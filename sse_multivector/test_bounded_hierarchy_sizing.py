@@ -53,6 +53,45 @@ class ComparisonCapacityTests(unittest.TestCase):
         self.assertEqual(result["proof"]["candidate_pairs"], 2)
         self.assertEqual(len(self.production_cases(nodes, pairs)), 1)
 
+    def test_unknown_pairs_bound_covers_every_small_production_pair_selection(self):
+        nodes = self.nodes(5, repetitions=1)
+        result = sizing.comparison_capacity_bound(nodes, self.template, None)
+        self.assertEqual(result["proof"]["eligible_nodes"], 5)
+        self.assertEqual(result["proof"]["candidate_pairs"], 10)
+        self.assertEqual(result["proof"]["universe"], "any_two_distinct_supplied_nodes")
+        pairs = list(combinations(nodes, 2))
+        for count in range(1, 4):
+            upper = result["proof"]["capacities"][count - 1]["rendered_tokens_upper"]
+            for selected in combinations(pairs, count):
+                packed = self.production_cases(nodes, selected)
+                self.assertEqual(len(packed), 1)
+                self.assertLessEqual(packed[0]["evidence"]["input_tokens"], upper)
+
+    def test_unknown_pairs_do_not_enumerate_quadratic_universe(self):
+        nodes = self.nodes(700, repetitions=1)
+        result = sizing.comparison_capacity_bound(nodes, self.template, None)
+        self.assertEqual(result["proof"]["candidate_pairs"], 244650)
+        self.assertGreater(result["guaranteed_pairs_per_request"], 0)
+        for size in range(1, 17):
+            pairs = [(f"S{i:04d}", f"S{699-i:04d}") for i in range(size)]
+            cases = self.production_cases(nodes, pairs)
+            upper = result["proof"]["capacities"][size - 1]["rendered_tokens_upper"]
+            if upper <= workflow.MAX_INPUT_TOKENS:
+                self.assertEqual(len(cases), 1)
+                self.assertLessEqual(cases[0]["evidence"]["input_tokens"], upper)
+
+    def test_unknown_pairs_require_fixed_width_saved_ids(self):
+        nodes = self.nodes(2, repetitions=1)
+        nodes["invented"] = nodes.pop("S0000")
+        with self.assertRaisesRegex(ValueError, "S####"):
+            sizing.comparison_capacity_bound(nodes, self.template, None)
+
+    def test_unknown_pairs_with_less_than_two_nodes_are_empty(self):
+        for count in (0, 1):
+            result = sizing.comparison_capacity_bound(self.nodes(count), self.template, None)
+            self.assertTrue(result["proof"]["empty_universe"])
+            self.assertEqual(result["proof"]["candidate_pairs"], 0)
+
     def test_two_entry_unicode_and_escaped_evidence_matches_each_capacity_certificate(self):
         endings = ['Plain ending', 'Quote: "', "Thai ชา ☕", "Line\nending!", "Slash \\."]
         nodes = self.nodes(len(endings), repetitions=1)

@@ -1139,6 +1139,12 @@ def parser():
     p.add_argument('destination', type=Path)
     p.add_argument('--pair', action='append', default=[], metavar='NODE_ID:NODE_ID',
                    help='track this diagnostic comparison in the prepared candidate lists')
+    p = commands.add_parser('measure-parent-guides',
+                            help='size one draft parent-guide pass; no inference or new vectors')
+    p.add_argument('build', type=Path)
+    p.add_argument('destination', type=Path)
+    p.add_argument('--prompt', type=Path, required=True)
+    p.add_argument('--prompt-id', required=True)
     p = commands.add_parser(
         "prepare", help="freeze inputs/settings and baseline; no inference"
     )
@@ -1274,6 +1280,24 @@ def main(argv=None):
                 'node_count', 'root_search', 'baseline', 'total_seconds', 'process_peak_rss_kib')},
                 'measurement_report': str(args.destination.resolve() / 'report.json'),
                 'profiles': [{k: p[k] for k in fields if k in p} for p in result['profiles']]}, indent=2))
+        elif args.command == 'measure-parent-guides':
+            try:
+                from .parent_guide_measurement import measure_build
+            except ImportError:
+                from parent_guide_measurement import measure_build
+            result = measure_build(args.build, args.destination, prompt=args.prompt, prompt_id=args.prompt_id)
+            fields = ('measurement_id', 'inference_attempts', 'prompt_id', 'node_count',
+                'discovery_requests', 'rendered_input_tokens', 'maximum_parent_guides',
+                'maximum_unique_resolved_pairs', 'maximum_verification_requests',
+                'maximum_first_attempt_requests', 'maximum_attempts_with_one_retry',
+                'maximum_rendered_input_tokens_first_attempt', 'remaining_attempts',
+                'within_remaining_budget_with_one_retry_each', 'requires_new_versioned_pass_authorization')
+            print(json.dumps({**{k: result[k] for k in fields},
+                'model_settings': {k: result['source_runner'][k] for k in
+                                   ('provider', 'model', 'reasoning_effort')},
+                'guaranteed_comparisons_per_request':
+                    result['comparison_capacity']['guaranteed_pairs_per_request'],
+                'measurement_report': str(args.destination.resolve() / 'report.json')}, indent=2))
         elif args.command == "collect":
             print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
         elif args.command == "run":

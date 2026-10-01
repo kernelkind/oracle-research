@@ -258,6 +258,92 @@ env LD_LIBRARY_PATH=/nix/store/1xw5xccqqh1xw3mvd70hyil6x418wxcm-gcc-14.3.0-lib/l
 Here the optional diagnostic pair identifies the saved Coffee and Beverages
 references. Other pairs must use two distinct original `S####` entry IDs.
 
+## PCPv3 — draft broader-subject nomination supplement
+
+Status: **draft, not behavior-tested or adopted**. The user authorized the draft
+and offline full-corpus sizing, not another model pass. HG100-SOL01 remains
+unchanged and its frozen nomination prompt remains PCPv2.
+
+The proposed supplementary pass works as follows:
+
+1. For every current **hierarchy node**, give Sol low the same one or two saved
+   **SP subject entries** used by PCPv2/BCPv5. Batch at most 16 queried nodes and
+   4,000 rendered `o200k_base` input tokens. The earliest source post determines
+   batching only; neither query nor candidate eligibility depends on that post.
+2. [PCPv3](PCPv3.md) proposes zero through three broader subject names, each at
+   most 160 Unicode characters. These are search text, not new hierarchy nodes,
+   equivalence judgments, or accepted ancestors. No global node catalogue is
+   sent to this prompt.
+3. Search existing nodes using the proposed names. Exact wording lookup can
+   reuse saved wordings; approximate lookup would require separately authorized
+   SSE encoding of new names and indexed subject-vector search. Repeated names
+   do not establish equivalence. Limit alias expansion, candidate inspections,
+   and the **total to three resolved existing nodes per query**, not three per
+   proposed name. The resolver and its ranking policy are not implemented or
+   selected by this measurement.
+4. Reuse BCPv5 to compare the queried node against each resolved existing node,
+   using only their unchanged saved SP evidence, not the generated search name.
+   The generated name cannot redefine either node. Filter existing ancestry and
+   judgments whose evidence is unchanged; only separately verified answers
+   could enter the existing application process.
+
+For example, the Butter query could propose "Dairy products". Lookup would find
+an existing Dairy products node, and BCPv5 would then compare the actual Butter
+and Dairy products nodes. This does not depend on those two subject vectors
+being nearest neighbours and does not assert the proposal will be generated.
+
+The naming prompt follows the [official OpenAI prompting guidance](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices):
+keep the task and output explicit, avoid repeated instructions, and evaluate
+the prompt with the chosen model and workload. Existing source interpretations
+and reference selection are retained rather than redesigned here.
+
+### Offline sizing through the shared runner
+
+`measure-parent-guides BUILD DESTINATION --prompt FILE --prompt-id PCPv3` reads
+a saved bounded build and writes a separate ignored report. It makes no model
+calls, prepares no inference run, loads no vectors, and changes no hierarchy or
+completed-build quotas. Source, prompt, export, budget, and measurement-code
+identities are recorded and checked.
+
+The report measures the actual query-only batches and rendered input counts.
+For N queried nodes, at most 3N names and 3N resolved comparisons are possible.
+Because the future names and pairs are unknown, verification is a conservative
+ceiling, not an exact count or a measured candidate-coverage result. The existing
+comparison packer is bounded against any two distinct supplied nodes using
+fixed-width ID records and the largest saved evidence records; it does not
+enumerate all node pairs. Include one provider retry per request when checking
+the remaining lifetime attempt budget. Token counts are rendered proxies, not
+provider billing.
+
+The 160-character contract bounds validated name text, not provider output or
+reasoning tokens. Saved subscription settings have no hard output cap; future
+output usage cannot be certified before inference. At most 3N new standalone
+subject-vector encodings could be needed, with exact-name reuse reducing that
+number. This measurement performs none and does not estimate their latency or
+provider cost. The saved archive loader and the 5,000-entry measurement guard
+are small-corpus tools, not a million-post implementation.
+
+Full 100-post measurement (`target/hg100-sol01-parent-guide-measurements-v1/report.json`):
+
+| Quantity | Measured count or conservative ceiling |
+| --- | ---: |
+| Current hierarchy nodes queried | 1,651 |
+| Nomination requests, packed from actual saved evidence | 151 |
+| Nomination rendered input tokens, total / maximum per request | 122,152 / 1,290 |
+| Proposed names / resolved comparisons, maximum each | 4,953 |
+| Guaranteed verification pairs per nonfinal batch | 13 |
+| Verification requests, maximum | 381 |
+| First-attempt requests, maximum | 532 |
+| Attempts allowing one provider retry each, maximum | 1,064 |
+| Remaining lifetime attempts before this measurement | 1,478 |
+| Total rendered input tokens, first-attempt ceiling | 1,646,152 |
+
+This establishes that one proposed pass fits the remaining attempt budget.
+There were **zero model calls and zero new vectors**. Name generation quality,
+candidate resolution, and browsing improvement remain untested; budget
+feasibility does not establish hierarchy completeness. Keep this separate from
+the finished build, including its original three-pass and nomination limits.
+
 ## Completed build and browser handoff
 
 HG100-SOL01 completed its three scheduled passes on September 30, 2026:

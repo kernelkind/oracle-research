@@ -19,8 +19,10 @@ except ImportError:
 def comparison_capacity_bound(nodes, template, candidate_pairs):
     """Certify a minimum occupancy for every nonfinal greedy comparison batch.
 
-    ``candidate_pairs`` is the actual bounded eligible universe, not all node
-    combinations. Each pair is canonicalized like comparison preparation.
+    ``candidate_pairs`` is the actual bounded eligible universe. ``None``
+    certifies any two distinct supplied nodes before candidates are known,
+    using fixed-width ASCII IDs without enumerating all node combinations.
+    Each explicit pair is canonicalized like comparison preparation.
     Evidence uses the production compact JSON representation unchanged.
 
     Interior o200k pre-token pieces cannot be affected by joining JSON objects:
@@ -44,16 +46,28 @@ def comparison_capacity_bound(nodes, template, candidate_pairs):
     # Use production placeholder validation, rather than a separate renderer.
     render(template, dict(INPUT_JSON=""))
     pairs, eligible = set(), set()
-    for position, pair in enumerate(candidate_pairs, 1):
-        if position > 100000:
-            raise ValueError("offline capacity universe exceeds 100000 supplied pairs")
-        if (not isinstance(pair, (tuple, list)) or len(pair) != 2
-                or any(not isinstance(n, str) or not re.fullmatch(r"S\d{4}", n)
-                       or n not in nodes for n in pair) or pair[0] == pair[1]):
-            raise ValueError("eligible comparison pairs require two distinct saved S#### IDs")
-        a, b = sorted(pair)
-        pairs.add((a, b))
-        eligible.update((a, b))
+    unknown_pairs = candidate_pairs is None
+    if unknown_pairs:
+        if any(not isinstance(n, str) or not re.fullmatch(r"S[0-9]{4}", n) for n in nodes):
+            raise ValueError("unknown pairs require fixed-width saved S#### IDs")
+        eligible = set(nodes)
+        ordered = sorted(eligible)
+        if len(ordered) >= 2:
+            # Only one record is needed to certify the common JSON boundaries.
+            pairs.add(tuple(ordered[:2]))
+        pair_count = len(eligible) * (len(eligible) - 1) // 2
+    else:
+        for position, pair in enumerate(candidate_pairs, 1):
+            if position > 100000:
+                raise ValueError("offline capacity universe exceeds 100000 supplied pairs")
+            if (not isinstance(pair, (tuple, list)) or len(pair) != 2
+                    or any(not isinstance(n, str) or not re.fullmatch(r"S\d{4}", n)
+                           or n not in nodes for n in pair) or pair[0] == pair[1]):
+                raise ValueError("eligible comparison pairs require two distinct saved S#### IDs")
+            a, b = sorted(pair)
+            pairs.add((a, b))
+            eligible.update((a, b))
+        pair_count = len(pairs)
 
     encoding = tiktoken.get_encoding("o200k_base")
     pattern = regex.compile(encoding._pat_str)
@@ -91,11 +105,14 @@ def comparison_capacity_bound(nodes, template, candidate_pairs):
     serialized_pairs = [compact(dict(id=a + "-" + b, A=a, B=b))
                         for a, b in sorted(pairs)]
     digest = lambda value: hashlib.sha256(compact(value).encode("utf-8")).hexdigest()
-    proof = dict(tokenizer="o200k_base", eligible_nodes=len(eligible), candidate_pairs=len(pairs),
+    proof = dict(tokenizer="o200k_base", eligible_nodes=len(eligible), candidate_pairs=pair_count,
                  evidence_entries=sum(len(nodes[n]) for n in eligible),
                  template_sha256=hashlib.sha256(template.encode("utf-8")).hexdigest(),
-                 nodes_sha256=digest(serialized_nodes), candidate_pairs_sha256=digest(sorted(pairs)),
+                 nodes_sha256=digest(serialized_nodes),
+                 candidate_pairs_sha256=None if unknown_pairs else digest(sorted(pairs)),
                  max_pairs=MAX_PAIRS, max_input_tokens=MAX_INPUT_TOKENS)
+    if unknown_pairs:
+        proof["universe"] = "any_two_distinct_supplied_nodes"
     if not pairs:
         return dict(guaranteed_pairs_per_request=MAX_PAIRS,
                     max_rendered_tokens_bound=0, proof=dict(proof, empty_universe=True))
@@ -122,7 +139,13 @@ def comparison_capacity_bound(nodes, template, candidate_pairs):
                  middle_pair=delta(middle_last, pf), pair_pair=delta(pl, pf, ","),
                  pair_tail=delta(pl, tail_first))
     node_costs = sorted((count(s) for s in serialized_nodes.values()), reverse=True)
-    max_pair_cost = max(map(count, serialized_pairs))
+    # Any fixed-width ASCII pair record has the same byte length. BPE cannot
+    # produce more tokens than bytes; use that conservative ceiling rather
+    # than scanning the quadratic universe of possible ID combinations.
+    max_pair_cost = (len(serialized_pairs[0].encode("ascii")) if unknown_pairs
+                     else max(map(count, serialized_pairs)))
+    if unknown_pairs:
+        proof["pair_token_bound_method"] = "fixed_width_ascii_record_bytes"
     constant_cost = sum(map(count, (head, middle, tail)))
     capacities = []
     for k in range(1, MAX_PAIRS + 1):
