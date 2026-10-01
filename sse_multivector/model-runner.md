@@ -3342,10 +3342,93 @@ agent `uncertain` through native review, with all twenty-five matching SP cases
 inspected and separately recorded. The other twenty-three agent assessments
 accept the plausible relative placements, not calibrated percentages.
 
-Investigating the saved Children relevance difference is recommended before
-adoption or more formula changes; that separate diagnostic has not begun.
+The user authorized investigating the saved Children relevance difference on
+October 1. The completed diagnostic is recorded below.
 PPv30-node-v1 remains tested, not production-frozen. No prompt, formula, source
 membership or previous user judgment changed, and no user review was requested.
+
+**Children relevance diagnostic: fixed PPv30-node-v1 prominence.**
+
+The original transfer request and worker receipt select every content token
+of the eighty-five-byte SP context, with twenty-seven tokens including EOS.
+The correct Children title is encoded separately; no context is truncated,
+no word is omitted by span selection, and case IDs, vector rows and saved
+sorting-score products match. The worker averages the selected contextual
+token states before its existing projection. Here the selection covers the
+complete SP context, including the ice-cream and plate details, rather than
+only the subject wording.
+
+Native `prominence_cosine.py prepare` created `children-short-source-v1` and
+`children-story-source-v1` under the transfer experiment. Both select only
+`context-641ea6563f1a2c0ab80ee60b` (son) and
+`context-d4dcb5e113d5948405a18d4b` (Lunchly), with `--post-order highest`.
+`--relevance-source-text` changes only the son's relevance input to an exact
+original-post fragment: "My son" for the short comparison, and the opening
+paragraph through "It is easier to eat all of the ice cream." for the story
+comparison. Complete-post/title prominence remains 55 and 40; saved SP
+subjects, contexts, masks and source posts are not edited. The Lunchly
+SP-context input is an unchanged control.
+
+Each native preparation contains five encoder rows: Children, original-mask
+replays V1026 and V0064, the Lunchly context, and the son's exact source
+fragment. Both run locally on CPU with the original checkpoint, model,
+pooling and runtime packages. The title replay cosine is 1.0; original-mask
+replay cosines are at least 0.9999999999999398, with maximum normalized
+component error 3.78e-8. The control's sorting score differs from the original
+by less than one millionth, consistent with the small batching-related vector
+differences. Every request remains below the 512-token limit, with no
+truncation. This is two bounded five-row comparisons, with no teacher
+calls, prompt changes, paid resources or new execution code.
+
+| Son's relevance input | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Saved SP context | 55 | 0.515541 | 28.354729 |
+| Original words "My son" alone | 55 | 0.754024 | 41.471298 |
+| Original opening ice-cream paragraph | 55 | 0.502639 | 27.645136 |
+
+Lunchly remains at prominence 40, relevance 0.707843 and sorting score
+28.313700 in both new comparisons. The original-story variant therefore puts
+the son below Lunchly, reversing the agent's preferred direction; it is a
+diagnostic input change, not a newly observed failure of the unchanged
+SP-context candidate. The short phrase has no age claim either. SSE can
+connect "My son" with Children; adding story detail greatly reduces that
+connection in both the original prose and the saved context. This rules out
+an SP summary-wording effect as the sole explanation and does not establish
+the encoder's internal causal mechanism. The code's complete-context
+selection and averaging are verified; the semantic interpretation remains
+an agent assessment.
+
+The separate original-mask comparison uses V1026's contextual selection
+"My son" and "son", not standalone source wording or a subject vector. Its
+relevance against the saved Children title is 0.774211, versus V0064's
+"kid"/"lunch" relevance 0.804175. That supports checking the choice of
+relevance input, without adopting mask relevance. A read-only check with the
+same node-title prominence finds that original-mask relevance reverses the
+accepted Coffee pair: iced coffee sorts at 93.756406 below raw-yolk coffee's
+97.620856. Both inputs have SP subject Coffee; subject-only relevance likewise
+cannot produce iced above raw-yolk when the fixed prominence is 95 versus
+100, because the relevance multiplier would be identical and nonnegative.
+Neither simpler input is a general correction established by this diagnostic.
+
+The next recommended comparison encodes SP subject plus the unchanged SP
+context for relevance, rather than dropping the context or rewriting it per
+post. For this case that means "The writer's son" alongside its existing
+ice-cream sentence. Keep prominence and the sorting formula fixed and check
+all accepted Coffee, Eggs, Photography and Music orders as well as the four
+transfer nodes. This is a proposed bounded comparison, not a selected
+production input, implementation or run. Its encoding work would grow with
+the selected SP entries, as the current context comparison does; it requires
+no new complete-post teacher assessments or all-post/all-node comparisons.
+
+Both new native comparisons, fixed prominence, products, exact source spans,
+unchanged control and protected original files passed verification. The
+prominence-cosine suite passed twelve tests, including its production
+preparation/collection path for source-text relevance. The son case retains
+agent `uncertain` with a native review recording these findings and hashes;
+no user decision was added. Comparison SHA-256:
+
+- `children-short-source-v1`: `7d420910e012a2abf566e9f29293302e2ca97e3960820e8b0082430db0412457`.
+- `children-story-source-v1`: `be7973a582b2de6e2b318c7d993e91f23fb9417d29561c34f85dc0ca583c01a8`.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

@@ -1224,11 +1224,32 @@ while the Lunchly market argument has 40 and 0.707843. Their sorting scores
 are 28.354729 and 28.313701, only 0.041028 apart, still in the agent's preferred
 direction. This is a concern about the narrowed gap, not an observed reversal
 or an agreed minimum difference. The SP context says "son" without stating an
-age, so the cause is not established. Investigating this saved relevance result
-is the recommended next step; it has not been started. Prompt, formula,
-memberships and production decisions remain unchanged. The detailed orders,
-agent assessments, usage and replay checks are recorded in
+age, so that comparison alone did not establish the cause. The user authorized
+the saved-input relevance diagnostic on October 1, and it is now completed.
+Prompt, formula, memberships and production decisions remain unchanged.
+The detailed orders, agent assessments, usage and replay checks are recorded in
 [model-runner.md](../../sse_multivector/model-runner.md).
+
+The diagnostic verifies the correct Children title, complete content-token
+selection and unchanged encoder provenance. With prominence fixed at 55,
+the original words "My son" have relevance 0.754024 and sorting score
+41.471298. The original opening ice-cream paragraph has relevance 0.502639
+and sorting score 27.645136, below the unchanged Lunchly control's 28.313700.
+The saved SP context's 0.515541 lies close to the full story result. Added
+story detail lowers relevance in both original prose and the SP context;
+the low relevance is not merely an SP summary-wording effect. These inputs
+also retain the son's unspecified age, so age ambiguity alone does not
+explain the difference. This is evidence about these inputs, not a general
+causal model or approval to change production sorting. Two local five-row
+SSE comparisons completed with replay parity; twelve existing comparison
+tests passed. No teachers were called.
+
+Replacing every context with SP subject wording alone cannot preserve the
+accepted iced-coffee-above-raw-yolk order: both SP subjects are Coffee, giving
+the same relevance multiplier to prominence 95 and 100. The recommended next
+comparison is relevance from SP subject plus its unchanged context, with
+prominence fixed and all existing accepted orders checked. This has not been
+implemented or run; current sorting inputs and formula remain unchanged.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
