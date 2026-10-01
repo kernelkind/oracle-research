@@ -3,6 +3,7 @@
 import hashlib
 import json
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import test_experiment as fixtures
 
@@ -254,6 +255,104 @@ class SubjectPairMergeTests(unittest.TestCase):
         self.assertEqual(provenance['masks'], previous['masks'])
         self.assertEqual(provenance['subjects'], previous['subjects'])
         self.assertEqual(before, {p: p.read_bytes() for p in before})
+        self.assertEqual(len(self.calls()), calls)
+
+    def test_continues_legacy_export_when_reports_add_default_transport_metadata(self):
+        from sse_multivector import experiment as workflow
+        from sse_multivector.subject_hierarchy import export_comparisons
+        current_report = workflow.report
+
+        def legacy_report(*args, **kwargs):
+            report = current_report(*args, **kwargs)
+            report['settings'].pop('transport', None)
+            return report
+
+        def legacy_prepare(name='E1', *args):
+            return workflow.prepare(workflow.parser().parse_args([
+                'prepare', str(self.root / name), '--spec', str(self.spec), *args]))
+
+        # Produce a historical-format fixture through the production preparer
+        # and exporter, with real offline receipts; do not edit signed artifacts.
+        with patch.object(workflow, 'report', side_effect=legacy_report), \
+                patch.object(self, 'prepare', side_effect=legacy_prepare):
+            source, _ = self.prepare_export()
+            export_comparisons(self.root / 'combined', source, self.root / 'view')
+        previous = json.loads((self.root / 'view/provenance.json').read_text())
+        self.assertTrue(all('transport' not in c['settings'] for c in previous['comparisons']))
+        before = {p: p.read_bytes() for p in (self.root / 'view').iterdir()}
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='additional.json')
+        self.write('additional-spec.json', spec)
+        self.write('additional.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='view/results.json', pairs=[dict(id='food-tea', A='S0000', B='S0005')]))
+        self.cli('prepare', 'additional', '--spec', self.root / 'additional-spec.json')
+        self.cli('run', 'additional', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"a_parent_of_b","reason":"Broader."}'})
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'extended')
+        self.assertEqual(json.loads(result.stdout)['new_ancestor_links'], 1)
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
+        self.assertEqual(len(self.calls()), calls)
+        preserved = json.loads((self.root / 'extended/provenance.json').read_text())
+        self.assertEqual(preserved['comparisons'][:-1], previous['comparisons'])
+
+    def test_exports_parent_nominated_pairs_with_validated_nomination_provenance(self):
+        source, _ = self.prepare_export()
+        self.cli('export-hierarchy', 'combined', '--source', source, '--output', 'view')
+        self.write('candidate-selection.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='view/results.json', judgments='view/provenance.json', nodes=['S0005']))
+        spec = json.loads(self.spec.read_text())
+        pair_schema = spec['runner']['output_schema']
+        spec['dataset'] = dict(adapter='parent_candidates', path='candidate-selection.json')
+        spec['runner']['output_schema'] = dict(type='object', properties={
+            'candidates': dict(type='array', items=dict(type='object', properties={
+                'id': dict(type='string'), 'reason': dict(type='string')},
+                required=['id', 'reason'], additionalProperties=False))},
+            required=['candidates'], additionalProperties=False)
+        self.write('candidate-spec.json', spec)
+        self.cli('prepare', 'candidates', '--spec', self.root / 'candidate-spec.json')
+        self.cli('run', 'candidates', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"candidates":[{"id":"S0000","reason":"Candidate only."}]}'})
+        spec['dataset'] = dict(adapter='subject_pairs', path='nominated-selection.json')
+        spec['runner']['output_schema'] = pair_schema
+        self.write('nominated-spec.json', spec)
+        self.write('nominated-selection.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='view/results.json', parent_candidates=['candidates']))
+        self.cli('prepare', 'nominated', '--spec', self.root / 'nominated-spec.json')
+        self.cli('run', 'nominated', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"b_parent_of_a","reason":"Parent."}'})
+        before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'nominated', '--base', 'view',
+            '--source', source, '--output', 'extended')
+        self.assertEqual(json.loads(result.stdout)['new_ancestor_links'], 1)
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
+        self.assertEqual(len(self.calls()), calls)
+        proof = json.loads((self.root / 'extended/provenance.json').read_text())
+        self.assertEqual(proof['comparisons'][-1]['parent_candidates'],
+                         self.show('nominated')['cases'][0]['evidence']['parent_candidates'])
+
+    def test_additional_export_rejects_a_genuinely_different_transport(self):
+        # The offline transport fixture must attest the actual WS exchange,
+        # otherwise receipt validation correctly stops before hierarchy export.
+        self.runner.write_text(self.runner.read_text().replace(
+            'result.update(json.loads(os.environ.get("FAKE_RUNNER_RESULT_OVERRIDE", "{}")))',
+            'if request.get("transport") == "websocket":\n'
+            '    result["transport"] = "websocket"\n'
+            '    result["request"].update(method="GET", url="ws://127.0.0.1/fixture")\n'
+            '    result["request"]["body"]["type"] = "response.create"\n'
+            '    result["response_metadata"]["http_status"] = 101\n'
+            'result.update(json.loads(os.environ.get("FAKE_RUNNER_RESULT_OVERRIDE", "{}")))'))
+        source = self.prepare_additional_export(run=False)
+        self.cli('prepare', 'websocket', '--from', 'additional', '--transport', 'websocket')
+        self.cli('run', 'websocket', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"a_parent_of_b","reason":"Broader."}'})
+        calls = len(self.calls())
+        failed = self.cli('export-hierarchy', 'websocket', '--base', 'view',
+            '--source', source, '--output', 'extended', ok=False)
+        self.assertIn('comparison model settings differ: transport', failed.stderr)
+        self.assertFalse((self.root / 'extended').exists())
         self.assertEqual(len(self.calls()), calls)
 
     def test_merge_only_export_rejects_other_answers_and_missing_base(self):

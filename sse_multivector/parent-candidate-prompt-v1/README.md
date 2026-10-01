@@ -80,3 +80,42 @@ from those completed nominations, and
 and settings. Checks are isolated in
 `target/branch-comparison-v1/bcpv4-pcpv1-ten-roots-v1`. Neither step reruns the
 three-root baseline or applies answers to the hierarchy.
+
+## Separate saved-answer hierarchy export
+
+The authorized follow-up applies the ten-root diagnostic's 43 broader-parent
+answers to a fresh test output, retaining the two `neither` answers as judgments
+without adding links. It uses the saved third-pass hierarchy as its exact base;
+the three-root diagnostic's answers are not included. This changes the separate
+test graph, not the canonical HG selection rules or the earlier exports.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py export-hierarchy \
+  target/branch-comparison-v1/bcpv4-pcpv1-ten-roots-v1 \
+  --base target/branch-comparison-v1/bcpv4-hg4-third-pass-v1/hierarchy \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --output target/branch-comparison-v1/bcpv4-pcpv1-ten-roots-applied-v1
+```
+
+The output must not already exist. Export sends no requests, retains every
+original node/subject/mask and direct post membership, preserves SP ancestry,
+and omits only redundant direct browsing links. It revalidates the nomination
+experiments and receipts before retaining their proofs alongside BCPv4 answers.
+Cycle and `neither`/ancestry conflicts still stop export without repair.
+
+Replay accepts only the historical metadata difference between omitted default
+`settings.transport` and explicit `sse`; all other evidence remains exact, and
+a genuinely different transport is rejected. Old artifacts are not rewritten.
+
+Inspect the isolated output with the existing browser:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/branch-comparison-v1/bcpv4-pcpv1-ten-roots-applied-v1/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
+
+Whether to adopt broader-parent discovery into the canonical process remains
+open. Do not infer approval from this separate export.

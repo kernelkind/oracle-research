@@ -8,6 +8,29 @@ import json
 from pathlib import Path
 
 
+def _same_saved_evidence(left, right):
+    """Compare frozen evidence, treating only omitted default SSE as equivalent.
+
+    Reports added an explicit default transport after older preparations were
+    saved. No other metadata, request, graph or source difference is accepted.
+    The caller retains the original records rather than rewriting them.
+    """
+    if isinstance(left, dict) and isinstance(right, dict):
+        if left.keys() != right.keys():
+            return False
+        for key in left:
+            a, b = left[key], right[key]
+            if key == 'settings' and isinstance(a, dict) and isinstance(b, dict):
+                a = dict(a, transport=a.get('transport', 'sse'))
+                b = dict(b, transport=b.get('transport', 'sse'))
+            if not _same_saved_evidence(a, b):
+                return False
+        return True
+    if isinstance(left, list) and isinstance(right, list):
+        return len(left) == len(right) and all(_same_saved_evidence(a, b) for a, b in zip(left, right))
+    return left == right
+
+
 def reachable(n, edges):
     outgoing = [set() for _ in range(n)]
     for a, b in edges:
@@ -357,7 +380,7 @@ def _initial_comparisons(directory, plan, protect, workflow, adapters):
     inputs = original["inputs"]
     selected, rebuilt = adapters.combine_subject_pairs(
         dict(**original, pairs=[], source=references), reports, plan["prompt"]["text"])
-    if rebuilt != prep:
+    if not _same_saved_evidence(rebuilt, prep):
         raise ValueError("saved combined preparation differs from source comparisons")
     expected_cases = {c["id"]: c for c in selected["cases"]}
     current = workflow.report(directory)
@@ -367,8 +390,9 @@ def _initial_comparisons(directory, plan, protect, workflow, adapters):
             if case["status"] != "valid" or not case.get("receipt"):
                 raise ValueError(f"comparison is not valid: {case['id']}")
             protect(case["receipt"]["results_path"])
-        for key in ("provider", "model", "reasoning_effort", "output_schema", "timeout_seconds", "max_output_tokens"):
-            if report["settings"].get(key) != current["settings"].get(key):
+        for key in ("provider", "model", "reasoning_effort", "output_schema", "timeout_seconds", "max_output_tokens", "transport"):
+            default = 'sse' if key == 'transport' else None
+            if report["settings"].get(key, default) != current["settings"].get(key, default):
                 raise ValueError(f"comparison model settings differ: {key}")
 
     comparisons = []
@@ -381,7 +405,7 @@ def _initial_comparisons(directory, plan, protect, workflow, adapters):
         raise ValueError("changed comparison inventory differs from preparation")
     for c in current["cases"]:
         expected = expected_cases[c["id"]]
-        if (c["inputs"] != expected["inputs"] or c["evidence"] != expected["evidence"]
+        if (c["inputs"] != expected["inputs"] or not _same_saved_evidence(c["evidence"], expected["evidence"])
                 or c["prompt"] != adapters.render(plan["prompt"]["text"], expected["inputs"])):
             raise ValueError("changed comparison inputs differ from combined nodes")
         comparisons.append(dict(id=c["id"], A=c["evidence"]["A"]["node_id"],
@@ -424,7 +448,7 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
         if saved[name] != rebuilt[name]:
             raise ValueError(f"base export {name} differs from saved comparisons")
     for name in ("protected_sha256", "subjects", "original_edges", "preparation", "comparisons", "masks"):
-        if previous[name] != rebuilt["provenance"][name]:
+        if not _same_saved_evidence(previous[name], rebuilt["provenance"][name]):
             raise ValueError(f"base export provenance {name} differs from saved comparisons")
     if "export" in previous and previous["export"] != rebuilt["provenance"]["export"]:
         raise ValueError("base export replay descriptor changed")
@@ -452,8 +476,9 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
     if any(plan["prompt"][k] != old_plan["prompt"][k] for k in ("id", "text")):
         raise ValueError("additional comparison prompt differs from base export")
     for c in previous["comparisons"]:
-        for key in ("provider", "model", "reasoning_effort", "output_schema", "timeout_seconds", "max_output_tokens"):
-            if c["settings"].get(key) != current["settings"].get(key):
+        for key in ("provider", "model", "reasoning_effort", "output_schema", "timeout_seconds", "max_output_tokens", "transport"):
+            default = 'sse' if key == 'transport' else None
+            if c["settings"].get(key, default) != current["settings"].get(key, default):
                 raise ValueError(f"comparison model settings differ: {key}")
 
     pairs = [dict(id=c["id"], A=c["evidence"]["A"]["node_id"], B=c["evidence"]["B"]["node_id"])
@@ -464,8 +489,25 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
         if len(rules) != 1 or None in rules:
             raise ValueError("mixed additional comparison selection rules")
         selection = dict(selection=rules.pop())
-    expected = adapters.prepare(dict(adapter="subject_pairs", select=[p["id"] for p in pairs]),
-        dict(inputs=inputs, hierarchy=saved["results"], **selection, source=references), plan["prompt"]["text"])
+    nominated = ['parent_candidates' in c['evidence'] for c in plan['cases']]
+    if any(nominated):
+        if not all(nominated) or rules != {None}:
+            raise ValueError('mixed parent nomination and comparison selection evidence')
+        directories = list(dict.fromkeys(p['experiment'] for c in plan['cases']
+                                         for p in c['evidence']['parent_candidates']))
+        reports = []
+        for candidate_directory in directories:
+            candidate_directory = Path(candidate_directory).resolve()
+            if str(candidate_directory / 'experiment.json') not in plan['sources']:
+                raise ValueError('parent nomination experiment is not bound to prepared sources')
+            reports.append(workflow.report(candidate_directory))
+        cases = adapters.prepare_parent_candidate_pairs(dict(
+            inputs=inputs, hierarchy=saved['results'], pairs=[], source=references), reports)
+        expected = adapters.prepare(dict(adapter='generic', select=[p['id'] for p in pairs]),
+            dict(cases=cases), plan['prompt']['text'])
+    else:
+        expected = adapters.prepare(dict(adapter="subject_pairs", select=[p["id"] for p in pairs]),
+            dict(inputs=inputs, hierarchy=saved["results"], **selection, source=references), plan["prompt"]["text"])
     by_id = {c["id"]: c for c in expected}
     if {c["id"] for c in current["cases"]} != set(by_id):
         raise ValueError("additional comparison inventory differs from preparation")
@@ -476,7 +518,7 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
         if c["status"] != "valid" or not c.get("receipt"):
             raise ValueError(f"comparison is not valid: {c['id']}")
         protect(c["receipt"]["results_path"])
-        if any(c[k] != by_id[c["id"]][k] for k in ("inputs", "evidence", "prompt")):
+        if any(not _same_saved_evidence(c[k], by_id[c["id"]][k]) for k in ("inputs", "evidence", "prompt")):
             raise ValueError("additional comparison inputs differ from base nodes")
         a, b = c["evidence"]["A"]["node_id"], c["evidence"]["B"]["node_id"]
         pair = frozenset((a, b))
@@ -487,6 +529,8 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
         comparisons.append(dict(id=c["id"], A=a, B=b, answer=c["parsed"], inputs=c["inputs"],
             receipt=c["receipt"], experiment=current["experiment"], prompt_id=current["prompt_id"],
             settings=current["settings"], stage="HG5"))
+        if 'parent_candidates' in c['evidence']:
+            comparisons[-1]['parent_candidates'] = c['evidence']['parent_candidates']
     preparation = previous["preparation"]
     if "pending_comparisons" in preparation:
         completed = {frozenset((c["A"], c["B"])) for c in comparisons}
