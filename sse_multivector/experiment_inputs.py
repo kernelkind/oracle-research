@@ -815,6 +815,33 @@ def prepare_subject_contexts(source, selected=None, basis='context'):
     return prepare_context_prominence({'cases': cases}, basis)
 
 
+def prepare_posts(source, selected=None):
+    """Use complete saved posts as inputs, keeping extraction data out of prompts."""
+    if type(source.get('schema_version')) is not int or source['schema_version'] != 1:
+        raise ValueError('expected posts schema_version 1')
+    if not isinstance(source.get('notes'), list):
+        raise ValueError('posts require a notes array')
+    cases, note_ids, identifiers = [], set(), set()
+    for note in source['notes']:
+        note_id = engine._expect_string(note['note_id'], 'note_id')
+        text = engine._expect_string(note['text'], 'post text')
+        origin = note.get('origin', {})
+        if not isinstance(origin, dict):
+            raise ValueError('post origin must be an object')
+        identifier = engine._expect_identifier(origin.get('prompt_id', note_id), 'post identity')
+        if note_id in note_ids or identifier in identifiers:
+            raise ValueError('duplicate post identity')
+        note_ids.add(note_id)
+        identifiers.add(identifier)
+        cases.append(dict(id=identifier, inputs={'POST': text},
+                          evidence=dict(note_id=note_id, text=text, origin=origin)))
+    if selected is not None:
+        if set(selected) - identifiers:
+            raise ValueError('unknown post requested')
+        cases = [case for case in cases if case['id'] in selected]
+    return cases
+
+
 def prepare(dataset, source, template):
     adapter = dataset["adapter"]
     if "select" in dataset:
@@ -842,6 +869,8 @@ def prepare(dataset, source, template):
             if set(dataset["select"]) - {c["id"] for c in cases}:
                 raise ValueError("unknown case requested")
             cases = [c for c in cases if c["id"] in dataset["select"]]
+    elif adapter == "posts":
+        cases = prepare_posts(source, dataset.get('select'))
     elif adapter == "prominence":
         cases = prepare_prominence(source, dataset.get("select"), dataset.get('combine_masks', False))
     elif adapter == "subject_pairs":

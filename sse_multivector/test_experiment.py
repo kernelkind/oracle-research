@@ -16,6 +16,47 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_posts_adapter_imports_exact_saved_prompts_without_leaking_subjects(self):
+        self.prepare('original')
+        self.cli('run', 'original')
+        calls = self.calls()
+        posts = dict(schema_version=1, notes=[
+            dict(note_id='hash-one', text='Tea {POST}', subjects=['REVIEW ONLY'],
+                 origin=dict(prompt_id='one')),
+            dict(note_id='hash-two', text='Coffee', subjects=[],
+                 origin=dict(prompt_id='two'))])
+        self.write('posts.json', posts)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='posts', path='posts.json')
+        self.write('spec.json', spec)
+        self.prepare('imported', '--import-config', 'original/runner-config.json')
+        shown = self.show('imported')
+        self.assertEqual(shown['summary']['valid'], 2)
+        first = self.show('imported', '--case', 'one')
+        self.assertEqual(first['inputs'], {'POST': 'Tea {POST}'})
+        self.assertEqual(first['evidence']['note_id'], 'hash-one')
+        self.assertNotIn('REVIEW ONLY', first['prompt'])
+        self.cli('prepare', 'candidate', '--from', 'imported', '--only', 'one',
+                 '--model', 'fixture/other')
+        candidate = self.show('candidate')
+        self.assertEqual([c['id'] for c in candidate['cases']], ['one'])
+        self.assertEqual(candidate['cases'][0]['prompt'], first['prompt'])
+        self.assertEqual(self.calls(), calls)
+
+    def test_posts_adapter_selection_and_duplicate_identity_checks(self):
+        posts = dict(schema_version=1, notes=[dict(note_id='one', text='Tea'),
+                                              dict(note_id='two', text='Coffee')])
+        self.write('posts.json', posts)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='posts', path='posts.json', select=['two'])
+        self.write('spec.json', spec)
+        self.prepare('selected')
+        self.assertEqual([c['id'] for c in self.show('selected')['cases']], ['two'])
+        posts['notes'][1]['note_id'] = 'one'
+        self.write('posts.json', posts)
+        error = self.cli('prepare', 'duplicate', '--spec', self.spec, ok=False)
+        self.assertIn('duplicate post identity', error.stderr)
+
     def test_explicit_websocket_transport_is_frozen_and_not_reused_from_sse(self):
         self.prepare('sse')
         self.cli('run', 'sse')
