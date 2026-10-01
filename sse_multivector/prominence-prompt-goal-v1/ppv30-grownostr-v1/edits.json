@@ -1,0 +1,9 @@
+{
+  "base_sha256": "5c5f160fbcc42890d8e964aeab9bbe44969e6ca7df0f35dbead25af8b254bd95",
+  "edits": [
+    {
+      "old": "Use the complete post to interpret the hierarchy node title as it applies to that post.",
+      "new": "For this trial, the hierarchy node \"grownostr\" means the GrowNostr initiative: growing Nostr participation, personal networks and communities by sharing diverse content and interacting with other Nostr users. Use this same meaning for every post. Use the complete post to judge how much of its meaning concerns this topic; do not redefine the node's topic from each post's other subjects."
+    }
+  ]
+}

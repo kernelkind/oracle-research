@@ -4487,11 +4487,49 @@ production all-post/all-node design.
 
 The agent now recommends saved SP subject plus context for subsequent sorting
 experiments, retaining prominence, SSE's final learned layers and the formula.
-Production adoption remains open. The next recommendation is a bounded
-prominence trial supplying one fixed meaning for `grownostr` across its posts,
-because changing relevance does not resolve the inconsistent meanings already
-observed. Its meaning and input must be reviewed before any new calls; no such
-trial, new prompt, hierarchy repair or production change has begun.
+Production adoption remains open. The user subsequently approved the bounded
+fixed-meaning `grownostr` prominence trial prepared below, because changing
+relevance does not resolve the inconsistent meanings already observed.
+
+**Fixed GrowNostr meaning approved October 1 (prepared, not yet run):**
+
+The user approved testing one meaning across the fifteen direct-member posts
+in `grownostr` (`Sa233efc2db`). Inspection found fourteen hashtag masks and
+one food-growing mask; the earlier user acceptance of the title does not
+establish a food-growing definition or authorize changing membership.
+[Jack Spirko's original announcement](https://www.thesurvivalpodcast.com/grow-nostr)
+and [initiative description](https://www.thesurvivalpodcast.com/lets-grow-nostr)
+describe growing Nostr participation and networks through diverse content and
+community interaction. They include gardening and food among many possible
+subjects; they do not define the initiative as food cultivation.
+
+Draft **PPv30-grownostr-v1** changes one paragraph of PPv30-node-v1 through
+native `experiment.py revise`: the meaning is the GrowNostr initiative,
+growing Nostr participation, personal networks and communities through diverse
+content and interaction. It is identical for every post. All other allocation
+instructions and the output schema are unchanged. This is a source-grounded
+trial definition, not a production decision or proof of every author's intent.
+The new [prompt](prominence-prompt-goal-v1/ppv30-grownostr-v1/PPv30-grownostr-v1.md),
+exact edits and native revision receipt are maintained sources.
+
+Native `prepare --from` with fifteen `--only` IDs preserves complete original
+post/title inputs, source evidence, Astra-low subscription settings and all
+fifteen saved baselines in `experiments/ppv30-grownostr-fixed-meaning-v1`.
+Four pre-run agent observations record the stock/steak inconsistency, the
+food-growing member and the salsa/Nostr connection. They set no exact
+percentage, numerical gap or strict complete order. All fifteen cases are
+unrun. Forty-five comparison, ranking, selection and actual local T5 worker
+checks pass. No workflow or production code change is necessary.
+
+The authorized run is bounded to thirty attempts including eligible provider
+retries, for fifteen distinct post/title inputs. Subscription incremental cash
+is zero, with no paid fallback or rentals. Prominence will use the fixed meaning;
+relevance will reuse the preceding subject-plus-context SSE vectors exactly,
+without new encoder work. SSE's learned layers, title, formula and highest
+selected-entry post rule remain fixed. Work grows with selected memberships
+and full-post text plus one short repeated definition, not all-post/all-node
+inputs. The source hierarchy, earlier teacher answers and 99 protected hashes
+are preserved. Inference and post-run assessment are not yet complete.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
