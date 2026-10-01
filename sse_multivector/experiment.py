@@ -1213,6 +1213,12 @@ def parser():
                    help='with --combine-equivalent, inherit consistent saved judgments through the merges; no new model receipts')
     p.add_argument('--source', type=Path, required=True, help='saved masked-posts.json and vector-map.json directory')
     p.add_argument('--output', type=Path, required=True, help='fresh directory outside saved sources')
+    p = commands.add_parser('export-parent-guides',
+                            help='apply saved parent-guide judgments to a separate bounded-build snapshot; no inference')
+    p.add_argument('build', type=Path, help='saved bounded build with its frozen final hierarchy')
+    p.add_argument('output', type=Path, help='fresh directory outside saved sources')
+    p.add_argument('--comparisons', type=Path, nargs='+', required=True,
+                   help='complete source-bound BCPv5 experiments; include earlier supplementary trials')
     p = commands.add_parser(
         "show", help="inspect all cases, or exact case evidence; no inference"
     )
@@ -1339,6 +1345,13 @@ def main(argv=None):
             )
         elif args.command == 'reconcile-costs':
             compact(reconcile_costs(args.experiment))
+        elif args.command == 'export-parent-guides':
+            try:
+                from .parent_guide_export import export_parent_guides
+            except ImportError:
+                from parent_guide_export import export_parent_guides
+            print(json.dumps(export_parent_guides(args.build, args.comparisons, args.output),
+                             ensure_ascii=False))
         elif args.command == 'export-hierarchy':
             try:
                 from .subject_hierarchy import export_comparisons

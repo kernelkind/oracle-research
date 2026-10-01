@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/hg100-sol01/exports/final-004/results.json",
+  "judgments": "../../target/hg100-sol01/bounded-build.json",
+  "discoveries": [
+    "../../target/hg100-sol01-parent-guides-v1/nomination",
+    "../../target/hg100-sol01-parent-guides-v1/full-pass/nomination"
+  ],
+  "resolution": "subject_vector_ancestors_with_exact",
+  "subject_probe": "../../target/subject-matching-100-v1/inputs",
+  "guide_probe": "../../target/hg100-sol01-parent-guides-v1/full-pass/guide-vectors",
+  "prior_comparisons": [
+    "../../target/hg100-sol01-parent-guides-v1/verification",
+    "../../target/hg100-sol01-parent-guides-v1/vector-verification",
+    "../../target/hg100-sol01-parent-guides-v1/ancestor-verification"
+  ]
+}

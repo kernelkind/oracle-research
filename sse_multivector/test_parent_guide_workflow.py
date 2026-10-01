@@ -60,6 +60,60 @@ class ParentGuideWorkflowTests(unittest.TestCase):
         self.assertEqual(preparation["phase"], "parent_guides")
         self.assertIn(self.refs["inputs"]["path"], protected)
 
+    def test_guide_adapter_automatically_reuses_only_saved_unchanged_queries(self):
+        previous = self.guide_report({"S0000": ["Dairy products"], "S0005": ["Community"]})
+        self.source_path.write_text(json.dumps(dict(self.refs, prior_guides=[previous["experiment"]])))
+        cases, protected, preparation = experiment_inputs.prepare_file(
+            dict(adapter="bounded_parent_guides"), self.source_path, self.template,
+            load_report=lambda path: previous)
+        self.assertEqual([q for case in cases for q in case["evidence"]["queries"]],
+                         ["S0001", "S0002", "S0003", "S0004"])
+        self.assertEqual(preparation["reused_query_nodes"], ["S0000", "S0005"])
+        self.assertEqual(preparation["prior_guides"], [previous["experiment"]])
+        self.assertIn(str(Path(previous["experiment"]) / "results.jsonl"), protected)
+
+    def test_guide_reuse_does_not_skip_changed_sources_or_original_references(self):
+        previous = self.guide_report({"S0000": ["Dairy products"]})
+        self.hierarchy.update(groups=[[0, 5], [1], [2], [3], [4]], member_to_group=[0, 1, 2, 3, 4, 0])
+        self.save_sources()
+        self.source_path.write_text(json.dumps(dict(self.refs, prior_guides=[previous["experiment"]])))
+        cases, _, preparation = experiment_inputs.prepare_file(
+            dict(adapter="bounded_parent_guides"), self.source_path, self.template,
+            load_report=lambda path: previous)
+        self.assertEqual(preparation["reused_query_nodes"], [])
+        self.assertIn("S0000", [q for case in cases for q in case["evidence"]["queries"]])
+
+    def test_guide_reuse_does_not_skip_a_query_under_changed_prompt_text(self):
+        previous = self.guide_report({"S0000": ["Dairy products"]})
+        self.source_path.write_text(json.dumps(dict(self.refs, prior_guides=[previous["experiment"]])))
+        cases, _, preparation = experiment_inputs.prepare_file(
+            dict(adapter="bounded_parent_guides"), self.source_path, "Changed instruction. {INPUT_JSON}",
+            load_report=lambda path: previous)
+        self.assertEqual(preparation["reused_query_nodes"], [])
+        self.assertIn("S0000", [q for case in cases for q in case["evidence"]["queries"]])
+
+    def test_guide_reuse_requires_valid_receipts_and_protected_reports(self):
+        for mutation in ("adapter", "status", "receipt", "protected"):
+            previous = self.guide_report({"S0000": ["Dairy products"]})
+            if mutation == "adapter":
+                previous["adapter"] = "generic"
+            elif mutation == "status":
+                previous["cases"][0]["status"] = "unrun"
+            elif mutation == "receipt":
+                previous["cases"][0]["receipt"] = None
+            else:
+                directory = Path(previous["experiment"])
+                (directory / "prompt.txt").write_text("Changed")
+                (directory / "experiment.json").write_text(json.dumps(dict(plan=dict(
+                    files={"prompt.txt": "wrong"}, sources={}))))
+            self.source_path.write_text(json.dumps(dict(self.refs, prior_guides=[previous["experiment"]])))
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                experiment_inputs.prepare_file(dict(adapter="bounded_parent_guides"),
+                    self.source_path, self.template, load_report=lambda path: previous)
+        with self.assertRaisesRegex(ValueError, "validated experiment reports"):
+            experiment_inputs.prepare_file(dict(adapter="bounded_parent_guides"),
+                                           self.source_path, self.template)
+
     def test_validator_requires_ordered_complete_queries_and_bounded_distinct_names(self):
         case = self.prepare_guides()[0][0]
         answer = dict(queries=[dict(id="S0000", parents=["Dairy products", "食べ物"])])
@@ -358,6 +412,53 @@ class ParentGuideWorkflowTests(unittest.TestCase):
         payload = json.loads(cases[0]["inputs"]["INPUT_JSON"])
         self.assertNotIn("seed", cases[0]["inputs"]["INPUT_JSON"])
         self.assertEqual(payload["pairs"][0]["B"], "S0003")
+
+    def test_combined_ancestor_mode_returns_exact_and_pooled_candidates_with_one_shared_quota(self):
+        from sse_multivector import subject_matching_probe
+        report = self.guide_report({"S0000": ["Dairy products", "Edible fats", "People together"]})
+        vectors = self.subject_vectors({"Edible fats": [0.9, 0.1, 0],
+                                        "People together": [-1, 0, 0]})
+        with patch.object(subject_matching_probe, "load_subject_vectors", return_value=(vectors, {}, {})):
+            cases, _, preparation = self.prepare_comparisons(report,
+                resolution="subject_vector_ancestors_with_exact", subject_probe="saved-subjects",
+                guide_probe="new-guides")
+        self.assertEqual([(p["A"], p["B"]) for p in preparation["pairs"]],
+                         [("S0000", "S0001"), ("S0000", "S0002"), ("S0000", "S0004")])
+        self.assertEqual(preparation["candidates_by_query"]["S0000"], ["S0001", "S0002", "S0004"])
+        self.assertEqual(len(cases[0]["evidence"]["pairs"]), 3)
+
+    def test_combined_ancestor_mode_reuses_prior_exact_decisions_without_releasing_their_slot(self):
+        from sse_multivector import subject_matching_probe
+        report = self.guide_report({"S0000": ["Dairy products", "Edible fats", "People together"]})
+        previous_cases = self.prepare_comparisons(report)[0]
+        directory = self.root / "previous-comparisons"
+        directory.mkdir()
+        receipt = directory / "results.jsonl"
+        receipt.write_text("{}\n")
+        (directory / "experiment.json").write_text(json.dumps(dict(plan=dict(files={}, sources={}))))
+        for case in previous_cases:
+            case.update(status="valid", receipt=dict(results_path=str(receipt)),
+                parsed=dict(comparisons=[dict(id=p["id"], relation="neither", reason="Different subjects.")
+                    for p in case["evidence"]["pairs"]]))
+        previous = dict(adapter="bounded_parent_comparisons", prompt_id="BCPv5",
+                        experiment=str(directory), cases=previous_cases)
+        source = self.root / "combined.json"
+        source.write_text(json.dumps(dict(self.refs, discoveries=[report["experiment"]],
+            resolution="subject_vector_ancestors_with_exact", subject_probe="subjects", guide_probe="guides",
+            prior_comparisons=[str(directory)])))
+        vectors = self.subject_vectors({"Edible fats": [0.9, 0.1, 0], "People together": [-1, 0, 0]})
+        template = (Path(__file__).parent / "bounded-hierarchy-v1" / "BCPv5.md").read_text()
+        reports = {Path(report["experiment"]): report, directory: previous}
+        with patch.object(subject_matching_probe, "load_subject_vectors", return_value=(vectors, {}, {})):
+            cases, protected, preparation = experiment_inputs.prepare_file(
+                dict(adapter="bounded_parent_comparisons"), source, template,
+                load_report=lambda path: reports[path])
+        self.assertEqual([(p["A"], p["B"]) for p in preparation["pairs"]],
+                         [("S0000", "S0002"), ("S0000", "S0004")])
+        self.assertEqual(preparation["candidates_by_query"]["S0000"], ["S0001", "S0002", "S0004"])
+        self.assertEqual(preparation["exact_pairs_reused_from_prior"], ["S0000-S0001"])
+        self.assertIn(str(receipt), protected)
+        self.assertEqual(len(cases[0]["evidence"]["pairs"]), 2)
 
     def test_ancestor_walk_keeps_budget_cutoff_when_its_seed_is_selected(self):
         from sse_multivector.parent_guide_workflow import resolve_vector_guides

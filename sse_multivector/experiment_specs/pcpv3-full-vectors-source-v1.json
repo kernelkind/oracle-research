@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/hg100-sol01/exports/final-004/results.json",
+  "judgments": "../../target/hg100-sol01/bounded-build.json",
+  "discoveries": [
+    "../../target/hg100-sol01-parent-guides-v1/nomination",
+    "../../target/hg100-sol01-parent-guides-v1/full-pass/nomination"
+  ],
+  "subject_probe": "../../target/hg100-sol01-parent-guides-v1/guide-vectors",
+  "worker_config": "../../target/subject-matching-100-v1/inputs/worker-config.json",
+  "worker_source": "../../target/subject-matching-100-v1/encoder-source/worker.py"
+}

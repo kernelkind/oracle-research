@@ -14,13 +14,13 @@ try:
     from . import bounded_hierarchy_workflow as bounded
     from .bounded_hierarchy_candidates import _ancestor, _validate_graph
     from .bounded_hierarchy_build import _unchanged_judgments
-    from .experiment_inputs import digest
+    from .experiment_inputs import digest, render
     from .parent_guide_measurement import PARENT_GUIDE_SCHEMA, pack_parent_guide_requests
 except ImportError:
     import bounded_hierarchy_workflow as bounded
     from bounded_hierarchy_candidates import _ancestor, _validate_graph
     from bounded_hierarchy_build import _unchanged_judgments
-    from experiment_inputs import digest
+    from experiment_inputs import digest, render
     from parent_guide_measurement import PARENT_GUIDE_SCHEMA, pack_parent_guide_requests
 
 
@@ -44,14 +44,46 @@ def validate_guides(case, raw):
     return value
 
 
-def create_guide_source(source_refs, template, *, base=None, selected=None):
+def create_guide_source(source_refs, template, *, base=None, selected=None, prior_reports=()):
     """Prepare compact query-only requests from protected saved SP references."""
     if not isinstance(source_refs, dict) or set(source_refs) - {
-            "schema_version", "inputs", "hierarchy", "query_nodes"}:
+            "schema_version", "inputs", "hierarchy", "query_nodes", "prior_guides"}:
         raise ValueError("invalid parent-guide source references")
-    loaded, references, protected = bounded._read_sources(source_refs, base)
-    cases = pack_parent_guide_requests(loaded["inputs"], loaded["hierarchy"], template,
-                                      query_nodes=source_refs.get("query_nodes"))
+    loaded, references, protected = bounded._read_sources(
+        {key: value for key, value in source_refs.items() if key != "prior_guides"}, base)
+    query_nodes, reused = source_refs.get("query_nodes"), set()
+    if prior_reports:
+        _, groups, _, _ = _validate_graph(loaded["inputs"], loaded["hierarchy"])
+        nodes = bounded._node_entries(loaded["inputs"], loaded["hierarchy"])
+        if query_nodes is not None and (not isinstance(query_nodes, list) or not query_nodes
+                or any(not isinstance(q, str) or q not in groups for q in query_nodes)
+                or len(set(query_nodes)) != len(query_nodes)):
+            raise ValueError("distinct current query node IDs required")
+        requested = set(groups if query_nodes is None else query_nodes)
+        for report in prior_reports:
+            if report.get("adapter") != "bounded_parent_guides" or report.get("prompt_id") != "PCPv3":
+                raise ValueError("guide reuse requires validated PCPv3 parent-guide reports")
+            for case in report["cases"]:
+                if case.get("status") != "valid" or not case.get("receipt"):
+                    raise ValueError("guide reuse requires complete valid saved answers")
+                validate_guides(case, bounded.compact(case["parsed"]))
+                payload = bounded._parse(case["inputs"]["INPUT_JSON"])
+                bounded._fields(payload, {"queries"}, "parent-guide input")
+                for query in payload["queries"]:
+                    bounded._fields(query, {"id", "entries"}, "parent-guide query")
+                    qid = query["id"]
+                    if (isinstance(qid, str) and qid in requested
+                            and case.get("prompt") == render(template, case["inputs"])
+                            and all(case["evidence"].get("source", {}).get(key) == references[key]
+                                    for key in ("inputs", "hierarchy"))
+                            and query["entries"] == nodes[qid]
+                            and case["evidence"].get("original_members", {}).get(qid) == groups[qid]):
+                        reused.add(qid)
+            _protect_report(report, protected)
+        query_nodes = sorted(requested - reused)
+    cases = ([] if prior_reports and query_nodes == [] else
+             pack_parent_guide_requests(loaded["inputs"], loaded["hierarchy"], template,
+                                        query_nodes=query_nodes))
     for case in cases:
         case["evidence"]["source"] = references
         case["evidence"]["reference_policy"] = bounded.REFERENCE_POLICY
@@ -63,6 +95,9 @@ def create_guide_source(source_refs, template, *, base=None, selected=None):
         reference_policy=bounded.REFERENCE_POLICY,
         query_nodes=[q for case in cases for q in case["evidence"]["queries"]],
         max_queries=16, max_input_tokens=bounded.MAX_INPUT_TOKENS, tokenizer="o200k_base")
+    if prior_reports:
+        preparation.update(reused_query_nodes=sorted(reused),
+                           prior_guides=[report["experiment"] for report in prior_reports])
     return cases, protected, preparation
 
 
@@ -341,7 +376,7 @@ def _ancestor_vector_pairs(resolution, nodes, parents, aliases, provider, subjec
 
 
 def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vectors, *,
-                          history=None, prior_reports=(), include_ancestors=False):
+                          history=None, prior_reports=(), include_ancestors=False, include_exact=False):
     """Select bounded vector comparisons, optionally pooling two parent steps."""
     try:
         from .bounded_hierarchy_candidates import HNSWSubjectNeighbors
@@ -373,10 +408,12 @@ def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vector
     chosen = {qid: set(ids) for qid, ids in resolution["candidates_by_query"].items()}
     saved_cases = {(report["experiment"], case["id"]): (report, case)
                    for report in reports for case in report["cases"]}
-    pairs, shortlist_cache = {}, {}
+    pairs = {(pair["A"], pair["B"]): pair for pair in exact_pairs
+             if include_exact and frozenset((pair["A"], pair["B"])) not in judged}
+    shortlist_cache = {}
     if include_ancestors:
-        pairs = _ancestor_vector_pairs(resolution, nodes, parents, aliases, provider, subject_vectors,
-            exact_selected, judged, chosen, inspections, saved_cases)
+        pairs.update(_ancestor_vector_pairs(resolution, nodes, parents, aliases, provider, subject_vectors,
+            exact_selected, judged, chosen, inspections, saved_cases))
     fallback_records = () if include_ancestors else resolution["guides"]
     for record in fallback_records:
         if record.get("reason") != "exact_name_absent":
@@ -433,8 +470,12 @@ def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vector
         candidates_by_query={qid: sorted(ids) for qid, ids in chosen.items()},
         unresolved_guides=[r for r in resolution["guides"] if r["status"] == "unresolved"],
         skipped_guides=[r for r in resolution["guides"] if r["status"] == "skipped"],
-        nearest_neighbors=provider.metadata,
-        exact_pairs_excluded_from_trial=[p["id"] for p in exact_pairs])
+        nearest_neighbors=provider.metadata)
+    if include_exact:
+        resolution["exact_pairs_reused_from_prior"] = [p["id"] for p in exact_pairs
+            if frozenset((p["A"], p["B"])) in judged]
+    else:
+        resolution["exact_pairs_excluded_from_trial"] = [p["id"] for p in exact_pairs]
     return [pairs[key] for key in sorted(pairs)], nodes, resolution
 
 
@@ -446,14 +487,16 @@ def build_comparison_source(source_refs, reports, template, *, base=None, select
             "resolution", "subject_probe", "guide_probe", "prior_comparisons"}:
         raise ValueError("invalid parent-comparison source references")
     mode = source_refs.get("resolution", "exact_saved_wording_only")
-    if mode not in {"exact_saved_wording_only", "subject_vector_fallback_only", "subject_vector_ancestors_only"}:
+    if mode not in {"exact_saved_wording_only", "subject_vector_fallback_only",
+                    "subject_vector_ancestors_only", "subject_vector_ancestors_with_exact"}:
         raise ValueError("invalid parent-comparison resolution mode")
     if mode == "exact_saved_wording_only" and any(
             key in source_refs for key in ("subject_probe", "guide_probe", "prior_comparisons")):
         raise ValueError("vector references require subject-vector fallback mode")
     loaded, references, protected = bounded._read_sources({key: value for key, value in source_refs.items()
         if key in {"schema_version", "inputs", "hierarchy", "judgments", "discoveries"}}, base)
-    if mode in {"subject_vector_fallback_only", "subject_vector_ancestors_only"}:
+    if mode in {"subject_vector_fallback_only", "subject_vector_ancestors_only",
+                "subject_vector_ancestors_with_exact"}:
         try:
             from .subject_matching_probe import load_subject_vectors
         except ImportError:
@@ -479,7 +522,8 @@ def build_comparison_source(source_refs, reports, template, *, base=None, select
         pairs, nodes, resolution = resolve_vector_guides(loaded["inputs"], loaded["hierarchy"],
             reports, references, {**candidate_vectors, **guide_vectors},
             history=loaded.get("judgments"), prior_reports=prior_reports,
-            include_ancestors=mode == "subject_vector_ancestors_only")
+            include_ancestors=mode in {"subject_vector_ancestors_only", "subject_vector_ancestors_with_exact"},
+            include_exact=mode == "subject_vector_ancestors_with_exact")
     else:
         pairs, nodes, resolution = resolve_exact_guides(loaded["inputs"], loaded["hierarchy"],
             reports, references, history=loaded.get("judgments"))

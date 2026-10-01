@@ -66,8 +66,17 @@ def prepare_file(dataset, path, template, load_report=None):
         except ImportError:
             import parent_guide_workflow as guides
         if dataset['adapter'] == 'bounded_parent_guides':
+            prior_paths = engine._validate_string_array(
+                source.get('prior_guides', []), 'prior parent-guide experiments', allow_empty=True)
+            prior_directories = [engine._resolve_path(p, 'prior parent-guide experiment', path.parent)
+                                 for p in prior_paths]
+            if len(set(prior_directories)) != len(prior_directories):
+                raise ValueError('duplicate prior parent-guide experiment')
+            if prior_directories and load_report is None:
+                raise ValueError('guide reuse requires validated experiment reports')
             cases, protected, preparation = guides.create_guide_source(
-                source, template, base=path.parent, selected=dataset.get('select'))
+                source, template, base=path.parent, selected=dataset.get('select'),
+                prior_reports=[load_report(p) for p in prior_directories])
         else:
             if load_report is None:
                 raise ValueError('parent comparisons require validated experiment reports')

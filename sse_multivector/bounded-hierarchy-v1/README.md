@@ -258,16 +258,17 @@ env LD_LIBRARY_PATH=/nix/store/1xw5xccqqh1xw3mvd70hyil6x418wxcm-gcc-14.3.0-lib/l
 Here the optional diagnostic pair identifies the saved Coffee and Beverages
 references. Other pairs must use two distinct original `S####` entry IDs.
 
-## PCPv3 — small-tested broader-subject nomination supplement
+## PCPv3 — broader-subject nomination supplement
 
-Status: **tested on eight selected nodes, not frozen or adopted**. The user
-authorized the draft, offline full-corpus sizing and this small nomination /
-verification trials, not a full supplementary pass. HG100-SOL01 remains unchanged
-and its frozen nomination prompt remains PCPv2. Exact-only and bounded HNSW
-lookup have small diagnostic implementations; a full pass and adoption of a new
-construction rule remain undecided.
+Status: **full supplementary pass completed October 1; not frozen or adopted
+as the general construction process**. The eight-node trials and offline sizing
+preceded this approval. The full pass reuses those valid saved results and checks
+every remaining node in final-004 with unchanged PCPv3, BCPv5, Sol low and lookup
+limits. The original HG100-SOL01 export and its PCPv2 build remain unchanged;
+verified supplementary relationships enter a separate export. Further passes,
+semantic acceptance and adoption of a new construction rule remain open.
 
-The proposed supplementary pass works as follows:
+The supplementary pass works as follows:
 
 1. For every current **hierarchy node**, give Sol low the same one or two saved
    **SP subject entries** used by PCPv2/BCPv5. Batch at most 16 queried nodes and
@@ -278,8 +279,8 @@ The proposed supplementary pass works as follows:
    equivalence judgments, or accepted ancestors. No global node catalogue is
    sent to this prompt.
 3. Search existing nodes using the proposed names. Exact wording lookup can
-   reuse saved wordings; approximate lookup would require separately authorized
-   SSE encoding of new names and indexed subject-vector search. Repeated names
+   reuse saved wordings; approximate lookup uses the authorized local SSE
+   encoding of new names and indexed subject-vector search. Repeated names
    do not establish equivalence. Limit alias expansion, candidate inspections,
    and the **total to three resolved existing nodes per query**, not three per
    proposed name. The small trials implement exact-only lookup and a separate
@@ -566,8 +567,94 @@ The reusable runner tests cover pooled ranking, fixed-reference scoring,
 shared comparison/inspection quotas, two-hop/three-parent/eight-visited bounds,
 judged and reverse-exact starting nodes, and explicit truncated-walk provenance.
 The relevant regression/integration suites passed **266 tests**. The original
-final-004 hierarchy hashes are unchanged; applying any saved supplementary
-answers or running a full pass remains separate work.
+final-004 hierarchy hashes are unchanged. These trials supply saved results for
+the separately authorized full pass below.
+
+### Full supplementary pass
+
+Reusable specs under `sse_multivector/experiment_specs/` are
+`pcpv3-full-sol-low-v1.json`, `pcpv3-full-vectors-source-v1.json` and
+`pcpv3-full-verification-sol-low-v1.json`, with their source selections. The
+shared workflow owns all preparation, inference, lookup, receipts and export;
+outputs are ignored under `target/hg100-sol01-parent-guides-v1/full-pass/`.
+
+1. Prepare PCPv3 against all 1,651 final-004 nodes. Reuse a saved nomination
+   only when its receipted answer, source node membership, compact references
+   and actual rendered prompt are unchanged. The eight trial queries reuse
+   their saved answers; 1,643 new queries fit 151 requests. Preparation measured
+   121,758 rendered input tokens, at most 1,290 per request.
+2. Prepare vectors for the unique proposed names, reusing both original subject
+   vectors and the nine names encoded during the trials. Encode only names not
+   already available, using the unchanged frozen local CPU SSE worker. Validate
+   runtime, checkpoint, source hashes and worker receipts before lookup.
+3. Use `subject_vector_ancestors_with_exact`: combine new exact matches with
+   the tested bounded ancestor lookup in one verification dataset. Both share
+   the three-candidate and 32-inspection limits per query. Previously checked
+   exact matches still reserve their original slots, but do not cause another
+   call. Reuse unchanged judgments from the original build and all three trials.
+4. Run unchanged BCPv5 only on the newly selected actual-node pairs. All model
+   attempts use the original persistent 2,000-attempt counter; provider retries
+   count and remain subject to the existing retry policy. The measured ceiling
+   is 532 first attempts for this pass, 1,064 allowing one provider retry each.
+   Actual verification counts are determined after nominations and lookup.
+5. `export-parent-guides BUILD OUTPUT --comparisons EXPERIMENT ...` applies
+   all saved verified answers through the unchanged graph policy to a separate
+   final-004-derived export. It retains original judgments, including neither
+   constraints, and all SP ancestry, entries, masks and multiple-parent routes.
+   Source data and completed receipt bindings must still match; historical code
+   hashes are recorded lineage, not a requirement that today's export helper
+   be identical to the archived build code. Conflicting duplicate answers fail;
+   graph-policy conflicts remain visibly deferred. No manual placements or new
+   source subjects are introduced.
+
+The full pass completed with **284 new Sol-low attempts**: 151 PCPv3 and 133
+BCPv5 requests, without failures, retries or exact-request reruns. Eight old
+queries reused their saved nominations. The local worker encoded 1,673 unique
+new names and reused nine previously encoded names; no new original SP or mask
+vectors were generated. Lookup selected 2,119 new pairs, using 225,016 rendered
+verification input tokens, at most 2,130 per request. Maximum observed work was
+three candidates and 19 inspections per query, below the unchanged limits.
+
+BCPv5 returned 496 ancestor answers, 1,600 neither answers and 23 uncertain
+answers; no equivalent answers. These are model judgments, not user approvals.
+The shared lifetime counter is **817 / 2,000**. Subscription catalog estimates
+are not charges; no external embedding service or rental was used.
+
+The separate export is `target/hg100-sol01-parent-guides-v1/full-pass/export/`.
+It combines all 2,494 original judgments with 2,138 supplementary judgments:
+19 from the three earlier trials and 2,119 from this pass. Existing graph rules
+apply or visibly defer them; no judgment or SP relationship is manually repaired.
+
+| Export property | Original final-004 | Supplementary export |
+| --- | ---: | ---: |
+| Posts / SP entries / masks | 100 / 2,383 / 1,674 | 100 / 2,383 / 1,674 |
+| Hierarchy nodes | 1,651 | 1,651 |
+| Top-level nodes | 220 | 182 |
+| Underlying links | 3,362 | 3,768 |
+| Browsing links | 2,138 | 2,345 |
+| Deferred judgment applications | 66 | 187 |
+
+Original snapshot hashes, node memberships and underlying links are unchanged
+or retained. Export hashes, DAG, SP ancestry, browsing ancestry and the native
+browser check pass. The relevant regression/integration runs passed 284 tests.
+This establishes mechanical completion, not semantic acceptance: 182 top-level
+nodes remain crowded, and preserved local SP-link problems can still spread
+through newly connected branches. More reachability is not automatically better
+membership. Further passes and adoption remain separate decisions.
+
+Agent inspection also found a new scope risk in BCPv5-0109: Diet and nutrition
+(S1517) was accepted above Cashews (S1957), whose fixed context identifies a
+matcha-cashew pie ingredient rather than a nutrition discussion. This is a
+questionable model judgment, not an established user decision or manual repair.
+By contrast, the new Beverages placement above Cherry flavour in Kreik concerns
+a property of a specifically named beverage, not generic cherry flavour.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hg100-sol01-parent-guides-v1/full-pass/export/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
 
 ## Completed build and browser handoff
 

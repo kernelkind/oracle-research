@@ -16,6 +16,14 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_parent_guide_export_has_a_read_only_source_bound_cli(self):
+        result = self.cli("export-parent-guides", "missing-build", "exported",
+                          "--comparisons", "missing-comparison", ok=False)
+        self.assertNotIn("invalid choice", result.stderr)
+        self.assertIn("missing-build", result.stderr)
+        self.assertFalse((self.root / "exported").exists())
+        self.assertEqual(self.calls(), [])
+
     def test_parent_vector_preparation_has_an_offline_source_bound_cli(self):
         error = self.cli("prepare-parent-guide-vectors", "missing-source.json", "vectors", ok=False)
         self.assertNotIn("invalid choice", error.stderr)
