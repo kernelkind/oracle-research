@@ -242,11 +242,16 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("other links", evaluate("document.querySelector('#graph-status').textContent"))
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
-                self.assertIn("Nine further Food-ancestor answers are applied in a separate continued test export.",
+                self.assertIn("Latest saved test export: 1,740 hierarchy nodes; original subjects and masks preserved.",
                               evaluate("document.querySelector('#details').innerText"))
                 hierarchy_details = evaluate("document.querySelector('#details').innerText")
                 for pending in (
-                    "repeated Food preparation/ingredients nodes",
+                    "Same-worded Food preparation/ingredients siblings beneath Food have been combined",
+                    "two further bounded passes completed",
+                    "The two existing pair-selection rules now nominate no unjudged pairs",
+                    "not proof that important parent relationships are complete",
+                    "parent links outside the current selection rules",
+                    "general conflict handling and production adoption",
                     "bagel-making and pie-making branches disconnected from Food",
                     "experimental Dietary practices / Diets merge",
                     "Launch-scale construction is not this completion gate",

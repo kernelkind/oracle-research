@@ -44,30 +44,33 @@ protocol remain prerequisites for their respective execution work; existing
 completion dependencies, acceptance requirements and open design choices are
 unchanged.
 
-**Current task 02 status (September 29):** the active investigation builds from
-per-post subject hierarchies and masks. LG01 has run on 100 posts; BCPv4 has
-compared 49 nominated parent pairs. The subsequent authorized HG6–HG7 test
-combines the 14 saved equivalence answers in an isolated preparation and retains
-19 unchanged judgments; seven changed Astra-low comparisons completed with valid
-JSON. The subsequent authorized separate export applies 13 current ancestor
-answers and omits 15 redundant browsing links, preserving all 1,753 nodes,
-original entries, SP ancestry and source evidence. The saved LG01 hierarchy is
-unchanged. Nine further authorized BCPv4/Astra-low comparisons recovered Food
-gaps missed by the original nomination rule; all returned valid Food-ancestor
-answers. The authorized continued test export applies those nine saved answers,
-preserving the earlier export and every node, mask and direct membership. Food
-still reaches 50 posts but now has 55 immediate browsing children; repeated
-Food preparation/ingredients nodes remain separate, and bagel-making and
-pie-making branches remain disconnected from Food. Review their relationships,
-alongside unresolved judgments such as the experimental Dietary practices /
-Diets merge. Broader nomination and inference remain unapproved.
-Ancestor interpretation and the browsing rule are implemented in
-this isolated test; production adoption and general conflict handling remain
-open. See the [stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
+**Current task 02 status (September 30):** the active investigation builds from
+per-post subject hierarchies and masks. The original 100-post LG01 hierarchy
+remains unchanged; subsequent authorized tests use separate exports. Earlier
+passes combined saved equivalences, re-compared seven changed inputs and applied
+13 ancestor answers plus nine further Food-ancestor answers.
+
+Later tests combined same-worded siblings, including Food preparation and Food
+ingredients beneath Food. Consistent saved judgments were carried through the
+equivalence merges without new calls. Two further bounded comparison/export
+passes completed. The latest saved test has 1,740 hierarchy nodes and 446
+top-level nodes, preserving all 2,383 original SP subject entries, 1,674 masks
+and source evidence. Food still reaches the same 50 posts.
+
+Neither existing pair-selection rule now nominates an unjudged pair. This
+exhausts those rules on this saved hierarchy, not evidence that important parent
+relationships are complete or that the hierarchy passes browsing review.
+Remaining review includes links outside those selection rules, the disconnected
+bagel-making and pie-making branches, unresolved judgments such as the
+experimental Dietary practices / Diets merge, and general conflict handling.
+Automatic repetition of the stages is not implemented; further calls and
+production adoption remain unapproved. See the
+[current stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
+
 Task 02 remains in progress until a useful 100-note hierarchy passes the user's
-browsing review; finishing launch-scale construction is not this gate. No
-production workflow is selected. Earlier HR02/HDBSCAN results and reviews remain
-evidence, not the current next-step instruction.
+browsing review; finishing launch-scale construction is not this gate. Status,
+track and dependencies are unchanged. No production workflow is selected;
+earlier HR02/HDBSCAN work remains evidence, not the current next-step instruction.
 
 **Task 23 dependency clarified September 29:** separate node-title generation
 is required for 02 only if the chosen workflow includes that stage. Task 23

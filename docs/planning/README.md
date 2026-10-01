@@ -82,18 +82,23 @@ track. Shared construction measurements can inform both where applicable.
 Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
-Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
-posts. BCPv4 compared 49 parent pairs; isolated tests subsequently combined the
-saved equivalences, re-compared seven changed inputs and applied 13 ancestor
-answers with redundant browsing shortcuts omitted. Nine further Food comparisons
-returned ancestor answers, now applied in a separate continued export. Food still
-reaches 50 posts, with nine additional child branches. Repeated Food
-preparation/ingredients nodes, the disconnected bagel-making and pie-making
-branches, and unresolved judgments such as the experimental Dietary practices /
-Diets merge remain review work. The saved LG01 hierarchy is unchanged. These
-are authorized tests, not production adoption or a general conflict policy;
-completion still requires the user's acceptance of a useful 100-note hierarchy,
-not finished launch-scale construction. See the
+Task 02 tracks the SP-based hierarchy investigation on 100 posts. Later
+authorized tests combined same-worded siblings, including Food preparation and
+Food ingredients beneath Food, carried consistent saved judgments through
+equivalences and completed two further bounded passes. The latest separate
+test export has 1,740 hierarchy nodes; original subjects, masks and source
+evidence remain represented. Food still reaches the same 50 posts.
+
+The two existing pair-selection rules now find no unjudged pairs. That does
+not establish complete parent relationships or browsing acceptance. Review
+still includes links outside those rules, disconnected bagel-making/pie-making
+branches, unresolved judgments such as the experimental Dietary practices /
+Diets merge, and general conflict handling. Automatic repetition is not
+implemented; further calls and production adoption remain unapproved.
+
+The saved LG01 hierarchy is unchanged. Task 02 remains in progress until the
+user accepts a useful 100-note hierarchy, not finished launch-scale construction.
+Track and dependencies are unchanged. See the
 [current stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
 Earlier HR02 results remain preserved, not the current next step.
 
