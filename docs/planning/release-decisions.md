@@ -1086,9 +1086,19 @@ scores 90.154658 and 87.301384 respectively, a difference of 2.853274. No
 numeric tolerance or tie rule is approved; this comparison is not counted as
 passed or failed and does not approve the assessed percentages or formula.
 
+The user next reviewed roasting your own beans (`056e6466`, A) against
+"Is there coffee for me?" (`78462b92`, B) inside Coffee, with complete wording
+and image URLs omitted, and said "they seem decently evenly matched. maybe A".
+Record roughly equal with a tentative preference for A, separately from the
+ten clear orders. Saved PPv30-node-v1 prominence is 98 < 100; sorting scores
+are 87.301384 > 83.173849, a difference of 4.127535. The sorting-score direction
+agrees with the tentative preference, but no numerical tolerance for closeness
+or tie rule was approved, so this pair is not counted as passed or failed.
+No formula, exact percentages or production rule was selected.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
-these ten checks, plus the two about-equal judgments and separate slight
+these ten checks, plus the three about-equal judgments and separate slight
 preference for the weather post described below.
 They are reference pairs, not a claim of general ranking quality.
 
@@ -1213,7 +1223,7 @@ entries; roasting has 98. Its broader SP subjects cannot supply a different
 prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
 matching the separate tentative roasting preference. With the tenth reviewed
 pair below, the sorting score matches all ten clear expected orders, while
-prominence alone matches nine. Both about-equal
+prominence alone matches nine. The three about-equal
 comparisons and the separate slight preference for the weather post remain
 outside that count, with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
 include two failing-first workflow/comparison checks and 202 passing regression

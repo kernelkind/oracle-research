@@ -2750,6 +2750,26 @@ matches all ten clear checks, prominence alone nine. The about-equal judgments
 and separate slight weather preference remain uncounted. One such case does
 not establish a general advantage or select a production formula.
 
+The user then reviewed roasting your own beans (`056e6466`, A) against
+"Is there coffee for me?" (`78462b92`, B) inside Coffee, with complete wording
+and image URLs omitted, and said "they seem decently evenly matched. maybe A".
+Record roughly equal with a tentative preference for A, separately from the
+ten clear checks. Saved PPv30-node-v1 values are unchanged:
+
+| Post | Coffee prominence | Highest SP-context relevance | Highest sorting score |
+| --- | ---: | ---: | ---: |
+| A: Roasting your own beans | 98 | 0.890830 | 87.301384 |
+| B: Is there coffee for me? | 100 | 0.831738 | 83.173849 |
+
+The sorting-score difference is 4.127535 in the tentatively preferred direction;
+prominence alone points toward B. No numerical tolerance for closeness or tie
+rule was approved, so this is not a passed or failed clear comparison. There
+are now three separate about-equal judgments, alongside the tentative
+roasting/coffee-places judgment and slight weather preference. The clear-check
+counts remain ten for the sorting score and nine for prominence alone, out of
+ten. No new inference, encoding, prompt change or saved-result modification
+was needed; this review does not select a production formula.
+
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
 
