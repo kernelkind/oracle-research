@@ -30,21 +30,24 @@ prevent the mask stage; its size may be unknown. Valid empty masks remain answer
 A bad model answer is a measured failure. Missing work or a parser bug blocks
 the affected comparison from advancing.
 
-## 3. Train and evaluate each data size — Vast
+## 3. Continue training and evaluate checkpoints — Vast
 
-Each run:
+Start **one continuing training run per student**:
 
-1. Load original weights with a fresh adapter and optimizer.
-2. Mix one **note → teacher hierarchy** example per note with one
-   **note + subject → teacher mask** example per labeled subject. Both tasks
-   update the same adapter.
-3. Save the adapter, reload it with the original model, and verify matching answers.
-4. Generate validation subjects, then their masks. Save both full outputs, raw
-   and parsed, linked by note and subject, including failures.
+1. Initialize its adapter and optimizer from the original model once.
+2. Learn from **note → teacher hierarchy** and **note + subject → teacher mask**
+   examples. Both tasks update the same adapter.
+3. At the proposed 250-note milestone, save the complete training checkpoint.
+   Verify the saved adapter reloads correctly. Generate subjects and their masks
+   on the **same 100 separate validation notes**; save raw and parsed outputs.
+4. Continue from that training state as the data grows to 500, then 1,000 notes.
+   Save and evaluate a checkpoint at each milestone, preserving the optimizer
+   and learning-rate schedule. Validation answers do not update the weights.
 
-Larger sets reuse earlier notes. Keep each candidate's recipe fixed; compare
-matched training work. **Training amount and checkpoint save/evaluation schedule
-remain open.** Record loss and resource telemetry.
+Larger sets retain earlier notes and labels. Continuing does not automatically
+require another pass over earlier notes. **Training amount, note ordering and
+revisiting, and exact save/evaluation schedule remain open.** Record loss,
+resource telemetry, and the examples used at each stage.
 
 ## 4. Retrieve verified results — Vast to local
 
@@ -80,14 +83,13 @@ Rental grouping, duration, and spending also remain open.
 
 ## Provisional cost — October 1
 
-Plan roughly **$200–300 in additional cash** for the proposed three candidates
-at 250/500/1,000 training notes, 100 validation notes, and the selected model's
-200-note final comparison against its untuned baseline. This assumes 128–1,024
-training updates per run and teacher labeling/review through the existing Codex
-subscription. Training amount is undecided; subscription quota is finite.
-Longer training or paid API calls would increase the estimate. At the previous
-GPU's speed, allow **5–9 days of GPU work**, including headroom. Label preparation
-and local review add time outside the rental; hardware is still undecided.
+At the previous GPU's measured speed, generating validation answers for three
+baselines and nine checkpoints, plus the selected model's final comparison,
+projects to **91–100 GPU hours / $130–140 before training, setup and transfers**.
+Full cost and elapsed time depend on the cumulative training amount and GPU
+schedule, which remain open. Three continuing runs do not automatically reduce
+training work by two thirds. Teacher labeling and review assume the existing
+Codex subscription, whose quota is finite; paid API work would be additional.
 
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

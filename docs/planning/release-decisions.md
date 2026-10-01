@@ -648,12 +648,26 @@ copy and retain remote originals at least until verification. Limit transfer
 bandwidth and disk activity to protect experiment throughput. This records the
 intended design; the copier and stronger stage checks still need implementation.
 
+**October 1 training-continuation correction approved:** the user requested
+removing the separate fresh starts. The larger pilot uses **one continuing
+training run per student**, with checkpoints at the proposed 250/500/1,000-note
+milestones. Initialize each adapter and optimizer once; carry learned weights,
+optimizer, learning-rate schedule, random state and data-order position forward.
+Save complete checkpoints and verify adapter reloads. At each milestone,
+generate subjects and masks on the same held-out validation notes without
+updating training weights. The proposed three milestones give nine trained
+checkpoint versions for comparison, not nine independent fine-tunes.
+Reusing training state does not itself require repeating earlier notes or
+establish a reduction in training compute. Cumulative training amount, stage
+allocation, note ordering/revisiting, exact checkpoint schedule, and GPU
+parallelism remain open. This corrects the intended design; continuation across
+expanding datasets and parallel execution still need implementation and tests.
+No rental, model calls, or spending is authorized by this correction.
+
 **September 30 training-data clarification:** the user confirmed that the
-500-note comparison includes the first 250 training notes plus 250 new notes.
-Each dataset-size run starts from the original model weights. This confirms
-data reuse and independent training starts. The user subsequently approved
-including 1,000 training notes in the planned comparison. Its inclusion is fixed;
-smaller comparison sizes, evaluation counts, rental grouping, duration, and
+500-note set includes the first 250 training notes plus 250 new notes; the
+1,000-note set retains the 500. Inclusion of the 1,000-note comparison is fixed.
+Smaller milestone sizes, evaluation counts, rental grouping, duration, and
 spending remain open.
 
 **September 25 informal start:** the user approved beginning the fine-tuning

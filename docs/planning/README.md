@@ -6,8 +6,10 @@ discussion, including corpus scope, validation, Vast.ai compute and rented hosti
 read-only investigation, the low-memory HDBSCAN discussion and unapproved next steps.
 
 [Fine-tuning pilot process](fine-tuning-pilot-process.md) describes the experiment:
-shared data, untuned baselines, training at increasing data sizes, evaluation,
-and model comparison. Semantic review happens outside the GPU rental.
+shared data, untuned baselines, three continuing student training runs with
+checkpoints as data grows, and model comparison. Each checkpoint generates
+subjects and masks on the same held-out validation notes. Semantic review
+happens outside the GPU rental.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user
