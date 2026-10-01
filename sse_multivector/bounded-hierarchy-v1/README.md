@@ -214,5 +214,66 @@ BCPv5 checks nominated global pairs, not every retained local SP relationship.
 Consequently, this build does not establish that every local link can safely
 become unconditional ancestry between combined global nodes. Remaining roots
 and duplicate branches also show that the bounded selection is not complete.
-The next read-only investigation should examine that local-to-global link
-assumption, using the saved source entries and actual inherited posts.
+The source trace confirmed that the recipe-specific SP entry directly contains
+general ingredient headings. Whether construction should validate original SP
+links before accepting global ancestry remains open; the completed build and
+its unconditional-preservation policy are unchanged.
+
+### Checking original SP links with unchanged BCPv5
+
+The shared `bounded_comparisons` adapter also accepts a source selection with
+exactly `schema_version`, `inputs`, and `original_sp_edges`. `inputs` is the saved
+SP-input path, optionally pinned with a `path`/`sha256` reference. Select a list
+of original `[parent_entry_index, child_entry_index]` pairs, or use `"all"` for
+all saved direct SP links. This mode cannot include a global hierarchy or
+discovery experiments.
+
+Preparation checks each selected link against the saved SP graph. Each endpoint
+is represented separately using its exact original subject and context, not an
+LG01 or later combined reference. It reuses BCPv5's existing 16-pair/4,000-token
+batching and response validator. The original link direction, source posts,
+masks and entry provenance remain review evidence; the model receives only the
+ordinary node entries and supplied pairs, without expected answers or an
+instruction to accept the SP link. Preparing or running this check does not
+change any hierarchy.
+
+The user approved a six-link diagnostic using **BCPv5 unchanged / GPT-6.1 Sol
+low**. The expectations below were chosen before inference and are agent
+assessments, not newly established user decisions:
+
+| Original parent entry | Original child entry | Expected relationship |
+| --- | --- | --- |
+| N063 SP2.1 Ingredients for mushroom risotto with shrimp | SP2.1.8 Cooking fats | Neither contains the other |
+| N063 SP2.1 Ingredients for mushroom risotto with shrimp | SP2.1.3 Cheese | Neither contains the other |
+| N063 SP2.1.8 Cooking fats | SP2.1.8.2 Butter | Parent contains child |
+| N063 SP2.1.2 Rice | SP2.1.2.1 Arborio rice | Parent contains child |
+| N042 SP1 Beverages | SP1.1 Tea | Parent contains child |
+| N015 SP3 Bread | SP3.1 Sourdough bread | Parent contains child |
+
+The maintained [selection](../experiment_specs/hg100-sol01-sp-links-six-v1.json)
+contains source indices and a hash-bound source reference, not copied case data.
+The [spec](../experiment_specs/hg100-sol01-sp-links-sol-low-v1.json) pins the
+existing prompt, subscription model and comparison schema. Preparation creates
+the actual prompts, review evidence and manifests automatically:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+uv run --offline --no-project --python python3.13 \
+  --with-requirements sse_multivector/bounded-hierarchy-v1/requirements.txt \
+  python -m sse_multivector.experiment prepare \
+  target/hg100-sol01-sp-links-v1/experiment \
+  --spec sse_multivector/experiment_specs/hg100-sol01-sp-links-sol-low-v1.json \
+  --history-root target/hg100-sol01/passes
+```
+
+Only the separately authorized `run` command sends model requests. This pilot
+does not authorize checking all SP links, exporting a replacement hierarchy,
+removing links, modifying ASv6.48, or adopting a new construction policy.
+
+The pilot completed on October 1, 2026, in one subscription call with no retry
+or reused answer. Both problematic risotto links returned `neither`; all four
+controls returned `a_parent_of_b`, matching the pre-inference expectations.
+The shared runner saved the receipt and attributed agent review in
+`target/hg100-sol01-sp-links-v1/experiment/`. This selected six-link result does
+not establish corpus-wide accuracy or a decision to filter SP links. The
+original HG100-SOL01 snapshot remains byte-for-byte unchanged.

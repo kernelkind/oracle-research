@@ -115,6 +115,21 @@ def validate_comparisons(case, raw):
     return value
 
 
+def _read_reference(ref, base):
+    expected = None
+    if isinstance(ref, dict):
+        _fields(ref, {"path", "sha256"}, "source reference")
+        expected, ref = ref["sha256"], ref["path"]
+    if not isinstance(ref, str) or not ref:
+        raise ValueError("source reference path must be a nonempty string")
+    path = (base / ref).resolve()
+    raw = path.read_bytes()
+    measured = hashlib.sha256(raw).hexdigest()
+    if expected is not None and expected != measured:
+        raise ValueError(f"protected source changed: {path}")
+    return _parse(raw), dict(path=str(path), sha256=measured)
+
+
 def _read_sources(refs, base=None):
     base = Path(base or ".").resolve()
     if not isinstance(refs, dict) or not {"inputs", "hierarchy"} <= set(refs):
@@ -128,21 +143,8 @@ def _read_sources(refs, base=None):
     for key in ("inputs", "hierarchy", "judgments"):
         if key not in refs:
             continue
-        ref = refs[key]
-        expected = None
-        if isinstance(ref, dict):
-            _fields(ref, {"path", "sha256"}, "source reference")
-            expected, ref = ref["sha256"], ref["path"]
-        if not isinstance(ref, str) or not ref:
-            raise ValueError("source reference path must be a nonempty string")
-        path = (base / ref).resolve()
-        raw = path.read_bytes()
-        measured = hashlib.sha256(raw).hexdigest()
-        if expected is not None and expected != measured:
-            raise ValueError(f"protected source changed: {path}")
-        protected[str(path)] = measured
-        loaded[key] = _parse(raw)
-        references[key] = dict(path=str(path), sha256=measured)
+        loaded[key], references[key] = _read_reference(refs[key], base)
+        protected[references[key]["path"]] = references[key]["sha256"]
     try:
         from .experiment_inputs import prepare_subject_pairs
     except ImportError:
@@ -306,6 +308,110 @@ def _pack_comparisons(pairs, nodes, template, references, *, max_pairs=MAX_PAIRS
     if pending:
         publish(pending)
     return cases
+
+
+def _original_sp_source(inputs):
+    """Validate saved original entry identities and local edges, not meanings."""
+    try:
+        from .experiment_inputs import prepare_subject_pairs
+    except ImportError:
+        from experiment_inputs import prepare_subject_pairs
+    if (not isinstance(inputs, dict)
+            or not all(isinstance(inputs.get(k), list) for k in ("posts", "subjects", "edges"))
+            or not inputs["posts"] or not inputs["subjects"]):
+        raise ValueError("original SP inputs require posts, subjects and edges")
+    posts, short_ids = {}, set()
+    for post in inputs["posts"]:
+        if (not isinstance(post, dict)
+                or any(not isinstance(post.get(k), str) or not post[k].strip()
+                       for k in ("note_id", "note_short_id"))
+                or not isinstance(post.get("text"), str)
+                or post["note_id"] in posts or post["note_short_id"] in short_ids):
+            raise ValueError("unique original source-post identities and text required")
+        posts[post["note_id"]] = post
+        short_ids.add(post["note_short_id"])
+    subjects = inputs["subjects"]
+    for subject in subjects:
+        if (not isinstance(subject, dict)
+                or not {"index", "subject", "context", "note_id", "note_short_id"} <= subject.keys()
+                or not isinstance(subject["note_id"], str) or subject["note_id"] not in posts
+                or subject["note_short_id"] != posts[subject["note_id"]]["note_short_id"]):
+            raise ValueError("original SP entries must identify their saved source post")
+    # Reuse the normal source/entry/edge checks without a saved global hierarchy.
+    # This partition is only an identity view of the original SP entries.
+    singleton = dict(groups=[[i] for i in range(len(subjects))],
+                     member_to_group=list(range(len(subjects))), edges=inputs["edges"])
+    prepare_subject_pairs(dict(inputs=inputs, hierarchy=singleton, pairs=[], source={}))
+    edges = set()
+    for edge in inputs["edges"]:
+        if (edge[0] == edge[1] or tuple(edge) in edges
+                or subjects[edge[0]]["note_id"] != subjects[edge[1]]["note_id"]):
+            raise ValueError("distinct original SP edges within a source post required")
+        edges.add(tuple(edge))
+    return posts, edges
+
+
+def build_sp_link_comparison_source(source_refs, template, *, base=None, selected=None,
+                                    max_pairs=MAX_PAIRS, max_input_tokens=MAX_INPUT_TOKENS):
+    """Check selected original local SP edges without global-node remapping."""
+    _fields(source_refs, {"schema_version", "inputs", "original_sp_edges"},
+            "original SP comparison source")
+    if type(source_refs["schema_version"]) is not int or source_refs["schema_version"] != 1:
+        raise ValueError("expected original SP comparison schema_version 1")
+    source_ref = source_refs["inputs"]
+    if isinstance(source_ref, dict):
+        expected = source_ref.get("sha256")
+        if (not isinstance(expected, str) or len(expected) != 64
+                or any(character not in "0123456789abcdef" for character in expected)):
+            raise ValueError("original SP hashed source requires a SHA256 digest")
+    inputs, reference = _read_reference(source_refs["inputs"], Path(base or ".").resolve())
+    posts, available = _original_sp_source(inputs)
+    requested = source_refs["original_sp_edges"]
+    if requested == "all":
+        requested = [list(edge) for edge in sorted(available)]
+    if not isinstance(requested, list) or not requested:
+        raise ValueError("original_sp_edges must select source edges or 'all'")
+    chosen = set()
+    for edge in requested:
+        if (not isinstance(edge, list) or len(edge) != 2
+                or any(type(i) is not int for i in edge)
+                or tuple(edge) not in available or tuple(edge) in chosen):
+            raise ValueError("distinct directed original SP source edges required")
+        chosen.add(tuple(edge))
+    try:
+        from .bounded_hierarchy_candidates import compact_entries
+    except ImportError:
+        from bounded_hierarchy_candidates import compact_entries
+    nodes = {f"S{i:04d}": compact_entries(inputs, [i])
+             for i in sorted({i for edge in chosen for i in edge})}
+    pairs = []
+    for a, b in sorted(chosen):
+        A, B = f"S{a:04d}", f"S{b:04d}"
+        pairs.append(dict(id=A + "-" + B, A=A, B=B,
+            reference_entries=dict(A=nodes[A], B=nodes[B]), parent_candidates=[],
+            original_sp_edge=[a, b]))
+    references = dict(inputs=reference)
+    cases = _pack_comparisons(pairs, nodes, template, references,
+        max_pairs=max_pairs, max_input_tokens=max_input_tokens)
+    for case in cases:
+        indices = sorted({i for pair in case["evidence"]["pairs"]
+                          for i in pair["original_sp_edge"]})
+        post_ids = sorted({inputs["subjects"][i]["note_id"] for i in indices})
+        case["evidence"].update(
+            reference_policy="exact original SP entry; no global-node remapping",
+            original_sp_edges=[p["original_sp_edge"] for p in case["evidence"]["pairs"]],
+            subject_entries=[inputs["subjects"][i] for i in indices],
+            source_posts=[posts[p] for p in post_ids])
+    if selected is not None:
+        if set(selected) - {case["id"] for case in cases}:
+            raise ValueError("unknown comparison case requested")
+        cases = [case for case in cases if case["id"] in selected]
+    protected = {reference["path"]: reference["sha256"]}
+    preparation = dict(phase="comparison", source_mode="original_sp_edges", source=references,
+        reference_policy="exact original SP entry; no global-node remapping",
+        original_sp_edges=[list(edge) for edge in sorted(chosen)], pairs=pairs,
+        max_pairs=max_pairs, max_input_tokens=max_input_tokens, tokenizer="o200k_base")
+    return cases, protected, preparation
 
 
 def build_comparison_source(source_refs, discovery_reports, template, *, base=None,

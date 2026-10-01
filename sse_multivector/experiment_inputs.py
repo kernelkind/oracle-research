@@ -68,6 +68,9 @@ def prepare_file(dataset, path, template, load_report=None):
         if dataset['adapter'] == 'bounded_discovery':
             cases, protected, preparation = bounded.create_discovery_source(
                 source, template, base=path.parent, selected=dataset.get('select'))
+        elif 'original_sp_edges' in source:
+            cases, protected, preparation = bounded.build_sp_link_comparison_source(
+                source, template, base=path.parent, selected=dataset.get('select'))
         else:
             if load_report is None:
                 raise ValueError('bounded comparisons require validated experiment reports')

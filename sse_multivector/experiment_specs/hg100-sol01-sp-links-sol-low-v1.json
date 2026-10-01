@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "BCPv5", "path": "../bounded-hierarchy-v1/BCPv5.md"},
+  "dataset": {
+    "adapter": "bounded_comparisons",
+    "path": "hg100-sol01-sp-links-six-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "concurrency": 1,
+    "timeout_seconds": 600,
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["comparisons"],
+      "properties": {
+        "comparisons": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "relation", "reason"],
+            "properties": {
+              "id": {"type": "string"},
+              "relation": {
+                "type": "string",
+                "enum": ["equivalent", "a_parent_of_b", "b_parent_of_a", "neither", "uncertain"]
+              },
+              "reason": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
