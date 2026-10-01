@@ -10,6 +10,82 @@ from sse_multivector.prominence_cosine import cosine, rank_rows
 
 
 class ProminenceCosineTests(unittest.TestCase):
+    def test_selected_cases_reuse_complete_encoding_with_fresh_prominence(self):
+        from sse_multivector import prominence_cosine as pc
+        from sse_multivector import experiment_inputs
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = [dict(id=title.lower(), node_id=title.lower(), node_title=title,
+                note_id=letter*64, text=f'{title} warms me.', mask_ids=[mid],
+                byte_spans=[[0, len(title)]], subject_number='1', subject=title,
+                context=f'The writer drinks {title.lower()}.')
+                for title, letter, mid in [('Tea', 'a', 'V1'), ('Coffee', 'b', 'V2')]]
+            cases = experiment_inputs.prepare_context_prominence(
+                {'cases': evidence}, basis='node_title')
+            for case in cases:
+                case.update(status='valid', parsed={'prominence': 30})
+            encoder = dict(checkpoint_sha256='b'*64, base_model_artifact_tree_sha256='c'*64,
+                           model={'dimensions': 2}, note_batch_size=1)
+            config = root/'config.json'
+            config.write_text(json.dumps(dict(encoder, device='cpu')))
+            (root/'experiment.json').write_text('{}')
+            (root/'results.jsonl').write_text('{}\n')
+            vectors = root/'vectors'
+            vectors.write_bytes(struct.pack('<4f', 1, 0, 0, 1))
+            rows = [dict(short_id=e['mask_ids'][0], ordinal=i, note_id=e['note_id'],
+                note_short_id=f'N{i}', byte_spans=e['byte_spans'], fragments=[e['subject']],
+                subject_entries=[dict(number='1', subject=e['subject'], context=e['context'])])
+                for i, e in enumerate(evidence)]
+            plan = {'dataset': {'adapter': 'subject_contexts', 'prominence_basis': 'node_title'},
+                    'run_directory': str(root)}
+            command = ['prominence_cosine.py', 'prepare', str(root/'out'),
+                       '--experiments', str(root), '--vectors', str(root),
+                       '--worker-config', str(config), '--replay', 'V1', 'V2',
+                       '--post-order', 'highest']
+            with patch.object(pc, 'load_vectors', return_value=(rows, encoder, vectors, 'f', {})), \
+                 patch.object(pc.experiment, 'load', return_value=(plan, None, None)), \
+                 patch.object(pc.experiment, 'report', return_value={'cases': cases}):
+                with patch('sys.argv', command):
+                    pc.main()
+                output = root/'out'
+                saved = pc.read(output/'plan.json')
+                request = pc.read(output/'worker-request.json')
+                flat = [(n, s) for n in request['notes'] for s in n['subjects']]
+                fresh = [(1, 0)] * len(flat)
+                fresh[saved['title_rows']['coffee']] = (0, 1)
+                fresh[saved['replays']['V2']['row']] = (0, 1)
+                result = output/'result'
+                result.mkdir()
+                (result/'raw-vectors.f32le').write_bytes(struct.pack(
+                    '<' + 'f' * (2*len(fresh)), *(v for row in fresh for v in row)))
+                (result/'worker-receipt.json').write_text(json.dumps(dict(
+                    encoder, request_sha256=pc.sha(output/'worker-request.json'),
+                    proposal_sha256=pc.sha(output/'plan.json'),
+                    rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n, s in flat])))
+                pc.collect(output)
+                before = pc.read(output/'comparison.json')
+                cases[1]['parsed']['prominence'] = 60
+                for mid in ('V2', 'V1'):
+                    selected = root/f'selected-{mid}'
+                    args = command[:]
+                    args[2] = str(selected)
+                    args[args.index('--replay')+1:args.index('--post-order')] = [mid]
+                    args += ['--only', 'coffee', '--reuse-encoding', str(output)]
+                    with patch('sys.argv', args):
+                        pc.main()
+                    self.assertFalse((selected/'result').exists())
+                    self.assertEqual(pc.read(selected/'worker-request.json')['notes'], request['notes'])
+                    pc.collect(selected)
+                    after = pc.read(selected/'comparison.json')
+                    self.assertEqual(list(after['groups']), ['coffee'])
+                    self.assertEqual(after['raw_vectors_sha256'], before['raw_vectors_sha256'])
+                    self.assertEqual(after['worker_receipt_sha256'], before['worker_receipt_sha256'])
+                    row = after['groups']['coffee'][0]
+                    self.assertEqual(row['cosine'], before['groups']['coffee'][0]['cosine'])
+                    self.assertEqual(row['prominence'], 60)
+                    self.assertEqual(row['linear_product'], 30)
+                    self.assertEqual(list(after['parity']), [mid])
+
     def test_source_text_relevance_preserves_post_evidence_and_fixed_prominence(self):
         from sse_multivector import prominence_cosine as pc
         from sse_multivector import experiment_inputs

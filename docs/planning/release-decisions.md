@@ -1401,6 +1401,18 @@ original-mask replays matched exactly, and eleven focused workflow tests
 passed. [Exact inputs and verification](../../sse_multivector/model-runner.md)
 remain evidence for the candidate calculation, not production adoption.
 
+The user authorized one fresh prominence assessment each for iced coffee
+(`76e19c3e`) and coffee with raw cream and raw egg yolk (`f4c5aa5f`), retaining
+both original relevance values and the prominence × relevance formula.
+`ppv30-node-orders-repeat-iced-raw-v1` inherits only their two original Coffee
+cases through the shared workflow's `--from`, `--only` and intentional
+`--repeat` controls. Prompt PPv30-node-v1, complete posts, title, schema and
+Astra-low subscription settings are identical. The run allows two new
+attempts and no regenerated embeddings. The existing expected order remains
+iced coffee above raw-egg-yolk coffee; this is another trial of that same
+judgment, not a twelfth independent expected pair. Original comparison
+results and user judgments remain intact; production sorting remains open.
+
 04 and 27 are in progress: saved Coffee/Eggs, Photography and Music trials test
 candidate sorting scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and

@@ -179,6 +179,12 @@ def prepare(args):
     output = args.output.resolve()
     if output.exists():
         raise ValueError("output already exists")
+    encoding_source = getattr(args, 'reuse_encoding', None)
+    if encoding_source:
+        encoding_source = encoding_source.resolve()
+        reuse_notes = read(encoding_source/'worker-request.json')['notes']
+        reuse_rows = [(n, s) for n in reuse_notes for s in n['subjects']]
+        reuse_replays = read(encoding_source/'plan.json')['replays']
     vectors = args.vectors.resolve()
     rows, encoder, vector_file, vector_code, protected = load_vectors(vectors)
     lookup = {r["short_id"]: r for r in rows}
@@ -290,7 +296,20 @@ def prepare(args):
                           subjects=[dict(subject_id=hashlib.sha256(nid.encode()).hexdigest()[:16],
                                          byte_spans=[[0, len(title.encode())]])]))
     for mid in args.replay:
-        e = originals[mid]
+        if mid in originals:
+            e = originals[mid]
+        elif encoding_source and mid in reuse_replays:
+            replay = reuse_replays[mid]
+            note, subject = reuse_rows[replay['row']]
+            saved = lookup[mid]
+            if (replay['ordinal'] != saved['ordinal'] or note['note_id'] != saved['note_id']
+                    or subject['byte_spans'] != saved['byte_spans']
+                    or [note['text'].encode()[a:b].decode() for a, b in subject['byte_spans']]
+                    != saved['fragments']):
+                raise ValueError(f'reused replay differs from saved mask: {mid}')
+            e = dict(text=note['text'], byte_spans=subject['byte_spans'])
+        else:
+            raise ValueError(f'replay mask unavailable: {mid}')
         replays[mid] = dict(row=len(notes), ordinal=lookup[mid]["ordinal"])
         notes.append(dict(note_id=lookup[mid]["note_id"], text=e["text"],
                           subjects=[dict(subject_id=hashlib.sha256(mid.encode()).hexdigest()[:16],
@@ -363,11 +382,22 @@ def prepare(args):
     if (config["device"] != "cpu" or ("worker_sha256" in encoder
             and sha(Path(worker.__file__)) != encoder["worker_sha256"])):
         raise ValueError("expected original CPU worker")
-    encoding_source = getattr(args, 'reuse_encoding', None)
     if encoding_source:
-        encoding_source = encoding_source.resolve()
-        if read(encoding_source/'worker-request.json')['notes'] != notes:
-            raise ValueError('reused encoder notes differ from current context selections')
+        indices = {json.dumps([n['note_id'], n['text'], s], sort_keys=True): i
+                   for i, (n, s) in enumerate(reuse_rows)}
+        try:
+            mapping = [indices[json.dumps([n['note_id'], n['text'], s], sort_keys=True)]
+                       for n in notes for s in n['subjects']]
+        except KeyError as error:
+            raise ValueError('reused encoder notes differ from current context selections') from error
+        title_rows = {nid: mapping[row] for nid, row in title_rows.items()}
+        for replay in replays.values():
+            replay['row'] = mapping[replay['row']]
+        for case in cases:
+            for key in ('mask_row', 'inverse_row', 'full_post_row'):
+                if case.get(key) is not None:
+                    case[key] = mapping[case[key]]
+        notes = reuse_notes
         previous = read(encoding_source/'comparison.json')
         for key, name in (('worker_receipt_sha256', 'result/worker-receipt.json'),
                           ('raw_vectors_sha256', 'result/raw-vectors.f32le')):
@@ -520,7 +550,7 @@ def main():
     prep.add_argument('--post-order', choices=('highest',),
                       help='compare each post\'s highest prominence and highest SP-context sorting score')
     prep.add_argument('--reuse-encoding', type=Path,
-                      help='reuse a completed encoding with exactly identical encoder notes and selections')
+                      help='reuse completed encoding rows matching exact notes and selections, including a subset')
     c = sub.add_parser("collect")
     c.add_argument("output", type=Path)
     args = p.parse_args()

@@ -1650,13 +1650,18 @@ This diagnostic makes no prompt calls; the shared experiment runner remains the
 only prompt-experiment workflow.
 
 `prepare --reuse-encoding COMPLETED_OUTPUT` permits new prominence assessments
-to use a completed comparison's exact vectors. Every encoder note, selection
-and row order must match. The saved comparison's vector and receipt hashes are
-verified; its plan, request, comparison, receipt and vectors are protected
-inputs. `collect` validates the original worker receipt against its original
-request and plan and uses the existing raw vectors. The new comparison records
-`encoding_source`. Run `collect` directly after preparation; no worker run is
-needed. Changed encoder input or modified source artifacts are refused.
+to use a completed comparison's exact vectors, including a selected subset.
+Each selected row must match the original note ID, complete text, selection ID
+and byte spans exactly. Title, context and replay indices are mapped to their
+original rows; the complete original encoder request is retained so receipt
+validation still covers every vector. A replay outside the selected posts can
+be retained from that encoding after checking its original mask identity.
+The saved comparison's vector and receipt hashes are verified; its plan,
+request, comparison, receipt and vectors are protected inputs. `collect`
+validates the original worker receipt against its original request and plan
+and uses the existing raw vectors. The new comparison records `encoding_source`.
+Run `collect` directly after preparation; no worker run is needed. Changed
+encoder input or modified source artifacts are refused.
 
 The `subject_contexts` adapter's `prominence_basis` can be `context` (the default),
 `subject`, or `node_title`. It renders only that saved field and the complete
@@ -2926,6 +2931,43 @@ The original hierarchy, masked posts, vector map, prompt and Coffee/Eggs and
 Photography comparisons remain unchanged. No baseline calls, SP generation,
 prompt or source-code changes, paid resources or production adoption occurred.
 PPv30-node-v1 remains tested, not production-frozen.
+
+**Fresh prominence for iced coffee and raw-egg-yolk coffee.**
+
+The user authorized reassessing these two posts while holding their existing
+SP-context relevance fixed. The expected order is unchanged: iced coffee
+(`76e19c3e`) above coffee with raw cream and raw egg yolk (`f4c5aa5f`). This is
+an independent generation for the same existing pair judgment, not a new
+user judgment or a replacement for the original Coffee/Eggs trial.
+
+`experiments/ppv30-node-orders-repeat-iced-raw-v1` was prepared with:
+
+```sh
+python3 sse_multivector/experiment.py prepare \
+  sse_multivector/experiments/ppv30-node-orders-repeat-iced-raw-v1 \
+  --from sse_multivector/experiments/ppv30-node-orders-v1 \
+  --only context-22008019e5987f70ab3df075 \
+  --only context-1a161fcf30ad4a372fcaabe4 \
+  --repeat --history-root sse_multivector/experiments
+```
+
+Both cases, complete inputs, PPv30-node-v1 prompt and Astra-low subscription
+settings match their original cases exactly. `--repeat` requests two fresh
+assessments rather than reusing their saved answers; two new attempts are
+allowed. No baseline or SP calls, new SSE encoding, changed source text or
+production sorting changes are included. Inference remains pending.
+
+The existing shared `--reuse-encoding` support now permits selecting a subset
+of a completed encoding. It maps exact unchanged note/text/selection/span
+identities to original rows and retains the full request for receipt
+validation, including replay controls outside the selected posts. A production
+CLI test first failed because partial notes were refused, then passed after
+the minimal change. The test verifies changed prominence with identical
+cosine, vector/receipt hashes, selected-node output and both selected and
+unselected-post replay controls. Existing changed-text and modified-artifact
+refusal checks still pass. The focused suite passes twelve tests; all 141 relevant
+regression checks passed. Relevance will be collected directly from the
+original context encoding, preserving the original values exactly.
 
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
