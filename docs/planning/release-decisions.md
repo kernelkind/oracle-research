@@ -604,7 +604,8 @@ returns separate **correctness** and **coverage** scores with evidence for each.
 Correctness assesses returned subjects, relationships, and masks; coverage
 assesses missing required subjects or information. Output reliability is
 checked mechanically. The scoring scale, rubric, reviewer model, reliability
-checks, and role in model selection remain design choices.
+checks, and role in model selection remain design choices. The user deferred
+review-prompt and grading details while the overall pilot pipeline is designed.
 The walkthrough also keeps remaining data choices, the larger pilot's output format,
 training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.

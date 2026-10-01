@@ -713,7 +713,12 @@ pilot, not a claim that the current worker enforces it.
 - **GPU execution:** one untuned baseline per candidate, followed by independent
   training/reload/validation runs at each selected size. Reuse that baseline
   across sizes. Start each size from the original weights with a fresh adapter
-  and optimizer. Use the same validation inputs and generation settings.
+  and optimizer. Mix one subject-hierarchy training example per note with one
+  mask example per labeled subject, updating the same adapter. Save the adapter,
+  reload it with the original model, and verify matching answers before generating
+  validation subjects and their masks. Save both complete responses, raw and
+  parsed, with their note/subject links and failures. Use the same validation
+  inputs and generation settings.
 - **Checks during execution:** account for every validation note and dependent
   call as responses arrive. For valid generated subjects, account for every
   requested mask response. An invalid subject response records that the mask
@@ -774,8 +779,11 @@ exceeds its limit must be reported, not silently truncated. Additional final-tes
 work depends on the still-open generation arrangement. Rental grouping,
 runtime limits, and spending require separate decisions.
 
-The exact training-work budget, checkpoint schedule, and checkpoint-selection
-rule must be specified before runs. The earlier three-pass runtime estimates
+The next training-design decision is the amount of training each data-size run
+receives; note count alone does not specify this. The preliminary 128 updates
+are not a selected larger-pilot training amount. The exact training-work budget,
+checkpoint save/evaluation schedule, and checkpoint-selection rule must be
+specified before runs. The earlier three-pass runtime estimates
 are not a frozen training protocol. Any recipe change needed to repair a
 training problem must be recorded; it cannot silently enter a data-size
 comparison as though only the number of notes changed.

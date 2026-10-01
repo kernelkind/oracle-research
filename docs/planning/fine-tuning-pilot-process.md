@@ -24,26 +24,27 @@ Save one baseline per candidate on the shared validation notes. Each model
 generates its own subjects, then their masks. Preserve original responses.
 
 **Check every response and dependent call immediately, before training.**
-Account for every requested mask response for valid subjects. Invalid subject
-answers prevent the mask stage; its size may be unknown. Valid empty masks
-remain saved answers.
+Account for every mask response for valid subjects. Invalid subject answers
+prevent the mask stage; its size may be unknown. Valid empty masks remain answers.
 
 A bad model answer is a measured failure. Missing work or a parser bug blocks
 the affected comparison from advancing.
 
 ## 3. Train and evaluate each data size — Vast
 
-Each run starts from the original model weights with a fresh adapter and
-optimizer. The 500-note set includes the first 250; the 1,000-note set includes
-the 500. Keep each candidate's recipe fixed and compare matched training work.
+Each run:
 
-In the two-task format, training examples are **note → teacher hierarchy** and
-**note + subject → teacher mask**, using their respective prompts. Both tasks
-train one adapter per candidate.
+1. Load original weights with a fresh adapter and optimizer.
+2. Mix one **note → teacher hierarchy** example per note with one
+   **note + subject → teacher mask** example per labeled subject. Both tasks
+   update the same adapter.
+3. Save the adapter, reload it with the original model, and verify matching answers.
+4. Generate validation subjects, then their masks. Save both full outputs, raw
+   and parsed, linked by note and subject, including failures.
 
-Save the adapter, verify reload, and generate validation outputs with the same
-prompts, settings, and checks as its baseline. Log training loss, time, GPU
-utilization, memory, power, and generation speed.
+Larger sets reuse earlier notes. Keep each candidate's recipe fixed; compare
+matched training work. **Training amount and checkpoint save/evaluation schedule
+remain open.** Record loss and resource telemetry.
 
 ## 4. Retrieve verified results — Vast to local
 
@@ -53,18 +54,18 @@ and retain remote originals at least until verification. Limit transfer bandwidt
 and disk activity.
 
 Before explicit deletion, verify both expected work and required local files.
-I observe the rental throughout; automatic deletion stays off.
+I inspect baseline and trained responses as they arrive and monitor training
+and GPU telemetry until explicit deletion. Automatic deletion stays off.
 
-After interruption, check whether the worker still runs before resuming. Reuse
-verified saved work with the original settings. Preserve evidence of workflow
-defects; prepare code changes locally.
+After interruption, reconcile the existing worker first. Reuse verified saved
+work under original settings; preserve defect evidence and prepare fixes locally.
 
 ## 5. Score and compare — locally, after the rental
 
 Measure mask agreement and output reliability mechanically. One semantic review
 prompt per note and model version sees the full note, task prompt, subjects,
 hierarchy, and masks. It returns separate **correctness** and **coverage** scores
-with evidence. The rubric, scale, and reviewer model remain open.
+with evidence. Prompt and grading details are deferred; reviewer selection is open.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Missing reviewer judgments are evaluation failures.
