@@ -1602,30 +1602,52 @@ parent-guide test blocked by missing `tiktoken`.
 [Model-runner results](../../sse_multivector/model-runner.md) record the frozen
 scope, both comparison hashes, workflow semantics and check evidence.
 
-**Remaining-node transfer approved October 1 (prepared):** The latest "proceed"
-authorizes the unchanged PPv30-node-v1 / Astra-low prominence prompt and
-context-only SSE relevance with its final learned layers, then prominence
-× relevance and the highest selected-context sorting score per post. The
-original saved source and raw named hierarchy contain 104 remaining nodes
-with at least two direct-member posts after excluding fourteen tested nodes:
-354 distinct post/title inputs, 94 original posts and 587 context cases.
-The agent assesses the posts and resulting orders, recording uncertainty
-and suspect title/member assignments separately; no new user labels or
-numerical tie threshold are introduced.
+**Remaining-node transfer approved October 1 (completed):** The latest
+"proceed" authorized fixed PPv30-node-v1 / Astra-low prominence, saved SP-context
+relevance with SSE's final learned layers, prominence × relevance and the
+highest selected-context sorting score per post. Native execution completed
+104 remaining direct-member nodes, 354 post/title inputs across 94 original
+posts and 587 context cases. All are valid; 233 exact-request case reuses and
+one successful HTTP 503 retry yield 355 sent attempts. No source posts, graph,
+prompt, earlier comparisons, weights or production behavior were changed.
 
-Native preparation uses reusable selectors and the shared runner; there is
-no required source-code change. Concurrency eight changes scheduling only;
-identical prominence requests share answers across contexts. At most 708
-new attempts cover eligible provider retries, with 354 expected initial calls.
-A zero-cash subscription reservation precedes execution. Local CPU SSE uses
-unchanged weights/projection and only the selected contexts and 104 titles.
-Fifty-two relevant existing tests pass. This covers more of the developmental
-saved corpus, not unseen/population accuracy. Work scales with direct selected
-memberships, repeated complete-post tokens per title and selected context
-lengths; production-scale admission remains open. New SP/MP generation,
-hierarchy changes, broader corpus generation and production adoption are
-outside this test. Native results are pending; full workflow/provenance is in
-[model-runner.md](../../sse_multivector/model-runner.md).
+The agent froze 104 pre-run node observations, read all complete posts and
+resulting orders, then recorded one post-run assessment per node. Clear
+pre-run directions hold in forty-nine of fifty such nodes; Food and drink
+reverses the expected restaurant-post/mixed-diary order, 42.752028 < 43.444485,
+although prominence is 85 > 61. Its sole selected context names Khyber Pass
+without saying restaurant; the saved SP subject explicitly says restaurant.
+Relevance causes the numerical reversal; omitted subject meaning is a
+hypothesis to test. Five modest directions hold but remain tentative, and
+forty-nine nodes had no fixed strict direction. These are related agent node
+observations, not independent pair labels or population accuracy. Relevance
+also puts the pizza-restaurant plan above the pizza-day greeting where
+prominence alone reverses them, adding one concrete agent-assessed benefit.
+
+Ambiguous title meaning remains unresolved: `grownostr` is interpreted as
+homegrown food/self-sufficiency for chicken stock (prominence 85) and growing
+Nostr for the steak/preservation diary (2). The trial does not repair node
+meaning or membership. Five suspect irrelevant memberships receive prominence
+and sorting score zero. All 587 own-node cosine/products, 354 post maxima and
+104 orders verify, with 687 CPU encoder rows and sixty unchanged protected
+hashes. Fifty-two relevant existing tests pass; three adapter checks reran
+successfully after an unrelated preparation-only provenance addition. Native
+accounting reports 267,585 input and 73,855 output tokens, including 12,138
+reasoning tokens; API catalog reference $6.368600 is separate from subscription
+cash $0 and unmeasured quota. 
+
+The next recommendation is testing saved SP subject plus context against
+context alone, with prominence, SSE and formula fixed and earlier agreed
+checks retained. An earlier eight-node trial showed little benefit; this
+newly observed restaurant reversal provides a concrete follow-up case. That
+comparison has not begun and will not settle ambiguous title meaning by
+itself. This remains saved developmental-corpus coverage, not unseen accuracy
+or production adoption. Teacher/encoder work scales with selected memberships
+and texts. The native offline diagnostic additionally emits 587 × 104 title
+cosines; this bounded cross-product is not a production design. New SP/MP or
+broader corpus generation, hierarchy changes and recursion remain outside
+this test. [Model-runner results](../../sse_multivector/model-runner.md) record
+provenance, exact inputs, comparison hash and review limits.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

@@ -4239,8 +4239,9 @@ among those focused posts has been approved. The agent recommends retaining
 the existing projection: this comparison gives no clear sorting advantage
 from omitting it. The user has now approved the unchanged calculation on the
 remaining hierarchy nodes with at least two posts in the saved corpus; the
-preparation below records that bounded transfer test. No new prompt, user labels, source-text policy,
-recursion or production sorting adoption is introduced.
+completed transfer test below records that approval. No new prompt, user
+labels, source-text policy, recursion or production sorting adoption is
+introduced.
 
 Independent verification confirms identical source text, token indices/IDs
 and all eighty-two prominence/evidence rows. Applying the saved linear → ReLU
@@ -4278,44 +4279,103 @@ inference-dependency skips. The broader experiment suite passes 101 of 102;
 the concurrently added parent-guide test fails because the default Python lacks
 `tiktoken`. That unrelated work is not changed by this task.
 
-**Remaining-node transfer approved October 1 (prepared):** The user's
-"proceed" authorizes fixed PPv30-node-v1 complete-post/title prominence,
-standalone saved SP-context relevance through the existing SSE projection,
-`P × (clip(cosine, -1, 1) + 1) / 2`, and the highest sorting score among the
-selected contexts for each post. Observation is delegated to the agent.
-The original saved 100-post source and unchanged raw named hierarchy supply
-104 remaining direct-member nodes, 354 distinct post/title inputs, 94 distinct
-posts and 587 context cases. Fourteen previously tested nodes are excluded;
-no descendants are added. This is broader coverage of the developmental
-saved corpus, not an unseen or representative population sample.
+**Remaining-node transfer approved October 1 (completed):** The user's
+"proceed" authorized unchanged PPv30-node-v1 / Astra-low complete-post/title
+prominence, standalone saved SP-context relevance through SSE's existing final
+projection, `P × (clip(cosine, -1, 1) + 1) / 2`, and the highest sorting score
+among the selected contexts for each post. Observation was delegated to the
+agent. The untouched 100-post source and raw named hierarchy supplied 104
+remaining direct-member nodes, 354 distinct post/title inputs, 94 distinct
+posts and 587 context cases, excluding fourteen previously tested nodes.
+This expands coverage of the developmental saved corpus, not unseen or
+representative population accuracy.
 
-Reusable source/spec files are
+Reusable selectors/specs are
 `experiment_specs/ppv30-remaining-nodes-v1-source.json` and
-`experiment_specs/ppv30-remaining-nodes-v1.json`; the native experiment is
-`experiments/ppv30-remaining-nodes-v1`. The existing workflow is sufficient;
-no production or workflow behavior change is needed. Its shared runner uses
-concurrency eight and coalesces identical requests without changing model
-input, prompt, Astra-low settings or the two-attempt provider-only retry rule.
-The maximum is 708 new attempts; expected first-attempt requests are 354,
-with 233 context-case reuses. Local CPU SSE will encode the selected saved
-contexts and 104 titles, with the unchanged checkpoint and final projection.
-Work grows with selected direct memberships and full-post input lengths for
-prominence, and selected context/title lengths for relevance; this does not
-compare every post to every hierarchy node. At larger corpus sizes, the model
-calls and repeated full-post tokens per distinct node remain a cost to assess
-before any production adoption.
+`experiment_specs/ppv30-remaining-nodes-v1.json`. Native results live in
+`experiments/ppv30-remaining-nodes-v1`, with comparison
+`relevance-v1/comparison.json` SHA-256
+`e29073a29b34415a385277963a08972416247d827b279d7efd18b00ee9b985cf`.
+The existing workflow sufficed; this task changes no production or workflow
+behavior. Concurrency eight changes scheduling only. All 587 cases are valid:
+354 distinct complete-post/title requests, 233 exact-request case reuses and
+355 sent attempts. One HTTP 503 was retried under the existing provider-only
+two-attempt limit and succeeded; there are no unresolved failures, malformed
+answers or invalid receipts. The maximum reservation was 708 attempts.
+A concurrent preparation-only provenance addition for bounded parent adapters
+was inspected and accepted through the native code-upgrade audit before any
+model result; frozen plan, inputs, settings and manifest were preserved.
 
-The agent reads complete posts and freezes one native pre-run comment per
-node before inference. Clear focused-versus-mixed directions are distinguished
-from uncertain within-focus orders and suspect title/member assignments;
-104 node observations are not hundreds of independent user labels. Existing
-prominence comparisons, source texts, graph, masks, prompt and SSE weights
-are preserved. Fifty-two relevant existing adapter, selection, ranking,
-worker and runner tests pass. Subscription cash is zero, with native usage,
-API catalog estimates and unmeasured quota reported separately. The zero-cash
-reservation is recorded before running. New SP/MP generation, hierarchy
-changes, broader corpus generation and production adoption remain outside
-this test. The result is pending.
+Local CPU SSE encoded 583 distinct exact context texts and 104 unchanged
+titles, 687 rows total, with the checkpoint, projection, model artifacts and
+runtime of the most recent projected comparison. The mask-linked source
+adapter references the original saved vector carrier for validation; it does
+not encode MP masks or add replay rows. Independent source/allocation checks,
+all 587 own-node cosine/products, 354 post maxima and 104 complete orders pass.
+Token IDs and selections match independent fast-tokenizer output, with no
+truncation and at most forty tokens per input. Sixty protected source, graph,
+prompt and previous-result hashes stay unchanged. Fifty-two relevant existing
+tests passed; the three production adapter checks were also rerun after the
+concurrent preparation-only code change and passed.
+
+The agent read all 94 complete posts and all 104 resulting orders. Native
+history preserves 104 pre-run uncertain node comments and appends 104
+post-run node assessments, plus two display-precision corrections. Among
+fifty nodes with clear pre-run directions, forty-nine retain all stated
+directions and one fails. Five modest directions hold but remain tentative;
+forty-nine nodes had no fixed strict direction. The post-run verdicts are
+forty-nine accept, one reject and fifty-four uncertain, each for one related
+node assessment. Accept applies only to the stated agent directions, not all
+unspecified pairs, numerical gaps, a complete user-approved order or a
+population accuracy claim. Existing user labels are unchanged.
+
+| Node / post | Fixed prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Food and drink: Khyber Pass restaurant (`add487c4`) | 85 | 0.502965 | 42.752028 |
+| Food and drink: mixed painting/food diary (`eaa6a5e6`) | 61 | 0.712205 | 43.444485 |
+| Pizza and restaurants: restaurant plan (`7258eaac`) | 75 | 0.957021 | 71.776557 |
+| Pizza and restaurants: pizza-day greeting (`9e811e03`) | 85 | 0.811376 | 68.966981 |
+
+The restaurant post was expected above the mixed diary. Its sole selected
+context says, "The writer specifically names Khyber Pass, identifying it
+parenthetically with St Marks Place." The saved SP subject is "Khyber Pass
+restaurant"; that subject is not currently supplied to SSE. Relevance reverses
+the sensible prominence direction here. Omitted restaurant meaning is a
+candidate explanation, not a proven cause. Conversely, relevance retains the
+expected pizza-restaurant plan above the greeting where prominence alone
+reverses them. This adds one clear agent-assessed case for retaining relevance,
+in addition to the previously agreed iced-coffee/raw-yolk case.
+
+Ambiguous title interpretation remains unresolved. For `grownostr`, chicken
+stock/canning (`25f5a4c0`) receives prominence 85 under a homegrown-food and
+self-sufficiency reading. The steak/preservation diary (`f67c7c54`) receives 2
+under a growing-Nostr reading. The title is identical; the teacher's saved
+allocations demonstrate different meanings across posts. `coffeechain`,
+combined Food and Paraguay, and weak `satoshi` memberships are also recorded
+as uncertain. Suspect tomato-joke/Onions, gamey-meat/Coffee flavor,
+chicken-enclosure/Motor vehicles, red-flags/Daily painting and
+chocolate-product/guarani memberships receive prominence zero, hence sorting
+score zero. The source hierarchy is preserved, not repaired by this trial.
+
+Native usage is 267,585 input tokens, 73,855 output tokens including 12,138
+reasoning tokens, no reported cache tokens, and API catalog reference estimate
+$6.368600. Incremental subscription cash is $0; provider-reported billing is
+unavailable and weekly quota is unmeasured. The zero-cash reservation and
+settlement preserve all monetary totals and unrelated ledger entries. Teacher
+work scales with direct selected memberships and repeated full-post tokens;
+encoder work uses distinct selected contexts/titles. Native offline collection
+also reports 61,048 selected-context/title cosines (587 × 104); only the 587
+own-node values enter sorting. That bounded diagnostic cross-product is not a
+production design, and must not grow to all-post/all-node comparisons.
+
+The next recommendation is a bounded native comparison of saved SP subject
+plus context against context alone, keeping the existing prominence, SSE
+projection and formula fixed and retaining the earlier agreed checks. The
+previous eight-node subject-plus-context trial corrected no demonstrated
+wrong order; the newly observed restaurant reversal now supplies a concrete
+case to test. This follow-up has not begun and does not resolve ambiguous
+node meaning in prominence. New SP/MP generation, hierarchy changes, broader
+corpus generation, recursion and production adoption remain outside this test.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
