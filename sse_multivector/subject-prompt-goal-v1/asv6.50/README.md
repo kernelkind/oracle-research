@@ -1,9 +1,10 @@
 # ASv6.50
 
-Status: draft, untested. The user authorized preparing this replacement for
-review; its wording and inference have not been approved. This supersedes the
-ASv6.49 draft. ASv6.48 remains the frozen subject baseline. MPv3.43 remains the
-frozen mask working baseline.
+Status: approved candidate, testing in progress on GPT-6.1 Sol xhigh. On
+October 1, 2026, the user approved the full-context delta and authorized this
+test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
+baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
+subject baseline remains open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -20,16 +21,16 @@ byte-identical to ASv6.48.
 The shared `experiment.py revise` command generated the draft and revision
 receipt directly against ASv6.48 SHA-256
 `e1d5740e68b5f5c29e139ad3fbb37839f91784784aaa31b3bdbdc4a829a4bacc`.
-The draft SHA-256 is
+The ASv6.50 SHA-256 is
 `2ab157eb34f49edd2a443799c439be8eff512fe61df96f6d508434f4d3807a1c`.
 No model calls were made while preparing this draft. Mechanical checks do not
 establish semantic improvement.
 
 The [agreed regression set](../asv6.49/README.md#agreed-regression-set) remains
 N063, N074, N096 and N100, using complete original posts and saved ASv6.48
-outputs. The proposed next comparison remains three independent candidate
-outputs per post, reviewing complete hierarchies for preserved coverage and
-new errors. It has not been started or authorized.
+outputs. The authorized comparison uses three independent candidate outputs
+per post on GPT-6.1 Sol xhigh, reviewing complete hierarchies for preserved
+coverage and new errors. Its setup and results are recorded below.
 
 ## Frozen-baseline reproduction on GPT-6.1 Sol xhigh
 
@@ -82,9 +83,9 @@ Native receipts, complete answers and four initial agent reviews remain in
 ignored `sse_multivector/experiments/sol61-xhigh-sp-scope-regression-v1/`; the
 separate retry experiment retains its answer and one agent acceptance. User
 authorization of the retry is not a semantic verdict on the output. There are
-no new user verdicts. ASv6.50 remains untested and unapproved; the recommended
-next step is testing it against these saved Sol outputs without rerunning
-completed ASv6.48 cases.
+no new user semantic verdicts. This frozen-baseline run did not test ASv6.50.
+The subsequently authorized candidate comparison uses these saved Sol outputs
+without rerunning completed ASv6.48 cases.
 
 ## Frozen-baseline reproduction on GPT-6 Astra medium
 
@@ -134,10 +135,8 @@ Native reported usage is 10,854 input tokens and 10,621 output tokens, including
 309 reasoning tokens. The $0.63959 catalog reference estimate is not a bill or
 measured subscription quota; incremental cash is zero.
 
-ASv6.50 remains an untested, unapproved draft. The useful next step is testing
-its replacement paragraph against these saved ASv6.48 answers, checking both
-parent relationships and preservation of individual subjects and their
-particular instances. No candidate inference was started.
+This Astra-medium run did not test ASv6.50. The subsequent candidate test is
+authorized on GPT-6.1 Sol xhigh; no Astra candidate inference is authorized.
 
 ## Frozen-baseline reproduction on GPT-6 Astra high
 
@@ -177,8 +176,7 @@ Complete answers, receipts and reviews remain ignored under
 `sse_multivector/experiments/astra-high-sp-scope-regression-v1/`. Native usage is
 10,854 input tokens and 14,679 output tokens, including 2,957 reasoning tokens.
 The $0.84249 catalog reference estimate is not a bill or measured subscription
-quota; incremental cash is zero. ASv6.48 remains frozen; ASv6.50 remains an
-untested, unapproved draft.
+quota; incremental cash is zero. This Astra-high run did not test ASv6.50.
 
 ## Frozen-baseline reproduction on GPT-6 Astra xhigh
 
@@ -207,7 +205,7 @@ added. Coverage and relationship assessments describe these particular outputs.
 All eight high/xhigh request receipts verify `gpt-6-astra` and the requested
 effort in the actual serialized body. Each rendered prompt matches the original
 Astra-low request's SHA-256, and hierarchy numbering is complete. Frozen ASv6.48
-and draft ASv6.50 remain unchanged. Native xhigh usage is 10,854 input tokens
+and ASv6.50 instructions remain unchanged. Native xhigh usage is 10,854 input tokens
 and 51,520 output tokens, including 34,640 reasoning tokens. The $2.68454 catalog
 reference estimate is not a bill or measured subscription quota; incremental
 cash is zero. Complete answers, receipts and reviews remain ignored under
@@ -215,7 +213,40 @@ cash is zero. Complete answers, receipts and reviews remain ignored under
 
 Neither tested effort level returned a failure-free set. These are one-answer
 trials per post and effort, not measured failure rates or a model ranking.
-The authorized effort escalation ends at xhigh. The useful next step is testing
-the untested ASv6.50 replacement paragraph against these saved ASv6.48 answers,
-checking complete hierarchies and coverage. That candidate test remains
-unapproved and was not started.
+The authorized Astra effort escalation ended at xhigh. The user subsequently
+approved ASv6.50 and testing it on GPT-6.1 Sol xhigh, as described below.
+
+## Approved candidate comparison on GPT-6.1 Sol xhigh
+
+The user approved ASv6.50's delta against frozen ASv6.48 and requested the
+GPT-6.1 Sol xhigh test. The proposed regression design uses three fresh answers
+for each of N063, N074, N096 and N100, compared with the saved Sol ASv6.48
+answers. Shared `prepare --from ... --prompt ... --prompt-id ASv6.50 --repeat`
+prepares three independent trials. Model, effort, schema, full original posts,
+WebSocket transport, deadline and concurrency match the frozen-baseline Sol
+experiment. Only the approved hierarchy paragraph changes in each rendered
+request. Each trial uses `run --max-new-attempts 8`, allowing at most the shared
+two-attempt policy per case for eligible provider failures. Baselines are not
+rerun; paid API fallback and output caps remain absent.
+
+The shared revision command derives the
+[ASv6.50 post template](../../experiment_specs/asv6.50-hr01-post-template.txt)
+from the existing ASv6.48 post template. Its instructions are byte-identical
+to approved ASv6.50, followed by the same `<post>` wrapper and `{POST}` variable.
+The revision receipt pins the baseline template and single approved edit.
+
+Native comparisons pair N074, N096 and N100 with their saved Sol answers.
+The original N063 attempt failed; its successful baseline is preserved in the
+separate `sol61-xhigh-sp-scope-regression-n063-retry-v1` experiment. Review uses
+that saved answer directly for N063 rather than constructing a combined report
+or rerunning it. Complete hierarchies are assessed for parent relationships,
+coverage of individual subjects and their particular instances, combinations,
+and newly introduced errors. Approval of the prompt is not a user semantic
+verdict on any returned answer.
+
+The three ignored experiment directories are
+`sse_multivector/experiments/asv6.50-sol61-xhigh-sp-scope-regression-t1/`,
+`sse_multivector/experiments/asv6.50-sol61-xhigh-sp-scope-regression-t2/` and
+`sse_multivector/experiments/asv6.50-sol61-xhigh-sp-scope-regression-t3/`.
+Results are pending. A fresh transfer test outside food remains proposed and
+requires separate authorization.

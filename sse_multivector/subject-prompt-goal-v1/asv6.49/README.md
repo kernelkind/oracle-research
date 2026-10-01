@@ -1,7 +1,7 @@
 # ASv6.49
 
 Status: superseded, untested. [ASv6.50](../asv6.50/README.md) is the current
-draft. ASv6.49 repeated existing instructions about refinement and independently
+candidate. ASv6.49 repeated existing instructions about refinement and independently
 understandable headings; ASv6.50 clarifies the existing hierarchy paragraph
 instead. ASv6.48 remains the frozen subject baseline. MPv3.43 remains the frozen
 mask working baseline.
@@ -46,10 +46,11 @@ errors. Different faithful wording, numbering and organization are acceptable;
 matching saved strings is not the acceptance rule. Removing supported general
 subjects or their particular instances does not satisfy the regression.
 
-## Proposed comparison
+## Approved comparison
 
-After approval, use the shared experiment workflow for three independent
-ASv6.50 outputs per regression post, compared with saved ASv6.48 outputs.
-Independent trials must disable request reuse through `--repeat`. Follow with
-a small fresh transfer check outside food if the regression comparison supports
-the revision. These comparisons are proposed, not started or authorized.
+On October 1, 2026, the user approved the ASv6.50 delta and requested testing on
+GPT-6.1 Sol xhigh. The [candidate comparison](../asv6.50/README.md#approved-candidate-comparison-on-gpt-61-sol-xhigh)
+uses the shared experiment workflow for three independent ASv6.50 outputs per
+regression post, compared with saved Sol ASv6.48 answers. Independent trials
+disable request reuse through `--repeat`. A small fresh transfer check outside
+food remains proposed and requires separate authorization.
