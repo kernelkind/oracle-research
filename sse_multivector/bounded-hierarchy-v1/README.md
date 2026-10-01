@@ -653,8 +653,18 @@ a property of a specifically named beverage, not generic cherry flavour.
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 target/infomap-review-build/debug/sse-subject-navigation \
   --categories target/hg100-sol01-parent-guides-v1/full-pass/export/categories.json \
-  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json \
+  --min-notes 2
 ```
+
+The optional `--min-notes 2` hides category choices reaching fewer than two
+distinct posts, counting all saved descendants. It changes only navigation:
+all saved nodes, memberships and masks remain intact; N still shows all posts,
+D direct assignments, and O posts outside the displayed children. The root is
+always kept. Omitting the option (or using `--min-notes 1`) restores the full
+view. In this export it reduces the initial choices from 182 to 55; 248
+hierarchy nodes meet the threshold overall. This is a browsing filter, not
+evidence that one-post subjects are invalid or that the hierarchy is complete.
 
 ## Completed build and browser handoff
 

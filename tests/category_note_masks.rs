@@ -101,6 +101,26 @@ fn screen(model: &mut ManualNoteExplorer) -> String {
 }
 
 #[test]
+fn filtering_single_post_choices_preserves_original_masks_in_note_views() {
+    let (dir, spec) = fixture();
+    let mut model = explorer(&dir, &spec).with_min_notes(2);
+    let root = screen(&mut model);
+    assert!(!root.contains("Coffee"), "{root}");
+    assert!(!root.contains("Tea"), "{root}");
+    for action in ['N', 'O'] {
+        key(&mut model, KeyCode::Char(action));
+        let note = screen(&mut model);
+        assert!(
+            note.contains("⟦café⟧ ⟦coffee with milk⟧; ⟦tea⟧ later. coffee again."),
+            "{note}"
+        );
+        assert!(note.contains("Note 1 of 1"), "{note}");
+        key(&mut model, KeyCode::Esc);
+        assert_eq!(screen(&mut model), root);
+    }
+}
+
+#[test]
 fn direct_notes_keep_category_highlights_and_complete_original_text() {
     let (dir, mut spec) = fixture();
     spec["nodes"][1]["note_ids"] = json!(["N001"]);

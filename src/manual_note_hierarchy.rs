@@ -443,6 +443,18 @@ impl ManualNoteHierarchy {
         node_id: &str,
         collapse_equal_notes: bool,
     ) -> CategoryNavigation {
+        self.category_navigation_with_min_notes(node_id, collapse_equal_notes, 1)
+    }
+
+    /// Hide smaller choices using distinct notes across all saved descendants.
+    /// Memberships stay unchanged; outside notes use only the displayed children.
+    /// A minimum of one retains the original unfiltered navigation.
+    pub fn category_navigation_with_min_notes(
+        &self,
+        node_id: &str,
+        collapse_equal_notes: bool,
+        min_notes: usize,
+    ) -> CategoryNavigation {
         let notes = self.note_ids(node_id);
         let mut children = Vec::new();
         let mut collapsed = Vec::new();
@@ -458,6 +470,9 @@ impl ManualNoteHierarchy {
                 continue;
             }
             let membership = self.note_ids(child);
+            if min_notes > 1 && membership.len() < min_notes {
+                continue;
+            }
             if collapse_equal_notes && membership == notes {
                 collapsed.push(child.clone());
                 pending.extend(self.nodes[child].children.iter().rev());

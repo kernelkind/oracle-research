@@ -49,6 +49,7 @@ pub struct ManualNoteExplorer {
     hierarchy: ManualNoteHierarchy,
     categories_only: bool,
     collapse_equal_notes: bool,
+    min_notes: usize,
     category_masks: Option<CategoryNoteMasks>,
     merge_origin: Option<(String, usize)>,
     categories: Vec<CategoryFrame>,
@@ -82,6 +83,22 @@ impl ManualNoteExplorer {
         model
     }
 
+    /// Filter category choices only; full memberships, masks and notes stay available.
+    pub fn with_min_notes(mut self, min_notes: usize) -> Self {
+        self.min_notes = min_notes;
+        for category in &mut self.categories {
+            category.navigation = self.hierarchy.category_navigation_with_min_notes(
+                &category.node_id,
+                self.collapse_equal_notes,
+                min_notes,
+            );
+            category.cursor = category
+                .cursor
+                .min(category.navigation.children.len().saturating_sub(1));
+        }
+        self
+    }
+
     fn with_categories_only(
         hierarchy: ManualNoteHierarchy,
         categories_only: bool,
@@ -98,6 +115,7 @@ impl ManualNoteExplorer {
             hierarchy,
             categories_only,
             collapse_equal_notes,
+            min_notes: 1,
             category_masks: None,
             merge_origin: None,
             notes: None,
@@ -177,8 +195,16 @@ impl ManualNoteExplorer {
     }
 
     fn navigation_analysis(&self) -> String {
+        let filter_notice = if self.min_notes > 1 {
+            format!(
+                "Minimum {} distinct notes per displayed category, including saved descendants.\nSaved nodes, memberships and masks are unchanged. N keeps all notes; D keeps direct assignments; O uses displayed children.\n\n",
+                self.min_notes
+            )
+        } else {
+            String::new()
+        };
         if !self.collapse_equal_notes {
-            return String::new();
+            return filter_notice;
         }
         let mut lines = vec![
             "Equal-note navigation collapse: saved categories and memberships are unchanged."
@@ -204,7 +230,7 @@ impl ManualNoteExplorer {
             ));
         }
         lines.push(String::new());
-        lines.join("\n") + "\n"
+        filter_notice + &lines.join("\n") + "\n"
     }
 
     fn breadcrumb(&self) -> String {
@@ -301,9 +327,11 @@ impl ManualNoteExplorer {
     fn open(&mut self) {
         let cursor = self.categories.last().expect("root category").cursor;
         if let Some(child) = self.navigation().children.get(cursor).cloned() {
-            let navigation = self
-                .hierarchy
-                .category_navigation(&child, self.collapse_equal_notes);
+            let navigation = self.hierarchy.category_navigation_with_min_notes(
+                &child,
+                self.collapse_equal_notes,
+                self.min_notes,
+            );
             self.categories.push(CategoryFrame {
                 node_id: child,
                 cursor: 0,
@@ -557,6 +585,9 @@ impl ManualNoteExplorer {
                 "\n{} · category hierarchy · read-only",
                 terminal_safe(&self.hierarchy.hierarchy_id)
             ));
+            if self.min_notes > 1 {
+                heading.push_str(&format!(" · minimum {} notes", self.min_notes));
+            }
         }
         if let Some(notice) = self.merge_notice() {
             heading.push('\n');
@@ -752,12 +783,12 @@ pub fn run_category_note_explorer(
     hierarchy: ManualNoteHierarchy,
     masks: Option<CategoryNoteMasks>,
     collapse_equal_notes: bool,
+    min_notes: usize,
 ) -> io::Result<()> {
-    run_note_explorer(ManualNoteExplorer::categories_with_masks(
-        hierarchy,
-        masks,
-        collapse_equal_notes,
-    ))
+    run_note_explorer(
+        ManualNoteExplorer::categories_with_masks(hierarchy, masks, collapse_equal_notes)
+            .with_min_notes(min_notes),
+    )
 }
 
 pub fn run_titled_merge_note_explorer(hierarchy: TitledMergeHierarchy) -> io::Result<()> {

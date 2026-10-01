@@ -87,6 +87,102 @@ fn screen(model: &mut ManualNoteExplorer) -> String {
 }
 
 #[test]
+fn minimum_notes_hides_single_post_choices_but_counts_descendants() {
+    let mut data = hierarchy();
+    // Coffee has no direct posts; its two distinct descendant posts keep it visible.
+    data.nodes.get_mut("coffee").unwrap().note_ids.clear();
+    let mut model = ManualNoteExplorer::categories(data).with_min_notes(2);
+    let root = screen(&mut model);
+    assert!(root.contains("Coffee · 2 notes"), "{root}");
+    assert!(!root.contains("Music"), "{root}");
+    key(&mut model, KeyCode::Enter);
+    let coffee = screen(&mut model);
+    assert!(coffee.contains("Espresso · 2 notes"), "{coffee}");
+    key(&mut model, KeyCode::Enter);
+    assert!(screen(&mut model).contains("Note 1 of 2"));
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(screen(&mut model), coffee);
+}
+
+#[test]
+fn minimum_notes_keeps_hidden_posts_in_all_direct_and_outside_views() {
+    let mut data = hierarchy();
+    data.nodes.get_mut("music").unwrap().note_ids = vec!["N004".to_owned()];
+    data.notes.insert(
+        "N004".to_owned(),
+        ManualNote {
+            note_id: "hidden-post".to_owned(),
+            note_short_id: "N004".to_owned(),
+            content: "Original post in a hidden single-post child.".to_owned(),
+        },
+    );
+    let raw_children = data.nodes["root"].children.clone();
+    let navigation = data.category_navigation_with_min_notes("root", false, 2);
+    assert_eq!(navigation.children, ["coffee"]);
+    assert_eq!(navigation.outside_note_ids, ["N003", "N004"]);
+    assert_eq!(data.nodes["root"].children, raw_children);
+    assert_eq!(data.nodes["music"].note_ids, ["N004"]);
+    assert_eq!(data.note_ids("root"), ["N001", "N002", "N003", "N004"]);
+
+    let mut model = ManualNoteExplorer::categories(data).with_min_notes(2);
+    screen(&mut model);
+    key(&mut model, KeyCode::Char('N'));
+    assert!(screen(&mut model).contains("Note 1 of 4"));
+    for _ in 0..3 {
+        key(&mut model, KeyCode::Right);
+    }
+    assert!(screen(&mut model).contains("Original post in a hidden single-post child."));
+    key(&mut model, KeyCode::Esc);
+    key(&mut model, KeyCode::Char('D'));
+    assert!(screen(&mut model).contains("Original note directly at root."));
+    assert!(screen(&mut model).contains("Note 1 of 1"));
+    key(&mut model, KeyCode::Esc);
+    key(&mut model, KeyCode::Char('O'));
+    assert!(screen(&mut model).contains("Note 1 of 2"));
+    key(&mut model, KeyCode::Right);
+    assert!(screen(&mut model).contains("Original post in a hidden single-post child."));
+}
+
+#[test]
+fn minimum_notes_counts_distinct_posts_and_keeps_the_root() {
+    let mut data = hierarchy();
+    data.nodes.get_mut("coffee").unwrap().note_ids = vec!["N002".to_owned()];
+    data.nodes.get_mut("espresso").unwrap().note_ids = vec!["N002".to_owned()];
+    data.nodes
+        .get_mut("root")
+        .unwrap()
+        .note_ids
+        .push("N001".to_owned());
+    assert!(
+        data.category_navigation_with_min_notes("root", false, 2)
+            .children
+            .is_empty()
+    );
+    let mut model = ManualNoteExplorer::categories(data).with_min_notes(2);
+    let root = screen(&mut model);
+    assert!(root.contains("Subjects"));
+    key(&mut model, KeyCode::Enter);
+    assert!(screen(&mut model).contains("Note 1 of 3"));
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(screen(&mut model), root);
+}
+
+#[test]
+fn minimum_notes_applies_after_equal_note_collapse_and_opens_filtered_leaves() {
+    let data = hierarchy();
+    let navigation = data.category_navigation_with_min_notes("coffee", true, 3);
+    assert!(navigation.children.is_empty());
+    let mut model = ManualNoteExplorer::categories_with_masks(data, None, true).with_min_notes(2);
+    screen(&mut model);
+    key(&mut model, KeyCode::Enter);
+    let note = screen(&mut model);
+    assert!(note.contains("Subjects > Coffee"), "{note}");
+    assert!(note.contains("Note 1 of 2"), "{note}");
+    key(&mut model, KeyCode::Esc);
+    assert!(!screen(&mut model).contains("Music"));
+}
+
+#[test]
 fn long_node_ids_are_hidden_while_browsing_but_available_in_analysis() {
     let mut data = hierarchy();
     let id = format!("merged-{}", "a".repeat(64));

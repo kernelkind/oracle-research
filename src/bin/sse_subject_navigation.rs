@@ -1,5 +1,6 @@
 //! Browse saved fine-segment hierarchies or manual categories over original notes.
 
+use std::collections::BTreeSet;
 use std::env;
 use std::io::IsTerminal;
 use std::process::ExitCode;
@@ -15,7 +16,7 @@ use oracle_mvp::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine-region-hierarchy-analysis.json> <fine-region-partition-analysis.json>
        sse-subject-navigation --notes <manual-note-hierarchy.json> <source-notes.json> [--check]
-       sse-subject-navigation --categories <note-hierarchy.json> <source-notes.json> [--collapse-equal-note-steps | --absorb-single-children] [--check]
+       sse-subject-navigation --categories <note-hierarchy.json> <source-notes.json> [--collapse-equal-note-steps | --absorb-single-children] [--min-notes N] [--check]
        sse-subject-navigation --compare <comparison.json> [--check]
        sse-subject-navigation --merge-notes <merge-history.json> <vector-map.json> <source-notes.json> <titles.json> [--min-notes 5] [--start-at GROUP] [--check]
 
@@ -23,6 +24,7 @@ const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine
 --categories  Browse immediate children; N opens current-category notes with combined masks when supplied
 --collapse-equal-note-steps  Skip equal-note child steps per route; preserve raw categories, N/D memberships and masks; O uses displayed children (--categories only)
 --absorb-single-children  Each parent absorbs its only child; keeps parent IDs, titles and notes (--categories only; unavailable with shared categories)
+--min-notes  Hide categories with fewer distinct notes, including raw descendants, without changing saved categories (--categories default: 1; --merge-notes default: 5)
 --compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
 --merge-notes  Browse unchanged saved merge groups as original notes with provisional titles
 --check  Validate and describe every requested page without opening a terminal";
@@ -138,16 +140,31 @@ fn run_notes(
     let mut check = false;
     let mut absorb = false;
     let mut collapse_equal_notes = false;
-    for option in options {
+    let mut minimum = None;
+    let mut options = options.iter();
+    while let Some(option) = options.next() {
         match option.as_str() {
             "--check" if !check => check = true,
             "--absorb-single-children" if categories_only && !absorb => absorb = true,
             "--collapse-equal-note-steps" if categories_only && !collapse_equal_notes => {
                 collapse_equal_notes = true;
             }
+            "--min-notes" if categories_only && minimum.is_none() => {
+                let value = options
+                    .next()
+                    .ok_or("--min-notes requires a positive integer")?;
+                let value = value
+                    .parse::<usize>()
+                    .map_err(|_| "--min-notes requires a positive integer")?;
+                if value == 0 {
+                    return Err("--min-notes requires a positive integer".into());
+                }
+                minimum = Some(value);
+            }
             _ => return Err(USAGE.into()),
         }
     }
+    let min_notes = minimum.unwrap_or(1);
     if absorb && collapse_equal_notes {
         return Err("choose either --collapse-equal-note-steps or --absorb-single-children".into());
     }
@@ -188,8 +205,45 @@ fn run_notes(
                 "Equal-note navigation collapse enabled; raw categories and memberships unchanged."
             );
         }
+        let displayed = if categories_only && min_notes > 1 {
+            let root = hierarchy.category_navigation_with_min_notes(
+                &hierarchy.root_node_id,
+                collapse_equal_notes,
+                min_notes,
+            );
+            println!("Minimum notes per displayed category: {min_notes}");
+            println!("Displayed root children: {}", root.children.len());
+            let mut displayed = BTreeSet::new();
+            let mut pending = vec![hierarchy.root_node_id.clone()];
+            while let Some(node_id) = pending.pop() {
+                if displayed.insert(node_id.clone()) {
+                    pending.extend(
+                        hierarchy
+                            .category_navigation_with_min_notes(
+                                &node_id,
+                                collapse_equal_notes,
+                                min_notes,
+                            )
+                            .children,
+                    );
+                }
+            }
+            Some(displayed)
+        } else {
+            None
+        };
         for node in hierarchy.nodes.values() {
-            let navigation = hierarchy.category_navigation(&node.node_id, collapse_equal_notes);
+            if displayed
+                .as_ref()
+                .is_some_and(|ids| !ids.contains(&node.node_id))
+            {
+                continue;
+            }
+            let navigation = hierarchy.category_navigation_with_min_notes(
+                &node.node_id,
+                collapse_equal_notes,
+                min_notes,
+            );
             println!(
                 "{} · {} notes",
                 node.label,
@@ -212,7 +266,7 @@ fn run_notes(
         return Err("manual note navigation must be started from an interactive terminal".into());
     }
     if categories_only {
-        run_category_note_explorer(hierarchy, masks, collapse_equal_notes)?;
+        run_category_note_explorer(hierarchy, masks, collapse_equal_notes, min_notes)?;
     } else {
         run_manual_note_explorer(hierarchy)?;
     }
