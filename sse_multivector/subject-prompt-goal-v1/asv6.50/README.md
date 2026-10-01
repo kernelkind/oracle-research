@@ -11,9 +11,10 @@ The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/AS
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
-[ASv6.52 (draft, untested)](../asv6.52/ASv6.52.md) is the subsequent
-example-only revision for review. Its wording and model test remain open;
-the [draft audit](#asv652-example-only-draft) records its scope.
+[ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) is the subsequent
+example-only revision for review. It corrects ASv6.52's missing placements
+in applicable branches. Its wording and model test remain open;
+the [corrected-example audit](#asv653-example-correction) records its scope.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -571,8 +572,10 @@ revision requires a separately reviewed delta and authorization.
 
 ## ASv6.52 example-only draft
 
-Status: draft, untested. On October 1, 2026, the user directed the work to focus
-on SP, retain examples and ensure that they demonstrate the intended behavior,
+Status: superseded draft, untested. Its examples omit required placements in
+applicable branches; ASv6.53 corrects them. On October 1, 2026, the user directed
+the work to focus on SP, retain examples and ensure that they demonstrate the
+intended behavior,
 then authorized preparing an example-only delta for review. This authorizes
 drafting, not approval of its wording or another model run. ASv6.51 remains the
 last approved candidate and ASv6.48 remains the frozen subject baseline.
@@ -612,15 +615,16 @@ order, with unique numbers and parents preceding children. Preservation checks
 verify every original railway entry, the unchanged instruction bytes and the
 unchanged lunar example.
 
-The agent reviewed all 39 direct parent-child relationships using standalone
-headings and checked the entries against their complete source posts. The new
-branches preserve replacement and advice roles; the combined advice fits both
-individual instructions without placing either individual beneath the whole
-combination. Named locomotive references, restoration, volunteer participation,
-boiler need, photography purpose and continuing tours remain represented. The
-added visitor advice, both actions, visitors and marked route have individual
-and combined subjects. This is an agent assessment of the worked examples,
-not a user semantic verdict or evidence of model generalization.
+The initial agent audit reviewed the 39 existing direct relationships and source
+coverage but did not check every applicable placement. The subsequent whole-prompt
+review found that both examples violate "including it in each branch that passes
+this check." Eclipse observation through binoculars is absent from `Binoculars`
+and `Lunar eclipses`; sketching the Moon is absent from `The Moon`; Bracken's
+restoration is absent from `Steam locomotive restoration`; and the combined
+visitor advice is absent from its booking and route-following branches. Checking
+existing relationships and output format did not establish whole-prompt
+consistency. ASv6.52 is not ready for inference. Its source remains useful for
+reproducing the omission and checking that ASv6.53 preserves the example posts.
 
 This follows the official OpenAI guidance that examples should closely agree
 with the instructions; discrepancies can reduce reliability.
@@ -637,5 +641,73 @@ The source prompt grows from 11,057 to 14,385 UTF-8 bytes, adding 3,328 bytes
 of repeated input per SP request. This remains one request per post, with two
 worked examples and the existing output schema. Actual model token use is
 unmeasured. No template, experiment or inference request was created for this
-draft. Review the delta first; the proposed next comparison is the same twelve
-GPT-6.1 Sol xhigh SP cases paired with saved ASv6.51 answers, subject to approval.
+draft. The user subsequently authorized fixing both examples; the correction
+is recorded below.
+
+## ASv6.53 example correction
+
+Status: draft, untested. The user authorized fixing the examples after the
+whole-prompt audit exposed ASv6.52's missing placements. The authorization covers
+the example correction and offline verification. Wording approval, inference and
+adoption remain open; ASv6.51 is still the last approved candidate and ASv6.48
+is the frozen subject baseline.
+
+[ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) replaces both complete example
+outputs. Every example post is byte-identical to ASv6.52, and all instructions
+are byte-identical to approved ASv6.51. The lunar output retains its 11 distinct
+subjects; the railway output retains 46 distinct subjects. Repeated entries now
+fill each applicable branch, including every occurrence of a shared heading.
+
+For example, eclipse observation appears beneath both astronomical observation
+and lunar eclipses; observing through binoculars also appears beneath binoculars.
+Moon sketching appears beneath both sketching and the Moon; cloud obstruction
+appears beneath both clouds and the Moon. Bracken's restoration appears beneath
+both the named locomotive and steam-locomotive restoration. General boilers
+remain outside replacement parts, while replacement boilers have both boilers
+and replacement parts as broader headings. The combined advice appears beneath
+both individual instructions in every advice, visitor, booking and route branch
+that applies. Individual instructions remain outside the combined advice.
+
+Five railway headings are made more explicit where their additional placements
+require it. Mira's work names the railway museum's steam locomotive; continuing
+tours name Bracken as a steam locomotive; the booking advice names railway-museum
+visits; and the route advice names the museum's marked visitor route. The combined
+advice preserves both clarified instructions. A child's proposed placement never
+borrows those restrictions from the source post or `context`.
+
+The worked examples contain 18 lunar entries and 129 railway entries, with 128
+displayed direct relationships in total. The agent reviewed source support,
+standalone wording and broader relationships for all 57 distinct subjects.
+Seventy-six declared broader relationships include one transitively redundant
+relationship; combining shared headings uses the remaining 75 relationships
+without repeating a subject directly beside its own containing branch.
+
+The maintained [example tests](../../test_subject_prompt_examples.py) exercise
+the production subjects adapter before inspecting placements. The minimal test
+first failed against ASv6.52 because the binoculars branch had no eclipse
+observation child. It passes against ASv6.53. Checks cover all 76 declared
+relationships beneath every copy of each parent, all displayed relationships,
+14 prohibited placements, distinct-subject coverage, output field order,
+unchanged instructions and unchanged example posts. Negative cases include
+general boilers beneath replacement parts, general booking beneath advice,
+individual advice beneath combined advice and boiler replacement beneath
+restoration: replacement can be ordinary maintenance.
+
+All six example tests and two existing SP workflow checks passed. The latter
+exercise preparation of 200 complete posts without requests and validation of
+subject numbering without repairs or retries. Mechanical and declared-relation
+checks do not independently prove natural-language entailment or teacher
+generalization; the semantic relationships remain an agent assessment.
+
+Shared `experiment.py revise` generated the prompt and its
+[ASv6.53 revision receipt](../asv6.53/ASv6.53.md.revision.json) against approved
+ASv6.51 SHA-256
+`db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
+The ASv6.53 SHA-256 is
+`6e09b33c83358be4857b7e2b6e3d59cc8e782bfbbe38e8a47e195a37bdab46d0`.
+The source grows from ASv6.52's 14,385 to 34,028 UTF-8 bytes. Filling every
+applicable branch adds 19,643 bytes of repeated input per request; it introduces
+no extra model pass or runtime component. Actual model token use is unmeasured.
+No template, experiment or model request was created for ASv6.53. Review its
+delta before authorizing the same twelve GPT-6.1 Sol xhigh SP cases paired with
+saved ASv6.51 answers.
