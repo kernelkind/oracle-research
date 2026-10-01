@@ -1257,10 +1257,23 @@ tests passed. No teachers were called.
 
 Replacing every context with SP subject wording alone cannot preserve the
 accepted iced-coffee-above-raw-yolk order: both SP subjects are Coffee, giving
-the same relevance multiplier to prominence 95 and 100. The recommended next
-comparison is relevance from SP subject plus its unchanged context, with
-prominence fixed and all existing accepted orders checked. This has not been
-implemented or run; current sorting inputs and formula remain unchanged.
+the same relevance multiplier to prominence 95 and 100. The user then approved
+comparing relevance from SP subject plus its unchanged context, with prominence
+fixed and existing accepted orders checked. That comparison is now completed
+across seventy-one SP entries, forty-five post/node memberships and eight nodes,
+with no new teacher calls.
+
+All eleven clear Coffee/Eggs/Music comparisons retain their accepted
+directions. Eggs, Photography, Music and the four transfer nodes keep their
+complete orders. Coffee only swaps errands and another coffee, a pair the
+user judged about equal with either direction acceptable. The son's Children
+relevance rises from 0.515541 to 0.541385; its sorting-score lead over Lunchly
+rises from 0.041028 to 0.178627. This is a modest numerical change with no
+clear ordering failure corrected or agreed minimum gap. The agent recommends
+keeping context-only relevance for the next broader subject trial; no
+production input or formula change is adopted. The small shared comparison
+option, nineteen comparison tests and 118 runner/worker checks are recorded
+in [model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

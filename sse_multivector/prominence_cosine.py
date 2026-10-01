@@ -173,6 +173,7 @@ def load_vectors(vectors):
 
 
 def prepare(args):
+    include_subject = getattr(args, 'include_subject', False)
     exclude_references = getattr(args, 'exclude_references', False)
     if exclude_references and not getattr(args, 'include_inverse', False):
         raise ValueError('--exclude-references requires --include-inverse')
@@ -200,10 +201,14 @@ def prepare(args):
         source_texts[case_id] = text
     if source_texts and getattr(args, 'include_inverse', False):
         raise ValueError('source-text relevance has no literal inverse')
+    if include_subject and source_texts:
+        raise ValueError('--include-subject cannot combine with --relevance-source-text')
     for directory in args.experiments:
         directory = directory.resolve()
         plan, _, _ = experiment.load(directory)
         context_input = plan['dataset']['adapter'] == 'subject_contexts'
+        if include_subject and not context_input:
+            raise ValueError('--include-subject requires saved SP subjects and contexts')
         if context_input and getattr(args, 'include_inverse', False):
             raise ValueError('subject context relevance has no literal inverse')
         if plan["dataset"]["adapter"] not in ("prominence", "generic", 'subject_contexts'):
@@ -263,7 +268,9 @@ def prepare(args):
                               ordinal=exact['ordinal'] if exact else None,
                               prominence=score))
             if context_input:
-                cases[-1].update(ordinal=None, representation='context', context=e['context'],
+                cases[-1].update(ordinal=None,
+                                 representation='subject_context' if include_subject else 'context',
+                                 context=e['context'],
                                  subject=e['subject'], subject_number=e['subject_number'],
                                  prominence_basis=plan['dataset'].get('prominence_basis', 'context'))
             if case['id'] in source_texts:
@@ -285,7 +292,8 @@ def prepare(args):
         raise ValueError("no prominence cases selected")
     post_order = getattr(args, 'post_order', None)
     if post_order and (post_order != 'highest'
-                       or any(c.get('representation') not in ('context', 'source_text') for c in cases)):
+                       or any(c.get('representation') not in ('context', 'subject_context', 'source_text')
+                              for c in cases)):
         raise ValueError('highest post order requires context or source-text cases')
     if len({c["id"] for c in cases}) != len(cases):
         raise ValueError("duplicate case IDs")
@@ -338,9 +346,13 @@ def prepare(args):
             e = evidence[case['id']]
             note_id = lookup[case['mask_ids'][0]]['note_id']
             if case['ordinal'] is None:
-                if case.get('representation') in ('context', 'source_text'):
-                    text = (case['relevance_source_text'] if case['representation'] == 'source_text'
-                            else case['context'])
+                if case.get('representation') in ('context', 'subject_context', 'source_text'):
+                    if case['representation'] == 'source_text':
+                        text = case['relevance_source_text']
+                    elif case['representation'] == 'subject_context':
+                        text = case['subject'] + '\n' + case['context']
+                    else:
+                        text = case['context']
                     case['mask_row'] = selection(hashlib.sha256(text.encode()).hexdigest(),
                                                  text, [[0, len(text.encode())]])
                 else:
@@ -540,6 +552,8 @@ def main():
     prep.add_argument('--relevance-source-text', action='append', nargs=2,
                       metavar=('CASE_ID', 'TEXT'),
                       help='encode an exact saved-post fragment as standalone relevance text; repeat per case')
+    prep.add_argument('--include-subject', action='store_true',
+                      help='encode the saved SP subject, a newline, and its unchanged context together')
     prep.add_argument("--vectors", type=Path, required=True)
     prep.add_argument("--worker-config", type=Path, required=True)
     prep.add_argument("--replay", nargs="+", required=True)

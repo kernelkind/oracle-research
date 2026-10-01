@@ -3410,15 +3410,11 @@ cannot produce iced above raw-yolk when the fixed prominence is 95 versus
 100, because the relevance multiplier would be identical and nonnegative.
 Neither simpler input is a general correction established by this diagnostic.
 
-The next recommended comparison encodes SP subject plus the unchanged SP
-context for relevance, rather than dropping the context or rewriting it per
-post. For this case that means "The writer's son" alongside its existing
-ice-cream sentence. Keep prominence and the sorting formula fixed and check
+The user then approved comparing relevance from SP subject plus the unchanged
+SP context, keeping prominence and the sorting formula fixed and checking
 all accepted Coffee, Eggs, Photography and Music orders as well as the four
-transfer nodes. This is a proposed bounded comparison, not a selected
-production input, implementation or run. Its encoding work would grow with
-the selected SP entries, as the current context comparison does; it requires
-no new complete-post teacher assessments or all-post/all-node comparisons.
+transfer nodes. The completed comparison follows. This does not select a
+production relevance input.
 
 Both new native comparisons, fixed prominence, products, exact source spans,
 unchanged control and protected original files passed verification. The
@@ -3429,6 +3425,105 @@ no user decision was added. Comparison SHA-256:
 
 - `children-short-source-v1`: `7d420910e012a2abf566e9f29293302e2ca97e3960820e8b0082430db0412457`.
 - `children-story-source-v1`: `be7973a582b2de6e2b318c7d993e91f23fb9417d29561c34f85dc0ca583c01a8`.
+
+**SP subject plus context: fixed PPv30-node-v1 prominence.**
+
+The shared `prominence_cosine.py prepare --include-subject` option encodes
+each saved SP subject followed by one newline and its unchanged saved context.
+It requires the `subject_contexts` adapter and cannot combine with an exact
+source-text override. Without the option, preparation still encodes context
+alone. The plan identifies the new input as `subject_context`; original SP
+fields, complete-post prominence inputs, masks and post aggregation remain
+unchanged. Existing context-only encoding cannot be reused for the new text.
+No arbitrary replacement context or per-post tuning is added.
+
+The minimal production preparation/collection test first failed because only
+the context was encoded. It now verifies the combined UTF-8 text and complete
+byte selection, fixed prominence and source evidence, original-mask control,
+CLI option, resulting sorting score, unchanged default and invalid input/reuse
+rejection. Nineteen comparison/ranking tests and 118 experiment, selection and
+worker regression tests passed. No production extraction, worker, teacher
+prompt, sorting formula or recursive transfer implementation changed.
+
+`experiments/ppv30-subject-context-relevance-v1` uses all saved cases from
+`ppv30-node-orders-v1`, `ppv30-photography-node-v1`, `ppv30-music-node-v1` and
+`ppv30-transfer-nodes-v1`. There are seventy-one SP entries across forty-five
+post/node memberships in eight nodes. The native preparation encodes eight
+titles, seventy-one subject/context texts and ten original-mask controls:
+eighty-nine rows in the same local CPU worker. Each input adds only one saved
+SP subject to its context; encoding work grows with the selected entries.
+There are no new complete-post teacher inputs or outputs, global all-post/all-
+node evaluation, provider calls or paid resources. Every encoded input is
+within the existing 512-token limit; the maximum observed length is 478.
+
+The completed run used this native preparation command, then the generated
+worker configuration and native collection:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/prominence_cosine.py prepare \
+  sse_multivector/experiments/ppv30-subject-context-relevance-v1 \
+  --experiments \
+  sse_multivector/experiments/ppv30-node-orders-v1 \
+  sse_multivector/experiments/ppv30-photography-node-v1 \
+  sse_multivector/experiments/ppv30-music-node-v1 \
+  sse_multivector/experiments/ppv30-transfer-nodes-v1 \
+  --include-subject --post-order highest \
+  --vectors sse_multivector/hierarchy-refresh-v1 \
+  --worker-config sse_multivector/experiments/ppv30-transfer-nodes-v1/relevance-v1/worker-config.json \
+  --replay V0507 V0882 V1268 V0964 V0522 V1026 V0064 V1051 V1063 V0794
+```
+
+The completed directory is immutable; use a new output path for a deliberate
+repeat. Its native comparison SHA-256 is
+`57985e0d3ff19059b67fe3224dc3e6f3d97b5677b776313cda7ef8cd9496792d`.
+All ten controls pass: replay cosine is at least 0.9999999999999452 and maximum
+normalized component error at most 4.08e-8. Original prompt, teacher receipts,
+SP/MP data, source hierarchy and preceding comparisons retain their hashes.
+All seventy-one sorting-score products and forty-five post maxima were
+verified; all prominence-only orders remain identical.
+
+| Hierarchy node | Posts | Change from context-only sorting order |
+| --- | ---: | --- |
+| coffee | 14 | Only errands/another-coffee swap; either direction already accepted |
+| Eggs | 7 | Identical |
+| Photography | 3 | Identical |
+| Music | 2 | Identical |
+| Children | 5 | Identical |
+| Literature | 4 | Identical |
+| Psychological distress | 2 | Identical |
+| Bitcoin | 8 | Identical |
+
+All eleven clear Coffee/Eggs/Music comparisons retain their accepted directions.
+The accepted seven-post Eggs order and three-post Photography order remain
+exactly intact, separately from that count. Coffee's only change puts errands
+at 45.192466 above another coffee at 44.407089, rather than 41.622349 below
+42.357665. The user judged this pair about equal and subsequently accepted
+either direction. The other three about-equal judgments remain acceptable;
+none is converted into a strict pair or numerical gap test. No new user
+judgments or global accuracy claims are added.
+
+The targeted Children result changes only slightly:
+
+| Post | Fixed prominence | Context-only relevance | Subject plus context relevance | New sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| Son's ice-cream conversation (`7e7eeee7`) | 55 | 0.515541 | 0.541385 | 29.776167 |
+| Lunchly market argument (`38862a72`) | 40 | 0.707843 | 0.739939 | 29.597540 |
+
+The son's lead rises from 0.041028 to 0.178627 sorting-score points; the relative
+order is retained and no agreed minimum gap exists. Adding the subject has not
+removed the earlier concern about the context's low relevance to Children.
+The four transfer orders remain plausible on agent inspection, with Literature
+and Psychological distress still small samples. Native agent reviews record
+the two Children uncertainties and the acceptable Coffee swap, bound to this
+comparison hash; existing user judgments remain unchanged.
+
+The agent recommends retaining context-only relevance for the next broader
+subject trial: this additional input gives little benefit and corrects no
+demonstrated wrong order. Testing more non-food subjects for actual ordering
+failures is the useful next step; it has not begun. The new option is diagnostic
+support, not production adoption. PPv30-node-v1 and the sorting formula remain
+tested candidates, with production input selection and broader validation open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
