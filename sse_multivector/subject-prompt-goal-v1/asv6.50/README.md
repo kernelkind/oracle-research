@@ -152,14 +152,16 @@ if an eligible provider failure occurs. No retries were needed.
 | Post | Entries | Complete-output finding |
 | --- | --- | --- |
 | N063 | 42 | Original fats-under-dish error avoided. New clear instance: 1.3.8, wine as a cooking ingredient, → 1.3.8.1, dry white wine, drops the cooking role. A post about drinking dry white wine fits the child without the parent. |
-| N074 | 50 | Original conjunction error avoided: individual recommendations at 4.1–4.3 are siblings of the combined attributed advice at 4.4. Possible book-source loss between 8.1, Food Rules by Michael Pollan, and 8.1.1, Pollan's combined advice, is recorded as uncertain; the child names Pollan but not the book. The relationship repeats at 9.1.1 → 9.1.1.1. |
+| N074 | 50 | Original conjunction error avoided: individual recommendations at 4.1–4.3 are siblings of the combined attributed advice at 4.4. New clear instance: 2.2.2, controversy over a mother telling her 10-year-old child to eat vegetables, → 2.2.2.1, a mother's instruction to eat vegetables as a childhood exception to the Nostr diet's lack of controversy, drops the age restriction. Possible book-source loss at 8.1 → 8.1.1 and 9.1.1 → 9.1.1.1 remains a separate uncertainty. |
 | N096 | 82 | Original error reproduced: 4.3.1, preparing beef and tomato sauce for Spaghetti Bolognaise, → 4.3.1.2, gently frying ground beef without browning. The child drops sauce/dish scope. Sautéing children at 4.2.1.1 and 4.2.1.2 also lose restrictions from 4.2.1. |
 | N100 | 74 | Original byproduct branch and Sol's chicken conjunction error avoided. New clear instance: 1, beef, → 1.6, myoglobin. The generic protein heading drops the beef restriction; its `context` cannot supply it. |
 
-High therefore did not meet the user's stopping condition: N063, N096 and N100
-contain clear instances of the same pattern. N074's possible source relationship
-is not needed for that decision. Native reviews record three agent rejections
-and one uncertain assessment, with no user semantic verdicts.
+High therefore did not meet the user's stopping condition: all four completed
+answers contain clear instances of the same pattern. N074's age restriction
+drop was found during the subsequent xhigh review; a new native agent rejection
+supersedes the earlier uncertain verdict while preserving its review history.
+The possible book-source relationship is not needed for the rejection. Current
+reviews are four agent rejections, with no user semantic verdicts.
 
 Coverage remains a separate check. N063 retains all named general ingredients
 but omits separate dish-specific ingredient subjects and the dish-specific
@@ -177,3 +179,43 @@ Complete answers, receipts and reviews remain ignored under
 The $0.84249 catalog reference estimate is not a bill or measured subscription
 quota; incremental cash is zero. ASv6.48 remains frozen; ASv6.50 remains an
 untested, unapproved draft.
+
+## Frozen-baseline reproduction on GPT-6 Astra xhigh
+
+High's confirmed failures triggered the user's authorized xhigh test. Shared
+`prepare --from` inherited the high experiment's complete inputs, frozen
+ASv6.48 prompt and runner settings, changing only effort to `xhigh`. The run
+used `--repeat` and `--max-new-attempts 8`. All four answers completed from
+four calls, without failures, retries, reuse or baseline regeneration.
+
+| Post | Entries | Complete-output finding |
+| --- | --- | --- |
+| N063 | 67 | No clear parent-scope failure found. General fats/oils are outside a dish-specific parent; wine → white wine → dry white wine fixes high's cooking-role loss. All 15 named ingredients have individual general subjects and separate dish-specific instances. |
+| N074 | 71 | Original conjunction error avoided, and Food Rules is explicit in the combined advice, resolving high's book-source concern. New clear instance: 1.1.3, Nostr diet not stirring controversy like the carnivore diet, → 1.1.3.1, mother–child conflict over vegetables as an exception to the Nostr diet's lack of controversy, drops the carnivore-diet comparison. |
+| N096 | 107 | Original general-steps-under-Bolognaise organization largely avoided. Clear instances remain at 3.2.1, tinned tomato products, → general chopped tomatoes and tomato purée at 3.2.1.1–3.2.1.2; combined vegetable chopping at 4.1.1.1 → single-vegetable children; and 4.2.1's sautéing → garlic addition at 4.2.1.2, losing finely chopped and olive oil. |
+| N100 | 103 | Original byproduct-use/material error, high's generic myoglobin-under-beef error and Sol's chicken conjunction error avoided. New instance: 6.1.1, dog intended to receive beef trimmings and myoglobin, → 6.1.1.1, trimmings for the dog, and 6.1.1.2, myoglobin for dog food. Each child drops the other component of the combined plan. |
+
+The agent accepted N063 and rejected the other three answers. N074's individual
+and combined advice, comparisons, controversy, family example, Bitcoin narrative
+and attribution remain covered. N096 retains general ingredients, individual
+quantities, recipe/yield and preparation details. N100 retains general materials
+and uses, quantities, animal provisions and sealer details. Its interpretation
+of myoglobin for chickens remains a separate source ambiguity; this answer does
+not assert that the sealer was used on the beef. No user semantic verdicts were
+added. Coverage and relationship assessments describe these particular outputs.
+
+All eight high/xhigh request receipts verify `gpt-6-astra` and the requested
+effort in the actual serialized body. Each rendered prompt matches the original
+Astra-low request's SHA-256, and hierarchy numbering is complete. Frozen ASv6.48
+and draft ASv6.50 remain unchanged. Native xhigh usage is 10,854 input tokens
+and 51,520 output tokens, including 34,640 reasoning tokens. The $2.68454 catalog
+reference estimate is not a bill or measured subscription quota; incremental
+cash is zero. Complete answers, receipts and reviews remain ignored under
+`sse_multivector/experiments/astra-xhigh-sp-scope-regression-v1/`.
+
+Neither tested effort level returned a failure-free set. These are one-answer
+trials per post and effort, not measured failure rates or a model ranking.
+The authorized effort escalation ends at xhigh. The useful next step is testing
+the untested ASv6.50 replacement paragraph against these saved ASv6.48 answers,
+checking complete hierarchies and coverage. That candidate test remains
+unapproved and was not started.
