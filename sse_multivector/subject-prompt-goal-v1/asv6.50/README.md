@@ -13,8 +13,10 @@ comparison evidence.
 
 [ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) is the subsequent
 example-only revision for review. It corrects ASv6.52's missing placements
-in applicable branches. Its wording and model test remain open;
-the [corrected-example audit](#asv653-example-correction) records its scope.
+in applicable branches. Its wording and model test remain open, and its
+examples do not cover all prompt rules. The
+[corrected-example audit](#asv653-example-correction) records its scope;
+the [rule-to-case map](#example-correctness-and-rule-coverage) records the gaps.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -650,7 +652,8 @@ Status: draft, untested. The user authorized fixing the examples after the
 whole-prompt audit exposed ASv6.52's missing placements. The authorization covers
 the example correction and offline verification. Wording approval, inference and
 adoption remain open; ASv6.51 is still the last approved candidate and ASv6.48
-is the frozen subject baseline.
+is the frozen subject baseline. The subsequent rule-to-case audit below shows
+that ASv6.53 does not meet the user's complete example-coverage criterion.
 
 [ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) replaces both complete example
 outputs. Every example post is byte-identical to ASv6.52, and all instructions
@@ -708,6 +711,97 @@ The ASv6.53 SHA-256 is
 The source grows from ASv6.52's 14,385 to 34,028 UTF-8 bytes. Filling every
 applicable branch adds 19,643 bytes of repeated input per request; it introduces
 no extra model pass or runtime component. Actual model token use is unmeasured.
-No template, experiment or model request was created for ASv6.53. Review its
-delta before authorizing the same twelve GPT-6.1 Sol xhigh SP cases paired with
-saved ASv6.51 answers.
+No template, experiment or model request was created for ASv6.53. Complete and
+review example rule coverage before authorizing the same twelve GPT-6.1 Sol
+xhigh SP cases paired with saved ASv6.51 answers.
+
+## Example correctness and rule coverage
+
+On October 1, 2026, the user set this criterion: examples demonstrate rules
+already stated in SP; each example must obey every applicable rule; every
+explicit or implicit rule must be traced concisely to an example case. Each
+behavior taught by an example must also trace back to those instructions.
+Examples must not introduce an additional rule.
+
+The map below uses the unchanged instructions in
+[ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md). C1 is its lunar-eclipse
+case; C2 is its railway-museum case. Each case already includes its source post
+and complete expected JSON. "Partial" means the named detail demonstrates only
+part of the rule; "Missing" means neither case exercises the required behavior.
+Absence of a prohibited output is insufficient when the input never presents
+that decision. These are review references, not additions to the output schema.
+
+| ID | Existing SP instruction | Example detail or gap |
+| --- | --- | --- |
+| R01 | Build a subject index after understanding the complete post. | C1: observation, Moon, binoculars, sketching and clouds all remain. |
+| R02 | Resolve references to the most specific supported description. | C1: "it" becomes the Moon; C2: "the restoration" names Bracken the steam locomotive. |
+| R03 | Use general knowledge to clarify language, identify referents and recognize subjects. | C1: lunar-eclipse observation supports astronomical observation. |
+| R04 | Ground every entity, modifier, action and relationship in the post. | C2: Bracken's type, ownership, restoration and exhibition purpose come from the post. |
+| R05 | Interpret names, labels and hashtags by referent, not component words. | Partial: C2 identifies Bracken as a locomotive; no misleading name, label or hashtag tests literal component words. |
+| R06 | Retain the name of an unresolved named subject. | Missing. |
+| R07 | Treat URLs and opaque identifiers as providing no subject evidence. | Missing. |
+| R08 | Retain URL or identifier subjects established by surrounding prose. | Missing. |
+| R09 | Give each remaining supported interpretation its own direct subject, without uncertainty qualifiers. | Missing: neither post remains ambiguous. |
+| R10 | Do not infer relationships from co-mention alone. | Partial: C2 does not make Mira the photographer; a focused co-mention case is missing. |
+| R11 | Do not infer relationships from statement order alone. | Partial: C1 does not claim sketching began after observation; a focused order case is missing. |
+| R12 | Add no commentary about plausibility or what is unclear or unstated. | Partial: both outputs omit commentary; neither exercises unresolved ambiguity. |
+| R13 | Preserve what numbers refer to. | Missing: section numbers are output formatting, not source numbers. |
+| R14 | Support count or measurement interpretations and units with the post. | Missing. |
+| R15 | Include calculated results only when explicitly stated. | Missing: neither post supplies quantities from which an unstated result could be calculated. |
+| R16 | Enumerate specific subjects before deriving broader headings. | C2: Bracken and Mira remain alongside broader locomotive and volunteer headings; reasoning order is not observable. |
+| R17 | Include literal, nonliteral and rhetorical subjects from parts, combined parts or the whole post, including unnamed concepts. | Partial: C1 names implied cloud hindrance; C2 combines both advice instructions. Nonliteral and rhetorical cases are missing. |
+| R18 | Retain individual subjects, particular instances and expressed combinations. | C2: boilers, Bracken's replacement boiler, both advice instructions and their combination remain. |
+| R19 | An event description must not replace its involved subjects. | C1: observation retains binoculars and the Moon; C2: restoration retains Bracken and Mira. |
+| R20 | Judge broader relationships using headings alone; a counterexample requires a broader parent. | C2: boilers have their own branch outside replacement parts; replacement boilers belong under both. |
+| R21 | Build upward and combine shared headings. | C2: shared steam-locomotive and restoration headings contain their applicable subjects. |
+| R22 | Retain each enumerated subject in every branch that passes the heading test. | C1: binocular observation repeats beneath observation and binoculars; C2: combined advice repeats beneath both instructions. |
+| R23 | Give each heading and subheading its own entry. | C1 and C2: every displayed level has its own object. |
+| R24 | Return only one JSON object containing a `subjects` array. | C1 and C2: each complete output uses that wrapper, with no surrounding answer text. |
+| R25 | Use section-style numbering, broad to specific, with parents first. | C1: `1`, `1.1`, `1.1.1`; C2 repeats the same ordering throughout. |
+| R26 | Order entry fields as `number`, `context`, `subject`. | C1 and C2: every entry uses this order. |
+| R27 | Context identifies the subject and the source establishing its meaning. | C1: Moon-obscuration context resolves "it"; C2: boiler context names Bracken. |
+| R28 | Context may describe a particular instance supporting a general heading. | C1: a particular eclipse observation supports astronomical observation. |
+| R29 | Match the heading's generality; keep instance details in subheadings without importing context restrictions. | C2: boilers, replacement boilers and Bracken's replacement boiler have separate headings. |
+| R30 | Make each heading understandable without the post, context or other entries. | C2: photography headings explicitly name Bracken the steam locomotive's restoration. |
+| R31 | A heading need not retell the post's assertion about its subject. | C1: "Binoculars" names the subject without retelling their use. |
+| R32 | Preserve meaning, negation and relationships in headings. | Partial: C2 retains exhibition purpose and visitor-advice roles; neither post tests negation. |
+| R33 | Name both comparison sides when provided. | Missing: neither post makes a comparison. |
+| R34 | Use concise wording. | C1: "Sketching the Moon"; C2: "Replacement boilers". Longer particular headings retain distinguishing details. |
+
+The reverse index records the demonstrations identified above; it does not
+exempt either case from the other applicable instructions.
+
+| Case | Purpose | Demonstrated rules | Partial coverage |
+| --- | --- | --- | --- |
+| C1 | Resolve whole-post references and retain subjects across shared branches. | R01–R03, R19, R22–R28, R31, R34 | R11, R12, R17 |
+| C2 | Preserve entity types, roles, purpose and advice combinations in every applicable branch. | R02, R04, R16, R18–R27, R29–R30, R34 | R05, R10, R12, R17, R32 |
+
+The hierarchy failures expose implications of existing instructions, rather
+than additional rules:
+
+| Implication | Instruction basis | Example detail |
+| --- | --- | --- |
+| An entity does not acquire a role merely from its context. | R18, R20, R29, R30 | C2: general boilers remain outside replacement parts. |
+| A child must retain restrictions needed to fit its parent, using equivalent wording where appropriate. | R20, R30, R32 | C2: photography of Bracken's restoration retains its steam-locomotive type. |
+| A stated combination can fit each component; either component alone need not fit the combination. | R18, R20, R22 | C2: combined booking-and-route advice is beneath both individual instructions; neither individual instruction is beneath the combination. |
+| Repeating a shared heading requires its applicable descendants beneath every occurrence. | R21, R22, R23 | C1: every lunar-eclipse-observation occurrence includes binocular observation. |
+| The source or context cannot repair a relationship that the headings alone do not support. | R20, R29, R30 | C2: boiler replacement stays outside restoration even though this post places the need during restoration. |
+
+For each revised case, retain a short purpose and rule-ID list beside its source
+post, full expected output and review result in these review notes. Check both
+directions: each rule has a demonstration, and each demonstrated behavior has an
+instruction basis. Check every case against all applicable rules, including
+source support, complete subject retention and every valid hierarchy branch.
+Internal reasoning order has no field in the required JSON; review its visible
+consequences rather than adding a reasoning trace to the examples.
+
+ASv6.53 therefore remains incomplete under this criterion. Its eight successful
+offline checks cover the declared subjects, relationships and workflow behavior;
+they do not cover the missing decisions in this map or establish model
+generalization. This documentation update changes no prompt, test fixture or
+model result and authorizes no inference run.
+
+The proposed next source change is a compact set of focused cases that covers
+these gaps while retaining the demonstrated hierarchy rules. Each case needs a
+complete correct output and its rule mapping before delta review. That example
+revision has not been authored or approved.
