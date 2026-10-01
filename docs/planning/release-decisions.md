@@ -16,6 +16,19 @@ diagram, viewer, renderer and their tests are removed; earlier versions remain
 in Git. This changes the interface, not task contents, dependencies, scheduling
 decisions or the proposal status of the calendar below.
 
+**Track views approved September 30:** the graph defaults to Required release;
+Optional model shows distillation work, and Both includes the full plan. Shared
+foundation tasks appear in both views as the same records. Final snapshot,
+protocol, service, Notedeck and publication work belong to the required release;
+training data, training setup, fine-tuning pilots, model packaging and
+model-generated-hierarchy checks belong to the optional model track. Earlier
+cycle/navigation experiments remain historical and accessible in Both, not
+current prerequisites. Shared HDBSCAN and separate-title work remains
+conditional. The selector filters the graph and task picker; direct links
+outside the view remain visible in task details and switch tracks when followed.
+This changes navigation only: statuses, dependencies, approvals, release gates
+and undecided implementation methods are unchanged.
+
 This discussion is for planning: outcomes, dependencies, open decisions and
 timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;

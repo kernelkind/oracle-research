@@ -40,6 +40,7 @@
     .task-status.ready { border-color: #68d391; color: #98e9ac; }
     .task-status.active { border-color: #79b8ff; color: #a9d1ff; }
     .task-status.complete { color: #aab8c7; }
+    .task-track { color: #bac6d3; font-size: 12px; }
     .task-status.paused { color: #e5c48b; border-color: #b48d57; }
     .description { white-space: pre-line; color: #d6e0eb; }
     .related { display: grid; gap: 6px; }
@@ -67,6 +68,13 @@
     </div>
     <p class="note">Read-only draft from release-plan.json. Task readiness does not authorize work.</p>
     <div class="controls">
+      <label>Track
+        <select id="track" aria-label="Track">
+          <option value="release" selected>Required release</option>
+          <option value="model">Optional model</option>
+          <option value="both">Both</option>
+        </select>
+      </label>
       <label>Task
         <select id="focus-task" aria-label="Task to focus"></select>
       </label>

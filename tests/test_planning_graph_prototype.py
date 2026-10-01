@@ -139,6 +139,96 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 wait_for("document.querySelector('#graph-status')?.textContent.includes('Layout ready')")
                 self.assertFalse(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('25 ·'))"),
                                  "HR02-only task 25 must not be a dependency of the current task 02")
+                self.assertEqual(evaluate("document.querySelector('#track')?.value"), "release")
+                self.assertEqual(json.loads(evaluate("JSON.stringify([...document.querySelector('#track').options].map(option => option.textContent))")),
+                                 ["Required release", "Optional model", "Both"])
+                plan = json.loads((public / "release-plan.json").read_text())
+                shared = {"01", "02", "03", "04", "09", "17", "20", "21", "22", "23", "24", "27", "28"}
+                release = {"12", "13", "14", "15", "16"}
+                model = {"05", "06", "07", "08", "10", "11", "18", "29"}
+                historical = {"25", "26"}
+                for task in plan["tasks"]:
+                    expected = ("shared" if task["id"] in shared else "release" if task["id"] in release
+                                else "model" if task["id"] in model else "historical")
+                    self.assertEqual(task["track"], expected, task["title"])
+                self.assertFalse(any(link["kind"] == "required" and link["source"] in model
+                                     and link["target"] in release | shared for link in plan["links"]),
+                                 "Optional-model work must not become a required-release gate")
+
+                def picker_ids():
+                    return set(json.loads(evaluate("JSON.stringify([...document.querySelector('#focus-task').options].map(option => option.value))")))
+
+                def visible_ids():
+                    return {node["id"] for node in check_routes()["nodes"]}
+
+                self.assertEqual(picker_ids(), shared | release)
+                capture("required-release-focused")
+                evaluate("document.querySelector('#show-all').click()")
+                self.assertEqual(visible_ids(), shared | release)
+                self.assertIn("Required release", evaluate("document.querySelector('#graph-status').textContent"))
+                capture("required-release")
+
+                evaluate("document.querySelector('#track').value = 'model'; document.querySelector('#track').dispatchEvent(new Event('change'))")
+                self.assertEqual(picker_ids(), shared | model)
+                self.assertEqual(visible_ids(), shared | model)
+                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "02")
+                self.assertIn("Shared", evaluate("document.querySelector('#details .task-track').textContent"))
+                capture("optional-model")
+                self.assertIn("Shared", evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('02').data('label')"))
+                self.assertIn("Optional model", evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('06').data('label')"))
+
+                # Compose with the completed-task filter when that control is present.
+                if evaluate("!!document.querySelector('#hide-completed')"):
+                    completed = {task["id"] for task in plan["tasks"] if task["status"] == "COMPLETE"}
+                    evaluate("document.querySelector('#hide-completed').click()")
+                    self.assertEqual(visible_ids(), (shared | model) - completed)
+                    evaluate("document.querySelector('#track').value = 'release'; document.querySelector('#track').dispatchEvent(new Event('change'))")
+                    self.assertTrue(evaluate("document.querySelector('#hide-completed').checked"))
+                    self.assertEqual(visible_ids(), (shared | release) - completed)
+                    evaluate("document.querySelector('#hide-completed').click()")
+                    evaluate("document.querySelector('#track').value = 'model'; document.querySelector('#track').dispatchEvent(new Event('change'))")
+
+                evaluate("document.querySelector('#focus-selected').click()")
+                self.assertTrue(visible_ids() <= shared | model)
+                self.assertIn("Required release · outside this view", evaluate("document.querySelector('#details').innerText"))
+                evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('14 ·')).click()")
+                self.assertEqual(evaluate("document.querySelector('#track').value"), "release")
+                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "14")
+                self.assertTrue(visible_ids() <= shared | release)
+                evaluate("document.querySelector('#go-back').click()")
+                self.assertEqual(evaluate("document.querySelector('#track').value"), "model")
+                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "02")
+
+                evaluate("document.querySelector('#track').value = 'release'; document.querySelector('#track').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#focus-task').value = '17'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('05 ·')).click()")
+                self.assertEqual(evaluate("document.querySelector('#track').value"), "model")
+                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "05")
+                evaluate("document.querySelector('#go-back').click()")
+                self.assertEqual(evaluate("document.querySelector('#track').value"), "release")
+                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "17")
+
+                evaluate("document.querySelector('#focus-task').value = '13'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#depth').value = '2'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#direction').value = 'before'; document.querySelector('#direction').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#show-inputs').click()")
+                evaluate("document.querySelector('#track').value = 'model'; document.querySelector('#track').dispatchEvent(new Event('change'))")
+                self.assertIn(evaluate("document.querySelector('#focus-task').value"), shared | model)
+                self.assertEqual(evaluate("document.querySelector('#depth').value"), "2")
+                self.assertEqual(evaluate("document.querySelector('#direction').value"), "before")
+                self.assertFalse(evaluate("document.querySelector('#show-inputs').checked"))
+                self.assertTrue(visible_ids() <= shared | model)
+                self.assertFalse(any(edge["id"].endswith("helpful") for edge in check_routes()["edges"]))
+
+                evaluate("document.querySelector('#track').value = 'both'; document.querySelector('#track').dispatchEvent(new Event('change'))")
+                self.assertEqual(picker_ids(), shared | release | model | historical)
+                evaluate("document.querySelector('#show-all').click()")
+                self.assertEqual(visible_ids(), shared | release | model | historical)
+                capture("both-tracks")
+                evaluate("document.querySelector('#focus-task').value = '02'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#depth').value = '1'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#direction').value = 'both'; document.querySelector('#direction').dispatchEvent(new Event('change'))")
+                evaluate("document.querySelector('#show-inputs').click()")
                 self.assertEqual(evaluate("document.title"), "Oracle release plan · task graph")
                 self.assertFalse(evaluate("document.body.innerText.includes('Earlier draw.io')"))
                 for retired in ("october-18-release.drawio", "vendor/viewer-static.min.js", "vendor/LICENSE.drawio"):
@@ -279,6 +369,26 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 data_file.write_text(json.dumps(data))
                 call("browsingContext.reload", {"context": context, "wait": "complete"})
                 wait_for("document.querySelector('#details')?.innerText.includes('Review refreshed 100-note hierarchy')")
+                # Track membership comes from the refreshed plan, not an ID list in the viewer.
+                changed = next(task for task in data["tasks"] if task["id"] == "29")
+                changed["track"] = "shared"
+                data_file.write_text(json.dumps(data))
+                call("browsingContext.reload", {"context": context, "wait": "complete"})
+                wait_for("document.querySelector('#focus-task')?.options.length > 0")
+                self.assertIn("29", picker_ids())
+                changed["track"] = "model"
+
+                invalid = data["tasks"][0]
+                saved_track = invalid["track"]
+                invalid["track"] = "unknown"
+                data_file.write_text(json.dumps(data))
+                call("browsingContext.reload", {"context": context, "wait": "complete"})
+                wait_for("document.querySelector('#graph-status')?.textContent.includes('Invalid task track')")
+                del invalid["track"]
+                data_file.write_text(json.dumps(data))
+                call("browsingContext.reload", {"context": context, "wait": "complete"})
+                wait_for("document.querySelector('#graph-status')?.textContent.includes('Invalid task track')")
+                invalid["track"] = saved_track
                 data["links"][0]["target"] = "99"
                 data_file.write_text(json.dumps(data))
                 call("browsingContext.reload", {"context": context, "wait": "complete"})

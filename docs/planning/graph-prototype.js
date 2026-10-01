@@ -4,6 +4,7 @@
   const statusElement = document.getElementById('graph-status');
   const detailsElement = document.getElementById('details');
   const taskSelect = document.getElementById('focus-task');
+  const trackSelect = document.getElementById('track');
   const depthSelect = document.getElementById('depth');
   const directionSelect = document.getElementById('direction');
   const inputsCheckbox = document.getElementById('show-inputs');
@@ -30,6 +31,13 @@
     WAITING: 'waiting',
   };
 
+  const trackLabels = {
+    release: 'Required release',
+    model: 'Optional model',
+    shared: 'Shared',
+    historical: 'Historical experiment',
+  };
+
   function readPlan(data) {
     if (!data || !Array.isArray(data.tasks) || !Array.isArray(data.links)) {
       throw new Error('The task file needs tasks and links arrays');
@@ -41,6 +49,9 @@
         typeof task.description !== 'string' || !Object.hasOwn(statusKeys, task.status) ||
         foundTasks.has(task.id)) {
         throw new Error(`Invalid or duplicate task ${task?.id ?? '(missing ID)'}`);
+      }
+      if (!Object.hasOwn(trackLabels, task.track)) {
+        throw new Error(`Invalid task track for ${task.id}`);
       }
       foundTasks.set(task.id, {...task, statusKey: statusKeys[task.status]});
     }
@@ -70,8 +81,27 @@
     return `${task.id} · ${task.title}`;
   }
 
+  function matchesTrack(task) {
+    return trackSelect.value === 'both' || task.track === 'shared' ||
+      task.track === trackSelect.value;
+  }
+
+  function updateTaskSelect() {
+    const eligible = sortedTasks().filter(matchesTrack);
+    if (!eligible.some(task => task.id === focusId)) focusId = eligible[0]?.id;
+    taskSelect.replaceChildren(...eligible.map(task => {
+      const option = document.createElement('option');
+      option.value = task.id;
+      option.textContent = displayName(task.id);
+      return option;
+    }));
+    taskSelect.value = focusId || '';
+  }
+
   function visibleTaskIds() {
-    if (allMode) return new Set(tasks.keys());
+    if (!focusId) return new Set();
+    const available = id => matchesTrack(tasks.get(id));
+    if (allMode) return new Set([...tasks.keys()].filter(available));
     const visible = new Set([focusId]);
     let frontier = new Set([focusId]);
     const depth = Number(depthSelect.value);
@@ -80,10 +110,12 @@
       const next = new Set();
       for (const link of links) {
         if (link.helpful && !inputsCheckbox.checked) continue;
-        if (direction !== 'after' && frontier.has(link.target) && !visible.has(link.source)) {
+        if (direction !== 'after' && frontier.has(link.target) &&
+          available(link.source) && !visible.has(link.source)) {
           next.add(link.source);
         }
-        if (direction !== 'before' && frontier.has(link.source) && !visible.has(link.target)) {
+        if (direction !== 'before' && frontier.has(link.source) &&
+          available(link.target) && !visible.has(link.target)) {
           next.add(link.target);
         }
       }
@@ -111,9 +143,14 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.textContent = displayName(link[otherEnd]);
-      if (link.label) {
+      const relatedTask = tasks.get(link[otherEnd]);
+      const annotations = [link.label];
+      if (!matchesTrack(relatedTask)) {
+        annotations.push(`${trackLabels[relatedTask.track]} · outside this view`);
+      }
+      if (annotations.some(Boolean)) {
         const label = document.createElement('small');
-        label.textContent = link.label;
+        label.textContent = annotations.filter(Boolean).join(' · ');
         button.append(label);
       }
       button.addEventListener('click', () => chooseFocus(link[otherEnd]));
@@ -125,6 +162,12 @@
   function updateDetails() {
     const task = tasks.get(focusId);
     detailsElement.replaceChildren();
+    if (!task) {
+      const empty = document.createElement('p');
+      empty.textContent = 'No tasks in this track.';
+      detailsElement.append(empty);
+      return;
+    }
     const heading = document.createElement('h2');
     heading.textContent = displayName(task.id);
     detailsElement.append(heading);
@@ -132,6 +175,10 @@
     status.className = `task-status ${task.statusKey}`;
     status.textContent = task.status;
     detailsElement.append(status);
+    const track = document.createElement('p');
+    track.className = 'task-track';
+    track.textContent = task.track === 'shared' ? 'Shared · required release and optional model' : trackLabels[task.track];
+    detailsElement.append(track);
     if (task.description) {
       const description = document.createElement('p');
       description.className = 'description';
@@ -154,6 +201,7 @@
 
   function render() {
     const generation = ++renderGeneration;
+    updateTaskSelect();
     const visible = visibleTaskIds();
     const visibleLinks = new Set(links.filter(link => visible.has(link.source) &&
       visible.has(link.target) && (!link.helpful || inputsCheckbox.checked))
@@ -168,14 +216,15 @@
       graph.nodes().forEach(node => {
         const task = tasks.get(node.id());
         const hidden = hiddenByTask.get(node.id());
-        node.data('label', `${task.id} · ${task.title}${hidden ? `\n+${hidden} other links` : ''}`);
+        node.data('label', `${task.id} · ${task.title}\n${trackLabels[task.track]}${hidden ? `\n+${hidden} other links` : ''}`);
         node.toggleClass('hidden', !visible.has(node.id()));
         node.toggleClass('focused', node.id() === focusId);
       });
       graph.edges().forEach(edge => edge.toggleClass('hidden', !visibleLinks.has(edge.id())));
     });
     const hiddenLinks = links.length - visibleLinks.size;
-    const summary = `Showing ${visible.size} of ${tasks.size} tasks · ${hiddenLinks} other links hidden.`;
+    const viewLabel = trackSelect.value === 'both' ? 'Both tracks' : trackLabels[trackSelect.value];
+    const summary = `${viewLabel} · Showing ${visible.size} of ${tasks.size} tasks · ${hiddenLinks} other links hidden.`;
     statusElement.textContent = `${summary} Arranging layout…`;
     taskSelect.value = focusId;
     depthSelect.disabled = allMode;
@@ -184,6 +233,10 @@
     backButton.disabled = history.length === 0;
     focusButton.disabled = !allMode;
     updateDetails();
+    if (!visible.size) {
+      statusElement.textContent = `${summary} No tasks in this track.`;
+      return;
+    }
     const model = {
       id: 'release-plan',
       layoutOptions: {
@@ -247,8 +300,10 @@
 
   function chooseFocus(id) {
     if (!tasks.has(id)) return;
-    if (id !== focusId) history.push(focusId);
+    if (focusId && id !== focusId) history.push({id: focusId, track: trackSelect.value});
     focusId = id;
+    const task = tasks.get(id);
+    if (!matchesTrack(task)) trackSelect.value = task.track === 'historical' ? 'both' : task.track;
     allMode = false;
     render();
   }
@@ -274,7 +329,7 @@
       wheelSensitivity: 0.17,
       style: [
         {selector: 'node', style: {
-          shape: 'round-rectangle', width: 205, height: 78,
+          shape: 'round-rectangle', width: 205, height: 94,
           'background-color': '#2c3a49', 'border-color': '#8da3b8',
           'border-width': 2, color: '#f0f5fa', 'font-size': 12,
           'font-weight': 600, label: 'data(label)', 'text-wrap': 'wrap',
@@ -313,14 +368,9 @@
       const response = await fetch('release-plan.json', {cache: 'no-store'});
       if (!response.ok) throw new Error(`The task file returned HTTP ${response.status}`);
       ({tasks, links} = readPlan(await response.json()));
-      for (const task of sortedTasks()) {
-        const option = document.createElement('option');
-        option.value = task.id;
-        option.textContent = displayName(task.id);
-        taskSelect.append(option);
-      }
       focusId = tasks.has('02') ? '02' : sortedTasks()[0].id;
       createGraph();
+      trackSelect.addEventListener('change', render);
       taskSelect.addEventListener('change', () => chooseFocus(taskSelect.value));
       depthSelect.addEventListener('change', () => { allMode = false; render(); });
       directionSelect.addEventListener('change', () => { allMode = false; render(); });
@@ -329,7 +379,9 @@
       focusButton.addEventListener('click', () => { allMode = false; render(); });
       backButton.addEventListener('click', () => {
         if (!history.length) return;
-        focusId = history.pop();
+        const previous = history.pop();
+        focusId = previous.id;
+        trackSelect.value = previous.track;
         allMode = false;
         render();
       });

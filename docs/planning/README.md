@@ -11,11 +11,12 @@ and model comparison. Semantic review happens outside the GPU rental.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user
-does not need to edit it. Each task has a two-digit `id`, `title`, `status`, and
-plain-text `description`. Links run from prerequisite `source` to dependent
-`target`, with `kind` set to `required` (needed to finish) or `helpful` (an
+does not need to edit it. Each task has a two-digit `id`, `title`, `status`,
+`track`, and plain-text `description`. Links run from prerequisite `source` to
+dependent `target`, with `kind` set to `required` (needed to finish) or `helpful` (an
 input that does not block finishing); `label` is optional. The browser rejects
-missing endpoints, duplicate IDs or links, and unknown statuses or link kinds.
+missing endpoints, duplicate IDs or links, and unknown statuses, tracks or
+link kinds.
 The written decision record remains the source for requirements, rationale,
 approvals, and open questions. Task readiness is not authorization to begin.
 
@@ -119,6 +120,23 @@ versions remain recoverable from Git, not as a competing planning view.
 
 ## Focused task graph
 
+The track selector defaults to **Required release**. **Optional model** shows the
+distillation work; **Both** includes the entire plan. Tasks marked **Shared**
+appear in both track views as the same task, not duplicate records. Earlier
+cycle/navigation experiments are marked **Historical experiment** and remain
+accessible in Both, without becoming current prerequisites.
+
+The `track` field is `release`, `model`, `shared`, or `historical`. It describes
+which views include the task, not its readiness or dependency strength. Shared
+HDBSCAN and separate-title work remains conditional on the chosen workflow.
+Statuses, arrows, task scope and open method choices are unchanged.
+
+Track selection filters the task picker and graph, including step expansion
+and the all-matching view. It preserves the steps, direction and helpful-input
+settings and composes with completed-task filtering. The details panel still
+lists every direct link and labels tasks outside the selected track. Following
+one switches to its track; Previous task restores the prior task and track.
+
 Open [the planning root](index.html) on the tailnet host for the
 read-only dependency view. It loads `release-plan.json` on every visit and
 arranges the graph automatically. It does not change the draft plan.
@@ -207,7 +225,8 @@ Open `http://127.0.0.1:8000/` in a browser on the same machine.
 ## Browser verification
 
 `tests/test_planning_graph_prototype.py` opens the planning root in isolated
-headless Firefox and verifies rendering, focus and step expansion, completed-task
-filtering, live task-data refresh and invalid-input errors. It also checks that
+headless Firefox and verifies rendering, focus and step expansion, track views,
+cross-track navigation, completed-task filtering, live task-data refresh and
+invalid-input errors. It also checks that
 the obsolete draw.io files and navigation link are absent. The test requires
 Firefox and Python's `websocket-client` package; it uses only local resources.

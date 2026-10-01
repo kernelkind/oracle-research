@@ -2,168 +2,196 @@
   "tasks": [
     {
       "id": "01",
+      "track": "shared",
       "title": "Fix subject and mask prompts",
       "status": "COMPLETE",
       "description": "Subject and mask prompts finished."
     },
     {
       "id": "02",
+      "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
       "description": "Current: hierarchy investigation using per-post subject hierarchies and masks; no production workflow selected.\n100 posts processed. Isolated tests combined nodes judged equivalent, repeated seven changed comparisons and applied 13 ancestor links; redundant browsing shortcuts were omitted.\nNine further Food-ancestor answers are applied in a separate continued test export. Food still reaches 50 posts; the nine added branches provide more browsing routes, not new posts.\nRemaining review: repeated Food preparation/ingredients nodes; bagel-making and pie-making branches disconnected from Food; unresolved relationship judgments, including the experimental Dietary practices / Diets merge.\nOpen: general conflict handling, broader pair selection and production adoption.\nCompletion: a useful 100-note hierarchy accepted in the user's browsing review. Launch-scale construction is not this completion gate.\nThe original LG01 hierarchy and earlier HR02/HDBSCAN evidence remain unchanged. Task 25 is complete for HR02, not proof that the new construction work is finished."
     },
     {
       "id": "03",
+      "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
       "description": "Corpus preparation underway: inspect collected data and prepare proposed 200/300/500-note inputs. Broader hierarchy tests have not started; they still need the reviewed 100-note hierarchy.\n200: within-node note ordering + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nTESTS START WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
+      "track": "shared",
       "title": "Define node sort score",
       "status": "IN PROGRESS",
       "description": "Define and validate one sorting score per note within a hierarchy node, including its inputs, output format and how multiple masks contribute if used. Prominence and relevance are candidate components, not fixed requirements. No final formula or model inputs are selected.\nSaved Coffee/Eggs experiments test candidate scores; no production method is adopted.\nIn launch scope and actively worked on. 27 applies the scoring definition to order notes."
     },
     {
       "id": "05",
+      "track": "model",
       "title": "Prepare pilot training data",
       "status": "WAITING",
       "description": "Model track. Prepare training and separate evaluation notes for the larger fine-tuning pilot (06), using selected teachers and including masks. Additional model outputs needed for sorting remain undecided; follow the method defined in 04 rather than assuming prominence.\nThe preliminary 100-note experiment (29) uses data already available; it does not wait for this task.\nWAITING FOR 04 + 17"
     },
     {
       "id": "06",
+      "track": "model",
       "title": "Choose model through larger fine-tuning pilot",
       "status": "WAITING",
       "description": "Model track. Larger model-selection pilot, originally envisaged at ~1,000 notes; exact dataset size remains open. The preliminary 100-note experiment is separate task 29.\nFormat examples and compare untuned versus trained quality, speed and cost for masks and any agreed additional outputs; sorting-related outputs are not yet decided.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nWAITING FOR 05; TRAINING SETUP 18 COMPLETE"
     },
     {
       "id": "07",
+      "track": "model",
       "title": "Generate full training data",
       "status": "WAITING",
       "description": "Model track. Produce masks and any agreed additional outputs to train the distilled model. Sorting-related outputs and quality checks remain open. The September 27 data-readiness target no longer constrains the release.\nAFTER SUCCESSFUL 500-NOTE HIERARCHY RUN (03)\n+ TEACHER SELECTION (17); VOLUME DECISION OPEN"
     },
     {
       "id": "08",
+      "track": "model",
       "title": "Distill and package the model",
       "status": "WAITING",
       "description": "Model track. Train on Vast.ai; check unseen-note masks, any agreed additional outputs and runtime.\nPrepare weights, supporting files, usage instructions and evaluation results.\nVerify loading and generation of the agreed outputs; sorting-related outputs remain undecided.\nWAITING FOR 06 + 07"
     },
     {
       "id": "09",
+      "track": "shared",
       "title": "Choose notes for launch hierarchy",
       "status": "WAITING",
       "description": "Select 2,000–5,000 English kind-1 posts (no replies/quotes) from the 3.51M candidates — the decided PoC release band — and freeze note IDs.\nWAITING FOR 20 + SELECTION"
     },
     {
       "id": "10",
+      "track": "model",
       "title": "Check full-build time and cost",
       "status": "WAITING",
       "description": "Model track / scalability roadmap: can the distilled model generate the agreed outputs at launch scale, and the pipeline build and order the full hierarchy using the chosen methods, within budget? Sorting mechanism and related outputs remain undecided. Not a gate on the release.\nNEEDS 08 + 09 + 20 + 28"
     },
     {
       "id": "11",
+      "track": "model",
       "title": "Test hierarchy with the distilled model",
       "status": "WAITING",
       "description": "Model track: build a sample hierarchy from the distilled model's outputs, using the chosen construction and note-sorting methods; check browsing and complete-pipeline operation. Sorting-related model outputs remain undecided. Passing this gates the model release.\nNEEDS 03 + 08"
     },
     {
       "id": "12",
+      "track": "release",
       "title": "Build launch hierarchy snapshot",
       "status": "WAITING",
       "description": "Build the release snapshot: teachers generate subjects, masks and any agreed additional outputs over the frozen 2–5k corpus; the validated pipeline builds and orders the hierarchy fully automated, with no manual repair. The sorting mechanism and any related teacher outputs remain undecided. Check nodes, coverage, ranking and reproducibility. Completion requires the user's acceptance of this final snapshot in browsing review.\nFor release: runnable code + instructions, architecture and continual-update path matching this build, and the scalability roadmap.\nNEEDS 03 + 09 + 17\nAND BUDGET APPROVAL"
     },
     {
       "id": "13",
+      "track": "release",
       "title": "Define Nostr hierarchy protocol",
       "status": "IN PROGRESS",
       "description": "Protocol drafting has started: a reconstructed decision baseline and proposed node-record format are documented. Wording awaits review; open protocol choices remain unresolved.\nSpecify requests/responses for browsing nodes, paths and ordered notes, pagination and snapshot versions."
     },
     {
       "id": "14",
+      "track": "release",
       "title": "Build public hierarchy service",
       "status": "WAITING",
       "description": "Build service code that serves a saved snapshot over our Nostr protocol; verify it end to end locally and provide tested serving instructions. No operated hosting is required; hosting a demo is optional.\nSTART: 13 · TEST: 02 SNAPSHOT"
     },
     {
       "id": "15",
+      "track": "release",
       "title": "Build Notedeck hierarchy browser",
       "status": "IN PROGRESS",
       "description": "Integration preparation underway: inspect the existing UI and identify required browsing changes. Implementation has not started; it still waits for the protocol.\nBrowse hierarchy nodes and display their notes through our Nostr service; test service integration. Delivered as a branch published on the user’s fork.\nIMPLEMENTATION STARTS WITH 13; FINISH WITH 14"
     },
     {
       "id": "16",
+      "track": "release",
       "title": "Launch public hierarchy",
       "status": "WAITING",
       "description": "Publish the release package: snapshot, code and architecture, tested serving instructions, scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes 08 + 11; a hosted demo is optional.\nTARGET · OCTOBER 18"
     },
     {
       "id": "17",
+      "track": "shared",
       "title": "Compare teachers",
       "status": "IN PROGRESS",
       "description": "A/B test resulting hierarchies on the same notes. Compare subject and mask quality, speed, cost and terms. Additional teacher outputs needed for sorting remain undecided; evaluate them if required by the method defined in 04.\nMuse high vs Astra low; no teacher selected.\nFINISH WITH 04"
     },
     {
       "id": "18",
+      "track": "model",
       "title": "Prepare training code for the fine-tuning pilot",
       "status": "COMPLETE",
       "description": "Pilot setup complete: local VM tests cover all three candidate families, training, interruption/resume, save/reload and SSH deployment. The rebuilt image is published and verified private.\nPreliminary candidate execution and quality review are tracked in 29; larger-pilot model selection is tracked in 06. Setup completion does not select a model or complete the model track."
     },
     {
       "id": "20",
+      "track": "shared",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
       "description": "Required release: estimate time, memory and cost for teachers to generate subjects, masks and any agreed additional outputs over 2–5k posts, plus the chosen hierarchy-construction and note-sorting methods. Sorting-related outputs remain undecided. Use teacher measurements and observed workload counts.\nOptional model track: retain pilot/distilled-model generation measurements as a separate estimate. Shared construction measurements can inform both where applicable; model-track measurements do not block the release estimate.\nInclude graph processing and membership recovery where used.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED."
     },
     {
       "id": "21",
+      "track": "shared",
       "title": "Assess HDBSCAN at launch scale",
       "status": "READY TO START",
       "description": "HDBSCAN use remains undecided. This assessment is required only if HDBSCAN is used.\nCan HDBSCAN form our mask-vector groups at the intended corpus size within budget and deadline? Identify work needed."
     },
     {
       "id": "22",
+      "track": "shared",
       "title": "Measure SSE and hierarchy-construction costs",
       "status": "READY TO START",
       "description": "Measure time, memory and cost for SSE and the construction stages used in the chosen workflow, including subject matching, merging, relationship checks and graph processing where used.\nMeasure separate node-title generation only if the workflow includes it; then include title input growth with group size.\nRetain TRUE's measured baseline as historical evidence, not the assumed relationship method. The production workflow remains open."
     },
     {
       "id": "23",
+      "track": "shared",
       "title": "Fix and validate node-title prompt",
       "status": "COMPLETE",
       "description": "Required only if the chosen workflow uses separate node-title generation; that choice remains open.\nCompleted for HR02: Astra-low v38 titles are saved for all 129 groups, with two rejected titles still flagged in the saved build."
     },
     {
       "id": "24",
+      "track": "shared",
       "title": "Recover missing node memberships",
       "status": "READY TO START",
       "description": "Required only if HDBSCAN is used; that choice remains open.\nDevelop and validate recovery beyond the six Coffee/Tea nodes. Include masks HDBSCAN left unassigned or grouped elsewhere.\nRelevant-content coverage remains required in 03 whichever workflow is used."
     },
     {
       "id": "25",
+      "track": "historical",
       "title": "Handle node equivalence and TRUE cycles",
       "status": "COMPLETE",
       "description": "Completed for HR02: exact-mask-set consolidation and reversible TRUE-cycle handling are implemented and tested.\nThe saved merged graph is named and browsable; its rules remain provisional.\nNot a prerequisite for 02 or 03. The newer hierarchy's merging and conflict decisions remain in 02."
     },
     {
       "id": "26",
+      "track": "historical",
       "title": "Collapse equal-note navigation steps",
       "status": "VALIDATION PENDING",
       "description": "Earlier mask-group navigation rule: skip a child when its complete post-ID set equals its parent's. Implemented and regression-tested, including shared children; validation remains pending.\nNot a prerequisite for 03. Any use in the newer hierarchy needs an explicit decision under 02. Preserve note sets, masks and provenance."
     },
     {
       "id": "27",
+      "track": "shared",
       "title": "Order notes within each node",
       "status": "IN PROGRESS",
       "description": "Implement and validate note ordering within each hierarchy node using the score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope.\nSaved Coffee/Eggs trials are experimental, not approval of a production method.\nFINISH WITH 04"
     },
     {
       "id": "28",
+      "track": "shared",
       "title": "Implement and validate the launch-scale build",
       "status": "WAITING",
       "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used.\nThe relationship method remains open.\nNEEDS 03 + 22; ALSO 21 IF HDBSCAN IS USED."
     },
     {
       "id": "29",
+      "track": "model",
       "title": "Run preliminary 100-note fine-tuning experiment",
       "status": "IN PROGRESS",
       "description": "Model track. Use existing data: 80 training notes, 20 evaluation notes; no prominence. One fine-tune per candidate learns both subject and mask prompts. Compare untuned and trained outputs, quality, speed and cost.\nAll three candidates have saved training runs, matching reload checks and trained evaluations. Qwen's baseline is saved; the recovered Gemma baseline subjects still need mask generation; candidate comparison and semantic review remain unfinished.\nThis informs the larger pilot (06), not final model selection. Existing experiment settings and $25 total approval remain unchanged.\nSUBJECT/MASK PROMPTS 01 + TRAINING SETUP 18 COMPLETE"
