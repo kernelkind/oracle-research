@@ -4593,11 +4593,11 @@ The result supports supplying one node meaning consistently when assessing
 prominence, but this single-node developmental trial does not select a general
 node-description method or production prompt. Next recommended work is the
 same bounded consistency check for `coffeechain`, using one source-grounded
-meaning and fixed relevance/SSE/formula. The user approved the prepared trial
+meaning and fixed relevance/SSE/formula. The user approved the completed trial
 below. Broader generation, hierarchy repairs, recursion and production adoption
 remain open or outside the authorized comparison.
 
-**Fixed coffeechain meaning approved October 1 (prepared):**
+**Fixed coffeechain meaning approved October 1 (completed):**
 
 The user approved the same check across the eleven saved direct-member posts
 in `coffeechain` (`S3c005e1a4f`). All eleven include the hashtag. Unlike the
@@ -4613,30 +4613,109 @@ trial meaning: the #coffeechain community on Nostr, where people share coffee
 experiences and exchange morning greetings. This is a trial interpretation,
 not proof of every author's intent or a production node-description method.
 
-Draft **PPv30-coffeechain-v1** changes only PPv30-node-v1's interpretation
+Tested **PPv30-coffeechain-v1** changes only PPv30-node-v1's interpretation
 paragraph through native revision. The allocation instructions, schema,
 complete post/title inputs, Astra-low subscription settings and eleven saved
 baselines stay fixed. Its [prompt](prominence-prompt-goal-v1/ppv30-coffeechain-v1/PPv30-coffeechain-v1.md),
 exact edits and revision receipt are maintained sources. Native
 `prepare --from` with eleven `--only` IDs produces
 `experiments/ppv30-coffeechain-fixed-meaning-v1`. Four native pre-run agent
-observations inspect coffee experience versus hashtag association, unrelated
+observations inspected coffee experience versus hashtag association, unrelated
 jokes, morning greetings versus household details, and the unusual coffee-shop
-occasion. No exact prominence, numerical gap or strict complete order is set.
+occasion. They prescribed no exact prominence, numerical gap or strict order.
 
-All eleven cases are unrun; execution is bounded to twenty-two attempts
-including eligible provider retries, with zero subscription incremental cash
-and no paid fallback or rentals. Forty-five existing comparison, ranking,
-selection and actual local T5 worker checks pass. Relevance will reuse the
-exact preceding SP subject-plus-context SSE encoding, without a worker run or
-new byte/token selections. Node title, SSE learned layers, formula and highest
-selected-entry post rule remain fixed. Work grows with selected post/node
-inputs, full-post tokens and one short repeated meaning, not all-post/all-node
-inputs. All 110 protected source/prompt/hierarchy/result/review hashes remain
-unchanged. No SP/MP generation, hierarchy repair, other-node change or workflow/
-production code change is included. Preparation, evidence and checks are ignored
-under `experiments/ppv30-coffeechain-fixed-meaning-v1-checks`; only reusable
-prompts, maintained documentation and zero-cash accounting are tracked.
+All eleven cases completed in eleven fresh, valid calls, without retries,
+failures or reuse. The authorized bound was twenty-two attempts including
+eligible provider retries, with zero subscription incremental cash and no paid
+fallback or rentals. Forty-five existing comparison, ranking, selection and
+actual local T5 worker checks pass. Relevance reuses the exact preceding SP
+subject-plus-context SSE encoding; native `prominence_cosine.py prepare
+--include-subject --post-order highest --reuse-encoding` and `collect` perform
+no worker run, new vectors or byte/token selections. All 738 encoding rows
+and eleven relevance values are bit-identical. Node title, SSE learned layers,
+formula and highest selected-entry post rule remain fixed. Work grows with
+selected memberships and full-post text plus one short repeated meaning.
+Only eleven own-node cosine values are emitted, not a new cross-node matrix.
+
+| Post (note-ID prefix) | Old prominence | Fixed-meaning prominence | Fixed relevance | Old sorting score | New sorting score |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Coffee with cream and egg yolk (`f4c5aa5f`) | 100 | 100 | 0.926226 | 92.622641 | 92.622641 |
+| Another coffee / Sunday greeting (`737eaa89`) | 55 | 95 | 0.947389 | 52.106416 | 90.001991 |
+| Personal home roasting (`056e6466`) | 12 | 100 | 0.853411 | 10.240937 | 85.341143 |
+| Weather / hot coffee / greeting (`82d3d344`) | 30 | 65 | 0.912517 | 27.375512 | 59.313610 |
+| Weird coffeechain / coffee-shop rave (`ccbd903d`) | 80 | 70 | 0.805875 | 64.469989 | 56.411241 |
+| Greeting / burrito / coffee / pet (`ee3404d5`) | 25 | 48 | 0.944882 | 23.622053 | 45.354342 |
+| Music in the coffee shop (`46ed60cb`) | 30 | 45 | 0.914767 | 27.443021 | 41.164532 |
+| Greeting / jetlag / breakfast (`a9b49c0a`) | 18 | 35 | 0.804268 | 14.476828 | 28.149388 |
+| Greeting / household plans (`61bdef2b`) | 10 | 27 | 0.951503 | 9.515030 | 25.690581 |
+| Greeting / gym / breakfast (`bd357fcf`) | 10 | 25 | 0.914744 | 9.147436 | 22.868590 |
+| Red-flag jokes / many tags (`41efa59d`) | 2 | 1 | 0.974300 | 1.948600 | 0.974300 |
+
+The home-roasting post now represents its coffee experience and personal taste
+journey, not just the twelve-point hashtag association. The coffee-with-cream/
+egg-yolk post retains prominence 100 and unchanged sorting score. The red-flag
+jokes remain unrelated: their body receives represented zero and only the
+hashtag affiliation receives one point. These are the three agent-accepted
+interpretation/separation or preservation checks, not new user judgments or
+approval of calibrated percentages and the complete strict order.
+
+The fixed meaning also includes morning greetings. This increases prominence
+for several mixed greetings while household safety, chicks, workout, travel,
+weather, burrito ingredients and pet observations remain separate meaning.
+Breakfast is not automatically treated as coffee in the jetlag or gym posts.
+Ten prominence values change; coffee with cream and egg yolk stays at 100.
+
+The weather/greeting post has prominence 65 below the rave's 70, but fixed
+relevance 0.912517 above 0.805875 makes its sorting score 59.313610 above
+56.411241. This reverses their saved sorting order without establishing an
+improvement or regression: that strict pair remains unsettled. Another-coffee/
+Sunday-greeting also ranks above home roasting after relevance, despite
+prominence 95 below 100. Their exact shares and strict relative placement are
+uncertain. The result supports explicit shared meaning for this developmental
+node; it does not prove that every increased prominence or changed order is
+better. The separate Coffee node and all earlier user-accepted checks are
+untouched, not relabeled or rerun.
+
+Eleven native post-run agent assessments accept the three stated semantic
+checks and retain eight uncertainties. The original four pre-run comments are
+preserved; no user labels are added. Comments bind exact prompt/input/output
+and this native comparison hash. The native text-change report is mechanical,
+not a quality grade. The optional native prominence-viewer check is unavailable
+for this experiment: `subject_contexts` is not supported by that view. Review
+uses native `show` and `review --case`; no UI/workflow extension is performed.
+Both the initially missing `--ui` flag and the corrected unsupported-adapter
+result are preserved in the check log; the viewer check is not reported passed.
+
+Independent checks verify all eleven exact complete-post/title inputs, saved
+baselines, allocations, unchanged subjects/contexts, cosine/products, post
+maxima and the complete native order. The largest difference from an
+independent cosine recomputation is 1.1102230246251565e-16. The comparison is
+`experiments/ppv30-coffeechain-fixed-meaning-v1/relevance-v1/comparison.json`,
+SHA256 `4354f4f3b2a7e06c7fee4e330280e1f5ed5b17550d1caf39fbdc638d838bedf0`.
+All 110 earlier protected source/prompt/hierarchy/result/review hashes and
+new frozen prompt/plan/receipt/result/comparison hashes remain unchanged.
+A concurrent change to `bounded_hierarchy_graph.py` was inspected before
+inference and recorded through native code-upgrade provenance with an empty
+result prefix. That unrelated module is not called by this subject-context
+prominence run; actual input/rendering/execution code and settings were
+unchanged. The task changes no workflow or production code, hierarchy, source
+memberships, SP/MP inputs or other-node results. Plans, model outputs, reviews
+and checks remain ignored artifacts under the experiment and
+`experiments/ppv30-coffeechain-fixed-meaning-v1-checks`.
+
+Native usage is 8,184 input tokens and 1,721 output tokens including 234
+reasoning tokens, with no reported cache tokens. Catalog reference $0.167890
+is separate from incremental subscription cash $0, unavailable provider billing
+and unmeasured weekly quota. Only this zero-cash reservation is settled;
+lifetime monetary totals and unrelated ledger entries remain unchanged.
+
+With GrowNostr and coffeechain now tested, the next recommendation is a bounded
+two-node check of obtaining one consistent meaning automatically from the
+existing saved SP subjects and contexts. This would test whether the supplied
+meanings can come from existing node inputs, with those inputs inspected before
+any new calls. It has not begun or been adopted. General description generation,
+calibrated prominence, hierarchy repairs, recursion and production adoption
+remain open or outside this completed comparison.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

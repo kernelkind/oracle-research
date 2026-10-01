@@ -1756,14 +1756,14 @@ is 12,202 input and 2,560 output tokens including 80 reasoning tokens; catalog
 reference $0.250020 remains separate from cash $0 and unmeasured quota. 
 
 The agent recommended checking the same fixed-meaning approach on `coffeechain`
-next, with relevance, SSE and formula fixed; the user approved the prepared
+next, with relevance, SSE and formula fixed; the user approved the completed
 trial below. These developmental trials do not establish a general description
 method, broader sorting quality or production adoption.
 
-**Fixed coffeechain meaning approved October 1 (prepared):** The user's
-"proceed" authorizes one consistent meaning across the eleven saved direct-member
+**Fixed coffeechain meaning approved October 1 (completed):** The user's
+"proceed" authorized one consistent meaning across the eleven saved direct-member
 posts in `coffeechain` (`S3c005e1a4f`). Their existing prominence answers already
-mostly use a coffee-sharing community meaning. The
+mostly used a coffee-sharing community meaning. The
 [Nostr community guide](https://quillie.github.io/nostr-wegweiser/),
 [a public author greeting](https://thegrinder.npub.pro/post/note1atxm208fgp2nq8fklknqseglftssann06r8y09gmq0re3ea6dt7q0xern2/)
 and complete saved posts ground the trial definition: the #coffeechain community
@@ -1771,20 +1771,51 @@ on Nostr, where people share coffee experiences and exchange morning greetings.
 The earlier user correction to preserve `#` remains recorded; neither the saved
 sorting title nor hierarchy changes in this comparison.
 
-Draft **PPv30-coffeechain-v1** revises only the interpretation paragraph,
-retaining complete original post/title inputs, schema, allocations, Astra-low
-subscription settings and eleven saved baselines. Native preparation and four
-pre-run agent observations precede inference; exact percentages, numerical gaps
-and a strict complete order are unset. All eleven cases are unrun, bounded to
-twenty-two attempts including eligible provider retries, with incremental cash
-zero and no paid fallback. Forty-five relevant checks pass. Relevance will reuse
-exact SP subject-plus-context encoding; SSE learned layers, title, formula and
-highest-entry post rule remain fixed. All 110 protected source/result/review
-hashes remain unchanged. No new vectors, SP/MP generation, other-node or
-workflow/production change, hierarchy repair or recursion is authorized.
-[Model-runner record](../../sse_multivector/model-runner.md) supplies the prompt,
-source grounding and frozen scope. General description generation, exact
-prominence calibration and production adoption remain open.
+Tested **PPv30-coffeechain-v1** revises only the interpretation paragraph,
+retaining complete original post/title inputs, schema, allocation instructions,
+Astra-low subscription settings and eleven saved baselines. Four pre-run agent
+observations prescribed no exact percentages, gaps or strict complete order.
+Eleven fresh valid calls completed with no retries, failures or reuse, within
+the twenty-two-attempt bound and zero-cash reservation. Relevance reuses exact
+SP subject-plus-context encoding; all 738 cached rows and eleven relevance
+values stay bit-identical. SSE learned layers, title, formula and highest-entry
+post rule stay fixed, with no new worker run or encoder selection.
+
+Home roasting changes from prominence 12 to 100 and sorting score 10.240937 to
+85.341143: the supplied coffee-community meaning now counts the coffee
+experience itself. Coffee with cream/egg yolk stays at prominence 100 and
+sorting score 92.622641. Red-flag jokes retain represented zero in their body,
+with only a small tag affiliation (2 to 1). Those semantic checks are accepted
+by agent review; exact percentages and the strict complete order remain open.
+The meaning includes morning greetings, increasing several mixed-post shares
+while unrelated weather, travel, workout, household and food details remain
+separate. The weather/greeting post moves above the rave after unchanged
+relevance (59.313610 versus 56.411241); that pair is unsettled. These changes do
+not prove every new value/order is better. No prior Coffee-node user judgment
+is transferred to this different node or overwritten.
+
+Eleven post-run native agent reviews record three semantic accepts and eight
+uncertainties, preserving the four pre-run comments and all user labels.
+Forty-five relevant tests pass, including actual local T5 integration. Exact
+inputs/baselines/allocations, reused cosines, products, post maxima and complete
+order verify; all 110 protected earlier source/result/review hashes remain
+unchanged. The optional native viewer check is unavailable for `subject_contexts`
+inputs; saved posts and answers are reviewed through native `show` and
+`review --case`, with no UI extension. A concurrent unused graph-module change
+is separately audited in native code-upgrade provenance before the first call;
+this task makes no workflow/production code change or hierarchy repair.
+[Model-runner results](../../sse_multivector/model-runner.md) retain the full
+ordering, source grounding, hashes and verification limits.
+
+Native usage is 8,184 input and 1,721 output tokens including 234 reasoning;
+catalog reference $0.167890 is separate from incremental cash $0 and unmeasured
+quota. 
+All other nodes, source memberships, SP/MP data and earlier agreed checks are
+untouched. The agent recommends a bounded two-node check of obtaining one
+consistent meaning automatically from existing saved SP subjects and contexts,
+inspecting those inputs before any new calls. That check has not begun.
+General description generation, calibrated prominence and production adoption
+remain open; no broader work or recursion is authorized by this comparison.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
