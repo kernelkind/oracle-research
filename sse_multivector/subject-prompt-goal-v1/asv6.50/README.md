@@ -42,14 +42,24 @@ the subscription WebSocket route, four concurrent requests, a 1,800-second
 deadline, no output cap, no paid fallback and `--repeat` to prevent request reuse.
 
 Four requests were sent, with three mechanically valid hierarchies and one
-provider failure. No retries, request reuse or baseline regeneration occurred.
-This was a reproduction run, not a prompt A/B comparison; native cases have no
-paired baseline. The agent assessed complete outputs against the original posts
-and the saved Astra hierarchies, using headings to judge parent relationships.
+provider failure. That initial run made no retries or request reuses and did not
+regenerate the baseline. The user then explicitly required retrying N063.
+One additional request in
+`sse_multivector/experiments/sol61-xhigh-sp-scope-regression-n063-retry-v1/`
+returned a valid hierarchy. Shared `prepare --from ... --only N063 --repeat`
+preserved the exact case and every runner setting; `run --max-new-attempts 1`
+bounded the retry to one new call. The original failed receipt and the three
+completed outputs and reviews remain unchanged.
+
+This was a reproduction run, not a prompt A/B comparison. The initial cases
+have no paired baseline; the retry records the failed first attempt as its
+unavailable baseline. The agent assessed complete outputs against the original
+posts and the saved Astra hierarchies, using headings to judge parent
+relationships.
 
 | Post | Original branch failure | Complete-output finding |
 | --- | --- | --- |
-| N063 | Unavailable | The provider returned `server_is_overloaded` / `service_unavailable_error` without an answer. The runner classified it as `unknown`, so it was not retried. This gives no subject-quality evidence. |
+| N063 | Not reproduced on the authorized retry | General culinary fats and oils remain in the food branch at 1.7, with general olive oil, extra virgin olive oil and butter plus dish-specific children. The dish-specific ingredient parent at 2.1.1.1 has 15 dish-qualified children. All named ingredients and their general subjects remain covered. The first attempt returned `server_is_overloaded` / `service_unavailable_error`, classified as `unknown`; it supplied no subject-quality evidence. |
 | N074 | Reproduced | 9.1.2, Michael Pollan's combined real-food/moderation/mostly-plants advice, has single-part children at 9.1.2.1–9.1.2.3. Each drops the other restrictions. The separate general-advice branch correctly makes the individual recommendations siblings of the combination. |
 | N096 | Not reproduced in its original form | The general cooking steps sit under general techniques. The same pattern appears at 3.3.1.1, sautéing finely chopped onion, celery and carrot in olive oil, → 3.3.1.1.2, adding garlic after sautéing those vegetables. The child drops olive oil and finely chopped. |
 | N100 | Not reproduced in its original form | 3.3's byproduct-use children describe uses, with general materials preserved elsewhere. The same pattern appears at 7.1.2.1, providing chickens with cold water and sunflower seeds tomorrow, → separate water-only and seeds-only children. The combination also splits under 9.1. |
@@ -64,10 +74,14 @@ leaves separate grounding uncertainties: interpreting the duplicated "some some"
 as myoglobin for chickens, and inferring that the steaks were the vacuum-sealed
 object. Neither uncertainty is needed to establish its conjunction failure.
 
-The same parent-scope failure pattern appears in all three completed outputs.
-One output per post demonstrates recurrence, not a failure rate or general
-model comparison. Native receipts, complete answers and four agent reviews
-remain in ignored `sse_multivector/experiments/sol61-xhigh-sp-scope-regression-v1/`.
-There are no new user verdicts. ASv6.50 remains untested and unapproved; the
-recommended next step is testing it against these saved Sol outputs without
-rerunning completed ASv6.48 cases.
+After the retry, each regression post has one completed output. The same
+parent-scope failure pattern appears in N074, N096 and N100; no clear instance
+was found in the complete N063 retry output. This demonstrates recurrence in
+three observed answers, not a failure rate or general model comparison.
+Native receipts, complete answers and four initial agent reviews remain in
+ignored `sse_multivector/experiments/sol61-xhigh-sp-scope-regression-v1/`; the
+separate retry experiment retains its answer and one agent acceptance. User
+authorization of the retry is not a semantic verdict on the output. There are
+no new user verdicts. ASv6.50 remains untested and unapproved; the recommended
+next step is testing it against these saved Sol outputs without rerunning
+completed ASv6.48 cases.
