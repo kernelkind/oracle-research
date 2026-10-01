@@ -3770,11 +3770,10 @@ were created. The agent found no clear wrong order, but this trial demonstrates
 no added relevance benefit. It uses older ASv6.23 contexts and nine posts from
 one music corpus, with diagnostic assignments rather than automatic placement;
 it does not establish broad fresh-subject transfer or current SP quality.
-The agent recommends one bounded diagnostic: use the question's exact original
-text as its relevance input, retaining the same prominence answers and all
-other inputs, to distinguish saved-context wording from the encoder's treatment
-of the question. That diagnostic has not begun. Production adoption remains
-open; prompt, formula and original artifacts remain unchanged.
+The user approved using the question's exact original text as its relevance
+input with prominence and all other inputs fixed. The completed diagnostic is
+recorded below. Production adoption remains open; prompt, formula and original
+artifacts remain unchanged.
 
 Native artifacts are under `experiments/ppv30-fresh-nonfood-v1`: frozen
 `experiment.json`, original `run/results.jsonl`, `after-run.json`, native
@@ -3801,6 +3800,62 @@ The existing cached offline CPU runtime ran `worker.py` with the prepared
 worker config between `prepare` and `collect`; `worker.log` records forty-five
 rows. `native-review.log` records the forty-three CLI agent reviews, with zero
 model calls. All artifacts remain ignored from the outset.
+
+**Music question: exact original text as relevance input.**
+
+The user approved the bounded diagnostic. Native `prominence_cosine.py prepare`
+keeps all forty-three original cases, three titles, complete posts and saved
+PPv30-node-v1 prominence answers. Only
+`fresh-S9f8ab11-N004-S001` and `fresh-S9f8ab11-N004-S002` use the exact original
+`What does music mean to you? ` as their standalone relevance text. Both select
+the full 29 UTF-8 bytes, including the trailing space, and share one encoder
+row. The SP carrier itself is unchanged. The existing `--relevance-source-text`
+option supports this directly; no workflow or production source change was
+needed. Native output is `experiments/ppv30-fresh-nonfood-v1/relevance-question-text-v1`.
+
+| Question relevance input | Relevance | Sorting score, prominence 100 |
+| --- | ---: | ---: |
+| Best saved SP context: “The question asks the reader what music means to them.” | .853925 | 85.392473 |
+| Exact original question | .845908 | 84.590802 |
+
+The sorting score decreases by .801671 and Music's order remains classical
+listening, Goa appraisal, AI-track credit, question, song inspiration/travel,
+and repost/algorithm defiance. Photography and Bitcoin orders are unchanged.
+The other question context, “The post's central topic.”, originally gave
+relevance .528183, so replacing it improves that individual case; however,
+the per-post maximum already came from the stronger second context. Replacing
+both makes their sorting scores identical and does not remove the question's
+lower position. This does not establish that all SP wording is irrelevant;
+it shows that exact question wording does not resolve this observed direction.
+The focused Music comparisons remain uncertain, with no clear error or
+benefit established. The agent recommends returning to broader saved-input
+transfer checks with context-only relevance and the formula fixed. No further
+trial or production input change is approved.
+
+The same cached offline CPU SSE runtime encoded forty-four rows: three titles,
+forty unchanged distinct contexts and the question's exact text. All complete
+byte spans and non-special token selections were verified, with unchanged
+checkpoint, model artifacts, worker and runtime identities. Thirty-seven other
+case node cosines/products are bit-identical; four differ on re-encoding by at
+most 6.143e-8 cosine and 1.598e-6 sorting-score points. All other input text and
+all complete orders remain unchanged. These numerical tolerances are checks
+on repeated encoding, not a semantic tie threshold. No original MP-mask replay
+controls exist on this path or are claimed. Forty-three independent
+cosines/products, eleven post maxima and all protected source/prompt/previous
+comparison hashes passed. Fourteen existing comparison tests passed in
+`workflow-tests.log`; there were no teacher calls, new teacher-token usage,
+paid resources or task budget-ledger edits. Another workstream's appended
+reservation was preserved without treating it as a sorting input change.
+
+Native `experiment.py review` recorded two additional uncertain agent comments
+on the question's two original cases, explicitly bound in their text to this
+comparison, preserving prior review history without creating user judgments.
+They share one complete-post/title input and are not independent observations.
+`native-review.log` records zero model calls; `verification-checks.log` records
+the protected-input, numerical and complete-order checks. Plan, request, worker
+receipt, vectors and comparison remain ignored from preparation onward.
+Comparison SHA256:
+`d64ce1d4cb0d5c7e88afd11a8447e4284a19175bb92adee2a80a5108bba94662`.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

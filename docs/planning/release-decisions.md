@@ -1353,11 +1353,28 @@ native agent case reviews accept ordering; nine uncertain cases share the three
 Music inputs. These are not user labels or an accuracy rate. All source hashes,
 complete context selections, independent products and post maxima passed;
 139 relevant source/regression tests passed before generation. Older SP wording
-and music-corpus selection limit generalization. The agent recommends testing
-the question's exact text as the relevance input while preserving prominence,
-before further expansion; that diagnostic has not begun. Production adoption
-remains open. [model-runner.md](../../sse_multivector/model-runner.md) records
-full orders, source protection and native evidence.
+and music-corpus selection limit generalization. The user then approved the
+question-text check below. Production adoption remains open.
+[model-runner.md](../../sse_multivector/model-runner.md) records full orders,
+source protection and native evidence.
+
+**Music question relevance check completed October 1:** both selected SP
+contexts for “What does music mean to you?” were replaced as relevance inputs
+by its exact original post, including the trailing space. All saved prominence
+values and other relevance inputs stayed fixed. Question prominence remains
+100; relevance changes from the best context's .853925 to .845908 and its
+sorting score from 85.392473 to 84.590802. All three full orders stay unchanged;
+the question remains below the Goa appraisal and AI-track credit in Music.
+Replacing its SP wording with the question itself does not remove that position
+or demonstrate an ordering improvement. The agent still finds these focused
+Music comparisons uncertain and recommends returning to broader saved-input
+transfer tests with context-only relevance and the formula fixed. No production
+input change is adopted and no further trial has begun. Native offline CPU
+preparation/collection used forty-four complete rows, with source hashes,
+independent products and post maxima verified. Re-encoding four other cases
+changed their sorting scores by at most .000001598; all input text and orders
+are preserved. Fourteen existing comparison tests passed; no teacher calls,
+new user judgments, paid resources or task accounting changes occurred.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
