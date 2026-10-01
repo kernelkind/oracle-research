@@ -1486,7 +1486,7 @@ result does not identify the cause of its lower relevance or establish a
 benefit from the strict focused-post order. The user approved a
 bounded wording diagnostic: replace “a node” with “a Bitcoin node” in the
 opening of a diagnostic copy, keeping other words, title, prominence and formula
-fixed. This checks sensitivity to explicitly naming Bitcoin; preparation is
+fixed. This checks sensitivity to explicitly naming Bitcoin; the completed check is
 recorded below. Original source posts and production input policy remain unchanged.
 
 Native offline CPU preparation/collection used thirty-three complete rows with
@@ -1500,21 +1500,38 @@ post, not independent labels. No teacher calls, new token usage, user judgments,
 paid resources or task accounting changes occurred. Production adoption remains
 open; [model-runner.md](../../sse_multivector/model-runner.md) records provenance.
 
-**Bitcoin privacy wording check approved October 1:** native preparation keeps
+**Bitcoin privacy wording check completed October 1:** native preparation keeps
 the same forty-five cases/five posts and replaces only the privacy post's
 opening “a node” with “a Bitcoin node” in its relevance input. Fourteen privacy
 entries share one complete 364-byte diagnostic copy; the exact 356-byte original
 and its source spans are separately retained. Prominence 100, title, formula
-and other contexts stay fixed. Thirty-three offline CPU rows are prepared with
+and other contexts stay fixed. Thirty-three offline CPU rows were encoded with
 the unchanged SSE model; no teacher generation or paid resources are involved.
 The shared `--relevance-source-replace` option adds explicit source-bound
 replacement support while preserving the default exact-text requirement. Its
 production-path integration test failed before implementation and passed after;
 142 relevant comparison, ranking, selection, experiment and worker tests passed.
 Saved subjects, masks, source posts, hierarchy, earlier comparisons and task
-accounting remain unchanged. This selected wording check is in progress;
-results and production adoption remain open. Native provenance and workflow
-semantics are recorded in
+accounting remain unchanged. Relevance rises from .542481 for the original
+complete post to .566381 for the named copy; sorting score rises from 54.248130
+to 56.638104 (+2.389974). This remains below the highest original SP-context
+score 66.258643 and the focused block/scaling posts. The full Bitcoin order
+does not change. All thirty-one other case cosines/products and all four other
+post maxima/winners are bit-identical. The intervention shows that explicitly
+naming Bitcoin affects this copy but does not close the gap, identify its full
+cause or demonstrate an ordering improvement. Strict focused-post directions
+remain uncertain; no exact-share approval, numeric tie threshold, new user
+judgment or policy of rewriting posts is introduced.
+
+Independent derivation, complete-selection, encoder-identity, product,
+post-maximum/order and twenty-five protected-hash checks passed. Fourteen native
+uncertain agent comments preserve history and represent one post/title input.
+No new teacher calls/tokens or cash were used. The next recommendation is to
+compare relevance before and after SSE's final learned projection on the same
+saved inputs, using agreed Coffee/Eggs examples and Bitcoin controls, with
+prominence and the formula fixed. That comparison can use the existing checkpoint
+without downloading another model; it has not begun. Production adoption remains
+open. Native provenance and workflow semantics are recorded in
 [model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records

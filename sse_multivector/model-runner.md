@@ -4054,7 +4054,7 @@ causes the gap. The strict within-focus direction remains uncertain. The user
 approved a bounded wording diagnostic: replace the opening “a node” with
 “a Bitcoin node” in a diagnostic copy, holding all other words, the title,
 prominence and formula fixed. That would test sensitivity to explicitly naming
-Bitcoin. Preparation is recorded below; the original post and production input
+Bitcoin. The completed check is recorded below; the original post and production input
 policy remain unchanged.
 
 The same cached offline CPU SSE checkpoint, model artifacts, worker and runtime
@@ -4081,7 +4081,7 @@ config, receipt, vectors, comparison, verification and review/test logs.
 The comparison SHA256 is
 `d26ab11ff6ae33591560271e2ae65b737c596dd60ae3bb9953ef301f3a32a0c4`.
 
-**Bitcoin privacy wording check: prepared.**
+**Bitcoin privacy wording check: completed.**
 
 The user approved changing only the opening “a node” to “a Bitcoin node” in
 the complete privacy post's relevance input. Native preparation selects the
@@ -4089,7 +4089,7 @@ same forty-five cases and five Bitcoin posts. Fourteen privacy cases share a
 single 364-byte copy derived from the exact 356-byte original, preserving the
 original source text/spans and declaring the one substitution. Saved prominence
 100, the title, formula, thirty-one other contexts and highest-per-post
-ordering remain fixed. Thirty-three rows are prepared: one title, one copy and
+ordering remain fixed. Thirty-three rows were encoded: one title, one copy and
 thirty-one complete contexts. Preparation is linear in selected text and
 case count, with identical copies deduplicated; this does not add every
 post/node pair or any teacher generation. Offline CPU SSE uses the unchanged
@@ -4103,11 +4103,63 @@ runner receipts with the fixture provider, source-bound comparison preparation
 and collection. They verify original inputs/receipts stay unchanged, identical
 copies share a row, unbound/ambiguous/empty edits are refused before writing,
 and old-text encoding cannot be reused. Thirty-four comparison/ranking/selection
-tests and 108 experiment/worker tests passed. No production APIs or test-only
-seams were added. Logs and prepared artifacts remain ignored under
+tests and 108 experiment/worker tests passed. The tests use existing production
+seams; no API was added solely for tests. Logs and prepared artifacts remain ignored under
 `experiments/ppv30-fresh-nonfood-v2/relevance-privacy-bitcoin-name-v1-preparation`
-and `relevance-privacy-bitcoin-name-v1`. Results and production adoption remain
-open.
+and `relevance-privacy-bitcoin-name-v1`.
+
+| Privacy-post relevance input | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Highest original SP context | 100 | .662586 | 66.258643 |
+| Exact complete original post | 100 | .542481 | 54.248130 |
+| Copy changing only “a node” to “a Bitcoin node” | 100 | .566381 | 56.638104 |
+
+The named copy raises the sorting score by 2.389974 over the original complete
+post, but stays below the original highest-context score and the other two
+focused Bitcoin posts. The full Bitcoin order remains block transmission
+(91.148035), scaling (88.740711), privacy (56.638104), Bitcoin/Nostr optimism
+(28.996428), and Nostr hardware with zaps (5.649778). All thirty-one other
+context cosines/products and all four other post maxima/winning cases are
+bit-identical to the complete-post diagnostic. Literature and Psychology and
+philosophy remain untouched.
+
+Explicitly naming Bitcoin affects this copy's relevance, but this intervention
+does not close the gap or demonstrate a sorting improvement. It does not show
+that omission of the name alone explains the gap, nor establish which part of
+the relevance calculation causes it. Both original and clarified wording
+develop Bitcoin privacy. The strict focused-post direction remains uncertain;
+this one wording comparison is not a broad robustness result, an exact-share
+approval or a numeric tie threshold. Rewriting posts is not adopted.
+
+The next recommendation is to compare relevance from the same saved inputs
+before and after SSE's final learned projection, using the agreed Coffee/Eggs
+examples and fixed Bitcoin controls. The worker currently averages the selected
+encoder tokens, then applies learned linear, ReLU and learned linear operations.
+The proposed check would use that same checkpoint's encoder/selected-token mean
+before those final layers as the alternate relevance input, retaining prominence
+and the formula. This tests whether that component helps standalone-context
+sorting; it does not assume the projection caused this gap. Existing cached
+weights suffice, with no new pretrained-model download or teacher inference.
+This comparison has not begun and production adoption remains open.
+
+Independent verification checks all forty-five original case identities and
+saved prominence values, fourteen exact one-substitution derivations with
+separate original byte spans, thirty-three complete encoder/token selections,
+unchanged checkpoint/model/runtime, forty-five cosine/products, five post maxima
+and full Bitcoin orders. All twenty-five protected source/artifact hashes remain
+unchanged, including the original source posts, SP/MP carrier, raw graph, PP
+prompt, receipts and both earlier Bitcoin comparisons. No numerical differences
+occur in the other context products on this encoding run. Native reviews append
+fourteen uncertain agent comments explicitly bound to this comparison, retaining
+the original history and creating no user labels; they share one post/title
+input. Native generation accounting remains fifteen original calls/eighty-four
+reuses from the prior trial. This check adds no teacher calls, teacher-token
+usage, paid resources or task accounting changes.
+
+The ignored `relevance-privacy-bitcoin-name-v1` directory contains native plan,
+request, config, worker receipt/vectors, comparison, independent verification
+and native review logs. Comparison SHA256:
+`74c23cd3347dbb6424f4f825aae52d7626a1a133b61dbc726291b838ed57ddac`.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
