@@ -106,8 +106,9 @@ matching adapter reloads and trained evaluations. Results were hash-verified loc
 JSON fences to recover the Gemma baselines. The parser now accepts them for
 subjects and masks; all 40 saved Gemma subject answers validate, but their 618
 baseline masks still need generation. Reparsed Qwen teacher-agreement F1 is
-0.344 before and 0.346 after training. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. That larger pilot remains waiting for its data; its
-original ~1,000-note scale is not a frozen dataset-size requirement.
+0.344 before and 0.346 after training. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. That larger pilot remains waiting for its data and
+includes a comparison trained on 1,000 notes, approved September 30. Remaining
+data choices and execution details are open.
 
 Task 13 is in progress: the [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
 records a reconstructed decision baseline and proposed node-record format.

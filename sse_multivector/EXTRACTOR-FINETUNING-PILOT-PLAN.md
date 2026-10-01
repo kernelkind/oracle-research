@@ -639,13 +639,13 @@ either Gemma checkpoint's training setup works.
 |---|---:|---|
 | Initial training set | 250 | First comparison across all three models |
 | Expanded training set | 500 | Measure improvement from more notes |
-| Additional comparison | 1,000 | Inclusion and any continuation rule remain open |
+| Included comparison | 1,000 | Approved as part of the planned pilot on September 30 |
 | Validation set | 100 | Compare development runs and select settings |
 | Final test set | 200 | Evaluate selected candidates after development stops |
 
-These counts are proposed measurement points for the larger pilot, not the
-initial informal experiment using the available 100 notes or demonstrated requirements.
-The user has not approved making 1,000 notes conditional on the 250/500 results.
+The user approved inclusion of the 1,000-note training comparison on September 30.
+The smaller training sizes and validation/test counts remain proposed measurement
+points. These are for the larger pilot, separate from the informal 100-note experiment.
 
 The 500-note set retains the original 250; the 1,000-note set retains the 500.
 All models receive the same sets. Choose broadly varied real notes while keeping
@@ -685,9 +685,9 @@ separately from review findings and any subsequent changes.
    Otherwise, more notes also means more training, and an improvement cannot
    be attributed to additional distinct notes alone. Preserve earlier
    checkpoints so overtraining a small set does not manufacture that effect.
-5. **Additional training sizes remain open.** Whether to include 1,000 notes,
-   and any rule for making that comparison conditional on earlier results,
-   have not been approved.
+5. **Include the 1,000-note comparison.** Its inclusion in the planned pilot
+   was approved September 30. Start from the original weights and use the same
+   comparison controls as at the smaller sizes.
 6. **Confirm decision-critical comparisons.** Repeat with a different random
    seed when a small gain or model difference would determine the next action.
    Keep the same evaluation notes and report uncertainty rather than treating
@@ -703,8 +703,8 @@ comparison as though only the number of notes changed.
 
 At most nine main fine-tuning runs are proposed across the three dataset sizes,
 in addition to untuned baselines, setup checks, and limited confirmation runs.
-Inclusion of 1,000 notes, rental grouping, and any decision to condition further
-runs on the 250/500 results remain unapproved. Confirmation runs are proposals.
+The 1,000-note comparison is included in the planned pilot. Smaller comparison
+sizes, rental grouping, and spending remain open. Confirmation runs are proposals.
 
 ## Evaluation and decisions
 

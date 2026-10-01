@@ -3,8 +3,8 @@
 Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
-This is the proposed experiment. Counts, prompt versions, task format, training
-settings, and semantic-review criteria remain to be settled.
+Prompt versions, task format, training settings, and semantic-review criteria
+remain to be settled.
 
 ## 1. Use shared data
 
@@ -12,10 +12,10 @@ Give all candidates the same varied notes and saved teacher answers. Separate
 training, validation, and final test notes; keep authors and duplicates within
 one split. Check teacher answers before using them.
 
-Training sizes under discussion: **250, 500, and 1,000 notes**; inclusion of
-1,000 and any rule for making it conditional remain open. **100 validation**
-and **200 final test** notes are also proposals. Validation guides comparisons;
-the final test stays untouched during development.
+The planned pilot includes **1,000 training notes**. **250 and 500 notes** are
+the proposed smaller comparisons. **100 validation** and **200 final test** notes
+remain proposals. Validation guides comparisons; the final test stays untouched
+during development.
 
 ## 2. Measure untuned baselines
 
@@ -57,7 +57,7 @@ candidate from its original weights. Keep its recipe fixed and compare after
 matched amounts of training,
 so additional training time does not explain an apparent benefit from more notes.
 
-Which sizes we run and how jobs are grouped into rentals remain open.
+The smaller comparison sizes and rental grouping remain open.
 
 ## 6. Compare and select
 

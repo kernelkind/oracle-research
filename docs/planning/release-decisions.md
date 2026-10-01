@@ -569,8 +569,8 @@ fine-tuning experiment separately as **29 · Run preliminary 100-note fine-tunin
 experiment**, in progress. It uses 80 training notes and 20 evaluation notes,
 existing subject/mask annotations and no prominence. **06 · Choose model through
 larger fine-tuning pilot** remains waiting for the larger pilot's data (05);
-training setup (18) is complete. That larger pilot was originally envisaged at
-roughly 1,000 notes, but its exact size is not frozen. Task 05 prepares the
+training setup (18) is complete. The larger pilot includes a comparison trained
+on 1,000 notes, approved September 30; remaining data choices are open. Task 05 prepares the
 larger pilot's data, not 29's already-prepared data. Tasks 01 and 18 are required
 inputs to 29; 29's findings are helpful inputs to 06 and the optional
 model-track estimates in 20, not new completion gates. The split does not change
@@ -592,16 +592,16 @@ Semantic review of saved results happens from the local workspace after retrieva
 without an active GPU rental. The proposed teacher reviewer performs evaluation;
 its judgments are not automatically training labels or weight updates. Reviewer
 criteria, reliability checks, and role in model selection remain design choices.
-The walkthrough also keeps data sizes, the larger pilot's output format,
+The walkthrough also keeps remaining data choices, the larger pilot's output format,
 training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
 
 **September 30 training-data clarification:** the user confirmed that the
 500-note comparison includes the first 250 training notes plus 250 new notes.
 Each dataset-size run starts from the original model weights. This confirms
-data reuse and independent training starts. The user clarified that making
-1,000 notes conditional on reviewing the 250/500 results has not been approved.
-Comparison sizes, the role of a 1,000-note stage, rental grouping, duration, and
+data reuse and independent training starts. The user subsequently approved
+including 1,000 training notes in the planned comparison. Its inclusion is fixed;
+smaller comparison sizes, evaluation counts, rental grouping, duration, and
 spending remain open.
 
 **September 25 informal start:** the user approved beginning the fine-tuning
