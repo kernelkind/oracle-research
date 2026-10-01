@@ -4488,10 +4488,10 @@ production all-post/all-node design.
 The agent now recommends saved SP subject plus context for subsequent sorting
 experiments, retaining prominence, SSE's final learned layers and the formula.
 Production adoption remains open. The user subsequently approved the bounded
-fixed-meaning `grownostr` prominence trial prepared below, because changing
+fixed-meaning `grownostr` prominence trial completed below, because changing
 relevance does not resolve the inconsistent meanings already observed.
 
-**Fixed GrowNostr meaning approved October 1 (prepared, not yet run):**
+**Fixed GrowNostr meaning approved October 1 (completed):**
 
 The user approved testing one meaning across the fifteen direct-member posts
 in `grownostr` (`Sa233efc2db`). Inspection found fourteen hashtag masks and
@@ -4503,7 +4503,7 @@ describe growing Nostr participation and networks through diverse content and
 community interaction. They include gardening and food among many possible
 subjects; they do not define the initiative as food cultivation.
 
-Draft **PPv30-grownostr-v1** changes one paragraph of PPv30-node-v1 through
+Tested **PPv30-grownostr-v1** changes one paragraph of PPv30-node-v1 through
 native `experiment.py revise`: the meaning is the GrowNostr initiative,
 growing Nostr participation, personal networks and communities through diverse
 content and interaction. It is identical for every post. All other allocation
@@ -4517,19 +4517,85 @@ post/title inputs, source evidence, Astra-low subscription settings and all
 fifteen saved baselines in `experiments/ppv30-grownostr-fixed-meaning-v1`.
 Four pre-run agent observations record the stock/steak inconsistency, the
 food-growing member and the salsa/Nostr connection. They set no exact
-percentage, numerical gap or strict complete order. All fifteen cases are
-unrun. Forty-five comparison, ranking, selection and actual local T5 worker
-checks pass. No workflow or production code change is necessary.
+percentage, numerical gap or strict complete order. Native execution completed
+all fifteen cases with fifteen fresh calls, no reuses, failures or retries.
+Forty-five comparison, ranking, selection and actual local T5 worker checks
+pass. No workflow or production code change was necessary.
 
 The authorized run is bounded to thirty attempts including eligible provider
 retries, for fifteen distinct post/title inputs. Subscription incremental cash
-is zero, with no paid fallback or rentals. Prominence will use the fixed meaning;
-relevance will reuse the preceding subject-plus-context SSE vectors exactly,
-without new encoder work. SSE's learned layers, title, formula and highest
+is zero, with no paid fallback or rentals. Prominence uses the fixed meaning;
+relevance reuses the preceding subject-plus-context SSE vectors exactly,
+without new encoder work. Native `prominence_cosine.py prepare --include-subject
+--post-order highest --reuse-encoding` and `collect` produce the new comparison.
+All 738 saved encoding rows remain unchanged; only fifteen own-node values
+are used. SSE's learned layers, title, formula and highest
 selected-entry post rule remain fixed. Work grows with selected memberships
 and full-post text plus one short repeated definition, not all-post/all-node
 inputs. The source hierarchy, earlier teacher answers and 99 protected hashes
-are preserved. Inference and post-run assessment are not yet complete.
+are preserved. All other 107 nodes in the preceding comparison are untouched;
+earlier accepted checks are preserved, not rerun.
+
+| GrowNostr post | Old prominence | Fixed-meaning prominence | Old sorting score | New sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| Stock preservation (`25f5a4c0`) | 85 | 7 | 71.804681 | 5.913327 |
+| Steak/preservation diary (`f67c7c54`) | 2 | 5 | 1.593722 | 3.984306 |
+| Food preparation / possible salsa sale on Nostr (`f7ed481e`) | 60 | 11 | 49.151388 | 9.011088 |
+| Food growing / another user's allotment (`7d538c44`) | 80 | 15 | 52.349315 | 9.815497 |
+
+The stock and steak allocations now use the same GrowNostr meaning. Their
+food preparation and preservation receive represented zero; only their
+community framing receives seven and five respectively. The salsa post also
+separates food work from explicitly considering a Nostr sale. This corrects
+the earlier switch from homegrown food to growing Nostr across those posts;
+it does not approve the exact percentages or establish a strict complete order.
+Fourteen of fifteen prominence values change; the jetlag greeting stays at 25.
+The largely hashtag-based second-coffee update leads the new sorting order at
+26.009181, followed by the breakfast greeting at 20.275159 and stove invitation
+at 18.162986. Their precise shares and strict ordering remain uncertain.
+
+The food-growing member still has no `#grownostr` tag. Its new fifteen points
+come from interpreting the `nostr:npub` reference as recognition of another
+Nostr user. Whether this warrants nonzero GrowNostr prominence is unresolved,
+especially under the instruction to ignore opaque identifiers; the explicit
+food-growing statements themselves receive represented zero. The mixed member
+set remains intact. A fixed meaning does not establish correct membership or
+prove each author's intended hashtag use.
+
+Fifteen native post-run agent reviews accept three topic-separation/consistency
+corrections and retain twelve uncertainties. The four pre-run comments remain
+as their original prefix. No user labels, exact percentages or numerical gap
+thresholds are added. Native text comparison reports changed outputs; it does
+not grade semantic improvement. Agent inspection, rather than that mechanical
+change label, supports the interpretation correction.
+
+Independent checks verify every exact complete-post/title input, saved baseline,
+allocation total, unchanged SP subject/context and bit-identical reused
+relevance value, all fifteen cosine/products, post maxima and the complete
+order. The native comparison is
+`experiments/ppv30-grownostr-fixed-meaning-v1/relevance-v1/comparison.json`, SHA256
+`79a91df5136313d7c2d9920047af451d659d3759a111b9db5be05ae50bba413b`.
+Its raw-vector and worker-receipt hashes exactly match the earlier 108-node
+subject-plus-context comparison. No worker is run and no new byte/token
+selections occur. Original 99 protected hashes, all old experiment comments
+and new frozen prompt/receipt/result hashes verify unchanged. Native plans,
+receipts, results and reviews are ignored; preparation, execution, verification,
+review and test logs are under
+`experiments/ppv30-grownostr-fixed-meaning-v1-checks`.
+
+Native usage reports 12,202 input tokens and 2,560 output tokens, including 80
+reasoning tokens, with no reported cache tokens. Catalog reference estimate is
+$0.250020, separately from subscription incremental cash $0; provider billing
+is unavailable and weekly quota is unmeasured. Only this zero-cash reservation
+is settled, preserving lifetime monetary totals and unrelated ledger entries.
+
+The result supports supplying one node meaning consistently when assessing
+prominence, but this single-node developmental trial does not select a general
+node-description method or production prompt. Next recommended work is the
+same bounded consistency check for `coffeechain`, using one source-grounded
+meaning and fixed relevance/SSE/formula. That trial has not begun. Broader
+generation, hierarchy repairs, recursion and production adoption remain open
+or outside the authorized comparison.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

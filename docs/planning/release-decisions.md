@@ -1701,10 +1701,10 @@ inputs, paired hashes, changed orders, verification and review limits.
 The agent recommends saved SP subject plus context for subsequent sorting
 experiments, keeping prominence, SSE and formula fixed; production adoption
 remains open. The user subsequently approved the bounded fixed-meaning
-`grownostr` prominence trial prepared below. Hierarchy changes and recursion
+`grownostr` prominence trial completed below. Hierarchy changes and recursion
 are outside both comparisons.
 
-**Fixed GrowNostr meaning approved October 1 (prepared, not yet run):** The
+**Fixed GrowNostr meaning approved October 1 (completed):** The
 latest "proceed" authorizes one consistent meaning across the fifteen existing
 direct-member posts. The node contains fourteen hashtag masks and one
 food-growing mask. The [original GrowNostr announcement](https://www.thesurvivalpodcast.com/grow-nostr)
@@ -1712,18 +1712,42 @@ describes growing Nostr participation and communities through diverse content
 and interaction. Its use as the fixed trial meaning is grounded in that source;
 the earlier title acceptance does not adopt a definition or repair membership.
 
-Draft **PPv30-grownostr-v1** changes only the title-interpretation paragraph,
+Tested **PPv30-grownostr-v1** changes only the title-interpretation paragraph,
 retaining the allocation instructions, complete post/title inputs, output
 schema, Astra-low subscription settings and fifteen saved baselines. Native
-preparation and four pre-run agent observations are complete; all fifteen
-cases remain unrun. The bounded run permits at most thirty attempts including
-eligible provider retries, with zero incremental cash and no paid fallback.
-Relevance will reuse the exact saved SP subject-plus-context vectors. SSE,
+preparation and four pre-run agent observations preceded fifteen fresh valid
+calls, without failures, retries or reuses. The bounded run permitted at most
+thirty attempts including eligible provider retries, with zero incremental
+cash and no paid fallback. Relevance reuses the exact saved SP subject-plus-context vectors. SSE,
 node title, formula and highest selected-entry post rule stay fixed. Forty-five
 relevant existing checks pass. No workflow/production code, hierarchy, SP/MP or
-other-node change is authorized; production adoption and broader validation
-remain open. [Model-runner preparation](../../sse_multivector/model-runner.md)
-records the source-grounded meaning, prompt revision and frozen scope.
+other-node change occurred; production adoption and broader validation remain
+open. [Model-runner results](../../sse_multivector/model-runner.md) record the
+source-grounded meaning, prompt revision and frozen scope.
+
+The stock-preservation post's prominence changes from 85 to 7 and the steak
+diary's from 2 to 5. Both now separate food work from their GrowNostr community
+connection under the same meaning. Their sorting scores become 5.913327 and
+3.984306 using unchanged relevance. The salsa/Nostr-sale post drops from 60
+to 11. These interpretation corrections do not approve exact percentages or
+a complete node order. The food-growing outlier drops from 80 to 15 because
+its Nostr profile reference is credited as community recognition; whether
+that warrants nonzero prominence remains uncertain under identifier exclusion.
+Membership is preserved. Fifteen native post-run agent assessments accept
+three topic-separation corrections and retain twelve uncertainties, preserving
+the original pre-run comments and all user labels.
+
+All fifteen exact inputs, baselines, allocations, cosine/products, maxima and
+the complete order verify, with bit-identical reused relevance and 99 unchanged
+original protected hashes. No SSE worker or new encoder selection is needed;
+all other 107 nodes and earlier agreed checks remain untouched. Native usage
+is 12,202 input and 2,560 output tokens including 80 reasoning tokens; catalog
+reference $0.250020 remains separate from cash $0 and unmeasured quota. 
+
+The agent recommends checking the same fixed-meaning approach on `coffeechain`
+next, with relevance, SSE and formula fixed. That trial has not begun. One
+developmental node does not establish a general description method, broader
+sorting quality or production adoption.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
