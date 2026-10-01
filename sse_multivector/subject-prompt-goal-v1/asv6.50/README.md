@@ -11,12 +11,12 @@ The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/AS
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
-[ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) is the subsequent
-example-only revision for review. It corrects ASv6.52's missing placements
-in applicable branches. Its wording and model test remain open, and its
-examples do not cover all prompt rules. The
-[corrected-example audit](#asv653-example-correction) records its scope;
-the [rule-to-case map](#example-correctness-and-rule-coverage) records the gaps.
+[ASv6.54 (draft, untested on models)](../asv6.54/ASv6.54.md) is the current
+example-only revision for review. It replaces the overloaded railway example
+with focused cases and covers the gaps found after ASv6.53's placement correction.
+Its wording and model test remain open. The
+[rule-to-case map](#example-correctness-and-rule-coverage) records each case's
+instruction basis; the [draft audit](#asv654-focused-examples) records verification.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -648,7 +648,7 @@ is recorded below.
 
 ## ASv6.53 example correction
 
-Status: draft, untested. The user authorized fixing the examples after the
+Status: superseded draft, untested. The user authorized fixing the examples after the
 whole-prompt audit exposed ASv6.52's missing placements. The authorization covers
 the example correction and offline verification. Wording approval, inference and
 adoption remain open; ASv6.51 is still the last approved candidate and ASv6.48
@@ -711,9 +711,9 @@ The ASv6.53 SHA-256 is
 The source grows from ASv6.52's 14,385 to 34,028 UTF-8 bytes. Filling every
 applicable branch adds 19,643 bytes of repeated input per request; it introduces
 no extra model pass or runtime component. Actual model token use is unmeasured.
-No template, experiment or model request was created for ASv6.53. Complete and
-review example rule coverage before authorizing the same twelve GPT-6.1 Sol
-xhigh SP cases paired with saved ASv6.51 answers.
+No template, experiment or model request was created for ASv6.53. The subsequent
+ASv6.54 draft below addresses its example-coverage gaps; ASv6.53 and its tests
+remain evidence for the missing-branch correction.
 
 ## Example correctness and rule coverage
 
@@ -723,85 +723,144 @@ explicit or implicit rule must be traced concisely to an example case. Each
 behavior taught by an example must also trace back to those instructions.
 Examples must not introduce an additional rule.
 
-The map below uses the unchanged instructions in
-[ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md). C1 is its lunar-eclipse
-case; C2 is its railway-museum case. Each case already includes its source post
-and complete expected JSON. "Partial" means the named detail demonstrates only
-part of the rule; "Missing" means neither case exercises the required behavior.
-Absence of a prohibited output is insufficient when the input never presents
-that decision. These are review references, not additions to the output schema.
+The first map exposed ASv6.53's absent ambiguity, unresolved-name, identifier,
+number, figurative, negation and comparison cases. Its passing relationship
+checks did not cover those decisions. The user then authorized drafting compact
+focused cases with complete outputs and rule mappings.
 
-| ID | Existing SP instruction | Example detail or gap |
+The current map uses [ASv6.54 (draft, untested on models)](../asv6.54/ASv6.54.md).
+Case IDs identify the nine examples in source order; they are review references
+and are not added to SP or its output schema. Every case contains its complete
+source post and expected JSON. The maintained tests contain the same case IDs,
+purposes, rule mappings, canonical subjects and reviewed relationships.
+"Reviewed" below is the agent's source-support and heading-relationship
+assessment, not user approval or a model result.
+
+| Case | Purpose | Demonstrated rules | Review |
+| --- | --- | --- | --- |
+| C1 | Whole-post references, implied subjects and repeated hierarchy branches. | R01–R04, R16–R32, R34, I04 | Reviewed |
+| C2 | Named referent resolution, replacement-part roles and retained locomotive type. | R02–R05, R16, R18–R22, R27–R32, R34, I01–I02, I05 | Reviewed |
+| C3 | Individual advice instructions and their stated combination. | R04, R16–R22, R27–R32, R34, I03 | Reviewed |
+| C4 | Names, hashtags, figurative labels, rhetorical meaning and an unresolved name. | R01–R06, R10, R12, R16–R22, R27–R32, R34 | Reviewed |
+| C5 | URL and opaque identifier bodies without surrounding subject evidence. | R07, R12, R24 | Reviewed |
+| C6 | URL and identifier subjects established by prose, without a cross-link. | R04, R07–R08, R10–R12, R16, R18, R20–R22, R27–R31, R34 | Reviewed |
+| C7 | Two direct ambiguity interpretations, independent co-mention and statement order. | R01, R03–R04, R09–R12, R16, R18–R22, R27–R32, R34 | Reviewed |
+| C8 | Count versus length, preserved negation, both comparison sides and no unstated arithmetic. | R01–R02, R04–R05, R13–R22, R27–R34 | Reviewed |
+| C9 | Explicit arithmetic result with separately retained addends and result. | R03–R04, R13–R22, R27–R32, R34 | Reviewed |
+
+The rule-to-case map traces the existing instruction clauses. An example's rule
+list identifies its demonstrations; every case must still obey all other
+applicable instructions. An absent prohibited output demonstrates a guard only
+when the input presents the decision that could produce it.
+
+| ID | Existing SP instruction | Demonstration |
 | --- | --- | --- |
 | R01 | Build a subject index after understanding the complete post. | C1: observation, Moon, binoculars, sketching and clouds all remain. |
-| R02 | Resolve references to the most specific supported description. | C1: "it" becomes the Moon; C2: "the restoration" names Bracken the steam locomotive. |
-| R03 | Use general knowledge to clarify language, identify referents and recognize subjects. | C1: lunar-eclipse observation supports astronomical observation. |
-| R04 | Ground every entity, modifier, action and relationship in the post. | C2: Bracken's type, ownership, restoration and exhibition purpose come from the post. |
-| R05 | Interpret names, labels and hashtags by referent, not component words. | Partial: C2 identifies Bracken as a locomotive; no misleading name, label or hashtag tests literal component words. |
-| R06 | Retain the name of an unresolved named subject. | Missing. |
-| R07 | Treat URLs and opaque identifiers as providing no subject evidence. | Missing. |
-| R08 | Retain URL or identifier subjects established by surrounding prose. | Missing. |
-| R09 | Give each remaining supported interpretation its own direct subject, without uncertainty qualifiers. | Missing: neither post remains ambiguous. |
-| R10 | Do not infer relationships from co-mention alone. | Partial: C2 does not make Mira the photographer; a focused co-mention case is missing. |
-| R11 | Do not infer relationships from statement order alone. | Partial: C1 does not claim sketching began after observation; a focused order case is missing. |
-| R12 | Add no commentary about plausibility or what is unclear or unstated. | Partial: both outputs omit commentary; neither exercises unresolved ambiguity. |
-| R13 | Preserve what numbers refer to. | Missing: section numbers are output formatting, not source numbers. |
-| R14 | Support count or measurement interpretations and units with the post. | Missing. |
-| R15 | Include calculated results only when explicitly stated. | Missing: neither post supplies quantities from which an unstated result could be calculated. |
-| R16 | Enumerate specific subjects before deriving broader headings. | C2: Bracken and Mira remain alongside broader locomotive and volunteer headings; reasoning order is not observable. |
-| R17 | Include literal, nonliteral and rhetorical subjects from parts, combined parts or the whole post, including unnamed concepts. | Partial: C1 names implied cloud hindrance; C2 combines both advice instructions. Nonliteral and rhetorical cases are missing. |
-| R18 | Retain individual subjects, particular instances and expressed combinations. | C2: boilers, Bracken's replacement boiler, both advice instructions and their combination remain. |
-| R19 | An event description must not replace its involved subjects. | C1: observation retains binoculars and the Moon; C2: restoration retains Bracken and Mira. |
-| R20 | Judge broader relationships using headings alone; a counterexample requires a broader parent. | C2: boilers have their own branch outside replacement parts; replacement boilers belong under both. |
-| R21 | Build upward and combine shared headings. | C2: shared steam-locomotive and restoration headings contain their applicable subjects. |
-| R22 | Retain each enumerated subject in every branch that passes the heading test. | C1: binocular observation repeats beneath observation and binoculars; C2: combined advice repeats beneath both instructions. |
-| R23 | Give each heading and subheading its own entry. | C1 and C2: every displayed level has its own object. |
-| R24 | Return only one JSON object containing a `subjects` array. | C1 and C2: each complete output uses that wrapper, with no surrounding answer text. |
-| R25 | Use section-style numbering, broad to specific, with parents first. | C1: `1`, `1.1`, `1.1.1`; C2 repeats the same ordering throughout. |
-| R26 | Order entry fields as `number`, `context`, `subject`. | C1 and C2: every entry uses this order. |
-| R27 | Context identifies the subject and the source establishing its meaning. | C1: Moon-obscuration context resolves "it"; C2: boiler context names Bracken. |
-| R28 | Context may describe a particular instance supporting a general heading. | C1: a particular eclipse observation supports astronomical observation. |
-| R29 | Match the heading's generality; keep instance details in subheadings without importing context restrictions. | C2: boilers, replacement boilers and Bracken's replacement boiler have separate headings. |
-| R30 | Make each heading understandable without the post, context or other entries. | C2: photography headings explicitly name Bracken the steam locomotive's restoration. |
-| R31 | A heading need not retell the post's assertion about its subject. | C1: "Binoculars" names the subject without retelling their use. |
-| R32 | Preserve meaning, negation and relationships in headings. | Partial: C2 retains exhibition purpose and visitor-advice roles; neither post tests negation. |
-| R33 | Name both comparison sides when provided. | Missing: neither post makes a comparison. |
-| R34 | Use concise wording. | C1: "Sketching the Moon"; C2: "Replacement boilers". Longer particular headings retain distinguishing details. |
+| R02 | Resolve references to the most specific supported description. | C2: Bracken's later identification supplies the boiler's locomotive type; C8 resolves A and B. |
+| R03 | Use general knowledge to clarify language, identify referents and recognize subjects. | C1 recognizes astronomical observation; C4 interprets the figurative label; C9 recognizes addends. |
+| R04 | Ground every entity, modifier, action and relationship in the post. | C2 retains the stated replacement role and steam-locomotive type; every case has a source-support review. |
+| R05 | Interpret names, labels and hashtags by referent, not component words. | C4: #RavenWorks names an app; the figurative lifesaver label names help, without birds, employment or literal rescue. |
+| R06 | Retain the name of an unresolved named subject. | C4: AmberLoop remains by name, outside the app, help and appreciation branches. |
+| R07 | Treat URLs and opaque identifiers as providing no subject evidence. | C5: the bare URL and hexadecimal identifier yield an empty array; C6 extracts no birds, repair or count from their bodies. |
+| R08 | Retain URL or identifier subjects established by surrounding prose. | C6: the labels establish profile URLs and event identifiers, unlike C5's identical bare bodies. |
+| R09 | Give each remaining supported interpretation its own direct subject, without uncertainty qualifiers. | C7: observation of a person's duck and observation of a person ducking have separate entries. |
+| R10 | Do not infer relationships from co-mention alone. | C4 does not type AmberLoop as an app; C6 does not associate the profile URL with the event; C7 keeps the notebook purchase independent. |
+| R11 | Do not infer relationships from statement order alone. | C7 does not add a chronological or causal link between observation and notebook purchase. |
+| R12 | Add no commentary about plausibility or what is unclear or unstated. | C4 directly mentions AmberLoop; C5 returns only the empty object wrapper; C7 directly states both interpretations. |
+| R13 | Preserve what numbers refer to. | C8 distinguishes the count of two cables from a length of 2 m; C9 distinguishes addends 2 and 3 from result 5. |
+| R14 | Support count or measurement interpretations and units with the post. | C8 retains the stated count and metre units; C9 does not turn arithmetic values into counts or measurements. |
+| R15 | Include calculated results only when explicitly stated. | C8 adds neither a 1 m difference nor a 5 m total; C9 includes the explicitly stated result 5. |
+| R16 | Enumerate specific subjects before deriving broader headings. | C1 and C2 retain each specific subject alongside broader headings. The output demonstrates retention, not internal reasoning order. |
+| R17 | Include literal, nonliteral and rhetorical subjects from parts, combined parts or the whole post, including unnamed concepts. | C1 includes implied cloud hindrance; C3 retains the combined advice; C4 includes figurative help and rhetorical appreciation. |
+| R18 | Retain individual subjects, particular instances and expressed combinations. | C3 retains both instructions and their combination; C8 retains both cables and their pair; C9 retains addends, result and calculation. |
+| R19 | An event description must not replace its involved subjects. | C1 retains binoculars and the Moon; C7 retains ducks, people and notebooks alongside observation and purchase. |
+| R20 | Judge broader relationships using headings alone; a counterexample requires a broader parent. | C2 keeps general boilers outside replacement parts and general replacement boilers outside steam-locomotive boilers. |
+| R21 | Build upward and combine shared headings. | C1 shares observation headings; C2 shares boiler headings; C3 shares individual advice headings. |
+| R22 | Retain each enumerated subject in every branch that passes the heading test. | C1 repeats binocular observation; C3 repeats the combined advice; C8 repeats the particular pair and comparison; C9 repeats the calculation. |
+| R23 | Give each heading and subheading its own entry. | C1 and every other nonempty case have an object at every displayed level. |
+| R24 | Return only one JSON object containing a subjects array. | Every case uses the wrapper; C5 uses {"subjects": []}, with no commentary. |
+| R25 | Use section-style numbering, broad to specific, with parents first. | C1 demonstrates 1, 1.1 and 1.1.1; all nonempty cases retain this ordering. |
+| R26 | Order entry fields as number, context, subject. | Every entry in every nonempty case uses this order. |
+| R27 | Context identifies the subject and the source establishing its meaning. | C2's context connects the boiler to Bracken's later identification; C7 directly identifies the source observation for each interpretation. |
+| R28 | Context may describe a particular instance supporting a general heading. | C1's eclipse supports astronomical observation; C2's particular replacement boiler supports boilers. |
+| R29 | Match the heading's generality; keep instance details in subheadings without importing context restrictions. | C2 separates boilers, replacement boilers and the particular boiler for Bracken; its general boiler heading stays general. |
+| R30 | Make each heading understandable without the post, context or other entries. | C2's particular boiler heading names Bracken's type; C8's comparison names both cables and their lengths. |
+| R31 | A heading need not retell the post's assertion about its subject. | C1 uses Binoculars; C2 uses Boilers; C4 uses AmberLoop. |
+| R32 | Preserve meaning, negation and relationships in headings. | C3 preserves the advice role; C4 preserves the rhetorical appreciation; C8 explicitly retains not longer. |
+| R33 | Name both comparison sides when provided. | C8 names 2 m cable A and 3 m cable B in its comparison. |
+| R34 | Use concise wording. | C1 uses Sketching the Moon; C2 uses Replacement boilers; C8 retains the details needed to identify both comparison sides. |
 
-The reverse index records the demonstrations identified above; it does not
-exempt either case from the other applicable instructions.
+The five tracked hierarchy implications derive from those instructions, rather
+than adding rules:
 
-| Case | Purpose | Demonstrated rules | Partial coverage |
+| ID | Implication | Instruction basis | Demonstration |
 | --- | --- | --- | --- |
-| C1 | Resolve whole-post references and retain subjects across shared branches. | R01–R03, R19, R22–R28, R31, R34 | R11, R12, R17 |
-| C2 | Preserve entity types, roles, purpose and advice combinations in every applicable branch. | R02, R04, R16, R18–R27, R29–R30, R34 | R05, R10, R12, R17, R32 |
+| I01 | An entity does not acquire a role merely from its context. | R18, R20, R29, R30 | C2: general boilers remain outside replacement parts. |
+| I02 | A child retains restrictions needed to fit its parent, using equivalent wording where appropriate. | R20, R30, R32 | C2: the particular replacement-boiler heading retains Bracken's steam-locomotive type. |
+| I03 | A stated combination can fit each component; either component alone need not fit the combination. | R18, R20, R22 | C3: combined advice is beneath both individual instructions; neither instruction is beneath the combination. |
+| I04 | Repeating a shared heading requires its applicable descendants beneath every occurrence. | R21, R22, R23 | C1: every lunar-eclipse-observation occurrence includes binocular observation. |
+| I05 | The source or context cannot repair a relationship unsupported by the headings alone. | R20, R29, R30 | C2: general replacement boilers stay outside steam-locomotive boilers despite this post's particular boiler being for a steam locomotive. |
 
-The hierarchy failures expose implications of existing instructions, rather
-than additional rules:
+All 34 instruction clauses and five tracked implications now have a case.
+Review goes in both directions: each rule has a demonstration, and each
+demonstrated behavior has an instruction basis. Every case was also reviewed
+for source support, complete subject retention, standalone wording and each
+valid relationship among its headings. Internal reasoning order has no field
+in the required JSON; examples demonstrate its visible consequences without
+adding a reasoning trace.
 
-| Implication | Instruction basis | Example detail |
-| --- | --- | --- |
-| An entity does not acquire a role merely from its context. | R18, R20, R29, R30 | C2: general boilers remain outside replacement parts. |
-| A child must retain restrictions needed to fit its parent, using equivalent wording where appropriate. | R20, R30, R32 | C2: photography of Bracken's restoration retains its steam-locomotive type. |
-| A stated combination can fit each component; either component alone need not fit the combination. | R18, R20, R22 | C2: combined booking-and-route advice is beneath both individual instructions; neither individual instruction is beneath the combination. |
-| Repeating a shared heading requires its applicable descendants beneath every occurrence. | R21, R22, R23 | C1: every lunar-eclipse-observation occurrence includes binocular observation. |
-| The source or context cannot repair a relationship that the headings alone do not support. | R20, R29, R30 | C2: boiler replacement stays outside restoration even though this post places the need during restoration. |
+## ASv6.54 focused examples
 
-For each revised case, retain a short purpose and rule-ID list beside its source
-post, full expected output and review result in these review notes. Check both
-directions: each rule has a demonstration, and each demonstrated behavior has an
-instruction basis. Check every case against all applicable rules, including
-source support, complete subject retention and every valid hierarchy branch.
-Internal reasoning order has no field in the required JSON; review its visible
-consequences rather than adding a reasoning trace to the examples.
+Status: draft, untested on models. The user's "proceed" authorized this
+example revision and offline verification. Wording approval, inference and
+adoption remain open. ASv6.51 remains the last approved candidate; ASv6.48
+remains the frozen subject baseline.
 
-ASv6.53 therefore remains incomplete under this criterion. Its eight successful
-offline checks cover the declared subjects, relationships and workflow behavior;
-they do not cover the missing decisions in this map or establish model
-generalization. This documentation update changes no prompt, test fixture or
-model result and authorizes no inference run.
+[ASv6.54 (draft, untested on models)](../asv6.54/ASv6.54.md) preserves every
+instruction byte from approved ASv6.51. It preserves ASv6.53's corrected lunar
+case byte for byte, replaces the overloaded railway story with separate
+replacement-part and combined-advice cases, and adds six language cases.
+Neither MP nor the runtime workflow changes.
 
-The proposed next source change is a compact set of focused cases that covers
-these gaps while retaining the demonstrated hierarchy rules. Each case needs a
-complete correct output and its rule mapping before delta review. That example
-revision has not been authored or approved.
+C4 makes "lifesaver" explicitly figurative, so the example does not silently
+choose between literal rescue and helpfulness. Its rhetorical question conveys
+appreciation. AmberLoop stays as a named subject without an inferred type.
+C5 and C6 use identical URL and opaque-identifier bodies; only C6's surrounding
+labels establish subjects. C7 states both duck interpretations directly and
+does not connect the notebook purchase to either observation. C8 distinguishes
+two cables from a 2 m cable length and preserves both named comparison sides
+and "not longer"; it supplies no unstated arithmetic. C9 includes the explicitly
+given sum while retaining the individual addends and result.
+
+The nine complete outputs contain 110 entries, 70 distinct subjects counted
+within their cases, and 83 displayed direct relationships. The reviewed fixture
+declares 71 broader relationships and 23 prohibited placements. Every declared
+relationship is checked beneath every copy of its parent, and every displayed
+relationship must follow the reviewed relationships. Canonical-subject checks
+also reject literal hashtag components, types for AmberLoop, uncertainty
+qualifiers, reversed negation, missing comparison sides, unsupported units and
+unstated calculated results.
+
+The minimal ambiguity test first failed against ASv6.53 because the case was
+absent. All 14 example checks, nine native prompt-revision checks and two existing
+SP workflow checks then passed. The workflow checks exercise offline preparation
+of 200 complete posts and numbering validation without repairs or retries.
+Example parsing uses the production subjects adapter. These checks establish
+agreement with the declared fixture and output contract; they do not independently
+prove natural-language entailment or teacher generalization.
+
+Shared `experiment.py revise` generated the prompt and
+[ASv6.54 revision receipt](../asv6.54/ASv6.54.md.revision.json) directly against
+approved ASv6.51 SHA-256
+`db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
+The ASv6.54 SHA-256 is
+`011dbe299b39996ea56c47e84fc3e19621960e6b4cdb477cbc3910aaccd446fd`.
+Its 21,707 UTF-8 bytes are 12,321 fewer than ASv6.53, but 10,650 more than
+approved ASv6.51. These are repeated input bytes per SP request, not measured
+model tokens. No extra pass or runtime component is introduced.
+
+No template, experiment or model request was created. Review the full delta
+against approved ASv6.51 before authorizing the same twelve GPT-6.1 Sol xhigh
+SP regression cases paired with saved ASv6.51 answers. The rule map establishes
+what the examples teach; only subsequent testing can assess transfer to those
+unchanged posts.
