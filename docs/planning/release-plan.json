@@ -117,7 +117,7 @@
       "track": "shared",
       "title": "Compare teachers",
       "status": "IN PROGRESS",
-      "description": "A/B test resulting hierarchies on the same notes. Compare subject and mask quality, speed, cost and terms. Additional teacher outputs needed for sorting remain undecided; evaluate them if required by the method defined in 04.\nGPT-6.1 Sol low is the provisional favorite for SP (subject generation). Mask teacher and final selection remain open; frozen ASv6.48 is unchanged.\nFINISH WITH 04"
+      "description": "A/B test resulting hierarchies on the same notes. Compare subject and mask quality, speed, cost and terms. Additional teacher outputs needed for sorting remain undecided; evaluate them if required by the method defined in 04.\nGPT-6.1 Sol low assessed on 20 posts and remains the provisional favorite for SP (subject generation).\nSol xhigh grouped masks assessed on 20 posts (684 masks), using saved Astra subjects. Agent reviews found broadly comparable quality to Astra, with minor omissions and unresolved cases; this does not establish corpus-wide parity or teacher selection.\nCombined Sol subject-and-mask process and resulting hierarchy comparison remain unvalidated. Subscription quota use remains unmeasured.\nMask teacher and final selection remain open; frozen ASv6.48 is unchanged.\nFINISH WITH 04"
     },
     {
       "id": "18",

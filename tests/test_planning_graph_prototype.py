@@ -323,6 +323,14 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 evaluate("document.querySelector('#focus-task').value = '17'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('17 ·')")
                 self.assertIn("Additional teacher outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
+                teacher_details = evaluate("document.querySelector('#details').innerText")
+                for progress in ("Sol low assessed on 20 posts", "20 posts (684 masks)",
+                                 "using saved Astra subjects", "Agent reviews",
+                                 "Combined Sol subject-and-mask process and resulting hierarchy comparison remain unvalidated",
+                                 "Subscription quota use remains unmeasured",
+                                 "Mask teacher and final selection remain open"):
+                    self.assertIn(progress, teacher_details)
                 evaluate("document.querySelector('#focus-task').value = '05'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('05 ·')")
                 self.assertIn("Additional model outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))

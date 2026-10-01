@@ -76,6 +76,15 @@ dependencies are unchanged. The sorting mechanism and any additional
 teacher/model outputs it needs remain undecided; prominence outputs are not
 required merely because earlier experiments used them.
 
+Teacher comparison (17) remains in progress. Sol low is provisionally favored
+for subject generation after assessment on 20 posts. Sol xhigh grouped masks
+were assessed on 20 posts (684 masks), using saved Astra subjects. Agent reviews
+found broadly comparable quality to Astra, with minor omissions and unresolved
+cases; they do not establish corpus-wide parity or select teachers. The combined
+Sol subject-and-mask process and resulting hierarchy comparison remain
+unvalidated. Subscription quota use is unmeasured; mask and final teacher
+selection stay open.
+
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the
 corresponding large-input work in 28 are required only if that stage is used.

@@ -350,10 +350,12 @@ Both tasks remain in progress. 04 is in launch scope and actively worked on,
 superseding the earlier pause notes; it need not wait for the 100-note hierarchy
 or title correction. Statuses and completion dependencies are unchanged.
 The user labels GPT-6.1 Sol low as the provisional favorite for SP
-(subject generation). The mask teacher and final teacher selection remain open.
+(subject generation). Completed subject and fixed-subject mask comparisons are
+summarized in the [teacher-comparison evaluation plan](#teacher-comparison-pilot-evaluation-plan).
+The combined Sol subject-and-mask process and resulting hierarchy comparison
+remain unvalidated. The mask teacher and final teacher selection remain open.
 Frozen ASv6.48 and production model settings are unchanged; Sol's subscription
 quota consumption remains unmeasured. Task 17 stays in progress.
-This does not establish completion of the teacher comparison (17).
 Dates are unchanged. The additional construction dependencies below expose
 unfinished work. Completing 01 and 23 does not complete the hierarchy. This
 records work and planning requirements, not authorization to start another
@@ -751,10 +753,20 @@ need not wait for the teacher selection.
 
 ### Teacher-comparison pilot evaluation plan
 
-Node 17 covers the teacher comparison, including its planning.
-It remains in progress, with GPT-6.1 Sol low provisionally favored for SP.
-This preference does not establish mask quality, end-to-end hierarchy quality,
-completion of 17 or final teacher selection.
+Node 17 covers the teacher comparison, including its planning, and remains in
+progress. GPT-6.1 Sol low is provisionally favored for SP after assessment on
+20 posts. Sol xhigh grouped masks were assessed on 20 posts: 287 masks in the
+first sample and 397 in the fresh sample, 684 total. These used saved Astra
+subjects, not Sol's own generated subjects. Agent reviews found broadly
+comparable mask quality to Astra, with minor omissions and unresolved cases.
+The samples are small, purposive and food-heavy; these are agent assessments,
+not user approval of the masks or evidence of corpus-wide parity.
+
+The combined Sol subject-and-mask process and resulting hierarchy A/B
+comparison remain unvalidated. Sol's subscription quota use is unmeasured.
+The mask teacher and final selection remain open; frozen prompts and production
+settings are unchanged. This progress does not complete 17 or establish
+end-to-end hierarchy quality.
 
 The comparison needs to establish:
 
