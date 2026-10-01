@@ -64,7 +64,8 @@ order. A node with no `e` tags has no children. `content` is empty.
     ["title","Cooking"],
     ["e","note1jkl..jkl"],
     ["e","note1mno..mno"],
-    ["notes_index","note1pqr..pqr"]
+    ["notes_index","note1pqr..pqr"],
+    ["notes_index","note1stu..stu"]
   ],
   "content":"", "sig":"def..def"
 }
@@ -74,8 +75,12 @@ order. A node with no `e` tags has no children. `content` is empty.
 
 `K_NOTES_INDEX` is an unassigned regular kind in `1000–9999`.
 
-A node uses one `notes_index` tag to reference the index of its note IDs,
-or omits the tag for an empty list.
+A node uses `notes_index` tags to reference its note list. Concatenate each
+referenced index's complete sequence in `notes_index` tag order. A node
+with no `notes_index` tags has an empty list.
+
+Child nodes do not automatically contribute notes. A child's note is
+included only if the author also lists its ID in this node's indexes.
 
 In an index, `e` tags list note event IDs. All `e` tags precede all
 `notes_index` tags, which reference further indexes:
