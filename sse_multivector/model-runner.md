@@ -3655,9 +3655,8 @@ It uses thirteen posts from the same original 100-post corpus, so it does not
 establish transfer to fresh posts or broad non-food coverage. The agent
 recommends a bounded trial on fresh non-food posts outside that corpus before
 further relevance-input changes. The user approved the saved-input trial below;
-PPv30-node-v1,
-the formula, input selection and production adoption remain tested candidates
-or open decisions, not frozen production behavior.
+PPv30-node-v1, the formula, input selection and production adoption remain
+tested candidates or open decisions, not frozen production behavior.
 
 **Fresh non-food posts: saved SP contexts and fixed PPv30-node-v1.**
 
@@ -3710,16 +3709,98 @@ account before photography incidental to song inspiration; Bitcoin support
 instructions before a song's incidental Bitcoin association. Subtle directions
 remain open, and none of these are new user labels.
 
-The prepared `experiments/ppv30-fresh-nonfood-v1` run is bounded to twenty-two
-new attempts, including eligible provider retries. Input/output work scales
-with selected post/node memberships and full-post length, not every post
-against every hierarchy node; repeated SP entries do not cause repeated
-complete-post inference. Local offline CPU SSE encodes selected contexts and
-three exact titles with the same checkpoint and model artifacts. Source lookup
-is linear in the saved carrier and selected entries. The zero-cash reservation
-is recorded without changing lifetime monetary totals or unrelated accounting.
-Prompts, formula and original artifacts are preserved; results and production
-adoption remain open.
+The run completed all forty-three valid cases with eleven new complete-post/
+title assessments and thirty-two exact-request reuses, no failures or retries.
+Native usage and generation accounting both report 7,916 input, zero cached
+input and 1,873 output tokens including 204 reasoning tokens. The API catalog
+reference is $0.17281; incremental subscription cash is zero and subscription
+quota was not measured. Only this zero-cash reservation is settled, preserving
+lifetime monetary totals and unrelated accounting. There were no baseline, SP,
+MP, hierarchy-generation or paid-fallback calls.
+
+Two SP entries have an identical context. Local offline CPU SSE encoded
+forty-two distinct contexts and three exact titles. All forty-five rows select
+their entire UTF-8 text and all non-special tokens; the longest has
+23 tokens including the special token. Checkpoint, model artifact, worker and
+runtime identities are unchanged. No replay controls exist on this path, so
+there is no claim of original-mask parity. Work scales with selected post/node
+inputs and full-post length rather than every post against every hierarchy
+node; repeated SP entries reuse the complete-post prominence answer. Source
+lookup is linear in the saved carrier and selected entries.
+
+Descending sorting-score order, with original music-corpus ranks identifying
+posts and the exact winning SP retained in `comparison.json`:
+
+| Title | Original rank and post | Prominence | Highest relevance | Sorting score |
+| --- | --- | ---: | ---: | ---: |
+| Music | 1: classical listening and enjoyment | 100 | .911088 | 91.108842 |
+| Music | 13: iconic Goa-track appraisal | 98 | .917322 | 89.897579 |
+| Music | 81: AI-track and lyric credits | 94 | .913821 | 85.899190 |
+| Music | 4: “What does music mean to you?” | 100 | .853925 | 85.392473 |
+| Music | 80: song influence and Lisbon inspiration | 81 | .884162 | 71.617087 |
+| Music | 35: daily listening, reposting and algorithm defiance | 70 | .813962 | 56.977332 |
+| Photography | 40: band photographs around video recording | 52 | .836664 | 43.506529 |
+| Photography | 46: photographing a drumming father | 30 | .755091 | 22.652723 |
+| Photography | 80: incidental photography in song inspiration | 10 | .654409 | 6.544092 |
+| Bitcoin | 21: vinyl contest and Lightning support instructions | 24 | .893909 | 21.453820 |
+| Bitcoin | 80: incidental Bitcoin associations in song promotion | 3 | .784576 | 2.353728 |
+
+Photography and Bitcoin match the pre-run agent observations and their
+prominence-only orders. The band post develops two photograph-sharing occasions;
+the father post also concerns drumming, learning guitar and family; the song
+mentions photography within its inspiration story. Bitcoin Lightning support
+instructions develop the subject beyond the song's incidental associations.
+
+Music's focused group still leads the mixed posts. The mixed song develops
+musical influence, inspiration and listening availability; its order before the
+repost with algorithm defiance is defensible. Within the focused group,
+relevance moves the pure music question below the Goa appraisal and AI-track
+credit. Prominence is 100 for the question versus 98 and 94 for those tracks;
+its winning saved context is “The question asks the reader what music means to
+them.” The winning track contexts are “The musical content shared in the post.”
+and “The post shares a musical track and includes #music.” The lower question
+relevance is verified, but the reason and the benefit of those subtle directions
+remain uncertain. No numeric gap was approved as a semantic threshold.
+
+Thirty-four native agent case reviews accept ordering; nine uncertain reviews
+share the question, Goa and AI-track inputs. These are correlated SP cases,
+not independent comparisons, user labels, exact-percentage approvals or an
+accuracy rate. Pre-run observations remain attributable and no user judgments
+were created. The agent found no clear wrong order, but this trial demonstrates
+no added relevance benefit. It uses older ASv6.23 contexts and nine posts from
+one music corpus, with diagnostic assignments rather than automatic placement;
+it does not establish broad fresh-subject transfer or current SP quality.
+The agent recommends one bounded diagnostic: use the question's exact original
+text as its relevance input, retaining the same prominence answers and all
+other inputs, to distinguish saved-context wording from the encoder's treatment
+of the question. That diagnostic has not begun. Production adoption remains
+open; prompt, formula and original artifacts remain unchanged.
+
+Native artifacts are under `experiments/ppv30-fresh-nonfood-v1`: frozen
+`experiment.json`, original `run/results.jsonl`, `after-run.json`, native
+`reviews.jsonl` and `after-review.json`, plus `relevance-v1` worker request,
+receipt, vectors and `comparison.json`. The comparison SHA256 is
+`1e9da852aebd69d15edde5037685a49057b60e43be369a937da14855570ebdf3`.
+`verification-checks.log` records exact carrier/context/title binding,
+disjoint post IDs, all point allocations, independent cosines/products,
+eleven post maxima, full orders and protected source/prompt/prior-comparison
+hashes. Tests were completed before generation; no further source changes
+were made for the result. Preparation source/specifications and zero-cash
+reservation were committed in `c67fff10`.
+
+Native commands after preparation:
+
+```sh
+python3 sse_multivector/experiment.py run sse_multivector/experiments/ppv30-fresh-nonfood-v1 --max-new-attempts 22
+python3 sse_multivector/experiment.py show sse_multivector/experiments/ppv30-fresh-nonfood-v1 --generation-costs --json
+python3 sse_multivector/prominence_cosine.py prepare sse_multivector/experiments/ppv30-fresh-nonfood-v1/relevance-v1 --experiments sse_multivector/experiments/ppv30-fresh-nonfood-v1 --post-order highest --worker-config sse_multivector/experiments/ppv30-transfer-nodes-v1/relevance-v1/worker-config.json
+python3 sse_multivector/prominence_cosine.py collect sse_multivector/experiments/ppv30-fresh-nonfood-v1/relevance-v1
+```
+
+The existing cached offline CPU runtime ran `worker.py` with the prepared
+worker config between `prepare` and `collect`; `worker.log` records forty-five
+rows. `native-review.log` records the forty-three CLI agent reviews, with zero
+model calls. All artifacts remain ignored from the outset.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

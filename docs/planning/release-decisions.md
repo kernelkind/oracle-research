@@ -1325,25 +1325,39 @@ post maxima, unchanged source hashes and twenty-three workflow tests passed.
 
 The agent recommends fresh non-food posts outside the original 100-post
 sample, rather than further wording changes without an observed failure. The
-user approved the bounded saved-input trial described below. Prompts, hierarchy, source posts, masks, formula and
-production adoption remain unchanged or open as before; detailed orders and
+user approved the bounded saved-input trial described below. Prompts, hierarchy,
+source posts, masks, formula and production adoption remain unchanged or open
+as before; detailed orders and
 provenance are in [model-runner.md](../../sse_multivector/model-runner.md).
 
-**Fresh-post sorting trial approved October 1:** nine posts from the saved
+**Fresh-post sorting trial completed October 1:** nine posts from the saved
 music corpus are disjoint from the original 100. Forty-three unchanged ASv6.23
-SP entries are selected for existing Music, Photography and Bitcoin titles,
-covering eleven post/node inputs. This uses explicit diagnostic assignments,
-not additions to the saved hierarchy or a test of automated memberships.
+SP entries were selected for existing Music, Photography and Bitcoin titles,
+covering eleven post/node inputs. These are explicit diagnostic assignments,
+not new hierarchy memberships or validation of automated placement.
 PPv30-node-v1 / Astra low, context-only relevance and highest prominence ×
-relevance per post remain fixed. The agent records observations before the run
-and reviews the resulting orders without new user labels. The native workflow
-now reads exact saved SP IDs and encodes their contexts without requiring MP
-masks or original mask vectors; source hashes remain protected. Failing-first
-checks and the existing comparison and experiment/worker suites pass. The run
-is prepared and bounded to twenty-two new attempts with zero incremental cash.
-No SP/MP generation is included, so the broader-corpus generation hold remains
-applicable to that separate work. Older context wording limits conclusions about
-current extraction quality; results and production adoption remain open.
+relevance per post remained fixed. Eleven new valid assessments and thirty-two
+exact-request reuses completed without failures or retries. Native usage is
+7,916 input and 1,873 output tokens, including 204 reasoning tokens; catalog
+reference is $0.17281 and incremental cash is zero. No SP/MP generation ran.
+
+Photography orders band photographs before photographing a drumming father
+before photography incidental to song inspiration. Bitcoin support instructions
+precede incidental Bitcoin associations. Both match the pre-run agent
+observations and prominence-only orders. In Music, four focused posts lead the
+two mixed posts, but relevance moves the wholly musical question “What does
+music mean to you?” below the Goa-track appraisal and the AI-track credit with
+community tags. Those subtle directions remain uncertain; this is neither a
+proven failure nor a demonstrated improvement from relevance. Thirty-four
+native agent case reviews accept ordering; nine uncertain cases share the three
+Music inputs. These are not user labels or an accuracy rate. All source hashes,
+complete context selections, independent products and post maxima passed;
+139 relevant source/regression tests passed before generation. Older SP wording
+and music-corpus selection limit generalization. The agent recommends testing
+the question's exact text as the relevance input while preserving prominence,
+before further expansion; that diagnostic has not begun. Production adoption
+remains open. [model-runner.md](../../sse_multivector/model-runner.md) records
+full orders, source protection and native evidence.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
