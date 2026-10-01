@@ -739,9 +739,13 @@ pilot, not a claim that the current worker enforces it.
   Independent prompts may still share a GPU batch.
   Save both complete responses, raw and parsed, with note/subject links and
   failures. Validation must not update weights or reset the ongoing training
-  state. Use each frozen training example once in its new 200-note block, with
-  exact coverage checked before the checkpoint; do not consume later-block
-  notes early or repeat earlier blocks. Use the same held-out notes and
+  state. Use each frozen training example once in its new 200-note block.
+  Shuffle the block's subject and mask examples together using a fixed seed;
+  take consecutive groups of N examples for one adapter update, retaining a
+  smaller final group when needed. This batch construction was approved
+  October 1; the task mix varies between updates. Check exact coverage before
+  the checkpoint; do not consume later-block notes early or repeat earlier
+  blocks. Use the same held-out notes and
   generation settings at every milestone.
 - **Checks during execution:** account for every validation note and dependent
   call as responses arrive. For valid generated subjects, account for every
@@ -806,8 +810,10 @@ runtime limits, and spending require separate decisions.
 **Complete-pass budget approved October 1:** each frozen subject and mask
 training example is used once, without replacement, in five new 200-note blocks.
 This guarantees example coverage under a modest training budget; it does not
-establish optimum training or each model's maximum capability. Exact ordering,
-task loss weights, optimizer/adapters and checkpoint selection remain open.
+establish optimum training or each model's maximum capability. Batch construction
+uses the approved shuffle within each block; block membership, seed value,
+examples per update, task loss weights, optimizer/adapters and checkpoint
+selection remain open.
 The preliminary 20% subject / 80% mask replacement sampler is a different recipe.
 At the old subject-count average, a natural pass is about 4% subject rows and
 96% mask rows. On the saved 80-note training set, production-encoder accounting

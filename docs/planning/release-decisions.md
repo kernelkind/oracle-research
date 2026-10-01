@@ -680,9 +680,10 @@ the previous rental's measured speed and price, before checkpoint checks and
 transfers. Training labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
-stage allocation were subsequently approved below. Exact note ordering, task
-loss weights, model settings, validation/test counts, and GPU parallelism remain
-open. This corrects the intended design; continuation across
+stage allocation and batch construction were subsequently approved below.
+Block membership, seed value, training batch size, task loss weights, model
+settings, validation/test counts, and GPU parallelism remain open. This corrects
+the intended design; continuation across
 expanding datasets and parallel execution still need implementation and tests.
 No rental, model calls, or spending is authorized by this correction.
 
@@ -692,8 +693,8 @@ Introduce five new 200-note blocks and finish each block's examples before its
 checkpoint. Continue the same adapter, optimizer, schedule, random state and
 data-order position; earlier blocks are not automatically replayed.
 Check actual example coverage at every milestone. Record task-specific loss and
-supervised tokens; task loss weights, exact ordering, numerical settings and
-adapter coverage remain open. The natural row exposure differs from the
+supervised tokens; task loss weights, block membership, seed value, batch size,
+numerical settings and adapter coverage remain open. The natural row exposure differs from the
 preliminary 20/80 replacement sampler. One pass is a modest starting budget,
 not an established optimum or a comparison of each architecture's maximum
 capability. Select from generated correctness, coverage and output reliability;
@@ -708,6 +709,16 @@ candidate's own generated subjects, requesting its mask separately. Independent
 single-subject prompts can still share a GPU batch. Teacher grouped-mask
 comparisons remain evidence for teacher selection; this decision selects the
 student format. Task loss weights and remaining recipe choices stay open.
+
+**October 1 training-batch construction approved:** collect every subject and
+mask example from the current 200-note block and shuffle them together using a
+fixed random seed. Take consecutive groups of **N prompt–answer examples per
+adapter update**, including a smaller final group when needed. Use each example
+once and finish the block before its checkpoint; the subject/mask mix varies
+between updates. An update can include examples from different notes. Freeze
+the seed and save the data-order position so continuation preserves the same stream.
+N, the seed value, and block membership remain open. This approves the batch
+construction design; loss weights remain open and implementation is separate.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new

@@ -51,9 +51,13 @@ Start **one continuing training run per student**:
 
 **One complete pass is approved:** use every subject and mask training example
 once, without replacement, in five new 200-note blocks. Earlier notes and labels
-remain saved; their examples are not repeated at later milestones. Exact note
-ordering, task loss weights, and model settings remain open. Record per-task
-loss, resource telemetry, and actual example coverage at each stage. This compares
+remain saved; their examples are not repeated at later milestones. Within each
+block, shuffle all subject and mask examples together using a fixed random seed.
+Use the next **N prompt–answer examples for one adapter update**, retaining a
+smaller final batch when needed. The subject/mask mix varies between batches.
+Block membership, the seed value, N, task loss weights, and model settings remain
+open. Record per-task loss, resource telemetry, and actual example coverage at
+each stage. This compares
 the tested configurations under a modest budget; one pass is not established as
 optimal training for every student.
 
