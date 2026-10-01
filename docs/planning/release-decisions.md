@@ -653,25 +653,30 @@ intended design; the copier and stronger stage checks still need implementation.
 
 **October 1 training-continuation correction approved:** the user requested
 removing the separate fresh starts. The larger pilot uses **one continuing
-training run per student**, with checkpoints at the proposed 250/500/1,000-note
-milestones. Initialize each adapter and optimizer once; carry learned weights,
-optimizer, learning-rate schedule, random state and data-order position forward.
+training run per student**, with validation checkpoints every 200 training
+notes through 1,000, approved October 1. Initialize each adapter and optimizer
+once; carry learned weights, optimizer, learning-rate schedule, random state
+and data-order position forward.
 Save complete checkpoints and verify adapter reloads. At each milestone,
 generate subjects and masks on the same held-out validation notes without
-updating training weights. The proposed three milestones give nine trained
-checkpoint versions for comparison, not nine independent fine-tunes.
+updating training weights. The five checkpoints at **200, 400, 600, 800, and
+1,000 notes** give fifteen trained versions across the three students, plus
+three untuned baselines. With the proposed 100 validation notes, that is
+1,800 note/model evaluations and semantic reviews. The schedule adds 600
+evaluations over the earlier proposal: approximately 42 GPU hours / $60 at
+the previous rental's measured speed and price, before checkpoint checks and
+transfers. Training labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. Cumulative training amount, stage
-allocation, note ordering/revisiting, exact checkpoint schedule, and GPU
+allocation, note ordering/revisiting, validation/test counts, and GPU
 parallelism remain open. This corrects the intended design; continuation across
 expanding datasets and parallel execution still need implementation and tests.
 No rental, model calls, or spending is authorized by this correction.
 
-**September 30 training-data clarification:** the user confirmed that the
-500-note set includes the first 250 training notes plus 250 new notes; the
-1,000-note set retains the 500. Inclusion of the 1,000-note comparison is fixed.
-Smaller milestone sizes, evaluation counts, rental grouping, duration, and
-spending remain open.
+**Training-data reuse clarified September 30; milestones approved October 1:**
+each larger training set retains the earlier notes and labels. Add 200 new
+notes at each milestone through 1,000; the smaller sets are shared subsets.
+Evaluation-note counts, rental grouping, duration, and spending remain open.
 
 **September 25 informal start:** the user approved beginning the fine-tuning
 pilot with available data from the latest subject and mask prompts, excluding

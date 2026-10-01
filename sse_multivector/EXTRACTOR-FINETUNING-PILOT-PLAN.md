@@ -12,10 +12,11 @@ Implementation and deployment details are recorded below.
 model-selection pilot is **06 · Choose model through larger fine-tuning pilot**,
 waiting for its data in 05. The planned pilot includes a comparison trained on
 1,000 notes, approved September 30. On October 1 the user requested three
-continuing student training runs, with checkpoints as data grows, replacing
-separate fresh starts at each size. Smaller milestone sizes and validation/test
-counts remain open. Task 18's preliminary training setup is complete; continuation
-across expanding datasets still needs implementation and verification.
+continuing student training runs, replacing separate fresh starts at each size,
+and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
+notes. Validation/test counts remain open. Task 18's preliminary training setup
+is complete; continuation across expanding datasets still needs implementation
+and verification.
 Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
@@ -145,7 +146,7 @@ Approved requirements:
   percentage is approved yet.
 
 The staged experimental design below is only partly approved. The 1,000-note
-training comparison is included; smaller training comparisons, validation/test
+training comparison and checkpoints every 200 notes are included; validation/test
 counts, exact training settings, hardware allocations, and individual spending
 authorizations remain open for that larger design. The first informal rental below
 started and was deleted on September 29 after the monitoring error recorded
@@ -645,17 +646,21 @@ either Gemma checkpoint's training setup works.
 
 | Set | Distinct notes | Purpose |
 |---|---:|---|
-| Initial training set | 250 | First comparison across all three models |
-| Expanded training set | 500 | Measure improvement from more notes |
-| Included comparison | 1,000 | Approved as part of the planned pilot on September 30 |
+| First training checkpoint | 200 | First trained validation point for all three students |
+| Second training checkpoint | 400 | Measure improvement along the same training run |
+| Third training checkpoint | 600 | Measure improvement along the same training run |
+| Fourth training checkpoint | 800 | Measure improvement along the same training run |
+| Fifth training checkpoint | 1,000 | Included comparison, approved September 30 |
 | Validation set | 100 | Compare development runs and select settings |
 | Final test set | 200 | Evaluate selected candidates after development stops |
 
-The user approved inclusion of the 1,000-note training comparison on September 30.
-The smaller training sizes and validation/test counts remain proposed measurement
-points. These are for the larger pilot, separate from the informal 100-note experiment.
+The user approved inclusion of the 1,000-note training comparison on September 30
+and validation every 200 training notes on October 1. Validation/test counts
+remain proposed. These are for the larger pilot, separate from the informal
+100-note experiment. Each student has five trained validation points plus its
+untuned baseline.
 
-The 500-note set retains the original 250; the 1,000-note set retains the 500.
+Each larger training set retains all earlier notes and labels, adding 200 notes.
 All models receive the same sets. Choose broadly varied real notes while keeping
 topic, writing-style, and length mixtures similar across sizes. Do not simply
 use our food/music-heavy existing annotations as evidence of broad coverage.
@@ -688,12 +693,12 @@ separately from review findings and any subsequent changes.
    preserve their outputs before fine-tuning.
 3. **Start one continuing training run per student.** Initialize the adapter
    and optimizer from the original pretrained model once. Save a complete
-   checkpoint at the proposed 250-note milestone and generate subjects and masks
+   checkpoint at 200 training notes and generate subjects and masks
    on the shared validation notes, without updating weights from those notes.
-4. **Continue as data grows to 500 notes.** Carry the adapter, optimizer,
-   learning-rate schedule, random state and data-order position forward. Save
-   and evaluate the next checkpoint. Record cumulative updates and which
-   examples were used; restarting the optimizer or schedule is a recipe change.
+4. **Continue through 400, 600, and 800 training notes.** Carry the adapter,
+   optimizer, learning-rate schedule, random state and data-order position
+   forward. Save and evaluate a checkpoint every 200 notes. Record cumulative
+   updates and which examples were used; restarting the optimizer or schedule is a recipe change.
 5. **Continue to 1,000 notes.** This comparison's inclusion was approved
    September 30. Save and evaluate its checkpoint using the same validation
    notes and generation settings. Define total training work, its allocation
@@ -776,12 +781,11 @@ resume exist; the stronger stage accounting and approved background copier
 above still require implementation and verification. Transfer mechanism and
 resource limits remain implementation choices.
 
-With three candidates and the proposed three training sizes, there are twelve
-validation versions: three untuned and nine saved training checkpoints. For N
-shared validation notes, this means 12N note outputs and 12N main semantic
-reviews; at the proposed
-100 notes, 1,200 reviews. Subject and mask generation call counts additionally
-depend on each version's own subjects. Check total generation/review tokens,
+With three candidates and five checkpoints per student, there are eighteen
+validation versions: three untuned and fifteen saved training checkpoints. For N
+shared validation notes, this means 18N note/model outputs and 18N main semantic
+reviews; at the proposed 100 notes, 1,800 evaluations and reviews. Subject and
+mask generation call counts additionally depend on each version's own subjects. Check total generation/review tokens,
 full-note review input length, stored adapters, and transfer volume before
 launch; include long notes and notes with many subjects. A reviewer input that
 exceeds its limit must be reported, not silently truncated. Additional final-test
@@ -792,17 +796,17 @@ The next training-design decision is the cumulative amount of training for
 **each continuing student run**, and its allocation across milestones. Note
 count alone does not specify updates, passes, ordering or repeated examples.
 The preliminary 128 updates are not a selected larger-pilot budget. Freeze the
-full training schedule, checkpoint save/evaluation schedule and selection rule
+full training schedule, checkpoint save/evaluation procedure and selection rule
 before launch; do not restart learning-rate decay at a milestone. Earlier
 three-pass runtime estimates are not a frozen protocol. Record recipe changes
 and interruptions; preserve the actual training history for every checkpoint.
 
-There are **three main continuing fine-tunes**, each with the proposed three
+There are **three main continuing fine-tunes**, each with five approved
 milestone checkpoints, alongside untuned baselines, setup checks and any
 separately justified confirmation work. The 1,000-note comparison is included;
-smaller milestones, validation/test counts, GPU grouping and spending remain
-open. Four GPUs cannot run four independent milestone training jobs when one
-student's later stage depends on its earlier stage; checkpoint generation could
+validation/test counts, GPU grouping and spending remain open. Four GPUs cannot
+run four independent milestone training jobs when one student's later stage
+depends on its earlier stage; checkpoint generation could
 provide other parallel work, with scheduling still to be designed and tested.
 
 ## Evaluation and decisions
@@ -936,16 +940,16 @@ all paid expenditure against the lifetime ceiling, regardless of reuse.
 
 The pilot ceiling is a financial guardrail, not a spending target or evidence
 that the pilot is scientifically sufficient. Its amount, the final-training
-reserve, and the dataset-size schedule remain open; no fixed pilot/rest ratio
+reserve, and the training budget remain open; no fixed pilot/rest ratio
 has been adopted.
 
 ### Larger pilot cost estimate — October 1, provisional
 
 Full cash cost and elapsed time must be recalculated from **cumulative training
 work across three continuing student runs** and the selected GPU schedule. The
-proposed three checkpoints per student still require the same validation and
-final-test generation work. Note counts and run counts do not determine the
-training budget. The component estimates below are provisional and authorize
+approved five checkpoints per student increase validation generation and
+review work; the selected final-test comparison is the same size. Note counts
+and run counts do not determine the training budget. The component estimates below are provisional and authorize
 no spending or recipe.
 
 A read-only Vast search on October 1 found a comparable verified 450 W RTX PRO
@@ -954,16 +958,18 @@ completed preliminary rental's price. Inbound/outbound transfer rates were
 $0.0078125/$0.0091146 per GB. No offer was reserved. Prices and availability can
 change; [Vast bills compute, storage and transfers](https://docs.vast.ai/guides/instances/pricing).
 
-Saved preliminary-run durations project approximately **74.6 GPU hours / $106**
-for 1,200 validation note/model outputs: three baselines plus nine frozen
-checkpoints. The selected candidate's final comparison adds 400 outputs, roughly
-16.5–25 hours / $23–35. Gemma baseline mask times are inferred from trained mask
+Saved preliminary-run durations project approximately **116.5 GPU hours / $165**
+for 1,800 validation note/model outputs: three baselines plus fifteen frozen
+checkpoints. The two extra checkpoints per student add 600 evaluations, about
+42 GPU hours / $60 at the previous rental's speed and price, before extra
+checkpoint checks and transfers. The selected candidate's final comparison adds
+400 outputs, roughly 16.5–25 hours / $23–35. Gemma baseline mask times are inferred from trained mask
 throughput because those baseline calls never happened. Truncated or malformed
 subjects also prevented some trained mask work. These are workload extrapolations,
 not measurements of a complete larger pilot.
 
-Together, validation and the selected final comparison project to **91–100 GPU
-hours / $130–140 before training, setup, headroom and transfers**. Training
+Together, validation and the selected final comparison project to **133–142 GPU
+hours / $188–200 before training, setup, headroom and transfers**. Training
 hours can be estimated from the measured 128-update trainer times:
 
 ```text
@@ -973,8 +979,9 @@ training hours ≈ (52.2 × Qwen updates + 80.6 × dense Gemma updates
 ```
 
 Each update count is the **total across that student's entire continuing run**,
-not a fresh budget at every milestone. Save/reload checks at all nine milestones
-would add approximately 1.53 hours if they resemble the previous checks.
+not a fresh budget at every milestone. Save/reload checks at all fifteen
+checkpoints would add approximately 2.55 hours if they resemble the previous
+checks.
 Three continuing runs do not imply a two-thirds compute saving: retaining the
 same total updates retains approximately the same trainer work. Savings depend
 on the chosen schedule and avoiding unnecessary repeated work.
@@ -982,7 +989,8 @@ on the chosen schedule and avoiding unnecessary repeated work.
 These projections assume comparable batch sizes, sequence lengths and
 throughput; they do not establish adequate training. An illustrative 25%
 headroom can cover startup and workload uncertainty, with another $3–10 for
-transfers at comparable host rates. Neither is a confidence interval or cap.
+transfers at comparable host rates, to be recalculated for the fifteen complete
+checkpoints. Neither is a confidence interval or cap.
 GPU grouping, shared resources, downloads, output lengths and checkpoint
 frequency affect the final estimate. Testing all three candidates against their
 baselines on the final test would add roughly $58–69 of generation cost over
@@ -1003,13 +1011,13 @@ At those lengths, 1,300 newly labeled notes require about 32,279 calls / 81.7M
 tokens. Training subsets share labels; do not charge their nested notes twice.
 The older 9.82-subject sample cannot be reused as the current workload estimate.
 
-One review per note/version gives 1,200 validation reviews plus 400 for the
+One review per note/version gives 1,800 validation reviews plus 400 for the
 winner's trained/untuned final comparison. An illustrative review workload uses 7,000–10,000 input and 500–1,500 output tokens per review, including reasoning, plus labeling. No review prompt or reviewer is selected.
 
 As a separate cash scenario, [Astra Standard API rates](https://developers.openai.com/api/docs/models/gpt-6-astra)
 are $10/M input, $1/M cached input and $50/M output. At the measured token
-lengths, all 1,300 labels would cost about $926–1,005, and the illustrative 1,600
-reviews another $152–280. These are API sensitivity estimates, not subscription
+lengths, all 1,300 labels would cost about $926–1,005, and the illustrative 2,200
+reviews another $209–385. These are API sensitivity estimates, not subscription
 charges or approved fallback spending; different reviewer models, reasoning,
 cache writes and actual request lengths can change them.
 
@@ -1061,12 +1069,13 @@ Gemma allocated 85.34 GiB of CUDA tensors, with sampled overall GPU use peaking
 at 94.32 GiB. An 80 GB H100/A100 is therefore not a substitute for this recipe.
 
 At the measured 450 W throughput, validation and the winner's final comparison
-alone project to approximately 91–100 GPU hours. Add cumulative training work,
+alone project to approximately 133–142 GPU hours. Add cumulative training work,
 checkpoint checks and setup before applying any headroom. GPU-hours are total
 work; elapsed rental time depends on the actual schedule.
 
-There are three student training paths, each with dependent 250/500/1,000-note
-stages. The earlier nine-independent-training-job packing does not apply.
+There are three student training paths, each with dependent
+200/400/600/800/1,000-note stages. The earlier nine-independent-training-job
+packing does not apply.
 Different students could train concurrently. A fourth GPU could generate answers
 from frozen checkpoints or process independent validation-note subsets, but
 that schedule, resource isolation and implementation remain open. Preserve the

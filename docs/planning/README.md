@@ -7,9 +7,9 @@ read-only investigation, the low-memory HDBSCAN discussion and unapproved next s
 
 [Fine-tuning pilot process](fine-tuning-pilot-process.md) describes the experiment:
 shared data, untuned baselines, three continuing student training runs with
-checkpoints as data grows, and model comparison. Each checkpoint generates
-subjects and masks on the same held-out validation notes. Semantic review
-happens outside the GPU rental.
+checkpoints at 200, 400, 600, 800, and 1,000 training notes, and model comparison.
+Each checkpoint generates subjects and masks on the same held-out validation
+notes. Semantic review happens outside the GPU rental.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user

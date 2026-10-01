@@ -15,8 +15,9 @@ Freeze shared training, validation, and final test notes, checked teacher
 answers, prompts, model revisions, and settings. Keep authors and duplicates
 within one split.
 
-**1,000 training notes** are included; **250/500 training**, **100 validation**,
-and **200 final test** remain proposals. Keep final test notes out of development.
+**1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
+and 1,000**, are approved. **100 validation** and **200 final test** notes remain
+proposals. Keep final test notes out of development.
 
 ## 2. Generate untuned baselines — Vast
 
@@ -37,16 +38,17 @@ Start **one continuing training run per student**:
 1. Initialize its adapter and optimizer from the original model once.
 2. Learn from **note → teacher hierarchy** and **note + subject → teacher mask**
    examples. Both tasks update the same adapter.
-3. At the proposed 250-note milestone, save the complete training checkpoint.
+3. At 200 training notes, save the complete training checkpoint.
    Verify the saved adapter reloads correctly. Generate subjects and their masks
    on the **same 100 separate validation notes**; save raw and parsed outputs.
-4. Continue from that training state as the data grows to 500, then 1,000 notes.
-   Save and evaluate a checkpoint at each milestone, preserving the optimizer
-   and learning-rate schedule. Validation answers do not update the weights.
+4. Continue from that training state through **400, 600, 800, and 1,000 notes**.
+   Save and evaluate at each milestone, giving five trained points per student
+   plus its untuned baseline. Preserve the optimizer and learning-rate schedule.
+   Validation answers do not update the weights.
 
 Larger sets retain earlier notes and labels. Continuing does not automatically
 require another pass over earlier notes. **Training amount, note ordering and
-revisiting, and exact save/evaluation schedule remain open.** Record loss,
+revisiting remain open.** Record loss,
 resource telemetry, and the examples used at each stage.
 
 ## 4. Retrieve verified results — Vast to local
@@ -84,8 +86,8 @@ Rental grouping, duration, and spending also remain open.
 ## Provisional cost — October 1
 
 At the previous GPU's measured speed, generating validation answers for three
-baselines and nine checkpoints, plus the selected model's final comparison,
-projects to **91–100 GPU hours / $130–140 before training, setup and transfers**.
+baselines and fifteen checkpoints, plus the selected model's final comparison,
+projects to **133–142 GPU hours / $188–200 before training, setup and transfers**.
 Full cost and elapsed time depend on the cumulative training amount and GPU
 schedule, which remain open. Three continuing runs do not automatically reduce
 training work by two thirds. Teacher labeling and review assume the existing

@@ -40,7 +40,7 @@
       "track": "model",
       "title": "Choose model through larger fine-tuning pilot",
       "status": "WAITING",
-      "description": "Model track. Larger model-selection pilot includes a comparison trained on 1,000 notes, approved September 30; other data choices remain open. The preliminary 100-note experiment is separate task 29.\nFormat examples and compare untuned versus trained quality, speed and cost for masks and any agreed additional outputs; sorting-related outputs are not yet decided.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nWAITING FOR 05; TRAINING SETUP 18 COMPLETE"
+      "description": "Model track. Larger model-selection pilot includes a comparison trained on 1,000 notes, approved September 30, with validation at 200, 400, 600, 800 and 1,000 notes along each continuing student run. Validation/test counts and training amount remain open. The preliminary 100-note experiment is separate task 29.\nFormat examples and compare untuned versus trained quality, speed and cost for masks and any agreed additional outputs; sorting-related outputs are not yet decided.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nWAITING FOR 05; TRAINING SETUP 18 COMPLETE"
     },
     {
       "id": "07",
