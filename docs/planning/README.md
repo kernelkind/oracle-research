@@ -89,13 +89,15 @@ teacher/model outputs it needs remain undecided; prominence outputs are not
 required merely because earlier experiments used them.
 
 Teacher comparison (17) remains in progress. Sol low is provisionally favored
-for subject generation after assessment on 20 posts. Sol xhigh grouped masks
-were assessed on 20 posts (684 masks), using saved Astra subjects. Agent reviews
-found broadly comparable quality to Astra, with minor omissions and unresolved
-cases; they do not establish corpus-wide parity or select teachers. The combined
+for subject generation after assessment on 20 posts. The user also provisionally
+favors GPT-6.1 Sol medium for grouped masks: one call for all subjects in a post.
+Sol xhigh grouped masks were assessed on 20 posts (684 masks), using saved Astra
+subjects. Agent reviews found broadly comparable quality to Astra, with minor
+omissions and unresolved cases; they do not establish corpus-wide parity or
+select teachers. The combined
 Sol subject-and-mask process and resulting hierarchy comparison remain
-unvalidated. Subscription quota use is unmeasured; mask and final teacher
-selection stay open. Final teacher selection waits for prompt stress-testing
+unvalidated. Subscription quota use is unmeasured; final teacher selection
+stays open. Final teacher selection waits for prompt stress-testing
 (30), with evidence for the prompts we will actually use. Comparison work may
 continue; any rechecking belongs to that workstream.
 

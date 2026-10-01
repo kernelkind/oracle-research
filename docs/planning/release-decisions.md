@@ -378,10 +378,13 @@ Both tasks remain in progress. 04 is in launch scope and actively worked on,
 superseding the earlier pause notes; it need not wait for the 100-note hierarchy
 or title correction. Statuses and completion dependencies are unchanged.
 The user labels GPT-6.1 Sol low as the provisional favorite for SP
-(subject generation). Completed subject and fixed-subject mask comparisons are
-summarized in the [teacher-comparison evaluation plan](#teacher-comparison-pilot-evaluation-plan).
+(subject generation), and GPT-6.1 Sol medium as the provisional favorite for
+grouped masks (one call for all subjects in a post). These are provisional
+preferences, not final teacher selection. Completed subject and fixed-subject
+mask comparisons are summarized in the
+[teacher-comparison evaluation plan](#teacher-comparison-pilot-evaluation-plan).
 The combined Sol subject-and-mask process and resulting hierarchy comparison
-remain unvalidated. The mask teacher and final teacher selection remain open.
+remain unvalidated. Final teacher selection remains open.
 Frozen ASv6.48 and production model settings are unchanged; Sol's subscription
 quota consumption remains unmeasured. Task 17 stays in progress.
 Dates are unchanged. The additional construction dependencies below expose
@@ -767,11 +770,11 @@ fine-tunes across the three candidates, including storage, transfers and failed
 attempts. Budget admission passed before the run; no replacement rental is authorized without discussing any failure with the user.
 
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
-  data. GPT-6.1 Sol low is provisionally favored for SP; the mask teacher and
-  final selection remain open. Assess subjects, masks, any agreed additional
-  outputs and the resulting hierarchies, along with generation time, cost and
-  feasibility. How unsuitable annotations are handled remains open; repairing
-  them is not an assumed workflow. Check the
+  data. GPT-6.1 Sol low is provisionally favored for SP, and GPT-6.1 Sol medium
+  for grouped masks. Final selection remains open. Assess subjects, masks, any
+  agreed additional outputs and the resulting hierarchies, along with generation
+  time, cost and feasibility. How unsuitable annotations are handled remains
+  open; repairing them is not an assumed workflow. Check the
   provider's data-use and output-use terms before producing training data at
   scale.
 - **Larger fine-tuning pilot (06):** compare the pretrained models that we will
@@ -817,7 +820,9 @@ not user approval of the masks or evidence of corpus-wide parity.
 
 The combined Sol subject-and-mask process and resulting hierarchy A/B
 comparison remain unvalidated. Sol's subscription quota use is unmeasured.
-The mask teacher and final selection remain open; frozen prompts and production
+Following subsequent medium comparisons, the user provisionally favors GPT-6.1
+Sol medium for grouped masks. This preference does not establish corpus-wide
+parity. Final selection remains open; frozen prompts and production
 settings are unchanged. This progress does not complete 17 or establish
 end-to-end hierarchy quality.
 
