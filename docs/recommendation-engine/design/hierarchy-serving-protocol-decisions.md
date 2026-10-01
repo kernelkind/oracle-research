@@ -15,9 +15,29 @@ Its author and kind select the current entry event, so no `d` tag is needed.
 For example, connect to `wss://hierarchy.example` and request:
 
 ```text
-["REQ","hierarchy",{"authors":["npub1abc..abc"],"kinds":[K_ENTRY],"limit":1}]
+["REQ","sid",{"authors":["npub1abc..abc"],"kinds":[K_ENTRY],"limit":1}]
 ```
 
-`K_ENTRY` stands for the unassigned kind number. The public key is abbreviated
-for display; the wire request uses its full lowercase hex value.
+`K_ENTRY` stands for the unassigned kind number. Examples abbreviate event IDs,
+public keys and signatures; wire IDs and keys use full lowercase hex.
 [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md#bare-keys-and-ids)
+
+## Entry event — proposed schema
+
+The entry event's `e` tags list the root node event IDs in order.
+The root nodes are served by the same relay. `content` is empty.
+
+```text
+{
+  "id":"note1abc..abc", "pubkey":"npub1abc..abc",
+  "created_at":1790683200, "kind":K_ENTRY,
+  "tags":[["e","note1def..def"],["e","note1ghi..ghi"]],
+  "content":"", "sig":"abc..abc"
+}
+```
+
+Fetch the referenced root nodes from that relay:
+
+```text
+["REQ","sid",{"ids":["note1def..def","note1ghi..ghi"]}]
+```
