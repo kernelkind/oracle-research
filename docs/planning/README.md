@@ -9,8 +9,9 @@ read-only investigation, the low-memory HDBSCAN discussion and unapproved next s
 shared data, untuned baselines, three continuing student training runs with
 one complete pass through all subject/mask training examples, checkpoints at
 200, 400, 600, 800, and 1,000 training notes, and model comparison.
-Each checkpoint generates subjects and masks on the same held-out validation
-notes. Semantic review happens outside the GPU rental.
+Training uses one teacher subject per mask prompt; each checkpoint generates
+its own subjects and requests their masks separately on the same held-out
+validation notes. Semantic review happens outside the GPU rental.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user

@@ -549,9 +549,9 @@ dataset is not required. See [publication preparation](../docs/planning/release-
 
 ## Task and training annotations
 
-The informal pilot above preserves both prompted tasks. The intended direct
-release task below remains a later experiment; it is not the informal pilot's
-training-output contract.
+The informal and larger subject/mask pilots preserve both prompted tasks. The
+intended direct release task below remains a later experiment, outside these
+pilots' training-output contracts.
 
 ```text
 complete original note → complete set of grouped source-text masks
@@ -730,9 +730,13 @@ pilot, not a claim that the current worker enforces it.
   candidate. Reuse that baseline across checkpoints. Initialize the adapter and
   optimizer once, and retain complete training state as the dataset expands.
   Mix one subject-hierarchy example per note with one mask example per labeled
-  subject, updating the same adapter. At each milestone save a complete training
-  checkpoint and its adapter. Verify adapter reload with the original model,
-  then generate validation subjects and their masks from that frozen checkpoint.
+  teacher subject: the complete note plus that one subject yields its teacher
+  mask response. Both tasks update the same adapter. At each milestone save a
+  complete training checkpoint and its adapter. Verify adapter reload with the
+  original model, then generate validation subjects and request a separate mask
+  response for each generated subject from that frozen checkpoint. Untuned
+  baselines use the same single-subject mask format, approved October 1.
+  Independent prompts may still share a GPU batch.
   Save both complete responses, raw and parsed, with note/subject links and
   failures. Validation must not update weights or reset the ongoing training
   state. Use each frozen training example once in its new 200-note block, with

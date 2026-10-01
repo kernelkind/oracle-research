@@ -3,8 +3,8 @@
 Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
-The execution flow below is a draft. Prompt versions, task format, task loss
-weights, adapter/optimizer settings, and review rubric remain open.
+The execution flow below is a draft. Prompt versions, remaining output format details,
+task loss weights, adapter/optimizer settings, and review rubric remain open.
 
 **Local preparation → Vast baselines/training/evaluation → verified retrieval
 → local scoring and comparison.**
@@ -22,7 +22,8 @@ proposals. Keep final test notes out of development.
 ## 2. Generate untuned baselines — Vast
 
 Save one baseline per candidate on the shared validation notes. Each model
-generates its own subjects, then their masks. Preserve original responses.
+generates its own subjects, then requests one mask response per subject in a
+separate prompt. Preserve original responses.
 
 **Check every response and dependent call immediately, before training.**
 Account for every mask response for valid subjects. Invalid subject answers
@@ -36,12 +37,13 @@ the affected comparison from advancing.
 Start **one continuing training run per student**:
 
 1. Initialize its adapter and optimizer from the original model once.
-2. Learn from **note → teacher hierarchy** and **note + subject → teacher mask**
-   examples. Both tasks update the same adapter.
+2. Learn from **note → teacher hierarchy** and **note + one teacher subject →
+   its teacher mask response** examples. Both tasks update the same adapter.
 3. After using every training example from the first 200 notes, save the complete
    training checkpoint.
    Verify the saved adapter reloads correctly. Generate subjects and their masks
-   on the **same 100 separate validation notes**; save raw and parsed outputs.
+   on the **same 100 separate validation notes**, using one mask prompt per
+   generated subject; save raw and parsed outputs.
 4. Continue from that training state through **400, 600, 800, and 1,000 notes**.
    Save and evaluate at each milestone, giving five trained points per student
    plus its untuned baseline. Preserve the optimizer and learning-rate schedule.

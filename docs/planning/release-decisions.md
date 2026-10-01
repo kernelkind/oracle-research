@@ -649,7 +649,7 @@ assesses missing required subjects or information. Output reliability is
 checked mechanically. The scoring scale, rubric, reviewer model, reliability
 checks, and checkpoint/model selection rule remain design choices. The user deferred
 review-prompt and grading details while the overall pilot pipeline is designed.
-The walkthrough also keeps remaining data choices, the larger pilot's output format,
+The walkthrough also keeps remaining data choices, remaining output format details,
 training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
 
@@ -699,6 +699,15 @@ not an established optimum or a comparison of each architecture's maximum
 capability. Select from generated correctness, coverage and output reliability;
 loss remains a diagnostic. Implementation, spending and launch are separate
 decisions.
+
+**October 1 single-subject masking approved:** the larger student pilot keeps
+one supplied subject per mask prompt and one mask response for that subject.
+Training pairs the complete note with one teacher subject and its teacher mask
+response. Baseline and checkpoint generation pair the note with one of that
+candidate's own generated subjects, requesting its mask separately. Independent
+single-subject prompts can still share a GPU batch. Teacher grouped-mask
+comparisons remain evidence for teacher selection; this decision selects the
+student format. Task loss weights and remaining recipe choices stay open.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
@@ -819,7 +828,7 @@ Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its masks,
 any agreed additional outputs and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
-advantage. The larger pilot's training settings, final example format,
+advantage. The larger pilot's training settings, remaining output format details,
 sorting-related output requirements and spending amounts remain open. The
 informal subject/mask settings and $25 approval above apply only to the current
 short experiment.
