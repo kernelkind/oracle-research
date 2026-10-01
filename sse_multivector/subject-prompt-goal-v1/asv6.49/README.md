@@ -1,7 +1,7 @@
 # ASv6.49
 
 Status: superseded, untested.
-[ASv6.51 (approved candidate, testing)](../asv6.51/ASv6.51.md) is the latest
+[ASv6.51 (approved candidate, evaluation interrupted)](../asv6.51/ASv6.51.md) is the latest
 approved subject prompt. ASv6.49 repeated existing instructions about refinement
 and independently understandable headings; ASv6.50 clarified the existing
 hierarchy paragraph instead. ASv6.48 remains the frozen subject baseline.
@@ -58,3 +58,5 @@ contain the parent-scope failure pattern. The linked comparison records the
 complete-output reviews and separate grounding uncertainties. The user has
 authorized the [ASv6.51 comparison](../asv6.50/README.md#asv651-comparison-on-gpt-61-sol-xhigh),
 with a fresh transfer check outside food conditional on a passing regression set.
+All twelve initial ASv6.51 requests were interrupted by a local service interruption. No candidate answer completed; the prompt remains unevaluated.
+The identical retry plans are prepared but require explicit retry authorization.

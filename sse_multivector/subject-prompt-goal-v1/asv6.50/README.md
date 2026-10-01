@@ -7,7 +7,7 @@ test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
 
-The subsequent [ASv6.51 (approved candidate, testing)](../asv6.51/ASv6.51.md)
+The subsequent [ASv6.51 (approved candidate, evaluation interrupted)](../asv6.51/ASv6.51.md)
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
@@ -350,13 +350,14 @@ its regression test and a fresh transfer check outside food if that set passes.
 
 ## ASv6.51 approved candidate
 
-Status: approved candidate, testing on GPT-6.1 Sol xhigh. On October 1, 2026, the user approved
+Status: approved candidate; GPT-6.1 Sol xhigh evaluation interrupted before any
+answer completed. On October 1, 2026, the user approved
 the ASv6.51 wording with "lgtm" after reviewing its full-context delta.
 The preceding drafting authorization followed the agent's confirmation of
 N074 trial 3's advice-role loss and N096 trial 2's loss of sautéing restrictions.
 The subsequent testing instruction authorized the comparison below.
 
-[ASv6.51 (approved candidate, testing)](../asv6.51/ASv6.51.md) replaces
+[ASv6.51 (approved candidate, evaluation interrupted)](../asv6.51/ASv6.51.md) replaces
 ASv6.50's existing hierarchy condition with a counterexample check. Compare the `subject` headings
 alone and imagine another post that fits the child: if it could fail to fit the
 proposed parent, use a broader parent. Each applicable branch must pass that
@@ -378,8 +379,8 @@ The ASv6.51 SHA-256 is
 Mechanical revision checks verify preservation and provenance; they do not
 establish a semantic improvement. No model calls were made while drafting.
 ASv6.48 remains the frozen subject baseline and MPv3.43 remains the frozen
-mask working baseline. The authorized regression comparison is in progress;
-the fresh-topic transfer check depends on its results.
+mask working baseline. The authorized regression comparison was interrupted;
+the fresh-topic transfer check depends on completed regression results.
 
 ## ASv6.51 comparison on GPT-6.1 Sol xhigh
 
@@ -408,6 +409,37 @@ The ignored experiments are
 `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t3/`.
 Twenty saved ASv6.48/ASv6.50 baseline plan, output, report and review files are
 hash-pinned before inference. ASv6.48 and MPv3.43 remain frozen; ASv6.51 adoption
-remains open. Complete candidate hierarchies will be reviewed for the agreed
+remains open. Complete candidate hierarchies must be reviewed for the agreed
 parent-scope pattern, core coverage and new errors, with agent assessments
-kept separate from user semantic verdicts. Results are pending.
+kept separate from user semantic verdicts.
+
+### Interrupted execution
+
+All three trials were launched concurrently. Each native report records four
+failed cases, four attempts, zero completed answers and zero reused answers.
+All twelve calls ended after 129.69–129.85 seconds with a WebSocket close code
+of `1006`, no clean close and no terminal response event. The upgrade had
+succeeded (`http_status: 101`), and each connection had received 13 or 15 frames
+before closing. The receipts retain a blank `TypeError` in the body phase;
+the shared failure classifier reports `unknown`.
+
+All twelve connection failures coincided with a local service interruption.
+No runner code was changed by this task.
+
+There are no returned hierarchies to judge, so these are execution failures,
+not evidence for or against the ASv6.51 wording. No semantic reviews were
+recorded and no non-food transfer requests were sent. The SDK retained zero
+token/cost counters without final provider usage; this does not establish that
+the interrupted upstream generations consumed no quota. Incremental cash
+remains zero on the subscription route, with no paid fallback.
+
+No automatic retries were sent. The [repository retry rule](../../../AGENTS.md)
+allows them only for provider failures, not unknown causes. Native `prepare`
+has created three identical, unrun retry trials at
+`sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t1-retry-v1/`,
+`sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t2-retry-v1/`
+and `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t3-retry-v1/`.
+They preserve the complete inputs and settings, use the same approved ASv6.51
+template, and pair against the corresponding saved ASv6.50 answers. All twelve
+remain unrun pending explicit retry authorization; preparation made no model
+calls and preserved the interrupted receipts.
