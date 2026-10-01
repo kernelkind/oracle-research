@@ -1552,12 +1552,39 @@ accepting either direction, and two accepted complete-node orders remain
 distinct observations. Bitcoin focused-versus-mixed orders remain agent
 assessments, with strict directions among focused posts uncertain. No new user
 labels, numeric tie threshold, teacher calls or paid resources are introduced.
-The two native requests contain eighty-five encoder rows each. Preparation is
-complete; local execution, collection and assessment are pending. Shared
-worker/CLI support passes forty-five relevant tests; the broader experiment
-suite passes 101 of 102, with the unrelated new parent-guide test blocked by
-missing `tiktoken`. [Model-runner results](../../sse_multivector/model-runner.md)
-record the frozen scope, workflow semantics and check evidence.
+The two eighty-five-row worker runs and native collection are complete. Both
+modes retain ten of ten clear Coffee/Eggs directions, including iced coffee
+above raw-yolk coffee (82.647530 > 74.316804 before the projection). Prominence
+alone still reverses that pair, so relevance cannot be eliminated on this
+evidence. Eggs and Bitcoin keep identical complete orders. Coffee swaps three
+pair directions: coffee request above iced coffee, hashtag-heavy second coffee
+above More coffee in cool places, and errands above another coffee/Sunday
+wishes. The last is an approved about-equal pair accepting either direction;
+the other swaps show no clear agent-assessed benefit or separately agreed
+strict pair preference. The previously accepted Coffee sequence changes;
+all ten clear checks still pass, and the new complete order has not been
+approved by the user.
+
+Bitcoin privacy's sorting score rises from 66.258643 to 73.438592 before the
+projection. It remains below block transmission and scaling, and above both
+mixed posts. This changes its numerical gap without demonstrating a better
+order or approving a target gap. The agent recommends keeping the existing
+projection; there is no clear sorting improvement from removing it. The next
+recommendation is the unchanged calculation on the remaining hierarchy nodes
+with at least two posts in the saved corpus, using saved SP contexts and agent
+observation. That further transfer test has not begun; adoption remains open.
+
+Independent application of the saved projection reproduces all eighty-five
+vectors exactly. All 164 cosine/products, fifty-two post maxima and six full
+orders verify; the projected rerun reproduces all three original node orders.
+Thirty-eight protected source/artifact hashes stay unchanged. Twenty-six
+native uncertain agent comments preserve history, one per post/title, without
+new user decisions. Native generation accounting is unchanged; no new teacher
+calls/tokens or cash are used. Worker/CLI support passes forty-five relevant
+tests; the broader experiment suite passes 101 of 102, with the unrelated new
+parent-guide test blocked by missing `tiktoken`.
+[Model-runner results](../../sse_multivector/model-runner.md) record the frozen
+scope, both comparison hashes, workflow semantics and check evidence.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

@@ -1720,8 +1720,9 @@ For an explicitly authorized encoder comparison, `prepare --pooling` accepts
 projection) or `selected-contextual-token-mean-v1` (the same checkpoint's
 selected-token mean before that projection). The option changes the frozen
 worker model descriptor, not source text, token selections or prominence.
-Every relevance row must be freshly encoded and original mask replays are
-refused, preventing comparisons between vectors from different representations.
+Every relevance row must have an encoder-request selection; direct use of saved
+mask vectors and original mask replays are refused, preventing comparisons
+between vectors from different representations.
 The worker checks output dimensions against the projection or encoder backbone,
 respectively; the config's dimensions must already match the chosen output.
 Encoding reuse must match checkpoint, model artifacts, complete model descriptor
@@ -4170,7 +4171,7 @@ request, config, worker receipt/vectors, comparison, independent verification
 and native review logs. Comparison SHA256:
 `74c23cd3347dbb6424f4f825aae52d7626a1a133b61dbc726291b838ed57ddac`.
 
-**Approved comparison: relevance before and after SSE projection.**
+**Completed comparison: relevance before and after SSE projection.**
 
 The user's next "proceeed" authorizes comparing the same checkpoint's
 selected-token mean with the existing mean → linear → ReLU → linear output.
@@ -4192,15 +4193,80 @@ no teacher calls or paid resources. At this bounded size the work is two linear
 encoder passes over the saved contexts/titles, with CPU batch size eight; it
 does not introduce per-post pairwise inference or a recursive hierarchy pass.
 
-The native outputs are `ppv30-node-orders-v1/relevance-projection-v1` and
-`ppv30-node-orders-v1/relevance-before-projection-v1`, under the ignored
-`experiments/` history. Encoder execution, collection and agent assessment are
-pending. Evaluate the ten clear Coffee/Eggs pair checks, especially iced coffee
-above raw-yolk coffee, separately from four about-equal pairs for which either
-direction is accepted. Keep the two accepted complete-node orders as two review
-observations, not all implied pairs as independent labels. The Bitcoin
-focused-versus-mixed direction is an agent observation; no strict order among
-the three focused Bitcoin posts has been approved.
+The native outputs `ppv30-node-orders-v1/relevance-projection-v1` and
+`ppv30-node-orders-v1/relevance-before-projection-v1` are complete under the
+ignored `experiments/` history. Both worker runs encode eighty-five rows with
+the same cached checkpoint/model artifacts, CPU runtime and batch size eight;
+native collection calculates eighty-two case products and twenty-six post
+maxima per mode. No encoding from the other representation is reused.
+
+Both modes retain all ten clear Coffee/Eggs expected pair directions. The
+important iced-coffee-above-raw-yolk comparison remains 85.118001 > 75.582815
+with the projection and 82.647530 > 74.316804 before it. Prominence alone,
+95 < 100, still reverses that approved direction, so this does not justify
+removing relevance. Four about-equal Coffee pairs accept either direction;
+they have no numerical gap requirement and are not counted as four more
+strict-order successes. The two accepted complete-node orders remain two
+review observations, not every implied pair as an independent label.
+
+Coffee changes exactly three pair directions:
+
+| Posts | With SSE projection | Before projection | Assessment |
+| --- | --- | --- | --- |
+| Iced coffee / coffee request | 85.118001 > 83.173847 | 82.647530 < 83.420752 | Both complete posts concern Coffee; the swap has uncertain benefit and no separately agreed strict pair direction. |
+| More coffee in cool places / hashtag-heavy second coffee | 65.443207 > 64.841901 | 62.883447 < 63.346777 | Both have fixed prominence 70 and additional place/tag meaning; no clear improvement is established. |
+| Another coffee/Sunday wishes / errands | 42.357666 > 41.622349 | 41.426023 < 44.515389 | The user judged these about equal and accepted either direction; this swap is acceptable. |
+
+The agent read all six complete posts and the winning saved SP contexts before
+making these assessments. Coffee's fourteen-post order therefore changes from
+the previously accepted displayed sequence, without failing a clear pair check
+or establishing a better full order. Eggs' seven-post order stays identical
+and reproduces the accepted sequence. Bitcoin's five-post order also stays
+identical, with focused posts above both mixed posts:
+
+| Bitcoin post | Fixed prominence | With SSE projection | Before projection |
+| --- | ---: | ---: | ---: |
+| Block transmission (`c9224e91`) | 100 | 91.148035 | 91.302657 |
+| Scaling (`e36fad15`) | 100 | 88.740711 | 90.002860 |
+| Privacy (`7ef38052`) | 100 | 66.258643 | 73.438592 |
+| Bitcoin/Nostr optimism (`51161520`) | 35 | 28.996428 | 29.756177 |
+| Nostr hardware zap controls (`9942031f`) | 10 | 5.649778 | 5.387452 |
+
+The privacy post rises by 7.179949 sorting-score points, but remains below the
+other two focused posts. This changes the earlier numerical gap without
+demonstrating an ordering improvement. No strict order or target score gap
+among those focused posts has been approved. The agent recommends retaining
+the existing projection: this comparison gives no clear sorting advantage
+from omitting it. The next recommendation is to run the unchanged calculation
+on the remaining hierarchy nodes with at least two posts in the saved corpus,
+using saved SP contexts and agent observation. That further transfer test has
+not begun; no new prompt, user labels, source-text policy, recursion or
+production sorting adoption is introduced.
+
+Independent verification confirms identical source text, token indices/IDs
+and all eighty-two prominence/evidence rows. Applying the saved linear → ReLU
+→ linear weights independently to each pre-projection vector reproduces all
+eighty-five projected vectors exactly, with maximum component error zero.
+All 164 independent title cosines/products, fifty-two post maxima and six
+complete node orders match native collection exactly. The rerun of the
+existing projection reproduces all three original node orders; maximum
+original-versus-rerun cosine drift is 1.44463e-7, with no ordering change.
+This is re-encoding reproducibility, not an original-mask replay assertion.
+All thirty-eight protected original source/artifact hashes remain unchanged.
+
+Native reviews append twenty-one Coffee/Eggs and five Bitcoin uncertain agent
+comments, one per post/title, explicitly bound to both comparison hashes.
+Original review history remains intact; these do not add twenty-six user
+decisions or eighty-two independent SP-level labels. Native generation
+accounting remains the original twenty-one calls/sixteen reuses for Coffee/Eggs
+and fifteen calls/eighty-four reuses for fresh-v2. No new calls, teacher-token
+usage, paid resource or budget-ledger change occurs in this task. The ignored
+outputs preserve worker logs, receipts/vectors, comparisons, verification,
+native review logs and native after-review accounting reports. Comparison
+SHA-256 values are `5dc1aafc008ce2a011bec5200f3cd2f784b1865c9f9a0f1189323a8f63043436`
+(with projection) and
+`1836a4013623fb53ad0de646edcf96310875d6085d7e50dc23ecc5f9b2fa5289`
+(before projection).
 
 Minimal tests failed first for the unsupported worker pooling rule and missing
 comparison option. The production worker integration uses a tiny real T5
