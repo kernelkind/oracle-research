@@ -1331,6 +1331,20 @@ approve exact percentages or select a production formula. The about-equal
 judgments and slight weather preference remain separate. No inference,
 encoding, prompt change or saved-result modification was needed.
 
+The user next reviewed Photography's three distinct complete posts, with URLs
+omitted and no sorting scores shown, and answered "A, B, C": A, forgetting to
+take photos while cooking (`bca8827b`); B, island lunch with photographer
+credits (`d6628bf3`); C, the Tolstoy quotation with `#Photography` (`be8d07d4`).
+Record one clear complete-order judgment, A > B > C, before inference. The
+user authorized applying the same PPv30-node-v1 prominence × SP-context
+relevance calculation to this node. The reusable Photography selector prepares
+six saved SP entries from all five direct masks, with three distinct complete
+post/node-title requests. The run is bounded to three new Astra-low
+subscription attempts, with repeated requests reused, followed by local CPU
+SSE encoding. No production formula, percentages, tie rule or multiple-entry
+rule is approved by this judgment; the ten Coffee/Eggs clear checks and three
+about-equal judgments retain their existing classifications.
+
 04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
 scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and

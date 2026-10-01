@@ -2770,6 +2770,35 @@ counts remain ten for the sorting score and nine for prominence alone, out of
 ten. No new inference, encoding, prompt change or saved-result modification
 was needed; this review does not select a production formula.
 
+**Photography: node-title prominence and SP-context relevance.**
+
+The user reviewed all three distinct posts in the raw Jev Photography node
+`S45e455e0be`, with complete wording, URLs omitted and no scores shown. The
+answer "A, B, C" establishes one complete ordering judgment:
+
+| Review label | Post (note-ID prefix) | Expected position |
+| --- | --- | ---: |
+| A | Forgot to take photos while cooking (`bca8827b`) | 1 |
+| B | Island lunch with photographer credits (`d6628bf3`) | 2 |
+| C | Tolstoy quotation with `#Photography` (`be8d07d4`) | 3 |
+
+The authorized experiment is `experiments/ppv30-photography-node-v1`, prepared
+using `experiment_specs/ppv30-photography-node-v1.json` and the production
+`subject_contexts` adapter with `prominence_basis: "node_title"`. All five
+direct masks (V0964, V0963, V0765, V0767, V0688) match six saved SP entries
+across these three posts. Every prominence input contains only the unchanged
+Photography title and complete original post; repeated post/title inputs are
+identical. PPv30-node-v1, its schema, Astra-low subscription settings and the
+prominence × relevance formula match the Coffee/Eggs node-title trial. The
+shared run is bounded to three new attempts, with repeated requests reused.
+The user order is review evidence, not a prompt input. This does not reuse the
+older Photography mask-prominence/mask-vector calculation as the same method.
+
+Preparation and input checks passed; inference and the local CPU SP-context
+encoding remain pending. No baseline calls, SP generation, membership changes,
+prompt edits, paid fallback or production rule adoption are authorized here.
+The ten clear Coffee/Eggs checks remain separate from this three-post judgment.
+
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
 
