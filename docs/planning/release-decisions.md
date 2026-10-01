@@ -1351,8 +1351,9 @@ complete orders. Coffee only swaps errands and another coffee, a pair the
 user judged about equal with either direction acceptable. The son's Children
 relevance rises from 0.515541 to 0.541385; its sorting-score lead over Lunchly
 rises from 0.041028 to 0.178627. This is a modest numerical change with no
-clear ordering failure corrected or agreed minimum gap. The agent recommends
-keeping context-only relevance for the next broader subject trial; no
+clear ordering failure corrected or agreed minimum gap. The agent recommended
+keeping context-only relevance for the next broader subject trial. The larger
+October 1 comparison below subsequently corrects a restaurant reversal; no
 production input or formula change is adopted. The small shared comparison
 option, nineteen comparison tests and 118 runner/worker checks are recorded
 in [model-runner.md](../../sse_multivector/model-runner.md).
@@ -1636,18 +1637,64 @@ accounting reports 267,585 input and 73,855 output tokens, including 12,138
 reasoning tokens; API catalog reference $6.368600 is separate from subscription
 cash $0 and unmeasured quota. 
 
-The next recommendation is testing saved SP subject plus context against
+The user subsequently approved testing saved SP subject plus context against
 context alone, with prominence, SSE and formula fixed and earlier agreed
-checks retained. An earlier eight-node trial showed little benefit; this
-newly observed restaurant reversal provides a concrete follow-up case. That
-comparison has not begun and will not settle ambiguous title meaning by
-itself. This remains saved developmental-corpus coverage, not unseen accuracy
+checks retained. The completed comparison below addresses this restaurant
+reversal; it does not settle ambiguous title meaning by itself. This remains
+saved developmental-corpus coverage, not unseen accuracy
 or production adoption. Teacher/encoder work scales with selected memberships
 and texts. The native offline diagnostic additionally emits 587 × 104 title
 cosines; this bounded cross-product is not a production design. New SP/MP or
 broader corpus generation, hierarchy changes and recursion remain outside
 this test. [Model-runner results](../../sse_multivector/model-runner.md) record
 provenance, exact inputs, comparison hash and review limits.
+
+**Remaining-node subject plus context approved October 1 (completed):** The
+latest "proceed" authorized an offline paired comparison on the same 104 nodes
+plus Coffee, Eggs, Music and Photography. Native preparation, the local CPU
+SSE worker and native collection completed 633 saved SP entries across 380
+post/node inputs, 96 original posts and 108 nodes. Only the candidate relevance
+input changes: saved SP subject, newline, unchanged SP context. Existing
+complete-post/title prominence, SSE checkpoint and final learned layers, node
+titles, formula and highest selected-entry sorting score per post stay fixed.
+No new teacher calls, source changes, paid resources or ledger edits occurred.
+The existing shared option sufficed; context alone remains the CLI default.
+
+The Food and drink restaurant post (`add487c4`) now has relevance 0.542109 and
+sorting score 46.079266, above the mixed diary (`eaa6a5e6`) at 42.367180.
+Context alone put them at 42.752028 < 43.444485. Prominence remains 85 and 61.
+The added subject is "Khyber Pass restaurant". All fifty earlier clear agent
+node expectations now hold, versus forty-nine with context alone; five modest
+directions remain tentative and forty-nine nodes had no strict expectation.
+All eleven earlier clear Coffee/Eggs/Music comparisons and the accepted Eggs
+and Photography complete orders remain intact. Coffee only swaps the already
+acceptable about-equal errands/another-coffee pair. No new user labels, exact
+percentages, gap thresholds or population accuracy claims are introduced.
+
+Eleven complete node orders change, ninety-seven remain identical. Other
+changes affect previously unsettled comparisons; coffee-shop rave versus
+laptop-rule, focused dinner/tea/bread posts and ambiguous hashtag nodes remain
+uncertain. Native reviews record 108 related node assessments bound to both
+comparison hashes: 54 accept the stated clear directions or agreed checks,
+54 retain uncertainty. Original review history and 77 protected hashes are
+preserved. The `grownostr` prominence discrepancy remains: homegrown-food
+meaning gives stock preservation 85, while growing-Nostr meaning gives the
+steak/preservation diary 2. This fixed-input relevance trial cannot repair it.
+
+Both sets of 633 own-node cosine/products, 380 post maxima and 108 orders verify;
+1,475 complete encoder selections have no truncation. Forty-five relevant tests
+pass, including actual local T5 worker integration. Work grows with selected
+entries, adding one short saved subject per context. The native 633 × 108 title
+diagnostic per mode remains bounded and is not a production design.
+[Model-runner results](../../sse_multivector/model-runner.md) record exact
+inputs, paired hashes, changed orders, verification and review limits.
+
+The agent recommends saved SP subject plus context for subsequent sorting
+experiments, keeping prominence, SSE and formula fixed; production adoption
+remains open. Next recommended work is a bounded prominence trial with one
+fixed meaning of `grownostr` across its posts, after reviewing that meaning
+and input. It has not begun; new prompts, calls, hierarchy changes and recursion
+are outside the completed comparison.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

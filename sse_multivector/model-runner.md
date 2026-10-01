@@ -3547,9 +3547,11 @@ and Psychological distress still small samples. Native agent reviews record
 the two Children uncertainties and the acceptable Coffee swap, bound to this
 comparison hash; existing user judgments remain unchanged.
 
-The agent recommends retaining context-only relevance for the next broader
-subject trial: this additional input gives little benefit and corrects no
-demonstrated wrong order. Testing more non-food subjects for actual ordering
+The agent recommended retaining context-only relevance for the next broader
+subject trial: in this eight-node comparison, the additional input gave little
+benefit and corrected no demonstrated wrong order. The larger October 1
+comparison below subsequently corrects a newly observed restaurant reversal.
+Testing more non-food subjects for actual ordering
 failures was recommended and the user subsequently approved the bounded trial
 below. The new option is diagnostic support, not production adoption.
 PPv30-node-v1 and the sorting formula remain
@@ -4368,14 +4370,128 @@ also reports 61,048 selected-context/title cosines (587 × 104); only the 587
 own-node values enter sorting. That bounded diagnostic cross-product is not a
 production design, and must not grow to all-post/all-node comparisons.
 
-The next recommendation is a bounded native comparison of saved SP subject
-plus context against context alone, keeping the existing prominence, SSE
-projection and formula fixed and retaining the earlier agreed checks. The
-previous eight-node subject-plus-context trial corrected no demonstrated
-wrong order; the newly observed restaurant reversal now supplies a concrete
-case to test. This follow-up has not begun and does not resolve ambiguous
-node meaning in prominence. New SP/MP generation, hierarchy changes, broader
-corpus generation, recursion and production adoption remain outside this test.
+The user subsequently approved comparing saved SP subject plus context against
+context alone, with prominence, SSE and formula fixed and earlier agreed checks
+retained. The completed comparison below tests the restaurant reversal; it does
+not resolve ambiguous node meaning in prominence. New SP/MP generation,
+hierarchy changes, broader corpus generation, recursion and production adoption
+remain outside this test.
+
+**Remaining-node subject plus context approved October 1 (completed):**
+
+The user's "proceed" authorized this offline paired comparison. Native
+`prominence_cosine.py prepare --post-order highest` selects the existing
+`ppv30-remaining-nodes-v1`, `ppv30-node-orders-v1`, `ppv30-music-node-v1` and
+`ppv30-photography-node-v1` experiments. These supply 633 saved SP entries,
+380 post/node inputs and 96 original posts in 108 nodes: the 104 remaining
+nodes plus Coffee, Eggs, Music and Photography. All native cases are valid.
+The existing `--include-subject` option changes only the candidate relevance
+input to the saved SP subject, one newline and its unchanged saved SP context.
+Complete-post/title PPv30-node-v1 prominence answers, selected memberships,
+node titles, original SSE checkpoint and final learned layers, formula and
+highest selected-entry sorting score per post are fixed. No new source or
+workflow capability was needed; the default remains context alone.
+
+Two local offline CPU worker runs encode 737 context-only rows and 738 subject
+plus context rows, including the same 108 title rows. Repeated identical input
+texts share rows. Total encoder input grows from 44,156 to 56,557 UTF-8 bytes;
+the maximum token count grows from 40 to 56, both below the fixed 512 limit.
+The paired worker receipts have identical checkpoint, model, pooling,
+batch size, device and runtime identities. Title vectors are bit-identical.
+No original-post masks or replay controls are re-encoded in this comparison.
+The native `collect` command produces both comparisons:
+
+| Relevance input | Native output under `experiments/ppv30-remaining-nodes-v1/` | Comparison SHA256 |
+| --- | --- | --- |
+| Saved SP context | `relevance-context-checks-v1/comparison.json` | `dbd044e4bb2f86082a3bf4e13e41986bcec61c108a07023cf265e607501e3143` |
+| Saved SP subject + newline + context | `relevance-subject-context-v1/comparison.json` | `a829768d4a8f2292894405998a86d2e11c4b8d556c8c89309a942a199781a292` |
+
+The restaurant input now begins with `Khyber Pass restaurant`, followed by
+"The writer specifically names Khyber Pass, identifying it parenthetically
+with St Marks Place." The original post, saved fields and prominence are
+unchanged. The resulting Food and drink order corrects the one clear failure
+from the preceding remaining-node trial:
+
+| Food and drink post | Fixed prominence | Context-only relevance | Context-only sorting score | Subject plus context relevance | Subject plus context sorting score |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Restaurant (`add487c4`) | 85 | 0.502965034 | 42.752027871 | 0.542109016 | 46.079266351 |
+| Mixed painting/food diary (`eaa6a5e6`) | 61 | 0.712204677 | 43.444485285 | 0.694543940 | 42.367180353 |
+| Homegrown food (`7d538c44`) | 82 | 0.704432005 | 57.763424419 | 0.688892428 | 56.489179075 |
+
+The diary's highest entry changes from the general Kreik context to its gift
+bottle context. Both food-focused posts now precede the mixed diary; no
+strict direction was set between those two focused posts. Adding the saved
+subject corrects this observed order, but the comparison does not isolate the
+word "restaurant" or establish a general causal rule.
+
+All fifty originally clear agent node expectations now hold, versus forty-nine
+with context alone. The five modest directions remain intact and tentative;
+the other forty-nine remaining nodes still lack a fixed strict direction.
+These are the earlier related node observations, not newly collected labels
+or a population accuracy measure. All eleven earlier clear Coffee/Eggs/Music
+comparisons hold in both modes. The accepted seven-post Eggs and three-post
+Photography complete orders are unchanged. Coffee swaps only errands and
+another coffee, the pair already judged about equal with either direction
+acceptable. Existing user judgments are unchanged; no numerical gap or tie
+threshold is introduced.
+
+Complete sorting orders change in eleven nodes; the other ninety-seven orders
+are identical. Agent inspection retains uncertainty for directions that were
+never settled:
+
+| Node | Change from context alone |
+| --- | --- |
+| Food and drink | Restaurant moves above mixed diary, correcting the prior clear failure |
+| Food and cooking | Twenty-one pair directions change within the previously unspecified 41-post order; all stated focused-versus-mixed directions hold |
+| Food and dining | Three dinner descriptions reorder; no strict direction was fixed among them |
+| coffee shop | Rave moves above laptop-rule post; this comparison remains uncertain, while laptop-rule remains above song playing |
+| Good morning greetings | Short breakfast greeting moves above household diary; earlier focused greeting directions hold |
+| tea | Two focused tea posts swap; both remain above diary |
+| Bread | Two focused bread posts swap; both remain above mixed dinner |
+| nostr | Two hashtag-only posts swap; their strict direction remains uncertain |
+| coffeechain | Weather/coffee and music/coffee-shop posts swap; node meaning remains ambiguous |
+| grownostr | Identical old sorting scores become a small subject-wording difference; node meaning remains ambiguous |
+| coffee | Only the already acceptable errands/another-coffee swap |
+
+There are 32 deterministic pair reversals, including one old exact tie in
+`grownostr`; these are not 32 independent quality judgments. The `grownostr`
+prominence discrepancy remains 85 for stock preservation under a homegrown-food
+reading versus 2 for the steak/preservation diary under a growing-Nostr reading.
+Relevance input cannot repair these fixed saved prominence answers. Five
+previously identified irrelevant memberships still have sorting score zero.
+
+Native `experiment.py review` appends one hash-bound agent assessment per node
+to the original experiments: 54 accept the exact earlier clear directions or
+agreed checks, and 54 retain uncertainty. Unspecified focused-post orders,
+percentages and gaps are not approved. Original review prefixes, teacher
+receipts, SP/MP sources, graph and all 77 protected hashes remain unchanged.
+Independent checks verify all 633 exact source/membership entries, literal
+paired inputs, all 1,475 complete byte/token selections, both sets of 633
+own-node cosine/products, 380 post maxima and 108 orders. Fresh context-only
+orders reproduce all four earlier comparison subsets; maximum sorting-score
+drift is 0.000006451, without an order change. The verification log also records
+two corrected verifier assumptions about merged mask aliases and the earlier
+eight-node projection comparison's selected subset; no production fix was
+required. All prominence-only orders remain identical.
+
+Forty-five existing comparison, ranking, selection and worker tests pass,
+including the actual local T5 worker integration. Ignored plans, requests,
+configs, receipts, vectors and comparisons are under the two output directories;
+verification, native review and test logs are under
+`experiments/ppv30-remaining-nodes-subject-context-v1-checks`. There are no new
+teacher calls, tokens, paid resources or budget-ledger changes. Encoding work
+grows with selected subject/context texts, adding one short saved subject per
+entry. Native offline diagnostics emit 633 × 108 title cosines per mode, but
+only the 633 own-node values enter sorting. That bounded diagnostic is not a
+production all-post/all-node design.
+
+The agent now recommends saved SP subject plus context for subsequent sorting
+experiments, retaining prominence, SSE's final learned layers and the formula.
+Production adoption remains open. The next recommendation is a bounded
+prominence trial supplying one fixed meaning for `grownostr` across its posts,
+because changing relevance does not resolve the inconsistent meanings already
+observed. Its meaning and input must be reviewed before any new calls; no such
+trial, new prompt, hierarchy repair or production change has begun.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
