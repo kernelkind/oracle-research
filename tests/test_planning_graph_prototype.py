@@ -289,8 +289,9 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
                 hierarchy_details = evaluate("document.querySelector('#details').innerText")
-                for summary in ("accepted by the user in browsing review", "The export is ready",
-                                "recipe branches include unrelated posts", "No production workflow is selected"):
+                for summary in ("accepted by the user in browsing review", "Parallel candidate builds continue",
+                                "independent comparison is available", "User browsing acceptance is pending",
+                                "no production workflow is selected"):
                     self.assertIn(summary, hierarchy_details)
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
                 self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 2)

@@ -12,7 +12,7 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nThe export is ready, but recipe branches include unrelated posts; browsing acceptance is pending. No production workflow is selected."
+      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nParallel candidate builds continue; independent comparison is available. User browsing acceptance is pending; no production workflow is selected."
     },
     {
       "id": "03",

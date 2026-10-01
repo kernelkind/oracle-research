@@ -79,7 +79,13 @@ reviewed 100-note hierarchy remains a prerequisite for broader hierarchy tests;
 other completion requirements are unchanged. Clearing the stress-testing hold
 is not authorization for model calls or spending.
 
-**Current task 02 status (October 1):** the newer
+**Current task 02 status (October 1):** parallel candidate builds continue, and
+the independent comparison started by the user is available. The comparison
+agent currently recommends the scalable subject-hierarchy candidate (SH04).
+This is an agent assessment, not user browsing acceptance or selection of a
+production workflow.
+
+The earlier
 [bounded 100-post build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)
 completed its three scheduled passes on September 30. It reused the original
 LG01 subjects, masks and vectors rather than regenerating them. The build used
@@ -101,10 +107,10 @@ The October 1 six-link diagnostic used the unchanged comparison prompt. Both
 problematic risotto links returned neither contains the other, while four
 controls returned parent contains child, matching pre-inference agent
 expectations. This selected result does not establish corpus-wide accuracy or
-a decision to filter original links. The full original-link check is prepared
-only: 1,755 comparisons in 110 batches, all unrun. Further inference and any
-filtering or changed construction policy require separate authorization; this
-planning update selects none.
+a decision to filter original links. The bounded build's full original-link
+check is prepared only: 1,755 comparisons in 110 batches, all unrun. Further
+inference and any filtering or changed construction policy require separate
+authorization; this planning update selects none.
 
 Task 02 remains in progress until a useful 100-note hierarchy passes the user's
 browsing review; finishing launch-scale construction is not this gate. Status,
