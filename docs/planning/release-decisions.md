@@ -1957,7 +1957,7 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   corpus scope and useful-coverage requirements to choose the intended corpus and
   freeze its IDs. Corpus size is not fixed before feasibility is investigated;
   the selected size still needs final validation.
-- **10 · Check full-build time and cost:** establish whether the distilled model
+- **10 · Check distilled-model build time and cost:** establish whether the distilled model
   can generate the agreed outputs for the selected launch corpus, and the
   remaining pipeline can construct and order its full hierarchy, within the
   remaining budget and available time. This is a model-track check, not an October 18

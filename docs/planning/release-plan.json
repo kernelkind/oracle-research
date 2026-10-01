@@ -66,7 +66,7 @@
     {
       "id": "10",
       "track": "model",
-      "title": "Check full-build time and cost",
+      "title": "Check distilled-model build time and cost",
       "status": "WAITING",
       "description": "Assess whether the distilled model and chosen construction/sorting workflow can build a launch-scale hierarchy within time and budget.\nAwaits the packaged model, selected corpus and scale measurements. This is a model-track check, not a release gate."
     },
@@ -94,7 +94,7 @@
     {
       "id": "14",
       "track": "release",
-      "title": "Build public hierarchy service",
+      "title": "Build and test hierarchy service code",
       "status": "WAITING",
       "description": "Deliver service code that serves a saved hierarchy snapshot through the Nostr protocol, with end-to-end local tests and serving instructions.\nImplementation awaits the protocol; testing needs the reviewed 100-note snapshot. Hosted operation is optional."
     },

@@ -226,10 +226,17 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(visible_ids(), shared | release | model | historical)
                 capture("both-tracks")
                 # Every task is a short planning summary, not an experiment log.
+                clarified_titles = {
+                    "10": "Check distilled-model build time and cost",
+                    "14": "Build and test hierarchy service code",
+                }
                 evaluate("document.querySelector('#depth').value = '0'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 for task in plan["tasks"]:
                     evaluate(f"document.querySelector('#focus-task').value = '{task['id']}'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                     wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task['id']} ·')")
+                    if task["id"] in clarified_titles:
+                        self.assertEqual(evaluate("document.querySelector('#details h2').textContent"),
+                                         f"{task['id']} · {clarified_titles[task['id']]}")
                     description = evaluate("document.querySelector('#details .description').textContent")
                     self.assertEqual(description, task["description"])
                     self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), task["status"])
