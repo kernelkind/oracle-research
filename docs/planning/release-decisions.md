@@ -1825,11 +1825,34 @@ Native usage is 8,184 input and 1,721 output tokens including 234 reasoning;
 catalog reference $0.167890 is separate from incremental cash $0 and unmeasured
 quota. 
 All other nodes, source memberships, SP/MP data and earlier agreed checks are
-untouched. The agent recommends a bounded two-node check of obtaining one
-consistent meaning automatically from existing saved SP subjects and contexts,
-inspecting those inputs before any new calls. That check has not begun.
+untouched. The proposed SP-only meaning-generation check was not approved and
+is withdrawn: coffeechain's saved contexts mostly name the hashtag without
+explaining it. The user approved the general prompt trial below instead.
 General description generation, calibrated prominence and production adoption
-remain open; no broader work or recursion is authorized by this comparison.
+remain open; no broader work or recursion is authorized.
+
+**General Nostr context approved October 1 (prepared):** The user's "sure"
+authorizes one shared prominence-prompt change on the twenty-six saved posts
+in `grownostr` and `coffeechain`, without separately supplying either definition.
+Draft **PPv30-nostr-v1** changes only the interpretation paragraph to state that
+node titles come from Nostr posts, where hashtags can identify communities.
+Native revision/preparation preserves exact full post/title inputs, source
+evidence, output schema, allocations, Astra-low subscription settings and
+original PPv30-node-v1 baselines. The two completed fixed-definition trials
+remain saved semantic references, not new samples or relabeled user decisions.
+
+Eight pre-run native agent observations set no exact percentages, gaps or full
+strict order. All twenty-six cases are unrun; execution is bounded to fifty-two
+attempts including eligible retries, with incremental cash zero and no paid
+fallback. Forty-five relevant existing checks pass with local T5 integration.
+Relevance will reuse exact SP subject-plus-context encoding; SSE final learned
+layers, titles, formula and highest-entry post rule stay fixed. No new worker,
+vectors, SP/MP generation, workflow/production code change or hierarchy repair
+is included. All 123 protected earlier hashes remain unchanged. The optional
+viewer remains unsupported for subject-context inputs; native saved-case review
+is used. [Model-runner record](../../sse_multivector/model-runner.md) supplies
+the versioned prompt, preserved scope and comparison limits. This approval is
+a test of the existing prominence call, not adoption of a production prompt.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

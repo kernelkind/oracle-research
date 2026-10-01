@@ -4709,13 +4709,50 @@ is separate from incremental subscription cash $0, unavailable provider billing
 and unmeasured weekly quota. Only this zero-cash reservation is settled;
 lifetime monetary totals and unrelated ledger entries remain unchanged.
 
-With GrowNostr and coffeechain now tested, the next recommendation is a bounded
-two-node check of obtaining one consistent meaning automatically from the
-existing saved SP subjects and contexts. This would test whether the supplied
-meanings can come from existing node inputs, with those inputs inspected before
-any new calls. It has not begun or been adopted. General description generation,
-calibrated prominence, hierarchy repairs, recursion and production adoption
-remain open or outside this completed comparison.
+The earlier recommendation to derive node meanings from saved SP subjects and
+contexts was not approved and is withdrawn. The coffeechain SP contexts mostly
+name the hashtag without explaining its community meaning, so those inputs do
+not establish a sufficient description source. The user instead approved the
+single general prominence-prompt change prepared below. General description
+generation, calibrated prominence and production adoption remain open.
+
+**General Nostr context approved October 1 (prepared):**
+
+The user's "sure" approves one shared prompt on the twenty-six existing posts
+in `grownostr` (`Sa233efc2db`, fifteen) and `coffeechain` (`S3c005e1a4f`, eleven).
+Draft **PPv30-nostr-v1** replaces only PPv30-node-v1's interpretation paragraph:
+the title comes from Nostr posts, where hashtags can identify communities, and
+the complete post should interpret the title as used on Nostr. Neither node is
+named in the template and neither manual definition is supplied. The same
+[prompt](prominence-prompt-goal-v1/ppv30-nostr-v1/PPv30-nostr-v1.md) is used for
+both. Allocation instructions, output schema and Astra-low subscription
+settings remain unchanged; no definition-generation call or SP/MP step is added.
+
+Native revision and `prepare --from` with twenty-six `--only` IDs preserve all
+complete original post/title inputs, source evidence and original PPv30-node-v1
+baselines in `experiments/ppv30-nostr-context-v1`. Both completed fixed-definition
+experiments remain separate references, not newly paired baselines or new model
+samples. Every input and source-bound entry matches all three saved versions.
+Eight native pre-run agent observations check GrowNostr meaning consistency and
+food/community separation, the salsa sale, the uncertain food-growing member,
+coffee roasting, focused coffee preparation, unrelated jokes and mixed
+weather/greetings. No exact percentage, gap or complete strict order is set.
+
+All twenty-six cases are unrun. Execution is bounded to fifty-two attempts
+including eligible provider retries, with zero incremental subscription cash
+and no paid fallback or rentals. Forty-five existing comparison, ranking,
+selection and actual local T5 worker checks pass. Relevance will reuse exact
+saved SP subject-plus-context SSE encoding and all 738 cached rows; SSE final
+learned layers, titles, formula and highest selected-entry post rule stay fixed.
+Work grows with selected post/node inputs and full-post tokens plus two short
+sentences, with no new worker or all-post/all-node inputs. All 123 protected
+source/prompt/hierarchy/result/review hashes remain unchanged. This task makes
+no workflow/production code change, hierarchy repair or other-node change.
+The subject-context adapter's optional prominence viewer remains unsupported;
+review uses native `show` and `review --case`, with no viewer extension.
+Generated evidence and checks are ignored under the experiment and
+`experiments/ppv30-nostr-context-v1-checks`. Fixed-definition results, user
+labels, node membership and earlier accepted orders remain intact.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
