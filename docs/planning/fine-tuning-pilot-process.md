@@ -78,5 +78,14 @@ gains over the corresponding untuned baseline. Whether GPU test outputs are
 collected during the main rental and kept sealed, or generated later, is open.
 Rental grouping, duration, and spending also remain open.
 
+## Provisional cost — October 1
+
+Plan roughly **$200–300 in additional cash** for the proposed three candidates
+at 250/500/1,000 training notes, 100 validation notes, and the selected model's
+200-note final comparison against its untuned baseline. This assumes 128–1,024
+training updates per run and teacher labeling/review through the existing Codex
+subscription. Training amount is undecided; subscription quota is finite.
+Longer training or paid API calls would increase the estimate.
+
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

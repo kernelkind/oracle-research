@@ -927,6 +927,75 @@ that the pilot is scientifically sufficient. Its amount, the final-training
 reserve, and the dataset-size schedule remain open; no fixed pilot/rest ratio
 has been adopted.
 
+### Larger pilot cost estimate — October 1, provisional
+
+Working estimate: **approximately $200–300 additional cash**, assuming the
+proposed three candidates at 250/500/1,000 nested training notes, 100 validation
+notes, and a 200-note final comparison of the selected trained model against its
+untuned baseline. This is an estimate, not a spending approval or selected recipe.
+
+A read-only Vast search on October 1 found a comparable verified 450 W RTX PRO
+6000 WS with 96 GB VRAM and 300 GB storage at **$1.4167/hour**, matching the
+completed preliminary rental's price. Inbound/outbound transfer rates were
+$0.0078125/$0.0091146 per GB. No offer was reserved. Prices and availability can
+change; [Vast bills compute, storage and transfers](https://docs.vast.ai/guides/instances/pricing).
+
+Saved preliminary-run durations project approximately **74.6 GPU hours / $106**
+for 1,200 validation note/model outputs: three baselines plus nine trained
+versions. The selected candidate's final comparison adds 400 outputs, roughly
+16.5–25 hours / $23–35. Gemma baseline mask times are inferred from trained mask
+throughput because those baseline calls never happened. Truncated or malformed
+subjects also prevented some trained mask work. These are workload extrapolations,
+not measurements of a complete larger pilot.
+
+| Illustrative updates per training run | Nine training runs, including save/reload | GPU cost including validation and one final comparison | With illustrative 25% headroom, before transfers |
+| ---: | ---: | ---: | ---: |
+| 128 | 9.4 hours | $142–154 | $178–193 |
+| 512 | 33.1 hours | $176–188 | $220–235 |
+| 1,024 | 64.6 hours | $221–233 | $276–291 |
+
+These scenarios hold training updates fixed across dataset sizes and scale the
+measured trainer time, with save/reload overhead once per run. They do not
+establish adequate training. The 25% allowance covers startup and workload
+uncertainty; it is not a confidence interval or guaranteed cap. Allow another
+$3–10 for transfers under comparable host rates; rental grouping, repeated
+model downloads and checkpoint frequency can change that allowance. Longer
+notes, more subjects, extra checkpoint evaluations or more training can exceed
+these estimates. Testing all three trained candidates against their baselines
+on the final test would add roughly $58–69 GPU cost over testing one, before
+headroom and extra semantic reviews.
+
+Teacher labeling and semantic review assume the existing subscription route,
+with **zero incremental API cash charge**, excluding the already-paid
+subscription. This is not free unlimited capacity; quota and completion time
+must be planned. Paid API fallback is neither selected nor included in the
+$200–300 estimate. Mechanical scoring runs locally. Training amount, reviewer,
+final-test collection and rental grouping remain open.
+
+For scale, the current 100-note teacher data has 23.83 subjects per note. Latest
+native receipts average 2,631 uncached input / 1,108 output tokens per subject
+call, and 2,095 uncached + 282 cached input / 105 output per actually sent mask
+call. Reused-answer receipts with zero new usage are excluded from these means.
+At those lengths, 1,300 newly labeled notes require about 32,279 calls / 81.7M
+tokens. Training subsets share labels; do not charge their nested notes twice.
+The older 9.82-subject sample cannot be reused as the current workload estimate.
+
+One review per note/version gives 1,200 validation reviews plus 400 for the
+winner's trained/untuned final comparison. An illustrative review workload uses 7,000–10,000 input and 500–1,500 output tokens per review, including reasoning, plus labeling. No review prompt or reviewer is selected.
+
+As a separate cash scenario, [Astra Standard API rates](https://developers.openai.com/api/docs/models/gpt-6-astra)
+are $10/M input, $1/M cached input and $50/M output. At the measured token
+lengths, all 1,300 labels would cost about $926–1,005, and the illustrative 1,600
+reviews another $152–280. These are API sensitivity estimates, not subscription
+charges or approved fallback spending; different reviewer models, reasoning,
+cache writes and actual request lengths can change them.
+
+Evidence: per-response timings and training records under
+`target/distillation-pilot-v1/launch-20260929-v2/operation/result/work/results/`;
+previous analysis `target/distillation-pilot-v1/results-deep-dive-20260930.md`.
+The following older estimates remain historical scenarios and do not describe
+this measured BF16 workload.
+
 ### Runtime estimates — not measured
 
 The following September 15 estimates predate the current subject hierarchy and
