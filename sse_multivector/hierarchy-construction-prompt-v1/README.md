@@ -1,10 +1,20 @@
 # HCPv1: multi-node hierarchy construction diagnostic
 
-Status: **draft; no model calls or hierarchy changes**. This is not an adopted
-HG rule. [HCPv1](HCPv1.md) asks for equivalent-node combinations and missing
-ancestor links involving several existing hierarchy nodes in one request.
+Status: **rejected as proposed for unacceptable scaling; no model calls or
+hierarchy changes**. This is not an adopted HG rule. The prepared input remains
+evidence of the failed proposal, not a next experiment to run. Existing code,
+prompt definitions and saved data are unchanged.
 
-## Proposed input and scope
+## Prepared input and scope
+
+[HCPv1](HCPv1.md) asks for equivalent-node combinations and missing ancestor
+links involving several existing hierarchy nodes in one request. Its N100
+request contains 44 query nodes against all 1,740 existing hierarchy nodes.
+The rendered prompt counts **105,081 tokens using `o200k_base`**, including
+104,440 for the catalogue alone. This is a proxy count, not a provider-reported
+Astra input count. Repeating a growing catalogue for a growing number of query
+sets makes total input grow roughly quadratically. Fewer requests and possible
+caching do not fix the growing per-request context requirement.
 
 - **SP subject entry:** a subject in one post's local hierarchy.
 - **Hierarchy node:** a node in the combined global hierarchy representing one
@@ -35,8 +45,10 @@ choices for review, not approved production architecture.
 ten-root test hierarchy as its frozen source, including its saved diagnostic
 links. [n100-spec.json](n100-spec.json) prepares only N100's scheduling set using
 Astra low through the existing subscription provider. It does not rerun older
-decisions. The full catalogue is intentionally available for this 100-post
-diagnostic; this is not a proposed million-post input format.
+decisions. The full catalogue was supplied for this 100-post diagnostic. That
+scope does not excuse the unacceptable scaling; do not run these requests as
+proposed. The preparation command below documents the saved input, not approval
+to prepare another trial.
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -66,5 +78,5 @@ application or conflict-repair stage for this output has been implemented.
 The draft separates task definitions, JSON output and delimited input, without
 requesting hidden reasoning. The reusable catalogue precedes the variable query,
 following the [official prompting guidance](https://developers.openai.com/api/docs/guides/prompt-engineering).
-This organization does not establish that the prompt works; the first model
-test still requires review and authorization.
+This organization does not resolve the rejected full-catalogue scaling.
+Any replacement input-selection method remains open and requires user review.
