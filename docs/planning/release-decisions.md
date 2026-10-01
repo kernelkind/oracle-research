@@ -1122,9 +1122,20 @@ agrees with the tentative preference, but no numerical tolerance for closeness
 or tie rule was approved, so this pair is not counted as passed or failed.
 No formula, exact percentages or production rule was selected.
 
+The user next reviewed decaf drinkers (`2dc50a30`, A) versus "Is there coffee
+for me?" (`78462b92`, B), with complete wording and B's image URL omitted,
+before seeing sorting scores, and answered "about equal maybe". Record a
+fourth, tentative about-equal Coffee judgment with no preferred direction.
+Both saved PPv30-node-v1 prominence values are 100; highest SP-context
+relevance is 0.901547 and 0.831738, producing sorting scores 90.154658 and
+83.173849. The difference, 6.980809 toward A, comes entirely from relevance.
+No numerical tolerance or tie rule is approved; this pair is not counted as
+passed or failed and does not approve the percentages, formula or a change to
+relevance. No new inference, encoding or result changes were required.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
-these ten checks, plus the three about-equal judgments and separate slight
+these ten checks, plus the four about-equal judgments and separate slight
 preference for the weather post described below.
 They are reference pairs, not a claim of general ranking quality.
 
@@ -1249,7 +1260,7 @@ entries; roasting has 98. Its broader SP subjects cannot supply a different
 prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
 matching the separate tentative roasting preference. With the tenth reviewed
 pair below, the sorting score matches all ten clear expected orders, while
-prominence alone matches nine. The three about-equal
+prominence alone matches nine. The four about-equal
 comparisons and the separate slight preference for the weather post remain
 outside that count, with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
 include two failing-first workflow/comparison checks and 202 passing regression

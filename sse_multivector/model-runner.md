@@ -3018,6 +3018,42 @@ prompt and Coffee/Eggs, Photography and Music comparisons are unchanged. No
 baseline generation, SP calls, new encoding, paid resource, prompt edits or
 production ranking changes occurred.
 
+**Decaf versus a coffee request: tentative about-equal judgment.**
+
+The user reviewed the complete decaf-drinkers post (`2dc50a30`, A) and
+"Is there coffee for me?" (`78462b92`, B) inside Coffee, with B's image URL
+omitted and no sorting scores shown, and answered "about equal maybe".
+Record tentative about equality with no preferred direction, separately
+from the eleven clear Coffee/Eggs/Music pairs and the Photography ordering
+judgment. This makes four about-equal Coffee judgments; no numerical tolerance
+or tie rule is approved, so the comparison is not marked as passed or failed.
+
+The unchanged original `ppv30-node-orders-v1/relevance-v1` results give:
+
+| Post | Prominence | Highest SP-context relevance | Highest sorting score |
+| --- | ---: | ---: | ---: |
+| A: Decaf drinkers | 100 | 0.901547 | 90.154658 |
+| B: Is there coffee for me? | 100 | 0.831738 | 83.173849 |
+
+A's winning entry is `context-35e7f2bb8ff33f9b31f98632`, with SP context
+"The post discusses coffee, contrasting decaffeinated coffee drinking with
+caffeine-driven consumption." B's is `context-d3139bbd11ca832d461643a4`,
+with "The post explicitly asks, 'Is there coffee for me?' and includes a
+coffee-cup emoji." Both complete-post prominence assessments give 100.
+The common prominence means the 6.980809 sorting-score difference toward A
+comes entirely from the saved relevance values; prominence alone ties them.
+The user did not approve this numerical gap, select a tie rule, reject the
+relevance calculation or authorize changing it.
+
+Native `show --case` evidence, per-post maxima and independently recomputed
+relevance/products match the saved comparison. Its SHA-256 remains
+`77f1e9bf073a504f76b26d1c8f667df85254fefc1640d94d4cf575c6bf51bbec`.
+No new teacher calls, encoding, prompt changes or saved-result modifications
+were needed. The original clear-check counts remain eleven matched sorting
+orders and ten matched prominence orders out of eleven; this tentative
+about-equal judgment stays outside those counts. Production sorting and the
+meaning of numerical closeness remain open.
+
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
 
