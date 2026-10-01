@@ -325,6 +325,11 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("Additional teacher outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                 teacher_details = evaluate("document.querySelector('#details').innerText")
+                self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('30 ·'))"))
+                self.assertIn("Final teacher selection waits for prompt stress-testing", teacher_details)
+                self.assertIn("Comparison work may continue", teacher_details)
+                evaluate("document.querySelector('#depth').value = '1'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
+                self.assertTrue(any(edge["source"] == "30" and edge["target"] == "17" and edge["line"] == "solid" for edge in check_routes()["edges"]))
                 for progress in ("Sol low assessed on 20 posts", "20 posts (684 masks)",
                                  "using saved Astra subjects", "Agent reviews",
                                  "Combined Sol subject-and-mask process and resulting hierarchy comparison remain unvalidated",

@@ -53,6 +53,11 @@ Task 03 remains in progress for preparation, and completed prompt-development
 task 01 remains complete. Testing methods, acceptance criteria and any prompt
 changes belong to that workstream; this planning update selects none.
 
+Final teacher selection also waits for prompt stress-testing, through a required
+30 → 17 completion link. Comparison work may continue; the choice needs evidence
+for the prompts we will actually use. Any rechecking belongs to the comparison
+workstream. Existing results remain useful evidence; no teachers are selected.
+
 The corpus-preparation session confirms that reusable preparation code is
 committed. The candidate 200-note input is 100 food/drink + 100 music notes,
 which the user considered reasonable without authorizing generation or freezing
@@ -814,10 +819,13 @@ The comparison needs to establish:
 - Whether provider data-use and output-use terms permit the intended training
   and open-weight release.
 
-Completing 17 needs the validated subject/mask prompts from 01 and the scoring
-definition from 04 to establish whether additional teacher outputs are needed
-and what to evaluate. It does not presuppose a prominence prompt. These are
-completion prerequisites; independent comparison work is already underway.
+Completing 17 needs the validated subject/mask prompts from 01, completed prompt
+stress-testing in 30, and the scoring definition from 04 to establish whether
+additional teacher outputs are needed and what to evaluate. It does not
+presuppose a prominence prompt. These are completion prerequisites; comparison
+work may continue before stress-testing is complete. Final selection needs
+evidence for the prompts we will actually use; any rechecking belongs to the
+comparison workstream.
 
 The hierarchy A/B comparison is part of 17, not a separate task. The sample,
 comparison procedure, review coverage, treatment of unsuitable annotations and

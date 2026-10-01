@@ -93,7 +93,9 @@ found broadly comparable quality to Astra, with minor omissions and unresolved
 cases; they do not establish corpus-wide parity or select teachers. The combined
 Sol subject-and-mask process and resulting hierarchy comparison remain
 unvalidated. Subscription quota use is unmeasured; mask and final teacher
-selection stay open.
+selection stay open. Final teacher selection waits for prompt stress-testing
+(30), with evidence for the prompts we will actually use. Comparison work may
+continue; any rechecking belongs to that workstream.
 
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the
