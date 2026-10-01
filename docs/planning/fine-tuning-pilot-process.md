@@ -3,7 +3,7 @@
 Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
-Prompt versions, task format, training settings, and semantic-review criteria
+Prompt versions, task format, training settings, and the review rubric
 remain to be settled.
 
 ## 1. Use shared data
@@ -41,11 +41,13 @@ utilization, memory, and power.
 Use the same validation notes, prompts, and generation settings as the baseline.
 Continue checking responses and call counts as they arrive.
 
-Measure mask overlap separately from subject meaning, hierarchy relationships,
-and whether masks preserve the intended meaning. A proposed teacher reviewer
-examines the full note, task prompt, and saved output for unsupported or missing
-meanings and incorrect relationships. This review happens **after retrieval,
-outside the rental**, and is evaluation only.
+Measure mask overlap separately from semantic quality. One review prompt per
+note and model version sees the full note, task prompt, subjects, hierarchy,
+and masks. It returns separate **correctness** and **coverage** scores with
+evidence: how correct the returned content is, and what required content is
+missing. Output reliability is checked mechanically. The scoring scale, rubric,
+and reviewer model remain open. Review happens **after retrieval, outside the
+rental**, and is evaluation only.
 
 Verify required results and transferred files before explicitly deleting the
 rental. I observe it throughout; automatic deletion stays off.

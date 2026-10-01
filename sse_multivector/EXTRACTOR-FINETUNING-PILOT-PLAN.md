@@ -436,7 +436,7 @@ masks and reference agreement. Token overlap uses whitespace-delimited source
 words (any selected part includes that word), with one-to-one matching and
 micro averaging over unique nonempty selections per note. Exact matching uses
 selected non-whitespace source characters. These mechanical measurements do
-not establish semantic correctness or approval; semantic review remains open.
+not establish semantic correctness or approval; the semantic-review rubric remains open.
 
 For the next pilot, response failures must be reported when they occur and
 baseline coverage checked before training proceeds. The current evaluation
@@ -445,8 +445,10 @@ calls. The stronger reporting and stage checks in
 [the walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-measure-untuned-baselines)
 require implementation and verification. Semantic review of saved results runs
 from the local workspace after retrieval, outside the GPU rental. The proposed
-teacher reviewer is an evaluation method, not another fine-tune; its detailed
-criteria and use in model selection remain open for design discussion.
+teacher reviewer is an evaluation method, not another fine-tune. The
+[approved review structure](#semantic-review--approved-structure) uses one
+prompt with separate correctness and coverage scores; its rubric, reviewer
+model, and use in model selection remain open for design discussion.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
@@ -663,9 +665,10 @@ review a varied sample of training annotations and every validation/test
 annotation. Annotation checks belong to local preparation before training.
 The review method and uncertainty handling remain design choices; the user's
 role is reviewing that design, not supplying example labels or adjudications.
-The proposed teacher review of saved candidate outputs occurs after retrieval,
-outside the rental, and does not feed judgments back into training. This review
-policy is proposed, not a release requirement.
+Review of saved candidate outputs follows the
+[approved structure](#semantic-review--approved-structure), occurs after retrieval
+outside the rental, and does not feed judgments back into training. The detailed
+rubric and release acceptance requirements remain open.
 How unsuitable annotations are handled remains open; preserve teacher outputs
 separately from review findings and any subsequent changes.
 
@@ -730,6 +733,16 @@ to select training checkpoints remain open. The informal automated workflow's
 mechanical scoring is specified above; it trains for a fixed number of steps
 and does not select checkpoints using these scores.
 
+### Semantic review — approved structure
+
+One review prompt per note and model version receives the full note, task
+prompt, and that version's subjects, hierarchy, and masks. It returns separate
+**correctness** and **coverage** scores with evidence for each. Correctness
+assesses returned content; coverage assesses missing required content.
+Output reliability is checked mechanically. Review runs after retrieval,
+outside the rental, and is evaluation only. The scoring scale, rubric, reviewer
+model, reliability checks, and score aggregation remain open.
+
 ### Required pilot measurements
 
 | Measurement | Required evidence | Decision it informs |
@@ -739,16 +752,17 @@ and does not select checkpoints using these scores.
 | Actual training resources and cost | GPU configuration, peak memory, training time and total rental cost, including setup and evaluation | Feasible hardware and measured inputs to larger-training estimates |
 | Batched generation speed | Notes processed per second, output lengths, peak memory and failures on representative notes | Time and cost to process the proposed launch corpus |
 
-Measure semantic quality separately from mechanical correctness:
+Measure semantic quality separately from output reliability:
 
-- **Coverage:** which supported subjects received a faithful mask?
-- **Mask errors:** which masks omit necessary meaning or add unrelated meaning?
+- **Correctness:** how correct are the returned subjects, hierarchy relationships,
+  and masks for their supplied subjects?
+- **Coverage:** which required subjects or relevant information are missing?
 - **Additional outputs, if required by the chosen sorting method:** how well do
   they meet their agreed meaning? Freeze review criteria before comparing
   models; do not infer correctness from valid numbers or combine these errors
   with mask errors into one score.
-- **Mechanical failures:** which outputs are malformed or cannot be located
-  correctly in the original note?
+- **Output reliability (mechanical):** missing responses, truncation, malformed
+  outputs, and masks that cannot be located correctly in the original note.
 
 For resource measurements, record the exact checkpoint, training or inference
 configuration, batch size, input/output lengths and billed rental interval.

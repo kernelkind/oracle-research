@@ -595,8 +595,14 @@ records note failures and can finish with missing mask calls; stronger reporting
 and stage progression checks are intended changes, not implemented by this record.
 Semantic review of saved results happens from the local workspace after retrieval,
 without an active GPU rental. The proposed teacher reviewer performs evaluation;
-its judgments are not automatically training labels or weight updates. Reviewer
-criteria, reliability checks, and role in model selection remain design choices.
+its judgments are not automatically training labels or weight updates.
+**Review structure approved September 30:** one prompt per note and model
+version sees the full note, task prompt, subjects, hierarchy, and masks. It
+returns separate **correctness** and **coverage** scores with evidence for each.
+Correctness assesses returned subjects, relationships, and masks; coverage
+assesses missing required subjects or information. Output reliability is
+checked mechanically. The scoring scale, rubric, reviewer model, reliability
+checks, and role in model selection remain design choices.
 The walkthrough also keeps remaining data choices, the larger pilot's output format,
 training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
