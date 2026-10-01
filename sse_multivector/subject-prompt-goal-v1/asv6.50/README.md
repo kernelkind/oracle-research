@@ -7,8 +7,9 @@ test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
 
-The subsequent [ASv6.51 (draft, untested)](../asv6.51/ASv6.51.md) is prepared
-for wording review. ASv6.50 remains the last approved subject prompt.
+The subsequent [ASv6.51 (approved candidate, untested)](../asv6.51/ASv6.51.md)
+is now the last approved subject prompt. ASv6.50 and its saved answers remain
+comparison evidence.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -344,18 +345,19 @@ These are the native per-trial usage totals. Catalog estimates are not bills or
 measured subscription quota; provider-reported cost is unavailable and
 incremental cash is zero. Adoption as the subject baseline remains open. The
 subsequent agent review confirmed the two failing relationships and the user
-authorized preparing the ASv6.51 draft below. A fresh transfer test outside food
+authorized preparing the ASv6.51 revision below. A fresh transfer test outside food
 remains proposed and requires separate authorization.
 
-## ASv6.51 draft for review
+## ASv6.51 approved candidate
 
-Status: draft, untested. On October 1, 2026, the user authorized preparing a
-revision after the agent confirmed N074 trial 3's advice-role loss and N096
-trial 2's loss of sautéing restrictions. This authorizes drafting; acceptance
-of the resulting wording and a candidate inference run remain open.
+Status: approved candidate, untested. On October 1, 2026, the user approved
+the ASv6.51 wording with "lgtm" after reviewing its full-context delta.
+The preceding drafting authorization followed the agent's confirmation of
+N074 trial 3's advice-role loss and N096 trial 2's loss of sautéing restrictions.
+Candidate inference remains unrun and requires a testing instruction.
 
-[ASv6.51 (draft, untested)](../asv6.51/ASv6.51.md) replaces ASv6.50's existing
-hierarchy condition with a counterexample check. Compare the `subject` headings
+[ASv6.51 (approved candidate, untested)](../asv6.51/ASv6.51.md) replaces
+ASv6.50's existing hierarchy condition with a counterexample check. Compare the `subject` headings
 alone and imagine another post that fits the child: if it could fail to fit the
 proposed parent, use a broader parent. Each applicable branch must pass that
 check. The requirements to retain enumerated subjects, combine shared headings
@@ -368,13 +370,14 @@ separate model pass or output fields are added. The change stays within one
 SP request; actual model token use remains unmeasured.
 
 Shared `experiment.py revise` generated the new prompt and its
-[ASv6.51 revision receipt](../asv6.51/ASv6.51.md.revision.json) against the last
-approved ASv6.50 SHA-256
+[ASv6.51 revision receipt](../asv6.51/ASv6.51.md.revision.json) against ASv6.50,
+the last approved prompt at the time, with SHA-256
 `2ab157eb34f49edd2a443799c439be8eff512fe61df96f6d508434f4d3807a1c`.
 The ASv6.51 SHA-256 is
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 Mechanical revision checks verify preservation and provenance; they do not
 establish a semantic improvement. No model calls were made while drafting.
 ASv6.48 remains the frozen subject baseline and MPv3.43 remains the frozen
-mask working baseline. The next step is review of the ASv6.51 delta before
-testing it on the agreed regression set.
+mask working baseline. The recommended next step is testing approved ASv6.51
+on the agreed regression set, followed by a separately authorized fresh-topic
+transfer test if it passes.

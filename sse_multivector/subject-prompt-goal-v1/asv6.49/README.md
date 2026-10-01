@@ -1,10 +1,11 @@
 # ASv6.49
 
-Status: superseded, untested. [ASv6.50](../asv6.50/README.md) is the latest
-approved candidate. ASv6.49 repeated existing instructions about refinement and
-independently understandable headings; ASv6.50 clarifies the existing hierarchy paragraph
-instead. ASv6.48 remains the frozen subject baseline. MPv3.43 remains the frozen
-mask working baseline.
+Status: superseded, untested.
+[ASv6.51 (approved candidate, untested)](../asv6.51/ASv6.51.md) is the latest
+approved subject prompt. ASv6.49 repeated existing instructions about refinement
+and independently understandable headings; ASv6.50 clarified the existing
+hierarchy paragraph instead. ASv6.48 remains the frozen subject baseline.
+MPv3.43 remains the frozen mask working baseline.
 
 ## Change and prompt audit
 
