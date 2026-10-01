@@ -47,6 +47,11 @@ Fetch the referenced root nodes from that relay:
 `K_NODE` is an unassigned regular kind in `1000–9999`.
 Node events are published by the hierarchy author and served by the same relay.
 
+Each node MUST have exactly one `d` tag with a nonempty identifier, unique
+within the author's hierarchy. The identifier MUST stay the same when the
+node's title, children or notes change, and MUST NOT be reused for a
+different node.
+
 `title` names the node. Its `e` tags list immediate child node event IDs in
 order. A node with no `e` tags has no children. `content` is empty.
 
@@ -55,6 +60,7 @@ order. A node with no `e` tags has no children. `content` is empty.
   "id":"note1def..def", "pubkey":"npub1abc..abc",
   "created_at":1790683199, "kind":K_NODE,
   "tags":[
+    ["d","7602d719-2393-4fab-93b8-5df19d887eb0"],
     ["title","Cooking"],
     ["e","note1jkl..jkl"],
     ["e","note1mno..mno"],
