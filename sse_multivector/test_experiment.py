@@ -1106,47 +1106,6 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(self.show('E1', '--case', 'pair')['inputs'], case['inputs'])
         self.assertEqual(self.calls(), [])
 
-    def parent_candidates_spec(self):
-        self.subject_pairs_spec()
-        source = json.loads((self.root / 'subjects.json').read_text())
-        for i, name in ((7, 'Other topic'), (8, 'Other subtopic')):
-            source['subjects'].append(dict(source['subjects'][2], index=i,
-                subject=name, context='Context for ' + name, number=str(i)))
-        source['edges'].append([7, 8])
-        self.write('subjects.json', source)
-        hierarchy = json.loads((self.root / 'hierarchy.json').read_text())
-        hierarchy['groups'].extend([[7], [8]])
-        hierarchy['member_to_group'].extend([3, 4])
-        hierarchy['edges'].append([3, 4])
-        self.write('hierarchy.json', hierarchy)
-        from sse_multivector.experiment_inputs import prepare_subject_pairs
-        prior = dict(id='prior', A='S0000', B='S0007')
-        case = prepare_subject_pairs(dict(inputs=source, hierarchy=hierarchy,
-            pairs=[prior], source={}))[0]
-        self.write('judgments.json', dict(subjects=source['subjects'], comparisons=[
-            dict(prior, inputs=case['inputs'], answer=dict(relation='neither', reason='Different.'))]))
-        self.write('selection/candidates.json', dict(schema_version=1,
-            inputs='../subjects.json', hierarchy='../hierarchy.json',
-            judgments='../judgments.json', nodes=['S0000']))
-        spec = json.loads(self.spec.read_text())
-        spec['dataset'] = dict(adapter='parent_candidates', path='selection/candidates.json')
-        self.write('spec.json', spec)
-
-    def test_parent_candidates_prepare_full_eligible_catalogue_from_saved_sources(self):
-        self.parent_candidates_spec()
-        self.prepare()
-        case = self.show('E1', '--case', 'S0000')
-        payload = json.loads(case['inputs']['INPUT_JSON'])
-        self.assertEqual(payload['A'], [
-            dict(subject='Tea', context='A cup of tea.'),
-            dict(subject='Teas', context='Several teas.'),
-            dict(subject='Tea', context='Another reference to tea.')])
-        self.assertEqual(payload['candidates'], [
-            dict(id='S0002', subjects=['Drinks']),
-            dict(id='S0008', subjects=['Other subtopic'])])
-        self.assertNotIn('REVIEW ONLY', case['prompt'])
-        self.assertNotIn('saved-vector', case['prompt'])
-        self.assertEqual(case['evidence']['A']['node_id'], 'S0000')
     def hierarchy_construction_spec(self):
         self.subject_pairs_spec()
         self.prompt.write_text('GENERIC PROMPT\n{CATALOGUE_JSON}\n{QUERY_JSON}')
@@ -1233,6 +1192,47 @@ class ExperimentTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises((ValueError, RunnerError)):
                 validate(dataset, case, json.dumps(value), None)
 
+    def parent_candidates_spec(self):
+        self.subject_pairs_spec()
+        source = json.loads((self.root / 'subjects.json').read_text())
+        for i, name in ((7, 'Other topic'), (8, 'Other subtopic')):
+            source['subjects'].append(dict(source['subjects'][2], index=i,
+                subject=name, context='Context for ' + name, number=str(i)))
+        source['edges'].append([7, 8])
+        self.write('subjects.json', source)
+        hierarchy = json.loads((self.root / 'hierarchy.json').read_text())
+        hierarchy['groups'].extend([[7], [8]])
+        hierarchy['member_to_group'].extend([3, 4])
+        hierarchy['edges'].append([3, 4])
+        self.write('hierarchy.json', hierarchy)
+        from sse_multivector.experiment_inputs import prepare_subject_pairs
+        prior = dict(id='prior', A='S0000', B='S0007')
+        case = prepare_subject_pairs(dict(inputs=source, hierarchy=hierarchy,
+            pairs=[prior], source={}))[0]
+        self.write('judgments.json', dict(subjects=source['subjects'], comparisons=[
+            dict(prior, inputs=case['inputs'], answer=dict(relation='neither', reason='Different.'))]))
+        self.write('selection/candidates.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            judgments='../judgments.json', nodes=['S0000']))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='parent_candidates', path='selection/candidates.json')
+        self.write('spec.json', spec)
+
+    def test_parent_candidates_prepare_full_eligible_catalogue_from_saved_sources(self):
+        self.parent_candidates_spec()
+        self.prepare()
+        case = self.show('E1', '--case', 'S0000')
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(payload['A'], [
+            dict(subject='Tea', context='A cup of tea.'),
+            dict(subject='Teas', context='Several teas.'),
+            dict(subject='Tea', context='Another reference to tea.')])
+        self.assertEqual(payload['candidates'], [
+            dict(id='S0002', subjects=['Drinks']),
+            dict(id='S0008', subjects=['Other subtopic'])])
+        self.assertNotIn('REVIEW ONLY', case['prompt'])
+        self.assertNotIn('saved-vector', case['prompt'])
+        self.assertEqual(case['evidence']['A']['node_id'], 'S0000')
         plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
         for name in ['subjects.json', 'hierarchy.json', 'judgments.json', 'selection/candidates.json']:
             path = self.root / name

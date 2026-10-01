@@ -846,6 +846,8 @@ def prepare(dataset, source, template):
         cases = prepare_prominence(source, dataset.get("select"), dataset.get('combine_masks', False))
     elif adapter == "subject_pairs":
         cases = prepare_subject_pairs(source, dataset.get("select"))
+    elif adapter == 'hierarchy_construction':
+        cases = prepare_hierarchy_construction(source, dataset.get('select'))
     elif adapter == 'parent_candidates':
         cases = prepare_parent_candidates(source, dataset.get('select'))
     elif adapter == 'subject_contexts':
@@ -875,8 +877,6 @@ def prepare(dataset, source, template):
         occurrences = {}
         for item in items:
             inputs = {"POST": item["note"], "SUBJECT": item["subject"]}
-    elif adapter == 'hierarchy_construction':
-        cases = prepare_hierarchy_construction(source, dataset.get('select'))
             if format_ == "word_positions":
                 inputs["INDEXED_POST"] = engine._position_decoder().index_post(
                     item["note"]
@@ -906,6 +906,29 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'hierarchy_construction':
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        engine._expect_fields(value, 'construction proposals', {'equivalences', 'ancestors'})
+        supplied = {n['id'] for n in json.loads(case['inputs']['CATALOGUE_JSON'])['nodes']}
+        query = set(json.loads(case['inputs']['QUERY_JSON'])['nodes'])
+        for field in ('equivalences', 'ancestors'):
+            if not isinstance(value[field], list):
+                raise ValueError('construction proposals must be arrays')
+            seen = set()
+            for proposal in value[field]:
+                fields = {'nodes', 'reason'} if field == 'equivalences' else {'ancestor', 'descendant', 'reason'}
+                engine._expect_fields(proposal, 'construction proposal', fields)
+                ids = (engine._validate_string_array(proposal['nodes'], 'equivalent nodes', allow_empty=False)
+                       if field == 'equivalences' else [proposal['ancestor'], proposal['descendant']])
+                if (len(ids) < 2 or any(not isinstance(nid, str) or nid not in supplied for nid in ids)
+                        or len(set(ids)) != len(ids) or not set(ids) & query
+                        or not isinstance(proposal['reason'], str) or not proposal['reason'].strip()):
+                    raise ValueError('invalid or unsupplied construction proposal')
+                key = tuple(sorted(ids)) if field == 'equivalences' else tuple(ids)
+                if key in seen:
+                    raise ValueError('duplicate construction proposal')
+                seen.add(key)
+        result['parsed'] = value
     if adapter == 'parent_candidates':
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         if not isinstance(value, dict) or set(value) != {'candidates'} or not isinstance(value['candidates'], list):
@@ -935,29 +958,6 @@ def validate(dataset, case, raw, schema):
             raise ValueError("expected one integer prominence score from 0 through 100")
         result["parsed"] = value
         if adapter == 'subject_contexts':
-    if adapter == 'hierarchy_construction':
-        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
-        engine._expect_fields(value, 'construction proposals', {'equivalences', 'ancestors'})
-        supplied = {n['id'] for n in json.loads(case['inputs']['CATALOGUE_JSON'])['nodes']}
-        query = set(json.loads(case['inputs']['QUERY_JSON'])['nodes'])
-        for field in ('equivalences', 'ancestors'):
-            if not isinstance(value[field], list):
-                raise ValueError('construction proposals must be arrays')
-            seen = set()
-            for proposal in value[field]:
-                fields = {'nodes', 'reason'} if field == 'equivalences' else {'ancestor', 'descendant', 'reason'}
-                engine._expect_fields(proposal, 'construction proposal', fields)
-                ids = (engine._validate_string_array(proposal['nodes'], 'equivalent nodes', allow_empty=False)
-                       if field == 'equivalences' else [proposal['ancestor'], proposal['descendant']])
-                if (len(ids) < 2 or any(not isinstance(nid, str) or nid not in supplied for nid in ids)
-                        or len(set(ids)) != len(ids) or not set(ids) & query
-                        or not isinstance(proposal['reason'], str) or not proposal['reason'].strip()):
-                    raise ValueError('invalid or unsupplied construction proposal')
-                key = tuple(sorted(ids)) if field == 'equivalences' else tuple(ids)
-                if key in seen:
-                    raise ValueError('duplicate construction proposal')
-                seen.add(key)
-        result['parsed'] = value
             if set(value) != {'prominence', 'missing_meaning', 'allocation'} or not isinstance(value['missing_meaning'], str):
                 raise ValueError('expected context prominence diagnostics')
             allocation = value['allocation']
