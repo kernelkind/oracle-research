@@ -115,10 +115,13 @@ baseline masks still need generation. Reparsed Qwen teacher-agreement F1 is
 includes a comparison trained on 1,000 notes, approved September 30. Remaining
 data choices and execution details are open.
 
-Task 13 is in progress: the [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
-records a reconstructed decision baseline and proposed node-record format.
-Its wording and open choices still need review. This does not complete 13;
-the service/client dependencies (14/15) are unchanged.
+Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
+has restarted from how a client opens a hierarchy and currently contains only
+that proposal, which awaits review. Node records, browsing requests/responses,
+paths, ordered-note pagination and snapshot versions still need specification
+and agreement. Service and Notedeck implementation remain dependent on the
+protocol; integration preparation is already underway. Dependencies are unchanged.
+This status correction selects no protocol design.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier

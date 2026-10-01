@@ -337,6 +337,7 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 evaluate("document.querySelector('#focus-task').value = '13'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('13 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
+                self.assertIn("The current draft covers only the opening proposal", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 

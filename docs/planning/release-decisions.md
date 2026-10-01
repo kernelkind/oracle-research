@@ -1436,10 +1436,16 @@ costs where recovery is used, not only model calls. It can use available evidenc
 from 24 and the growing hierarchy builds; it does not wait for the finished
 implementation in 28.
 
-13 is in progress: the [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
-records a reconstructed decision baseline and proposed node-record format.
-Its wording awaits review; open choices are not resolved by this status update.
-The protocol is not complete. Its links to 14 and 15 are unchanged.
+**Protocol status corrected September 30:** 13 remains in progress. The
+[protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
+has restarted from how a client opens a hierarchy and currently documents only
+that proposal, which awaits review—not the previously described node-record
+format. Node records, browsing requests/responses, paths, ordered-note pagination
+and snapshot versions still need specification and agreement. Service and
+Notedeck implementation remain dependent on the protocol; integration preparation
+is already underway. Status, track and links to 14 and 15 are unchanged.
+This records current work; protocol design remains in its existing session and
+no protocol choice or implementation is approved here.
 
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need

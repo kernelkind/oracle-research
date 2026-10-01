@@ -89,7 +89,7 @@
       "track": "release",
       "title": "Define Nostr hierarchy protocol",
       "status": "IN PROGRESS",
-      "description": "Protocol drafting has started: a reconstructed decision baseline and proposed node-record format are documented. Wording awaits review; open protocol choices remain unresolved.\nSpecify requests/responses for browsing nodes, paths and ordered notes, pagination and snapshot versions."
+      "description": "Protocol design in progress: work restarted from how a client opens a hierarchy. The current draft covers only the opening proposal, not node records; the proposal awaits review.\nStill to specify and agree: node records, browsing requests/responses, paths, ordered-note pagination and snapshot versions.\nService and Notedeck implementation remain dependent on the protocol; integration preparation is already underway."
     },
     {
       "id": "14",
