@@ -7,7 +7,7 @@ test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
 
-The subsequent [ASv6.51 (approved candidate, evaluation interrupted)](../asv6.51/ASv6.51.md)
+The subsequent [ASv6.51 (approved candidate, retry testing)](../asv6.51/ASv6.51.md)
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
@@ -350,14 +350,15 @@ its regression test and a fresh transfer check outside food if that set passes.
 
 ## ASv6.51 approved candidate
 
-Status: approved candidate; GPT-6.1 Sol xhigh evaluation interrupted before any
-answer completed. On October 1, 2026, the user approved
+Status: approved candidate; authorized GPT-6.1 Sol xhigh retries are running
+after the first evaluation was interrupted before any answer completed.
+On October 1, 2026, the user approved
 the ASv6.51 wording with "lgtm" after reviewing its full-context delta.
 The preceding drafting authorization followed the agent's confirmation of
 N074 trial 3's advice-role loss and N096 trial 2's loss of sautéing restrictions.
 The subsequent testing instruction authorized the comparison below.
 
-[ASv6.51 (approved candidate, evaluation interrupted)](../asv6.51/ASv6.51.md) replaces
+[ASv6.51 (approved candidate, retry testing)](../asv6.51/ASv6.51.md) replaces
 ASv6.50's existing hierarchy condition with a counterexample check. Compare the `subject` headings
 alone and imagine another post that fits the child: if it could fail to fit the
 proposed parent, use a broader parent. Each applicable branch must pass that
@@ -379,7 +380,7 @@ The ASv6.51 SHA-256 is
 Mechanical revision checks verify preservation and provenance; they do not
 establish a semantic improvement. No model calls were made while drafting.
 ASv6.48 remains the frozen subject baseline and MPv3.43 remains the frozen
-mask working baseline. The authorized regression comparison was interrupted;
+mask working baseline. The authorized regression comparison is running again;
 the fresh-topic transfer check depends on completed regression results.
 
 ## ASv6.51 comparison on GPT-6.1 Sol xhigh
@@ -440,6 +441,15 @@ has created three identical, unrun retry trials at
 `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t2-retry-v1/`
 and `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t3-retry-v1/`.
 They preserve the complete inputs and settings, use the same approved ASv6.51
-template, and pair against the corresponding saved ASv6.50 answers. All twelve
-remain unrun pending explicit retry authorization; preparation made no model
-calls and preserved the interrupted receipts.
+template, and pair against the corresponding saved ASv6.50 answers. Preparation
+made no model calls and preserved the interrupted receipts.
+
+### Authorized retry
+
+After the interruption report, the user explicitly authorized retrying all
+twelve requests with "proceed" on October 1. The local service is active;
+the approved prompt and template hashes, complete case inputs, settings,
+paired baselines and prepared workflow code match the retry plans. All three
+prepared retry trials are running through native `run --max-new-attempts 8`.
+The shared provider-only automatic retry policy still applies. No paid fallback
+is configured. Results and complete-hierarchy agent reviews are pending.
