@@ -173,6 +173,9 @@ def load_vectors(vectors):
 
 
 def prepare(args):
+    pooling = getattr(args, 'pooling', None)
+    if pooling and args.replay:
+        raise ValueError('pooling override cannot use original mask replays')
     include_subject = getattr(args, 'include_subject', False)
     exclude_references = getattr(args, 'exclude_references', False)
     if exclude_references and not getattr(args, 'include_inverse', False):
@@ -435,7 +438,18 @@ def prepare(args):
     if (config["device"] != "cpu" or ("worker_sha256" in encoder
             and sha(Path(worker.__file__)) != encoder["worker_sha256"])):
         raise ValueError("expected original CPU worker")
+    if pooling:
+        if any(c['ordinal'] is not None for c in cases):
+            raise ValueError('pooling override requires newly encoded relevance rows')
+        model = dict(config['model'], pooling=pooling)
+        worker.ModelDescriptor.from_json(model)
+        config['model'] = model
+        encoder = dict(encoder, model=model)
     if encoding_source:
+        reused_encoder = read(encoding_source/'plan.json')['encoder']
+        for key in ('checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model', 'note_batch_size'):
+            if encoder[key] != reused_encoder[key]:
+                raise ValueError(f'reused encoder identity differs: {key}')
         indices = {json.dumps([n['note_id'], n['text'], s], sort_keys=True): i
                    for i, (n, s) in enumerate(reuse_rows)}
         try:
@@ -600,6 +614,8 @@ def main():
                       help='replace one unique phrase in selected source text; freeze the original and diagnostic copy')
     prep.add_argument('--include-subject', action='store_true',
                       help='encode the saved SP subject, a newline, and its unchanged context together')
+    prep.add_argument('--pooling', choices=(worker.POOLING_RULE, worker.MEAN_POOLING_RULE),
+                      help='override pooling for newly encoded relevance rows; cannot use original mask replays')
     prep.add_argument("--vectors", type=Path, help='required for saved MP masks or mask replay controls')
     prep.add_argument("--worker-config", type=Path, required=True)
     prep.add_argument("--replay", nargs="+", default=[], help='original MP-mask controls from --vectors')

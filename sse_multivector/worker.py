@@ -22,6 +22,7 @@ from typing import Any, Iterable, Sequence
 SCHEMA_VERSION = 1
 VECTOR_FORMAT = "row-major-f32le-v1"
 POOLING_RULE = "selected-contextual-token-mean-linear-relu-linear-v1"
+MEAN_POOLING_RULE = "selected-contextual-token-mean-v1"
 BYTE_SPAN_RULE = "complete-token-contained-in-utf8-byte-span-union-v2"
 TREE_HASH_RULE = "sorted-relative-path-type-size-content-sha256-v1"
 
@@ -201,7 +202,7 @@ class ModelDescriptor:
             ),
             pooling=_expect_string(value["pooling"], "model.pooling"),
         )
-        if descriptor.pooling != POOLING_RULE:
+        if descriptor.pooling not in (POOLING_RULE, MEAN_POOLING_RULE):
             raise ValueError(f"unsupported pooling rule `{descriptor.pooling}`")
         return descriptor
 
@@ -466,6 +467,7 @@ class OfficialSseEncoder:
         self._torch = torch
         self._maximum_tokens = config.model.maximum_tokens
         self._dimensions = config.model.dimensions
+        self._pooling = config.model.pooling
         self._batch_size = config.note_batch_size
         self._tokenizer = AutoTokenizer.from_pretrained(
             config.base_model_artifact_path,
@@ -509,7 +511,7 @@ class OfficialSseEncoder:
                 )
             expected_dimensions = (
                 int(checkpoint_dimensions)
-                if checkpoint_dimensions is not None
+                if config.model.pooling == POOLING_RULE and checkpoint_dimensions is not None
                 else int(encoder_config.hidden_size)
             )
             if expected_dimensions != config.model.dimensions:
@@ -524,40 +526,44 @@ class OfficialSseEncoder:
             if key.startswith("encoder.")
         }
         self._encoder.load_state_dict(encoder_state, strict=True)
-        linear1_weight = state.get("mlp.linear1.weight")
-        linear1_bias = state.get("mlp.linear1.bias")
-        linear2_weight = state.get("mlp.linear2.weight")
-        linear2_bias = state.get("mlp.linear2.bias")
-        if any(
-            value is None
-            for value in (
-                linear1_weight,
-                linear1_bias,
-                linear2_weight,
-                linear2_bias,
+        if config.model.pooling == MEAN_POOLING_RULE:
+            if config.model.dimensions != int(encoder_config.hidden_size):
+                raise ValueError("encoder output dimension does not match the config")
+        else:
+            linear1_weight = state.get("mlp.linear1.weight")
+            linear1_bias = state.get("mlp.linear1.bias")
+            linear2_weight = state.get("mlp.linear2.weight")
+            linear2_bias = state.get("mlp.linear2.bias")
+            if any(
+                value is None
+                for value in (
+                    linear1_weight,
+                    linear1_bias,
+                    linear2_weight,
+                    linear2_bias,
+                )
+            ):
+                raise ValueError("checkpoint is missing the SSE projection MLP")
+            input_dimensions = int(linear1_weight.shape[1])
+            hidden_dimensions = int(linear1_weight.shape[0])
+            output_dimensions = int(linear2_weight.shape[0])
+            if (
+                input_dimensions != int(encoder_config.hidden_size)
+                or int(linear2_weight.shape[1]) != hidden_dimensions
+                or output_dimensions != config.model.dimensions
+            ):
+                raise ValueError("checkpoint projection dimensions are inconsistent")
+            self._linear1 = torch.nn.Linear(input_dimensions, hidden_dimensions)
+            self._linear2 = torch.nn.Linear(hidden_dimensions, output_dimensions)
+            self._linear1.load_state_dict(
+                {"weight": linear1_weight, "bias": linear1_bias}, strict=True
             )
-        ):
-            raise ValueError("checkpoint is missing the SSE projection MLP")
-        input_dimensions = int(linear1_weight.shape[1])
-        hidden_dimensions = int(linear1_weight.shape[0])
-        output_dimensions = int(linear2_weight.shape[0])
-        if (
-            input_dimensions != int(encoder_config.hidden_size)
-            or int(linear2_weight.shape[1]) != hidden_dimensions
-            or output_dimensions != config.model.dimensions
-        ):
-            raise ValueError("checkpoint projection dimensions are inconsistent")
-        self._linear1 = torch.nn.Linear(input_dimensions, hidden_dimensions)
-        self._linear2 = torch.nn.Linear(hidden_dimensions, output_dimensions)
-        self._linear1.load_state_dict(
-            {"weight": linear1_weight, "bias": linear1_bias}, strict=True
-        )
-        self._linear2.load_state_dict(
-            {"weight": linear2_weight, "bias": linear2_bias}, strict=True
-        )
+            self._linear2.load_state_dict(
+                {"weight": linear2_weight, "bias": linear2_bias}, strict=True
+            )
+            self._linear1.float().eval()
+            self._linear2.float().eval()
         self._encoder.float().eval()
-        self._linear1.float().eval()
-        self._linear2.float().eval()
         del checkpoint
         del state
 
@@ -605,7 +611,8 @@ class OfficialSseEncoder:
                             .index_select(0, selected_tensor)
                             .mean(dim=0)
                         )
-                        projected = self._linear2(torch.relu(self._linear1(pooled)))
+                        projected = (self._linear2(torch.relu(self._linear1(pooled)))
+                                     if self._pooling == POOLING_RULE else pooled)
                         vector = tuple(
                             float(value) for value in projected.float().cpu().tolist()
                         )

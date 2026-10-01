@@ -1715,6 +1715,20 @@ and replay checks before `collect` emits a comparison.
 This diagnostic makes no prompt calls; the shared experiment runner remains the
 only prompt-experiment workflow.
 
+For an explicitly authorized encoder comparison, `prepare --pooling` accepts
+`selected-contextual-token-mean-linear-relu-linear-v1` (the existing SSE
+projection) or `selected-contextual-token-mean-v1` (the same checkpoint's
+selected-token mean before that projection). The option changes the frozen
+worker model descriptor, not source text, token selections or prominence.
+Every relevance row must be freshly encoded and original mask replays are
+refused, preventing comparisons between vectors from different representations.
+The worker checks output dimensions against the projection or encoder backbone,
+respectively; the config's dimensions must already match the chosen output.
+Encoding reuse must match checkpoint, model artifacts, complete model descriptor
+and batch size, in addition to exact notes/selections. Collection rejects a
+receipt with a different pooling rule. Without this option the original behavior
+is retained. Neither pooling choice changes production sorting policy.
+
 `prepare --reuse-encoding COMPLETED_OUTPUT` permits new prominence assessments
 to use a completed comparison's exact vectors, including a selected subset.
 Each selected row must match the original note ID, complete text, selection ID
@@ -4131,16 +4145,11 @@ develop Bitcoin privacy. The strict focused-post direction remains uncertain;
 this one wording comparison is not a broad robustness result, an exact-share
 approval or a numeric tie threshold. Rewriting posts is not adopted.
 
-The next recommendation is to compare relevance from the same saved inputs
-before and after SSE's final learned projection, using the agreed Coffee/Eggs
-examples and fixed Bitcoin controls. The worker currently averages the selected
-encoder tokens, then applies learned linear, ReLU and learned linear operations.
-The proposed check would use that same checkpoint's encoder/selected-token mean
-before those final layers as the alternate relevance input, retaining prominence
-and the formula. This tests whether that component helps standalone-context
-sorting; it does not assume the projection caused this gap. Existing cached
-weights suffice, with no new pretrained-model download or teacher inference.
-This comparison has not begun and production adoption remains open.
+The user subsequently authorized the comparison below using the same saved
+inputs before and after SSE's final learned projection. This tests whether that
+component helps standalone-context sorting; it does not assume the projection
+caused this gap. Existing cached weights suffice, with no new pretrained-model
+download or teacher inference. Production adoption remains open.
 
 Independent verification checks all forty-five original case identities and
 saved prominence values, fourteen exact one-substitution derivations with
@@ -4160,6 +4169,49 @@ The ignored `relevance-privacy-bitcoin-name-v1` directory contains native plan,
 request, config, worker receipt/vectors, comparison, independent verification
 and native review logs. Comparison SHA256:
 `74c23cd3347dbb6424f4f825aae52d7626a1a133b61dbc726291b838ed57ddac`.
+
+**Approved comparison: relevance before and after SSE projection.**
+
+The user's next "proceeed" authorizes comparing the same checkpoint's
+selected-token mean with the existing mean → linear → ReLU → linear output.
+This is a bounded local CPU experiment, not a different pretrained model or a
+new teacher assessment. Prominence remains PPv30-node-v1, relevance remains
+`(clip(title cosine, -1, 1) + 1) / 2`, sorting score remains prominence ×
+relevance, and each post retains its highest selected SP-context sorting score.
+The encoder checkpoint itself was trained for SSE; omitting its final projection
+does not restore the pretrained encoder's original weights.
+
+Native preparation freezes Coffee's fourteen posts and Eggs' seven from
+`experiments/ppv30-node-orders-v1`, plus Bitcoin's five original posts from
+`experiments/ppv30-fresh-nonfood-v2`. This is thirty-seven plus forty-five SP
+entries: eighty-two complete contexts and three node titles, eighty-five encoder
+rows in each run. Both requests contain identical text, order and byte spans;
+case evidence and prominence also match exactly. The earlier rewritten privacy
+copy is not an input. There are no original-mask replay rows, no inverse term,
+no teacher calls or paid resources. At this bounded size the work is two linear
+encoder passes over the saved contexts/titles, with CPU batch size eight; it
+does not introduce per-post pairwise inference or a recursive hierarchy pass.
+
+The native outputs are `ppv30-node-orders-v1/relevance-projection-v1` and
+`ppv30-node-orders-v1/relevance-before-projection-v1`, under the ignored
+`experiments/` history. Encoder execution, collection and agent assessment are
+pending. Evaluate the ten clear Coffee/Eggs pair checks, especially iced coffee
+above raw-yolk coffee, separately from four about-equal pairs for which either
+direction is accepted. Keep the two accepted complete-node orders as two review
+observations, not all implied pairs as independent labels. The Bitcoin
+focused-versus-mixed direction is an agent observation; no strict order among
+the three focused Bitcoin posts has been approved.
+
+Minimal tests failed first for the unsupported worker pooling rule and missing
+comparison option. The production worker integration uses a tiny real T5
+checkpoint and fast tokenizer, checks both projection and selected-token mean,
+discontinuous UTF-8 selections, shared tokens/receipts and distinct output
+dimensions. Native experiment/CLI/collector tests check unchanged source inputs,
+wrong-mode receipts and encoding reuse, and refusal of original mask replays.
+Thirty-six comparison/ranking/selection and nine worker tests pass, with no
+inference-dependency skips. The broader experiment suite passes 101 of 102;
+the concurrently added parent-guide test fails because the default Python lacks
+`tiktoken`. That unrelated work is not changed by this task.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

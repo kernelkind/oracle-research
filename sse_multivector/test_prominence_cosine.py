@@ -890,5 +890,87 @@ class ProminenceSourceReplacementTests(unittest.TestCase):
             self.assertEqual(path.read_bytes(), content)
 
 
+class ProminencePoolingTests(unittest.TestCase):
+    setUp = fixtures.ExperimentTests.setUp
+    write = fixtures.ExperimentTests.write
+    cli = fixtures.ExperimentTests.cli
+    prepare = fixtures.ExperimentTests.prepare
+    show = fixtures.ExperimentTests.show
+    calls = fixtures.ExperimentTests.calls
+    prepare_source_cases = ProminenceSourceReplacementTests.prepare_source_cases
+    compare_cli = ProminenceSourceReplacementTests.compare_cli
+
+    def prepare_pooling_cases(self):
+        self.prepare_source_cases()
+        self.encoder['model'] = dict(base_model='fixture/t5', dimensions=2,
+            maximum_tokens=512, pooling='selected-contextual-token-mean-linear-relu-linear-v1')
+        self.write('encoder.json', dict(self.encoder, device='cpu'))
+        self.originals[self.root/'encoder.json'] = (self.root/'encoder.json').read_bytes()
+
+    def write_vectors(self, output):
+        from sse_multivector import prominence_cosine as pc
+        plan = pc.read(output/'plan.json')
+        rows = [(n, s) for n in pc.read(output/'worker-request.json')['notes']
+                for s in n['subjects']]
+        fresh = [(1, 0)] * len(rows)
+        fresh[plan['cases'][0]['mask_row']] = (0, 1)
+        result = output/'result'
+        result.mkdir()
+        (result/'raw-vectors.f32le').write_bytes(struct.pack(
+            '<'+'f'*(2*len(fresh)), *(v for row in fresh for v in row)))
+        receipt = dict(plan['encoder'], request_sha256=pc.sha(output/'worker-request.json'),
+            proposal_sha256=pc.sha(output/'plan.json'),
+            rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n,s in rows])
+        (result/'worker-receipt.json').write_text(json.dumps(receipt))
+
+    def test_pooling_override_keeps_inputs_and_scores_and_binds_collection(self):
+        from sse_multivector import prominence_cosine as pc
+        self.prepare_pooling_cases()
+        self.compare_cli('projected')
+        self.compare_cli('means', '--pooling', 'selected-contextual-token-mean-v1')
+        projected, means = self.root/'projected', self.root/'means'
+        before, after = pc.read(projected/'plan.json'), pc.read(means/'plan.json')
+        self.assertEqual(before['cases'], after['cases'])
+        self.assertEqual(before['title_rows'], after['title_rows'])
+        self.assertEqual(pc.read(projected/'worker-request.json')['notes'],
+                         pc.read(means/'worker-request.json')['notes'])
+        expected = dict(self.encoder['model'], pooling='selected-contextual-token-mean-v1')
+        self.assertEqual(after['encoder']['model'], expected)
+        self.assertEqual(pc.read(means/'worker-config.json')['model'], expected)
+        self.write_vectors(means)
+        pc.collect(means)
+        comparison = pc.read(means/'comparison.json')
+        self.assertEqual(comparison['parity'], {})
+        self.assertEqual(comparison['groups']['bitcoin'][0]['linear_product'], 50)
+        receipt_path = means/'result/worker-receipt.json'
+        receipt = pc.read(receipt_path)
+        receipt['model'] = self.encoder['model']
+        receipt_path.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, 'worker identity differs: model'):
+            pc.collect(means)
+        for path, content in self.originals.items():
+            self.assertEqual(path.read_bytes(), content)
+        self.assertEqual(self.calls(), self.original_calls)
+
+    def test_pooling_override_refuses_replay_and_wrong_encoding_reuse(self):
+        self.prepare_pooling_cases()
+        self.compare_cli('projected')
+        self.write_vectors(self.root/'projected')
+        from sse_multivector import prominence_cosine as pc
+        pc.collect(self.root/'projected')
+        result = self.compare_cli('wrong-reuse', '--pooling',
+            'selected-contextual-token-mean-v1', '--reuse-encoding',
+            str(self.root/'projected'), ok=False)
+        self.assertIn('reused encoder identity differs: model', result.stderr)
+        self.assertFalse((self.root/'wrong-reuse').exists())
+        result = self.compare_cli('replay', '--pooling',
+            'selected-contextual-token-mean-v1', '--replay', 'V1', ok=False)
+        self.assertIn('pooling override', result.stderr)
+        self.assertFalse((self.root/'replay').exists())
+        result = self.compare_cli('unknown', '--pooling', 'unknown', ok=False)
+        self.assertIn('invalid choice', result.stderr)
+        self.assertFalse((self.root/'unknown').exists())
+
+
 if __name__ == "__main__":
     unittest.main()

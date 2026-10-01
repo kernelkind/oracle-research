@@ -1530,13 +1530,34 @@ judgment or policy of rewriting posts is introduced.
 Independent derivation, complete-selection, encoder-identity, product,
 post-maximum/order and twenty-five protected-hash checks passed. Fourteen native
 uncertain agent comments preserve history and represent one post/title input.
-No new teacher calls/tokens or cash were used. The next recommendation is to
-compare relevance before and after SSE's final learned projection on the same
-saved inputs, using agreed Coffee/Eggs examples and Bitcoin controls, with
-prominence and the formula fixed. That comparison can use the existing checkpoint
-without downloading another model; it has not begun. Production adoption remains
-open. Native provenance and workflow semantics are recorded in
+No new teacher calls/tokens or cash were used. The user subsequently authorized
+the following comparison before and after SSE's final learned projection.
+Production adoption remains open. Native provenance and workflow semantics are recorded in
 [model-runner.md](../../sse_multivector/model-runner.md).
+
+**SSE projection comparison approved October 1:** The user's "proceeed"
+authorizes a bounded local comparison using the agreed Coffee/Eggs examples
+and fixed Bitcoin posts. Native preparation freezes all twenty-one Coffee/Eggs
+posts and five Bitcoin posts: eighty-two saved SP contexts plus three node
+titles, with identical text, token-selection spans and saved PPv30-node-v1
+prominence in both runs. Only the worker pooling descriptor changes between
+the checkpoint's selected-token mean and its existing mean → linear → ReLU →
+linear output. The same SSE-trained encoder weights are used in both; this
+does not recover the pretrained model's original encoder weights.
+
+The formula and highest-context post maximum stay fixed. This authorizes
+testing the component, not removing it from production or rewriting source
+posts. Ten clear Coffee/Eggs expected pair directions, four about-equal pairs
+accepting either direction, and two accepted complete-node orders remain
+distinct observations. Bitcoin focused-versus-mixed orders remain agent
+assessments, with strict directions among focused posts uncertain. No new user
+labels, numeric tie threshold, teacher calls or paid resources are introduced.
+The two native requests contain eighty-five encoder rows each. Preparation is
+complete; local execution, collection and assessment are pending. Shared
+worker/CLI support passes forty-five relevant tests; the broader experiment
+suite passes 101 of 102, with the unrelated new parent-guide test blocked by
+missing `tiktoken`. [Model-runner results](../../sse_multivector/model-runner.md)
+record the frozen scope, workflow semantics and check evidence.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

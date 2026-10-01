@@ -4,11 +4,13 @@ import math
 import struct
 import tempfile
 import unittest
+from argparse import Namespace
 from unittest.mock import patch
 from pathlib import Path
 
 from sse_multivector.worker import (
     EncodedSubject,
+    WorkerConfig,
     canonical_tree_sha256,
     select_token_indices,
     run_worker,
@@ -289,6 +291,118 @@ class WorkerTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(ValueError, "unexpected field.*label"):
                     run_worker(config_path)
+
+
+class OfficialSsePoolingTests(unittest.TestCase):
+    def setUp(self):
+        try:
+            import torch
+            from tokenizers import Tokenizer, models, pre_tokenizers
+            from transformers import PreTrainedTokenizerFast, T5Config, T5EncoderModel
+        except ImportError:
+            self.skipTest("SSE inference dependencies are not installed")
+        self.torch = torch
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        artifact = self.root / "model"
+        artifact.mkdir()
+        tokenizer = Tokenizer(models.WordLevel(
+            {"<unk>": 0, "<pad>": 1, "coffee": 2, "eggs": 3, "☕": 4},
+            unk_token="<unk>",
+        ))
+        tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+        self.tokenizer = PreTrainedTokenizerFast(
+            tokenizer_object=tokenizer, unk_token="<unk>", pad_token="<pad>",
+            model_input_names=["input_ids", "attention_mask"],
+        )
+        self.tokenizer.save_pretrained(artifact)
+        model_config = T5Config(vocab_size=5, d_model=4, d_ff=8, d_kv=2,
+                                num_heads=2, num_layers=1, dropout_rate=0,
+                                pad_token_id=1)
+        model_config.save_pretrained(artifact)
+        with torch.random.fork_rng():
+            torch.manual_seed(8)
+            self.reference = T5EncoderModel(model_config).float().eval()
+        self.linear1 = torch.nn.Linear(4, 2)
+        self.linear2 = torch.nn.Linear(2, 3)
+        with torch.no_grad():
+            self.linear1.weight.copy_(torch.tensor([[1., 0., -1., 0.],
+                                                    [0., 1., 0., -1.]]))
+            self.linear1.bias.copy_(torch.tensor([.25, -.5]))
+            self.linear2.weight.copy_(torch.tensor([[1., 0.], [0., 1.], [1., -1.]]))
+            self.linear2.bias.copy_(torch.tensor([.5, 1., -.25]))
+        state = {"encoder." + k: v for k, v in self.reference.state_dict().items()}
+        for name, layer in (("linear1", self.linear1), ("linear2", self.linear2)):
+            state.update({"mlp." + name + "." + k: v
+                          for k, v in layer.state_dict().items()})
+        checkpoint = self.root / "checkpoint.ckpt"
+        torch.save(dict(state_dict=state, hyper_parameters=dict(params=Namespace(
+            model_name="fixture/t5", final_output_dim=3))), checkpoint)
+        request = dict(schema_version=1, proposal_sha256="ab"*32, notes=[dict(
+            note_id="11"*32, text="☕ coffee eggs coffee", subjects=[
+                dict(subject_id="01"*8, byte_spans=[[4, 10], [16, 22]]),
+                dict(subject_id="02"*8, byte_spans=[[0, 22]])])])
+        self.request_path = self.root / "request.json"
+        self.request_path.write_text(json.dumps(request, ensure_ascii=False))
+        self.config = dict(schema_version=1, request_path=str(self.request_path),
+            request_sha256=hashlib.sha256(self.request_path.read_bytes()).hexdigest(),
+            checkpoint_path=str(checkpoint),
+            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+            base_model_artifact_path=str(artifact),
+            base_model_artifact_tree_sha256=canonical_tree_sha256(artifact),
+            model=dict(base_model="fixture/t5", dimensions=3, maximum_tokens=32,
+                       pooling="selected-contextual-token-mean-linear-relu-linear-v1"),
+            device="cpu", container_image="sha256:"+"ef"*32, note_batch_size=1,
+            output_path=str(self.root / "projected"))
+
+    def run_config(self, pooling, dimensions, name):
+        config = dict(self.config, model=dict(self.config["model"], pooling=pooling,
+                      dimensions=dimensions), output_path=str(self.root / name))
+        path = self.root / (name + ".json")
+        path.write_text(json.dumps(config))
+        run_worker(path)
+        receipt = json.loads((self.root / name / "worker-receipt.json").read_text())
+        raw = (self.root / name / "raw-vectors.f32le").read_bytes()
+        return list(struct.iter_unpack("<" + "f"*dimensions, raw)), receipt
+
+    def test_worker_emits_selected_token_mean_before_projection(self):
+        torch = self.torch
+        projected, projected_receipt = self.run_config(
+            "selected-contextual-token-mean-linear-relu-linear-v1", 3, "projected")
+        means, mean_receipt = self.run_config(
+            "selected-contextual-token-mean-v1", 4, "means")
+        tokens = self.tokenizer("☕ coffee eggs coffee", return_tensors="pt")
+        with torch.inference_mode():
+            hidden = self.reference(**tokens).last_hidden_state[0]
+            # The first selection excludes both the emoji and eggs.
+            for i, selected in enumerate(([1, 3], [0, 1, 2, 3])):
+                expected = hidden[selected].mean(dim=0)
+                self.assertEqual(means[i], tuple(expected.tolist()))
+                transformed = self.linear2(torch.relu(self.linear1(expected)))
+                self.assertEqual(projected[i], tuple(transformed.tolist()))
+        self.assertEqual(projected_receipt["rows"], mean_receipt["rows"])
+        self.assertEqual(mean_receipt["model"]["pooling"],
+                         "selected-contextual-token-mean-v1")
+        self.assertEqual(mean_receipt["dimensions"], 4)
+        self.assertEqual(mean_receipt["request_sha256"],
+                         projected_receipt["request_sha256"])
+        self.assertEqual(mean_receipt["checkpoint_sha256"],
+                         projected_receipt["checkpoint_sha256"])
+
+    def test_mean_pooling_checks_backbone_dimensions_and_rejects_unknown_rules(self):
+        with self.assertRaisesRegex(ValueError, "output dimension"):
+            self.run_config("selected-contextual-token-mean-v1", 3, "wrong-mean")
+        self.assertFalse((self.root / "wrong-mean").exists())
+        with self.assertRaisesRegex(ValueError, "output dimension"):
+            self.run_config("selected-contextual-token-mean-linear-relu-linear-v1",
+                            4, "wrong-projection")
+        self.assertFalse((self.root / "wrong-projection").exists())
+        path = self.root / "unknown.json"
+        config = dict(self.config, model=dict(self.config["model"], pooling="unknown"))
+        path.write_text(json.dumps(config))
+        with self.assertRaisesRegex(ValueError, "unsupported pooling rule"):
+            WorkerConfig.load(path)
 
 
 if __name__ == "__main__":
