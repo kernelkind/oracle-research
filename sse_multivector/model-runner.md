@@ -3829,8 +3829,9 @@ lower position. This does not establish that all SP wording is irrelevant;
 it shows that exact question wording does not resolve this observed direction.
 The focused Music comparisons remain uncertain, with no clear error or
 benefit established. The agent recommends returning to broader saved-input
-transfer checks with context-only relevance and the formula fixed. No further
-trial or production input change is approved.
+transfer checks with context-only relevance and the formula fixed. The user
+then approved the three-node saved-input trial below; production input choice
+remains open.
 
 The same cached offline CPU SSE runtime encoded forty-four rows: three titles,
 forty unchanged distinct contexts and the question's exact text. All complete
@@ -3856,6 +3857,69 @@ the protected-input, numerical and complete-order checks. Plan, request, worker
 receipt, vectors and comparison remain ignored from preparation onward.
 Comparison SHA256:
 `d64ce1d4cb0d5c7e88afd11a8447e4284a19175bb92adee2a80a5108bba94662`.
+
+**Further fresh posts: Literature, Psychology and philosophy, Bitcoin.**
+
+The user approved three existing nodes outside food and music with about five
+fresh posts each, retaining the calculation and delegating observations to the
+agent. The saved coverage-expansion carrier contains 48 earlier development
+posts, with reviewed ASv6.23 subjects and contexts. The trial selects fifteen
+posts whose IDs are disjoint from the original 100 and the previous nine-post
+sorting trial. Original coverage-expansion generation, manual subject/mask
+reviews and HDBv2 decisions remain unchanged; none of the ninety-nine selected
+SP entries has an explicit saved subject correction. Older prompt wording and
+purposive developmental selection limit generalization and current SP-quality
+conclusions. No new SP or MP generation is required, respecting the separate
+broader-corpus generation hold.
+
+`experiment_specs/ppv30-fresh-nonfood-v2-source.json` references the unchanged
+`real-note-fine-segmentation-v1/coverage-expansion-v1/subjects-reviewed.json`
+and unchanged raw HR02 graph. It preserves exact SP IDs, post text, subjects,
+contexts and existing titles. These are explicit diagnostic assignments, not
+changes to graph membership or validation of automatic placement. The shared
+saved-SP input path already suffices; no workflow or production code change was
+needed. `experiment_specs/ppv30-fresh-nonfood-v2.json` keeps PPv30-node-v1,
+Astra-low subscription settings, output schema and complete-post/title
+prominence inputs identical in method to the earlier trial.
+
+| Existing title | Original coverage ranks | Selected SP entries | Distinct post/title inputs |
+| --- | --- | ---: | ---: |
+| Literature | 7, 9, 11, 13, 14 | 21 | 5 |
+| Psychology and philosophy | 17, 18, 22, 23, 24 | 33 | 5 |
+| Bitcoin | 19, 38, 40, 41, 45 | 45 | 5 |
+
+The agent recorded fifteen native pre-run observations. Literature includes
+book-recommendation questions, a shared poem, the argument about fearing
+thought rather than books, and audiobook appreciation with an EarPods detail.
+Focused book discussion should precede the fear-of-thinking argument; the poem
+should be assessed as literature rather than simply counting its imagery as
+unrelated topics. Differences within the focused group remain uncertain.
+Philosophical reflection and happiness advice should precede the mixed
+bodily-activity/cannabis/year-end account with gratitude. For Bitcoin, the three
+technology discussions should precede optimism attributed jointly to Bitcoin
+and Nostr, which should precede the mostly Nostr hardware proposal with zap
+controls. Within-focus directions remain uncertain, with no numeric tie rule or
+new user judgment. Pre-run comments are observations, not exact-percentage
+approvals or fixed truth labels.
+
+Native preparation freezes ninety-nine cases but fifteen exact complete-post/
+title requests; repeated SP entries reuse the same prominence answer. Prominence
+× standalone SP-context relevance and highest sorting score among the selected
+entries per post remain fixed. The zero-cash reservation permits at most thirty
+new attempts including eligible provider retries, no paid fallback. Local
+offline CPU SSE will encode selected complete contexts and three existing titles
+with the unchanged checkpoint/model identity. Work scales with selected
+post/node inputs and text length, not every post against every hierarchy node;
+source lookup is linear in the saved carrier and selected entries. No baseline,
+SP/MP, title or hierarchy generation, rentals, UI or production adoption is
+included. Native generation costs and subscription cash will remain separate.
+
+Thirty-one selection/comparison/ranking tests and 108 experiment/worker tests
+passed. Logs are in the ignored `experiments/ppv30-fresh-nonfood-v2-preparation`
+directory. Prepared data and native observations are under the ignored
+`experiments/ppv30-fresh-nonfood-v2` directory. Protected source/prompt/prior-
+comparison hashes were recorded before preparation. Results and production
+adoption remain open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

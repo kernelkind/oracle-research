@@ -1373,13 +1373,39 @@ the question remains below the Goa appraisal and AI-track credit in Music.
 Replacing its SP wording with the question itself does not remove that position
 or demonstrate an ordering improvement. The agent still finds these focused
 Music comparisons uncertain and recommends returning to broader saved-input
-transfer tests with context-only relevance and the formula fixed. No production
-input change is adopted and no further trial has begun. Native offline CPU
+transfer tests with context-only relevance and the formula fixed. The user
+then approved the three-node saved-input trial below; no production input
+change is adopted. Native offline CPU
 preparation/collection used forty-four complete rows, with source hashes,
 independent products and post maxima verified. Re-encoding four other cases
 changed their sorting scores by at most .000001598; all input text and orders
 are preserved. Fourteen existing comparison tests passed; no teacher calls,
 new user judgments, paid resources or task accounting changes occurred.
+
+**Three fresh subjects approved October 1:** the user approved five fresh posts
+each for three existing nodes outside food and music, with the calculation
+fixed and agent observation. The prepared `ppv30-fresh-nonfood-v2` trial uses
+fifteen posts from the saved 48-post coverage expansion for Literature,
+Psychology and philosophy, and Bitcoin. Their IDs are disjoint from the original
+100 and the prior nine-post sorting trial. Ninety-nine exact reviewed ASv6.23
+SP entries are explicitly selected: twenty-one Literature, thirty-three
+Psychology and philosophy, and forty-five Bitcoin. None of these entries has
+an explicit saved subject correction. This is a selected earlier development
+corpus, not unseen data or an automatic-membership test; the graph is unchanged.
+The agent recorded fifteen pre-run observations, including uncertainty among
+focused posts and the poem's interpretation, without new user labels.
+
+PPv30-node-v1 / Astra low, context-only relevance and highest prominence ×
+relevance per post remain fixed. Fifteen distinct complete-post/title inputs
+share prominence answers across SP entries. Native preparation and 139 relevant
+workflow tests passed without source changes. The zero-cash reservation bounds
+new attempts to thirty, including eligible provider retries; saved SP/MP,
+source posts, titles, hierarchy and earlier results are protected. No new SP/MP
+or broader-corpus generation runs, respecting the separate generation hold.
+Local encoding scales with selected contexts and titles, and complete-post
+inference with selected post/node inputs rather than every post/node pair.
+Results and production adoption remain open. Native source selectors and
+provenance are described in [model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
