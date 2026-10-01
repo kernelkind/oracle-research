@@ -52,5 +52,7 @@ On October 1, 2026, the user approved the ASv6.50 delta and requested testing on
 GPT-6.1 Sol xhigh. The [candidate comparison](../asv6.50/README.md#approved-candidate-comparison-on-gpt-61-sol-xhigh)
 uses the shared experiment workflow for three independent ASv6.50 outputs per
 regression post, compared with saved Sol ASv6.48 answers. Independent trials
-disable request reuse through `--repeat`. A small fresh transfer check outside
-food remains proposed and requires separate authorization.
+disable request reuse through `--repeat`. All twelve answers completed; two
+contain the parent-scope failure pattern. The linked comparison records the
+complete-output reviews and separate grounding uncertainties. A small fresh
+transfer check outside food remains proposed and requires separate authorization.

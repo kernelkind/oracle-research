@@ -1,6 +1,7 @@
 # ASv6.50
 
-Status: approved candidate, testing in progress on GPT-6.1 Sol xhigh. On
+Status: approved candidate, tested on GPT-6.1 Sol xhigh. Two of twelve answers
+contain the parent-scope failure pattern. On
 October 1, 2026, the user approved the full-context delta and authorized this
 test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
@@ -248,5 +249,97 @@ The three ignored experiment directories are
 `sse_multivector/experiments/asv6.50-sol61-xhigh-sp-scope-regression-t1/`,
 `sse_multivector/experiments/asv6.50-sol61-xhigh-sp-scope-regression-t2/` and
 `sse_multivector/experiments/asv6.50-sol61-xhigh-sp-scope-regression-t3/`.
-Results are pending. A fresh transfer test outside food remains proposed and
-requires separate authorization.
+All twelve answers completed from twelve calls, with no failures, retries or
+reuse. Actual serialized request receipts verify `openai-codex`, `gpt-6.1-sol`,
+reasoning effort `xhigh` and WebSocket transport. Every answer is mechanically
+valid, with unique numbering and each parent listed before its children.
+ASv6.48 and approved ASv6.50 prompt hashes, and the original Sol baseline
+artifacts, remain unchanged.
+
+| Post | Saved Sol ASv6.48 answer | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- | --- |
+| N063 | Pass, 91 entries | Pass, 78 entries | Pass, 168 entries | Pass, 120 entries |
+| N074 | Fail, 83 entries | Pass, 100 entries | Pass, 84 entries | Fail, 105 entries |
+| N096 | Fail, 134 entries | Pass, 190 entries | Fail, 144 entries | Pass, 156 entries |
+| N100 | Fail, 125 entries | Pass, 144 entries | Pass, 141 entries | Pass, 131 entries |
+
+Pass/fail in this table describes the parent-scope check on the complete
+hierarchy. Ten candidate answers pass that check; two contain the same failure
+pattern. These observations do not establish a failure rate or measured
+improvement: the baseline has one saved answer per post, and the candidate has
+three. ASv6.50 does not eliminate the agreed regression.
+
+N074 trial 3 fixes the saved conjunction failure but introduces an advice-role
+loss:
+
+```text
+1.2.3     Advice to eat mostly plants
+1.2.3.2   Mostly plant-based eating as an alternative to the Bitcoin–carnivore-diet narrative
+```
+
+A post describing someone's own dietary alternative without giving advice
+fits the child heading without the parent. The child's source `context` calls
+it a recommendation, but that context cannot constrain the standalone heading.
+The relationship repeats at `1.1.2.2.1 → 1.1.2.2.1.2` and
+`1.3.2.2.1 → 1.3.2.2.1.2`. Trials 1 and 2 retain the advice role; in all three
+answers the combined, attributed Food Rules advice is narrower than the
+individual recommendations rather than their parent.
+
+N096 trial 2 reproduces the saved Sol failure:
+
+```text
+3.3.1.1     Sautéing finely chopped onion, celery and carrot in olive oil over medium heat in a large pan
+3.3.1.1.1   Adding crushed garlic after a few minutes of sautéing onion, celery and carrot
+```
+
+The child drops finely chopped, olive oil, medium heat and large pan. A post
+about adding garlic after sautéing those vegetables in butter fits the child
+without fitting the olive-oil parent. Two further relationships drop dish scope:
+`5.1.1`, large pan for preparing spaghetti bolognese sauce, → `5.1.1.1`, the
+general vegetable sauté; and `4.1.1`, one tin of water for spaghetti bolognese
+sauce, → `4.1.1.1`, adding tomato ingredients and water once beef is uniformly
+coloured. Trials 1 and 3 place the garlic step separately from the restrictive
+sauté, and their sauce-specific children retain sauce scope.
+
+Coverage was assessed across each complete hierarchy. All three N063 answers
+retain individual general subjects for all 15 ingredients and separate
+dish-specific instances, with general fats outside the dish-specific ingredient
+parent. N074 retains individual and combined advice, both sides of comparisons,
+the ten-year-old/mother/vegetable exception, Bitcoin narrative and Food Rules
+attribution. N096 retains individual ingredients and quantities, salt and pepper
+separately and together, recipe/yield, preparation, heat/duration and packet
+instructions. N100 retains purchase and steak quantities, trimming, general
+materials and their uses, individual chicken provisions and their combination,
+and the sealer comparison, discount and recommendation. Its use branches have
+particular uses as children, and its combined chicken plan has no single-part
+children. Different numbering, wording and repeated applicable branches are
+accepted; coverage is an agent assessment rather than exhaustive-extraction
+proof.
+
+Two separate N100 grounding uncertainties remain. Trial 1 asserts that the
+beef was vacuum-sealed, although the post names no object for the sealer's use
+(`2.8.1`, `11.1.1` and repetitions). Trial 2 interprets the duplicated
+"some some" as adding saved myoglobin to the chickens' cold water and sunflower
+seeds (`2.1.6.2`, `4.1.5` and repetitions); simply putting out water and seeds
+is also supported. These ambiguities were present in the saved baseline and
+are separate from the parent check. Trial 3 asserts neither relationship.
+The two answers therefore pass this regression check without establishing
+acceptance of those source interpretations.
+
+Native reviews record ten agent acceptances for the regression check and two
+agent rejections, with the grounding uncertainties in their comments. No user
+semantic verdicts have been added. Complete answers, receipts, reports and
+reviews remain in the ignored experiment directories above.
+
+| Trial | Input tokens | Cached input tokens | Output tokens | Reasoning tokens included in output | Catalog reference estimate |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 5,910 | 4,992 | 75,042 | 49,689 | $0.7627392 |
+| 2 | 10,902 | 0 | 76,177 | 50,716 | $0.783574 |
+| 3 | 10,902 | 0 | 70,075 | 45,242 | $0.722554 |
+
+These are the native per-trial usage totals. Catalog estimates are not bills or
+measured subscription quota; provider-reported cost is unavailable and
+incremental cash is zero. Adoption as the subject baseline remains open. The
+recommended next step is to review the two failing relationships before another
+prompt change. A fresh transfer test outside food remains proposed and requires
+separate authorization.
