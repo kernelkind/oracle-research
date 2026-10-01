@@ -1413,6 +1413,22 @@ iced coffee above raw-egg-yolk coffee; this is another trial of that same
 judgment, not a twelfth independent expected pair. Original comparison
 results and user judgments remain intact; production sorting remains open.
 
+Both fresh assessments completed without reuse, failures or retries and
+returned the original prominence values: iced coffee 95, raw-egg-yolk coffee
+100. With exactly the same saved relevance, 0.895979 and 0.755828, sorting
+scores repeat exactly: 85.118002 > 75.582818. Prominence alone again reverses
+the expected order. Thus the earlier result repeats in one additional trial;
+it does not establish a general benefit or approve the percentages/formula.
+No SSE worker ran. Original vectors, receipts, five replay results and
+source artifacts are unchanged. The shared subset-reuse change passed its
+failing-first CLI test and 141 relevant regression/integration tests; 22
+focused checks also passed after an unrelated concurrent input-adapter addition.
+The first collector refused a changed shared-code hash; a new read-only
+preparation used unchanged inputs and collected successfully, without repeating
+model calls or editing frozen plans. [Exact results and verification](../../sse_multivector/model-runner.md)
+are saved with this repeated pair, separate from the eleven original clear
+Coffee/Eggs/Music checks and the Photography ordering judgment.
+
 04 and 27 are in progress: saved Coffee/Eggs, Photography and Music trials test
 candidate sorting scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and

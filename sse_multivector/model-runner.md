@@ -2955,7 +2955,12 @@ Both cases, complete inputs, PPv30-node-v1 prompt and Astra-low subscription
 settings match their original cases exactly. `--repeat` requests two fresh
 assessments rather than reusing their saved answers; two new attempts are
 allowed. No baseline or SP calls, new SSE encoding, changed source text or
-production sorting changes are included. Inference remains pending.
+production sorting changes are included. Both independent assessments
+completed validly with two new calls and zero reused answers, without failures
+or retries. Native generation accounting reports 1,337 input and 193 output
+tokens, including 48 reasoning tokens, with complete usage. The $0.02302
+catalog reference estimate is not a subscription invoice or quota measurement;
+incremental cash is zero.
 
 The existing shared `--reuse-encoding` support now permits selecting a subset
 of a completed encoding. It maps exact unchanged note/text/selection/span
@@ -2966,8 +2971,52 @@ the minimal change. The test verifies changed prominence with identical
 cosine, vector/receipt hashes, selected-node output and both selected and
 unselected-post replay controls. Existing changed-text and modified-artifact
 refusal checks still pass. The focused suite passes twelve tests; all 141 relevant
-regression checks passed. Relevance will be collected directly from the
+regression checks passed. Relevance was collected directly from the
 original context encoding, preserving the original values exactly.
+
+The first `relevance-v1` collector refused to proceed because an unrelated
+concurrent addition of the `posts` adapter changed `experiment_inputs.py` after
+preparation. Its frozen files are retained unchanged and no comparison was
+emitted. Inspection confirmed that the prominence, context-prominence and
+subject-context preparation functions were unchanged. A separate read-only
+`relevance-v2` preparation froze the current code, using the same completed
+prominence results and original encoding; collection passed. No model call,
+embedding or failed receipt was retried. The current prominence-cosine and
+experiment-selection suites subsequently passed all 22 tests.
+
+`relevance-v2` retains the original 44-row encoder request and uses only the
+two selected context rows and Coffee title for this comparison. All five
+original MP-mask replay checks are preserved and pass exactly as before. Raw
+vectors, worker receipt hashes and both relevance values match the original
+Coffee/Eggs comparison exactly. No new worker ran and no result directory was
+created for this collection.
+
+| Post | Original prominence | Fresh prominence | Fixed relevance | Fresh sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| Iced coffee served in ice (`76e19c3e`) | 95 | 95 | 0.895979 | 85.118002 |
+| Coffee with raw cream and raw egg yolk (`f4c5aa5f`) | 100 | 100 | 0.755828 | 75.582818 |
+
+The fresh iced-coffee assessment assigns 95 points to its unusual serving
+method and five to crediting the video's creator. The fresh raw-egg-yolk
+assessment assigns all 100 points to preparing coffee and its ingredients,
+shared with a coffee-related hashtag. These are new teacher assessments,
+not approved percentages. Multiplying by the original relevance values repeats
+the earlier expected direction exactly; prominence alone still puts raw-egg-yolk
+coffee first. This is one additional successful trial of the same judged pair,
+not a new pair or a general demonstration that relevance improves sorting.
+Original eleven-pair results and the separate Photography ordering judgment
+remain intact. Formula adoption and production sorting remain open.
+
+Exact original case inputs/settings, independent generation provenance, all
+point allocations, selected-row identities, frozen-source hashes, preserved
+vectors/receipts/replay results, independently recomputed cosines and sorting
+scores, and per-post maxima passed. Comparison SHA-256 is
+`7df9193c3c8b0c1c68a5d7b3efd23e72daf8d990e1b62cbd20f288f3a3a86577`.
+Failing-first, regression and current-code check logs are preserved in the
+ignored experiment directory. Original hierarchy, masked posts, vector map,
+prompt and Coffee/Eggs, Photography and Music comparisons are unchanged. No
+baseline generation, SP calls, new encoding, paid resource, prompt edits or
+production ranking changes occurred.
 
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
