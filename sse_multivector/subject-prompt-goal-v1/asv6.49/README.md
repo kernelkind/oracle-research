@@ -1,8 +1,10 @@
 # ASv6.49
 
-Status: draft, untested. The user authorized preparing this revision for review;
-its wording and inference have not been approved. ASv6.48 remains the frozen
-subject baseline. MPv3.43 remains the frozen mask working baseline.
+Status: superseded, untested. [ASv6.50](../asv6.50/README.md) is the current
+draft. ASv6.49 repeated existing instructions about refinement and independently
+understandable headings; ASv6.50 clarifies the existing hierarchy paragraph
+instead. ASv6.48 remains the frozen subject baseline. MPv3.43 remains the frozen
+mask working baseline.
 
 ## Change and prompt audit
 
@@ -47,7 +49,7 @@ subjects or their particular instances does not satisfy the regression.
 ## Proposed comparison
 
 After approval, use the shared experiment workflow for three independent
-ASv6.49 outputs per regression post, compared with saved ASv6.48 outputs.
+ASv6.50 outputs per regression post, compared with saved ASv6.48 outputs.
 Independent trials must disable request reuse through `--repeat`. Follow with
 a small fresh transfer check outside food if the regression comparison supports
 the revision. These comparisons are proposed, not started or authorized.
