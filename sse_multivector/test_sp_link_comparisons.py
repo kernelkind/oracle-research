@@ -132,6 +132,19 @@ class SPLinkComparisonTests(unittest.TestCase):
         self.assertEqual(frozen["preparation"]["source_mode"], "original_sp_edges")
         self.assertEqual(len(frozen["cases"]), 1)
         self.assertFalse((destination / "run" / "results.jsonl").exists())
+        report = json.loads((destination / "report.json").read_text())
+        sizing = report["prepared_inputs"]
+        count = frozen["cases"][0]["evidence"]["input_tokens"]
+        self.assertEqual(sizing, dict(tokenizer="o200k_base", batches=1, comparisons=2,
+            rendered_input_tokens=count, min_rendered_input_tokens=count,
+            max_rendered_input_tokens=count))
+        self.assertEqual(report["usage"]["input_tokens"], 0)
+        self.assertIn("Offline input sizing", result.stdout)
+        from sse_multivector.experiment import report as inspect_report
+        self.assertEqual(inspect_report(destination, only=["BCPv5-0001"])["prepared_inputs"], sizing)
+        empty = inspect_report(destination, only=[])["prepared_inputs"]
+        self.assertEqual(empty, dict(tokenizer="o200k_base", batches=0, comparisons=0,
+            rendered_input_tokens=0, min_rendered_input_tokens=0, max_rendered_input_tokens=0))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "inputs": {
+    "path": "../../target/subject-matching-100-v1/inputs/inputs.json",
+    "sha256": "524001b6b854880f43d35676ec6d4d5764be4441fd2e48d3d38d9faaf51a6086"
+  },
+  "original_sp_edges": "all"
+}

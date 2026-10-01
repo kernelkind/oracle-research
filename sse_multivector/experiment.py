@@ -677,6 +677,14 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
     result["requests"] = (
         request_preview(plan, manifest, cases) if not plan["imported"] else None
     )
+    if result["adapter"] == "bounded_comparisons":
+        token_counts = [case["evidence"]["input_tokens"] for case in cases]
+        result["prepared_inputs"] = dict(
+            tokenizer="o200k_base", batches=len(cases),
+            comparisons=sum(len(case["evidence"]["pairs"]) for case in cases),
+            rendered_input_tokens=sum(token_counts),
+            min_rendered_input_tokens=min(token_counts, default=0),
+            max_rendered_input_tokens=max(token_counts, default=0))
     if result["adapter"] == "masks":
         result["posts"] = len({c["evidence"]["note_id"] for c in cases})
     if generation_costs:
@@ -1076,6 +1084,9 @@ def compact(result, *, prepared=False):
     if result["adapter"] == "masks":
         print(f"Posts: {result['posts']}; subjects/calls: {result['summary']['cases']}")
     print("Cases: " + ", ".join(f"{k}={v}" for k, v in result["summary"].items()))
+    if "prepared_inputs" in result:
+        print("Offline input sizing (rendered prompt proxy, not provider billing): "
+              + json.dumps(result["prepared_inputs"]))
     print("Comparison (text changes, not quality): " + json.dumps(result["comparison"]))
     if result["baseline_only"]:
         print(

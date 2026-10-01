@@ -277,3 +277,39 @@ The shared runner saved the receipt and attributed agent review in
 `target/hg100-sol01-sp-links-v1/experiment/`. This selected six-link result does
 not establish corpus-wide accuracy or a decision to filter SP links. The
 original HG100-SOL01 snapshot remains byte-for-byte unchanged.
+
+### Full SP-link check: offline preparation only
+
+The user subsequently approved preparing all saved SP links to measure workload,
+not sending the full check. The [all-links source selection](../experiment_specs/hg100-sol01-sp-links-all-v1.json)
+uses the same hash-bound original inputs and `original_sp_edges: "all"`.
+The [all-links spec](../experiment_specs/hg100-sol01-sp-links-all-sol-low-v1.json)
+keeps BCPv5, GPT-6.1 Sol low, the schema and model settings unchanged.
+
+The shared runner's `prepared_inputs` report summarizes the selected comparison
+batches and their total/minimum/maximum rendered input tokens. These are
+`o200k_base` input-size proxies, separate from `usage`, which measures actual
+attempts. The summary respects `show --only` filtering; it neither projects
+output tokens nor assumes cache discounts, provider overhead or free retries.
+
+Preparation on October 1, 2026 produced **110 batches for 1,755 comparisons**:
+**186,304 rendered input tokens**, with **1,335–1,966 tokens per batch**. All
+requests are unrun; no saved whole request was reusable. The six pilot links
+remain included, but rebatching does not reuse their individual answers.
+The source data and original hierarchy remain unchanged.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+uv run --offline --no-project --python python3.13 \
+  --with-requirements sse_multivector/bounded-hierarchy-v1/requirements.txt \
+  python -m sse_multivector.experiment prepare \
+  target/hg100-sol01-sp-links-all-v1/experiment \
+  --spec sse_multivector/experiment_specs/hg100-sol01-sp-links-all-sol-low-v1.json \
+  --history-root target/hg100-sol01
+```
+
+Use `show` on the existing directory to inspect this preparation without
+inference. A first pass would require 110 new calls; the existing provider-only
+retry rule permits at most two attempts per batch. Sending the full check or
+changing global ancestry requires approval beyond this offline preparation;
+no full-check outputs exist yet.
