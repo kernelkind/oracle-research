@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "MPv3.43-G1",
+    "path": "../mask-prompt-goal-v1/mpv3.43-grouped-v1/mask-prompt.md"
+  },
+  "dataset": {
+    "adapter": "grouped_masks",
+    "path": "../hierarchy-refresh-v1/masked-posts.json",
+    "select": [
+      "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+      "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+      "46ed60cb0d3a5873d3a11f65515c366b03934cd4e25ded6732c819d2a2d493d0",
+      "ada943cfb5b2d76764fc4dbf3785f507e88bf7aef558a1700a389bd9c30498d5",
+      "1c964a412ac60a1f4234cf22bf3291669562b23113ad55fc0c369ac811903061",
+      "a197ff5f5c62e27c0c4089a08463f81741c0a1a388267d949da59e3c9a722c96"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "timeout_seconds": 1800,
+    "concurrency": 16,
+    "transport": "websocket",
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["results"],
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "meaning", "expressible", "evidence", "mask"],
+            "properties": {
+              "id": {"type": "string"},
+              "meaning": {"type": "string"},
+              "expressible": {"type": "boolean"},
+              "evidence": {"type": "string"},
+              "mask": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {"type": "array", "items": {"type": "integer", "minimum": 1},
+                     "minItems": 2, "maxItems": 2},
+                    {"type": "object", "additionalProperties": false,
+                     "required": ["word", "text"],
+                     "properties": {"word": {"type": "integer", "minimum": 1},
+                                    "text": {"type": "string", "pattern": "^\\S+$"}}}
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
