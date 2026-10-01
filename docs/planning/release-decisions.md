@@ -1483,11 +1483,11 @@ The Literature and Psychology and philosophy comparisons are untouched.
 The replacement does not close the privacy post's gap to the other focused
 Bitcoin posts. Its complete meaning still concerns Bitcoin privacy, but this
 result does not identify the cause of its lower relevance or establish a
-benefit from the strict focused-post order. The next recommendation is a
+benefit from the strict focused-post order. The user approved a
 bounded wording diagnostic: replace “a node” with “a Bitcoin node” in the
 opening of a diagnostic copy, keeping other words, title, prominence and formula
-fixed. This would check sensitivity to explicitly naming Bitcoin; it has not
-begun. Original source posts and production input policy remain unchanged.
+fixed. This checks sensitivity to explicitly naming Bitcoin; preparation is
+recorded below. Original source posts and production input policy remain unchanged.
 
 Native offline CPU preparation/collection used thirty-three complete rows with
 the unchanged SSE checkpoint/model/runtime. Exact inputs, complete token
@@ -1499,6 +1499,23 @@ uncertain agent comments preserve original history and represent one privacy
 post, not independent labels. No teacher calls, new token usage, user judgments,
 paid resources or task accounting changes occurred. Production adoption remains
 open; [model-runner.md](../../sse_multivector/model-runner.md) records provenance.
+
+**Bitcoin privacy wording check approved October 1:** native preparation keeps
+the same forty-five cases/five posts and replaces only the privacy post's
+opening “a node” with “a Bitcoin node” in its relevance input. Fourteen privacy
+entries share one complete 364-byte diagnostic copy; the exact 356-byte original
+and its source spans are separately retained. Prominence 100, title, formula
+and other contexts stay fixed. Thirty-three offline CPU rows are prepared with
+the unchanged SSE model; no teacher generation or paid resources are involved.
+The shared `--relevance-source-replace` option adds explicit source-bound
+replacement support while preserving the default exact-text requirement. Its
+production-path integration test failed before implementation and passed after;
+142 relevant comparison, ranking, selection, experiment and worker tests passed.
+Saved subjects, masks, source posts, hierarchy, earlier comparisons and task
+accounting remain unchanged. This selected wording check is in progress;
+results and production adoption remain open. Native provenance and workflow
+semantics are recorded in
+[model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

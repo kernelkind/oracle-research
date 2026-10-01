@@ -205,6 +205,13 @@ def prepare(args):
         if case_id in source_texts:
             raise ValueError(f'duplicate relevance source text: {case_id}')
         source_texts[case_id] = text
+    source_replacements = {}
+    for case_id, before, after in getattr(args, 'relevance_source_replace', None) or []:
+        if case_id in source_replacements:
+            raise ValueError(f'duplicate relevance source replacement: {case_id}')
+        source_replacements[case_id] = (before, after)
+    if source_replacements.keys() - source_texts.keys():
+        raise ValueError('--relevance-source-replace requires --relevance-source-text for each case')
     if source_texts and getattr(args, 'include_inverse', False):
         raise ValueError('source-text relevance has no literal inverse')
     if include_subject and source_texts:
@@ -305,6 +312,17 @@ def prepare(args):
                 cases[-1].update(ordinal=None, representation='source_text',
                                  relevance_source_text=text,
                                  relevance_source_spans=[[byte_start, byte_start + len(text.encode())]])
+                if case['id'] in source_replacements:
+                    before, after = source_replacements[case['id']]
+                    if not before.strip() or before == after:
+                        raise ValueError(f'relevance source replacement must change a nonempty phrase: {case["id"]}')
+                    if text.count(before) != 1:
+                        raise ValueError(f'relevance source replacement phrase must occur exactly once: {case["id"]}')
+                    replaced = text.replace(before, after, 1)
+                    if not replaced.strip():
+                        raise ValueError(f'replacement must leave nonempty relevance text: {case["id"]}')
+                    cases[-1].update(relevance_source_replacement=dict(before=before, after=after),
+                                     relevance_text=replaced)
     if selected_cases - {case['id'] for case in cases}:
         raise ValueError(f"unknown requested cases: {sorted(selected_cases - {case['id'] for case in cases})}")
     if selected_nodes - titles.keys():
@@ -371,7 +389,7 @@ def prepare(args):
             if case['ordinal'] is None:
                 if case.get('representation') in ('context', 'subject_context', 'source_text'):
                     if case['representation'] == 'source_text':
-                        text = case['relevance_source_text']
+                        text = case.get('relevance_text', case['relevance_source_text'])
                     elif case['representation'] == 'subject_context':
                         text = case['subject'] + '\n' + case['context']
                     else:
@@ -577,6 +595,9 @@ def main():
     prep.add_argument('--relevance-source-text', action='append', nargs=2,
                       metavar=('CASE_ID', 'TEXT'),
                       help='encode an exact saved-post fragment as standalone relevance text; repeat per case')
+    prep.add_argument('--relevance-source-replace', action='append', nargs=3,
+                      metavar=('CASE_ID', 'OLD', 'NEW'),
+                      help='replace one unique phrase in selected source text; freeze the original and diagnostic copy')
     prep.add_argument('--include-subject', action='store_true',
                       help='encode the saved SP subject, a newline, and its unchanged context together')
     prep.add_argument("--vectors", type=Path, help='required for saved MP masks or mask replay controls')

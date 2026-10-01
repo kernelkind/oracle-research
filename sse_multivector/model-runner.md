@@ -1771,6 +1771,20 @@ the node title and original-vector replays. Highest-per-post ordering supports
 both SP-context and source-text cases. Literal inverse diagnostics cannot be
 combined with this option, and changed text cannot reuse a different encoding.
 
+For an explicit wording diagnostic, add
+`--relevance-source-replace CASE_ID OLD NEW` to that case's source-text option.
+The original selection must still be exact saved-post text; the replacement
+phrase must be nonempty and occur exactly once. Duplicate replacements,
+unselected/unknown cases, no-op replacements and empty resulting text fail
+before output preparation. The plan and comparison retain the original
+`relevance_source_text` and its original byte spans, record
+`relevance_source_replacement` as `before`/`after`, and carry the actual copy in
+`relevance_text`. Only that copy is encoded, with its complete byte span. Saved
+post text, model inputs, prominence, SP context and source bindings remain
+intact; the copy cannot reuse vectors from different text. The default path
+still encodes exact original text. This is an offline input diagnostic, not a
+new prominence assessment or a production input policy.
+
 `prominence_cosine.py prepare --include-inverse` additionally prepares each
 mask's exact UTF-8 byte complement and one full-post selection per distinct
 post. Both are encoded in the unchanged complete post. Selections are grouped
@@ -4036,12 +4050,12 @@ Bitcoin privacy, consistent with its saved prominence 100. Replacing its SP
 contexts with the original post does not close its gap to the other focused
 Bitcoin posts or demonstrate an ordering improvement. This is not proof that
 all SP wording is irrelevant or that a particular SSE/model/title limitation
-causes the gap. The strict within-focus direction remains uncertain. The agent
-recommends a bounded wording diagnostic: replace the opening “a node” with
+causes the gap. The strict within-focus direction remains uncertain. The user
+approved a bounded wording diagnostic: replace the opening “a node” with
 “a Bitcoin node” in a diagnostic copy, holding all other words, the title,
 prominence and formula fixed. That would test sensitivity to explicitly naming
-Bitcoin; it has not begun and would not change the original post or production
-input policy.
+Bitcoin. Preparation is recorded below; the original post and production input
+policy remain unchanged.
 
 The same cached offline CPU SSE checkpoint, model artifacts, worker and runtime
 encoded thirty-three complete rows: one title, thirty-one other contexts and
@@ -4066,6 +4080,34 @@ usage. Ignored artifacts are under
 config, receipt, vectors, comparison, verification and review/test logs.
 The comparison SHA256 is
 `d26ab11ff6ae33591560271e2ae65b737c596dd60ae3bb9953ef301f3a32a0c4`.
+
+**Bitcoin privacy wording check: prepared.**
+
+The user approved changing only the opening “a node” to “a Bitcoin node” in
+the complete privacy post's relevance input. Native preparation selects the
+same forty-five cases and five Bitcoin posts. Fourteen privacy cases share a
+single 364-byte copy derived from the exact 356-byte original, preserving the
+original source text/spans and declaring the one substitution. Saved prominence
+100, the title, formula, thirty-one other contexts and highest-per-post
+ordering remain fixed. Thirty-three rows are prepared: one title, one copy and
+thirty-one complete contexts. Preparation is linear in selected text and
+case count, with identical copies deduplicated; this does not add every
+post/node pair or any teacher generation. Offline CPU SSE uses the unchanged
+checkpoint, model and runtime, with no paid resources or task ledger changes.
+
+The previous shared option intentionally refused rewritten source text, so
+the smallest reusable extension is `--relevance-source-replace`. The native
+CLI integration test first failed for the missing option, then passed after
+implementation. Three integration tests exercise actual experiment preparation,
+runner receipts with the fixture provider, source-bound comparison preparation
+and collection. They verify original inputs/receipts stay unchanged, identical
+copies share a row, unbound/ambiguous/empty edits are refused before writing,
+and old-text encoding cannot be reused. Thirty-four comparison/ranking/selection
+tests and 108 experiment/worker tests passed. No production APIs or test-only
+seams were added. Logs and prepared artifacts remain ignored under
+`experiments/ppv30-fresh-nonfood-v2/relevance-privacy-bitcoin-name-v1-preparation`
+and `relevance-privacy-bitcoin-name-v1`. Results and production adoption remain
+open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

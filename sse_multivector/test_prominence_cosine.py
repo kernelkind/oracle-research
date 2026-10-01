@@ -1,12 +1,16 @@
 import unittest
 import json
+import os
 import struct
+import subprocess
+import sys
 import tempfile
 from argparse import Namespace
 from unittest.mock import patch
 from pathlib import Path
 
 from sse_multivector.prominence_cosine import cosine, rank_rows
+from sse_multivector import test_experiment as fixtures
 
 
 class ProminenceCosineTests(unittest.TestCase):
@@ -728,6 +732,162 @@ class ProminenceCosineTests(unittest.TestCase):
         self.assertEqual(result["cosine"], ["c", "b", "a", "d"])
         self.assertEqual(result["product"], ["b", "a", "c", "d"])
         self.assertEqual(rows[-1]["product"], -9)
+
+
+class ProminenceSourceReplacementTests(unittest.TestCase):
+    setUp = fixtures.ExperimentTests.setUp
+    write = fixtures.ExperimentTests.write
+    cli = fixtures.ExperimentTests.cli
+    prepare = fixtures.ExperimentTests.prepare
+    show = fixtures.ExperimentTests.show
+    calls = fixtures.ExperimentTests.calls
+
+    def prepare_source_cases(self):
+        self.source_text = 'When running a node, use Tor.\n\nSparrow helps.'
+        self.post = '☕ ' + self.source_text
+        self.write('subjects.json', {'notes': [dict(note_id='a'*64,
+            text=self.post, subjects=[dict(id=sid, subject='Bitcoin node privacy.',
+                context=context) for sid, context in (
+                    ('SP1', 'Running a node over Tor.'),
+                    ('SP2', 'Sparrow helps with node privacy.'))]),
+            dict(note_id='d'*64, text='Bitcoin blocks propagate.', subjects=[dict(
+                id='SP3', subject='Bitcoin block transmission.',
+                context='A Bitcoin block is transmitted.')])]})
+        self.write('hierarchy.json', {'graph': {'nodes': [
+            dict(group='bitcoin', title='Bitcoin')]}})
+        self.write('source.json', dict(schema_version=1, subjects='subjects.json',
+            hierarchy='hierarchy.json', selections=[dict(id=cid, node_id='bitcoin',
+                note_id=note, subject_id=sid) for cid, note, sid in (
+                    ('privacy1', 'a'*64, 'SP1'), ('privacy2', 'a'*64, 'SP2'),
+                    ('control', 'd'*64, 'SP3'))]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_contexts', path='source.json',
+                              prominence_basis='node_title')
+        self.write('spec.json', spec)
+        self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
+        self.prepare()
+        answer = dict(missing_meaning='', prominence=100, allocation=[dict(
+            meaning='Bitcoin.', points=100, represented=100, missing=0)])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.encoder = dict(checkpoint_sha256='b'*64,
+            base_model_artifact_tree_sha256='c'*64, model={'dimensions': 2},
+            note_batch_size=1)
+        self.write('encoder.json', dict(self.encoder, device='cpu'))
+        self.originals = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        self.original_calls = self.calls()
+
+    def compare_cli(self, destination, *options, ok=True):
+        result = subprocess.run([sys.executable,
+            str(Path(__file__).with_name('prominence_cosine.py')),
+            'prepare', str(self.root/destination), '--experiments', str(self.root/'E1'),
+            '--worker-config', str(self.root/'encoder.json'), '--post-order', 'highest',
+            *options], cwd=self.root, env=os.environ, text=True, capture_output=True,
+            timeout=30)
+        if ok:
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        else:
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+        return result
+
+    def test_source_replacement_encodes_copy_preserves_sources_and_collects(self):
+        from sse_multivector import prominence_cosine as pc
+        self.prepare_source_cases()
+        options = []
+        for cid in ('privacy1', 'privacy2'):
+            options += ['--relevance-source-text', cid, self.source_text,
+                        '--relevance-source-replace', cid, 'a node', 'a Bitcoin node']
+        self.compare_cli('comparison', *options)
+        output = self.root/'comparison'
+        plan = pc.read(output/'plan.json')
+        rows = [(n, s) for n in pc.read(output/'worker-request.json')['notes']
+                for s in n['subjects']]
+        self.assertEqual(len(rows), 3)
+        cases = {c['id']: c for c in plan['cases']}
+        self.assertEqual(cases['privacy1']['mask_row'], cases['privacy2']['mask_row'])
+        edited = self.source_text.replace('a node', 'a Bitcoin node', 1)
+        for cid in ('privacy1', 'privacy2'):
+            case = cases[cid]
+            note, selection = rows[case['mask_row']]
+            self.assertEqual(note['text'], edited)
+            self.assertEqual(selection['byte_spans'], [[0, len(edited.encode())]])
+            self.assertEqual(case['relevance_source_text'], self.source_text)
+            self.assertEqual(case['relevance_source_spans'], [[4, len(self.post.encode())]])
+            self.assertEqual(case['relevance_source_replacement'],
+                             dict(before='a node', after='a Bitcoin node'))
+            self.assertEqual(case['relevance_text'], edited)
+            self.assertEqual(case['prominence'], 100)
+        control = cases['control']
+        self.assertEqual(rows[control['mask_row']][0]['text'],
+                         'A Bitcoin block is transmitted.')
+        self.assertNotIn('relevance_source_replacement', control)
+        fresh = [(1, 0)] * len(rows)
+        fresh[cases['privacy1']['mask_row']] = (0, 1)
+        result = output/'result'
+        result.mkdir()
+        (result/'raw-vectors.f32le').write_bytes(struct.pack(
+            '<'+'f'*(2*len(fresh)), *(value for row in fresh for value in row)))
+        (result/'worker-receipt.json').write_text(json.dumps(dict(self.encoder,
+            request_sha256=pc.sha(output/'worker-request.json'),
+            proposal_sha256=pc.sha(output/'plan.json'),
+            rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n,s in rows])))
+        pc.collect(output)
+        comparison = pc.read(output/'comparison.json')
+        privacy = next(p for p in comparison['posts']['bitcoin'] if p['note_id']=='a'*64)
+        self.assertEqual(privacy['linear_product'], 50)
+        self.assertEqual(privacy['linear_product_case'], 'privacy1')
+        for case in comparison['groups']['bitcoin']:
+            if case['id'].startswith('privacy'):
+                self.assertEqual(case['relevance_text'], edited)
+                self.assertEqual(case['relevance_source_text'], self.source_text)
+        self.assertEqual(self.calls(), self.original_calls)
+        for path, content in self.originals.items():
+            self.assertEqual(path.read_bytes(), content)
+
+    def test_source_replacement_refuses_unbound_ambiguous_or_empty_copies(self):
+        self.prepare_source_cases()
+        source = ['--relevance-source-text', 'privacy1', self.source_text]
+        replacement = ['--relevance-source-replace', 'privacy1', 'a node', 'a Bitcoin node']
+        invalid = [
+            (replacement, 'requires --relevance-source-text'),
+            (source + replacement + replacement, 'duplicate relevance source replacement'),
+            (source + ['--relevance-source-replace', 'privacy1', '', 'Bitcoin'], 'nonempty phrase'),
+            (source + ['--relevance-source-replace', 'privacy1', 'a node', 'a node'], 'nonempty phrase'),
+            (source + ['--relevance-source-replace', 'privacy1', 'coffee', 'Bitcoin'], 'exactly once'),
+            (source + ['--relevance-source-replace', 'privacy1', 'o', 'Bitcoin'], 'exactly once'),
+            (source + ['--relevance-source-replace', 'privacy1', self.source_text, ''], 'nonempty relevance'),
+            (['--relevance-source-text', 'privacy1', self.source_text.replace('a node', 'a Bitcoin node')],
+             'exact nonempty post fragment'),
+            (source + replacement + ['--include-inverse'], 'no literal inverse'),
+            (source + replacement + ['--include-subject'], 'cannot combine'),
+            (['--relevance-source-text', 'missing', self.source_text,
+              '--relevance-source-replace', 'missing', 'a node', 'a Bitcoin node'],
+             'unknown relevance source'),
+            (source + replacement + ['--only', 'control'], 'unknown relevance source'),
+        ]
+        for index, (options, message) in enumerate(invalid):
+            with self.subTest(options=options):
+                name = f'bad-{index}'
+                result = self.compare_cli(name, *options, ok=False)
+                self.assertIn(message, result.stderr)
+                self.assertFalse((self.root/name).exists())
+        self.assertEqual(self.calls(), self.original_calls)
+        for path, content in self.originals.items():
+            self.assertEqual(path.read_bytes(), content)
+
+    def test_source_replacement_cannot_reuse_original_text_encoding(self):
+        self.prepare_source_cases()
+        source = ['--relevance-source-text', 'privacy1', self.source_text,
+                  '--relevance-source-text', 'privacy2', self.source_text]
+        self.compare_cli('original', *source)
+        result = self.compare_cli('changed', *source,
+            '--relevance-source-replace', 'privacy1', 'a node', 'a Bitcoin node',
+            '--relevance-source-replace', 'privacy2', 'a node', 'a Bitcoin node',
+            '--reuse-encoding', str(self.root/'original'), ok=False)
+        self.assertIn('reused encoder notes differ', result.stderr)
+        self.assertFalse((self.root/'changed').exists())
+        self.assertEqual(self.calls(), self.original_calls)
+        for path, content in self.originals.items():
+            self.assertEqual(path.read_bytes(), content)
 
 
 if __name__ == "__main__":
