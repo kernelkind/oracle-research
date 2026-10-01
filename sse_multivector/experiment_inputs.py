@@ -60,6 +60,27 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
+        try:
+            from . import parent_guide_workflow as guides
+        except ImportError:
+            import parent_guide_workflow as guides
+        if dataset['adapter'] == 'bounded_parent_guides':
+            cases, protected, preparation = guides.create_guide_source(
+                source, template, base=path.parent, selected=dataset.get('select'))
+        else:
+            if load_report is None:
+                raise ValueError('parent comparisons require validated experiment reports')
+            paths = engine._validate_string_array(
+                source.get('discoveries'), 'parent-guide experiments', allow_empty=False)
+            directories = [engine._resolve_path(p, 'parent-guide experiment', path.parent) for p in paths]
+            if len(set(directories)) != len(directories):
+                raise ValueError('duplicate parent-guide experiment')
+            reports = [load_report(p) for p in directories]
+            cases, protected, preparation = guides.build_comparison_source(
+                source, reports, template, base=path.parent, selected=dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, {'cases': cases}, template), sources, preparation
     if dataset['adapter'] in {'bounded_discovery', 'bounded_comparisons'}:
         try:
             from . import bounded_hierarchy_workflow as bounded
@@ -1007,7 +1028,13 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
-    if adapter in {'bounded_discovery', 'bounded_comparisons'}:
+    if adapter == 'bounded_parent_guides':
+        try:
+            from .parent_guide_workflow import validate_guides
+        except ImportError:
+            from parent_guide_workflow import validate_guides
+        result['parsed'] = validate_guides(case, raw)
+    if adapter in {'bounded_discovery', 'bounded_comparisons', 'bounded_parent_comparisons'}:
         try:
             from . import bounded_hierarchy_workflow as bounded
         except ImportError:

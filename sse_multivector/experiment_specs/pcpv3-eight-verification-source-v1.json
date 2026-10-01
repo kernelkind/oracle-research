@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/hg100-sol01/exports/final-004/results.json",
+  "discoveries": ["../../target/hg100-sol01-parent-guides-v1/nomination"],
+  "judgments": "../../target/hg100-sol01/bounded-build.json"
+}

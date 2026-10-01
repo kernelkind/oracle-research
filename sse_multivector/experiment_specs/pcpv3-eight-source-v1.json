@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/hg100-sol01/exports/final-004/results.json",
+  "query_nodes": [
+    "S0346", "S1704", "S1408", "S0104",
+    "S0820", "S0121", "S0449", "S0547"
+  ]
+}

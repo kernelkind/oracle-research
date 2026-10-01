@@ -16,6 +16,25 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_parent_guide_preparation_pins_its_packer_and_validator_code(self):
+        subjects = [dict(index=i, subject=name, context=name,
+                         note_id=f"p{i}", note_short_id=f"N{i+1:03d}")
+                    for i, name in enumerate(("Butter", "Dairy products"))]
+        self.write("saved-inputs.json", dict(subjects=subjects, edges=[],
+            posts=[dict(note_id=s["note_id"], text=s["subject"]) for s in subjects]))
+        self.write("saved-hierarchy.json", dict(groups=[[0], [1]], member_to_group=[0, 1], edges=[]))
+        self.write("guide-source.json", dict(schema_version=1,
+            inputs="saved-inputs.json", hierarchy="saved-hierarchy.json", query_nodes=["S0000"]))
+        self.prompt.write_text("Suggest broader subjects. {INPUT_JSON}")
+        spec = json.loads(self.spec.read_text())
+        spec["dataset"] = dict(adapter="bounded_parent_guides", path="guide-source.json")
+        self.write("spec.json", spec)
+        self.prepare()
+        plan = json.loads((self.root / "E1" / "experiment.json").read_text())["plan"]
+        self.assertIn("parent_guide_measurement.py", plan["code"])
+        self.assertIn("parent_guide_workflow.py", plan["code"])
+        self.assertEqual(self.calls(), [])
+
     def test_posts_adapter_imports_exact_saved_prompts_without_leaking_subjects(self):
         self.prepare('original')
         self.cli('run', 'original')

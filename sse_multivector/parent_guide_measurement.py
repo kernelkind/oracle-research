@@ -34,7 +34,7 @@ PARENT_GUIDE_SCHEMA = dict(type="object", additionalProperties=False, required=[
                          items=dict(type="string", minLength=1, maxLength=160)))))))
 
 
-def pack_parent_guide_requests(inputs, hierarchy, template, *, max_queries=16,
+def pack_parent_guide_requests(inputs, hierarchy, template, *, query_nodes=None, max_queries=16,
                                max_input_tokens=MAX_INPUT_TOKENS):
     """Create source-bound generic cases containing only compact query evidence."""
     import tiktoken
@@ -48,9 +48,14 @@ def pack_parent_guide_requests(inputs, hierarchy, template, *, max_queries=16,
     if not isinstance(template, str) or template.count("{INPUT_JSON}") != 1:
         raise ValueError("parent-guide prompt requires exactly one INPUT_JSON placeholder")
     _, groups, _, _ = _validate_graph(inputs, hierarchy)
+    if query_nodes is not None and (not isinstance(query_nodes, list) or not query_nodes
+            or any(not isinstance(q, str) or q not in groups for q in query_nodes)
+            or len(set(query_nodes)) != len(query_nodes)):
+        raise ValueError("distinct current query node IDs required")
+    selected = sorted(groups) if query_nodes is None else sorted(query_nodes)
     references = {q: compact_entries(inputs, g) for q, g in groups.items()}
     by_post = defaultdict(list)
-    for q in sorted(groups):
+    for q in selected:
         by_post[inputs["subjects"][groups[q][0]]["note_short_id"]].append(q)
     source = dict(inputs_sha256=digest(inputs), hierarchy_sha256=digest(hierarchy))
     encoding = tiktoken.get_encoding("o200k_base")

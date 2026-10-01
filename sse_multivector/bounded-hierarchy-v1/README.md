@@ -258,11 +258,13 @@ env LD_LIBRARY_PATH=/nix/store/1xw5xccqqh1xw3mvd70hyil6x418wxcm-gcc-14.3.0-lib/l
 Here the optional diagnostic pair identifies the saved Coffee and Beverages
 references. Other pairs must use two distinct original `S####` entry IDs.
 
-## PCPv3 — draft broader-subject nomination supplement
+## PCPv3 — small-tested broader-subject nomination supplement
 
-Status: **draft, not behavior-tested or adopted**. The user authorized the draft
-and offline full-corpus sizing, not another model pass. HG100-SOL01 remains
-unchanged and its frozen nomination prompt remains PCPv2.
+Status: **tested on eight selected nodes, not frozen or adopted**. The user
+authorized the draft, offline full-corpus sizing and this small nomination /
+verification trial, not a full supplementary pass. HG100-SOL01 remains unchanged
+and its frozen nomination prompt remains PCPv2. Approximate lookup and adoption
+of a new construction rule remain undecided.
 
 The proposed supplementary pass works as follows:
 
@@ -279,8 +281,8 @@ The proposed supplementary pass works as follows:
    SSE encoding of new names and indexed subject-vector search. Repeated names
    do not establish equivalence. Limit alias expansion, candidate inspections,
    and the **total to three resolved existing nodes per query**, not three per
-   proposed name. The resolver and its ranking policy are not implemented or
-   selected by this measurement.
+   proposed name. The small trial implements exact-only lookup, described below;
+   approximate lookup and its ranking policy are not implemented or selected.
 4. Reuse BCPv5 to compare the queried node against each resolved existing node,
    using only their unchanged saved SP evidence, not the generated search name.
    The generated name cannot redefine either node. Filter existing ancestry and
@@ -339,10 +341,68 @@ Full 100-post measurement (`target/hg100-sol01-parent-guide-measurements-v1/repo
 | Total rendered input tokens, first-attempt ceiling | 1,646,152 |
 
 This establishes that one proposed pass fits the remaining attempt budget.
-There were **zero model calls and zero new vectors**. Name generation quality,
-candidate resolution, and browsing improvement remain untested; budget
-feasibility does not establish hierarchy completeness. Keep this separate from
-the finished build, including its original three-pass and nomination limits.
+The offline measurement made **zero model calls and zero new vectors**. It did
+not measure name quality or candidate coverage; budget feasibility does not
+establish hierarchy completeness. Keep this separate from the finished build,
+including its original three-pass and nomination limits.
+
+### Eight-node exact-lookup trial
+
+The shared runner now supports `bounded_parent_guides` and
+`bounded_parent_comparisons`. Reusable specs are
+`sse_multivector/experiment_specs/pcpv3-eight-sol-low-v1.json` and
+`pcpv3-eight-verification-sol-low-v1.json`; their source files select eight
+current nodes, reference the unchanged final hierarchy and bind the saved
+bounded-build judgment history. Preparation, output validation, lookup metadata,
+receipts, usage and pair packing belong to the shared workflow, not manually
+assembled batches.
+
+Exact lookup indexes all original SP subject wordings and maps matches to their
+current hierarchy nodes. It processes proposed names in their supplied order,
+with matching node IDs in stable order: at most **32 alias inspections and three
+selected existing nodes in total per query**. Inspections count even excluded
+aliases. Self, duplicate candidates, ancestry in either direction and judgments
+whose compact original evidence is unchanged are excluded. An ancestry walk
+that exceeds 2,048 operations remains unresolved, not assumed unrelated.
+Missing names remain unresolved; they are not silently reworded, converted into
+new nodes or treated as rejected relationships. BCPv5 receives only the actual
+nodes' original compact references, never the nomination text as a hint.
+
+Saved experiments are under `target/hg100-sol01-parent-guides-v1/`:
+
+| Queried hierarchy node | PCPv3's suggested broader names | Exact-lookup outcome |
+| --- | --- | --- |
+| Coffee | Beverages; Caffeinated beverages | Beverages selected; other name absent |
+| Butter | Dairy products; Edible fats | Dairy products selected; other name absent |
+| Nostr community | Decentralized social media communities; Online communities | Both names absent |
+| Slush drinks | Frozen beverages; Non-alcoholic beverages | Both names absent |
+| Siamstr community | Nostr communities | Name absent |
+| Social-media communities | Online communities | Name absent |
+| Health effects of tea consumption | Health effects of beverage consumption; Tea consumption; Diet and health | Two names absent; Tea consumption excluded because unchanged evidence was already judged |
+| Chicken / Chickens | No names | Saved references describe meat and living animals; no nomination |
+
+GPT-6.1 Sol low completed eight PCPv3 requests and one unchanged BCPv5 request,
+without failures, retries or request reuses. All responses passed mechanical
+validation. Thirteen names were proposed: two selected real nodes, ten had no
+exact saved wording, and one was excluded by unchanged judgment history.
+BCPv5 accepted **Beverages as an ancestor of Coffee** and **Dairy products as an
+ancestor of Butter**. These are model judgments, not user approvals or evidence
+of overall recall. Both fit the supplied subject meanings on agent inspection.
+
+The Chicken response respects this sample's conflicting references. The other
+suggestions are not all established as valid ancestors: in particular, the
+general wording "Slush drinks" does not establish that every drink is
+non-alcoholic. No unmatched proposal was verified or applied. Exact lookup also
+cannot tell whether a missing generated name denotes a genuinely absent subject
+or a useful saved node under different wording.
+
+The shared lifetime attempt counter moved from 522 to **531 / 2,000**. No new
+vectors, nodes, merges or placements were produced. This selected small trial
+does not establish browsing improvement or authorize a full pass. A bounded
+subject-vector lookup test using these saved nominations is the next proposal,
+not an adopted rule. One adapter limitation remains: if lookup produces no
+eligible pairs, generic experiment preparation rejects the empty dataset;
+such an outcome must not be replaced with invented verification cases.
 
 ## Completed build and browser handoff
 

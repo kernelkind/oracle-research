@@ -298,6 +298,10 @@ def prepare(args):
                   if Path(__file__).with_name(name).exists()),
             )
         }
+        if plan["dataset"]["adapter"] in {"bounded_parent_guides", "bounded_parent_comparisons"}:
+            for name in ("parent_guide_measurement.py", "parent_guide_workflow.py"):
+                code = Path(__file__).with_name(name)
+                plan["code"][name] = engine._sha256_file(code)
         plan["requests_at_prepare"] = (
             request_preview(plan, manifest, plan["cases"])
             if not args.import_config
