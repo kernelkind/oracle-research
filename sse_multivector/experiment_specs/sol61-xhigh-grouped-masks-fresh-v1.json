@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "MPv3.43-G1",
+    "path": "../mask-prompt-goal-v1/mpv3.43-grouped-v1/mask-prompt.md"
+  },
+  "dataset": {
+    "adapter": "grouped_masks",
+    "path": "../hierarchy-refresh-v1/masked-posts.json",
+    "select": [
+      "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+      "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+      "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+      "be8d07d42b8f14d60ccfe50b63c93c5c607c589129d79d9f6b560948150542bc",
+      "1c964a412ac60a1f4234cf22bf3291669562b23113ad55fc0c369ac811903061",
+      "8ccb05277a35536d5461312ebe3909c1ba600ca1150b0ab9e6bc3bab369d5cc3",
+      "05f275f4b6e52744a7f8148ab768843355f3ce2bfb07f3e4b82224294f990626",
+      "03313183e42615c765021814b8c6b3de61c7ff95f89e75f5cebe588c1bcb0f4a",
+      "11d2afb1607f1d1284adb6cb3dabb8876aaf53a7aff204cf65083df2c5d34865",
+      "c8f3157a282115b257706a7b99457197e4d636fafa4a3a46c2ef159381b8c325"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "timeout_seconds": 1800,
+    "concurrency": 16,
+    "transport": "websocket",
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["results"],
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "meaning", "expressible", "evidence", "mask"],
+            "properties": {
+              "id": {"type": "string"},
+              "meaning": {"type": "string"},
+              "expressible": {"type": "boolean"},
+              "evidence": {"type": "string"},
+              "mask": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {"type": "array", "items": {"type": "integer", "minimum": 1},
+                     "minItems": 2, "maxItems": 2},
+                    {"type": "object", "additionalProperties": false,
+                     "required": ["word", "text"],
+                     "properties": {"word": {"type": "integer", "minimum": 1},
+                                    "text": {"type": "string", "pattern": "^\\S+$"}}}
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
