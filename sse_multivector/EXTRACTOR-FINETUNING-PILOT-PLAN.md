@@ -654,8 +654,9 @@ either Gemma checkpoint's training setup works.
 | Validation set | 100 | Compare development runs and select settings |
 | Final test set | 200 | Evaluate selected candidates after development stops |
 
-The user approved inclusion of the 1,000-note training comparison on September 30
-and validation every 200 training notes on October 1. Validation/test counts
+The user approved inclusion of the 1,000-note training comparison on September 30,
+validation every 200 training notes on October 1, and one complete training pass
+after the October 1 research. Validation/test counts
 remain proposed. These are for the larger pilot, separate from the informal
 100-note experiment. Each student has five trained validation points plus its
 untuned baseline.
@@ -692,18 +693,21 @@ separately from review findings and any subsequent changes.
 2. **Measure the three untuned baselines.** Use the shared validation notes and
    preserve their outputs before fine-tuning.
 3. **Start one continuing training run per student.** Initialize the adapter
-   and optimizer from the original pretrained model once. Save a complete
-   checkpoint at 200 training notes and generate subjects and masks
+   and optimizer from the original pretrained model once. Use every frozen
+   subject and mask example from the first 200-note block once, without
+   replacement. Save a complete checkpoint after finishing that block and
+   generate subjects and masks
    on the shared validation notes, without updating weights from those notes.
 4. **Continue through 400, 600, and 800 training notes.** Carry the adapter,
    optimizer, learning-rate schedule, random state and data-order position
-   forward. Save and evaluate a checkpoint every 200 notes. Record cumulative
+   forward. Train once on each new 200-note block; do not replay earlier blocks.
+   Save and evaluate a checkpoint after completing each block. Record cumulative
    updates and which examples were used; restarting the optimizer or schedule is a recipe change.
 5. **Continue to 1,000 notes.** This comparison's inclusion was approved
    September 30. Save and evaluate its checkpoint using the same validation
-   notes and generation settings. Define total training work, its allocation
-   across stages and any revisiting of earlier notes before launch. Milestones
-   do not impose extra passes over earlier notes or a wall-clock training limit.
+   notes and generation settings. Finish the last block's examples, completing
+   one pass through all frozen training examples. Extra repetition requires a
+   separate design decision; milestones do not impose a wall-clock training limit.
    These checkpoints measure progression through one training history, including
    both added data and accumulated training; they do not isolate data size alone.
 6. **Confirm decision-critical comparisons.** Repeat with a different random
@@ -731,7 +735,10 @@ pilot, not a claim that the current worker enforces it.
   then generate validation subjects and their masks from that frozen checkpoint.
   Save both complete responses, raw and parsed, with note/subject links and
   failures. Validation must not update weights or reset the ongoing training
-  state. Use the same held-out notes and generation settings at every milestone.
+  state. Use each frozen training example once in its new 200-note block, with
+  exact coverage checked before the checkpoint; do not consume later-block
+  notes early or repeat earlier blocks. Use the same held-out notes and
+  generation settings at every milestone.
 - **Checks during execution:** account for every validation note and dependent
   call as responses arrive. For valid generated subjects, account for every
   requested mask response. An invalid subject response records that the mask
@@ -792,14 +799,24 @@ exceeds its limit must be reported, not silently truncated. Additional final-tes
 work depends on the still-open generation arrangement. Rental grouping,
 runtime limits, and spending require separate decisions.
 
-The next training-design decision is the cumulative amount of training for
-**each continuing student run**, and its allocation across milestones. Note
-count alone does not specify updates, passes, ordering or repeated examples.
-The preliminary 128 updates are not a selected larger-pilot budget. Freeze the
-full training schedule, checkpoint save/evaluation procedure and selection rule
-before launch; do not restart learning-rate decay at a milestone. Earlier
-three-pass runtime estimates are not a frozen protocol. Record recipe changes
-and interruptions; preserve the actual training history for every checkpoint.
+**Complete-pass budget approved October 1:** each frozen subject and mask
+training example is used once, without replacement, in five new 200-note blocks.
+This guarantees example coverage under a modest training budget; it does not
+establish optimum training or each model's maximum capability. Exact ordering,
+task loss weights, optimizer/adapters and checkpoint selection remain open.
+The preliminary 20% subject / 80% mask replacement sampler is a different recipe.
+At the old subject-count average, a natural pass is about 4% subject rows and
+96% mask rows. On the saved 80-note training set, production-encoder accounting
+gives subjects about 30% of response-token volume in a complete pass, versus
+73% in the old draws; neither percentage measures gradient contribution.
+Check the effective loss normalization and report per-task loss, target tokens,
+updates and consumed rows at each milestone. The preliminary 128 updates are
+not the larger-pilot budget. Freeze the full ordering, schedule, checkpoint
+save/evaluation procedure and selection rule before launch; do not restart
+learning-rate decay at a milestone. Record recipe changes and interruptions;
+preserve the actual training history for every checkpoint. The current
+replacement sampler and stage/resume handling still need implementation changes
+and production-path verification for this approved design.
 
 There are **three main continuing fine-tunes**, each with five approved
 milestone checkpoints, alongside untuned baselines, setup checks and any
@@ -939,18 +956,19 @@ infrastructure, from the additional compute spent comparing candidates. Count
 all paid expenditure against the lifetime ceiling, regardless of reuse.
 
 The pilot ceiling is a financial guardrail, not a spending target or evidence
-that the pilot is scientifically sufficient. Its amount, the final-training
-reserve, and the training budget remain open; no fixed pilot/rest ratio
-has been adopted.
+that the pilot is scientifically sufficient. Its amount and the final-training
+reserve remain open; one complete training pass is approved. No fixed pilot/rest
+ratio has been adopted.
 
 ### Larger pilot cost estimate — October 1, provisional
 
 Full cash cost and elapsed time must be recalculated from **cumulative training
 work across three continuing student runs** and the selected GPU schedule. The
 approved five checkpoints per student increase validation generation and
-review work; the selected final-test comparison is the same size. Note counts
-and run counts do not determine the training budget. The component estimates below are provisional and authorize
-no spending or recipe.
+review work; the selected final-test comparison is the same size. Training uses
+one complete pass through the frozen subject/mask examples. Actual row/token
+counts and remaining recipe choices determine its update count and runtime.
+The component estimates below are provisional and authorize no spending.
 
 A read-only Vast search on October 1 found a comparable verified 450 W RTX PRO
 6000 WS with 96 GB VRAM and 300 GB storage at **$1.4167/hour**, matching the
@@ -961,8 +979,9 @@ change; [Vast bills compute, storage and transfers](https://docs.vast.ai/guides/
 Saved preliminary-run durations project approximately **116.5 GPU hours / $165**
 for 1,800 validation note/model outputs: three baselines plus fifteen frozen
 checkpoints. The two extra checkpoints per student add 600 evaluations, about
-42 GPU hours / $60 at the previous rental's speed and price, before extra
-checkpoint checks and transfers. The selected candidate's final comparison adds
+42 GPU hours / $60 at the previous rental's speed and price, already included in
+the 116.5-hour estimate above, before extra checkpoint checks and transfers.
+The selected candidate's final comparison adds
 400 outputs, roughly 16.5–25 hours / $23–35. Gemma baseline mask times are inferred from trained mask
 throughput because those baseline calls never happened. Truncated or malformed
 subjects also prevented some trained mask work. These are workload extrapolations,
@@ -975,11 +994,12 @@ hours can be estimated from the measured 128-update trainer times:
 ```text
 training hours ≈ (52.2 × Qwen updates + 80.6 × dense Gemma updates
                   + 24.8 × MoE updates) / (128 × 60)
-                 + checkpoint and reload overhead
 ```
 
 Each update count is the **total across that student's entire continuing run**,
-not a fresh budget at every milestone. Save/reload checks at all fifteen
+not a fresh budget at every milestone. The measured trainer times already
+include periodic checkpoint writes/hashing; add only stage export/reload work
+not included in those times. Save/reload checks at all fifteen
 checkpoints would add approximately 2.55 hours if they resemble the previous
 checks.
 Three continuing runs do not imply a two-thirds compute saving: retaining the
@@ -1000,8 +1020,9 @@ Teacher labeling and semantic review assume the existing subscription route,
 with **zero incremental API cash charge**, excluding the already-paid
 subscription. This is not free unlimited capacity; quota and completion time
 must be planned. Paid API fallback is neither selected nor included in the
-component generation estimate. Mechanical scoring runs locally. Cumulative
-training amount, reviewer, final-test collection and GPU grouping remain open.
+component generation estimate. Mechanical scoring runs locally. Task loss
+weights, numerical settings, adapter coverage, reviewer, final-test collection
+and GPU grouping remain open.
 
 For scale, the current 100-note teacher data has 23.83 subjects per note. Latest
 native receipts average 2,631 uncached input / 1,108 output tokens per subject

@@ -3,8 +3,8 @@
 Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
-The execution flow below is a draft. Prompt versions, task format, training
-settings, and review rubric remain open.
+The execution flow below is a draft. Prompt versions, task format, task loss
+weights, adapter/optimizer settings, and review rubric remain open.
 
 **Local preparation → Vast baselines/training/evaluation → verified retrieval
 → local scoring and comparison.**
@@ -38,7 +38,8 @@ Start **one continuing training run per student**:
 1. Initialize its adapter and optimizer from the original model once.
 2. Learn from **note → teacher hierarchy** and **note + subject → teacher mask**
    examples. Both tasks update the same adapter.
-3. At 200 training notes, save the complete training checkpoint.
+3. After using every training example from the first 200 notes, save the complete
+   training checkpoint.
    Verify the saved adapter reloads correctly. Generate subjects and their masks
    on the **same 100 separate validation notes**; save raw and parsed outputs.
 4. Continue from that training state through **400, 600, 800, and 1,000 notes**.
@@ -46,10 +47,13 @@ Start **one continuing training run per student**:
    plus its untuned baseline. Preserve the optimizer and learning-rate schedule.
    Validation answers do not update the weights.
 
-Larger sets retain earlier notes and labels. Continuing does not automatically
-require another pass over earlier notes. **Training amount, note ordering and
-revisiting remain open.** Record loss,
-resource telemetry, and the examples used at each stage.
+**One complete pass is approved:** use every subject and mask training example
+once, without replacement, in five new 200-note blocks. Earlier notes and labels
+remain saved; their examples are not repeated at later milestones. Exact note
+ordering, task loss weights, and model settings remain open. Record per-task
+loss, resource telemetry, and actual example coverage at each stage. This compares
+the tested configurations under a modest budget; one pass is not established as
+optimal training for every student.
 
 ## 4. Retrieve verified results — Vast to local
 
@@ -88,10 +92,10 @@ Rental grouping, duration, and spending also remain open.
 At the previous GPU's measured speed, generating validation answers for three
 baselines and fifteen checkpoints, plus the selected model's final comparison,
 projects to **133–142 GPU hours / $188–200 before training, setup and transfers**.
-Full cost and elapsed time depend on the cumulative training amount and GPU
-schedule, which remain open. Three continuing runs do not automatically reduce
-training work by two thirds. Teacher labeling and review assume the existing
-Codex subscription, whose quota is finite; paid API work would be additional.
+Full cost and elapsed time must include the approved complete pass, checkpoint
+checks, and the still-open model settings and GPU schedule. Teacher labeling and
+review assume the existing Codex subscription, whose quota is finite; paid API
+work would be additional.
 
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

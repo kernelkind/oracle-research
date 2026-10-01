@@ -647,7 +647,7 @@ returns separate **correctness** and **coverage** scores with evidence for each.
 Correctness assesses returned subjects, relationships, and masks; coverage
 assesses missing required subjects or information. Output reliability is
 checked mechanically. The scoring scale, rubric, reviewer model, reliability
-checks, and role in model selection remain design choices. The user deferred
+checks, and checkpoint/model selection rule remain design choices. The user deferred
 review-prompt and grading details while the overall pilot pipeline is designed.
 The walkthrough also keeps remaining data choices, the larger pilot's output format,
 training settings, continuation rules, and new spending open. It authorizes no
@@ -679,11 +679,26 @@ evaluations over the earlier proposal: approximately 42 GPU hours / $60 at
 the previous rental's measured speed and price, before checkpoint checks and
 transfers. Training labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
-establish a reduction in training compute. Cumulative training amount, stage
-allocation, note ordering/revisiting, validation/test counts, and GPU
-parallelism remain open. This corrects the intended design; continuation across
+establish a reduction in training compute. The complete-pass training amount and
+stage allocation were subsequently approved below. Exact note ordering, task
+loss weights, model settings, validation/test counts, and GPU parallelism remain
+open. This corrects the intended design; continuation across
 expanding datasets and parallel execution still need implementation and tests.
 No rental, model calls, or spending is authorized by this correction.
+
+**October 1 complete-pass training budget approved after research:** use every
+frozen subject-hierarchy and mask training example **once, without replacement**.
+Introduce five new 200-note blocks and finish each block's examples before its
+checkpoint. Continue the same adapter, optimizer, schedule, random state and
+data-order position; earlier blocks are not automatically replayed.
+Check actual example coverage at every milestone. Record task-specific loss and
+supervised tokens; task loss weights, exact ordering, numerical settings and
+adapter coverage remain open. The natural row exposure differs from the
+preliminary 20/80 replacement sampler. One pass is a modest starting budget,
+not an established optimum or a comparison of each architecture's maximum
+capability. Select from generated correctness, coverage and output reliability;
+loss remains a diagnostic. Implementation, spending and launch are separate
+decisions.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
