@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "subjects": "../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/masks-effective-mapped/reviewed-input.json",
+  "hierarchy": "../../target/hierarchy-build-v1/hr02-jev-browser-v1/named-graph.json",
+  "descriptions": "../experiments/sorting-general-v1-all-node-descriptions-v3-collected/node-descriptions.json",
+  "selections": [
+    {
+      "id": "audit-ee99e292c929656cc4110d16",
+      "node_id": "S96eaf3bc1b",
+      "note_id": "d062ebdef015bc855e8f2a6223476b91120fc972e8e106f04ea91de90381422c",
+      "subject_id": "N092-S003"
+    },
+    {
+      "id": "audit-662a37c3407a0341cffc1925",
+      "node_id": "Sd96605e96f",
+      "note_id": "fa953ea6ea83b27b594cdd38c69e382902e32eca2d6b54a2ded07ee67ccceb71",
+      "subject_id": "N015-S017"
+    },
+    {
+      "id": "audit-5307eb8910184fc2dbbc2620",
+      "node_id": "S9f8ab11969",
+      "note_id": "d6977b268504816f2146563a97e80db55b2e81ea76257cfc64c9c7ed7b2f0f72",
+      "subject_id": "N029-S011"
+    },
+    {
+      "id": "audit-c942a443e3a3949ddd3b4dea",
+      "node_id": "S19408eec70",
+      "note_id": "d6977b268504816f2146563a97e80db55b2e81ea76257cfc64c9c7ed7b2f0f72",
+      "subject_id": "N029-S011"
+    }
+  ]
+}

@@ -1305,9 +1305,10 @@ remain required in 03; no replacement navigation rule is selected here.
 On September 29, the user dropped recursive sorting from 27 and limited the work
 to sorting within a node. A child's score is not transferred to its parent.
 Earlier trials used prominence times relevance. The September 30 scope
-clarification makes the node sort score the required outcome, not that
-particular formula. Its inputs and any treatment of multiple masks remain
-open under 04; 27 applies the selected definition.
+clarification made the node sort score the required outcome, not that
+particular formula. At that point its inputs and treatment of multiple masks
+remained open under 04; 27 applies the selected definition. The later October 2
+audit below freezes the experimental choice for the next browsing build.
 
 **Good-enough sorting evaluation approved October 2:** The user rejects
 perfect prompts or identical repeated percentages as acceptance requirements.
@@ -1327,6 +1328,34 @@ it. This authorizes the audit and stopping rule, not an inference that it has
 passed, new user labels, hierarchy-membership changes or production deployment.
 The sorting formula, saved meanings, SSE learned layers and earlier experiments
 remain unchanged during this evaluation.
+
+**Finite sorting audit completed October 2:** The current PPv35 candidate
+passes the approved good-enough rule and is frozen for the next browsing build.
+Two agent-reviewed complete-order passes cover twelve fixed meanings, 101
+post/node diagnostic assignments and 62 complete posts fresh to sorting.
+All node-related selected SP entries participate: 760 initially prepared entries
+plus six source-only completeness additions, 766 total. Actual cohort sizes are
+Music 10, Art 10, nostr 10, Effective communication 8, Family 10, Physical
+movement 8, Festive gatherings 10, Food and drink 10, Chocolate and cacao 4,
+Animals 4, Positive emotions and attitudes 10, and coffee 7. Focused posts
+precede incidental mentions in the clear contrasts; close/mixed swaps and two
+possible isolated lower-order swaps are acceptable. No substantial recurring
+browsing failure appeared in either pass. These are agent assessments, not new
+user labels or a general accuracy estimate; music-heavy sources, shared posts,
+Communication's limited positives, Chocolate's weak contrasts and Coffee's
+flavor/beverage boundaries remain explicit limitations.
+
+The frozen experimental sorting score uses PPv35 prominence for the complete
+post against the same saved NodeDescription-v3 meaning, multiplied by SSE
+relevance for saved SP subject plus newline plus context against the existing
+standalone node title. Relevance is `(clip(cosine, -1, 1) + 1) / 2`; retain SSE's
+final learned layers. A post takes the highest entry sorting score among its
+SP entries selected in that node. Keep the formula, prompt, saved meanings and
+encoder fixed for the next browsing build; stop prompt/architecture search.
+Reopen only for a concrete substantial recurring browsing failure. The audit
+did not change the hierarchy or deploy sorting, and does not complete task 27
+or launch-scale validation. Native evidence and accounting are recorded in
+[model-runner.md](../../sse_multivector/model-runner.md).
 
 User-approved Coffee/Eggs post-ordering checks for 27 (September 29–30): the user reviewed the
 complete wording with URLs omitted and established ten clear expected orders.

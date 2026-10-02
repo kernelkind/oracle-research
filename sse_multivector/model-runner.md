@@ -5085,12 +5085,66 @@ identical percentages, a numeric accuracy claim, new user labels or production
 deployment. Fixed meanings, prominence × SP subject-plus-context relevance,
 SSE learned layers and highest-entry selection remain the audit's controls.
 
+**Finite PPv35 audit completed October 2 — freeze for the next browsing build:**
+The first and genuinely independent repeat both pass the agreed browsing rule.
+Twelve native agent reviews accept complete orders for twelve meanings and 101
+diagnostic post/node assignments from 62 complete fresh-to-sorting posts.
+The two original source carriers prepared 760 SP cases; before order review,
+six related saved entries were added through native supplements while retaining
+the immutable original inputs. Final comparison covers 766 entries and 639
+local SSE rows. Supplements reuse full-post/node prominence; they add no
+first-pass calls. Existing SP subjects/contexts, hierarchy titles, NodeDescription-v3
+meanings and final learned SSE layers remain fixed. Native post aggregation
+uses the maximum entry `P * (clip(cosine, -1, 1) + 1) / 2`, never separately
+combining maxima of P and relevance.
+
+First-pass prominence uses 101 new subscription answers. An isolated empty
+history root supplies another 101 independent answers with normal duplicate
+reuse retained; do not use `--repeat`, which disables that reuse. The repeat's
+one runner-exit failure remains saved in `ppv35-good-enough-v1-music-repeat`.
+Native resume leaves that terminal failure unchanged, so a clean native
+`--from` preparation, `ppv35-good-enough-v1-music-repeat-completed`, reuses all
+542 successful same-repeat-root answers with zero new calls. All entries for
+each post/node share the same prominence answer. The persistent native budget
+records **203 attempts: 202 fresh successful answers plus one runner failure**,
+below the admitted 404 ceiling; incremental subscription cash is zero. Native
+per-experiment usage and catalog estimates remain separate from actual cash;
+no manual token/cost aggregation, paid fallback or rented compute.
+
+The first complete orders are in
+`experiments/ppv35-good-enough-v1-relevance/comparison.json`; the repeat is in
+`experiments/ppv35-good-enough-v1-relevance-repeat/comparison.json`, reusing the
+exact first encoding. Full score-hidden views and frozen source assessments
+are ignored artifacts under `experiments/ppv35-good-enough-v1-inputs/`.
+The Music/Art/nostr/Family/Movement/Festive/Food/Positive-emotions orders change
+among close or mixed posts; Communication/Animals/Coffee/Chocolate orders do
+not change. Clear focused-versus-incidental contrasts survive both passes.
+The first possible Food-list/cats swap reverses; a lower Festive restaurant/
+prospective-party swap is acceptable. No substantial recurring browsing error
+was found. Communication has one clear positive, Chocolate only four topical
+posts, Coffee no wholly beverage-focused positive; music-heavy sources and
+shared posts limit transfer claims. Diagnostic assignments are not saved or
+new production hierarchy memberships. Earlier user labels remain separate.
+
+This later audit applies the user's stopping rule and supersedes continued
+prompt search based on the earlier session's dissatisfaction or percentage
+variation. Freeze PPv35, NodeDescription-v3 meanings, prominence times SP
+subject-plus-context relevance and highest-entry selection for the next
+browsing build. Production implementation and launch-scale validation remain
+open; reopen tuning only after a concrete substantial recurring browsing
+failure. No prompt, scorer, SSE architecture, node-specific correction or
+production deployment was changed. The existing native workflow checks pass:
+135 of 136 initially pass; the remaining check lacked `tiktoken` and passes
+with the cached dependency, alongside nine additional relevant checks. All
+133 earlier protected artifact hashes still match.
+
 The minimal direct-sorting production CLI tests first failed for the missing
 adapter, then passed. The 159 relevant workflow, selection, description,
 collection, legacy sorting, title and hierarchy tests pass under `uv` with
 `tiktoken`. Legacy sorting tests remain unchanged. All 133 earlier protected
 artifact hashes verify. Direct scores are an architecture experiment, not a
-replacement adopted into the product. Production scoring choice remains open.
+replacement adopted into the product. These earlier direct-score trials did
+not select a production scoring method.
 
 All 108 v2 descriptions were independently
 reviewed against masks and ninety unique complete source posts. No hard generated

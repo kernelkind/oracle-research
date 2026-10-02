@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "subjects": "../../sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/subjects-reviewed.json",
+  "hierarchy": "../../target/hierarchy-build-v1/hr02-jev-browser-v1/named-graph.json",
+  "descriptions": "../experiments/sorting-general-v1-all-node-descriptions-v3-collected/node-descriptions.json",
+  "selections": [
+    {
+      "id": "audit-dc7a3d9a92ef59fdc2e001ab",
+      "node_id": "S83f8d64ef6",
+      "note_id": "ada1559bf4fe6781b78ae3747f1520d21ec657289644cda376c4f2387717de4a",
+      "subject_id": "N003-S010"
+    },
+    {
+      "id": "audit-b1cbc86c7d9e90b80f60aef3",
+      "node_id": "S83f8d64ef6",
+      "note_id": "ada1559bf4fe6781b78ae3747f1520d21ec657289644cda376c4f2387717de4a",
+      "subject_id": "N003-S011"
+    }
+  ]
+}
