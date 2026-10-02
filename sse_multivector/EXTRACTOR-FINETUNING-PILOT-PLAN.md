@@ -826,9 +826,9 @@ warmup, and LoRA rank 16 / alpha 32 for ordinary adapters. Gemma MoE's routed
 expert adapters use rank 2 / alpha 32, subsequently approved October 1, with
 original model and router weights frozen. Retain smaller final groups; no
 checkpoint resets the training state. These are a shared starting
-recipe, not established optima. Block membership, seed value, task loss weights
-and normalization, remaining optimizer/adapter settings and checkpoint selection
-remain open. The approved larger-pilot MoE route adds adapters to
+recipe, not established optima. Block membership, seed value, remaining
+optimizer/adapter settings and checkpoint selection remain open. The approved
+larger-pilot MoE route adds adapters to
 `experts.gate_up_proj` and `experts.down_proj` in all 30 layers at rank 2 / alpha 32,
 keeping existing attention/shared MLP adapters at rank 16 / alpha 32. This follows
 the [controlled MoE study's active-expert rank convention](https://thinkingmachines.ai/blog/lora/),
@@ -840,6 +840,20 @@ GPU fit and inference policy remain unresolved. Explicit expert targeting still
 needs implementation. The current worker leaves routed experts frozen and uses
 the preliminary 128-step replacement sampler, not the approved larger-pilot
 continuation.
+
+**Training loss approved October 1:** ordinary cross-entropy on teacher-answer
+and native turn-ending tokens, summed across the actual adapter update and
+divided by its actual supervised-token count. The prompt, note, supplied subject,
+and padding receive no loss. Do not average separately normalized batch losses;
+GPU partitioning and accumulation must preserve the same update-level objective.
+Smaller final groups use their own denominator. No extra task, answer, or note
+weights are applied. Longer answers contribute more tokens within an update;
+this does not establish equal subject/mask influence or an optimal task mixture.
+The [normalization guidance](https://huggingface.co/blog/gradient_accumulation)
+and [comparable extraction implementation](https://github.com/hitz-zentroa/GoLLIE/blob/164c611743fdc1befe71bbdf03e08c5eb4e35957/src/trainer.py#L288-L300)
+support this starting objective. Its exact behavior in the larger-pilot worker
+still needs production-path verification.
+
 The preliminary 20% subject / 80% mask replacement sampler is a different recipe.
 At the old subject-count average, a natural pass is about 4% subject rows and
 96% mask rows. On the saved 80-note training set, production-encoder accounting
@@ -1056,9 +1070,9 @@ Teacher labeling and semantic review assume the existing subscription route,
 with **zero incremental API cash charge**, excluding the already-paid
 subscription. This is not free unlimited capacity; quota and completion time
 must be planned. Paid API fallback is neither selected nor included in the
-component generation estimate. Mechanical scoring runs locally. Task loss
-weights, numerical settings, adapter coverage, reviewer, final-test collection
-and GPU grouping remain open.
+component generation estimate. Mechanical scoring runs locally. Remaining
+numerical/adapter settings, reviewer, final-test collection and GPU grouping
+remain open.
 
 For scale, the current 100-note teacher data has 23.83 subjects per note. Latest
 native receipts average 2,631 uncached input / 1,108 output tokens per subject

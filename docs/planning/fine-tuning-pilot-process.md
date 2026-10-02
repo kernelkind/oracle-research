@@ -4,7 +4,7 @@ Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
 The execution flow below is a draft. Prompt versions, remaining output format details,
-task loss weights, remaining adapter/optimizer settings, and review rubric remain open.
+remaining adapter/optimizer settings, and review rubric remain open.
 
 **Local preparation → separate paid GPU preparation → Vast
 baselines/training/evaluation → verified retrieval → local scoring and comparison.**
@@ -64,9 +64,12 @@ varies between batches. **Starting settings approved October 1:** learning rate
 **Gemma MoE also adapts its routed experts at rank 2 / alpha 32**, retaining
 rank 16 / alpha 32 for attention and shared MLP adapters. Original model and router
 weights stay frozen. These are starting choices, not established optima.
-Block membership, the seed value, task loss weights and normalization, and
-remaining model settings stay open. Record per-task loss, resource telemetry,
-and actual example coverage at each stage. This compares
+**Training loss:** average prediction error over all teacher-answer and native
+turn-ending tokens in each update, excluding prompts and padding. No extra
+subject or mask weighting; longer answers contribute more tokens within an update.
+Block membership, the seed value, and remaining model settings stay open.
+Record per-task loss, resource telemetry, and actual example coverage at each stage.
+This compares
 the tested configurations under a modest budget; one pass is not established as
 optimal training for every student.
 

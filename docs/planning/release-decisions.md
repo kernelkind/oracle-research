@@ -688,8 +688,8 @@ transfers. Training labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
-Block membership, seed value, task loss weights and normalization, remaining model
-settings, validation/test counts, and GPU parallelism remain open. This corrects
+Block membership, seed value, remaining model settings, validation/test counts,
+and GPU parallelism remain open. Loss was subsequently approved below. This corrects
 the intended design; continuation across
 expanding datasets and parallel execution still need implementation and tests.
 No rental, model calls, or spending is authorized by this correction.
@@ -700,8 +700,9 @@ Introduce five new 200-note blocks and finish each block's examples before its
 checkpoint. Continue the same adapter, optimizer, schedule, random state and
 data-order position; earlier blocks are not automatically replayed.
 Check actual example coverage at every milestone. Record task-specific loss and
-supervised tokens; task loss weights and normalization, block membership, seed
-value, remaining numerical settings and adapter coverage remain open. The
+supervised tokens; block membership, seed value and remaining numerical settings
+remain open. Loss and additional MoE adapter coverage were subsequently approved
+below. The
 natural row exposure differs from the
 preliminary 20/80 replacement sampler. One pass is a modest starting budget,
 not an established optimum or a comparison of each architecture's maximum
@@ -716,7 +717,8 @@ response. Baseline and checkpoint generation pair the note with one of that
 candidate's own generated subjects, requesting its mask separately. Independent
 single-subject prompts can still share a GPU batch. Teacher grouped-mask
 comparisons remain evidence for teacher selection; this decision selects the
-student format. Task loss weights and remaining recipe choices stay open.
+student format. Loss was subsequently approved below; remaining recipe choices
+stay open.
 
 **October 1 training-batch construction approved:** collect every subject and
 mask example from the current 200-note block and shuffle them together using a
@@ -726,8 +728,8 @@ once and finish the block before its checkpoint; the subject/mask mix varies
 between updates. An update can include examples from different notes. Freeze
 the seed and save the data-order position so continuation preserves the same stream.
 N was subsequently selected as 8 below; the seed value and block membership
-remain open. This approves the batch construction design; loss weights remain
-open and implementation is separate.
+remain open. This approves the batch construction design; loss was subsequently
+approved below and implementation is separate.
 
 **October 1 starting training settings approved after comparable-experiment research:**
 all three students use **8 prompt–answer examples per adapter update, total across
@@ -736,9 +738,9 @@ Retain a smaller final group and the approved one-pass, five-block continuation.
 These are a reasonable shared starting recipe, not established optima or each
 model's maximum attainable quality. The later expert decision below specifies
 Gemma MoE's additional adapter coverage and rank; the informal configuration
-still leaves routed experts frozen. Task loss weights and
-normalization, block membership, seed value, remaining optimizer/adapter settings,
-hardware, and spending remain open. This approves the intended settings; the
+still leaves routed experts frozen. Loss was subsequently approved below.
+Block membership, seed value, remaining optimizer/adapter settings, hardware,
+and spending remain open. This approves the intended settings; the
 current 128-step replacement sampler is not the approved larger-pilot worker.
 Implementation and launch require separate authorization.
 
@@ -751,6 +753,21 @@ nominal rank 16 divided by eight active experts. It is a research-grounded start
 choice transferred to Gemma, not a measured optimum for this task. The larger
 pilot tests this single chosen MoE recipe. Expert targeting is not yet implemented;
 remaining runtime choices, GPU fit, and implementation authorization stay open.
+
+**October 1 training loss approved after research:** use ordinary cross-entropy
+on teacher-answer and native turn-ending tokens. For each adapter update, sum
+these token losses across all its examples and divide by the actual number of
+supervised tokens in that update. Prompt text, the note, the supplied subject,
+and padding receive no prediction loss. Use the actual denominator for a smaller
+final group; splitting an update across GPUs or accumulated batches must preserve
+this objective. Apply no additional task, answer, or note weighting. Longer
+answers contribute more tokens within an update; this does not equalize subject
+and mask influence. Record per-task loss, supervised-token counts, and actual
+example coverage. The [normalization guidance](https://huggingface.co/blog/gradient_accumulation)
+and [comparable extraction implementation](https://github.com/hitz-zentroa/GoLLIE/blob/164c611743fdc1befe71bbdf03e08c5eb4e35957/src/trainer.py#L288-L300)
+support this starting objective, without establishing the natural task mixture as
+optimal. This approves the larger-pilot design; implementation and verification
+remain separate work.
 
 **October 1 separate paid GPU preparation agreed in principle:** settle the
 remaining pilot configuration and identify all required GPU checks before booking
