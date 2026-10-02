@@ -28,12 +28,17 @@ for boiler repair. The [audit](#asv656-cutting-for-boiler-repair-example) record
 the approved draft and updated rule map. The completed twelve-case Sol xhigh
 test found four answers with scope failures and all twelve missing valid
 branches; adoption remains open.
-The current [ASv6.57 (candidate, tested on Sol xhigh)](../asv6.57/ASv6.57.md) revises the same
+The subsequent [ASv6.57 (candidate, tested on Sol xhigh)](../asv6.57/ASv6.57.md) revises the same
 case to show a quantified tube separately from its repair purpose and
 purpose-qualified cutting. The [audit](#asv657-quantified-tube-and-repair-purpose-example)
 records the approved candidate and updated rule map. The completed twelve-answer
 Sol xhigh test found four answers with scope failures and eleven missing valid
 branches. Only N063 T2 passes both reviewed checks; adoption remains open.
+The current [ASv6.58 (draft, untested)](../asv6.58/ASv6.58.md) supplies the same
+repair purpose through C1's heading, preserving every subject heading and
+placement. Its [audit](#asv658-purpose-supplied-by-a-heading) records 29 passing
+offline checks. The user authorized drafting and presenting the delta; wording
+approval and a model test remain open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -745,7 +750,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.57 (candidate, tested on Sol xhigh)](../asv6.57/ASv6.57.md).
+The current map uses [ASv6.58 (draft, untested)](../asv6.58/ASv6.58.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -765,12 +770,13 @@ The maintained tests contain the same case IDs, purposes, primary assignments
 and explained secondary assignments. "Reviewed" means the agent assessed
 source support and heading relationships. The user approved testing ASv6.56,
 then authorized drafting ASv6.57 after its failures and approved its test.
-Adoption remains open. Agent assessments remain separate
+After that test, the user authorized the ASv6.58 heading-purpose draft for review.
+Its wording approval, model test and adoption remain open. Agent assessments remain separate
 from user semantic judgments and adoption.
 
 | Case | Purpose | Review |
 | --- | --- | --- |
-| C1 | Reference resolution, quantified items versus their repair purpose, and general versus purpose-qualified cutting. | Reviewed |
+| C1 | Reference resolution and heading-established repair purpose, with general and qualified items and cutting retained. | Reviewed |
 | C2 | Names, hashtags, figurative labels, rhetorical meaning and an unresolved name. | Reviewed |
 | C3 | URL and opaque identifier bodies without surrounding subject evidence. | Reviewed |
 | C4 | URL and identifier subjects established by prose, without a cross-link. | Reviewed |
@@ -780,10 +786,10 @@ from user semantic judgments and adoption.
 
 | ID | Existing SP instruction | Primary case and demonstration | Secondary case and distinct aspect |
 | --- | --- | --- | --- |
-| R01 | Build a subject index after understanding the complete post. | C1: Both sentences establish the tube and repair references before the hierarchy is presented. | — |
-| R02 | Resolve references to the most specific supported description. | C1: 'It' becomes the one tube for boiler repair, and 'that repair' becomes boiler repair. | C2: Named referent: 'it' retains RavenWorks's stated app type and hashtag-established name. |
+| R01 | Build a subject index after understanding the complete post. | C1: The heading and list together establish the counted tube, its repair purpose and the cutting reference before the hierarchy is presented. | — |
+| R02 | Resolve references to the most specific supported description. | C1: 'It' becomes the one tube, with its boiler-repair purpose supplied by the heading. | C2: Named referent: 'it' retains RavenWorks's stated app type and hashtag-established name. |
 | R03 | Use general knowledge to clarify language, identify referents and recognize subjects. | C2: The figurative 'lifesaver' label conveys help, and the rhetorical question conveys appreciation. | — |
-| R04 | Ground every entity, modifier, action and relationship in the post. | C1: The stated tube count, boiler-repair purpose and cutting object are preserved. | — |
+| R04 | Ground every entity, modifier, action and relationship in the post. | C1: The stated tube count and cutting object retain the repair purpose reasonably implied by the heading and list. | — |
 | R05 | Interpret names, labels and hashtags by referent, not component words. | C2: #RavenWorks names an app; its component words yield no birds or employment subjects, and the figurative label conveys help. | — |
 | R06 | Retain the name of an unresolved named subject. | C2: AmberLoop remains by name, outside the app, help and appreciation branches. | — |
 | R07 | Treat URLs and opaque identifiers as providing no subject evidence. | C3: The bare URL and hexadecimal identifier yield no subjects. | C4: Relevant prose establishes topics while URL bodies still contribute no birds, repair or count. |
@@ -806,7 +812,7 @@ from user semantic judgments and adoption.
 | R24 | Return only one JSON object containing a subjects array. | C3: The output is only one JSON object with a subjects array, here empty. | C1: Nonempty output contrasts with C3's empty array. |
 | R25 | Use section-style numbering, broad to specific, with parents first. | C1: Section-style numbering presents each parent before its children. | — |
 | R26 | Order entry fields as number, context, subject. | C1: Every entry orders its fields as number, context, subject. | — |
-| R27 | Context identifies the subject and the source establishing its meaning. | C1: Contexts identify the first sentence's count and purpose and resolve the second sentence's 'it' and 'that repair'. | — |
+| R27 | Context identifies the subject and the source establishing its meaning. | C1: Contexts identify the list's count and 'it' reference and the heading that supplies the repair purpose. | — |
 | R28 | Context may describe a particular instance supporting a general heading. | C1: One tube's context describes this instance's repair purpose without restricting that general heading. | — |
 | R29 | Match the heading's generality; keep instance details in subheadings without importing context restrictions. | C1: One tube and Cutting one tube retain the count but stay outside Boiler repair; their repair roles appear in context and qualified subheadings. | — |
 | R30 | Make each heading understandable without the post, context or other entries. | C1: Qualified tube and cutting headings retain the count, object and boiler-repair purpose without pronouns. | — |
@@ -837,7 +843,7 @@ case byte for byte, replaces the overloaded railway story with separate
 replacement-part and combined-advice cases, and adds six language cases.
 Neither MP nor the runtime workflow changes.
 Case IDs in this audit refer to ASv6.54's nine examples; the current rule map
-uses ASv6.57's seven examples.
+uses ASv6.58's seven examples.
 
 C4 makes "lifesaver" explicitly figurative, so the example does not silently
 choose between literal rescue and helpfulness. Its rhetorical question conveys
@@ -1661,5 +1667,74 @@ A proposed next step is to review a delta to the existing boiler example that
 demonstrates purpose supplied by a heading, while preserving general subjects,
 qualified subjects and all valid placements. This targets a transfer hypothesis:
 the current case states "for boiler repair" explicitly, whereas a recipe heading
-supplies the purpose of its ingredient list and steps. Another draft or test
-requires user authorization; none has been prepared.
+supplies the purpose of its ingredient list and steps. The user subsequently
+authorized the ASv6.58 draft below for review; its wording approval and model
+test remain open.
+
+## ASv6.58 purpose supplied by a heading
+
+Status: draft, untested. On October 2, 2026, after the ASv6.57 results, the user
+authorized revising the existing boiler example to demonstrate purpose supplied
+by a heading, verifying it offline and presenting the delta. This authorizes
+neither inference nor adoption; ASv6.48 remains the frozen subject baseline.
+
+[ASv6.58 (draft, untested)](../asv6.58/ASv6.58.md) changes only C1's post and
+source contexts. The old post says "One tube for boiler repair. Cutting it for
+that repair." The new post is:
+
+```text
+Boiler repair:
+One tube.
+Cutting it.
+```
+
+The heading supplies the list's repair purpose, and "it" refers to the counted
+tube. The qualified headings state that supported purpose directly. Their
+contexts identify the heading as its source rather than citing the removed
+phrase "that repair". The heading/list structure supports this relationship;
+the separate co-mention and statement-order case C5 remains unchanged.
+
+All 23 C1 entries keep their original numbers and subject headings. General
+One tube and Cutting one tube remain outside Boiler repair; their repair-
+qualified counterparts remain beneath every valid broader subject. All ten
+headings retain source support under the new wording. The twelve declared
+relationships and eleven prohibited placements remain valid. The post still
+does not establish that the tube itself is a boiler component.
+
+Every instruction byte and the other six example blocks are identical to
+approved ASv6.57. All 34 primary rule assignments, nine explained secondary
+demonstrations and five implications folded into R20, R22, R29 and R30 remain
+unchanged. The current rule map updates only C1's source-specific descriptions.
+The seven cases still contain 89 entries, 54 distinct subjects counted within
+cases and 69 displayed direct relationships. The fixture declares 56 broader
+relationships and 26 prohibited placements.
+
+The new heading-purpose check first failed against ASv6.57 because it has no
+purpose heading. It now passes, together with the other seventeen example
+checks, nine native revision checks and two existing SP workflow checks: 29
+total. These exercise the production subjects validator, native revision CLI
+and existing SP preparation/execution paths without provider calls. The
+preservation check also verifies every C1 number/heading pair against ASv6.57.
+The first full-suite run exposed a stale variable left while updating that
+check; it was corrected before the passing run. Offline checks establish
+example and fixture consistency, not generalization to the regression posts.
+
+Native `experiment.py revise` generated the prompt and
+[ASv6.58 revision receipt](../asv6.58/ASv6.58.md.revision.json) directly against
+approved ASv6.57 SHA-256
+`0257ef96bf407d2941d16c26c2e4fecf67bacbe7183d1bbc14c3001e6b07bdaf`.
+One exact edit changes C1; the receipt reconstructs the exact draft. ASv6.58
+SHA-256 is
+`7d498096d5ee2144b1513a46dab42fd1046cfd1ef7fdaf179a9642ec98d87f0f`.
+Its source is 18,075 UTF-8 bytes, 61 fewer than ASv6.57. Those prompt bytes
+repeat per SP request; the model token difference is unmeasured. No runtime
+component or additional model pass is introduced. All 29 pinned ASv6.57
+source/template and saved-answer files remain unchanged.
+
+The full-context ASv6.57 → ASv6.58 delta is an ignored review artifact at
+`target/sp-scope-regression-v1/asv658-full-context.diff`; exact authoring edits
+and input hashes are ignored alongside it. No post template, experiment or
+inference request has been prepared. The proposed next step is review of this
+delta, followed by the same twelve-answer Sol 6.1 xhigh regression test if
+authorized. Only a model test can check whether the heading-purpose example
+transfers to recipe ingredients and actions.

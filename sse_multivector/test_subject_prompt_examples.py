@@ -12,7 +12,7 @@ PROMPT_PATH = (
     Path(__file__).parent / "subject-prompt-goal-v1/asv6.53/ASv6.53.md"
 )
 FOCUSED_PROMPT_PATH = (
-    Path(__file__).parent / "subject-prompt-goal-v1/asv6.57/ASv6.57.md"
+    Path(__file__).parent / "subject-prompt-goal-v1/asv6.58/ASv6.58.md"
 )
 
 
@@ -310,8 +310,8 @@ class SubjectPromptExampleTests(unittest.TestCase):
 FOCUSED_CASES = (
     {
         "id": "C1",
-        "purpose": "Reference resolution, quantified items versus their repair purpose, and general versus purpose-qualified cutting.",
-        "post": "One tube for boiler repair. Cutting it for that repair.",
+        "purpose": "Reference resolution and heading-established repair purpose, with general and qualified items and cutting retained.",
+        "post": "Boiler repair:\nOne tube.\nCutting it.",
         "subjects": {
             "tubes": "Tubes",
             "one_tube": "One tube",
@@ -600,6 +600,18 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
         self.assertIn("Observation of a person's duck", subjects)
         self.assertIn("Observation of a person ducking", subjects)
 
+    def test_list_heading_establishes_the_tube_and_cutting_repair_purpose(self):
+        examples = self.examples()
+        post = next(iter(examples))
+        lines = post.splitlines()
+        self.assertEqual(lines[0], "Boiler repair:", "missing purpose heading")
+        self.assertEqual(lines[1:], ["One tube.", "Cutting it."])
+        for entry in examples[post]:
+            with self.subTest(number=entry["number"]):
+                self.assertNotIn("that repair", entry["context"])
+                if "for boiler repair" in entry["subject"]:
+                    self.assertIn("heading", entry["context"])
+
     def test_cutting_for_boiler_repair_retains_general_and_qualified_subjects(self):
         entries = self.examples()[FOCUSED_CASES[0]["post"]]
         subjects = {entry["subject"] for entry in entries}
@@ -751,7 +763,7 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
         approved = (directory / "asv6.51/ASv6.51.md").read_text()
         expanded = (directory / "asv6.54/ASv6.54.md").read_text()
         previous = (directory / "asv6.55/ASv6.55.md").read_text()
-        last_approved = (directory / "asv6.56/ASv6.56.md").read_text()
+        last_approved = (directory / "asv6.57/ASv6.57.md").read_text()
         focused = FOCUSED_PROMPT_PATH.read_text()
         self.assertEqual(
             focused.split("<example>", 1)[0], approved.split("<example>", 1)[0]
@@ -765,16 +777,21 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
             ],
         )
         current_blocks = re.findall(r"<example>\n.*?\n</example>", focused, re.S)
-        previous_blocks = re.findall(r"<example>\n.*?\n</example>", previous, re.S)
+        approved_blocks = re.findall(r"<example>\n.*?\n</example>", last_approved, re.S)
         self.assertEqual(len(current_blocks), 7)
-        self.assertEqual(current_blocks[1:], previous_blocks[1:])
-        self.assertNotEqual(current_blocks[0], previous_blocks[0])
-        last_approved_blocks = re.findall(r"<example>\n.*?\n</example>", last_approved, re.S)
+        self.assertEqual(current_blocks[1:], approved_blocks[1:])
+        headings = []
+        for block in (current_blocks[0], approved_blocks[0]):
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S)
+            entries = experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, output.group(1), None
+            )["parsed"]["subjects"]
+            headings.append([(entry["number"], entry["subject"]) for entry in entries])
+        self.assertEqual(headings[0], headings[1])
         self.assertEqual(
             focused.split("<example>", 1)[0], last_approved.split("<example>", 1)[0]
         )
-        self.assertEqual(current_blocks[1:], last_approved_blocks[1:])
-        self.assertNotEqual(current_blocks[0], last_approved_blocks[0])
+        self.assertNotEqual(current_blocks[0], approved_blocks[0])
 
 
 if __name__ == "__main__":
