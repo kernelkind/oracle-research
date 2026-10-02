@@ -39,19 +39,20 @@ and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
 Task 28 supplies the validated launch-scale implementation and is required to
 complete 12; it does not own a separate release snapshot or select a workflow.
-Corpus preparation and Notedeck integration preparation started September 30.
-Broader hierarchy tests have not started. Browser UI implementation is now
-underway; protocol agreement and service integration remain pending.
-The reviewed-100-note prerequisite for broader tests remains in place.
+Corpus and Notedeck preparation started September 30. A 200-note experimental
+hierarchy using saved outputs has since been generated and is under further
+development. The Notedeck browser UI is approved and committed; task 15 waits
+for protocol agreement and service implementation before integration.
+The reviewed-100-note prerequisite for the planned validation ladder remains open.
 
 On October 1, the user is undertaking prompt stress-testing. Shared task 30,
 **Stress-test prompts**, is in progress and blocks new generation for broader
 corpus inputs in 03. Corpus selection and offline preparation may continue;
 completed prompt-development task 01 remains complete. Task 03 stays in progress
-for preparation, not active hierarchy tests. Reusable preparation code is
-committed, but the actual 200-note input is not prepared. The user considered
-100 food/drink + 100 music notes reasonable; this is not final corpus approval.
-Food has current subjects, masks and vectors; music has older-prompt outputs.
+for corpus preparation and experimental 200-note construction using saved outputs.
+The experiment uses 100 food/drink and 100 music notes; food has current subjects,
+masks and vectors, while music has older-prompt outputs. It does not establish
+acceptance of the validation ladder or freeze the release corpus.
 Stress-testing completion does not authorize generation calls.
 
 Whether HDBSCAN will be used remains open (September 29 clarification).
@@ -181,8 +182,9 @@ execution details are open; see the
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
 now covers opening a hierarchy, node events, note lists and indexes. Proposals
 remain under review; service implementation and client integration await
-agreement. Notedeck browser UI implementation is underway, not just preparation.
-Dependencies are unchanged; this update selects no protocol design.
+agreement. The Notedeck browser UI is approved and committed; task 15 is waiting
+for service integration. Dependencies are unchanged; no protocol design is
+selected by this planning update.
 
 The user agreed in principle to a separate preparation rental for the larger
 pilot, after settling remaining choices locally. That does not authorize

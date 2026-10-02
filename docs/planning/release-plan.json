@@ -19,7 +19,7 @@
       "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
-      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nCorpus preparation is underway. New generation awaits prompt stress-testing; hierarchy tests await the accepted 100-note build."
+      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nA 200-note experimental hierarchy using saved outputs has been generated and is under further development. New generation awaits prompt stress-testing; the 100-note acceptance gate remains open."
     },
     {
       "id": "04",
@@ -102,8 +102,8 @@
       "id": "15",
       "track": "release",
       "title": "Build Notedeck hierarchy browser",
-      "status": "IN PROGRESS",
-      "description": "Deliver a Notedeck hierarchy browser on the user’s fork, integrated with the Nostr service.\nBrowser UI implementation is underway; service integration awaits protocol agreement and service implementation."
+      "status": "WAITING",
+      "description": "Deliver a Notedeck hierarchy browser on the user’s fork, integrated with the Nostr service.\nBrowser UI is approved and committed; service integration awaits protocol agreement and service implementation."
     },
     {
       "id": "16",

@@ -391,11 +391,14 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 
-                for task_id, preparation in (("03", "Corpus preparation is underway"), ("15", "Browser UI implementation is underway")):
+                for task_id, status, progress in (
+                    ("03", "IN PROGRESS", "A 200-note experimental hierarchy using saved outputs has been generated"),
+                    ("15", "WAITING", "Browser UI is approved and committed"),
+                ):
                     evaluate(f"document.querySelector('#focus-task').value = '{task_id}'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                     wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task_id} ·')")
-                    self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
-                    self.assertIn(preparation, evaluate("document.querySelector('#details').innerText"))
+                    self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), status)
+                    self.assertIn(progress, evaluate("document.querySelector('#details').innerText"))
 
                 evaluate("document.querySelector('#focus-task').value = '03'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('03 ·')")

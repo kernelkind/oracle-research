@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated October 1, 2026. This is the written record of the planning discussion.
+Updated October 2, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -46,38 +46,36 @@ than the UI. This applies to completed and historical tasks too. Scope, statuses
 tracks, dependencies and approvals are unchanged; concise summaries do not
 replace the full decision record.
 
-**Parallel preparation started September 30:** the user has started agents on
-broader test-corpus preparation and Notedeck integration preparation. Corpus work
-inspects collected data and prepares proposed 200/300/500-note inputs; the broader
-hierarchy tests have not started. Notedeck browser UI implementation has since
-started, following the user's navigation and layout requests. Protocol agreement
-and service integration remain pending. Corpus work is still preparation only;
-the reviewed 100-note hierarchy remains a prerequisite for broader hierarchy
-tests. Existing completion dependencies, acceptance requirements and open design
-choices are unchanged.
+**Parallel work — status reconciled October 2:** corpus and Notedeck preparation
+started September 30. A 200-note experimental hierarchy using saved outputs has
+since been generated and is under further development. Task 03 remains in
+progress; the planned validation ladder and 100-note acceptance gate remain open.
+The Notedeck browser UI is approved and committed; task 15 is waiting for
+protocol agreement and service implementation before integration. Completion
+links, acceptance requirements and open implementation choices are unchanged.
 
 **Broader-corpus generation hold — October 1:** the user is undertaking prompt
 stress-testing and has put generation of the additional notes on hold until that
 testing is complete. Shared task **30 · Stress-test prompts** is in progress,
 with a required 30 → 03 link. The start condition is specifically new corpus
 subject/mask generation; corpus selection and offline preparation may continue.
-Task 03 remains in progress for preparation, and completed prompt-development
-task 01 remains complete. Testing methods, acceptance criteria and any prompt
-changes belong to that workstream; this planning update selects none.
+Task 03 remains in progress for preparation and experimental construction using
+saved outputs; completed prompt-development task 01 remains complete. Testing
+methods, acceptance criteria and prompt changes belong to that workstream;
+this planning update selects none.
 
 Final teacher selection also waits for prompt stress-testing, through a required
 30 → 17 completion link. Comparison work may continue; the choice needs evidence
 for the prompts we will actually use. Any rechecking belongs to the comparison
 workstream. Existing results remain useful evidence; no teachers are selected.
 
-The corpus-preparation session confirms that reusable preparation code is
-committed. The candidate 200-note input is 100 food/drink + 100 music notes,
-which the user considered reasonable without authorizing generation or freezing
-the combined corpus. Food has current subjects, masks and vectors; music has
-older-prompt outputs. The actual 200-note input is not prepared yet. The
-reviewed 100-note hierarchy remains a prerequisite for broader hierarchy tests;
-other completion requirements are unchanged. Clearing the stress-testing hold
-is not authorization for model calls or spending.
+Reusable corpus-preparation code is committed. The 200-note experiment uses
+saved outputs from 100 food/drink and 100 music notes: food has current subjects,
+masks and vectors, while music has older-prompt outputs. This is experimental
+construction, not an accepted validation run or release-corpus selection.
+The reviewed 100-note hierarchy remains a prerequisite for completing the
+planned broader validation; other completion requirements are unchanged.
+Clearing the stress-testing hold is not authorization for model calls or spending.
 
 **Current task 02 status (October 1):** parallel candidate builds continue, and
 the independent comparison started by the user is available. The comparison
@@ -2491,14 +2489,14 @@ costs where recovery is used, not only model calls. It can use available evidenc
 from 24 and the growing hierarchy builds; it does not wait for the finished
 implementation in 28.
 
-**Protocol and client status reconciled October 1:** 13 remains in progress.
+**Protocol and client status reconciled October 2:** 13 remains in progress.
 The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
 now covers opening a hierarchy, node events, note lists and indexes. Proposals
 remain under review; service implementation and client integration await
-agreement. Notedeck browser UI implementation is underway, not just preparation;
-this does not establish end-to-end readiness. Statuses, tracks and completion
-links to 14 and 15 are unchanged. Protocol design and UI work remain with their
-assigned agents; this update makes no technical choice.
+agreement. The Notedeck browser UI is approved and committed; task 15 is waiting
+for service integration. This does not establish end-to-end readiness. Tracks
+and completion links are unchanged. Protocol design and UI work remain with
+their assigned agents; this update makes no technical choice.
 
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need
