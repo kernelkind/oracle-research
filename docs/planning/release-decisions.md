@@ -77,6 +77,17 @@ The reviewed 100-note hierarchy remains a prerequisite for completing the
 planned broader validation; other completion requirements are unchanged.
 Clearing the stress-testing hold is not authorization for model calls or spending.
 
+**300-note corpus selection — October 2:** the user approved selecting software
+and computing as the third area. The frozen 100 complete posts join the unchanged
+100 food/drink and 100 music posts. The addition has 90 authors, at most two posts
+per author, and every complete text fits the existing 512-token limit. All 300
+posts passed offline source-loading and post-input preparation checks. Counts
+refer to source posts, not hierarchy nodes; the three areas do not prescribe
+hierarchy branches. [Selection, provenance and review evidence](../../sse_multivector/real-note-fine-segmentation-v1/README.md#software-selection-for-the-300-note-hierarchy)
+are recorded separately from earlier generation results. Selection is complete;
+the 300-note hierarchy has not been built. The generation hold, prompt/build
+choices and validation gates remain unchanged.
+
 **Current task 02 status (October 1):** parallel candidate builds continue, and
 the independent comparison started by the user is available. The comparison
 agent currently recommends the scalable subject-hierarchy candidate (SH04).

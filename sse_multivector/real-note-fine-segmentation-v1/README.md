@@ -6,6 +6,18 @@ Started 2026-09-08 UTC from commit `18637cbed7ba45716bc81afd8d4a195e99844b51` on
 
 [Results](results.md) · [Full-note evidence](evidence.md) · [Run the unnamed review tool](review-handoff/README.md)
 
+## Software selection for the 300-note hierarchy
+
+**October 2: the user approved selecting 100 software/computing notes.** The [frozen notes](software-corpus-selection-v1/notes.json) extend the unchanged original 100 food/drink and 100 music notes to **300 complete source posts**. These counts refer to posts, not hierarchy nodes. The addition covers programming, Linux, self-hosting, software releases, security and computing applications, including mixed-topic posts. Topic selection supplies source material; it does not prescribe hierarchy branches.
+
+Selection reused the saved 51,200-note sample, excluding all 248 prior selected IDs. Retrieval yielded 471 candidates from 396 authors. The primary assistant read candidate ranks 1–125 in full, then retained the first 100 eligible notes in the recorded note-ID hash order after tokenizer, copy and author checks. Before the selection cutoff at candidate 119, 18 unrelated keyword hits and one near-copy were excluded. No fine-topic quotas, generated subjects, masks, vectors or hierarchy results guided selection. The [complete-note review](software-corpus-selection-v1/complete-note-review.json) records assistant assessments, not user judgments; no independent review was performed.
+
+The selected 100 contain **90 authors**, at most two notes per author. Complete originals contain **10–418 tokens including special tokens**, below the unchanged 512-token limit. Local checks used the frozen Sentence-T5-base tokenizer files and reproduced all 200 historical food/music token counts exactly; the actual local library versions are recorded in [token-counts.json](software-corpus-selection-v1/token-counts.json). No text was shortened or corrected. Exact normalized-text and four-word-shingle near-copy checks passed against the prior 248 notes and within the addition.
+
+The [300-post source reference](software-corpus-selection-v1/corpus-300-source.json) loads food/drink, music and software in that order, preserving every original note field. Production corpus loading and post-input preparation passed for all 300, with 271 authors and at most three notes per author. Only complete original post text enters teacher inputs; selection annotations remain bookkeeping. The [freeze manifest](software-corpus-selection-v1/manifest.json) binds source provenance, checks and artifact hashes; [selection accounting](software-corpus-selection-v1/selection-accounting.json) records every candidate's disposition. Frozen notes SHA-256: `a46148fa880b37932252c5c73675eb70d93fd15b38aadf2762ae7b9c68b1f00f`.
+
+This checkpoint completes corpus selection and offline preparation. It includes no model calls, new subjects, masks, vectors or 300-note hierarchy. The broader-corpus generation hold and open prompt/build choices in the [release decisions](../../docs/planning/release-decisions.md) still apply. The earlier generation and hierarchy results below remain historical evidence.
+
 ## Current checkpoint
 
 **HDBv2-music100 and HDBv2-combined200 are complete; user review is pending.** Music alone produced 53 multi-note segments from 1,057 vectors. Combining the original 945 food/drink vectors with those exact music vectors produced 124 multi-note segments. Both runs matched their complete fresh replays. The review presents 53 music segments, then 45 new/changed combined segments, with identical previously reviewed groups omitted and no labels or prefilled decisions. [Results, separate assistant assessments and review commands](music-generation-v1/results.md).
