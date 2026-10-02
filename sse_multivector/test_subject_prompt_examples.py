@@ -814,7 +814,7 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
 
     def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
         root = Path(__file__).parent
-        for version in range(59, 70):
+        for version in range(59, 74):
             with self.subTest(version=version):
                 candidate = (
                     root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"
@@ -889,7 +889,7 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
                 ("unknown", "appreciation"), ("unknown", "first_use"),
             ),
         }
-        for version in range(61, 70):
+        for version in range(61, 74):
             repair_case = FOCUSED_CASES[0]
             if version >= 62:
                 repair_case = {
@@ -973,7 +973,72 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
                         ("R24", "Nonempty output contrasts with C3's empty array."),
                     ),
                 }
-            cases = (repair_case, app_case) + FOCUSED_CASES[2:]
+            if version >= 72:
+                repair_case = {
+                    **FOCUSED_CASES[0],
+                    "purpose": "Resolved counted-water reference, soup-preparation purpose and every valid parent copy.",
+                    "post": "Soup preparation:\nOne cup of water.\nHeating it.",
+                    "subjects": {
+                        "water": "Water", "one": "One cup of water",
+                        "qualified_water": "One cup of water for soup preparation",
+                        "heating_one": "Heating one cup of water",
+                        "full": "Heating one cup of water for soup preparation",
+                        "soup": "Soup preparation", "heating": "Heating",
+                        "qualified_heating": "Heating for soup preparation",
+                    },
+                    "relationships": (
+                        ("one", "water"), ("qualified_water", "one"),
+                        ("qualified_water", "soup"), ("heating_one", "one"),
+                        ("heating_one", "heating"),
+                        ("qualified_heating", "soup"),
+                        ("qualified_heating", "heating"),
+                        ("full", "qualified_water"),
+                        ("full", "heating_one"),
+                        ("full", "qualified_heating"),
+                    ),
+                    "invalid": (
+                        ("water", "soup"), ("one", "soup"),
+                        ("heating", "soup"), ("heating_one", "soup"),
+                        ("one", "qualified_water"),
+                        ("heating_one", "qualified_water"),
+                        ("qualified_water", "heating"),
+                        ("soup", "heating"),
+                    ),
+                    "secondary_rules": (
+                        ("R18", "Counted water and qualified heating remain separate subjects."),
+                        ("R24", "Nonempty output contrasts with C3's empty array."),
+                    ),
+                }
+            current_app = app_case
+            if version >= 73:
+                current_app = {
+                    **app_case,
+                    "purpose": "Named new app, figurative first-use help, blocking exception, rhetoric and unresolved blocker type.",
+                    "post": "On my first use, the new app #RavenWorks was a lifesaver, figuratively speaking, unless AmberLoop blocked it—how could I not appreciate the app on that first use?",
+                    "subjects": {
+                        **app_case["subjects"],
+                        "blocking": "Blocking",
+                        "blocker_app": "AmberLoop blocking the new RavenWorks app",
+                        "conditional_help": "Help from the new RavenWorks app on first use unless AmberLoop blocks the app",
+                    },
+                    "relationships": app_case["relationships"] + (
+                        ("blocker_app", "blocking"),
+                        ("blocker_app", "unknown"), ("blocker_app", "new"),
+                        ("conditional_help", "first_help"),
+                        ("conditional_help", "blocker_app"),
+                    ),
+                    "invalid": app_case["invalid"] + (
+                        ("unknown", "blocking"),
+                        ("blocker_app", "first_help"),
+                        ("first_help", "blocker_app"),
+                        ("blocker_app", "named_appreciation"),
+                    ),
+                    "secondary_rules": app_case["secondary_rules"] + (
+                        ("R04", "The blocking pronoun refers to the named new app."),
+                        ("R32", "The unless relationship remains in the complete help subject."),
+                    ),
+                }
+            cases = (repair_case, current_app) + FOCUSED_CASES[2:]
             path = FOCUSED_PROMPT_PATH.parent.parent / f"asv6.{version}/ASv6.{version}.md"
             # Reuse semantic fixtures through production validation, patching
             # only test inputs, never a production API or path.
@@ -1070,6 +1135,24 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
             re.findall(r"<example>\n.*?\n</example>", before, re.S),
             re.findall(r"<example>\n.*?\n</example>", after, re.S),
         )
+
+    def test_asv670_only_shortens_example_contexts(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+
+        def without_contexts(version):
+            source = (directory / f"asv6.{version}/ASv6.{version}.md").read_text()
+
+            def output(match):
+                parsed = experiment_inputs.validate(
+                    {"adapter": "subjects"}, {}, match.group(1), None
+                )["parsed"]
+                for row in parsed["subjects"]:
+                    del row["context"]
+                return json.dumps(parsed, ensure_ascii=False)
+
+            return re.sub(r"<output>\n(.*?)\n</output>", output, source, flags=re.S)
+
+        self.assertEqual(without_contexts(68), without_contexts(70))
 
 
 if __name__ == "__main__":

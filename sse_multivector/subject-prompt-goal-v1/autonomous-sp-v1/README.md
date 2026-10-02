@@ -93,7 +93,7 @@ compared with 15 entries and nine headings before. Six other cases and all
 instruction bytes remain unchanged from ASv6.60. This demonstrates existing
 restrictions without adding an example or requiring a new output field.
 
-### Rule coverage for ASv6.61
+### Rule coverage for ASv6.61 and subsequent candidates
 
 The 34 clause definitions remain the IDs in the maintained ASv6.50 audit.
 Each has one primary example. Existing secondary demonstrations keep their
@@ -102,8 +102,8 @@ for repeated qualified subjects. No new rule is introduced.
 
 | Case | Primary clauses | Demonstration |
 | --- | --- | --- |
-| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted tube, resolved cutting reference, repair-purpose restrictions and every valid branch. |
-| C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved independent name; qualified new-app first use. |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subject, resolved action reference, purpose restrictions and every valid branch. |
+| C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved name; qualified new-app first use. ASv6.73 adds a blocking exception. |
 | C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
 | C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |
 | C5 | R09–R12, R19 | Two direct duck interpretations, independent notebook purchase, individual entities retained. |
@@ -176,7 +176,11 @@ red-bicycle relationships; these remain bounded checks, not full SP gold.
 | ASv6.66 | Test parent restrictions across any domain, not just this post's domain. | Four confirmed failures. |
 | ASv6.67 | Finish relationships before numbering; repeated headings retain all enumerated descendants. | N063/N096 rejected; N074/N100 uncertain on full source specificity. |
 | ASv6.68 | Replace C1 with simpler repair and explicit edible/inedible oil qualities, purposes and their source combination. | N074/N096/N100 rejected; N063 uncertain on full coverage. |
-| ASv6.69 | Rewrite only the parent-check paragraph to distinguish generic kinds from this post's role-qualified subjects. | Testing. |
+| ASv6.69 | Rewrite only the parent-check paragraph to distinguish generic kinds from this post's role-qualified subjects. | Four confirmed failures; low camera copy diagnostic also fails. |
+| ASv6.70 | Shorten example contexts only; preserve every source post, subject, number and instruction from ASv6.68. | N063/N096/N100 rejected; N074 uncertain on full exception specificity. |
+| ASv6.71 | Collect complete source-descendant sets before numbering and explicitly audit completed edges/source clauses/all copies. | N074/N096/N100 rejected; N063 awaits full numbered coverage review. |
+| ASv6.72 | Replace only C1 with counted water/heating for soup preparation and explicit alternate-use counterexamples. | N063 awaits numbered coverage; N074/N096/N100 still have confirmed failures. |
+| ASv6.73 | Replace only C2 with a named blocker and a fully qualified first-use help exception. | Two medium N074 answers satisfy the checked advice placements and preserve the diet exception; N063 removes the olive-oil scope error and retains both complete ingredient-group branches. N096 and N100 retain confirmed scope failures. These are bounded findings, not full-SP passes. |
 
 ASv6.67 low D004 and D006 satisfy the checked first-use/appreciation and
 repair/observation relationships beneath every numbered parent copy in two
@@ -197,10 +201,142 @@ from ASv6.67. Its secondary R18 demonstration includes the explicit source
 combination. The five existing implications keep the same rule mappings.
 
 The eight transfer answers for each of ASv6.58, ASv6.62 and ASv6.63 are saved.
-Their review is incomplete, so they do not establish a generalization score.
+Initial bounded reviews are recorded; most full-SP judgments remain uncertain,
+so they do not establish a generalization score.
 Known placement failures include ASv6.58 H001's returned deletion/copying
 combination outside all configuration-copying parents, and ASv6.63 H004's
 returned physiotherapy/gym sequence outside its constituent branches.
 H006's rubric is too narrow about “I liked it”: the preceding lesson is also a
 plausible referent, so retaining that interpretation alone is not a failure.
 Frozen source inputs and historical reviews are preserved.
+
+### Concise examples and new controls
+
+The eight reusable scope fixtures test soup seasoning versus road de-icing,
+feeding versus a chew toy, restoration paste, breakfast, new equipment versus
+a recommendation including used units, and a conditional/attributed-advice
+post. They use native preparation from maintained source JSON. They are
+agent-defined development cases, not held-out proof or user-labelled gold.
+
+Initial low answers often handle these short role distinctions even with
+ASv6.58. Their bounded reviews are: ASv6.58 six accepted, one rejected and one
+uncertain; ASv6.69 six accepted and two rejected; ASv6.70 seven accepted and
+one rejected. The rejections concern missing source-combination placements,
+not seasoning/feeding scope. This contrast shows that the successful short
+examples do not resolve the longer-post failures. Do not compare these
+bounded target counts to full-SP regression correctness.
+
+ASv6.72 C1 replaces the 38-entry repair/oil case with 16 entries and eight
+headings for “Soup preparation: One cup of water. Heating it.” Water, the
+counted amount and unqualified heating retain general meanings; the full
+quantity/purpose subject appears beneath all three constituent headings and
+all their copies. Plant watering and industrial heating are counterexamples
+in the explanation, not invented source subjects. All 34 primary mappings
+and the five tracked implications remain. C1's secondary R18 demonstration
+retains counted water and its heating separately; C6 still demonstrates the
+explicit pair combination.
+
+ASv6.73 C2 keeps the new named app, first-use help and rhetorical appreciation,
+and makes AmberLoop the unresolved named blocker. It has 32 entries and
+15 headings. The complete help-unless-blocked subject retains newness,
+first use and the named blocking relationship beneath every component copy.
+AmberLoop remains outside app/type branches. Conditional headings name
+source topics without asserting an actual blocking event. C2 adds secondary
+R04 (resolved blocking reference) and R32 (preserved unless relationship);
+its primary rule assignments remain R03/R05/R06/R17. Six other examples and
+all instruction text are unchanged from ASv6.72. No candidate is adopted.
+
+### Fixed repeated comparison: ASv6.58 versus ASv6.73
+
+After the user requested proof of progress, the saved answers showed particular
+corrections but did not establish reliable overall improvement. The user then
+approved a repeated comparison. Freeze both prompt versions for five new,
+independent trials per version on each of N063, N074, N096 and N100: 40 planned
+new calls on subscription `gpt-6.1-sol` at `medium`. Use native `prepare --from`
+with the same complete source posts and `--repeat`, the existing history root
+and the unchanged 1,000-attempt budget. Exclude prior development answers from
+these trial counts. Do not revise either prompt or stop early based on quality.
+
+The review criteria are fixed before these calls:
+
+- **Scope:** inspect every displayed parent-child edge using the heading strings
+  alone. In particular, unrestricted olive oil cannot inherit culinary purpose
+  (N063); unrestricted salt cannot inherit food-seasoning purpose (N096); a
+  material merely "for the dog" cannot inherit feeding purpose (N100). A lamp
+  oil, de-icing salt or chew toy supplies the corresponding counterexample.
+- **Placement:** check each relevant source subject beneath every numbered
+  occurrence of each applicable returned parent, including repeated copies.
+  For N063, check the expressed ingredient group beneath the dish and all 15
+  qualified ingredients beneath every copy of that group. For N074, check the
+  complete, attributed three-part advice beneath every returned component
+  advice heading, and preserve the diet comparison with its mother/child
+  exception beneath its applicable component headings.
+- **Source meaning:** inspect every source clause for omitted or changed
+  referents, amounts, modifiers, negation and expressed relationships. N096
+  includes the cooking instructions and their restrictions; N100 includes the
+  sealer appreciation/recommendation and the unresolved dog/chicken reference.
+  Do not impose an unsupported newness restriction on a model recommendation.
+
+Record scoped findings and concrete failure witnesses through native agent
+`review`, separate from user labels. A target can improve while another rule
+still fails. Report case-level counts for confirmed scope/placement failures
+and retain uncertain full-SP assessments; do not turn a lack of found errors
+into a gold pass. The unresolved rule for placement of derived general headings
+remains outside the confirmed-failure count. Five trials estimate repeatability
+on these development posts, not generalization to unseen topics.
+
+All 40 planned calls completed with valid native receipts, no runner failures
+and no answer reuse. All ten frozen experiments were checked for identical
+complete input posts and runner settings; each arm used its exact fixed prompt
+template. Each answer has one current, output-bound agent review. The persistent
+campaign budget now records 210 of the authorized 1,000 attempts. No candidate
+was adopted, and neither prompt changed during the comparison.
+
+| Post | ASv6.58 answers with confirmed errors | ASv6.73 answers with confirmed errors |
+| --- | --- | --- |
+| N063 | 5/5 | 1/5 |
+| N074 | 5/5 | 2/5 |
+| N096 | 5/5 | 5/5 |
+| N100 | 5/5 | 5/5 |
+
+These counts concern errors found under the fixed agent review criteria. The
+other seven ASv6.73 answers were accepted under those bounded checks; they are
+not independent full-SP gold passes. The aggregate is 20/20 versus 13/20 answers
+with confirmed errors on these four development posts, not a generalization
+score or a claim that ASv6.73 is ready for adoption.
+
+The specific findings distinguish corrections from remaining failures:
+
+- **N063:** material-purpose scope fails in 5/5 ASv6.58 trials and 0/5 ASv6.73
+  trials. Whole-group/dish and member-copy placement fails in 3/5 versus 1/5.
+  ASv6.73 trial 4 retains all 15 ingredients beneath both specific dishes and
+  beneath the standalone ingredient group, but omits the group itself beneath
+  both dish copies (1.1.1.1 and 3.1.1).
+- **N074:** combined advice is missing beneath at least one component copy in
+  2/5 ASv6.58 trials and 0/5 ASv6.73 trials. Food Rules attribution is missing
+  in 4/5 versus 1/5. The complete diet-comparison exception is absent in all
+  five baseline answers and present in all five candidate answers; candidate
+  trial 5 nevertheless omits it beneath all five returned mother-controversy
+  copies (1.1.4, 4.3, 5.1.1.1, 6.1.1.1 and 7.1.1.1.1). Candidate trial 3 loses
+  the book attribution. Retain the name of an identifiable book; do not require
+  the author name literally when the book title itself identifies the referent.
+- **N096:** Seasonings → Salt occurs in 4/5 baseline and 3/5 candidate trials.
+  Candidate trials 4 and 5 avoid that particular edge but still fail other
+  rules. Trial 4 drops the medium-onion restriction from a child of One medium
+  onion for Spaghetti Bolognaise. Trial 5 retains the complete sautéing heading
+  beneath only one of three identical qualified-onion parents, omitting copies
+  1.1.1.1 and 2.1.1.1; analogous missing copies affect celery, carrot and oil.
+- **N100:** material merely "for the dog" inherits a feeding/food restriction
+  in every answer from both prompts. Candidate meat-processing headings avoid
+  some earlier food-purpose errors, but sealer recommendation/newness and
+  source-combination errors remain. The ambiguous myoglobin/chicken reading
+  was not counted as a confirmed failure.
+
+The native experiment directories are `fixed-as58-medium-r1` through `r5` and
+`fixed-as73-medium-r1` through `r5` under the ignored campaign experiment root.
+Their `reviews.jsonl` files preserve the numbered witnesses and their native
+`run/results.jsonl` files preserve all answers and receipts. Earlier development
+trials remain separate. The next useful revision should target the remaining
+item-versus-purpose distinction and complete repeated branches, retaining the
+observed N063/N074 improvements. That is a recommendation, not a new prompt
+revision or an adoption decision.

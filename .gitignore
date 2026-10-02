@@ -35,6 +35,8 @@ __pycache__/
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/diagnostics-spec.json
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/transfer-cases.json
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/transfer-spec.json
+!/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/scope-cases.json
+!/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/scope-spec.json
 
 # Reusable construction source references/settings, not generated case data.
 !/sse_multivector/hierarchy-construction-prompt-v1/n100-selection.json

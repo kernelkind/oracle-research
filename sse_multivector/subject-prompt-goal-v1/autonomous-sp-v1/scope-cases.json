@@ -1,0 +1,84 @@
+{
+  "cases": [
+    {
+      "id": "S001",
+      "inputs": {
+        "POST": "Seasoning a soup: sea salt and pepper."
+      },
+      "evidence": {
+        "review_context": "Preserve the soup-seasoning role in qualified source subjects and their combination. Generic Sea salt does not itself entail seasoning use; industrial sea salt is a counterexample to placing the unrestricted heading under Seasonings.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S002",
+      "inputs": {
+        "POST": "For de-icing a footpath, I spread sea salt. I did not use it to season food."
+      },
+      "evidence": {
+        "review_context": "Preserve sea-salt spreading for footpath de-icing and explicit non-seasoning. Do not assign food/seasoning purpose to unqualified Sea salt. Keep generic salt meanings separate from this instance role.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S003",
+      "inputs": {
+        "POST": "Dog feeding: beef scraps and water."
+      },
+      "evidence": {
+        "review_context": "The list heading supplies dog-feeding purpose for scraps and water and their stated combination. Qualified dog-feeding headings can appear under feeding; unrestricted Water cannot inherit that purpose.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S004",
+      "inputs": {
+        "POST": "I made a leather chew toy for my dog. Separately, I fed the dog beef scraps."
+      },
+      "evidence": {
+        "review_context": "For the dog does not establish feeding: leather toy making and beef-scrap feeding are distinct. Do not place the toy or unrestricted Leather under Dog feeding, or transfer feeding purpose across the separate statement.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S005",
+      "inputs": {
+        "POST": "Book restoration: paste made from flour and water. I used the paste to mend one torn page."
+      },
+      "evidence": {
+        "review_context": "Resolve the paste reference and preserve book-restoration purpose, flour/water composition, one torn page, and mending. Generic Water or generic Paste does not itself express restoration purpose. Do not infer cooking from flour/water co-mention.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S006",
+      "inputs": {
+        "POST": "I ate one apple for breakfast."
+      },
+      "evidence": {
+        "review_context": "Retain one apple, eating and breakfast purpose. General knowledge permits actual type memberships such as Apples under Fruits or Food; the role restriction rule must not become a ban on valid intrinsic type relationships.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S007",
+      "inputs": {
+        "POST": "My new Echo sound recorder worked well on first use. I recommend the Echo model, including used units."
+      },
+      "evidence": {
+        "review_context": "First-use performance concerns the new recorder. The recommendation expressly includes used units, so it must not be restricted to the new unit or placed beneath a New Echo recorder heading without a separate supported qualified subject. Preserve the model name and sound-recorder type.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    },
+    {
+      "id": "S008",
+      "inputs": {
+        "POST": "The river path is quiet unless a dam release floods it. The book Trail Notes by Nora Bell says to stay on the path and carry water."
+      },
+      "evidence": {
+        "review_context": "Resolve it/the path to the river path. Retain the flooding exception to the quiet-river-path claim, book/author attribution, each advice constituent and their conjunction. Any returned specific conjunction must appear beneath every numbered copy of its applicable component headings. Do not drop the source relationship or infer unrelated advice.",
+        "assessment": "Development diagnostic with agent-defined rubric; not user-labelled gold. Source text is reusable, not a rendered model artifact."
+      }
+    }
+  ]
+}
