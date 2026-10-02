@@ -11,11 +11,12 @@ The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/AS
 provides the saved comparison answers for the ASv6.55 test below. ASv6.50 and
 its saved answers remain comparison evidence.
 
-[ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md) is the current
+[ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md) is the current
 example-only revision, authorized for testing. It removes two overlapping
-examples from
-ASv6.54 while retaining demonstrations of every existing instruction clause.
-Adoption remains open. The
+examples from ASv6.54 while retaining demonstrations of every existing
+instruction clause.
+The test found five of twelve answers with scope failures and ten with missing
+valid branches. Adoption remains open. The
 [rule-to-case map](#example-correctness-and-rule-coverage) records each case's
 instruction basis; the [draft audit](#asv655-consolidated-examples) records verification.
 
@@ -729,7 +730,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md).
+The current map uses [ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -868,13 +869,14 @@ the examples; ASv6.54 remains unchanged as the source for preservation checks.
 
 ## ASv6.55 consolidated examples
 
-Status: candidate, testing in progress. The user explicitly confirmed that
-the next prompt should consolidate overlapping examples while keeping every rule
-demonstrated, then explicitly authorized testing ASv6.55 on the same twelve
+Status: candidate, tested on Sol xhigh; regression failures found. The user
+explicitly confirmed that the next prompt should consolidate overlapping
+examples while keeping every rule demonstrated, then explicitly authorized
+testing ASv6.55 on the same twelve
 GPT-6.1 Sol xhigh regression cases. ASv6.51 supplies the saved comparison
 answers; ASv6.48 remains frozen. Adoption remains open.
 
-[ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md) removes ASv6.54's
+[ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md) removes ASv6.54's
 lunar and combined-advice cases. Their instruction demonstrations are retained
 in existing cases: the boiler case resolves a reference across sentences,
 distinguishes entities from roles and repeats descendants beneath every valid
@@ -957,6 +959,118 @@ The ignored experiments are
 `sse_multivector/experiments/asv6.55-sol61-xhigh-sp-scope-regression-t1/`,
 `sse_multivector/experiments/asv6.55-sol61-xhigh-sp-scope-regression-t2/` and
 `sse_multivector/experiments/asv6.55-sol61-xhigh-sp-scope-regression-t3/`.
-Execution is in progress. Complete answers will be assessed for the agreed
-parent-scope pattern, subject coverage and other errors through native agent
-reviews. No user semantic verdict or baseline adoption is implied by execution.
+All twelve answers completed with valid JSON and valid native receipts, each
+on its first attempt. There were no execution failures, repairs, retries,
+truncation requests, reused answers or regenerated baselines. Entry fields
+retain the required number/context/subject order. Source and template hashes,
+and all 27 pinned ASv6.51 files, remain unchanged.
+
+### Completed answers and agent review
+
+ASv6.55 does not pass the regression check. Agent review found five of twelve
+answers with a heading-alone scope failure, compared with two in the saved
+ASv6.51 cohort. Ten answers also omit an enumerated heading from a valid
+broader branch. This is a sample comparison, not an estimate of general failure
+rates or proof that removing the two examples caused the difference. ASv6.54
+has not been tested on these posts.
+
+The following cells show the scope assessment and number of hierarchy entries.
+"Pass" means no confirmed scope failure was found in that review; it does not
+mean every SP requirement passed.
+
+| Post | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| N063 | Pass; 161 entries | Pass; 186 entries | Fail; 182 entries |
+| N074 | Pass; 163 entries | Pass; 169 entries | Pass; 154 entries |
+| N096 | Fail; 260 entries | Fail; 225 entries | Fail; 210 entries |
+| N100 | Pass; 230 entries | Pass; 193 entries | Fail; 211 entries |
+
+The five scope findings are:
+
+- **N063 T3, 8.1 -> 8.1.1:** Edible fats and oils -> Vegetable oils. The generic
+  child includes nonedible oils. Tung oil is a concrete counterexample,
+  explicitly classified as a nonedible vegetable oil in the
+  [USDA Fats and Oils report](https://ers.usda.gov/sites/default/files/_laserfiche/outlooks/37342/32910_ius6c_002.pdf).
+  The edible olive-oil instance in this source cannot narrow that generic heading.
+- **N096 T1, 1.6 -> 1.6.1, and T3, 1.7 -> 1.7.1:** Cooking oils -> Olive oil.
+  The child itself does not specify a cooking role; another post can concern
+  olive oil used outside cooking. This uses the same entity/role criterion as
+  the saved ingredient-role failures, rather than borrowing the recipe context.
+- **N096 T2, 1.2.1.2 -> 1.2.1.2.1:** Translucent sautéed onions -> Moving
+  sautéed ingredients to the pan's side and adding 500 g ground beef when onions
+  turn translucent, for spaghetti Bolognaise. The child calls the moved
+  ingredients sautéed, but does not identify the translucent onions as those
+  ingredients. A post can move sautéed celery while separately cooked onions
+  become translucent. The full source supplies the missing sautéed-onion
+  relationship; the child heading alone does not.
+- **N100 T3, 6 -> 6.4:** Food preparation -> Tallow production. Generic tallow
+  production can have a nonfood purpose. The
+  [EPA vegetable-oil processing analysis](https://www.epa.gov/sites/production/files/2020-07/documents/vegetable-oil_eia_neshap_final_01-2001.pdf)
+  includes inedible tallow among industrial substitutes. Neither this source's
+  cooking hashtag nor its planned fat use supplies a food restriction in the
+  generic child heading.
+
+These are agent semantic assessments of the agreed heading test, not an
+independent entailment oracle or user verdict. The native reviews retain exact
+source-bound outputs and the counterexamples used for each assessment.
+
+The valid-branch omissions concern headings already present elsewhere in the
+same answer. Each listed child fits the named broader heading by itself, but
+is absent beneath the indicated occurrence. A narrower descendant does not
+retain the separately enumerated heading required by R22.
+
+| Post/trial | Existing child occurrence | Valid broader branch missing it |
+| --- | --- | --- |
+| N063 T1 | 11.1 Vegetable broth | 7 Vegetables |
+| N063 T3 | 12.1.1 Sea salt as a seasoning | 11.1 Sea salt |
+| N074 T1 | 10.1 Weariness of diet narratives | 1.7 and 9.1 Diet narratives |
+| N074 T2 | 12.1 Weariness of dietary narratives | 1.9 and 9.1 Dietary narratives |
+| N074 T3 | 9.1.1 Advice to eat real food | 1.6 and 12.1 Dietary advice |
+| N096 T1 | 6.1.1 Tinned tomatoes | 1.5 Tomatoes |
+| N096 T2 | 3.10.1 Adding garlic after a few minutes of sautéing | 3.3 Adding cooking ingredients |
+| N096 T3 | 1.10.1.1 Finely chopped vegetables | 1.3 Vegetables |
+| N100 T1 | 1.3.1 and 4.1.1 Beef fat for making tallow | 8 Tallow |
+| N100 T3 | 6.4 Tallow production | 3.2 Tallow |
+
+No confirmed scope or branch-retention failure was found in N063 T2 or N100 T2.
+N100 T2 remains uncertain overall: its source's doubled "some some" can be read
+as referring to saved myoglobin for chickens, alongside the water/seeds-only
+reading. It retains only the latter; whether the former is sufficiently
+supported to require a separate subject under the ambiguity rule needs a
+semantic verdict. T1 and T3 retain both readings.
+No candidate answer assumes that the writer sealed this beef.
+
+Core dish/ingredient, diet/advice, recipe/quantity/action/time and
+meat/animal/equipment/purchase subjects remain represented. That does not
+establish complete interpretation coverage or satisfy every valid-branch
+requirement. All twelve hierarchies are larger than their paired ASv6.51
+answers: the respective saved entry counts were N063 81/78/85, N074 89/91/87,
+N096 143/117/158 and N100 124/141/128. More output did not prevent these omissions.
+The repeated input and larger output matter when assessing corpus-scale use.
+
+Native `experiment.py review --role agent` records ten rejects, one accept
+(N063 T2) and one uncertain assessment (N100 T2). These judgments combine scope,
+branch retention and interpretation coverage; they are not just the scope
+matrix above. No user semantic review or adoption was recorded. ASv6.48 remains
+the frozen subject baseline, and neither ASv6.55 nor MP was changed during testing.
+
+Native usage remains separate for each trial; reasoning tokens are already
+included in output tokens:
+
+| Trial | New attempts | Input tokens | Cached input tokens | Output tokens | Reasoning tokens | Catalog estimate USD |
+| --- | --- | --- | --- | --- | --- | --- |
+| T1 | 4 | 18,354 | 0 | 95,230 | 53,105 | 0.989008 |
+| T2 | 4 | 13,874 | 4,480 | 95,898 | 56,122 | 0.987176 |
+| T3 | 4 | 18,354 | 0 | 87,556 | 48,866 | 0.912268 |
+
+Every attempt has native usage and a catalog estimate. These estimates are not
+subscription bills or measured quota consumption; provider-reported billing
+is unavailable and incremental cash remains zero. The 26 offline example,
+revision and SP workflow checks passed before inference. Native case parsing
+and receipt validation pass after the run; the semantic regression does not.
+
+Before another example edit, a useful proposed check is the unchanged ASv6.54
+on the same twelve cases, paired with these saved ASv6.55 answers, to isolate
+the effect of consolidating the examples. That test is not authorized or
+prepared. The rule map establishes demonstration coverage; these results show
+that coverage alone does not establish teacher generalization.
