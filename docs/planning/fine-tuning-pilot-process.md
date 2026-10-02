@@ -18,6 +18,11 @@ representative and long notes: check complete answers, truncation, GPU memory,
 and runtime. Choose and freeze the pilot limits after those checks.
 Preparation scope, hardware, and maximum charge remain open.
 
+**Batched subject evaluation is approved.** Calculate a conservative batch size
+locally from per-GPU weights, maximum prompt/output lengths, generation cache,
+temporary buffers and headroom. The existing preparation run confirms the
+packaged configuration and measures throughput for pricing.
+
 ## 1. Freeze shared inputs — locally
 
 Freeze shared training, validation, and final test notes, checked teacher
@@ -32,6 +37,9 @@ proposals. Keep final test notes out of development.
 
 Save one **thinking-off** baseline per candidate on the shared validation notes.
 Each model generates its own subject hierarchy. Preserve original responses.
+Generate several independent notes per GPU batch. Freeze the batching policy
+per student and generation mode; use the same policy for that student's
+baseline and trained checkpoints. Check and save each note's answer separately.
 
 **Check every response immediately, before training.**
 Account for one subject response per validation note and save parsing failures.
@@ -116,10 +124,10 @@ the same thinking mode for both. Whether GPU test outputs are
 collected during the main rental and kept sealed, or generated later, is open.
 Rental grouping, duration, and spending also remain open.
 
-## Provisional subjects-only cost — October 2
+## Serial cost reference — October 2
 
 Assuming 100 validation notes, 200 final test notes, and the previous
-**$1.4167/hour** GPU's measured subject-generation speed:
+**$1.4167/hour** GPU's measured single-note subject-generation speed:
 
 - **Ordinary evaluation:** about **$108–113**, including three baselines,
   fifteen checkpoints, and the winner's thinking-off final comparison.
@@ -128,6 +136,10 @@ Assuming 100 validation notes, 200 final test notes, and the previous
 - **Preparation:** a provisional **$10–25 allowance**, not a measured or approved
   rental budget. Rounded combined GPU planning estimate: **$210–300**.
 
+These amounts price serial evaluation, not the approved batched pilot. Revise
+the pilot estimate from measured batched throughput on the intended hardware.
+Memory arithmetic selects the candidate batch locally; it does not establish
+runtime or imply dividing serial time by batch size.
 Thinking-on runtime is unmeasured; its allowance assumes 2–4 times the final
 thinking-off validation time. Choosing thinking on for the final test needs a
 revised estimate. Hardware, spending and preparation scope remain open.

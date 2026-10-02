@@ -665,6 +665,18 @@ This pilot supplies subject evidence for model selection; it cannot establish
 mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
 
+**October 2 batched subject evaluation approved:** generate independent notes
+in GPU batches. Freeze a batching policy per student and generation mode and
+apply the same policy to its untuned baseline and trained checkpoints. Preserve
+separate note identities, raw/parsed answers and immediate response accounting.
+Calculate conservative per-GPU fit locally from model placement, maximum
+rendered input plus output allowance, cache/state, temporary buffers and
+headroom. The existing preparation run confirms the packaged path and measures
+throughput; it is not a separate search for a batch size that happens to fit.
+Batch size, hardware and implementation remain open. The old single-note
+timing estimate is a serial reference; batched pilot pricing needs throughput
+evidence and cannot be obtained by simply dividing that estimate by batch size.
+
 **Planning split approved September 29:** track the preliminary 100-note
 fine-tuning experiment separately as **29 · Run preliminary 100-note fine-tuning
 experiment**, in progress. It uses 80 training notes and 20 evaluation notes,
@@ -994,7 +1006,7 @@ attempts. Budget admission passed before the run; no replacement rental is autho
   [existing fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md),
   not the teacher selection. Its preliminary 100-note experiment is tracked in 29.
 
-**Subjects-only GPU estimate (October 2, provisional):** at the previous
+**Subjects-only serial GPU reference (October 2):** at the previous
 $1.4167/hour hardware's measured subject speed, ordinary validation and the
 winner's thinking-off final comparison cost about $108–113. Allowing subject-only
 training, checkpoint transitions, terminal thinking evaluation, 25% headroom
@@ -1005,7 +1017,9 @@ the final thinking-off validation runtime; actual thinking, longer outputs,
 expanded expert adapters and the new lifecycle are unmeasured. The estimate
 assumes the proposed 100 validation / 200 final test notes and thinking off on
 the final test. Paid API labels/reviews are additional; the existing subscription
-route is assumed. No spending is authorized by this estimate.
+route is assumed. These amounts retain the single-note timing reference;
+the approved batched pilot needs repricing from preparation throughput.
+No spending is authorized by this reference.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
