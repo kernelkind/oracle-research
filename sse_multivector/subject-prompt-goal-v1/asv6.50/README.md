@@ -34,11 +34,11 @@ purpose-qualified cutting. The [audit](#asv657-quantified-tube-and-repair-purpos
 records the approved candidate and updated rule map. The completed twelve-answer
 Sol xhigh test found four answers with scope failures and eleven missing valid
 branches. Only N063 T2 passes both reviewed checks; adoption remains open.
-The current [ASv6.58 (draft, untested)](../asv6.58/ASv6.58.md) supplies the same
+The current [ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md) supplies the same
 repair purpose through C1's heading, preserving every subject heading and
 placement. Its [audit](#asv658-purpose-supplied-by-a-heading) records 29 passing
-offline checks. The user authorized drafting and presenting the delta; wording
-approval and a model test remain open.
+offline checks. The user approved the wording and the same twelve-answer Sol
+xhigh test; its results are pending and adoption remains open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -750,7 +750,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.58 (draft, untested)](../asv6.58/ASv6.58.md).
+The current map uses [ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -771,7 +771,8 @@ and explained secondary assignments. "Reviewed" means the agent assessed
 source support and heading relationships. The user approved testing ASv6.56,
 then authorized drafting ASv6.57 after its failures and approved its test.
 After that test, the user authorized the ASv6.58 heading-purpose draft for review.
-Its wording approval, model test and adoption remain open. Agent assessments remain separate
+The user subsequently approved its wording and the same twelve-answer Sol
+xhigh test. Adoption remains open. Agent assessments remain separate
 from user semantic judgments and adoption.
 
 | Case | Purpose | Review |
@@ -1668,17 +1669,19 @@ demonstrates purpose supplied by a heading, while preserving general subjects,
 qualified subjects and all valid placements. This targets a transfer hypothesis:
 the current case states "for boiler repair" explicitly, whereas a recipe heading
 supplies the purpose of its ingredient list and steps. The user subsequently
-authorized the ASv6.58 draft below for review; its wording approval and model
-test remain open.
+authorized the ASv6.58 draft below for review, then approved its wording and
+the same twelve-answer Sol xhigh test. Adoption remains open.
 
 ## ASv6.58 purpose supplied by a heading
 
-Status: draft, untested. On October 2, 2026, after the ASv6.57 results, the user
+Status: approved for testing, results pending. On October 2, 2026, after the ASv6.57 results, the user
 authorized revising the existing boiler example to demonstrate purpose supplied
 by a heading, verifying it offline and presenting the delta. This authorizes
-neither inference nor adoption; ASv6.48 remains the frozen subject baseline.
+neither inference nor adoption by itself. The user subsequently approved
+ASv6.58 and the same twelve-answer Sol xhigh test below; adoption remains open
+and ASv6.48 remains the frozen subject baseline.
 
-[ASv6.58 (draft, untested)](../asv6.58/ASv6.58.md) changes only C1's post and
+[ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md) changes only C1's post and
 source contexts. The old post says "One tube for boiler repair. Cutting it for
 that repair." The new post is:
 
@@ -1733,8 +1736,41 @@ source/template and saved-answer files remain unchanged.
 
 The full-context ASv6.57 → ASv6.58 delta is an ignored review artifact at
 `target/sp-scope-regression-v1/asv658-full-context.diff`; exact authoring edits
-and input hashes are ignored alongside it. No post template, experiment or
-inference request has been prepared. The proposed next step is review of this
-delta, followed by the same twelve-answer Sol 6.1 xhigh regression test if
-authorized. Only a model test can check whether the heading-purpose example
-transfers to recipe ingredients and actions.
+and input hashes are ignored alongside it. Drafting prepared no post template,
+experiment or inference request. The subsequently authorized test below checks
+whether the heading-purpose example transfers to recipe ingredients and actions.
+
+### Authorized ASv6.58 Sol 6.1 xhigh regression test
+
+The user approved ASv6.58 and testing it on N063, N074, N096 and N100 with three
+independent answers per post. Native `prepare --from ... --repeat` pairs each
+trial with its corresponding saved ASv6.57 trial. Full original posts, review
+evidence, schema and runner settings are preserved. Every saved baseline output,
+parse and receipt matches; no baseline is regenerated.
+
+Native `experiment.py revise` derives the reusable
+[ASv6.58 post template](../../experiment_specs/asv6.58-hr01-post-template.txt)
+and [revision receipt](../../experiment_specs/asv6.58-hr01-post-template.txt.revision.json)
+directly from the approved source. The template adds only the existing `{POST}`
+wrapper, byte-identical to the previous wrappers, and reconstructs exactly from
+its native receipt. It contains 18,097 UTF-8 bytes; SHA-256 is
+`3f819679d5cebc30cea9d9d055978e3f17e674fc243c7ee334e6ad86a0aae195`.
+
+Preflight found four valid saved baselines and four new, nonreusable requests
+per trial. All twelve prepared prompts render exactly with their original post.
+The draft's 29 offline checks passed, and native receipt and preparation checks
+pass. All 29 pinned approved-source, new-template and saved-ASv6.57 files remain
+unchanged after preparation. The ignored experiments are
+`sse_multivector/experiments/asv6.58-sol61-xhigh-sp-scope-regression-t1/`,
+`sse_multivector/experiments/asv6.58-sol61-xhigh-sp-scope-regression-t2/` and
+`sse_multivector/experiments/asv6.58-sol61-xhigh-sp-scope-regression-t3/`.
+
+The exact model is `gpt-6.1-sol`, effort `xhigh`, through the subscription
+WebSocket route: four concurrent cases per trial, 1,800-second timeout, no
+output cap or paid fallback. Each native run allows at most eight new attempts,
+including only provider-eligible retries, with two attempts maximum per case.
+This test covers those three trials; fresh-topic testing remains open. The ledger's
+monetary totals are valid; incremental subscription cash is zero and quota
+consumption is unmeasured. Preparation made no model calls. Results and
+complete-output reviews are pending. Agent assessments remain separate from
+user judgments and adoption.
