@@ -28,11 +28,12 @@ for boiler repair. The [audit](#asv656-cutting-for-boiler-repair-example) record
 the approved draft and updated rule map. The completed twelve-case Sol xhigh
 test found four answers with scope failures and all twelve missing valid
 branches; adoption remains open.
-The current [ASv6.57 (approved for testing, test running)](../asv6.57/ASv6.57.md) revises the same
+The current [ASv6.57 (candidate, tested on Sol xhigh)](../asv6.57/ASv6.57.md) revises the same
 case to show a quantified tube separately from its repair purpose and
 purpose-qualified cutting. The [audit](#asv657-quantified-tube-and-repair-purpose-example)
-records the approved candidate and updated rule map. The user authorized the
-same twelve-answer Sol xhigh test; adoption remains open.
+records the approved candidate and updated rule map. The completed twelve-answer
+Sol xhigh test found four answers with scope failures and eleven missing valid
+branches. Only N063 T2 passes both reviewed checks; adoption remains open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -744,7 +745,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.57 (approved for testing, test running)](../asv6.57/ASv6.57.md).
+The current map uses [ASv6.57 (candidate, tested on Sol xhigh)](../asv6.57/ASv6.57.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -1455,13 +1456,13 @@ the ASv6.57 draft below, then approved the same twelve-answer Sol xhigh test.
 
 ## ASv6.57 quantified tube and repair-purpose example
 
-Status: approved for testing, test running. On October 2, 2026, after the ASv6.56 results, the user
+Status: approved candidate, tested on Sol xhigh. On October 2, 2026, after the ASv6.56 results, the user
 authorized revising the existing boiler case to demonstrate a quantified item
 separately from its repair purpose and presenting the delta for review.
 The user subsequently approved ASv6.57 for the same twelve-answer Sol xhigh
 test. Adoption remains open; ASv6.48 remains the frozen subject baseline.
 
-[ASv6.57 (approved for testing, test running)](../asv6.57/ASv6.57.md) replaces only C1. Its post is:
+[ASv6.57 (candidate, tested on Sol xhigh)](../asv6.57/ASv6.57.md) replaces only C1. Its post is:
 "One tube for boiler repair. Cutting it for that repair." The second sentence's
 "it" refers to the counted tube, and "that repair" refers to boiler repair.
 The qualified headings retain both references' supported meaning. The source
@@ -1561,6 +1562,104 @@ output cap or paid fallback. Each native run allows at most eight new attempts,
 including only provider-eligible retries, with two attempts maximum per case.
 No additional trial is authorized. The ledger's monetary totals are valid;
 incremental subscription cash is zero and quota consumption is unmeasured.
-Preparation made no model calls; execution is now running. Complete-output
-reviews will assess heading relationships, retained subjects and valid broader
-branches. Agent assessments remain separate from user judgments and adoption.
+Preparation made no model calls. All twelve answers subsequently completed on
+the first attempt with valid JSON and native receipts. There were no execution
+failures, retries, repairs, reused answers or regenerated baselines. Field order
+remains number/context/subject. All 29 pinned source, template and saved-baseline
+files remain unchanged after execution and native reviews. Agent assessments
+remain separate from user judgments and adoption.
+
+### ASv6.57 completed answers and agent review
+
+ASv6.57 does not pass. Agent review found four of twelve answers with a
+heading-alone parent-scope failure and eleven missing an enumerated subject
+from a valid broader branch. N063 T2 passes both reviewed checks. The saved
+ASv6.56 counts were four scope failures and twelve missing-branch failures.
+This small set of stochastic answers does not establish improvement or a
+general failure rate. Current native agent verdicts are eleven reject and one
+accept; no user verdict or adoption is inferred.
+
+| Post | T1 scope / entries | T2 scope / entries | T3 scope / entries | Answers missing valid branches |
+| --- | --- | --- | --- | --- |
+| N063 | Pass / 197 | Pass / 164 | Pass / 157 | 2 of 3 |
+| N074 | Pass / 177 | Pass / 169 | Pass / 142 | 3 of 3 |
+| N096 | Fail / 289 | Fail / 296 | Fail / 255 | 3 of 3 |
+| N100 | Fail / 199 | Pass / 226 | Pass / 255 | 3 of 3 |
+
+Pass means no confirmed scope failure was found in that complete-output review;
+it does not establish compliance with every instruction. N063 T2 also retains
+all fifteen ingredients and their dish roles, the dish, cooks and food/Nostr
+subjects. Its general olive oil uses Oils, and vegetable broth appears beneath
+both Vegetables and Broths. Its acceptance is bounded to the reviewed checks.
+
+Each failing scope answer has a displayed direct edge and a heading-only
+counterexample. The post or `context` cannot supply a missing restriction:
+
+| Answer | Displayed parent → child | Counterexample |
+| --- | --- | --- |
+| N096 T1 | 2 Food preparation → 2.2 Chopping | Chopping wood fits the child without preparing food. |
+| N096 T2 | 3 Cooking → 3.6 Mixing ingredients | Mixing paint ingredients fits the child without cooking. |
+| N096 T3 | 3 Cooking → 3.5 Mixing ingredients | Mixing paint ingredients fits the child without cooking. |
+| N100 T1 | 5 Meat processing → 5.2 Trimming fat | Trimming human body fat during surgery fits the child without processing meat as food. |
+
+The missing placements below were checked against the full returned hierarchy,
+including every occurrence of each parent. Narrower instances do not replace
+the enumerated general subject. Equivalent wording is allowed; these remain
+semantic agent assessments rather than user judgments.
+
+| Answer | Retained subject and its position(s) | Missing broader placement(s) |
+| --- | --- | --- |
+| N063 T1 | Vegetable broth, 10.1 | Vegetables, 6 |
+| N063 T3 | Preparing risotto, 14.1 | Risotto, 1.2.1 |
+| N074 T1 | Weariness with narratives, 14 | Narratives, 13 |
+| N074 T2 | Weariness with narratives, 11.1 | Narratives, 10 |
+| N074 T3 | Dietary click-generation comparisons, 1.1.4.1 | Click generation by diets, 1.1.5 and 4.1 |
+| N096 T1 | One tin of water, 3.1 | Tins, 5.1 |
+| N096 T2 | Dinner recipes, 2.5 | Food recipes, 1.11 and 2.1 |
+| N096 T3 | One tin of water for bolognaise sauce, 5.1.2.1.1 and 6.1.1 | Bolognaise sauce, 1.7.1 |
+| N100 T1 | Beef-processing byproducts for tallow and animal food, 1.7.1 and 19.1.1 | Tallow production, 2.2.1 |
+| N100 T2 | Beef fat for making tallow, 3.1.2.1.1 | Beef fat, 2.1.3 and 3.1.1 |
+| N100 T3 | Myoglobin in dog food, 10.2.1 | Dog food, 7.1.2 and 8.1.2 |
+
+The answers retain N063's ingredients and dish; N074's comparisons,
+mother/ten-year-old example, Bitcoin narrative, attribution and individual plus
+combined advice; N096's ingredient quantities, yield, actions, heat levels and
+simmering time; and N100's price, steak count/thickness, trimming quantities and
+purposes, animal provisions and sealer details. This does not establish
+exhaustive coverage. N096 T1 and T2 retain many recipe-purpose quantities;
+T3 retains the water-purpose distinction but lacks many other recipe-purpose
+counterparts. The fully qualified named recipe headings remain terminal.
+General quantity headings cannot simply be placed beneath them without
+retaining the recipe role. These source-coverage caveats are separate from the
+missing placements counted among subjects already returned.
+
+All three N100 answers represent both the water/seeds provision and possible
+myoglobin-addition readings for chickens; the doubled "some some" remains
+ambiguous, without a user grounding verdict. No answer claims that the purchased
+beef was vacuum-sealed. N074's comparative controversy-exception wording remains
+a separate semantic caveat. No unstated arithmetic result was identified.
+
+Native usage for the four new attempts in each trial is recorded below.
+Output already includes reasoning; these columns must not be added together
+as separate output charges. No cross-trial token or cost total is assembled.
+
+| Trial | New attempts | Input tokens | Cached input | Output tokens | Reasoning tokens | Catalog estimate, USD |
+| --- | --- | --- | --- | --- | --- | --- |
+| T1 | 4 | 10,358 | 9,856 | 91,584 | 48,464 | 0.9375416 |
+| T2 | 4 | 20,214 | 0 | 92,642 | 47,570 | 0.966848 |
+| T3 | 4 | 15,350 | 4,864 | 97,692 | 55,477 | 1.0081064 |
+
+Every attempt has native usage and a catalog estimate; provider billing is
+unavailable. The estimates are not subscription charges or measured quota
+consumption; incremental cash is zero. Cached input does not mean an answer
+was reused. ASv6.57 uses 1,120 fewer prompt bytes per request than ASv6.56.
+The 28 offline checks passed before inference, and native parsing and receipt
+validation pass after execution; the semantic regression does not. ASv6.48
+remains frozen, with no adoption or MP change.
+
+A proposed next step is to review a delta to the existing boiler example that
+demonstrates purpose supplied by a heading, while preserving general subjects,
+qualified subjects and all valid placements. This targets a transfer hypothesis:
+the current case states "for boiler repair" explicitly, whereas a recipe heading
+supplies the purpose of its ingredient list and steps. Another draft or test
+requires user authorization; none has been prepared.
