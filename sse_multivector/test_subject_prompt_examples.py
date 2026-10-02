@@ -2,6 +2,7 @@
 
 import re
 import unittest
+from collections import Counter
 from pathlib import Path
 
 from sse_multivector import experiment_inputs
@@ -304,7 +305,7 @@ class SubjectPromptExampleTests(unittest.TestCase):
 
 
 
-# R/I IDs refer to the rule-to-case map in subject-prompt-goal-v1/asv6.50/README.md.
+# R IDs refer to the rule-to-case map in subject-prompt-goal-v1/asv6.50/README.md.
 # Subjects and relationships are reviewed expectations, not model-generated truth.
 FOCUSED_CASES = (
     {
@@ -313,11 +314,14 @@ FOCUSED_CASES = (
         "post": "I watched a lunar eclipse through binoculars. Tried sketching the Moon, but clouds kept hiding it.",
         "subjects": LUNAR_SUBJECTS,
         "relationships": LUNAR_RELATIONSHIPS,
-        "rules": (
-            "R01", "R02", "R03", "R04", "R16", "R17", "R18",
-            "R19", "R20", "R21", "R22", "R23", "R24", "R25",
-            "R26", "R27", "R28", "R29", "R30", "R31", "R32",
-            "R34", "I04",
+        "primary_rules": (
+            "R01", "R03", "R16", "R21", "R22", "R23", "R25",
+            "R26", "R28", "R31", "R34",
+        ),
+        "secondary_rules": (
+            ("R02", "Pronoun resolution: 'it' becomes the Moon."),
+            ("R17", "Unnamed subject: cloud hindrance follows from two statements."),
+            ("R24", "Nonempty output contrasts with C5's empty array."),
         ),
         "invalid": (
             ("3", "1"),
@@ -350,10 +354,11 @@ FOCUSED_CASES = (
             ("steam_locomotives", "locomotives"),
             ("bracken", "steam_locomotives"),
         ),
-        "rules": (
-            "R02", "R03", "R04", "R05", "R16", "R18", "R19",
-            "R20", "R21", "R22", "R27", "R28", "R29", "R30",
-            "R31", "R32", "R34", "I01", "I02", "I05",
+        "primary_rules": (
+            "R02", "R04", "R20", "R27", "R29", "R30",
+        ),
+        "secondary_rules": (
+            ("R18", "Named particular instance: Bracken's replacement boiler."),
         ),
         "invalid": (
             ("boilers", "replacement_parts"),
@@ -383,10 +388,12 @@ FOCUSED_CASES = (
             ("combined_advice", "booking_advice"),
             ("combined_advice", "route_advice"),
         ),
-        "rules": (
-            "R04", "R16", "R17", "R18", "R19", "R20", "R21",
-            "R22", "R27", "R28", "R29", "R30", "R31", "R32",
-            "R34", "I03",
+        "primary_rules": (
+            "R18",
+        ),
+        "secondary_rules": (
+            ("R20", "Combined advice fits both instructions; either instruction can lack the other."),
+            ("R32", "The advice role survives; recommendations do not become completed actions."),
         ),
         "invalid": (
             ("booking", "advice"),
@@ -421,11 +428,12 @@ FOCUSED_CASES = (
             ("ravenworks_appreciation", "app_appreciation"),
             ("ravenworks_appreciation", "ravenworks"),
         ),
-        "rules": (
-            "R01", "R02", "R03", "R04", "R05", "R06", "R10",
-            "R12", "R16", "R17", "R18", "R19", "R20", "R21",
-            "R22", "R27", "R28", "R29", "R30", "R31", "R32",
-            "R34",
+        "primary_rules": (
+            "R05", "R06", "R17",
+        ),
+        "secondary_rules": (
+            ("R03", "Figurative language clarification, alongside C1's recognition of an astronomical subject."),
+            ("R12", "Unresolved name retained without commentary about its unknown type."),
         ),
         "invalid": (
             ("amberloop", "apps"),
@@ -441,8 +449,8 @@ FOCUSED_CASES = (
         },
         "relationships": (
         ),
-        "rules": (
-            "R07", "R12", "R24",
+        "primary_rules": (
+            "R07", "R24",
         ),
         "invalid": (
         ),
@@ -465,10 +473,11 @@ FOCUSED_CASES = (
             ("event_identifiers", "identifiers"),
             ("event_identifiers", "events"),
         ),
-        "rules": (
-            "R04", "R07", "R08", "R10", "R11", "R12", "R16",
-            "R18", "R20", "R21", "R22", "R27", "R28", "R29",
-            "R30", "R31", "R34",
+        "primary_rules": (
+            "R08",
+        ),
+        "secondary_rules": (
+            ("R07", "Relevant prose establishes topics while URL bodies still contribute no birds, repair or count."),
         ),
         "invalid": (
             ("profile_urls", "event_identifiers"),
@@ -504,10 +513,8 @@ FOCUSED_CASES = (
             ("notebook_purchase", "notebooks"),
             ("notebook_purchase", "purchases"),
         ),
-        "rules": (
-            "R01", "R03", "R04", "R09", "R10", "R11", "R12",
-            "R16", "R18", "R19", "R20", "R21", "R22", "R27",
-            "R28", "R29", "R30", "R31", "R32", "R34",
+        "primary_rules": (
+            "R09", "R10", "R11", "R12", "R19",
         ),
         "invalid": (
             ("notebook_purchase", "observation"),
@@ -547,11 +554,11 @@ FOCUSED_CASES = (
             ("not_longer", "comparisons"),
             ("not_longer", "pair"),
         ),
-        "rules": (
-            "R01", "R02", "R04", "R05", "R13", "R14", "R15",
-            "R16", "R17", "R18", "R19", "R20", "R21", "R22",
-            "R27", "R28", "R29", "R30", "R31", "R32", "R33",
-            "R34",
+        "primary_rules": (
+            "R13", "R14", "R32", "R33",
+        ),
+        "secondary_rules": (
+            ("R15", "No unstated 1 m difference or 5 m total."),
         ),
         "invalid": (
             ("pairs", "lengths"),
@@ -584,10 +591,11 @@ FOCUSED_CASES = (
             ("sum", "three"),
             ("sum", "five"),
         ),
-        "rules": (
-            "R03", "R04", "R13", "R14", "R15", "R16", "R17",
-            "R18", "R19", "R20", "R21", "R22", "R27", "R28",
-            "R29", "R30", "R31", "R32", "R34",
+        "primary_rules": (
+            "R15",
+        ),
+        "secondary_rules": (
+            ("R13", "Arithmetic roles distinguish addends 2 and 3 from result 5."),
         ),
         "invalid": (
         ),
@@ -623,14 +631,25 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
 
     def test_each_instruction_is_traced_to_a_present_case(self):
         self.assertEqual(set(self.examples()), {c["post"] for c in FOCUSED_CASES})
+        primary_rules = Counter(
+            rule for case in FOCUSED_CASES for rule in case["primary_rules"]
+        )
         self.assertEqual(
-            {rule for c in FOCUSED_CASES for rule in c["rules"]},
-            {f"R{i:02d}" for i in range(1, 35)}
-            | {f"I{i:02d}" for i in range(1, 6)},
+            primary_rules,
+            Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
+            "each instruction must have exactly one primary example",
         )
         self.assertEqual(len({c["id"] for c in FOCUSED_CASES}), len(FOCUSED_CASES))
         for case in FOCUSED_CASES:
             self.assertTrue(case["purpose"])
+            secondary_rules = case.get("secondary_rules", ())
+            self.assertEqual(
+                len(secondary_rules), len({rule for rule, _ in secondary_rules})
+            )
+            for rule, aspect in secondary_rules:
+                self.assertIn(rule, primary_rules)
+                self.assertNotIn(rule, case["primary_rules"])
+                self.assertTrue(aspect.strip())
 
     def test_all_expected_subjects_and_output_fields_are_retained(self):
         examples = self.examples()
