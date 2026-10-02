@@ -144,14 +144,26 @@ def prepare_file(dataset, path, template, load_report=None):
             source[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
         source['source'] = references
+    if dataset['adapter'] == 'node_descriptions':
+        engine._expect_fields(source, 'node descriptions',
+            {'schema_version', 'source_packets', 'hierarchy'} | ({'nodes'} & source.keys()))
+        if type(source['schema_version']) is not int or source['schema_version'] != 1:
+            raise ValueError('expected node descriptions schema_version 1')
+        references = {}
+        for key in ('source_packets', 'hierarchy'):
+            source_path = engine._resolve_path(source[key], key, path.parent)
+            source[key] = read(source_path)
+            references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
+        source['source'] = references
     if dataset['adapter'] == 'subject_contexts':
         selector = 'nodes' if 'nodes' in source else 'selections'
         engine._expect_fields(source, 'subject contexts',
-                              {'schema_version', 'subjects', 'hierarchy', selector})
+                              {'schema_version', 'subjects', 'hierarchy', selector}
+                              | ({'descriptions'} & source.keys()))
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
             raise ValueError('expected subject contexts schema_version 1')
         references = {}
-        for key in ('subjects', 'hierarchy'):
+        for key in ('subjects', 'hierarchy') + (('descriptions',) if 'descriptions' in source else ()):
             source_path = engine._resolve_path(source[key], key, path.parent)
             source[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
@@ -951,6 +963,118 @@ def prepare_posts(source, selected=None):
     return cases
 
 
+def validate_node_description(value, node_id=None, node_title=None):
+    """Validate saved meaning and preserve the exact existing node identity."""
+    if not isinstance(value, dict) or set(value) != {'node_id', 'node_title', 'description'}:
+        raise ValueError('expected exact node_id, node_title and description fields')
+    engine._expect_identifier(value['node_id'], 'node_id')
+    for key in ('node_title', 'description'):
+        engine._expect_string(value[key], key)
+        if not value[key].strip():
+            raise ValueError(f'empty node description {key}')
+    if len(value['description']) > 1200:
+        raise ValueError('node description exceeds 1200 characters')
+    if node_id is not None and value['node_id'] != node_id:
+        raise ValueError('node description identity differs')
+    if node_title is not None and value['node_title'] != node_title:
+        raise ValueError('node description title differs')
+    return value
+
+
+def prepare_node_descriptions(source, selected=None):
+    """Bound exact complete-post context without changing saved node membership."""
+    prepare_titles(source['source_packets'], '{NUMBERED_INSTANCES}', [])
+    packets = {p['packet']: p for p in source['source_packets']['packets']}
+    nodes = source['hierarchy']['graph']['nodes']
+    by_id = {}
+    for node in nodes:
+        nid = engine._expect_identifier(node['group'], 'node_id')
+        if nid in by_id:
+            raise ValueError('duplicate hierarchy node identity')
+        engine._expect_string(node['title'], 'node_title')
+        if not node['title'].strip():
+            raise ValueError('empty hierarchy node title')
+        by_id[nid] = node
+    requested = source.get('nodes', list(by_id))
+    engine._validate_string_array(requested, 'nodes', allow_empty=False)
+    if len(set(requested)) != len(requested) or set(requested) - set(by_id):
+        raise ValueError('duplicate or unknown description node requested')
+    if selected is not None:
+        if set(selected) - set(requested):
+            raise ValueError('unknown description case requested')
+        requested = [nid for nid in requested if nid in selected]
+    cases = []
+    for nid in requested:
+        node = by_id[nid]
+        packet_ids = [nid] if nid in packets else node.get('source_group_ids', [nid])
+        engine._validate_string_array(packet_ids, 'source_group_ids', allow_empty=False)
+        if len(packet_ids) != len(set(packet_ids)) or set(packet_ids) - set(packets):
+            raise ValueError(f'missing or duplicate source packets for node: {nid}')
+        if 'sources' in node:
+            packet_masks = {(item['note_id'], tuple(map(tuple, item['byte_spans'])))
+                            for pid in packet_ids for item in packets[pid]['instances']}
+            graph_masks = {(item['note_id'], tuple(map(tuple, item['byte_spans'])))
+                           for item in node['sources']}
+            if packet_masks != graph_masks:
+                raise ValueError(f'node description source masks differ from hierarchy: {nid}')
+        posts, masks = {}, {}
+        for pid in packet_ids:
+            for item in packets[pid]['instances']:
+                note_id = engine._expect_identifier(item['note_id'], 'note_id')
+                posts[note_id] = item['text']
+                key = tuple(tuple(span) for span in item['byte_spans'])
+                masks.setdefault(note_id, {})[key] = item['fragments']
+        payload = dict(node_id=nid, node_title=node['title'], instances=[])
+        selected_ids, skipped = [], []
+        for note_id in sorted(posts):
+            instance = dict(note_id=note_id, post=posts[note_id],
+                            masks=[fragments for _, fragments in sorted(masks[note_id].items())])
+            candidate = {**payload, 'instances': payload['instances'] + [instance]}
+            reason = ('post_limit' if len(selected_ids) >= 8 else
+                      'character_limit' if len(json.dumps(candidate, ensure_ascii=False)) > 12000 else None)
+            if reason:
+                skipped.append(dict(note_id=note_id, reason=reason))
+            else:
+                payload = candidate
+                selected_ids.append(note_id)
+        if not selected_ids:
+            raise ValueError(f'no complete posts fit node description input: {nid}')
+        rendered = json.dumps(payload, ensure_ascii=False)
+        cases.append(dict(id=nid, inputs={'INPUT_JSON': rendered}, evidence=dict(
+            node_id=nid, node_title=node['title'], node=node,
+            packets=[packets[pid] for pid in packet_ids], source=source['source'],
+            candidate_note_ids=sorted(posts), selected_note_ids=selected_ids,
+            skipped_note_ids=[item['note_id'] for item in skipped], skipped_posts=skipped,
+            input_characters=len(rendered))))
+    return cases
+
+
+def attach_node_descriptions(cases, source):
+    descriptions = source['descriptions']
+    engine._expect_fields(descriptions, 'collected node descriptions', {'schema_version', 'nodes'})
+    if type(descriptions['schema_version']) is not int or descriptions['schema_version'] != 1:
+        raise ValueError('expected collected node descriptions schema_version 1')
+    if not isinstance(descriptions['nodes'], list):
+        raise ValueError('node descriptions must be an array')
+    by_id = {}
+    for record in descriptions['nodes']:
+        validate_node_description(record)
+        if record['node_id'] in by_id:
+            raise ValueError('duplicate node description identity')
+        by_id[record['node_id']] = record
+    for case in cases:
+        evidence = case['evidence']
+        record = by_id.get(evidence['node_id'])
+        if record is None:
+            raise ValueError(f'missing node description: {evidence["node_id"]}')
+        validate_node_description(record, evidence['node_id'], evidence['node_title'])
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        payload['node_description'] = record['description']
+        case['inputs']['INPUT_JSON'] = json.dumps(payload, ensure_ascii=False)
+        evidence.update(node_description=record['description'], node_description_record=record,
+                        description_source=source['source']['descriptions'])
+
+
 def prepare(dataset, source, template):
     adapter = dataset["adapter"]
     if "select" in dataset:
@@ -991,6 +1115,12 @@ def prepare(dataset, source, template):
     elif adapter == 'subject_contexts':
         cases = prepare_subject_contexts(source, dataset.get('select'),
                                          dataset.get('prominence_basis', 'context'))
+        if 'descriptions' in source:
+            if dataset.get('prominence_basis', 'context') != 'node_title':
+                raise ValueError('node descriptions require node_title prominence basis')
+            attach_node_descriptions(cases, source)
+    elif adapter == 'node_descriptions':
+        cases = prepare_node_descriptions(source, dataset.get('select'))
     elif adapter == "titles":
         groups = prepare_titles(
             source, "{NUMBERED_INSTANCES}", dataset.get("select", [])
@@ -1044,6 +1174,10 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'node_descriptions':
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        result['parsed'] = validate_node_description(value, case['evidence']['node_id'],
+                                                    case['evidence']['node_title'])
     if adapter == 'bounded_parent_guides':
         try:
             from .parent_guide_workflow import validate_guides

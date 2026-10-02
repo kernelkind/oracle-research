@@ -1,0 +1,13 @@
+{
+  "base_sha256": "2530c9b72d130645f8b3454883ad1d5ebbe8d9caaca9967b47e964ccf19d5dcd",
+  "edits": [
+    {
+      "old": "The input is a JSON object. \"node_title\" contains the existing hierarchy node title. \"post\" contains the complete original post.",
+      "new": "The input is a JSON object. \"node_title\" contains the existing hierarchy node title. \"node_description\" contains the same saved meaning of that node for every post. \"post\" contains the complete original post."
+    },
+    {
+      "old": "The hierarchy node title comes from Nostr posts, where hashtags can identify communities. Use the complete post to interpret the hierarchy node title as it is used on Nostr.",
+      "new": "Use the supplied node_description to determine what concerns the hierarchy node. Assess the complete post against that same node meaning; do not redefine the node according to each post."
+    }
+  ]
+}

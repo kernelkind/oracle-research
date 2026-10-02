@@ -738,7 +738,7 @@ target/infomap-review-build/debug/sse-subject-navigation \
 Do not enable display-collapse options. Append `--check` for noninteractive
 validation. No saved LG01 output is rewritten.
 
-### Collect subjects and masks into reusable inputs
+### Collect subjects, masks and node descriptions into reusable inputs
 
 `collect` is offline. It validates saved answers and receipts through the same
 report loader as `show`, then writes a fresh output directory. Collection paths,
@@ -753,6 +753,10 @@ prompt versions, teacher settings and saved-answer reuse are data supplied to
   `worker-request.json`. Keep every original SP entry, including valid empty MP
   masks and selected posts with no subjects. Encode exactly identical nonempty
   source-byte ranges within one post once, retaining all subject associations.
+- Collect completed `node_descriptions` experiments into `node-descriptions.json`.
+  Each record preserves the supplied `node_id` and `node_title` and adds a
+  nonempty description of at most 1,200 characters. Duplicate nodes are rejected;
+  collection does not choose between trials or generate descriptions.
 - Multiple experiment paths can combine disjoint collections or complete partial
   mask batches. Reject duplicate subject answers, conflicting posts, missing
   masks, invalid receipts and changed source data. Collection does not choose
@@ -4860,12 +4864,59 @@ is separate from incremental subscription cash $0, unavailable provider billing
 and unmeasured weekly quota. Only this zero-cash reservation is settled;
 lifetime monetary totals and unrelated accounting are unchanged.
 
-Next recommended work is a read-only inspection of these two nodes' saved
-node-title inputs to determine whether the existing title call has enough
-information to also provide one consistent node meaning. That inspection has
-not begun; it does not reopen frozen title prompt v38 or authorize generation,
-a new stage, hierarchy repair or production adoption. SP-only meaning generation
-remains unapproved and withdrawn for insufficient explanatory context.
+The subsequently approved read-only inspection is complete. Both current
+TPv38 calls sent only the selected mask fragments: eleven repetitions of
+coffeechain's name, and fourteen GrowNostr names plus one food-growing mask.
+Full source posts are review evidence, not model input. These inputs do not
+establish a sufficient shared description source. Frozen TPv38 remains intact;
+the earlier SP-only generation proposal remains withdrawn.
+
+**General sorting investigation approved October 1 (in progress):**
+
+The user authorizes architectural choices and experiments until satisfactory
+or two hours pass, with a deadline of October 2 at 02:09:48 UTC. The ceiling
+is 2,000 OpenAI subscription calls using 6.1 Sol at medium effort or lower.
+The agent assesses transfer without requesting new user labels, preserves prior
+user judgments, commits completed checkpoints and reports status at the stop.
+No paid fallback, rental, push or production deployment is included.
+
+The first control, `experiments/sorting-general-v1-nostr-sol-control`, keeps
+PPv30-nostr-v1 and all twenty-six original inputs fixed and changes only the
+model to gpt-6.1-sol / medium. Twenty-six fresh first-attempt calls are valid.
+Eight pre-run agent observations prescribe no exact percentages. Sol preserves
+the focused roasting/preparation and food/community separation checks, but
+still counts household/gym greetings while omitting weather/another-coffee
+greetings. One stove output newly substitutes gardening/food growing for
+GrowNostr. Model choice alone therefore does not establish consistent meaning.
+
+The shared workflow now supports `node_descriptions` source selections with
+`schema_version`, `source_packets`, `hierarchy` and optional `nodes`. It checks
+original mask spans and references, combines original source groups for merged
+nodes, deduplicates masks within posts and selects at most eight distinct
+complete posts in note-ID order. JSON input is bounded to 12,000 characters.
+Whole posts that exceed the bound are skipped with reasons; nothing is silently
+truncated. All original evidence, selected/skipped identities and source hashes
+remain frozen. This is a mechanical sample, not proven semantic coverage.
+
+Experimental **NodeDescription-v1 (draft)** asks for one short shared meaning,
+using selected masks to identify the node subject and complete posts as context.
+It preserves existing node titles and does not combine every co-occurring post
+subject. The two-node trial is prepared, not yet generated. The collected
+description file can be referenced by a `subject_contexts` selection's optional
+`descriptions` field with `prominence_basis: "node_title"`; preparation checks
+IDs/titles and adds the same `node_description` to every post in that node.
+Experimental **PPv31-node-description-v1 (draft)** keeps allocations/schema
+unchanged and uses that supplied meaning. Default input contracts remain intact.
+Changed inputs retain native `input_mismatch`, not invented comparable baselines.
+
+One description request per node has bounded context; subsequent prominence
+requests add one description bounded to 1,200 characters per post/node pair.
+Work follows existing memberships, not all posts against all nodes. Initial
+comparisons retain the existing SP subject-plus-context relevance, SSE learned
+layers and formula, so interpretation changes can be isolated. Production
+adoption, description quality, sampling coverage and any formula change remain
+open. Source-changing tests demonstrate the missing capabilities before the
+implementation; collection validates receipts and every referenced source.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

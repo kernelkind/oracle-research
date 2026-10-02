@@ -720,11 +720,10 @@ def collect(directories, output, worker_config=None):
             raise ValueError("collect requires complete valid saved answers")
         plan = {**plan, "experiment": str(directory)}
         bundles.append((plan, result))
-        source = plan["dataset"]["path"]
-        expected = plan["sources"][source]
-        if source in protected and protected[source] != expected:
-            raise ValueError(f"conflicting source hashes: {source}")
-        protected[source] = expected
+        for source, expected in plan["sources"].items():
+            if source in protected and protected[source] != expected:
+                raise ValueError(f"conflicting source hashes: {source}")
+            protected[source] = expected
         protected[str(directory / "experiment.json")] = engine._sha256_file(directory / "experiment.json")
         for name, expected in plan["files"].items():
             protected[str(directory / name)] = expected
@@ -740,10 +739,21 @@ def collect(directories, output, worker_config=None):
         files = inputs.hierarchy_inputs.collect_subjects(bundles)
     elif adapters <= {"masks", "grouped_masks"}:
         files = inputs.hierarchy_inputs.collect_masks(bundles)
+    elif adapters == {"node_descriptions"}:
+        nodes = {}
+        for _, result in bundles:
+            for case in result["cases"]:
+                evidence = case["evidence"]
+                value = inputs.validate_node_description(case["parsed"],
+                    evidence["node_id"], evidence["node_title"])
+                if value["node_id"] in nodes:
+                    raise ValueError(f'duplicate collected node description: {value["node_id"]}')
+                nodes[value["node_id"]] = value
+        files = {"node-descriptions.json": dict(schema_version=1, nodes=list(nodes.values()))}
     else:
-        raise ValueError("collect supports subjects, masks and grouped_masks experiments")
+        raise ValueError("collect supports subjects, masks, grouped_masks and node_descriptions experiments")
     if worker_config is not None:
-        if adapters == {"subjects"}:
+        if not adapters <= {"masks", "grouped_masks"}:
             raise ValueError("--worker-config requires mask experiments")
         worker_config = worker_config.expanduser().resolve()
         protected[str(worker_config)] = engine._sha256_file(worker_config)

@@ -1900,11 +1900,37 @@ API catalog reference $0.462170 is separate from incremental cash $0 and
 unmeasured quota. 
 The task changes no production/workflow code, hierarchy, source membership,
 other-node result or old SP/MP data. Earlier agreed checks remain untouched.
-Next recommended work is read-only inspection of these two nodes' saved
-title-generation inputs to assess whether the existing title call could supply
-one consistent meaning. It has not begun; frozen v38 is unchanged and no
-new generation stage, broader work, hierarchy repair or adoption is authorized.
-The SP-only generation proposal remains withdrawn, not approved.
+The subsequently approved title-input inspection is complete: current TPv38
+calls receive repeated names/mask fragments, with full posts saved only as
+review evidence. Those fragments do not establish enough information to supply
+an explicit shared meaning. Frozen v38 remains unchanged; SP-only generation
+remains withdrawn for insufficient explanatory context.
+
+**General sorting investigation approved October 1 (in progress):** The user
+authorizes architectural choices and independent agent assessment until
+satisfactory or two hours pass, stopping at October 2, 02:09:48 UTC. The total
+ceiling is 2,000 OpenAI subscription calls using 6.1 Sol at medium effort or
+lower. Preserve earlier user judgments; no new user ordering labels are
+required. This is authority to investigate and implement reusable support,
+not a production deployment, push, paid fallback or resource rental.
+
+An exact twenty-six-input Sol-medium control completed valid first attempts.
+It reproduces coffeechain's inconsistent greeting inclusion and adds one
+GrowNostr food-growing interpretation failure. The next comparison supplies
+one bounded, source-bound description to every post in a node. Reusable
+preparation/validation and offline collection are implemented; generation is
+prepared for the two original nodes, not yet run. The description request
+preserves titles, uses at most eight complete posts and bounds JSON to 12,000
+characters. Skipped whole posts and all original evidence are retained.
+Descriptions are at most 1,200 characters and are opt-in prominence inputs;
+default contracts, memberships and frozen title prompts stay intact.
+
+Initial experiments keep SP subject-plus-context relevance, SSE learned layers
+and the sorting formula fixed. One bounded request per node and one bounded
+description per selected post/node input avoid an all-post/all-node matrix.
+Production adoption, description quality and general transfer remain open.
+[Model-runner investigation](../../sse_multivector/model-runner.md) records
+the native experiments, capability tests, model control and context limits.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
