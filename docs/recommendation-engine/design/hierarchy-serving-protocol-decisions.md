@@ -52,8 +52,12 @@ within the author's hierarchy. The identifier MUST stay the same when the
 node's title, children or notes change, and MUST NOT be reused for a
 different node.
 
-`title` names the node. Its `e` tags list immediate child node event IDs in
-order. A node with no `e` tags has no children. `content` is empty.
+`title` names the node. Its `child` tags list immediate children in tag order.
+Each tag contains the child's `d` value followed by its node event ID.
+The event ID selects the child version. The referenced event MUST be a
+`K_NODE` event by the hierarchy author, and its `d` value MUST match the
+tag's identifier.
+A node with no `child` tags has no children. `content` is empty.
 
 ```text
 {
@@ -62,8 +66,8 @@ order. A node with no `e` tags has no children. `content` is empty.
   "tags":[
     ["d","7602d719-2393-4fab-93b8-5df19d887eb0"],
     ["title","Cooking"],
-    ["e","note1jkl..jkl"],
-    ["e","note1mno..mno"]
+    ["child","d288321f-a49b-4dbd-9523-86337d7ad046","note1jkl..jkl"],
+    ["child","74286a9a-5768-44ce-8a1a-c4af2f1a2255","note1mno..mno"]
   ],
   "content":"", "sig":"def..def"
 }
