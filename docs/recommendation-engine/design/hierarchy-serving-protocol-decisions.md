@@ -55,6 +55,9 @@ different node.
 A node MAY have multiple parents. Different parents MAY select different
 node event IDs for the same `d` value.
 
+A `d` value MUST NOT occur twice along one path from a root through `child`
+references, even if the node event IDs differ.
+
 `title` names the node. Its `child` tags list immediate children in tag order.
 Each tag contains the child's `d` value followed by its node event ID.
 The event ID selects the child version. The referenced event MUST be a
