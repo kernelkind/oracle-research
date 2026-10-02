@@ -194,6 +194,8 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 capture("required-release-focused")
                 evaluate("document.querySelector('#show-all').click()")
                 self.assertEqual(visible_ids(), shared | release)
+                self.assertEqual(evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('28-12-required').length"), 1,
+                                 "The validated launch-scale build must gate the required launch snapshot")
                 self.assertIn("Required release", evaluate("document.querySelector('#graph-status').textContent"))
                 capture("required-release")
 

@@ -529,9 +529,9 @@ longer constrains the release. The validation ladder is kept and extended —
 release build — because each rung gives diagnostic reference points when a
 larger build misbehaves, and the release build must not be an uninstrumented
 jump in scale. The dependency graph follows: the release build (12) now takes
-its inputs from the validated workflow (03), the frozen corpus (09) and the
-selected teachers (17), while the distilled-model checks (10, 11) gate the
-model track instead of the release.
+its inputs from the validated workflow (03), the validated launch-scale
+implementation (28), the frozen corpus (09) and the selected teachers (17).
+The distilled-model checks (10, 11) gate the model track instead of the release.
 
 ## Corpus scope and size
 
@@ -1219,7 +1219,7 @@ select implementation methods or new dates:
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Complete for HR02; not a prerequisite for 02 or 03. The newer hierarchy's merging and conflict decisions remain within 02. |
 | **26 · Collapse equal-note navigation steps** | Earlier mask-group navigation rule, implemented and regression-tested including shared children; validation remains pending. Preserve note sets, masks and provenance. | Not a prerequisite for 03. Any reuse in the newer hierarchy needs an explicit decision within 02; useful navigation remains required in 03. |
 | **27 · Order notes within each node** | Implement and validate ordering using the node sort score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope. | Needs score definition 04; required to finish 03. |
-| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
+| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to complete release snapshot 12 and model-track feasibility check 10. |
 
 Task 24's recovery work is conditional on using HDBSCAN; that choice remains
 open. Its link to 03 is helpful while the choice is open and becomes required
@@ -2477,8 +2477,10 @@ schedule fits.
 Three weeks remain to the non-negotiable October 18 date. This re-cut of the
 efficient five-week sequence matches the release shape above; it is a proposal
 that authorizes nothing. Model-track and scale work (05–08, 10, 11, 20, 21,
-22, 28) proceeds opportunistically in parallel and is not scheduled here. This
-calendar supersedes the earlier weekly-targets proposal. The retired draw.io
+22) proceeds opportunistically in parallel and is not scheduled here.
+Launch-scale implementation (28) is required to complete snapshot 12; its
+schedule remains open. This calendar supersedes the earlier weekly-targets
+proposal. The retired draw.io
 page is recoverable from Git, not a second current planning view.
 
 **Week 1 · September 28 – October 4: settle the quality foundation.** Review

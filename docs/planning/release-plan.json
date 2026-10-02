@@ -433,6 +433,12 @@
       "label": "validated automated workflow"
     },
     {
+      "source": "28",
+      "target": "12",
+      "kind": "required",
+      "label": "validated launch-scale build"
+    },
+    {
       "source": "09",
       "target": "12",
       "kind": "required",

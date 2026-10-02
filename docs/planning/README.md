@@ -37,6 +37,8 @@ Task 03 covers validation at 200 / 300 / 500 notes and the ~1–2k-note user-rev
 rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
 and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
+Task 28 supplies the validated launch-scale implementation and is required to
+complete 12; it does not own a separate release snapshot or select a workflow.
 Corpus preparation and Notedeck integration preparation started September 30.
 Broader hierarchy tests have not started. Browser UI implementation is now
 underway; protocol agreement and service integration remain pending.
