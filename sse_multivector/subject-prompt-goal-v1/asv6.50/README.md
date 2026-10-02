@@ -19,6 +19,9 @@ The test found five of twelve answers with scope failures and ten with missing
 valid branches. Adoption remains open. The
 [rule-to-case map](#example-correctness-and-rule-coverage) records each case's
 instruction basis; the [draft audit](#asv655-consolidated-examples) records verification.
+The subsequent [unchanged ASv6.54 comparison](#asv654-completed-answers-and-agent-review)
+also failed, with five answers containing scope failures and eleven missing
+valid branches.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -808,13 +811,13 @@ its visible consequences without adding a reasoning trace.
 
 ## ASv6.54 focused examples
 
-Status: unchanged comparison candidate, testing in progress on Sol xhigh. The
-user's earlier "proceed" authorized this example revision and offline
+Status: unchanged comparison candidate, tested on Sol xhigh; regression failures
+found. The user's earlier "proceed" authorized this example revision and offline
 verification; the latest "proceed" authorizes the twelve-answer comparison
 below. Wording approval and adoption remain open. ASv6.51 remains the last
 approved candidate; ASv6.48 remains the frozen subject baseline.
 
-[ASv6.54 (candidate, testing in progress)](../asv6.54/ASv6.54.md) preserves every
+[ASv6.54 (candidate, tested on Sol xhigh)](../asv6.54/ASv6.54.md) preserves every
 instruction byte from approved ASv6.51. It preserves ASv6.53's corrected lunar
 case byte for byte, replaces the overloaded railway story with separate
 replacement-part and combined-advice cases, and adds six language cases.
@@ -904,9 +907,118 @@ trials. Incremental subscription cash is zero; quota consumption is unmeasured.
 The ledger's monetary totals were validated before inference.
 
 All 26 offline prompt-revision, example and SP workflow checks passed before
-inference. Execution is in progress; completed answers will receive native
-agent reviews for heading-alone scope, every valid branch and source coverage.
+inference. All twelve answers completed on their first attempt with valid JSON
+and native receipts. There were no execution failures, retries, repairs,
+reused answers, regenerated baselines or output-truncation requests. All entry
+fields retain the number/context/subject order. The source prompt, template and
+27 pinned ASv6.55 files remain unchanged after execution and native reviews.
 No user semantic verdict, source-prompt change or adoption is implied.
+
+### ASv6.54 completed answers and agent review
+
+Agent review rejects all twelve answers. Five answers contain heading-alone
+scope failures; eleven omit an enumerated heading from a valid broader branch.
+The corresponding ASv6.55 figures were five and ten. The unchanged nine-example
+prompt still exhibits both patterns, so consolidation does not explain their
+presence by itself. These small independent samples do not establish general
+failure rates or prove that ASv6.54 is worse. The source instructions are
+unchanged in both prompts.
+
+The cells below show scope assessment and hierarchy-entry counts. "Pass" means
+no confirmed scope failure was found; every answer still fails at least one
+reviewed requirement.
+
+| Post | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| N063 | Pass; 143 entries | Fail; 153 entries | Pass; 159 entries |
+| N074 | Pass; 169 entries | Pass; 140 entries | Pass; 151 entries |
+| N096 | Fail; 266 entries | Fail; 242 entries | Fail; 224 entries |
+| N100 | Pass; 243 entries | Pass; 191 entries | Fail; 215 entries |
+
+Representative scope findings for the five failing answers are:
+
+- **N063 T2, 10 -> 10.1, and N096 T3, 1.7 -> 1.7.1:** Edible oils -> Olive oil.
+  The generic child includes lampante olive oil that is unfit for human
+  consumption without further processing. The
+  [USDA olive-oil grades](https://www.ams.usda.gov/grades-standards/olive-oil-and-olive-pomace-oil-grades-and-standards)
+  identify refining and nonfood purposes for that grade. A post about it fits
+  the child without fitting the edible parent; this source's cooking use cannot
+  narrow the heading.
+- **N096 T1, 3 -> 3.1:** Food preparation -> Ingredient preparation. Preparing
+  ingredients for soap fits the generic child without fitting Food preparation.
+  The child lacks the food restriction established by this particular recipe.
+- **N096 T2, 3 -> 3.1:** Cooking -> Chopping. Chopping wood fits the generic
+  child without fitting Cooking. Cooking oils -> Olive oil at 1.6 -> 1.6.1 also
+  lacks the restriction to a cooking grade or role.
+- **N100 T3, 1.1.4 -> 1.1.4.1:** Beef by-products -> Beef fat. A post about fat
+  within an intact beef cut fits Beef fat without requiring a processing
+  by-product role. The generic connective-tissue and myoglobin children have
+  the same role problem; the trimming context supplies it only for this source.
+
+For each omission below, the child already occurs elsewhere in the answer and
+fits the stated broader heading by itself, but is absent beneath every listed
+parent occurrence. The child position is representative when it has several
+copies. Narrower descendants do not retain the separately enumerated heading
+required by R22.
+
+| Post/trial | Existing child occurrence | Valid broader branch missing it |
+| --- | --- | --- |
+| N063 T1 | 10.1 Vegetable broth | 6 Vegetables |
+| N063 T3 | 10.1 Vegetable broth | 5 Vegetables |
+| N074 T1 | 1.3.1 Plant-based diets | 5.1 Plant foods |
+| N074 T2 | 7.1 Weariness with diet narratives | 1.1.6 Diet narratives |
+| N074 T3 | 11.1 Dietary advice | 1 Diets |
+| N096 T1 | 3.1.1 Finely chopped vegetables | 1.2 Vegetables |
+| N096 T2 | 6.1.1 Tinned tomatoes | 1.2.5 Tomatoes |
+| N096 T3 | 3.6 Cooking according to packet instructions | 10 Cooking instructions |
+| N100 T1 | 15.1.1.3 Nesco VS-12 food vacuum sealer rated much better than previously used FoodSaver food vacuum sealers | 15.1.2.1, 15.1.3.2, 16.1.2.1 and 16.1.3.2 Past use of FoodSaver food vacuum sealers |
+| N100 T2 | 14.1.1.2 New Nesco VS-12 vacuum sealer rated much better than previously used FoodSaver vacuum sealers | 14.2.1 and 14.3.2 Past use of FoodSaver vacuum sealers |
+| N100 T3 | 13.1 Vacuum sealer evaluations | 10 Vacuum sealers |
+
+No confirmed valid-branch omission was found in N063 T2; its scope failure
+still rejects the answer. Core dish/ingredient, diet/advice, recipe/quantity/
+action/time and meat/animal/equipment/purchase subjects are largely retained.
+N074 T1 has no separate Nostr entry, though its Nostr diet headings remain.
+That preservation does not prove full individual-subject or interpretation
+coverage.
+
+All three N100 answers retain both the water/seeds-only plan and a reading
+that includes saved myoglobin for chickens. The doubled "some some" source
+remains ambiguous: retaining both readings is not a user verdict that the
+writer actually plans to feed myoglobin to chickens. No answer asserts that
+the writer sealed this beef. A keyword check for uncertainty/plausibility
+commentary found no such qualifiers in the saved entries.
+
+Native `experiment.py review --role agent` records one reject per answer and
+no user judgments. These are agent semantic assessments with source-bound
+outputs, exact positions and counterexamples, not an independent entailment
+oracle. JSON/receipt validity and the 26 passing offline checks remain separate
+from the failed semantic regression. Neither prompt was edited or adopted;
+ASv6.48 remains frozen.
+
+Native usage is preserved separately for each trial. Reasoning tokens are
+already included in output tokens:
+
+| Trial | New attempts | Input tokens | Cached input tokens | Output tokens | Reasoning tokens | Catalog estimate USD |
+| --- | --- | --- | --- | --- | --- | --- |
+| T1 | 4 | 23,534 | 0 | 103,145 | 61,537 | 1.078518 |
+| T2 | 4 | 23,534 | 0 | 87,527 | 50,020 | 0.922338 |
+| T3 | 4 | 23,534 | 0 | 87,718 | 51,864 | 0.924248 |
+
+Every attempt has native usage and a catalog estimate; provider billing is
+unavailable. Catalog estimates are not subscription charges or measured quota
+consumption; incremental cash remains zero. ASv6.54 repeats 5,185 additional
+prompt bytes per request compared with ASv6.55. Entry counts vary in both
+directions against the paired answers: ASv6.55 counts were N063 161/186/182,
+N074 163/169/154, N096 260/225/210 and N100 230/193/211. Restoring more examples
+did not prevent these failures and added repeated input at corpus scale.
+
+A useful proposed next step is a focused delta to an existing example that
+retains a general action separately from its context-specific purpose, and
+shows the qualified subject in every valid broader branch. Cutting a part for
+boiler repair would apply the existing rules outside food. Review its source,
+subjects, relationships and rule mappings before further inference. No example
+edit or additional model test has been authorized or prepared.
 
 ## ASv6.55 consolidated examples
 
@@ -1014,7 +1126,8 @@ ASv6.51 cohort. Ten answers also omit an enumerated heading from a valid
 broader branch. This is a sample comparison, not an estimate of general failure
 rates or proof that removing the two examples caused the difference. The
 [unchanged ASv6.54 comparison](#authorized-asv654-sol-61-xhigh-comparison-test)
-was subsequently authorized and is now in progress.
+was subsequently authorized and completed: it also has five answers with scope
+failures, and eleven with missing valid branches.
 
 The following cells show the scope assessment and number of hierarchy entries.
 "Pass" means no confirmed scope failure was found in that review; it does not
@@ -1113,6 +1226,6 @@ and receipt validation pass after the run; the semantic regression does not.
 
 The user subsequently authorized unchanged ASv6.54 on the same twelve cases,
 paired with these saved ASv6.55 answers, to examine the effect of consolidating
-the examples before another edit. That test is in progress above. The rule map
-establishes demonstration coverage; these results show that coverage alone
-does not establish teacher generalization.
+the examples before another edit. That test completed above and still exhibits
+both failure patterns. The rule map establishes demonstration coverage; these
+results show that coverage alone does not establish teacher generalization.

@@ -32,9 +32,11 @@ records their instruction basis and review status.
 The [completed test](../asv6.50/README.md#completed-answers-and-agent-review)
 found five of twelve answers with scope failures and ten with missing valid
 branches; ASv6.48 remains frozen.
-The user subsequently authorized the [unchanged ASv6.54 comparison
-test](../asv6.50/README.md#authorized-asv654-sol-61-xhigh-comparison-test), now
-in progress on the same twelve cases. Adoption remains open.
+The subsequently authorized [unchanged ASv6.54 comparison
+test](../asv6.50/README.md#asv654-completed-answers-and-agent-review) also found
+five of twelve answers with scope failures and eleven with missing valid
+branches. Restoring the two examples did not resolve these patterns in this
+sample. Adoption remains open.
 The existing instructions retain individual subjects, combinations and broader
 headings. This revision preserves those coverage requirements.
 
