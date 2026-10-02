@@ -1309,6 +1309,25 @@ clarification makes the node sort score the required outcome, not that
 particular formula. Its inputs and any treatment of multiple masks remain
 open under 04; 27 applies the selected definition.
 
+**Good-enough sorting evaluation approved October 2:** The user rejects
+perfect prompts or identical repeated percentages as acceptance requirements.
+Evaluate the existing experimental **PPv35-post-meaning-v1** candidate first
+on twelve varied hierarchy-node meanings with posts not used in earlier sorting
+trials. Agent assessment covers each complete order, especially its first ten
+posts where available; actual smaller cohorts remain explicit. Earlier user
+judgments and permitted about-equal swaps remain separate reference evidence.
+Count mistakes that noticeably hurt browsing, such as incidental mentions
+repeatedly preceding posts mainly about the node. Isolated mistakes, small
+differences and close-order reversals are acceptable. Change the method only
+for a substantial recurring problem across nodes or an independent rerun;
+percentage variation alone does not warrant more tuning. If the finite audit
+passes, freeze the candidate for the next browsing build and stop prompt or
+architecture search. Later substantial recurring browsing failures can reopen
+it. This authorizes the audit and stopping rule, not an inference that it has
+passed, new user labels, hierarchy-membership changes or production deployment.
+The sorting formula, saved meanings, SSE learned layers and earlier experiments
+remain unchanged during this evaluation.
+
 User-approved Coffee/Eggs post-ordering checks for 27 (September 29–30): the user reviewed the
 complete wording with URLs omitted and established ten clear expected orders.
 These judgments establish expected post order; they do not select

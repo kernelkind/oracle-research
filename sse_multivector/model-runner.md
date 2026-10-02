@@ -5071,6 +5071,20 @@ and transfer to a new corpus remain open. The investigation is not satisfactory
 for product adoption; pause and report at the two-hour deadline. Completed support,
 prompts, configurations and maintained evidence are committed locally.
 
+**PPv35 good-enough audit approved October 2:** The subsequent user decision
+replaces percentage repeatability as a stopping criterion with useful browsing
+order. Evaluate the current PPv35-post-meaning-v1 candidate across twelve varied
+node meanings using fresh-to-sorting posts. Review complete orders and their
+first ten posts where available, retaining smaller cohort sizes explicitly.
+Allow isolated mistakes and close swaps; revise only for a substantial recurring
+browsing problem across nodes or an independent rerun. Keep all existing strict
+judgments, accepted orders and permitted swaps distinct. If the audit passes,
+freeze the candidate for the next browsing build and stop searching for another
+prompt or architecture. This is a bounded evaluation, not a requirement for
+identical percentages, a numeric accuracy claim, new user labels or production
+deployment. Fixed meanings, prominence × SP subject-plus-context relevance,
+SSE learned layers and highest-entry selection remain the audit's controls.
+
 The minimal direct-sorting production CLI tests first failed for the missing
 adapter, then passed. The 159 relevant workflow, selection, description,
 collection, legacy sorting, title and hierarchy tests pass under `uv` with

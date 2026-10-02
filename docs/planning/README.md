@@ -95,6 +95,14 @@ dependencies are unchanged. The sorting mechanism and any additional
 teacher/model outputs it needs remain undecided; prominence outputs are not
 required merely because earlier experiments used them.
 
+The October 2 stopping rule evaluates the current experimental
+PPv35-post-meaning-v1 candidate on twelve varied node meanings and fresh posts.
+Useful browsing order is the criterion: isolated mistakes and close swaps are
+acceptable; repeated percentages need not match. If the finite audit passes,
+freeze the candidate for the next browsing build and stop prompt/architecture
+search. The audit's outcome and production implementation remain open. See
+[the agreed stopping rule](release-decisions.md).
+
 Teacher comparison (17) remains in progress. Sol low is provisionally favored
 for subject generation after assessment on 20 posts. The user also provisionally
 favors GPT-6.1 Sol medium for grouped masks: one call for all subjects in a post.
