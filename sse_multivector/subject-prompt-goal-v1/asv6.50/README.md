@@ -28,11 +28,11 @@ for boiler repair. The [audit](#asv656-cutting-for-boiler-repair-example) record
 the approved draft and updated rule map. The completed twelve-case Sol xhigh
 test found four answers with scope failures and all twelve missing valid
 branches; adoption remains open.
-The current [ASv6.57 (draft, untested)](../asv6.57/ASv6.57.md) revises the same
+The current [ASv6.57 (approved for testing, test running)](../asv6.57/ASv6.57.md) revises the same
 case to show a quantified tube separately from its repair purpose and
 purpose-qualified cutting. The [audit](#asv657-quantified-tube-and-repair-purpose-example)
-records the authorized draft and updated rule map. Wording approval, model
-testing and adoption remain open.
+records the approved candidate and updated rule map. The user authorized the
+same twelve-answer Sol xhigh test; adoption remains open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -744,7 +744,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.57 (draft, untested)](../asv6.57/ASv6.57.md).
+The current map uses [ASv6.57 (approved for testing, test running)](../asv6.57/ASv6.57.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -763,8 +763,8 @@ requirements to count.
 The maintained tests contain the same case IDs, purposes, primary assignments
 and explained secondary assignments. "Reviewed" means the agent assessed
 source support and heading relationships. The user approved testing ASv6.56,
-then authorized drafting ASv6.57 after its failures. ASv6.57 wording approval
-and model testing remain open. Agent assessments remain separate
+then authorized drafting ASv6.57 after its failures and approved its test.
+Adoption remains open. Agent assessments remain separate
 from user semantic judgments and adoption.
 
 | Case | Purpose | Review |
@@ -1451,18 +1451,17 @@ quantified general item separately from its repair role, while retaining the
 action-purpose demonstration and every rule mapping. This would demonstrate the
 distinction behind the One tin of water failure and missing recipe-qualified
 quantities with a short example outside food. The user subsequently authorized
-the ASv6.57 draft below. Review its delta before another test; no ASv6.57 model
-test has been authorized or prepared.
+the ASv6.57 draft below, then approved the same twelve-answer Sol xhigh test.
 
 ## ASv6.57 quantified tube and repair-purpose example
 
-Status: draft, untested. On October 2, 2026, after the ASv6.56 results, the user
+Status: approved for testing, test running. On October 2, 2026, after the ASv6.56 results, the user
 authorized revising the existing boiler case to demonstrate a quantified item
 separately from its repair purpose and presenting the delta for review.
-ASv6.56 remains the last approved prompt. ASv6.57 wording approval, model
-testing and adoption remain open; ASv6.48 remains the frozen subject baseline.
+The user subsequently approved ASv6.57 for the same twelve-answer Sol xhigh
+test. Adoption remains open; ASv6.48 remains the frozen subject baseline.
 
-[ASv6.57 (draft, untested)](../asv6.57/ASv6.57.md) replaces only C1. Its post is:
+[ASv6.57 (approved for testing, test running)](../asv6.57/ASv6.57.md) replaces only C1. Its post is:
 "One tube for boiler repair. Cutting it for that repair." The second sentence's
 "it" refers to the counted tube, and "that repair" refers to boiler repair.
 The qualified headings retain both references' supported meaning. The source
@@ -1528,7 +1527,40 @@ saved ASv6.55 files remain unchanged.
 
 The full-context ASv6.56 → ASv6.57 delta is an ignored review artifact at
 `target/sp-scope-regression-v1/asv657-full-context.diff`; its exact authoring
-edits are ignored alongside it. No ASv6.57 model template, experiment or
-inference request has been prepared. Review this delta before authorizing the
-same twelve-answer Sol 6.1 xhigh regression test; that test would check whether
+edits are ignored alongside it. Drafting prepared no model template, experiment
+or inference request. The subsequently authorized test below checks whether
 the quantified-purpose distinction transfers beyond this example.
+
+### Authorized ASv6.57 Sol 6.1 xhigh regression test
+
+The user approved testing the candidate on N063, N074, N096 and N100 with three
+independent answers per post. Native `prepare --from ... --repeat` pairs each
+trial with the corresponding saved ASv6.56 trial, preserving complete original
+posts, review evidence, schema and runner settings. No baseline is regenerated.
+
+Native `experiment.py revise` derives the reusable
+[ASv6.57 post template](../../experiment_specs/asv6.57-hr01-post-template.txt)
+and [revision receipt](../../experiment_specs/asv6.57-hr01-post-template.txt.revision.json)
+directly from the approved ASv6.57 source. It adds only the existing `{POST}`
+wrapper, byte-identical to the ASv6.56 and earlier comparison wrappers. The
+template SHA-256 is
+`9f5d473433ebf8ea9afc5a13c68b4bcdcc75d6135641182ddd00eb0b12c6907e`.
+
+Preflight found four valid saved baselines and four new, nonreusable requests
+per trial. The draft's 28 offline checks passed, and native template receipt
+reconstruction and preparation validation pass. The approved source, new
+template and all 27 saved ASv6.56 files are hash-pinned; all 29 remain unchanged
+after preparation. The ignored experiments are
+`sse_multivector/experiments/asv6.57-sol61-xhigh-sp-scope-regression-t1/`,
+`sse_multivector/experiments/asv6.57-sol61-xhigh-sp-scope-regression-t2/` and
+`sse_multivector/experiments/asv6.57-sol61-xhigh-sp-scope-regression-t3/`.
+
+The exact model is `gpt-6.1-sol`, effort `xhigh`, through the subscription
+WebSocket route: four concurrent cases per trial, 1,800-second timeout, no
+output cap or paid fallback. Each native run allows at most eight new attempts,
+including only provider-eligible retries, with two attempts maximum per case.
+No additional trial is authorized. The ledger's monetary totals are valid;
+incremental subscription cash is zero and quota consumption is unmeasured.
+Preparation made no model calls; execution is now running. Complete-output
+reviews will assess heading relationships, retained subjects and valid broader
+branches. Agent assessments remain separate from user judgments and adoption.
