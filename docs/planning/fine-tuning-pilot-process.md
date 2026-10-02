@@ -6,8 +6,12 @@ learning from teacher answers improve quality, and what does it cost?
 The execution flow below is a draft. Prompt versions, remaining output format details,
 task loss weights, remaining adapter/optimizer settings, and review rubric remain open.
 
-**Local preparation → Vast baselines/training/evaluation → verified retrieval
-→ local scoring and comparison.**
+**Local preparation → separate paid GPU preparation → Vast
+baselines/training/evaluation → verified retrieval → local scoring and comparison.**
+
+Settle the remaining configuration and rehearse automation locally before booking
+the preparation rental. Verify the chosen GPU configuration before the pilot begins.
+Preparation checks, hardware, and maximum charge remain open.
 
 ## 1. Freeze shared inputs — locally
 

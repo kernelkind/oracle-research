@@ -740,6 +740,14 @@ hardware, and spending remain open. This approves the intended settings; the
 current 128-step replacement sampler is not the approved larger-pilot worker.
 Implementation and launch require separate authorization.
 
+**October 1 separate paid GPU preparation agreed in principle:** settle the
+remaining pilot configuration and identify all required GPU checks before booking
+a preparation rental. Rehearse the packaged workflow locally, then verify its
+chosen GPU configuration before the larger pilot begins. The pilot runs its
+settled training and evaluation procedure. Preparation scope, hardware, maximum
+charge, and launch remain open; this decision accepts a separate paid preparation
+step without authorizing a rental commitment.
+
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
 notes at each milestone through 1,000; the smaller sets are shared subsets.

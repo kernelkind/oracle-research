@@ -21,6 +21,13 @@ Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
 
+**October 1 preparation decision:** a separate paid GPU preparation step is agreed
+in principle. Settle the remaining pilot configuration and required GPU checks,
+then rehearse the packaged workflow locally before booking. Verify the chosen
+GPU configuration before the larger pilot starts; its training and evaluation
+use the settled setup. Preparation scope, hardware, maximum charge, and launch
+remain open.
+
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
 establishing untuned baselines and testing fine-tuning without prominence.
@@ -169,7 +176,8 @@ rehearse deployment as previously done on Vast, with no manual code editing
 on the rented server. Candidate training settings and Vast launch limits are
 now frozen locally. On September 29 the user authorized publication and one
 Vast rental, then approved up to $1.66/hour and 13 hours total within $25.
-GPU compatibility is checked during the actual pilot.
+For that completed informal run, GPU compatibility was checked during its rental.
+The larger pilot uses the separate preparation step agreed above.
 
 ### Frozen informal settings
 

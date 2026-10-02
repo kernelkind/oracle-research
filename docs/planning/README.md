@@ -11,7 +11,9 @@ one complete pass through all subject/mask training examples, checkpoints at
 200, 400, 600, 800, and 1,000 training notes, and model comparison.
 Training uses one teacher subject per mask prompt; each checkpoint generates
 its own subjects and requests their masks separately on the same held-out
-validation notes. Semantic review happens outside the GPU rental.
+validation notes. Semantic review happens outside the GPU rental. A separate
+paid GPU preparation step is agreed in principle; settle its configuration and
+checks locally before booking. Hardware, maximum charge, and launch remain open.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user
