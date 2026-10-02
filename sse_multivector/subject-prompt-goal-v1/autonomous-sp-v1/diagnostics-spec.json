@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "ASv6.58",
+    "path": "../../experiment_specs/asv6.58-hr01-post-template.txt"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "diagnostic-cases.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "transport": "websocket",
+    "timeout_seconds": 1800,
+    "concurrency": 4,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]*(\\.[1-9][0-9]*)*$"
+              },
+              "context": {
+                "type": "string",
+                "minLength": 1
+              },
+              "subject": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "number",
+              "context",
+              "subject"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "subjects"
+      ],
+      "additionalProperties": false
+    },
+    "auth_file": null
+  }
+}

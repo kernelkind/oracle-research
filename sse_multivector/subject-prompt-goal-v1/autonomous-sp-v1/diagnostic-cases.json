@@ -1,0 +1,64 @@
+{
+  "cases": [
+    {
+      "id": "D001",
+      "inputs": {
+        "POST": "Bridge repair: one steel plate. I drilled four holes in it."
+      },
+      "evidence": {
+        "review_context": "Retain repair-purpose plate and drilling, one plate, four holes; generic steel plates or drilling alone do not imply bridge repair.",
+        "assessment": "Agent-defined diagnostic rubric, not user-labelled gold. Judge meanings and source-subject placements, not exact wording or derived-heading completeness."
+      }
+    },
+    {
+      "id": "D002",
+      "inputs": {
+        "POST": "I visited a bridge repair site. At home, I drilled four holes in one steel plate for a sculpture."
+      },
+      "evidence": {
+        "review_context": "Drilling and plate serve sculpture; do not attach them to bridge repair merely because that site is mentioned.",
+        "assessment": "Agent-defined diagnostic rubric, not user-labelled gold. Judge meanings and source-subject placements, not exact wording or derived-heading completeness."
+      }
+    },
+    {
+      "id": "D003",
+      "inputs": {
+        "POST": "I tried my new camera for the first time and liked it."
+      },
+      "evidence": {
+        "review_context": "Retain camera newness, first use and appreciation; a child under new-camera use must retain newness.",
+        "assessment": "Agent-defined diagnostic rubric, not user-labelled gold. Judge meanings and source-subject placements, not exact wording or derived-heading completeness."
+      }
+    },
+    {
+      "id": "D004",
+      "inputs": {
+        "POST": "I tried an old borrowed camera for the first time and liked it."
+      },
+      "evidence": {
+        "review_context": "First use and appreciation do not establish a new camera; preserve old and borrowed in specific subjects.",
+        "assessment": "Agent-defined diagnostic rubric, not user-labelled gold. Judge meanings and source-subject placements, not exact wording or derived-heading completeness."
+      }
+    },
+    {
+      "id": "D005",
+      "inputs": {
+        "POST": "I repaired a red bicycle."
+      },
+      "evidence": {
+        "review_context": "Retain red bicycle and its repair; repair of a red bicycle belongs beneath bicycle repair and red bicycles whenever those parents occur.",
+        "assessment": "Agent-defined diagnostic rubric, not user-labelled gold. Judge meanings and source-subject placements, not exact wording or derived-heading completeness."
+      }
+    },
+    {
+      "id": "D006",
+      "inputs": {
+        "POST": "I repaired a blue bicycle and saw a different red bicycle."
+      },
+      "evidence": {
+        "review_context": "Repair is of the blue bicycle; observation is of a distinct red bicycle; do not invent repair of the red bicycle.",
+        "assessment": "Agent-defined diagnostic rubric, not user-labelled gold. Judge meanings and source-subject placements, not exact wording or derived-heading completeness."
+      }
+    }
+  ]
+}
