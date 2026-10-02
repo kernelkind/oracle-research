@@ -4978,7 +4978,7 @@ Default prominence adapters and the existing candidate formula remain intact.
 
 **NodeSorting-v1 (draft, superseded before inference)** states relative focus and
 semantic relevance as one within-node sorting score. **NodeSorting-v2
-(experimental, prepared/running)** adds the general community-tag clarification
+(tested, rejected as a replacement)** adds the general community-tag clarification
 from independent prompt review. Neither version claims a calibrated percentage.
 The fifteen-post nonfood trial
 completed 99 SP cases with fifteen fresh calls and 84 reuses; all ten fixed agent
@@ -4991,6 +4991,85 @@ held out from the description request, not a new corpus. Three v2 descriptions
 were generated from original masks/posts only and independently reviewed before
 these scoring inputs. Ten additional agent directions were fixed beforehand;
 Literature's full order remains uncertain. No new user labels are requested.
+
+The direct broad trial completed 633 valid cases with 380 fresh calls and
+253 reuses. It preserves eight of eleven clear user directions, reverses one
+Eggs direction and ties two Coffee directions; ties are not strict passes.
+Photography reverses its accepted first two posts. Of thirty-five additional
+agent directions, thirty-two pass, one fails and two tie. Multiple maximum
+sorting scores lose distinctions between posts. Nonfood success therefore does
+not establish a general replacement for prominence times relevance.
+
+The revised-description prominence trial uses **PPv33-community-meaning-v2** and
+NodeDescription-v3 across forty-one selected nodes. Its first 142-SP selection
+omitted some other SP entries of the same posts; that can alter the highest-SP
+sorting score. Native preparation expanded the same 122 post/node inputs to
+all 202 SP entries, reusing every prominence answer with zero new calls. Final
+comparison passes all thirty-five agent directions and eleven clear user
+comparisons. Photography still reverses its accepted order; Coffee and Eggs
+complete orders differ. All 202 cosines and cached vector hashes remain exact.
+Coffeechain greetings are consistent; GrowNostr's bare-tag participation boundary
+remains uncertain, without inventing a food-growing community purpose.
+
+A separate bare-title control stress test requests independent answers for all
+46 protected SP entries, including identical post inputs. All eleven clear
+comparisons pass, but an Eggs direction has only a 0.072130 sorting-score gap.
+Prominence varies across six identical-input groups, and highest-SP collection
+also selects among those answers. This differs from the default reuse of one
+judgment per identical post/title/meaning input; it exposes variation rather
+than establishing calibrated uncertainty or a new production aggregation rule.
+
+**PPv34-mixed-meaning-v1 (tested, experimental)** clarifies separate meanings in
+lists and attributions without splitting synonyms or assigning fixed ratios.
+The 202-case trial completes with 120 fresh calls and 82 reuses, preserving
+all thirty-five agent directions and eleven clear user comparisons. Photography's
+accepted order is restored. Eggs still swaps burrito and dinner in this run;
+Coffee's complete order differs. The independent 46-answer protected repeat
+preserves all eleven directions and complete Eggs, Music and Photography orders,
+while Coffee still differs. Its smallest observed diary sorting score exceeds
+the largest raw-yolk sorting score by 1.336308, compared with the control stress
+test's near-tie. These are observed answers, not calibrated confidence bounds.
+
+PPv33 also passes all ten nonfood directions with prominence alone and with
+SP subject-plus-context relevance. The historical nonfood comparison encoded
+context alone; native cache reuse correctly rejected that representation change.
+A local offline SSE run encoded 102 current rows (99 contexts plus three titles).
+No provider encoder calls were made. Memberships and model settings are unchanged;
+all 99 cosines differ from the context-only reference, so exact relevance reuse
+is not claimed. Literature's complete order remains uncertain.
+
+**PPv35-post-meaning-v1 (tested, experimental)** keeps an argument's comparison,
+criticism or invitation attached to the subject it addresses unless it adds
+separately meaningful content about another subject. It adds no node names,
+post examples, numerical targets or percentage calibration. All 202 cases
+complete with 108 fresh calls and 94 reuses. Combined sorting preserves all
+eleven clear user directions and thirty-five agent directions, plus the accepted
+Eggs, Music and Photography complete orders. Coffee's fourteen-post order still
+differs beyond its four about-equal pairs: the request is above iced coffee,
+half-and-half above the second-coffee post, and weather/burrito above movement.
+These complete-order differences remain uncertain rather than new strict labels;
+the earlier slight weather preference and subsequent complete review remain saved.
+
+The separate Coffee stress test uses nineteen fresh answers and passes all six
+clear Coffee directions. Decaf's preference argument, comparison and invitation
+now all concern Coffee: prominence is 100 instead of the PPv34 stress answer's
+85, without prescribing either percentage. Identical places inputs still vary
+from 70 to 80. The 202-case run reused these fourteen Coffee post answers from
+the parallel stress test through the normal memo; it is not independent Coffee
+replication. The separate fifteen-call nonfood trial passes all ten earlier
+agent directions. All 99 current SP-context cosines and 102 vector/receipt rows
+are exact reuses; Literature ordering and religious/philosophical overlap remain
+uncertain. No new labels, node-specific examples or numeric exceptions were added.
+
+Final session accounting records **1,920 subscription provider attempts**, including
+one retry, across twenty-three native trials, all gpt-6.1-sol / medium and below
+the 2,000-call limit. Inference is complete before the 02:09:48 UTC deadline.
+The strongest current candidate remains prominence times SP subject-plus-context
+relevance, using a fixed node meaning and PPv35. It is experimental: Coffee's
+complete order, answer variation, uncertain node meanings, representation choice
+and transfer to a new corpus remain open. The investigation is not satisfactory
+for product adoption; pause and report at the two-hour deadline. Completed support,
+prompts, configurations and maintained evidence are committed locally.
 
 The minimal direct-sorting production CLI tests first failed for the missing
 adapter, then passed. The 159 relevant workflow, selection, description,

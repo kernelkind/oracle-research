@@ -1,0 +1,9 @@
+{
+  "base_sha256": "c84ad1a8b1640e0f4b9798fbe4cb888815b5ccabc4170d250718968aff62e58d",
+  "edits": [
+    {
+      "old": "Judge meaning, not word count or grammatical completeness.",
+      "new": "Interpret an argument, comparison, criticism, personal stance or invitation to respond in relation to the subject it addresses in this post. Do not detach that meaning from its subject merely because it expresses an opinion or uses rhetoric. Count it with that subject unless it adds separately meaningful content about another subject.\n\nJudge meaning, not word count or grammatical completeness."
+    }
+  ]
+}

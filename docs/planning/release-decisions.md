@@ -1994,7 +1994,7 @@ and one saved node meaning and asks for the sorting score directly. It tests
 removing separate prominence, SSE relevance and highest-SP selection. Native
 collection deduplicates identical post/node judgments, rejects conflicts and
 preserves source provenance. NodeSorting-v1 is a draft superseded before calls;
-NodeSorting-v2 adds a general community-tag clarification and is running. Scores
+NodeSorting-v2 adds a general community-tag clarification and has been tested. Scores
 express relative focus/relevance, not calibrated percentages. No product adoption
 is implied. Minimal production-path tests fail before implementation; 159
 relevant regression/integration tests pass and legacy tests remain intact.
@@ -2004,6 +2004,44 @@ and Bitcoin posts disjoint from the original 98 description-source posts. Their
 three meanings use only original source evidence. Ten agent directions were
 recorded before new scoring; the posts were previously studied, so this is a
 check on transfer beyond the description sample, not a fresh unseen corpus.
+
+The direct broad trial fails one clear user direction and ties two others,
+reverses Photography's accepted order, and loses three of thirty-five agent
+comparisons through one reversal and two ties. It is rejected as a general
+replacement. Revised NodeDescription-v3 with PPv33 preserves all eleven clear
+user directions and thirty-five agent comparisons after including every SP
+entry of the selected 122 post/node inputs (202 entries). Partial SP selections
+must not be compared as if they retain the complete highest-SP sorting score.
+Photography, Coffee and Eggs complete orders still differ.
+
+Experimental PPv34 distinguishes meanings in mixed lists/attributions without
+splitting synonyms or prescribing ratios. It preserves the eleven and thirty-five
+comparisons and restores Photography's order. The 46-answer independent repeat
+also preserves complete Eggs and Music orders; the first run still swaps two
+Eggs positions. Coffee's complete order remains unsettled, and repeated identical
+inputs receive varying prominence. The default workflow reuses identical requests;
+the stress test deliberately asks for independent answers per SP entry.
+
+A separate PPv33 nonfood comparison preserves all ten agent directions with current
+SP subject-plus-context relevance. Its older reference used context only; 102 rows
+were encoded locally rather than asserting invalid cache reuse. Literature remains
+uncertain. Experimental PPv35 keeps comparisons/criticism attached to the subject
+they address while preserving separately meaningful other subjects. Its complete
+202-case comparison passes all eleven clear user directions and thirty-five agent
+directions, and preserves complete Eggs, Music and Photography orders. A separate
+nonfood trial preserves all ten agent directions with unchanged current relevance.
+Coffee's complete order still differs; its nineteen-answer stress test preserves
+six clear directions but identical inputs vary. The complete run reused those
+parallel Coffee answers, so this is not independent replication.
+
+The final session uses 1,920 subscription provider attempts including one retry,
+all gpt-6.1-sol / medium, below the 2,000-call ceiling. Inference finishes before
+the October 2, 02:09:48 UTC stop. The agent remains unsatisfied: Coffee's complete
+order, stable prominence, uncertain node meanings and new-corpus transfer are open.
+Pause and report at the two-hour deadline. The strongest experimental candidate
+retains prominence times SP subject-plus-context relevance with PPv35 and one fixed
+node meaning. No candidate is adopted into the product; the formula, SSE learned
+layers, titles, memberships and earlier judgments remain fixed.
 
 Initial experiments keep SP subject-plus-context relevance, SSE learned layers
 and the sorting formula fixed. One bounded request per node and one bounded
