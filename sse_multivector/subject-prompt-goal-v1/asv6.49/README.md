@@ -23,8 +23,8 @@ numbering remain byte-identical in ASv6.49. The separately authorized
 [ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) corrects this loss and the
 missing placements in both worked examples. ASv6.52's initial audit missed the
 every-applicable-branch requirement. The corrected wording and model test
-remain open. The current [ASv6.54 (draft, untested on models)](../asv6.54/ASv6.54.md)
-uses focused cases to cover the remaining rules; its
+remain open. The current [ASv6.55 (draft, untested on models)](../asv6.55/ASv6.55.md)
+consolidates ASv6.54's focused cases while retaining every rule demonstration; its
 [rule-to-case map](../asv6.50/README.md#example-correctness-and-rule-coverage)
 records their instruction basis and review status.
 The existing instructions retain individual subjects, combinations and broader

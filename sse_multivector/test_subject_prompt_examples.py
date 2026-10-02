@@ -12,7 +12,7 @@ PROMPT_PATH = (
     Path(__file__).parent / "subject-prompt-goal-v1/asv6.53/ASv6.53.md"
 )
 FOCUSED_PROMPT_PATH = (
-    Path(__file__).parent / "subject-prompt-goal-v1/asv6.54/ASv6.54.md"
+    Path(__file__).parent / "subject-prompt-goal-v1/asv6.55/ASv6.55.md"
 )
 
 
@@ -310,27 +310,6 @@ class SubjectPromptExampleTests(unittest.TestCase):
 FOCUSED_CASES = (
     {
         "id": "C1",
-        "purpose": "Whole-post references, implied subjects and repeated hierarchy branches.",
-        "post": "I watched a lunar eclipse through binoculars. Tried sketching the Moon, but clouds kept hiding it.",
-        "subjects": LUNAR_SUBJECTS,
-        "relationships": LUNAR_RELATIONSHIPS,
-        "primary_rules": (
-            "R01", "R03", "R16", "R21", "R22", "R23", "R25",
-            "R26", "R28", "R31", "R34",
-        ),
-        "secondary_rules": (
-            ("R02", "Pronoun resolution: 'it' becomes the Moon."),
-            ("R17", "Unnamed subject: cloud hindrance follows from two statements."),
-            ("R24", "Nonempty output contrasts with C5's empty array."),
-        ),
-        "invalid": (
-            ("3", "1"),
-            ("2.1", "1.1"),
-            ("5", "4.1"),
-        ),
-    },
-    {
-        "id": "C2",
         "purpose": "Named referent resolution, replacement-part roles and retained locomotive type.",
         "post": "Replacement boiler for Bracken. Bracken is a steam locomotive.",
         "subjects": {
@@ -355,10 +334,12 @@ FOCUSED_CASES = (
             ("bracken", "steam_locomotives"),
         ),
         "primary_rules": (
-            "R02", "R04", "R20", "R27", "R29", "R30",
+            "R01", "R02", "R04", "R16", "R20", "R21", "R22", "R23",
+            "R25", "R26", "R27", "R28", "R29", "R30", "R31", "R34",
         ),
         "secondary_rules": (
             ("R18", "Named particular instance: Bracken's replacement boiler."),
+            ("R24", "Nonempty output contrasts with C3's empty array."),
         ),
         "invalid": (
             ("boilers", "replacement_parts"),
@@ -367,43 +348,7 @@ FOCUSED_CASES = (
         ),
     },
     {
-        "id": "C3",
-        "purpose": "Individual advice instructions and their stated combination.",
-        "post": "Advice: book ahead and stay on marked routes.",
-        "subjects": {
-            "advice": "Advice",
-            "booking": "Advance booking",
-            "routes": "Marked routes",
-            "staying": "Staying on marked routes",
-            "booking_advice": "Advice to book in advance",
-            "route_advice": "Advice to stay on marked routes",
-            "combined_advice": "Advice to book in advance and stay on marked routes",
-        },
-        "relationships": (
-            ("staying", "routes"),
-            ("booking_advice", "advice"),
-            ("booking_advice", "booking"),
-            ("route_advice", "advice"),
-            ("route_advice", "staying"),
-            ("combined_advice", "booking_advice"),
-            ("combined_advice", "route_advice"),
-        ),
-        "primary_rules": (
-            "R18",
-        ),
-        "secondary_rules": (
-            ("R20", "Combined advice fits both instructions; either instruction can lack the other."),
-            ("R32", "The advice role survives; recommendations do not become completed actions."),
-        ),
-        "invalid": (
-            ("booking", "advice"),
-            ("routes", "advice"),
-            ("booking_advice", "combined_advice"),
-            ("route_advice", "combined_advice"),
-        ),
-    },
-    {
-        "id": "C4",
+        "id": "C2",
         "purpose": "Names, hashtags, figurative labels, rhetorical meaning and an unresolved name.",
         "post": "The app #RavenWorks is a lifesaver, figuratively speaking—how could I not appreciate it? Also: AmberLoop.",
         "subjects": {
@@ -429,10 +374,10 @@ FOCUSED_CASES = (
             ("ravenworks_appreciation", "ravenworks"),
         ),
         "primary_rules": (
-            "R05", "R06", "R17",
+            "R03", "R05", "R06", "R17",
         ),
         "secondary_rules": (
-            ("R03", "Figurative language clarification, alongside C1's recognition of an astronomical subject."),
+            ("R02", "Pronoun resolution: 'it' becomes the RavenWorks app."),
             ("R12", "Unresolved name retained without commentary about its unknown type."),
         ),
         "invalid": (
@@ -442,7 +387,7 @@ FOCUSED_CASES = (
         ),
     },
     {
-        "id": "C5",
+        "id": "C3",
         "purpose": "URL and opaque identifier bodies without surrounding subject evidence.",
         "post": "https://birds.example/repair?count=12\n8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f",
         "subjects": {
@@ -456,7 +401,7 @@ FOCUSED_CASES = (
         ),
     },
     {
-        "id": "C6",
+        "id": "C4",
         "purpose": "URL and identifier subjects established by prose, without a cross-link.",
         "post": "Profile URL: https://birds.example/repair?count=12\nEvent ID: 8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f",
         "subjects": {
@@ -485,7 +430,7 @@ FOCUSED_CASES = (
         ),
     },
     {
-        "id": "C7",
+        "id": "C5",
         "purpose": "Two direct ambiguity interpretations, independent co-mention and statement order.",
         "post": "I saw her duck. I bought a notebook.",
         "subjects": {
@@ -525,7 +470,7 @@ FOCUSED_CASES = (
         ),
     },
     {
-        "id": "C8",
+        "id": "C6",
         "purpose": "Count versus length, preserved negation, both comparison sides and no unstated arithmetic.",
         "post": "2 cables: cable A is 2 m long and cable B is 3 m long. A is not longer than B.",
         "subjects": {
@@ -555,19 +500,23 @@ FOCUSED_CASES = (
             ("not_longer", "pair"),
         ),
         "primary_rules": (
-            "R13", "R14", "R32", "R33",
+            "R13", "R14", "R18", "R32", "R33",
         ),
         "secondary_rules": (
             ("R15", "No unstated 1 m difference or 5 m total."),
+            ("R17", "The pair combines the count, both named cables and their stated lengths."),
+            ("R20", "The pair fits both cable headings; either cable can be mentioned without the other."),
         ),
         "invalid": (
             ("pairs", "lengths"),
             ("a", "b"),
             ("b", "a"),
+            ("a", "pair"),
+            ("b", "pair"),
         ),
     },
     {
-        "id": "C9",
+        "id": "C7",
         "purpose": "Explicit arithmetic result with separately retained addends and result.",
         "post": "2 + 3 = 5.",
         "subjects": {
@@ -620,6 +569,15 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
                 {"adapter": "subjects"}, {}, output.group(1), None
             )["parsed"]["subjects"]
         return examples
+
+    def test_consolidated_examples_omit_overlapping_lunar_and_advice_cases(self):
+        posts = set(self.examples())
+        for post in (
+            "I watched a lunar eclipse through binoculars. Tried sketching the Moon, but clouds kept hiding it.",
+            "Advice: book ahead and stay on marked routes.",
+        ):
+            with self.subTest(post=post):
+                self.assertNotIn(post, posts)
 
     def test_remaining_ambiguity_has_two_direct_interpretations(self):
         examples = self.examples()
@@ -723,27 +681,31 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
 
     def test_identical_opaque_bodies_require_surrounding_subject_prose(self):
         cases = {case["id"]: case for case in FOCUSED_CASES}
-        bare = cases["C5"]["post"].splitlines()
-        labelled = cases["C6"]["post"].splitlines()
+        bare = cases["C3"]["post"].splitlines()
+        labelled = cases["C4"]["post"].splitlines()
         self.assertEqual(labelled, ["Profile URL: " + bare[0], "Event ID: " + bare[1]])
         examples = self.examples()
-        self.assertEqual(examples[cases["C5"]["post"]], [])
+        self.assertEqual(examples[cases["C3"]["post"]], [])
         self.assertEqual(
-            {e["subject"] for e in examples[cases["C6"]["post"]]},
+            {e["subject"] for e in examples[cases["C4"]["post"]]},
             {"URLs", "Profile URLs", "Profiles", "Identifiers", "Event identifiers", "Events"},
         )
 
-    def test_instructions_and_corrected_lunar_case_are_preserved(self):
+    def test_instructions_and_retained_focused_cases_are_preserved(self):
         directory = FOCUSED_PROMPT_PATH.parent.parent
         approved = (directory / "asv6.51/ASv6.51.md").read_text()
-        corrected = PROMPT_PATH.read_text()
+        previous = (directory / "asv6.54/ASv6.54.md").read_text()
         focused = FOCUSED_PROMPT_PATH.read_text()
         self.assertEqual(
             focused.split("<example>", 1)[0], approved.split("<example>", 1)[0]
         )
         self.assertEqual(
-            re.findall(r"<example>\n.*?\n</example>", focused, re.S)[0],
-            re.findall(r"<example>\n.*?\n</example>", corrected, re.S)[0],
+            re.findall(r"<example>\n.*?\n</example>", focused, re.S),
+            [
+                block for index, block in enumerate(
+                    re.findall(r"<example>\n.*?\n</example>", previous, re.S)
+                ) if index not in (0, 2)
+            ],
         )
 
 
