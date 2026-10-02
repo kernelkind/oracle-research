@@ -52,6 +52,9 @@ within the author's hierarchy. The identifier MUST stay the same when the
 node's title, children or notes change, and MUST NOT be reused for a
 different node.
 
+A node MAY have multiple parents. Different parents MAY select different
+node event IDs for the same `d` value.
+
 `title` names the node. Its `child` tags list immediate children in tag order.
 Each tag contains the child's `d` value followed by its node event ID.
 The event ID selects the child version. The referenced event MUST be a
