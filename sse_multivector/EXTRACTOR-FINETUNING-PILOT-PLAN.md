@@ -739,10 +739,12 @@ separately from review findings and any subsequent changes.
 
 ### GPU preparation cases and checks — draft
 
-Preparation scope, cases, hardware and maximum charge remain open. Use the same
-pinned models, approved subject-only adapter recipe and intended GPU allocation
-as the pilot. Prepare locally and rehearse production paths in the VM before
-booking. The current informal worker does not implement subject-only coverage,
+**GPU choice confirmed October 2:** use one **96GB RTX PRO 6000** for
+preparation and the larger pilot, holding each complete student model on that
+GPU and running the three students sequentially. The specific card edition/power
+setting, rental offer, preparation scope/cases and maximum charge remain open.
+Use the same pinned models and approved subject-only adapter recipe as the
+pilot. Prepare locally and rehearse production paths in the VM before booking. The current informal worker does not implement subject-only coverage,
 expert adapters or the full milestone lifecycle.
 
 Start with historical N18 (long diary: dense hierarchy and subject truncation),
@@ -919,9 +921,8 @@ do not establish their optimality for this task. Physical batching must retain
 the approved eight examples total per update. Physical groups may vary with
 memory while preserving update membership, example order and the update-level
 supervised-token denominator. One model replica can accumulate eight one-example
-groups, including when that model is sharded across GPUs. GPU allocation,
-generation limits, numeric batching budgets and remaining runtime choices stay
-open; merged BF16
+groups on the selected single 96GB RTX PRO 6000. Generation limits, numeric
+batching budgets and remaining runtime choices stay open; merged BF16
 checkpoint evaluation/resume and the terminal thinking comparison were approved
 October 2. Ordinary generation stays thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
@@ -962,7 +963,7 @@ verify continuation across the full transition. The current worker evaluates an
 unmerged adapter only at training's endpoint and retains two rolling checkpoints;
 five-stage continuation, milestone retention and merging still need implementation
 and production-path verification. Additional recovery-checkpoint cadence,
-generation limits, numeric batching budgets, hardware and spending remain open.
+generation limits, numeric batching budgets and spending remain open.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -986,11 +987,10 @@ changes and production-path verification.
 
 There are **three main continuing fine-tunes**, each with five approved
 milestone checkpoints, alongside untuned baselines, setup checks and any
-separately justified confirmation work. The 1,000-note comparison is included;
-validation/test counts, GPU grouping and spending remain open. Four GPUs cannot
-run four independent milestone training jobs when one student's later stage
-depends on its earlier stage; checkpoint generation could
-provide other parallel work, with scheduling still to be designed and tested.
+separately justified confirmation work. The 1,000-note comparison is included.
+The selected single 96GB RTX PRO 6000 runs the students sequentially, with each
+later milestone continuing from its preceding checkpoint. Validation/test
+counts and spending remain open.
 
 ## Evaluation and decisions
 
@@ -1144,8 +1144,9 @@ illustrative 25% headroom and $3–10 transfers: approximately **$192–264**, r
 to **$200–275 for the main pilot**. These are planning allowances, not confidence
 intervals or approved caps. Preparation is separate: a **$10–25 placeholder**
 would make a rounded **$210–300 combined GPU estimate**; its scope, duration,
-hardware and maximum charge remain open. Measure merged inference, full output
-lengths, lifecycle overhead and intended GPU allocation before final pricing.
+specific rental offer and maximum charge remain open. Measure merged inference,
+full output lengths and lifecycle overhead on the selected single 96GB RTX PRO
+6000 before final pricing.
 Dropping masks reduces work but does not establish lower peak training memory.
 
 At the proposed split sizes, teacher annotation requires **1,300 subject calls**,
@@ -1215,17 +1216,15 @@ work; elapsed rental time depends on the actual schedule.
 There are three student training paths, each with dependent
 200/400/600/800/1,000-note stages. The earlier nine-independent-training-job
 packing does not apply.
-Different students could train concurrently. A fourth GPU could generate answers
-from frozen checkpoints or process independent validation-note subsets, but
-that schedule, resource isolation and implementation remain open. Preserve the
-same per-response generation settings and complete call accounting. Do not
-claim a two- or four-GPU duration merely by dividing total GPU-hours.
+The selected pilot runs the three students sequentially on one 96GB RTX PRO
+6000. Each complete model stays on that GPU. Preserve the same per-response
+generation settings and complete call accounting; dynamic batching controls
+how many independent notes that GPU evaluates together.
 
 Teacher labeling and local semantic review/selection add elapsed time outside
-the rental. Separate rentals can end independently; multi-GPU hosts charge for
-idle GPUs. The two/four-GPU server quotes showed little per-GPU discount. No
-parallel implementation or hardware choice is approved by this price comparison;
-prepare and test the selected launch configuration locally before renting.
+the rental. The historical price comparison does not reserve a specific offer
+or authorize spending. Prepare and test the selected single-GPU launch
+configuration locally before renting.
 
 Offer evidence is saved in `target/distillation-pilot-v1/cost-estimate-20261001/`;
 GPU telemetry is under the completed operation's `observations/progress-*.json`.

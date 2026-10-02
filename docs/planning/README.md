@@ -16,7 +16,9 @@ final 1,000-note adapter then gets one thinking-on validation evaluation with
 unchanged weights. Semantic review happens outside the GPU rental. A separate
 paid GPU preparation step is agreed in principle; prepare candidate settings and
 checks locally before booking. Test output limits during preparation and freeze
-them before the main pilot. Hardware, maximum charge, and launch remain open.
+them before the main pilot. Use one 96GB RTX PRO 6000, with each complete
+model on that GPU and the three students running sequentially. The specific
+rental offer, maximum charge, and launch remain open.
 Subject evaluation chooses each batch's size from token lengths and a frozen
 per-GPU memory budget, matched across baselines and checkpoints. Preparation
 throughput replaces the serial cost reference.

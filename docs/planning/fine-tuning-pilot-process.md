@@ -6,6 +6,9 @@ learning from teacher answers improve quality, and what does it cost?
 **Subjects only, approved October 2:** train and evaluate subject discovery and
 hierarchy. Generate no masks for this pilot.
 
+**GPU selected:** one **96GB RTX PRO 6000** for preparation and the pilot.
+Keep each complete model on that GPU and run the three students sequentially.
+
 The execution flow below is a draft. Prompt versions, remaining output format details,
 execution settings, and review rubric remain open.
 
@@ -16,7 +19,7 @@ Prepare candidate settings and rehearse automation locally before booking the
 preparation rental. Test subject output limits, including thinking on, on
 representative and long notes: check complete answers, truncation, GPU memory,
 and runtime. Choose and freeze the pilot limits after those checks.
-Preparation scope, hardware, and maximum charge remain open.
+Preparation scope, the specific rental offer and maximum charge remain open.
 
 **Dynamic subject evaluation batches are approved.** Before each batch,
 tokenize the waiting notes and choose how many fit the frozen per-GPU memory
@@ -146,7 +149,8 @@ Memory arithmetic selects each batch's size; it does not establish
 runtime or imply dividing serial time by batch size.
 Thinking-on runtime is unmeasured; its allowance assumes 2–4 times the final
 thinking-off validation time. Choosing thinking on for the final test needs a
-revised estimate. Hardware, spending and preparation scope remain open.
+revised estimate. The specific rental offer, spending and preparation scope
+remain open.
 Teacher labeling and local review assume the existing Codex subscription;
 paid API work would be additional. See the technical plan for assumptions.
 

@@ -660,10 +660,20 @@ evaluation note. Keep the three students, one complete 1,000-note pass,
 200/400/600/800/1,000-note checkpoints, approved numerical recipe, merged
 evaluation/resume lifecycle and terminal thinking comparison. Eight examples
 per update give **125 updates per student, 25 per block**. The proposed 100
-validation and 200 final test notes, hardware and spending remain open.
+validation and 200 final test notes and spending remain open. The GPU choice
+is recorded below.
 This pilot supplies subject evidence for model selection; it cannot establish
 mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
+
+**October 2 GPU choice confirmed by the user:** use one **96GB RTX PRO 6000**
+for separate preparation and the larger pilot. Keep the complete student model
+on that GPU; run the three students sequentially. Prior NVLink alternatives are
+research evidence, not the selected execution configuration. The subjects-only
+scope, one continuing pass, approved training recipe and dynamic evaluation
+batching remain unchanged. Numeric batching budgets, generation limits, the
+specific card edition/power setting and rental offer, maximum charge and launch
+remain open. This hardware choice does not authorize a paid commitment.
 
 **October 2 dynamic subject evaluation batching approved:** before each batch,
 tokenize waiting notes and choose their count from a frozen per-GPU memory
@@ -676,7 +686,7 @@ separate note identities, raw/parsed answers and immediate response accounting.
 Prepare the conservative calculation locally under the actual model placement.
 The existing preparation run confirms the packaged path and measures
 throughput; it is not a separate search for a batch size that happens to fit.
-Numeric budgets, hardware and implementation remain open. Physical training
+Numeric budgets and implementation remain open. Physical training
 groups may also vary while preserving the approved eight examples per update,
 example order and supervised-token loss normalization. The old single-note
 timing estimate is a serial reference; batched pilot pricing needs throughput
@@ -750,10 +760,10 @@ labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
-Block membership, seed value, remaining model settings, validation/test counts,
-and GPU parallelism remain open. Loss was subsequently approved below. This corrects
-the intended design; continuation across
-expanding datasets and parallel execution still need implementation and tests.
+Block membership, seed value, remaining model settings and validation/test
+counts remain open. Loss was subsequently approved below. This corrects the
+intended design; continuation through the new note blocks still needs
+implementation and tests on the selected single GPU.
 No rental, model calls, or spending is authorized by this correction.
 
 **October 1 complete-pass training budget approved after research:** use every
@@ -791,7 +801,7 @@ model's maximum attainable quality. The later expert decision below specifies
 Gemma MoE's additional adapter coverage and rank; the informal configuration
 still leaves routed experts frozen. Loss was subsequently approved below.
 The later numerical decision below settles optimizer, precision and LoRA defaults.
-Block membership, seed value, hardware and spending remain open.
+Block membership, seed value and spending remain open.
 This approves the intended settings; the
 current 128-step replacement sampler is not the approved larger-pilot worker.
 Implementation and launch require separate authorization.
@@ -861,7 +871,7 @@ guidance](https://huggingface.co/docs/peft/v0.21.0/en/package_reference/lora#tar
 supports merging to remove generation overhead. The current worker still only
 reloads an unmerged adapter after training ends and retains two rolling checkpoints;
 this approval describes the intended larger-pilot design. Implementation,
-generation limits, numeric batching budgets, hardware, preparation spending and
+generation limits, numeric batching budgets, preparation spending and
 launch stay open.
 
 **October 2 terminal thinking evaluation approved:** keep answer-only training
@@ -885,7 +895,7 @@ that is 300 extra and 2,100 total subject calls. Earlier GPU estimates exclude
 the extra thinking work, whose
 reasoning lengths, runtime and cost are unmeasured. Generation limits and
 numeric batching budgets,
-implementation, preparation scope, hardware, spending and launch remain open.
+implementation, preparation scope, spending and launch remain open.
 
 **October 1 separate paid GPU preparation agreed in principle:** prepare the
 candidate pilot configuration and identify all required GPU checks before booking
@@ -895,7 +905,7 @@ limits and thinking-on allowances are candidates for preparation: test complete
 answers, truncation, GPU memory and runtime on representative and long notes,
 then select and freeze limits before the main pilot. Suggested numeric caps are
 not selected by this clarification. The pilot runs its settled training and
-evaluation procedure. Preparation scope, hardware, maximum
+evaluation procedure. Preparation scope, the specific rental offer, maximum
 charge, and launch remain open; this decision accepts a separate paid preparation
 step without authorizing a rental commitment.
 
