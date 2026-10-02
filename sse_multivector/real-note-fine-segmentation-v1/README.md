@@ -18,6 +18,16 @@ The [300-post source reference](software-corpus-selection-v1/corpus-300-source.j
 
 This checkpoint completes corpus selection and offline preparation. It includes no model calls, new subjects, masks, vectors or 300-note hierarchy. The broader-corpus generation hold and open prompt/build choices in the [release decisions](../../docs/planning/release-decisions.md) still apply. The earlier generation and hierarchy results below remain historical evidence.
 
+## Books selection for the 400-note hierarchy
+
+**October 2: the user requested extending corpus selection to 400 and 500 notes.** The assistant recommended books/reading next, followed by exercise/fitness. The [frozen 100 books, reading and literature posts](books-corpus-selection-v1/notes.json) extend the unchanged 300-post source to 400. They include reading routines, nonfiction, poetry, publishing, book access and adaptations, with mixed-topic material retained. These are source selections, not prescribed hierarchy branches or user acceptance of a hierarchy.
+
+The saved sample yielded 381 candidates from 331 authors after excluding the prior 348 selected IDs, including the separate 48-note coverage collection. The primary assistant read candidate ranks 1–180 in full. The first 100 eligible notes in recorded note-ID hash order passed complete-text tokenizer, copy and author checks, reaching candidate 156 after excluding 56 unrelated keyword hits. The selected notes contain **92 authors**, at most two posts each, and **12–471 tokens including special tokens**. Original texts remain unchanged; exact normalized-text and near-copy checks passed against all prior selections and within the addition. No fine-topic quotas or generated hierarchy results guided selection.
+
+The [400-post source reference](books-corpus-selection-v1/corpus-400-source.json) passed production corpus loading and post-input preparation, preserving all fields and order of the earlier 300 posts. It contains 348 authors, with at most four posts per author. [Complete-note review](books-corpus-selection-v1/complete-note-review.json), [candidate accounting](books-corpus-selection-v1/selection-accounting.json) and the [freeze manifest](books-corpus-selection-v1/manifest.json) retain assistant assessments and hash-bound provenance; no independent review or user per-note judgments are claimed. Tokenizer checks reproduced all 300 earlier saved counts exactly. Frozen notes SHA-256: `94a1ba456d4571082b60da70db8fa9801a0b9dd824049c367229066ddf4dcb31`.
+
+Corpus selection and offline preparation are complete for 400 posts. No model calls, new subjects, masks, vectors or 400-note hierarchy were produced. The broader-corpus generation hold and open prompt/build choices remain in effect.
+
 ## Current checkpoint
 
 **HDBv2-music100 and HDBv2-combined200 are complete; user review is pending.** Music alone produced 53 multi-note segments from 1,057 vectors. Combining the original 945 food/drink vectors with those exact music vectors produced 124 multi-note segments. Both runs matched their complete fresh replays. The review presents 53 music segments, then 45 new/changed combined segments, with identical previously reviewed groups omitted and no labels or prefilled decisions. [Results, separate assistant assessments and review commands](music-generation-v1/results.md).
