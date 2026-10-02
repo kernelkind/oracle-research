@@ -1944,14 +1944,43 @@ not a production deployment, push, paid fallback or resource rental.
 
 An exact twenty-six-input Sol-medium control completed valid first attempts.
 It reproduces coffeechain's inconsistent greeting inclusion and adds one
-GrowNostr food-growing interpretation failure. The next comparison supplies
-one bounded, source-bound description to every post in a node. Reusable
-preparation/validation and offline collection are implemented; generation is
-prepared for the two original nodes, not yet run. The description request
-preserves titles, uses at most eight complete posts and bounds JSON to 12,000
-characters. Skipped whole posts and all original evidence are retained.
-Descriptions are at most 1,200 characters and are opt-in prominence inputs;
-default contracts, memberships and frozen title prompts stay intact.
+GrowNostr food-growing interpretation failure. One bounded, source-bound
+meaning is now supplied to every post in a node through opt-in experimental
+inputs. NodeDescription-v1 was tested and rejected for inventing GrowNostr's
+purpose from tagged food posts. NodeDescription-v2 distinguishes the community
+from subjects its members discuss; all 108 sorting-node descriptions completed
+valid, retaining unresolved meanings explicitly. An independent twenty-node
+scope audit found no hard changes and two uncertainties. All 108 descriptions
+were then inspected, with additional existing title/mask mismatches recorded.
+These are experimental descriptions, not adopted production meanings.
+
+PPv31-node-description-v1 completed twenty-six fresh valid prominence calls.
+It fixes coffeechain's inconsistent greetings while keeping food/community
+separation, but GrowNostr still counts some greetings and omits others.
+PPv32-community-meaning-v1 was tested and rejected for dropping coffee's
+substantive focus while counting community interaction. Experimental PPv33-
+community-meaning-v2 explicitly includes both; its two-node trial restores
+focused coffee and consistent greetings. Exact percentages remain uncalibrated.
+
+The separate 108-node Sol control completed 633 SP cases/380 post-node inputs
+with 354 fresh calls and 279 verified reuses. Combined sorting preserves all
+eleven clear user directions and the accepted Eggs, Music and Photography orders.
+Coffee's complete order changes beyond allowed about-equal swaps. Of thirty-five
+additional agent subject-transfer comparisons, thirty-four pass; the pizza
+restaurant-plan comparison reverses. Prominence alone loses the accepted iced-
+coffee comparison, so removing relevance is not established. Native cached
+encoding is unchanged. A broad PPv31 shared-description comparison is running.
+These are same-corpus regression checks, not new user labels or unseen-corpus
+validation. All 108 descriptions were reviewed; uncertainties mostly identify
+existing title/mask mismatches. Source membership is preserved for investigation.
+
+Reusable preparation, offline collection and sorting comparison validate exact
+IDs, titles, description records and source hashes. The request preserves titles,
+uses at most eight complete posts and bounds JSON to 12,000 characters. Skipped
+whole posts and all original evidence are retained. Descriptions are at most
+1,200 characters; default contracts, memberships and frozen title prompts stay
+intact. Compatibility support reuses unchanged SSE vectors and starts with a
+failing production-path test.
 
 Initial experiments keep SP subject-plus-context relevance, SSE learned layers
 and the sorting formula fixed. One bounded request per node and one bounded

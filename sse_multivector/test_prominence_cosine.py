@@ -742,6 +742,72 @@ class ProminenceSourceReplacementTests(unittest.TestCase):
     show = fixtures.ExperimentTests.show
     calls = fixtures.ExperimentTests.calls
 
+    def test_node_description_provenance_preserves_cached_encoder_inputs(self):
+        from sse_multivector import prominence_cosine as pc
+        self.prepare_source_cases()
+        self.compare_cli('baseline-encoding', '--include-subject')
+        baseline = self.root/'baseline-encoding'
+        before = pc.read(baseline/'worker-request.json')['notes']
+        rows = [(note, subject) for note in before for subject in note['subjects']]
+        (baseline/'result').mkdir()
+        (baseline/'result/raw-vectors.f32le').write_bytes(struct.pack(
+            '<' + 'f' * (2 * len(rows)), *([1., 0.] * len(rows))))
+        (baseline/'result/worker-receipt.json').write_text(json.dumps(dict(self.encoder,
+            request_sha256=pc.sha(baseline/'worker-request.json'),
+            proposal_sha256=pc.sha(baseline/'plan.json'),
+            rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n, s in rows])))
+        pc.collect(baseline)
+        description = dict(node_id='bitcoin', node_title='Bitcoin',
+                           description='Bitcoin transactions, privacy and block transmission.')
+        self.write('descriptions.json', dict(schema_version=1, nodes=[description]))
+        source = pc.read(self.root/'source.json')
+        source['descriptions'] = 'descriptions.json'
+        self.write('source.json', source)
+        self.prepare('described')
+        answer = dict(missing_meaning='', prominence=100, allocation=[dict(
+            meaning='Bitcoin.', points=100, represented=100, missing=0)])
+        self.cli('run', 'described', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        command = [sys.executable, str(Path(__file__).with_name('prominence_cosine.py')),
+            'prepare', str(self.root/'described-comparison'), '--experiments', str(self.root/'described'),
+            '--worker-config', str(self.root/'encoder.json'), '--include-subject',
+            '--post-order', 'highest', '--reuse-encoding', str(self.root/'baseline-encoding')]
+        result = subprocess.run(command, cwd=self.root, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertEqual(pc.read(self.root/'described-comparison/worker-request.json')['notes'], before)
+        saved = pc.read(self.root/'described-comparison/plan.json')
+        self.assertEqual(saved['protected'][str(self.root/'descriptions.json')],
+                         pc.sha(self.root/'descriptions.json'))
+        pc.collect(self.root/'described-comparison')
+        reused = pc.read(self.root/'described-comparison/comparison.json')
+        original = pc.read(baseline/'comparison.json')
+        self.assertEqual(reused['raw_vectors_sha256'], original['raw_vectors_sha256'])
+        self.assertEqual(reused['posts'], original['posts'])
+        case = pc.experiment.report(self.root/'described')['cases'][0]
+        variants = [dict(node_description='Conflicting meaning.'),
+            dict(node_description_record={**description, 'node_id': 'other'}),
+            dict(node_description_record={**description, 'node_title': 'Other'}),
+            dict(description_source={**case['evidence']['description_source'], 'sha256': '0'*64})]
+        for number, changes in enumerate(variants + ['node_description',
+                'node_description_record', 'description_source']):
+            invalid = {**case, 'evidence': dict(case['evidence'])}
+            if isinstance(changes, str):
+                del invalid['evidence'][changes]
+            else:
+                invalid['evidence'].update(changes)
+            args = Namespace(output=self.root/f'invalid-{number}', vectors=None,
+                experiments=[self.root/'described'], worker_config=self.root/'encoder.json',
+                replay=[], post_order='highest', include_subject=True)
+            with self.subTest(changes=changes), \
+                 patch.object(pc.experiment, 'report', return_value={'cases': [invalid]}), \
+                 self.assertRaises(ValueError):
+                pc.prepare(args)
+            self.assertFalse(args.output.exists())
+        (self.root/'descriptions.json').write_text('{}')
+        command[3] = str(self.root/'tampered-description')
+        result = subprocess.run(command, cwd=self.root, capture_output=True, text=True, timeout=30)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('source changed', result.stderr)
+
     def prepare_source_cases(self):
         self.source_text = 'When running a node, use Tor.\n\nSparrow helps.'
         self.post = '☕ ' + self.source_text

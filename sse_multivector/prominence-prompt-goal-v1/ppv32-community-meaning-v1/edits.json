@@ -1,0 +1,9 @@
+{
+  "base_sha256": "5df4f913865d621f9052ee307a106ed4b1cb3e20790c1efed45c3333bd026e03",
+  "edits": [
+    {
+      "old": "Use the supplied node_description to determine what concerns the hierarchy node. Assess the complete post against that same node meaning; do not redefine the node according to each post.",
+      "new": "Use the supplied node_description to determine what concerns the hierarchy node. Assess the complete post against that same node meaning; do not redefine the node according to each post. If the node identifies a community, distinguish interactions directed to that community from the other subjects being discussed. Greetings, invitations to other members, and explicit participation concern the community interaction itself. Use the post and its community tags to identify the intended community, then apply this rule consistently whether or not the post also discusses the community's usual subject. A tag alone does not make unrelated cooking, weather, exercise, travel, or family details concern the community."
+    }
+  ]
+}

@@ -4898,16 +4898,68 @@ Whole posts that exceed the bound are skipped with reasons; nothing is silently
 truncated. All original evidence, selected/skipped identities and source hashes
 remain frozen. This is a mechanical sample, not proven semantic coverage.
 
-Experimental **NodeDescription-v1 (draft)** asks for one short shared meaning,
-using selected masks to identify the node subject and complete posts as context.
-It preserves existing node titles and does not combine every co-occurring post
-subject. The two-node trial is prepared, not yet generated. The collected
-description file can be referenced by a `subject_contexts` selection's optional
-`descriptions` field with `prominence_basis: "node_title"`; preparation checks
-IDs/titles and adds the same `node_description` to every post in that node.
-Experimental **PPv31-node-description-v1 (draft)** keeps allocations/schema
-unchanged and uses that supplied meaning. Default input contracts remain intact.
-Changed inputs retain native `input_mismatch`, not invented comparable baselines.
+**NodeDescription-v1 (tested, rejected for GrowNostr)** generated two valid
+first-attempt descriptions, but inferred a gardening/homesteading purpose from
+the subjects in tagged posts. That description was rejected before prominence.
+**NodeDescription-v2 (tested, experimental)** explicitly distinguishes a named
+community's purpose from subjects its members discuss. The two fresh outputs
+retain coffeechain's coffee/community meaning and leave GrowNostr's purpose
+unresolved instead of inventing a gardening definition. The same prompt then
+produced all 108 sorting-node descriptions: 106 fresh calls and two verified
+reuses, all valid. An independent twenty-node scope audit found eighteen
+acceptable and two uncertain (GrowNostr's unresolved purpose; Brands' ambiguous
+zap mask), with no hard scope changes. This is an agent assessment, not new user
+approval or proof of unseen-corpus transfer.
+
+Collected descriptions are opt-in `subject_contexts` inputs through the
+selection's `descriptions` reference and `prominence_basis: "node_title"`.
+Preparation checks IDs/titles and supplies the same meaning to every post.
+**PPv31-node-description-v1 (tested, experimental)** preserves allocations and
+schema. Its two-node trial completed twenty-six fresh valid requests. Coffeechain
+now represents greetings consistently while separating weather, exercise and
+household subjects; focused roasting and cream/yolk preparation remain fully
+coffee-centered. GrowNostr food cultivation remains zero, and food work stays
+separate from community association/Nostr commerce. GrowNostr still omits the
+household/burrito greetings while counting jetlag's greeting: two native rejects
+record that inconsistency, without prescribed percentages.
+
+**PPv32-community-meaning-v1 (tested, rejected)** adds a general community
+interaction rule. Twenty-six valid fresh calls fix GrowNostr's greetings but
+incorrectly reduce focused coffee roasting/preparation to the sharing act.
+Three native rejects preserve that regression. **PPv33-community-meaning-v2
+(tested, experimental)** clarifies that both the description's substantive
+subjects and community interaction count. Its twenty-six valid fresh calls
+restore focused coffee to 100 and retain consistent greetings across the two
+nodes. GrowNostr's exact purpose remains unresolved; percentages are not
+calibrated or approved.
+
+The separate Sol control across 108 nodes completed all 633 SP cases/380
+post-node inputs: 354 fresh requests and 279 verified reuses, no failures or
+provider retries. Thirty-five additional subject-transfer directions were
+identified from exact complete posts independently of new outputs. The combined
+sorting score passes 34; the pizza restaurant plan versus Pizza-Day greeting
+reverses, because prominence 75 versus 90 outweighs relevance. All eleven clear
+user directions pass; prominence alone loses iced coffee versus cream/yolk.
+Eggs, Music and Photography accepted orders hold. Coffee's complete order
+changes beyond permitted about-equal swaps, recorded as one discrepancy rather
+than new strict pair labels. The twenty additional agent directions each pass
+both formulas. These are same-corpus regression observations, not fresh user
+labels or proof of general transfer. Relevance reused all 738 cached rows.
+
+The 108-node PPv31 shared-description prominence comparison is running with the
+same memberships and fixed relevance. All 108 descriptions were independently
+reviewed against masks and ninety unique complete source posts. No hard generated
+scope redefinition was found; twenty-five native reviews record eighteen accepts
+and seven uncertainties, chiefly existing title/mask mismatches (Brands/zap,
+Coffee flavor/gamey meat, Onions/tomato joke, guarani/gianduja, Daily painting/daily,
+Motor vehicles/chicken enclosure) and GrowNostr's unresolved purpose. Other
+outputs were inspected without prescribing numerical values.
+
+Default contracts remain intact. Changed inputs retain native `input_mismatch`.
+Offline sorting preparation validates the description record and exact source
+hash against the saved experiment before reusing unchanged title/SP-context
+vectors. The compatibility test first reproduced the input/evidence mismatch;
+the implementation introduces no new encoding or changed relevance.
 
 One description request per node has bounded context; subsequent prominence
 requests add one description bounded to 1,200 characters per post/node pair.

@@ -13,12 +13,12 @@ import struct
 
 try:
     from . import experiment, worker
-    from .experiment_inputs import prepare_prominence, prepare_context_prominence, union_spans
+    from .experiment_inputs import prepare_prominence, prepare_context_prominence, union_spans, attach_node_descriptions
     from .prominence_ranking import ranking_scores
     from .extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
 except ImportError:
     import experiment
-    from experiment_inputs import prepare_prominence, prepare_context_prominence, union_spans
+    from experiment_inputs import prepare_prominence, prepare_context_prominence, union_spans, attach_node_descriptions
     import worker
     from prominence_ranking import ranking_scores
     from extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
@@ -261,6 +261,26 @@ def prepare(args):
             source = {"cases": [{key: e[key] for key in fields}]}
             verified = (prepare_context_prominence(source, plan['dataset'].get('prominence_basis', 'context'))
                         if context_input else prepare_prominence(source))[0]
+            description_fields = ('node_description', 'node_description_record', 'description_source')
+            if (any(key in e for key in description_fields)
+                    or 'node_description' in json.loads(case['inputs']['INPUT_JSON'])
+                    or 'descriptions' in e.get('source', {})):
+                if (not context_input or plan['dataset'].get('prominence_basis') != 'node_title'
+                        or any(key not in e for key in description_fields)):
+                    raise ValueError('missing or incompatible node description evidence')
+                reference = e['description_source']
+                if e.get('source', {}).get('descriptions') != reference:
+                    raise ValueError('node description source differs from saved evidence')
+                path = Path(reference['path'])
+                expected = sha(path)
+                if (expected != reference['sha256']
+                        or protected.get(str(path), expected) != expected):
+                    raise ValueError(f'node description source changed: {path}')
+                protected[str(path)] = expected
+                attach_node_descriptions([verified], dict(descriptions=read(path),
+                    source={'descriptions': reference}))
+                if any(verified['evidence'][key] != e[key] for key in description_fields):
+                    raise ValueError('node description differs from saved evidence')
             if (case["id"] != e["id"] or set(case["inputs"]) != {"INPUT_JSON"}
                     or json.loads(case["inputs"]["INPUT_JSON"]) !=
                     json.loads(verified["inputs"]["INPUT_JSON"])):
