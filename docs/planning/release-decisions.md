@@ -90,15 +90,22 @@ choices and validation gates remain unchanged.
 
 **400/500-note corpus preparation — October 2:** the user requested proceeding
 with both selections. The assistant recommended books/reading for the fourth
-area and exercise/fitness for the fifth. Both 100-post additions are frozen,
-bringing the unchanged earlier 300 posts to 400, then 500. Complete-text,
-tokenizer, copy, author and production input-preparation checks passed for both.
+area and exercise/fitness for the fifth. The user then approved replacing four
+uncertain topic fits before generation: one books/reading post and three
+exercise/fitness posts. The current v2 selections preserve the other 196 entries
+and the earlier 300 posts, bringing the source to 400, then 500. The original v1
+files remain untouched as provenance. Original-text, local tokenizer, copy,
+author and production input-preparation checks passed for the corrected sources.
 [Books selection](../../sse_multivector/real-note-fine-segmentation-v1/README.md#books-selection-for-the-400-note-hierarchy)
 and [exercise selection](../../sse_multivector/real-note-fine-segmentation-v1/README.md#exercise-selection-for-the-500-note-hierarchy)
-record the assistant's selections and provenance; no user per-note or hierarchy
-judgments are claimed. Both selections and offline preparation are complete;
-400/500-note hierarchies have not been built. Generation holds, open prompt/build
-choices and validation gates are unchanged.
+record the replacements, retained assessments and source hashes. The user
+authorized the identified replacements; no independent semantic review or user
+judgment of the replacement posts or hierarchies is claimed. Broader retained
+corpus eligibility still relies on upstream English, reply and quote filtering;
+no independent per-event metadata audit was performed. Both corrected selections
+and offline preparation are complete; 400/500-note hierarchies have not been
+built. Generation holds, open prompt/build choices and validation gates are
+unchanged.
 
 **Current task 02 status (October 1):** parallel candidate builds continue, and
 the independent comparison started by the user is available. The comparison
