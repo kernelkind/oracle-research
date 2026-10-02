@@ -25,8 +25,9 @@ Preparation scope, the specific rental offer and maximum charge remain open.
 tokenize the waiting notes and choose how many fit the frozen per-GPU memory
 budget. Account for resident weights, padding, caches through the allowed
 output length, temporary buffers and headroom. Short notes can form larger
-batches; long notes get smaller ones. Prepare this calculation locally; the
-existing preparation run confirms execution and measures throughput for pricing.
+batches; long notes get smaller ones. The worker now implements this calculation
+and saves batch receipts plus separate raw/parsed answers per note. GPU
+preparation confirms numeric memory allowances and measures throughput for pricing.
 
 ## 1. Freeze shared inputs — locally
 

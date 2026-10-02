@@ -19,9 +19,11 @@ checks locally before booking. Test output limits during preparation and freeze
 them before the main pilot. Use one 96GB RTX PRO 6000, with each complete
 model on that GPU and the three students running sequentially. The specific
 rental offer, maximum charge, and launch remain open.
-Subject evaluation chooses each batch's size from token lengths and a frozen
-per-GPU memory budget, matched across baselines and checkpoints. Preparation
-throughput replaces the serial cost reference.
+Subject evaluation batching is implemented: each batch's size follows token
+lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
+answers. Numeric GPU allowances still need preparation evidence. Preparation
+throughput replaces the serial cost reference; the larger training and
+checkpoint lifecycle remains to be implemented.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user

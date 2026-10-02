@@ -66,6 +66,25 @@ class CandidateArchitectureTests(unittest.TestCase):
         for prompt, answer in zip(messages, batched["answers"]):
             single = runner.generate(model, tokenizer, prompt, config, "mask")
             self.assertEqual(answer, {key: single[key] for key in ("raw", "tokens", "truncated")})
+        subject_config = {**config, "evaluation_tasks": ["subjects"],
+                          "subject_batching": {"budget_bytes": 16*1024*1024, "workspace_bytes": 0,
+                                               "prefill_bytes_per_token": 1024, "attention_matrix_count": 4}}
+        data = {"evaluation": [{"note_id": str(i), "messages": prompt} for i, prompt in enumerate(messages)],
+                "references": {str(i): {"text": prompt[0]["content"]} for i, prompt in enumerate(messages)}}
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            with patch.object(model, "generate", wraps=model.generate) as calls:
+                results = runner.evaluate(model, tokenizer, data, subject_config, output)
+            self.assertEqual(calls.call_count, 1)
+            self.assertEqual(calls.call_args.kwargs["input_ids"].shape[0], 4)
+            self.assertEqual([row["note_id"] for row in results], [str(i) for i in range(4)])
+            self.assertFalse(list(output.glob("note-*/masks-*.json")))
+            for i, prompt in enumerate(messages):
+                saved = runner.read_json(output / f"note-{i:04}/subjects.json")
+                single = runner.generate(model, tokenizer, prompt, config, "subjects")
+                self.assertEqual(saved["answer"], {key: single[key] for key in ("raw", "tokens", "truncated")})
+                self.assertTrue((output / f"note-{i:04}/subjects-result.json").exists())
+            self.assertTrue(runner.verify_saved(output))
 
     def test_text_weights_training_checkpointing_and_reload(self):
         import torch

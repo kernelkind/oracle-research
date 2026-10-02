@@ -686,9 +686,17 @@ separate note identities, raw/parsed answers and immediate response accounting.
 Prepare the conservative calculation locally under the actual model placement.
 The existing preparation run confirms the packaged path and measures
 throughput; it is not a separate search for a batch size that happens to fit.
-Numeric budgets and implementation remain open. Physical training
-groups may also vary while preserving the approved eight examples per update,
-example order and supervised-token loss normalization. The old single-note
+Numeric GPU allowances remain open. The user subsequently authorized local
+implementation and VM verification. The worker now supports optional
+subjects-only evaluation and memory-based grouping for one complete model on
+one device. It saves a frozen plan, batch receipts and separate raw/parsed
+answers; partial publication resumes from a saved receipt without regenerating,
+while an unfinished generation attempt blocks an automatic retry. This does not
+implement the larger pilot's subject-only training or milestone lifecycle.
+Local verification passed 24 host checks and 39 VM tests, including all three
+candidate architectures and shared SSH deployment/retrieval; the VM is stopped.
+Physical training groups may also vary while preserving the approved eight
+examples per update, example order and supervised-token loss normalization. The old single-note
 timing estimate is a serial reference; batched pilot pricing needs throughput
 evidence and cannot be obtained by simply dividing that estimate by batch size.
 

@@ -8,6 +8,7 @@ import time
 import unittest
 from unittest.mock import patch
 from pathlib import Path
+from types import SimpleNamespace
 
 from sse_multivector import distillation_run
 from sse_multivector.test_distillation_data import DistillationDataTests
@@ -15,6 +16,187 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def subject_batch_fixture(self, lengths=(4, 4, 20, 4, 4)):
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return messages[0]["content"]
+
+            def encode(self, text, **kwargs):
+                return list(range(len(text)))
+
+        class Tensor:
+            device = SimpleNamespace(type="cpu")
+
+            def numel(self):
+                return 16
+
+            def element_size(self):
+                return 4
+
+        class Model:
+            config = SimpleNamespace(model_type="llama", num_hidden_layers=1,
+                num_attention_heads=1, num_key_value_heads=1, head_dim=1)
+            generation_config = SimpleNamespace(num_beams=1, num_return_sequences=1,
+                                                cache_implementation=None)
+
+            def parameters(self):
+                return iter([Tensor()])
+
+            def buffers(self):
+                return iter([])
+
+            def get_input_embeddings(self):
+                return SimpleNamespace(weight=Tensor())
+
+        data = {"evaluation": [{"note_id": str(i), "messages": [{"role": "user", "content": "x" * n}]}
+                               for i, n in enumerate(lengths)],
+                "references": {str(i): {"text": "Tea"} for i in range(len(lengths))}}
+        config = {"device": "cpu", "quantization": "none", "max_length": 100,
+                  "max_new_tokens": {"subjects": 4}, "max_subjects": 8,
+                  "evaluation_tasks": ["subjects"],
+                  "subject_batching": {"budget_bytes": 20000, "workspace_bytes": 0,
+                                       "prefill_bytes_per_token": 32, "attention_matrix_count": 4}}
+        answer = {"raw": '{"subjects":[]}', "tokens": 3, "truncated": False}
+        return Model(), Tokenizer(), data, config, answer
+
+    def test_subject_batches_follow_memory_budget_and_preserve_each_note(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture()
+        def batch(model, tokenizer, messages, config, task, **kwargs):
+            return {"answers": [dict(answer) for _ in messages], "seconds": 1.}
+
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(distillation_run, "generate", return_value=answer), \
+                patch.object(distillation_run, "generate_batch", side_effect=batch) as calls:
+            results = distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+            self.assertEqual([len(call.args[2]) for call in calls.call_args_list], [2, 1, 2])
+            self.assertEqual([row["note_id"] for row in results], [str(i) for i in range(5)])
+            for i in range(5):
+                saved = distillation_run.read_json(Path(temporary) / f"note-{i:04}/subjects.json")
+                self.assertEqual(saved["messages"], data["evaluation"][i]["messages"])
+                self.assertEqual(saved["answer"], answer)
+            self.assertTrue(distillation_run.verify_saved(temporary))
+
+    def test_subject_batch_size_reserves_the_entire_output_allowance(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,)*5)
+        config["subject_batching"]["budget_bytes"] = 3000
+        for allowance, expected in ((4, [4, 1]), (50, [1]*5)):
+            with self.subTest(allowance=allowance), tempfile.TemporaryDirectory() as temporary:
+                config["max_new_tokens"]["subjects"] = allowance
+                def batch(model, tokenizer, messages, config, task, **kwargs):
+                    return {"answers": [dict(answer) for _ in messages], "seconds": 1.}
+                with patch.object(distillation_run, "generate_batch", side_effect=batch) as calls:
+                    distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+                self.assertEqual([len(call.args[2]) for call in calls.call_args_list], expected)
+
+    def test_subject_batch_resume_uses_receipt_after_partial_note_publication(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture()
+        valid = {**answer, "raw": '{"subjects":[{"number":"1","context":"Tea is named.","subject":"Tea"}]}'}
+        malformed = {**answer, "raw": "bad JSON"}
+        truncated = {**valid, "truncated": True}
+        publish = distillation_run.write_json
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            def interrupted(path, value):
+                if Path(path) == root / "note-0001/subjects.json":
+                    self.assertTrue((root / "subjects-0000.json").exists())
+                    raise OSError("publication interrupted")
+                return publish(path, value)
+            with patch.object(distillation_run, "generate_batch", return_value={
+                    "answers": [valid, malformed], "seconds": 1.}) as calls, \
+                    patch.object(distillation_run, "write_json", side_effect=interrupted):
+                with self.assertRaisesRegex(OSError, "publication interrupted"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+                self.assertEqual(calls.call_count, 1)
+            saved = distillation_run.file_hashes(root)
+            def batch(model, tokenizer, messages, config, task, **kwargs):
+                # Completed first-batch answers must already be parsed before
+                # another expensive generation call starts.
+                self.assertTrue((root / "note-0001/subjects-result.json").exists())
+                replies = [truncated] if len(messages) == 1 else [answer, valid]
+                return {"answers": replies, "seconds": 1.}
+            with patch.object(distillation_run, "generate", side_effect=AssertionError("serial subject call")), \
+                    patch.object(distillation_run, "generate_batch", side_effect=batch) as calls:
+                results = distillation_run.evaluate(model, tokenizer, data, config, root)
+            self.assertEqual([len(call.args[2]) for call in calls.call_args_list], [1, 2])
+            self.assertTrue(all(call.args[4] == "subjects" for call in calls.call_args_list))
+            self.assertEqual([bool(row["errors"]) for row in results], [False, True, True, False, False])
+            self.assertEqual(results[0]["subjects"][0]["subject"], "Tea")
+            self.assertFalse(list(root.glob("note-*/masks-*.json")))
+            for name, digest in saved.items():
+                self.assertEqual(distillation_run.sha256(root / name), digest)
+            with patch.object(distillation_run, "generate_batch", side_effect=AssertionError("repeated completed evaluation")):
+                self.assertEqual(distillation_run.evaluate(model, tokenizer, data, config, root), results)
+
+    def test_incomplete_subject_generation_is_not_automatically_retried(self):
+        model, tokenizer, data, config, _ = self.subject_batch_fixture()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with patch.object(distillation_run, "generate_batch", side_effect=RuntimeError("GPU failure")) as calls:
+                with self.assertRaisesRegex(RuntimeError, "GPU failure"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+                self.assertEqual(calls.call_count, 1)
+            with patch.object(distillation_run, "generate_batch", side_effect=AssertionError("automatic retry")):
+                with self.assertRaisesRegex(ValueError, "unfinished generation attempt"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+
+    def test_bad_subject_batch_count_is_preserved_and_blocks_completion(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with patch.object(distillation_run, "generate_batch", return_value={"answers": [answer], "seconds": 1.}):
+                with self.assertRaisesRegex(ValueError, "answer count differs"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+            self.assertEqual(distillation_run.read_json(root / "subjects-0000.json")["answers"], [answer])
+            self.assertFalse((root / "complete.json").exists())
+            with patch.object(distillation_run, "generate_batch", side_effect=AssertionError("retrying count defect")):
+                with self.assertRaisesRegex(ValueError, "answer count differs"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+
+    def test_subject_batch_policy_change_is_rejected_on_resume(self):
+        model, tokenizer, data, config, _ = self.subject_batch_fixture()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with patch.object(distillation_run, "generate_batch", side_effect=RuntimeError("interrupted")):
+                with self.assertRaisesRegex(RuntimeError, "interrupted"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+            config["subject_batching"]["budget_bytes"] += 1
+            with patch.object(distillation_run, "generate_batch", side_effect=AssertionError("changed frozen policy")):
+                with self.assertRaisesRegex(ValueError, "batch plan differs"):
+                    distillation_run.evaluate(model, tokenizer, data, config, root)
+
+    def test_subject_batch_limits_fail_before_any_generation(self):
+        for change, message in ((lambda c: c["subject_batching"].update(budget_bytes=1), "cannot fit"),
+                                (lambda c: c.update(max_length=10), "max_length"),
+                                (lambda c: c["subject_batching"].update(attention_matrix_count=True), "invalid subject batching")):
+            model, tokenizer, data, config, _ = self.subject_batch_fixture()
+            change(config)
+            with self.subTest(error=message), tempfile.TemporaryDirectory() as temporary, \
+                    patch.object(distillation_run, "generate_batch", side_effect=AssertionError("generation before validation")):
+                with self.assertRaisesRegex(ValueError, message):
+                    distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+
+    def test_subject_memory_policy_rejects_generation_that_multiplies_or_retains_state(self):
+        for setting, value in (("num_beams", 2), ("num_return_sequences", 2),
+                               ("cache_implementation", "static"), ("output_scores", True),
+                               ("output_hidden_states", True)):
+            model, tokenizer, data, config, _ = self.subject_batch_fixture()
+            model.generation_config = SimpleNamespace(num_beams=1, num_return_sequences=1,
+                                                     cache_implementation=None)
+            setattr(model.generation_config, setting, value)
+            with self.subTest(setting=setting), tempfile.TemporaryDirectory() as temporary, \
+                    patch.object(distillation_run, "generate_batch", side_effect=AssertionError("unsupported generation")):
+                with self.assertRaisesRegex(ValueError, "unsupported subject generation settings"):
+                    distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+
+    def test_subject_budget_reserves_decode_attention_for_short_inputs_and_long_answers(self):
+        model, tokenizer, data, config, _ = self.subject_batch_fixture((4,))
+        config["max_new_tokens"]["subjects"] = 80
+        config["subject_batching"]["budget_bytes"] = 3000
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(distillation_run, "generate_batch", side_effect=AssertionError("underbudgeted decode")):
+            with self.assertRaisesRegex(ValueError, "cannot fit"):
+                distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+
     def test_subject_parser_accepts_a_complete_json_code_fence(self):
         subjects = [{"number": "1", "context": "Tea is named.", "subject": "Tea"}]
         raw = json.dumps({"subjects": subjects})
@@ -256,6 +438,33 @@ class TinyWorkflowTests(unittest.TestCase):
                 distillation_run.generate_batch(model, tokenizer, messages, {**self.config, "max_length": width}, "mask")
         finally:
             tokenizer.pad_token = old_pad
+
+    def test_dynamic_subject_baseline_runs_through_the_cli_and_freezes_its_policy(self):
+        config = {**self.config, "evaluation_tasks": ["subjects"],
+                  "subject_batching": {"budget_bytes": 8*1024*1024, "workspace_bytes": 0,
+                                       "prefill_bytes_per_token": 1024, "attention_matrix_count": 4}}
+        path, output = self.root / "dynamic-config.json", self.root / "dynamic-baseline"
+        distillation_run.write_json(path, config)
+        command = [sys.executable, "-B", "-m", "sse_multivector.distillation_run", str(path),
+                   "--output", str(output), "--through", "baseline"]
+        with (self.root / "dynamic-baseline.log").open("w") as log:
+            subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=120)
+        self.assertTrue(distillation_run.verify_saved(output / "baseline"))
+        data = distillation_run.load_data(config["data"], config["mask_prompt"])
+        receipt = distillation_run.read_json(output / "baseline/subjects-0000.json")
+        self.assertEqual(receipt["note_ids"], [row["note_id"] for row in data["evaluation"]])
+        self.assertEqual(len(receipt["answers"]), len(data["evaluation"]))
+        self.assertFalse(list(output.glob("baseline/note-*/masks-*.json")))
+        self.assertFalse((output / "adapter").exists())
+        before = distillation_run.file_hashes(output)
+        subprocess.run(command, capture_output=True, check=True, timeout=120)
+        self.assertEqual(before, distillation_run.file_hashes(output))
+        config["subject_batching"]["budget_bytes"] += 1
+        distillation_run.write_json(path, config)
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("frozen run differs", result.stderr)
+        self.assertEqual(before, distillation_run.file_hashes(output))
 
     def test_training_resume_reload_and_two_step_evaluation(self):
         from safetensors.torch import load_file

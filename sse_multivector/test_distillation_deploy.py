@@ -141,6 +141,22 @@ class SharedSSHTests(unittest.TestCase):
         for name in ('first', 'second'):
             self.assertTrue(read_json(result / name / 'report.json')['training']['reload_matches'])
 
+    def test_dynamic_subject_batches_train_and_retrieve_through_shared_ssh(self):
+        policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                  'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}
+        root = self.fixture_package('dynamic-subjects', {
+            'evaluation_tasks': ['subjects'], 'subject_batching': policy})
+        result = self.run_package(root / 'inputs', root / 'operation')
+        for name in ('first', 'second'):
+            run = result / name
+            self.assertEqual(read_json(run / 'manifest.json')['config']['subject_batching'], policy)
+            for stage in ('baseline', 'trained'):
+                self.assertEqual(read_json(run / stage / 'subject-batches.json')['policy'], policy)
+                receipt = read_json(run / stage / 'subjects-0000.json')
+                self.assertEqual(len(receipt['answers']), len(receipt['note_ids']))
+                self.assertEqual(len(list((run / stage).glob('note-*/subjects-result.json'))), len(receipt['note_ids']))
+                self.assertFalse(list((run / stage).glob('note-*/masks-*.json')))
+
     def test_failure_preserves_logs(self):
         root = self.fixture_package('failure', {'max_length': 8})
         result = self.run_package(root / 'inputs', root / 'operation', expected=1)

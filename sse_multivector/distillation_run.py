@@ -152,12 +152,15 @@ def generate(model, tokenizer, messages, config, task="subjects"):
     return {**batch["answers"][0], "seconds": batch["seconds"]}
 
 
-def generate_batch(model, tokenizer, messages, config, task):
+def generate_batch(model, tokenizer, messages, config, task, *, encoded=None):
     import torch
     if not messages:
         raise ValueError("generation batch must not be empty")
-    encoded = [tokenizer.encode(generation_prompt(tokenizer, prompt), add_special_tokens=False)
-               for prompt in messages]
+    if encoded is None:
+        encoded = [tokenizer.encode(generation_prompt(tokenizer, prompt), add_special_tokens=False)
+                   for prompt in messages]
+    if len(encoded) != len(messages) or any(not row for row in encoded):
+        raise ValueError("generation batch token rows differ or are empty")
     allowance = config["max_new_tokens"][task]
     width = max(map(len, encoded))
     if width + allowance > config["max_length"]:
@@ -189,6 +192,170 @@ def generate_batch(model, tokenizer, messages, config, task):
     return {"answers": answers, "seconds": elapsed}
 
 
+def validate_subject_batching(policy):
+    """Require explicit frozen memory allowances; no inferred numerical defaults."""
+    fields = {"budget_bytes", "workspace_bytes", "prefill_bytes_per_token", "attention_matrix_count"}
+    if (not isinstance(policy, dict) or set(policy) != fields
+            or any(type(value) is not int or value < 0 for value in policy.values())
+            or policy["budget_bytes"] == 0 or policy["prefill_bytes_per_token"] == 0
+            or policy["attention_matrix_count"] > 4):
+        raise ValueError("invalid subject batching memory policy")
+
+
+def subject_batch_memory(model, config):
+    """Resident tensors and cache shapes for one complete, unquantized model.
+
+    Kernel scratch allowances come from the frozen subject_batching policy.
+    Their suitability for the selected GPU still requires preparation evidence.
+    """
+    if config["quantization"] != "none":
+        raise ValueError("dynamic subject batching requires an unquantized model")
+    generation = model.generation_config
+    # In the pinned Transformers version, None resolves to one greedy sequence.
+    if (generation.num_beams not in (None, 1) or generation.num_return_sequences not in (None, 1)
+            or generation.cache_implementation not in (None, "dynamic")
+            or getattr(generation, "cache_config", None)
+            or any(getattr(generation, field, False) for field in (
+                "output_scores", "output_logits", "output_attentions",
+                "output_hidden_states", "return_dict_in_generate"))):
+        raise ValueError("unsupported subject generation settings for the memory policy")
+    tensors = list(model.parameters()) + list(model.buffers())
+    devices = {(t.device.type, getattr(t.device, "index", None)) for t in tensors}
+    if len(devices) != 1 or next(iter(devices))[0] != config["device"]:
+        raise ValueError("subject batching requires the complete model on one device")
+    policy = config["subject_batching"]
+    if config["device"] == "cuda":
+        import torch
+        capacity = torch.cuda.get_device_properties(next(iter(devices))[1]).total_memory
+        if policy["budget_bytes"] > capacity:
+            raise ValueError("subject batch budget exceeds GPU memory capacity")
+    c = model.config
+    if hasattr(c, "get_text_config"):
+        c = c.get_text_config()
+    if c.model_type not in ("qwen3_5_text", "gemma4_text", "llama"):
+        raise ValueError(f"unsupported subject batch cache model: {c.model_type}")
+    if getattr(c, "num_kv_shared_layers", 0):
+        raise ValueError("subject batch cache sharing is not supported")
+    layers = getattr(c, "layer_types", None) or ["full_attention"] * c.num_hidden_layers
+    if len(layers) != c.num_hidden_layers or set(layers) - {"full_attention", "sliding_attention", "linear_attention"}:
+        raise ValueError("unsupported subject batch cache layers")
+    if "sliding_attention" in layers and not getattr(c, "sliding_window", 0):
+        raise ValueError("subject batch sliding cache requires a window")
+    size = model.get_input_embeddings().weight.element_size()
+    d = getattr(c, "head_dim", None) or c.hidden_size // c.num_attention_heads
+    full_layer = 2 * (getattr(c, "num_global_key_value_heads", None) or c.num_key_value_heads) * (
+        getattr(c, "global_head_dim", None) or d) * size
+    sliding_layer = 2 * c.num_key_value_heads * d * size
+    recurrent_layer = convolution_layer = 0
+    if "linear_attention" in layers:
+        if c.model_type != "qwen3_5_text":
+            raise ValueError("unsupported recurrent subject batch cache")
+        recurrent_layer = c.linear_num_value_heads * c.linear_key_head_dim * c.linear_value_head_dim * 4
+        convolution_layer = (2*c.linear_num_key_heads*c.linear_key_head_dim
+                             + c.linear_num_value_heads*c.linear_value_head_dim) * c.linear_conv_kernel_dim * size
+    return {"resident_bytes": sum(t.numel()*t.element_size() for t in tensors),
+            "kv_bytes_per_token": layers.count("full_attention")*full_layer,
+            "sliding_bytes_per_token": layers.count("sliding_attention")*sliding_layer,
+            "sliding_window": getattr(c, "sliding_window", 0) or 0,
+            "state_bytes_per_note": layers.count("linear_attention")*(recurrent_layer+convolution_layer),
+            "full_layer_bytes_per_token": full_layer if "full_attention" in layers else 0,
+            "sliding_layer_bytes_per_token": sliding_layer if "sliding_attention" in layers else 0,
+            "recurrent_layer_bytes": recurrent_layer,
+            "attention_heads": c.num_attention_heads,
+            "vocab_size": getattr(c, "vocab_size", 0)}
+
+
+def subject_batch_plan(model, tokenizer, rows, config):
+    policy = config["subject_batching"]
+    validate_subject_batching(policy)
+    memory = subject_batch_memory(model, config)
+    encoded = [tokenizer.encode(generation_prompt(tokenizer, row["messages"]), add_special_tokens=False)
+               for row in rows]
+    allowance = config["max_new_tokens"]["subjects"]
+
+    def estimated_bytes(count, width):
+        length = width + allowance
+        prefill_cache = (memory["kv_bytes_per_token"] + memory["sliding_bytes_per_token"])*width
+        decode_cache = memory["kv_bytes_per_token"]*length + memory["sliding_bytes_per_token"]*min(
+            length, memory["sliding_window"])
+        cache_copy = max(memory["full_layer_bytes_per_token"]*length,
+                         memory["sliding_layer_bytes_per_token"]*max(width, memory["sliding_window"]),
+                         memory["recurrent_layer_bytes"])
+        per_note = max(prefill_cache, decode_cache) + memory["state_bytes_per_note"] + cache_copy
+        # Budget prefill and the longest single-token decode, including FP32 masks.
+        per_note += (8 + 4*memory["attention_heads"]*policy["attention_matrix_count"])*max(width*width, length)
+        per_note += policy["prefill_bytes_per_token"]*width + 16*memory["vocab_size"]
+        return memory["resident_bytes"] + policy["workspace_bytes"] + count*per_note
+
+    batches, indices, width = [], [], 0
+    for index, tokens in enumerate(encoded):
+        if not tokens or len(tokens) + allowance > config["max_length"]:
+            raise ValueError(f"subject input {index} plus output allowance exceeds max_length or is empty")
+        if estimated_bytes(1, len(tokens)) > policy["budget_bytes"]:
+            raise ValueError(f"subject input {index} cannot fit the frozen memory budget")
+        candidate = max(width, len(tokens))
+        if indices and estimated_bytes(len(indices)+1, candidate) > policy["budget_bytes"]:
+            batches.append({"indices": indices, "prompt_width": width,
+                            "estimated_bytes": estimated_bytes(len(indices), width)})
+            indices, width = [], 0
+        indices.append(index)
+        width = max(width, len(tokens))
+    if indices:
+        batches.append({"indices": indices, "prompt_width": width,
+                        "estimated_bytes": estimated_bytes(len(indices), width)})
+    plan = {"policy": policy, "memory": memory, "max_new_tokens": allowance,
+            "inputs": [{"note_id": row["note_id"], "tokens": len(tokens),
+                        "sha256": hashlib.sha256(json.dumps([row["messages"], tokens],
+                            ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()}
+                       for row, tokens in zip(rows, encoded)], "batches": batches}
+    return plan, encoded
+
+
+def generate_subject_batches(model, tokenizer, rows, config, directory):
+    """Publish a complete batch before its per-note files, so resumes never repeat it."""
+    plan, encoded = subject_batch_plan(model, tokenizer, rows, config)
+    plan_path = directory / "subject-batches.json"
+    if plan_path.exists():
+        if read_json(plan_path) != plan:
+            raise ValueError("saved subject batch plan differs")
+    else:
+        write_json(plan_path, plan)
+    for index, batch in enumerate(plan["batches"]):
+        indices = batch["indices"]
+        paths = [directory / f"note-{i:04}/subjects.json" for i in indices]
+        receipt = directory / f"subjects-{index:04}.json"
+        messages = [rows[i]["messages"] for i in indices]
+        inputs = {"note_ids": [rows[i]["note_id"] for i in indices], "messages": messages,
+                  "input_tokens": [len(encoded[i]) for i in indices], "batch": batch}
+        if receipt.exists():
+            saved = read_json(receipt)
+            if any(saved.get(key) != value for key, value in inputs.items()):
+                raise ValueError("saved subject batch input differs")
+        else:
+            if any(path.exists() for path in paths):
+                raise ValueError("saved subject answers have no batch receipt")
+            attempt = directory / f"subjects-{index:04}.started.json"
+            if attempt.exists():
+                raise ValueError("subject batch has an unfinished generation attempt; reconcile it before restarting")
+            write_json(attempt, {**inputs, "started_unix": time.time()})
+            generated = generate_batch(model, tokenizer, messages, config, "subjects",
+                                       encoded=[encoded[i] for i in indices])
+            saved = {**inputs, **generated}
+            # Preserve defective batch evidence too; never retry an answer-count defect.
+            write_json(receipt, saved)
+        if len(saved["answers"]) != len(indices):
+            raise ValueError("subject generation batch answer count differs")
+        for offset, (path, prompt, answer) in enumerate(zip(paths, messages, saved["answers"])):
+            value = {"note_id": rows[indices[offset]]["note_id"], "messages": prompt, "answer": answer,
+                     "batch": {"file": receipt.name, "offset": offset}}
+            if path.exists():
+                if read_json(path) != value:
+                    raise ValueError("saved subject answer differs from its batch receipt")
+            else:
+                write_json(path, value)
+            yield indices[offset], rows[indices[offset]]
+
+
 def evaluate(model, tokenizer, data, config, directory):
     """Persist each completed call, including malformed answers, without retries."""
     directory = Path(directory)
@@ -196,6 +363,14 @@ def evaluate(model, tokenizer, data, config, directory):
         if not verify_saved(directory):
             raise ValueError("evaluation hash mismatch")
         return read_json(directory / "results.json")
+
+    tasks = config.get("evaluation_tasks", ["subjects", "mask"])
+    if tasks not in (["subjects"], ["subjects", "mask"]):
+        raise ValueError("invalid evaluation tasks")
+    if "subject_batching" in config:
+        rows = generate_subject_batches(model, tokenizer, data["evaluation"], config, directory)
+    else:
+        rows = enumerate(data["evaluation"])
 
     def call(path, messages, task):
         if path.exists():
@@ -208,7 +383,7 @@ def evaluate(model, tokenizer, data, config, directory):
         return answer
 
     notes = []
-    for index, row in enumerate(data["evaluation"]):
+    for index, row in rows:
         note_id = row["note_id"]
         original = data["references"][note_id]
         note_directory = directory / f"note-{index:04}"
@@ -222,9 +397,18 @@ def evaluate(model, tokenizer, data, config, directory):
                 raise ValueError("subject count exceeds configured limit")
         except (ValueError, TypeError) as error:
             result["errors"].append({"task": "subjects", "error": str(error)})
+        if "subject_batching" in config:
+            parsed_path = note_directory / "subjects-result.json"
+            parsed = {"note_id": note_id, "subjects": result["subjects"], "errors": result["errors"]}
+            if parsed_path.exists():
+                if read_json(parsed_path) != parsed:
+                    raise ValueError("saved parsed subject result differs")
+            else:
+                write_json(parsed_path, parsed)
+        if result["errors"]:
             notes.append(result)
             continue
-        if result["subjects"]:
+        if result["subjects"] and "mask" in tasks:
             _, prompts = prepare_mask_inputs({"schema_version": 1, "notes": [{
                 "note_id": note_id, "text": original["text"], "subjects": result["subjects"]}]},
                 data["mask_prompt"])
@@ -451,8 +635,13 @@ def run(config_path, output, through="report"):
         "max_length", "max_new_tokens", "max_subjects", "max_steps", "save_steps", "batch_size",
         "gradient_accumulation_steps", "learning_rate", "subject_fraction", "lora_rank", "lora_alpha", "threads",
         "gradient_checkpointing", "lora_target_modules", "mask_batch_size"}
-    if set(config) != required:
+    optional = {"subject_batching", "evaluation_tasks"}
+    if required - set(config) or set(config) - required - optional:
         raise ValueError(f"configuration fields differ: {set(config) ^ required}")
+    if "subject_batching" in config:
+        validate_subject_batching(config["subject_batching"])
+    if config.get("evaluation_tasks", ["subjects", "mask"]) not in (["subjects"], ["subjects", "mask"]):
+        raise ValueError("invalid evaluation tasks")
     for key in required - {"model", "revision", "data", "mask_prompt", "device", "quantization",
                            "learning_rate", "subject_fraction", "max_new_tokens", "gradient_checkpointing",
                            "lora_target_modules"}:

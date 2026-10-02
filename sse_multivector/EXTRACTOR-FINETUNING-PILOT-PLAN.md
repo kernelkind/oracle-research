@@ -435,6 +435,34 @@ including every prompt and one measured generation duration for the batch.
 Resuming reuses the whole saved batch, including malformed and empty answers;
 the final incomplete group can contain fewer than four requests.
 
+Optional `evaluation_tasks: ["subjects"]` skips mask generation during evaluation;
+the existing training/data contract still requires the legacy two-task package.
+Optional `subject_batching` enables memory-based grouping for one complete,
+unquantized model on one device. Its explicit integer fields are `budget_bytes`,
+`workspace_bytes`, `prefill_bytes_per_token` and `attention_matrix_count`. They
+freeze the memory ceiling, fixed scratch/headroom, per-token prefill allowance
+and attention-score buffer count. No numeric GPU defaults are inferred.
+The calculation counts actual resident tensors, full/sliding KV caches, Qwen
+recurrent/convolution state, cache updates, padded prefill and decode attention,
+and the full output allowance. Unsupported cache or generation settings fail
+before model calls. Tokenize once and seal `subject-batches.json` before
+generation. Save one `subjects-NNNN.json` receipt with all answers and measured
+batch duration before publishing separate `subjects.json` and
+`subjects-result.json` files per note. Parse each note before starting the next
+batch. Saved malformed/truncated answers remain failures. A saved receipt can
+finish interrupted publication; a started generation without a receipt blocks
+automatic retry. Batch estimates require GPU preparation evidence; CPU tests
+do not establish CUDA fit.
+
+October 2 verification passed 24 host checks and 39 tests in the pinned VM
+container. Tests exercised short/long inputs, full output reservations, missing
+responses, interrupted publication, CLI resume and frozen-policy rejection,
+small versions of all three architectures before/after adapter training, and
+shared SSH deployment with verified retrieval. All four retrieved dynamic
+baseline/trained stages reverified locally. The VM is stopped and its container
+export is retained under `target/distillation-vm-clean-deployment/`. Numeric
+96GB GPU allowances and the larger training lifecycle remain open.
+
 Subject and position-mask decoding accept bare JSON or one complete Markdown
 code fence labelled `json` (case-insensitive) or unlabelled. Existing field,
 duplicate-key, hierarchy, verdict and position validation still apply. Raw
@@ -744,8 +772,10 @@ preparation and the larger pilot, holding each complete student model on that
 GPU and running the three students sequentially. The specific card edition/power
 setting, rental offer, preparation scope/cases and maximum charge remain open.
 Use the same pinned models and approved subject-only adapter recipe as the
-pilot. Prepare locally and rehearse production paths in the VM before booking. The current informal worker does not implement subject-only coverage,
-expert adapters or the full milestone lifecycle.
+pilot. Prepare locally and rehearse production paths in the VM before booking.
+The worker now supports subjects-only evaluation and memory-based subject
+batching. Subject-only training coverage, expert adapters and the full
+milestone lifecycle remain to be implemented.
 
 Start with historical N18 (long diary: dense hierarchy and subject truncation),
 N00 (soda bread: negation and qualifiers), and N15 (gianduja/store: short note).
@@ -764,11 +794,13 @@ allocator headroom. Account for sliding-window caches and Qwen's recurrent
 layers rather than assuming every layer stores a full-context KV cache.
 Reserve for generation through the allowed output length, not just initial free
 memory. Each batch's count can change with its token lengths; choose the count
-before generating. Numeric budgets and implementation remain open.
+before generating. The worker now implements the calculation with explicit
+frozen allowances; numeric GPU budgets remain open.
 Freeze the batching policy per student/mode and match baseline/checkpoints;
 preserve per-note outputs. The existing preparation sequence confirms execution
 and peak memory and measures throughput; no standalone batch-size rental sweep
-is prescribed. The current worker still generates subjects one note at a time.
+is prescribed. Historical recipes retain serial subject generation unless
+the new `subject_batching` policy is supplied.
 
 **Combined GPU sequence, once per student:**
 
