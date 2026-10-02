@@ -43,15 +43,16 @@ Start **one continuing training run per student**:
 1. Initialize its adapter and optimizer from the original model once.
 2. Learn from **note → teacher hierarchy** and **note + one teacher subject →
    its teacher mask response** examples. Both tasks update the same adapter.
-3. After using every training example from the first 200 notes, save the complete
-   training checkpoint.
-   Verify the saved adapter reloads correctly. Generate subjects and their masks
-   on the **same 100 separate validation notes**, using one mask prompt per
-   generated subject; save raw and parsed outputs.
-4. Continue from that training state through **400, 600, 800, and 1,000 notes**.
-   Save and evaluate at each milestone, giving five trained points per student
-   plus its untuned baseline. Preserve the optimizer and learning-rate schedule.
-   Validation answers do not update the weights.
+3. After using every training example from the first 200 notes, save and verify
+   the complete training checkpoint. Unload training from the GPU; load the
+   saved adapter on a fresh BF16 base and bake its changes into this evaluation copy.
+   Verify reloads under that policy. Generate subjects and their masks on the
+   **same validation notes** (100 proposed), using one mask prompt per generated
+   subject; save raw and parsed outputs and check dependent calls immediately.
+4. Discard the evaluation copy and restore the complete training state, including
+   the exact next example. Continue through **400, 600, 800, and 1,000 notes**,
+   saving and evaluating at each milestone. Keep all five complete checkpoints.
+   Validation leaves the saved adapter, optimizer, schedule, and random state intact.
 
 **One complete pass is approved:** use every subject and mask training example
 once, without replacement, in five new 200-note blocks. Earlier notes and labels

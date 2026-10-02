@@ -782,8 +782,35 @@ preliminary numerical setup and supported defaults, not task-specific optima;
 see [Trainer defaults](https://huggingface.co/docs/transformers/v5.17.0/en/main_classes/trainer)
 and [PEFT precision guidance](https://huggingface.co/docs/peft/v0.21.0/en/developer_guides/troubleshooting#selecting-the-dtype-of-the-adapter).
 Record these settings explicitly in the larger-pilot configuration. Hardware,
-physical batch allocation, evaluation precision and checkpoint lifecycle, runtime
-choices, exact expanded MoE GPU fit, implementation and spending remain open.
+physical batch allocation, generation settings, runtime choices, exact expanded
+MoE GPU fit, implementation and spending remain open. The later checkpoint
+decision below settles merged BF16 validation and the save/evaluate/resume flow.
+
+**October 2 checkpoint evaluation and resume approved:** at each completed
+200-note block, finish the final adapter update, save the full unmerged training
+checkpoint, and verify its files before publishing completion. Preserve the
+adapter, optimizer, schedule, random state, update count and exact next-example
+position; retain all five complete milestone checkpoints per student.
+Release training from the GPU, load a fresh original pinned BF16 base with that
+saved adapter, and merge its learned changes into this disposable evaluation
+copy. Use this policy for all three students and every trained checkpoint;
+untuned baselines use the original base. Verify saved-adapter reloads under the
+selected inference policy; merged/unmerged BF16 answers need not be identical.
+Generate validation subjects and their separate masks, preserve raw and parsed
+responses, account for dependent calls immediately, and transfer finished files
+with the approved background copier. Missing work or pipeline defects block
+advancement; invalid model answers remain measured failures.
+Discard the evaluation copy and restore the untouched full training checkpoint,
+including random state after reconstruction, before using the next example.
+Merging/unmerging the continuing BF16 training base is excluded. This keeps one
+copy of that student's model resident at a time and adds cached-base reloads between stages.
+Separate GPU preparation must verify the save/merge/evaluate/resume transition,
+continuation, merge peak memory and elapsed overhead. The [PEFT expert-adapter
+guidance](https://huggingface.co/docs/peft/v0.21.0/en/package_reference/lora#targeting-nnparameter-directly)
+supports merging to remove generation overhead. The current worker still only
+reloads an unmerged adapter after training ends and retains two rolling checkpoints;
+this approval describes the intended larger-pilot design. Implementation,
+generation limits/batching, hardware, preparation spending and launch stay open.
 
 **October 1 separate paid GPU preparation agreed in principle:** settle the
 remaining pilot configuration and identify all required GPU checks before booking

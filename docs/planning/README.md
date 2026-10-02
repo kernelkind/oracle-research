@@ -165,8 +165,10 @@ model and router weights frozen. Training loss averages all teacher-answer and
 native turn-ending tokens per update, without extra task weighting. Numerical
 settings retain AdamW defaults with no weight decay and clipping 1, an unquantized
 BF16 base/mixed computation and FP32 adapter/optimizer state, plus LoRA dropout 0,
-frozen biases and standard initialization. Remaining data choices and execution
-details are open; see the
+frozen biases and standard initialization. Each milestone retains a complete
+training checkpoint, evaluates a disposable BF16 base with the saved adapter
+baked in, then restores the full training state. Remaining data choices and
+execution details are open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)

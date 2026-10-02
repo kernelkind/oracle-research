@@ -739,10 +739,14 @@ pilot, not a claim that the current worker enforces it.
   optimizer once, and retain complete training state as the dataset expands.
   Mix one subject-hierarchy example per note with one mask example per labeled
   teacher subject: the complete note plus that one subject yields its teacher
-  mask response. Both tasks update the same adapter. At each milestone save a
-  complete training checkpoint and its adapter. Verify adapter reload with the
-  original model, then generate validation subjects and request a separate mask
-  response for each generated subject from that frozen checkpoint. Untuned
+  mask response. Both tasks update the same adapter. At each milestone save and
+  verify the complete unmerged training checkpoint containing its adapter; retain
+  all five milestone checkpoints. Release training from the GPU. Load the saved
+  adapter on a fresh original BF16 base, merge it into this disposable evaluation
+  copy, and verify reload under that policy. Generate validation subjects and
+  request a separate mask response for each generated subject from the saved
+  checkpoint. Discard evaluation and restore the full untouched training state,
+  including the exact next-example position, before the next block. Untuned
   baselines use the same single-subject mask format, approved October 1.
   Independent prompts may still share a GPU batch.
   Save both complete responses, raw and parsed, with note/subject links and
@@ -836,7 +840,8 @@ not a Gemma task-specific optimum. At the pinned model shapes it adds 59,473,920
 parameters, for 78,059,520 total. With the approved FP32 adapter/gradient/Adam
 state policy, static adapter training state is about 1.16 GiB, an increase of
 0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; exact
-GPU fit and inference policy remain unresolved. Explicit expert targeting still
+GPU fit and generation limits/batching remain unresolved. The merged evaluation
+policy was approved October 2 below. Explicit expert targeting still
 needs implementation. The current worker leaves routed experts frozen and uses
 the preliminary 128-step replacement sampler, not the approved larger-pilot
 continuation.
@@ -858,10 +863,47 @@ and [PEFT precision guidance](https://huggingface.co/docs/peft/v0.21.0/en/develo
 do not establish their optimality for this task. Physical batching must retain
 the approved eight examples total per update; one-example batches accumulated
 eight times apply only when that student trains on one GPU. GPU allocation,
-evaluation precision/lifecycle and remaining runtime choices stay open.
+generation settings and remaining runtime choices stay open; merged BF16
+checkpoint evaluation and resume were approved October 2 below.
 Exact memory fit of the expanded MoE configuration must be checked during
 separate GPU preparation. The larger-pilot worker still needs implementation
 and production-path verification.
+
+**Checkpoint lifecycle approved October 2:** complete each 200-note block's
+final update, including any smaller final group, then save the full unmerged
+training checkpoint. Seal completion only after all files and their hashes are
+complete. Each of the five retained milestone checkpoints includes its adapter,
+optimizer, schedule, Python/NumPy/Torch/CUDA random state, cumulative update
+count, exact data-order position and frozen run identities. Save the actual
+next-example position; multiplying update count by eight would skip examples
+when a block ends with a smaller group.
+
+Release training objects from the GPU, then load a fresh pinned original BF16
+base plus the saved adapter and merge the adapter into this disposable evaluation
+copy. All three students use this same inference policy at every trained
+milestone; untuned baselines retain the original base. Verify adapter reloads
+under the chosen merged policy, without requiring merged/unmerged text equality.
+The [PEFT expert-adapter guidance](https://huggingface.co/docs/peft/v0.21.0/en/package_reference/lora#targeting-nnparameter-directly)
+recommends merging to remove repeated packed-weight work during generation.
+Preserve the unmerged FP32 adapter and full training checkpoint; do not merge and
+unmerge the continuing BF16 training base. Each checkpoint's evaluation outputs
+are tied to that checkpoint and inference settings. Preserve all responses and
+resume incomplete evaluation from completed saved calls under the same settings.
+Check dependent-call accounting as responses arrive, before advancing the
+candidate; completed files transfer through the approved background copier.
+
+After evaluation, discard its model and restore trainable adapters, optimizer,
+schedule, counters and the exact next-example position from the untouched
+training checkpoint. Restore random state after reconstructing the model and optimizer, then
+continue training with training mode, cache off and training checkpointing
+restored. No validation answer updates the adapter. This lifecycle keeps one
+copy of a given student's model resident at a time and adds cached-base reloads at transitions.
+Separate GPU preparation must measure that overhead and merge peak memory, and
+verify continuation across the full transition. The current worker evaluates an
+unmerged adapter only at training's endpoint and retains two rolling checkpoints;
+five-stage continuation, milestone retention and merging still need implementation
+and production-path verification. Additional recovery-checkpoint cadence,
+generation limits/batching, hardware and spending remain open.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -1071,9 +1113,10 @@ training hours ≈ (52.2 × Qwen updates + 80.6 × dense Gemma updates
 Each update count is the **total across that student's entire continuing run**,
 not a fresh budget at every milestone. The measured trainer times already
 include periodic checkpoint writes/hashing; add only stage export/reload work
-not included in those times. Save/reload checks at all fifteen
-checkpoints would add approximately 2.55 hours if they resemble the previous
-checks.
+not included in those times. The earlier 2.55-hour projection assumed fifteen
+checks resembling the preliminary terminal save/reload. It does not estimate
+the approved fresh-base merged evaluation and full training-restoration flow;
+measure that transition in separate GPU preparation before pricing its overhead.
 Three continuing runs do not imply a two-thirds compute saving: retaining the
 same total updates retains approximately the same trainer work. Savings depend
 on the chosen schedule and avoiding unnecessary repeated work.
