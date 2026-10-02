@@ -40,13 +40,18 @@ purpose-qualified cutting. The [audit](#asv657-quantified-tube-and-repair-purpos
 records the approved candidate and updated rule map. The completed twelve-answer
 Sol xhigh test found four answers with scope failures and eleven missing valid
 branches. Only N063 T2 passes both reviewed checks; adoption remains open.
-The current [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md) supplies the same
+The subsequent [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md) supplies the same
 repair purpose through C1's heading, preserving every subject heading and
 placement. Its [audit](#asv658-purpose-supplied-by-a-heading) records 29 passing
 offline checks. The user approved the wording and the same twelve-answer Sol
 xhigh test. The [completed review](#asv658-completed-answers-and-agent-review)
 found four answers with scope failures and all twelve missing valid branch
 placements. No answer passes both reviewed checks; adoption remains open.
+
+On October 2, the user authorized [autonomous SP iteration](../autonomous-sp-v1/README.md)
+with at most 1,000 attempts on GPT-6.1 Sol low or medium. That campaign records
+later experimental candidates and updated example mappings separately. It
+does not adopt a candidate or settle the derived-heading interpretation.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -760,7 +765,9 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md).
+This map describes [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md).
+Later autonomous candidates and their changed demonstrations are tracked in
+the [campaign rule map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because

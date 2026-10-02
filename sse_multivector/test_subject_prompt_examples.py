@@ -2,6 +2,7 @@
 
 import re
 import unittest
+from unittest.mock import patch
 from collections import Counter
 from pathlib import Path
 
@@ -792,6 +793,153 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
             focused.split("<example>", 1)[0], last_approved.split("<example>", 1)[0]
         )
         self.assertNotEqual(current_blocks[0], approved_blocks[0])
+
+
+class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
+    def test_asv659_preserves_the_reviewed_rule_examples(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        baseline = FOCUSED_PROMPT_PATH.read_text()
+        candidate = (directory / "asv6.59/ASv6.59.md").read_text()
+        blocks = re.findall(r"<example>\n.*?\n</example>", candidate, re.S)
+        self.assertEqual(
+            blocks, re.findall(r"<example>\n.*?\n</example>", baseline, re.S)
+        )
+        self.assertEqual(len(blocks), len(FOCUSED_CASES))
+        for block in blocks:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S)
+            experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, output.group(1), None
+            )
+
+    def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
+        root = Path(__file__).parent
+        for version in (59, 60, 61, 62):
+            with self.subTest(version=version):
+                candidate = (
+                    root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"
+                ).read_text()
+                template = (
+                    root / f"experiment_specs/asv6.{version}-hr01-post-template.txt"
+                ).read_text()
+                self.assertEqual(template, candidate + "\n<post>\n{POST}\n</post>")
+
+    def test_asv660_explanation_preserves_reviewed_posts_outputs_and_rules(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        baseline = (directory / "asv6.59/ASv6.59.md").read_text()
+        candidate = (directory / "asv6.60/ASv6.60.md").read_text()
+        without_explanation = re.sub(
+            r"<explanation>\n.*?\n</explanation>\n\n", "", candidate, flags=re.S
+        )
+        self.assertNotEqual(candidate, without_explanation)
+        self.assertEqual(without_explanation, baseline)
+
+    def test_asv661_only_revises_the_named_app_example(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        baseline = (directory / "asv6.60/ASv6.60.md").read_text()
+        candidate = (directory / "asv6.61/ASv6.61.md").read_text()
+        self.assertEqual(
+            baseline.split("<example>", 1)[0], candidate.split("<example>", 1)[0]
+        )
+        before = re.findall(r"<example>\n.*?\n</example>", baseline, re.S)
+        after = re.findall(r"<example>\n.*?\n</example>", candidate, re.S)
+        self.assertEqual(len(after), 7)
+        self.assertEqual(before[:1] + before[2:], after[:1] + after[2:])
+        self.assertNotEqual(before[1], after[1])
+
+    def test_asv661_retains_rule_coverage_and_valid_example_relationships(self):
+        app_case = {
+            **FOCUSED_CASES[1],
+            "purpose": "Named new app, first-use help and appreciation, rhetoric and unresolved independent name.",
+            "post": "On my first use, the new app #RavenWorks was a lifesaver, figuratively speaking—how could I not appreciate it on that first use? Also: AmberLoop.",
+            "subjects": {
+                "apps": "Apps",
+                "named": "RavenWorks app",
+                "new": "New RavenWorks app",
+                "first": "First use of the new RavenWorks app",
+                "help": "Help",
+                "named_help": "Help from the new RavenWorks app",
+                "first_help": "Help from the new RavenWorks app on first use",
+                "appreciation": "Appreciation",
+                "named_appreciation": "Appreciation for the new RavenWorks app",
+                "first_appreciation": "Appreciation for the new RavenWorks app on first use",
+                "first_use": "First use",
+                "unknown": "AmberLoop",
+            },
+            "relationships": (
+                ("named", "apps"), ("new", "named"),
+                ("first", "new"), ("first", "first_use"),
+                ("named_help", "new"), ("named_help", "help"),
+                ("first_help", "first"), ("first_help", "named_help"),
+                ("named_appreciation", "new"),
+                ("named_appreciation", "appreciation"),
+                ("first_appreciation", "first"),
+                ("first_appreciation", "named_appreciation"),
+            ),
+            "secondary_rules": FOCUSED_CASES[1]["secondary_rules"] + (
+                ("R20", "Newness and first use remain in children under qualified parents."),
+                ("R22", "First-use help and appreciation occur beneath every applicable parent copy."),
+            ),
+            "invalid": (
+                ("named", "new"), ("named_help", "first"),
+                ("named_appreciation", "first"), ("first", "named_help"),
+                ("first_help", "named_appreciation"),
+                ("first_appreciation", "named_help"),
+                ("unknown", "apps"), ("unknown", "help"),
+                ("unknown", "appreciation"), ("unknown", "first_use"),
+            ),
+        }
+        for version in (61, 62):
+            repair_case = FOCUSED_CASES[0]
+            if version == 62:
+                repair_case = {
+                    **repair_case,
+                    "post": repair_case["post"] + "\nSeparately, olive oil for cooking.",
+                    "subjects": {**repair_case["subjects"],
+                        "oils": "Oils", "olive": "Olive oil",
+                        "cooking_oils": "Oils for cooking",
+                        "cooking_olive": "Olive oil for cooking",
+                        "cooking": "Cooking",
+                    },
+                    "relationships": repair_case["relationships"] + (
+                        ("olive", "oils"), ("cooking_oils", "oils"),
+                        ("cooking_oils", "cooking"),
+                        ("cooking_olive", "olive"),
+                        ("cooking_olive", "cooking_oils"),
+                    ),
+                    "invalid": repair_case["invalid"] + (
+                        ("olive", "cooking_oils"), ("olive", "cooking"),
+                        ("oils", "cooking_oils"), ("oils", "cooking"),
+                        ("cooking_olive", "boiler_repair"),
+                    ),
+                }
+            cases = (repair_case, app_case) + FOCUSED_CASES[2:]
+            path = FOCUSED_PROMPT_PATH.parent.parent / f"asv6.{version}/ASv6.{version}.md"
+            # Reuse semantic fixtures through production validation, patching
+            # only test inputs, never a production API or path.
+            with self.subTest(version=version), patch(
+                __name__ + ".FOCUSED_PROMPT_PATH", path
+            ), patch(__name__ + ".FOCUSED_CASES", cases):
+                checks = FocusedSubjectPromptExampleTests()
+                checks.test_each_instruction_is_traced_to_a_present_case()
+                checks.test_all_expected_subjects_and_output_fields_are_retained()
+                checks.test_each_reviewed_relationship_holds_beneath_every_parent_copy()
+                checks.test_all_displayed_relationships_have_a_reviewed_basis()
+                checks.test_general_subjects_and_independent_mentions_keep_valid_parents()
+
+    def test_asv662_preserves_other_cases_and_the_reviewed_repair_entries(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        before = (directory / "asv6.61/ASv6.61.md").read_text()
+        after = (directory / "asv6.62/ASv6.62.md").read_text()
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S) for s in (before, after)]
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        outputs = []
+        for b in blocks:
+            raw = re.search(r"<output>\n(.*?)\n</output>", b[0], re.S).group(1)
+            outputs.append(experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, raw, None
+            )["parsed"]["subjects"])
+        self.assertEqual(outputs[0], outputs[1][:len(outputs[0])])
 
 
 if __name__ == "__main__":

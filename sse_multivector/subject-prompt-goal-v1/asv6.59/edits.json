@@ -1,0 +1,9 @@
+{
+  "base_sha256": "7d498096d5ee2144b1513a46dab42fd1046cfd1ef7fdaf179a9642ec98d87f0f",
+  "edits": [
+    {
+      "old": "For each enumerated subject, identify broader subjects by comparing their `subject` headings alone. Imagine another post that fits the child heading: if it could fail to fit the proposed parent heading, use a broader parent. Use these relationships to build the hierarchy upward, combining shared headings. Retain every enumerated subject as an entry, including it in each branch that passes this check. Give every heading and subheading its own entry.",
+      "new": "For each enumerated subject, identify broader headings using only the proposed `subject` strings. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship. Imagine another post that fits the child heading: if it could fail to fit the proposed parent heading, broaden the parent or keep the supported restriction in the child wording. The post, `context` and other entries cannot supply a restriction missing from a heading.\n\nUse the valid relationships to build the hierarchy upward, combining shared headings. Then check each enumerated subject against every returned heading: wherever its wording passes the same parent check, retain it beneath that heading, in every copy of that heading. A placement elsewhere does not satisfy a missing branch. Give every heading and subheading its own entry."
+    }
+  ]
+}

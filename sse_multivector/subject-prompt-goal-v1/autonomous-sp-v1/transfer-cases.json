@@ -1,0 +1,84 @@
+{
+  "cases": [
+    {
+      "id": "H001",
+      "inputs": {
+        "POST": "For a production server migration, I copied two configuration files. Separately, I deleted an old local test database; the production database stayed untouched."
+      },
+      "evidence": {
+        "review_context": "Keep migration-purpose copies, two configuration files, old/local/test database deletion and untouched production database. Do not attach test deletion to production migration or infer deletion of the production database.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H002",
+      "inputs": {
+        "POST": "I first played my new electric violin at rehearsal and loved its quiet tone. I also repaired an old acoustic violin."
+      },
+      "evidence": {
+        "review_context": "Preserve new/electric/first-use/rehearsal constraints and quiet-tone appreciation. Old/acoustic repair concerns a different instrument. Child headings beneath new-electric first-use parents must carry those restrictions.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H003",
+      "inputs": {
+        "POST": "Archive restoration: I cleaned three water-damaged books with a soft brush. At home I read a different, undamaged novel."
+      },
+      "evidence": {
+        "review_context": "Preserve restoration-purpose cleaning, three damaged books and soft brush. Reading a distinct undamaged novel at home does not establish restoration, cleaning or water damage for that novel.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H004",
+      "inputs": {
+        "POST": "At physiotherapy I did two gentle stretches for my injured left shoulder. Later, at the gym, I lifted 10 kg for three sets; I did not train the injured shoulder."
+      },
+      "evidence": {
+        "review_context": "Keep physiotherapy purpose, gentle stretches, two stretches, injured/left shoulder, gym lifting, 10 kg and three sets. No inferred reps, tonnage or gym shoulder training; preserve explicit negation and stated later relationship.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H005",
+      "inputs": {
+        "POST": "I used edible olive oil for a salad and lampante olive oil in an oil lamp. The lamp oil was not for eating."
+      },
+      "evidence": {
+        "review_context": "General olive oil includes both uses. Do not nest unqualified olive oil beneath edible/cooking/salad-purpose parents. Preserve edible salad oil and explicitly non-eating lamp use as separate subjects.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H006",
+      "inputs": {
+        "POST": "I first used an old borrowed microscope in a school biology lesson. I liked it. Our new microscope stayed boxed."
+      },
+      "evidence": {
+        "review_context": "First use and liking concern the old borrowed microscope. Do not transfer newness from the distinct boxed microscope or infer its use/unboxing. Keep school/biology purpose where parent wording requires it.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H007",
+      "inputs": {
+        "POST": "I watched her bat beside a crate marked 12. Then I bought a notebook."
+      },
+      "evidence": {
+        "review_context": "Retain supported readings of bat (animal, sports implement, batting action) as direct subjects, and the crate label 12 without treating it as a count or unit. Notebook purchase is independent; then establishes order but no causal link. Ambiguity assessment remains agent judgment.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    },
+    {
+      "id": "H008",
+      "inputs": {
+        "POST": "Profile URL: https://camera.example/repair?new=3\nEvent ID: 8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f8ca25e7f\nThree camera repairs were completed; no camera was replaced."
+      },
+      "evidence": {
+        "review_context": "Prose supports profile URL and event identifier, three repairs and negated camera replacement. URL/hash bodies contribute no subjects; three repairs do not imply three distinct cameras or new cameras.",
+        "assessment": "New transfer diagnostic, agent-defined rubric. Not user-labelled gold or proof of generalization; becomes development evidence if used for revision."
+      }
+    }
+  ]
+}

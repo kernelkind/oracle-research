@@ -47,4 +47,94 @@ includes the existing repeated-branch requirement.
 
 ## Results
 
-Baseline preparation and evaluation in progress. No candidate is adopted.
+ASv6.58 (candidate, tested): all four original regression answers at medium
+fail confirmed rules. N063 drops culinary scope, N096 drops cooking scope
+and sauteing restrictions, N100 drops food purpose, and N074 omits combined
+advice beneath its plant-advice component. Short diagnostics pass the bounded
+rubric in 5/6 low answers and 6/6 medium answers. Low D006 omits the specific
+blue-bicycle repair/red-bicycle observation combination from both component
+branches. These are agent reviews saved through native `review`, not user labels.
+
+ASv6.59 (candidate, tested with failures) clarifies the existing heading-only restriction
+check and the per-parent placement check. Its seven worked examples and
+source-subject contract are unchanged. R20–R23 retain their C1 example mapping;
+all other rule mappings remain as recorded in the ASv6.50 maintained audit.
+No new normative requirement or decision about derived headings is introduced.
+The minimal failing behavioral evidence is the completed ASv6.58 native
+regression above, through the production subjects preparation/validation path.
+
+No candidate is adopted. Native budget and all model receipts remain saved.
+
+ASv6.59 medium still has scope failures: edible oils → unrestricted olive
+oil (N063), water as a cooking ingredient → one tin of water (N096), and
+dog food → tissue and scrap meat merely “for the dog” (N100). A dog's chew
+toy provides the last counterexample. Low D006 still misses placements of
+its explicitly returned distinct-object combination. The medium D006 answer
+preserves the relationship and all relevant source-subject placements.
+
+ASv6.60 (candidate, testing) adds a short explanation inside C1 demonstrating
+its already-correct negative parent checks and repeated placements. Its
+instructions, example posts and JSON outputs are otherwise identical to
+ASv6.59; it introduces no extra post or normative rule.
+
+ASv6.60 medium still fails all four original regression posts: unrestricted
+sea salt under Food and drink (N063), the Nostr-diet relationship omitted from
+the mother/child exception (N074), salt under Seasonings (N096), and appreciation
+under use of a new sealer without newness (N100). All six low diagnostics pass
+the bounded pair targets, including the formerly missing D006 source combination.
+That is not a full SP correctness score.
+
+[ASv6.61 (candidate, tested with failures)](../asv6.61/ASv6.61.md) revises C2 to name a new
+app and explicitly place help and appreciation on first use. All source
+subjects retain newness and first-use qualifiers under those parents; broad
+help/appreciation remain broad. C2 has 21 entries and 12 distinct headings,
+compared with 15 entries and nine headings before. Six other cases and all
+instruction bytes remain unchanged from ASv6.60. This demonstrates existing
+restrictions without adding an example or requiring a new output field.
+
+### Rule coverage for ASv6.61
+
+The 34 clause definitions remain the IDs in the maintained ASv6.50 audit.
+Each has one primary example. Existing secondary demonstrations keep their
+distinct explanations; C2 adds R20 for newness/first-use restrictions and R22
+for repeated qualified subjects. No new rule is introduced.
+
+| Case | Primary clauses | Demonstration |
+| --- | --- | --- |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted tube, resolved cutting reference, repair-purpose restrictions and every valid branch. |
+| C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved independent name; qualified new-app first use. |
+| C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
+| C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |
+| C5 | R09–R12, R19 | Two direct duck interpretations, independent notebook purchase, individual entities retained. |
+| C6 | R13, R14, R18, R32, R33 | Count vs lengths, individual cables and pair, negated comparison naming both sides. |
+| C7 | R15 | Explicit addition result with both addends and result retained. |
+
+The five implications remain folded into R20 (combinations and no context
+repair), R22 (every parent occurrence), R29 (entity vs instance role) and R30
+(restrictions inside child headings). Mechanical tests reuse the production
+subjects validator and the reviewed positive/negative relationship fixtures;
+they independently check each parent occurrence and every displayed edge.
+The semantic fixtures are agent judgments, not an independent truth oracle.
+
+ASv6.61 medium improves the N100 appreciation wording, but its recommendation
+still drops newness beneath a New Nesco heading. N096 also drops cooking
+purpose from chopping beneath a cooking-qualified onion. N074 drops the
+Nostr-diet relationship from the mother/child exception, while N063 omits
+the expressed whole ingredient-list subject. All four remain rejected.
+Low D006 loses the distinct-object observation beneath repaired-blue-bicycle
+branches; other five pair targets pass.
+
+[ASv6.62 (candidate, testing)](../asv6.62/ASv6.62.md) extends C1 with the explicit
+separate phrase “olive oil for cooking.” Unqualified Olive oil remains outside
+Oils for cooking and Cooking; the qualified subject appears in both material
+and purpose branches. The original 23 repair entries remain byte-equivalent
+as parsed entries; eight new entries add five distinct headings. C2 and the
+other five examples remain unchanged. R20/R22/R29 already cover this contrast;
+all 34 primary assignments remain present. The source has seven examples.
+
+Eight new transfer cases cover software, music, archive restoration, fitness,
+food/lamp oil, microscopes, ambiguity and opaque URLs/numbers/negation. These
+are diagnostic fixtures with agent rubrics, not actual user labels. They are
+kept out of worked prompts. Any case used to guide a later revision becomes
+development evidence. Compare unchanged ASv6.58 medium with ASv6.62 medium
+using native preparation, exact same source inputs and the shared budget.
