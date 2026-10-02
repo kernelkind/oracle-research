@@ -1281,13 +1281,13 @@ select implementation methods or new dates:
 | **27 · Order notes within each node** | Implement and validate ordering using the node sort score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope. | Needs score definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to complete release snapshot 12 and model-track feasibility check 10. |
 
-Task 24's recovery work is conditional on using HDBSCAN; that choice remains
-open. Its link to 03 is helpful while the choice is open and becomes required
-if HDBSCAN is selected. Relevant-content coverage remains part of 03's required
-hierarchy-quality validation for any workflow; this does not select a recovery
-method for a workflow without HDBSCAN.
+Task 24's recovery work is waiting for the workflow choice and is needed only
+if HDBSCAN is selected. Its link to 03 stays helpful while the choice is open
+and becomes required if HDBSCAN is selected. Relevant-content coverage remains
+part of 03's required hierarchy-quality validation for any workflow; this does
+not select a recovery method for a workflow without HDBSCAN.
 
-24 can start from saved artifacts and remains unstarted. 25 is complete for
+25 is complete for
 HR02: both merge stages, provenance-preserving naming and browser export are
 implemented and tested. The four-merge user review accepted three and rejected
 Beef; it was not blanket approval of the provisional rule. Further quality

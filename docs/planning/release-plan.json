@@ -158,8 +158,8 @@
       "id": "24",
       "track": "shared",
       "title": "Recover missing node memberships",
-      "status": "READY TO START",
-      "description": "Recover masks missing from HDBSCAN-produced nodes and validate relevant-content coverage beyond the Coffee/Tea test.\nRequired only if HDBSCAN is selected; coverage remains a validation requirement for any workflow."
+      "status": "WAITING",
+      "description": "Recover masks missing from HDBSCAN-produced nodes and validate relevant-content coverage beyond the Coffee/Tea test.\nAwaits the workflow choice; needed only if HDBSCAN is used. Coverage remains required for any workflow."
     },
     {
       "id": "25",

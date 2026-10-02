@@ -196,6 +196,8 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(visible_ids(), shared | release)
                 self.assertEqual(evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('28-12-required').length"), 1,
                                  "The validated launch-scale build must gate the required launch snapshot")
+                self.assertTrue(evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('24').hasClass('waiting')"),
+                                "HDBSCAN membership recovery waits for the unresolved workflow choice")
                 self.assertIn("Required release", evaluate("document.querySelector('#graph-status').textContent"))
                 capture("required-release")
 

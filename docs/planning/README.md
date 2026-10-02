@@ -60,10 +60,10 @@ are helpful while the choice is open; make them required if HDBSCAN is selected.
 The chosen workflow's time and cost checks remain required. No algorithm is
 selected by this tracking change.
 
-Task 24's membership-recovery work is also required only if HDBSCAN is used.
-Its link to 03 is helpful while the choice is open; make it required if HDBSCAN
-is selected. Relevant-content coverage remains part of 03's required validation
-for whichever workflow is used.
+Task 24's membership-recovery work waits for the workflow choice and is needed
+only if HDBSCAN is used. Its link to 03 is helpful while the choice is open;
+make it required if HDBSCAN is selected. Relevant-content coverage remains part
+of 03's required validation for whichever workflow is used.
 
 Task 23's completed title-prompt work is required for 02 only if the chosen
 workflow uses separate node-title generation. Its link to 02 is helpful while
