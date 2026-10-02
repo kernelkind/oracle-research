@@ -382,11 +382,12 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 evaluate("document.querySelector('#focus-task').value = '13'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('13 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
-                self.assertIn("Protocol agreement blocks service and client implementation", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("Protocol proposals are under review", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("Service implementation and client integration await agreement", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 
-                for task_id, preparation in (("03", "Corpus preparation is underway"), ("15", "Integration preparation is underway")):
+                for task_id, preparation in (("03", "Corpus preparation is underway"), ("15", "Browser UI implementation is underway")):
                     evaluate(f"document.querySelector('#focus-task').value = '{task_id}'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                     wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task_id} ·')")
                     self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
@@ -411,8 +412,9 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 wait_for("document.querySelector('#details h2').textContent.startsWith('18 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")
                 setup_details = evaluate("document.querySelector('#details').innerText")
-                self.assertIn("setup is ready for the fine-tuning pilots", setup_details)
-                self.assertIn("not candidate evaluation or model selection", setup_details)
+                self.assertIn("setup is ready for the preliminary experiment", setup_details)
+                self.assertIn("does not complete larger-pilot preparation", setup_details)
+                self.assertIn("candidate evaluation or model selection", setup_details)
 
                 evaluate("document.querySelector('#focus-task').value = '29'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('29 ·')")

@@ -49,12 +49,12 @@ replace the full decision record.
 **Parallel preparation started September 30:** the user has started agents on
 broader test-corpus preparation and Notedeck integration preparation. Corpus work
 inspects collected data and prepares proposed 200/300/500-note inputs; the broader
-hierarchy tests have not started. Integration work inspects the existing UI and
-identifies required browsing changes; implementation has not started. Both tasks
-are in progress for preparation only. The reviewed 100-note hierarchy and the
-protocol remain prerequisites for their respective execution work; existing
-completion dependencies, acceptance requirements and open design choices are
-unchanged.
+hierarchy tests have not started. Notedeck browser UI implementation has since
+started, following the user's navigation and layout requests. Protocol agreement
+and service integration remain pending. Corpus work is still preparation only;
+the reviewed 100-note hierarchy remains a prerequisite for broader hierarchy
+tests. Existing completion dependencies, acceptance requirements and open design
+choices are unchanged.
 
 **Broader-corpus generation hold — October 1:** the user is undertaking prompt
 stress-testing and has put generation of the additional notes on hold until that
@@ -625,7 +625,8 @@ fine-tuning experiment separately as **29 · Run preliminary 100-note fine-tunin
 experiment**, in progress. It uses 80 training notes and 20 evaluation notes,
 existing subject/mask annotations and no prominence. **06 · Choose model through
 larger fine-tuning pilot** remains waiting for the larger pilot's data (05);
-training setup (18) is complete. The larger pilot includes a comparison trained
+training setup (18) is complete for the preliminary experiment. The larger pilot
+includes a comparison trained
 on 1,000 notes, approved September 30; remaining data choices are open. Task 05 prepares the
 larger pilot's data, not 29's already-prepared data. Tasks 01 and 18 are required
 inputs to 29; 29's findings are helpful inputs to 06 and the optional
@@ -2255,16 +2256,14 @@ costs where recovery is used, not only model calls. It can use available evidenc
 from 24 and the growing hierarchy builds; it does not wait for the finished
 implementation in 28.
 
-**Protocol status corrected September 30:** 13 remains in progress. The
-[protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
-has restarted from how a client opens a hierarchy and currently documents only
-that proposal, which awaits review—not the previously described node-record
-format. Node records, browsing requests/responses, paths, ordered-note pagination
-and snapshot versions still need specification and agreement. Service and
-Notedeck implementation remain dependent on the protocol; integration preparation
-is already underway. Status, track and links to 14 and 15 are unchanged.
-This records current work; protocol design remains in its existing session and
-no protocol choice or implementation is approved here.
+**Protocol and client status reconciled October 1:** 13 remains in progress.
+The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
+now covers opening a hierarchy, node events, note lists and indexes. Proposals
+remain under review; service implementation and client integration await
+agreement. Notedeck browser UI implementation is underway, not just preparation;
+this does not establish end-to-end readiness. Statuses, tracks and completion
+links to 14 and 15 are unchanged. Protocol design and UI work remain with their
+assigned agents; this update makes no technical choice.
 
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need
@@ -2363,13 +2362,15 @@ Neither blocks 12 or is required to finish before the other. They may share
 construction measurements with the teacher-built release, but their generation
 measurements and acceptance decisions remain separate.
 
-**18 · Prepare training code for the fine-tuning pilot** is complete for setup.
+**18 · Prepare training code for the fine-tuning pilot** is complete for the
+preliminary experiment's setup.
 Local VM rehearsals cover all three candidate families, real adapter updates,
 interruption/resume, save/reload and SSH deployment; the rebuilt image is
 published and verified private. Preliminary candidate execution and quality
 review are tracked in 29; larger-pilot model selection is tracked in 06.
-Setup completion does not select a model, prove all full-size candidates work
-or complete the model track.
+Setup completion does not verify the newer larger-pilot worker or configuration,
+select a model, prove all full-size candidates work or complete the model track.
+Further larger-run preparation remains within 06.
 
 Final training-example formatting and output-quality evaluation remain within
 **06 · Choose model through larger fine-tuning pilot**. Its completion needs the

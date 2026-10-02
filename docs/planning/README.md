@@ -38,8 +38,9 @@ rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
 and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
 Corpus preparation and Notedeck integration preparation started September 30.
-Broader hierarchy tests and client implementation have not started. Their
-reviewed-100-note and protocol prerequisites remain in place.
+Broader hierarchy tests have not started. Browser UI implementation is now
+underway; protocol agreement and service integration remain pending.
+The reviewed-100-note prerequisite for broader tests remains in place.
 
 On October 1, the user is undertaking prompt stress-testing. Shared task 30,
 **Stress-test prompts**, is in progress and blocks new generation for broader
@@ -142,8 +143,10 @@ not finished launch-scale construction. Track, dependencies and production
 workflow choices are unchanged. The original LG01 hierarchy and earlier
 HR02/Astra tests remain preserved as evidence; task 25 stays complete for HR02.
 
-Task 18 is complete for pilot setup. The rebuilt image is published and verified;
-local VM rehearsals cover all three candidate families.
+Task 18 is complete for the preliminary experiment's setup. The rebuilt image
+is published and verified; local VM rehearsals cover all three candidate families.
+This does not verify the newer larger-pilot worker or configuration. Further
+larger-run preparation remains within 06.
 
 Task 29 tracks the preliminary 100-note fine-tuning experiment in progress. Its
 replacement GPU run completed all three baseline attempts, 128-step training runs,
@@ -159,12 +162,14 @@ remaining data choices and execution details are open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
-has restarted from how a client opens a hierarchy and currently contains only
-that proposal, which awaits review. Node records, browsing requests/responses,
-paths, ordered-note pagination and snapshot versions still need specification
-and agreement. Service and Notedeck implementation remain dependent on the
-protocol; integration preparation is already underway. Dependencies are unchanged.
-This status correction selects no protocol design.
+now covers opening a hierarchy, node events, note lists and indexes. Proposals
+remain under review; service implementation and client integration await
+agreement. Notedeck browser UI implementation is underway, not just preparation.
+Dependencies are unchanged; this update selects no protocol design.
+
+The user agreed in principle to a separate preparation rental for the larger
+pilot, after settling remaining choices locally. That does not authorize
+immediate execution or spending; the larger pilot remains waiting.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier
