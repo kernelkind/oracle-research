@@ -822,13 +822,24 @@ establish optimum training or each model's maximum capability. Batch constructio
 uses the approved shuffle within each block. **Starting settings approved
 October 1 after comparable-experiment research:** 8 prompt–answer examples per
 adapter update total across all GPUs, constant learning rate 0.0001 with no
-warmup, and LoRA rank 16 / alpha 32 for all three students. Retain smaller final
-groups; no checkpoint resets the training state. These are a shared starting
+warmup, and LoRA rank 16 / alpha 32 for ordinary adapters. Gemma MoE's routed
+expert adapters use rank 2 / alpha 32, subsequently approved October 1, with
+original model and router weights frozen. Retain smaller final groups; no
+checkpoint resets the training state. These are a shared starting
 recipe, not established optima. Block membership, seed value, task loss weights
 and normalization, remaining optimizer/adapter settings and checkpoint selection
-remain open. MoE adapter coverage is unresolved; the informal route leaves
-routed experts frozen. The current worker still implements the preliminary
-128-step replacement sampler, not the approved larger-pilot continuation.
+remain open. The approved larger-pilot MoE route adds adapters to
+`experts.gate_up_proj` and `experts.down_proj` in all 30 layers at rank 2 / alpha 32,
+keeping existing attention/shared MLP adapters at rank 16 / alpha 32. This follows
+the [controlled MoE study's active-expert rank convention](https://thinkingmachines.ai/blog/lora/),
+not a Gemma task-specific optimum. At the pinned model shapes it adds 59,473,920
+parameters, for 78,059,520 total. With the informal FP32 adapter/gradient/Adam
+state policy, static adapter training state is about 1.16 GiB, an increase of
+0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; exact
+GPU fit and inference policy remain unresolved. Explicit expert targeting still
+needs implementation. The current worker leaves routed experts frozen and uses
+the preliminary 128-step replacement sampler, not the approved larger-pilot
+continuation.
 The preliminary 20% subject / 80% mask replacement sampler is a different recipe.
 At the old subject-count average, a natural pass is about 4% subject rows and
 96% mask rows. On the saved 80-note training set, production-encoder accounting

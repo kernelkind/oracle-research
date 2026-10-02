@@ -734,12 +734,23 @@ all three students use **8 prompt–answer examples per adapter update, total ac
 all GPUs; constant learning rate 0.0001 with no warmup; LoRA rank 16 / alpha 32**.
 Retain a smaller final group and the approved one-pass, five-block continuation.
 These are a reasonable shared starting recipe, not established optima or each
-model's maximum attainable quality. MoE adapter coverage remains unresolved;
-the informal configuration leaves routed experts frozen. Task loss weights and
+model's maximum attainable quality. The later expert decision below specifies
+Gemma MoE's additional adapter coverage and rank; the informal configuration
+still leaves routed experts frozen. Task loss weights and
 normalization, block membership, seed value, remaining optimizer/adapter settings,
 hardware, and spending remain open. This approves the intended settings; the
 current 128-step replacement sampler is not the approved larger-pilot worker.
 Implementation and launch require separate authorization.
+
+**October 1 Gemma MoE expert adapters approved:** add adapters to every routed
+expert's gate/up and down projections at **rank 2 / alpha 32**, retaining
+**rank 16 / alpha 32** for attention and shared MLP adapters. Keep original model
+weights, router projection, and router scales frozen. The expert rank applies the
+[controlled MoE study's active-expert convention](https://thinkingmachines.ai/blog/lora/):
+nominal rank 16 divided by eight active experts. It is a research-grounded starting
+choice transferred to Gemma, not a measured optimum for this task. The larger
+pilot tests this single chosen MoE recipe. Expert targeting is not yet implemented;
+remaining runtime choices, GPU fit, and implementation authorization stay open.
 
 **October 1 separate paid GPU preparation agreed in principle:** settle the
 remaining pilot configuration and identify all required GPU checks before booking

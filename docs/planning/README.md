@@ -157,8 +157,10 @@ baseline masks still need generation. Reparsed Qwen teacher-agreement F1 is
 0.344 before and 0.346 after training. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. That larger pilot remains waiting for its data and
 includes a comparison trained on 1,000 notes, approved September 30. Its approved
 starting recipe uses 8 examples per update total across GPUs, constant learning
-rate 0.0001 with no warmup, and LoRA rank 16 / alpha 32. MoE adapter coverage,
-remaining data choices and execution details are open; see the
+rate 0.0001 with no warmup, and LoRA rank 16 / alpha 32 for ordinary adapters.
+Gemma MoE also receives rank 2 / alpha 32 routed-expert adapters with original
+model and router weights frozen. Task loss, remaining data choices and execution
+details are open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)

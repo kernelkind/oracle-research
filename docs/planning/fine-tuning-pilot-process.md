@@ -60,9 +60,11 @@ block, shuffle all subject and mask examples together using a fixed random seed.
 Use the next **8 prompt–answer examples for one adapter update**, total across
 all GPUs, retaining a smaller final batch when needed. The subject/mask mix
 varies between batches. **Starting settings approved October 1:** learning rate
-**0.0001, constant with no warmup; LoRA rank 16 / alpha 32** for all three students.
-These are reasonable starting settings, not established optima. Block membership,
-the seed value, task loss weights and normalization, MoE adapter coverage, and
+**0.0001, constant with no warmup; LoRA rank 16 / alpha 32** for ordinary adapters.
+**Gemma MoE also adapts its routed experts at rank 2 / alpha 32**, retaining
+rank 16 / alpha 32 for attention and shared MLP adapters. Original model and router
+weights stay frozen. These are starting choices, not established optima.
+Block membership, the seed value, task loss weights and normalization, and
 remaining model settings stay open. Record per-task loss, resource telemetry,
 and actual example coverage at each stage. This compares
 the tested configurations under a modest budget; one pass is not established as
