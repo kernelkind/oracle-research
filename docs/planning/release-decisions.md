@@ -679,7 +679,9 @@ generate subjects and masks on the same held-out validation notes without
 updating training weights. The five checkpoints at **200, 400, 600, 800, and
 1,000 notes** give fifteen trained versions across the three students, plus
 three untuned baselines. With the proposed 100 validation notes, that is
-1,800 note/model evaluations and semantic reviews. The schedule adds 600
+1,800 note/model evaluations and semantic reviews for the regular thinking-off
+comparison; the October 2 terminal thinking-on addition is recorded below.
+The schedule adds 600
 evaluations over the earlier proposal: approximately 42 GPU hours / $60 at
 the previous rental's measured speed and price, before checkpoint checks and
 transfers. Training labels are shared across checkpoints.
@@ -809,6 +811,28 @@ supports merging to remove generation overhead. The current worker still only
 reloads an unmerged adapter after training ends and retains two rolling checkpoints;
 this approval describes the intended larger-pilot design. Implementation,
 generation limits/batching, hardware, preparation spending and launch stay open.
+
+**October 2 terminal thinking evaluation approved:** keep answer-only training
+without teacher reasoning traces. Use thinking off for the three untuned
+validation baselines and all five ordinary checkpoint evaluations. After each
+student finishes training and its 1,000-note thinking-off evaluation, append
+exactly one thinking-on evaluation of that same saved adapter on the same
+validation notes, using the approved disposable merged BF16 evaluation policy.
+Generate subjects, then one mask response per generated subject, with thinking
+on for both tasks. This compares generation modes at unchanged final weights;
+it adds no training and no thinking-on untuned validation baseline.
+Preserve original responses, separate thought/final channels, parsed final
+answers, failures, call accounting, elapsed time and total token usage. Apply
+the same integrity checks and progressive retrieval. Compare final-answer
+quality, reliability and cost locally; thinking at earlier checkpoints is not
+tested. Select any final-test mode using validation and match that mode for the
+selected adapter and corresponding untuned base. The final test stays reserved.
+The addition is three validation versions: **3N** more note/model outputs and
+reviews, bringing **18N** to **21N**; at the still-proposed 100 validation notes,
+that is 300 extra and 2,100 total. Mask calls depend on each mode's generated
+subjects. Earlier GPU estimates exclude the extra thinking work, whose
+reasoning lengths, runtime and cost are unmeasured. Generation limits/batching,
+implementation, preparation scope, hardware, spending and launch remain open.
 
 **October 1 separate paid GPU preparation agreed in principle:** settle the
 remaining pilot configuration and identify all required GPU checks before booking

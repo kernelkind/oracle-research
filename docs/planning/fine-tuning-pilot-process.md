@@ -25,7 +25,8 @@ proposals. Keep final test notes out of development.
 
 ## 2. Generate untuned baselines — Vast
 
-Save one baseline per candidate on the shared validation notes. Each model
+Save one **thinking-off** baseline per candidate on the shared validation notes.
+Each model
 generates its own subjects, then requests one mask response per subject in a
 separate prompt. Preserve original responses.
 
@@ -53,6 +54,10 @@ Start **one continuing training run per student**:
    the exact next example. Continue through **400, 600, 800, and 1,000 notes**,
    saving and evaluating at each milestone. Keep all five complete checkpoints.
    Validation leaves the saved adapter, optimizer, schedule, and random state intact.
+5. Keep thinking **off** at all five checkpoints. After the final checkpoint,
+   evaluate that same 1,000-note adapter once more with thinking **on**, on the
+   same validation notes. Compare its subjects and masks against the saved
+   thinking-off answers. This adds three evaluations, with no further training.
 
 **One complete pass is approved:** use every subject and mask training example
 once, without replacement, in five new 200-note blocks. Earlier notes and labels
@@ -104,8 +109,9 @@ Check a small hierarchy built from candidate outputs before model selection.
 
 ## 6. Confirm on the final test
 
-After model and training choices are settled, use the reserved test to confirm
-gains over the corresponding untuned baseline. Whether GPU test outputs are
+After model, checkpoint, and thinking mode are settled from validation, use the
+reserved test to confirm gains over the corresponding untuned baseline, using
+the same thinking mode for both. Whether GPU test outputs are
 collected during the main rental and kept sealed, or generated later, is open.
 Rental grouping, duration, and spending also remain open.
 
@@ -114,8 +120,10 @@ Rental grouping, duration, and spending also remain open.
 At the previous GPU's measured speed, generating validation answers for three
 baselines and fifteen checkpoints, plus the selected model's final comparison,
 projects to **133–142 GPU hours / $188–200 before training, setup and transfers**.
-Full cost and elapsed time must include the approved complete pass, checkpoint
-checks, and the still-open model settings and GPU schedule. Teacher labeling and
+That thinking-off forecast excludes the added thinking-on evaluation: **300
+extra note/model outputs and reviews** if validation has 100 notes. Its extra
+GPU time and cost are unmeasured. Full cost must also include training, checkpoint
+checks, and the remaining settings and GPU schedule. Teacher labeling and
 review assume the existing Codex subscription, whose quota is finite; paid API
 work would be additional.
 

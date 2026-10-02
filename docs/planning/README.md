@@ -11,7 +11,9 @@ one complete pass through all subject/mask training examples, checkpoints at
 200, 400, 600, 800, and 1,000 training notes, and model comparison.
 Training uses one teacher subject per mask prompt; each checkpoint generates
 its own subjects and requests their masks separately on the same held-out
-validation notes. Semantic review happens outside the GPU rental. A separate
+validation notes. Baselines and all five checkpoints use thinking off; each
+final 1,000-note adapter then gets one thinking-on validation evaluation with
+unchanged weights. Semantic review happens outside the GPU rental. A separate
 paid GPU preparation step is agreed in principle; settle its configuration and
 checks locally before booking. Hardware, maximum charge, and launch remain open.
 
@@ -175,7 +177,9 @@ settings retain AdamW defaults with no weight decay and clipping 1, an unquantiz
 BF16 base/mixed computation and FP32 adapter/optimizer state, plus LoRA dropout 0,
 frozen biases and standard initialization. Each milestone retains a complete
 training checkpoint, evaluates a disposable BF16 base with the saved adapter
-baked in, then restores the full training state. Remaining data choices and
+baked in, then restores the full training state. Answer-only training continues;
+one terminal thinking-on comparison per student is approved, with added runtime
+unmeasured. Remaining data choices and
 execution details are open; see the
 [pilot process](fine-tuning-pilot-process.md).
 

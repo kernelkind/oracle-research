@@ -698,8 +698,8 @@ separately from review findings and any subsequent changes.
    the agreed output format, source alignment, working training, GPU memory use,
    and measured speed. Record whether prominence is included. Training loss and
    successful parsing are setup diagnostics, not evidence of semantic quality.
-2. **Measure the three untuned baselines.** Use the shared validation notes and
-   preserve their outputs before fine-tuning.
+2. **Measure the three untuned baselines.** Use thinking off on the shared
+   validation notes and preserve their outputs before fine-tuning.
 3. **Start one continuing training run per student.** Initialize the adapter
    and optimizer from the original pretrained model once. Use every frozen
    subject and mask example from the first 200-note block once, without
@@ -713,17 +713,22 @@ separately from review findings and any subsequent changes.
    updates and which examples were used; restarting the optimizer or schedule is a recipe change.
 5. **Continue to 1,000 notes.** This comparison's inclusion was approved
    September 30. Save and evaluate its checkpoint using the same validation
-   notes and generation settings. Finish the last block's examples, completing
+   notes and thinking-off generation settings. Finish the last block's examples,
+   completing
    one pass through all frozen training examples. Extra repetition requires a
    separate design decision; milestones do not impose a wall-clock training limit.
    These checkpoints measure progression through one training history, including
    both added data and accumulated training; they do not isolate data size alone.
-6. **Confirm decision-critical comparisons.** Repeat with a different random
+6. **Append the approved thinking evaluation.** For each student, evaluate the
+   same saved 1,000-note adapter once with thinking on, on the same validation
+   notes. Compare against its existing thinking-off answers; do not train again.
+7. **Confirm decision-critical comparisons.** Repeat with a different random
    seed when a small gain or model difference would determine the next action.
    Keep the same evaluation notes and report uncertainty rather than treating
    each mask as an independent observation.
-7. **Use the final test after selection.** Compare selected fine-tuned
-   candidates with their corresponding untuned baselines on the reserved notes.
+8. **Use the final test after selection.** Compare selected fine-tuned
+   candidates with their corresponding untuned baselines on the reserved notes,
+   using the same selected thinking mode for both.
 
 ### Execution and failure handling (draft)
 
@@ -734,7 +739,8 @@ pilot, not a claim that the current worker enforces it.
 - **Local preparation:** freeze note splits, nested training sets, teacher
   answers, prompt versions, model revisions, generation limits, and each
   candidate's recipe. Prepare code and configuration locally.
-- **GPU execution:** one untuned baseline and one continuing training run per
+- **GPU execution:** one thinking-off untuned validation baseline and one
+  continuing training run per
   candidate. Reuse that baseline across checkpoints. Initialize the adapter and
   optimizer once, and retain complete training state as the dataset expands.
   Mix one subject-hierarchy example per note with one mask example per labeled
@@ -757,8 +763,20 @@ pilot, not a claim that the current worker enforces it.
   update, retaining a smaller final group when needed. This batch construction was approved
   October 1; the task mix varies between updates. Check exact coverage before
   the checkpoint; do not consume later-block notes early or repeat earlier
-  blocks. Use the same held-out notes and
-  generation settings at every milestone.
+  blocks. Use the same held-out notes and thinking-off generation settings at
+  every ordinary milestone. Training targets are teacher answers without
+  reasoning traces.
+- **Terminal thinking evaluation — approved October 2:** after the final ordinary
+  evaluation, use the same saved 1,000-note adapter and merged BF16 inference
+  policy for one thinking-on validation evaluation per student. Keep the same
+  notes and task prompts; generate its own subjects and their separate masks
+  with thinking on for both tasks. Preserve raw thought and final-answer channels
+  separately, parsing only final answers as subject/mask data. Save frozen mode
+  settings, call links, failures, time and total token usage. Apply the same
+  immediate accounting and verified background transfer. Compare against already
+  saved thinking-off final outputs; no further training or thinking-on untuned
+  validation baseline is added. This tests thinking only at the final adapter.
+  Thinking limits/batching, implementation and added runtime remain open.
 - **Checks during execution:** account for every validation note and dependent
   call as responses arrive. For valid generated subjects, account for every
   requested mask response. An invalid subject response records that the mask
@@ -785,7 +803,9 @@ pilot, not a claim that the current worker enforces it.
   Compare the same notes across baseline and trained versions. Keep semantic
   findings, model failures, and missing reviewer verdicts distinct.
 - **Final test:** keep it out of development comparisons. Review it only after
-  model and training choices are fixed. Whether to generate its GPU outputs
+  model, checkpoint and generation mode are fixed from validation. Match the
+  selected mode between untuned and trained final-test outputs. Whether to
+  generate its GPU outputs
   during the main rental and seal them, or in a later job, remains open.
 
 Proposed handling of failures:
@@ -808,11 +828,13 @@ resume exist; the stronger stage accounting and approved background copier
 above still require implementation and verification. Transfer mechanism and
 resource limits remain implementation choices.
 
-With three candidates and five checkpoints per student, there are eighteen
-validation versions: three untuned and fifteen saved training checkpoints. For N
-shared validation notes, this means 18N note/model outputs and 18N main semantic
-reviews; at the proposed 100 notes, 1,800 evaluations and reviews. Subject and
-mask generation call counts additionally depend on each version's own subjects. Check total generation/review tokens,
+With three candidates and five checkpoints per student, ordinary thinking-off
+validation has eighteen versions: three untuned and fifteen saved checkpoints.
+The terminal thinking-on addition contributes three versions at final weights.
+For N shared validation notes, this is **18N + 3N = 21N** note/model outputs and
+semantic reviews; at the proposed 100 notes, **2,100**, including 300 added by
+thinking on. The addition requires 3N subject calls; mask-call counts depend on
+each version's own subjects. Check total generation/review tokens,
 full-note review input length, stored adapters, and transfer volume before
 launch; include long notes and notes with many subjects. A reviewer input that
 exceeds its limit must be reported, not silently truncated. Additional final-test
@@ -863,8 +885,9 @@ and [PEFT precision guidance](https://huggingface.co/docs/peft/v0.21.0/en/develo
 do not establish their optimality for this task. Physical batching must retain
 the approved eight examples total per update; one-example batches accumulated
 eight times apply only when that student trains on one GPU. GPU allocation,
-generation settings and remaining runtime choices stay open; merged BF16
-checkpoint evaluation and resume were approved October 2 below.
+generation limits/batching and remaining runtime choices stay open; merged BF16
+checkpoint evaluation/resume and the terminal thinking comparison were approved
+October 2. Ordinary generation stays thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
 separate GPU preparation. The larger-pilot worker still needs implementation
 and production-path verification.
@@ -1079,7 +1102,9 @@ ratio has been adopted.
 Full cash cost and elapsed time must be recalculated from **cumulative training
 work across three continuing student runs** and the selected GPU schedule. The
 approved five checkpoints per student increase validation generation and
-review work; the selected final-test comparison is the same size. Training uses
+review work; the selected final-test comparison is the same size. The October 2
+terminal thinking addition adds three validation versions; its GPU runtime is
+unmeasured and excluded from the thinking-off extrapolations below. Training uses
 one complete pass through the frozen subject/mask examples. Actual row/token
 counts and remaining recipe choices determine its update count and runtime.
 The component estimates below are provisional and authorize no spending.
@@ -1091,7 +1116,8 @@ $0.0078125/$0.0091146 per GB. No offer was reserved. Prices and availability can
 change; [Vast bills compute, storage and transfers](https://docs.vast.ai/guides/instances/pricing).
 
 Saved preliminary-run durations project approximately **116.5 GPU hours / $165**
-for 1,800 validation note/model outputs: three baselines plus fifteen frozen
+for 1,800 thinking-off validation note/model outputs: three baselines plus fifteen
+frozen
 checkpoints. The two extra checkpoints per student add 600 evaluations, about
 42 GPU hours / $60 at the previous rental's speed and price, already included in
 the 116.5-hour estimate above, before extra checkpoint checks and transfers.
@@ -1101,8 +1127,12 @@ throughput because those baseline calls never happened. Truncated or malformed
 subjects also prevented some trained mask work. These are workload extrapolations,
 not measurements of a complete larger pilot.
 
-Together, validation and the selected final comparison project to **133–142 GPU
-hours / $188–200 before training, setup, headroom and transfers**. Training
+Together, thinking-off validation and a thinking-off selected final comparison
+project to **133–142 GPU hours / $188–200 before training, setup, headroom and
+transfers**. This excludes the terminal thinking-on evaluation; its extra
+reasoning, changed subject counts and runtime need measurement. Selecting
+thinking on for the final test would also require revising that component's
+estimate and generating a matching untuned baseline. Training
 hours can be estimated from the measured 128-update trainer times:
 
 ```text
@@ -1146,13 +1176,16 @@ At those lengths, 1,300 newly labeled notes require about 32,279 calls / 81.7M
 tokens. Training subsets share labels; do not charge their nested notes twice.
 The older 9.82-subject sample cannot be reused as the current workload estimate.
 
-One review per note/version gives 1,800 validation reviews plus 400 for the
-winner's trained/untuned final comparison. An illustrative review workload uses 7,000–10,000 input and 500–1,500 output tokens per review, including reasoning, plus labeling. No review prompt or reviewer is selected.
+At the proposed split sizes, one review per note/version gives **2,100 validation
+reviews plus 400** for the winner's trained/untuned final comparison. This includes
+300 added reviews for the terminal thinking evaluation. An illustrative review workload uses 7,000–10,000 input and 500–1,500 output tokens per review, including reasoning, plus labeling. No review prompt or reviewer is selected.
 
-As a separate cash scenario, [Astra Standard API rates](https://developers.openai.com/api/docs/models/gpt-6-astra)
-are $10/M input, $1/M cached input and $50/M output. At the measured token
-lengths, all 1,300 labels would cost about $926–1,005, and the illustrative 2,200
-reviews another $209–385. These are API sensitivity estimates, not subscription
+As a separate cash scenario, using the October 1 recorded
+[Astra Standard API rates](https://developers.openai.com/api/docs/models/gpt-6-astra)
+of $10/M input, $1/M cached input and $50/M output, all 1,300 labels at the
+measured token lengths would cost about $926–1,005. The illustrative **2,500
+reviews** would add **$238–438**, including approximately $29–53 for the 300
+new reviews. These are API sensitivity estimates, not subscription
 charges or approved fallback spending; different reviewer models, reasoning,
 cache writes and actual request lengths can change them.
 
@@ -1203,8 +1236,9 @@ under a 300 W limit. The full unchanged workload also exceeded 80 GB: dense
 Gemma allocated 85.34 GiB of CUDA tensors, with sampled overall GPU use peaking
 at 94.32 GiB. An 80 GB H100/A100 is therefore not a substitute for this recipe.
 
-At the measured 450 W throughput, validation and the winner's final comparison
-alone project to approximately 133–142 GPU hours. Add cumulative training work,
+At the measured 450 W throughput, thinking-off validation and the winner's
+thinking-off final comparison alone project to approximately 133–142 GPU hours.
+The terminal thinking-on addition is unmeasured. Add cumulative training work,
 checkpoint checks and setup before applying any headroom. GPU-hours are total
 work; elapsed rental time depends on the actual schedule.
 
