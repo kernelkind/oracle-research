@@ -1,6 +1,14 @@
 # ASv6.49
 
 Status: superseded, untested.
+
+The October 2 [offline audit of saved candidate answers](../asv6.50/README.md#offline-audit-of-saved-candidate-answers)
+corrects earlier scope assessments and separates confirmed placement failures
+for subjects expressed by the post from the open requirement for derived
+broader headings.
+The counts below preserve the original reviews; use that audit for current
+scope findings. No prompts or model outputs changed, and ASv6.48 remains frozen.
+
 [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md) supplies
 the saved comparison answers for the authorized ASv6.55 test. ASv6.49 repeated
 existing instructions about refinement

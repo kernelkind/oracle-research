@@ -1,11 +1,17 @@
 # ASv6.50
 
-Status: approved candidate, tested on GPT-6.1 Sol xhigh. Two of twelve answers
-contain the parent-scope failure pattern. On
+Status: approved candidate, tested on GPT-6.1 Sol xhigh. The October 2
+[offline audit](#offline-audit-of-saved-candidate-answers) confirms scope
+failures in eight of twelve saved answers, correcting the original two. On
 October 1, 2026, the user approved the full-context delta and authorized this
 test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
+
+The reports below preserve the original assessments and counts. Use the
+[offline audit](#offline-audit-of-saved-candidate-answers) for corrected scope
+counts and the unresolved interpretation of missing broader headings. Earlier
+"Pass" cells are historical agent judgments, not current acceptance decisions.
 
 The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md)
 provides the saved comparison answers for the ASv6.55 test below. ASv6.50 and
@@ -381,8 +387,10 @@ its regression test and a fresh transfer check outside food if that set passes.
 
 ## ASv6.51 approved candidate
 
-Status: approved candidate, tested on GPT-6.1 Sol xhigh. Two of twelve completed
-answers contain the parent-scope failure pattern. The first evaluation was
+Status: approved candidate, tested on GPT-6.1 Sol xhigh. The October 2
+[offline audit](#offline-audit-of-saved-candidate-answers) confirms scope
+failures in five of twelve completed answers, correcting the original two.
+The first evaluation was
 interrupted before any answer completed; all twelve authorized retries succeeded.
 On October 1, 2026, the user approved
 the ASv6.51 wording with "lgtm" after reviewing its full-context delta.
@@ -1899,3 +1907,188 @@ posts from other topics, covering general materials versus roles and retention
 under two valid parents. That would check whether these failures also occur on
 simple inputs before another example edit. That test and any next draft remain
 unapproved; neither has started. Fresh-topic generalization remains open.
+
+## Offline audit of saved candidate answers
+
+On October 2, 2026, the user authorized auditing the saved answers against
+common criteria and proposing short diagnostic cases before another prompt
+edit. This audit made no model calls and changed no prompts, post inputs,
+settings, receipts or model outputs. It covers the 84 completed Sol 6.1 xhigh
+answers from ASv6.50, ASv6.51 and ASv6.54–58: three trials on each of N063,
+N074, N096 and N100. ASv6.52/53 are untested drafts and are not samples.
+
+Native `experiment.py show` validates all 84 answers. The post inputs match
+across all seven versions. The instruction prefix before `<example>` is
+byte-identical across ASv6.51 and ASv6.54–58; their differences are in examples.
+For ASv6.50/51, this audit reads all distinct headings and all direct
+parent-heading relationships, then checks full numbered branches and contexts
+for its witnesses. For the later 60 answers it rechecks the existing scope and
+placement witnesses and searches the saved direct relationships for the same
+restriction losses. This is a bounded reassessment, not a new proof that all
+other relationships, interpretations or coverage requirements pass.
+
+### Common scope check and corrected findings
+
+Compare the child and parent headings by themselves. A counterexample post
+that fits the child without the parent confirms a failure. Source context
+cannot restore a missing cooking role, edible grade, food-preparation purpose,
+advice role, method or modifier. The same counterexample must receive the same
+assessment across prompt versions.
+
+Applying this criterion consistently finds twelve additional failing answers.
+The scope columns count answers with at least one confirmed witness, not bad
+edges and not overall acceptances:
+
+| Tested candidate | Original scope failures / 12 | Confirmed scope failures / 12 after audit |
+| --- | --- | --- |
+| ASv6.50 | 2 | 8 |
+| ASv6.51 | 2 | 5 |
+| ASv6.54 | 5 | 5 |
+| ASv6.55 | 5 | 6 |
+| ASv6.56 | 4 | 5 |
+| ASv6.57 | 4 | 5 |
+| ASv6.58 | 4 | 4 |
+
+Each counted answer has a direct-parent witness verified against its saved
+parse. The twelve corrections are:
+
+| Candidate / answer | Previously missed direct relationship |
+| --- | --- |
+| ASv6.50 N063 T1 | 8 Cooking fats and oils → 8.1 Olive oil |
+| ASv6.50 N063 T2 | 1.8.1 Cooking oils → 1.8.1.1 Olive oil |
+| ASv6.50 N096 T1 | 1.7 Cooking oils → 1.7.1 Olive oil |
+| ASv6.50 N096 T3 | 1.12 Cooking oils → 1.12.1 Olive oil |
+| ASv6.50 N100 T1 | 3 Food preparation → 3.1 Beef preparation |
+| ASv6.50 N100 T3 | 4 Food preparation → 4.1 Beef preparation |
+| ASv6.51 N096 T2 | 2.6 Edible oils → 2.6.1 Olive oil |
+| ASv6.51 N100 T1 | 10.1.1 First use of a new Nesco VS-12 vacuum sealer → 10.1.1.1 Satisfaction with the Nesco VS-12 after first use |
+| ASv6.51 N100 T2 | 3 Food preparation → 3.2 Meat preparation |
+| ASv6.55 N100 T2 | 10 Food preparation → 10.1 Meat cutting |
+| ASv6.56 N100 T2 | 10 Food preparation → 10.1 Meat preparation |
+| ASv6.57 N100 T3 | 3 Food preparation → 3.1 Meat preparation |
+
+The oil witnesses use the same lampante/nonfood counterexample as the later
+reviews; the [USDA olive-oil grades](https://www.ams.usda.gov/grades-standards/olive-oil-and-olive-pomace-oil-grades-and-standards)
+already supplied its basis. Preparing or cutting meat samples for laboratory
+testing fits the generic preparation/cutting child without food preparation,
+the same distinction used in ASv6.58 N100 T1. Satisfaction after someone's
+first use of a previously owned VS-12 fits the ASv6.51 child without use of a
+new sealer, matching ASv6.58's lost-new modifier check. These are agent semantic
+assessments, not independently calibrated user labels.
+
+These counts correct earlier review omissions. They do not establish a causal
+effect of examples, a general failure rate, or a reliable ranking among these
+small samples. In particular, the original ten scope acceptances in ASv6.50
+and ASv6.51 are not evidence that those candidates satisfy the later criteria.
+
+### Placement check and open interpretation
+
+The instruction first enumerates specific subjects expressed by the post, then
+derives broader headings. Its placement sentence says: "Retain every enumerated
+subject as an entry, including it in each branch that passes this check."
+Later reviews applied that requirement to every returned heading, including
+derived general headings. The schema does not distinguish those two origins.
+The user has been asked whether branch retention applies to every returned
+heading or to the subjects expressed by the post. That interpretation remains
+open; this audit does not amend the prompt or infer a user decision.
+
+An omission witness needs both a valid heading-only relationship and absence
+of the same meaning from the proposed branch. Repetition elsewhere proves
+that the model returned a meaning, not that it belongs beneath another parent.
+For example, ASv6.50 N096 T2 returns a sauce-simmering heading beneath
+Ground-beef and tomato sauce **for spaghetti bolognese**, but the child names
+bolognese sauce without the spaghetti purpose. Its existing placement can
+itself lose scope; copying it beneath the other parent occurrences would not
+repair that loss. Likewise, trimming tissue and scraps **for a dog** does not,
+by heading alone, establish a dog-food role. Those two proposed omission
+witnesses were discarded rather than used to inflate failure counts.
+
+The audit verifies the coordinates and exact-heading absence of all 56
+previously recorded omission witnesses in ASv6.54–58. That structural check
+does not decide semantic entailment or the open enumeration boundary. Several
+witnesses demand a derived broader heading despite narrower source meanings
+being present. Five also rely on Vegetable broth fitting Vegetables, a
+relationship needing calibration rather than an assumed class-membership
+judgment. No replacement aggregate placement score is asserted while those
+boundaries remain open.
+
+Missing placements also affect subjects directly grounded in the post, so the
+regression does not depend entirely on the broader-heading interpretation.
+The following additional early-answer witnesses retain source-specific
+meanings and pass the heading-only relationship check. Full numbered branches
+were checked for equivalent wording as well as these exact headings:
+
+| Answer | Returned source subject | Broader parent occurrence lacking it |
+| --- | --- | --- |
+| ASv6.50 N063 T1 | 2.1.1 Ingredients for mushroom risotto with shrimp | 1.1.1.1 and 1.1.2.1 Mushroom risotto with shrimp |
+| ASv6.50 N063 T2 | 1.1.1.1.1.1.1.1 Ingredients for cremini mushroom risotto with shrimp | 2 Cooking |
+| ASv6.50 N100 T3 | 2.4.1.1 About a quarter pound of beef connective tissue and meat scraps reserved for a dog | 10.1.2.1 Beef connective tissue reserved for a dog |
+| ASv6.51 N063 T1 | 5.1.1 Ingredients for cremini mushroom risotto with shrimp | 1.1.1.1.1.1.1 and 1.1.1.1.2.1.1 Cremini mushroom risotto with shrimp |
+| ASv6.51 N063 T2 | 2.1.1.1 Ingredients for cremini mushroom risotto with shrimp | 1.1.1.1.1 and 1.1.2.1.1 Cremini mushroom risotto with shrimp |
+| ASv6.51 N063 T3 | 2.1.1 Ingredients for cremini mushroom risotto with shrimp | 1.1.1.1.1, 1.1.1.2.1 and 1.1.2.1.1 Cremini mushroom risotto with shrimp |
+| ASv6.51 N074 T2 | 3.2.1.1.1.1 10-year-olds' resistance to mothers' instructions to eat vegetables | 2.4.1 Mothers telling 10-year-olds to eat vegetables |
+| ASv6.51 N074 T3 | 8.2.1 Michael Pollan's advice not to eat too much | 8.5 Michael Pollan's dietary advice |
+| ASv6.51 N096 T1 | 1.6.1.1.1 500 g of ground beef for spaghetti bolognaise | 1.1.1.2 and 1.2.1.1 Spaghetti bolognaise |
+| ASv6.51 N096 T2 | 1.1.1.1.1 Never-fail spaghetti Bolognaise recipe that feeds 5 | 2.1.1.2 Spaghetti Bolognaise |
+| ASv6.51 N096 T3 | 1.5.1 Ingredients for the writer's spaghetti Bolognaise recipe | 1.1.1.1.1 Writer's spaghetti Bolognaise recipe |
+| ASv6.51 N100 T1 | 6.2.2.1 Providing chickens with cold water and sunflower seeds tomorrow | 6.2.1.1 Sunflower seeds for chickens |
+| ASv6.51 N100 T3 | 2.4.1.1 Trimming about a quarter pound of beef connective tissue and meat scraps for a dog | 2.7.2 About a quarter pound of beef connective tissue and meat scraps reserved for a dog |
+
+Combining the confirmed scope and placement witnesses for subjects expressed
+by the post rejects at least eleven of ASv6.51's twelve saved answers.
+N074 T1 has no confirmed
+failure in this bounded audit; that is not an exhaustive pass. Thus an earlier
+candidate's scope-only acceptance cannot be used as an overall control pass.
+
+For ASv6.58, the four scope witnesses remain confirmed. The placement witnesses
+for subjects expressed by the post in N063 T1/T2 and N096 T1/T3 also remain
+supported. Their
+union confirms failures in at least seven answers independently of requiring
+every derived broader heading. The remaining five answers' recorded rejections
+depend on broader-heading omission witnesses in the completed review. The
+earlier 12/12 placement figure remains the historical assessment under that
+interpretation, not a settled common-criterion score.
+
+### Evidence preservation and diagnostic proposal
+
+Twenty native `experiment.py review --role agent` reassessments record the
+twelve additional scope findings and thirteen early source-placement witnesses;
+several answers have both. Every preceding review remains in its JSONL history.
+No user judgments were added. The saved source-coverage and N100 grounding
+caveats remain available separately from the confirmed failures.
+
+The initial hash capture and supplemental recursive capture live in ignored
+`target/sp-scope-regression-v1/saved-candidate-audit-v1-*-hashes.json` artifacts.
+They pin 161 immutable files, the original prefixes of 21 review files and 21
+original reports. Native reviews append history and regenerate reports; those
+two changes are expected. Approved prompts, templates, frozen experiment
+plans, runner settings and saved run artifacts are unchanged.
+
+Repeated entries should not be mistaken for added coverage. N063 T2 has 78
+entries and 61 distinct headings in ASv6.51, versus 147 entries and 61 distinct
+headings in ASv6.58. Equal distinct counts do not prove equal meanings or
+coverage; they show why entry count alone cannot measure either.
+
+The proposed next diagnostic is six short posts in three pairs. These are
+cases for review, not new SP worked examples or an approved experiment spec:
+
+| Pair | Positive post | Control post | Required distinction |
+| --- | --- | --- | --- |
+| Purpose supplied by a heading | Bridge repair: one steel plate. I drilled four holes in it. | I visited a bridge repair site. At home, I drilled four holes in one steel plate for a sculpture. | The first post supports repair-purpose subjects. The control supports sculpture-purpose subjects; the site visit does not give the drilling a bridge-repair purpose. Keep the general plate and the purpose-qualified instance; a generic Steel plates child cannot borrow repair purpose from context. |
+| First use and new | I tried my new camera for the first time and liked it. | I tried an old borrowed camera for the first time and liked it. | Both support first use and appreciation. Only the first supports a new camera. A child beneath use of a new camera must retain new; first use alone cannot supply it. |
+| One subject under two valid parents | I repaired a red bicycle. | I repaired a blue bicycle and saw a different red bicycle. | The first supports repair of a red bicycle beneath both bicycle repair and red bicycles, when those broader headings are returned. The control supports two separate events and does not establish repair of the red bicycle. |
+
+Assess meanings and valid relationships, allowing faithful alternate wording
+and numbering. Require the source-specific subjects under every applicable
+returned parent; leave derived-heading obligations conditional on the open
+decision. Check controls as well as positives so that successful purpose
+inference does not reward attaching nearby statements to the same purpose or
+object. These cases are informed by the development failures; they are
+diagnostics rather than untouched evidence of generalization.
+
+After the user settles the grading boundary and approves these cases, the
+suggested first run is the unchanged ASv6.58 candidate on Sol 6.1 xhigh, one
+fresh answer per case through the native workflow. This is six bounded calls,
+without an additional model grading pass or a new production process. Any
+repeat, wider transfer test or prompt revision remains unapproved. None has
+started. ASv6.48 remains frozen and adoption remains open.
