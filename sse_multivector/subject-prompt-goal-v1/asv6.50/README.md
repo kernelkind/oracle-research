@@ -34,11 +34,13 @@ purpose-qualified cutting. The [audit](#asv657-quantified-tube-and-repair-purpos
 records the approved candidate and updated rule map. The completed twelve-answer
 Sol xhigh test found four answers with scope failures and eleven missing valid
 branches. Only N063 T2 passes both reviewed checks; adoption remains open.
-The current [ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md) supplies the same
+The current [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md) supplies the same
 repair purpose through C1's heading, preserving every subject heading and
 placement. Its [audit](#asv658-purpose-supplied-by-a-heading) records 29 passing
 offline checks. The user approved the wording and the same twelve-answer Sol
-xhigh test; its results are pending and adoption remains open.
+xhigh test. The [completed review](#asv658-completed-answers-and-agent-review)
+found four answers with scope failures and all twelve missing valid branch
+placements. No answer passes both reviewed checks; adoption remains open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -750,7 +752,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md).
+The current map uses [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -772,8 +774,9 @@ source support and heading relationships. The user approved testing ASv6.56,
 then authorized drafting ASv6.57 after its failures and approved its test.
 After that test, the user authorized the ASv6.58 heading-purpose draft for review.
 The user subsequently approved its wording and the same twelve-answer Sol
-xhigh test. Adoption remains open. Agent assessments remain separate
-from user semantic judgments and adoption.
+xhigh test. That completed test found four answers with scope failures and
+all twelve missing valid branches. Adoption remains open. Agent assessments
+remain separate from user semantic judgments and adoption.
 
 | Case | Purpose | Review |
 | --- | --- | --- |
@@ -1674,14 +1677,14 @@ the same twelve-answer Sol xhigh test. Adoption remains open.
 
 ## ASv6.58 purpose supplied by a heading
 
-Status: approved for testing, results pending. On October 2, 2026, after the ASv6.57 results, the user
-authorized revising the existing boiler example to demonstrate purpose supplied
+Status: approved candidate, tested on Sol xhigh. On October 2, 2026, after the
+ASv6.57 results, the user authorized revising the existing boiler example to demonstrate purpose supplied
 by a heading, verifying it offline and presenting the delta. This authorizes
 neither inference nor adoption by itself. The user subsequently approved
 ASv6.58 and the same twelve-answer Sol xhigh test below; adoption remains open
 and ASv6.48 remains the frozen subject baseline.
 
-[ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md) changes only C1's post and
+[ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md) changes only C1's post and
 source contexts. The old post says "One tube for boiler repair. Cutting it for
 that repair." The new post is:
 
@@ -1771,6 +1774,128 @@ output cap or paid fallback. Each native run allows at most eight new attempts,
 including only provider-eligible retries, with two attempts maximum per case.
 This test covers those three trials; fresh-topic testing remains open. The ledger's
 monetary totals are valid; incremental subscription cash is zero and quota
-consumption is unmeasured. Preparation made no model calls. Results and
-complete-output reviews are pending. Agent assessments remain separate from
-user judgments and adoption.
+consumption is unmeasured. Preparation made no model calls. The completed
+execution and reviews are recorded below. Agent assessments remain separate
+from user judgments and adoption.
+
+### ASv6.58 completed answers and agent review
+
+On October 2, 2026, all twelve requests completed on the first attempt. Each
+trial has four valid answers, four attempts and zero empty, malformed,
+invalid-receipt, failed or unrun cases. There were no retries, answer reuses,
+baseline regenerations, output repairs or paid fallbacks. Native parsing and
+receipt checks pass. Every entry preserves `number`, `context`, `subject` key
+order. All four answers in each trial differ from their saved ASv6.57 answers;
+the native text comparison is not a quality judgment.
+
+The agent read every numbered subject in all twelve hierarchies and checked
+the complete source posts and distinct subjects' contexts. The review tests
+heading-only scope and retention of returned subjects beneath applicable
+broader headings. Source-grounding and entity-coverage caveats are recorded
+separately; a passing scope check is not a claim that every prompt rule passes.
+All twelve native reviews are current agent rejections, each bound to its input
+and output with a concrete missing-placement witness. Four also have a scope
+counterexample. No user output verdict or adoption decision is inferred from
+approval of the prompt and test.
+
+| Post | Entries T1 / T2 / T3 | Answers with scope failure | Answers with missing valid placement |
+| --- | --- | --- | --- |
+| N063 | 144 / 147 / 175 | 0 / 3 | 3 / 3 |
+| N074 | 200 / 159 / 183 | 0 / 3 | 3 / 3 |
+| N096 | 232 / 251 / 223 | 2 / 3 | 3 / 3 |
+| N100 | 217 / 191 / 187 | 2 / 3 | 3 / 3 |
+
+**Scope fails in 4/12 answers; valid branch retention fails in 12/12.** No
+answer passes both reviewed checks. ASv6.57 had four scope failures and eleven
+placement failures, with N063 T2 its only bounded pass. The approved
+heading-purpose edit does not resolve these regressions in this sample. These
+small stochastic samples do not establish a causal change in failure rate or
+generalization to other topics.
+
+Confirmed heading-only scope witnesses are:
+
+| Answer | Direct parent → child | Counterexample that fits the child but loses the parent restriction |
+| --- | --- | --- |
+| N096 T2 | 2.6 Cooking oils → 2.6.1 Olive oil | Olive oil used in a lamp does not establish a cooking role. |
+| N096 T3 | 1.6 Seasonings → 1.6.1 Salt | Salt used to de-ice a road does not establish a seasoning role. |
+| N100 T1 | 3 Food preparation → 3.1 Beef preparation | Preparing beef tissue as a laboratory specimen does not establish food preparation. |
+| N100 T3 | 14.1.1.1 Using the new Nesco VS-12 vacuum sealer → 14.1.1.1.1 Appreciation for the Nesco VS-12 vacuum sealer after use | Appreciation after using an old VS-12 does not establish use of a new sealer. |
+
+The N100 T3 edge also occurs at 14.3.1 → 14.3.1.1 and
+19.1.1 → 19.1.1.1. N096 T2 also puts generic subjects under Culinary herbs,
+Seasonings, Cookware and Food containers. This table supplies a confirmed
+witness per failing answer rather than an exhaustive count of bad edges.
+An instance's `context` does not repair restrictions missing from its heading.
+
+Each answer also omits at least one already-returned subject from an applicable
+branch. These witnesses do not depend on demanding a particular vocabulary or
+inventing an additional subject. A narrower subject or event elsewhere in the
+branch does not retain the missing heading's level of generality.
+
+| Answer | Returned subject and all its occurrences | Applicable parent occurrences lacking that subject beneath them |
+| --- | --- | --- |
+| N063 T1 | Ingredients for mushroom risotto with shrimp, 1.2.1.1.1.1, 1.2.1.2.1.1, 2.2.1.1, 3.2.1.1 and 15.1 | Cooking, 16; only the preparation subject is present. |
+| N063 T2 | Ingredients for cremini mushroom risotto with shrimp, 1.1.1.1.1.1, 2.1, 3.1.1.1, 4.2.1.1.1.1 and 6.1.1.1.1.1 | Cooking, 15; it is terminal. |
+| N063 T3 | Risotto ingredients, 4.1 and 16.1 | Risotto, 1.2 |
+| N074 T1 | Comparisons of diets' click generation, 1.1.4.1 | Click generation by diets, 1.1.6 and 7.1.1 |
+| N074 T2 | Weariness with narratives, 11.1 | Narratives, 10 |
+| N074 T3 | Weariness with dietary narratives, 12.1 | Dietary narratives, 1.6 and 11.1 |
+| N096 T1 | Onions turning clear during cooking, 1.2.1.2 | Cooking, 8 |
+| N096 T2 | Spaghetti bolognaise recipes feeding 5 people, 1.4.1 | Spaghetti bolognaise recipes, 1.1 and 2.1.1.1.1 |
+| N096 T3 | One tin of water for spaghetti Bolognese sauce, 1.1.1.2.4.13 and 3.1.1 | Bolognese sauce, 1.8.1; Bolognese sauce for spaghetti Bolognese, 1.1.1.2.5 and 1.8.1.1 |
+| N100 T1 | Dog food, 11.1.1 | Dogs, 9; only food for the writer's dog is present. |
+| N100 T2 | Beef steaks, 2.2 | Steaks, 3; only the narrower sirloin strip steaks subject is present. |
+| N100 T3 | Beef steaks approximately 1.5–2 inches thick, 3.2.1 | Beef steaks, 2.2 and 3.1; only the narrower 15-steak subject is present. |
+
+Read-only checks against the native saved parses verify each cited heading,
+all its occurrences, absence beneath each cited parent, and the four scope
+edges' direct-parent coordinates. The assessments themselves remain semantic
+agent judgments rather than automatic label matching.
+
+N063 retains all fifteen named ingredients and their dish roles in every
+answer. T2 also retains the chef emoji as Cooks and Male cooks; T1 and T3 use
+it to establish cooking/preparation but lack that entity heading. N074 retains
+the diet comparisons, mother/ten-year-old example, Bitcoin narrative,
+attribution and individual plus combined advice. Its controversy-exception
+wording remains a separate semantic caveat. N096 retains ingredients,
+recipe-purpose quantities, yield, actions, heat levels and simmering time.
+Many general quantity headings are absent in T3 compared with T1/T2, and the
+fully qualified writer's recipe headings remain terminal in all three answers.
+These coverage caveats are separate from the counted missing placements among
+subjects already returned. No unstated arithmetic result was identified.
+
+N100 retains the beef price, steak count and thickness, combined trimming
+quantities and purposes, animal provisions and sealer details. T2 and T3 retain
+both chicken-water/seeds provision and possible myoglobin-addition readings.
+T1 retains only the provision reading. The doubled "some some" remains
+ambiguous without a user grounding verdict. T1 and T2 additionally connect
+vacuum-sealer use to preservation of the sirloin steaks. Their contexts cite
+the account's sequence and #foodpreservation; the post does not state what was
+sealed, so this is a separate grounding concern under the existing co-mention
+and statement-order rule. T3 does not assert that beef was vacuum-sealed.
+
+Native usage for each trial's four new attempts is below. Output includes
+reasoning; these are not separate output charges. No cross-trial token or cost
+total is assembled.
+
+| Trial | New attempts | Input tokens | Cached input | Output tokens | Reasoning tokens | Catalog estimate, USD |
+| --- | --- | --- | --- | --- | --- | --- |
+| T1 | 4 | 20,198 | 0 | 91,976 | 50,131 | 0.960156 |
+| T2 | 4 | 20,198 | 0 | 93,486 | 53,213 | 0.975256 |
+| T3 | 4 | 15,334 | 4,864 | 88,709 | 48,662 | 0.9182444 |
+
+Every attempt has native usage and a catalog estimate; provider billing is
+unavailable. These estimates are not subscription charges or measured quota
+consumption; incremental cash is zero. Cached input does not mean answer reuse.
+All 29 pinned approved-source, template and saved-ASv6.57 files remain unchanged
+after execution and review. Inputs, evidence, schema, runner settings, rendered
+prompts and saved baseline outputs/parses/receipts still match preflight.
+The unchanged source's 29 offline checks passed before inference. Native
+format, receipt, preservation and review checks pass after execution; the
+semantic regression fails. ASv6.48 remains frozen, with no adoption or MP change.
+
+A proposed next step is a small transfer test of the unchanged prompt on short
+posts from other topics, covering general materials versus roles and retention
+under two valid parents. That would check whether these failures also occur on
+simple inputs before another example edit. That test and any next draft remain
+unapproved; neither has started. Fresh-topic generalization remains open.

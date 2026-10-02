@@ -48,11 +48,13 @@ purpose-qualified cutting. Its [rule map and audit](../asv6.50/README.md#asv657-
 record the approved candidate and completed twelve-answer Sol xhigh test:
 four answers contain scope failures and eleven miss valid branches. Only
 N063 T2 passes both reviewed checks; adoption remains open.
-The current [ASv6.58 (approved for testing, results pending)](../asv6.58/ASv6.58.md) supplies the same
+The current [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md) supplies the same
 repair purpose through the boiler example's heading. Its subject headings and
 placements are unchanged. The [draft audit](../asv6.50/README.md#asv658-purpose-supplied-by-a-heading)
-records 29 passing offline checks and the authorized twelve-answer Sol xhigh
-test. The user approved the wording and test; adoption remains open.
+records 29 passing offline checks. The [completed twelve-answer Sol xhigh
+test](../asv6.50/README.md#asv658-completed-answers-and-agent-review) found four
+answers with scope failures and all twelve missing valid branch placements.
+No answer passes both reviewed checks; adoption remains open.
 The existing instructions retain individual subjects, combinations and broader
 headings. This revision preserves those coverage requirements.
 
