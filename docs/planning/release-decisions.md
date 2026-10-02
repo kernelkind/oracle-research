@@ -90,12 +90,15 @@ choices and validation gates remain unchanged.
 
 **400/500-note corpus preparation — October 2:** the user requested proceeding
 with both selections. The assistant recommended books/reading for the fourth
-area and exercise/fitness for the fifth. The 100 book/reading posts are frozen,
-bringing the unchanged earlier 300 posts to 400. Complete-text, tokenizer, copy,
-author and production input-preparation checks passed. [Selection and provenance](../../sse_multivector/real-note-fine-segmentation-v1/README.md#books-selection-for-the-400-note-hierarchy)
-record the assistant's selection; no user per-note or hierarchy judgments are
-claimed. The fifth-area selection is in progress. This extends selection and
-offline preparation only; generation holds and validation gates are unchanged.
+area and exercise/fitness for the fifth. Both 100-post additions are frozen,
+bringing the unchanged earlier 300 posts to 400, then 500. Complete-text,
+tokenizer, copy, author and production input-preparation checks passed for both.
+[Books selection](../../sse_multivector/real-note-fine-segmentation-v1/README.md#books-selection-for-the-400-note-hierarchy)
+and [exercise selection](../../sse_multivector/real-note-fine-segmentation-v1/README.md#exercise-selection-for-the-500-note-hierarchy)
+record the assistant's selections and provenance; no user per-note or hierarchy
+judgments are claimed. Both selections and offline preparation are complete;
+400/500-note hierarchies have not been built. Generation holds, open prompt/build
+choices and validation gates are unchanged.
 
 **Current task 02 status (October 1):** parallel candidate builds continue, and
 the independent comparison started by the user is available. The comparison
