@@ -162,8 +162,11 @@ starting recipe uses 8 examples per update total across GPUs, constant learning
 rate 0.0001 with no warmup, and LoRA rank 16 / alpha 32 for ordinary adapters.
 Gemma MoE also receives rank 2 / alpha 32 routed-expert adapters with original
 model and router weights frozen. Training loss averages all teacher-answer and
-native turn-ending tokens per update, without extra task weighting. Remaining
-data choices and execution details are open; see the
+native turn-ending tokens per update, without extra task weighting. Numerical
+settings retain AdamW defaults with no weight decay and clipping 1, an unquantized
+BF16 base/mixed computation and FP32 adapter/optimizer state, plus LoRA dropout 0,
+frozen biases and standard initialization. Remaining data choices and execution
+details are open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)

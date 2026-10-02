@@ -700,10 +700,9 @@ Introduce five new 200-note blocks and finish each block's examples before its
 checkpoint. Continue the same adapter, optimizer, schedule, random state and
 data-order position; earlier blocks are not automatically replayed.
 Check actual example coverage at every milestone. Record task-specific loss and
-supervised tokens; block membership, seed value and remaining numerical settings
-remain open. Loss and additional MoE adapter coverage were subsequently approved
-below. The
-natural row exposure differs from the
+supervised tokens; block membership and seed value remain open. Loss, numerical
+settings and additional MoE adapter coverage were subsequently approved below.
+The natural row exposure differs from the
 preliminary 20/80 replacement sampler. One pass is a modest starting budget,
 not an established optimum or a comparison of each architecture's maximum
 capability. Select from generated correctness, coverage and output reliability;
@@ -739,8 +738,9 @@ These are a reasonable shared starting recipe, not established optima or each
 model's maximum attainable quality. The later expert decision below specifies
 Gemma MoE's additional adapter coverage and rank; the informal configuration
 still leaves routed experts frozen. Loss was subsequently approved below.
-Block membership, seed value, remaining optimizer/adapter settings, hardware,
-and spending remain open. This approves the intended settings; the
+The later numerical decision below settles optimizer, precision and LoRA defaults.
+Block membership, seed value, hardware and spending remain open.
+This approves the intended settings; the
 current 128-step replacement sampler is not the approved larger-pilot worker.
 Implementation and launch require separate authorization.
 
@@ -768,6 +768,22 @@ and [comparable extraction implementation](https://github.com/hitz-zentroa/GoLLI
 support this starting objective, without establishing the natural task mixture as
 optimal. This approves the larger-pilot design; implementation and verification
 remain separate work.
+
+**October 1 optimizer, precision and LoRA defaults approved:** retain PyTorch
+AdamW (`adamw_torch`) with beta1 0.9, beta2 0.999, epsilon 1e-8, weight decay 0,
+and aggregate gradient-norm clipping at 1 after accumulation and before each
+adapter update. Load the frozen base in unquantized BF16 and use BF16 mixed
+precision computation, retaining normal FP32-sensitive operations. Store LoRA
+weights, their gradients and Adam moments in FP32. Retain LoRA dropout 0,
+frozen biases (`bias="none"`, `lora_bias=False`), standard PEFT initialization
+(`init_lora_weights=True`, Kaiming-uniform A and zero B), and ordinary alpha/r
+scaling. The initial adapter contribution is zero. These carry forward the
+preliminary numerical setup and supported defaults, not task-specific optima;
+see [Trainer defaults](https://huggingface.co/docs/transformers/v5.17.0/en/main_classes/trainer)
+and [PEFT precision guidance](https://huggingface.co/docs/peft/v0.21.0/en/developer_guides/troubleshooting#selecting-the-dtype-of-the-adapter).
+Record these settings explicitly in the larger-pilot configuration. Hardware,
+physical batch allocation, evaluation precision and checkpoint lifecycle, runtime
+choices, exact expanded MoE GPU fit, implementation and spending remain open.
 
 **October 1 separate paid GPU preparation agreed in principle:** settle the
 remaining pilot configuration and identify all required GPU checks before booking

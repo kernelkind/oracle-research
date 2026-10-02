@@ -826,20 +826,42 @@ warmup, and LoRA rank 16 / alpha 32 for ordinary adapters. Gemma MoE's routed
 expert adapters use rank 2 / alpha 32, subsequently approved October 1, with
 original model and router weights frozen. Retain smaller final groups; no
 checkpoint resets the training state. These are a shared starting
-recipe, not established optima. Block membership, seed value, remaining
-optimizer/adapter settings and checkpoint selection remain open. The approved
-larger-pilot MoE route adds adapters to
+recipe, not established optima. Numerical defaults were subsequently approved
+below. Block membership, seed value and checkpoint selection remain open.
+The approved larger-pilot MoE route adds adapters to
 `experts.gate_up_proj` and `experts.down_proj` in all 30 layers at rank 2 / alpha 32,
 keeping existing attention/shared MLP adapters at rank 16 / alpha 32. This follows
 the [controlled MoE study's active-expert rank convention](https://thinkingmachines.ai/blog/lora/),
 not a Gemma task-specific optimum. At the pinned model shapes it adds 59,473,920
-parameters, for 78,059,520 total. With the informal FP32 adapter/gradient/Adam
+parameters, for 78,059,520 total. With the approved FP32 adapter/gradient/Adam
 state policy, static adapter training state is about 1.16 GiB, an increase of
 0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; exact
 GPU fit and inference policy remain unresolved. Explicit expert targeting still
 needs implementation. The current worker leaves routed experts frozen and uses
 the preliminary 128-step replacement sampler, not the approved larger-pilot
 continuation.
+
+**Optimizer, precision and LoRA defaults approved October 1:** retain the
+preliminary numerical approach and record the settings explicitly:
+
+| Setting | Larger-pilot design |
+| --- | --- |
+| Optimizer | PyTorch AdamW (`adamw_torch`); beta1 0.9, beta2 0.999, epsilon 1e-8, weight decay 0 |
+| Clipping | Aggregate trainable gradient norm at most 1, after accumulation and before the update |
+| Base and computation | Frozen unquantized BF16 base; BF16 mixed precision computation with normal FP32-sensitive operations |
+| Trainable state | FP32 LoRA weights, gradients and Adam moments |
+| LoRA defaults | Dropout 0; frozen biases (`bias="none"`, `lora_bias=False`); standard initialization (`init_lora_weights=True`, Kaiming-uniform A, zero B); ordinary alpha/r scaling |
+
+The adapter initially contributes zero. These are supported starting choices;
+[Trainer defaults](https://huggingface.co/docs/transformers/v5.17.0/en/main_classes/trainer)
+and [PEFT precision guidance](https://huggingface.co/docs/peft/v0.21.0/en/developer_guides/troubleshooting#selecting-the-dtype-of-the-adapter)
+do not establish their optimality for this task. Physical batching must retain
+the approved eight examples total per update; one-example batches accumulated
+eight times apply only when that student trains on one GPU. GPU allocation,
+evaluation precision/lifecycle and remaining runtime choices stay open.
+Exact memory fit of the expanded MoE configuration must be checked during
+separate GPU preparation. The larger-pilot worker still needs implementation
+and production-path verification.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -1070,9 +1092,8 @@ Teacher labeling and semantic review assume the existing subscription route,
 with **zero incremental API cash charge**, excluding the already-paid
 subscription. This is not free unlimited capacity; quota and completion time
 must be planned. Paid API fallback is neither selected nor included in the
-component generation estimate. Mechanical scoring runs locally. Remaining
-numerical/adapter settings, reviewer, final-test collection and GPU grouping
-remain open.
+component generation estimate. Mechanical scoring runs locally. Reviewer,
+final-test collection, GPU grouping and remaining runtime choices remain open.
 
 For scale, the current 100-note teacher data has 23.83 subjects per note. Latest
 native receipts average 2,631 uncached input / 1,108 output tokens per subject
