@@ -22,11 +22,12 @@ instruction basis; the [draft audit](#asv655-consolidated-examples) records veri
 The subsequent [unchanged ASv6.54 comparison](#asv654-completed-answers-and-agent-review)
 also failed, with five answers containing scope failures and eleven missing
 valid branches.
-The current [ASv6.56 (approved candidate, test prepared)](../asv6.56/ASv6.56.md) changes only the
+The current [ASv6.56 (candidate, tested on Sol xhigh)](../asv6.56/ASv6.56.md) changes only the
 boiler case from ASv6.55 to demonstrate general cutting separately from cutting
 for boiler repair. The [audit](#asv656-cutting-for-boiler-repair-example) records
-the approved draft and updated rule map. The user authorized the same twelve-case
-Sol xhigh test; adoption remains open.
+the approved draft and updated rule map. The completed twelve-case Sol xhigh
+test found four answers with scope failures and all twelve missing valid
+branches; adoption remains open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -738,7 +739,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.56 (approved candidate, test prepared)](../asv6.56/ASv6.56.md).
+The current map uses [ASv6.56 (candidate, tested on Sol xhigh)](../asv6.56/ASv6.56.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -820,8 +821,8 @@ its visible consequences without adding a reasoning trace.
 Status: unchanged comparison candidate, tested on Sol xhigh; regression failures
 found. The user's earlier "proceed" authorized this example revision and offline
 verification; the latest "proceed" authorizes the twelve-answer comparison
-below. Wording approval and adoption remain open. ASv6.51 remains the last
-approved candidate; ASv6.48 remains the frozen subject baseline.
+below. ASv6.54 wording approval and adoption remain open. ASv6.51 was the last
+approved candidate at that comparison; ASv6.48 remains the frozen subject baseline.
 
 [ASv6.54 (candidate, tested on Sol xhigh)](../asv6.54/ASv6.54.md) preserves every
 instruction byte from approved ASv6.51. It preserves ASv6.53's corrected lunar
@@ -1238,14 +1239,14 @@ results show that coverage alone does not establish teacher generalization.
 
 ## ASv6.56 cutting-for-boiler-repair example
 
-Status: approved candidate, test prepared. After the unchanged ASv6.54 comparison failed, the user
+Status: candidate, tested on Sol xhigh. After the unchanged ASv6.54 comparison failed, the user
 authorized drafting a focused change to the existing boiler example, with a
 full-context delta for review before model testing. On October 2, 2026, the user
 approved the delta and authorized the same twelve-case Sol xhigh comparison.
 Adoption remains open. ASv6.48 remains the frozen subject
 baseline; no MP work is included.
 
-[ASv6.56 (approved candidate, test prepared)](../asv6.56/ASv6.56.md) replaces only C1 from ASv6.55.
+[ASv6.56 (candidate, tested on Sol xhigh)](../asv6.56/ASv6.56.md) replaces only C1 from ASv6.55.
 The source is now: "Cutting for boiler repair on Bracken. Bracken is a steam
 locomotive." The source directly states cutting's purpose and resolves Bracken's
 type in the next sentence. It adds no cutting tool, material, replacement part,
@@ -1284,7 +1285,7 @@ review does not establish that the draft generalizes on model outputs.
 
 Shared `experiment.py revise` generated the prompt and
 [ASv6.56 revision receipt](../asv6.56/ASv6.56.md.revision.json) directly against
-last approved ASv6.51 SHA-256
+then-approved ASv6.51 SHA-256
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 The receipt reconstructs the exact draft, whose SHA-256 is
 `a1a1292b45ab5afa9a2a87c25ac0434e7e2b4428b518767f846e67130ce4b4d2`.
@@ -1329,6 +1330,120 @@ output cap or paid fallback. Each native run allows at most eight new attempts,
 including only provider-eligible retries, with two attempts maximum per case.
 This does not authorize additional trials. The ledger's monetary totals are
 valid; incremental subscription cash is zero and quota consumption is unmeasured.
-Preparation made no model calls. Complete-output reviews will assess heading
-relationships, retained subjects and every valid branch; no user semantic
-judgment or adoption is inferred.
+Preparation made no model calls. All twelve answers subsequently completed on
+the first attempt with valid JSON and native receipts. There were no execution
+failures, retries, repairs, reused answers or regenerated baselines. Field order
+remains number/context/subject. All 29 pinned source, template and saved-baseline
+files remain unchanged after execution and native reviews. The complete-output
+agent reviews below assess relationships, retained subjects and every valid
+branch; no user semantic judgment or adoption is inferred.
+
+### ASv6.56 completed answers and agent review
+
+ASv6.56 does not pass. Agent review found four of twelve answers with a
+heading-alone parent-scope failure and all twelve missing an enumerated
+subject from a valid broader branch. The corresponding ASv6.55 counts were
+five and ten; ASv6.54 had five and eleven. These are small sets of stochastic
+answers, not estimates of general failure rates or proof that the example
+change improved scope handling or worsened coverage. All twelve current native
+agent verdicts are reject; no user verdict is recorded.
+
+| Post | T1 scope / entries | T2 scope / entries | T3 scope / entries | Answers missing valid branches |
+| --- | --- | --- | --- | --- |
+| N063 | Pass / 149 | Pass / 167 | Fail / 202 | 3 of 3 |
+| N074 | Pass / 155 | Pass / 158 | Pass / 156 | 3 of 3 |
+| N096 | Fail / 211 | Fail / 199 | Fail / 296 | 3 of 3 |
+| N100 | Pass / 225 | Pass / 229 | Pass / 261 | 3 of 3 |
+
+Pass means no confirmed scope failure was found in that complete-output review;
+it does not mean the answer passes coverage or every other instruction.
+Each failing scope answer has a displayed edge and a heading-only counterexample:
+
+| Answer | Displayed parent → child | Counterexample |
+| --- | --- | --- |
+| N063 T3 | 1.7 Edible fats and oils → 1.7.1 Olive oil | Generic olive oil includes lampante grades that require processing before human consumption. The post's EVOO context cannot make that general heading edible. |
+| N096 T1 | 3 Cooking → 3.5 Mixing ingredients | Mixing ingredients for paint can fit the child without cooking. The food restriction is absent from the heading. |
+| N096 T2 | 3.1 Water used in cooking → 3.1.1 One tin of water | A tin of water for watering plants can fit the child without retaining the cooking purpose. |
+| N096 T3 | 10 Cookware → 10.1 Pans | A pan for collecting drained engine oil can fit the generic child without being cookware. The cooking type appears only in this post's context. |
+
+The olive-oil counterexample is supported by the primary
+[USDA olive-oil grade definitions](https://www.ams.usda.gov/grades-standards/olive-oil-and-olive-pomace-oil-grades-and-standards),
+checked October 2, 2026. Edible oils → Olive oil also appears in N096 T1
+(1.5 → 1.5.1) and T2 (1.6 → 1.6.1). N096 T2 additionally nests Finely chopping
+vegetables (6.8.1.1) beneath Chopping cooking ingredients (6.8.1); chopping
+vegetables for compost does not retain the cooking role. These additional
+edges are in already-counted answers. N096 T3 correctly places generic olive
+oil beneath Oils, and N063 T2 explicitly uses Edible olive oils.
+
+Every missing placement below was checked against the full returned hierarchy,
+including every occurrence of the parent. A narrower instance does not replace
+the enumerated general subject. These are semantic agent assessments; different
+equivalent wording is allowed, and the source facts and relationships remain
+separate from any user judgment.
+
+| Answer | Retained subject and its position(s) | Missing broader placement(s) |
+| --- | --- | --- |
+| N063 T1 | Culinary ingredients, 2.2 | Cooking, 2.1 |
+| N063 T2 | Vegetable broth, 1.9.1 | Vegetables, 1.5 |
+| N063 T3 | Cooking ingredients, 2.1 and 3.1 | Food and drink, 1 |
+| N074 T1 | Online clicks generated by diets, 3.1.1 | Diets, 1 |
+| N074 T2 | Dietary advice, 1.9 | Food consumption, 9 |
+| N074 T3 | Weariness with diet narratives, 12.1 | Diet narratives, 1.7 and 11.1 |
+| N096 T1 | Cooking ingredients, 1.9 | Cooking, 3 |
+| N096 T2 | Finely chopping vegetables, 6.8.1.1 | Vegetables, 1.3 |
+| N096 T3 | Food preparation, 9.1 | Food, 1 |
+| N100 T1 | About 3 lb of beef fat for tallow production, 2.1.3.1.1 and 4.1.1.1 | Tallow production, 5.1 |
+| N100 T2 | Vacuum sealer purchases, 13.2 | Vacuum sealers, 12.1 |
+| N100 T3 | New Nesco VS-12 vacuum sealer better than previously used FoodSaver vacuum sealers; seven copies | Previous use of FoodSaver vacuum sealers, 15.1.1.2.1.1, 15.1.1.3.2, 16.1.1.2.1.1, 16.1.1.3.2 and 22.1.1.2 |
+
+N100 T3's comparison copies are at 15.1.1.1.1.3, 15.1.1.2.1.2, 15.1.1.4.1,
+16.1.1.1.1.3, 16.1.1.2.1.2, 16.1.1.4.1 and 21.1.1.1. None occurs beneath
+any of the five past-use entries. The specific comparison is present, but its
+placements remain incomplete.
+
+The answers retain N063's fifteen ingredients and dish; N074's comparisons,
+mother/10-year-old example, Bitcoin narrative, attribution and individual plus
+combined advice; N096's ingredient quantities, yield, actions, heat levels and
+simmering time; and N100's price, steak count/thickness, trimming quantities and
+purposes, dog food, chicken provisions and sealer details. This does not
+establish exhaustive coverage. N096 T1 has thirteen terminal copies of its
+named recipe's ingredient heading. Its ingredient quantities remain in general
+branches, without recipe-qualified counterparts beneath that heading. T2's
+named recipe entries are also terminal. Moving the general quantity headings
+under the recipe without retaining the recipe role would recreate the scope
+failure; the supported general and qualified subjects must both remain.
+
+N100 T1 represents only the water/seeds reading for chickens. T2 and T3 also
+represent the possible myoglobin-for-chickens reading. The doubled "some some"
+source remains ambiguous; the missing reading in T1 is a separate ambiguity-
+coverage caveat, without an invented user grounding verdict. No answer claims
+that the purchased beef was vacuum-sealed. N074's wording of the comparative
+controversy exception remains a separate semantic caveat. No unstated
+arithmetic result was identified. No answer was repaired or regenerated.
+
+Native usage for the four new attempts in each trial is recorded below.
+Output already includes reasoning; these columns must not be added together
+as separate output charges. No cross-trial token or cost total is assembled.
+
+| Trial | New attempts | Input tokens | Cached input | Output tokens | Reasoning tokens | Catalog estimate, USD |
+| --- | --- | --- | --- | --- | --- | --- |
+| T1 | 4 | 21,382 | 0 | 91,404 | 53,241 | 0.956804 |
+| T2 | 4 | 11,142 | 10,240 | 90,365 | 51,471 | 0.926958 |
+| T3 | 4 | 16,134 | 5,248 | 100,344 | 53,157 | 1.0362328 |
+
+Every attempt has native usage and a catalog estimate; provider billing is
+unavailable. The estimates are not subscription charges or measured quota
+consumption; incremental cash is zero. Cached input does not mean an answer
+was reused: all twelve were independent new attempts. ASv6.56 repeats 2,734
+additional prompt bytes per request compared with ASv6.55. The 27 offline
+checks passed before inference, and native parsing and receipt validation pass
+after execution; the semantic regression does not. ASv6.48 remains frozen,
+with no adoption or MP change.
+
+A useful proposed next step is to revise the existing boiler case to show a
+quantified general item separately from its repair role, while retaining the
+action-purpose demonstration and every rule mapping. This would demonstrate the
+distinction behind the One tin of water failure and missing recipe-qualified
+quantities with a short example outside food. Review the delta before another
+test. No further prompt edit, experiment or model call has been authorized or
+prepared.
