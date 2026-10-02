@@ -126,3 +126,125 @@ even if its quality is poor. Inspect native receipts, exact inputs/settings,
 prompt preservation and every answer's output-bound agent review after the
 run. Any later example revision uses these cases as development evidence;
 fresh-domain validation remains a separate subsequent step.
+
+## Results
+
+All 36 planned answers completed on subscription `gpt-6.1-sol` at medium:
+twelve per trial, each on its first attempt. Native reports record valid
+answers, zero runner failures and zero answer reuse. The exact source posts,
+settings and ASv6.73 rendering were checked across all three trials. Every
+answer has a current, output-bound native agent review. The persistent budget
+increased from 210 to 246 of 1,000 attempts; no prompt or production change was
+made. C2's help/appreciation combination remains an unresolved user question.
+
+The table records agent judgments under the criteria frozen above. Acceptance
+is bounded to the focal checks; it does not certify every background subject
+or all SP rules. Uncertainty is retained rather than counted as success or
+failure.
+
+| Post | Focal contrast | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- | --- |
+| I001 | Soup seasonings, short | Accept | Accept | Accept |
+| I002 | Seasoning soup, short | Accept | Accept | Accept |
+| I003 | Soup seasonings, background | Accept | Accept | Accept |
+| I004 | Seasoning soup, background | Accept | Accept | Accept |
+| I005 | Beef scraps for dog, short | Accept | Accept | Accept |
+| I006 | Beef scraps for feeding dog, short | Accept | Accept | Accept |
+| I007 | Beef scraps for dog, background | Accept | Accept | Accept |
+| I008 | Beef scraps for feeding dog, background | Accept | Accept | Accept |
+| I009 | Counted soup ingredients/action, short | Accept | Accept | Accept |
+| I010 | Counted soup ingredients/action, background | Accept | Uncertain | Reject |
+| I011 | Counted repair supplies/action, short | Reject | Reject | Accept |
+| I012 | Counted repair supplies/action, background | Accept | Reject | Reject |
+
+There are five confirmed rejections, one uncertainty and thirty bounded
+acceptances. All confirmed errors concern placement, not loss of the complete
+focal meaning everywhere. No confirmed focal scope error was found. These are
+handwritten development cases, not exact repetitions of N096/N100 or unseen
+validation. The earlier fixed original-post comparison still has confirmed
+errors in all five ASv6.73 answers for each of N096 and N100.
+
+### Scope and exposure
+
+- All twelve seasoning answers retain qualified sea-salt/pepper soup roles
+  and the full pair beneath every checked role-component occurrence. Generic
+  **Seasonings** occurs in five of six nominal-list answers; each contains
+  qualified children. The sixth returns **Soup seasoning** directly. All
+  twelve expose a soup-seasoning parent, with no unrestricted salt beneath it.
+  Thus a nominal list heading alone did not reproduce the original error.
+- None of the six recipient-only dog answers returns a food/feeding parent.
+  They preserve the amount and recipient, but provide **zero observations**
+  of the disputed food/feeding edge. Their acceptance is not six successful
+  feeding-edge tests. All six explicit-feeding answers expose feeding parents
+  and preserve feeding purpose inside their material children.
+- Independent background wording showed no obvious unsupported change in
+  the bounded inspection. Its complete combination and placement coverage was
+  not certified. Conditional dam-release headings do not assert a release.
+
+### Numbered evidence
+
+Two failures have material-group omissions that do not depend on disputed
+action/ingredient membership:
+
+- **Trial 3, I010:** the expressed group **Soup ingredients consisting of one
+  medium onion and two tablespoons of olive oil** appears only at `3.1.3`.
+  It is missing below both copies of **One medium onion for soup preparation**
+  (`1.1.1`, `3.1.1`) and both copies of **Two tablespoons of olive oil for soup
+  preparation** (`2.1.1`, `3.1.2`). The qualified action appears in those
+  branches; it cannot replace the separately expressed ingredient group.
+- **Trial 2, I012:** **One steel plate and two steel bolts as chair-repair
+  supplies** occurs below counted plate parents `2.1.1.1` and `4.1.1.1`, but
+  not identical parents `1.1.1.1` and `5.1.1`. It occurs below counted bolt
+  parents `3.1.1.1` and `4.2.1.1`, but not identical parents `1.1.1.2` and
+  `5.1.2`. These four omissions survive checking every numbered occurrence.
+
+Three additional repair answers omit the complete attachment below their
+expressed whole supplies group: all fourteen group copies in trial 1 I011,
+all eleven in trial 2 I011 and all ten in trial 3 I012. Their complete action
+heading itself says **Attaching one steel plate to a chair with two steel bolts
+using a drill for chair repair**. It states use of the same counted repair
+materials, so the subject concerns those supplies without borrowing a role
+from context. This is an agent semantic judgment about subject-index placement,
+not physical-object subtyping or closure for every derived heading. For example,
+trial 2 I011 returns terminal group `1.1.1.1.1` and the complete action at sibling
+`1.1.1.1.2`. Trial 1 I011 also omits that action beneath seven copies each of
+the counted plate/bolt **as a chair-repair supply** parents. Trial 2 I012 has
+terminal group copies too; its independent four component-copy omissions above
+are sufficient to reject it.
+
+**Trial 2 I010 stays uncertain.** The complete sautéing heading reaches all
+five qualified counted-onion and two qualified counted-oil occurrences, but
+none of the four whole ingredient-group copies. Its wording specifies soup
+preparation, without explicitly making those materials soup ingredients.
+Preparation use need not mean inclusion as an ingredient; the pre-generation
+rubric excludes rejecting ambiguous ingredient-group membership. The unchopped
+group is also not required beneath a finely-chopped-onion heading.
+
+The short repair post fails in two of three trials, as does its background
+form. Short soup preparation has no confirmed failure in three trials;
+its background form has one rejection and one uncertainty. Additional context
+is therefore not necessary for an incomplete branch. These small contrasts do
+not establish that context caused the errors, or explain why original N096/N100
+still fail. C1's omitted soup participant independently establishes that the
+current examples cannot all be described as correct.
+
+### Verification and next decision
+
+Native experiment directories are `as73-interactions-medium-r1`, `r2` and `r3`
+under the ignored campaign experiment root. Their reports, receipts and
+`reviews.jsonl` preserve every answer and review; the handwritten source/spec
+and this maintained account are committed separately from those artifacts.
+The production example/attempt-budget checks passed all 34 tests before
+inference, and Git whitespace checks passed. No production API, grading stage
+or additional model pass was added.
+
+The next useful change is a reviewable revision of C1: correct its participant
+omission and demonstrate an expressed two-material group and complete action
+beneath every compatible numbered component/group copy. The short non-food
+repair failures give a concrete development target for that demonstration.
+Keep the existing instruction contract and seven-case structure, audit the
+complete replacement against every applicable rule, then compare the candidate
+with fixed ASv6.73 on these cases and the original regression posts. Scope
+qualification remains unresolved on the originals and must be checked there;
+this diagnostic does not justify declaring it solved. This is a recommendation,
+not a prompt revision, adoption or authorization for additional calls.

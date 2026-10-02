@@ -4,7 +4,12 @@ The approved [ASv6.73 example audit and fixed interaction
 diagnostics](interaction-audit-v1.md) investigates seasoning wording,
 recipient/feeding purpose and counted participant/action placements. Its
 pre-generation criteria and twelve reusable source fixtures are frozen before
-three independent medium trials. ASv6.73 stays fixed for this experiment.
+three independent medium trials. All 36 fresh answers completed without runner
+errors or reuse: five have confirmed placement failures, one remains uncertain,
+and thirty satisfy the bounded focal checks. The salt/dog contrasts did not
+reproduce the original scope failures. See the linked audit for parent exposure,
+numbered witnesses and limits. ASv6.73 stayed fixed; the campaign budget is now
+246 of 1,000 attempts. Prompt revision and adoption remain open.
 
 The user authorized autonomous SP iteration on 2026-10-02, with at most
 1,000 attempts on `gpt-6.1-sol` at `low` or `medium` reasoning. This is an upper
@@ -295,8 +300,8 @@ All 40 planned calls completed with valid native receipts, no runner failures
 and no answer reuse. All ten frozen experiments were checked for identical
 complete input posts and runner settings; each arm used its exact fixed prompt
 template. Each answer has one current, output-bound agent review. The persistent
-campaign budget now records 210 of the authorized 1,000 attempts. No candidate
-was adopted, and neither prompt changed during the comparison.
+campaign budget recorded 210 of the authorized 1,000 attempts at that checkpoint.
+No candidate was adopted, and neither prompt changed during the comparison.
 
 | Post | ASv6.58 answers with confirmed errors | ASv6.73 answers with confirmed errors |
 | --- | --- | --- |
