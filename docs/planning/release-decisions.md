@@ -78,34 +78,39 @@ planned broader validation; other completion requirements are unchanged.
 Clearing the stress-testing hold is not authorization for model calls or spending.
 
 **300-note corpus selection — October 2:** the user approved selecting software
-and computing as the third area. The frozen 100 complete posts join the unchanged
-100 food/drink and 100 music posts. The addition has 90 authors, at most two posts
-per author, and every complete text fits the existing 512-token limit. All 300
-posts passed offline source-loading and post-input preparation checks. Counts
-refer to source posts, not hierarchy nodes; the three areas do not prescribe
-hierarchy branches. [Selection, provenance and review evidence](../../sse_multivector/real-note-fine-segmentation-v1/README.md#software-selection-for-the-300-note-hierarchy)
-are recorded separately from earlier generation results. Selection is complete;
-the 300-note hierarchy has not been built. The generation hold, prompt/build
-choices and validation gates remain unchanged.
+and computing as the third area, then replacing two address-based replies found
+by direct event inspection. Software v2 keeps the other 98 entries and the
+original food/drink and music posts unchanged. The current software addition has
+89 authors, at most two posts each; the combined 300 have 270 authors. Every
+complete text fits the existing 512-token limit. Counts refer to source posts,
+not hierarchy nodes; the areas do not prescribe hierarchy branches.
+[Selection, provenance and review evidence](../../sse_multivector/real-note-fine-segmentation-v1/README.md#software-selection-for-the-300-note-hierarchy)
+remain separate from earlier generation results. The corrected source and
+offline preparation are saved; the 300-note hierarchy has not been built.
+Generation holds, open prompt/build choices and validation gates remain unchanged.
 
-**400/500-note corpus preparation — October 2:** the user requested proceeding
-with both selections. The assistant recommended books/reading for the fourth
-area and exercise/fitness for the fifth. The user then approved replacing four
-uncertain topic fits before generation: one books/reading post and three
-exercise/fitness posts. The current v2 selections preserve the other 196 entries
-and the earlier 300 posts, bringing the source to 400, then 500. The original v1
-files remain untouched as provenance. Original-text, local tokenizer, copy,
-author and production input-preparation checks passed for the corrected sources.
+**400/500-note corpus preparation — October 2:** the user requested both
+selections, then approved replacing four uncertain topic fits: one books/reading
+post and three exercise/fitness posts. Those v2 corrections remain in place.
+The user subsequently approved replacing the three address-based replies found
+by a direct 500-event audit: software positions 19 and 62 and exercise position
+85. The current 400-post reference uses software v2 and the unchanged books v2
+posts; the reference-only books v3 adopts the software corrections. Exercise v3
+replaces only position 85 of v2 and extends that exact 400-post source to 500.
+Earlier frozen versions remain untouched. Original-text, local tokenizer, copy,
+author and production input-preparation checks passed for all corrected sources.
 [Books selection](../../sse_multivector/real-note-fine-segmentation-v1/README.md#books-selection-for-the-400-note-hierarchy)
 and [exercise selection](../../sse_multivector/real-note-fine-segmentation-v1/README.md#exercise-selection-for-the-500-note-hierarchy)
-record the replacements, retained assessments and source hashes. The user
-authorized the identified replacements; no independent semantic review or user
-judgment of the replacement posts or hierarchies is claimed. Broader retained
-corpus eligibility still relies on upstream English, reply and quote filtering;
-no independent per-event metadata audit was performed. Both corrected selections
-and offline preparation are complete; 400/500-note hierarchies have not been
-built. Generation holds, open prompt/build choices and validation gates are
-unchanged.
+record the corrections, retained assessments and hashes. The current event audit
+reuses 497 unchanged inspections and directly inspects all three replacements;
+all 500 IDs, original texts, authors, canonical event hashes and kind-1 values
+match. None has an e-tag reply or mention, a q tag, or an a tag marked root/reply.
+Eleven retained inline event references without q tags and five mixed-language
+posts still require the previously requested policy choices; full requirements
+satisfaction is not claimed. No independent semantic review or user judgment of
+the replacement posts or hierarchies is claimed. Corrected source preparation
+is saved; 300/400/500-note hierarchies have not been built. Generation holds,
+open prompt/build choices and validation gates remain unchanged.
 
 **Current task 02 status (October 1):** parallel candidate builds continue, and
 the independent comparison started by the user is available. The comparison
