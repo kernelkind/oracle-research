@@ -8,13 +8,14 @@ baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
 
 The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md)
-is now the last approved subject prompt. ASv6.50 and its saved answers remain
-comparison evidence.
+provides the saved comparison answers for the ASv6.55 test below. ASv6.50 and
+its saved answers remain comparison evidence.
 
-[ASv6.55 (draft, untested on models)](../asv6.55/ASv6.55.md) is the current
-example-only revision for review. It removes two overlapping examples from
+[ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md) is the current
+example-only revision, authorized for testing. It removes two overlapping
+examples from
 ASv6.54 while retaining demonstrations of every existing instruction clause.
-Its wording and model test remain open. The
+Adoption remains open. The
 [rule-to-case map](#example-correctness-and-rule-coverage) records each case's
 instruction basis; the [draft audit](#asv655-consolidated-examples) records verification.
 
@@ -728,7 +729,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.55 (draft, untested on models)](../asv6.55/ASv6.55.md).
+The current map uses [ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -746,8 +747,8 @@ requirements to count.
 
 The maintained tests contain the same case IDs, purposes, primary assignments
 and explained secondary assignments. "Reviewed" means the agent assessed
-source support and heading relationships; wording approval and model testing
-remain open.
+source support and heading relationships. The user authorized model testing;
+agent assessments remain separate from user semantic judgments and adoption.
 
 | Case | Purpose | Review |
 | --- | --- | --- |
@@ -867,13 +868,13 @@ the examples; ASv6.54 remains unchanged as the source for preservation checks.
 
 ## ASv6.55 consolidated examples
 
-Status: draft, untested on models. The user explicitly confirmed that the next
-prompt should consolidate overlapping examples while keeping every rule
-demonstrated. This authorizes drafting and offline verification; wording
-approval, inference and adoption remain open. ASv6.51 remains the last approved
-candidate and ASv6.48 remains the frozen subject baseline.
+Status: candidate, testing in progress. The user explicitly confirmed that
+the next prompt should consolidate overlapping examples while keeping every rule
+demonstrated, then explicitly authorized testing ASv6.55 on the same twelve
+GPT-6.1 Sol xhigh regression cases. ASv6.51 supplies the saved comparison
+answers; ASv6.48 remains frozen. Adoption remains open.
 
-[ASv6.55 (draft, untested on models)](../asv6.55/ASv6.55.md) removes ASv6.54's
+[ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md) removes ASv6.54's
 lunar and combined-advice cases. Their instruction demonstrations are retained
 in existing cases: the boiler case resolves a reference across sentences,
 distinguishes entities from roles and repeats descendants beneath every valid
@@ -923,9 +924,39 @@ Its 16,522 UTF-8 bytes are 5,185 fewer than ASv6.54 (24% smaller), but 5,465
 more than approved ASv6.51. These are repeated input bytes per SP request,
 not measured model tokens. No runtime component or extra model pass is added.
 
-No template, experiment or model request was created. Review the delta against
-ASv6.54 to inspect the consolidation, and against approved ASv6.51 to inspect
-the complete proposed change. After wording approval, the useful next check is
-the same twelve GPT-6.1 Sol xhigh SP regression cases paired with saved ASv6.51
-answers. Only that subsequent testing can assess transfer to the unchanged
-regression posts.
+Drafting made no model requests. The subsequent authorized test below checks
+transfer to the unchanged regression posts.
+
+### Authorized Sol 6.1 xhigh regression test
+
+The user authorized the same twelve-answer design after reviewing the ASv6.55
+consolidation and rule coverage: N063, N074, N096 and N100, with three independent
+answers per post. Three native `prepare --from ... --repeat` experiments pair
+each trial with its corresponding completed ASv6.51 retry trial. Complete
+original post text, source evidence, output schema and model settings are
+preserved; saved baselines are not regenerated.
+
+Shared `experiment.py revise` derives the
+[ASv6.55 post template](../../experiment_specs/asv6.55-hr01-post-template.txt)
+and its [native receipt](../../experiment_specs/asv6.55-hr01-post-template.txt.revision.json)
+from the approved ASv6.51 template. The source prompt and unchanged `{POST}`
+wrapper match exactly. The ASv6.55 template SHA-256 is
+`5a321bf7146bc5d577fbd8f5d32a4fc11ac3adb7090c2f76988b43c2145720a5`;
+its baseline template SHA-256 is
+`8c8ef84d5c27726c710fcb6bf91b107df93abe157ce1cd63a2286b3d65a72003`.
+
+Preflight verifies all twelve cases, four valid saved baselines per trial and
+unchanged GPT-6.1 Sol xhigh subscription settings: WebSocket transport,
+1,800-second timeout, four concurrent requests per trial and no output cap.
+Twenty-seven saved ASv6.51 files are hash-pinned before inference. Each native
+run allows at most eight new attempts, retaining the shared provider-only retry
+policy and two-attempt maximum per case. Incremental subscription cash is zero;
+quota consumption is unmeasured and no paid fallback is configured.
+
+The ignored experiments are
+`sse_multivector/experiments/asv6.55-sol61-xhigh-sp-scope-regression-t1/`,
+`sse_multivector/experiments/asv6.55-sol61-xhigh-sp-scope-regression-t2/` and
+`sse_multivector/experiments/asv6.55-sol61-xhigh-sp-scope-regression-t3/`.
+Execution is in progress. Complete answers will be assessed for the agreed
+parent-scope pattern, subject coverage and other errors through native agent
+reviews. No user semantic verdict or baseline adoption is implied by execution.

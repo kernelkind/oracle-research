@@ -1,8 +1,9 @@
 # ASv6.49
 
 Status: superseded, untested.
-[ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md) is the latest
-approved subject prompt. ASv6.49 repeated existing instructions about refinement
+[ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md) supplies
+the saved comparison answers for the authorized ASv6.55 test. ASv6.49 repeated
+existing instructions about refinement
 and independently understandable headings; ASv6.50 clarified the existing
 hierarchy paragraph instead. ASv6.48 remains the frozen subject baseline.
 MPv3.43 remains the frozen mask working baseline.
@@ -23,7 +24,8 @@ numbering remain byte-identical in ASv6.49. The separately authorized
 [ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) corrects this loss and the
 missing placements in both worked examples. ASv6.52's initial audit missed the
 every-applicable-branch requirement. The corrected wording and model test
-remain open. The current [ASv6.55 (draft, untested on models)](../asv6.55/ASv6.55.md)
+remain open for those superseded drafts. The current
+[ASv6.55 (candidate, testing in progress)](../asv6.55/ASv6.55.md)
 consolidates ASv6.54's focused cases while retaining every rule demonstration; its
 [rule-to-case map](../asv6.50/README.md#example-correctness-and-rule-coverage)
 records their instruction basis and review status.
