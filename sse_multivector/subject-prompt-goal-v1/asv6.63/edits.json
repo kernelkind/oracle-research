@@ -1,0 +1,9 @@
+{
+  "base_sha256": "f95b9de321c55033329325a3dabbb7c6af64ba692b64bac0c69ddc550b63a75f",
+  "edits": [
+    {
+      "old": "For each enumerated subject, identify broader headings using only the proposed `subject` strings. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship.",
+      "new": "For each enumerated subject, derive broader headings by generalizing its meaning without adding restrictions. An item's usual purpose is not a property of every instance: a purpose-qualified heading cannot contain an unrestricted item heading. Compare only the proposed `subject` strings. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship."
+    }
+  ]
+}

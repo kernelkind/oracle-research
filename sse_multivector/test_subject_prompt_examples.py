@@ -1,5 +1,6 @@
 """Offline checks for the SP examples' declared hierarchy relationships."""
 
+import json
 import re
 import unittest
 from unittest.mock import patch
@@ -813,7 +814,7 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
 
     def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
         root = Path(__file__).parent
-        for version in (59, 60, 61, 62):
+        for version in range(59, 70):
             with self.subTest(version=version):
                 candidate = (
                     root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"
@@ -888,9 +889,9 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
                 ("unknown", "appreciation"), ("unknown", "first_use"),
             ),
         }
-        for version in (61, 62):
+        for version in range(61, 70):
             repair_case = FOCUSED_CASES[0]
-            if version == 62:
+            if version >= 62:
                 repair_case = {
                     **repair_case,
                     "post": repair_case["post"] + "\nSeparately, olive oil for cooking.",
@@ -910,6 +911,66 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
                         ("olive", "cooking_oils"), ("olive", "cooking"),
                         ("oils", "cooking_oils"), ("oils", "cooking"),
                         ("cooking_olive", "boiler_repair"),
+                    ),
+                }
+            if version >= 68:
+                repair_case = {
+                    **FOCUSED_CASES[0],
+                    "purpose": "Count/reference/purpose plus explicit edible/inedible qualities and a retained oil-use combination.",
+                    "post": "Repair:\nOne tube.\nCutting it.\nSeparately, edible olive oil for cooking and inedible olive oil for a lamp.",
+                    "subjects": {
+                        "tubes": "Tubes", "one": "One tube",
+                        "repair_tube": "One tube for repair",
+                        "cut_tube": "Cutting one tube",
+                        "repair_cut_tube": "Cutting one tube for repair",
+                        "repair": "Repair", "cutting": "Cutting",
+                        "repair_cutting": "Cutting for repair",
+                        "oils": "Oils", "olive": "Olive oil",
+                        "edible": "Edible oils", "inedible": "Inedible oils",
+                        "edible_olive": "Edible olive oil",
+                        "inedible_olive": "Inedible olive oil",
+                        "cooking_olive": "Edible olive oil for cooking",
+                        "lamp_olive": "Inedible olive oil for a lamp",
+                        "cooking": "Cooking", "lamps": "Lamps",
+                        "oil_combination": "Edible olive oil for cooking and inedible olive oil for a lamp",
+                    },
+                    "relationships": (
+                        ("one", "tubes"), ("repair_tube", "one"),
+                        ("repair_tube", "repair"), ("cut_tube", "one"),
+                        ("cut_tube", "cutting"),
+                        ("repair_cut_tube", "repair_tube"),
+                        ("repair_cut_tube", "cut_tube"),
+                        ("repair_cut_tube", "repair_cutting"),
+                        ("repair_cutting", "repair"),
+                        ("repair_cutting", "cutting"),
+                        ("olive", "oils"), ("edible", "oils"),
+                        ("inedible", "oils"),
+                        ("edible_olive", "olive"), ("edible_olive", "edible"),
+                        ("inedible_olive", "olive"), ("inedible_olive", "inedible"),
+                        ("cooking_olive", "edible_olive"),
+                        ("cooking_olive", "cooking"),
+                        ("lamp_olive", "inedible_olive"), ("lamp_olive", "lamps"),
+                        ("oil_combination", "cooking_olive"),
+                        ("oil_combination", "lamp_olive"),
+                    ),
+                    "invalid": (
+                        ("tubes", "repair"), ("one", "repair"),
+                        ("cut_tube", "repair"), ("cutting", "repair"),
+                        ("repair", "cutting"), ("one", "repair_tube"),
+                        ("cut_tube", "repair_tube"), ("repair_tube", "cutting"),
+                        ("olive", "edible"), ("olive", "inedible"),
+                        ("olive", "cooking"), ("olive", "lamps"),
+                        ("edible_olive", "inedible"),
+                        ("inedible_olive", "edible"),
+                        ("edible_olive", "cooking"), ("inedible_olive", "lamps"),
+                        ("cooking_olive", "lamps"), ("lamp_olive", "cooking"),
+                        ("oil_combination", "repair"),
+                        ("cooking_olive", "oil_combination"),
+                        ("lamp_olive", "oil_combination"),
+                    ),
+                    "secondary_rules": (
+                        ("R18", "Counted tube and qualified cutting remain; the stated oil-use combination retains both constituents."),
+                        ("R24", "Nonempty output contrasts with C3's empty array."),
                     ),
                 }
             cases = (repair_case, app_case) + FOCUSED_CASES[2:]
@@ -940,6 +1001,75 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
                 {"adapter": "subjects"}, {}, raw, None
             )["parsed"]["subjects"])
         self.assertEqual(outputs[0], outputs[1][:len(outputs[0])])
+
+    def test_asv663_preserves_every_reviewed_example(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        before = (directory / "asv6.62/ASv6.62.md").read_text()
+        after = (directory / "asv6.63/ASv6.63.md").read_text()
+        self.assertEqual(
+            re.findall(r"<example>\n.*?\n</example>", before, re.S),
+            re.findall(r"<example>\n.*?\n</example>", after, re.S),
+        )
+
+    def test_asv664_only_compacts_json_layout(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+
+        def normalized(version):
+            source = (directory / f"asv6.{version}/ASv6.{version}.md").read_text()
+
+            def output(match):
+                parsed = experiment_inputs.validate(
+                    {"adapter": "subjects"}, {}, match.group(1), None
+                )["parsed"]
+                return json.dumps(parsed, ensure_ascii=False)
+
+            return re.sub(r"<output>\n(.*?)\n</output>", output, source, flags=re.S)
+
+        self.assertEqual(normalized(63), normalized(64))
+
+    def test_asv665_only_moves_existing_hierarchy_instructions(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        before = (directory / "asv6.64/ASv6.64.md").read_text()
+        after = (directory / "asv6.65/ASv6.65.md").read_text()
+        start = before.index("For each enumerated subject, derive broader headings")
+        end = before.index("\n\nReturn only one JSON object", start)
+        rules = before[start:end]
+        expected = before.replace(rules + "\n\n", "", 1)
+        last = expected.rindex("</example>") + len("</example>")
+        expected = expected[:last] + "\n\n" + rules + expected[last:]
+        self.assertEqual(expected, after)
+
+    def test_domain_and_copy_clarifications_preserve_reviewed_examples(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        baseline = (directory / "asv6.65/ASv6.65.md").read_text()
+        blocks = re.findall(r"<example>\n.*?\n</example>", baseline, re.S)
+        for version in (66, 67):
+            with self.subTest(version=version):
+                source = (directory / f"asv6.{version}/ASv6.{version}.md").read_text()
+                self.assertEqual(blocks, re.findall(r"<example>\n.*?\n</example>", source, re.S))
+
+    def test_asv668_only_revises_the_restriction_example(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        before = (directory / "asv6.67/ASv6.67.md").read_text()
+        after = (directory / "asv6.68/ASv6.68.md").read_text()
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S) for s in (before, after)]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertNotEqual(blocks[0][0], blocks[1][0])
+        for tag in ("<example>", "</example>"):
+            if tag.startswith("</"):
+                self.assertEqual(before.rsplit(tag, 1)[1], after.rsplit(tag, 1)[1])
+            else:
+                self.assertEqual(before.split(tag, 1)[0], after.split(tag, 1)[0])
+
+    def test_asv669_preserves_every_reviewed_example(self):
+        directory = FOCUSED_PROMPT_PATH.parent.parent
+        before = (directory / "asv6.68/ASv6.68.md").read_text()
+        after = (directory / "asv6.69/ASv6.69.md").read_text()
+        self.assertEqual(
+            re.findall(r"<example>\n.*?\n</example>", before, re.S),
+            re.findall(r"<example>\n.*?\n</example>", after, re.S),
+        )
 
 
 if __name__ == "__main__":

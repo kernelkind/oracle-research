@@ -1,0 +1,9 @@
+{
+  "base_sha256": "b5fb5f3c11482e4d0e8d7bacdb8c6ed2597d5612f10e2880ff8a4c6fb6b68e86",
+  "edits": [
+    {
+      "old": "Use the valid relationships to build the hierarchy upward, combining shared headings. Then check each enumerated subject against every returned heading:",
+      "new": "Use the valid relationships to build the hierarchy upward, combining shared headings. Finish these relationships before assigning numbers. Repeating a heading repeats its enumerated descendants too: every copy must retain the same complete source-subject headings beneath it. Then check each enumerated subject against every returned heading:"
+    }
+  ]
+}
