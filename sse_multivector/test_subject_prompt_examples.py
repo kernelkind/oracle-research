@@ -12,7 +12,7 @@ PROMPT_PATH = (
     Path(__file__).parent / "subject-prompt-goal-v1/asv6.53/ASv6.53.md"
 )
 FOCUSED_PROMPT_PATH = (
-    Path(__file__).parent / "subject-prompt-goal-v1/asv6.56/ASv6.56.md"
+    Path(__file__).parent / "subject-prompt-goal-v1/asv6.57/ASv6.57.md"
 )
 
 
@@ -310,55 +310,54 @@ class SubjectPromptExampleTests(unittest.TestCase):
 FOCUSED_CASES = (
     {
         "id": "C1",
-        "purpose": "Named referent resolution, general actions versus their repair purpose and retained locomotive type.",
-        "post": "Cutting for boiler repair on Bracken. Bracken is a steam locomotive.",
+        "purpose": "Reference resolution, quantified items versus their repair purpose, and general versus purpose-qualified cutting.",
+        "post": "One tube for boiler repair. Cutting it for that repair.",
         "subjects": {
+            "tubes": "Tubes",
+            "one_tube": "One tube",
+            "repair_tube": "One tube for boiler repair",
+            "tube_cutting": "Cutting one tube",
+            "repair_tube_cutting": "Cutting one tube for boiler repair",
             "boilers": "Boilers",
-            "steam_boilers": "Steam locomotive boilers",
-            "bracken_boiler": "Boiler of Bracken the steam locomotive",
-            "locomotives": "Locomotives",
-            "steam_locomotives": "Steam locomotives",
-            "bracken": "Bracken the steam locomotive",
             "repair": "Repair",
             "boiler_repair": "Boiler repair",
-            "bracken_boiler_repair": "Boiler repair on Bracken the steam locomotive",
             "cutting": "Cutting",
             "boiler_repair_cutting": "Cutting for boiler repair",
-            "bracken_boiler_repair_cutting": "Cutting for boiler repair on Bracken the steam locomotive",
         },
         "relationships": (
-            ("steam_boilers", "boilers"),
-            ("steam_boilers", "steam_locomotives"),
-            ("bracken_boiler", "steam_boilers"),
-            ("bracken_boiler", "bracken"),
-            ("steam_locomotives", "locomotives"),
-            ("bracken", "steam_locomotives"),
+            ("one_tube", "tubes"),
+            ("repair_tube", "one_tube"),
+            ("repair_tube", "boiler_repair"),
+            ("tube_cutting", "one_tube"),
+            ("tube_cutting", "cutting"),
+            ("repair_tube_cutting", "repair_tube"),
+            ("repair_tube_cutting", "tube_cutting"),
+            ("repair_tube_cutting", "boiler_repair_cutting"),
             ("boiler_repair", "repair"),
             ("boiler_repair", "boilers"),
-            ("bracken_boiler_repair", "boiler_repair"),
-            ("bracken_boiler_repair", "bracken_boiler"),
             ("boiler_repair_cutting", "cutting"),
             ("boiler_repair_cutting", "boiler_repair"),
-            ("bracken_boiler_repair_cutting", "boiler_repair_cutting"),
-            ("bracken_boiler_repair_cutting", "bracken_boiler_repair"),
         ),
         "primary_rules": (
             "R01", "R02", "R04", "R16", "R20", "R21", "R22", "R23",
             "R25", "R26", "R27", "R28", "R29", "R30", "R31", "R34",
         ),
         "secondary_rules": (
-            ("R18", "Bracken and its boiler remain alongside their repair and cutting subjects."),
+            ("R18", "One tube remains alongside its repair-qualified and cutting subjects."),
             ("R24", "Nonempty output contrasts with C3's empty array."),
         ),
         "invalid": (
             ("cutting", "boiler_repair"),
             ("boiler_repair", "cutting"),
             ("boilers", "boiler_repair"),
-            ("bracken_boiler", "boiler_repair"),
-            ("boiler_repair", "steam_boilers"),
-            ("boiler_repair_cutting", "steam_boilers"),
-            ("bracken", "repair"),
-            ("bracken", "cutting"),
+            ("tubes", "boiler_repair"),
+            ("one_tube", "boiler_repair"),
+            ("tube_cutting", "boiler_repair"),
+            ("one_tube", "repair_tube"),
+            ("tube_cutting", "repair_tube"),
+            ("repair_tube", "cutting"),
+            ("boiler_repair", "tubes"),
+            ("boiler_repair_cutting", "tubes"),
         ),
     },
     {
@@ -391,7 +390,7 @@ FOCUSED_CASES = (
             "R03", "R05", "R06", "R17",
         ),
         "secondary_rules": (
-            ("R02", "Pronoun resolution: 'it' becomes the RavenWorks app."),
+            ("R02", "Named referent: 'it' retains RavenWorks's stated app type and hashtag-established name."),
             ("R12", "Unresolved name retained without commentary about its unknown type."),
         ),
         "invalid": (
@@ -602,9 +601,7 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
         self.assertIn("Observation of a person ducking", subjects)
 
     def test_cutting_for_boiler_repair_retains_general_and_qualified_subjects(self):
-        entries = next(
-            entries for post, entries in self.examples().items() if "Bracken" in post
-        )
+        entries = self.examples()[FOCUSED_CASES[0]["post"]]
         subjects = {entry["subject"] for entry in entries}
         self.assertIn("Cutting", subjects)
         self.assertIn("Boiler repair", subjects)
@@ -620,6 +617,30 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
                 self.assertIn("Cutting for boiler repair", descendants)
                 if parent["subject"] == "Boiler repair":
                     self.assertNotIn("Cutting", descendants)
+
+    def test_quantified_tube_keeps_its_repair_purpose_in_every_valid_branch(self):
+        entries = self.examples()[FOCUSED_CASES[0]["post"]]
+        subjects = {entry["subject"] for entry in entries}
+        self.assertIn("One tube", subjects)
+        self.assertIn("One tube for boiler repair", subjects)
+        self.assertIn("Cutting one tube", subjects)
+        self.assertIn("Cutting one tube for boiler repair", subjects)
+        for parent in entries:
+            descendants = {
+                entry["subject"] for entry in entries
+                if entry["number"].startswith(parent["number"] + ".")
+            }
+            with self.subTest(parent=parent["number"]):
+                if parent["subject"] in {"One tube", "Boiler repair"}:
+                    self.assertIn("One tube for boiler repair", descendants)
+                if parent["subject"] in {
+                    "One tube for boiler repair", "Cutting one tube",
+                    "Cutting for boiler repair",
+                }:
+                    self.assertIn("Cutting one tube for boiler repair", descendants)
+                if parent["subject"] == "Boiler repair":
+                    self.assertNotIn("One tube", descendants)
+                    self.assertNotIn("Cutting one tube", descendants)
 
     def test_each_instruction_is_traced_to_a_present_case(self):
         self.assertEqual(set(self.examples()), {c["post"] for c in FOCUSED_CASES})
@@ -730,6 +751,7 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
         approved = (directory / "asv6.51/ASv6.51.md").read_text()
         expanded = (directory / "asv6.54/ASv6.54.md").read_text()
         previous = (directory / "asv6.55/ASv6.55.md").read_text()
+        last_approved = (directory / "asv6.56/ASv6.56.md").read_text()
         focused = FOCUSED_PROMPT_PATH.read_text()
         self.assertEqual(
             focused.split("<example>", 1)[0], approved.split("<example>", 1)[0]
@@ -747,6 +769,12 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
         self.assertEqual(len(current_blocks), 7)
         self.assertEqual(current_blocks[1:], previous_blocks[1:])
         self.assertNotEqual(current_blocks[0], previous_blocks[0])
+        last_approved_blocks = re.findall(r"<example>\n.*?\n</example>", last_approved, re.S)
+        self.assertEqual(
+            focused.split("<example>", 1)[0], last_approved.split("<example>", 1)[0]
+        )
+        self.assertEqual(current_blocks[1:], last_approved_blocks[1:])
+        self.assertNotEqual(current_blocks[0], last_approved_blocks[0])
 
 
 if __name__ == "__main__":

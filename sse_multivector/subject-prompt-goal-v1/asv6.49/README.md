@@ -24,7 +24,7 @@ numbering remain byte-identical in ASv6.49. The separately authorized
 [ASv6.53 (draft, untested)](../asv6.53/ASv6.53.md) corrects this loss and the
 missing placements in both worked examples. ASv6.52's initial audit missed the
 every-applicable-branch requirement. The corrected wording and model test
-remain open for those superseded drafts. The current
+remain open for those superseded drafts. The tested
 [ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md)
 consolidates ASv6.54's focused cases while retaining every rule demonstration; its
 [rule-to-case map](../asv6.50/README.md#example-correctness-and-rule-coverage)
@@ -37,11 +37,15 @@ test](../asv6.50/README.md#asv654-completed-answers-and-agent-review) also found
 five of twelve answers with scope failures and eleven with missing valid
 branches. Restoring the two examples did not resolve these patterns in this
 sample. Adoption remains open.
-The current [ASv6.56 (candidate, tested on Sol xhigh)](../asv6.56/ASv6.56.md) revises only
+The subsequent [ASv6.56 (candidate, tested on Sol xhigh)](../asv6.56/ASv6.56.md) revises only
 the boiler case to demonstrate general cutting separately from cutting for
 boiler repair. Its [rule map and audit](../asv6.50/README.md#asv656-cutting-for-boiler-repair-example)
 record the completed twelve-case Sol xhigh test: four answers contain scope
 failures and all twelve miss valid branches. Adoption remains open.
+The current [ASv6.57 (draft, untested)](../asv6.57/ASv6.57.md) revises that
+same case to retain a quantified tube separately from its repair purpose and
+purpose-qualified cutting. Its [rule map and audit](../asv6.50/README.md#asv657-quantified-tube-and-repair-purpose-example)
+record the authorized draft; wording approval and model testing remain open.
 The existing instructions retain individual subjects, combinations and broader
 headings. This revision preserves those coverage requirements.
 
