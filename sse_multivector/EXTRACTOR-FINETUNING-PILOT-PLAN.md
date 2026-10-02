@@ -731,6 +731,86 @@ separately from review findings and any subsequent changes.
    candidates with their corresponding untuned baselines on the reserved notes,
    using the same selected thinking mode for both.
 
+### GPU preparation cases and checks — draft
+
+Proposed scope for the separate preparation rental; case selection, trial
+profiles, hardware and maximum charge still require agreement. Use the same
+pinned models, approved adapter recipe and intended GPU allocation as the pilot.
+Prepare the package and all trial profiles locally and rehearse their production
+paths in the VM before booking. The current informal worker does not implement
+the larger pilot's expert adapters or full milestone lifecycle.
+
+**Cases:** start with these three historical notes, whose N labels follow the
+preliminary held-out order. Use training/preparation notes for the larger pilot;
+keep its reserved final test out of these trials.
+
+| Case | What it exercises |
+| --- | --- |
+| N18, long diary (`eaa6a5e…`) | Dense hierarchy and termination: all three trained students hit the old subject cap here. |
+| N00, soda bread (`03313183…`) | Negation, qualifiers, disjoint/partial selections and a previously capped mask. |
+| N15, gianduja/store (`b3c0ab8f…`) | Short complete subject-to-mask path and saved empty/nonempty mask examples. |
+
+Tokenize the actual candidate corpus and prompts locally. Add a distinct case
+only when these notes miss a maximum needed for training or generation: full
+teacher hierarchy/mask sequence, rendered input, or proposed batched shape.
+Reuse a note that covers several maxima. The historical training maximum,
+`05f275f4…`, was 6,531 Qwen / 6,440 Gemma tokens; historical short notes alone do
+not establish fit for the larger corpus. Freeze source IDs, prompt versions,
+row IDs and profile identities before execution.
+
+**Combined GPU sequence, once per student:**
+
+1. **Load and generate:** verify model revision, kernels, dtypes and adapter
+   targets. Exercise the untuned thinking-off subject-to-own-subject-mask path.
+   Save both responses and account for every dependent call immediately.
+2. **Prepare two small complete note blocks and train the first:** use every
+   teacher subject/mask example once, with the approved eight examples per update.
+   Include at least two full updates and a smaller final group before the first
+   checkpoint; choose whole notes rather than dropping masks to create that group.
+   Measure the longest relevant training rows after Adam moments are allocated.
+   Check finite losses/gradients, actual adapter changes, frozen base/router,
+   gradient flow in activated expert adapters and exact example/supervised-token
+   accounting.
+3. **Save, merge, evaluate and resume:** seal the full first-block checkpoint.
+   Record one reference next-block update from that saved state, then unload
+   the trial training model from the GPU. Reload a fresh BF16 base, merge the saved first-block
+   adapter and evaluate one short note with thinking off. Discard evaluation,
+   restore the untouched full training
+   state and repeat the same next update. Require exact counters, example order,
+   cursor and restored random state; compare loss, adapter and Adam state under
+   declared numerical tolerances. Finish the second block, save its complete
+   checkpoint and retain both checkpoints. Local tests establish update/loss equivalence through the same
+   production path before this GPU check.
+4. **Test output limits and batching:** unload training and load the final saved
+   preparation adapter on a fresh BF16 base, merging for evaluation. Use thinking
+   off/on on the cases above. Generate subjects and one
+   mask response for every valid returned subject. Record complete final answers,
+   truncation, reasoning/final channels, counts, tokens and elapsed time for each
+   declared profile. Compare one small set of identical mask requests individually
+   and in the proposed batch, preserving raw/parsed differences and a smaller
+   final batch. Separately exercise the proposed maximum generation/cache shape
+   if natural answers stop before reaching it; early termination proves only the
+   memory use actually reached. Trial caps and physical batch sizes remain proposals.
+5. **Retrieve while running:** exercise the background copier with responses and
+   a complete checkpoint, verify local hashes and confirm transfer leaves the
+   continuing run intact. Reconnect/reconcile without duplicate work. I observe
+   responses, training and telemetry through verified retrieval and explicit
+   deletion; automatic deletion stays off.
+
+**Local replay cases:** accepted JSON fences, malformed/truncated hierarchies,
+valid empty masks, invalid source positions, missing dependent calls, partial
+checkpoints and interrupted transfers. Use saved responses and production paths;
+these checks do not need additional full-model inference.
+
+**Preparation report:** per-phase peak CUDA allocated/reserved memory, sampled
+GPU usage/utilization/power, host memory/disk, training/generation throughput,
+reload/merge/copy overhead, call accounting and verified files. Choose output
+limits and batch allocation from that evidence, then freeze the main pilot
+configuration and revise its cost estimate. This establishes tested execution
+and resource bounds; final-adapter reasoning lengths and learning quality remain
+questions for the main pilot. Numeric acceptance tolerances, case membership,
+trial count, hardware, implementation and spending remain open.
+
 ### Execution and failure handling (draft)
 
 The [process walkthrough](../docs/planning/fine-tuning-pilot-process.md) maps
