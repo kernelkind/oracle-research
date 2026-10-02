@@ -1155,5 +1155,150 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
         self.assertEqual(without_contexts(68), without_contexts(70))
 
 
+MATERIAL_PROMPT_PATH = (
+    Path(__file__).parent / "subject-prompt-goal-v1/asv6.74/ASv6.74.md"
+)
+
+# Agent-reviewed source meanings and entailments; these are not an independent
+# semantic oracle. The adapter and every numbered occurrence are checked below.
+MATERIAL_SUBJECTS = {
+    "plates": "Steel plates",
+    "plate": "One steel plate",
+    "repair_plate": "One steel plate for chair repair",
+    "bolts": "Steel bolts",
+    "two_bolts": "Two steel bolts",
+    "repair_bolts": "Two steel bolts for chair repair",
+    "group": "One steel plate and two steel bolts for chair repair",
+    "attachment": "Attaching one steel plate to a chair with two steel bolts for chair repair",
+    "chairs": "Chairs",
+    "repair": "Repair",
+    "chair_repair": "Chair repair",
+    "attaching": "Attaching",
+    "counted_attachment": "Attaching one steel plate to a chair with two steel bolts",
+    "repair_attaching": "Attaching for chair repair",
+}
+MATERIAL_RELATIONSHIPS = (
+    ("plate", "plates"),
+    ("repair_plate", "plate"),
+    ("repair_plate", "chair_repair"),
+    ("two_bolts", "bolts"),
+    ("repair_bolts", "two_bolts"),
+    ("repair_bolts", "chair_repair"),
+    ("chair_repair", "chairs"),
+    ("chair_repair", "repair"),
+    ("group", "repair_plate"),
+    ("group", "repair_bolts"),
+    ("attachment", "group"),
+    ("attachment", "counted_attachment"),
+    ("attachment", "repair_attaching"),
+    ("counted_attachment", "attaching"),
+    ("counted_attachment", "chairs"),
+    ("repair_attaching", "attaching"),
+    ("repair_attaching", "chair_repair"),
+)
+
+
+class MaterialSubjectPromptExampleTests(unittest.TestCase):
+    def material_example(self, path=None):
+        source = (path or MATERIAL_PROMPT_PATH).read_text()
+        block = re.findall(r"<example>\n(.*?)\n</example>", source, re.S)[0]
+        post = re.search(r"<post>\n(.*?)\n</post>", block, re.S).group(1)
+        output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+        entries = experiment_inputs.validate(
+            {"adapter": "subjects"}, {}, output, None
+        )["parsed"]["subjects"]
+        return post, entries
+
+    def assert_participants_retained(self, path=None):
+        post, entries = self.material_example(path)
+        # These are source-participant judgments, separate from the action.
+        participants = {
+            "Soup preparation:": ("Water", "Soup"),
+            "Chair repair:": ("Steel plates", "Steel bolts", "Chairs"),
+        }[post.splitlines()[0]]
+        subjects = {e["subject"] for e in entries}
+        for participant in participants:
+            self.assertIn(participant, subjects, "event replaced its participant")
+
+    def test_c1_keeps_individual_participants(self):
+        self.assert_participants_retained()
+
+    def test_saved_c1_still_demonstrates_the_participant_omission(self):
+        before = MATERIAL_PROMPT_PATH.parent.parent / "asv6.73/ASv6.73.md"
+        with self.assertRaisesRegex(AssertionError, "'Soup' not found"):
+            self.assert_participants_retained(before)
+
+    def ancestors(self):
+        ancestors = {node: set() for node in MATERIAL_SUBJECTS}
+        for child, parent in MATERIAL_RELATIONSHIPS:
+            ancestors[child].add(parent)
+        while True:
+            expanded = {
+                child: parents.union(*(ancestors[parent] for parent in parents))
+                for child, parents in ancestors.items()
+            }
+            if expanded == ancestors:
+                return ancestors
+            ancestors = expanded
+
+    def test_source_groups_and_actions_fill_every_compatible_parent_copy(self):
+        _, entries = self.material_example()
+        ancestors = self.ancestors()
+        for child in ("repair_plate", "repair_bolts", "group", "attachment"):
+            for parent in ancestors[child]:
+                parents = [e for e in entries if e["subject"] == MATERIAL_SUBJECTS[parent]]
+                self.assertTrue(parents, parent)
+                for occurrence in parents:
+                    with self.subTest(child=child, parent=occurrence["number"]):
+                        self.assertTrue(any(
+                            e["subject"] == MATERIAL_SUBJECTS[child]
+                            and e["number"].startswith(occurrence["number"] + ".")
+                            for e in entries
+                        ))
+
+    def test_every_displayed_edge_has_a_reviewed_heading_only_basis(self):
+        _, entries = self.material_example()
+        ids = {subject: node for node, subject in MATERIAL_SUBJECTS.items()}
+        self.assertEqual({e["subject"] for e in entries}, set(ids))
+        ancestors = self.ancestors()
+        by_number = {e["number"]: e for e in entries}
+        for entry in entries:
+            if "." in entry["number"]:
+                parent = by_number[entry["number"].rsplit(".", 1)[0]]
+                with self.subTest(number=entry["number"]):
+                    self.assertIn(ids[parent["subject"]], ancestors[ids[entry["subject"]]])
+
+    def test_generic_materials_and_attachment_do_not_inherit_repair_purpose(self):
+        _, entries = self.material_example()
+        for parent in entries:
+            descendants = {
+                e["subject"] for e in entries
+                if e["number"].startswith(parent["number"] + ".")
+            }
+            if parent["subject"] == "Chair repair":
+                for node in ("plates", "plate", "bolts", "two_bolts", "counted_attachment"):
+                    with self.subTest(parent=parent["number"], child=node):
+                        self.assertNotIn(MATERIAL_SUBJECTS[node], descendants)
+            if parent["subject"] == MATERIAL_SUBJECTS["group"]:
+                for node in ("repair_plate", "repair_bolts", "repair_attaching"):
+                    self.assertNotIn(MATERIAL_SUBJECTS[node], descendants)
+
+    def test_revision_preserves_instructions_six_other_examples_and_schema(self):
+        before = (MATERIAL_PROMPT_PATH.parent.parent / "asv6.73/ASv6.73.md").read_text()
+        after = MATERIAL_PROMPT_PATH.read_text()
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S) for s in (before, after)]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
+        for block in blocks[1]:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            entries = experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, output, None
+            )["parsed"]["subjects"]
+            for entry in entries:
+                self.assertEqual(list(entry), ["number", "context", "subject"])
+
+
 if __name__ == "__main__":
     unittest.main()

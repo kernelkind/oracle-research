@@ -1,5 +1,12 @@
 # Autonomous SP iteration
 
+The user approved [ASv6.74's C1-only revision and fixed
+comparison](../asv6.74/README.md): a two-material repair group and action,
+separate participants and complete numbered placements. Instructions and the
+other six examples are unchanged. Offline checks passed; fifty-six fresh
+medium candidate answers are planned against saved ASv6.73 baselines. Production
+adoption remains open.
+
 The approved [ASv6.73 example audit and fixed interaction
 diagnostics](interaction-audit-v1.md) investigates seasoning wording,
 recipient/feeding purpose and counted participant/action placements. Its
@@ -113,7 +120,7 @@ for repeated qualified subjects. No new rule is introduced.
 
 | Case | Primary clauses | Demonstration |
 | --- | --- | --- |
-| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subject, resolved action reference, purpose restrictions and every valid branch. |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; R19 is also demonstrated by its separate participants. |
 | C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved name; qualified new-app first use. ASv6.73 adds a blocking exception. |
 | C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
 | C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |
