@@ -7,11 +7,11 @@ read-only investigation, the low-memory HDBSCAN discussion and unapproved next s
 
 [Fine-tuning pilot process](fine-tuning-pilot-process.md) describes the experiment:
 shared data, untuned baselines, three continuing student training runs with
-one complete pass through all subject/mask training examples, checkpoints at
+one complete pass through subject-hierarchy training examples, checkpoints at
 200, 400, 600, 800, and 1,000 training notes, and model comparison.
-Training uses one teacher subject per mask prompt; each checkpoint generates
-its own subjects and requests their masks separately on the same held-out
-validation notes. Baselines and all five checkpoints use thinking off; each
+The larger pilot is subjects only, approved October 2: one teacher hierarchy
+per training note and no mask generation. Each checkpoint generates its own
+subject hierarchies on the same held-out validation notes. Baselines and all five checkpoints use thinking off; each
 final 1,000-note adapter then gets one thinking-on validation evaluation with
 unchanged weights. Semantic review happens outside the GPU rental. A separate
 paid GPU preparation step is agreed in principle; prepare candidate settings and
@@ -169,8 +169,9 @@ subjects and masks; all 40 saved Gemma subject answers validate, but their 618
 baseline masks still need generation. Reparsed Qwen teacher-agreement F1 is
 0.344 before and 0.346 after training. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. That larger pilot remains waiting for its data and
 includes a comparison trained on 1,000 notes, approved September 30. Its approved
-starting recipe uses 8 examples per update total across GPUs, constant learning
+starting recipe uses 8 subject examples per update total across GPUs, constant learning
 rate 0.0001 with no warmup, and LoRA rank 16 / alpha 32 for ordinary adapters.
+One pass through 1,000 notes now requires 125 updates per student.
 Gemma MoE also receives rank 2 / alpha 32 routed-expert adapters with original
 model and router weights frozen. Training loss averages all teacher-answer and
 native turn-ending tokens per update, without extra task weighting. Numerical

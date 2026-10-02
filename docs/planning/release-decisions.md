@@ -644,7 +644,7 @@ Runtime, memory and million-note processing cost still require separate
 measurements. Profiling 500 notes does not establish launch-scale feasibility.
 
 The [fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
-must measure unseen-note mask quality and any agreed additional output quality
+must measure unseen-note subject correctness, coverage and hierarchy quality
 before and after training, improvement with more training data, actual training
 resources and cost, and
 batched generation speed on representative notes. Compare quality against total
@@ -652,6 +652,18 @@ training-and-generation cost. This does not estimate the other hierarchy-build
 stages or approve a dataset size, hardware rental or spending allocation.
 
 ## Two separate model pilots
+
+**October 2 larger-pilot scope approved:** the user removed masks from this
+pilot. Train and evaluate subjects and their hierarchy only: one teacher
+subject-hierarchy example per note and one generated subject response per
+evaluation note. Keep the three students, one complete 1,000-note pass,
+200/400/600/800/1,000-note checkpoints, approved numerical recipe, merged
+evaluation/resume lifecycle and terminal thinking comparison. Eight examples
+per update give **125 updates per student, 25 per block**. The proposed 100
+validation and 200 final test notes, hardware and spending remain open.
+This pilot supplies subject evidence for model selection; it cannot establish
+mask quality or downstream mask/SSE hierarchy quality. The completed combined
+preliminary experiment and the eventual release task retain their own scope.
 
 **Planning split approved September 29:** track the preliminary 100-note
 fine-tuning experiment separately as **29 · Run preliminary 100-note fine-tuning
@@ -682,9 +694,9 @@ Semantic review of saved results happens from the local workspace after retrieva
 without an active GPU rental. The proposed teacher reviewer performs evaluation;
 its judgments are not automatically training labels or weight updates.
 **Review structure approved September 30:** one prompt per note and model
-version sees the full note, task prompt, subjects, hierarchy, and masks. It
+version sees the full note, task prompt, subjects and hierarchy. It
 returns separate **correctness** and **coverage** scores with evidence for each.
-Correctness assesses returned subjects, relationships, and masks; coverage
+Correctness assesses returned subjects and relationships; coverage
 assesses missing required subjects or information. Output reliability is
 checked mechanically. The scoring scale, rubric, reviewer model, reliability
 checks, and checkpoint/model selection rule remain design choices. The user deferred
@@ -695,9 +707,9 @@ new code changes, model calls, or rental.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
-subject and mask responses during baseline before training, training progress
+subject responses during baseline before training, training progress
 and GPU telemetry, and trained outputs as they arrive.
-One background copier transfers subject responses, mask batches, and checkpoints
+One background copier transfers subject responses and checkpoints
 as soon as saving finishes while the experiment continues. Verify each local
 copy and retain remote originals at least until verification. Limit transfer
 bandwidth and disk activity to protect experiment throughput. This records the
@@ -710,16 +722,14 @@ notes through 1,000, approved October 1. Initialize each adapter and optimizer
 once; carry learned weights, optimizer, learning-rate schedule, random state
 and data-order position forward.
 Save complete checkpoints and verify adapter reloads. At each milestone,
-generate subjects and masks on the same held-out validation notes without
+generate subject hierarchies on the same held-out validation notes without
 updating training weights. The five checkpoints at **200, 400, 600, 800, and
 1,000 notes** give fifteen trained versions across the three students, plus
 three untuned baselines. With the proposed 100 validation notes, that is
 1,800 note/model evaluations and semantic reviews for the regular thinking-off
 comparison; the October 2 terminal thinking-on addition is recorded below.
-The schedule adds 600
-evaluations over the earlier proposal: approximately 42 GPU hours / $60 at
-the previous rental's measured speed and price, before checkpoint checks and
-transfers. Training labels are shared across checkpoints.
+The schedule adds 600 subject evaluations over the earlier proposal. Training
+labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
@@ -730,36 +740,26 @@ expanding datasets and parallel execution still need implementation and tests.
 No rental, model calls, or spending is authorized by this correction.
 
 **October 1 complete-pass training budget approved after research:** use every
-frozen subject-hierarchy and mask training example **once, without replacement**.
+frozen subject-hierarchy training example **once, without replacement**.
 Introduce five new 200-note blocks and finish each block's examples before its
 checkpoint. Continue the same adapter, optimizer, schedule, random state and
 data-order position; earlier blocks are not automatically replayed.
-Check actual example coverage at every milestone. Record task-specific loss and
+Check actual example coverage at every milestone. Record subject loss and
 supervised tokens; block membership and seed value remain open. Loss, numerical
 settings and additional MoE adapter coverage were subsequently approved below.
-The natural row exposure differs from the
+The subjects-only rows differ from the
 preliminary 20/80 replacement sampler. One pass is a modest starting budget,
 not an established optimum or a comparison of each architecture's maximum
 capability. Select from generated correctness, coverage and output reliability;
 loss remains a diagnostic. Implementation, spending and launch are separate
 decisions.
 
-**October 1 single-subject masking approved:** the larger student pilot keeps
-one supplied subject per mask prompt and one mask response for that subject.
-Training pairs the complete note with one teacher subject and its teacher mask
-response. Baseline and checkpoint generation pair the note with one of that
-candidate's own generated subjects, requesting its mask separately. Independent
-single-subject prompts can still share a GPU batch. Teacher grouped-mask
-comparisons remain evidence for teacher selection; this decision selects the
-student format. Loss was subsequently approved below; remaining recipe choices
-stay open.
-
-**October 1 training-batch construction approved:** collect every subject and
-mask example from the current 200-note block and shuffle them together using a
+**October 1 training-batch construction approved, scoped to subjects October 2:**
+collect every subject example from the current 200-note block and shuffle using a
 fixed random seed. Take consecutive groups of **N prompt–answer examples per
 adapter update**, including a smaller final group when needed. Use each example
-once and finish the block before its checkpoint; the subject/mask mix varies
-between updates. An update can include examples from different notes. Freeze
+once and finish the block before its checkpoint. An update can include examples
+from different notes. Freeze
 the seed and save the data-order position so continuation preserves the same stream.
 N was subsequently selected as 8 below; the seed value and block membership
 remain open. This approves the batch construction design; loss was subsequently
@@ -792,16 +792,15 @@ remaining runtime choices, GPU fit, and implementation authorization stay open.
 **October 1 training loss approved after research:** use ordinary cross-entropy
 on teacher-answer and native turn-ending tokens. For each adapter update, sum
 these token losses across all its examples and divide by the actual number of
-supervised tokens in that update. Prompt text, the note, the supplied subject,
+supervised tokens in that update. Prompt text, the note,
 and padding receive no prediction loss. Use the actual denominator for a smaller
 final group; splitting an update across GPUs or accumulated batches must preserve
 this objective. Apply no additional task, answer, or note weighting. Longer
-answers contribute more tokens within an update; this does not equalize subject
-and mask influence. Record per-task loss, supervised-token counts, and actual
+answers contribute more tokens within an update. Record subject loss,
+supervised-token counts, and actual
 example coverage. The [normalization guidance](https://huggingface.co/blog/gradient_accumulation)
 and [comparable extraction implementation](https://github.com/hitz-zentroa/GoLLIE/blob/164c611743fdc1befe71bbdf03e08c5eb4e35957/src/trainer.py#L288-L300)
-support this starting objective, without establishing the natural task mixture as
-optimal. This approves the larger-pilot design; implementation and verification
+support this starting objective. This approves the larger-pilot design; implementation and verification
 remain separate work.
 
 **October 1 optimizer, precision and LoRA defaults approved:** retain PyTorch
@@ -831,8 +830,8 @@ saved adapter, and merge its learned changes into this disposable evaluation
 copy. Use this policy for all three students and every trained checkpoint;
 untuned baselines use the original base. Verify saved-adapter reloads under the
 selected inference policy; merged/unmerged BF16 answers need not be identical.
-Generate validation subjects and their separate masks, preserve raw and parsed
-responses, account for dependent calls immediately, and transfer finished files
+Generate validation subject hierarchies, preserve raw and parsed
+responses, account for every expected note response immediately, and transfer finished files
 with the approved background copier. Missing work or pipeline defects block
 advancement; invalid model answers remain measured failures.
 Discard the evaluation copy and restore the untouched full training checkpoint,
@@ -853,8 +852,8 @@ validation baselines and all five ordinary checkpoint evaluations. After each
 student finishes training and its 1,000-note thinking-off evaluation, append
 exactly one thinking-on evaluation of that same saved adapter on the same
 validation notes, using the approved disposable merged BF16 evaluation policy.
-Generate subjects, then one mask response per generated subject, with thinking
-on for both tasks. This compares generation modes at unchanged final weights;
+Generate subject hierarchies with thinking on. This compares generation modes
+at unchanged final weights;
 it adds no training and no thinking-on untuned validation baseline.
 Preserve original responses, separate thought/final channels, parsed final
 answers, failures, call accounting, elapsed time and total token usage. Apply
@@ -864,15 +863,15 @@ tested. Select any final-test mode using validation and match that mode for the
 selected adapter and corresponding untuned base. The final test stays reserved.
 The addition is three validation versions: **3N** more note/model outputs and
 reviews, bringing **18N** to **21N**; at the still-proposed 100 validation notes,
-that is 300 extra and 2,100 total. Mask calls depend on each mode's generated
-subjects. Earlier GPU estimates exclude the extra thinking work, whose
+that is 300 extra and 2,100 total subject calls. Earlier GPU estimates exclude
+the extra thinking work, whose
 reasoning lengths, runtime and cost are unmeasured. Generation limits/batching,
 implementation, preparation scope, hardware, spending and launch remain open.
 
 **October 1 separate paid GPU preparation agreed in principle:** prepare the
 candidate pilot configuration and identify all required GPU checks before booking
 a preparation rental. Rehearse the packaged workflow locally, then verify its
-chosen GPU configuration before the larger pilot begins. Subject/mask output
+chosen GPU configuration before the larger pilot begins. Subject output
 limits and thinking-on allowances are candidates for preparation: test complete
 answers, truncation, GPU memory and runtime on representative and long notes,
 then select and freeze limits before the main pilot. Suggested numeric caps are
@@ -995,10 +994,23 @@ attempts. Budget admission passed before the run; no replacement rental is autho
   [existing fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md),
   not the teacher selection. Its preliminary 100-note experiment is tracked in 29.
 
+**Subjects-only GPU estimate (October 2, provisional):** at the previous
+$1.4167/hour hardware's measured subject speed, ordinary validation and the
+winner's thinking-off final comparison cost about $108–113. Allowing subject-only
+training, checkpoint transitions, terminal thinking evaluation, 25% headroom
+and transfers gives roughly **$200–275 for the main pilot**. A **$10–25 preparation
+placeholder** gives a rounded **$210–300 combined GPU estimate**; preparation
+scope and charge are not approved. The thinking allowance assumes 2–4 times
+the final thinking-off validation runtime; actual thinking, longer outputs,
+expanded expert adapters and the new lifecycle are unmeasured. The estimate
+assumes the proposed 100 validation / 200 final test notes and thinking off on
+the final test. Paid API labels/reviews are additional; the existing subscription
+route is assumed. No spending is authorized by this estimate.
+
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
-candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its masks,
-any agreed additional outputs and total training-and-generation cost with the
+candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subjects,
+hierarchy and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
 advantage. The larger pilot's remaining training settings, remaining output
 format details, sorting-related output requirements and spending amounts remain open. The
