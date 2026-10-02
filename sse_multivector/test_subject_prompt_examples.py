@@ -12,7 +12,7 @@ PROMPT_PATH = (
     Path(__file__).parent / "subject-prompt-goal-v1/asv6.53/ASv6.53.md"
 )
 FOCUSED_PROMPT_PATH = (
-    Path(__file__).parent / "subject-prompt-goal-v1/asv6.55/ASv6.55.md"
+    Path(__file__).parent / "subject-prompt-goal-v1/asv6.56/ASv6.56.md"
 )
 
 
@@ -310,41 +310,55 @@ class SubjectPromptExampleTests(unittest.TestCase):
 FOCUSED_CASES = (
     {
         "id": "C1",
-        "purpose": "Named referent resolution, replacement-part roles and retained locomotive type.",
-        "post": "Replacement boiler for Bracken. Bracken is a steam locomotive.",
+        "purpose": "Named referent resolution, general actions versus their repair purpose and retained locomotive type.",
+        "post": "Cutting for boiler repair on Bracken. Bracken is a steam locomotive.",
         "subjects": {
             "boilers": "Boilers",
             "steam_boilers": "Steam locomotive boilers",
-            "replacement_boilers": "Replacement boilers",
-            "bracken_boiler": "Replacement boiler for Bracken the steam locomotive",
+            "bracken_boiler": "Boiler of Bracken the steam locomotive",
             "locomotives": "Locomotives",
             "steam_locomotives": "Steam locomotives",
             "bracken": "Bracken the steam locomotive",
-            "replacement_parts": "Replacement parts",
+            "repair": "Repair",
+            "boiler_repair": "Boiler repair",
+            "bracken_boiler_repair": "Boiler repair on Bracken the steam locomotive",
+            "cutting": "Cutting",
+            "boiler_repair_cutting": "Cutting for boiler repair",
+            "bracken_boiler_repair_cutting": "Cutting for boiler repair on Bracken the steam locomotive",
         },
         "relationships": (
             ("steam_boilers", "boilers"),
             ("steam_boilers", "steam_locomotives"),
-            ("replacement_boilers", "boilers"),
-            ("replacement_boilers", "replacement_parts"),
             ("bracken_boiler", "steam_boilers"),
-            ("bracken_boiler", "replacement_boilers"),
             ("bracken_boiler", "bracken"),
             ("steam_locomotives", "locomotives"),
             ("bracken", "steam_locomotives"),
+            ("boiler_repair", "repair"),
+            ("boiler_repair", "boilers"),
+            ("bracken_boiler_repair", "boiler_repair"),
+            ("bracken_boiler_repair", "bracken_boiler"),
+            ("boiler_repair_cutting", "cutting"),
+            ("boiler_repair_cutting", "boiler_repair"),
+            ("bracken_boiler_repair_cutting", "boiler_repair_cutting"),
+            ("bracken_boiler_repair_cutting", "bracken_boiler_repair"),
         ),
         "primary_rules": (
             "R01", "R02", "R04", "R16", "R20", "R21", "R22", "R23",
             "R25", "R26", "R27", "R28", "R29", "R30", "R31", "R34",
         ),
         "secondary_rules": (
-            ("R18", "Named particular instance: Bracken's replacement boiler."),
+            ("R18", "Bracken and its boiler remain alongside their repair and cutting subjects."),
             ("R24", "Nonempty output contrasts with C3's empty array."),
         ),
         "invalid": (
-            ("boilers", "replacement_parts"),
-            ("replacement_boilers", "steam_boilers"),
-            ("bracken", "replacement_parts"),
+            ("cutting", "boiler_repair"),
+            ("boiler_repair", "cutting"),
+            ("boilers", "boiler_repair"),
+            ("bracken_boiler", "boiler_repair"),
+            ("boiler_repair", "steam_boilers"),
+            ("boiler_repair_cutting", "steam_boilers"),
+            ("bracken", "repair"),
+            ("bracken", "cutting"),
         ),
     },
     {
@@ -587,6 +601,26 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
         self.assertIn("Observation of a person's duck", subjects)
         self.assertIn("Observation of a person ducking", subjects)
 
+    def test_cutting_for_boiler_repair_retains_general_and_qualified_subjects(self):
+        entries = next(
+            entries for post, entries in self.examples().items() if "Bracken" in post
+        )
+        subjects = {entry["subject"] for entry in entries}
+        self.assertIn("Cutting", subjects)
+        self.assertIn("Boiler repair", subjects)
+        self.assertIn("Cutting for boiler repair", subjects)
+        for parent in entries:
+            if parent["subject"] not in {"Cutting", "Boiler repair"}:
+                continue
+            descendants = {
+                entry["subject"] for entry in entries
+                if entry["number"].startswith(parent["number"] + ".")
+            }
+            with self.subTest(parent=parent["number"]):
+                self.assertIn("Cutting for boiler repair", descendants)
+                if parent["subject"] == "Boiler repair":
+                    self.assertNotIn("Cutting", descendants)
+
     def test_each_instruction_is_traced_to_a_present_case(self):
         self.assertEqual(set(self.examples()), {c["post"] for c in FOCUSED_CASES})
         primary_rules = Counter(
@@ -694,19 +728,25 @@ class FocusedSubjectPromptExampleTests(unittest.TestCase):
     def test_instructions_and_retained_focused_cases_are_preserved(self):
         directory = FOCUSED_PROMPT_PATH.parent.parent
         approved = (directory / "asv6.51/ASv6.51.md").read_text()
-        previous = (directory / "asv6.54/ASv6.54.md").read_text()
+        expanded = (directory / "asv6.54/ASv6.54.md").read_text()
+        previous = (directory / "asv6.55/ASv6.55.md").read_text()
         focused = FOCUSED_PROMPT_PATH.read_text()
         self.assertEqual(
             focused.split("<example>", 1)[0], approved.split("<example>", 1)[0]
         )
         self.assertEqual(
-            re.findall(r"<example>\n.*?\n</example>", focused, re.S),
+            re.findall(r"<example>\n.*?\n</example>", previous, re.S),
             [
                 block for index, block in enumerate(
-                    re.findall(r"<example>\n.*?\n</example>", previous, re.S)
+                    re.findall(r"<example>\n.*?\n</example>", expanded, re.S)
                 ) if index not in (0, 2)
             ],
         )
+        current_blocks = re.findall(r"<example>\n.*?\n</example>", focused, re.S)
+        previous_blocks = re.findall(r"<example>\n.*?\n</example>", previous, re.S)
+        self.assertEqual(len(current_blocks), 7)
+        self.assertEqual(current_blocks[1:], previous_blocks[1:])
+        self.assertNotEqual(current_blocks[0], previous_blocks[0])
 
 
 if __name__ == "__main__":

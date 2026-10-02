@@ -37,6 +37,10 @@ test](../asv6.50/README.md#asv654-completed-answers-and-agent-review) also found
 five of twelve answers with scope failures and eleven with missing valid
 branches. Restoring the two examples did not resolve these patterns in this
 sample. Adoption remains open.
+The current [ASv6.56 (draft, untested)](../asv6.56/ASv6.56.md) revises only
+the boiler case to demonstrate general cutting separately from cutting for
+boiler repair. Its [rule map and audit](../asv6.50/README.md#asv656-cutting-for-boiler-repair-example)
+record the authorized draft; approval and model testing remain open.
 The existing instructions retain individual subjects, combinations and broader
 headings. This revision preserves those coverage requirements.
 

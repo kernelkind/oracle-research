@@ -11,8 +11,8 @@ The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/AS
 provides the saved comparison answers for the ASv6.55 test below. ASv6.50 and
 its saved answers remain comparison evidence.
 
-[ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md) is the current
-example-only revision, authorized for testing. It removes two overlapping
+[ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md) was authorized
+for testing. It removes two overlapping
 examples from ASv6.54 while retaining demonstrations of every existing
 instruction clause.
 The test found five of twelve answers with scope failures and ten with missing
@@ -22,6 +22,10 @@ instruction basis; the [draft audit](#asv655-consolidated-examples) records veri
 The subsequent [unchanged ASv6.54 comparison](#asv654-completed-answers-and-agent-review)
 also failed, with five answers containing scope failures and eleven missing
 valid branches.
+The current [ASv6.56 (draft, untested)](../asv6.56/ASv6.56.md) changes only the
+boiler case from ASv6.55 to demonstrate general cutting separately from cutting
+for boiler repair. The [audit](#asv656-cutting-for-boiler-repair-example) records
+the authorized draft and updated rule map. Approval and model testing remain open.
 
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
@@ -733,7 +737,7 @@ number, figurative, negation and comparison cases. ASv6.54 supplied focused
 cases. The user then clarified that consolidation should change the examples
 themselves, while keeping every rule demonstrated.
 
-The current map uses [ASv6.55 (candidate, tested on Sol xhigh)](../asv6.55/ASv6.55.md).
+The current map uses [ASv6.56 (draft, untested)](../asv6.56/ASv6.56.md).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -751,12 +755,13 @@ requirements to count.
 
 The maintained tests contain the same case IDs, purposes, primary assignments
 and explained secondary assignments. "Reviewed" means the agent assessed
-source support and heading relationships. The user authorized model testing;
-agent assessments remain separate from user semantic judgments and adoption.
+source support and heading relationships. The user authorized drafting ASv6.56;
+its approval and model testing remain open. Agent assessments remain separate
+from user semantic judgments and adoption.
 
 | Case | Purpose | Review |
 | --- | --- | --- |
-| C1 | Named referent resolution, replacement-part roles and retained locomotive type. | Reviewed |
+| C1 | Named referent resolution, general actions versus their repair purpose and retained locomotive type. | Reviewed |
 | C2 | Names, hashtags, figurative labels, rhetorical meaning and an unresolved name. | Reviewed |
 | C3 | URL and opaque identifier bodies without surrounding subject evidence. | Reviewed |
 | C4 | URL and identifier subjects established by prose, without a cross-link. | Reviewed |
@@ -766,10 +771,10 @@ agent assessments remain separate from user semantic judgments and adoption.
 
 | ID | Existing SP instruction | Primary case and demonstration | Secondary case and distinct aspect |
 | --- | --- | --- | --- |
-| R01 | Build a subject index after understanding the complete post. | C1: The boiler is interpreted using Bracken's later identification before the hierarchy is presented. | — |
-| R02 | Resolve references to the most specific supported description. | C1: Bracken's later identification supplies the steam-locomotive type in the particular boiler heading. | C2: Pronoun resolution: 'it' becomes the RavenWorks app. |
+| R01 | Build a subject index after understanding the complete post. | C1: The boiler repair and cutting are interpreted using Bracken's later identification before the hierarchy is presented. | — |
+| R02 | Resolve references to the most specific supported description. | C1: Bracken's later identification supplies the steam-locomotive type in the particular boiler, repair and cutting headings. | C2: Pronoun resolution: 'it' becomes the RavenWorks app. |
 | R03 | Use general knowledge to clarify language, identify referents and recognize subjects. | C2: The figurative 'lifesaver' label conveys help, and the rhetorical question conveys appreciation. | — |
-| R04 | Ground every entity, modifier, action and relationship in the post. | C1: The boiler's stated replacement role, Bracken's name and locomotive type are preserved. | — |
+| R04 | Ground every entity, modifier, action and relationship in the post. | C1: Cutting's stated boiler-repair purpose, Bracken's name and locomotive type are preserved. | — |
 | R05 | Interpret names, labels and hashtags by referent, not component words. | C2: #RavenWorks names an app; its component words yield no birds or employment subjects, and the figurative label conveys help. | — |
 | R06 | Retain the name of an unresolved named subject. | C2: AmberLoop remains by name, outside the app, help and appreciation branches. | — |
 | R07 | Treat URLs and opaque identifiers as providing no subject evidence. | C3: The bare URL and hexadecimal identifier yield no subjects. | C4: Relevant prose establishes topics while URL bodies still contribute no birds, repair or count. |
@@ -781,22 +786,22 @@ agent assessments remain separate from user semantic judgments and adoption.
 | R13 | Preserve what numbers refer to. | C6: The count of two cables is distinct from the 2 m and 3 m cable lengths. | C7: Arithmetic roles distinguish addends 2 and 3 from result 5. |
 | R14 | Support count or measurement interpretations and units with the post. | C6: The cable count and metre units come directly from the post. | — |
 | R15 | Include calculated results only when explicitly stated. | C7: The explicitly stated result 5 appears with the calculation. | C6: No unstated 1 m difference or 5 m total. |
-| R16 | Enumerate specific subjects before deriving broader headings. | C1: The particular boiler and Bracken remain under derived headings; JSON shows retention rather than internal reasoning order. | — |
+| R16 | Enumerate specific subjects before deriving broader headings. | C1: Bracken, its boiler and their particular repair and cutting subjects remain under derived headings; JSON shows retention rather than internal reasoning order. | — |
 | R17 | Include literal, nonliteral and rhetorical subjects from parts, combined parts or the whole post, including unnamed concepts. | C2: The figurative label conveys help and the rhetorical question conveys appreciation. | C6: The pair combines the count, both named cables and their stated lengths. |
-| R18 | Retain individual subjects, particular instances and expressed combinations. | C6: Cable A, cable B and their stated pair remain as individual instances and an expressed combination. | C1: Named particular instance: Bracken's replacement boiler. |
+| R18 | Retain individual subjects, particular instances and expressed combinations. | C6: Cable A, cable B and their stated pair remain as individual instances and an expressed combination. | C1: Bracken and its boiler remain alongside their repair and cutting subjects. |
 | R19 | An event description must not replace its involved subjects. | C5: Ducks, people and notebooks remain alongside observation and purchase subjects. | — |
-| R20 | Judge broader relationships using headings alone; a counterexample requires a broader parent. | C1: General replacement boilers remain outside steam-locomotive boilers; this post's steam-locomotive context cannot narrow that general heading. | C6: The pair fits both cable headings; either cable can be mentioned without the other. |
-| R21 | Build upward and combine shared headings. | C1: Replacement boilers is shared beneath Boilers and Replacement parts. | — |
-| R22 | Retain each enumerated subject in every branch that passes the heading test. | C1: Every copy of Steam locomotive boilers and Replacement boilers retains the named boiler, which also appears beneath Bracken. | — |
+| R20 | Judge broader relationships using headings alone; a counterexample requires a broader parent. | C1: General Cutting stays outside Boiler repair; generic Boiler repair stays outside Steam locomotive boilers. The post's purpose and locomotive context cannot narrow either general heading. | C6: The pair fits both cable headings; either cable can be mentioned without the other. |
+| R21 | Build upward and combine shared headings. | C1: Cutting for boiler repair is shared beneath Cutting and Boiler repair. Boiler repair is shared beneath Boilers and Repair. | — |
+| R22 | Retain each enumerated subject in every branch that passes the heading test. | C1: Every copy of Boiler repair retains the qualified cutting and named repair. Every copy of Bracken's boiler retains its repair, and every applicable parent retains the named cutting subject. | — |
 | R23 | Give each heading and subheading its own entry. | C1: Every displayed heading and subheading has its own entry. | — |
 | R24 | Return only one JSON object containing a subjects array. | C3: The output is only one JSON object with a subjects array, here empty. | C1: Nonempty output contrasts with C3's empty array. |
 | R25 | Use section-style numbering, broad to specific, with parents first. | C1: Section-style numbering presents each parent before its children. | — |
 | R26 | Order entry fields as number, context, subject. | C1: Every entry orders its fields as number, context, subject. | — |
-| R27 | Context identifies the subject and the source establishing its meaning. | C1: The boiler's context identifies its source and connects Bracken to the later locomotive description. | — |
-| R28 | Context may describe a particular instance supporting a general heading. | C1: The post's particular replacement boiler supports the general Boilers heading. | — |
-| R29 | Match the heading's generality; keep instance details in subheadings without importing context restrictions. | C1: Boilers remains outside Replacement parts; its replacement instance appears in context and in narrower headings. | — |
-| R30 | Make each heading understandable without the post, context or other entries. | C1: The particular boiler heading retains Bracken's steam-locomotive type, so it fits its parent without context. | — |
-| R31 | A heading need not retell the post's assertion about its subject. | C1: Boilers names the subject without retelling the particular boiler's replacement role. | — |
+| R27 | Context identifies the subject and the source establishing its meaning. | C1: The boiler, repair and cutting contexts identify their source and connect Bracken to the later locomotive description. | — |
+| R28 | Context may describe a particular instance supporting a general heading. | C1: Cutting's context describes this particular purpose without restricting the general Cutting heading. | — |
+| R29 | Match the heading's generality; keep instance details in subheadings without importing context restrictions. | C1: Cutting and Boilers stay outside Boiler repair; their repair instance appears in context and in narrower headings. | — |
+| R30 | Make each heading understandable without the post, context or other entries. | C1: Bracken's steam-locomotive type stays explicit in each named heading; the qualified cutting heading also retains its boiler-repair purpose. | — |
+| R31 | A heading need not retell the post's assertion about its subject. | C1: Cutting names the action without retelling its particular boiler-repair purpose. | — |
 | R32 | Preserve meaning, negation and relationships in headings. | C6: The comparison retains not longer, both cable descriptions and their relationship. | — |
 | R33 | Name both comparison sides when provided. | C6: The comparison names 2 m cable A and 3 m cable B. | — |
 | R34 | Use concise wording. | C1: Steam locomotives is concise while retaining the stated type. | — |
@@ -823,7 +828,7 @@ case byte for byte, replaces the overloaded railway story with separate
 replacement-part and combined-advice cases, and adds six language cases.
 Neither MP nor the runtime workflow changes.
 Case IDs in this audit refer to ASv6.54's nine examples; the current rule map
-uses ASv6.55's seven examples.
+uses ASv6.56's seven examples.
 
 C4 makes "lifesaver" explicitly figurative, so the example does not silently
 choose between literal rescue and helpfulness. Its rhetorical question conveys
@@ -1013,12 +1018,11 @@ directions against the paired answers: ASv6.55 counts were N063 161/186/182,
 N074 163/169/154, N096 260/225/210 and N100 230/193/211. Restoring more examples
 did not prevent these failures and added repeated input at corpus scale.
 
-A useful proposed next step is a focused delta to an existing example that
-retains a general action separately from its context-specific purpose, and
-shows the qualified subject in every valid broader branch. Cutting a part for
-boiler repair would apply the existing rules outside food. Review its source,
-subjects, relationships and rule mappings before further inference. No example
-edit or additional model test has been authorized or prepared.
+The user subsequently authorized the focused [ASv6.56 draft](#asv656-cutting-for-boiler-repair-example).
+It revises the existing boiler case to retain general cutting separately from
+cutting for boiler repair and repeats qualified subjects in every valid broader
+branch. Review the source, subjects, relationships and rule map before further
+inference. Draft approval and additional model testing remain open.
 
 ## ASv6.55 consolidated examples
 
@@ -1229,3 +1233,67 @@ paired with these saved ASv6.55 answers, to examine the effect of consolidating
 the examples before another edit. That test completed above and still exhibits
 both failure patterns. The rule map establishes demonstration coverage; these
 results show that coverage alone does not establish teacher generalization.
+
+## ASv6.56 cutting-for-boiler-repair example
+
+Status: draft, untested. After the unchanged ASv6.54 comparison failed, the user
+authorized drafting a focused change to the existing boiler example, with a
+full-context delta for review before model testing. Approval of this wording,
+model testing and adoption remain open. ASv6.48 remains the frozen subject
+baseline; no MP work is included.
+
+[ASv6.56 (draft, untested)](../asv6.56/ASv6.56.md) replaces only C1 from ASv6.55.
+The source is now: "Cutting for boiler repair on Bracken. Bracken is a steam
+locomotive." The source directly states cutting's purpose and resolves Bracken's
+type in the next sentence. It adds no cutting tool, material, replacement part,
+worker or completion claim.
+
+General **Cutting** stays outside **Boiler repair**, because another post about
+cutting can concern a purpose other than boiler repair. **Cutting for boiler
+repair** fits both headings and appears beneath every occurrence of each.
+General **Boiler repair** stays outside **Steam locomotive boilers**, because
+another post about boiler repair can concern a boiler of another type.
+Bracken, its boiler, the named repair and the named cutting remain separately
+represented; each qualified heading retains the locomotive type. Every copy of
+the boiler retains its named repair, and every applicable branch retains the
+named cutting subject. Neither the action's instance-specific purpose nor the
+boiler's repair role is imported into a general heading from its context.
+
+The agent reviewed all twelve C1 headings against the two source sentences,
+all fourteen declared broader relationships and all eight prohibited placements.
+The [current rule map](#example-correctness-and-rule-coverage) retains exactly
+one primary assignment for each of 34 clauses and nine explained secondary
+demonstrations. The five tracked implications remain folded into their original
+rules. The six other example blocks and all instruction bytes remain identical
+to their sources. The replacement case has 29 entries; all seven cases together
+contain 95 entries, 56 distinct subjects counted within cases and 75 displayed
+direct relationships. The fixture declares 58 broader relationships and 23
+prohibited placements. No eighth example or new instruction is added.
+
+The minimal cutting-purpose check first failed against ASv6.55 because its case
+contained no Cutting subject. All sixteen example checks, nine native revision
+checks and two existing SP workflow checks pass. The production subjects adapter
+parses every example, and each reviewed relationship is checked beneath every
+parent occurrence. Preservation checks pin the instructions to approved ASv6.51,
+the unchanged six blocks to ASv6.55, and ASv6.55's earlier consolidation to ASv6.54.
+These checks establish fixture consistency; the agent's source and relationship
+review does not establish that the draft generalizes on model outputs.
+
+Shared `experiment.py revise` generated the prompt and
+[ASv6.56 revision receipt](../asv6.56/ASv6.56.md.revision.json) directly against
+last approved ASv6.51 SHA-256
+`db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
+The receipt reconstructs the exact draft, whose SHA-256 is
+`a1a1292b45ab5afa9a2a87c25ac0434e7e2b4428b518767f846e67130ce4b4d2`.
+The source is 19,256 UTF-8 bytes: 2,734 more than ASv6.55, 2,451 fewer than
+ASv6.54 and 8,199 more than approved ASv6.51. The added bytes repeat per SP
+request; actual model tokens are unmeasured. No runtime component or additional
+model pass is introduced. ASv6.51, ASv6.54 and ASv6.55 remain hash-identical.
+
+Both full-context diffs are ignored review artifacts in
+`target/sp-scope-regression-v1/`: `asv656-full-context.diff` shows approved
+ASv6.51 to ASv6.56; `asv656-from-asv655-full-context.diff` isolates this turn's
+change from ASv6.55. No model template, experiment or inference request was
+created. Review the focused delta next; if approved, testing the same twelve
+Sol 6.1 xhigh regression cases would check whether the demonstrated distinction
+transfers to the saved failure topics.
