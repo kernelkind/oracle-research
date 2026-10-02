@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "I001",
+      "text": "Soup seasonings:\nSea salt and pepper.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "seasoning", "form": "nominal", "background": "none", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I002",
+      "text": "Seasoning soup:\nSea salt and pepper.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "seasoning", "form": "action", "background": "none", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I003",
+      "text": "Soup seasonings:\nSea salt and pepper.\n\nSeparately, I bought a new camera from HarborPhoto at 20% off. On its first use, I photographed two red bicycles beside the river. I liked the camera after that first use. The new camera was better than the old camera I had used before. The RiverWalk guide by Nora Bell advises: Stay on the path. Carry water. The walk was quiet unless the dam released water.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "seasoning", "form": "nominal", "background": "independent_passage", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I004",
+      "text": "Seasoning soup:\nSea salt and pepper.\n\nSeparately, I bought a new camera from HarborPhoto at 20% off. On its first use, I photographed two red bicycles beside the river. I liked the camera after that first use. The new camera was better than the old camera I had used before. The RiverWalk guide by Nora Bell advises: Stay on the path. Carry water. The walk was quiet unless the dam released water.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "seasoning", "form": "action", "background": "independent_passage", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I005",
+      "text": "Dog supplies:\nAbout a quarter pound of beef scraps for my dog.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "dog", "form": "recipient", "background": "none", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I006",
+      "text": "Dog supplies:\nAbout a quarter pound of beef scraps for feeding my dog.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "dog", "form": "feeding", "background": "none", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I007",
+      "text": "Dog supplies:\nAbout a quarter pound of beef scraps for my dog.\n\nSeparately, I bought a new camera from HarborPhoto at 20% off. On its first use, I photographed two red bicycles beside the river. I liked the camera after that first use. The new camera was better than the old camera I had used before. The RiverWalk guide by Nora Bell advises: Stay on the path. Carry water. The walk was quiet unless the dam released water.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "dog", "form": "recipient", "background": "independent_passage", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I008",
+      "text": "Dog supplies:\nAbout a quarter pound of beef scraps for feeding my dog.\n\nSeparately, I bought a new camera from HarborPhoto at 20% off. On its first use, I photographed two red bicycles beside the river. I liked the camera after that first use. The new camera was better than the old camera I had used before. The RiverWalk guide by Nora Bell advises: Stay on the path. Carry water. The walk was quiet unless the dam released water.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "dog", "form": "feeding", "background": "independent_passage", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I009",
+      "text": "Soup preparation:\nIngredients: one medium onion and two tablespoons of olive oil.\nI sautéed the finely chopped onion in the oil in a large pan over medium heat.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "placement", "form": "soup", "background": "none", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I010",
+      "text": "Soup preparation:\nIngredients: one medium onion and two tablespoons of olive oil.\nI sautéed the finely chopped onion in the oil in a large pan over medium heat.\n\nSeparately, I bought a new camera from HarborPhoto at 20% off. On its first use, I photographed two red bicycles beside the river. I liked the camera after that first use. The new camera was better than the old camera I had used before. The RiverWalk guide by Nora Bell advises: Stay on the path. Carry water. The walk was quiet unless the dam released water.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "placement", "form": "soup", "background": "independent_passage", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I011",
+      "text": "Chair repair:\nSupplies: one steel plate and two steel bolts.\nI attached the plate with the bolts to the chair using a drill.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "placement", "form": "chair", "background": "none", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "I012",
+      "text": "Chair repair:\nSupplies: one steel plate and two steel bolts.\nI attached the plate with the bolts to the chair using a drill.\n\nSeparately, I bought a new camera from HarborPhoto at 20% off. On its first use, I photographed two red bicycles beside the river. I liked the camera after that first use. The new camera was better than the old camera I had used before. The RiverWalk guide by Nora Bell advises: Stay on the path. Carry water. The walk was quiet unless the dam released water.",
+      "origin": {"kind": "handwritten_sp_diagnostic", "family": "placement", "form": "chair", "background": "independent_passage", "rubric": "interaction-audit-v1.md#pre-generation-criteria"}
+    }
+  ]
+}

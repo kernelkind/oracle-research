@@ -1,5 +1,11 @@
 # Autonomous SP iteration
 
+The approved [ASv6.73 example audit and fixed interaction
+diagnostics](interaction-audit-v1.md) investigates seasoning wording,
+recipient/feeding purpose and counted participant/action placements. Its
+pre-generation criteria and twelve reusable source fixtures are frozen before
+three independent medium trials. ASv6.73 stays fixed for this experiment.
+
 The user authorized autonomous SP iteration on 2026-10-02, with at most
 1,000 attempts on `gpt-6.1-sol` at `low` or `medium` reasoning. This is an upper
 bound, not a target. Use the subscription `openai-codex` route, without paid
