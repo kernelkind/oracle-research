@@ -808,12 +808,13 @@ its visible consequences without adding a reasoning trace.
 
 ## ASv6.54 focused examples
 
-Status: superseded draft, untested on models. The user's "proceed" authorized this
-example revision and offline verification. Wording approval, inference and
-adoption remain open. ASv6.51 remains the last approved candidate; ASv6.48
-remains the frozen subject baseline.
+Status: unchanged comparison candidate, testing in progress on Sol xhigh. The
+user's earlier "proceed" authorized this example revision and offline
+verification; the latest "proceed" authorizes the twelve-answer comparison
+below. Wording approval and adoption remain open. ASv6.51 remains the last
+approved candidate; ASv6.48 remains the frozen subject baseline.
 
-[ASv6.54 (draft, untested on models)](../asv6.54/ASv6.54.md) preserves every
+[ASv6.54 (candidate, testing in progress)](../asv6.54/ASv6.54.md) preserves every
 instruction byte from approved ASv6.51. It preserves ASv6.53's corrected lunar
 case byte for byte, replaces the overloaded railway story with separate
 replacement-part and combined-advice cases, and adds six language cases.
@@ -864,8 +865,48 @@ Its 21,707 UTF-8 bytes are 12,321 fewer than ASv6.53, but 10,650 more than
 approved ASv6.51. These are repeated input bytes per SP request, not measured
 model tokens. No extra pass or runtime component is introduced.
 
-No template, experiment or model request was created. ASv6.55 below consolidates
-the examples; ASv6.54 remains unchanged as the source for preservation checks.
+Drafting created no template, experiment or model request. ASv6.55 below
+consolidates the examples; ASv6.54 remains unchanged as the source for
+preservation checks and the subsequent comparison test.
+
+### Authorized ASv6.54 Sol 6.1 xhigh comparison test
+
+After reviewing ASv6.55's completed results, the user authorized testing
+unchanged ASv6.54 on N063, N074, N096 and N100 with three independent trials
+per post. The only prompt difference from ASv6.55 is the retained lunar and
+combined-advice examples: every instruction byte and all seven common example
+blocks match. This comparison examines consolidation before another edit;
+it does not establish a general failure rate or imply adoption.
+
+Native `experiment.py revise` generated the reusable
+[ASv6.54 post template](../../experiment_specs/asv6.54-hr01-post-template.txt)
+and [revision receipt](../../experiment_specs/asv6.54-hr01-post-template.txt.revision.json)
+against the approved ASv6.51 post template, preserving the post wrapper.
+The template is the unchanged ASv6.54 source followed by that wrapper; its
+SHA-256 is
+`b19683efb32a3a1d45a96274977838c8433ada8f568f13d98dde7101d3686b0e`.
+
+Three native `prepare --from ... --repeat` experiments inherit the corresponding
+ASv6.55 trials. All four complete posts, evidence and model settings match;
+all four saved outputs per trial are frozen as comparison answers without
+regeneration. Twenty-seven ASv6.55 source files are hash-pinned and unchanged.
+The ignored experiments are
+`sse_multivector/experiments/asv6.54-sol61-xhigh-sp-scope-regression-t1/`,
+`sse_multivector/experiments/asv6.54-sol61-xhigh-sp-scope-regression-t2/` and
+`sse_multivector/experiments/asv6.54-sol61-xhigh-sp-scope-regression-t3/`.
+
+The model is exact `gpt-6.1-sol`, reasoning `xhigh`, through the existing
+`openai-codex` subscription WebSocket route: four concurrent cases per trial,
+1,800-second timeout and no output cap or paid fallback. Native runs allow at
+most eight new attempts per trial, preserving the provider-only, two-attempt
+retry policy. These allowances include retries and do not authorize additional
+trials. Incremental subscription cash is zero; quota consumption is unmeasured.
+The ledger's monetary totals were validated before inference.
+
+All 26 offline prompt-revision, example and SP workflow checks passed before
+inference. Execution is in progress; completed answers will receive native
+agent reviews for heading-alone scope, every valid branch and source coverage.
+No user semantic verdict, source-prompt change or adoption is implied.
 
 ## ASv6.55 consolidated examples
 
@@ -971,8 +1012,9 @@ ASv6.55 does not pass the regression check. Agent review found five of twelve
 answers with a heading-alone scope failure, compared with two in the saved
 ASv6.51 cohort. Ten answers also omit an enumerated heading from a valid
 broader branch. This is a sample comparison, not an estimate of general failure
-rates or proof that removing the two examples caused the difference. ASv6.54
-has not been tested on these posts.
+rates or proof that removing the two examples caused the difference. The
+[unchanged ASv6.54 comparison](#authorized-asv654-sol-61-xhigh-comparison-test)
+was subsequently authorized and is now in progress.
 
 The following cells show the scope assessment and number of hierarchy entries.
 "Pass" means no confirmed scope failure was found in that review; it does not
@@ -1069,8 +1111,8 @@ is unavailable and incremental cash remains zero. The 26 offline example,
 revision and SP workflow checks passed before inference. Native case parsing
 and receipt validation pass after the run; the semantic regression does not.
 
-Before another example edit, a useful proposed check is the unchanged ASv6.54
-on the same twelve cases, paired with these saved ASv6.55 answers, to isolate
-the effect of consolidating the examples. That test is not authorized or
-prepared. The rule map establishes demonstration coverage; these results show
-that coverage alone does not establish teacher generalization.
+The user subsequently authorized unchanged ASv6.54 on the same twelve cases,
+paired with these saved ASv6.55 answers, to examine the effect of consolidating
+the examples before another edit. That test is in progress above. The rule map
+establishes demonstration coverage; these results show that coverage alone
+does not establish teacher generalization.
