@@ -750,8 +750,34 @@ def collect(directories, output, worker_config=None):
                     raise ValueError(f'duplicate collected node description: {value["node_id"]}')
                 nodes[value["node_id"]] = value
         files = {"node-descriptions.json": dict(schema_version=1, nodes=list(nodes.values()))}
+    elif adapters == {"node_sorting"}:
+        nodes, judgments = {}, {}
+        for _, result in bundles:
+            for case in result['cases']:
+                evidence = case['evidence']
+                nid, note_id = evidence['node_id'], evidence['note_id']
+                value = inputs.validate_node_sorting(case['parsed'])
+                node = nodes.setdefault(nid, dict(node_id=nid, node_title=evidence['node_title'], posts=[]))
+                if node['node_title'] != evidence['node_title']:
+                    raise ValueError(f'conflicting sorting node title: {nid}')
+                key = (nid, note_id)
+                if key in judgments:
+                    prior, post = judgments[key]
+                    if prior['inputs'] != case['inputs'] or prior['parsed'] != value:
+                        raise ValueError(f'conflicting node/post sorting judgment: {nid}/{note_id}')
+                    if case['id'] not in post['case_ids']:
+                        post['case_ids'].append(case['id'])
+                else:
+                    post = dict(note_id=note_id, **value, case_ids=[case['id']])
+                    judgments[key] = (case, post)
+                    node['posts'].append(post)
+        for node in nodes.values():
+            node['posts'].sort(key=lambda p: (-p['sorting_score'], p['note_id']))
+            node['order'] = [post['note_id'] for post in node['posts']]
+        files = {'node-sorting.json': dict(schema_version=1,
+                  nodes=[nodes[nid] for nid in sorted(nodes)])}
     else:
-        raise ValueError("collect supports subjects, masks, grouped_masks and node_descriptions experiments")
+        raise ValueError("collect supports subjects, masks, grouped_masks, node_descriptions and node_sorting experiments")
     if worker_config is not None:
         if not adapters <= {"masks", "grouped_masks"}:
             raise ValueError("--worker-config requires mask experiments")

@@ -155,7 +155,7 @@ def prepare_file(dataset, path, template, load_report=None):
             source[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
         source['source'] = references
-    if dataset['adapter'] == 'subject_contexts':
+    if dataset['adapter'] in {'subject_contexts', 'node_sorting'}:
         selector = 'nodes' if 'nodes' in source else 'selections'
         engine._expect_fields(source, 'subject contexts',
                               {'schema_version', 'subjects', 'hierarchy', selector}
@@ -981,6 +981,15 @@ def validate_node_description(value, node_id=None, node_title=None):
     return value
 
 
+def validate_node_sorting(value):
+    """Validate a direct sorting judgment without prominence allocations."""
+    if (not isinstance(value, dict) or set(value) != {'sorting_score', 'reason'}
+            or type(value['sorting_score']) is not int or not 0 <= value['sorting_score'] <= 100
+            or not isinstance(value['reason'], str) or not value['reason'].strip()):
+        raise ValueError('expected integer sorting_score from 0 through 100 and nonempty reason')
+    return value
+
+
 def prepare_node_descriptions(source, selected=None):
     """Bound exact complete-post context without changing saved node membership."""
     prepare_titles(source['source_packets'], '{NUMBERED_INSTANCES}', [])
@@ -1112,11 +1121,12 @@ def prepare(dataset, source, template):
         cases = prepare_hierarchy_construction(source, dataset.get('select'))
     elif adapter == 'parent_candidates':
         cases = prepare_parent_candidates(source, dataset.get('select'))
-    elif adapter == 'subject_contexts':
+    elif adapter in {'subject_contexts', 'node_sorting'}:
+        basis = 'node_title' if adapter == 'node_sorting' else dataset.get('prominence_basis', 'context')
         cases = prepare_subject_contexts(source, dataset.get('select'),
-                                         dataset.get('prominence_basis', 'context'))
+                                         basis)
         if 'descriptions' in source:
-            if dataset.get('prominence_basis', 'context') != 'node_title':
+            if basis != 'node_title':
                 raise ValueError('node descriptions require node_title prominence basis')
             attach_node_descriptions(cases, source)
     elif adapter == 'node_descriptions':
@@ -1174,6 +1184,9 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'node_sorting':
+        result['parsed'] = validate_node_sorting(json.loads(
+            raw, object_pairs_hook=engine._position_decoder().unique_object))
     if adapter == 'node_descriptions':
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         result['parsed'] = validate_node_description(value, case['evidence']['node_id'],

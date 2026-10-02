@@ -1,0 +1,9 @@
+{
+  "base_sha256": "a3f85894d0d5b6ef94d8219e6000f71d49ac58f6526ce42c505aa4aabd43de98",
+  "edits": [
+    {
+      "old": "Greetings, invitations and explicit participation count as the community interaction itself.",
+      "new": "Greetings, invitations and explicit participation count as the community interaction itself. A community tag may identify whom a greeting or invitation addresses, but does not make the rest of a tagged post community interaction."
+    }
+  ]
+}

@@ -4946,8 +4946,60 @@ than new strict pair labels. The twenty additional agent directions each pass
 both formulas. These are same-corpus regression observations, not fresh user
 labels or proof of general transfer. Relevance reused all 738 cached rows.
 
-The 108-node PPv31 shared-description prominence comparison is running with the
-same memberships and fixed relevance. All 108 descriptions were independently
+The 108-node PPv31 shared-description comparison completed 633 valid cases with
+355 fresh attempts (one provider retry) and 279 verified reuses. All 633 relevance
+cosines and the raw-vector hash match the control, with no new encoding. Its
+combined sorting passes all thirty-five agent directions, including the pizza
+comparison, but only ten of eleven clear user directions. The Coffee description
+explicitly includes “enjoying coffee in different places”; the cool-places post
+then receives prominence 100, as does focused cream/yolk coffee. Fixed relevance
+puts cool places above cream/yolk, violating the prior user direction. Music and
+Photography orders hold; Eggs swaps two accepted displayed positions, and Coffee's
+complete order still differs. This is not an adopted improvement.
+
+**NodeDescription-v3 (tested on seven nodes, experimental)** requests the title's
+subject and explicit relationships without a catalogue of sampled settings or
+activities. Seven fresh valid descriptions remove Coffee's places clause and keep
+Eggs broad across raw/cooked/preserved forms. GrowNostr remains unresolved; Food
+and drink's establishment extension and Pizza-Day elaboration remain uncertain.
+The same version completed all 108 nodes with 101 fresh calls and seven verified
+reuses; scope review is complete with eighteen accepts and seven uncertainties in
+twenty-five native reviews; no hard scope changes were identified.
+
+The native **node_sorting** adapter tests direct complete-post sorting scores.
+It uses the existing source-bound memberships and optional shared descriptions;
+SP entries identify saved membership only and are not model scoring inputs.
+Each identical post/title/meaning request is reused across those entries.
+Outputs are exactly integer `sorting_score` 0–100 and a nonempty `reason`.
+Offline collection emits `node-sorting.json` with one judgment and descending
+order per node/post, rejects conflicting duplicates and protects all source
+references. There are no SSE requests or highest-SP aggregation in this trial.
+Default prominence adapters and the existing candidate formula remain intact.
+
+**NodeSorting-v1 (draft, superseded before inference)** states relative focus and
+semantic relevance as one within-node sorting score. **NodeSorting-v2
+(experimental, prepared/running)** adds the general community-tag clarification
+from independent prompt review. Neither version claims a calibrated percentage.
+The fifteen-post nonfood trial
+completed 99 SP cases with fifteen fresh calls and 84 reuses; all ten fixed agent
+directions pass, with no failures or ties. Literature ordering remains uncertain.
+The v2 broad trial uses the 108 v2 descriptions and preserves original user and
+agent observations. A separate trial uses fifteen saved posts in Literature,
+Psychology and philosophy, and Bitcoin. All fifteen are disjoint from the 98
+original description-source posts, but were previously studied; they are
+held out from the description request, not a new corpus. Three v2 descriptions
+were generated from original masks/posts only and independently reviewed before
+these scoring inputs. Ten additional agent directions were fixed beforehand;
+Literature's full order remains uncertain. No new user labels are requested.
+
+The minimal direct-sorting production CLI tests first failed for the missing
+adapter, then passed. The 159 relevant workflow, selection, description,
+collection, legacy sorting, title and hierarchy tests pass under `uv` with
+`tiktoken`. Legacy sorting tests remain unchanged. All 133 earlier protected
+artifact hashes verify. Direct scores are an architecture experiment, not a
+replacement adopted into the product. Production scoring choice remains open.
+
+All 108 v2 descriptions were independently
 reviewed against masks and ninety unique complete source posts. No hard generated
 scope redefinition was found; twenty-five native reviews record eighteen accepts
 and seven uncertainties, chiefly existing title/mask mismatches (Brands/zap,

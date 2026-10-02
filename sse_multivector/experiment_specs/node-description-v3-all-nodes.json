@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "NodeDescription-v3",
+    "path": "../node-description-prompt-v3/prompt.txt"
+  },
+  "dataset": {
+    "adapter": "node_descriptions",
+    "path": "node-description-v2-all-nodes-source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "concurrency": 12,
+    "timeout_seconds": 600,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
+        },
+        "node_title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "node_id",
+        "node_title",
+        "description"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

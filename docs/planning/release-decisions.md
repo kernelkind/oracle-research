@@ -1969,9 +1969,16 @@ Coffee's complete order changes beyond allowed about-equal swaps. Of thirty-five
 additional agent subject-transfer comparisons, thirty-four pass; the pizza
 restaurant-plan comparison reverses. Prominence alone loses the accepted iced-
 coffee comparison, so removing relevance is not established. Native cached
-encoding is unchanged. A broad PPv31 shared-description comparison is running.
-These are same-corpus regression checks, not new user labels or unseen-corpus
-validation. All 108 descriptions were reviewed; uncertainties mostly identify
+encoding is unchanged. The broad PPv31 description trial now completes all cases
+and passes all thirty-five agent comparisons, but fails one protected Coffee
+direction: its places clause makes cool-places coffee entirely about Coffee,
+and fixed relevance then ranks it above cream/yolk coffee. Music and Photography
+orders hold; Eggs' accepted complete order swaps two displayed positions.
+NodeDescription-v3 tests a definition focused on the title's subject without
+cataloguing sampled settings; all 108 descriptions completed and scope review
+found no hard changes. These are regression checks, not new user labels or
+unseen-corpus validation. All 108 descriptions were reviewed; uncertainties
+mostly identify
 existing title/mask mismatches. Source membership is preserved for investigation.
 
 Reusable preparation, offline collection and sorting comparison validate exact
@@ -1981,6 +1988,22 @@ whole posts and all original evidence are retained. Descriptions are at most
 1,200 characters; default contracts, memberships and frozen title prompts stay
 intact. Compatibility support reuses unchanged SSE vectors and starts with a
 failing production-path test.
+
+A new experimental `node_sorting` workflow gives the teacher the complete post
+and one saved node meaning and asks for the sorting score directly. It tests
+removing separate prominence, SSE relevance and highest-SP selection. Native
+collection deduplicates identical post/node judgments, rejects conflicts and
+preserves source provenance. NodeSorting-v1 is a draft superseded before calls;
+NodeSorting-v2 adds a general community-tag clarification and is running. Scores
+express relative focus/relevance, not calibrated percentages. No product adoption
+is implied. Minimal production-path tests fail before implementation; 159
+relevant regression/integration tests pass and legacy tests remain intact.
+
+A separate direct trial uses fifteen saved Literature, Psychology/philosophy
+and Bitcoin posts disjoint from the original 98 description-source posts. Their
+three meanings use only original source evidence. Ten agent directions were
+recorded before new scoring; the posts were previously studied, so this is a
+check on transfer beyond the description sample, not a fresh unseen corpus.
 
 Initial experiments keep SP subject-plus-context relevance, SSE learned layers
 and the sorting formula fixed. One bounded request per node and one bounded
