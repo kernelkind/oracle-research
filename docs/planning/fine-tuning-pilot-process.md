@@ -9,14 +9,16 @@ execution settings, and review rubric remain open.
 **Local preparation → separate paid GPU preparation → Vast
 baselines/training/evaluation → verified retrieval → local scoring and comparison.**
 
-Settle the remaining configuration and rehearse automation locally before booking
-the preparation rental. Verify the chosen GPU configuration before the pilot begins.
-Preparation checks, hardware, and maximum charge remain open.
+Prepare candidate settings and rehearse automation locally before booking the
+preparation rental. Test subject/mask output limits, including thinking on, on
+representative and long notes: check complete answers, truncation, GPU memory,
+and runtime. Choose and freeze the pilot limits after those checks.
+Preparation scope, hardware, and maximum charge remain open.
 
 ## 1. Freeze shared inputs — locally
 
 Freeze shared training, validation, and final test notes, checked teacher
-answers, prompts, model revisions, and settings. Keep authors and duplicates
+answers, prompts, model revisions, and training settings. Keep authors and duplicates
 within one split.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,

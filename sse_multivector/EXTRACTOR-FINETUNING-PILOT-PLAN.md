@@ -22,10 +22,11 @@ in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
 
 **October 1 preparation decision:** a separate paid GPU preparation step is agreed
-in principle. Settle the remaining pilot configuration and required GPU checks,
-then rehearse the packaged workflow locally before booking. Verify the chosen
-GPU configuration before the larger pilot starts; its training and evaluation
-use the settled setup. Preparation scope, hardware, maximum charge, and launch
+in principle. Prepare candidate settings and agree on required GPU checks, then
+rehearse the packaged workflow locally before booking. Test subject/mask output
+limits with thinking off and on for completion, truncation, memory and runtime
+on representative and long notes. Select and freeze limits after preparation,
+before the larger pilot starts. Preparation scope, hardware, maximum charge, and launch
 remain open.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
@@ -737,8 +738,11 @@ where each stage runs. This is a proposed execution contract for the larger
 pilot, not a claim that the current worker enforces it.
 
 - **Local preparation:** freeze note splits, nested training sets, teacher
-  answers, prompt versions, model revisions, generation limits, and each
-  candidate's recipe. Prepare code and configuration locally.
+  answers, prompt versions, model revisions, and each candidate's recipe. Prepare
+  code and candidate generation settings locally. Test subject/mask output limits
+  with thinking off and on during separate GPU preparation, using representative
+  and long notes; measure complete answers, truncation, GPU memory and runtime.
+  Select and freeze generation limits after those checks, before the main pilot.
 - **GPU execution:** one thinking-off untuned validation baseline and one
   continuing training run per
   candidate. Reuse that baseline across checkpoints. Initialize the adapter and

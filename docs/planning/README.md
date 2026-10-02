@@ -14,8 +14,9 @@ its own subjects and requests their masks separately on the same held-out
 validation notes. Baselines and all five checkpoints use thinking off; each
 final 1,000-note adapter then gets one thinking-on validation evaluation with
 unchanged weights. Semantic review happens outside the GPU rental. A separate
-paid GPU preparation step is agreed in principle; settle its configuration and
-checks locally before booking. Hardware, maximum charge, and launch remain open.
+paid GPU preparation step is agreed in principle; prepare candidate settings and
+checks locally before booking. Test output limits during preparation and freeze
+them before the main pilot. Hardware, maximum charge, and launch remain open.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user
@@ -191,7 +192,8 @@ for service integration. Dependencies are unchanged; no protocol design is
 selected by this planning update.
 
 The user agreed in principle to a separate preparation rental for the larger
-pilot, after settling remaining choices locally. That does not authorize
+pilot, after preparing candidate settings and agreeing on checks locally; output
+limits are selected from preparation measurements. That does not authorize
 immediate execution or spending; the larger pilot remains waiting.
 
 The task graph is the only release-plan viewer. The root URL opens it; the

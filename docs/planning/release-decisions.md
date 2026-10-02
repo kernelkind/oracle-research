@@ -845,11 +845,15 @@ subjects. Earlier GPU estimates exclude the extra thinking work, whose
 reasoning lengths, runtime and cost are unmeasured. Generation limits/batching,
 implementation, preparation scope, hardware, spending and launch remain open.
 
-**October 1 separate paid GPU preparation agreed in principle:** settle the
-remaining pilot configuration and identify all required GPU checks before booking
+**October 1 separate paid GPU preparation agreed in principle:** prepare the
+candidate pilot configuration and identify all required GPU checks before booking
 a preparation rental. Rehearse the packaged workflow locally, then verify its
-chosen GPU configuration before the larger pilot begins. The pilot runs its
-settled training and evaluation procedure. Preparation scope, hardware, maximum
+chosen GPU configuration before the larger pilot begins. Subject/mask output
+limits and thinking-on allowances are candidates for preparation: test complete
+answers, truncation, GPU memory and runtime on representative and long notes,
+then select and freeze limits before the main pilot. Suggested numeric caps are
+not selected by this clarification. The pilot runs its settled training and
+evaluation procedure. Preparation scope, hardware, maximum
 charge, and launch remain open; this decision accepts a separate paid preparation
 step without authorizing a rental commitment.
 
