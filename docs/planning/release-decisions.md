@@ -665,15 +665,20 @@ This pilot supplies subject evidence for model selection; it cannot establish
 mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
 
-**October 2 batched subject evaluation approved:** generate independent notes
-in GPU batches. Freeze a batching policy per student and generation mode and
-apply the same policy to its untuned baseline and trained checkpoints. Preserve
+**October 2 dynamic subject evaluation batching approved:** before each batch,
+tokenize waiting notes and choose their count from a frozen per-GPU memory
+budget. Account for resident weights, padding, caches/state through the full
+allowed output length, temporary buffers and headroom; free memory at the start
+alone does not account for answers growing. Short notes can form larger batches
+and long notes smaller ones. Freeze a batching policy per student and generation
+mode and apply it to its untuned baseline and trained checkpoints. Preserve
 separate note identities, raw/parsed answers and immediate response accounting.
-Calculate conservative per-GPU fit locally from model placement, maximum
-rendered input plus output allowance, cache/state, temporary buffers and
-headroom. The existing preparation run confirms the packaged path and measures
+Prepare the conservative calculation locally under the actual model placement.
+The existing preparation run confirms the packaged path and measures
 throughput; it is not a separate search for a batch size that happens to fit.
-Batch size, hardware and implementation remain open. The old single-note
+Numeric budgets, hardware and implementation remain open. Physical training
+groups may also vary while preserving the approved eight examples per update,
+example order and supervised-token loss normalization. The old single-note
 timing estimate is a serial reference; batched pilot pricing needs throughput
 evidence and cannot be obtained by simply dividing that estimate by batch size.
 
@@ -856,7 +861,8 @@ guidance](https://huggingface.co/docs/peft/v0.21.0/en/package_reference/lora#tar
 supports merging to remove generation overhead. The current worker still only
 reloads an unmerged adapter after training ends and retains two rolling checkpoints;
 this approval describes the intended larger-pilot design. Implementation,
-generation limits/batching, hardware, preparation spending and launch stay open.
+generation limits, numeric batching budgets, hardware, preparation spending and
+launch stay open.
 
 **October 2 terminal thinking evaluation approved:** keep answer-only training
 without teacher reasoning traces. Use thinking off for the three untuned
@@ -877,7 +883,8 @@ The addition is three validation versions: **3N** more note/model outputs and
 reviews, bringing **18N** to **21N**; at the still-proposed 100 validation notes,
 that is 300 extra and 2,100 total subject calls. Earlier GPU estimates exclude
 the extra thinking work, whose
-reasoning lengths, runtime and cost are unmeasured. Generation limits/batching,
+reasoning lengths, runtime and cost are unmeasured. Generation limits and
+numeric batching budgets,
 implementation, preparation scope, hardware, spending and launch remain open.
 
 **October 1 separate paid GPU preparation agreed in principle:** prepare the

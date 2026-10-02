@@ -753,12 +753,16 @@ maximum training sequence, rendered input or generation/cache shape. Keep the
 reserved final test out of preparation. Freeze source IDs, prompt versions,
 example IDs and profile identities locally.
 
-**Batched evaluation approved October 2:** calculate the candidate batch locally
-before renting, per GPU under its actual model placement. Budget resident BF16
+**Dynamic evaluation batching approved October 2:** prepare a per-GPU memory
+budget locally under the actual model placement. Before each generation batch,
+tokenize waiting notes and choose how many fit that budget. Account for resident BF16
 weights, per-note cache and recurrent state at maximum admitted prompt plus
 output length, padded prefill/decoding tensors, kernel temporary buffers and
 allocator headroom. Account for sliding-window caches and Qwen's recurrent
 layers rather than assuming every layer stores a full-context KV cache.
+Reserve for generation through the allowed output length, not just initial free
+memory. Each batch's count can change with its token lengths; choose the count
+before generating. Numeric budgets and implementation remain open.
 Freeze the batching policy per student/mode and match baseline/checkpoints;
 preserve per-note outputs. The existing preparation sequence confirms execution
 and peak memory and measures throughput; no standalone batch-size rental sweep
@@ -783,9 +787,9 @@ is prescribed. The current worker still generates subjects one note at a time.
 4. With a fresh merged preparation adapter, test thinking off/on subject output
    limits. Save complete final answers, reasoning/final channels, truncation,
    tokens, timing and memory. Exercise a proposed maximum generation/cache shape
-   separately if natural answers terminate early. Verify the locally calculated
-   subject batch, including a smaller final batch, and measure complete-batch
-   throughput over representative lengths. Caps and the numeric batch allocation
+   separately if natural answers terminate early. Verify the dynamic subject
+   batch calculation on short and long inputs, including a smaller final batch,
+   and measure complete-batch throughput. Caps and numeric memory budgets
    remain proposals; there is no mask-batching trial.
 5. Exercise the background copier with saved responses and a checkpoint. Verify
    local hashes and uninterrupted progress; reconnect/reconcile without duplicate
@@ -891,8 +895,8 @@ not a Gemma task-specific optimum. At the pinned model shapes it adds 59,473,920
 parameters, for 78,059,520 total. With the approved FP32 adapter/gradient/Adam
 state policy, static adapter training state is about 1.16 GiB, an increase of
 0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; exact
-GPU fit and generation limits/batching remain unresolved. The merged evaluation
-policy was approved October 2 below. Explicit expert targeting still
+GPU fit, generation limits and numeric batching budgets remain unresolved.
+The merged evaluation policy was approved October 2 below. Explicit expert targeting still
 needs implementation. The current worker leaves routed experts frozen and uses
 the preliminary 128-step replacement sampler, not the approved larger-pilot
 continuation.
@@ -912,9 +916,12 @@ The adapter initially contributes zero. These are supported starting choices;
 [Trainer defaults](https://huggingface.co/docs/transformers/v5.17.0/en/main_classes/trainer)
 and [PEFT precision guidance](https://huggingface.co/docs/peft/v0.21.0/en/developer_guides/troubleshooting#selecting-the-dtype-of-the-adapter)
 do not establish their optimality for this task. Physical batching must retain
-the approved eight examples total per update; one-example batches accumulated
-eight times apply only when that student trains on one GPU. GPU allocation,
-generation limits/batching and remaining runtime choices stay open; merged BF16
+the approved eight examples total per update. Physical groups may vary with
+memory while preserving update membership, example order and the update-level
+supervised-token denominator. One model replica can accumulate eight one-example
+groups, including when that model is sharded across GPUs. GPU allocation,
+generation limits, numeric batching budgets and remaining runtime choices stay
+open; merged BF16
 checkpoint evaluation/resume and the terminal thinking comparison were approved
 October 2. Ordinary generation stays thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
@@ -955,7 +962,7 @@ verify continuation across the full transition. The current worker evaluates an
 unmerged adapter only at training's endpoint and retains two rolling checkpoints;
 five-stage continuation, milestone retention and merging still need implementation
 and production-path verification. Additional recovery-checkpoint cadence,
-generation limits/batching, hardware and spending remain open.
+generation limits, numeric batching budgets, hardware and spending remain open.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -1101,9 +1108,10 @@ three continuing students, 1,000 training notes each, 100 validation notes and
 counts remain proposals. Use the previous **$1.4167/hour** RTX PRO 6000 WS rate
 including 300 GB storage and its measured subject-generation speed. This is a
 historical hardware anchor, not a selected current offer or a multi-GPU speed claim.
-Reprice from batched preparation throughput after choosing the locally calculated
-memory allocation. Dividing serial hours by batch size is not a measured speedup:
-batch compute time, padding and different answer lengths affect throughput.
+Reprice from batched preparation throughput after preparing the per-GPU memory
+budget and dynamic batch calculation. Dividing serial hours by batch size is not
+a measured speedup: batch compute time, padding and different answer lengths
+affect throughput.
 
 | Component | GPU hours | Dollars before headroom |
 | --- | ---: | ---: |

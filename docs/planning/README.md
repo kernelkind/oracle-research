@@ -17,8 +17,9 @@ unchanged weights. Semantic review happens outside the GPU rental. A separate
 paid GPU preparation step is agreed in principle; prepare candidate settings and
 checks locally before booking. Test output limits during preparation and freeze
 them before the main pilot. Hardware, maximum charge, and launch remain open.
-Subject evaluation is batched: calculate memory fit locally, freeze a matched
-batching policy and use preparation throughput to replace the serial cost reference.
+Subject evaluation chooses each batch's size from token lengths and a frozen
+per-GPU memory budget, matched across baselines and checkpoints. Preparation
+throughput replaces the serial cost reference.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user

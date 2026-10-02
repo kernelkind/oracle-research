@@ -18,10 +18,12 @@ representative and long notes: check complete answers, truncation, GPU memory,
 and runtime. Choose and freeze the pilot limits after those checks.
 Preparation scope, hardware, and maximum charge remain open.
 
-**Batched subject evaluation is approved.** Calculate a conservative batch size
-locally from per-GPU weights, maximum prompt/output lengths, generation cache,
-temporary buffers and headroom. The existing preparation run confirms the
-packaged configuration and measures throughput for pricing.
+**Dynamic subject evaluation batches are approved.** Before each batch,
+tokenize the waiting notes and choose how many fit the frozen per-GPU memory
+budget. Account for resident weights, padding, caches through the allowed
+output length, temporary buffers and headroom. Short notes can form larger
+batches; long notes get smaller ones. Prepare this calculation locally; the
+existing preparation run confirms execution and measures throughput for pricing.
 
 ## 1. Freeze shared inputs — locally
 
@@ -37,9 +39,9 @@ proposals. Keep final test notes out of development.
 
 Save one **thinking-off** baseline per candidate on the shared validation notes.
 Each model generates its own subject hierarchy. Preserve original responses.
-Generate several independent notes per GPU batch. Freeze the batching policy
-per student and generation mode; use the same policy for that student's
-baseline and trained checkpoints. Check and save each note's answer separately.
+Generate independent notes in batches whose size follows the memory budget.
+Freeze the batching policy per student and generation mode; use it for that
+student's baseline and trained checkpoints. Check and save each answer separately.
 
 **Check every response immediately, before training.**
 Account for one subject response per validation note and save parsing failures.
@@ -74,7 +76,9 @@ remain saved; their examples are not repeated at later milestones. Within each
 block, shuffle the subject examples using a fixed random seed.
 Use the next **8 prompt–answer examples for one adapter update**, total across
 all GPUs, retaining a smaller final batch when needed. With 1,000 notes, this
-is **125 updates per student, 25 per checkpoint block**. **Starting settings approved October 1:** learning rate
+is **125 updates per student, 25 per checkpoint block**. Physical training groups
+may vary with memory while preserving the same eight-example update and loss.
+**Starting settings approved October 1:** learning rate
 **0.0001, constant with no warmup; LoRA rank 16 / alpha 32** for ordinary adapters.
 **Gemma MoE also adapts its routed experts at rank 2 / alpha 32**, retaining
 rank 16 / alpha 32 for attention and shared MLP adapters. Original model and router
@@ -138,7 +142,7 @@ Assuming 100 validation notes, 200 final test notes, and the previous
 
 These amounts price serial evaluation, not the approved batched pilot. Revise
 the pilot estimate from measured batched throughput on the intended hardware.
-Memory arithmetic selects the candidate batch locally; it does not establish
+Memory arithmetic selects each batch's size; it does not establish
 runtime or imply dividing serial time by batch size.
 Thinking-on runtime is unmeasured; its allowance assumes 2–4 times the final
 thinking-off validation time. Choosing thinking on for the final test needs a
