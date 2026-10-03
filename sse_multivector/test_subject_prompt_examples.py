@@ -1300,5 +1300,155 @@ class MaterialSubjectPromptExampleTests(unittest.TestCase):
                 self.assertEqual(list(entry), ["number", "context", "subject"])
 
 
+FOOD_PROMPT_PATH = (
+    Path(__file__).parent / "subject-prompt-goal-v1/asv6.75/ASv6.75.md"
+)
+
+# Reviewed heading meanings, not a semantic oracle. Ingredient role is explicit
+# in the source; the separate dog-recipient clause does not establish that role.
+FOOD_SUBJECTS = {
+    "salt": "Salt",
+    "food_salt": "Salt for food seasoning",
+    "tissue": "Connective tissue",
+    "dog_tissue": "Connective tissue for the dog",
+    "food_tissue": "One piece of connective tissue as a food ingredient for the dog",
+    "meat": "Meat scraps",
+    "food_meat": "Two meat scraps as food ingredients for the dog",
+    "group": "One piece of connective tissue and two meat scraps as food ingredients for the dog",
+    "dogs": "Dogs",
+    "dog_food": "Dog food",
+    "ingredients": "Dog-food ingredients",
+    "food": "Food",
+    "seasoning": "Food seasoning",
+    "mixing": "Mixing",
+    "food_mixing": "Mixing food ingredients for the dog",
+    "complete_mixing": "Mixing food ingredients for the dog: one piece of connective tissue and two meat scraps",
+}
+FOOD_RELATIONSHIPS = (
+    ("food_salt", "salt"),
+    ("food_salt", "seasoning"),
+    ("seasoning", "food"),
+    ("dog_tissue", "tissue"),
+    ("dog_tissue", "dogs"),
+    ("food_tissue", "dog_tissue"),
+    ("food_tissue", "ingredients"),
+    ("food_meat", "meat"),
+    ("food_meat", "ingredients"),
+    ("dog_food", "dogs"),
+    ("dog_food", "food"),
+    ("ingredients", "dog_food"),
+    ("group", "food_tissue"),
+    ("group", "food_meat"),
+    ("food_mixing", "mixing"),
+    ("food_mixing", "ingredients"),
+    ("complete_mixing", "group"),
+    ("complete_mixing", "food_mixing"),
+)
+
+
+class FoodSubjectPromptExampleTests(unittest.TestCase):
+    def food_example(self, path=FOOD_PROMPT_PATH):
+        source = path.read_text()
+        block = re.findall(r"<example>\n(.*?)\n</example>", source, re.S)[0]
+        output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+        return experiment_inputs.validate(
+            {"adapter": "subjects"}, {}, output, None
+        )["parsed"]["subjects"]
+
+    def assert_food_parents(self, path=FOOD_PROMPT_PATH):
+        entries = self.food_example(path)
+        subjects = {e["subject"] for e in entries}
+        self.assertIn("Food", subjects, "C1 does not demonstrate the reproduced food parent")
+        self.assertGreaterEqual(sum(e["subject"] == "Dog food" for e in entries), 2)
+
+    def test_c1_exposes_food_and_dog_food_parent_copies(self):
+        self.assert_food_parents()
+
+    def test_saved_repair_example_does_not_expose_food_parents(self):
+        with self.assertRaisesRegex(AssertionError, "C1 does not demonstrate"):
+            self.assert_food_parents(MATERIAL_PROMPT_PATH)
+
+    def ancestors(self):
+        ancestors = {node: set() for node in FOOD_SUBJECTS}
+        for child, parent in FOOD_RELATIONSHIPS:
+            ancestors[child].add(parent)
+        while True:
+            expanded = {
+                child: parents.union(*(ancestors[parent] for parent in parents))
+                for child, parents in ancestors.items()
+            }
+            if expanded == ancestors:
+                return ancestors
+            ancestors = expanded
+
+    def test_source_subjects_fill_every_compatible_numbered_parent(self):
+        entries = self.food_example()
+        ancestors = self.ancestors()
+        for child in (
+            "food_salt", "dog_tissue", "food_tissue", "food_meat",
+            "group", "complete_mixing", "seasoning", "ingredients",
+        ):
+            for parent in ancestors[child]:
+                parents = [e for e in entries if e["subject"] == FOOD_SUBJECTS[parent]]
+                self.assertTrue(parents, parent)
+                for occurrence in parents:
+                    with self.subTest(child=child, parent=occurrence["number"]):
+                        self.assertTrue(any(
+                            e["subject"] == FOOD_SUBJECTS[child]
+                            and e["number"].startswith(occurrence["number"] + ".")
+                            for e in entries
+                        ), "source subject missing from this parent occurrence")
+
+    def test_every_edge_has_a_reviewed_heading_only_basis(self):
+        entries = self.food_example()
+        ids = {subject: node for node, subject in FOOD_SUBJECTS.items()}
+        self.assertEqual({e["subject"] for e in entries}, set(ids))
+        ancestors = self.ancestors()
+        by_number = {e["number"]: e for e in entries}
+        for entry in entries:
+            if "." in entry["number"]:
+                parent = by_number[entry["number"].rsplit(".", 1)[0]]
+                with self.subTest(number=entry["number"]):
+                    self.assertIn(ids[parent["subject"]], ancestors[ids[entry["subject"]]])
+
+    def test_generic_materials_and_recipient_only_tissue_stay_outside_food(self):
+        entries = self.food_example()
+        for parent in entries:
+            descendants = {
+                e["subject"] for e in entries
+                if e["number"].startswith(parent["number"] + ".")
+            }
+            if parent["subject"] in ("Food", "Dog food", "Dog-food ingredients", "Food seasoning"):
+                for node in ("salt", "tissue", "dog_tissue", "meat", "mixing"):
+                    with self.subTest(parent=parent["number"], child=node):
+                        self.assertNotIn(FOOD_SUBJECTS[node], descendants)
+            if parent["subject"] == FOOD_SUBJECTS["group"]:
+                for node in ("food_tissue", "food_meat", "food_mixing"):
+                    self.assertNotIn(FOOD_SUBJECTS[node], descendants)
+
+    def test_individual_materials_and_dogs_remain_alongside_the_action(self):
+        subjects = {e["subject"] for e in self.food_example()}
+        for node in ("salt", "tissue", "meat", "dogs"):
+            self.assertIn(FOOD_SUBJECTS[node], subjects, "event replaced its participant")
+
+    def test_revision_preserves_instructions_other_examples_and_post_template(self):
+        before = MATERIAL_PROMPT_PATH.read_text()
+        after = FOOD_PROMPT_PATH.read_text()
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S) for s in (before, after)]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
+        template = Path(__file__).parent / "experiment_specs/asv6.75-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        for block in blocks[1]:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            entries = experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, output, None
+            )["parsed"]["subjects"]
+            for entry in entries:
+                self.assertEqual(list(entry), ["number", "context", "subject"])
+
+
 if __name__ == "__main__":
     unittest.main()

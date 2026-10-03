@@ -1,5 +1,14 @@
 # Autonomous SP iteration
 
+The approved existing-example drafting task has produced
+[ASv6.75 (draft, untested)](../asv6.75/README.md). Only C1 changes: generic salt
+and recipient-only tissue remain outside food parents, while explicit counted
+food ingredients and their complete mixing action fill every compatible parent
+copy. Instructions, C2–C7 and all clause assignments remain unchanged.
+Forty-seven example/attempt-budget tests and nine native revision tests pass;
+no model calls were made. Exact-draft approval, testing and adoption remain
+open; the persistent budget remains 356 of 1,000 attempts.
+
 The approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md)
 is complete: 54 fresh medium answers and output-bound agent reviews, no runner
 errors or reuse. The title/salt line/original hashtags reproduce Food → Salt
@@ -137,7 +146,7 @@ for repeated qualified subjects. No new rule is introduced.
 
 | Case | Primary clauses | Demonstration |
 | --- | --- | --- |
-| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; R19 is also demonstrated by its separate participants. |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75 (draft, untested) uses explicit food ingredients and mixing, with generic salt and recipient-only tissue outside food parents. Both demonstrate R19 through separate participants. |
 | C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved name; qualified new-app first use. ASv6.73 adds a blocking exception. |
 | C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
 | C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |

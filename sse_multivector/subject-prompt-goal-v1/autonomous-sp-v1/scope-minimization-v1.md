@@ -276,13 +276,15 @@ for choosing examples; it is not a prompt improvement. A correct qualified
 heading elsewhere and a correctly qualified child with missing copies are two
 different incomplete results. The existing scope and placement rules cover both.
 
-The next useful step is to draft a revision of an existing example around these
-Food/Salt and Dog food/recipient contrasts. Demonstrate unrestricted materials
-as separate subjects, qualified food-role children under the actual broad food
-parents, and complete source groups/actions beneath every compatible numbered
-parent. Preserve C1's count, reference, participant and action coverage and audit
-the complete output against all existing rules before testing. This is a draft
-recommendation, not an example edit or another model run in this task.
+The user subsequently approved drafting an existing-example revision around
+these Food/Salt and Dog food/recipient contrasts. The resulting
+[ASv6.75 (draft, untested)](../asv6.75/README.md) demonstrates unrestricted
+materials, qualified food-role children under the broad food parents, and
+complete source groups/actions beneath every compatible numbered parent. Its
+audit preserves C1's count, reference, participant and action coverage and the
+existing clause assignments. No calls were made for that drafting task. Review
+of the exact draft and a fixed model comparison are the next steps; testing
+and adoption remain open.
 
 Food-context additions are useful controlled contrasts, not proved necessary or
 sufficient causes. These small repeated samples do not establish unseen-topic
