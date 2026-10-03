@@ -56,11 +56,11 @@ and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
 Task 28 supplies the validated launch-scale implementation and is required to
 complete 12; it does not own a separate release snapshot or select a workflow.
-Corpus and Notedeck preparation started September 30. The latest 200-note
-construction using saved outputs completed its model answers, but their
-combination contains cycles and incorrect retrieval paths; further construction
-experiments continue. Subject-generation omissions and incorrect parent links
-are a separate unresolved quality problem in prompt stress-testing.
+Corpus and Notedeck preparation started September 30. The frontier-based
+200-note candidate is now cycle-free after joint review, but browsing quality
+and user acceptance remain open. Construction experiments continue.
+Subject-generation omissions and incorrect parent links are a separate
+unresolved quality problem in prompt stress-testing.
 The Notedeck browser UI is approved and committed; task 15 waits
 for protocol agreement and service implementation before integration.
 The reviewed-100-note prerequisite for the planned validation ladder remains open.
@@ -147,11 +147,13 @@ track. Shared construction measurements can inform both where applicable.
 Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
-Task 02 tracks acceptance of a useful 100-note hierarchy. Subject-generation
-errors and incorrect global relationships remain separately unresolved. The
-October 1 independent comparison favored SH04; that earlier agent assessment
-is not user browsing acceptance or production workflow selection. Both remain
-open.
+Task 02 tracks acceptance of a useful 100-note hierarchy, with frontier-based
+and vector-space construction tested in parallel. The frontier-based 200-note
+candidate is cycle-free but not accepted. The vector-space 100-note build and
+larger-model test are complete, but quality problems remain. Their separate
+evidence is linked in [the decision record](release-decisions.md).
+Subject-generation corrections remain shared work. Neither construction
+approach is selected or accepted; release tracks and dependencies are unchanged.
 
 The earlier
 [bounded build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)

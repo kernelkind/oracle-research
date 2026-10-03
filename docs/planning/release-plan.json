@@ -12,14 +12,14 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nAcceptance remains open: subject-generation errors and incorrect global relationships are separate unresolved quality problems. No production workflow is selected."
+      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nFrontier-based: 200-note candidate is cycle-free; browsing quality remains open.\nVector-space: 100-note build and larger-model test completed; quality problems remain.\nNeither approach selected; subject-generation errors remain unresolved."
     },
     {
       "id": "03",
       "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
-      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nLatest 200-note construction returned all model answers, but cycles and incorrect retrieval paths remain. New generation awaits prompt stress-testing; 100-note acceptance remains open."
+      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nFrontier-based 200-note candidate is cycle-free, not yet accepted. New generation awaits prompt stress-testing; 100-note acceptance remains open."
     },
     {
       "id": "04",

@@ -54,21 +54,27 @@ The Notedeck browser UI is approved and committed; task 15 is waiting for
 protocol agreement and service implementation before integration. Completion
 links, acceptance requirements and open implementation choices are unchanged.
 
-**Hierarchy-quality status reconciled October 3:** two separate quality problems
-remain open. Subject generation still omits supported relationships and produces
-incorrect parent links; correction continues in prompt stress-testing. Separately,
-the latest 200-note construction using saved inputs completed its model answers,
-but their combination contains cycles and incorrect ancestry that retrieves
-unrelated posts. Construction experiments continue; removing cycles alone would
-not establish browsing quality. Fixing either stage does not establish that the
-other is correct.
+**Parallel hierarchy-construction candidates confirmed October 3:** frontier-based
+and vector-space approaches are both being tested within the existing hierarchy
+investigation. Record their progress separately; neither is selected or accepted.
+These are construction candidates, not new release tracks or additional tasks.
 
-The [subject-generation investigation](../../sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/README.md)
-and [current construction investigation](../../../oracle-mvp-scalable-hierarchy-v12/sse_multivector/scalable-hierarchy-v1/README.md#sh5-200--actual-browsing-menu-construction-sprint)
-retain detailed evidence. The board records these unresolved problems within
-the existing hierarchy investigation and prompt stress-testing, not as new
-tasks or chosen fixes. The useful 100-note hierarchy acceptance gate remains
-open. Tracks, dependencies, generation holds and production choices are unchanged.
+The [frontier-based investigation](../../../oracle-mvp-scalable-hierarchy-v12/sse_multivector/scalable-hierarchy-v1/README.md#sh5-200--actual-browsing-menu-construction-sprint)
+completed a 200-note construction pass. Its initial combined answers contained
+cycles; subsequent joint review produced a cycle-free candidate. That resolves
+the structural issue for this candidate, not browsing quality or user acceptance.
+
+The [vector-space investigation](../../../oracle-mvp-vector-hierarchy-v1/sse_multivector/vector-hierarchy-ten-hour-goal.md#result-and-review)
+generated a 100-note hierarchy and completed a larger-model follow-up. The latter
+recovered more valid relationships but also introduced more incorrect ones on
+the previously inspected evaluation data. The workstream's recorded assessment
+remains unsatisfactory; these measurements do not establish general accuracy.
+
+[Subject-generation corrections](../../sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/README.md)
+remain shared work: missing relationships and incorrect parent links are still
+unresolved. Fixing source subjects does not establish that either construction
+approach is correct. The useful 100-note hierarchy acceptance gate remains open;
+tracks, dependencies, generation holds and production choices are unchanged.
 
 **Broader-corpus generation hold — October 1:** the user is undertaking prompt
 stress-testing and has put generation of the additional notes on hold until that
@@ -129,10 +135,11 @@ is saved; 300/400/500-note hierarchies have not been built. Generation holds,
 open prompt/build choices and validation gates remain unchanged.
 
 **Current task 02 status (October 3):** user browsing acceptance remains open.
-Subject-generation errors and incorrect global relationships are separate
-unresolved quality problems, as recorded above. The October 1 independent
-comparison favored the scalable subject-hierarchy candidate (SH04); that earlier
-agent assessment is not acceptance or selection of a production workflow.
+Frontier-based and vector-space construction are both under investigation, with
+separate results recorded above. Subject-generation errors remain unresolved.
+The October 1 independent comparison favored the scalable subject-hierarchy
+candidate (SH04); that earlier agent assessment is not acceptance or selection
+of a production workflow.
 
 The earlier
 [bounded 100-post build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)
