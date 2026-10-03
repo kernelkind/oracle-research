@@ -51,16 +51,16 @@ Freeze shared training, validation, and final test notes, checked teacher
 answers, prompts, model revisions, and training settings. Keep authors and duplicates
 within one split.
 
-**Full student prompt, approved October 3:** use all subject instructions and
-worked examples in training and every evaluation. Size context and memory for
-the full prompt, complete note and answer allowance.
+**Full student prompt, approved October 3:** use the complete SP chosen for the
+pilot, including all instructions and worked examples, in training and every
+evaluation. **The SP remains under development; no pilot version is selected.**
+Finalize context, memory and the launch estimate against that chosen version.
 
-**Prompt-length check, October 3:** prep used **ASv6.48**. The current experimental
+**Prompt-length check, October 3:** prep used **ASv6.48**. The audited experimental
 **ASv6.98** needs about 7,900–8,500 input tokens on the existing notes, before
 answers. Every note exceeds the current 8,192-token limit when its 4,096-token
-output allowance is included. Freeze the exact full prompt version and resolve its context
-and memory requirements before freezing inputs; the prep does not establish
-that the latest prompt fits.
+output allowance is included. This is a diagnostic for ASv6.98, not a pilot SP
+selection or a final context/memory requirement.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
 and 1,000**, are approved. **100 validation** and **200 final test** notes remain

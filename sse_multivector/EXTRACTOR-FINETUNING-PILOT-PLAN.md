@@ -1483,7 +1483,10 @@ ratio has been adopted.
 **Full student prompt, approved October 3:** use the complete subject prompt,
 including every worked example, for training, untuned baselines, all checkpoint
 validations and the final test. Size context and memory for the full prompt,
-complete note and allowed answer. The exact prompt version remains to be frozen.
+complete note and allowed answer. **The SP remains under development; no pilot
+SP version is selected.** This full-prompt decision does not select ASv6.98 or
+any other experimental version. Final context/memory settings and the launch
+estimate depend on the chosen pilot SP.
 
 ### Conditional subjects-only batched cost reference — October 3
 

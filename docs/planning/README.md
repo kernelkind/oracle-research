@@ -60,12 +60,14 @@ answers. Subjects-only training now continues through retained checkpoints,
 with disposable merged evaluation and full training-state restoration. The
 preparation now supplies measured cache bounds. The student uses the full subject
 prompt, including all worked examples, in training and every evaluation,
-approved October 3. The conditional ASv6.48 projection
+approved October 3. The SP remains under development; no pilot version is selected.
+The conditional ASv6.48 projection
 is 36–40 hours / $51–58 at the prep rate, including overhead and headroom.
-The current experimental ASv6.98 exceeds the tested 8,192-token configuration
-on every existing note when the output allowance is included. Freeze the exact
-full prompt version and settle its context/memory requirements before freezing inputs; that cost
-reference does not price ASv6.98. The background copier transfers completed responses
+The audited experimental ASv6.98 exceeds the tested 8,192-token configuration
+on every existing note when the output allowance is included. These checks do
+not select ASv6.98. Final context/memory settings and the launch estimate depend
+on the chosen pilot SP; that cost reference does not price ASv6.98.
+The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 
 `release-plan.json` is the current task-and-dependency source for the focused
