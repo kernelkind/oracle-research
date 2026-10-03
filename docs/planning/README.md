@@ -19,6 +19,8 @@ notes while the pilot data is pending. Prepare its minimal checks and automation
 locally before booking. Verify training, checkpoint reload/merge, batched
 generation and training continuation within declared input/output memory bounds.
 Check the actual pilot data against those tested bounds when it is ready.
+Minimize preparation's total billed cost, approved October 3. Collect pilot
+timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete
 model on that GPU and the three students running sequentially. The specific
 rental offer, maximum charge, and launch remain open.

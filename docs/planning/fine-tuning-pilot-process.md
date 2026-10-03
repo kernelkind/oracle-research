@@ -24,6 +24,11 @@ memory bounds, and restored training. It does not establish future answer qualit
 or completeness. Check the actual pilot data's token lengths against those
 bounds when ready. Exact checks, implementation, offer and maximum charge remain open.
 
+**Keep preparation cheap, approved October 3:** collect pilot timing estimates
+during the same hardware checks. Keep parser/recovery tests and automation
+rehearsal local. Compare qualifying offers by total expected charge, including
+startup and transfers; retrieve, verify and explicitly delete promptly after checks.
+
 **Dynamic subject evaluation batches are approved.** Before each batch,
 tokenize the waiting notes and choose how many fit the frozen per-GPU memory
 budget. Account for resident weights, padding, caches through the allowed

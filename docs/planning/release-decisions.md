@@ -974,6 +974,15 @@ The pilot runs its settled training and evaluation procedure. Preparation scope,
 the specific rental offer, maximum charge and launch remain open; this accepts
 separate preparation in principle without authorizing a rental commitment.
 
+**October 3 preparation cost priority approved:** minimize total billed preparation
+cost on the selected 96GB GPU. Collect training, batched generation and lifecycle
+timings during the same required checks to estimate the pilot's GPU duration/cost
+range. Keep parser/recovery tests and automation rehearsal local; avoid adding
+separate benchmarks, complete hierarchy comparisons or tuning sweeps. Compare
+qualifying offers by expected total charge, including startup, storage and transfers.
+Retrieve and verify the evidence, then explicitly delete promptly after checks
+finish. Exact scope, offer and maximum spending approval remain open.
+
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
 notes at each milestone through 1,000; the smaller sets are shared subsets.

@@ -867,6 +867,14 @@ memory-based subject batching and the save/merge/evaluate/restore lifecycle.
 The background copier is implemented locally. Preparation and the pilot use
 thinking off throughout.
 
+**Preparation cost priority approved October 3:** minimize total billed cost.
+Collect update, generation and save/reload/merge/restore timings during the same
+minimum cycle to project a pilot duration/cost range; separate cold setup from
+repeated work. Keep parser/recovery testing and automation rehearsal local.
+Compare qualifying 96GB offers by expected total charge, including startup,
+storage and transfers. After checks, finish verified retrieval and explicit
+deletion promptly. Exact scope and maximum spending approval remain open.
+
 Use existing notes; preparation is not blocked by the future 1,000-note dataset.
 Historical N18 (long diary), N00 (soda bread) and N15 (short gianduja/store note)
 are candidate cases, not an approved three-note evaluation set. Tokenize the
