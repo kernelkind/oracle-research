@@ -64,8 +64,14 @@ The preliminary preparation costs were $1.639 and $1.620 ($3.259 combined).
 Direct SSH copying was slow; the verified provider proxy route completed retrieval using
 the unchanged native transfer code. Small sealed responses and measurements were copied
 ahead of remaining checkpoints. Frozen remote code, inputs and operation contract stayed
-unchanged. These local recovery steps still need incorporation into the shared launcher
-before the pilot; automatic fallback and small-file priority are not implemented. Future
+unchanged. The October 3 launcher update selects the provider proxy from the start
+for new distillation operations, honoring an explicit direct SSH setting when supplied.
+Both progressive and final transfers prioritize small sealed outputs, copying each
+completion marker after its files. Streams carry at most 64 MiB; the background
+copier rediscovers sealed files between streams so newly saved responses can
+precede an unfinished checkpoint. Partial files are retained and checked
+against the complete saved SHA256 before publication. New launches require a fresh
+package and image from the updated source; historical operations stay frozen. Future
 pilot data must fit the measured training and cache shapes. Rentals below $1.60/hour
 need no further approval for the authorized prep; straightforward failures are repaired
 promptly, otherwise available data is verified and the prep rental explicitly deleted.
@@ -575,7 +581,25 @@ response before the next generation batch; completed checkpoints already have
 atomic directory publication. Discovery reads completion records and file
 sizes, without repeatedly hashing large remote tensors. Exclude partial
 checkpoint directories. Transfer processes use remote nice 19 and idle disk
-priority, and stream bounded chunks at the frozen bandwidth limit.
+priority, and stream at the frozen bandwidth limit. Both progressive and final
+retrieval prioritize sealed directories by total saved bytes, then path. Each
+directory's completion marker follows its files, including nested sealed
+directories; unsealed files use their individual sizes. This keeps small
+responses ahead of checkpoints without advertising incomplete local directories
+as complete. Each stream carries at most 64 MiB and 32 files. The watcher
+rediscovers seals after each completed stream,
+without sleeping while data remains, so newly published responses precede the
+rest of a large checkpoint. The configured polling interval applies when no
+new bytes or files were copied. New responses can be prioritized after the
+current stream rather than after the entire checkpoint; response backlog,
+connection setup, discovery, hashing and link speed still affect delay. A
+64 MiB payload at the default 8 MiB/s cap takes at least eight seconds; actual
+transfer time can be longer. This chunk size amortizes the costly proxy SSH
+setup observed during preparation. New distillation launch settings select
+the provider SSH proxy
+from the start, using the existing managed key and authentication loop;
+explicit direct SSH settings remain supported. No slow direct-route trial or
+hardcoded endpoint wrapper is needed under the new default.
 
 Receive partial bytes under `progressive/partial`, verify the complete file
 SHA256 and size, then atomically publish it under `result.next/work`. Separate
@@ -607,6 +631,24 @@ hashes match the VM snapshot. During repeated rehearsals, accumulated artifacts
 filled the local 64 GiB disk during export; expanding that reused disk to
 128 GiB preserved earlier evidence and allowed the export to finish. The fresh
 VM default remains 64 GiB. These checks do not establish full-size GPU impact.
+
+October 3 transfer automation passed **59 command-workload regressions and
+58 VM tests** (4 architecture, 30 worker/data and 24 deployment/Vast/data),
+with no VM skips. A new production-path test reproduced premature local
+completion-marker publication; ordering now publishes each marker after its
+verified files. Real SSH copied a 128 MiB checkpoint in bounded streams while
+retrieving a newly sealed response before checkpoint completion. Live training
+and terminal retrieval checks passed. Routing settings survive preparation;
+new distillation launch defaults select the provider proxy. The broader
+controller suite retains one source-comparison failure, also reproduced on
+committed HEAD, for earlier command-stopping changes to `remote_supervise`,
+`remote_stop` and `destroy_instance`; its 80 other checks passed. Artifacts are
+under `target/distillation-transfer-v1/`; `verification.json` records source
+hashes and copy receipts. The VM stopped and its image export completed;
+current source files match the VM snapshot. The archive SHA256 is
+`7b69803b70f0a5b19ea0535885482e218347bef37cc1c4ec38f5640e47926863`.
+This is an archive hash, not a published registry digest. No rented hardware
+was used.
 
 The automatic report separates malformed subject/mask outputs, valid empty
 masks and reference agreement. Token overlap uses whitespace-delimited source
@@ -1383,8 +1425,9 @@ transferred 8 MiB in 10.3 s including connection setup. Prioritizing 148
 small sealed response/measurement files put all 40 Gemma raw answers and
 parse outcomes locally before the remaining checkpoints finished. Native
 verification covers all 210 work files and six startup files. These
-operational recovery steps used unchanged frozen code; they are not yet
-automatic shared-launcher behavior.
+operational recovery steps used unchanged frozen code. The subsequent local
+launcher update uses the provider proxy by default and prioritizes small
+sealed outputs between bounded checkpoint streams.
 
 **Prep stopping exception, approved October 3:** repair straightforward failures
 immediately. If recovery requires substantial work, preserve and verify all

@@ -17,7 +17,7 @@ def make_spec(settings, offer, package, image):
             and job['timeout_seconds'] > settings['worker_timeout_seconds']):
         raise ValueError('package exceeds the approved worker timeout')
     return {'version': 2, 'label': settings['label'], 'offer': offer, 'image': image,
-        'disk_gb': settings['disk_gb'], 'onstart': settings['onstart'], 'ssh_direct': True,
+        'disk_gb': settings['disk_gb'], 'onstart': settings['onstart'], 'ssh_direct': settings['ssh_direct'],
         'python': REMOTE_PYTHON,
         'inputs': [{'source': str(Path(package).resolve()), 'destination': 'inputs'}],
         'command': [REMOTE_PYTHON, '-m', 'sse_multivector.distillation_deploy', 'execute',

@@ -157,6 +157,112 @@ class CommandWorkloadTest(unittest.TestCase):
         with self.assertRaisesRegex(self.module.OperationError, 'verified copy changed'):
             self.module.copy_files(self.context, Path('/unused'), ['unused'], [record])
 
+    def test_final_copy_prioritizes_responses_and_resumes_bounded_checkpoint_chunks(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 512 * 1024 * 1024,
+                                         'timeout_seconds': 30}
+        self.freeze()
+        records = []
+        for name, payload in (('checkpoints/adapter.bin', b'c' * (128 * 1024 * 1024 + 1024)),
+                              ('responses/subject.json', b'saved subject response')):
+            source = self.root / 'work/results' / name
+            source.parent.mkdir(parents=True, exist_ok=True)
+            source.write_bytes(payload)
+            records.append({'path': str(source.relative_to(self.root)), 'bytes': len(payload),
+                            'sha256': runner.sha256_file(source)})
+        partial = self.root / 'progressive/partial' / records[0]['path']
+        partial.parent.mkdir(parents=True)
+        partial.write_bytes(b'c' * 100)
+        requests = []
+        def remote(_context, _key, _target, _operation, _flag, encoded):
+            import shlex
+            request = shlex.split(encoded)[0]
+            requests.append(json.loads(request))
+            return [sys.executable, '-B', str(self.operator), '--root', str(self.root),
+                    '--config', str(self.config), '_remote-copy', '--files', request]
+        with mock.patch.object(self.module, 'remote_arguments', side_effect=remote):
+            totals = self.module.copy_files(self.context, Path('/unused'), ['unused'], records, terminal=True)
+        self.assertEqual(requests[0][0]['path'], records[1]['path'])
+        self.assertEqual(len(requests), 3)
+        self.assertTrue(all(sum(r['length'] for r in group) <= 64 * 1024 * 1024 for group in requests))
+        self.assertEqual(requests[0][1]['offset'], 100)
+        self.assertEqual(totals['copied_files'], 2)
+        self.assertEqual(totals['copied_bytes'], sum(r['bytes'] for r in records) - 100)
+        for record in records:
+            self.assertEqual(runner.sha256_file(self.root / 'result.next' / record['path']), record['sha256'])
+
+    def test_progressive_copy_discovers_new_responses_between_checkpoint_chunks(self):
+        self.spec['outputs'] = ['results']
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 512 * 1024 * 1024,
+                                         'timeout_seconds': 30}
+        self.freeze()
+        checkpoint = self.root / 'work/results/checkpoints/adapter'
+        checkpoint.mkdir(parents=True)
+        (checkpoint / 'weights.bin').write_bytes(b'c' * (128 * 1024 * 1024 + 1024))
+        runner.atomic_json(checkpoint / 'complete.json', {'weights.bin': runner.sha256_file(checkpoint / 'weights.bin')})
+        runner.atomic_json(self.root / 'progressive/endpoint.json', {'identity': '/unused', 'target': ['unused']})
+        weights = self.root / 'result.next/work/results/checkpoints/adapter/weights.bin'
+        subject = self.root / 'result.next/work/results/responses/note/subjects.json'
+        requests = []
+        stream = self.module.stream_processes
+        def remote(_context, _key, _target, _operation, _flag, encoded):
+            import shlex
+            request = shlex.split(encoded)[0]
+            requests.append(json.loads(request))
+            return [sys.executable, '-B', str(self.operator), '--root', str(self.root),
+                    '--config', str(self.config), '_remote-copy', '--files', request]
+        def copy(*args):
+            stream(*args)
+            if len(requests) == 1:
+                self.assertFalse(weights.exists(), 'first transfer published the entire checkpoint')
+                note = self.root / 'work/results/responses/note'
+                note.mkdir(parents=True)
+                (note / 'subjects.json').write_text('new response while checkpoint was copying')
+                runner.atomic_json(note / 'complete.json', {'subjects.json': runner.sha256_file(note / 'subjects.json')})
+            elif len(requests) == 2:
+                self.assertTrue(subject.is_file(), 'new response waited behind the checkpoint')
+                self.assertFalse(weights.exists())
+            if weights.exists():
+                runner.atomic_json(self.root / 'progressive/terminal.json', {'attempt_id': '001'})
+        with mock.patch.object(self.module, 'remote_json', side_effect=lambda *args: self.call('_remote-progress')), \
+                mock.patch.object(self.module, 'remote_arguments', side_effect=remote), \
+                mock.patch.object(self.module, 'stream_processes', side_effect=copy), \
+                mock.patch.object(self.module, 'stop', side_effect=AssertionError('copy stopped the worker')):
+            result = self.module.progressive_copy(self.context, watch=True)
+        self.assertEqual(result['state'], 'stopped')
+        self.assertEqual(runner.sha256_file(weights), runner.sha256_file(checkpoint / 'weights.bin'))
+        self.assertTrue(subject.is_file())
+        self.assertEqual(len(requests), 3)
+
+    def test_copy_rejects_invalid_chunk_length(self):
+        self.freeze()
+        for length in (-1, True, 4):
+            with self.subTest(length=length), self.assertRaisesRegex(self.module.OperationError, 'length'):
+                self.module.copy_records([{'path': 'work/results/response', 'bytes': 3,
+                                          'sha256': '0' * 64, 'length': length}])
+
+    def test_copy_publishes_completion_marker_after_its_directory_files(self):
+        self.spec['outputs'] = ['results']
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 512 * 1024 * 1024,
+                                         'timeout_seconds': 30}
+        self.freeze()
+        directory = self.root / 'work/results/checkpoints/adapter'
+        directory.mkdir(parents=True)
+        (directory / 'weights.bin').write_bytes(b'c' * (64 * 1024 * 1024 + 1024))
+        runner.atomic_json(directory / 'complete.json', {'weights.bin': runner.sha256_file(directory / 'weights.bin')})
+        records = self.call('_remote-progress')['files']
+        def remote(_context, _key, _target, _operation, _flag, encoded):
+            import shlex
+            return [sys.executable, '-B', str(self.operator), '--root', str(self.root),
+                    '--config', str(self.config), '_remote-copy', '--files', shlex.split(encoded)[0]]
+        destination = self.root / 'result.next/work/results/checkpoints/adapter'
+        with mock.patch.object(self.module, 'remote_arguments', side_effect=remote):
+            self.module.copy_files(self.context, Path('/unused'), ['unused'], records, one_group=True)
+            self.assertFalse((destination / 'complete.json').exists(), 'published completion before weights arrived')
+            self.assertFalse((destination / 'weights.bin').exists())
+            self.module.copy_files(self.context, Path('/unused'), ['unused'], records, terminal=True)
+        self.assertEqual(runner.read_json(destination / 'complete.json'),
+                         {'weights.bin': runner.sha256_file(destination / 'weights.bin')})
+
     def test_copy_stream_hash_failure_never_publishes_or_stops_worker(self):
         self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
         self.freeze()

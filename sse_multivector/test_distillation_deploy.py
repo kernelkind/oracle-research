@@ -98,6 +98,71 @@ class PackageTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
 class SharedSSHTests(unittest.TestCase):
+    def test_chunked_copy_prioritizes_new_responses_over_real_ssh(self):
+        import argparse
+        import importlib.util
+        sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
+        import package as packager
+        from sse_multivector.distillation_vast import make_spec
+        from sse_multivector.test_distillation_vast import quote
+        root = self.fixture_package('chunked-copy')
+        settings, offer = quote()
+        spec = make_spec(settings, offer, root / 'inputs', settings['image_repository'] + '@sha256:' + '4' * 64)
+        spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 8 * 1024 * 1024,
+                                    'timeout_seconds': 120}
+        ledger = root / 'ledger.json'
+        write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
+                           'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
+        operation = root / 'operation'
+        config = packager.freeze(spec, operation, ledger)
+        definition = importlib.util.spec_from_file_location('chunked_ssh_runner', operation / 'transport/control/vast_full_build.py')
+        module = importlib.util.module_from_spec(definition)
+        sys.modules[definition.name] = module
+        definition.loader.exec_module(module)
+        context = module.Context.load(argparse.Namespace(root=operation, config=config, operation='copy'))
+        self.assertIs(context.config['ssh_direct'], False)
+        (operation / 'launch').mkdir()
+        (operation / 'launch/operation-contract.json').write_bytes(config.read_bytes())
+        target = read_json(os.environ['DISTILLATION_SSH_TARGET'])
+        key, endpoint = Path(target['identity']), ['-p', str(target['port']), target['host']]
+        module.tar_upload_directory(context, key, endpoint, operation / 'transport', '/workspace/oracle-full-build/transport')
+        module.tar_upload_directory(context, key, endpoint, operation / 'launch', '/workspace/oracle-full-build/launch')
+        module.completed_process([*module.ssh_arguments(context, key, endpoint), 'rm -rf /workspace/oracle-full-build/work'])
+        checkpoint = root / 'checkpoint'
+        checkpoint.mkdir()
+        (checkpoint / 'weights.bin').write_bytes(b'c' * (128 * 1024 * 1024 + 1024))
+        write_json(checkpoint / 'complete.json', {'weights.bin': sha256(checkpoint / 'weights.bin')})
+        module.tar_upload_directory(context, key, endpoint, checkpoint, '/workspace/oracle-full-build/work/results/checkpoints/adapter')
+        note = root / 'note'
+        note.mkdir()
+        (note / 'subjects.json').write_text('response published during checkpoint transfer')
+        write_json(note / 'complete.json', {'subjects.json': sha256(note / 'subjects.json')})
+        write_json(operation / 'progressive/endpoint.json', {'identity': str(key), 'target': endpoint})
+        weights = operation / 'result.next/work/results/checkpoints/adapter/weights.bin'
+        subject = operation / 'result.next/work/results/responses/note/subjects.json'
+        stream, groups = module.stream_processes, []
+        def copy(*args):
+            stream(*args)
+            if args[2] != 'progressive copy':
+                return
+            groups.append(read_json(operation / 'progressive/request.json'))
+            self.assertLessEqual(sum(record['length'] for record in groups[-1]), 64 * 1024 * 1024)
+            if len(groups) == 1:
+                self.assertFalse(weights.exists())
+                module.tar_upload_directory(context, key, endpoint, note, '/workspace/oracle-full-build/work/results/responses/note')
+            elif len(groups) == 2:
+                self.assertTrue(subject.is_file())
+                self.assertFalse(weights.exists())
+            if weights.exists():
+                write_json(operation / 'progressive/terminal.json', {'attempt_id': '001'})
+        with patch.object(module, 'stream_processes', side_effect=copy):
+            self.assertEqual(module.progressive_copy(context, watch=True)['state'], 'stopped')
+        self.assertEqual(len(groups), 3)
+        self.assertEqual(sha256(weights), sha256(checkpoint / 'weights.bin'))
+        self.assertEqual(sha256(subject), sha256(note / 'subjects.json'))
+        write_json(root / 'transfer-checks.json', {'groups': groups, 'response_before_checkpoint': True,
+                                                'checkpoint_sha256': sha256(weights), 'subject_sha256': sha256(subject)})
+
     def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False):
         import argparse
         import importlib.util

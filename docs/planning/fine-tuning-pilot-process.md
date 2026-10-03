@@ -114,7 +114,9 @@ optimal training for every student.
 ## 4. Retrieve verified results — Vast to local
 
 One background copier transfers subject responses and checkpoints
-as soon as saving finishes, while the experiment continues. Verify local copies
+as soon as saving finishes, while the experiment continues. Use Vast's SSH proxy
+and copy small response files first. Check for new results between checkpoint
+chunks. Completion markers follow verified files. Verify local copies
 and retain remote originals at least until verification. Limit transfer bandwidth
 and disk activity. The copier starts automatically beside the observer; final
 retrieval reuses verified copies. A transfer failure is reported without stopping

@@ -3210,6 +3210,9 @@ def copy_records(records: object) -> list[dict[str, object]]:
         offset = record.get("offset", 0)
         if type(offset) is not int or not 0 <= offset <= size:
             raise OperationError("invalid copy offset")
+        length = record.get("length", size - offset)
+        if type(length) is not int or not 0 <= length <= size - offset or (length == 0 and offset < size):
+            raise OperationError("invalid copy length")
         require_sha256(required_string(record, "sha256"), "copy SHA256")
     return records
 
@@ -3266,7 +3269,7 @@ def remote_copy(context: Context, records: object) -> None:
             raise OperationError("copy source size changed")
         with path.open("rb") as source:
             source.seek(record.get("offset", 0))
-            remaining = record["bytes"] - source.tell()
+            remaining = record.get("length", record["bytes"] - source.tell())
             while remaining:
                 chunk = source.read(min(65536, remaining))
                 if not chunk:
@@ -3299,22 +3302,21 @@ def receive_copy(context: Context, request: Path) -> None:
         offset = record.get("offset", 0)
         if (partial.stat().st_size if partial.exists() else 0) != offset:
             raise OperationError("partial copy offset changed")
-        digest = hashlib.sha256()
         with partial.open("a+b") as output:
-            output.seek(0)
-            for chunk in iter(lambda: output.read(65536), b""):
-                digest.update(chunk)
-            remaining = record["bytes"] - offset
+            remaining = record.get("length", record["bytes"] - offset)
             while remaining:
                 chunk = sys.stdin.buffer.read(min(65536, remaining))
                 if not chunk:
                     raise OperationError("copy stream ended early; partial files retained")
                 output.write(chunk)
-                digest.update(chunk)
                 remaining -= len(chunk)
             output.flush()
             os.fsync(output.fileno())
-        if digest.hexdigest() != record["sha256"]:
+        if partial.stat().st_size < record["bytes"]:
+            continue
+        # Hash once at completion, including bytes retained across chunks or
+        # interrupted streams. Incomplete files never acquire a verified receipt.
+        if partial.stat().st_size != record["bytes"] or sha256_file(partial) != record["sha256"]:
             raise OperationError("copy hash mismatch; evidence retained")
         target.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         if target.exists():
@@ -3329,22 +3331,43 @@ def receive_copy(context: Context, request: Path) -> None:
 
 
 def copy_files(context: Context, private_key: Path, target: list[str], records: object,
-               *, terminal: bool = False) -> dict[str, int]:
+               *, terminal: bool = False, one_group: bool = False) -> dict[str, int]:
     policy = progressive_policy(context)
     if policy is None:
         raise OperationError("progressive copying is not configured")
     totals = {"copied_files": 0, "copied_bytes": 0, "reused_files": 0, "reused_bytes": 0}
     records = copy_records(records)
-    # Small groups amortize SSH setup. A large checkpoint file gets its own group.
+    sizes = {Path(record["path"]).parent: 0 for record in records
+             if Path(record["path"]).name == "complete.json"}
+    for record in records:
+        for parent in Path(record["path"]).parents:
+            if parent in sizes:
+                sizes[parent] += record["bytes"]
+
+    def priority(record):
+        path = Path(record["path"])
+        directory = next((parent for parent in path.parents if parent in sizes), None)
+        return (sizes[directory] if directory is not None else record["bytes"],
+                str(directory if directory is not None else path),
+                path.name == "complete.json", record["bytes"], record["path"])
+
+    # Prioritize small sealed directories, with each completion marker last.
+    # Descendant directories are smaller than ancestors, so enclosing markers
+    # also follow the files they certify. Unsealed files use their own size.
+    records = sorted(records, key=priority)
+    # Bound each stream so the watcher can
+    # discover newly sealed responses between checkpoint chunks. At the
+    # distillation default of 8 MiB/s, 64 MiB takes eight seconds of payload,
+    # amortizing SSH setup without holding the copier for an entire checkpoint.
+    stream_bytes = 64 * 1024 * 1024
     position = 0
     while position < len(records):
         with file_lock(context.path("progressive/copy.lock"), blocking=True):
             if not terminal and context.path("progressive/terminal.json").exists():
                 break
             pending, size = [], 0
-            while position < len(records) and len(pending) < 32 and size < 8 * 1024 * 1024:
+            while position < len(records) and len(pending) < 32 and size < stream_bytes:
                 record = records[position]
-                position += 1
                 destination = copy_destination(context, record)
                 receipt = context.path("progressive/verified") / (record["path"] + ".json")
                 if destination.exists():
@@ -3362,13 +3385,17 @@ def copy_files(context: Context, private_key: Path, target: list[str], records: 
                             "local_mtime_ns": destination.stat().st_mtime_ns, "verified_at_utc": utc_text()})
                     totals["reused_files"] += 1
                     totals["reused_bytes"] += record["bytes"]
+                    position += 1
                     continue
                 partial = context.path("progressive/partial") / record["path"]
                 offset = partial.stat().st_size if partial.exists() else 0
                 if offset > record["bytes"]:
                     raise OperationError("partial copy exceeds expected size")
-                pending.append({**record, "offset": offset})
-                size += record["bytes"] - offset
+                length = min(record["bytes"] - offset, stream_bytes - size)
+                pending.append({**record, "offset": offset, "length": length})
+                size += length
+                if offset + length == record["bytes"]:
+                    position += 1
             if not pending:
                 continue
             request = context.path("progressive/request.json")
@@ -3379,8 +3406,10 @@ def copy_files(context: Context, private_key: Path, target: list[str], records: 
                 [sys.executable, str(context.operator_path), "--root", str(context.root),
                  "--config", str(context.config_path), "_receive-copy", "--request", str(request)],
                 "progressive copy", policy["timeout_seconds"])
-            totals["copied_files"] += len(pending)
+            totals["copied_files"] += sum(record["offset"] + record["length"] == record["bytes"] for record in pending)
             totals["copied_bytes"] += size
+            if one_group:
+                break
     return totals
 
 
@@ -3400,7 +3429,8 @@ def progressive_copy(context: Context, watch: bool) -> dict[str, object]:
                 return state
             try:
                 inventory = remote_json(context, Path(endpoint["identity"]), endpoint["target"], "_remote-progress")
-                totals = copy_files(context, Path(endpoint["identity"]), endpoint["target"], inventory["files"])
+                totals = copy_files(context, Path(endpoint["identity"]), endpoint["target"], inventory["files"],
+                                    one_group=watch)
                 state = {"state": "watching" if watch else "copied", **totals, "observed_at_utc": utc_text()}
                 atomic_json(context.path("progressive/status.json"), state, replace=True)
             except (OperationError, OSError) as error:
@@ -3409,7 +3439,8 @@ def progressive_copy(context: Context, watch: bool) -> dict[str, object]:
                 raise
             if not watch:
                 return state
-            time.sleep(policy["poll_seconds"])
+            if not (totals["copied_bytes"] or totals["copied_files"]):
+                time.sleep(policy["poll_seconds"])
 
 
 def start_progressive_copy(context: Context, private_key: Path, target: list[str]) -> subprocess.Popen[bytes]:

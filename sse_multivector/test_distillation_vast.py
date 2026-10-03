@@ -22,6 +22,23 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_launch_settings_select_proxy_and_preserve_explicit_direct_override(self):
+        settings, offer = quote()
+        with self.subTest(default='proxy'):
+            self.assertIs(settings['ssh_direct'], False)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/model', 'revision': 'a' * 40})
+            deploy.prepare([config], root / 'inputs', 43200)
+            image = settings['image_repository'] + '@sha256:' + '4' * 64
+            for direct in (False, True):
+                settings['ssh_direct'] = direct
+                with self.subTest(ssh_direct=direct):
+                    self.assertIs(vast.make_spec(settings, offer, root / 'inputs', image)['ssh_direct'], direct)
+
     def test_unbounded_preparation_has_no_worker_deadline(self):
         sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
         import package as packager
@@ -84,7 +101,7 @@ class WorkloadTests(unittest.TestCase):
             spec = vast.make_spec(settings, offer, inputs, image)
             self.assertEqual(spec['offer'], offer)
             self.assertEqual(spec['onstart'], 'ssh-keygen -A && service ssh start')
-            self.assertIs(spec['ssh_direct'], True)
+            self.assertIs(spec['ssh_direct'], False)
             self.assertEqual(spec['limits']['maximum_charge_cents'], 2500)
             self.assertEqual(spec['limits']['work_seconds'], 43200)
             self.assertEqual(spec['limits']['session_seconds'], 50400)

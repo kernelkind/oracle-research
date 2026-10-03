@@ -1054,8 +1054,14 @@ Preliminary preparation costs were $1.639 for this run and $1.620 for the earlie
 Direct SSH copying was slow; the verified provider proxy route completed retrieval using
 the unchanged native transfer code. Small sealed responses and measurements were copied
 ahead of remaining checkpoints. Frozen remote code, inputs and operation contract stayed
-unchanged. These local recovery steps still need incorporation into the shared launcher
-before the pilot; automatic fallback and small-file priority are not implemented. Future
+unchanged. The October 3 launcher update selects the provider proxy from the start
+for new distillation operations, honoring an explicit direct SSH setting when supplied.
+Both progressive and final transfers prioritize small sealed outputs, copying each
+completion marker after its files. Streams carry at most 64 MiB; the background
+copier rediscovers sealed files between streams so newly saved responses can
+precede an unfinished checkpoint. Partial files are retained and checked
+against the complete saved SHA256 before publication. New launches require a fresh
+package and image from the updated source; historical operations stay frozen. Future
 pilot data must fit the measured training and cache shapes. Rentals below $1.60/hour
 need no further approval for the authorized prep; straightforward failures are repaired
 promptly, otherwise available data is verified and the prep rental explicitly deleted.
@@ -1114,7 +1120,7 @@ The user clarified that the VM must rehearse the deployment process used on
 Vast: prepare an immutable image and frozen inputs locally, upload the inputs,
 start the experiment automatically, reconnect and retrieve verified results.
 The approved integration uses the successful September 27 shared Vast runner
-(`vast/runner.py`) for creation, direct SSH, transfers, execution, retrieval and
+(`vast/runner.py`) for creation, managed SSH, transfers, execution, retrieval and
 verified destruction. It replaces the separate distillation provider controller
 and SSH operator. Managed SSH uses `ssh-keygen -A && service ssh start`; the
 workload explicitly supplies its Python and runtime environment. The VM

@@ -49,8 +49,10 @@ approval before stopping incomplete work. No automatic timeout or deletion.
 training, checkpoint restoration, merge and generation/cache checks on the
 96GB card. Qwen evidence was reused; the repaired Gemma rental lasted 65.5 minutes.
 All 210 work files and six startup files were verified.  Preliminary preparation charges total $3.26 including the earlier failure.
-The shared launcher still needs the successful proxy route and small-file copy
-priority made automatic before the pilot. Future data must fit measured bounds.
+The shared launcher now selects the provider SSH proxy by default and prioritizes
+saved responses before checkpoints. Completion markers follow their files.
+Checkpoint streams are limited to 64 MiB, with new response discovery between
+streams. Future data must fit measured bounds.
 
 Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed

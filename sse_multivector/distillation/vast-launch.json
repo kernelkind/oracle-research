@@ -65,5 +65,5 @@
     5
   ],
   "onstart": "ssh-keygen -A && service ssh start",
-  "ssh_direct": true
+  "ssh_direct": false
 }
