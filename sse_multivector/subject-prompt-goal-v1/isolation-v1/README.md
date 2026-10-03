@@ -1,7 +1,7 @@
 # SP failure isolation and prompt correction
 
 Status: all completed comparisons retain failures; a reliable prompt correction
-remains incomplete. A new matched explanation comparison is frozen next.
+remains incomplete. Matched explanation comparison reviews are in progress.
 The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
 keeps ASv6.81 and all previous scores frozen while testing two independent
 example changes under the remaining original attempt ceiling.
@@ -34,6 +34,11 @@ and all valid raw JSON survives the adapter unchanged. No draft is adopted.
 The next [matched collection explanation](collection-contrast-v1.md) freezes
 66 first attempts with ASv6.91 versus ASv6.92; their only difference is C1's
 explanation, with identical reference instructions and full/partial example.
+Its 24 original answers finish valid on first attempts without errors/reuse:
+ASv6.91 has 7 accepts/5 rejects and ASv6.92 has 8 accepts/4 rejects. Full and
+partial shared actions survive in every original answer, but source qualification
+and independent compatible copies still fail. Neither qualifies for prospective
+verification; remaining frozen diagnostic and guard reviews continue.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact

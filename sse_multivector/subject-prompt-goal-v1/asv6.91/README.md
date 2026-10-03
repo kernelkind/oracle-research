@@ -1,6 +1,6 @@
 # ASv6.91 broad and exact source collections
 
-Status: combined experimental draft; not yet model-tested or adopted.
+Status: tested with original-post failures; experimental and not adopted.
 [ASv6.91](ASv6.91.md) preserves ASv6.90's complete-referent instructions and
 replaces only C1 with ASv6.86's 54-row full/partial cutting post and output.
 Its new explanation shows two complete collections: all six specific ingredient,
@@ -44,7 +44,8 @@ physical participants and full/partial actions without adding ASv6.88's twelve
 specimen-source rows. Retaining the smaller example does not prove narrative
 origin or later-property retention. Equivalent concise wording, optional broader
 headings, occurrence-specific chronology and frozen semantic exclusions remain
-those of the existing contract. No semantic repair is claimed before inference.
+those of the existing contract. The completed original screen does not establish
+a reliable repair.
 
 ## Provenance and checks
 
@@ -68,4 +69,13 @@ The [frozen matched comparison](../isolation-v1/collection-contrast-v1.md)
 tests 33 first attempts for this draft against 33 for ASv6.92, whose only
 difference is the original C1 explanation. All 107 relevant offline checks pass;
 24 native plans are frozen with exact route/evidence/rendering identity and
-zero reusable requests. No inference result is claimed before those calls.
+zero reusable requests before inference.
+
+The completed original checkpoint has 7 accepts/5 rejects across 12 valid first
+answers. N063 passes all three; N074 passes only trial 1; N096 passes only trial
+2; N100 passes trials 1/3. All full and partial actions survive, while two source,
+three independent copy and one overlapping displayed-scope failure remain.
+The matching ASv6.92 control has 8 accepts/4 rejects. The explanation table shows
+no unique original gain, and this draft is ineligible for prospective verification.
+Remaining frozen diagnostics and guards continue; see the matched comparison
+for the exact trial table, witnesses and append-only review accounting.

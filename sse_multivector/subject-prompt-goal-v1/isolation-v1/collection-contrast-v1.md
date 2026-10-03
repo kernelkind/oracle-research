@@ -1,6 +1,7 @@
 # Matched broad-versus-exact collection example comparison
 
-Status: frozen before inference; both drafts remain experimental and unadopted.
+Status: the original screen completes with confirmed failures; remaining
+diagnostic and guard reviews are in progress. Both drafts remain unadopted.
 The preceding 117 first attempts finish, reaching 1,256/2,000. Keep every prior
 score, uncertainty, runner error and the explicit current-phase N074 calibration
 correction. Do not introduce a new rule or additional inference pass.
@@ -81,3 +82,37 @@ authored consistency, not model behavior or independent semantic truth.
 Commit source, templates, tests and maintained plan before inference.
 Production ASv6.48, MP, release decisions and foreign pending changes remain
 outside this task; no push is authorized.
+
+## Completed original-post checkpoint
+
+All 24 original answers finish on first attempts with valid native receipts,
+zero provider errors, retries or reuse. Every answer has an output-bound agent
+review; this is bounded development evidence, not independent human gold.
+
+| Post | ASv6.91 trials 1/2/3 | ASv6.92 trials 1/2/3 |
+| --- | --- | --- |
+| N063 | accept / accept / accept | accept / accept / accept |
+| N074 | accept / reject / reject | accept / accept / accept |
+| N096 | reject / accept / reject | accept / reject / reject |
+| N100 | accept / reject / accept | reject / accept / reject |
+| Total | 7 accepts / 5 rejects | 8 accepts / 4 rejects |
+
+Neither version omits the complete shared actions or required partial actions
+in these original answers. ASv6.91 has two source-qualification failures, three
+independent copy failures and one displayed scope failure, overlapping at N100
+trial 2. ASv6.92 has two source failures and two independent copy failures, with
+no confirmed displayed scope defect. The table does not show a unique original
+gain over the matching control. Both fail prospective-verification eligibility.
+
+Concrete independent copy failures retain the complete source subject elsewhere:
+ASv6.91 N074 trials 2/3 omit attributed advice below generic advice components;
+N096 trial 3 leaves its specific dinner-dish 2.1.1.1 empty. ASv6.92 N096 trial 3
+omits the complete saute beneath qualified ingredient occurrences and large-pan
+15.1; N100 trial 1 omits trims below priced sirloin 2.1.1 although the generated
+canonical explicitly includes that same $10-per-pound source. No new general
+price requirement or disputed indirect purchase attachment is introduced.
+
+An append-only review correction fixes ASv6.92 N063 trial 1's tuple count to
+59 rather than 60 without changing its accept verdict. Count the latest
+applicable agent review once; preserve the prior output-bound event. Finish all
+remaining frozen cases and raw-request audits regardless of these failures.

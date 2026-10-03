@@ -264,6 +264,10 @@ ingredient versus exact-group descendant collections explicit inside C1;
 ASv6.92 keeps the old explanation. No primary assignment or tracked implication
 is added or duplicated. Their [matched comparison](../isolation-v1/collection-contrast-v1.md)
 uses 66 frozen first attempts and is experimental, not adopted.
+Its completed original checkpoint has ASv6.91 7/12 versus ASv6.92 8/12 bounded
+accepts. All full/partial actions survive; source and compatible-copy failures
+persist, so neither qualifies for prospective verification. Remaining frozen
+diagnostic and guard reviews continue.
 
 The resumed comparison preserves this map. ASv6.85 changes only C6's source
 order, demonstrating later-established cable lengths without changing its
