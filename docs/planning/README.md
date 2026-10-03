@@ -29,8 +29,10 @@ model on that GPU and the three students running sequentially. The user approved
 proceeding with the $5 preparation on October 3. The tested image is now published
 and verified private. A refreshed compatible 600 W quote is $1.4522/hour,
 with $4.41 planned for three hours including transfer allowances, within the
-approved $5. The $7 request is withdrawn. Launch uses the frozen shared operator. No job timeout, watcher
-error or elapsed review window may terminate this work automatically. Stopping
+approved $5. The $7 request is withdrawn. Its first creation request was rejected
+with HTTP 400; complete inventory recovery confirmed no instance and no charge.  The specific provider explanation was not retained. GPU preparation
+is still pending; replacement-offer and selection-filter review remain open.
+No job timeout, watcher error or elapsed review window may terminate this work automatically. Stopping
 or deleting requires complete, verified local data, or explicit user approval
 to stop incomplete work. Keep the resource and supply any missing work.
 Subject evaluation batching is implemented: each batch's size follows token

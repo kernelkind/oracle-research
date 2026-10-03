@@ -1008,8 +1008,13 @@ read-only pull and anonymous rejection. The refreshed selected compatible
 Three planned hours with transfer allowances cost $4.41, within the approved $5;
 the $7 request is withdrawn. The original transfer-fee ceiling was unnecessarily
 strict: the revised ceilings still prove admission under $5. All existing
-hardware filters are satisfied. Launch uses the frozen shared operator. Automatic deletion remains
-disabled. See the technical plan's
+hardware filters were satisfied.  Vast definitively rejected the request with HTTP 400. The unchanged operator completed its inventory
+recovery and recorded no instance and zero charge; independent authenticated
+inventory was empty.  No GPU preparation checks
+ran. The helper did not retain the provider explanation, so the exact rejection
+cause is unknown. The selected quote is no longer available. Replacement-offer
+and selection-filter review remain open. Automatic deletion remains disabled.
+See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 
 **October 3 stopping rule required by the user:** never terminate the

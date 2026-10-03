@@ -43,8 +43,10 @@ mode, frozen input package and VM rehearsal are ready. The user approved
 proceeding with the $5 preparation on October 3. The tested image is published
 and verified private. A refreshed compatible 600 W quote fits the approved
 $5: $1.4522/hour, or $4.41 for three planned hours including transfer allowances.
-The $7 request is withdrawn. Launch uses the frozen shared operator. The cases and numerical
-memory allowances below await GPU evidence.
+The $7 request is withdrawn. Vast rejected the request with HTTP 400.
+The specific rejection explanation was not retained. A replacement offer and
+selection filters await review. The cases and numerical memory allowances below
+still await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -1267,6 +1269,9 @@ and a three-hour cost-planning/review window. The approved maximum is $5.
 The refreshed selected quote is a compatible offer, at
 $1.4522/hour including storage. Three planned hours plus 200 GB inbound and
 10 GB outbound allowances cost $4.41. The earlier $7 request is withdrawn.
+The rejected operation is `operation-5usd/` under the proposal directory.
+No GPU checks ran, and the quote is now unavailable. The secret-safe helper
+retained HTTP 400 but discarded the provider explanation; the cause is unknown.
 The user rejected the 2.5-hour worker stop: the current package freezes
 `timeout_seconds: null` and `work_seconds: null`. No execution timeout, watcher
 expiry/error/interrupt or budget alert may kill the job. Observation must
@@ -1275,13 +1280,18 @@ deletion is confirmed. The latest October 3 offers did not meet
 the original very low transfer-fee filter. That filter was an unnecessarily
 strict proxy for total cost. The new fee ceilings are $0.0009/GB in each direction;
 three hours at the $1.60/hour ceiling plus 200/10 GB at those fee ceilings total
-$4.989, within $5. The selected quote's actual fees are lower. The $5 operation
-passed shared-operator preparation; use its approved plan and registry digest.
+$4.989, within $5. The rejected quote's actual fees were lower. The $5 operation
+passed local shared-operator preparation, but its creation was rejected; never
+reuse that creation attempt. A new offer needs a separately frozen plan.
 
 The constraint review found that 600 W is a preference and 128 GiB host RAM is
 unmeasured headroom, not demonstrated minimum requirements. The existing 99.5%
 reliability, CPU-core, disk and network thresholds are conservative selection
-criteria. This launch satisfies all those hardware filters; none was weakened.
+criteria. The rejected launch satisfied all those hardware filters; none was weakened.
+A current 600 W quote with about 126 GiB host RAM and 479 Mbps download costs
+about $4.81 for three planned hours including transfers. It is excluded by the
+128 GiB/500 Mbps floors and per-GB fee ceilings despite fitting the total budget.
+Using that alternative requires the pending selection decision.
 The image uses CUDA runtime 13.0.96 and NVRTC 13.0.88, corresponding to CUDA 13.0
 Update 2; retain its driver floor of 580.95.05 ([NVIDIA release notes](https://docs.nvidia.com/cuda/archive/13.0.2/cuda-toolkit-release-notes/index.html)).
 
