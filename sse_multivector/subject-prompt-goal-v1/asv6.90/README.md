@@ -1,6 +1,6 @@
 # ASv6.90 resolved referents before specific subjects
 
-Status: offline-checked experimental draft; not yet model-tested or adopted.
+Status: tested with failures; not adopted.
 [ASv6.90](ASv6.90.md) replaces only the first two source-resolution sentences
 in frozen ASv6.81 with three sentences: resolve the complete supported referent
 for each occurrence, build complete specific subjects and expressed combinations
@@ -70,3 +70,17 @@ the exact edit, unchanged examples, production validation and template identity.
 Both native revision receipts and the unchanged POST wrapper are verified.
 This authoring task makes no inference calls and changes no test files; no
 semantic repair is claimed. Root owns the native development screen and commit.
+
+## Completed development result
+
+The [completed comparison](../isolation-v1/source-completion-phase-v1.md)
+finishes 24 valid original/minimized/later answers: fifteen bounded accepts,
+nine rejects. Originals are 6 accepts/6 rejects, minimized cases 5/6 and later
+properties 4/6. All three original N096 sautés retain explicit author/easy/
+never-fail/feeding-five recipe identity, versus one of three fresh ASv6.81
+answers. Independent N096 copies still fail in every trial. Source completion,
+missing partial actions and later-property/copy failures remain elsewhere.
+The nine occurrence guards have eight accepts and one chronology-preserving
+copy rejection, versus nine accepts for fresh ASv6.81. Neither version imports
+later wetness into earlier packing. This is a bounded targeted source finding,
+not a reliable correction or a unique internal model explanation.

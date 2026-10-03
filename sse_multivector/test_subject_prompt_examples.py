@@ -1762,6 +1762,84 @@ class CompleteSourceCollectionExampleTests(SpecificSourceEnumerationExampleTests
         self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
 
 
+class CombinedReferenceAndSharedActionPromptTests(SharedActionSubjectPromptExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.92/ASv6.92.md"
+
+    def entries(self, path=None):
+        return super().entries(path or self.path)
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = (self.path.parent.parent / "asv6.90/ASv6.90.md").read_text()
+        shared = (self.path.parent.parent / "asv6.86/ASv6.86.md").read_text()
+        first = lambda s: re.findall(r"<example>\n.*?\n</example>", s, re.S)[0]
+        self.assertEqual(self.path.read_text(), before.replace(first(before), first(shared), 1))
+        template = Path(__file__).parent / "experiment_specs/asv6.92-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), self.path.read_text() + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+
+class BroadAndExactSourceCollectionExampleTests(SharedActionSubjectPromptExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.91/ASv6.91.md"
+
+    def entries(self, path=None):
+        return super().entries(path or self.path)
+
+    def test_complete_broad_and_exact_descendant_collections_are_demonstrated(self):
+        entries = self.entries()
+        block = re.findall(r"<example>\n(.*?)\n</example>", self.path.read_text(), re.S)[0]
+        explanation = re.search(r"<explanation>\n(.*?)\n</explanation>", block, re.S).group(1)
+        rows = [tuple(cell.strip() for cell in line.strip("|").split("|"))
+                for line in explanation.splitlines() if line.startswith("|")]
+        source_nodes = ("food_tissue", "food_meat", "group", "tissue_cutting",
+                        "meat_cutting", "complete_cutting")
+        source_subjects = {self.subjects[node] for node in source_nodes}
+        ancestors = self.ancestors()
+        for parent_node in ("ingredients", "group"):
+            matching = [row for row in rows if row[0] == self.subjects[parent_node]]
+            self.assertEqual(len(matching), 1,
+                             "C1 lacks a complete broad/exact collection demonstration")
+            self.assertEqual(len(matching[0]), 2)
+            expected = {self.subjects[node] for node in source_nodes
+                        if parent_node in ancestors[node]}
+            self.assertEqual(set(matching[0][1].split("; ")), expected)
+            for parent in entries:
+                if parent["subject"] != self.subjects[parent_node]:
+                    continue
+                descendants = {entry["subject"] for entry in entries
+                               if entry["number"].startswith(parent["number"] + ".")}
+                self.assertEqual(descendants & source_subjects, expected)
+
+    def test_previous_example_lacks_the_broad_collection_demonstration(self):
+        before = self.path.parent.parent / "asv6.86/ASv6.86.md"
+        with patch.object(self, "path", before):
+            with self.assertRaisesRegex(AssertionError, "broad/exact collection"):
+                self.test_complete_broad_and_exact_descendant_collections_are_demonstrated()
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = (self.path.parent.parent / "asv6.90/ASv6.90.md").read_text()
+        shared = (self.path.parent.parent / "asv6.86/ASv6.86.md").read_text()
+        after = self.path.read_text()
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S)
+                  for s in (before, shared, after)]
+        self.assertEqual(len(blocks[2]), 7)
+        self.assertEqual(blocks[0][1:], blocks[2][1:])
+        omit_explanation = lambda s: re.sub(
+            r"<explanation>\n.*?\n</explanation>", "<explanation/>", s,
+            count=1, flags=re.S,
+        )
+        self.assertEqual(omit_explanation(blocks[1][0]), omit_explanation(blocks[2][0]))
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
+        for block in blocks[2]:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        template = Path(__file__).parent / "experiment_specs/asv6.91-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+
 class CompleteReferentResolutionPromptTests(unittest.TestCase):
     path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.90/ASv6.90.md"
 

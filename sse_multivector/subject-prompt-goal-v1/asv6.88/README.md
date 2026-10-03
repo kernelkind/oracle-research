@@ -1,6 +1,6 @@
 # ASv6.88 enclosing physical-origin example
 
-Status: authored experimental draft; not adopted. Change only C1 of frozen
+Status: tested with failures; not adopted. Changes only C1 of frozen
 ASv6.86. Its ingredient heading names specimen A as physical source, and all
 complete ingredient, group and full/partial-cut subjects retain that origin
 alongside counts and the dog-food role. Twelve source-branch rows bring C1
@@ -30,7 +30,11 @@ existing criteria, exact subscription Sol 6.1 medium settings and the persistent
 production adoption or MP changes. Any candidate selection needs original
 replication and newly frozen prospective verification.
 
-The [frozen development comparison](../isolation-v1/source-completion-phase-v1.md)
-uses 39 ASv6.88 first attempts including all fifteen origin regressions. The
-authored example audit passes; all 95 relevant offline checks pass with the
-other two drafts. No model behavior or semantic repair is established yet.
+The [completed development comparison](../isolation-v1/source-completion-phase-v1.md)
+finishes 39 valid first attempts: 20 bounded accepts, 13 rejects and six
+uncertainties. Originals have 5 accepts/6 rejects/1 uncertain, minimized cases
+4/6 accepts, later-property cases 4/6 and origin controls 7 accepts/3 rejects/5
+uncertain. All twelve explicit-origin answers preserve source and focal trim
+details. The fresh ASv6.81 baseline also passes two of three N100 answers, so
+this example has no established unique original gain. Full-combination, source,
+copy and actual scope failures persist. No reliable correction is established.

@@ -258,6 +258,13 @@ subjects validator and the reviewed positive/negative relationship fixtures;
 they independently check each parent occurrence and every displayed edge.
 The semantic fixtures are agent judgments, not an independent truth oracle.
 
+ASv6.91/92 retain ASv6.90's resolved-reference operation and ASv6.86's C1
+full/partial cutting demonstration. ASv6.91 alone makes the complete broad
+ingredient versus exact-group descendant collections explicit inside C1;
+ASv6.92 keeps the old explanation. No primary assignment or tracked implication
+is added or duplicated. Their [matched comparison](../isolation-v1/collection-contrast-v1.md)
+uses 66 frozen first attempts and is experimental, not adopted.
+
 The resumed comparison preserves this map. ASv6.85 changes only C6's source
 order, demonstrating later-established cable lengths without changing its
 correct output. ASv6.86 imports ASv6.78's reviewed full/partial cutting C1 into

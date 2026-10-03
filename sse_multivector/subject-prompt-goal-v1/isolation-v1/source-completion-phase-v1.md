@@ -1,6 +1,6 @@
 # Complete-source and collection development comparison
 
-Status: in progress; original-post screen completed, remaining controls running.
+Status: completed; all 117 first attempts and semantic reviews finish.
 All inputs were frozen before their generation. Preserve the completed ASv6.81 baseline and
 all prior scores. Resume under the existing 2,000-attempt ceiling, now 1,139
 used. Test three separate interventions, not a combined draft:
@@ -118,8 +118,8 @@ planned first attempts now 117, reaching 1,256 without provider retries.
 ## Completed original-post checkpoint
 
 All twelve original-post plans finish: 48 attempts, 47 valid answers and one
-unknown runner error (fresh ASv6.81 N063 trial 2). Every valid answer has exactly
-one current native agent review; the failed answer is unavailable and has no
+unknown runner error (fresh ASv6.81 N063 trial 2). Every valid answer has a
+current output-bound native agent review; the failed answer is unavailable and has no
 semantic verdict. These bounded assessments are not independent human gold.
 The original 105-attempt plan and adaptive twelve baseline attempts continue
 in full; this checkpoint neither stops controls nor selects a replacement.
@@ -174,3 +174,78 @@ supports a specific source-completion effect for ASv6.90, with generation-time
 and stochastic limits; it does not establish a unique internal model cause or a
 reliable prompt correction. Do not alter frozen prior scores or reinterpret the
 excluded chicken-feed/source ambiguities as new confirmed rejections.
+
+## Completed controls and final audit
+
+All 39 native plans finish with 117 first attempts, 115 valid answers and two
+unknown errors: ASv6.89 S006 trial 3 and fresh ASv6.81 N063 trial 2. Both have
+one HTTP attempt and no semantic review or retry. No answer is reused, unrun,
+malformed, receipt-invalid or stopped by an output cap. The counter is 1,256
+of 2,000. Latest applicable agent verdicts total 72 accepts, 37 rejects and
+six uncertainties; these are bounded development assessments, not full-SP
+correctness or independent human labels.
+
+| Case | ASv6.88 | ASv6.89 | ASv6.90 |
+| --- | --- | --- | --- |
+| S006 | accept / accept / reject | accept / accept / unavailable | accept / reject / accept |
+| D006 | reject / accept / accept | accept / accept / accept | accept / accept / accept |
+| J001 | reject / accept / accept | reject / accept / accept | accept / accept / reject |
+| J002 | accept / reject / accept | reject / accept / reject | accept / accept / reject |
+| Original/minimized/later total | 13 accept, 10 reject, 1 uncertain | 14 accept, 9 reject, 1 unavailable | 15 accept, 9 reject |
+
+ASv6.88 D006 trial 1 retains the full joint and both partial trims but leaves
+ten partial-trim occurrences without their complete combination. S006 trial 3
+loses recipe identity from all seasoning subjects. ASv6.89's five available
+minimized answers pass, but that does not repair its full-original failures.
+ASv6.90 S006 trial 2 again loses the recipe relationship from the seasoning
+pair. Its J001 trial 3 retains every property but misses six full-packing copies
+beneath qualified partial packings; J002 trial 3 loses non-waterproofness from
+every packing action. The other drafts' later-property rejects likewise retain
+the property separately while omitting it from their actions.
+
+| Origin control | ASv6.88 trials |
+| --- | --- |
+| O001, narrative origin | uncertain / reject / reject |
+| O002, explicit origin clause | accept / uncertain / reject |
+| O003, enclosing origin heading | accept / accept / uncertain |
+| O004, origin on each portion | accept / accept / uncertain |
+| O005, different oak source | uncertain / accept / accept |
+
+The fifteen origin answers total seven accepts, three rejects and five
+uncertainties, the same aggregate as the preceding ASv6.86 controls. All twelve
+explicit-origin answers retain the physical origin, full/partial focal trim,
+quantities, purposes and focal trim copies. O001 retains cedar origin only in
+trial 3, an observation under the existing narrative ambiguity rather than a
+new pass requirement or unique gain. Its trials 2/3 independently omit copies
+of explicitly generated purchase/cut or purchase/cut/trim combinations.
+O002 trial 3 independently displays Cutting → generic Trimming. Indirect
+purchase-topic compatibility retains its frozen uncertainty status.
+
+| Occurrence guard | Fresh ASv6.81 | ASv6.90 |
+| --- | --- | --- |
+| K001, later shared stable property | accept / accept / accept | accept / accept / accept |
+| K002, wet only after unpacking | accept / accept / accept | accept / reject / accept |
+| K003, different participant properties | accept / accept / accept | accept / accept / accept |
+
+Both versions retain dry state at packing and wetting only after unpacking.
+ASv6.90 K002 trial 2 supplies the complete temporal subject in thirteen places
+but omits it below four compatible Packing-two-dry-towels leaves. This is a copy
+failure, not a timing, source or scope failure. Equivalent passive packing
+wording is accepted. A full qualified shared action can preserve its expressed
+material group without an additional optional non-action group heading.
+
+Native plan hashes and all 117 actual request bodies match frozen source input.
+Requests use exactly one user message, empty separate instructions, no prior
+response ID, subscription Sol 6.1 medium and no output cap. All 115 valid raw
+JSON answers equal structured model output and final adapter output, with normal
+stops. No repair/postprocessing introduces the failed meanings or copies.
+All answers have a latest applicable output-bound agent review. The corrected
+N074 answer retains two append-only review events; native `current` means hash
+binding to this output, so count its latest role verdict once rather than both
+events. No reviews or old scores are rewritten. All 107 relevant offline checks
+pass after the next drafts' example/source checks are included.
+
+No draft meets the reliable-fix criterion. The next finite
+[ASv6.91/92 matched collection comparison](collection-contrast-v1.md) isolates
+the new example explanation from the combined reference instruction and
+full/partial action example. Production ASv6.48 and MP remain unchanged.

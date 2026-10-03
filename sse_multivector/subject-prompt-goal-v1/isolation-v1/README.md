@@ -1,7 +1,7 @@
 # SP failure isolation and prompt correction
 
-Status: earlier experiments completed; resumed controls are running and a
-reliable prompt correction remains incomplete.
+Status: all completed comparisons retain failures; a reliable prompt correction
+remains incomplete. A new matched explanation comparison is frozen next.
 The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
 keeps ASv6.81 and all previous scores frozen while testing two independent
 example changes under the remaining original attempt ceiling.
@@ -24,8 +24,16 @@ unknown runner error: fresh ASv6.81 6 accepts/5 rejects, ASv6.88 5 accepts/6
 rejects/1 uncertain, and ASv6.89/90 each 6 accepts/6 rejects. ASv6.90 preserves
 N096's explicit complete recipe identity in three of three answers versus one
 of three fresh baseline answers, but independent copy failures persist in all
-three. Remaining minimized, later-property, origin and occurrence controls
-continue without early stopping. No draft is adopted.
+three. All 117 first attempts now finish: 115 valid, two unknown errors, no
+retries/reuse. ASv6.88 totals 20 accepts/13 rejects/6 uncertain across 39,
+ASv6.89 14 accepts/9 rejects/1 unavailable across 24, and ASv6.90 15 accepts/9
+rejects across 24. Occurrence guards add ASv6.81 9/9 accepts versus ASv6.90
+8/9; its remaining failure omits copies while preserving chronology.
+The counter reaches 1,256/2,000, every actual request matches its frozen input
+and all valid raw JSON survives the adapter unchanged. No draft is adopted.
+The next [matched collection explanation](collection-contrast-v1.md) freezes
+66 first attempts with ASv6.91 versus ASv6.92; their only difference is C1's
+explanation, with identical reference instructions and full/partial example.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact

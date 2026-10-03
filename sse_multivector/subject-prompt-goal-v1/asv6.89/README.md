@@ -1,6 +1,6 @@
 # ASv6.89 complete-source collection demonstration
 
-Status: untested candidate; not adopted.
+Status: tested with failures; not adopted.
 [ASv6.89](ASv6.89.md) replaces only C1's explanation in
 [ASv6.87](../asv6.87/ASv6.87.md). It keeps the six complete specific source
 subjects, then demonstrates one complete collection before numbering:
@@ -32,8 +32,12 @@ complete group collection. The same check now verifies the demonstrated
 collection against the reviewed source relationships and every group copy
 in the production-parsed output. Additional checks preserve the original
 examples, source enumeration, scope, relationships, copies and exact POST
-template. Teacher inference has not run. Root will freeze a 24-case screen
-before generation.
+template. The frozen 24-attempt screen now finishes: 23 valid answers, fourteen
+bounded accepts, nine rejects and one unknown S006 trial-3 error. All five
+available minimized answers pass, but originals remain 6 accepts/6 rejects
+and later-property cases 3 accepts/3 rejects. Source, independent copies and
+actual scope failures persist. The [completed comparison](../isolation-v1/source-completion-phase-v1.md)
+preserves the unavailable answer without retry and establishes no reliable fix.
 
 The native `experiment.py revise` command applied the single exact edit in
 [prompt-edits.json](prompt-edits.json). Its automatic
