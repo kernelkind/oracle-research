@@ -868,6 +868,200 @@ def subject_stage_summary(directory, data):
             "returned_subjects": sum(len(row["subjects"]) for row in results)}
 
 
+def preparation_data(data, config):
+    """Select existing complete examples; preparation never repairs teacher data."""
+    settings = config["preparation"]
+    fields = {"max_new_tokens", "cache_fill_tokens", "train_note_ids", "evaluation_note_ids"}
+    if not isinstance(settings, dict) or set(settings) != fields:
+        raise ValueError("invalid preparation settings")
+    for key in ("max_new_tokens", "cache_fill_tokens"):
+        if type(settings[key]) is not int or settings[key] < 1:
+            raise ValueError(f"invalid preparation {key}")
+    if settings["max_new_tokens"] > config["max_new_tokens"]["subjects"]:
+        raise ValueError("preparation output limit exceeds the subject allowance")
+    selected = dict(data)
+    for name, key in (("train", "train_note_ids"), ("evaluation", "evaluation_note_ids")):
+        ids = settings[key]
+        if (not isinstance(ids, list) or not ids or any(not isinstance(i, str) for i in ids)
+                or len(ids) != len(set(ids))):
+            raise ValueError(f"invalid preparation {key}")
+        available = {row["note_id"]: row for row in data[name]}
+        if set(ids) - available.keys():
+            raise ValueError(f"preparation {key} contains notes outside its split")
+        selected[name] = [available[i] for i in ids]
+    milestones = config["training_milestones"]
+    if (not isinstance(milestones, list) or len(milestones) != 2
+            or any(type(m) is not int for m in milestones) or not 1 <= milestones[0] <= 8
+            or not 1 <= milestones[1]-milestones[0] <= 8):
+        raise ValueError("preparation requires exactly two small training updates")
+    return selected
+
+
+def cuda_measurement(config, reset=False):
+    """Synchronize timing and retain resident as well as temporary GPU allocations."""
+    import torch
+    if config["device"] != "cuda":
+        return {"peak_cuda_allocated_bytes": None, "peak_cuda_reserved_bytes": None}
+    torch.cuda.synchronize()
+    if reset:
+        torch.cuda.reset_peak_memory_stats()
+    return {"peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
+            "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved()}
+
+
+def generation_cache_check(model, tokenizer, encoded, config, chunk_tokens):
+    """Build real native caches in chunks, then decode at the allowed maximum.
+
+    These synthetic continuation tokens test memory and execution only. They are
+    never training examples or semantic evaluation outputs. No cache tensors are
+    fabricated, resized or patched outside the model's normal forward path.
+    """
+    import torch
+    if not encoded or any(not row for row in encoded) or type(chunk_tokens) is not int or chunk_tokens < 1:
+        raise ValueError("invalid generation cache check shape")
+    width = max(map(len, encoded))
+    target = width + config["max_new_tokens"]["subjects"]
+    if target > config["max_length"]:
+        raise ValueError("invalid generation cache check shape")
+    inputs = torch.tensor([[tokenizer.pad_token_id]*(width-len(row)) + row
+                           + [row[-1]]*(target-width) for row in encoded], device=config["device"])
+    attention = torch.tensor([[0]*(width-len(row)) + [1]*(len(row)+target-width)
+                              for row in encoded], device=config["device"])
+    positions = attention.cumsum(-1)-1
+    positions.masked_fill_(attention == 0, 0)
+    model.eval()
+    cache, done, calls = None, 0, 0
+    prefill_seconds = fill_seconds = decode_seconds = 0.
+    cuda_measurement(config, reset=True)
+    with torch.inference_mode():
+        while done < target:
+            end = width if done == 0 else min(target-1, done+chunk_tokens) if done < target-1 else target
+            started = time.monotonic()
+            prepared = model.prepare_inputs_for_generation(inputs[:, :end],
+                next_sequence_length=end-done, past_key_values=cache,
+                attention_mask=attention[:, :end], position_ids=positions[:, :end],
+                is_first_iteration=done == 0, use_cache=True, logits_to_keep=1)
+            result = model(**prepared)
+            cache = result.past_key_values
+            if cache is None or int(cache.get_seq_length()) != end or not bool(torch.isfinite(result.logits).all()):
+                raise ValueError("generation cache did not advance or produced nonfinite logits")
+            cuda_measurement(config)
+            elapsed = time.monotonic()-started
+            if done == 0:
+                prefill_seconds = elapsed
+            elif end == target:
+                decode_seconds = elapsed
+            else:
+                fill_seconds += elapsed
+                calls += 1
+            del result, prepared
+            done = end
+    return {"batch_size": len(encoded), "prompt_width": width, "cached_tokens": done,
+            "fill_calls": calls, "prefill_seconds": prefill_seconds,
+            "fill_seconds": fill_seconds, "decode_seconds": decode_seconds,
+            **cuda_measurement(config), "purpose": "Memory check with synthetic continuation; not a quality result."}
+
+
+def run_subject_preparation(config, tokenizer, data, output):
+    """One save/merge/generate/restore cycle and two actual optimizer updates."""
+    plan = subject_training_plan(data, config)
+    plan_path = output / "training-plan.json"
+    if plan_path.exists() and read_json(plan_path) != plan:
+        raise ValueError("frozen preparation training plan differs")
+    write_json(plan_path, plan)
+    stages = output / "preparation"
+    checkpoints = [output / "checkpoints" / f"checkpoint-{m}" for m in plan["milestones"]]
+    if (output / "report.json").exists():
+        if not verify_saved(stages):
+            raise ValueError("preparation hash mismatch")
+        for checkpoint in checkpoints:
+            subject_checkpoint_metadata(checkpoint, output, plan)
+        print("stage: preparation complete (reused)", flush=True)
+        return
+    timing_path = output / "preparation-timings.json"
+    timings = read_json(timing_path) if timing_path.exists() else []
+    for index, milestone in enumerate(plan["milestones"]):
+        checkpoint = checkpoints[index]
+        if not (checkpoint / "complete.json").exists():
+            if checkpoint.exists():
+                raise ValueError("incomplete preparation checkpoint cannot be resumed")
+            started = time.monotonic()
+            train_subject_block(config, tokenizer, data, output, plan, milestone,
+                                checkpoints[index-1] if index else None)
+            timings.append({"stage": f"training-{milestone}", "seconds": time.monotonic()-started})
+            write_json(timing_path, timings)
+        metadata = subject_checkpoint_metadata(checkpoint, output, plan)
+        if index:
+            continue
+        if (stages / "complete.json").exists():
+            if not verify_saved(stages):
+                raise ValueError("preparation hash mismatch")
+            continue
+        attempt = stages / "started.json"
+        if attempt.exists():
+            raise ValueError("unfinished preparation attempt; reconcile saved evidence before restarting")
+        write_json(attempt, {"started_unix": time.time(), "checkpoint": str(checkpoint.relative_to(output))})
+        cuda_measurement(config, reset=True)
+        started = time.monotonic()
+        model = load_model(config, checkpoint)
+        verify_adapter(model, checkpoint)
+        model = model.merge_and_unload(safe_merge=True)
+        if any("lora_" in name for name, _ in model.named_parameters()):
+            raise ValueError("preparation evaluation still contains adapters")
+        merge = {"seconds": time.monotonic()-started, **cuda_measurement(config)}
+        try:
+            batch_plan, encoded = subject_batch_plan(model, tokenizer, data["evaluation"], config)
+            write_json(stages / "subject-batches.json", batch_plan)
+            brief = {**config, "max_new_tokens": {"subjects": config["preparation"]["max_new_tokens"]}}
+            cache_checks, batches = [], []
+            for batch_index, batch in enumerate(batch_plan["batches"]):
+                indices = batch["indices"]
+                rows = [data["evaluation"][i] for i in indices]
+                messages = [row["messages"] for row in rows]
+                cuda_measurement(config, reset=True)
+                generated = generate_batch(model, tokenizer, messages, brief, "subjects",
+                                           encoded=[encoded[i] for i in indices])
+                if len(generated["answers"]) != len(rows):
+                    raise ValueError("preparation subject response accounting differs")
+                receipt = {"indices": indices, **generated, **cuda_measurement(config)}
+                write_json(stages / f"subjects-{batch_index:04}.json", receipt)
+                for i, row, answer in zip(indices, rows, generated["answers"]):
+                    note = stages / f"note-{i:04}"
+                    write_json(note / "subjects.json", {"note_id": row["note_id"],
+                               "messages": row["messages"], "answer": answer})
+                    parsed = {"note_id": row["note_id"], "subjects": [], "errors": []}
+                    try:
+                        parsed["subjects"] = parse_subjects(answer["raw"])
+                    except ValueError as error:
+                        parsed["errors"].append({"task": "subjects", "error": str(error)})
+                    write_json(note / "subjects-result.json", parsed)
+                    write_json(note / "complete.json", file_hashes(note))
+                batches.append(receipt)
+                check = generation_cache_check(model, tokenizer, [encoded[i] for i in indices],
+                                                config, config["preparation"]["cache_fill_tokens"])
+                if (config["device"] == "cuda" and
+                        check["peak_cuda_reserved_bytes"] > config["subject_batching"]["budget_bytes"]):
+                    raise ValueError("observed generation cache peak exceeds the frozen memory budget")
+                cache_checks.append(check)
+                write_json(stages / f"cache-{batch_index:04}.json", check)
+            write_json(stages / "measurements.json", {"subject_answers": len(data["evaluation"]),
+                "max_new_tokens": brief["max_new_tokens"]["subjects"], "merge": merge,
+                "batches": batches, "cache_checks": cache_checks})
+            write_json(stages / "complete.json", file_hashes(stages))
+        finally:
+            del model
+            gc.collect()
+            if config["device"] == "cuda":
+                import torch
+                torch.cuda.empty_cache()
+        if not verify_saved(checkpoint):
+            raise ValueError("preparation modified the saved training checkpoint")
+    write_json(output / "report.json", {"status": "complete", "purpose": "GPU preparation; not a quality comparison.",
+        "training": {"examples": metadata["cursor"], "updates": metadata["updates"]},
+        "preparation": read_json(stages / "measurements.json"), "stage_timings": timings})
+    print("stage: preparation complete", flush=True)
+
+
 def run_subject_pilot(config, tokenizer, data, output, through):
     plan = subject_training_plan(data, config)
     plan_path = output / "training-plan.json"
@@ -934,7 +1128,7 @@ def run(config_path, output, through="report"):
     if pilot:
         required = required - {"mask_prompt", "mask_batch_size", "max_steps", "save_steps", "subject_fraction"}
         required |= {"training_milestones", "subject_batching"}
-    optional = {"subject_batching", "evaluation_tasks"}
+    optional = {"subject_batching", "evaluation_tasks", "preparation"}
     if required - set(config) or set(config) - required - optional:
         raise ValueError(f"configuration fields differ: {set(config) ^ required}")
     if "subject_batching" in config:
@@ -971,6 +1165,12 @@ def run(config_path, output, through="report"):
     if not local_model.is_dir() and not re.fullmatch(r"[a-f0-9]{40}", config["revision"] or ""):
         raise ValueError("remote models require an immutable revision")
     data = load_data(config["data"], config.get("mask_prompt"))
+    preparing = "preparation" in config
+    if (through == "preparation" and not preparing or
+            preparing and (not pilot or through not in ("preparation", "preflight"))):
+        raise ValueError("preparation mode requires its explicit subject-only configuration")
+    if preparing:
+        data = preparation_data(data, config)
     if pilot:
         if set(data["manifest"]["tasks"]) != {"subjects"}:
             raise ValueError("subject pilot requires subjects-only data")
@@ -1010,6 +1210,9 @@ def run(config_path, output, through="report"):
         write_json(output / "preflight.json", preflight(tokenizer, data, config))
         if through == "preflight":
             print("stage: preflight complete (no model weights loaded)", flush=True)
+            return
+        if through == "preparation":
+            run_subject_preparation(config, tokenizer, data, output)
             return
         print("stage: baseline", flush=True)
         baseline_path = output / "baseline" / "results.json"
@@ -1051,7 +1254,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("config", type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--through", choices=("preflight", "baseline", "train", "report"), default="report")
+    parser.add_argument("--through", choices=("preflight", "baseline", "train", "report", "preparation"), default="report")
     args = parser.parse_args()
     run(args.config, args.output, args.through)
 

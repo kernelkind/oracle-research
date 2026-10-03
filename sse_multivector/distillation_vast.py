@@ -32,8 +32,8 @@ def make_spec(settings, offer, package, image):
             'maximum_hourly_usd': settings['offer_maximums']['dph_total'],
             'session_seconds': settings['rental_hours'] * 3600, 'cleanup_seconds': 900,
             'work_seconds': job['timeout_seconds'],
-            # Setup estimate includes the entire $2.20 transfer allowance.
-            'setup_cost_cents': 500, 'manual_stop_cost_cents': 2460,
+            'setup_cost_cents': settings.get('setup_cost_cents', 500),
+            'manual_stop_cost_cents': settings.get('manual_stop_cost_cents', 2460),
             'inbound_gb': settings['inbound_gb'], 'outbound_gb': settings['outbound_gb']}}
 
 

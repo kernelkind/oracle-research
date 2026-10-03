@@ -78,7 +78,7 @@ def code_hashes():
 
 def prepare(config_paths, output, timeout_seconds, through="report"):
     """Copy only explicit inputs; no source code, credentials or host config."""
-    if timeout_seconds <= 0 or not config_paths or through not in ("preflight", "baseline", "train", "report"):
+    if timeout_seconds <= 0 or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation"):
         raise ValueError("runs and a positive timeout are required")
     output = Path(output).resolve()
     if output.exists():
@@ -202,7 +202,7 @@ def main():
     prepare_parser.add_argument("--config", type=Path, action="append", required=True)
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--timeout-seconds", type=int, required=True)
-    prepare_parser.add_argument("--through", choices=("preflight", "baseline", "train", "report"), default="report")
+    prepare_parser.add_argument("--through", choices=("preflight", "baseline", "train", "report", "preparation"), default="report")
     offer_parser = commands.add_parser("check-offer", help="validate a saved quote without renting")
     offer_parser.add_argument("--settings", type=Path, required=True)
     offer_parser.add_argument("--offers", type=Path, required=True)

@@ -20,9 +20,11 @@ Prepare candidate settings and rehearse automation locally before booking the
 separate preparation rental, confirmed in principle October 3. Use existing
 notes while the pilot data is pending. The proposed small check covers an
 adapter update, checkpoint save/reload/merge, brief batched generation at tested
-memory bounds, and restored training. It does not establish future answer quality
-or completeness. Check the actual pilot data's token lengths against those
-bounds when ready. Exact checks, implementation, offer and maximum charge remain open.
+memory bounds, and restored training. The local package now uses two updates
+over 16 existing notes per student and saves brief subject responses separately.
+The VM rehearsal passed; actual GPU fit is pending. Check the pilot data and
+planned batch shapes against the measured bounds when ready. Future answer
+completeness, the rental offer and spending approval remain open.
 
 **Keep preparation cheap, approved October 3:** collect pilot timing estimates
 during the same hardware checks. Keep parser/recovery tests and automation
@@ -148,10 +150,11 @@ Assuming 100 validation notes, 200 final test notes, and the previous
   fifteen checkpoints, and the winner's thinking-off final comparison.
 - **Main rental:** roughly **$149–178**, including training, checkpoint
   transitions, transfers and 25% headroom.
-- **Separate preparation, October 3 proposal:** roughly **1–3 hours / $2–6**,
-  conditional on locally rehearsing brief generation and the check of maximum
-  generation/cache shapes. This replaces the larger placeholder; a quote and
-  spending cap remain open.
+- **Separate preparation, October 3 proposal:** roughly **1–3 hours / $2–5** on a compatible offer with cheap transfers.
+  Saved telemetry measured about 14 minutes fetching all three models and
+  3 minutes startup. Those times are included, not added again. The local
+  rehearsal passed; new GPU paths remain unmeasured. The latest search found
+  no compatible offer within the proposed $5 cap; spending remains unapproved.
 
 These amounts price serial evaluation, not the approved batched pilot. Revise
 the pilot estimate from measured batched throughput and actual output lengths

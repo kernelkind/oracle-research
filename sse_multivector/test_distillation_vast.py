@@ -22,6 +22,33 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_small_preparation_budget_freezes_in_shared_controller(self):
+        sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
+        import package as packager
+        settings, offer = quote()
+        settings.update(approved_maximum_usd=5, rental_hours=3,
+                        worker_timeout_seconds=9000,
+                        setup_cost_cents=100, manual_stop_cost_cents=475)
+        settings['offer_maximums'] = {**settings['offer_maximums'],
+            'inet_down_cost': .0001, 'inet_up_cost': .0001}
+        offer.update(inet_down_cost=.0001, inet_up_cost=.0001)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/model', 'revision': 'a' * 40})
+            deploy.prepare([config], root / 'inputs', 9000, through='preparation')
+            spec = vast.make_spec(settings, offer, root / 'inputs',
+                                  settings['image_repository'] + '@sha256:' + '4' * 64)
+            ledger = root / 'ledger.json'
+            write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
+                'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
+            contract = read_json(packager.freeze(spec, root / 'operation', ledger))
+            self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 5_000_000)
+            self.assertEqual(contract['limits']['setup_cost_micro_usd'], 1_000_000)
+            self.assertEqual(contract['limits']['manual_stop_cost_micro_usd'], 4_750_000)
+
     def test_freezes_shared_workload_with_preserved_experiment_and_budget(self):
         settings, offer = quote()
         with tempfile.TemporaryDirectory() as temporary:

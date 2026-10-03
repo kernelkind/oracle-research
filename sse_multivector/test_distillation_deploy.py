@@ -167,7 +167,7 @@ class SharedSSHTests(unittest.TestCase):
             results = root / 'result.next/work/results'
         return results
 
-    def fixture_package(self, name, changes=None, seconds=180):
+    def fixture_package(self, name, changes=None, seconds=180, through='report'):
         root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / name
         root.mkdir(parents=True)
         config = read_json(Path(os.environ['DISTILLATION_TEST_OUTPUT']) / 'config.json')
@@ -186,7 +186,7 @@ class SharedSSHTests(unittest.TestCase):
             path = root / (candidate + '.json')
             write_json(path, config)
             paths.append(path)
-        deploy.prepare(paths, root / 'inputs', seconds)
+        deploy.prepare(paths, root / 'inputs', seconds, through=through)
         return root
 
     def test_two_candidates_train_and_retrieve_through_shared_ssh(self):
@@ -227,6 +227,31 @@ class SharedSSHTests(unittest.TestCase):
             for milestone in (1, 2, 3, 4, 6):
                 self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
                 self.assertTrue(verify_saved(run / f'evaluations/checkpoint-{milestone}'))
+
+    def test_subject_preparation_retrieves_all_checks_without_baseline(self):
+        from sse_multivector.distillation_run import load_data, verify_saved
+        source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
+        data = load_data(source / 'data', source / 'masks.txt')
+        training_ids = list(dict.fromkeys(row['note_id'] for row in data['train']))
+        evaluation_ids = [row['note_id'] for row in data['evaluation']]
+        root = self.fixture_package('subject-preparation', {
+            'training_milestones': [3, 6], 'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'],
+            'subject_batching': {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                                'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4},
+            'preparation': {'max_new_tokens': 4, 'cache_fill_tokens': 16,
+                            'train_note_ids': training_ids, 'evaluation_note_ids': evaluation_ids}},
+            through='preparation')
+        result = self.run_package(root / 'inputs', root / 'operation')
+        for name in ('first', 'second'):
+            run = result / name
+            self.assertEqual(read_json(run / 'report.json')['training'], {'examples': 6, 'updates': 2})
+            self.assertTrue(verify_saved(run / 'preparation'))
+            self.assertEqual(len(list((run / 'preparation').glob('note-*/subjects.json'))), 2)
+            for milestone in (3, 6):
+                self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
+            self.assertFalse((run / 'baseline').exists())
+            self.assertFalse((run / 'evaluations').exists())
 
     def test_subject_responses_and_checkpoints_copy_while_training_is_running(self):
         policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,

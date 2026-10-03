@@ -972,14 +972,14 @@ workflow before booking. The proposed minimum checks an adapter update,
 checkpoint save/reload/merge, brief batched generation plus the maximum admitted
 memory shape, and a further update after restoring training. Full hierarchy
 comparisons, output-quality review and tuning sweeps are outside this preparation.
-Exact cases, counts and the brief maximum-shape method remain proposals, not
-implemented GPU evidence. Preparation verifies only its tested input/output
+The proposed cases and cache method are now implemented and rehearsed locally.
+This is not GPU evidence. Preparation verifies only its tested input/output
 bounds; it cannot establish completeness of future pilot answers. When the real
 data arrives, tokenize it locally against those bounds before the main rental.
 Out-of-bounds data requires reconsidering the configuration locally.
-The pilot runs its settled training and evaluation procedure. Preparation scope,
-the specific rental offer, maximum charge and launch remain open; this accepts
-separate preparation in principle without authorizing a rental commitment.
+The pilot runs its settled training and evaluation procedure. The exact frozen
+preparation proposal, specific rental offer, maximum charge and launch approval
+remain open; separate preparation in principle does not authorize a rental commitment.
 
 **October 3 preparation cost priority approved:** minimize total billed preparation
 cost on the selected 96GB GPU. Collect training, batched generation and lifecycle
@@ -989,6 +989,22 @@ separate benchmarks, complete hierarchy comparisons or tuning sweeps. Compare
 qualifying offers by expected total charge, including startup, storage and transfers.
 Retrieve and verify the evidence, then explicitly delete promptly after checks
 finish. Exact scope, offer and maximum spending approval remain open.
+
+**October 3 local preparation implementation:** the existing runner now has an
+explicit preparation mode. The frozen proposal selects 16 existing training
+notes per student for two eight-example updates, puts the longest training
+example after restoration, and performs one save/reload/merge/generate/restore
+cycle. It saves brief subject responses separately, capped at 64 tokens, for the
+20 existing evaluation notes. Native forwards fill the generation cache in
+128-token chunks and check final decode at the full 4,096-token allowance;
+synthetic continuation is memory evidence only. Timings and CUDA peaks come
+from the same checks. The numerical memory policy remains a proposal.
+The final local VM rehearsal passed 53 tests, including the pinned real
+tokenizers and managed SSH deployment/retrieval; 59 local controller checks
+passed. The package and image export are local. Private publication, a compatible
+rental offer, spending approval, ledger reservation and actual GPU execution
+remain pending. Automatic deletion remains disabled. See the technical plan's
+[preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
@@ -1109,9 +1125,12 @@ $1.4167/hour hardware's measured subject speed, ordinary validation and the
 winner's thinking-off final comparison cost about $108–113. Allowing subject-only
 training, checkpoint transitions, 25% headroom and transfers gives roughly
 **$149–178 for the main pilot** after removing the thinking-on allowance.
-The October 3 small-preparation proposal is provisionally **1–3 hours / $2–6**,
-conditional on local rehearsal of brief generation and maximum generation/cache shapes;
-it replaces the larger placeholder and is not a quote or approved cap.
+The October 3 small-preparation proposal is provisionally **1–3 hours / $2–5**
+on a compatible offer with cheap transfers. Saved telemetry measured 838 seconds
+fetching the three models plus 181 seconds startup; these are included in that
+total, not added again. The local VM rehearsal passed. The earlier low-transfer
+offer is unavailable, and the latest search found no compatible offer within
+the proposed $5 cap. This is not a current quote or approved spending cap.
 Preparation scope and charge are not approved. Longer outputs, expanded expert
 adapters and the new lifecycle are unmeasured. The estimate
 assumes the proposed 100 validation / 200 final test notes and thinking off on

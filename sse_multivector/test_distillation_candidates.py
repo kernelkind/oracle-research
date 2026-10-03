@@ -66,6 +66,20 @@ class CandidateArchitectureTests(unittest.TestCase):
         for prompt, answer in zip(messages, batched["answers"]):
             single = runner.generate(model, tokenizer, prompt, config, "mask")
             self.assertEqual(answer, {key: single[key] for key in ("raw", "tokens", "truncated")})
+        probe_config = {**config, "max_new_tokens": {"subjects": 120}}
+        encoded = [tokenizer.encode(runner.generation_prompt(tokenizer, prompt), add_special_tokens=False)
+                   for prompt in messages]
+        forward, calls = model.forward, []
+        def record_forward(**kwargs):
+            output = forward(**kwargs)
+            calls.append((kwargs["input_ids"].shape[-1], int(output.past_key_values.get_seq_length())))
+            return output
+        with patch.object(model, "forward", side_effect=record_forward):
+            check = runner.generation_cache_check(model, tokenizer, encoded, probe_config, 16)
+        self.assertEqual(check["cached_tokens"], max(map(len, encoded))+120)
+        self.assertEqual(calls[-1], (1, check["cached_tokens"]))
+        self.assertTrue(all(width <= 16 for width, _ in calls[1:]))
+        self.assertEqual(check["batch_size"], 4)
         subject_config = {**config, "evaluation_tasks": ["subjects"],
                           "subject_batching": {"budget_bytes": 16*1024*1024, "workspace_bytes": 0,
                                                "prefill_bytes_per_token": 1024, "attention_matrix_count": 4}}

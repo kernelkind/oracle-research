@@ -625,6 +625,60 @@ class TinyWorkflowTests(unittest.TestCase):
         self.assertIn("frozen run differs", result.stderr)
         self.assertEqual(before, distillation_run.file_hashes(output))
 
+    def test_subject_preparation_cli_checks_cache_and_restores_training_without_full_evaluations(self):
+        prepared = self.root / "preparation-data"
+        distillation_data.prepare(self.root / "source.json", self.root / "annotations.json",
+            self.root / "subjects.txt", None, "AS-test", None, 2, "test", prepared, tasks=("subjects",))
+        data = distillation_run.load_data(prepared)
+        removed = {"mask_prompt", "max_steps", "save_steps", "subject_fraction", "mask_batch_size"}
+        config = {key: value for key, value in self.config.items() if key not in removed}
+        config.update(data=str(prepared), training_milestones=[3, 6], batch_size=1,
+            gradient_accumulation_steps=8, evaluation_tasks=["subjects"],
+            max_new_tokens={"subjects": 120},
+            subject_batching={"budget_bytes": 8*1024*1024, "workspace_bytes": 0,
+                              "prefill_bytes_per_token": 1024, "attention_matrix_count": 4},
+            preparation={"max_new_tokens": 4, "cache_fill_tokens": 16,
+                         "train_note_ids": [row["note_id"] for row in data["train"]],
+                         "evaluation_note_ids": [row["note_id"] for row in data["evaluation"]]})
+        path, output = self.root / "preparation.json", self.root / "preparation"
+        distillation_run.write_json(path, config)
+        command = [sys.executable, "-m", "sse_multivector.distillation_run", str(path),
+                   "--output", str(output), "--through", "preparation"]
+        preflight_command = [*command[:-3], str(output.with_name('preparation-preflight')),
+                             '--through', 'preflight']
+        preflight = subprocess.run(preflight_command, capture_output=True, text=True, timeout=30)
+        self.assertEqual(preflight.returncode, 0, preflight.stderr + preflight.stdout)
+        self.assertIn('no model weights loaded', preflight.stdout)
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        report = distillation_run.read_json(output / "report.json")
+        self.assertEqual(report["status"], "complete")
+        self.assertEqual(report["training"], {"examples": 6, "updates": 2})
+        self.assertEqual(report["preparation"]["subject_answers"], 2)
+        self.assertEqual(report["preparation"]["max_new_tokens"], 4)
+        self.assertFalse((output / "baseline").exists())
+        self.assertFalse((output / "evaluations").exists())
+        for milestone in (3, 6):
+            self.assertTrue(distillation_run.verify_saved(output / "checkpoints" / f"checkpoint-{milestone}"))
+        self.assertTrue(distillation_run.verify_saved(output / "preparation"))
+        for index, row in enumerate(data["evaluation"]):
+            note = output / "preparation" / f"note-{index:04}"
+            saved = distillation_run.read_json(note / "subjects.json")
+            self.assertEqual(saved["messages"], row["messages"])
+            self.assertLessEqual(saved["answer"]["tokens"], 4)
+            self.assertTrue((note / "subjects-result.json").exists())
+        for check in report["preparation"]["cache_checks"]:
+            self.assertEqual(check["cached_tokens"], check["prompt_width"] + 120)
+            self.assertGreater(check["fill_calls"], 1)
+            self.assertGreater(check["decode_seconds"], 0)
+        replay = subprocess.run(command, capture_output=True, text=True, timeout=30)
+        self.assertEqual(replay.returncode, 0, replay.stderr + replay.stdout)
+        self.assertIn("preparation complete (reused)", replay.stdout)
+        (output / "preparation/note-0000/subjects.json").unlink()
+        broken = subprocess.run(command, capture_output=True, text=True, timeout=30)
+        self.assertNotEqual(broken.returncode, 0)
+        self.assertIn("preparation hash mismatch", broken.stderr)
+
     def test_subject_update_loss_is_independent_of_physical_group_size(self):
         import torch
         from safetensors.torch import load_file

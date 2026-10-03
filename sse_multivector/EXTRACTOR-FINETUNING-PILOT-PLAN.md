@@ -38,8 +38,10 @@ before booking. Training, checkpoint reload/merge, batched generation and
 restored training are the proposed checks, with thinking off throughout.
 Evidence applies only to tested input/output memory bounds; audit the actual
 pilot data's token lengths against those bounds when it is ready. Future answer
-completeness is not established by this preparation. Exact cases and checks,
-local implementation, the offer, maximum charge and launch remain open.
+completeness is not established by this preparation. The local preparation
+mode, frozen input package and VM rehearsal are ready. The proposed cases
+and allowances below await GPU evidence; offer, maximum charge and launch
+approval remain open. No paid action has been taken.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -1207,6 +1209,51 @@ counts from a selected corpus, not model-token counts or a forecast for every
 new topic. These older annotations and counts do not establish the coverage,
 output lengths or any additional labels needed by the chosen sorting method.
 
+## Small GPU preparation — local package ready October 3
+
+`distillation_run --through preparation` uses the existing subjects-only export
+and normal training, adapter, generation, checkpoint and retrieval paths. The
+frozen proposal is under `target/distillation-pilot-v1/subject-preparation-20261003/`.
+ASv6.48 and the existing informal 80/20 split are retained; no future pilot
+validation or final test data is used.
+
+Per student, the package selects 16 existing training notes and saves at 8 and
+16 notes, giving exactly two eight-example updates. The second block includes
+the longest training note after full optimizer/schedule/RNG restoration. Actual
+maximum training lengths are 6,531 Qwen tokens and 6,440 Gemma tokens.
+After the first save it reloads and verifies the adapter, merges into a fresh
+BF16 base, and saves brief subject responses for the 20 existing evaluation
+notes in dynamically calculated batches. Generation stops at 64 new tokens;
+truncation or parsing failure in these brief outputs is preserved, not treated
+as a quality result. There are no full baselines or checkpoint evaluations.
+
+Memory checks use native model forwards to prefill real prompts, fill caches
+with synthetic continuation tokens in chunks of 128, then decode one token at
+the configured 4,096-token output allowance. They do not generate or judge a
+full hierarchy. Longest prompts are 3,232 Qwen tokens and 3,149 Gemma tokens.
+The proposed policy budgets 88 GiB, reserves 4 GiB workspace, allows 256 KiB
+prefill scratch per token and four attention-matrix buffers. These conservative
+numerical allowances are not approved main-pilot settings or proven GPU bounds.
+Record actual batch shapes, stage timings, raw/parsed responses and peak allocated
+and reserved CUDA memory. Compare future data and planned batch/cache shapes
+against the measured cases before booking the main pilot.
+
+The production-path CLI test first failed on the missing preparation mode.
+The final VM rehearsal passed 53 tests: tiny models exercise Qwen's linear/full
+cache and both Gemma sliding/full caches, adapter merge, training restoration,
+real pinned tokenizer preflights, managed SSH deployment and verified retrieval.
+The local controller/contract checks passed 59 tests. No paid GPU evidence or
+new image publication is claimed. Evidence:
+`target/distillation-vm-clean-deployment/attempt-1791044250692284676/`.
+
+Proposed rental controls are one 600 W / 96GB RTX PRO 6000 WS, 300 GB disk,
+a $5 maximum charge, three total hours with a 2.5-hour worker deadline and
+explicit retrieval/deletion. Automatic deletion stays off; observation must
+continue until deletion is verified. The latest October 3 offers did not meet
+both compatibility requirements and that spending proposal. Refresh and freeze
+a qualifying offer before launch. Private publication, maximum charge approval,
+ledger reservation and launch remain pending.
+
 ## Compute estimates and spending constraints
 
 ### Pilot budget — approved approach
@@ -1266,9 +1313,13 @@ Together the retained rows give **82.42–94.61 GPU hours / $116.76–134.03**. 
 illustrative 25% headroom and $3–10 transfers: approximately **$149–178 for the
 main pilot**. These are planning allowances, not confidence intervals or
 approved caps. Separate preparation's October 3 proposal is provisionally
-**1–3 hours / $2–6**, conditional on local rehearsal of the brief generation
-and maximum generation/cache shapes. It replaces the larger placeholder; it is not a quote
-or approved cap. Its scope, specific rental offer and maximum charge remain open.
+**1–3 hours / $2–5** on a compatible offer with cheap transfers. Historical
+model-fetch telemetry totals 838 seconds (Qwen 74, dense Gemma 129, MoE Gemma
+635), plus 181 seconds startup. These are already included in the total-hour
+scenarios. The local rehearsal passed; the expanded expert/merge/cache CUDA
+paths remain unmeasured. The earlier low-transfer offer is unavailable, and
+the latest search found no compatible offer within the proposed $5 cap.
+Rental approval remains open.
 Brief preparation timing cannot price full future answers. Measure merged inference,
 full output lengths and lifecycle overhead on the selected single 96GB RTX PRO
 6000 before final pricing.

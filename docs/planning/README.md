@@ -16,8 +16,11 @@ throughout preparation, training, baselines, checkpoints and the final test.
 Semantic review happens outside the GPU rental. A separate
 paid GPU preparation step is confirmed in principle October 3, using existing
 notes while the pilot data is pending. Prepare its minimal checks and automation
-locally before booking. Verify training, checkpoint reload/merge, batched
-generation and training continuation within declared input/output memory bounds.
+locally before booking. The separate preparation mode now implements two
+updates over 16 existing training notes per student, one save/merge/restore
+cycle, brief subject generation, and native cache checks. The local VM rehearsal
+passed, including the real tokenizers and retrieval over SSH. GPU execution
+and numeric memory allowances still need the paid preparation evidence.
 Check the actual pilot data against those tested bounds when it is ready.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
@@ -214,8 +217,10 @@ selected by this planning update.
 The user confirmed separate GPU preparation in principle October 3 because the
 pilot data is not ready. Existing notes can exercise the hardware workflow;
 they cannot certify the lengths or completeness of future pilot answers.
-Exact checks, local packaging, the offer and maximum charge remain open;
-the larger pilot remains waiting for its data.
+The local package and VM rehearsal are ready. Its exact cases and memory
+allowances are a concrete proposal; rental approval remains open. No compatible
+low-transfer offer met the proposed $5 cap in the latest October 3 search.
+The larger pilot remains waiting for its data.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier
