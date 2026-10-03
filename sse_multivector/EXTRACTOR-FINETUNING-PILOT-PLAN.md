@@ -24,7 +24,8 @@ continuing student training runs, replacing separate fresh starts at each size,
 and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
 notes. Validation/test counts remain open. Task 18's preliminary training setup
 is complete. The subjects-only continuing worker is implemented locally;
-GPU fit, terminal thinking evaluation and progressive retrieval remain open.
+GPU fit and terminal thinking evaluation remain open. The background copier
+is implemented locally.
 Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
@@ -524,6 +525,49 @@ responses reverified locally. All three tiny architectures retained frozen
 original weights, including MoE routers, and supported expert-adapter merge.
 The VM is stopped. Full-size BF16 GPU fit and throughput remain unverified.
 
+The command workload supports optional `progressive_copy` with positive integer
+`poll_seconds`, `bytes_per_second` and `timeout_seconds`. Distillation
+specifications freeze software defaults of 5 seconds, 8 MiB/s and 900 seconds;
+settings can supply other controls before freezing. These defaults are not GPU
+throughput measurements. `run --watch` starts one local copier, with separate
+locks and status under `progressive/`. The worker seals each raw/parsed subject
+response before the next generation batch; completed checkpoints already have
+atomic directory publication. Discovery reads completion records and file
+sizes, without repeatedly hashing large remote tensors. Exclude partial
+checkpoint directories. Transfer processes use remote nice 19 and idle disk
+priority, and stream bounded chunks at the frozen bandwidth limit.
+
+Receive partial bytes under `progressive/partial`, verify the complete file
+SHA256 and size, then atomically publish it under `result.next/work`. Separate
+receipts record successful verification and local modification time. Resumption
+uses received offsets and previously verified files; do not replace changed or
+corrupt evidence. A missing receipt after successful file publication is
+reconstructed after one integrity check. Copy failures are visible in
+`progressive/status.json` and ordinary status, without stopping training.
+Terminal retrieval stops new copy batches, seals the stopped remote tree,
+reuses already verified work files, retrieves missing files and preparation
+evidence, and verifies the complete final file set. The copier never removes
+remote originals or deletes the rental. Full checkpoint sizes and transfer
+charges must be included in the larger pilot's separately approved allowance.
+GPU preparation must measure the transfer effect on workload throughput.
+
+October 2 copying verification passed **129 controller regression tests, 27
+host distillation checks and 50 pinned-container VM tests** (3 architecture,
+29 worker/data and 18 deployment/Vast/data). Production reception resumed a
+truncated byte stream, rejected corrupt contents and recovered a missing
+verification receipt without repeated large-file hashing. The controller
+reported copier startup, status-write and process-exit failures without
+stopping training. Real SSH execution saved subject responses and a complete
+checkpoint locally while the worker was running. Final retrieval reused 174
+files (4,322,227 bytes), and all 246 terminal work files plus six preparation
+files reverified locally. Both students retained all five complete checkpoints,
+with all twelve evaluation stages and twenty-four raw/parsed responses verified.
+The copier and VM stopped, the container export passed, and the final source
+hashes match the VM snapshot. During repeated rehearsals, accumulated artifacts
+filled the local 64 GiB disk during export; expanding that reused disk to
+128 GiB preserved earlier evidence and allowed the export to finish. The fresh
+VM default remains 64 GiB. These checks do not establish full-size GPU impact.
+
 The automatic report separates malformed subject/mask outputs, valid empty
 masks and reference agreement. Token overlap uses whitespace-delimited source
 words (any selected part includes that word), with one-to-one matching and
@@ -819,7 +863,8 @@ Use the same pinned models and approved subject-only adapter recipe as the
 pilot. Prepare locally and rehearse production paths in the VM before booking.
 The worker now supports subjects-only preparation/training, expert adapters,
 memory-based subject batching and the save/merge/evaluate/restore lifecycle.
-Terminal thinking evaluation and the background copier remain to be implemented.
+The background copier is implemented locally; terminal thinking evaluation
+remains to be implemented.
 
 Start with historical N18 (long diary: dense hierarchy and subject truncation),
 N00 (soda bread: negation and qualifiers), and N15 (gianduja/store: short note).
@@ -886,9 +931,9 @@ counts, implementation and spending remain open.
 
 The [process walkthrough](../docs/planning/fine-tuning-pilot-process.md) maps
 where each stage runs. Subjects-only training, ordinary checkpoint evaluations
-and stage accounting are implemented. Terminal thinking and progressive
-retrieval remain intended work; the legacy informal configuration still uses
-both tasks.
+and stage accounting are implemented. Ongoing response/checkpoint copying is
+implemented locally; terminal thinking remains intended work. The legacy
+informal configuration still uses both tasks.
 
 - **Local preparation:** freeze note splits, teacher subject hierarchies, prompt
   versions, model revisions, data order and approved recipe. Rehearse locally;
@@ -942,8 +987,9 @@ Parser fixes can re-evaluate saved answers consistently; missing responses need
 actual generation. Changed settings require a separately identified matched
 comparison. Preserve originals and prepare fixes locally. A sealed
 `complete.json` verifies files, not completion of every required call. The
-subject-response and checkpoint accounting are implemented. The background
-copier and terminal thinking evaluation remain to be implemented and verified.
+subject-response and checkpoint accounting and background copying are
+implemented locally. Terminal thinking evaluation remains to be implemented
+and verified; full-size GPU behavior still needs preparation evidence.
 
 With three students and five checkpoints each, thinking-off validation has
 18 versions (three bases and fifteen checkpoints). Terminal thinking adds three
@@ -1005,8 +1051,8 @@ checkpoint evaluation/resume and the terminal thinking comparison were approved
 October 2. Ordinary generation stays thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
 separate GPU preparation. The ordinary continuing training and merged
-checkpoint lifecycle are implemented; terminal thinking evaluation and the
-background copier remain to be implemented.
+checkpoint lifecycle and background copier are implemented; terminal thinking
+evaluation remains to be implemented.
 
 **Checkpoint lifecycle approved October 2:** complete each 200-note block's
 final update, including any smaller final group, then save the full unmerged

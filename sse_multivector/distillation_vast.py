@@ -26,6 +26,8 @@ def make_spec(settings, offer, package, image):
             'HF_HUB_DISABLE_TELEMETRY': '1', 'TOKENIZERS_PARALLELISM': 'false',
             'PYTHONUNBUFFERED': '1', 'PYTHONDONTWRITEBYTECODE': '1'},
         'outputs': ['results'],
+        'progressive_copy': settings.get('progressive_copy', {
+            'poll_seconds': 5, 'bytes_per_second': 8 * 1024 * 1024, 'timeout_seconds': 900}),
         'limits': {'maximum_charge_cents': int(settings['approved_maximum_usd'] * 100),
             'maximum_hourly_usd': settings['offer_maximums']['dph_total'],
             'session_seconds': settings['rental_hours'] * 3600, 'cleanup_seconds': 900,

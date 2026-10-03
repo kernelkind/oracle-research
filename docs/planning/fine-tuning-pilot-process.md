@@ -104,7 +104,9 @@ optimal training for every student.
 One background copier transfers subject responses and checkpoints
 as soon as saving finishes, while the experiment continues. Verify local copies
 and retain remote originals at least until verification. Limit transfer bandwidth
-and disk activity.
+and disk activity. The copier starts automatically beside the observer; final
+retrieval reuses verified copies. A transfer failure is reported without stopping
+training.
 
 Before explicit deletion, verify both expected work and required local files.
 I inspect baseline and trained responses as they arrive and monitor training

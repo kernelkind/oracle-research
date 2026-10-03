@@ -411,6 +411,13 @@ def evaluate(model, tokenizer, data, config, directory):
                     raise ValueError("saved parsed subject result differs")
             else:
                 write_json(parsed_path, parsed)
+            if tasks == ["subjects"]:
+                seal = note_directory / "complete.json"
+                if seal.exists():
+                    if not verify_saved(note_directory):
+                        raise ValueError("saved subject response hash mismatch")
+                else:
+                    write_json(seal, file_hashes(note_directory))
         if result["errors"]:
             notes.append(result)
             continue

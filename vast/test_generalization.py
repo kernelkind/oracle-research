@@ -94,15 +94,25 @@ class CommandContractTest(unittest.TestCase):
             "verify_destroy_ownership", "cost_record_from_instance", "live_cost_record",
             "record_pre_worker_cost", "status_once", "ssh_options", "run", "ensure_ssh", "main", "parse_args",
             "cleanup_preworker_instance", "ledger_reconciliation_state", "destroy_without_remote_retrieval",
-            "cleanup_terminal", "stop"}
+            "cleanup_terminal", "stop", "ensure_retrieved"}
         self.assertTrue(set(before) <= set(after))
         changed = {name for name in before if ast.dump(before[name]) != ast.dump(after[name])}
         self.assertEqual(changed, allowed_changes)
         # In particular, these execute the original control flow, without a substitute controller.
         for name in ("tar_upload_directory", "tar_download_directory",
                      "ensure_remote_prepared", "ensure_worker_started", "remote_worker", "remote_supervise",
-                     "ensure_retrieved", "destroy_instance", "invoke_destroy_request", "ensure_final_charge"):
+                     "destroy_instance", "invoke_destroy_request", "ensure_final_charge"):
             self.assertEqual(ast.dump(before[name]), ast.dump(after[name]), name)
+        # Progressive retrieval is optional for command workloads. Removing its
+        # branches must leave the established terminal retrieval flow identical.
+        body = after["ensure_retrieved"].body
+        for node in list(body):
+            if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "progressive" for t in node.targets):
+                body.remove(node)
+            elif isinstance(node, ast.If) and isinstance(node.test, ast.Name) and node.test.id == "progressive":
+                index = body.index(node)
+                body[index:index+1] = node.orelse
+        self.assertEqual(ast.dump(before["ensure_retrieved"]), ast.dump(after["ensure_retrieved"]))
         # Endpoint resolution is the only change to the proven attachment and
         # authentication-readiness loop; preserve its retries and receipts.
         replacement = ast.parse("target = resolve_ssh_target(context, instance_id)").body[0]

@@ -24,8 +24,9 @@ lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,
 with disposable merged evaluation and full training-state restoration. Numeric
 GPU allowances still need preparation evidence; measured throughput replaces
-the serial cost reference. Terminal thinking evaluation and the background
-copier remain to be implemented.
+the serial cost reference. The background copier transfers completed responses
+and checkpoints, verifies local copies and reuses them during final retrieval.
+Terminal thinking evaluation remains to be implemented.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user

@@ -17,6 +17,144 @@ from test_generalization import FAKE_COMMAND
 
 
 class CommandWorkloadTest(unittest.TestCase):
+    def test_progressive_inventory_includes_only_published_files(self):
+        self.spec['outputs'] = ['results']
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        note = self.root / 'work/results/student/baseline/note-0000'
+        note.mkdir(parents=True)
+        (note / 'subjects.json').write_text('raw response')
+        (note / 'subjects-result.json').write_text('parsed response')
+        seal = {name: runner.sha256_file(note / name) for name in ('subjects.json', 'subjects-result.json')}
+        runner.atomic_json(note / 'complete.json', seal)
+        partial = self.root / 'work/results/student/checkpoints/checkpoint-200.partial-1'
+        partial.mkdir(parents=True)
+        (partial / 'weights').write_text('not yet published')
+        runner.atomic_json(partial / 'complete.json', {'weights': runner.sha256_file(partial / 'weights')})
+        records = self.call('_remote-progress')['files']
+        self.assertEqual({r['path'] for r in records},
+            {str((note / name).relative_to(self.root)) for name in (*seal, 'complete.json')})
+        self.assertEqual(self.context.config['workload']['progressive_copy'], self.spec['progressive_copy'])
+
+    def test_copy_receive_retains_partial_bytes_and_resumes_without_rewriting_verified_files(self):
+        import hashlib
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        payload = b'first response' * 100
+        record = {'path': 'work/results/subject.json', 'bytes': len(payload), 'sha256': hashlib.sha256(payload).hexdigest()}
+        request = self.root / 'request.json'
+        runner.atomic_json(request, [record])
+        command = [sys.executable, '-B', str(self.operator), '--root', str(self.root), '--config', str(self.config),
+                   '_receive-copy', '--request', str(request)]
+        failed = subprocess.run(command, input=payload[:100], capture_output=True, timeout=20)
+        self.assertNotEqual(failed.returncode, 0)
+        self.assertIn(b'ended early', failed.stderr)
+        self.assertEqual((self.root / 'progressive/partial'/record['path']).read_bytes(), payload[:100])
+        self.assertFalse((self.root / 'result.next'/record['path']).exists())
+        runner.atomic_json(request, [{**record, 'offset': 100}], replace=True)
+        resumed = subprocess.run(command, input=payload[100:], capture_output=True, timeout=20)
+        self.assertEqual(resumed.returncode, 0, resumed.stderr)
+        target = self.root / 'result.next'/record['path']
+        self.assertEqual(target.read_bytes(), payload)
+        self.assertEqual(runner.read_json(self.root / 'progressive/verified'/(record['path']+'.json'))['sha256'], record['sha256'])
+        with mock.patch.object(self.module, 'stream_processes', side_effect=AssertionError('retransmitted verified file')):
+            totals = self.module.copy_files(self.context, Path('/unused'), ['unused'], [record])
+        self.assertEqual(totals['copied_bytes'], 0)
+        self.assertEqual(totals['reused_bytes'], len(payload))
+        target.write_bytes(b'corrupted')
+        with self.assertRaisesRegex(self.module.OperationError, 'verified copy changed'):
+            self.module.copy_files(self.context, Path('/unused'), ['unused'], [record])
+
+    def test_copy_stream_hash_failure_never_publishes_or_stops_worker(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        record = {'path': 'work/results/subject.json', 'bytes': 3, 'sha256': '0' * 64}
+        request = self.root / 'request.json'
+        runner.atomic_json(request, [record])
+        result = subprocess.run([sys.executable, '-B', str(self.operator), '--root', str(self.root), '--config', str(self.config),
+            '_receive-copy', '--request', str(request)], input=b'bad', capture_output=True, timeout=20)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(b'hash mismatch', result.stderr)
+        self.assertEqual((self.root / 'progressive/partial'/record['path']).read_bytes(), b'bad')
+        self.assertFalse((self.root / 'result.next'/record['path']).exists())
+        self.assertFalse((self.root / 'launch/stop-requested.json').exists())
+
+    def test_copy_recovers_receipt_after_publication_without_rehashing_each_poll(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        path = self.root / 'result.next/work/results/subject.json'
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b'already published before the copier was interrupted')
+        record = {'path': 'work/results/subject.json', 'bytes': path.stat().st_size, 'sha256': runner.sha256_file(path)}
+        with mock.patch.object(self.module, 'sha256_file', wraps=self.module.sha256_file) as hashes:
+            for _ in range(2):
+                self.module.copy_files(self.context, Path('/unused'), ['unused'], [record])
+            self.assertEqual(hashes.call_count, 1)
+
+    def test_copier_start_failure_is_visible_and_does_not_stop_training(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        with mock.patch.object(self.module, 'run', side_effect=[{'state': 'running', 'instance_id': '42'}, {'state': 'retrieved'}]), \
+                mock.patch.object(self.module, 'resolve_ssh_target', return_value=['unused']), \
+                mock.patch.object(self.module, 'start_progressive_copy', side_effect=OSError('copy connection failed')), \
+                mock.patch.object(self.module.time, 'sleep'), mock.patch.object(self.module, 'stop') as stop:
+            result = self.module.run_watch(self.context, None)
+        self.assertEqual(result['state'], 'retrieved')
+        self.assertEqual(result['progressive_copy']['state'], 'failed')
+        self.assertIn('connection failed', result['progressive_copy']['error'])
+        stop.assert_not_called()
+
+    def test_copier_status_write_failure_does_not_stop_training(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        publish = self.module.atomic_json
+        def write(path, value, **kwargs):
+            if path == self.root / 'progressive/status.json':
+                raise OSError('local disk full')
+            return publish(path, value, **kwargs)
+        with mock.patch.object(self.module, 'run', side_effect=[{'state': 'running', 'instance_id': '42'}, {'state': 'retrieved'}]), \
+                mock.patch.object(self.module, 'resolve_ssh_target', return_value=['unused']), \
+                mock.patch.object(self.module, 'start_progressive_copy', side_effect=OSError('copy connection failed')), \
+                mock.patch.object(self.module, 'atomic_json', side_effect=write), \
+                mock.patch.object(self.module.time, 'sleep'), mock.patch.object(self.module, 'stop') as stop:
+            self.assertEqual(self.module.run_watch(self.context, None)['state'], 'retrieved')
+        stop.assert_not_called()
+
+    def test_copier_exit_without_status_is_visible_and_does_not_stop_training(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        copier = mock.Mock()
+        copier.poll.return_value = 1
+        copier.returncode = 1
+        with mock.patch.object(self.module, 'run', side_effect=[{'state': 'running', 'instance_id': '42'}, {'state': 'retrieved'}]), \
+                mock.patch.object(self.module, 'resolve_ssh_target', return_value=['unused']), \
+                mock.patch.object(self.module, 'start_progressive_copy', return_value=copier), \
+                mock.patch.object(self.module.time, 'sleep'), mock.patch.object(self.module, 'stop') as stop:
+            result = self.module.run_watch(self.context, None)
+        self.assertEqual(result['progressive_copy']['state'], 'failed')
+        self.assertIn('exited with status 1', result['progressive_copy']['error'])
+        stop.assert_not_called()
+
+    def test_remote_copy_limits_bandwidth_and_refuses_symbolic_links(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        path = self.root / 'work/results/payload'
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b'x' * 65536)
+        record = {'path': str(path.relative_to(self.root)), 'bytes': path.stat().st_size, 'sha256': runner.sha256_file(path)}
+        command = [sys.executable, '-B', str(self.operator), '--root', str(self.root), '--config', str(self.config),
+                   '_remote-copy', '--files', json.dumps([record])]
+        started = time.monotonic()
+        result = subprocess.run(command, capture_output=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, path.read_bytes())
+        self.assertGreaterEqual(time.monotonic()-started, 1.)
+        path.unlink()
+        path.symlink_to(self.input)
+        result = subprocess.run(command, capture_output=True, timeout=20)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertRegex(result.stderr.decode(), 'symbolic link|escapes operation root')
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

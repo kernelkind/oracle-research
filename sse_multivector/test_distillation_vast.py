@@ -43,6 +43,8 @@ class WorkloadTests(unittest.TestCase):
             self.assertEqual(spec['limits']['cleanup_seconds'], 900)
             self.assertEqual(spec['command'][0], deploy.REMOTE_PYTHON)
             self.assertEqual(spec['outputs'], ['results'])
+            self.assertEqual(spec['progressive_copy'], {'poll_seconds': 5, 'bytes_per_second': 8 * 1024 * 1024,
+                                                        'timeout_seconds': 900})
             self.assertIn('/usr/local/cuda/bin', spec['environment']['PATH'].split(':'))
             self.assertIn('/usr/local/nvidia/bin', spec['environment']['PATH'].split(':'))
             self.assertEqual(deploy.verify_package(inputs)['through'], 'report')

@@ -16,6 +16,22 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_subject_response_is_sealed_before_next_generation_batch(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            calls = []
+            def generate(model, tokenizer, messages, config, task, **kwargs):
+                if calls:
+                    for index in calls[-1]:
+                        self.assertTrue(distillation_run.verify_saved(root / f"note-{index:04}"))
+                start = sum(len(indices) for indices in calls)
+                calls.append(list(range(start, start + len(messages))))
+                return {"answers": [dict(answer) for _ in messages], "seconds": 1.}
+            with patch.object(distillation_run, "generate_batch", side_effect=generate):
+                distillation_run.evaluate(model, tokenizer, data, config, root)
+            self.assertTrue(all(distillation_run.verify_saved(root / f"note-{i:04}") for i in range(5)))
+
     def test_subject_checkpoint_with_wrong_update_count_blocks_advancement(self):
         model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
         data["train"] = [{"note_id": "train", "task": "subjects"}]

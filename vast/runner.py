@@ -3169,6 +3169,247 @@ def remote_seal(context: Context, attempt_id: str) -> dict[str, object]:
             }
 
 
+def progressive_policy(context: Context) -> dict[str, int] | None:
+    if not context.command_workload:
+        return None
+    policy = context.config["workload"].get("progressive_copy")
+    if policy is None:
+        return None
+    fields = {"poll_seconds", "bytes_per_second", "timeout_seconds"}
+    if not isinstance(policy, dict) or set(policy) != fields:
+        raise OperationError("invalid progressive copy policy")
+    for field in fields:
+        required_positive_int(policy, field)
+    return policy
+
+
+def copy_records(records: object) -> list[dict[str, object]]:
+    if not isinstance(records, list):
+        raise OperationError("copy records must be a list")
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict):
+            raise OperationError("invalid copy record")
+        path = command_relative_path(record.get("path"))
+        if path.as_posix() != record["path"] or path.parts[0] not in ("work", "preparation-attempts") or len(path.parts) < 2:
+            raise OperationError("invalid copy path")
+        if record["path"] in seen:
+            raise OperationError("duplicate copy path")
+        seen.add(record["path"])
+        size = required_nonnegative_int(record, "bytes")
+        offset = record.get("offset", 0)
+        if type(offset) is not int or not 0 <= offset <= size:
+            raise OperationError("invalid copy offset")
+        require_sha256(required_string(record, "sha256"), "copy SHA256")
+    return records
+
+
+def copy_source(context: Context, relative: str) -> Path:
+    path = context.path(relative)
+    if path.resolve() != path.absolute() or not path.is_file():
+        raise OperationError(f"copy source is missing or contains a symbolic link: {relative}")
+    return path
+
+
+def copy_priority() -> None:
+    os.nice(19)
+    completed_process(["ionice", "-c", "3", "-p", str(os.getpid())])
+
+
+def remote_progress(context: Context) -> dict[str, object]:
+    """Discover completion records without rereading large saved tensors."""
+    if progressive_policy(context) is None:
+        raise OperationError("progressive copying is not configured")
+    copy_priority()
+    records = {}
+    for relative in context.config["workload"]["outputs"]:
+        root = context.path("work") / relative
+        for seal in sorted(root.rglob("complete.json")):
+            if any(".partial" in part or part.startswith(".") for part in seal.relative_to(root).parts):
+                continue
+            contents = read_json(copy_source(context, str(seal.relative_to(context.root))))
+            if not isinstance(contents, dict) or not contents:
+                raise OperationError("invalid progressive completion record")
+            files = dict(contents)
+            files["complete.json"] = sha256_file(seal)
+            for name, digest in files.items():
+                path = seal.parent / command_relative_path(name)
+                record = {"path": str(path.relative_to(context.root)),
+                          "bytes": copy_source(context, str(path.relative_to(context.root))).stat().st_size,
+                          "sha256": digest}
+                copy_records([record])
+                if record["path"] in records and records[record["path"]] != record:
+                    raise OperationError("published progressive files disagree")
+                records[record["path"]] = record
+    return {"files": list(records.values())}
+
+
+def remote_copy(context: Context, records: object) -> None:
+    policy = progressive_policy(context)
+    if policy is None:
+        raise OperationError("progressive copying is not configured")
+    copy_priority()
+    started, sent = time.monotonic(), 0
+    for record in copy_records(records):
+        path = copy_source(context, record["path"])
+        if path.stat().st_size != record["bytes"]:
+            raise OperationError("copy source size changed")
+        with path.open("rb") as source:
+            source.seek(record.get("offset", 0))
+            remaining = record["bytes"] - source.tell()
+            while remaining:
+                chunk = source.read(min(65536, remaining))
+                if not chunk:
+                    raise OperationError("copy source ended early")
+                sys.stdout.buffer.write(chunk)
+                sys.stdout.buffer.flush()
+                sent += len(chunk)
+                remaining -= len(chunk)
+                delay = started + sent / policy["bytes_per_second"] - time.monotonic()
+                if delay > 0:
+                    time.sleep(delay)
+
+
+def copy_destination(context: Context, record: dict[str, object]) -> Path:
+    relative = Path(record["path"])
+    if relative.parts[0] == "preparation-attempts":
+        relative = Path("audit") / relative
+    path = context.path("result.next") / relative
+    if path.resolve() != path.absolute():
+        raise OperationError("copy destination contains a symbolic link")
+    return path
+
+
+def receive_copy(context: Context, request: Path) -> None:
+    """Publish each file only after its complete contents match the saved hash."""
+    for record in copy_records(read_json(request)):
+        target = copy_destination(context, record)
+        partial = context.path("progressive/partial") / record["path"]
+        partial.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        offset = record.get("offset", 0)
+        if (partial.stat().st_size if partial.exists() else 0) != offset:
+            raise OperationError("partial copy offset changed")
+        digest = hashlib.sha256()
+        with partial.open("a+b") as output:
+            output.seek(0)
+            for chunk in iter(lambda: output.read(65536), b""):
+                digest.update(chunk)
+            remaining = record["bytes"] - offset
+            while remaining:
+                chunk = sys.stdin.buffer.read(min(65536, remaining))
+                if not chunk:
+                    raise OperationError("copy stream ended early; partial files retained")
+                output.write(chunk)
+                digest.update(chunk)
+                remaining -= len(chunk)
+            output.flush()
+            os.fsync(output.fileno())
+        if digest.hexdigest() != record["sha256"]:
+            raise OperationError("copy hash mismatch; evidence retained")
+        target.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        if target.exists():
+            raise OperationError("copy destination already exists")
+        os.replace(partial, target)
+        sync_directory(target.parent)
+        atomic_json(context.path("progressive/verified") / (record["path"] + ".json"), {
+            **{key: record[key] for key in ("path", "bytes", "sha256")},
+            "local_mtime_ns": target.stat().st_mtime_ns, "verified_at_utc": utc_text()})
+    if sys.stdin.buffer.read(1):
+        raise OperationError("copy stream has extra bytes")
+
+
+def copy_files(context: Context, private_key: Path, target: list[str], records: object,
+               *, terminal: bool = False) -> dict[str, int]:
+    policy = progressive_policy(context)
+    if policy is None:
+        raise OperationError("progressive copying is not configured")
+    totals = {"copied_files": 0, "copied_bytes": 0, "reused_files": 0, "reused_bytes": 0}
+    records = copy_records(records)
+    # Small groups amortize SSH setup. A large checkpoint file gets its own group.
+    position = 0
+    while position < len(records):
+        with file_lock(context.path("progressive/copy.lock"), blocking=True):
+            if not terminal and context.path("progressive/terminal.json").exists():
+                break
+            pending, size = [], 0
+            while position < len(records) and len(pending) < 32 and size < 8 * 1024 * 1024:
+                record = records[position]
+                position += 1
+                destination = copy_destination(context, record)
+                receipt = context.path("progressive/verified") / (record["path"] + ".json")
+                if destination.exists():
+                    saved = read_json(receipt) if receipt.exists() else None
+                    if saved is not None:
+                        if (any(saved.get(key) != record[key] for key in ("path", "bytes", "sha256"))
+                                or destination.stat().st_size != record["bytes"]
+                                or destination.stat().st_mtime_ns != saved["local_mtime_ns"]):
+                            raise OperationError("previously verified copy changed; evidence retained")
+                    elif destination.stat().st_size != record["bytes"] or sha256_file(destination) != record["sha256"]:
+                        raise OperationError("existing copy hash mismatch; evidence retained")
+                    if saved is None:
+                        atomic_json(receipt, {
+                            **{key: record[key] for key in ("path", "bytes", "sha256")},
+                            "local_mtime_ns": destination.stat().st_mtime_ns, "verified_at_utc": utc_text()})
+                    totals["reused_files"] += 1
+                    totals["reused_bytes"] += record["bytes"]
+                    continue
+                partial = context.path("progressive/partial") / record["path"]
+                offset = partial.stat().st_size if partial.exists() else 0
+                if offset > record["bytes"]:
+                    raise OperationError("partial copy exceeds expected size")
+                pending.append({**record, "offset": offset})
+                size += record["bytes"] - offset
+            if not pending:
+                continue
+            request = context.path("progressive/request.json")
+            atomic_json(request, pending, replace=True)
+            encoded = shlex.quote(json.dumps(pending, separators=(",", ":")))
+            stream_processes(
+                remote_arguments(context, private_key, target, "_remote-copy", "--files", encoded),
+                [sys.executable, str(context.operator_path), "--root", str(context.root),
+                 "--config", str(context.config_path), "_receive-copy", "--request", str(request)],
+                "progressive copy", policy["timeout_seconds"])
+            totals["copied_files"] += len(pending)
+            totals["copied_bytes"] += size
+    return totals
+
+
+def progressive_copy(context: Context, watch: bool) -> dict[str, object]:
+    verify_reviewed_artifacts(context)
+    policy = progressive_policy(context)
+    if policy is None:
+        raise OperationError("progressive copying is not configured")
+    with file_lock(context.path("progressive/watch.lock"), blocking=False):
+        endpoint = read_json(context.path("progressive/endpoint.json"))
+        while True:
+            if (context.path("progressive/terminal.json").exists()
+                    or context.path("launch/retrieval-verification.json").exists()
+                    or context.path("launch/destruction-confirmation.json").exists()):
+                state = {"state": "stopped", "observed_at_utc": utc_text()}
+                atomic_json(context.path("progressive/status.json"), state, replace=True)
+                return state
+            try:
+                inventory = remote_json(context, Path(endpoint["identity"]), endpoint["target"], "_remote-progress")
+                totals = copy_files(context, Path(endpoint["identity"]), endpoint["target"], inventory["files"])
+                state = {"state": "watching" if watch else "copied", **totals, "observed_at_utc": utc_text()}
+                atomic_json(context.path("progressive/status.json"), state, replace=True)
+            except (OperationError, OSError) as error:
+                atomic_json(context.path("progressive/status.json"), {
+                    "state": "failed", "error": str(error), "observed_at_utc": utc_text()}, replace=True)
+                raise
+            if not watch:
+                return state
+            time.sleep(policy["poll_seconds"])
+
+
+def start_progressive_copy(context: Context, private_key: Path, target: list[str]) -> subprocess.Popen[bytes]:
+    atomic_json(context.path("progressive/endpoint.json"), {
+        "identity": str(private_key), "target": target}, replace=True)
+    with context.path("progressive/copier.log").open("ab") as log:
+        return subprocess.Popen([sys.executable, str(context.operator_path), "--root", str(context.root),
+            "--config", str(context.config_path), "copy", "--watch"], stdout=log, stderr=log)
+
+
 def validate_file_records(root: Path, records: object) -> list[dict[str, object]]:
     if not isinstance(records, list) or not records:
         raise OperationError("retrieval manifest contains no files")
@@ -3235,13 +3476,18 @@ def ensure_retrieved(
     destination = context.path("result.next")
     if not destination.is_dir():
         raise OperationError("result.next is missing before retrieval")
-    tar_download_directory(
-        context,
-        private_key,
-        target,
-        "/workspace/oracle-full-build/work/",
-        destination / "work",
-    )
+    progressive = progressive_policy(context) is not None
+    if progressive:
+        atomic_json(context.path("progressive/terminal.json"), {"attempt_id": attempt_id})
+        records = [{**record, "path": "work/" + record["path"]} for record in work_records]
+        # The terminal manifest itself is excluded from its file list. Copy it
+        # using its small authoritative bytes from the sealed response.
+        copied = copy_files(context, private_key, target, records, terminal=True)
+        atomic_json(destination / "work/retrieval-manifest.json", {
+            "schema_version": 1, "artifact_kind": "gte-full-build-retrieval-work", "files": work_records})
+    else:
+        tar_download_directory(
+            context, private_key, target, "/workspace/oracle-full-build/work/", destination / "work")
     verified_work = validate_file_records(destination / "work", work_records)
     verified_preparation: list[dict[str, object]] = []
     if preparation_records is not None:
@@ -3265,6 +3511,8 @@ def ensure_retrieved(
         "preparation_files": verified_preparation,
         "verified_at_utc": utc_text(),
     }
+    if progressive:
+        receipt["progressive_copy"] = copied
     atomic_json(receipt_path, receipt)
     return receipt
 
@@ -4396,6 +4644,8 @@ def status_once(context: Context) -> dict[str, object]:
         "state": state,
         "billing_possible": billing_possible,
     }
+    if context.path("progressive/status.json").exists():
+        result["progressive_copy"] = read_json(context.path("progressive/status.json"))
     if context.path("launch/result-loss-ledger-reconciliation.json").is_file():
         result["ledger_reconciliation_required"] = True
     attempt_id = last_attempt_id(context)
@@ -4657,6 +4907,7 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                 seconds = required_positive_int(context.config, "session_seconds") - context.config.get("cleanup_seconds", 0)
                 atomic_json(path, {"deadline_utc": utc_text(utc_now() + timedelta(seconds=seconds))})
             deadline = parse_utc(read_json(path)["deadline_utc"], "watch deadline")
+        copier = None
         try:
             while True:
                 if utc_now() >= deadline:
@@ -4665,6 +4916,22 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                     raise OperationError("watch deadline expired before creation; prepare a new operation")
                 result = run(context, approval)
                 approval = None
+                if progressive_policy(context) is not None:
+                    try:
+                        if copier is None and result.get("state") == "running":
+                            private = context.path("launch/ssh/id_ed25519")
+                            target = resolve_ssh_target(context, result["instance_id"])
+                            copier = start_progressive_copy(context, private, target)
+                        if copier is not None and copier.poll() not in (None, 0):
+                            raise OperationError(f"background copy exited with status {copier.returncode}; see progressive/copier.log")
+                        if context.path("progressive/status.json").exists():
+                            result["progressive_copy"] = read_json(context.path("progressive/status.json"))
+                    except (OperationError, OSError) as error:
+                        state = {"state": "failed", "error": str(error), "observed_at_utc": utc_text()}
+                        result["progressive_copy"] = state
+                        with contextlib.suppress(OperationError, OSError):
+                            atomic_json(context.path("progressive/status.json"), state, replace=True)
+                        print(f"background copy failed: {error}", file=sys.stderr, flush=True)
                 if result.get("state") not in ("running", "preparing", "remote_access_pending"):
                     return result
                 time.sleep(min(30, max(0, (deadline - utc_now()).total_seconds())))
@@ -4672,6 +4939,14 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
             if context.path("launch/create-request-attempted.txt").exists():
                 stop(context, delete=False)
             raise
+        finally:
+            if copier is not None and copier.poll() is None:
+                copier.terminate()
+                try:
+                    copier.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    copier.kill()
+                    copier.wait(timeout=5)
 
 
 def status(context: Context, watch: bool) -> dict[str, object]:
@@ -4844,6 +5119,13 @@ def parse_args() -> argparse.Namespace:
     run_parser.add_argument("--watch", action="store_true")
     status_parser = subparsers.add_parser("status")
     status_parser.add_argument("--watch", action="store_true")
+    copy_parser = subparsers.add_parser("copy", help="copy completed files without stopping the worker")
+    copy_parser.add_argument("--watch", action="store_true")
+    subparsers.add_parser("_remote-progress", help=argparse.SUPPRESS)
+    copy_remote = subparsers.add_parser("_remote-copy", help=argparse.SUPPRESS)
+    copy_remote.add_argument("--files", required=True)
+    copy_receive = subparsers.add_parser("_receive-copy", help=argparse.SUPPRESS)
+    copy_receive.add_argument("--request", required=True, type=Path)
     subparsers.add_parser("stop", help="stop the workload, retrieve results and delete the instance")
     subparsers.add_parser("_remote-verify-transfer", help=argparse.SUPPRESS)
     subparsers.add_parser("_remote-prepare", help=argparse.SUPPRESS)
@@ -5031,6 +5313,7 @@ def validate_command_context(context: Context) -> None:
         raise OperationError("workload.outputs must list relative result paths")
     for relative in outputs:
         command_relative_path(relative)
+    progressive_policy(context)
 
 
 def command_relative_path(value: object) -> Path:
@@ -5185,6 +5468,16 @@ def main() -> int:
             result = run_watch(context, args.approve) if args.watch else run(context, args.approve)
         elif args.operation == "status":
             result = status(context, args.watch)
+        elif args.operation == "copy":
+            result = progressive_copy(context, args.watch)
+        elif args.operation == "_remote-progress":
+            result = remote_progress(context)
+        elif args.operation == "_remote-copy":
+            remote_copy(context, json.loads(args.files))
+            return 0
+        elif args.operation == "_receive-copy":
+            receive_copy(context, args.request)
+            return 0
         elif args.operation == "stop":
             result = stop(context)
         elif args.operation == "_remote-verify-transfer":

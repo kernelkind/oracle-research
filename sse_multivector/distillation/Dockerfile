@@ -1,7 +1,7 @@
 FROM pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends openssh-server openssh-client \
+    && apt-get install -y --no-install-recommends openssh-server openssh-client util-linux \
     && rm -rf /var/lib/apt/lists/* /etc/ssh/ssh_host_*
 
 ENV PATH=/opt/distillation-venv/bin:$PATH \

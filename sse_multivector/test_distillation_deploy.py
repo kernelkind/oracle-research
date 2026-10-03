@@ -73,7 +73,7 @@ class PackageTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
 class SharedSSHTests(unittest.TestCase):
-    def run_package(self, inputs, root, expected=0, stop=False):
+    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False):
         import argparse
         import importlib.util
         import shutil
@@ -88,6 +88,8 @@ class SharedSSHTests(unittest.TestCase):
             'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
         settings, offer = quote()
         spec = make_spec(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
+        if copy_while_running:
+            spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 1024 * 1024, 'timeout_seconds': 120}
         config = packager.freeze(spec, root, ledger)
         definition = importlib.util.spec_from_file_location('frozen_ssh_runner', root / 'transport/control/vast_full_build.py')
         module = importlib.util.module_from_spec(definition)
@@ -119,17 +121,40 @@ class SharedSSHTests(unittest.TestCase):
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.2)
         call('_remote-worker', '--attempt', '001')
+        copier = module.start_progressive_copy(context, key, endpoint) if copy_while_running else None
+        if copier is not None:
+            self.addCleanup(lambda: copier.terminate() if copier.poll() is None else None)
+        copied_before_terminal = None
         if stop:
             time.sleep(2)
             call('_remote-stop', '--attempt', '001')
         while True:
             state = call('_remote-status', '--attempt', '001')
+            if copier is not None and state['state'] == 'running':
+                local = root / 'result.next/work/results/first'
+                notes = list(local.glob('baseline/note-*/complete.json'))
+                checkpoints = list(local.glob('checkpoints/checkpoint-*/complete.json'))
+                if notes and checkpoints and copied_before_terminal is None:
+                    from sse_multivector.distillation_run import verify_saved
+                    self.assertTrue(all(verify_saved(p.parent) for p in notes + checkpoints))
+                    copied_before_terminal = {str(p.relative_to(root / 'result.next')): p.stat().st_mtime_ns for p in notes + checkpoints}
+                    write_json(root / 'copied-while-running.json', {'remote_state': state, 'files': copied_before_terminal})
             if state['state'] == 'terminal':
                 break
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.5)
-        (root / 'result.next').mkdir()
+        (root / 'result.next').mkdir(exist_ok=True)
         module.ensure_retrieved(context, 'offline-fixture', key, endpoint, '001')
+        if copier is not None:
+            self.assertIsNotNone(copied_before_terminal, (root / 'progressive/copier.log').read_text())
+            self.assertEqual(copier.wait(timeout=20), 0, (root / 'progressive/copier.log').read_text())
+            receipt = read_json(root / 'launch/retrieval-verification.json')['progressive_copy']
+            self.assertGreater(receipt['reused_files'], 0)
+            self.assertGreater(receipt['reused_bytes'], 0)
+            self.assertTrue(all((root / 'result.next' / p).stat().st_mtime_ns == stamp
+                                for p, stamp in copied_before_terminal.items()))
+            module.completed_process([*module.ssh_arguments(context, key, endpoint),
+                'test -f /workspace/oracle-full-build/work/results/first/baseline/note-0000/subjects.json'])
         if expected == 0:
             self.assertEqual(state['exit_status'], 0, (root / 'result.next/work/full-build-attempts/001/full-build.log').read_text())
             self.assertTrue(module.publish_verified_result(context, '001'))
@@ -202,6 +227,20 @@ class SharedSSHTests(unittest.TestCase):
             for milestone in (1, 2, 3, 4, 6):
                 self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
                 self.assertTrue(verify_saved(run / f'evaluations/checkpoint-{milestone}'))
+
+    def test_subject_responses_and_checkpoints_copy_while_training_is_running(self):
+        policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                  'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}
+        root = self.fixture_package('progressive-subject-pilot', {'training_milestones': [1, 2, 3, 4, 6],
+            'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'], 'subject_batching': policy})
+        result = self.run_package(root / 'inputs', root / 'operation', copy_while_running=True)
+        from sse_multivector.distillation_run import verify_saved
+        for candidate in ('first', 'second'):
+            self.assertTrue(verify_saved(result / candidate / 'baseline'))
+            for milestone in (1, 2, 3, 4, 6):
+                self.assertTrue(verify_saved(result / candidate / f'checkpoints/checkpoint-{milestone}'))
+                self.assertTrue(verify_saved(result / candidate / f'evaluations/checkpoint-{milestone}'))
 
     def test_failure_preserves_logs(self):
         root = self.fixture_package('failure', {'max_length': 8})

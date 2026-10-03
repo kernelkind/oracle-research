@@ -749,7 +749,7 @@ as soon as saving finishes while the experiment continues. Verify each local
 copy and retain remote originals at least until verification. Limit transfer
 bandwidth and disk activity to protect experiment throughput. This records the
 intended design. The subject-response and checkpoint accounting checks are now
-implemented; the background copier remains to be implemented.
+implemented. The copier implementation is recorded below.
 
 **October 1 training-continuation correction approved:** the user requested
 removing the separate fresh starts. The larger pilot uses **one continuing
@@ -905,8 +905,32 @@ coverage. Unequal-length answers preserved the token objective across physical
 groups of one or eight; missing responses and invalid checkpoint counters
 blocked advancement. All twelve retrieved evaluation stages and ten checkpoints
 reverified locally, and the VM is stopped. These tiny CPU checks do not establish
-BF16 GPU fit or throughput. Terminal thinking evaluation and progressive
-retrieval remain open.
+BF16 GPU fit or throughput. Terminal thinking evaluation remains open; ongoing
+transfer implementation is recorded below.
+
+**October 2 background copying implemented locally:** the user authorized
+implementation and VM verification of transfers during training. Subjects-only
+evaluation publishes a completion record for each raw/parsed note response.
+The shared frozen Vast operator starts one separate local copier under
+`run --watch`. It discovers published responses and checkpoints, transfers
+only new bytes with low remote CPU/disk priority and a frozen bandwidth limit,
+verifies SHA256 and size before local publication, and retains remote originals.
+Interrupted files retain their received bytes for resumption. Existing verified
+files are reused; integrity failures retain evidence and are reported without
+stopping training or deleting the instance. Final retrieval uses the original
+terminal seal, reuses verified copies, and validates the complete retrieved file
+set. Copy controls are explicit and frozen: software defaults are five-second
+polling, 8 MiB/s and a 900-second transfer timeout. They are operational defaults,
+not a measured throughput optimum or an approved rental configuration. GPU
+impact and the larger pilot's complete checkpoint/transfer allowance still need
+preparation evidence. Terminal thinking evaluation remains open. Verification
+passed 129 shared-controller regression tests, 27 host distillation checks and
+50 tests in the pinned VM container. Real SSH execution transferred raw/parsed
+responses and a complete checkpoint while training was running. Final retrieval
+reused 174 work files and all 246 work files plus six preparation files reverified
+locally. Partial reception, receipt loss, corrupt data, bandwidth limits and
+copier start/status/exit failures were checked; copy failures did not stop
+training. The final container export passed and the VM is stopped.
 
 **October 2 terminal thinking evaluation approved:** keep answer-only training
 without teacher reasoning traces. Use thinking off for the three untuned
