@@ -189,4 +189,6 @@ recipe relationship. Its source defect survives the corrected Food interpretatio
 and provides a concrete example requirement before another wording change.
 
 The user approves this target. [ASv6.98](../asv6.98/README.md) appends a compact
-recipe example while retaining these tested bytes. Its fixed screen is pending.
+recipe example while retaining these tested bytes. Its 18-answer medium screen
+completes at 3 bounded accepts/14 rejects/1 uncertain. S006's recipe-retention
+and placement checks pass all three trials; original-post failures remain.

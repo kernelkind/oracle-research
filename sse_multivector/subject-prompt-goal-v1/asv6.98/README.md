@@ -1,6 +1,7 @@
 # ASv6.98 Enclosing recipe example
 
-Status: experimental draft; offline checks pass; fixed regression screen pending.
+Status: tested experimental draft; S006 target passes; other clear failures remain;
+not adopted.
 The user approves targeting S006 after the [ASv6.97 results](../asv6.97/README.md#completed-results).
 Production adoption remains a separate decision.
 
@@ -89,3 +90,91 @@ historical controls, not a contemporaneous causal comparison. Repeatedly inspect
 development posts do not establish unseen generalization or population accuracy.
 A 3/3 target pass would support a bounded repair signal; remaining original-post
 defects still prevent a reliable SP-fix claim.
+
+## Completed results
+
+All 18 planned medium calls complete with valid first answers, zero failures,
+invalid receipts, retries, reuse or unrun cases. The persistent counter moves
+from 1,505 to 1,523/2,000, leaving 477 attempts. Native saved SDK requests match
+the exact frozen prompt, model, effort and schema; outputs/receipts validate.
+Source and template remain at pre-inference checkpoint `8257bed6`. All 148
+focused offline checks pass; static validation does not imply teacher correctness.
+
+**S006 passes source retention and placement in all three trials.** Each answer
+forms complete salt at 1.1.1, pepper at 1.1.2 and their combination at 1.1.1.1,
+retaining food-seasoning purpose, to taste and the full recipe relationship.
+Never-failing, reliable and never-fail are the accepted reliability paraphrases;
+serving/feeding five people retains the capacity. No absent easy claim is added.
+
+Each trial copies salt beneath both recipe occurrences, Salt and Food seasoning;
+pepper beneath both recipe occurrences, Pepper and Food seasoning; and the
+combination beneath every returned compatible component occurrence. No clear
+whole-answer defect is found within this bounded assessment. The recipe's
+separate entry alone is no longer being used to supply omitted seasoning details.
+The 3/3 result contrasts with the same-criterion 0/3 saved ASv6.97 target results;
+it is a concrete development-case repair signal, not causal proof or unseen accuracy.
+
+| Case | T1 | T2 | T3 | Remaining finding |
+| --- | --- | --- | --- | --- |
+| N063 | R | U | R | All fifteen ingredient roles and full-list meanings retained; T1 food-sharing/Cooking copies and T3 Cooking copies missing. T2 platform membership remains open. |
+| N074 | R | R | R | T1 mother instruction missing Eating advice; T2 individual quantity/plant advice missing Food; T3 individual quantity advice missing Real food. |
+| N096 | R | R | R | T1 full list lacks ingredient copies; T2 full list never forms and packet instructions lack spaghetti copies; T3 individual sautés lack oil copies. |
+| N100 | R | R | R | T1 component-portion sources lack reciprocal material copies; T2 loses eventual-use qualification; T3 lacks complete individual tissue/scrap trimming actions. |
+| S006 | A | A | A | All three complete seasoning sources and required copies retained. |
+| D006 | R | R | R | T1/T3 complete component actions lack reciprocal material copies; T2 individual actions omit measured-group membership. |
+
+Whole-answer totals are 3 bounded accepts, 14 rejects and 1 uncertain. The
+original-post subset is 0/11/1 among twelve; the six diagnostics are 3/3/0.
+ASv6.97's historical whole-answer labels remain 2/15/1. Different returned
+headings and assessment history make that total unsuitable as a causal score
+comparison. Its accepted N063 Q1/Q3 answers have no Cooking heading; ASv6.98
+T1/T3 return one and must therefore retain its compatible descendants. There
+is no demand to add an optional Cooking heading. Original-post failures still
+prevent a reliable whole-prompt claim. The eight prospective posts remain unused.
+
+Concrete native `show` witnesses distinguish three remaining defects:
+
+- T3 N096 forms the individual onion sauté at 1.1.1.1.1.1, celery at
+  1.1.1.1.2.1 and carrot at 1.1.1.1.3.1. Olive oil 1.1.1.1.11 receives their
+  combined sauté, but none of the three individual actions. Combination retention
+  does not replace individual-source copies. The pan heading 1.1.1.2 specifically
+  names sauce preparation; source strings without that purpose need a separate
+  compatibility decision. That question stays open with sauce interpretations,
+  without changing the independently supported oil-copy rejection.
+- T2 N100 parent 16.1.1 says the author's eventual use of the new sealer bought
+  on the Amazon deal; child 16.1.1.1 says love after using it and omits eventual
+  qualification. The same omission occurs under 3.2.1 and 17.1.1. Context cannot
+  restore a parent restriction missing from the child wording.
+- T2 D006 individual tissue action 2.1.2 and scrap action 3.1.2 omit their
+  membership in the shared approximate-quarter-pound portion. Their child
+  describes the combined portion's trimming, not the complete individual action.
+  This is source loss, without also counting copies of never-formed targets;
+  no individual quarter-pound weight is required.
+
+## Review corrections and limits
+
+Two answer reviewers receive only unchanged complete POST and parsed subjects,
+without prompt, baseline or old labels. Their actual reasons are recorded
+separately in native `review`. Initial disagreements expose individual-versus-
+combined source mistakes: reviewer A changes N074 T2/T3 A→R and D006 T2 U→R;
+reviewer B changes D006 T1 A→R after checking the explicit shared-portion
+relationship. Reviewer agreement after that discussion is not independent
+accuracy evidence. Native history preserves eight initial/superseded events,
+36 final reviewer events and 19 broker adjudications (including the pan-purpose
+clarification): 63 hash-current events.
+Scoring uses the latest broker verdict per case, not all hash-current events.
+
+Food-preservation compatibility in N100 stays open: a usual device purpose and
+post domain alone do not establish every instance's food-use restriction, while
+a general topic/device-class reading is distinct. Initial reviewer claims are
+preserved; final N100 rejections use clearer component/action/qualifier witnesses.
+N074 readings, Foodstr membership, dinner/purchase attachments, sauce membership,
+implicit sirloin origin and the duplicated some remain separate uncertainties.
+No Food-other-use exclusion or Seasonings→bare-Salt rejection is used here.
+Agent calibration does not create human whole-answer gold.
+
+The useful next target is N096's repeated loss of individual sauté copies under
+the oil heading. Preserve the recipe-retention example and demonstrate
+that each complete individual action, as well as the shared action, retains every
+compatible participant/tool occurrence. This is a proposal for a subsequent
+prompt iteration, not a new production pass or inference already authorized here.
