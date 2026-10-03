@@ -401,3 +401,17 @@ control for ASv6.83's collection edit. Keep all exact inputs and criteria, no
 quality reruns or stopping. Completing both fixed screens reaches 916 before
 the planned 48 fresh validation answers. Do not treat the additional baseline
 as a new candidate or use validation results to revise the selected prompt.
+
+
+## General-heading permission control, frozen before generation
+
+The existing “need not retell” permission follows the requirement that each
+heading stands alone. ASv6.84 limits that permission explicitly to broader
+headings, preserving complete instance details in the particular subject.
+ASv6.81 N096 trial 1 and N100 trial 2 supply the saved source-omission witnesses.
+This tests a possible reading conflict, not an established internal cause.
+Keep all examples and exclude ASv6.83's collection edit. Freeze twelve original
+answers in three medium trials with exact same-trial ASv6.81 native baselines,
+all existing criteria and every answer reviewed. Extend the frozen selection
+order after the full screen; run the same thirty minimized/repair checks only
+if this exact candidate is selected. Validation remains ungenerated.
