@@ -91,6 +91,13 @@ established by the source's #dinner; its separate dinner recipe at 13.1.1 cannot
 repair the complete action. This distinction was in the frozen criterion.
 No pan parent is returned in that trial, so pan placement remains unexposed.
 
+Candidate N096 trial 1 also returns unrestricted Olive oil at 1.10 directly
+under Food at 1. Lamp oil supplies the heading-alone counterexample; its
+qualified recipe-use child at 1.10.1 cannot repair that edge. The same
+material-versus-purpose error therefore remains in a generated hierarchy even
+though supplied pair judgments pass. This is an additional witness in an
+already rejected answer, without changing the frozen criterion or totals.
+
 All baseline N100 answers lose the full joint trim. Candidate trials 1–4 also
 lose it, despite retaining the sirloin source in both partial actions. Trial 5
 retains the fully qualified joint trim across compatible material occurrences,

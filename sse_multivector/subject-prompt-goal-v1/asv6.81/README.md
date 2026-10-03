@@ -110,6 +110,11 @@ one versus zero confirmed placement errors; its excluded alternative group
 form accounts for the uncertainties. This supports particular progress, not
 reliable completion of the hard original cases.
 
+N096 repeat 1 also puts unrestricted Olive oil directly under Food at 1/1.10,
+despite a qualified recipe-use child. This preserves the original material-
+purpose failure pattern in a different post; it is an additional numbered
+witness in an already rejected case, without changing the counts.
+
 The candidate's N100 joint source survives in only one of five new repeats,
 versus all three development trials. That repeat omits both partial trims.
 N096 can retain the recipe-qualified action while missing compatible copies,

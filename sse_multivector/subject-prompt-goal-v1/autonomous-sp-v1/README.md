@@ -67,6 +67,11 @@ fall from four of five to zero, but N096/N100 still fail all five repeats each.
 Its complete N100 joint trim survives only one repeat, which loses both partial
 actions. The development improvement does not establish a reliable correction.
 
+Candidate N096 repeat 1 additionally places unrestricted Olive oil directly
+under Food (1/1.10). The qualified recipe-use child cannot repair that edge.
+The original material-purpose scope pattern still occurs during generation;
+this witness is added to an already rejected answer without changing totals.
+
 The [twelve attribute controls](../isolation-v1/late-attribute-v1.md) complete
 with ten bounded accepts/two rejects and valid first receipts, no errors or
 reuse. Later references lose the negated attribute from packing actions in

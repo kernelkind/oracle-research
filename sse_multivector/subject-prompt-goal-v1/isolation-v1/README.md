@@ -15,6 +15,11 @@ These operations fail separately. A named recipe can remain in one heading
 while its sauté loses the recipe relationship; a complete sauté can remain in
 the recipe branch while disappearing from compatible ingredient branches.
 
+The original material-versus-purpose scope pattern also persists: candidate
+N096 repeat 1 places unrestricted Olive oil directly under Food. A supported
+culinary-use child does not repair its generic parent's invalid placement.
+Supplied-pair correctness does not guarantee correct edges during generation.
+
 ASv6.81 improves particular cases, but the fixed five-trial original replication
 still rejects every N096/N100 answer. The fresh comparison is 22/24 versus
 23/24 bounded accepts, with the remaining negated material attribute lost from
