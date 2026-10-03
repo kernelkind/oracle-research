@@ -63,6 +63,8 @@ an original confirmed failure is not a reliable fix. A promising screen still
 requires independent original replication and newly frozen cross-topic
 verification. New prospective posts are authored before these outcomes; if
 their results guide another edit, they become development evidence.
+The eight [prospective v2 posts and criteria](prospective-v2.md) are committed
+before any ASv6.91/92 inference. They remain unused until eligibility is met.
 
 ## Source identity and pre-inference checks
 
