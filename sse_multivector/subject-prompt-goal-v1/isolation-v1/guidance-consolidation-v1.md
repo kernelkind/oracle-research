@@ -60,9 +60,12 @@ not scored. Compare actual completed fresh answers by identical case ID and POST
 
 The root is an unblinded broker. Fresh reviewers receive only the complete POST,
 unchanged parsed answer and a randomly assigned neutral answer token, plus the
-frozen semantic criteria below. They receive no prompt, version, experiment path,
-snapshot baseline, previous verdict or token key and must not inspect repository
-files. Lock their assessment before decoding. Root records each verdict with
+frozen semantic criteria below. Root supplies an exact read-only native `show`
+projection command; its neutral E01–E06 runner alias is visible, but the prompt,
+version, version-bearing paths, snapshot baseline, earlier verdicts and token key
+are excluded. Reviewers must not inspect repository files or other metadata.
+This refinement was recorded before the first answer assessment and avoids
+custom review-packet files. Lock assessment before decoding. Root records each verdict with
 native `review --case`; every review binds the actual input/output hashes.
 Randomize answer presentation separately from runner-slot assignment.
 
@@ -106,6 +109,14 @@ must not consume the holdout. Further independent replication and representative
 validation remain necessary before adoption or generalization claims.
 
 ## Pre-inference verification
+
+Before answer assessment, all three blinded reviewers independently reject
+Food seasonings → Salt and accept Food seasonings → Salt for food seasoning,
+matching the user's earlier explicit Salt judgment. Each supplies road-deicing
+salt as the counterexample. Agreement is 3/3 for each of two related heading
+pairs; this checks one calibrated restriction distinction, not whole-answer
+agreement or representative grader accuracy. The N100 origin question remains
+pending and separate from that existing human label.
 
 Commit prompt, exact edits/receipts, reusable spec, checks and maintained plan
 before calls. Verify all six prepared plans have the same eleven complete input
