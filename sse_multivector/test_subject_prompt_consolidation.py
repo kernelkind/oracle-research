@@ -48,3 +48,52 @@ class ConsolidatedSubjectPromptTests(example_checks.FiniteSourceCollectionPrompt
             Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
             Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
         )
+
+
+class FoodClassificationSubjectPromptTests(example_checks.GroupedSourceCopiesPromptTests):
+    path = ROOT / "subject-prompt-goal-v1/asv6.97/ASv6.97.md"
+    subjects = {
+        **example_checks.SHARED_ACTION_SUBJECTS,
+        "salt": "Sea salt",
+        "food_salt": "Sea salt for food seasoning",
+    }
+    # The user accepts Food -> Sea salt. Other C1 meanings retain their
+    # existing reviewed basis; this graph is not a general semantic oracle.
+    relationships = example_checks.SHARED_ACTION_RELATIONSHIPS + (("salt", "food"),)
+
+    def test_food_membership_and_complete_seasoning_subject_coexist(self):
+        entries = self.entries()
+        by_number = {entry["number"]: entry for entry in entries}
+        self.assertTrue(any(
+            entry["subject"] == "Sea salt"
+            and "." in entry["number"]
+            and by_number[entry["number"].rsplit(".", 1)[0]]["subject"] == "Food"
+            for entry in entries
+        ), "C1 lacks the accepted Food -> Sea salt example")
+        for parent in entries:
+            if parent["subject"] in ("Sea salt", "Food seasoning"):
+                with self.subTest(parent=parent["number"]):
+                    self.assertTrue(any(
+                        child["subject"] == "Sea salt for food seasoning"
+                        and child["number"].startswith(parent["number"] + ".")
+                        for child in entries
+                    ), "complete source purpose is missing from a compatible copy")
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = CANDIDATE_PATH.read_text()
+        after = self.path.read_text()
+        blocks = [re.findall(r"<example>\n(.*?)\n</example>", source, re.S)
+                  for source in (before, after)]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
+        for block in blocks[1]:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        template = ROOT / "experiment_specs/asv6.97-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(
+            Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
+            Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
+        )

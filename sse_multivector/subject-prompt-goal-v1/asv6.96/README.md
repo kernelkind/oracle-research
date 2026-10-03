@@ -2,6 +2,10 @@
 
 Status: tested experimental draft; clear failures remain; not adopted.
 
+The user-approved [ASv6.97 C1 correction](../asv6.97/README.md) now demonstrates
+Food → Sea salt and retains the explicit source-seasoning purpose. ASv6.96's
+tested bytes remain frozen; the new version's regression screen is pending.
+
 [ASv6.96](ASv6.96.md) consolidates ASv6.95's repeated instruction checks into
 ten paragraphs before its seven unchanged examples. Instruction words decrease
 from 731 to 534; complete source size decreases from 27,665 to 26,372 UTF-8 bytes.
