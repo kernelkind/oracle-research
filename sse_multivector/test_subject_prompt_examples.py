@@ -814,7 +814,7 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
 
     def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
         root = Path(__file__).parent
-        for version in range(59, 85):
+        for version in range(59, 87):
             with self.subTest(version=version):
                 candidate = (
                     root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"
@@ -1569,6 +1569,51 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
         self.assertEqual(template.read_text(), sources[1] + "\n<post>\n{POST}\n</post>")
         # The shared-predicate example supplements R17's rhetoric case; all
         # established primary assignments stay exactly once.
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+
+class LaterReferentSubjectPromptExampleTests(unittest.TestCase):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.85/ASv6.85.md"
+
+    def test_comparison_uses_qualifications_established_later_in_the_post(self):
+        blocks = re.findall(r"<example>\n(.*?)\n</example>", self.path.read_text(), re.S)
+        post = re.search(r"<post>\n(.*?)\n</post>", blocks[5], re.S).group(1)
+        self.assertLess(post.index("not longer"), post.index("2 m long"),
+                        "C6 does not demonstrate later-established referent qualifications")
+        output = re.search(r"<output>\n(.*?)\n</output>", blocks[5], re.S).group(1)
+        entries = experiment_inputs.validate(
+            {"adapter": "subjects"}, {}, output, None
+        )["parsed"]["subjects"]
+        comparisons = [e for e in entries if "not longer" in e["subject"]]
+        self.assertTrue(comparisons)
+        for entry in comparisons:
+            self.assertEqual(entry["subject"], "2 m cable A not longer than 3 m cable B")
+
+    def test_only_the_source_order_changes_and_reviewed_output_is_preserved(self):
+        before = (self.path.parent.parent / "asv6.81/ASv6.81.md").read_text()
+        self.assertEqual(self.path.read_text(), before.replace(
+            "2 cables: cable A is 2 m long and cable B is 3 m long. A is not longer than B.",
+            "2 cables: cable A is not longer than cable B. Cable A is 2 m long and cable B is 3 m long.",
+        ))
+
+
+class CompleteSharedActionSubjectPromptExampleTests(SharedActionSubjectPromptExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.86/ASv6.86.md"
+
+    def entries(self, path=None):
+        return super().entries(path or self.path)
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = FOOD_PROMPT_PATH.parent.parent / "asv6.81/ASv6.81.md"
+        sources = (before.read_text(), self.path.read_text())
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S) for s in sources]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertEqual(sources[0].split("<example>", 1)[0], sources[1].split("<example>", 1)[0])
+        self.assertEqual(sources[0].rsplit("</example>", 1)[1], sources[1].rsplit("</example>", 1)[1])
+        audited = re.findall(r"<example>\n.*?\n</example>", SHARED_ACTION_PROMPT_PATH.read_text(), re.S)
+        self.assertEqual(blocks[1][0], audited[0])
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 

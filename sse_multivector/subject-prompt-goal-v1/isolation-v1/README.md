@@ -1,6 +1,9 @@
 # SP failure isolation and prompt correction
 
 Status: experiments completed; a reliable prompt correction remains incomplete.
+The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
+keeps ASv6.81 and all previous scores frozen while testing two independent
+example changes under the remaining original attempt ceiling.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact
