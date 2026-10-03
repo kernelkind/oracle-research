@@ -1930,5 +1930,50 @@ class SourceFirstCollectionPromptTests(FiniteSourceCollectionPromptTests):
     path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.94/ASv6.94.md"
 
 
+class GroupedSourceCopiesPromptTests(FiniteSourceCollectionPromptTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.95/ASv6.95.md"
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = (self.path.parent.parent / "asv6.94/ASv6.94.md").read_text()
+        after = self.path.read_text()
+        output_pattern = r"<output>\n(.*?)\n</output>"
+        self.assertEqual(re.sub(output_pattern, "<output></output>", before, flags=re.S),
+                         re.sub(output_pattern, "<output></output>", after, flags=re.S))
+        previous = re.findall(output_pattern, before, re.S)
+        current = re.findall(output_pattern, after, re.S)
+        self.assertEqual(len(current), 7)
+        for old, new in zip(previous, current):
+            old_entries = experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, old, None
+            )["parsed"]["subjects"]
+            new_entries = experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, new, None
+            )["parsed"]["subjects"]
+            self.assertEqual(Counter(tuple(entry.items()) for entry in old_entries),
+                             Counter(tuple(entry.items()) for entry in new_entries))
+        template = Path(__file__).parent / "experiment_specs/asv6.95-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+    def test_all_copies_of_a_subject_are_emitted_together(self):
+        blocks = re.findall(r"<example>\n(.*?)\n</example>", self.path.read_text(), re.S)
+        for case, block in enumerate(blocks, 1):
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            entries = experiment_inputs.validate(
+                {"adapter": "subjects"}, {}, output, None
+            )["parsed"]["subjects"]
+            closed = set()
+            previous = None
+            for entry in entries:
+                subject = entry["subject"]
+                if subject != previous:
+                    self.assertNotIn(subject, closed,
+                                     f"C{case} separates copies of {subject!r}")
+                    if previous is not None:
+                        closed.add(previous)
+                    previous = subject
+
+
 if __name__ == "__main__":
     unittest.main()
