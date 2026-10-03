@@ -1480,74 +1480,98 @@ that the pilot is scientifically sufficient. Its amount and the final-training
 reserve remain open; one complete training pass is approved. No fixed pilot/rest
 ratio has been adopted.
 
-### Subjects-only serial cost reference — October 2
+### Conditional subjects-only batched cost reference — October 3
 
-This replaces the combined subject/mask reference. It prices the historical
-single-note subject execution, not the approved batched pilot. Assume
-three continuing students, 1,000 training notes each, 100 validation notes and
-200 final test notes for the winner's trained/untuned comparison. Validation/test
-counts remain proposals. Use the previous **$1.4167/hour** RTX PRO 6000 WS rate
-including 300 GB storage and its measured subject-generation speed. This is a
-historical hardware anchor, not a selected current offer or a multi-GPU speed claim.
-Reprice from batched preparation throughput after preparing the per-GPU memory
-budget and dynamic batch calculation. Dividing serial hours by batch size is not
-a measured speedup: batch compute time, padding and different answer lengths
-affect throughput.
+This replaces the serial reference with a **projection**, using measured prep
+batch shapes under **ASv6.48** and historical complete/truncated subject-answer
+lengths. It assumes 1,000 distinct training notes per student, one continuing
+pass, the proposed 100 validation / 200 final test notes, thinking off, and
+only the selected student's final baseline/trained comparison. It does not price
+the longer experimental ASv6.98 prompt or authorize spending.
 
-| Component | GPU hours | Dollars before headroom |
+| Component | Projected GPU hours | Counted work |
+| --- | ---: | --- |
+| Training, all three students | 5.58 | 125 updates each; no checkpoint restarts |
+| Validation baselines and checkpoints | 19.11 | 3 baselines + 15 trained stages, 100 notes each |
+| Winner's final comparison | 2.74–5.39 | 200 notes before and after training |
+| Extra lifecycle, startup and final retrieval | Allowance 1–2 | Model fetch/load, merge, checkpoint restoration/publication, retrieval tail |
+| Total after 25% headroom | 35.54–40.10 | Headroom applied once to the combined hours |
+
+At the prep's historical **$1.4153/hour including storage**, add $1 transfer
+fees for about **$51–58**. At an illustrative $1.60/hour, about **$58–65**.
+These are planning allowances, not confidence intervals or a selected offer.
+The $3.26 preliminary prep charges already incurred are separate.
+
+**Method:** for each measured batch, use its 64-token generation duration plus
+`max(0, longest saved answer in the batch - 64) × measured incremental-token seconds`.
+Use the incremental-token timing at the filled native cache; exclude parallel
+synthetic cache-fill time. Retain historical truncated 4,096-token answers at
+their saved length without claiming completeness. Reuse the observed 20-note
+batch layout arithmetically five times for 100 notes and ten times for 200 notes,
+including its small tail batch. Actual pilot notes will be distinct. Average
+answer length alone would hide time spent waiting for each batch's longest answer.
+Use old baseline lengths for baselines and old trained lengths for all five
+checkpoints; no larger-pilot answer lengths exist yet.
+
+Extrapolate the mean of two measured eight-example updates to 125 per student.
+Their observed minimum/maximum sensitivity gives **4.20–6.97 total training hours**,
+versus the 5.58-hour mean projection. Combining that sensitivity with the other
+allowances yields **33.81–41.83 total hours**, about **$49–60** at the historical
+rate or **$55–68** at $1.60/hour. Two updates do not establish a runtime bound.
+The prep's first training-stage overhead already includes its initial model
+fetch/load; do not add the earlier 838-second download observation again.
+Progressive transfers overlap computation. Fifteen checkpoints extrapolate to
+about 19.5 GB; at the historical offer's transfer rates, an illustrative 300 GB
+in / 30 GB out costs about $0.90, rounded to $1. Transfer time is covered by the
+extra allowance and headroom, rather than counted once per overlapping copy.
+
+If all three final baseline/trained comparisons are generated before local
+selection, the same projection is **45.84–47.09 hours / $66–68** at the historical
+rate, rather than the winner-only amount. Final-test collection and rental
+arrangement remain decisions, so neither variant is an approved run contract.
+Full autoregressive generation is unmeasured under the new lifecycle; short
+samples and a single incremental step cannot guarantee full-output throughput.
+New prompts/data may reduce batch sizes, increase training time, or need a
+changed configuration. Reprice after those inputs are selected.
+
+**Prompt-length audit, October 3:** offline native chat-template/tokenizer checks
+used all 80 existing subject training examples and 20 held-out prompts. ASv6.98
+is an experimental draft, not an adopted pilot prompt. Old teacher answers were
+paired with it only for this length check; no new labels or quality results were
+produced and no pilot input was frozen.
+
+| Token measure | Qwen3.8-27B | Both Gemma students |
 | --- | ---: | ---: |
-| Three thinking-off untuned validation baselines | 5.53 | $7.84 |
-| Fifteen thinking-off trained validation checkpoints | 61.17 | $86.65 |
-| Selected student's thinking-off trained/base final comparison | 9.72–12.91 | $13.77–18.29 |
-| Subject-only training, all three students | Illustrative 3–5 | $4.25–7.08 |
-| Extra load/merge/evaluate/restore overhead across milestones | Illustrative 3–10 | $4.25–14.17 |
+| ASv6.98 prompt alone, existing 100 notes | 8,066–8,507 | 7,921–8,375 |
+| Longest prompt plus 4,096-token output allowance | 12,603 | 12,471 |
+| Longest training sequence with old teacher answer | 11,806 | 11,644 |
+| Existing training examples exceeding 8,192 | 79/80 | 74/80 |
+| Prompts plus allowance exceeding 8,192 | 100/100 | 100/100 |
 
-The ordinary subject-generation subtotal is **76.42–79.61 GPU hours / $108–113**.
-Each student consumes 1,000 subject examples once, giving **125 updates**, 25
-per block. Old trainer timings came from mixed subject/mask updates, not the
-new task. Saved subject sequences average about 3,800 tokens versus 2,560 for
-mask sequences. Linear/quadratic sequence-length sensitivities give about
-3.4–4.4 total training hours; the 3–5-hour allowance is a scenario, not measured
-subject-only throughput or a bound. New expert adapters, loss normalization and
-actual corpus lengths require preparation measurements. Historical trainer times
-already include periodic checkpoint writes/hashing; add only lifecycle work not
-included there. The 3–10-hour transition allowance is unmeasured, approximately
-12–40 minutes per milestone across fifteen checkpoints.
-
-The user removed the terminal thinking-on evaluations on October 2. Their
-previous runtime and cost allowances are excluded from this calculation.
-Together the retained rows give **82.42–94.61 GPU hours / $116.76–134.03**. Add
-illustrative 25% headroom and $3–10 transfers: approximately **$149–178 for the
-main pilot**. These are planning allowances, not confidence intervals or
-approved caps. Separate preparation's October 3 proposal is provisionally
-**1–3 hours / $2–5** on a compatible offer with cheap transfers. Historical
-model-fetch telemetry totals 838 seconds (Qwen 74, dense Gemma 129, MoE Gemma
-635), plus 181 seconds startup. These are already included in the total-hour
-scenarios. The local rehearsal passed; the expanded expert/merge/cache CUDA
-paths remain unmeasured. The earlier low-transfer offer is unavailable, and
-the latest search found no compatible offer within the proposed $5 cap.
-Rental approval remains open.
-Brief preparation timing cannot price full future answers. Measure merged inference,
-full output lengths and lifecycle overhead on the selected single 96GB RTX PRO
-6000 before final pricing.
-Dropping masks reduces work but does not establish lower peak training memory.
+The existing worker therefore rejects that diagnostic input under its current
+8,192-token setting. This is a configuration mismatch, not proof of an actual
+GPU memory failure. Prep tested training lengths only through 6,531 Qwen /
+6,440 Gemma tokens and cached generation through 7,328 / 7,245 tokens.
+Choose the pilot prompt and establish appropriate context/memory settings before
+freezing or launching. Do not truncate prompts, notes or labels to bypass this gate.
+The raw source corpus exists; pilot note selection and selected-teacher labels
+remain pending. The existing 100-note annotations establish no broader coverage.
 
 At the proposed split sizes, teacher annotation requires **1,300 subject calls**,
-with training labels shared across all checkpoints. At the saved receipt means
-of 2,631 uncached input / 1,108 output tokens per subject call, this is about
-4.86M tokens before label review. There are **1,800 validation reviews plus 400
-winner final reviews**; each now receives subjects and hierarchy without masks.
-The review prompt/model remains open. The existing subscription route assumes
-zero incremental API cash charge, excluding its already-paid subscription;
-quota is finite. Paid API labels or reviews require a separate estimate and
-approval and are additional to the GPU amounts above. No spending is authorized.
+with training labels shared across checkpoints. There are **1,800 validation
+reviews plus 400 winner final reviews**. Prompt/model selection and actual token
+lengths are required to price labels/reviews. The existing subscription route
+assumes zero incremental API cash; paid API work would be additional and requires
+separate admission/approval.
 
-Evidence: native `subjects.json` timings and training records under
-`target/distillation-pilot-v1/launch-20260929-v2/operation/result/work/results/`,
-`target/distillation-pilot-v1/gpu-cost-research-20261002/subject-only-cost.json`,
-and the retained preliminary-run deep dive. Trained N18 outputs were truncated;
-longer complete outputs and disposable merged inference are not yet measured.
-The older runtime scenarios below do not price this approved subjects-only recipe.
+Evidence: `target/distillation-pilot-v1/batched-cost-and-input-audit-20261003/`
+contains `calculate.py`, `batched-cost.json` with source hashes, and
+`prompt-length-audit.json`, and `production-preflight-check.json`. All three
+ASv6.48 native preflights passed; all three ASv6.98 diagnostics were rejected
+for exceeding 8,192 tokens, as expected. Inputs are native prep receipts under
+`subject-preparation-20261003-v2/` (Qwen) and `subject-preparation-20261003-v3/`
+(Gemmas), plus saved subject answers from `launch-20260929-v2/`.
+The older hardware/runtime scenarios below do not price this subjects-only recipe.
 
 ### GPU alternatives and duration — October 1, provisional
 

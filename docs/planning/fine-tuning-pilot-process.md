@@ -51,6 +51,13 @@ Freeze shared training, validation, and final test notes, checked teacher
 answers, prompts, model revisions, and training settings. Keep authors and duplicates
 within one split.
 
+**Prompt-length check, October 3:** prep used **ASv6.48**. The current experimental
+**ASv6.98** needs about 7,900–8,500 input tokens on the existing notes, before
+answers. Every note exceeds the current 8,192-token limit when its 4,096-token
+output allowance is included. Choose the pilot prompt and resolve its context
+and memory requirements before freezing inputs; the prep does not establish
+that the latest prompt fits.
+
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
 and 1,000**, are approved. **100 validation** and **200 final test** notes remain
 proposals. Keep final test notes out of development.
@@ -157,29 +164,27 @@ for both. Whether GPU test outputs are
 collected during the main rental and kept sealed, or generated later, is open.
 Rental grouping, duration, and spending also remain open.
 
-## Serial cost reference — October 2
+## Conditional batched cost reference — October 3
 
-Assuming 100 validation notes, 200 final test notes, and the previous
-**$1.4167/hour** GPU's measured single-note subject-generation speed:
+Using prep's **ASv6.48** input/batch shapes, saved historical answer lengths,
+**100 validation / 200 final test notes** (proposed), and only the winner's
+final comparison:
 
-- **Ordinary evaluation:** about **$108–113**, including three baselines,
-  fifteen checkpoints, and the winner's thinking-off final comparison.
-- **Main rental:** roughly **$149–178**, including training, checkpoint
-  transitions, transfers and 25% headroom.
-- **Completed preparation, October 3:** the repaired Gemma rental took **65.5 minutes**
-  and has **$1.64 preliminary charges**, including transfers. Qwen checks were reused.
-  Including the earlier failed prep, preliminary charges are **$3.26**, within $5.
-  All measured hardware checks passed.
+- **Training:** about **5.6 GPU hours** across all three continuing runs.
+- **Baselines and evaluations:** about **22–24.5 GPU hours**, including all
+  five checkpoints per student and the winner's final baseline/trained comparison.
+- **Total planning allowance:** about **36–40 hours / $51–58** at the prep's
+  **$1.4153/hour**, including 1–2 hours extra overhead, 25% headroom and $1
+  transfer fees. At an illustrative $1.60/hour, this is **$58–65**.
 
-These amounts price serial evaluation, not the approved batched pilot. Revise
-the pilot estimate from measured batched throughput and actual output lengths
-on the intended hardware.
-Memory arithmetic selects each batch's size; it does not establish
-runtime or imply dividing serial time by batch size.
-The thinking-on evaluations and their cost allowance have been removed.
-The main pilot's specific rental offer, maximum charge and data remain open.
-Teacher labeling and local review assume the existing Codex subscription;
-paid API work would be additional. See the technical plan for assumptions.
+These are projections from brief generation and one-token decode measurements,
+not a measured full pilot or a spending cap. They **do not price ASv6.98**:
+that prompt exceeds the tested configuration. Actual pilot data, prompt choice
+and final-test collection arrangement must be settled before a launch estimate.
+Teacher labels and local review assume the existing subscription; paid APIs add cost.
+
+Completed prep's preliminary charges are **$3.26**, including the failed attempt;
+those already-incurred charges are separate. 
 
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

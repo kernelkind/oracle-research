@@ -1198,25 +1198,31 @@ attempts. Budget admission passed before the run; no replacement rental is autho
   [existing fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md),
   not the teacher selection. Its preliminary 100-note experiment is tracked in 29.
 
-**Subjects-only serial GPU reference (October 2):** at the previous
-$1.4167/hour hardware's measured subject speed, ordinary validation and the
-winner's thinking-off final comparison cost about $108–113. Allowing subject-only
-training, checkpoint transitions, 25% headroom and transfers gives roughly
-**$149–178 for the main pilot** after removing the thinking-on allowance.
-The October 3 small-preparation proposal is provisionally **1–3 hours / $2–5**
-on a compatible offer with cheap transfers. Saved telemetry measured 838 seconds
-fetching the three models plus 181 seconds startup; these are included in that
-total, not added again. The local VM rehearsal passed. The earlier low-transfer
-offer is unavailable, and the latest search found no compatible offer within
-the proposed $5 cap. This is not a current quote or approved spending cap.
-Preparation scope and charge are not approved. Longer outputs, expanded expert
-adapters and the new lifecycle are unmeasured. The estimate
-assumes the proposed 100 validation / 200 final test notes and thinking off on
-the final test. Paid API labels/reviews are additional; the existing subscription
-route is assumed. These amounts retain the single-note timing reference;
-the approved batched pilot needs repricing from measured batched throughput and
-actual output lengths. Brief preparation timing alone does not price full answers.
-No spending is authorized by this reference.
+**Conditional batched GPU reference (October 3):** the completed prep measured
+all three subject-only setups on a 96GB/600 W RTX PRO 6000. Combining its
+ASv6.48 batch shapes and incremental-token timings with saved historical answer
+lengths gives about **5.6 hours training** and **22–24.5 hours generation** for
+three baselines, fifteen validation checkpoints and only the winner's final
+comparison. Assuming the proposed 100 validation / 200 final test notes,
+1–2 hours extra lifecycle/startup/retrieval allowance, 25% headroom and $1
+transfer fees gives **36–40 hours / $51–58** at the prep's historical $1.4153/hour;
+an illustrative $1.60/hour gives $58–65. Brief generation plus a single long-cache
+decode step is a projection, not measured full-output throughput. No full-pilot
+spending is authorized. Preparation's preliminary total was $3.26.
+
+**Input audit (October 3):** prep used **ASv6.48**, not the latest experimental
+**ASv6.98**. Offline actual-tokenizer checks on the existing 100 notes find
+ASv6.98 prompts of 8,066–8,507 Qwen tokens and 7,921–8,375 Gemma tokens.
+All 100 prompts plus the 4,096-token output allowance exceed the configured
+8,192-token context. Pairing them with old teacher answers solely for length
+checking also exceeds that limit for 79/80 Qwen and 74/80 Gemma training examples.
+This demonstrates a configuration mismatch, not a measured GPU memory failure.
+Prompt choice, context/memory settings and actual data must be settled before
+freezing pilot inputs; the batched estimate above does not price ASv6.98.
+The source corpus exists, but pilot note selection and teacher labels remain
+pending. Teachers, review details, validation/test counts, final-test collection
+arrangement and the specific rental remain open. Paid API labels/reviews are
+additional; the existing subscription route is assumed.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third

@@ -58,8 +58,12 @@ Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,
 with disposable merged evaluation and full training-state restoration. The
-preparation now supplies measured cache bounds. Reprice the pilot using batched
-throughput and actual output lengths rather than the serial cost reference. The background copier transfers completed responses
+preparation now supplies measured cache bounds. The conditional ASv6.48 projection
+is 36–40 hours / $51–58 at the prep rate, including overhead and headroom.
+The current experimental ASv6.98 exceeds the tested 8,192-token configuration
+on every existing note when the output allowance is included. Settle the pilot
+prompt and its context/memory requirements before freezing inputs; that cost
+reference does not price ASv6.98. The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 
 `release-plan.json` is the current task-and-dependency source for the focused
