@@ -319,6 +319,14 @@ Removing the sealer paragraph does not repair the omission. Source retention
 and compatible placement can fail separately. These controlled behavioral
 findings do not reveal a unique internal attention or reasoning mechanism.
 
+The ASv6.78 D006 trial-3 five-row answer also has normal raw completion:
+`status=succeeded`, `raw_stop_reason=completed`, `stop_reason=stop`, one HTTP
+attempt, no provider/validation error, and no requested output cap. The request
+records the exact Sol model and medium effort. Its missing participants are
+therefore a semantic coverage failure in a normally completed answer, not a
+reported transport failure or output-limit termination. This witness does not
+rule out every possible provider problem in other calls.
+
 ASv6.79 clarifies that each expressed combination gets its own complete heading;
 ASv6.80 moves the unchanged enumeration paragraph nearer the post. Their twelve
 original answers each complete on first attempts, taking the counter to 820.
@@ -385,3 +393,11 @@ uncertainties, no quality reruns/early stopping. At most six requests remain
 active. First-attempt completion reaches 886. Compare originals with ASv6.81;
 keep the same selection ordering, extending eligibility to the exact ASv6.83
 only after its entire screen completes. Validation remains ungenerated.
+
+Also freeze ASv6.81 on the same eight minimized and two repair cases in three
+trials: thirty first attempts, following the 42-answer screen. This gives the
+provisional best candidate its required regression checks and a matched input
+control for ASv6.83's collection edit. Keep all exact inputs and criteria, no
+quality reruns or stopping. Completing both fixed screens reaches 916 before
+the planned 48 fresh validation answers. Do not treat the additional baseline
+as a new candidate or use validation results to revise the selected prompt.

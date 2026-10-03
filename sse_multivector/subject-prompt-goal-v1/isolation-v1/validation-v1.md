@@ -46,6 +46,11 @@ exposure, without treating an absent parent as a corrected edge. Derived
 broader-heading closure and disputed ingredient memberships remain excluded.
 Where a material semantic question remains, mark uncertain and state it.
 
+V007's bird, machine and intransitive stretching meanings are supported by the
+[Cambridge Dictionary entry](https://dictionary.cambridge.org/dictionary/english/crane).
+Treating them as readings of this sentence remains an agent linguistic judgment;
+equivalent person/pronoun wording is allowed, rather than requiring “woman.”
+
 Use only native prepare/run/show/review, subscription `gpt-6.1-sol` medium,
 WebSocket, 1,800-second timeout, no output cap or paid fallback, and the existing
 history and persistent 2,000 budget. Each runner has concurrency one; at most
