@@ -180,4 +180,6 @@ that each complete individual action, as well as the shared action, retains ever
 compatible participant/tool occurrence. This is a proposal for a subsequent
 prompt iteration, not a new production pass. The user approves this target;
 [ASv6.99](../asv6.99/README.md) extends C1 with a shared knife while preserving C8.
-Its fixed regression screen is pending.
+Its 18-answer medium screen completes at 3 bounded accepts/11 rejects/4 uncertain.
+N096's individual sauté/oil-copy target passes 3/3 and S006's recipe-retention
+target remains 3/3; whole-answer failures still prevent adoption.

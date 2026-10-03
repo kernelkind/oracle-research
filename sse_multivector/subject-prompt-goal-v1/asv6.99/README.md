@@ -1,6 +1,7 @@
 # ASv6.99 Individual action copies under a shared tool
 
-Status: experimental draft; 158 focused offline checks pass; fixed screen pending.
+Status: tested experimental draft; both focused targets pass; whole-answer failures
+remain; not adopted.
 The user approves the next N096 target after the [ASv6.98 results](../asv6.98/README.md#completed-results).
 Production adoption remains a separate decision.
 
@@ -76,3 +77,96 @@ and unresolved readings stay separate from decisive defects. Review complete
 unchanged POST and parsed answers via native `show`; preserve actual individual
 reviewer reasons and corrections through native `review`, then broker adjudicate.
 Agent assessments are not human whole-answer gold or independent accuracy proof.
+
+## Completed results
+
+All 18 planned medium calls return valid first answers with no failures, invalid
+receipts, retries, reuse or unrun cases. The shared counter moves from
+1,523 to **1,541/2,000**, leaving **459 attempts**. Native source/template and
+plans remain frozen at checkpoint `683c97d8`; saved SDK requests and receipts
+retain the exact prompt, provider/model, effort and schema. All 158 focused
+offline checks pass; static correctness is separate from teacher correctness.
+
+**N096 source retention and individual sauté copies under olive oil pass 3/3.**
+All three complete individual actions retain material quantities, fine chopping,
+oil amount, pan, heat and full recipe scope. Each answer returns one oil occurrence
+and includes all three individual actions there, alongside their complete shared
+sauté. U3's feeding-five paraphrase preserves the recipe capacity. Sauce-qualified
+pan compatibility is not used to establish this target.
+
+| Trial | Individual source locations (onion / celery / carrot) | Oil occurrence | Individual copies under oil |
+| --- | --- | --- | --- |
+| U1 | 1.1.1.1 / 1.1.2.1 / 1.1.3.1 | 1.1.11 | .1 / .2 / .3 |
+| U2 | 1.1.1.1.1 / 1.1.1.2.1 / 1.1.1.3.1 | 1.1.1.11 | .1 / .2 / .3 |
+| U3 | 1.1.1.1.1 / 1.1.1.2.1 / 1.1.1.3.1 | 1.1.1.11 | .1 / .2 / .3 |
+
+The shared sauté appears beneath each of these oil-branch individual actions.
+The saved same-criterion ASv6.98 result is 2/3; fresh ASv6.99 is 3/3. This small
+historical contrast supports a bounded repair signal, not causal proof.
+
+**S006 recipe-retention and placement also remain 3/3.** Complete salt and pepper
+sources occur at 1.1.1/1.1.2 and their combination at 1.1.1.1. Salt repeats at
+2.1.1/3.1/5.1; pepper at 2.1.2/4.1/5.2; the combination appears beneath all eight
+individual occurrences. All retain seasoning food, to taste, author, reliability,
+dish and five-person capacity. No absent easy claim is required.
+
+| Case | U1 | U2 | U3 | Remaining finding |
+| --- | --- | --- | --- | --- |
+| N063 | U | U | R | U1/U2 Foodstr community/platform reading open; U3 Cooking lacks formed ingredient/list copies. |
+| N074 | U | R | U | U2 individual quantity advice lacks Food copy; other advice/Unless readings remain open. |
+| N096 | R | R | R | Sauté target passes; U1/U2 individual tomato additions lack beef-condition copies, U3 individual additions never form. |
+| N100 | R | R | R | U1/U3 whole shared trimming source never forms; U2 loses finally and nests generic recommendation below specific purchased unit. |
+| S006 | A | A | A | Complete recipe-qualified seasoning sources and copies retained. |
+| D006 | R | R | R | U1/U3 reciprocal material-action copies missing; U2 improves those copies but omits separate complete individual material sources. |
+
+Whole-answer totals are **3 bounded accepts, 11 rejects, 4 uncertain**.
+The twelve original answers are 0/8/4; the six diagnostics are 3/3/0.
+Historical ASv6.98 labels remain 3/14/1; neither total is a causal quality score
+comparison. Optional returned headings and unresolved readings affect whole-answer
+assessment. Prospective posts remain unused; no unseen/general accuracy claim.
+
+Three native `show` witnesses describe the clearest remaining target:
+
+- U1 N096 forms individual chopped-tomato addition 1.1.7.2, explicitly conditioned
+  on the 500 g beef being uniformly coloured. Beef 1.1.6 contains only the combined
+  tomato/purée/water addition, not this complete individual source.
+- U2 N096 forms the analogous individual source 1.1.1.7.1, but beef 1.1.1.6 again
+  receives only the combined addition. Its own beef-condition wording establishes
+  the relationship; the copy requirement does not come from adjacency or context.
+- U3 N096 forms combined addition 1.1.1.6.4 but no complete individual chopped-tomato,
+  purée or water addition source. This is source loss, not extra missing-copy counts.
+
+## Review corrections and limits
+
+Two whole-answer reviewers inspect unchanged complete POST and parsed answers
+with prompt/version definitions withheld. Reviewer B's first readiness command
+accidentally exposes truncated baseline-containing metadata, so a fully blinded
+claim is unavailable. Later judgments use actual full POST/parsed projections.
+Each reviewer's actual reasons are recorded separately, not substituted with the
+broker's selected witness. The separate fixed-target audit matches the complete
+source/copy evidence above; reviewer agreement is not independent accuracy proof.
+
+Native history preserves ten initial/superseded events, 36 final individual
+reviewer events and 18 broker adjudications: **64 hash-current events**. Score
+the latest broker verdict per case. Both reviewers initially miss U3 N063's
+returned Cooking branch and change A→R. Reviewer B changes U2 N074 U→R on the
+individual Food-quantity copy. Reviewer A proposes vegetable/plant-food rejections
+for U1/U3 N074, then withdraws them as uncalibrated; U1 follows U→proposed R→U.
+Reviewer A changes U1/U3 N100 U→R after applying explicit shared-predicate
+combination coverage. Both change U2 D006 A→R: correctly copied individual
+trimming events do not replace separate complete individual material subjects,
+as the existing event-versus-subject clause requires. No extra copy count is
+charged for these never-formed material sources.
+
+Foodstr membership, N074 advice/Unless and vegetable/plant-food readings,
+mother-instruction/Dietary-advice compatibility, dinner/purchase attachment,
+sauce membership, implicit sirloin origin, duplicated some and vacuum-sealer
+food-preservation purpose remain separate uncertainties. Neither nonfood uses
+nor a universal culinary-purpose restriction establishes a rejection here.
+Human edge calibration is not whole-answer gold.
+
+The useful next target is N096's individual tomato/purée/water additions and
+their copies under compatible beef-condition headings. It repeats across all
+three answers as either source loss or missing copies. Preserve both successful
+demonstrations while investigating this next existing-rule transfer. This is a
+proposal for a subsequent iteration, not another run or production adoption.
