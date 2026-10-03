@@ -173,8 +173,11 @@ implicit sirloin origin and the duplicated some remain separate uncertainties.
 No Food-other-use exclusion or Seasonings→bare-Salt rejection is used here.
 Agent calibration does not create human whole-answer gold.
 
-The useful next target is N096's repeated loss of individual sauté copies under
-the oil heading. Preserve the recipe-retention example and demonstrate
+The useful next target is N096's missing individual sauté copies under
+the oil heading in T3; the narrow target already passes T1/T2 (2/3). Preserve
+the recipe-retention example and demonstrate
 that each complete individual action, as well as the shared action, retains every
 compatible participant/tool occurrence. This is a proposal for a subsequent
-prompt iteration, not a new production pass or inference already authorized here.
+prompt iteration, not a new production pass. The user approves this target;
+[ASv6.99](../asv6.99/README.md) extends C1 with a shared knife while preserving C8.
+Its fixed regression screen is pending.

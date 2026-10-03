@@ -137,3 +137,58 @@ class TitledRecipeSubjectPromptTests(unittest.TestCase):
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
         template = ROOT / "experiment_specs/asv6.98-hr01-post-template.txt"
         self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+
+
+class SharedToolSubjectPromptTests(FoodClassificationSubjectPromptTests):
+    path = ROOT / "subject-prompt-goal-v1/asv6.99/ASv6.99.md"
+    subjects = {
+        **FoodClassificationSubjectPromptTests.subjects,
+        **{node: subject + " with a knife"
+           for node, subject in example_checks.SHARED_ACTION_SUBJECTS.items()
+           if node in ("tissue_cutting", "meat_cutting", "complete_cutting")},
+        "knife": "Knife",
+    }
+    relationships = FoodClassificationSubjectPromptTests.relationships + (
+        ("tissue_cutting", "knife"), ("meat_cutting", "knife"),
+    )
+
+    def test_shared_tool_retains_individual_and_combined_actions(self):
+        entries = self.entries()
+        knives = [entry for entry in entries if entry["subject"] == "Knife"]
+        self.assertTrue(knives, "C1 lacks the shared-tool copy example")
+        expected = {self.subjects[node] for node in
+                    ("tissue_cutting", "meat_cutting", "complete_cutting")}
+        for knife in knives:
+            descendants = {entry["subject"] for entry in entries
+                           if entry["number"].startswith(knife["number"] + ".")}
+            self.assertEqual(descendants, expected)
+
+    def test_all_copies_of_a_subject_are_emitted_together(self):
+        # Only C1 changes. C8 keeps its reviewed branch ordering verbatim.
+        closed = set()
+        previous = None
+        for entry in self.entries():
+            subject = entry["subject"]
+            if subject != previous:
+                self.assertNotIn(subject, closed)
+                if previous is not None:
+                    closed.add(previous)
+                previous = subject
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = TitledRecipeSubjectPromptTests.path.read_text()
+        after = self.path.read_text()
+        blocks = [re.findall(r"<example>\n(.*?)\n</example>", source, re.S)
+                  for source in (before, after)]
+        self.assertEqual(len(blocks[1]), 8)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        for block in blocks[1]:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        template = ROOT / "experiment_specs/asv6.99-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(
+            Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
+            Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
+        )
