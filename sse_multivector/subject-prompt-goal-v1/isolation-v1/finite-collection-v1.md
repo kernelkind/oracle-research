@@ -1,6 +1,6 @@
 # Finite collection and source traversal comparison
 
-Status: frozen before inference; ASv6.93/94 remain experimental and unadopted.
+Status: completed; both drafts retain original failures and remain unadopted.
 The completed preceding comparison uses 66 valid first attempts, reaching
 1,322/2,000: ASv6.91 26 accepts/7 rejects, ASv6.92 23 accepts/9 rejects/1
 uncertain. Both retain original source and independent compatible-copy failures.
@@ -96,3 +96,84 @@ authored consistency, not independent human gold. All 24 frozen plan hashes,
 POST renders, inherited inputs/evidence and runner settings match, with 66 new
 requests and zero reuse. Commit sources, tests and maintained plan before calls.
 MP, release decisions, foreign pending changes and pushes remain outside scope.
+
+## Completed results
+
+All 66 first attempts finish valid, with zero failures, retries, reuse or unrun
+cases. Each answer has exactly one current output-hash-bound native agent review.
+Read-only request/receipt audit confirms all 66 frozen rendered inputs, empty
+conversation history, exact Sol 6.1 medium settings, no output cap and normal
+completion. Every raw model JSON equals the structured and adapter outputs.
+The phase ends at 1,388/2,000 attempts.
+
+| Case | ASv6.93 trials 1/2/3 | ASv6.94 trials 1/2/3 |
+| --- | --- | --- |
+| N063 | accept / accept / reject | accept / accept / accept |
+| N074 | reject / accept / accept | accept / accept / reject |
+| N096 | reject / reject / accept | reject / accept / reject |
+| N100 | reject / accept / reject | reject / reject / reject |
+| S006 | accept / accept / accept | accept / accept / accept |
+| D006 | accept / accept / accept | accept / accept / accept |
+| J001 | reject / accept / accept | accept / accept / accept |
+| J002 | accept / reject / accept | reject / accept / reject |
+| K001 | accept / accept / accept | accept / accept / accept |
+| K002 | accept / accept / reject | uncertain / uncertain / accept |
+| K003 | accept / accept / accept | accept / accept / accept |
+
+| Screen | ASv6.93 | ASv6.94 |
+| --- | --- | --- |
+| Original posts | 6 accepts / 6 rejects | 6 accepts / 6 rejects |
+| Minimized sources | 6 accepts | 6 accepts |
+| Later properties | 4 accepts / 2 rejects | 4 accepts / 2 rejects |
+| Occurrence guards | 8 accepts / 1 reject | 7 accepts / 2 uncertain |
+| Entire screen | 24 accepts / 9 rejects | 23 accepts / 8 rejects / 2 uncertain |
+
+Neither traversal qualifies as a reliable correction or for prospective-v2
+verification. Both retain source, independent-copy and scope errors. The
+frozen small-sample screen does not establish a unique internal mechanism.
+No identical self-descendants occur in the 24 original answers, so the real
+reflexive wording ambiguity is not an observed explanation of these failures.
+
+ASv6.94 retains N096's explicit recipe identity in all three answers, but
+trials 1 and 3 omit compatible copies of the correctly formed saute. Trial 1
+leaves four ingredient-list occurrences empty; trial 3 leaves complete recipe
+1.1.1 without its saute or seasoning pair. ASv6.93 N074 trial 1 retains complete
+attributed advice under book/author but misses six component occurrences.
+ASv6.93 N063 trial 3 fills dish/ingredient/material branches but returns Food 19
+without its already-generated complete food ingredient tuple. This applies
+the frozen all-returned-heading rule, not a requirement to invent Food.
+
+Original confirmed dimensions are source qualification 4 versus 2, independent
+copies 2 versus 2, and displayed scope 2 versus 2. ASv6.93's two scope failures
+overlap its N096 source failures: qualified recipe ingredients parent an
+unqualified recipe ingredient, or Recipe ingredients 4 parents unrestricted
+Salt 4.8. ASv6.94 N074 trial 3 places comparative fewer-clicks/controversy
+subjects beneath absolute no-clicks/controversy headings. ASv6.94 N100 trial 2
+places unrestricted Trimming beneath Cutting. Source-origin omissions remain
+in ASv6.93 N100 trials 1/3 and ASv6.94 trials 1/3; the unchanged narrative-origin
+interpretation remains a bounded agent assessment. Equivalent passive partial
+trimming in ASv6.93 trial 2 passes.
+
+All twelve minimized answers pass complete shared actions, required partials,
+source qualifications and every compatible copy. All four later-property
+rejects are source qualification only: ASv6.93 J001 trial 1/J002 trial 2 and
+ASv6.94 J002 trials 1/3 index non-waterproofness separately but omit it from
+every full/partial packing action. Their structural combinations and copies
+of actually generated sources pass; dependent missing copies are not double
+counted. The complete qualified action survives in the other eight answers.
+
+The only confirmed guard reject is ASv6.93 K002 trial 3: complete dry-packing,
+unpacking, then rain-wetting chronology exists elsewhere but is absent below
+all four complete Packing-two-dry-sauna-towels headings. ASv6.94 K002 trials 1/2
+retain full chronology beneath packing but omit a separate unpacking source
+there, reproducing the frozen unresolved boundary and remaining uncertain.
+Its trial 3 chronology/unpacking wording does not itself retain prior packing;
+copy compatibility is judged from those subjects, without importing context.
+Other guard source, timing and displayed-scope checks pass. Historical scores
+and uncertainty calibration are unchanged.
+
+The next [grouped worked-output comparison](grouped-emission-v1.md) preserves
+all ASv6.94 source/instruction/example tuples and changes only output array
+order. All copies of one exact heading appear together after their parents.
+It tests example serialization sensitivity against these saved controls,
+not a new semantic rule or a proved source-first internal algorithm.

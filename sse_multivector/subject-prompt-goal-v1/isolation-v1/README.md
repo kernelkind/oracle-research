@@ -1,7 +1,7 @@
 # SP failure isolation and prompt correction
 
 Status: all completed comparisons retain failures; a reliable prompt correction
-remains incomplete. A finite-collection and traversal comparison is frozen next.
+remains incomplete. A grouped worked-output comparison is running next.
 The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
 keeps ASv6.81 and all previous scores frozen while testing two independent
 example changes under the remaining original attempt ceiling.
@@ -47,6 +47,20 @@ The next [finite collection/traversal comparison](finite-collection-v1.md)
 clarifies the examples' existing finite own-entry representation in ASv6.93;
 ASv6.94 changes only source-versus-heading collection traversal. The self-equality
 wording ambiguity is real but does not establish why distinct proper copies fail.
+All 66 first attempts finish valid without errors/retries/reuse, with exactly
+one current output-bound native agent review each: ASv6.93 has 24 accepts/9
+rejects and ASv6.94 has 23 accepts/8 rejects/2 uncertain. Both have 6/12 accepted
+original answers. All twelve minimized answers pass; each draft loses later
+non-waterproof qualification twice. ASv6.94 retains N096's explicit recipe
+identity in three of three, but still misses compatible copies in two. The
+guard results preserve the previously frozen unpacking-copy uncertainty.
+The counter reaches 1,388/2,000 and all 66 raw answers survive unchanged.
+Neither draft qualifies as reliable correction or prospective verification.
+The [grouped worked-output comparison](grouped-emission-v1.md) freezes ASv6.95
+against these saved ASv6.94 controls. It preserves every instruction, post,
+explanation and all 137 example tuples while grouping each exact subject's
+copies after all parent occurrences. All 129 offline checks and independent
+semantic/provenance audits pass; 33 new answers are fixed before calls.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact

@@ -1,6 +1,10 @@
 # ASv6.93 finite collection clarification
 
-Status: untested experimental draft; not approved or adopted.
+Status: tested experimental draft; retains failures and is unadopted.
+The [completed matched screen](../isolation-v1/finite-collection-v1.md) has
+24 accepts/9 rejects from 33 valid first attempts, including 6 accepts/6 rejects
+on the original posts. Finite collection clarification does not yield a reliable
+fix. Historical pre-inference descriptions below record authoring conditions.
 [ASv6.93](ASv6.93.md) derives from the exact
 [ASv6.92 source](../asv6.92/ASv6.92.md) and POST template. It clarifies that a
 heading's own entry represents an equal-meaning source subject, while every

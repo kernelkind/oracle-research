@@ -1,6 +1,11 @@
 # ASv6.94 source subjects before their compatible headings
 
-Status: experimental draft; not yet model-tested or adopted.
+Status: tested experimental draft; retains failures and is unadopted.
+The [completed matched screen](../isolation-v1/finite-collection-v1.md) has
+23 accepts/8 rejects/2 uncertain from 33 valid first attempts, including
+6 accepts/6 rejects on the original posts. N096's explicit recipe identity
+survives in all three answers, but two still omit compatible copies. Historical
+pre-inference descriptions below record authoring conditions.
 [ASv6.94](ASv6.94.md) changes only ASv6.93's clarified collection traversal:
 for each complete source subject, find every compatible returned heading and
 place the subject beneath every more-general numbered occurrence. An entry
