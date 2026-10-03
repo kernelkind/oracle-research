@@ -170,3 +170,8 @@ their copies under compatible beef-condition headings. It repeats across all
 three answers as either source loss or missing copies. Preserve both successful
 demonstrations while investigating this next existing-rule transfer. This is a
 proposal for a subsequent iteration, not another run or production adoption.
+
+The user approves this target. [ASv6.100](../asv6.100/README.md) adds a separately
+named condition participant to existing C1 while preserving Knife and C8.
+Its fixed screen is pending; source completeness and conditional copies are
+predeclared separately.

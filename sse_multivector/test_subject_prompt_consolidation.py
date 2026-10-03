@@ -141,6 +141,7 @@ class TitledRecipeSubjectPromptTests(unittest.TestCase):
 
 class SharedToolSubjectPromptTests(FoodClassificationSubjectPromptTests):
     path = ROOT / "subject-prompt-goal-v1/asv6.99/ASv6.99.md"
+    baseline_path = TitledRecipeSubjectPromptTests.path
     subjects = {
         **FoodClassificationSubjectPromptTests.subjects,
         **{node: subject + " with a knife"
@@ -176,7 +177,7 @@ class SharedToolSubjectPromptTests(FoodClassificationSubjectPromptTests):
                 previous = subject
 
     def test_instruction_coverage_other_examples_and_template_are_preserved(self):
-        before = TitledRecipeSubjectPromptTests.path.read_text()
+        before = self.baseline_path.read_text()
         after = self.path.read_text()
         blocks = [re.findall(r"<example>\n(.*?)\n</example>", source, re.S)
                   for source in (before, after)]
@@ -186,9 +187,35 @@ class SharedToolSubjectPromptTests(FoodClassificationSubjectPromptTests):
         for block in blocks[1]:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
-        template = ROOT / "experiment_specs/asv6.99-hr01-post-template.txt"
+        template = ROOT / "experiment_specs" / f"{self.path.parent.name}-hr01-post-template.txt"
         self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(
             Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
             Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
         )
+
+
+class ConditionalParticipantSubjectPromptTests(SharedToolSubjectPromptTests):
+    path = ROOT / "subject-prompt-goal-v1/asv6.100/ASv6.100.md"
+    baseline_path = SharedToolSubjectPromptTests.path
+    subjects = {
+        **SharedToolSubjectPromptTests.subjects,
+        **{node: SharedToolSubjectPromptTests.subjects[node] + " when a bowl is empty"
+           for node in ("tissue_cutting", "meat_cutting", "complete_cutting")},
+        "bowl_condition": "A bowl being empty",
+    }
+    relationships = SharedToolSubjectPromptTests.relationships + (
+        ("tissue_cutting", "bowl_condition"), ("meat_cutting", "bowl_condition"),
+    )
+
+    def test_condition_retains_individual_and_combined_action_copies(self):
+        entries = self.entries()
+        conditions = [entry for entry in entries
+                      if entry["subject"] == self.subjects["bowl_condition"]]
+        self.assertTrue(conditions, "C1 lacks the separate condition-participant copies")
+        expected = {self.subjects[node] for node in
+                    ("tissue_cutting", "meat_cutting", "complete_cutting")}
+        for condition in conditions:
+            descendants = {entry["subject"] for entry in entries
+                           if entry["number"].startswith(condition["number"] + ".")}
+            self.assertEqual(descendants, expected)
