@@ -1,0 +1,9 @@
+{
+  "base_sha256": "ad2d0130f4bf0c1fb4afbeae32209a6ca82a0994b6da539832e34887045e5ccb",
+  "edits": [
+    {
+      "old": "Use the complete post to resolve references to the most specific descriptions it supports. General knowledge may clarify language, identify referents, and recognize subjects, but every entity, modifier, action, and relationship in an entry must be stated or reasonably implied by the post.",
+      "new": "Use the complete post to resolve each reference and local description to its most specific supported referent, including meaning established by a title, enclosing heading, list or shared predicate. A local role or purpose does not replace a supported enclosing relationship: retain both in the complete specific subject and expressed combination. General knowledge may clarify language, identify referents, and recognize subjects, but every entity, modifier, action, and relationship in an entry must be stated or reasonably implied by the post."
+    }
+  ]
+}
