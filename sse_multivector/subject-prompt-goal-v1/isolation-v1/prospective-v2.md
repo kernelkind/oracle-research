@@ -65,3 +65,14 @@ P205's possessive Rhea/handbook relationship: authorship is not uniquely stated,
 and the condition concerns balcony lights rather than a general power failure.
 The source posts remain unchanged. This corrects unsupported rubric wording;
 no candidate or validation answer informed it, and no validation has run.
+
+The same independent audit bounds P201's qualifications to their referents:
+the recorder is newly borrowed, without a manufacturing or purchase claim;
+six counts ticket confirmations, and the singular unprinted confirmation does
+not make all six unprinted. Do not require an unstated calculated seat total.
+For P202, the two main partial removals are binding and the combined cord group;
+separate red/blue removal headings are not mandatory. If returned, they preserve
+membership in the jointly measured group without separate assigned lengths.
+P203's stable insulation qualifies the fitted spacers and sleeve, not the mast
+or microphone lead. These source-based bounds precede validation and do not
+change the source posts or add requirements.
