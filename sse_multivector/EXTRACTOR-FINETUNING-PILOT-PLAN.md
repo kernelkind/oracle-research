@@ -13,7 +13,8 @@ yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
 mask labeling, training or generation belongs to this pilot. The combined
 preliminary experiment remains historical evidence; the eventual mask-based
 release task below has its separate scope. One 96GB RTX PRO 6000 is selected;
-the specific offer and spending remain open.
+the specific offer and spending remain open. Thinking stays off throughout
+preparation, training and evaluation, approved October 2.
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
@@ -24,7 +25,7 @@ continuing student training runs, replacing separate fresh starts at each size,
 and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
 notes. Validation/test counts remain open. Task 18's preliminary training setup
 is complete. The subjects-only continuing worker is implemented locally;
-GPU fit and terminal thinking evaluation remain open. The background copier
+GPU fit remains open. The background copier
 is implemented locally.
 Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
@@ -33,7 +34,7 @@ Splitting the tracking does not change the experiments or spending approvals.
 **October 1 preparation decision:** a separate paid GPU preparation step is agreed
 in principle. Prepare candidate settings and agree on required GPU checks, then
 rehearse the packaged workflow locally before booking. Test subject output
-limits with thinking off and on for completion, truncation, memory and runtime
+limits with thinking off for completion, truncation, memory and runtime
 on representative and long notes. Select and freeze limits after preparation,
 before the larger pilot starts. Preparation scope, hardware, maximum charge, and launch
 remain open.
@@ -842,16 +843,13 @@ separately from review findings and any subsequent changes.
    separate design decision; milestones do not impose a wall-clock training limit.
    These checkpoints measure progression through one training history, including
    both added data and accumulated training; they do not isolate data size alone.
-6. **Append the approved thinking evaluation.** For each student, evaluate the
-   same saved 1,000-note adapter once with thinking on, on the same validation
-   notes. Compare against its existing thinking-off answers; do not train again.
-7. **Confirm decision-critical comparisons.** Repeat with a different random
+6. **Confirm decision-critical comparisons.** Repeat with a different random
    seed when a small gain or model difference would determine the next action.
    Keep the same evaluation notes and report uncertainty rather than treating
    subjects within one note as independent observations.
-8. **Use the final test after selection.** Compare selected fine-tuned
+7. **Use the final test after selection.** Compare selected fine-tuned
    candidates with their corresponding untuned baselines on the reserved notes,
-   using the same selected thinking mode for both.
+   using thinking off for both.
 
 ### GPU preparation cases and checks — draft
 
@@ -863,8 +861,8 @@ Use the same pinned models and approved subject-only adapter recipe as the
 pilot. Prepare locally and rehearse production paths in the VM before booking.
 The worker now supports subjects-only preparation/training, expert adapters,
 memory-based subject batching and the save/merge/evaluate/restore lifecycle.
-The background copier is implemented locally; terminal thinking evaluation
-remains to be implemented.
+The background copier is implemented locally. Preparation and the pilot use
+thinking off throughout.
 
 Start with historical N18 (long diary: dense hierarchy and subject truncation),
 N00 (soda bread: negation and qualifiers), and N15 (gianduja/store: short note).
@@ -885,7 +883,7 @@ Reserve for generation through the allowed output length, not just initial free
 memory. Each batch's count can change with its token lengths; choose the count
 before generating. The worker now implements the calculation with explicit
 frozen allowances; numeric GPU budgets remain open.
-Freeze the batching policy per student/mode and match baseline/checkpoints;
+Freeze the thinking-off batching policy per student and match baseline/checkpoints;
 preserve per-note outputs. The existing preparation sequence confirms execution
 and peak memory and measures throughput; no standalone batch-size rental sweep
 is prescribed. Historical recipes retain serial subject generation unless
@@ -907,8 +905,8 @@ the new `subject_batching` policy is supplied.
    and random state; compare loss, adapter and Adam state under declared numerical
    tolerances. Finish the second block and retain both verified checkpoints.
    Establish equivalence locally through production paths before the GPU check.
-4. With a fresh merged preparation adapter, test thinking off/on subject output
-   limits. Save complete final answers, reasoning/final channels, truncation,
+4. With a fresh merged preparation adapter, test thinking-off subject output
+   limits. Save complete raw/parsed answers, truncation,
    tokens, timing and memory. Exercise a proposed maximum generation/cache shape
    separately if natural answers terminate early. Verify the dynamic subject
    batch calculation on short and long inputs, including a smaller final batch,
@@ -932,12 +930,12 @@ counts, implementation and spending remain open.
 The [process walkthrough](../docs/planning/fine-tuning-pilot-process.md) maps
 where each stage runs. Subjects-only training, ordinary checkpoint evaluations
 and stage accounting are implemented. Ongoing response/checkpoint copying is
-implemented locally; terminal thinking remains intended work. The legacy
+implemented locally. Thinking stays off throughout the pilot. The legacy
 informal configuration still uses both tasks.
 
 - **Local preparation:** freeze note splits, teacher subject hierarchies, prompt
   versions, model revisions, data order and approved recipe. Rehearse locally;
-  settle output limits with thinking off/on during separate GPU preparation.
+  settle thinking-off output limits during separate GPU preparation.
 - **GPU execution:** generate one thinking-off untuned validation baseline per
   student using batched independent notes under the frozen policy. Use the same
   policy for its trained checkpoints and preserve each note's answer separately.
@@ -951,12 +949,6 @@ informal configuration still uses both tasks.
   answers and failures immediately. Discard evaluation and restore untouched
   training state and exact next-example position before continuing. Validation
   does not update training weights. Teacher targets contain no reasoning traces.
-- **Terminal thinking evaluation — approved October 2:** after ordinary final
-  validation, generate subjects once more with thinking on from the same
-  1,000-note adapter and merged BF16 policy. Keep the same notes and task prompt,
-  separate thought/final channels and parse only final answers. Compare against
-  saved thinking-off outputs; add no training or untuned thinking-on validation
-  baseline. Preserve mode settings, failures, time and total token usage.
 - **Checks and live observation:** account for one subject response per expected
   evaluation note as it arrives. Invalid model answers are measured failures;
   missing work or parser/pipeline defects block advancement of affected work.
@@ -971,8 +963,8 @@ informal configuration still uses both tasks.
 - **Local scoring:** mechanically check output reliability; review subject and
   hierarchy correctness/coverage after retrieval. Keep model failures, semantic
   findings and missing reviewer verdicts distinct.
-- **Final test:** reserve it until model, checkpoint and mode are settled from
-  validation. Match mode between selected adapter and untuned baseline. Whether
+- **Final test:** reserve it until model and checkpoint are settled from
+  validation. Use thinking off for selected adapter and untuned baseline. Whether
   to generate and seal test outputs during the main rental or in a later job
   remains open.
 
@@ -988,14 +980,12 @@ actual generation. Changed settings require a separately identified matched
 comparison. Preserve originals and prepare fixes locally. A sealed
 `complete.json` verifies files, not completion of every required call. The
 subject-response and checkpoint accounting and background copying are
-implemented locally. Terminal thinking evaluation remains to be implemented
-and verified; full-size GPU behavior still needs preparation evidence.
+implemented locally. Full-size GPU behavior still needs preparation evidence.
 
 With three students and five checkpoints each, thinking-off validation has
-18 versions (three bases and fifteen checkpoints). Terminal thinking adds three
-versions. For N validation notes, **21N subject responses and semantic reviews**;
-at 100 notes, **2,100**. The winner's proposed 200-note trained/base final
-comparison adds 400. Freeze generation/review lengths, stored adapters, transfer
+18 versions (three bases and fifteen checkpoints). For N validation notes,
+**18N subject responses and semantic reviews**; at 100 notes, **1,800**. The
+winner's proposed 200-note trained/base final comparison adds 400. Freeze generation/review lengths, stored adapters, transfer
 volumes and resource allocation before launch. Report over-limit reviewer
 inputs rather than truncating them. Rental grouping, runtime and spending
 remain open.
@@ -1047,12 +1037,11 @@ memory while preserving update membership, example order and the update-level
 supervised-token denominator. One model replica can accumulate eight one-example
 groups on the selected single 96GB RTX PRO 6000. Generation limits, numeric
 batching budgets and remaining runtime choices stay open; merged BF16
-checkpoint evaluation/resume and the terminal thinking comparison were approved
-October 2. Ordinary generation stays thinking off.
+checkpoint evaluation/resume was approved October 2. All preparation,
+training and evaluation use thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
 separate GPU preparation. The ordinary continuing training and merged
-checkpoint lifecycle and background copier are implemented; terminal thinking
-evaluation remains to be implemented.
+checkpoint lifecycle and background copier are implemented locally.
 
 **Checkpoint lifecycle approved October 2:** complete each 200-note block's
 final update, including any smaller final group, then save the full unmerged
@@ -1246,7 +1235,6 @@ affect throughput.
 | Selected student's thinking-off trained/base final comparison | 9.72–12.91 | $13.77–18.29 |
 | Subject-only training, all three students | Illustrative 3–5 | $4.25–7.08 |
 | Extra load/merge/evaluate/restore overhead across milestones | Illustrative 3–10 | $4.25–14.17 |
-| Three terminal thinking-on validation versions | Assumed 24.47–48.93 | $34.66–69.32 |
 
 The ordinary subject-generation subtotal is **76.42–79.61 GPU hours / $108–113**.
 Each student consumes 1,000 subject examples once, giving **125 updates**, 25
@@ -1260,16 +1248,13 @@ already include periodic checkpoint writes/hashing; add only lifecycle work not
 included there. The 3–10-hour transition allowance is unmeasured, approximately
 12–40 minutes per milestone across fifteen checkpoints.
 
-The terminal thinking row assumes **2–4 times** the 12.23-hour thinking-off
-final-validation equivalent. Actual reasoning lengths and speed are unmeasured.
-Selecting thinking on for the final test requires a revised matched baseline
-and trained estimate; the table assumes thinking off for that test.
-
-Together these scenarios give about **108–144 GPU hours / $153–204**. Add
-illustrative 25% headroom and $3–10 transfers: approximately **$192–264**, rounded
-to **$200–275 for the main pilot**. These are planning allowances, not confidence
-intervals or approved caps. Preparation is separate: a **$10–25 placeholder**
-would make a rounded **$210–300 combined GPU estimate**; its scope, duration,
+The user removed the terminal thinking-on evaluations on October 2. Their
+previous runtime and cost allowances are excluded from this calculation.
+Together the retained rows give **82.42–94.61 GPU hours / $116.76–134.03**. Add
+illustrative 25% headroom and $3–10 transfers: approximately **$149–178 for the
+main pilot**. These are planning allowances, not confidence intervals or
+approved caps. Preparation is separate: a **$10–25 placeholder** gives a
+**$159–203 combined GPU estimate**; its scope, duration,
 specific rental offer and maximum charge remain open. Measure merged inference,
 full output lengths and lifecycle overhead on the selected single 96GB RTX PRO
 6000 before final pricing.
@@ -1278,7 +1263,7 @@ Dropping masks reduces work but does not establish lower peak training memory.
 At the proposed split sizes, teacher annotation requires **1,300 subject calls**,
 with training labels shared across all checkpoints. At the saved receipt means
 of 2,631 uncached input / 1,108 output tokens per subject call, this is about
-4.86M tokens before label review. There are **2,100 validation reviews plus 400
+4.86M tokens before label review. There are **1,800 validation reviews plus 400
 winner final reviews**; each now receives subjects and hierarchy without masks.
 The review prompt/model remains open. The existing subscription route assumes
 zero incremental API cash charge, excluding its already-paid subscription;
@@ -1335,9 +1320,9 @@ at 94.32 GiB. An 80 GB H100/A100 is therefore not a substitute for this recipe.
 
 At the measured 450 W subject-generation throughput, thinking-off validation
 and the winner's thinking-off final comparison project to approximately 76–80 GPU hours.
-The terminal thinking-on addition is unmeasured. Add cumulative training work,
-checkpoint checks and setup before applying any headroom. GPU-hours are total
-work; elapsed rental time depends on the actual schedule.
+Add cumulative training work, checkpoint checks and setup before applying any
+headroom. GPU-hours are total work; elapsed rental time depends on the actual
+schedule.
 
 There are three student training paths, each with dependent
 200/400/600/800/1,000-note stages. The earlier nine-independent-training-job

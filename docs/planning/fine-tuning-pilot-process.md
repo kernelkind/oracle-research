@@ -4,7 +4,8 @@ Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
 **Subjects only, approved October 2:** train and evaluate subject discovery and
-hierarchy. Generate no masks for this pilot.
+hierarchy. Generate no masks for this pilot. Thinking stays **off** throughout
+preparation, training and evaluation, approved October 2.
 
 **GPU selected:** one **96GB RTX PRO 6000** for preparation and the pilot.
 Keep each complete model on that GPU and run the three students sequentially.
@@ -16,7 +17,7 @@ execution settings, and review rubric remain open.
 baselines/training/evaluation → verified retrieval → local scoring and comparison.**
 
 Prepare candidate settings and rehearse automation locally before booking the
-preparation rental. Test subject output limits, including thinking on, on
+preparation rental. Test thinking-off subject output limits on
 representative and long notes: check complete answers, truncation, GPU memory,
 and runtime. Choose and freeze the pilot limits after those checks.
 Preparation scope, the specific rental offer and maximum charge remain open.
@@ -44,7 +45,7 @@ proposals. Keep final test notes out of development.
 Save one **thinking-off** baseline per candidate on the shared validation notes.
 Each model generates its own subject hierarchy. Preserve original responses.
 Generate independent notes in batches whose size follows the memory budget.
-Freeze the batching policy per student and generation mode; use it for that
+Freeze the thinking-off batching policy per student; use it for that
 student's baseline and trained checkpoints. Check and save each answer separately.
 
 **Check every response immediately, before training.**
@@ -69,10 +70,6 @@ Start **one continuing training run per student**:
    the exact next example. Continue through **400, 600, 800, and 1,000 notes**,
    saving and evaluating at each milestone. Keep all five complete checkpoints.
    Validation leaves the saved adapter, optimizer, schedule, and random state intact.
-5. Keep thinking **off** at all five checkpoints. After the final checkpoint,
-   evaluate that same 1,000-note adapter once more with thinking **on**, on the
-   same validation notes. Compare its subjects against the saved
-   thinking-off answers. This adds three evaluations, with no further training.
 
 **One complete pass is approved:** use every subject training example
 once, without replacement, in five new 200-note blocks. Earlier notes and labels
@@ -128,9 +125,9 @@ Assess the returned subject hierarchies before model selection.
 
 ## 6. Confirm on the final test
 
-After model, checkpoint, and thinking mode are settled from validation, use the
-reserved test to confirm gains over the corresponding untuned baseline, using
-the same thinking mode for both. Whether GPU test outputs are
+After model and checkpoint are settled from validation, use the reserved test
+to confirm gains over the corresponding untuned baseline, with thinking off
+for both. Whether GPU test outputs are
 collected during the main rental and kept sealed, or generated later, is open.
 Rental grouping, duration, and spending also remain open.
 
@@ -141,19 +138,17 @@ Assuming 100 validation notes, 200 final test notes, and the previous
 
 - **Ordinary evaluation:** about **$108–113**, including three baselines,
   fifteen checkpoints, and the winner's thinking-off final comparison.
-- **Main rental:** roughly **$200–275**, including training, checkpoint
-  transitions, the terminal thinking comparison, transfers and 25% headroom.
+- **Main rental:** roughly **$149–178**, including training, checkpoint
+  transitions, transfers and 25% headroom.
 - **Preparation:** a provisional **$10–25 allowance**, not a measured or approved
-  rental budget. Rounded combined GPU planning estimate: **$210–300**.
+  rental budget. Combined GPU planning estimate: **$159–203**.
 
 These amounts price serial evaluation, not the approved batched pilot. Revise
 the pilot estimate from measured batched throughput on the intended hardware.
 Memory arithmetic selects each batch's size; it does not establish
 runtime or imply dividing serial time by batch size.
-Thinking-on runtime is unmeasured; its allowance assumes 2–4 times the final
-thinking-off validation time. Choosing thinking on for the final test needs a
-revised estimate. The specific rental offer, spending and preparation scope
-remain open.
+The thinking-on evaluations and their cost allowance have been removed.
+The specific rental offer, spending and preparation scope remain open.
 Teacher labeling and local review assume the existing Codex subscription;
 paid API work would be additional. See the technical plan for assumptions.
 

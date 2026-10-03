@@ -658,7 +658,8 @@ pilot. Train and evaluate subjects and their hierarchy only: one teacher
 subject-hierarchy example per note and one generated subject response per
 evaluation note. Keep the three students, one complete 1,000-note pass,
 200/400/600/800/1,000-note checkpoints, approved numerical recipe, merged
-evaluation/resume lifecycle and terminal thinking comparison. Eight examples
+evaluation/resume lifecycle. Thinking stays off throughout the pilot, as
+subsequently approved below. Eight examples
 per update give **125 updates per student, 25 per block**. The proposed 100
 validation and 200 final test notes and spending remain open. The GPU choice
 is recorded below.
@@ -762,8 +763,7 @@ generate subject hierarchies on the same held-out validation notes without
 updating training weights. The five checkpoints at **200, 400, 600, 800, and
 1,000 notes** give fifteen trained versions across the three students, plus
 three untuned baselines. With the proposed 100 validation notes, that is
-1,800 note/model evaluations and semantic reviews for the regular thinking-off
-comparison; the October 2 terminal thinking-on addition is recorded below.
+1,800 note/model evaluations and semantic reviews, all with thinking off.
 The schedule adds 600 subject evaluations over the earlier proposal. Training
 labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
@@ -905,8 +905,7 @@ coverage. Unequal-length answers preserved the token objective across physical
 groups of one or eight; missing responses and invalid checkpoint counters
 blocked advancement. All twelve retrieved evaluation stages and ten checkpoints
 reverified locally, and the VM is stopped. These tiny CPU checks do not establish
-BF16 GPU fit or throughput. Terminal thinking evaluation remains open; ongoing
-transfer implementation is recorded below.
+BF16 GPU fit or throughput. Ongoing transfer implementation is recorded below.
 
 **October 2 background copying implemented locally:** the user authorized
 implementation and VM verification of transfers during training. Subjects-only
@@ -923,7 +922,7 @@ set. Copy controls are explicit and frozen: software defaults are five-second
 polling, 8 MiB/s and a 900-second transfer timeout. They are operational defaults,
 not a measured throughput optimum or an approved rental configuration. GPU
 impact and the larger pilot's complete checkpoint/transfer allowance still need
-preparation evidence. Terminal thinking evaluation remains open. Verification
+preparation evidence. Verification
 passed 129 shared-controller regression tests, 27 host distillation checks and
 50 tests in the pinned VM container. Real SSH execution transferred raw/parsed
 responses and a complete checkpoint while training was running. Final retrieval
@@ -932,34 +931,22 @@ locally. Partial reception, receipt loss, corrupt data, bandwidth limits and
 copier start/status/exit failures were checked; copy failures did not stop
 training. The final container export passed and the VM is stopped.
 
-**October 2 terminal thinking evaluation approved:** keep answer-only training
-without teacher reasoning traces. Use thinking off for the three untuned
-validation baselines and all five ordinary checkpoint evaluations. After each
-student finishes training and its 1,000-note thinking-off evaluation, append
-exactly one thinking-on evaluation of that same saved adapter on the same
-validation notes, using the approved disposable merged BF16 evaluation policy.
-Generate subject hierarchies with thinking on. This compares generation modes
-at unchanged final weights;
-it adds no training and no thinking-on untuned validation baseline.
-Preserve original responses, separate thought/final channels, parsed final
-answers, failures, call accounting, elapsed time and total token usage. Apply
-the same integrity checks and progressive retrieval. Compare final-answer
-quality, reliability and cost locally; thinking at earlier checkpoints is not
-tested. Select any final-test mode using validation and match that mode for the
-selected adapter and corresponding untuned base. The final test stays reserved.
-The addition is three validation versions: **3N** more note/model outputs and
-reviews, bringing **18N** to **21N**; at the still-proposed 100 validation notes,
-that is 300 extra and 2,100 total subject calls. Earlier GPU estimates exclude
-the extra thinking work, whose
-reasoning lengths, runtime and cost are unmeasured. Generation limits and
-numeric batching budgets,
-implementation, preparation scope, spending and launch remain open.
+**October 2 thinking-off decision approved:** after reviewing comparable
+research, the user chose thinking off throughout pilot preparation, answer-only
+training, all three untuned validation baselines, all five checkpoints and the
+selected adapter's matched untuned/fine-tuned final test. Remove the three
+previously planned terminal thinking-on evaluations. With N validation notes,
+there are **18N** subject responses and semantic reviews; at the proposed 100
+notes, **1,800**. The proposed 200-note final comparison adds 400 responses and
+reviews. Comparable research does not establish the benefit of enabling thinking
+after our particular answer-only fine-tune. Output limits, numeric batching
+budgets, preparation scope, spending and launch remain open.
 
 **October 1 separate paid GPU preparation agreed in principle:** prepare the
 candidate pilot configuration and identify all required GPU checks before booking
 a preparation rental. Rehearse the packaged workflow locally, then verify its
-chosen GPU configuration before the larger pilot begins. Subject output
-limits and thinking-on allowances are candidates for preparation: test complete
+chosen GPU configuration before the larger pilot begins. Thinking-off subject
+output limits are candidates for preparation: test complete
 answers, truncation, GPU memory and runtime on representative and long notes,
 then select and freeze limits before the main pilot. Suggested numeric caps are
 not selected by this clarification. The pilot runs its settled training and
@@ -1084,12 +1071,11 @@ attempts. Budget admission passed before the run; no replacement rental is autho
 **Subjects-only serial GPU reference (October 2):** at the previous
 $1.4167/hour hardware's measured subject speed, ordinary validation and the
 winner's thinking-off final comparison cost about $108–113. Allowing subject-only
-training, checkpoint transitions, terminal thinking evaluation, 25% headroom
-and transfers gives roughly **$200–275 for the main pilot**. A **$10–25 preparation
-placeholder** gives a rounded **$210–300 combined GPU estimate**; preparation
-scope and charge are not approved. The thinking allowance assumes 2–4 times
-the final thinking-off validation runtime; actual thinking, longer outputs,
-expanded expert adapters and the new lifecycle are unmeasured. The estimate
+training, checkpoint transitions, 25% headroom and transfers gives roughly
+**$149–178 for the main pilot** after removing the thinking-on allowance. A
+**$10–25 preparation placeholder** gives a **$159–203 combined GPU estimate**;
+preparation scope and charge are not approved. Longer outputs, expanded expert
+adapters and the new lifecycle are unmeasured. The estimate
 assumes the proposed 100 validation / 200 final test notes and thinking off on
 the final test. Paid API labels/reviews are additional; the existing subscription
 route is assumed. These amounts retain the single-note timing reference;

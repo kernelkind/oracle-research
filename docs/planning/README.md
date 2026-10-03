@@ -11,9 +11,9 @@ one complete pass through subject-hierarchy training examples, checkpoints at
 200, 400, 600, 800, and 1,000 training notes, and model comparison.
 The larger pilot is subjects only, approved October 2: one teacher hierarchy
 per training note and no mask generation. Each checkpoint generates its own
-subject hierarchies on the same held-out validation notes. Baselines and all five checkpoints use thinking off; each
-final 1,000-note adapter then gets one thinking-on validation evaluation with
-unchanged weights. Semantic review happens outside the GPU rental. A separate
+subject hierarchies on the same held-out validation notes. Thinking stays off
+throughout preparation, training, baselines, checkpoints and the final test.
+Semantic review happens outside the GPU rental. A separate
 paid GPU preparation step is agreed in principle; prepare candidate settings and
 checks locally before booking. Test output limits during preparation and freeze
 them before the main pilot. Use one 96GB RTX PRO 6000, with each complete
@@ -26,7 +26,6 @@ with disposable merged evaluation and full training-state restoration. Numeric
 GPU allowances still need preparation evidence; measured throughput replaces
 the serial cost reference. The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
-Terminal thinking evaluation remains to be implemented.
 
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user
@@ -189,9 +188,8 @@ settings retain AdamW defaults with no weight decay and clipping 1, an unquantiz
 BF16 base/mixed computation and FP32 adapter/optimizer state, plus LoRA dropout 0,
 frozen biases and standard initialization. Each milestone retains a complete
 training checkpoint, evaluates a disposable BF16 base with the saved adapter
-baked in, then restores the full training state. Answer-only training continues;
-one terminal thinking-on comparison per student is approved, with added runtime
-unmeasured. Remaining data choices and
+baked in, then restores the full training state. Answer-only training and
+every evaluation use thinking off. Remaining data choices and
 execution details are open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
