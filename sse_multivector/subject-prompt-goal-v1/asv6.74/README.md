@@ -225,12 +225,16 @@ parents; the seasoning controls use Sea salt and explicit soup wording rather
 than the original salt/recipe context. Broadly rewriting another example from
 these results would not identify the cause.
 
-The next useful experiment is to minimize the failing original salt and dog
-passages while preserving their words and the co-mentioned source meaning that
-produces the relevant parents. Compare those with explicit purpose-qualified
-controls, record whether each answer actually exposes the parent, and inspect
-every numbered copy. Freeze that comparison before generation. This is a
-recommendation; no further fixture, prompt or model run is started here.
+The approved [salt/dog minimization](../autonomous-sp-v1/scope-minimization-v1.md)
+is now complete, with 54 fresh medium answers under this unchanged prompt.
+Short posts reproduce Food → Salt in 3/3 title/line/hashtag answers and dog-food
+parents containing recipient-only material in 2/3 trimming/hashtag answers.
+Other variants preserve scope but lose source relationships or numbered
+placements. The linked report separates exposure and exact witnesses from
+bounded accepts, with the full-original controls kept as their own trials.
+The next useful step is a reviewable existing-example draft demonstrating those
+actual food-parent relationships while retaining its prior rule coverage. This
+recommendation does not revise the candidate or begin another model run.
 
 Two semantic questions remain open: the C2 help/appreciation combination and
 N063's complete-dish versus separate ingredient-group representation. Neither

@@ -1,7 +1,8 @@
 # ASv6.74 salt/dog scope minimization
 
-Status: authorized, criteria fixed before generation; not yet run. The user
-approved minimizing the original failures after the ASv6.74 comparison.
+Status: completed, with reproduced scope failures and additional source/placement
+failures. All 54 fresh answers and current native agent reviews are saved. The
+user approved minimizing the original failures after the ASv6.74 comparison.
 ASv6.74 stays fixed, as does production ASv6.48. Prompt revision, MP and
 adoption remain outside this task.
 
@@ -124,3 +125,166 @@ output costs are unchanged. The shorter posts reduce this experiment's variable
 input and most output work. Subscription incremental cash is zero, quota use
 is unmeasured and catalog estimates are not bills. The monetary ledger was
 inspected before launch; no paid commitment is introduced.
+
+## Results
+
+All 54 planned answers completed on their first attempt, with valid native
+receipts, no runner errors and no reuse. The criteria and source/spec were
+committed as `cd27a60b` before inference. Post-run verification checked the
+unchanged ASv6.74 source/template and exact rendering; identical diagnostic
+inputs/settings; preserved full-original inputs, evidence and baseline outputs;
+every receipt; and every current review's input/output hashes. Each answer has
+exactly one agent review and no user label. The persistent budget is 356 of
+1,000 attempts. Native preparation/validation and Git whitespace checks passed.
+
+The salt failure class now has a short repeated reproduction. The dog failure
+also occurs in shortened passages, with variable exposure and repeatability.
+The prompt has not improved during this experiment: it stayed fixed while the
+inputs were changed to expose its behavior.
+
+### All diagnostic trials
+
+Accept is bounded to the frozen focal criteria, not full-SP gold. Rejections
+include source and placement errors as well as scope errors. A zero scope-error
+count does not count missing parent exposure as success.
+
+| Case | Trial 1 | Trial 2 | Trial 3 | Focal scope errors | Other finding |
+| --- | --- | --- | --- | --- | --- |
+| S001, isolated salt line | Accept | Accept | Accept | 0/3 | Trial 1 has no food/seasoning parent; other trials retain role-qualified children. |
+| S002, recipe title + salt line | Accept | Accept | Accept | 0/3 | Full recipe/pair relationship and checked copies retained. |
+| S003, complete ingredient list | Accept | Accept | Accept | 0/3 | Salt recipe roles retained; full ingredient-list coverage is not certified. |
+| S004, title + salt line + hashtags | Reject | Reject | Reject | 3/3 | Food → unrestricted Salt in every answer. |
+| S005, explicit seasoning purpose | Accept | Accept | Accept | 0/3 | Food-seasoning parents use qualified children. |
+| S006, title + explicit purpose | Reject | Accept | Reject | 0/3 | Trials 1/3 omit the salt/pepper relationship with the recipe. |
+| S007, Sea salt line | Accept | Accept | Accept | 0/3 | Seasoning parents use to-taste children. |
+| S008, title + Sea salt line | Accept | Accept | Accept | 0/3 | Complete source combination fills all checked numbered copies. |
+| D001, dog-material trimming | Accept | Accept | Accept | 0/3 | No food/feeding parent in any answer: zero exposure. |
+| D002, plus myoglobin food clause | Accept | Accept | Accept | 0/3 | Dog food parents are present; recipient-only scraps stay outside them. |
+| D003, explicit feeding purpose | Accept | Accept | Accept | 0/3 | Feeding purpose and checked source placements retained. |
+| D004, explicit feeding + myoglobin | Reject | Reject | Reject | 0/3 | Feeding material/action missing beneath both Dog food copies in every answer. |
+| D005, complete trimming sentence | Accept | Accept | Accept | 0/3 | Joint trimming retained; no food/feeding parent. |
+| D006, trimming + myoglobin clause | Reject | Reject | Accept | 0/3 | Trials 1/2 omit the complete joint trimming subject. |
+| D007, plus complete chicken clause | Reject | Reject | Reject | 1/3 | Trials 2/3 omit joint trimming; trial 1 has the dog-food scope failure. |
+| D008, trimming + original hashtags | Reject | Reject | Reject | 2/3 | Trials 1/3 have scope failures; trial 2 omits joint trimming and returns no dog-food/feeding parent. |
+
+These forty-eight diagnostic reviews total 32 bounded accepts and sixteen
+rejections. Six answers have the focal material-purpose scope failure. Counts
+for different contrasts are not a combined SP accuracy score or a claim about
+unseen posts. No unresolved ingredient membership or derived-heading closure
+is counted as a confirmed error.
+
+### Salt witnesses and exposure
+
+S004 removes the ingredient list, all cooking instructions and the media URL
+from N096, retaining its title, salt/pepper line and final hashtags:
+
+```text
+My #neverfail Spaghetti Bolognaise recipe that feeds 5.
+Salt and pepper to taste
+
+#food #recipe #easy #spaghetti #bolognaise #tomato #dinner
+```
+
+Its failing edges are Food 1 → Salt 1.3 in trial 1 and Food 2 → Salt 2.3 in
+trials 2 and 3. De-icing salt fits the unrestricted child without food purpose.
+All three answers also return qualified to-taste/recipe subjects elsewhere.
+Those subjects and the descendants of Salt cannot narrow the Salt heading.
+The shorter post reproduces the original material-purpose failure class; its
+parent is Food, rather than the original Seasonings.
+
+S002 differs only by omitting the final hashtags. All three S002 answers use
+role-qualified children beneath seasoning parents and preserve the full
+recipe/pair relationship. This controlled source contrast associates the
+returned broad Food branch with the observed failure in these samples; it
+does not establish the model's internal cause or a universal hashtag effect.
+
+The isolated original salt line and Sea salt variants do not fail the scope
+check here. Salt versus Sea salt alone therefore does not explain the earlier
+full-post difference. The Sea salt variant with the original hashtags was not
+tested. Explicit food-seasoning purpose produces qualified children in all
+six S005/S006 answers, but S006 trials 1 and 3 lose the full recipe relationship
+from every salt/pepper heading. Correct qualification alone is insufficient.
+
+### Dog witnesses and exposure
+
+D008 retains the original complete trimming sentence and hashtags, omitting
+the steak purchase, myoglobin/chicken clause and sealer passage. Trial 1
+returns Dog food at 5.1 and 7.1, each containing the approximate quarter-pound
+beef tissue/scrap merely "for a dog" at 5.1.1 and 7.1.1. Trial 3 returns
+Food for dogs 5.1 with Connective tissue for a dog 5.1.1 and Scrap meat for a
+dog 5.1.2. A chew-toy use fits those recipient-only children without food
+purpose. Trial 2 returns generic Food for preservation/cooking but no dog-food
+or feeding parent; it is not a successful observation of the disputed edge.
+
+D007 trial 1 also reproduces Dog food 6.1 → the approximate quarter-pound
+tissue/scrap for the dog 6.1.1, without any final hashtags. Hashtags are therefore
+not necessary for this failure. D002/D006 add only the dog-food myoglobin clause;
+all six answers expose Dog food parents yet keep recipient-only scraps outside
+them. The separate food co-mention is not sufficient to reproduce the failure
+in these samples. D001/D005 expose no food/feeding parents at all.
+
+D003's explicit feeding wording retains correct feeding scope and checked
+placements. D004 adds the myoglobin food clause and retains correct feeding
+qualifications too, but its full counted feeding material and trimming are
+absent beneath both Dog food copies in each answer:
+
+- Trial 1: 3.2 and 7.1.
+- Trial 2: 5.2 and 7.1.
+- Trial 3: 5.2 and 8.1.
+
+The full source material says it is for feeding a dog, so it concerns dog food;
+the Dog food headings have no restriction to myoglobin alone. Correct placement
+under the other feeding branch cannot repair those six omitted copies. This is
+an agent semantic judgment about placement of explicit source materials/actions,
+not a requirement to add or place every derived general heading.
+
+D006 trials 1/2, D007 trials 2/3 and D008 trial 2 additionally omit the complete
+first-sentence joint trimming of fat for tallow and tissue/scrap for the dog.
+Both partial actions remain, but none of their headings states the complete
+source combination. D008 trial 1 retains that combination only at 6.1.1/6.2.1,
+missing other compatible partial-trimming copies such as 1.1.1.1.1. These are
+independent source/placement findings, not extra recipient-versus-food errors.
+
+### Fresh full-original controls
+
+All six controls have confirmed errors under the earlier bounded original-post
+criteria. Keep these trials separate from the five earlier ASv6.74 trials.
+
+| Post | Focal scope failures | Other confirmed errors |
+| --- | --- | --- |
+| N096 | Seasonings → Salt in trials 1/3: 2/3 | Trial 2 loses the medium-onion restriction in a child; trials 1/3 omit recipe purpose from all complete sautéing headings. |
+| N100 | Recipient-only tissue/scrap trimming under Dog feeding in trial 2: 1/3 | Trials 1/2 omit the joint trimming subject; trial 3 loses first-use scope in appreciation children. |
+
+N096's bare Salt is 1.5.1 beneath Seasonings 1.5 in both failing scope answers.
+Trial 2 returns no Seasonings parent and keeps qualified salt recipe subjects
+outside its food branch, but One medium onion for Spaghetti Bolognaise 4.1.1
+has child 4.1.1.3 that omits medium. A non-medium onion fits that child.
+
+N100 trial 2 returns Dog feeding 12.1/13.1 with recipient-only trimming children
+12.1.1/13.1.1. Trial 1 exposes food parents but keeps those materials outside
+them. Trial 3 explicitly qualifies the material "for dog food", a permitted
+supported interpretation; its first-use parents 13.1.1.1/16.1 nevertheless have
+appreciation children without first-use specificity. The earlier 5/5 dog scope
+failure count is therefore not deterministic behavior of this frozen prompt.
+The ambiguous myoglobin/chicken reading remains excluded.
+
+## Interpretation and next step
+
+We now have concrete short posts exposing the failing food-parent relationships,
+alongside nearby inputs that preserve qualifications. This improves the evidence
+for choosing examples; it is not a prompt improvement. A correct qualified
+heading elsewhere and a correctly qualified child with missing copies are two
+different incomplete results. The existing scope and placement rules cover both.
+
+The next useful step is to draft a revision of an existing example around these
+Food/Salt and Dog food/recipient contrasts. Demonstrate unrestricted materials
+as separate subjects, qualified food-role children under the actual broad food
+parents, and complete source groups/actions beneath every compatible numbered
+parent. Preserve C1's count, reference, participant and action coverage and audit
+the complete output against all existing rules before testing. This is a draft
+recommendation, not an example edit or another model run in this task.
+
+Food-context additions are useful controlled contrasts, not proved necessary or
+sufficient causes. These small repeated samples do not establish unseen-topic
+generalization. C2 and N063's open semantic questions remain open; no candidate
+is adopted.

@@ -1,11 +1,15 @@
 # Autonomous SP iteration
 
-The user approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md).
-Sixteen shortened contrasts and fresh complete N096/N100 controls are frozen
-before three independent medium trials: 54 planned new answers. The prompt
-stays fixed. Record parent exposure separately from successful relationships;
-the earlier short dog cases did not return food/feeding parents. This comparison
-does not revise a prompt or adopt a candidate.
+The approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md)
+is complete: 54 fresh medium answers and output-bound agent reviews, no runner
+errors or reuse. The title/salt line/original hashtags reproduce Food → Salt
+in 3/3 answers; the trimming sentence/original hashtags reproduce dog-food
+parents containing recipient-only material in 2/3. Separate dog-food co-mention
+alone does not reproduce that scope error in six shortened answers. Explicit
+feeding wording with that co-mention preserves scope but omits both Dog food
+parent copies in each of three answers. See the report for source omissions,
+full-original controls, numbered witnesses and exposure. ASv6.74 stayed fixed;
+the persistent budget is 356 of 1,000 attempts. No candidate is adopted.
 
 The approved [ASv6.74 C1 revision and fixed comparison](../asv6.74/README.md)
 is complete: fifty-six fresh medium answers and current output-bound native
@@ -15,7 +19,7 @@ resemble the replacement example. Confirmed-error counts on the original posts
 stay N063 1/5, N074 2/5, N096 5/5 and N100 5/5. Three additional N063 answers
 and five soup diagnostics remain uncertain. N063 also introduces an unrestricted
 olive-oil/salt scope error. This is local progress, not a demonstrated general
-fix. Forty offline tests passed; the persistent budget is 302 of 1,000 attempts.
+fix. Forty offline tests passed; the budget was 302 of 1,000 at that checkpoint.
 Instructions and the other six examples are unchanged. Production adoption
 remains open.
 
