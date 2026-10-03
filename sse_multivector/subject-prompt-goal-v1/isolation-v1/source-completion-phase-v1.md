@@ -1,6 +1,7 @@
 # Complete-source and collection development comparison
 
-Status: frozen before inference. Preserve the completed ASv6.81 baseline and
+Status: in progress; original-post screen completed, remaining controls running.
+All inputs were frozen before their generation. Preserve the completed ASv6.81 baseline and
 all prior scores. Resume under the existing 2,000-attempt ceiling, now 1,139
 used. Test three separate interventions, not a combined draft:
 
@@ -113,3 +114,53 @@ native agent review per valid answer, and complete all twelve regardless of
 outcome. Preserve all earlier scores and the original 105-attempt plan. This
 adaptive diagnostic is not untouched validation or a quality retry. Total
 planned first attempts now 117, reaching 1,256 without provider retries.
+
+## Completed original-post checkpoint
+
+All twelve original-post plans finish: 48 attempts, 47 valid answers and one
+unknown runner error (fresh ASv6.81 N063 trial 2). Every valid answer has exactly
+one current native agent review; the failed answer is unavailable and has no
+semantic verdict. These bounded assessments are not independent human gold.
+The original 105-attempt plan and adaptive twelve baseline attempts continue
+in full; this checkpoint neither stops controls nor selects a replacement.
+
+| Case | Fresh ASv6.81 | ASv6.88 | ASv6.89 | ASv6.90 |
+| --- | --- | --- | --- | --- |
+| N063 | accept / unavailable / accept | uncertain / reject / accept | accept / accept / accept | accept / reject / accept |
+| N074 | reject / reject / accept | accept / reject / accept | accept / reject / accept | accept / accept / accept |
+| N096 | reject / reject / reject | reject / reject / reject | reject / accept / reject | reject / reject / reject |
+| N100 | accept / reject / accept | accept / accept / reject | reject / reject / reject | reject / accept / reject |
+| Total | 5 accept, 6 reject, 1 unavailable | 5 accept, 6 reject, 1 uncertain | 6 accept, 6 reject | 6 accept, 6 reject |
+
+ASv6.90 retains the explicit author/easy/never-fail/feeding-five recipe
+qualifications in all three complete counted N096 sautés. The fresh ASv6.81
+baseline loses those explicit qualifications in trials 1 and 3; trial 2 retains
+them but loses the Dinner relationship. Dinner-only loss remains the separately
+reported interpretive criterion, not evidence for an independent explicit-source
+failure. ASv6.90 still fails independent numbered copies in every N096 answer:
+the dish occurrence in trial 1, broad ingredient collections in trial 2 and
+qualified onion/celery/carrot/oil occurrences in trial 3. Trial 2 does not require
+a four-ingredient sauté below the exact eleven-ingredient tuple; the broader
+ingredient collection independently needs its compatible action branch.
+
+ASv6.88 also retains N096's explicit recipe qualifications in all three trials
+but loses independent copies. Its N100 origin/full-combination passes in trials
+1 and 2 are not a demonstrated unique gain: the fresh baseline passes N100 in
+trials 1 and 3. ASv6.88 trial 3 retains origin-qualified partial trims but omits
+the full joint trim, and separately places a recipient-only dog trim below Food
+preparation under Food. Training-scent preparation supplies a nonfood witness;
+the purpose distinction remains necessary despite correct source subjects.
+
+ASv6.89 passes every N063 trial and N096 trial 2. It still loses attributed
+advice in N074 trial 2; N096 trial 1 loses ingredient/pan copies and trial 3
+loses explicit recipe qualifications. All N100 trials reject: full-joint omission
+in trials 1 and 3, origin loss in trial 2, and an independently invalid New Nesco
+parent/recommendation edge in trial 3. ASv6.90 N100 trial 3 preserves the complete
+joint with origin and eight copies but omits both partial actions. Preserve that
+partial-action-only failure independently from source, full-joint and copy loss.
+
+None has eliminated original failures. The small contemporaneous comparison
+supports a specific source-completion effect for ASv6.90, with generation-time
+and stochastic limits; it does not establish a unique internal model cause or a
+reliable prompt correction. Do not alter frozen prior scores or reinterpret the
+excluded chicken-feed/source ambiguities as new confirmed rejections.

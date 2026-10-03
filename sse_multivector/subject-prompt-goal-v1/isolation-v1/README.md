@@ -1,6 +1,7 @@
 # SP failure isolation and prompt correction
 
-Status: experiments completed; a reliable prompt correction remains incomplete.
+Status: earlier experiments completed; resumed controls are running and a
+reliable prompt correction remains incomplete.
 The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
 keeps ASv6.81 and all previous scores frozen while testing two independent
 example changes under the remaining original attempt ceiling.
@@ -17,6 +18,14 @@ The three implicit-origin cases omit origin and stay interpretively uncertain.
 The counter reaches 1,139 of 2,000. A reliable prompt correction remains incomplete.
 The next [source/collection comparison](source-completion-phase-v1.md) freezes
 ASv6.88, ASv6.89 and ASv6.90 plus occurrence guards before 105 first attempts.
+It later freezes twelve fresh ASv6.81 original controls before their calls.
+Its completed 48-attempt original checkpoint has 47 valid answers and one
+unknown runner error: fresh ASv6.81 5 accepts/6 rejects, ASv6.88 5 accepts/6
+rejects/1 uncertain, and ASv6.89/90 each 6 accepts/6 rejects. ASv6.90 preserves
+N096's explicit complete recipe identity in three of three answers versus one
+of three fresh baseline answers, but independent copy failures persist in all
+three. Remaining minimized, later-property, origin and occurrence controls
+continue without early stopping. No draft is adopted.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact
