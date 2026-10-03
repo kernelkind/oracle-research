@@ -8,13 +8,17 @@ every-parent collection before choosing the next SP revision. The exact
 subscription `gpt-6.1-sol` low/medium route remains authorized; MP and production
 adoption remain outside scope.
 
-The first isolation phase used 108 attempts: 61 valid answers and 47 runner
-failures, with no unknown-failure retries. All thirty completed pair judgments
-and twelve supplied collections pass their bounded checks. Flat generation
-still loses the complete recipe relationship in all three S006 answers and
-the sole completed N096 counted sautéing answer. See the isolation report for
-source witnesses, missing diagnostic coverage and the frozen next comparison.
-The persistent counter is 538 of 2,000; no replacement SP is adopted.
+The two completed isolation phases use 246 attempts: 199 valid answers and
+47 runner failures, with no unknown-failure retries. In the second phase all
+48 heading judgments and 24 supplied collections pass with the complete SP
+prompt present. Flat generation still loses S006's complete recipe relationship
+in 3/3 answers with C1 and 3/3 without it, while a colon or explicit reference
+restores the association in the edited controls. The source omission therefore
+persists without hierarchy generation and is not repaired by removing C1.
+See the isolation report for all witnesses and limits. The diagnostic phase
+closes at 676 of 2,000. [ASv6.76](../asv6.76/README.md), which changes only
+the reference-resolution paragraph, is undergoing fixed screening; no
+replacement SP is adopted.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with

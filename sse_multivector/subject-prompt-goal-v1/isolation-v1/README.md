@@ -196,3 +196,51 @@ scheduling. Bound aggregate concurrency to six during this phase and record
 any failures unchanged. A lower burst size is an operational choice, not a
 claim that concurrency caused the upstream rejection. Commit this plan and
 authored sources before inference.
+
+## Second diagnostic results
+
+All 138 new answers completed on their first attempt, with no runner failures,
+retries or reuse. Every answer has exactly one current native agent review:
+132 bounded accepts and six source rejections. The diagnostic phase closes at
+676 of 2,000 attempts. Native show validates receipts and preserved preparation;
+input/output-bound review hashes and exact interventions were checked. The
+56 offline prompt/workflow checks pass. ASv6.76 screening subsequently begins
+from this counter; the diagnostic prompts are not adopted SP replacements.
+
+E2's forty-eight heading-pair decisions match every positive/negative witness,
+including the previously unanswered first-use/newness/book-attribution cases.
+P2's twenty-four collections match every supplied parent occurrence, including
+all repeated advice and joint-trimming parents; incompatible Dog food
+collections remain empty. These results establish competence on these bounded
+operations with the full SP prompt present. They do not establish reliable
+joint discovery, relation selection and hierarchy rendering.
+
+| Flat source case | R1, with C1 | R2, without C1 | Observation |
+| --- | --- | --- | --- |
+| S002, recipe title plus original salt line | A/A/A | A/A/A | Full named-recipe/to-taste relationship retained. |
+| S006, same title plus explicit food purpose | R/R/R | R/R/R | Every complete pair loses its named-recipe relationship. Removing C1 does not repair it. |
+| B001, S006 title ending with a colon | A/A/A | A/A/A | Full recipe and culinary/to-taste relationship retained; equivalent complete-action wording counts. |
+| B002/B004, explicit recipe reference | A/A/A each | A/A/A each | Full recipe relationship and title qualifications retained. |
+| B003, separately marked seasoning | A/A/A | A/A/A | No recipe association is added. |
+| B005, counted action under recipe heading | A/R/A | A/R/A | Trial 2 in each version drops serving-five/reliability qualifiers from the complete action. |
+| B006, same action with explicit recipe purpose | A/A/A | A/A/A | Complete counted action and full recipe qualifications retained. |
+| B007, counted repair action under heading | A/A/A | R/A/A | R2 trial 1 drops the blue-boiler workshop-repair purpose from the tube-fitting action. Alternative boiler-fitting readings remain outside the focal acceptance. |
+| B008, repair action with explicit purpose | A/A/A | A/A/A | Complete counted tube-fitting action retains the named repair purpose. |
+| B009/B010, book advice as heading/in-clause | A/A/A each | A/A/A each | Joint advice retains both gates, quiet entry, book and author. |
+
+The source interventions show a reproducible enclosing-relationship loss when
+the local line also states a complete food purpose. A colon or explicit
+reference changes that behavior. They do not reveal hidden reasoning or prove
+the unique internal cause. C1 is not the demonstrated cause: its removal
+leaves S006 unchanged and introduces a repair-purpose omission in one other
+case. Source qualifier retention can also fail with a colon, as B005 shows.
+The candidate [ASv6.76](../asv6.76/README.md) therefore clarifies carrying
+supported enclosing and local meanings together, rather than deleting C1 or
+changing the output contract. All seven worked examples remain unchanged.
+
+The evaluation distinction is also supported as a research method by
+[FollowBench](https://aclanthology.org/2024.acl-long.257/), which incrementally
+adds constraints, and [ComplexBench](https://arxiv.org/abs/2407.03978), which
+evaluates how constraints compose and depend on one another. These older
+benchmarks do not measure this exact Sol model or explain its particular
+answers; the repository's controlled inputs provide that evidence.
