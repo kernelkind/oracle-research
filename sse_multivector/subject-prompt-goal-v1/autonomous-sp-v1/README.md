@@ -266,6 +266,15 @@ specific source enumeration before deriving headings (R16), while preserving
 its post and JSON. All keep seven examples, every primary assignment and the
 five implications. These are authorized experimental drafts, not user adoption.
 
+ASv6.88 keeps ASv6.86's full/partial action example and adds specimen A as an
+explicit enclosing physical source alongside the local food role. ASv6.89
+keeps ASv6.87's post/output and explicitly demonstrates one complete group
+collection. ASv6.90 keeps ASv6.81's examples and changes only the reference
+resolution operation to build complete specific subjects from resolved
+occurrence-specific referents before generalizing. All preserve this 34+5 map;
+their separate [development screen](../isolation-v1/source-completion-phase-v1.md)
+and occurrence guards are frozen before inference.
+
 ASv6.61 medium improves the N100 appreciation wording, but its recommendation
 still drops newness beneath a New Nesco heading. N096 also drops cooking
 purpose from chopping beneath a cooking-qualified onion. N074 drops the

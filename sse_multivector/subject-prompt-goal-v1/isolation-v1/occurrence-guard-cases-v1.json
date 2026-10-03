@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "K001",
+      "text": "I packed two green boots for the river walk and one grey satchel for school. Both kinds of packed items are waterproof.",
+      "origin": {
+        "kind": "authored_sp_occurrence_guard",
+        "variation": "Later stable property applies to both complete participants/actions",
+        "rubric": "source-completion-phase-v1.md"
+      }
+    },
+    {
+      "note_id": "K002",
+      "text": "I packed two dry towels for the sauna. Only after I unpacked them, those towels became wet in the rain.",
+      "origin": {
+        "kind": "authored_sp_occurrence_guard",
+        "variation": "Later change must not replace dry state at packing; accept explicit chronology in full wording",
+        "rubric": "source-completion-phase-v1.md"
+      }
+    },
+    {
+      "note_id": "K003",
+      "text": "I packed two orange jackets for camping and one blue helmet for a cycling lesson. The helmet is not waterproof; the jackets are waterproof.",
+      "origin": {
+        "kind": "authored_sp_occurrence_guard",
+        "variation": "Later different stable properties attach separately to their complete action participants",
+        "rubric": "source-completion-phase-v1.md"
+      }
+    }
+  ]
+}

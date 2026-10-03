@@ -15,6 +15,8 @@ fifteen valid answers: all twelve explicit-origin answers retain origin,
 while three have independent Cutting → unrestricted Trimming scope errors.
 The three implicit-origin cases omit origin and stay interpretively uncertain.
 The counter reaches 1,139 of 2,000. A reliable prompt correction remains incomplete.
+The next [source/collection comparison](source-completion-phase-v1.md) freezes
+ASv6.88, ASv6.89 and ASv6.90 plus occurrence guards before 105 first attempts.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact

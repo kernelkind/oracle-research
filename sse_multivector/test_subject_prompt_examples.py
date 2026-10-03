@@ -1478,6 +1478,9 @@ SHARED_ACTION_RELATIONSHIPS = tuple(
 
 
 class SharedActionSubjectPromptExampleTests(unittest.TestCase):
+    subjects = SHARED_ACTION_SUBJECTS
+    relationships = SHARED_ACTION_RELATIONSHIPS
+
     def entries(self, path=SHARED_ACTION_PROMPT_PATH):
         block = re.findall(r"<example>\n(.*?)\n</example>", path.read_text(), re.S)[0]
         output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
@@ -1486,8 +1489,8 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
         )["parsed"]["subjects"]
 
     def ancestors(self):
-        ancestors = {node: set() for node in SHARED_ACTION_SUBJECTS}
-        for child, parent in SHARED_ACTION_RELATIONSHIPS:
+        ancestors = {node: set() for node in self.subjects}
+        for child, parent in self.relationships:
             ancestors[child].add(parent)
         while True:
             expanded = {
@@ -1501,9 +1504,9 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
     def test_partial_actions_and_complete_shared_action_are_demonstrated(self):
         subjects = {e["subject"] for e in self.entries()}
         for node in ("tissue_cutting", "meat_cutting", "complete_cutting"):
-            self.assertIn(SHARED_ACTION_SUBJECTS[node], subjects,
+            self.assertIn(self.subjects[node], subjects,
                           "C1 does not demonstrate partial and complete shared actions")
-        self.assertEqual(subjects, set(SHARED_ACTION_SUBJECTS.values()))
+        self.assertEqual(subjects, set(self.subjects.values()))
 
     def test_each_source_subject_fills_every_compatible_parent_copy(self):
         entries = self.entries()
@@ -1514,19 +1517,19 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
             "seasoning", "ingredients", "dog_food",
         ):
             for parent in ancestors[child]:
-                copies = [e for e in entries if e["subject"] == SHARED_ACTION_SUBJECTS[parent]]
+                copies = [e for e in entries if e["subject"] == self.subjects[parent]]
                 self.assertTrue(copies, parent)
                 for copy in copies:
                     with self.subTest(child=child, parent=copy["number"]):
                         self.assertTrue(any(
-                            e["subject"] == SHARED_ACTION_SUBJECTS[child]
+                            e["subject"] == self.subjects[child]
                             and e["number"].startswith(copy["number"] + ".")
                             for e in entries
                         ), "source subject missing from this compatible parent occurrence")
 
     def test_every_rendered_edge_preserves_the_parent_heading_meaning(self):
         entries = self.entries()
-        ids = {subject: node for node, subject in SHARED_ACTION_SUBJECTS.items()}
+        ids = {subject: node for node, subject in self.subjects.items()}
         ancestors = self.ancestors()
         by_number = {e["number"]: e for e in entries}
         for entry in entries:
@@ -1552,10 +1555,10 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
                 if e["number"].startswith(parent["number"] + ".")
             }
             for node, children in invalid.items():
-                if parent["subject"] == SHARED_ACTION_SUBJECTS[node]:
+                if parent["subject"] == self.subjects[node]:
                     for child in children:
                         with self.subTest(parent=parent["number"], child=child):
-                            self.assertNotIn(SHARED_ACTION_SUBJECTS[child], descendants)
+                            self.assertNotIn(self.subjects[child], descendants)
 
     def test_instruction_coverage_other_examples_and_template_are_preserved(self):
         before = FOOD_PROMPT_PATH.parent.parent / "asv6.76/ASv6.76.md"
@@ -1649,6 +1652,149 @@ class SpecificSourceEnumerationExampleTests(FoodSubjectPromptExampleTests):
         for block in blocks:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+
+ORIGIN_SUBJECTS = {
+    **{node: subject.replace(" as ", " from specimen A as ", 1)
+       if node in ("food_tissue", "food_meat", "group", "tissue_cutting",
+                   "meat_cutting", "complete_cutting") else subject
+       for node, subject in SHARED_ACTION_SUBJECTS.items()},
+    "specimens": "Specimens", "specimen_a": "Specimen A",
+}
+ORIGIN_RELATIONSHIPS = SHARED_ACTION_RELATIONSHIPS + (
+    ("specimen_a", "specimens"),
+    ("food_tissue", "specimen_a"), ("food_meat", "specimen_a"),
+)
+
+
+class OriginQualifiedSubjectPromptExampleTests(SharedActionSubjectPromptExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.88/ASv6.88.md"
+    subjects = ORIGIN_SUBJECTS
+    relationships = ORIGIN_RELATIONSHIPS
+
+    def entries(self, path=None):
+        return super().entries(path or self.path)
+
+    def test_complete_ingredients_and_actions_retain_named_physical_source(self):
+        subjects = {entry["subject"] for entry in self.entries()}
+        for node in ("food_tissue", "food_meat", "group", "tissue_cutting",
+                     "meat_cutting", "complete_cutting"):
+            with self.subTest(subject=node):
+                self.assertIn(ORIGIN_SUBJECTS[node], subjects,
+                              "C1 does not demonstrate enclosing physical origin with local food role")
+        for parent in self.entries():
+            if parent["subject"] == "Specimen A":
+                for node in ("food_tissue", "food_meat", "group", "tissue_cutting",
+                             "meat_cutting", "complete_cutting"):
+                    self.assertTrue(any(
+                        e["subject"] == ORIGIN_SUBJECTS[node]
+                        and e["number"].startswith(parent["number"] + ".")
+                        for e in self.entries()
+                    ))
+
+    def test_recipient_only_tissue_does_not_gain_food_or_source_role(self):
+        entries = self.entries()
+        for parent in entries:
+            if parent["subject"] in ("Food", "Dog food", "Specimens", "Specimen A"):
+                self.assertFalse(any(
+                    e["subject"] == ORIGIN_SUBJECTS["dog_tissue"]
+                    and e["number"].startswith(parent["number"] + ".")
+                    for e in entries
+                ))
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = (self.path.parent.parent / "asv6.86/ASv6.86.md").read_text()
+        after = self.path.read_text()
+        blocks = [re.findall(r"<example>\n.*?\n</example>", s, re.S)
+                  for s in (before, after)]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
+        self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
+        template = Path(__file__).parent / "experiment_specs/asv6.88-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+
+class CompleteSourceCollectionExampleTests(SpecificSourceEnumerationExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.89/ASv6.89.md"
+
+    def test_explanation_demonstrates_one_complete_source_collection(self):
+        entries = self.food_example()
+        block = re.findall(r"<example>\n(.*?)\n</example>", self.path.read_text(), re.S)[0]
+        explanation = re.search(r"<explanation>\n(.*?)\n</explanation>", block, re.S).group(1)
+        rows = [tuple(cell.strip() for cell in line.strip("|").split("|"))
+                for line in explanation.splitlines() if line.startswith("|")]
+        group_rows = [row for row in rows if row[0] == FOOD_SUBJECTS["group"]]
+        self.assertEqual(len(group_rows), 1,
+                         "C1 does not explicitly demonstrate the complete group collection")
+        source_nodes = ("food_salt", "dog_tissue", "food_tissue", "food_meat",
+                        "group", "complete_mixing")
+        ancestors = self.ancestors()
+        expected = {FOOD_SUBJECTS[node] for node in source_nodes
+                    if "group" in ancestors[node]}
+        self.assertEqual(set(group_rows[0][1:]), expected)
+        groups = [entry for entry in entries if entry["subject"] == FOOD_SUBJECTS["group"]]
+        self.assertTrue(groups)
+        for parent in groups:
+            descendants = {entry["subject"] for entry in entries
+                           if entry["number"].startswith(parent["number"] + ".")}
+            self.assertEqual(descendants, expected)
+
+    def test_previous_explanation_lacks_complete_collection_demonstration(self):
+        before = self.path.parent.parent / "asv6.87/ASv6.87.md"
+        with patch.object(self, "path", before):
+            with self.assertRaisesRegex(AssertionError, "complete group collection"):
+                self.test_explanation_demonstrates_one_complete_source_collection()
+
+    def test_revision_preserves_instructions_other_examples_and_post_template(self):
+        super().test_revision_preserves_instructions_other_examples_and_post_template()
+        before = (self.path.parent.parent / "asv6.87/ASv6.87.md").read_text()
+        after = self.path.read_text()
+        omit_first_explanation = lambda s: re.sub(
+            r"<explanation>\n.*?\n</explanation>", "<explanation/>", s, count=1, flags=re.S
+        )
+        self.assertEqual(omit_first_explanation(before), omit_first_explanation(after))
+        template = Path(__file__).parent / "experiment_specs/asv6.89-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+
+
+class CompleteReferentResolutionPromptTests(unittest.TestCase):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.90/ASv6.90.md"
+
+    def test_source_resolution_precedes_complete_subject_construction(self):
+        source = self.path.read_text()
+        for block in re.findall(r"<example>\n(.*?)\n</example>", source, re.S):
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        self.assertIn(
+            "Build complete specific subjects and expressed combinations from those resolved referents",
+            source, "Source resolution is not demonstrated as an input to subject construction",
+        )
+        self.assertIn("of its referent for that occurrence", source)
+        self.assertIn("Derive less specific descriptions only as broader headings.", source)
+
+    def test_only_source_resolution_operation_changes(self):
+        before = (self.path.parent.parent / "asv6.81/ASv6.81.md").read_text()
+        old = (
+            "Use the complete post to resolve each reference and local description to its most specific "
+            "supported referent, including meaning established by a title, enclosing heading, list or "
+            "shared predicate. A local role or purpose does not replace a supported enclosing "
+            "relationship: retain both in the complete specific subject and expressed combination."
+        )
+        new = (
+            "Resolve each reference or local description to the complete supported description of its "
+            "referent for that occurrence, using the whole post, including titles, enclosing headings, "
+            "lists and shared predicates. Build complete specific subjects and expressed combinations "
+            "from those resolved referents, retaining both enclosing relationships and local roles or "
+            "purposes. Derive less specific descriptions only as broader headings."
+        )
+        self.assertEqual(self.path.read_text(), before.replace(old, new))
+        template = Path(__file__).parent / "experiment_specs/asv6.90-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), self.path.read_text() + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 

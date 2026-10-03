@@ -1,0 +1,9 @@
+{
+  "base_sha256": "dc0eb737b33866b6c6fb3a5d63066a48c5f3f11b43b07dc4c253598c5b54f7b8",
+  "edits": [
+    {
+      "old": "Use the complete post to resolve each reference and local description to its most specific supported referent, including meaning established by a title, enclosing heading, list or shared predicate. A local role or purpose does not replace a supported enclosing relationship: retain both in the complete specific subject and expressed combination.",
+      "new": "Resolve each reference or local description to the complete supported description of its referent for that occurrence, using the whole post, including titles, enclosing headings, lists and shared predicates. Build complete specific subjects and expressed combinations from those resolved referents, retaining both enclosing relationships and local roles or purposes. Derive less specific descriptions only as broader headings."
+    }
+  ]
+}
