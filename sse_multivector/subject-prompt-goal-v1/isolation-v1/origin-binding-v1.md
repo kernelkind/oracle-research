@@ -1,6 +1,6 @@
 # Physical-origin binding source controls
 
-Status: frozen development diagnostic before generation. Keep exact ASv6.86,
+Status: completed development diagnostic, frozen before generation. Keep exact ASv6.86,
 its seven examples and native medium settings unchanged. Both available
 original N100 answers generate full and partial trims but omit the enclosing
 sirloin-strip-subprimal origin; D006 has no named physical origin and passes
@@ -57,3 +57,48 @@ without quality retries or early stopping. Only explicit native provider-
 transient errors may retry once; unknown failures remain unavailable. Count
 every attempt against the persistent 2,000 ceiling. With the 24 ASv6.87 attempts
 and no retries, the subtotal reaches 1,139. Production SP and MP do not change.
+
+## Completed controls
+
+All fifteen first attempts return valid answers, with zero errors, retries,
+reuse or unrun cases. Each has one current native agent review. The counter
+reaches 1,139 of 2,000. Exact native plans/templates revalidate; every raw
+answer stops normally, equals the adapter's unchanged final JSON and uses
+one Sol 6.1 medium request without an output cap.
+
+| Case | Trial 1 / 2 / 3 | Focal physical-origin result |
+| --- | --- | --- |
+| O001 | U / U / U | Direct cedar-material origin omitted; narrative attachment is interpretive. |
+| O002 | U / R / R | Explicit shared cedar origin retained in every full and partial trim. |
+| O003 | A / A / R | Heading-established cedar origin retained in every full and partial trim. |
+| O004 | U / A / A | Directly qualified cedar origin retained in every full and partial trim. |
+| O005 | A / A / A | Explicit oak origin retained; no cedar trim invented. |
+
+There are seven bounded accepts, three rejects and five uncertainties. These
+are agent judgments, not independent gold. All twelve explicit-origin answers
+retain full/partial actions, amounts, distinct purposes and physical source.
+That differs from the two available ASv6.86 N100 answers, which lose origin;
+the inputs and origin explicitness also differ, so this is not an internal
+mechanism proof or a prompt repair. All three implicit-origin answers omit
+direct origin. Trial 1 retains chronology in a full action mentioning earlier
+cutting of a purchased trunk; chronology does not itself name material origin.
+The prospectively uncertain narrative attachment remains uncertain.
+
+All three confirmed rejections are independent displayed-scope failures:
+trial 2 O002 Cutting 5 → unrestricted Trimming 5.2; trial 3 O002 Cutting 4 →
+Trimming 4.2; and trial 3 O003 Cutting 10 → Trimming 10.2. Trimming can also
+mean decorating a tree with ornaments, which need not involve cutting
+([Cambridge Dictionary](https://dictionary.cambridge.org/dictionary/english/trim)).
+The wood context cannot restrict the generic heading's meaning. Origin success
+therefore does not repair the original heading-alone scope rule.
+
+Keep indirect purchase-copy questions separate: trial 1 O002/O004 names the
+"purchased cedar trunk" in material/trim subjects but leaves purchase-heading
+collections incomplete for those subjects. Compatibility with a purchase topic
+is less directly demonstrated than the focal source/material collections;
+these sole defects are marked uncertain, not a newly introduced hard reject.
+Trial 2 O002 records the same uncertainty alongside its confirmed scope defect.
+Do not alter prior original-post scores or broaden this diagnostic into full-SP
+gold. The next prompt intervention needs independent source, copy and scope
+checks; an explicit-origin example alone cannot establish a narrative-origin
+or recipe-qualification repair.

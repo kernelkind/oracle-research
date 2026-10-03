@@ -8,7 +8,13 @@ That comparison finishes 72 attempts, 70 valid and two unknown failures:
 ASv6.81 11/24, ASv6.85 14/24 and ASv6.86 14/22 available bounded accepts.
 Both drafts still lose later properties and original source/copy relationships.
 The separately frozen [ASv6.87 explanation-only screen](../asv6.87/README.md)
-is running; a reliable prompt correction remains incomplete.
+finishes 24 valid answers, 12 bounded accepts/12 rejects, including every
+N096/N100 rejection. Complete-source enumeration alone does not repair the
+failures. The [physical-origin source controls](origin-binding-v1.md) finish
+fifteen valid answers: all twelve explicit-origin answers retain origin,
+while three have independent Cutting → unrestricted Trimming scope errors.
+The three implicit-origin cases omit origin and stay interpretively uncertain.
+The counter reaches 1,139 of 2,000. A reliable prompt correction remains incomplete.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact
