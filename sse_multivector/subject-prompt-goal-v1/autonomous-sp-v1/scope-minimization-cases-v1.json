@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "S001",
+      "text": "Salt and pepper to taste",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "isolated source line", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S002",
+      "text": "My #neverfail Spaghetti Bolognaise recipe that feeds 5.\nSalt and pepper to taste",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "source title and isolated line", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S003",
+      "text": "My #neverfail Spaghetti Bolognaise recipe that feeds 5.\n1x med onion\n1x celery stick\n1x med carrot\n1-2 cloves garlic\nbunch fresh basil\n500g ground beef\n1x 400g tin chopped tomatoes\n1x 400g tin tomato purée\nSalt and pepper to taste\n2 Tbls olive oil\n500g dried spaghetti",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "source title and complete ingredient list without instructions or final hashtags", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S004",
+      "text": "My #neverfail Spaghetti Bolognaise recipe that feeds 5.\nSalt and pepper to taste\n\n#food #recipe #easy #spaghetti #bolognaise #tomato #dinner",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "S002 plus source final hashtags", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S005",
+      "text": "Salt and pepper for seasoning food, to taste.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "S001 with explicit food-seasoning purpose", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S006",
+      "text": "My #neverfail Spaghetti Bolognaise recipe that feeds 5.\nSalt and pepper for seasoning food, to taste.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "S002 with explicit food-seasoning purpose", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S007",
+      "text": "Sea salt and pepper to taste",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "S001 with salt replaced by sea salt", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "S008",
+      "text": "My #neverfail Spaghetti Bolognaise recipe that feeds 5.\nSea salt and pepper to taste",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N096", "variation": "S002 with salt replaced by sea salt", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D001",
+      "text": "Trimmed about a quarter pound of some connective tissue and scrap meat for the dog.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "source trimming sentence with fat/tallow clause deleted", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D002",
+      "text": "Trimmed about a quarter pound of some connective tissue and scrap meat for the dog.\n\nSaved the excess myoglobin to add in the dogs food.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "D001 plus source myoglobin clause without chickens", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D003",
+      "text": "Trimmed about a quarter pound of some connective tissue and scrap meat for feeding the dog.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "D001 with explicit feeding purpose", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D004",
+      "text": "Trimmed about a quarter pound of some connective tissue and scrap meat for feeding the dog.\n\nSaved the excess myoglobin to add in the dogs food.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "D002 with explicit feeding purpose", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D005",
+      "text": "Trimmed about 3lb of fat for making tallow and about a quarter pound of some connective tissue and scrap meat for the dog.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "complete source trimming sentence", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D006",
+      "text": "Trimmed about 3lb of fat for making tallow and about a quarter pound of some connective tissue and scrap meat for the dog.\n\nSaved the excess myoglobin to add in the dogs food.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "D005 plus source myoglobin clause without chickens", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D007",
+      "text": "Trimmed about 3lb of fat for making tallow and about a quarter pound of some connective tissue and scrap meat for the dog.\n\nSaved the excess myoglobin to add in the dogs food and will put some some cold water and sunflower seeds for the chickens tomorrow.",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "complete source trimming and myoglobin/chicken sentences", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    },
+    {
+      "note_id": "D008",
+      "text": "Trimmed about 3lb of fat for making tallow and about a quarter pound of some connective tissue and scrap meat for the dog.\n\n#beef #foodstr #foodpreservation #cooking #steak #cooking #grownostr #prepping #plebchain #homesteading",
+      "origin": {"kind": "authored_sp_minimization", "source_post": "N100", "variation": "D005 plus source hashtags", "rubric": "scope-minimization-v1.md#pre-generation-criteria"}
+    }
+  ]
+}

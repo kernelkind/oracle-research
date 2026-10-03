@@ -39,6 +39,8 @@ __pycache__/
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/scope-spec.json
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/interaction-cases.json
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/interaction-spec.json
+!/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/scope-minimization-cases-v1.json
+!/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/scope-minimization-spec-v1.json
 
 # Reusable construction source references/settings, not generated case data.
 !/sse_multivector/hierarchy-construction-prompt-v1/n100-selection.json

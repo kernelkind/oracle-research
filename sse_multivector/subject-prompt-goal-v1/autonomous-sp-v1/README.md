@@ -1,5 +1,12 @@
 # Autonomous SP iteration
 
+The user approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md).
+Sixteen shortened contrasts and fresh complete N096/N100 controls are frozen
+before three independent medium trials: 54 planned new answers. The prompt
+stays fixed. Record parent exposure separately from successful relationships;
+the earlier short dog cases did not return food/feeding parents. This comparison
+does not revise a prompt or adopt a candidate.
+
 The approved [ASv6.74 C1 revision and fixed comparison](../asv6.74/README.md)
 is complete: fifty-six fresh medium answers and current output-bound native
 agent reviews, with no runner errors or reuse. The repair diagnostics improve
