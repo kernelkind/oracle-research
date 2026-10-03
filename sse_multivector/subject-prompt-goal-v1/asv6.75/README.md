@@ -1,12 +1,22 @@
 # ASv6.75 food-role example and fixed comparison
 
-Status: candidate, approved for testing; untested. On 2026-10-02 the user
+Status: candidate, tested with failures. On 2026-10-02 the user
 approved drafting and auditing
 the existing-example revision recommended by the completed
 [ASv6.74 scope minimization](../autonomous-sp-v1/scope-minimization-v1.md).
-The user subsequently approved the [fixed comparison](comparison-v1.md) of this
-exact source with ASv6.74. Production SP remains frozen ASv6.48; MP and adoption
-are outside this task.
+The user subsequently approved the now-completed
+[fixed comparison](comparison-v1.md) of this exact source with ASv6.74.
+All 74 fresh medium answers completed without runner errors, retries or reuse;
+all have current output-bound native agent reviews. Production SP remains
+frozen ASv6.48; MP and adoption are outside this task.
+
+Minimized checks improve from 32/48 to 40/48 bounded accepts; all six repair
+checks remain accepted. Original-post confirmed failures are N063 1/5,
+N074 3/5, N096 5/5 and N100 5/5. Culinary salt and dog-recipient scope improve
+with actual parent exposure in the originals, but complete combinations and
+numbered placements still fail; three N096 answers reverse group/member
+direction. These development-set agent judgments do not establish general
+SP correctness. The persistent campaign budget is 430 of 1,000 attempts.
 
 [ASv6.75](ASv6.75.md) replaces only C1's post, explanation and complete output.
 Instructions, C2–C7 and the JSON schema remain byte-for-byte unchanged from
@@ -123,15 +133,18 @@ C1 has 42 entries and sixteen distinct headings, versus ASv6.74's 35 and
 fourteen. The complete source grows from 21,533 to 23,662 UTF-8 bytes: 2,129
 additional fixed input bytes per post, or 9.9%. Across K posts this adds
 2,129 × K input bytes; the required hierarchy copies remain part of the
-existing contract. Generated output size and token usage are unmeasured.
+existing contract. Native comparison reports retain per-run token usage;
+no output-size or corpus-cost estimate follows from this fixed input delta.
 There is no additional per-post pass. Source SHA-256 is
 `4a673d7d6c87dc568bcf6043e46bb05c01ca873eacc9c87c4797f12231dc8c70`.
 Drafting made no model calls; the persistent campaign budget was 356 of
 1,000 attempts at that checkpoint.
 
-The user approved that next step: the [fixed comparison](comparison-v1.md)
-freezes this source for all sixteen minimized cases, the four original
-regression posts and two earlier repair diagnostics. Preserve parent exposure,
-scope, source coverage, every numbered placement and uncertainty separately.
-The plan fixes all 74 candidate answers before generation; no candidate is
-adopted by this comparison.
+The [completed fixed comparison](comparison-v1.md) preserved this source across
+all sixteen minimized cases, four original regression posts and two earlier
+repair diagnostics. Its report separates parent exposure, scope, source
+coverage, every numbered placement and uncertainty, with all 74 native reviews
+bound to their current outputs. Recommend explaining the existing example's
+combination-below-components direction and testing the short S004 contrast
+first; the reverse direction fails there and in three N096 answers. This is a
+proposed next task, not an approved revision. No candidate is adopted.

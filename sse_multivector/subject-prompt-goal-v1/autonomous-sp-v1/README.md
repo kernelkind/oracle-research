@@ -1,16 +1,23 @@
 # Autonomous SP iteration
 
-The approved existing-example drafting task has produced
-[ASv6.75 (candidate, approved for testing)](../asv6.75/README.md). Only C1 changes: generic salt
-and recipient-only tissue remain outside food parents, while explicit counted
-food ingredients and their complete mixing action fill every compatible parent
-copy. Instructions, C2–C7 and all clause assignments remain unchanged.
-Forty-seven example/attempt-budget tests and nine native revision tests pass;
-no model calls were made during drafting. The user subsequently approved the
-[fixed 74-answer comparison](../asv6.75/comparison-v1.md) with saved ASv6.74
-answers on minimized cases, originals and repair diagnostics. The source and
-criteria are frozen before generation; the budget starts at 356 of 1,000.
-Production adoption remains open.
+The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
+74 fresh medium answers and current output-bound native agent reviews, with
+no runner errors, retries or reuse. [ASv6.75 (candidate, tested with
+failures)](../asv6.75/README.md) improves minimized checks from 32/48 to 40/48
+bounded accepts; all six repair checks remain accepted. Original-post confirmed
+failures are N063 1/5, N074 3/5, N096 5/5 and N100 5/5. Culinary salt and
+dog-recipient scope improve with actual original-post parent exposure, but
+complete source combinations, numbered placements and reversed group/member
+edges still fail. D008 returns no dog-food parent, so its apparent scope gain
+does not establish a corrected edge. See the report for all trials and witnesses.
+
+Only C1 changed from ASv6.74; instructions, C2–C7 and clause assignments stayed
+fixed. The 56 offline checks passed before launch, and frozen provenance,
+receipts and review bindings passed after completion. The persistent budget is
+430 of 1,000 attempts. Recommend a small explanation change within an existing
+example to demonstrate why an individual member cannot inherit the full group's
+restrictions, tested first on S004; no next draft or run is approved by these
+results. Production adoption and the recorded semantic questions remain open.
 
 The approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md)
 is complete: 54 fresh medium answers and output-bound agent reviews, no runner
@@ -21,7 +28,8 @@ alone does not reproduce that scope error in six shortened answers. Explicit
 feeding wording with that co-mention preserves scope but omits both Dog food
 parent copies in each of three answers. See the report for source omissions,
 full-original controls, numbered witnesses and exposure. ASv6.74 stayed fixed;
-the persistent budget is 356 of 1,000 attempts. No candidate is adopted.
+the persistent budget was 356 of 1,000 attempts at that checkpoint. No candidate
+is adopted.
 
 The approved [ASv6.74 C1 revision and fixed comparison](../asv6.74/README.md)
 is complete: fifty-six fresh medium answers and current output-bound native
@@ -149,7 +157,7 @@ for repeated qualified subjects. No new rule is introduced.
 
 | Case | Primary clauses | Demonstration |
 | --- | --- | --- |
-| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75 (candidate, approved for testing) uses explicit food ingredients and mixing, with generic salt and recipient-only tissue outside food parents. Both demonstrate R19 through separate participants. |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75 (candidate, tested with failures) uses explicit food ingredients and mixing, with generic salt and recipient-only tissue outside food parents. Both demonstrate R19 through separate participants. |
 | C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved name; qualified new-app first use. ASv6.73 adds a blocking exception. |
 | C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
 | C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |

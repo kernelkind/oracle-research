@@ -278,13 +278,17 @@ different incomplete results. The existing scope and placement rules cover both.
 
 The user subsequently approved drafting an existing-example revision around
 these Food/Salt and Dog food/recipient contrasts. The resulting
-[ASv6.75 (candidate, approved for testing)](../asv6.75/README.md) demonstrates unrestricted
+[ASv6.75 (candidate, tested with failures)](../asv6.75/README.md) demonstrates unrestricted
 materials, qualified food-role children under the broad food parents, and
 complete source groups/actions beneath every compatible numbered parent. Its
 audit preserves C1's count, reference, participant and action coverage and the
 existing clause assignments. No calls were made for that drafting task. Review
-of the exact draft subsequently led to the approved
-[fixed comparison](../asv6.75/comparison-v1.md). Adoption remains open.
+of the exact draft subsequently led to the now-completed
+[fixed comparison](../asv6.75/comparison-v1.md). Its 74 fresh medium answers
+improve minimized bounded accepts from 32/48 to 40/48 and retain all six repair
+accepts, but original-post failures persist. D008's candidate trials expose no
+dog-food parents; the observed scope improvements with exposure are recorded
+separately. The campaign budget is now 430 of 1,000. Adoption remains open.
 
 Food-context additions are useful controlled contrasts, not proved necessary or
 sufficient causes. These small repeated samples do not establish unseen-topic
