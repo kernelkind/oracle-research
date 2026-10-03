@@ -1877,5 +1877,58 @@ class CompleteReferentResolutionPromptTests(unittest.TestCase):
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 
 
+class FiniteSourceCollectionPromptTests(SharedActionSubjectPromptExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.93/ASv6.93.md"
+
+    def entries(self, path=None):
+        return super().entries(path or self.path)
+
+    def test_instruction_coverage_other_examples_and_template_are_preserved(self):
+        before = (self.path.parent.parent / "asv6.92/ASv6.92.md").read_text()
+        after = self.path.read_text()
+        blocks = [re.findall(r"<example>\n(.*?)\n</example>", s, re.S)
+                  for s in (before, after)]
+        self.assertEqual(len(blocks[1]), 7)
+        self.assertEqual(blocks[0][1:], blocks[1][1:])
+        for previous, current in zip(*blocks):
+            for tag in ("post", "output"):
+                pattern = rf"<{tag}>\n(.*?)\n</{tag}>"
+                self.assertEqual(re.search(pattern, previous, re.S).group(1),
+                                 re.search(pattern, current, re.S).group(1))
+            output = re.search(r"<output>\n(.*?)\n</output>", current, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        template = (Path(__file__).parent / "experiment_specs" /
+                    f"{self.path.parent.name}-hr01-post-template.txt")
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+    def assert_distinct_descendants(self, entries):
+        for entry in entries:
+            self.assertFalse(any(
+                child["subject"] == entry["subject"]
+                and child["number"].startswith(entry["number"] + ".")
+                for child in entries
+            ), f"same source subject repeated beneath its own heading {entry['number']}")
+
+    def test_a_source_subject_is_represented_at_its_own_entry(self):
+        self.assert_distinct_descendants(self.entries())
+
+    def test_identical_self_descendant_is_rejected(self):
+        subject = self.subjects["complete_cutting"]
+        parsed = experiment_inputs.validate({"adapter": "subjects"}, {}, json.dumps({
+            "subjects": [
+                {"number": "1", "context": "Cutting both counted ingredients.", "subject": subject},
+                {"number": "1.1", "context": "Cutting both counted ingredients.", "subject": subject},
+            ]
+        }), None)["parsed"]["subjects"]
+        with self.assertRaisesRegex(AssertionError, "same source subject"):
+            self.assert_distinct_descendants(parsed)
+
+
+class SourceFirstCollectionPromptTests(FiniteSourceCollectionPromptTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.94/ASv6.94.md"
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,9 @@
+{
+  "base_sha256": "3ca832cbe5738ba2220c7cffc1a4f685784c2d710f6ff17583b050b8ba5a5c5b",
+  "edits": [
+    {
+      "old": "For each returned heading, collect every enumerated source subject whose own wording passes the parent check. The heading's own entry represents a source subject with the same meaning; place every more-specific compatible source subject among its descendants. Complete that collection at every numbered occurrence of the heading, even when its surrounding branch differs.",
+      "new": "For each enumerated complete source subject, use its own wording to find every returned heading whose parent check it passes. An equal-meaning heading's own entry already represents that source subject; place it among the descendants of every more-general compatible heading, independently for every numbered occurrence even when the surrounding branch differs."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Matched broad-versus-exact collection example comparison
 
-Status: the original screen completes with confirmed failures; remaining
-diagnostic and guard reviews are in progress. Both drafts remain unadopted.
+Status: completed; 66 valid first answers retain failures in both drafts.
+Neither draft is adopted or eligible for prospective verification.
 The preceding 117 first attempts finish, reaching 1,256/2,000. Keep every prior
 score, uncertainty, runner error and the explicit current-phase N074 calibration
 correction. Do not introduce a new rule or additional inference pass.
@@ -114,5 +114,46 @@ price requirement or disputed indirect purchase attachment is introduced.
 
 An append-only review correction fixes ASv6.92 N063 trial 1's tuple count to
 59 rather than 60 without changing its accept verdict. Count the latest
-applicable agent review once; preserve the prior output-bound event. Finish all
-remaining frozen cases and raw-request audits regardless of these failures.
+applicable agent review once; preserve the prior output-bound event.
+
+## Completed diagnostic and guard screen
+
+All 24 plans finish: 66 valid first answers, zero errors, retries or reuse.
+Actual request bodies match every frozen input, exact Sol 6.1 medium settings,
+one user message, no previous-response history and no output cap. All 66 raw
+JSON answers equal the structured model output and production adapter result,
+with normal completion. The persistent counter reaches 1,322/2,000.
+
+| Case | ASv6.91 trials 1/2/3 | ASv6.92 trials 1/2/3 |
+| --- | --- | --- |
+| S006 | accept / accept / reject | reject / reject / accept |
+| D006 | accept / accept / accept | accept / accept / accept |
+| J001 | accept / accept / accept | reject / reject / reject |
+| J002 | accept / accept / reject | accept / accept / accept |
+| K001 | accept / accept / accept | accept / accept / accept |
+| K002 | accept / accept / accept | accept / accept / uncertain |
+| K003 | accept / accept / accept | accept / accept / accept |
+| Entire 33-answer screen | 26 accepts / 7 rejects | 23 accepts / 9 rejects / 1 uncertain |
+
+Minimized/later cases add seven source-only failures: three recipe-relationship
+losses and four losses of non-waterproofness from packing despite that property
+surviving in separate headings. Their full/partial actions remain, with no
+independent copy or displayed-scope defect. Across the original and diagnostic
+screens ASv6.91 has four source failures, three independent copy failures and
+one overlapping scope defect; ASv6.92 has seven source and two independent copy
+failures. Small repeated development samples do not establish a causal ranking.
+
+The 18 guards yield 17 accepts and one uncertainty, with no confirmed timing,
+source or scope failure. ASv6.92 K002 trial 3 retains the full chronology but
+omits its distinct complete unpacking heading below four gerund packing copies.
+The explicit prior dry packing makes that unpacking subject compatible, but
+ASv6.90 guard trial 3 was accepted with the identical relevant pattern. Keep
+that prior score unchanged and record the current copy-boundary uncertainty;
+do not silently introduce a hard rejection after generation. An uncertainty is
+not a pass. Subsequent comparisons retain this recorded calibration boundary.
+
+All 66 answers have latest-applicable output-bound native agent judgments.
+There are 68 bound history events because the two numerical comment corrections
+are append-only: N063's 59-tuple count and D006's 14-joint-copy count. Neither
+changes its accept verdict. Production ASv6.48 and the unused prospective posts
+remain unchanged.

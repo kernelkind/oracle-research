@@ -1,0 +1,13 @@
+{
+  "base_sha256": "cdb7f3830976ab0d7faf3942eb69f07060ef87f9f9e2419c522ed3c71d67e86d",
+  "edits": [
+    {
+      "old": "For each returned heading, collect every enumerated source subject whose own wording passes the parent check. Use that complete collection beneath every numbered occurrence of the heading, even when its surrounding branch differs.",
+      "new": "For each returned heading, collect every enumerated source subject whose own wording passes the parent check. The heading's own entry represents a source subject with the same meaning; place every more-specific compatible source subject among its descendants. Complete that collection at every numbered occurrence of the heading, even when its surrounding branch differs."
+    },
+    {
+      "old": "Each complete source subject appears beneath every compatible parent copy, including both Dog food branches.",
+      "new": "Each complete source subject appears beneath every compatible parent copy, including both Dog food branches. An entry already represents a source subject with the same meaning; the complete shared cutting action has no identical descendant, but still appears beneath every compatible group and partial-action occurrence."
+    }
+  ]
+}

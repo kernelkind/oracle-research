@@ -266,8 +266,21 @@ is added or duplicated. Their [matched comparison](../isolation-v1/collection-co
 uses 66 frozen first attempts and is experimental, not adopted.
 Its completed original checkpoint has ASv6.91 7/12 versus ASv6.92 8/12 bounded
 accepts. All full/partial actions survive; source and compatible-copy failures
-persist, so neither qualifies for prospective verification. Remaining frozen
-diagnostic and guard reviews continue.
+persist, so neither qualifies for prospective verification. The full screen has
+ASv6.91 26 accepts/7 rejects versus ASv6.92 23 accepts/9 rejects/1 uncertainty.
+All 66 raw answers are valid and unchanged by the production adapter.
+
+ASv6.93 makes R22's already implied finite representation explicit: a heading's
+own entry represents an equal-meaning complete source subject, while every
+distinct more-specific compatible source still requires descendants at every
+numbered occurrence. One C1 explanation sentence demonstrates the existing
+complete-cutting leaves and proper group/partial-action copies; all seven posts
+and outputs remain exact. ASv6.94 changes only collection traversal to enumerate
+each complete source subject's compatible returned headings. R22 retains its
+single primary C1 mapping; all 34 assignments and five tracked implications
+remain covered, without another example, field or inference pass. Their
+[66-answer comparison](../isolation-v1/finite-collection-v1.md) is experimental
+and frozen before inference; no behavior improvement is yet claimed.
 
 The resumed comparison preserves this map. ASv6.85 changes only C6's source
 order, demonstrating later-established cable lengths without changing its

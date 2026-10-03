@@ -77,5 +77,7 @@ answers. N063 passes all three; N074 passes only trial 1; N096 passes only trial
 three independent copy and one overlapping displayed-scope failure remain.
 The matching ASv6.92 control has 8 accepts/4 rejects. The explanation table shows
 no unique original gain, and this draft is ineligible for prospective verification.
-Remaining frozen diagnostics and guards continue; see the matched comparison
-for the exact trial table, witnesses and append-only review accounting.
+The completed 33-answer screen has 26 accepts/7 rejects, all valid first answers
+without runner errors or reuse. Minimized/later cases have 10 accepts/2 source
+rejects; all nine guards accept. See the matched comparison for exact trials,
+witnesses, raw-request checks and append-only review accounting.

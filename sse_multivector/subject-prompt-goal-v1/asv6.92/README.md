@@ -44,6 +44,9 @@ answers. N063/N074 pass all three; N096 passes only trial 1; N100 passes only
 trial 2. Every full and partial action survives. Two source-qualification and
 two independent compatible-copy failures remain, with no confirmed displayed
 scope defect. The matching ASv6.91 explanation-table draft has 7 accepts/5 rejects.
-Neither qualifies for prospective verification. Remaining frozen diagnostics
-and guards continue; the matched comparison preserves exact witnesses and the
-latest-applicable-review rule for append-only corrections.
+Neither qualifies for prospective verification. The complete 33-answer screen
+has 23 accepts/9 rejects/1 uncertainty, all valid first answers without runner
+errors or reuse. Minimized/later cases have 7 accepts/5 source rejects; guards
+have 8 accepts and one copy-boundary uncertainty with preserved prior calibration.
+The matched comparison records exact witnesses and latest-applicable reviews
+for append-only corrections.
