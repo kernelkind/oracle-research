@@ -1040,7 +1040,14 @@ all three students fit or settle the full pilot's duration/cost.
 See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 
-**October 3 stopping rule required by the user:** never terminate the
+**October 3 prep stopping exception approved by the user:** repair straightforward
+failures immediately. If recovery requires substantial work, preserve and verify
+all available data, then delete the prep rental promptly. This is standing user
+approval to stop incomplete prep work; do not hold an idle rental while seeking
+renewed approval or developing a substantial recovery change. The agent judges
+repair scope; no fixed time cutoff was approved.
+
+**Full pilot stopping rule:** never terminate the
 fine-tuning job or its rental until all necessary data is complete, retrieved
 and verified locally. If data is missing, retain the resource and add the work.
 If stopping is preferable, ask for explicit user approval first. This withdraws
@@ -1052,8 +1059,10 @@ The rebuilt package disables its execution timeout. The shared watcher no longer
 stops this workload on expiry/error/interrupt, and both `stop` and direct deletion
 require a recorded completeness review bound to the operation, instance and
 verified retrieval. The operator rechecks local files. An incomplete stop
-requires the actual user-approved reason and records that exception. Original
-frozen inputs and defect evidence remain intact when additional work is needed.
+requires the actual user-approved reason and records that exception. For prep,
+record the standing approval and the concrete failure/repair assessment using
+`--incomplete-stop-approval`. Original frozen inputs and defect evidence remain
+intact when additional work is needed.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new

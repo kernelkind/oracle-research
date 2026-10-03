@@ -115,13 +115,18 @@ and disk activity. The copier starts automatically beside the observer; final
 retrieval reuses verified copies. A transfer failure is reported without stopping
 training.
 
-Before stopping the job or deleting its rental, complete all necessary work
+For the full pilot, complete all necessary work before stopping the job or
+deleting its rental
 and verify that its data is fully retrieved locally. A successful transfer
 alone does not establish completeness. If something is missing, keep the
 resource and add that work. If stopping is preferable, ask for user approval
 first. Automatic job timeouts, stops on watcher errors, and deletion are disabled;
 time/cost thresholds call for review. I inspect responses as they arrive and
 monitor training and GPU telemetry until explicit deletion.
+
+**Prep only:** repair straightforward failures immediately. If recovery needs
+substantial work, retrieve and verify available data, then delete the rental
+under the user's standing approval. Completing all prep checks is not required.
 
 After interruption, reconcile the existing worker first. Reuse verified saved
 work under original settings; preserve defect evidence and prepare fixes locally.

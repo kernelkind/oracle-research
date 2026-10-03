@@ -41,9 +41,11 @@ and MoE did not start. The local per-layer dimension fix is committed and its
 rebuilt VM passes all 56 tests. Reuse was approved, then cancelled by the deletion
 instruction before implementation. Remaining GPU checks are incomplete.
 Preliminary charges were $1.56.
-No job timeout, watcher error or elapsed review window may terminate this work automatically. Stopping
-or deleting requires complete, verified local data, or explicit user approval
-to stop incomplete work. Keep the resource and supply any missing work.
+For prep rentals, repair straightforward failures immediately. If recovery needs
+substantial work, preserve and verify the available data, then delete under the
+user's standing approval; completion of all prep checks is not required.
+The full pilot still requires complete, verified local data or explicit user
+approval before stopping incomplete work. No automatic timeout or deletion.
 Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,

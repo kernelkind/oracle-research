@@ -1282,8 +1282,9 @@ retained HTTP 400 but discarded the provider explanation; the cause is unknown.
 The user rejected the 2.5-hour worker stop: the current package freezes
 `timeout_seconds: null` and `work_seconds: null`. No execution timeout, watcher
 expiry/error/interrupt or budget alert may kill the job. Observation must
-continue until necessary data is complete, retrieved and verified, and explicit
-deletion is confirmed. The latest October 3 offers did not meet
+continue through verified retrieval and explicit deletion. Prep failures use
+the standing prep stopping approval below; preserve all available data.
+The latest October 3 offers did not meet
 the original very low transfer-fee filter. That filter was an unnecessarily
 strict proxy for total cost. The revised approved floors are 125 GiB host RAM
 and 450 Mbps download. The new $1.47/hour, $0.00261/GB inbound and $0.00391/GB
@@ -1334,7 +1335,14 @@ The preliminary resource charge was $1.56. Evidence:
 `operation-5usd-r1/observations/available-data-integrity-review.json` and
 `closure-evidence.json` in the proposal directory.
 
-**Required stopping rule, approved October 3:** retain the job and rental while
+**Prep stopping exception, approved October 3:** repair straightforward failures
+immediately. If recovery requires substantial work, preserve and verify all
+available data, then delete the rental promptly. This is standing user approval
+to stop incomplete prep work; completing all prep checks is not required. Do not
+hold paid hardware idle for substantial new development or renewed permission.
+Judge repair scope rather than imposing a fixed time cutoff.
+
+**Full pilot stopping rule:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain
 explicit user approval first. Spending approvals still apply; request any
 needed extension early instead of treating a financial threshold as permission
@@ -1354,8 +1362,10 @@ alone cannot establish all required work. The operator rechecks the retrieved
 files before deletion. Missing or changed files block it.
 Only an explicit user-approved exception may use `--incomplete-stop-approval`,
 recording the actual approval reason locally and with the remote stop request.
-This flag is not permission to invent an approval. Preserve original frozen
-inputs and defect evidence while adding any necessary repair work.
+For a prep failure requiring substantial recovery, record the user's standing
+prep-only approval and the concrete repair assessment with this flag. This flag
+is not permission to invent an approval. Preserve original frozen inputs and
+defect evidence while adding any necessary repair work.
 
 ## Compute estimates and spending constraints
 
