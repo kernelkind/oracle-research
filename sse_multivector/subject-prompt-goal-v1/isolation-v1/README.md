@@ -415,3 +415,19 @@ answers in three medium trials with exact same-trial ASv6.81 native baselines,
 all existing criteria and every answer reviewed. Extend the frozen selection
 order after the full screen; run the same thirty minimized/repair checks only
 if this exact candidate is selected. Validation remains ungenerated.
+
+## Completed collection clarification
+
+ASv6.83 completes all 42 frozen first attempts, with valid receipts, no errors,
+retries or reuse and current native reviews for every output. Bounded judgments
+are 34 accept/8 reject: originals 6/12, minimized 22/24 and repair 6/6. Complete
+tables and numbered failure descriptions are in its candidate README. N096
+passes in one trial, while all three N100 answers again lose the complete
+joint trim. This is weaker on originals than ASv6.81's 8/12, so it does not
+replace the provisional best. All D008 answers omit Dog-food parents, leaving
+that previously failing edge unexposed rather than demonstrated fixed.
+
+ASv6.81's already frozen thirty minimized/repair checks now run alongside the
+ASv6.84 originals, with no more than six requests active. Fresh validation
+answers remain ungenerated. Keep the existing selection order and all bounded
+criteria; no prompt edit follows fresh validation inspection.

@@ -36,7 +36,15 @@ ASv6.81/82 complete with 8/12 and 4/12 bounded accepts. ASv6.81 names N100's
 joined trim in 3/3, preserving its enclosing sirloin source in 2/3, and passes
 N063/N074 in all trials. Its remaining N096 failures include compatible
 placements, motivating ASv6.83's clarification of the existing collection rule.
-The counter is 844. Eight fresh validation inputs/criteria remain frozen and
+ASv6.83 completes all 42 first attempts with valid receipts and current native
+reviews: originals 6/12, minimized 22/24 and repairs 6/6 bounded accepts.
+The collection clarification permits one successful N096 answer but again
+loses N100's full joint trim in 3/3. It is weaker on originals than ASv6.81.
+ASv6.81's frozen minimized/repair checks and ASv6.84's general-heading
+permission control run next, with the existing selection order unchanged.
+The ASv6.83 first-attempt subtotal reaches 886; overlapping later screens
+continue to share the persistent 2,000-call counter.
+Eight fresh validation inputs/criteria remain frozen and
 ungenerated before final candidate selection. No replacement SP is adopted.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
