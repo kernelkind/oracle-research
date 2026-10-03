@@ -1,7 +1,7 @@
 # SP failure isolation and prompt correction
 
 Status: all completed comparisons retain failures; a reliable prompt correction
-remains incomplete. A grouped worked-output comparison is running next.
+remains incomplete. The grouped worked-output comparison is complete.
 The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
 keeps ASv6.81 and all previous scores frozen while testing two independent
 example changes under the remaining original attempt ceiling.
@@ -61,6 +61,19 @@ against these saved ASv6.94 controls. It preserves every instruction, post,
 explanation and all 137 example tuples while grouping each exact subject's
 copies after all parent occurrences. All 129 offline checks and independent
 semantic/provenance audits pass; 33 new answers are fixed before calls.
+All 33 first attempts subsequently finish, with 32 valid answers and one unknown
+subscription-access error preserved without retry or semantic verdict. ASv6.95
+totals 25 accepts/7 rejects/1 unavailable, including 7 accepts/5 rejects on
+originals, 4 accepts/2 source rejects on minimized inputs, five available later-
+property accepts and all nine guard accepts. N096 fails all three original
+trials: one loses explicit source qualifications, two retain complete sources
+but omit compatible copies. Independent scope errors also remain. All 32 valid
+raw JSON answers survive unchanged and have one current output-bound review.
+No valid answer groups every exact duplicate source, despite grouped examples;
+31/32 retain numeric/contiguous branch order. This is an ordering observation,
+not a pass condition or a proof of hidden execution. Mixed results leave the
+draft ineligible for prospective verification. The counter reaches 1,421/2,000;
+all fixed experiments are finished, but reliable prompt correction is unfinished.
 On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact

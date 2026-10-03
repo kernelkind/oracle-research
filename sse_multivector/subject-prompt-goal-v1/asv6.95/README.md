@@ -1,6 +1,12 @@
 # ASv6.95 grouped copies in worked outputs
 
-Status: experimental draft; untested and unadopted at authoring.
+Status: tested experimental draft; retains failures and remains unadopted.
+The [completed saved-control screen](../isolation-v1/grouped-emission-v1.md)
+has 25 accepts/7 rejects/1 unavailable from 33 fixed first attempts. Originals
+have 7 accepts/5 rejects, with N096 rejected in all three trials; minimized
+recipe qualification regresses twice. None of the 32 valid answers groups all
+exact duplicate subjects. Historical pre-inference descriptions below record
+authoring conditions; these results do not establish a reliable fix.
 [ASv6.95](ASv6.95.md) preserves every ASv6.94 instruction, example post,
 explanation, number, context and subject. Only the array order of six worked
 outputs changes; the empty C3 output is unchanged. All occurrences of an exact
