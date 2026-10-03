@@ -51,6 +51,13 @@ The persistent counter is 928. Its exact source/template and native candidate
 specification are frozen before the 48 fresh validation answers; all 61 offline
 checks pass. No replacement SP is adopted, and no prompt tuning follows fresh
 answer inspection. The prospective validation criteria stay unchanged.
+The fixed fresh comparison completes with 22/24 ASv6.75 and 23/24 ASv6.81
+bounded accepts, all valid first receipts/current native reviews and no errors.
+The remaining candidate packing action omits a negated material attribute
+despite representing it separately, confirming a normally completed source
+retention failure on a different topic. Exact prompts stay frozen for forty
+independent original repeats and twelve source-form diagnostics; their results
+cannot revise the held-out score or establish full-SP reliability.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with

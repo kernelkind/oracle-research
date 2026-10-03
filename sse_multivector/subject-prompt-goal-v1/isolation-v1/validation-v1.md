@@ -1,7 +1,6 @@
 # Fresh SP validation, frozen before generation
 
-Status: ASv6.81 selected and exact source/specifications frozen; no validation
-answer generated or inspected.
+Status: fixed comparison completed; ASv6.81 has one confirmed bounded failure.
 Use the eight [source fixtures](validation-cases-v1.json) after selecting an
 exact final candidate using development evidence alone. These authored posts
 were not used in any earlier prompt or experiment. Some structures deliberately
@@ -79,3 +78,48 @@ hashes are verified before generation. All seven examples remain identical to
 ASv6.75, and all 61 relevant offline tests pass. The persistent counter is 928;
 48 first attempts reach 976 if no explicitly allowed transient retry is needed.
 Do not change the prompt or prospective criteria after inspecting these answers.
+
+## Completed fixed comparison
+
+All 48 first attempts complete with valid native receipts and current
+output-bound agent reviews, with no errors, retries or reuse. Neither exact
+prompt nor the prospective criteria changes after generation. ASv6.75 has
+22 accepts/two rejects; ASv6.81 has 23 accepts/one reject. This is a small
+agent-authored fresh-input comparison, not statistical proof of superiority,
+independent human gold or full-SP reliability. The first-attempt subtotal is
+976; overlapping original-post replication shares the same persistent counter.
+
+| Case | ASv6.75 trials 1/2/3 | ASv6.81 trials 1/2/3 |
+| --- | --- | --- |
+| V001 | accept / accept / accept | accept / accept / accept |
+| V002 | accept / accept / accept | accept / accept / accept |
+| V003 | accept / accept / accept | accept / accept / accept |
+| V004 | accept / accept / accept | accept / accept / accept |
+| V005 | reject / accept / accept | accept / accept / accept |
+| V006 | accept / accept / accept | accept / accept / accept |
+| V007 | accept / accept / accept | accept / accept / accept |
+| V008 | accept / reject / accept | reject / accept / accept |
+
+ASv6.75 V005 trial 1 returns both complete attributed conditional-advice
+readings, but omits both below its attributed waiting component occurrences
+1.1.1.1.1/2.1.1.1.1/3.1.1.1/4.1.1/6.1.1 and the closing-unless component
+copies. The ambiguity of conditional attachment itself is not rejected. The
+three candidate answers preserve checked complete advice copies.
+
+ASv6.75 V008 trial 2 and ASv6.81 V008 trial 1 preserve non-waterproofness in
+separate material/group headings but omit it in every complete packing action.
+The candidate's full packing heading at 1.1.1.1 and copies retains the two
+orange jackets/camping and one blue helmet/cycling relationships but not either
+material's negated attribute. Separate facts do not complete that particular
+action. Its raw receipt has `status=succeeded`, `raw_stop_reason=completed`,
+`stop_reason=stop`, one HTTP attempt, no provider error, and valid output;
+the frozen request has no output cap. This is a semantic retention failure in
+a normally completed answer, not a reported transport or output-limit failure.
+
+The other frozen focal checks pass in all trials: counted printing/beacon/
+workshop actions, shared cutting plus separate participants, camera second use
+and negated comparison, crane ambiguity, opaque URL contents and unresolved
+name handling. Compatible participant/action copies are inspected in the
+actual returned trees; optional hierarchy and recorded semantic exclusions
+remain unchanged. The 23/24 result does not erase the candidate's known
+original-post and minimized source/placement failures. No candidate is adopted.

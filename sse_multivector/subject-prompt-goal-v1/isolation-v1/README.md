@@ -463,3 +463,29 @@ tests pass. The counter is 928. Run all 48 fixed first attempts with at most
 six active requests, recording errors and every available output's bound review;
 do not revise the prompt or criteria after inspection. This evaluates transfer
 of the strongest development candidate, not reliable full-SP completion or adoption.
+
+## Completed fresh validation and fixed follow-up controls
+
+All 48 fixed fresh-input first attempts complete with valid receipts/current
+native reviews and no errors, retries or reuse. ASv6.75 has 22/24 bounded
+accepts and ASv6.81 has 23/24. The original-post development improvement is
+4/12 to 8/12 on the same first three saved trials, not a claim of reliable
+completion. The fresh result and all trials are in validation-v1.md.
+
+The candidate's fresh V008 trial 1 indexes both materials' non-waterproofness
+separately but omits it in every full packing action. Its raw receipt has normal
+completion, one HTTP attempt and no provider error/output cap. ASv6.75 V008
+trial 2 shows the same omission. ASv6.75 V005 trial 1 loses compatible complete
+attributed-advice copies while retaining the complete subjects elsewhere.
+Thus both already isolated failure operations recur on different topics.
+
+The exact prompts remain unchanged for the frozen forty-answer independent
+original-post replication. Also freeze twelve ordinary ASv6.81 answers to four
+source forms of V008: original later anaphora, later explicit full material
+references, reversed explicit-clause order and inline negative attributes.
+See late-attribute-v1.md for exact interventions and unchanged criteria. These
+are failure-derived development diagnostics, not untouched validation or a way
+to increase its fixed score. Native source/template/plan/file receipts and
+identical runner settings are verified before generation. At most six requests
+remain active. The fixed first-attempt totals are 976, then 1,016, then 1,028;
+overlapping phases share the persistent 2,000 counter and five-hour deadline.

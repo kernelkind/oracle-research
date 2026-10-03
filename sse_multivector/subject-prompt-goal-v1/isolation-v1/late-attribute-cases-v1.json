@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "J001",
+      "text": "I packed two orange jackets for the camping trip and one blue helmet for the cycling lesson. Neither the jackets nor the helmet are waterproof.\n#RainSongFestival",
+      "origin": {
+        "kind": "authored_sp_late_attribute_control",
+        "variation": "Exact V008; later neither-qualified anaphoric material property",
+        "rubric": "late-attribute-v1.md"
+      }
+    },
+    {
+      "note_id": "J002",
+      "text": "I packed two orange jackets for the camping trip and one blue helmet for the cycling lesson. The two orange jackets for the camping trip and the one blue helmet for the cycling lesson are not waterproof.\n#RainSongFestival",
+      "origin": {
+        "kind": "authored_sp_late_attribute_control",
+        "variation": "Same facts; later negative property explicitly repeats both complete material descriptions",
+        "rubric": "late-attribute-v1.md"
+      }
+    },
+    {
+      "note_id": "J003",
+      "text": "The two orange jackets for the camping trip and the one blue helmet for the cycling lesson are not waterproof. I packed two orange jackets for the camping trip and one blue helmet for the cycling lesson.\n#RainSongFestival",
+      "origin": {
+        "kind": "authored_sp_late_attribute_control",
+        "variation": "Same two explicit clauses as J002, reversed order",
+        "rubric": "late-attribute-v1.md"
+      }
+    },
+    {
+      "note_id": "J004",
+      "text": "I packed two non-waterproof orange jackets for the camping trip and one non-waterproof blue helmet for the cycling lesson.\n#RainSongFestival",
+      "origin": {
+        "kind": "authored_sp_late_attribute_control",
+        "variation": "Same facts; negated attribute directly qualifies each packed material",
+        "rubric": "late-attribute-v1.md"
+      }
+    }
+  ]
+}

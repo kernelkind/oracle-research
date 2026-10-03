@@ -86,3 +86,15 @@ and seven examples are frozen before any validation generation; the eight
 prospective validation cases and criteria remain unchanged. All 61 relevant
 offline tests pass. This screen reaches the persistent counter 928 after the
 overlapping ASv6.84 comparison; the 48 fresh attempts would reach 976.
+
+## Fixed fresh-input result
+
+The unchanged candidate has 23/24 bounded accepts versus ASv6.75's 22/24,
+with all 48 valid first receipts, current native reviews and no errors/retries/
+reuse. [The fixed comparison](../isolation-v1/validation-v1.md) preserves all
+trials and the source failure: V008 trial 1 keeps non-waterproofness in separate
+material/group headings but loses it from the complete packing action. Its
+raw receipt completes normally. This confirms that the candidate still loses
+specific subject qualification on a different topic; 23/24 is not full-SP
+reliability or statistical proof of superiority. The prompt remains frozen
+for the independent original-post replication and source-form diagnostic.
