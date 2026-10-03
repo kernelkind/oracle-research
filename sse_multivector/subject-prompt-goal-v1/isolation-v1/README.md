@@ -440,3 +440,26 @@ valid N100 answers omit the full joint trim. This does not displace ASv6.81's
 complete 8/12 original screen: the four confirmed failures are joined by an
 uncertainty and missing answer, not evidence of a reliable correction. All
 tables and concrete witnesses remain in the ASv6.84 README.
+
+## Final candidate freeze before fresh validation
+
+The selected ASv6.81 completes its thirty required regression attempts:
+29 valid receipts with current native reviews (25 accept/4 reject), and one
+D008 trial-2 unknown request failure preserved without retry. The four bounded
+failures are an absent S004 dish copy, omitted S006 author relationship, D006
+missing joint-trim copies and D007 absent complete joint trim. The repairs
+pass all six bounded checks. Tables remain in its candidate README.
+
+ASv6.81 is now frozen for the planned 48 fresh answers, using development
+evidence alone. The candidate native source specification changes only prompt
+ID/path from the frozen baseline; all six native eight-case plans have verified
+source/template, plan and runner-file hashes, identical inputs/evidence/schema
+and settings, and zero generations. The exact ASv6.81 source SHA-256 is
+`0539158131a807b9d6afcb389adf8dab73317e6d5ddbce110740accee2a7b609`;
+its ordinary POST template hash is
+`dc0eb737b33866b6c6fb3a5d63066a48c5f3f11b43b07dc4c253598c5b54f7b8`.
+All seven examples remain unchanged from ASv6.75, and all 61 relevant offline
+tests pass. The counter is 928. Run all 48 fixed first attempts with at most
+six active requests, recording errors and every available output's bound review;
+do not revise the prompt or criteria after inspection. This evaluates transfer
+of the strongest development candidate, not reliable full-SP completion or adoption.

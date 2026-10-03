@@ -48,3 +48,41 @@ Every N100 answer names the joined trim; trials 1/3 preserve its sirloin source 
 All optional classifications and recorded source ambiguities remain excluded.
 The complete-source sentence near the post is a stronger development candidate
 than either position-only or original-position wording, but still fails.
+
+## Required minimized and repair regression screen
+
+The thirty frozen first attempts finish with 29 valid receipts and one failed
+D008 trial-2 request, without retries or reuse. All valid answers have current
+output-bound native agent reviews: 25 accepts and four rejects (minimized
+19 accept/4 reject/1 unavailable; repairs 6/6 accept). The failed request has
+an error stop, no terminal reason and native failure kind `unknown`; its
+partial stream is not reviewed as a completed answer.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| S002 | accept | accept | accept |
+| S004 | reject | accept | accept |
+| S006 | reject | accept | accept |
+| D004 | accept | accept | accept |
+| D005 | accept | accept | accept |
+| D006 | accept | reject | accept |
+| D007 | reject | accept | accept |
+| D008 | accept | request failed | accept |
+| I011 | accept | accept | accept |
+| I012 | accept | accept | accept |
+
+S004 trial 1 omits the complete pair below the returned dish at 1.1.1.
+S006 trial 1 preserves the named recipe, serving-five and culinary relationship
+but drops its explicit author possessive throughout the complete pair/action.
+D006 trial 2 retains the full joint trim in trimming/dog branches but omits
+compatible fat and tissue/scrap occurrences. D007 trial 1 loses the joint trim
+entirely. Both valid D008 answers omit Dog-food parents: that previously failing
+edge is unexposed, not demonstrated fixed. The repair checks retain the complete
+counted attachment and independent camera/guide subjects in all six answers.
+
+ASv6.81 is selected for the fixed fresh comparison using development evidence
+alone, with no adoption or full-SP reliability claim. Its exact source/template
+and seven examples are frozen before any validation generation; the eight
+prospective validation cases and criteria remain unchanged. All 61 relevant
+offline tests pass. This screen reaches the persistent counter 928 after the
+overlapping ASv6.84 comparison; the 48 fresh attempts would reach 976.

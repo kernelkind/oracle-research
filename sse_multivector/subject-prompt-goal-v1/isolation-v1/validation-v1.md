@@ -1,6 +1,7 @@
 # Fresh SP validation, frozen before generation
 
-Status: inputs and criteria frozen; no validation answer generated or inspected.
+Status: ASv6.81 selected and exact source/specifications frozen; no validation
+answer generated or inspected.
 Use the eight [source fixtures](validation-cases-v1.json) after selecting an
 exact final candidate using development evidence alone. These authored posts
 were not used in any earlier prompt or experiment. Some structures deliberately
@@ -59,3 +60,22 @@ failures may be retried once. Record current output-bound native agent reviews
 for all 48 answers, all failures and all trials, without quality reruns or early
 stopping. Report bounded findings separately from original-post results and
 from any claim of overall prompt reliability. Production SP remains one pass.
+
+## Exact candidate selection before fresh generation
+
+ASv6.81 wins the development original-post screen under the previously frozen
+ordering: 8/12 bounded accepts, four confirmed failures and no uncertainties.
+ASv6.83 has six accepts/six failures; ASv6.84 has six accepts/four failures/one
+uncertainty and one unavailable request. The selected candidate's required
+thirty regression attempts finish with 25 accepts, four failures and one
+unavailable request. These limitations remain visible; selection is not adoption.
+
+The [candidate source specification](validation-candidate-spec-v1.json) differs
+from the frozen baseline specification only in prompt ID/path. Native plans
+`validation-as75-medium-r1`–`r3` and `validation-as81-medium-r1`–`r3` are prepared
+without inference; each contains the identical eight posts/evidence, schema and
+subscription medium settings. Source/template, native plan and runner-file
+hashes are verified before generation. All seven examples remain identical to
+ASv6.75, and all 61 relevant offline tests pass. The persistent counter is 928;
+48 first attempts reach 976 if no explicitly allowed transient retry is needed.
+Do not change the prompt or prospective criteria after inspecting these answers.

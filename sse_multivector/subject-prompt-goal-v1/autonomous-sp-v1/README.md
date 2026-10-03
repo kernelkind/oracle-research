@@ -44,8 +44,13 @@ ASv6.81's frozen minimized/repair checks and ASv6.84's general-heading
 permission control run next, with the existing selection order unchanged.
 The ASv6.83 first-attempt subtotal reaches 886; overlapping later screens
 continue to share the persistent 2,000-call counter.
-Eight fresh validation inputs/criteria remain frozen and
-ungenerated before final candidate selection. No replacement SP is adopted.
+ASv6.84 records 6 accepts/4 failures/1 uncertainty and one unavailable request;
+it does not displace ASv6.81. The selected ASv6.81 completes its thirty
+required regressions with 25 accepts/4 failures and one unavailable request.
+The persistent counter is 928. Its exact source/template and native candidate
+specification are frozen before the 48 fresh validation answers; all 61 offline
+checks pass. No replacement SP is adopted, and no prompt tuning follows fresh
+answer inspection. The prospective validation criteria stay unchanged.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with
