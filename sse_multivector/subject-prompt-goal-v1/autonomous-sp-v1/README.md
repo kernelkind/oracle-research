@@ -24,7 +24,7 @@ still have failures. [ASv6.77's framing comparison](../asv6.77/README.md) comple
 with 23/12/1 and does not establish a reliable gain. All 72 answers complete
 on the first attempt with native output-bound reviews, no runner errors or
 reuse. [ASv6.78](../asv6.78/README.md) completes with 23 bounded accepts and
-13 failures; its corrected partial/shared-action example does not restore
+12 failures and one uncertainty; its corrected partial/shared-action example does not restore
 N100's whole action in any original trial. The full-post controls retain it
 in all six flat answers and all three hierarchies with a late explicit source
 reminder, while removing the sealer paragraph leaves it absent in 3/3. One

@@ -37,18 +37,18 @@ is adopted, and these reused originals are development evidence.
 ## Completed comparison
 
 All 12 first attempts completed with valid native receipts, without request
-failures, retries or reuse. All have output-bound native agent reviews: 5 accept and 7 reject
+failures, retries or reuse. All have output-bound native agent reviews: 5 accept, 6 reject and one uncertain
 on the frozen bounded checks. These are agent judgments, not independent human
 gold or overall SP certification. The persistent counter reached 820 after both ASv6.79/80 screens.
 
 | Case | Trial 1 | Trial 2 | Trial 3 |
 | --- | --- | --- | --- |
-| N063 | reject | accept | accept |
+| N063 | uncertain | accept | accept |
 | N074 | accept | accept | accept |
 | N096 | reject | reject | reject |
 | N100 | reject | reject | reject |
 
-N100 omits the complete joint trim in every trial. N063 trial 1 omits the complete fifteen-member ingredient combination. N096 trial 1 loses the enclosing recipe's easy/never-fail/serving-five qualifications; trials 2/3 omit compatible action placements. Trial 3 additionally places individual salt/pepper children below a heading requiring their complete pair. Moving the instruction alone is not established as a fix.
+N100 omits the complete joint trim in every trial. N063 trial 1 preserves all fifteen qualified ingredients with an ingredient-role group; the frozen alternative-group exclusion makes this uncertain. N096 trial 1 loses the enclosing recipe's easy/never-fail/serving-five qualifications; trials 2/3 omit compatible action placements. Trial 3 additionally places individual salt/pepper children below a heading requiring their complete pair. Moving the instruction alone is not established as a fix.
 
 Optional classifications and the unresolved chicken/myoglobin reference remain
 excluded. Source presence alone is not placement success. Native receipts and

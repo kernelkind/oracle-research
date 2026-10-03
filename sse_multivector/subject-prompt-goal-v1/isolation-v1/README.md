@@ -323,7 +323,7 @@ ASv6.79 clarifies that each expressed combination gets its own complete heading;
 ASv6.80 moves the unchanged enumeration paragraph nearer the post. Their twelve
 original answers each complete on first attempts, taking the counter to 820.
 ASv6.79 retains N100's complete trim in 1/3; ASv6.80 in 0/3. Bounded original
-reviews are 7 accept/5 reject and 5 accept/7 reject respectively. Neither is a
+reviews are 7 accept/5 reject and 5 accept/6 reject/1 uncertain respectively. Neither is a
 reliable fix. The complete trial tables and concrete witnesses are maintained
 in their candidate READMEs. All seven examples and the ordinary schema remain
 unchanged in both.
@@ -340,3 +340,21 @@ Eight fresh posts and prospective criteria are frozen in
 [validation-v1.md](validation-v1.md). Select and freeze the exact candidate from
 development evidence before generating any validation answers. Production SP
 remains one pass and no candidate is adopted.
+
+### Selection and regression rule, before ASv6.81/82 reviews
+
+Choose among ASv6.76–82 using their complete three-trial original-post screens:
+fewest confirmed bounded rejections, then fewest uncertainties, then most N100
+complete-joint retention, then the smaller source change from ASv6.76. This is
+a development selection rule, not statistical proof of model ranking. Do not
+change frozen criteria to select a winner. Candidate answers to ASv6.81/82
+have not yet been semantically inspected at this freeze.
+
+Before fresh validation, run the exact selected candidate on the eight frozen
+minimized cases and I011/I012 repair cases in three trials: thirty first
+attempts, inheriting saved same-trial inputs/settings/evidence. Judge existing
+criteria, review every result and preserve all errors/uncertainties. The
+original examples remain audited through the production subjects adapter.
+If this screen exposes a regression requiring another edit, freeze and finish
+that edit's development screen before candidate selection for validation;
+these eight fresh posts remain ungenerated meanwhile.
