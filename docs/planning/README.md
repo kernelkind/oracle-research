@@ -34,11 +34,13 @@ with HTTP 400; complete inventory recovery confirmed no instance and no charge. 
 is still pending. The user approved revised selection filters and proceeding
 within $5. A better refreshed 96GB/600 W quote is offer [private ID removed] on machine
 [private ID removed] at $1.4656/hour, or $4.40 for three planned hours including transfers.
-The unchanged private image and native package use a new frozen operation. Gemma dense failed in batch-memory calculation. Qwen completed both updates, 20 brief responses and four cache
-checks. All 125 work files and six startup files are retrieved and rehashed;
-Gemma dense has only its first checkpoint, and MoE did not start. The local fix
-uses each attention layer's dimensions and has a passing regression test.
-The rebuilt VM passes 56 tests, including managed SSH and retrieval. Deploying the corrected package and completing GPU checks remain pending. Incomplete deletion still requires user approval.
+The unchanged private image and native package use a new frozen operation. All 125 available work files and six startup files were reverified before the run ended on October 3.
+ Qwen completed both updates,
+20 brief responses and four cache checks; Gemma dense has its first checkpoint,
+and MoE did not start. The local per-layer dimension fix is committed and its
+rebuilt VM passes all 56 tests. Reuse was approved, then cancelled by the deletion
+instruction before implementation. Remaining GPU checks are incomplete.
+Preliminary charges were $1.56.
 No job timeout, watcher error or elapsed review window may terminate this work automatically. Stopping
 or deleting requires complete, verified local data, or explicit user approval
 to stop incomplete work. Keep the resource and supply any missing work.

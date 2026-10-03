@@ -1022,7 +1022,10 @@ checks. Gemma dense completed its first update but failed before generation:
 its head dimension differs by attention layer, and the batch-memory calculation
 incorrectly read the global configuration. MoE never started. Retrieval and
 independent rehashing account for all 125 work files and six startup files.
- No automatic timeout or deletion.
+
+The preliminary preparation cost was $1.56. Required Gemma work remains incomplete. No automatic timeout or
+deletion occurred. Budget overruns must trigger a direct chat update, never an
+automatic stop. Ask questions directly in chat; do not use question tools.
 
 The minimal local production-path test reproduces the same per-layer attribute
 error for both Gemma variants. The fix reads each layer's cache dimensions and

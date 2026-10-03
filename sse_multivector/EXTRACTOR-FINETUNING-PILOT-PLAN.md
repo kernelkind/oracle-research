@@ -47,13 +47,12 @@ The $7 request is withdrawn. Vast rejected the request with HTTP 400.
 The specific rejection explanation was not retained. The user approved revised
 selection filters and proceeding within $5. A better refreshed 96GB/600 W offer on the host costs $1.4656/hour, or $4.40 for three planned hours
 including transfers. A new frozen operation uses the unchanged tested image and package.
-The preparation run is retained and continuously observed after Gemma dense
-failed in batch-memory calculation. Qwen completed all checks. All available
-125 work files and six startup files are retrieved and independently rehashed;
-Gemma dense has only its first checkpoint, and MoE did not start. The local
-per-layer dimension fix and regression pass. The rebuilt VM passed all 56
-tests; corrected deployment and remaining GPU checks are pending. Reuse of the
-retained rental is under review; incomplete deletion requires user approval.
+All 125 available work files and six startup files were reverified. Qwen completed all checks; Gemma
+dense has only its first checkpoint, and MoE did not start. The local per-layer
+dimension fix is committed; its rebuilt VM passed all 56 tests. Reuse was
+approved, then cancelled by the deletion instruction before implementation.
+Remaining GPU checks are incomplete.
+The preliminary resource charge was $1.56.
 The cases and numerical memory allowances below still await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
@@ -1328,16 +1327,23 @@ repair; evidence is under
 `target/distillation-vm-clean-deployment/attempt-1791054641206410906/`. The old
 image, package and results are unchanged. Corrected deployment and remaining
 GPU preparation are still pending. Do not infer complete
-three-student fit or a full pilot cost from this partial run. The rental remains
-retained pending explicit approval of incomplete deletion. Evidence:
-`operation-5usd-r1/observations/available-data-integrity-review.json`.
+three-student fit or a full pilot cost from this partial run. The user approved
+reuse, then explicitly instructed deletion before any deployment support was
+implemented. All available files were rehashed again.
+The preliminary resource charge was $1.56. Evidence:
+`operation-5usd-r1/observations/available-data-integrity-review.json` and
+`closure-evidence.json` in the proposal directory.
 
 **Required stopping rule, approved October 3:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain
 explicit user approval first. Spending approvals still apply; request any
 needed extension early instead of treating a financial threshold as permission
 to terminate incomplete work. The previously asked approval containing a
-2.5-hour job stop is withdrawn.
+2.5-hour job stop is withdrawn. The user explicitly prohibited terminating a
+rental merely because spending exceeds the planning budget: report overruns
+directly in chat and retain incomplete work unless explicitly instructed to stop.
+Questions and approval requests must be asked directly in chat; do not use
+question tools.
 
 The shared operator refuses `stop` and direct deletion for this timeout-free
 workload without `launch/completion-review.json`. That review records a positive
