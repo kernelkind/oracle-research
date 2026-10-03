@@ -91,3 +91,25 @@ pass. Source-resolution behavior is established only by the planned inference.
 Production ASv6.48, MP, release decisions and unrelated working changes remain
 untouched. Review and commit source, templates, tests and maintained plan before
 inference; generated experiment data stays ignored.
+
+## Fresh original baseline extension, before its generation
+
+At 15:10 UTC, all six completed N096 answers from the initial ASv6.88/89/90
+trial-1/2 requests retain explicit complete recipe qualifications. This differs
+from ASv6.87's three source failures. These are provisional source observations,
+not complete semantic reviews or causal improvement claims. Because different
+interventions improve the same source dimension in this small preview, add
+three exact-ASv6.81 original trials (twelve first attempts) to test the older
+baseline near the new generation window. Model/request-route changes are not
+established; stochastic and timing explanations remain possible.
+
+Freeze native `source-epoch-as81-original-medium-r1/r2/r3` before any of their
+calls. Each inherits its same-trial completed ASv6.81 inputs, evidence, template
+and medium settings exactly, with four new requests and zero reuse. The three
+native plan hashes revalidate. Place these runs alongside the pending candidate
+trial-3 requests under the same six-request limit; exact simultaneity is not
+guaranteed. Apply unchanged original criteria and existing exclusions, bind one
+native agent review per valid answer, and complete all twelve regardless of
+outcome. Preserve all earlier scores and the original 105-attempt plan. This
+adaptive diagnostic is not untouched validation or a quality retry. Total
+planned first attempts now 117, reaching 1,256 without provider retries.
