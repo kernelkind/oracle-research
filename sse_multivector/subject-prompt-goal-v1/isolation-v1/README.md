@@ -184,7 +184,13 @@ the full SP context; the previously unanswered cases have no earlier outcome
 to compare. These changed prompts are new interventions, not retries of the
 unknown runner failures.
 
-Plan 132 calls; all-first-attempt success reaches 670. Keep medium, subscription
+Before any R2 generation, add six native inherited S002/S006 checks (three
+trials per case) under R2. Their completed R1 answers supply the direct contrast
+for the original failing period/title wording; the ten edited binding posts
+alone would not test that failure. This amendment does not alter the running
+R1/E2/P2 plans or their criteria.
+
+Plan 138 calls; all-first-attempt success reaches 676. Keep medium, subscription
 Sol 6.1, WebSocket, 1,800 seconds and no output cap. Native runners own their
 scheduling. Bound aggregate concurrency to six during this phase and record
 any failures unchanged. A lower burst size is an operational choice, not a
