@@ -1480,6 +1480,11 @@ that the pilot is scientifically sufficient. Its amount and the final-training
 reserve remain open; one complete training pass is approved. No fixed pilot/rest
 ratio has been adopted.
 
+**Full student prompt, approved October 3:** use the complete subject prompt,
+including every worked example, for training, untuned baselines, all checkpoint
+validations and the final test. Size context and memory for the full prompt,
+complete note and allowed answer. The exact prompt version remains to be frozen.
+
 ### Conditional subjects-only batched cost reference — October 3
 
 This replaces the serial reference with a **projection**, using measured prep
@@ -1552,7 +1557,7 @@ The existing worker therefore rejects that diagnostic input under its current
 8,192-token setting. This is a configuration mismatch, not proof of an actual
 GPU memory failure. Prep tested training lengths only through 6,531 Qwen /
 6,440 Gemma tokens and cached generation through 7,328 / 7,245 tokens.
-Choose the pilot prompt and establish appropriate context/memory settings before
+Freeze the exact full prompt version and establish appropriate context/memory settings before
 freezing or launching. Do not truncate prompts, notes or labels to bypass this gate.
 The raw source corpus exists; pilot note selection and selected-teacher labels
 remain pending. The existing 100-note annotations establish no broader coverage.

@@ -1210,6 +1210,12 @@ an illustrative $1.60/hour gives $58–65. Brief generation plus a single long-c
 decode step is a projection, not measured full-output throughput. No full-pilot
 spending is authorized. Preparation's preliminary total was $3.26.
 
+**Full student prompt (approved October 3):** students use the complete subject
+prompt, including all worked examples, during training, untuned baselines,
+checkpoint validation and final testing. Context and memory settings must
+accommodate that full prompt, the complete note and the answer allowance.
+Freeze the exact prompt version before the pilot.
+
 **Input audit (October 3):** prep used **ASv6.48**, not the latest experimental
 **ASv6.98**. Offline actual-tokenizer checks on the existing 100 notes find
 ASv6.98 prompts of 8,066–8,507 Qwen tokens and 7,921–8,375 Gemma tokens.
@@ -1217,7 +1223,7 @@ All 100 prompts plus the 4,096-token output allowance exceed the configured
 8,192-token context. Pairing them with old teacher answers solely for length
 checking also exceeds that limit for 79/80 Qwen and 74/80 Gemma training examples.
 This demonstrates a configuration mismatch, not a measured GPU memory failure.
-Prompt choice, context/memory settings and actual data must be settled before
+The exact full prompt version, context/memory settings and actual data must be settled before
 freezing pilot inputs; the batched estimate above does not price ASv6.98.
 The source corpus exists, but pilot note selection and teacher labels remain
 pending. Teachers, review details, validation/test counts, final-test collection
