@@ -1,6 +1,8 @@
 # Fixed original-post replication after candidate selection
 
-Status: exact ASv6.75 and ASv6.81, inputs and criteria frozen before generation.
+Status: all forty first attempts completed; the candidate still fails both
+hard original posts in every trial. Exact ASv6.75 and ASv6.81, inputs and
+criteria were frozen before generation.
 The saved three-trial development originals have 4/12 and 8/12 bounded accepts
 respectively. This small comparison selected ASv6.81, but it still has source
 and placement failures. Measure repeatability independently without another
@@ -50,3 +52,54 @@ timeout, no output cap or paid fallback, existing native history/budget. If
 all earlier frozen first attempts complete, these forty reach counter 1,016
 after fresh validation's 976. Do not revise either prompt using these answers.
 No production candidate is adopted and no MP work is included.
+
+## Completed fixed comparison
+
+All forty first attempts have valid native receipts and current output-bound
+agent reviews, without errors, retries or reuse. All ten preparation plans
+retain verified source/template, plan and runner-file hashes, identical full
+posts/evidence/schema/settings and the exact same-version saved baseline.
+The two prompts and seven examples remain unchanged. The first-attempt
+subtotal reaches 1,016; the overlapping attribute controls share the budget.
+
+ASv6.75 has one accept, fifteen rejects and four uncertainties; ASv6.81 has
+nine accepts, ten rejects and one uncertainty. These are bounded agent
+judgments on development posts, not full-SP gold or statistical proof.
+
+| Case | ASv6.75 trials 1/2/3/4/5 | ASv6.81 trials 1/2/3/4/5 |
+| --- | --- | --- |
+| N063 | uncertain / reject / uncertain / uncertain / uncertain | accept / accept / uncertain / accept / accept |
+| N074 | accept / reject / reject / reject / reject | accept / accept / accept / accept / accept |
+| N096 | reject / reject / reject / reject / reject | reject / reject / reject / reject / reject |
+| N100 | reject / reject / reject / reject / reject | reject / reject / reject / reject / reject |
+
+The N063 uncertainties retain all fifteen qualified members beneath a broad
+ingredient role group without an explicit full-list tuple. That previously
+excluded representation is not a newly counted error. ASv6.75 trial 2 has a
+separate concrete omission: its returned dish at 1.1.1.1.1 is a leaf without
+the ingredient group or qualified members. All candidate trials fill those
+compatible dish occurrences. N074's improvement retains the complete book
+attribution across all returned partial-advice occurrences, rather than only
+in book/author branches; both prompts preserve the checked diet exception.
+
+Every baseline N096 action loses enclosing recipe qualifications; trial 5
+also loses the material amounts. Candidate trials 1/3 preserve the counted
+recipe-qualified action but omit ingredient/pan copies. Trials 2/4 still lose
+easy/never-fail/serving-five qualifications from the action. Trial 5 retains
+those qualifications and ingredient copies, but omits the dinner qualification
+established by the source's #dinner; its separate dinner recipe at 13.1.1 cannot
+repair the complete action. This distinction was in the frozen criterion.
+No pan parent is returned in that trial, so pan placement remains unexposed.
+
+All baseline N100 answers lose the full joint trim. Candidate trials 1–4 also
+lose it, despite retaining the sirloin source in both partial actions. Trial 5
+retains the fully qualified joint trim across compatible material occurrences,
+but omits both required partial trimming actions. A complete event does not
+replace individual source subjects. Thus joined-source retention is 0/5 versus
+1/5, while complete bounded acceptance remains 0/5 for both prompts.
+
+The earlier candidate development result, including joined retention in 3/3
+N100 answers and two bounded accepts, does not repeat here. There is observable
+N074 progress and fewer overall confirmed errors, but no reliable correction
+of N096/N100. Optional hierarchy, recorded source ambiguities and unsupported
+recommendation-newness requirements remain excluded. Exact prompts stay frozen.

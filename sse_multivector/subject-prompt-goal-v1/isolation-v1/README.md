@@ -1,11 +1,28 @@
 # SP failure isolation and prompt correction
 
-Status: authorized, in progress. On 2026-10-02 the user instructed us to
+Status: experiments completed; a reliable prompt correction remains incomplete.
+On 2026-10-02 the user instructed us to
 isolate why SP fails, fix the prompt and work for five hours with a 2,000-call
 cap. Start: 2026-10-03 02:38:46 UTC; deadline: 07:38:46 UTC. Preserve the exact
 subscription `gpt-6.1-sol` low/medium route, SP JSON schema, source meanings,
 all 34 instruction clauses and five tracked implications. MP, production
 adoption, paid fallback and pushes are outside scope.
+
+The model can judge supplied heading restrictions and collect supplied subjects
+correctly with the full prompt present, but loses facts while constructing
+complete specific subjects and loses copies while rendering their hierarchy.
+These operations fail separately. A named recipe can remain in one heading
+while its sauté loses the recipe relationship; a complete sauté can remain in
+the recipe branch while disappearing from compatible ingredient branches.
+
+ASv6.81 improves particular cases, but the fixed five-trial original replication
+still rejects every N096/N100 answer. The fresh comparison is 22/24 versus
+23/24 bounded accepts, with the remaining negated material attribute lost from
+the complete packing action despite being indexed separately. Follow-up source
+controls reproduce that loss even with explicit later references. These are
+behavioral findings, not a unique internal model explanation or a full-SP fix.
+See [original replication](replication-v1.md), [fresh validation](validation-v1.md)
+and [attribute controls](late-attribute-v1.md) for all trials and limits.
 
 The persistent campaign counter starts at 430. Its ceiling increases from
 1,000 to 2,000 without resetting/refunding use, conservatively leaving 1,570
@@ -489,3 +506,65 @@ to increase its fixed score. Native source/template/plan/file receipts and
 identical runner settings are verified before generation. At most six requests
 remain active. The fixed first-attempt totals are 976, then 1,016, then 1,028;
 overlapping phases share the persistent 2,000 counter and five-hour deadline.
+
+## Completed replication and source-form diagnosis
+
+The unchanged five-trial original comparison completes forty valid first
+receipts with current native reviews, no errors/retries/reuse. ASv6.75 has
+1 accept/15 reject/4 uncertain; ASv6.81 has 9 accept/10 reject/1 uncertain.
+N074 improves from four confirmed errors to zero. N063 has one versus zero
+confirmed placement errors, with the excluded alternative group form retained
+as uncertainty. Every N096/N100 answer still fails in both prompts. Candidate
+N096 trials distinguish correctly retained actions with missing copies from
+correctly placed actions missing source qualification; candidate N100 trial 5
+retains the joint action but loses both partial actions. The full table and
+numbered witnesses remain in replication-v1.md.
+
+The twelve frozen attribute controls complete with ten bounded accepts/two
+rejects and valid first receipts/current native reviews, no errors/retries/
+reuse. The later-anaphora and later-explicit-reference forms each lose the
+negative material attribute from all packing actions in one of three trials,
+despite indexing it separately. Reversing the explicit clauses and inline
+modification each retain it in three of three. Both failing raw receipts end
+normally. The unchanged J001 also succeeds twice, so this is a small source-
+form effect with variability, not a unique internal mechanism or general fix.
+All trials and source/receipt limits remain in late-attribute-v1.md.
+
+The persistent counter closes at 1,028 of 2,000: 430 preserved prior-campaign
+attempts plus 598 new task attempts. There are 549 valid task answers and
+49 runner failures, preserved without retries or prompt-quality verdicts.
+These comprise 246 diagnostics, 108 ASv6.76/77/78 screen attempts, twelve full-
+post controls, 24 ASv6.79/80 attempts, 24 ASv6.81/82 attempts, 42 ASv6.83
+attempts, twelve ASv6.84 attempts, thirty ASv6.81 regression attempts, 48 fresh
+validation attempts, forty original repeats and twelve attribute controls.
+All inference uses exact subscription Sol 6.1 medium and native receipts.
+
+The task isolates two observed failures: construction of complete qualified
+subjects and collection beneath each compatible returned heading. Supplied
+pair/collection competence, correct separate facts and correctly populated
+other branches do not guarantee their composition. Minimal clarifications
+produce particular progress, including N074, but changing the shared-action
+example, deleting book-index framing or restricting the general-heading
+brevity permission does not produce a reliable fix. The fixed candidate and
+all seven examples stay frozen. Reliable correction remains unfinished;
+no production adoption, MP work or paid fallback is authorized by these results.
+
+## Verification
+
+Native `show` revalidates all 106 task experiments: 598 attempts, 549 valid
+answers, 49 unknown failures and zero reused answers. Every valid answer has
+a current output-bound agent review; no case is unrun, empty, malformed or
+missing a receipt. The final forty original and twelve attribute judgments
+match their authored review records exactly. Frozen original/candidate inputs,
+schema/settings and native plan/file/source hashes pass the direct checks.
+ASv6.81's source/template hashes remain those recorded before validation, and
+its seven examples remain byte-identical to ASv6.75. All 61 relevant offline
+prompt, revision and attempt-budget tests pass in the final check. These verify
+the experiment and prompt contracts, not semantic reliability.
+
+Read-only raw-receipt inspection verifies all 598 requests specify exactly
+`openai-codex / gpt-6.1-sol` at medium, with no requested output cap and one
+recorded attempt. All 549 valid raw answers report succeeded/completed/stop,
+one HTTP attempt, valid output and no provider/validation error. The semantic
+omissions are present in normally completed answers, rather than reported
+transport or output-limit terminations. Provider internals remain unobserved.

@@ -98,3 +98,25 @@ raw receipt completes normally. This confirms that the candidate still loses
 specific subject qualification on a different topic; 23/24 is not full-SP
 reliability or statistical proof of superiority. The prompt remains frozen
 for the independent original-post replication and source-form diagnostic.
+
+## Independent original repeats and source-form controls
+
+The [five-trial original replication](../isolation-v1/replication-v1.md) has
+forty valid first receipts with current native reviews and no errors/retries/
+reuse. ASv6.75 has fifteen confirmed errors in twenty answers and ASv6.81 has
+ten; uncertainties are four versus one. N074 has four versus zero confirmed
+errors, while N096/N100 still fail all five trials in both prompts. N063 has
+one versus zero confirmed placement errors; its excluded alternative group
+form accounts for the uncertainties. This supports particular progress, not
+reliable completion of the hard original cases.
+
+The candidate's N100 joint source survives in only one of five new repeats,
+versus all three development trials. That repeat omits both partial trims.
+N096 can retain the recipe-qualified action while missing compatible copies,
+or retain more copies while losing a source distinction. The unchanged
+[twelve source-form controls](../isolation-v1/late-attribute-v1.md) retain
+non-waterproofness in every action when placed first or inline (six answers),
+but lose it in two of six answers with a later reference, including one with
+explicit complete material descriptions. Those are development diagnostics,
+not new validation or proof of an internal mechanism. The prompt remains
+frozen with confirmed failures and is not adopted.

@@ -59,6 +59,28 @@ retention failure on a different topic. Exact prompts stay frozen for forty
 independent original repeats and twelve source-form diagnostics; their results
 cannot revise the held-out score or establish full-SP reliability.
 
+The [independent original replication](../isolation-v1/replication-v1.md)
+completes all forty first attempts with valid receipts/current native reviews,
+no errors/retries/reuse: ASv6.75 has 1 accept/15 reject/4 uncertain, ASv6.81
+9 accept/10 reject/1 uncertain. N074's confirmed attribution/placement failures
+fall from four of five to zero, but N096/N100 still fail all five repeats each.
+Its complete N100 joint trim survives only one repeat, which loses both partial
+actions. The development improvement does not establish a reliable correction.
+
+The [twelve attribute controls](../isolation-v1/late-attribute-v1.md) complete
+with ten bounded accepts/two rejects and valid first receipts, no errors or
+reuse. Later references lose the negated attribute from packing actions in
+two of six answers, including one explicit complete-reference form; property-
+first and inline forms retain it in all six. This small source intervention
+supports a retention failure across separate clauses, not a unique internal
+model explanation. It leaves the fresh validation score unchanged.
+
+The persistent counter is 1,028 of 2,000, preserving the 430 prior attempts:
+598 new task attempts, 549 valid answers and 49 runner failures. Unknown
+failures are preserved without quality judgments or retries. Exact prompts
+remain frozen, source/examples/schema checks pass, and the reliable SP fix
+remains incomplete. Production ASv6.48 and MP remain unchanged.
+
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with
 no runner errors, retries or reuse. [ASv6.75 (candidate, tested with
