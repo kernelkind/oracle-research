@@ -233,10 +233,11 @@ Other variants preserve scope but lose source relationships or numbered
 placements. The linked report separates exposure and exact witnesses from
 bounded accepts, with the full-original controls kept as their own trials.
 The user subsequently approved drafting that existing-example revision. The
-resulting [ASv6.75 (draft, untested)](../asv6.75/README.md) demonstrates those
+resulting [ASv6.75 (candidate, approved for testing)](../asv6.75/README.md) demonstrates those
 food-parent relationships while retaining the prior rule coverage. This
 ASv6.74 candidate and its saved comparison remain unchanged. Review of the
-exact draft and testing remain open; the drafting task made no model calls.
+exact draft subsequently led to the approved [fixed comparison](../asv6.75/comparison-v1.md);
+the drafting task made no model calls. Adoption remains open.
 
 Two semantic questions remain open: the C2 help/appreciation combination and
 N063's complete-dish versus separate ingredient-group representation. Neither

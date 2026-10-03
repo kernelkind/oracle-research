@@ -1,10 +1,12 @@
-# ASv6.75 food-role example draft
+# ASv6.75 food-role example and fixed comparison
 
-Status: draft, untested. On 2026-10-02 the user approved drafting and auditing
+Status: candidate, approved for testing; untested. On 2026-10-02 the user
+approved drafting and auditing
 the existing-example revision recommended by the completed
 [ASv6.74 scope minimization](../autonomous-sp-v1/scope-minimization-v1.md).
-Approval of this exact draft and model testing remain open. Production SP
-remains frozen ASv6.48; MP and adoption are outside this task.
+The user subsequently approved the [fixed comparison](comparison-v1.md) of this
+exact source with ASv6.74. Production SP remains frozen ASv6.48; MP and adoption
+are outside this task.
 
 [ASv6.75](ASv6.75.md) replaces only C1's post, explanation and complete output.
 Instructions, C2–C7 and the JSON schema remain byte-for-byte unchanged from
@@ -124,13 +126,12 @@ additional fixed input bytes per post, or 9.9%. Across K posts this adds
 existing contract. Generated output size and token usage are unmeasured.
 There is no additional per-post pass. Source SHA-256 is
 `4a673d7d6c87dc568bcf6043e46bb05c01ca873eacc9c87c4797f12231dc8c70`.
-No model calls were made: the persistent campaign budget remains 356 of
-1,000 attempts.
+Drafting made no model calls; the persistent campaign budget was 356 of
+1,000 attempts at that checkpoint.
 
-After review, the useful next step is a fixed comparison with ASv6.74 on all
-sixteen minimized cases and the original four regression posts, retaining
-parent exposure, scope, source coverage, every numbered placement and
-uncertainty separately. Include the earlier repair diagnostics to check the
-effect of replacing their closely related example. Freeze criteria and the
-whole draft before generation; do not select trials by their quality. This is
-a recommendation, not an approved or started model experiment.
+The user approved that next step: the [fixed comparison](comparison-v1.md)
+freezes this source for all sixteen minimized cases, the four original
+regression posts and two earlier repair diagnostics. Preserve parent exposure,
+scope, source coverage, every numbered placement and uncertainty separately.
+The plan fixes all 74 candidate answers before generation; no candidate is
+adopted by this comparison.

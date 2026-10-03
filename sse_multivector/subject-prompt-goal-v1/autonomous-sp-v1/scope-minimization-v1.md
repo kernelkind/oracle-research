@@ -278,13 +278,13 @@ different incomplete results. The existing scope and placement rules cover both.
 
 The user subsequently approved drafting an existing-example revision around
 these Food/Salt and Dog food/recipient contrasts. The resulting
-[ASv6.75 (draft, untested)](../asv6.75/README.md) demonstrates unrestricted
+[ASv6.75 (candidate, approved for testing)](../asv6.75/README.md) demonstrates unrestricted
 materials, qualified food-role children under the broad food parents, and
 complete source groups/actions beneath every compatible numbered parent. Its
 audit preserves C1's count, reference, participant and action coverage and the
 existing clause assignments. No calls were made for that drafting task. Review
-of the exact draft and a fixed model comparison are the next steps; testing
-and adoption remain open.
+of the exact draft subsequently led to the approved
+[fixed comparison](../asv6.75/comparison-v1.md). Adoption remains open.
 
 Food-context additions are useful controlled contrasts, not proved necessary or
 sufficient causes. These small repeated samples do not establish unseen-topic
