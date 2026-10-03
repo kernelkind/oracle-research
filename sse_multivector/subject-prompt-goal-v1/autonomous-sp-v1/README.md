@@ -1,11 +1,16 @@
 # Autonomous SP iteration
 
-The user approved [ASv6.74's C1-only revision and fixed
-comparison](../asv6.74/README.md): a two-material repair group and action,
-separate participants and complete numbered placements. Instructions and the
-other six examples are unchanged. Offline checks passed; fifty-six fresh
-medium candidate answers are planned against saved ASv6.73 baselines. Production
-adoption remains open.
+The approved [ASv6.74 C1 revision and fixed comparison](../asv6.74/README.md)
+is complete: fifty-six fresh medium answers and current output-bound native
+agent reviews, with no runner errors or reuse. The repair diagnostics improve
+from four confirmed placement failures in six answers to none; they closely
+resemble the replacement example. Confirmed-error counts on the original posts
+stay N063 1/5, N074 2/5, N096 5/5 and N100 5/5. Three additional N063 answers
+and five soup diagnostics remain uncertain. N063 also introduces an unrestricted
+olive-oil/salt scope error. This is local progress, not a demonstrated general
+fix. Forty offline tests passed; the persistent budget is 302 of 1,000 attempts.
+Instructions and the other six examples are unchanged. Production adoption
+remains open.
 
 The approved [ASv6.73 example audit and fixed interaction
 diagnostics](interaction-audit-v1.md) investigates seasoning wording,
@@ -15,8 +20,9 @@ three independent medium trials. All 36 fresh answers completed without runner
 errors or reuse: five have confirmed placement failures, one remains uncertain,
 and thirty satisfy the bounded focal checks. The salt/dog contrasts did not
 reproduce the original scope failures. See the linked audit for parent exposure,
-numbered witnesses and limits. ASv6.73 stayed fixed; the campaign budget is now
-246 of 1,000 attempts. Prompt revision and adoption remain open.
+numbered witnesses and limits. ASv6.73 stayed fixed; the campaign budget was
+246 of 1,000 attempts at that checkpoint. Prompt revision and adoption remained
+open.
 
 The user authorized autonomous SP iteration on 2026-10-02, with at most
 1,000 attempts on `gpt-6.1-sol` at `low` or `medium` reasoning. This is an upper
