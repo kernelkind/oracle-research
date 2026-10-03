@@ -25,8 +25,11 @@ Check the actual pilot data against those tested bounds when it is ready.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete
-model on that GPU and the three students running sequentially. The specific
-rental offer, maximum charge, and launch remain open. No job timeout, watcher
+model on that GPU and the three students running sequentially. The user approved
+proceeding with the $5 preparation on October 3. The tested image is now published
+and verified private. Current compatible 600 W offers require a higher budget:
+the selected proposal costs about $6.34 for three planned hours, with a $7
+approval requested. No reservation or rental has started. No job timeout, watcher
 error or elapsed review window may terminate this work automatically. Stopping
 or deleting requires complete, verified local data, or explicit user approval
 to stop incomplete work. Keep the resource and supply any missing work.

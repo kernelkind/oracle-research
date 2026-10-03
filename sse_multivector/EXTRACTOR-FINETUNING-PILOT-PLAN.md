@@ -39,9 +39,11 @@ restored training are the proposed checks, with thinking off throughout.
 Evidence applies only to tested input/output memory bounds; audit the actual
 pilot data's token lengths against those bounds when it is ready. Future answer
 completeness is not established by this preparation. The local preparation
-mode, frozen input package and VM rehearsal are ready. The proposed cases
-and allowances below await GPU evidence; offer, maximum charge and launch
-approval remain open. No paid action has been taken.
+mode, frozen input package and VM rehearsal are ready. The user approved
+proceeding with the $5 preparation on October 3. The tested image is published
+and verified private; the cheapest compatible 600 W quote needs a proposed
+$7 budget, awaiting approval. The cases
+and numerical memory allowances below await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -1250,20 +1252,30 @@ real pinned tokenizer preflights, managed SSH deployment and verified retrieval.
 The local controller/contract checks passed 65 tests, including refusal to
 stop/delete with missing or changed local data, watcher expiry/error/interrupt
 preservation, an actual worker without an inherited deadline, and recorded
-user approval for incomplete stops. No paid GPU evidence or
-new image publication is claimed. Evidence:
+user approval for incomplete stops. No paid GPU evidence is claimed. The exact
+VM export is now published privately as
+`docker.io/kernelkind/oracle-mvp@sha256:04628fd9d099cc3deb1d999d0664d000fb4b4ce6ba0a6b9cddc38931fba6832b`.
+Filesystem layers, runtime configuration and source hashes match the VM;
+read-only rental credentials can pull it and an anonymous-token manifest request
+is rejected with HTTP 401. Publication evidence is in the proposal directory's
+`publication/publication-receipt.json`. Local test evidence:
 `target/distillation-vm-clean-deployment/attempt-1791046788404742039/`.
 
 Proposed rental controls are one 600 W / 96GB RTX PRO 6000 WS, 300 GB disk,
-a proposed $5 spending approval and a three-hour cost-planning/review window.
+and a three-hour cost-planning/review window. The user approved proceeding with
+the proposed $5 preparation, but no current compatible offer fits that amount.
+The selected October 3 quote is offer 53902271, the host, at about
+$1.66/hour including storage. Three planned hours plus 200 GB inbound and
+10 GB outbound allowances cost $6.34. A $7 maximum is requested, still pending.
+The prepared unlaunched operation is `operation-proposed-7usd/` under the proposal
+directory; no reservation or paid commitment has been made.
 The user rejected the 2.5-hour worker stop: the current package freezes
 `timeout_seconds: null` and `work_seconds: null`. No execution timeout, watcher
 expiry/error/interrupt or budget alert may kill the job. Observation must
 continue until necessary data is complete, retrieved and verified, and explicit
 deletion is confirmed. The latest October 3 offers did not meet
-both compatibility requirements and that spending proposal. Refresh and freeze
-a qualifying offer before launch. Private publication, maximum charge approval,
-ledger reservation and launch remain pending.
+both compatibility requirements and the $5 spending proposal. The selected $7 proposal passed the shared operator preparation; launch remains pending. Refresh the selected offer
+before launch and continue to use the verified registry digest.
 
 **Required stopping rule, approved October 3:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain
