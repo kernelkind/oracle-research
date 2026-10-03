@@ -53,6 +53,16 @@ dimension fix is committed; its rebuilt VM passed all 56 tests. Reuse was
 approved, then cancelled by the deletion instruction before implementation.
 Remaining GPU checks are incomplete.
 The preliminary resource charge was $1.56.
+**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
+Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
+private image is frozen at
+`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
+VM checks passed. a compatible offer on the host meets the existing 96GB/600 W hardware
+checks at $1.4153/hour including storage. The 1.75-hour duration is cost planning only. No
+automatic timeout or deletion. Repair straightforward failures immediately; otherwise
+verify available data and delete promptly under standing prep authorization. Observe
+through explicit deletion.
+
 The cases and numerical memory allowances below still await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved

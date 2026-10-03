@@ -40,6 +40,15 @@ and saves batch receipts plus separate raw/parsed answers per note. GPU
 preparation checks numeric memory allowances. Brief generation timing alone does
 not establish the full pilot's runtime.
 
+**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
+Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
+private image is frozen at
+`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
+VM checks passed. The compatible configuration meets the existing 96GB/600 W hardware checks at $1.4153/hour including storage. Earlier preparation had preliminary charges of $1.56. Allow 1.75 hours for further preparation cost planning. No
+automatic timeout or deletion. Repair straightforward failures immediately; otherwise
+verify available data and delete promptly under standing prep authorization. Observe
+through explicit deletion.
+
 ## 1. Freeze shared inputs — locally
 
 Freeze shared training, validation, and final test notes, checked teacher

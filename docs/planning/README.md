@@ -46,6 +46,15 @@ substantial work, preserve and verify the available data, then delete under the
 user's standing approval; completion of all prep checks is not required.
 The full pilot still requires complete, verified local data or explicit user
 approval before stopping incomplete work. No automatic timeout or deletion.
+**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
+Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
+private image is frozen at
+`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
+VM checks passed. The compatible configuration meets the existing 96GB/600 W hardware checks at $1.4153/hour including storage. Earlier preparation had preliminary charges of $1.56. Allow 1.75 hours for further preparation cost planning. No
+automatic timeout or deletion. Repair straightforward failures immediately; otherwise
+verify available data and delete promptly under standing prep authorization. Observe
+through explicit deletion.
+
 Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,
