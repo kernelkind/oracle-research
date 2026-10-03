@@ -1,6 +1,7 @@
 # Fresh instruction-consolidation comparison
 
-Status: frozen before inference; results pending.
+Status: fresh comparison complete; clear failures remain; neither prompt is a
+reliable correction and ASv6.96 is not adopted.
 
 The user authorized applying current prompting and evaluation guidance after
 the audit found repeated/scattered instructions and weak saved, unblinded
@@ -136,3 +137,130 @@ ASv6.96 source SHA256:
 `4899be460978c5b561975d507b8a584b9c65e15f2b5cdd3c2229b42c34e2195b`.
 POST-template SHA256:
 `5464710b08999eae75617526a250c873a22a8748aa0331fdb8d908a9d868bdfd`.
+
+## Completed fresh results
+
+All six runners finish their eleven fixed cases: 66 valid first answers, zero
+errors, retries, reused answers or unrun cases. The persistent counter reaches
+1,487/2,000, leaving 513 attempts; it is not reset or refunded. The exact
+subscription Sol 6.1 medium route is preserved. No paid fallback, cash-ledger
+increment or production adoption follows this result.
+
+Read-only audits verify that each of the 66 actual request bodies contains its
+exact frozen prompt, model and effort. Each has one HTTP attempt and normal
+completion. The raw final answer equals the response and adapter raw text;
+parsed JSON equals the validated model output. This excludes observed prompt
+substitution and output rewriting. It does not establish that single-user-message
+delivery, instruction organization or any hidden model procedure causes failure.
+Both committed ASv6.96 source hashes remain unchanged.
+
+All 66 primary assessments and 24 independent original-post assessments are
+locked without prompt versions. After explicit corrections under the existing
+joint-amount and purchase-attachment calibration, the paired reviewers agree on
+the whole-answer verdict in 20/24 cases. Disagreements are T001/S001,
+T013/S005, T030/S013 and T035/S015. The additional K001 cross-check below is
+outside those 24 pairs. Agent agreement is not human accuracy; the prior Salt
+calibration still covers only one related restriction distinction.
+
+The unblinded broker appends a final assessment separately from the blind locks.
+Native `review` stores 158 hash-bound events: 90 fixed blind assessments, one
+initial judgment subsequently corrected, one extra blind cross-check, and 66
+explicitly marked final broker verdicts. Live native `show` verifies all events
+against the same current inputs and outputs. Its `current` field means matching
+hashes, not latest or adjudicated; scoring uses the single event per case whose
+comment starts `Final broker adjudication`. No human-role whole-answer review
+is invented.
+
+| Assessment | ASv6.95 accept / reject / uncertain | ASv6.96 accept / reject / uncertain |
+| --- | --- | --- |
+| Locked primary, after existing-calibration corrections | 22 / 9 / 2 | 20 / 13 / 0 |
+| Final broker, retaining disputed boundaries as uncertainty | 22 / 9 / 2 | 19 / 10 / 4 |
+
+Final bounded verdicts by repeated development post:
+
+| Post | ASv6.95 accept / reject / uncertain | ASv6.96 accept / reject / uncertain |
+| --- | --- | --- |
+| N063 | 2 / 1 / 0 | 2 / 1 / 0 |
+| N074 | 0 / 2 / 1 | 0 / 0 / 3 |
+| N096 | 0 / 3 / 0 | 0 / 3 / 0 |
+| N100 | 0 / 2 / 1 | 0 / 3 / 0 |
+| S006 | 3 / 0 / 0 | 2 / 1 / 0 |
+| D006 | 3 / 0 / 0 | 3 / 0 / 0 |
+| J001 | 3 / 0 / 0 | 3 / 0 / 0 |
+| J002 | 2 / 1 / 0 | 1 / 2 / 0 |
+| K001 | 3 / 0 / 0 | 2 / 0 / 1 |
+| K002 | 3 / 0 / 0 | 3 / 0 / 0 |
+| K003 | 3 / 0 / 0 | 3 / 0 / 0 |
+| Total | 22 / 9 / 2 | 19 / 10 / 4 |
+
+The original-post subset is 2 accepts/8 rejects/2 uncertain for ASv6.95 and
+2 accepts/7 rejects/3 uncertain for ASv6.96. Both fail the frozen reliable-fix
+gate. Counts are not independent-post accuracy estimates or evidence of a
+statistically established regression. There is no demonstrated benefit from
+the shorter instruction block in this comparison. All eight prospective-v2
+posts remain unused.
+
+## Concrete failures and assessment boundaries
+
+- **Scope, revised N063 E01:** Food `1` contains Sea salt `1.13` without a food
+  restriction. Both blind reviewers identify this Salt-like failure; food context
+  cannot supply the missing restriction in the child heading.
+- **Source, revised N100 E03:** `9.1` retains trimming about 3 lb of fat for
+  tallow; `9.2`/`9.3.1` retain the joint quarter-pound tissue-and-scrap portion for
+  the dog. No complete subject joins those two main portions in the shared
+  trimming action. Both reviewers reject this omission. No subdivision inside
+  the joint quarter-pound group is required.
+- **Copy, revised N100 E01:** the formed Saving excess beef myoglobin for
+  addition to dog food `6.1.1` is absent from compatible Beef `2.1`.
+- **Copy, revised N096 E03:** complete individual onion sautéing `1.2.1.1.1`
+  is missing under the first Large pan `1.1.1.2`; that occurrence contains only
+  the joint sauté, while another large-pan occurrence contains individual actions.
+  Separate source omissions also remain. Every N096 trial rejects in both arms.
+- **Copy, revised S006 E04:** the formed complete qualified recipe is missing
+  under Food `6`; its context cannot narrow Food to seasonings.
+- **Source, revised J002 E03 and E04:** packing subjects `5.1`, `5.2` and
+  `5.1.1` omit the stable non-waterproof property; separate waterproofness
+  branches omit packing. The complete meanings are never formed, so these are
+  source losses rather than a second independent copy failure.
+
+The following reconsiderations remain visible alongside their original locks;
+they are not retrospectively applied to historical experiments:
+
+- **N074 T001, T006, T013 and T035 become uncertain.** Reviewers disagree about
+  comparative controversy plus its exception, the diet restriction in Bitcoin
+  carnivore narrative, colloquial vegetable references and Plants membership.
+  Some primary objections paraphrased an actually comparative parent as absolute.
+  These do not establish a confirmed independent failure. Human questions about
+  the diet and conditional-comparison boundaries remain unanswered at closure.
+  ASv6.95 T007 still rejects for a separate confirmed Dietary advice copy gap;
+  T032 still rejects for an absolute no-click heading above comparative wording.
+- **N100 T030 initially rejects, then becomes uncertain, then finally rejects
+  for a different confirmed copy gap.** The primary inner-material subdivision
+  objection is withdrawn under the existing joint-amount calibration. The peer's
+  Amazon/30%-off propagation objection is also withdrawn under the purchase
+  attachment exclusion. Cutting `2.1.2` explicitly includes purchased for $10
+  per lb, so empty priced Purchase `2.1.1` is compatible and lacks the copy;
+  duplicate Purchase `15.1` contains it. No global price propagation is required.
+- **N100 S020 retains reject after withdrawing purchase-detail propagation.**
+  The independent finally-using parent `7.1.1.1` has a love-after-use child
+  `7.1.1.1.1` that omits finally. Implicit physical origin remains uncertain.
+- **K001 T034 becomes uncertain after an extra blind cross-check S025.** The
+  primary treats author's river walk as unsupported; the other reviewer accepts
+  it as reasonably implied by I packed boots for the river walk. Source evidence
+  permits reasonable implications; the stricter across-possible-post test governs
+  parent-child restrictions. No scope/copy failure is found. This newly identified
+  source-ownership boundary is not a calibrated human label.
+
+These post-inference adjudications are disclosed assessment uncertainty, not a
+preregistered human gold set. The already-pending N100 implicit-origin question
+also remains unanswered; origin alone does not decide rejection. Clear failures
+remain without resolving any of these questions. Consolidation satisfies the
+authored checks but does not repair SP behavior; no unique internal cause or
+generalization claim follows.
+
+Native results and append-only reviews remain ignored under
+`sse_multivector/experiments/sp-autonomous-v1/guidance-consolidation-v1/E01`–`E06`.
+Inspect them with native `experiment.py show EXP --case ID --json`; snapshot
+baseline text differences are not fresh quality results. Prompt/source changes
+were committed as `f8358e00` before inference; neutral access and the Salt
+calibration were recorded before assessment and committed as `9784e6e1`.

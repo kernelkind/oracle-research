@@ -3,11 +3,18 @@
 Status: all completed comparisons retain failures; a reliable prompt correction
 remains incomplete. The grouped worked-output comparison is complete.
 The user next authorized applying current prompt/evaluation guidance. The
-[instruction-consolidation comparison](guidance-consolidation-v1.md) freezes
+[instruction-consolidation comparison](guidance-consolidation-v1.md) tests
 ASv6.96's 534-word instruction block against ASv6.95's 731 words, with every
-example unchanged. It prepares 66 fresh contemporaneous answers, randomized
-runner-slot assignment and blinded version-free assessment. All 137 authored
-checks and two independent semantic audits pass; behavioral results are pending.
+example unchanged. All 66 fresh contemporaneous answers finish valid on their
+first attempts without errors, retries or reuse, with randomized runner slots
+and version-blinded assessment. All 137 authored checks and two semantic audits
+pass; raw JSON reaches validation unchanged. Final bounded verdicts are ASv6.95
+22 accepts/9 rejects/2 uncertain and ASv6.96 19 accepts/10 rejects/4 uncertain.
+The 24 independent original-post review pairs agree in 20 cases after existing
+calibration corrections; disputed interpretations and all initial judgments are
+preserved separately from the unblinded broker's final reviews. The comparison
+shows no demonstrated benefit and no reliable fix. ASv6.96 remains unadopted, eight prospective
+posts stay reserved, and the counter reaches 1,487/2,000.
 The user subsequently said “continue”; the [resumed example comparison](example-phase-v1.md)
 keeps ASv6.81 and all previous scores frozen while testing two independent
 example changes under the remaining original attempt ceiling.

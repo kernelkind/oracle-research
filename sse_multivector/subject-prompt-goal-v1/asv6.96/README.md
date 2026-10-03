@@ -1,6 +1,6 @@
 # ASv6.96 consolidated instructions
 
-Status: experimental draft; source audited, behavioral comparison pending.
+Status: tested experimental draft; clear failures remain; not adopted.
 
 [ASv6.96](ASv6.96.md) consolidates ASv6.95's repeated instruction checks into
 ten paragraphs before its seven unchanged examples. Instruction words decrease
@@ -74,5 +74,20 @@ provide the behavioral failure baseline.
 
 Source SHA256: `4899be460978c5b561975d507b8a584b9c65e15f2b5cdd3c2229b42c34e2195b`.
 The [fresh blinded comparison](../isolation-v1/guidance-consolidation-v1.md)
-freezes both arms and all scoring boundaries before inference. Wording approval,
-testing and adoption are different decisions; this candidate is not adopted.
+finishes 66 valid first answers: three trials of eleven development posts for
+each prompt, with no errors, retries or reused answers. All 137 offline checks
+pass. Every actual request matches its frozen input and every raw JSON answer
+reaches validation unchanged. Instruction consolidation therefore does not
+explain away the remaining failures as an adapter or delivery corruption.
+
+Final bounded verdicts are ASv6.95 22 accepts/9 rejects/2 uncertain and ASv6.96
+19 accepts/10 rejects/4 uncertain across 33 answers per arm. This repeated
+development sample does not demonstrate a benefit; it is not population accuracy.
+ASv6.96 still places unrestricted Sea salt beneath Food in one N063 answer,
+omits the complete shared trimming action in one N100 answer, and loses formed
+subjects from compatible branches. It is not a reliable correction. Disputed
+N074 interpretations and implicit N100 origins remain separate uncertainties;
+they are not used as confirmed failures. The comparison records original blind
+judgments, explicit reconsiderations and the limits of agent/human calibration.
+All eight prospective posts stay reserved. Wording approval, testing and adoption
+are different decisions; this candidate is not adopted.
