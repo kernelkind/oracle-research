@@ -568,3 +568,9 @@ recorded attempt. All 549 valid raw answers report succeeded/completed/stop,
 one HTTP attempt, valid output and no provider/validation error. The semantic
 omissions are present in normally completed answers, rather than reported
 transport or output-limit terminations. Provider internals remain unobserved.
+
+For all 549 valid answers, the model's raw JSON, structured model output and
+native final JSON are identical after JSON decoding. The production subjects
+adapter validates fields and preceding-parent numbering without changing
+subject meanings. The retained-fact and missing-copy witnesses therefore
+originate in the model answer, rather than a later parsing or rewriting step.
