@@ -44,11 +44,14 @@ def write_json(path, value):
     temporary.replace(path)
 
 
-def load_data(directory, mask_prompt):
-    directory, mask_prompt = Path(directory), Path(mask_prompt)
+def load_data(directory, mask_prompt=None):
+    directory = Path(directory)
     manifest = read_json(directory / "manifest.json")
     if manifest["schema_version"] != 2:
-        raise ValueError("expected two-task dataset schema 2")
+        raise ValueError("expected dataset schema 2")
+    tasks = set(manifest["tasks"])
+    if tasks not in ({"subjects"}, {"subjects", "mask"}):
+        raise ValueError("unexpected dataset tasks")
     rows = {}
     for name in ("train", "evaluation", "references"):
         path = directory / (name + ".jsonl")
@@ -56,8 +59,9 @@ def load_data(directory, mask_prompt):
             raise ValueError(f"dataset hash mismatch: {path.name}")
         rows[name] = [json.loads(line, object_pairs_hook=unique_object)
                       for line in path.read_text().splitlines()]
-    if sha256(mask_prompt) not in manifest["inputs"].values():
-        raise ValueError("mask prompt hash differs from prepared data")
+    if "mask" in tasks:
+        if mask_prompt is None or sha256(mask_prompt) not in manifest["inputs"].values():
+            raise ValueError("mask prompt hash differs from prepared data")
     train = set(manifest["train_note_ids"])
     evaluation = set(manifest["evaluation_note_ids"])
     if not train or not evaluation or train & evaluation:
@@ -65,7 +69,7 @@ def load_data(directory, mask_prompt):
     if ({r["note_id"] for r in rows["train"]} != train or
             {r["note_id"] for r in rows["evaluation"]} != evaluation):
         raise ValueError("example IDs disagree with split")
-    if any(r["task"] not in ("subjects", "mask") for r in rows["train"]):
+    if any(r["task"] not in tasks for r in rows["train"]):
         raise ValueError("unexpected training task")
     references = {r["note_id"]: r for r in rows["references"]}
     if len(references) != len(rows["references"]) or references.keys() != train | evaluation:
@@ -73,7 +77,9 @@ def load_data(directory, mask_prompt):
     for note_id in train | evaluation:
         if references[note_id]["split"] != ("train" if note_id in train else "evaluation"):
             raise ValueError("reference split differs")
-    rows.update(manifest=manifest, references=references, mask_prompt=mask_prompt.read_text())
+    rows.update(manifest=manifest, references=references)
+    if "mask" in tasks:
+        rows["mask_prompt"] = Path(mask_prompt).read_text()
     return rows
 
 
@@ -628,6 +634,288 @@ def train(config, tokenizer, data, output):
     return reloaded
 
 
+def subject_training_plan(data, config):
+    """Freeze whole-note block membership, then shuffle only within each block."""
+    ids = [row["note_id"] for row in data["train"]]
+    milestones = config["training_milestones"]
+    if (any(row["task"] != "subjects" for row in data["train"]) or len(set(ids)) != len(ids)):
+        raise ValueError("training requires exactly one subject example per note")
+    if (not isinstance(milestones, list) or not milestones
+            or any(type(n) is not int or n <= 0 for n in milestones)
+            or milestones != sorted(set(milestones)) or milestones[-1] != len(ids)):
+        raise ValueError("training milestones must increase through the complete note set")
+    if config["batch_size"] * config["gradient_accumulation_steps"] != 8:
+        raise ValueError("subject training requires eight examples per update")
+    order, start = [], 0
+    rng = random.Random(config["seed"])
+    for stop in milestones:
+        block = ids[start:stop]
+        rng.shuffle(block)
+        order.extend(block)
+        start = stop
+    return {"note_ids": order, "milestones": milestones, "examples_per_update": 8}
+
+
+def subject_training_model(config, checkpoint=None):
+    """Create FP32 trainable adapters, including both packed Gemma expert weights."""
+    import torch
+    from peft import LoraConfig, PeftModel, get_peft_model
+    model = load_model(config)
+    experts = []
+    if getattr(model.config, "enable_moe_block", False):
+        if model.config.model_type != "gemma4_text":
+            raise ValueError("unsupported subject training experts")
+        experts = [name for name, _ in model.named_parameters()
+                   if name.endswith((".experts.gate_up_proj", ".experts.down_proj"))]
+        if len(experts) != 2 * model.config.num_hidden_layers:
+            raise ValueError("subject training expert target coverage differs")
+    if checkpoint is None:
+        model = get_peft_model(model, LoraConfig(task_type="CAUSAL_LM",
+            target_modules=config["lora_target_modules"], r=config["lora_rank"],
+            lora_alpha=config["lora_alpha"], lora_dropout=0., bias="none", lora_bias=False,
+            init_lora_weights=True, target_parameters=experts or None,
+            rank_pattern={re.escape(name): 2 for name in experts},
+            alpha_pattern={re.escape(name): 32 for name in experts}))
+    else:
+        model = PeftModel.from_pretrained(model, checkpoint, is_trainable=True)
+        verify_adapter(model, checkpoint)
+    trainable = [(name, value) for name, value in model.named_parameters() if value.requires_grad]
+    if not trainable or any("lora_" not in name or "router" in name or value.dtype != torch.float32
+                            for name, value in trainable):
+        raise ValueError("subject training requires only FP32 LoRA weights to be trainable")
+    model.config.use_cache = False
+    if config["gradient_checkpointing"]:
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+    model.train()
+    return model
+
+
+def verify_adapter(model, checkpoint):
+    import torch
+    from peft import get_peft_model_state_dict
+    from safetensors.torch import load_file
+    saved = load_file(str(Path(checkpoint) / "adapter_model.safetensors"))
+    actual = get_peft_model_state_dict(model)
+    if saved.keys() != actual.keys() or any(not torch.equal(value, actual[name].detach().cpu())
+                                            for name, value in saved.items()):
+        raise ValueError("saved adapter weights differ after reload")
+
+
+def training_random_state(state=None):
+    import numpy as np
+    import torch
+    if state is not None:
+        random.setstate(state["python"])
+        name, keys, position, gaussian, cached = state["numpy"]
+        np.random.set_state((name, np.asarray(keys, dtype=np.uint32), position, gaussian, cached))
+        torch.set_rng_state(state["torch"])
+        if state["cuda"]:
+            torch.cuda.set_rng_state_all(state["cuda"])
+        return
+    name, keys, position, gaussian, cached = np.random.get_state()
+    return {"python": random.getstate(), "numpy": (name, keys.tolist(), position, gaussian, cached),
+            "torch": torch.get_rng_state(),
+            "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else []}
+
+
+def subject_checkpoint_metadata(checkpoint, output, plan):
+    """A file seal alone cannot establish full checkpoint coverage or counters."""
+    checkpoint, output = Path(checkpoint), Path(output)
+    required = {"training-state.pt", "training.json", "adapter_model.safetensors", "adapter_config.json"}
+    if not required <= {path.name for path in checkpoint.iterdir() if path.is_file()}:
+        raise ValueError("subject checkpoint is missing required files")
+    if not verify_saved(checkpoint):
+        raise ValueError("subject checkpoint hash mismatch")
+    metadata = read_json(checkpoint / "training.json")
+    cursor = metadata["cursor"]
+    if (type(cursor) is not int or cursor not in plan["milestones"]
+            or checkpoint.name != f"checkpoint-{cursor}"
+            or metadata["consumed_note_ids"] != plan["note_ids"][:cursor]
+            or metadata["manifest_sha256"] != sha256(output / "manifest.json")
+            or metadata["plan_sha256"] != sha256(output / "training-plan.json")):
+        raise ValueError("subject checkpoint identity or cursor differs")
+    start, expected_updates = 0, 0
+    for stop in plan["milestones"]:
+        expected_updates += math.ceil((stop-start)/plan["examples_per_update"])
+        start = stop
+        if stop == cursor:
+            break
+    if type(metadata["updates"]) is not int or metadata["updates"] != expected_updates:
+        raise ValueError("subject checkpoint update count differs")
+    return metadata
+
+
+def train_subject_block(config, tokenizer, data, output, plan, milestone, previous=None):
+    """Continue unmerged training, preserving the actual cursor and token objective."""
+    import torch
+    from contextlib import nullcontext
+    from transformers import DataCollatorForSeq2Seq, set_seed
+    output = Path(output)
+    identity = {"manifest_sha256": sha256(output / "manifest.json"),
+                "plan_sha256": sha256(output / "training-plan.json")}
+    state = {"cursor": 0, "updates": 0, "supervised_tokens": 0, "consumed_note_ids": []}
+    if previous is not None:
+        metadata = subject_checkpoint_metadata(previous, output, plan)
+        state = torch.load(Path(previous) / "training-state.pt", map_location="cpu", weights_only=True)
+        if (state["identity"] != identity
+                or any(state[key] != metadata[key] for key in ("cursor", "updates", "supervised_tokens", "consumed_note_ids"))):
+            raise ValueError("subject training checkpoint identity or cursor differs")
+    if milestone <= state["cursor"] or milestone not in plan["milestones"]:
+        raise ValueError("subject training block must advance to the next milestone")
+    next_index = plan["milestones"].index(state["cursor"]) + 1 if state["cursor"] else 0
+    if plan["milestones"][next_index] != milestone:
+        raise ValueError("subject training cannot skip a milestone")
+    set_seed(config["seed"])
+    model = subject_training_model(config, previous)
+    parameters = [p for p in model.parameters() if p.requires_grad]
+    optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"], betas=(.9, .999), eps=1e-8, weight_decay=0.)
+    schedule = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.)
+    if previous is not None:
+        optimizer.load_state_dict(state["optimizer"])
+        schedule.load_state_dict(state["schedule"])
+        training_random_state(state["random"])
+    by_id = {row["note_id"]: row for row in data["train"]}
+    collator = DataCollatorForSeq2Seq(tokenizer, padding=True, label_pad_token_id=-100)
+    metrics = []
+    started = time.monotonic()
+    if config["device"] == "cuda":
+        torch.cuda.reset_peak_memory_stats()
+    try:
+        while state["cursor"] < milestone:
+            stop = min(state["cursor"] + plan["examples_per_update"], milestone)
+            ids = plan["note_ids"][state["cursor"]:stop]
+            rows = [encode_example(tokenizer, by_id[note_id], config["max_length"]) for note_id in ids]
+            tokens = sum(sum(label != -100 for label in row["labels"][1:]) for row in rows)
+            if not tokens:
+                raise ValueError("subject update has no teacher-answer tokens")
+            optimizer.zero_grad(set_to_none=True)
+            loss_value = 0.
+            update_started = time.monotonic()
+            for start in range(0, len(rows), config["batch_size"]):
+                batch = {key: value.to(config["device"]) for key, value in
+                         collator(rows[start:start+config["batch_size"]]).items()}
+                count = int((batch["labels"][:, 1:] != -100).sum())
+                context = torch.autocast("cuda", dtype=torch.bfloat16) if config["device"] == "cuda" else nullcontext()
+                with context:
+                    loss = model(**batch, use_cache=False).loss * (count / tokens)
+                if not torch.isfinite(loss):
+                    raise ValueError("nonfinite subject training loss")
+                loss.backward()
+                loss_value += float(loss.detach())
+                del batch, loss
+            norm = torch.nn.utils.clip_grad_norm_(parameters, 1., error_if_nonfinite=True)
+            optimizer.step()
+            schedule.step()
+            state["cursor"] = stop
+            state["updates"] += 1
+            state["supervised_tokens"] += tokens
+            state["consumed_note_ids"].extend(ids)
+            metrics.append({"update": state["updates"], "cursor": stop, "note_ids": ids,
+                            "supervised_tokens": tokens, "loss": loss_value, "gradient_norm": float(norm),
+                            "seconds": time.monotonic()-update_started,
+                            "cuda_allocated_bytes": torch.cuda.memory_allocated() if config["device"] == "cuda" else None,
+                            "cuda_reserved_bytes": torch.cuda.memory_reserved() if config["device"] == "cuda" else None})
+            print(json.dumps({"stage": "subject training", **metrics[-1]}), flush=True)
+        optimizer.zero_grad(set_to_none=True)
+        checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
+        staging = checkpoint.with_name(checkpoint.name + f".partial-{time.time_ns()}")
+        model.save_pretrained(staging)
+        tokenizer.save_pretrained(staging)
+        state.update(identity=identity, optimizer=optimizer.state_dict(), schedule=schedule.state_dict(),
+                     random=training_random_state())
+        torch.save(state, staging / "training-state.pt")
+        write_json(staging / "training.json", {**identity, "cursor": state["cursor"], "updates": state["updates"],
+            "supervised_tokens": state["supervised_tokens"], "consumed_note_ids": state["consumed_note_ids"],
+            "updates_this_block": metrics, "seconds": time.monotonic()-started,
+            "trainable_parameters": sum(p.numel() for p in parameters),
+            "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated() if config["device"] == "cuda" else None,
+            "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved() if config["device"] == "cuda" else None})
+        write_json(staging / "complete.json", file_hashes(staging))
+        if not verify_saved(staging):
+            raise ValueError("subject checkpoint publication hash mismatch")
+        staging.rename(checkpoint)
+        return checkpoint
+    finally:
+        del model, optimizer, schedule, parameters, state
+        gc.collect()
+        if config["device"] == "cuda":
+            torch.cuda.empty_cache()
+
+
+def subject_stage_summary(directory, data):
+    directory = Path(directory)
+    if not verify_saved(directory):
+        raise ValueError("subject evaluation hash mismatch")
+    results = read_json(directory / "results.json")
+    expected = [row["note_id"] for row in data["evaluation"]]
+    if [row["note_id"] for row in results] != expected:
+        raise ValueError("subject response accounting differs")
+    for index, row in enumerate(results):
+        note = directory / f"note-{index:04}"
+        raw = read_json(note / "subjects.json")
+        parsed = read_json(note / "subjects-result.json")
+        if (raw["note_id"] != row["note_id"] or raw["messages"] != data["evaluation"][index]["messages"]
+                or parsed != {key: row[key] for key in ("note_id", "subjects", "errors")} or row["masks"]):
+            raise ValueError("subject response accounting differs")
+    return {"notes": len(results), "subject_failures": sum(bool(row["errors"]) for row in results),
+            "returned_subjects": sum(len(row["subjects"]) for row in results)}
+
+
+def run_subject_pilot(config, tokenizer, data, output, through):
+    plan = subject_training_plan(data, config)
+    plan_path = output / "training-plan.json"
+    if plan_path.exists():
+        if read_json(plan_path) != plan:
+            raise ValueError("frozen subject training plan differs")
+    else:
+        write_json(plan_path, plan)
+    baseline = subject_stage_summary(output / "baseline", data)
+    previous = None
+    stages = []
+    for milestone in plan["milestones"]:
+        checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
+        if (checkpoint / "complete.json").exists():
+            subject_checkpoint_metadata(checkpoint, output, plan)
+        elif checkpoint.exists():
+            raise ValueError("incomplete subject checkpoint cannot be resumed")
+        else:
+            print(f"stage: subject training through {milestone} notes", flush=True)
+            checkpoint = train_subject_block(config, tokenizer, data, output, plan, milestone, previous)
+        stage = output / "evaluations" / checkpoint.name
+        if not (stage / "complete.json").exists():
+            print(f"stage: merged subject evaluation at {milestone} notes", flush=True)
+            model = load_model(config, checkpoint)
+            verify_adapter(model, checkpoint)
+            model = model.merge_and_unload(safe_merge=True)
+            if any("lora_" in name for name, _ in model.named_parameters()):
+                raise ValueError("subject evaluation still contains unmerged adapters")
+            try:
+                evaluate(model, tokenizer, data, config, stage)
+            finally:
+                del model
+                gc.collect()
+                if config["device"] == "cuda":
+                    import torch
+                    torch.cuda.empty_cache()
+        summary = subject_stage_summary(stage, data)
+        if not verify_saved(checkpoint):
+            raise ValueError("subject evaluation changed the training checkpoint")
+        stages.append({"notes_trained": milestone, "checkpoint": str(checkpoint.relative_to(output)),
+                       "evaluation": summary, "merged_reload_verified": True})
+        previous = checkpoint
+    if through != "train":
+        report = {"status": "complete", "baseline": baseline, "checkpoints": stages,
+            "training": {"examples": len(plan["note_ids"]),
+                         "updates": read_json(previous / "training.json")["updates"]},
+            "semantic_review": "Pending; saved subject answers require local correctness/coverage review."}
+        report_path = output / "report.json"
+        if report_path.exists() and read_json(report_path) != report:
+            raise ValueError("saved subject pilot report differs")
+        if not report_path.exists():
+            write_json(report_path, report)
+    print("stage: subject pilot complete", flush=True)
+
+
 def run(config_path, output, through="report"):
     import torch
     config, output = read_json(config_path), Path(output)
@@ -635,22 +923,30 @@ def run(config_path, output, through="report"):
         "max_length", "max_new_tokens", "max_subjects", "max_steps", "save_steps", "batch_size",
         "gradient_accumulation_steps", "learning_rate", "subject_fraction", "lora_rank", "lora_alpha", "threads",
         "gradient_checkpointing", "lora_target_modules", "mask_batch_size"}
+    pilot = "training_milestones" in config
+    if pilot:
+        required = required - {"mask_prompt", "mask_batch_size", "max_steps", "save_steps", "subject_fraction"}
+        required |= {"training_milestones", "subject_batching"}
     optional = {"subject_batching", "evaluation_tasks"}
     if required - set(config) or set(config) - required - optional:
         raise ValueError(f"configuration fields differ: {set(config) ^ required}")
     if "subject_batching" in config:
         validate_subject_batching(config["subject_batching"])
+    if pilot:
+        if config.get("evaluation_tasks", ["subjects"]) != ["subjects"] or config["quantization"] != "none":
+            raise ValueError("subject pilot requires subjects-only evaluation and an unquantized base")
+        config.setdefault("evaluation_tasks", ["subjects"])
     if config.get("evaluation_tasks", ["subjects", "mask"]) not in (["subjects"], ["subjects", "mask"]):
         raise ValueError("invalid evaluation tasks")
     for key in required - {"model", "revision", "data", "mask_prompt", "device", "quantization",
                            "learning_rate", "subject_fraction", "max_new_tokens", "gradient_checkpointing",
-                           "lora_target_modules"}:
+                           "lora_target_modules", "training_milestones", "subject_batching"}:
         if type(config[key]) is not int or config[key] < (0 if key == "seed" else 1):
             raise ValueError(f"invalid {key}")
     limits = config["max_new_tokens"]
-    if (not isinstance(limits, dict) or set(limits) != {"subjects", "mask"}
+    if (not isinstance(limits, dict) or set(limits) != ({"subjects"} if pilot else {"subjects", "mask"})
             or any(type(v) is not int or not 0 < v < config["max_length"] for v in limits.values())
-            or not 0 < config["subject_fraction"] < 1 or not math.isfinite(config["learning_rate"])
+            or (not pilot and not 0 < config["subject_fraction"] < 1) or not math.isfinite(config["learning_rate"])
             or config["learning_rate"] <= 0):
         raise ValueError("invalid sampling, learning rate or length")
     targets = config["lora_target_modules"]
@@ -667,7 +963,11 @@ def run(config_path, output, through="report"):
     local_model = Path(config["model"])
     if not local_model.is_dir() and not re.fullmatch(r"[a-f0-9]{40}", config["revision"] or ""):
         raise ValueError("remote models require an immutable revision")
-    data = load_data(config["data"], config["mask_prompt"])
+    data = load_data(config["data"], config.get("mask_prompt"))
+    if pilot:
+        if set(data["manifest"]["tasks"]) != {"subjects"}:
+            raise ValueError("subject pilot requires subjects-only data")
+        subject_training_plan(data, config)
     torch.set_num_threads(config["threads"])
     set_seed(config["seed"])
     code = Path(__file__).parent
@@ -688,7 +988,7 @@ def run(config_path, output, through="report"):
                 raise ValueError("frozen run differs; use a new output directory")
         else:
             write_json(manifest_path, frozen)
-        if through == "report" and (output / "report.json").exists():
+        if not pilot and through == "report" and (output / "report.json").exists():
             for stage in ("baseline", "adapter", "trained"):
                 if not verify_saved(output / stage):
                     raise ValueError(f"{stage} hash mismatch")
@@ -715,6 +1015,9 @@ def run(config_path, output, through="report"):
                 raise ValueError("baseline hash mismatch")
             baseline = read_json(baseline_path)
         if through == "baseline":
+            return
+        if pilot:
+            run_subject_pilot(config, tokenizer, data, output, through)
             return
         if torch.cuda.is_available():
             torch.cuda.empty_cache()

@@ -78,8 +78,8 @@ Start **one continuing training run per student**:
 once, without replacement, in five new 200-note blocks. Earlier notes and labels
 remain saved; their examples are not repeated at later milestones. Within each
 block, shuffle the subject examples using a fixed random seed.
-Use the next **8 prompt–answer examples for one adapter update**, total across
-all GPUs, retaining a smaller final batch when needed. With 1,000 notes, this
+Use the next **8 prompt–answer examples for one adapter update** on the selected
+GPU, retaining a smaller final group when needed. With 1,000 notes, this
 is **125 updates per student, 25 per checkpoint block**. Physical training groups
 may vary with memory while preserving the same eight-example update and loss.
 **Starting settings approved October 1:** learning rate

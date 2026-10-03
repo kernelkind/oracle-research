@@ -13,6 +13,26 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_subjects_only_package_has_no_mask_prompt_dependency(self):
+        from sse_multivector import distillation_data
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            distillation_data.prepare(root / 'source.json', root / 'annotations.json', root / 'subjects.txt',
+                None, 'AS-test', None, 2, 'pilot', root / 'subject-data', tasks=('subjects',))
+            model = root / 'model'
+            model.mkdir()
+            (model / 'weights').write_bytes(b'model payload')
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'subject-data'), 'model': str(model), 'revision': None,
+                                'training_milestones': [1, 2, 4]})
+            package = root / 'package'
+            deploy.prepare([config], package, 600, through='preflight')
+            job = deploy.verify_package(package)
+            copied = read_json(package / job['runs'][0])
+            self.assertNotIn('mask_prompt', copied)
+            self.assertFalse((package / 'prompts').exists())
+
     def test_offer_checks_returned_storage_inclusive_price_and_total_budget(self):
         settings = read_json(Path(__file__).parent / "distillation/vast-launch.json")
         offer = {**settings["offer_equals"], **settings["offer_minimums"],
@@ -127,6 +147,15 @@ class SharedSSHTests(unittest.TestCase):
         root.mkdir(parents=True)
         config = read_json(Path(os.environ['DISTILLATION_TEST_OUTPUT']) / 'config.json')
         config.update(changes or {})
+        if 'training_milestones' in config:
+            from sse_multivector import distillation_data
+            source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
+            distillation_data.prepare(source / 'source.json', source / 'annotations.json', source / 'subjects.txt',
+                None, 'AS-test', None, 2, 'test', root / 'subject-data', tasks=('subjects',))
+            config['data'] = str(root / 'subject-data')
+            for key in ('mask_prompt', 'mask_batch_size', 'subject_fraction', 'max_steps', 'save_steps'):
+                config.pop(key)
+            config['max_new_tokens'] = {'subjects': config['max_new_tokens']['subjects']}
         paths = []
         for candidate in ('first', 'second'):
             path = root / (candidate + '.json')
@@ -156,6 +185,23 @@ class SharedSSHTests(unittest.TestCase):
                 self.assertEqual(len(receipt['answers']), len(receipt['note_ids']))
                 self.assertEqual(len(list((run / stage).glob('note-*/subjects-result.json'))), len(receipt['note_ids']))
                 self.assertFalse(list((run / stage).glob('note-*/masks-*.json')))
+
+    def test_subject_pilot_checkpoints_and_answers_retrieve_through_shared_ssh(self):
+        policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                  'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}
+        root = self.fixture_package('subject-pilot', {'training_milestones': [1, 2, 3, 4, 6],
+            'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'], 'subject_batching': policy})
+        result = self.run_package(root / 'inputs', root / 'operation')
+        from sse_multivector.distillation_run import verify_saved
+        for name in ('first', 'second'):
+            run = result / name
+            report = read_json(run / 'report.json')
+            self.assertEqual(report['training'], {'examples': 6, 'updates': 5})
+            self.assertEqual(len(report['checkpoints']), 5)
+            for milestone in (1, 2, 3, 4, 6):
+                self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
+                self.assertTrue(verify_saved(run / f'evaluations/checkpoint-{milestone}'))
 
     def test_failure_preserves_logs(self):
         root = self.fixture_package('failure', {'max_length': 8})

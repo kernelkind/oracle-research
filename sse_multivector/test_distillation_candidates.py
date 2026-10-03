@@ -148,6 +148,50 @@ class CandidateArchitectureTests(unittest.TestCase):
                                              for n, p in trained.named_parameters() if p.requires_grad))
                         self.assert_batch_matches_single(trained, fixture.tokenizer, config)
                         del trained
+                        from sse_multivector import distillation_data
+                        prepared = root / "subject-data"
+                        distillation_data.prepare(fixture.root / "source.json", fixture.root / "annotations.json",
+                            fixture.root / "subjects.txt", None, "AS-test", None, 2, "test", prepared, tasks=("subjects",))
+                        pilot_data = runner.load_data(prepared)
+                        pilot_config = {**config, "batch_size": 1, "gradient_accumulation_steps": 8,
+                                        "training_milestones": [2, 4, 6]}
+                        plan = runner.subject_training_plan(pilot_data, pilot_config)
+                        pilot_output = root / "pilot"
+                        runner.write_json(pilot_output / "manifest.json", {"config": pilot_config,
+                                          "dataset": pilot_data["manifest"]})
+                        runner.write_json(pilot_output / "training-plan.json", plan)
+                        previous = None
+                        for milestone in plan["milestones"]:
+                            previous = runner.train_subject_block(pilot_config, fixture.tokenizer, pilot_data,
+                                pilot_output, plan, milestone, previous)
+                        loaded = runner.load_model(pilot_config, previous)
+                        runner.verify_adapter(loaded, previous)
+                        # Every original parameter, including the router and packed
+                        # expert weights, must still equal the immutable original.
+                        from safetensors.torch import load_file
+                        originals = load_file(str(root / "model.safetensors"))
+                        for key, value in loaded.named_parameters():
+                            if "lora_" in key:
+                                continue
+                            plain = key.removeprefix("base_model.model.")
+                            while ".base_layer." in plain:
+                                plain = plain.replace(".base_layer.", ".")
+                            published = plain.replace("model.", "model.language_model.", 1) if plain.startswith("model.") else plain
+                            self.assertTrue(torch.equal(value.detach().cpu(), originals[published]), key)
+                        if name == "gemma-moe":
+                            wrappers = [module for module in loaded.modules()
+                                        if module.__class__.__name__ == "ParamWrapper"]
+                            self.assertEqual(len(wrappers), 2 * text_config.num_hidden_layers)
+                            self.assertTrue(all(module.r["default"] == 2 and module.lora_alpha["default"] == 32
+                                                for module in wrappers))
+                            self.assertTrue(any(torch.count_nonzero(module.lora_B["default"].weight)
+                                                for module in wrappers))
+                        checkpoint_hashes = runner.file_hashes(previous)
+                        loaded = loaded.merge_and_unload(safe_merge=True)
+                        self.assertFalse(any("lora_" in key for key, _ in loaded.named_parameters()))
+                        self.assert_batch_matches_single(loaded, fixture.tokenizer, pilot_config)
+                        self.assertEqual(checkpoint_hashes, runner.file_hashes(previous))
+                        del loaded
         finally:
             fixtures.TinyWorkflowTests.tearDownClass()
 

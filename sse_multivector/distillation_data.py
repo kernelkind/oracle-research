@@ -1,4 +1,4 @@
-"""Prepare one fine-tuning dataset containing subject and mask tasks.
+"""Prepare subject-hierarchy training data, optionally including mask tasks.
 
 No inference, label repair, or semantic approval happens here. Generated files
 belong under target/; keep the original subject annotations for diagnosis.
@@ -60,7 +60,11 @@ def selections(text, spans, fragments):
 
 
 def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path,
-            subject_prompt_id, mask_prompt_id, evaluation_notes, seed, output):
+            subject_prompt_id, mask_prompt_id, evaluation_notes, seed, output,
+            tasks=("subjects", "mask")):
+    tasks = tuple(tasks)
+    if tasks not in (("subjects",), ("subjects", "mask")):
+        raise ValueError("expected subjects or subjects and masks")
     if output.exists():
         raise FileExistsError(output)
     source = json.loads(source_path.read_text())["notes"]
@@ -76,10 +80,12 @@ def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path
     if not 0 < evaluation_notes < len(source):
         raise ValueError("evaluation count must leave both training and evaluation notes")
     subject_instruction = subject_prompt_path.read_text().rstrip()
-    mask_instruction = mask_prompt_path.read_text()
-    if not subject_instruction or not subject_prompt_id.strip() or not mask_prompt_id.strip():
+    if (not subject_instruction or not subject_prompt_id.strip()
+            or "mask" in tasks and (mask_prompt_path is None or not (mask_prompt_id or "").strip())):
         raise ValueError("instructions and prompt IDs must be nonempty")
-    items, prompts = prepare_mask_inputs({"schema_version": 1, "notes": annotations}, mask_instruction)
+    items, prompts = [], []
+    if "mask" in tasks:
+        items, prompts = prepare_mask_inputs({"schema_version": 1, "notes": annotations}, mask_prompt_path.read_text())
     mask_prompts = {note_id: [] for note_id in originals}
     for item, prompt in zip(items, prompts):
         mask_prompts[item["note_id"]].append(prompt.text)
@@ -123,12 +129,15 @@ def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path
         subject_target = {"subjects": [
             {key: entry[key] for key in ("number", "context", "subject")}
             for entry in note["subjects"]]}
+        subject_count += len(note["subjects"])
+        if "mask" not in tasks:
+            from sse_multivector.distillation_run import parse_subjects
+            parse_subjects(json.dumps(subject_target, ensure_ascii=False))
         messages = [{"role": "user", "content": subject_instruction
                      + "\n\n<post>\n" + note["text"] + "\n</post>"}]
         examples = [{"note_id": note_id, "task": "subjects", "prompt": messages,
                      "completion": [{"role": "assistant", "content": json.dumps(subject_target, ensure_ascii=False)}]}]
         for subject, content in zip(note["subjects"], mask_prompts[note_id]):
-            subject_count += 1
             mask = selections(note["text"], subject["byte_spans"], subject["fragments"])
             if not mask:
                 empty_count += 1
@@ -150,13 +159,13 @@ def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path
         references.append({**note, "split": "evaluation" if note_id in held_out else "train"})
     manifest = {
         "schema_version": 2, "seed": seed,
-        "tasks": {"subjects": subject_prompt_id, "mask": mask_prompt_id},
+        "tasks": {"subjects": subject_prompt_id, **({"mask": mask_prompt_id} if "mask" in tasks else {})},
         "inputs": {str(p.resolve()): digest(p) for p in
-                   [source_path, annotations_path, subject_prompt_path, mask_prompt_path]},
+                   [source_path, annotations_path, subject_prompt_path] + ([mask_prompt_path] if "mask" in tasks else [])},
         "train_note_ids": sorted(originals.keys() - held_out),
         "evaluation_note_ids": [n["note_id"] for n in evaluation],
         "subject_entries": subject_count, "empty_subject_masks": empty_count,
-        "training_examples": {task: sum(r["task"] == task for r in train) for task in ["subjects", "mask"]},
+        "training_examples": {task: sum(r["task"] == task for r in train) for task in tasks},
         "semantic_status": "Saved teacher outputs; no new semantic review or approval.",
     }
     output.mkdir(parents=True)
@@ -169,16 +178,18 @@ def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ["source", "annotations", "subject-prompt", "mask-prompt", "output"]:
+    for name in ["source", "annotations", "subject-prompt", "output"]:
         parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--mask-prompt", type=Path)
     parser.add_argument("--subject-prompt-id", required=True)
-    parser.add_argument("--mask-prompt-id", required=True)
+    parser.add_argument("--mask-prompt-id")
+    parser.add_argument("--tasks", nargs="+", choices=("subjects", "mask"), default=("subjects", "mask"))
     parser.add_argument("--evaluation-notes", type=int, required=True)
     parser.add_argument("--seed", required=True)
     args = parser.parse_args()
     manifest = prepare(args.source, args.annotations, args.subject_prompt, args.mask_prompt,
                        args.subject_prompt_id, args.mask_prompt_id,
-                       args.evaluation_notes, args.seed, args.output)
+                       args.evaluation_notes, args.seed, args.output, tasks=args.tasks)
     print(json.dumps({"train_notes": len(manifest["train_note_ids"]),
                       "evaluation_notes": len(manifest["evaluation_note_ids"]),
                       "training_examples": manifest["training_examples"]}))

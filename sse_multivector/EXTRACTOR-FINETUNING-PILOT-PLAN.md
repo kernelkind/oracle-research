@@ -12,7 +12,8 @@ subject discovery and hierarchy only. One teacher hierarchy per training note
 yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
 mask labeling, training or generation belongs to this pilot. The combined
 preliminary experiment remains historical evidence; the eventual mask-based
-release task below has its separate scope. Hardware and spending remain open.
+release task below has its separate scope. One 96GB RTX PRO 6000 is selected;
+the specific offer and spending remain open.
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
@@ -22,8 +23,8 @@ waiting for its data in 05. The planned pilot includes a comparison trained on
 continuing student training runs, replacing separate fresh starts at each size,
 and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
 notes. Validation/test counts remain open. Task 18's preliminary training setup
-is complete; continuation across expanding datasets still needs implementation
-and verification.
+is complete. The subjects-only continuing worker is implemented locally;
+GPU fit, terminal thinking evaluation and progressive retrieval remain open.
 Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
@@ -435,8 +436,9 @@ including every prompt and one measured generation duration for the batch.
 Resuming reuses the whole saved batch, including malformed and empty answers;
 the final incomplete group can contain fewer than four requests.
 
-Optional `evaluation_tasks: ["subjects"]` skips mask generation during evaluation;
-the existing training/data contract still requires the legacy two-task package.
+Optional `evaluation_tasks: ["subjects"]` skips mask generation during evaluation.
+Legacy joint training uses the two-task dataset; the continuing subjects-only
+configuration below uses one teacher hierarchy per training note.
 Optional `subject_batching` enables memory-based grouping for one complete,
 unquantized model on one device. Its explicit integer fields are `budget_bytes`,
 `workspace_bytes`, `prefill_bytes_per_token` and `attention_matrix_count`. They
@@ -461,7 +463,8 @@ small versions of all three architectures before/after adapter training, and
 shared SSH deployment with verified retrieval. All four retrieved dynamic
 baseline/trained stages reverified locally. The VM is stopped and its container
 export is retained under `target/distillation-vm-clean-deployment/`. Numeric
-96GB GPU allowances and the larger training lifecycle remain open.
+96GB GPU allowances remained open; the continuing training implementation
+is described below.
 
 Subject and position-mask decoding accept bare JSON or one complete Markdown
 code fence labelled `json` (case-insensitive) or unlabelled. Existing field,
@@ -470,7 +473,7 @@ answers are retained. Parser changes do not rewrite a completed evaluation;
 apply the same decoder to both baseline and trained answers in a separate
 evaluation before comparing their scores.
 
-The JSON config requires explicit model/revision, prepared-data and mask-prompt
+The legacy two-task JSON config requires explicit model/revision, prepared-data and mask-prompt
 paths; CPU/CUDA and none/NF4 quantization; seed, sequence and per-task output
 limits, subject limit, steps, checkpoint interval, training batch size,
 evaluation `mask_batch_size`, gradient
@@ -482,6 +485,45 @@ schedule with the configured subject probability and records realized counts.
 The candidate files specify the adapted projections. Overlength examples fail;
 the runner does not truncate training answers.
 
+For continuing subjects-only training, set `training_milestones` (the pilot uses
+`[200, 400, 600, 800, 1000]`), supply subjects-only data and `subject_batching`,
+and retain the shared model, precision and LoRA settings. Omit `mask_prompt`,
+`mask_batch_size`, `subject_fraction`, `max_steps` and `save_steps`;
+`max_new_tokens` contains only `subjects`. Physical `batch_size` times
+`gradient_accumulation_steps` must equal eight. Prepare this data through
+`distillation_data.py --tasks subjects`; no mask labels or prompt are needed.
+The worker freezes `training-plan.json`, shuffles within the configured blocks,
+and visits every note once. It normalizes each physical group against the
+entire update's teacher-token count, uses AdamW and a constant schedule, and
+records loss, gradient norm, supervised tokens, note IDs and CUDA allocated/
+reserved memory. Each `checkpoints/checkpoint-N` contains the unmerged FP32
+adapter, `training-state.pt`, tokenizer, counters/coverage and file seal. Verify
+required files, identities, counts and hashes before use. Release training,
+reload and verify the adapter on a fresh original base, merge that disposable
+copy, and save raw/parsed subjects under `evaluations/checkpoint-N`. Check
+response accounting before restoring the full training state, including random
+state after reconstruction. Keep every milestone checkpoint. `--through train`
+includes milestone evaluations and skips the aggregate report. The report
+contains response reliability and returned-subject counts; semantic scoring
+remains local and separate.
+
+October 2 continuing-worker verification passed **29 host checks and 48 VM
+tests** (3 architecture, 28 worker/data and 17 deployment/Vast/data tests).
+Scaled five-milestone jobs completed through the full CLI and shared SSH
+deployment/retrieval. The same CPU updates with and without intervening merged
+evaluation produced exactly equal adapters, Adam state, schedule and random
+state. Interrupted response publication resumed without regenerating baseline
+answers or changing training state; all five recovered adapter files matched
+the original hashes. Unequal-length teacher answers with physical groups of
+one and eight used the same 382 supervised tokens and loss within 1e-5;
+adapter tensors agreed within 1e-6 absolute / 1e-4 relative tolerance. Missing
+responses, even under a valid file seal, and wrong update counts blocked
+advancement. Both retrieved runs retained five checkpoints and twelve total
+baseline/checkpoint evaluation stages; all seals and expected raw/parsed
+responses reverified locally. All three tiny architectures retained frozen
+original weights, including MoE routers, and supported expert-adapter merge.
+The VM is stopped. Full-size BF16 GPU fit and throughput remain unverified.
+
 The automatic report separates malformed subject/mask outputs, valid empty
 masks and reference agreement. Token overlap uses whitespace-delimited source
 words (any selected part includes that word), with one-to-one matching and
@@ -489,12 +531,14 @@ micro averaging over unique nonempty selections per note. Exact matching uses
 selected non-whitespace source characters. These mechanical measurements do
 not establish semantic correctness or approval; the semantic-review rubric remains open.
 
-For the next pilot, response failures must be reported when they occur and
-baseline coverage checked before training proceeds. The current evaluation
-records failed notes and continues; a sealed directory can therefore lack mask
-calls. The stronger reporting and stage checks in
-[the walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-generate-untuned-baselines--vast)
-require implementation and verification. Semantic review of saved results runs
+The subjects-only worker checks baseline response accounting before training
+and checkpoint response accounting before advancing. Invalid/truncated model
+answers remain measured failures; missing raw/parsed responses or invalid
+checkpoint coverage block advancement even if a directory has a file seal.
+The legacy combined evaluation can omit mask calls after failed subjects, as
+seen in the preliminary run.
+[The walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-generate-untuned-baselines--vast)
+records the larger pilot's response requirements. Semantic review of saved results runs
 from the local workspace after retrieval, outside the GPU rental. The proposed
 teacher reviewer is an evaluation method, not another fine-tune. The
 [approved review structure](#semantic-review--approved-structure) uses one
@@ -773,9 +817,9 @@ GPU and running the three students sequentially. The specific card edition/power
 setting, rental offer, preparation scope/cases and maximum charge remain open.
 Use the same pinned models and approved subject-only adapter recipe as the
 pilot. Prepare locally and rehearse production paths in the VM before booking.
-The worker now supports subjects-only evaluation and memory-based subject
-batching. Subject-only training coverage, expert adapters and the full
-milestone lifecycle remain to be implemented.
+The worker now supports subjects-only preparation/training, expert adapters,
+memory-based subject batching and the save/merge/evaluate/restore lifecycle.
+Terminal thinking evaluation and the background copier remain to be implemented.
 
 Start with historical N18 (long diary: dense hierarchy and subject truncation),
 N00 (soda bread: negation and qualifiers), and N15 (gianduja/store: short note).
@@ -841,8 +885,10 @@ counts, implementation and spending remain open.
 ### Execution and failure handling (draft)
 
 The [process walkthrough](../docs/planning/fine-tuning-pilot-process.md) maps
-where each stage runs. This describes the intended subjects-only larger pilot;
-the current informal worker still runs both tasks.
+where each stage runs. Subjects-only training, ordinary checkpoint evaluations
+and stage accounting are implemented. Terminal thinking and progressive
+retrieval remain intended work; the legacy informal configuration still uses
+both tasks.
 
 - **Local preparation:** freeze note splits, teacher subject hierarchies, prompt
   versions, model revisions, data order and approved recipe. Rehearse locally;
@@ -896,8 +942,8 @@ Parser fixes can re-evaluate saved answers consistently; missing responses need
 actual generation. Changed settings require a separately identified matched
 comparison. Preserve originals and prepare fixes locally. A sealed
 `complete.json` verifies files, not completion of every required call. The
-stronger stage accounting, background copier and larger-pilot worker still
-require implementation and verification.
+subject-response and checkpoint accounting are implemented. The background
+copier and terminal thinking evaluation remain to be implemented and verified.
 
 With three students and five checkpoints each, thinking-off validation has
 18 versions (three bases and fifteen checkpoints). Terminal thinking adds three
@@ -930,10 +976,10 @@ parameters, for 78,059,520 total. With the approved FP32 adapter/gradient/Adam
 state policy, static adapter training state is about 1.16 GiB, an increase of
 0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; exact
 GPU fit, generation limits and numeric batching budgets remain unresolved.
-The merged evaluation policy was approved October 2 below. Explicit expert targeting still
-needs implementation. The current worker leaves routed experts frozen and uses
-the preliminary 128-step replacement sampler, not the approved larger-pilot
-continuation.
+The merged evaluation policy was approved October 2 below. The subjects-only
+worker targets both packed expert weights in every layer at the approved rank
+and alpha, preserving frozen original parameters and router. The legacy
+128-step recipe retains its earlier expert coverage and replacement sampler.
 
 **Optimizer, precision and LoRA defaults approved October 1:** retain the
 preliminary numerical approach and record the settings explicitly:
@@ -958,8 +1004,9 @@ batching budgets and remaining runtime choices stay open; merged BF16
 checkpoint evaluation/resume and the terminal thinking comparison were approved
 October 2. Ordinary generation stays thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
-separate GPU preparation. The larger-pilot worker still needs implementation
-and production-path verification.
+separate GPU preparation. The ordinary continuing training and merged
+checkpoint lifecycle are implemented; terminal thinking evaluation and the
+background copier remain to be implemented.
 
 **Checkpoint lifecycle approved October 2:** complete each 200-note block's
 final update, including any smaller final group, then save the full unmerged
@@ -991,10 +1038,10 @@ continue training with training mode, cache off and training checkpointing
 restored. No validation answer updates the adapter. This lifecycle keeps one
 copy of a given student's model resident at a time and adds cached-base reloads at transitions.
 Separate GPU preparation must measure that overhead and merge peak memory, and
-verify continuation across the full transition. The current worker evaluates an
-unmerged adapter only at training's endpoint and retains two rolling checkpoints;
-five-stage continuation, milestone retention and merging still need implementation
-and production-path verification. Additional recovery-checkpoint cadence,
+verify continuation across the full transition. The subjects-only worker now
+retains every milestone checkpoint and restores its full unmerged state after
+evaluating a disposable merged copy. Legacy two-task configurations retain
+their unmerged endpoint evaluation and two rolling checkpoints. Additional recovery-checkpoint cadence,
 generation limits, numeric batching budgets and spending remain open.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
@@ -1006,16 +1053,17 @@ Smaller final groups use their own denominator. No extra task, answer, or note
 weights are applied. Longer answers contribute more tokens within an update.
 The [normalization guidance](https://huggingface.co/blog/gradient_accumulation)
 and [comparable extraction implementation](https://github.com/hitz-zentroa/GoLLIE/blob/164c611743fdc1befe71bbdf03e08c5eb4e35957/src/trainer.py#L288-L300)
-support this starting objective. Its exact behavior in the larger-pilot worker
-still needs production-path verification.
+support this starting objective. The continuing worker scales each physical
+group's mean loss by its supervised-token count divided by the update's total;
+prompt and padding tokens remain masked.
 
 The preliminary 20% subject / 80% mask replacement sampler is a different
 recipe. The subjects-only pilot uses 1,000 unique note/hierarchy examples per
 student, once each: 125 updates at global eight. Record loss, supervised tokens,
 updates and consumed examples at each milestone. Freeze ordering, checkpoint
 procedure and selection rule; preserve actual training history and interruptions.
-The current replacement sampler and stage/resume handling need implementation
-changes and production-path verification.
+The continuing subjects-only path implements that stream and full-state
+restoration; legacy configurations retain the replacement sampler.
 
 There are **three main continuing fine-tunes**, each with five approved
 milestone checkpoints, alongside untuned baselines, setup checks and any

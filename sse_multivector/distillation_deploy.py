@@ -95,16 +95,19 @@ def prepare(config_paths, output, timeout_seconds, through="report"):
                 raise ValueError("config filenames must be distinct lowercase run names")
             names.add(name)
             config = read_json(path)
-            data, prompt = Path(config["data"]), Path(config["mask_prompt"])
+            data = Path(config["data"])
+            prompt = Path(config["mask_prompt"]) if "mask_prompt" in config else None
             load_data(data, prompt)
             data_relative = "data/" + sha256(data / "manifest.json")
-            prompt_relative = "prompts/" + sha256(prompt) + ".txt"
             (staging / data_relative).mkdir(parents=True, exist_ok=True)
             for filename in ("manifest.json", "train.jsonl", "evaluation.jsonl", "references.jsonl"):
                 shutil.copyfile(data / filename, staging / data_relative / filename)
-            (staging / prompt_relative).parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(prompt, staging / prompt_relative)
-            config.update(data=data_relative, mask_prompt=prompt_relative)
+            config["data"] = data_relative
+            if prompt is not None:
+                prompt_relative = "prompts/" + sha256(prompt) + ".txt"
+                (staging / prompt_relative).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(prompt, staging / prompt_relative)
+                config["mask_prompt"] = prompt_relative
             model = Path(config["model"])
             if model.is_dir():
                 model_relative = "models/" + name
@@ -168,7 +171,8 @@ def execute(package, output):
             name = Path(relative).stem
             config = read_json(package / relative)
             for key in ("data", "mask_prompt"):
-                config[key] = str(package / config[key])
+                if key in config:
+                    config[key] = str(package / config[key])
             if (package / config["model"]).is_dir():
                 config["model"] = str(package / config["model"])
             config_path = output / "configs" / (name + ".json")

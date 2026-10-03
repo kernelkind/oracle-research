@@ -79,6 +79,27 @@ class DistillationDataTests(unittest.TestCase):
                 self.prepare(root, bad_fragment=True)
             self.assertFalse((root / "prepared").exists())
 
+    def test_subjects_only_preparation_needs_no_mask_labels_or_prompt(self):
+        from sse_multivector.distillation_run import load_data
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.prepare(root)
+            annotations = json.loads((root / "annotations.json").read_text())
+            for note in annotations["notes"]:
+                note["subjects"] = [{key: value for key, value in subject.items()
+                                     if key in ("number", "context", "subject")}
+                                    for subject in note["subjects"]]
+            (root / "subject-labels.json").write_text(json.dumps(annotations))
+            result = distillation_data.prepare(root / "source.json", root / "subject-labels.json",
+                root / "subjects.txt", None, "AS-test", None, 2, "pilot", root / "subject-data",
+                tasks=("subjects",))
+            data = load_data(root / "subject-data", None)
+            self.assertEqual(result["tasks"], {"subjects": "AS-test"})
+            self.assertEqual(result["training_examples"], {"subjects": 4})
+            self.assertEqual(len(data["train"]), 4)
+            self.assertEqual({row["task"] for row in data["train"]}, {"subjects"})
+            self.assertEqual({row["note_id"] for row in data["train"]}, set(result["train_note_ids"]))
+
 
 if __name__ == "__main__":
     unittest.main()

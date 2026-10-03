@@ -16,6 +16,44 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_subject_checkpoint_with_wrong_update_count_blocks_advancement(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        data["train"] = [{"note_id": "train", "task": "subjects"}]
+        config.update(seed=7, batch_size=1, gradient_accumulation_steps=8, training_milestones=[1])
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            distillation_run.write_json(root / "manifest.json", {"identity": "test"})
+            plan = distillation_run.subject_training_plan(data, config)
+            distillation_run.write_json(root / "training-plan.json", plan)
+            with patch.object(distillation_run, "generate_batch", return_value={"answers": [answer], "seconds": 1.}):
+                distillation_run.evaluate(model, tokenizer, data, config, root / "baseline")
+            checkpoint = root / "checkpoints/checkpoint-1"
+            checkpoint.mkdir(parents=True)
+            for name in ("training-state.pt", "adapter_model.safetensors", "adapter_config.json"):
+                (checkpoint / name).write_bytes(b"fixture checkpoint payload")
+            distillation_run.write_json(checkpoint / "training.json", {"cursor": 1, "updates": 2,
+                "supervised_tokens": 1, "consumed_note_ids": ["train"],
+                "manifest_sha256": distillation_run.sha256(root / "manifest.json"),
+                "plan_sha256": distillation_run.sha256(root / "training-plan.json")})
+            distillation_run.write_json(checkpoint / "complete.json", distillation_run.file_hashes(checkpoint))
+            with patch.object(distillation_run, "load_model", side_effect=AssertionError("advanced corrupt checkpoint")):
+                with self.assertRaisesRegex(ValueError, "checkpoint update count differs"):
+                    distillation_run.run_subject_pilot(config, tokenizer, data, root, "report")
+
+    def test_subject_training_plan_shuffles_within_blocks_and_uses_every_note_once(self):
+        data = {"train": [{"note_id": str(i), "task": "subjects"} for i in range(15)]}
+        config = {"seed": 7, "batch_size": 1, "gradient_accumulation_steps": 8,
+                  "training_milestones": [3, 6, 9, 12, 15]}
+        plan = distillation_run.subject_training_plan(data, config)
+        self.assertEqual(len(set(plan["note_ids"])), 15)
+        self.assertEqual(plan["milestones"], config["training_milestones"])
+        for start in range(0, 15, 3):
+            self.assertEqual(set(plan["note_ids"][start:start+3]), {str(i) for i in range(start, start+3)})
+        self.assertEqual(plan, distillation_run.subject_training_plan(data, config))
+        data["train"][0]["task"] = "mask"
+        with self.assertRaisesRegex(ValueError, "one subject example"):
+            distillation_run.subject_training_plan(data, config)
+
     def subject_batch_fixture(self, lengths=(4, 4, 20, 4, 4)):
         class Tokenizer:
             def apply_chat_template(self, messages, **kwargs):
@@ -465,6 +503,140 @@ class TinyWorkflowTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("frozen run differs", result.stderr)
         self.assertEqual(before, distillation_run.file_hashes(output))
+
+    def test_subject_pilot_retains_five_checkpoints_and_continues_once_through_every_note(self):
+        import torch
+        prepared = self.root / "subject-pilot-data"
+        distillation_data.prepare(self.root / "source.json", self.root / "annotations.json",
+            self.root / "subjects.txt", None, "AS-test", None, 2, "test", prepared, tasks=("subjects",))
+        removed = {"mask_prompt", "max_steps", "save_steps", "subject_fraction", "mask_batch_size"}
+        config = {key: value for key, value in self.config.items() if key not in removed}
+        config.update(data=str(prepared), training_milestones=[1, 2, 3, 4, 6],
+            batch_size=1, gradient_accumulation_steps=8, evaluation_tasks=["subjects"],
+            max_new_tokens={"subjects": self.config["max_new_tokens"]["subjects"]},
+            subject_batching={"budget_bytes": 8*1024*1024, "workspace_bytes": 0,
+                              "prefill_bytes_per_token": 1024, "attention_matrix_count": 4})
+        path, output = self.root / "subject-pilot.json", self.root / "subject-pilot"
+        distillation_run.write_json(path, config)
+        command = [sys.executable, "-B", "-m", "sse_multivector.distillation_run", str(path),
+                   "--output", str(output)]
+        with (self.root / "subject-pilot.log").open("w") as log:
+            subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=180)
+        data = distillation_run.load_data(prepared, None)
+        plan = distillation_run.read_json(output / "training-plan.json")
+        self.assertEqual(set(plan["note_ids"]), set(data["manifest"]["train_note_ids"]))
+        self.assertEqual(len(plan["note_ids"]), 6)
+        for update, milestone in enumerate(config["training_milestones"], 1):
+            checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
+            self.assertTrue(distillation_run.verify_saved(checkpoint))
+            state = torch.load(checkpoint / "training-state.pt", weights_only=True)
+            self.assertEqual(state["cursor"], milestone)
+            self.assertEqual(state["updates"], update)
+            self.assertEqual(state["consumed_note_ids"], plan["note_ids"][:milestone])
+            self.assertTrue(all(int(value["step"]) == update for value in state["optimizer"]["state"].values()))
+            stage = output / "evaluations" / f"checkpoint-{milestone}"
+            self.assertTrue(distillation_run.verify_saved(stage))
+            self.assertEqual(len(list(stage.glob("note-*/subjects-result.json"))), 2)
+            self.assertFalse(list(stage.glob("note-*/masks-*.json")))
+        # Run the same production block updates without intervening generation.
+        # Evaluation must leave the next update, Adam moments and random state identical.
+        reference = self.root / "subject-pilot-reference"
+        reference.mkdir()
+        distillation_run.write_json(reference / "manifest.json", distillation_run.read_json(output / "manifest.json"))
+        distillation_run.write_json(reference / "training-plan.json", plan)
+        previous = None
+        for milestone in config["training_milestones"]:
+            previous = distillation_run.train_subject_block(config, self.tokenizer, data, reference, plan, milestone, previous)
+            from safetensors.torch import load_file
+            checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
+            actual_weights = load_file(str(checkpoint / "adapter_model.safetensors"))
+            reference_weights = load_file(str(previous / "adapter_model.safetensors"))
+            for name in actual_weights:
+                torch.testing.assert_close(actual_weights[name], reference_weights[name], rtol=0, atol=0)
+            actual = torch.load(checkpoint / "training-state.pt", weights_only=True)
+            expected = torch.load(previous / "training-state.pt", weights_only=True)
+            torch.testing.assert_close(actual["optimizer"], expected["optimizer"], rtol=0, atol=0)
+            torch.testing.assert_close(actual["random"]["torch"], expected["random"]["torch"], rtol=0, atol=0)
+            self.assertEqual(actual["random"]["python"], expected["random"]["python"])
+            self.assertEqual(actual["random"]["numpy"], expected["random"]["numpy"])
+            self.assertEqual(actual["schedule"], expected["schedule"])
+        self.assertEqual(distillation_run.read_json(output / "report.json")["training"]["examples"], 6)
+        before = distillation_run.file_hashes(output)
+        subprocess.run(command, capture_output=True, check=True, timeout=180)
+        self.assertEqual(before, distillation_run.file_hashes(output))
+        import shutil
+        resumed = self.root / "subject-pilot-resumed"
+        resumed.mkdir()
+        for name in ("manifest.json", "training-plan.json"):
+            shutil.copyfile(output / name, resumed / name)
+        shutil.copytree(output / "baseline", resumed / "baseline")
+        shutil.copytree(output / "checkpoints/checkpoint-1", resumed / "checkpoints/checkpoint-1")
+        partial = resumed / "evaluations/checkpoint-1"
+        shutil.copytree(output / "evaluations/checkpoint-1", partial)
+        (partial / "complete.json").unlink()
+        (partial / "results.json").unlink()
+        for file in (partial / "note-0001").iterdir():
+            file.unlink()
+        first_before = distillation_run.file_hashes(resumed / "checkpoints/checkpoint-1")
+        baseline_before = distillation_run.file_hashes(resumed / "baseline")
+        resumed_command = [*command[:-1], str(resumed)]
+        with (self.root / "subject-pilot-resumed.log").open("w") as log:
+            subprocess.run(resumed_command, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=180)
+        self.assertEqual(first_before, distillation_run.file_hashes(resumed / "checkpoints/checkpoint-1"))
+        self.assertEqual(baseline_before, distillation_run.file_hashes(resumed / "baseline"))
+        actual = torch.load(output / "checkpoints/checkpoint-6/training-state.pt", weights_only=True)
+        recovered = torch.load(resumed / "checkpoints/checkpoint-6/training-state.pt", weights_only=True)
+        for key in ("identity", "cursor", "updates", "supervised_tokens", "consumed_note_ids", "schedule"):
+            self.assertEqual(actual[key], recovered[key])
+        torch.testing.assert_close(actual["optimizer"], recovered["optimizer"], rtol=0, atol=0)
+        torch.testing.assert_close(actual["random"]["torch"], recovered["random"]["torch"], rtol=0, atol=0)
+        self.assertEqual(actual["random"]["python"], recovered["random"]["python"])
+        self.assertEqual(actual["random"]["numpy"], recovered["random"]["numpy"])
+        broken = self.root / "subject-pilot-missing-response"
+        broken.mkdir()
+        shutil.copyfile(output / "manifest.json", broken / "manifest.json")
+        shutil.copytree(output / "baseline", broken / "baseline")
+        (broken / "baseline/note-0001/subjects-result.json").unlink()
+        distillation_run.write_json(broken / "baseline/complete.json", distillation_run.file_hashes(broken / "baseline"))
+        result = subprocess.run([*command[:-1], str(broken)], capture_output=True, text=True, timeout=120)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("subjects-result.json", result.stderr)
+        self.assertFalse((broken / "checkpoints").exists())
+        config["subject_batching"]["budget_bytes"] += 1
+        distillation_run.write_json(path, config)
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("frozen run differs", result.stderr)
+        self.assertEqual(before, distillation_run.file_hashes(output))
+
+    def test_subject_update_loss_is_independent_of_physical_group_size(self):
+        import torch
+        from safetensors.torch import load_file
+        annotations = distillation_run.read_json(self.root / "annotations.json")
+        for i, note in enumerate(annotations["notes"]):
+            note["subjects"][0]["context"] = "Tea is named. " * (i+1)
+        labels = self.root / "weighted-labels.json"
+        distillation_run.write_json(labels, annotations)
+        prepared = self.root / "weighted-data"
+        distillation_data.prepare(self.root / "source.json", labels, self.root / "subjects.txt",
+            None, "AS-test", None, 2, "test", prepared, tasks=("subjects",))
+        data = distillation_run.load_data(prepared)
+        checkpoints = []
+        for size in (1, 8):
+            config = {**self.config, "batch_size": size, "gradient_accumulation_steps": 8//size,
+                      "training_milestones": [6], "data": str(prepared)}
+            plan = distillation_run.subject_training_plan(data, config)
+            output = self.root / f"weighted-group-{size}"
+            distillation_run.write_json(output / "manifest.json", {"config": config, "dataset": data["manifest"]})
+            distillation_run.write_json(output / "training-plan.json", plan)
+            checkpoints.append(distillation_run.train_subject_block(config, self.tokenizer, data, output, plan, 6))
+        left, right = [load_file(str(path / "adapter_model.safetensors")) for path in checkpoints]
+        for name in left:
+            torch.testing.assert_close(left[name], right[name], rtol=1e-4, atol=1e-6)
+        a, b = [distillation_run.read_json(path / "training.json")["updates_this_block"][0] for path in checkpoints]
+        self.assertEqual(a["note_ids"], b["note_ids"])
+        self.assertEqual(a["supervised_tokens"], b["supervised_tokens"])
+        self.assertAlmostEqual(a["loss"], b["loss"], places=5)
 
     def test_training_resume_reload_and_two_step_evaluation(self):
         from safetensors.torch import load_file

@@ -691,8 +691,8 @@ implementation and VM verification. The worker now supports optional
 subjects-only evaluation and memory-based grouping for one complete model on
 one device. It saves a frozen plan, batch receipts and separate raw/parsed
 answers; partial publication resumes from a saved receipt without regenerating,
-while an unfinished generation attempt blocks an automatic retry. This does not
-implement the larger pilot's subject-only training or milestone lifecycle.
+while an unfinished generation attempt blocks an automatic retry. The training
+and checkpoint implementation is recorded below.
 Local verification passed 24 host checks and 39 VM tests, including all three
 candidate architectures and shared SSH deployment/retrieval; the VM is stopped.
 Physical training groups may also vary while preserving the approved eight
@@ -748,7 +748,8 @@ One background copier transfers subject responses and checkpoints
 as soon as saving finishes while the experiment continues. Verify each local
 copy and retain remote originals at least until verification. Limit transfer
 bandwidth and disk activity to protect experiment throughput. This records the
-intended design; the copier and stronger stage checks still need implementation.
+intended design. The subject-response and checkpoint accounting checks are now
+implemented; the background copier remains to be implemented.
 
 **October 1 training-continuation correction approved:** the user requested
 removing the separate fresh starts. The larger pilot uses **one continuing
@@ -770,8 +771,8 @@ establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
 Block membership, seed value, remaining model settings and validation/test
 counts remain open. Loss was subsequently approved below. This corrects the
-intended design; continuation through the new note blocks still needs
-implementation and tests on the selected single GPU.
+intended design. The subjects-only continuation is now implemented locally;
+execution and fit on the selected GPU still need preparation evidence.
 No rental, model calls, or spending is authorized by this correction.
 
 **October 1 complete-pass training budget approved after research:** use every
@@ -811,8 +812,9 @@ still leaves routed experts frozen. Loss was subsequently approved below.
 The later numerical decision below settles optimizer, precision and LoRA defaults.
 Block membership, seed value and spending remain open.
 This approves the intended settings; the
-current 128-step replacement sampler is not the approved larger-pilot worker.
-Implementation and launch require separate authorization.
+legacy 128-step replacement sampler retains its earlier recipe. Local
+implementation of the continuing subjects-only worker was subsequently
+authorized and is recorded below. Launch requires separate authorization.
 
 **October 1 Gemma MoE expert adapters approved:** add adapters to every routed
 expert's gate/up and down projections at **rank 2 / alpha 32**, retaining
@@ -821,8 +823,9 @@ weights, router projection, and router scales frozen. The expert rank applies th
 [controlled MoE study's active-expert convention](https://thinkingmachines.ai/blog/lora/):
 nominal rank 16 divided by eight active experts. It is a research-grounded starting
 choice transferred to Gemma, not a measured optimum for this task. The larger
-pilot tests this single chosen MoE recipe. Expert targeting is not yet implemented;
-remaining runtime choices, GPU fit, and implementation authorization stay open.
+pilot tests this single chosen MoE recipe. The continuing subjects-only worker
+now targets both packed expert projections in every Gemma MoE layer at the
+approved rank and alpha. Remaining runtime choices and GPU fit stay open.
 
 **October 1 training loss approved after research:** use ordinary cross-entropy
 on teacher-answer and native turn-ending tokens. For each adapter update, sum
@@ -876,11 +879,34 @@ copy of that student's model resident at a time and adds cached-base reloads bet
 Separate GPU preparation must verify the save/merge/evaluate/resume transition,
 continuation, merge peak memory and elapsed overhead. The [PEFT expert-adapter
 guidance](https://huggingface.co/docs/peft/v0.21.0/en/package_reference/lora#targeting-nnparameter-directly)
-supports merging to remove generation overhead. The current worker still only
-reloads an unmerged adapter after training ends and retains two rolling checkpoints;
-this approval describes the intended larger-pilot design. Implementation,
-generation limits, numeric batching budgets, preparation spending and
-launch stay open.
+supports merging to remove generation overhead. The subjects-only worker now
+retains all configured milestone checkpoints, evaluates a freshly merged copy,
+and restores the full unmerged training state for the next block. The legacy
+two-task recipe retains its endpoint evaluation and rolling checkpoints.
+Generation limits, numeric batching budgets, preparation spending and launch
+stay open.
+
+**October 2 continuing subjects-only worker:** the user authorized local
+implementation and VM verification. Offline preparation accepts subjects-only
+labels without mask data or a mask prompt. Freeze block membership and shuffle
+within each block; use every example once. Each eight-example update uses one
+supervised-token denominator, with the actual smaller final group when needed.
+Save adapters, Adam state, constant schedule, Python/NumPy/Torch/CUDA random
+state, exact cursor and consumed-note IDs at each retained milestone. Validate
+required checkpoint files, hashes, identities and update counts; check every
+expected raw/parsed subject response before advancing. Reload adapters on a
+fresh original base, verify saved weights, merge the disposable evaluation copy,
+then restore untouched training state. Verification passed **29 host checks and
+48 tests in the pinned VM container**, including all three tiny architectures
+and full five-checkpoint jobs through shared SSH deployment/retrieval.
+Intervening evaluation and recovery from interrupted response publication
+preserved exact CPU adapter weights, Adam state, schedule, random state and
+coverage. Unequal-length answers preserved the token objective across physical
+groups of one or eight; missing responses and invalid checkpoint counters
+blocked advancement. All twelve retrieved evaluation stages and ten checkpoints
+reverified locally, and the VM is stopped. These tiny CPU checks do not establish
+BF16 GPU fit or throughput. Terminal thinking evaluation and progressive
+retrieval remain open.
 
 **October 2 terminal thinking evaluation approved:** keep answer-only training
 without teacher reasoning traces. Use thinking off for the three untuned
