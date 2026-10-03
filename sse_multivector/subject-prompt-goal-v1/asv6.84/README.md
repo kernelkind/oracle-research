@@ -1,6 +1,6 @@
 # ASv6.84 general-heading permission clarification
 
-Status: candidate, untested; not adopted. ASv6.81 N096 trial 1 drops the named
+Status: tested, confirmed failures; not adopted. ASv6.81 N096 trial 1 drops the named
 recipe's easy/never-fail/serving-five restrictions from its complete sautéing
 subject, and N100 trial 2 loses the enclosing sirloin source in the full trim.
 These native saved answers are the production-path failing behavior.
@@ -34,3 +34,32 @@ Together with the previously frozen 916 attempts, this adds twelve to reach
 928; a selected-candidate regression would add thirty to reach 958 before the
 48 fresh validation calls. No fresh validation answer has been generated or
 inspected, and no production candidate is adopted.
+
+## Completed screen, including the transport failure
+
+All twelve first attempts are recorded: eleven valid answers and one failed
+request, with no retries or reuse. Every valid answer has a current output-bound
+native agent review: six accepts, four rejects and one uncertainty under the
+unchanged bounded checks. The N100 trial-1 request ends with WebSocket closure
+1011 before a terminal response; the native failure kind is `unknown`, so it
+is preserved without retry. Its partial stream is not judged as a completed
+answer or used to revise the prompt.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| N063 | accept | uncertain | accept |
+| N074 | accept | accept | accept |
+| N096 | reject | reject | accept |
+| N100 | request failed | reject | reject |
+
+N096 trial 1 loses the enclosing recipe qualifications and compatible material
+copies; trial 2 retains the full action but omits it below returned dish
+occurrences 2.1/2.2.1. Trial 3 passes the bounded sauté/pair checks. Both valid
+N100 answers omit the full joint trim. N063 trial 2 retains all fifteen members
+under a role group without an explicit tuple; the frozen alternative-group
+exclusion makes that uncertain rather than a confirmed failure.
+
+This screen does not displace ASv6.81's complete 8/12 original screen. It has
+the same four confirmed failures plus an uncertainty and unavailable answer;
+neither the general-heading wording nor its hypothesized reading conflict is
+established as a reliable correction or unique internal cause.

@@ -431,3 +431,12 @@ ASv6.81's already frozen thirty minimized/repair checks now run alongside the
 ASv6.84 originals, with no more than six requests active. Fresh validation
 answers remain ungenerated. Keep the existing selection order and all bounded
 criteria; no prompt edit follows fresh validation inspection.
+
+ASv6.84 records twelve first attempts: eleven valid answers with current native
+reviews (6 accept/4 reject/1 uncertain), and N100 trial 1 unavailable after
+WebSocket closure 1011 before a terminal response. The native failure kind is
+`unknown`, preserved without retry or judgment of the partial stream. Both
+valid N100 answers omit the full joint trim. This does not displace ASv6.81's
+complete 8/12 original screen: the four confirmed failures are joined by an
+uncertainty and missing answer, not evidence of a reliable correction. All
+tables and concrete witnesses remain in the ASv6.84 README.
