@@ -1,6 +1,6 @@
 # Resumed SP example comparison
 
-Status: development plan, frozen before inference. The user said “continue”
+Status: completed with confirmed failures; frozen before inference. The user said “continue”
 after the original five-hour window. Resume the existing SP correction task
 and 2,000-attempt ceiling; do not reset its 1,028 used attempts. The previous
 ASv6.81 validation, replication and control scores remain fixed. Their inputs
@@ -67,3 +67,63 @@ provider-transient failures may retry once. First-attempt completion reaches
 hashes, source/template identity, exact inherited inputs and runner settings
 before generation. Relevant offline checks pass 68 tests after two minimal
 checks first failed on ASv6.81 for the missing demonstrations.
+
+## Completed comparison
+
+All 72 first attempts finish: 70 valid answers, two unknown runner failures,
+zero retries, reuse or unrun cases. Native show revalidates all 27 experiments;
+each valid answer has exactly one current output-bound agent review. The
+counter reaches 1,100 of 2,000. Exact requests use subscription Sol 6.1 medium
+without an output cap; every valid raw response completes normally and its
+JSON equals the adapter's unchanged final JSON. The failures are ASv6.86
+N100 trial 1 and J001 trial 3, each error stop without a terminal reason or
+diagnostics, one HTTP attempt and native failure kind unknown. Partial streams
+are not semantic answers and unknown causes are not retried.
+
+| Case | ASv6.81 trials 1/2/3 | ASv6.85 trials 1/2/3 | ASv6.86 trials 1/2/3 |
+| --- | --- | --- | --- |
+| N063 | R / A / A | A / A / A | A / R / A |
+| N074 | A / R / A | R / A / R | R / A / A |
+| N096 | R / R / R | R / R / R | A / R / R |
+| N100 | A / R / R | A / R / R | unavailable / R / R |
+| S006 | A / A / R | A / A / A | A / A / A |
+| D006 | A / R / A | A / A / A | A / A / A |
+| J001 | R / A / R | A / A / R | A / A / unavailable |
+| J002 | A / R / R | R / R / A | R / R / A |
+
+A/R mean bounded agent accept/reject, not full-SP or human gold. Totals are
+ASv6.81 11 A/13 R; ASv6.85 14 A/10 R; ASv6.86 14 A/8 R/2 unavailable.
+Originals alone are 5/12, 5/12 and 5/11 available accepts. Unknown failures
+cannot be counted as gains; these small samples establish no reliable winner.
+
+The two example changes still fail J002 in two of three answers, indexing
+non-waterproofness separately while omitting it from packing actions.
+ASv6.85's order change therefore does not repair that later-reference case.
+Both drafts pass all six minimized checks, versus four for the new baseline.
+ASv6.86 generates full and partial trimming in both available N100 answers,
+but every trim loses the enclosing sirloin-strip-subprimal source. Its D006
+passes all three trials; that minimized post has no named origin object.
+Shared-action generation and origin attachment remain separate failures.
+
+Concrete independent copy failures include ASv6.81 N096 trial 2: its complete
+sauté at 1.1.1.1.2.1 retains every focal qualifier but ingredient and large-pan
+14.1.1 copies lack it. ASv6.85 N100 trial 3 retains the full joint trim at
+2.1.3.3 but leaves partial-action copies 2.1.3.1/2.1.3.2 empty. Its new sealer
+13.1.1 also directly contains model recommendation 13.1.1.5 without newness:
+a recommendation for a used unit fits the child, not its parent. Newness is
+not required on its separate root model recommendation. ASv6.81 N096 trial 1
+puts a sauté naming only generic spaghetti bolognaise beneath fully qualified
+author/never-fail/serving-five ingredient parents. These generated scope
+errors survive correct supplied-pair judgments.
+
+Keep interpretation strength separate: ASv6.85 N096 trial 1 and ASv6.86
+N096 trial 2 fail solely on the frozen dinner qualification inferred from
+#dinner. Their explicit facts and checked copies pass; no action ancestor
+requires dinner. ASv6.86 N096 trial 3 additionally has a clean dish-copy
+omission at 2.2.2. No partial-action-only rejection is needed in this screen.
+All earlier uncertainty exclusions and scores remain unchanged.
+
+The next independent [ASv6.87](../asv6.87/README.md) arm changes only C1's
+explanation to demonstrate existing R16 source enumeration before hierarchy.
+Its source and 24-answer plan were frozen and committed before inference,
+which starts only after these 72 attempts finish. No draft is adopted.

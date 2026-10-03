@@ -1,6 +1,13 @@
 # ASv6.86 complete and partial shared actions
 
-Status: draft, frozen for the [development screen](../isolation-v1/example-phase-v1.md).
+Status: tested with failures; not adopted. The [development screen](../isolation-v1/example-phase-v1.md)
+has 24 first attempts: 22 valid answers, 14 accepts/8 rejects and two unknown
+runner failures. All valid answers have current native agent reviews. Originals
+pass five of eleven available answers; unavailable N100 trial 1 is not a gain.
+All six minimized answers pass. Both available N100s now retain full and partial
+trims, but every trim loses the sirloin-strip-subprimal origin. J002 still loses
+non-waterproofness in two trials. No checked generated scope error is found,
+while absent optional parents remain unexposed. This is not a reliable SP fix.
 [ASv6.86](ASv6.86.md) imports only ASv6.78's audited C1 cutting example into
 ASv6.81. It demonstrates both partial actions and their complete shared action,
 individual participants, food-role restrictions and every compatible numbered
