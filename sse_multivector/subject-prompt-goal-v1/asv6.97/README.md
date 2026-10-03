@@ -187,3 +187,6 @@ No human whole-answer labels or independent agreement-rate claim is invented.
 The useful next prompt target is S006's short, repeated loss of the enclosing
 recipe relationship. Its source defect survives the corrected Food interpretation
 and provides a concrete example requirement before another wording change.
+
+The user approves this target. [ASv6.98](../asv6.98/README.md) appends a compact
+recipe example while retaining these tested bytes. Its fixed screen is pending.

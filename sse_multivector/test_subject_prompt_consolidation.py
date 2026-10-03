@@ -1,6 +1,8 @@
 """Authored prompt checks; clause meaning still requires semantic review."""
 
+import json
 import re
+import unittest
 from collections import Counter
 from pathlib import Path
 
@@ -97,3 +99,41 @@ class FoodClassificationSubjectPromptTests(example_checks.GroupedSourceCopiesPro
             Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
             Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
         )
+
+
+class TitledRecipeSubjectPromptTests(unittest.TestCase):
+    path = ROOT / "subject-prompt-goal-v1/asv6.98/ASv6.98.md"
+
+    def test_titled_recipe_retains_complete_source_relationship(self):
+        blocks = re.findall(r"<example>\n(.*?)\n</example>", self.path.read_text(), re.S)
+        self.assertEqual(len(blocks), 8, "missing the titled-recipe example")
+        output = re.search(r"<output>\n(.*?)\n</output>", blocks[-1], re.S).group(1)
+        experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        entries = json.loads(output)["subjects"]
+        by_number = {entry["number"]: entry for entry in entries}
+        recipe = "Author's reliable lentil soup recipe serving four people"
+        seasoning = "Cumin to taste for seasoning food in the author's reliable lentil soup recipe serving four people"
+        self.assertEqual([entry["number"] for entry in entries if entry["subject"] == recipe],
+                         ["1.1", "2.1"])
+        self.assertEqual([entry["number"] for entry in entries if entry["subject"] == seasoning],
+                         ["1.1.1", "2.1.1", "3.1", "4.1"])
+        for entry in entries:
+            if "." not in entry["number"]:
+                continue
+            parent = by_number[entry["number"].rsplit(".", 1)[0]]["subject"]
+            self.assertIn((parent, entry["subject"]), {
+                ("Recipes", recipe), ("Lentil soup", recipe),
+                (recipe, seasoning), ("Cumin", seasoning), ("Food seasoning", seasoning),
+            })
+
+    def test_existing_instructions_examples_and_wrapper_are_preserved(self):
+        before = FoodClassificationSubjectPromptTests.path.read_text()
+        after = self.path.read_text()
+        self.assertTrue(after.startswith(before + "\n<example>\n"))
+        blocks = re.findall(r"<example>\n(.*?)\n</example>", after, re.S)
+        self.assertEqual(len(blocks), 8)
+        for block in blocks:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
+        template = ROOT / "experiment_specs/asv6.98-hr01-post-template.txt"
+        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
