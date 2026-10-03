@@ -1,0 +1,7 @@
+{
+  "schema_version":1,
+  "prompt":{"id":"SP-Isolation-P1","path":"SP-Isolation-P1.md"},
+  "dataset":{"adapter":"generic","path":"placement-cases-v1.json"},
+  "runner":{"provider":"openai-codex","model":"gpt-6.1-sol","reasoning_effort":"medium","transport":"websocket","timeout_seconds":1800,"concurrency":1,"auth_file":null,
+    "output_schema":{"type":"object","properties":{"placements":{"type":"array","items":{"type":"object","properties":{"parent_number":{"type":"string","minLength":1},"subject_ids":{"type":"array","items":{"type":"string","minLength":1}}},"required":["parent_number","subject_ids"],"additionalProperties":false}}},"required":["placements"],"additionalProperties":false}}
+}

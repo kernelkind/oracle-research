@@ -1,0 +1,7 @@
+{
+  "schema_version":1,
+  "prompt":{"id":"SP-Isolation-E1","path":"SP-Isolation-E1.md"},
+  "dataset":{"adapter":"generic","path":"edge-cases-v1.json"},
+  "runner":{"provider":"openai-codex","model":"gpt-6.1-sol","reasoning_effort":"medium","transport":"websocket","timeout_seconds":1800,"concurrency":2,"auth_file":null,
+    "output_schema":{"type":"object","properties":{"valid":{"type":"boolean"},"reason":{"type":"string","minLength":1}},"required":["valid","reason"],"additionalProperties":false}}
+}

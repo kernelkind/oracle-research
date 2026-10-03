@@ -1,5 +1,13 @@
 # Autonomous SP iteration
 
+The user has authorized [five hours of SP failure isolation and prompt
+correction](../isolation-v1/README.md), starting 2026-10-03 02:38:46 UTC, with
+a 2,000-call cap. The existing 430-call counter is preserved and its ceiling
+raised to 2,000. First isolate complete-subject retention, heading judgments and
+every-parent collection before choosing the next SP revision. The exact
+subscription `gpt-6.1-sol` low/medium route remains authorized; MP and production
+adoption remain outside scope.
+
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with
 no runner errors, retries or reuse. [ASv6.75 (candidate, tested with
@@ -13,11 +21,11 @@ does not establish a corrected edge. See the report for all trials and witnesses
 
 Only C1 changed from ASv6.74; instructions, C2–C7 and clause assignments stayed
 fixed. The 56 offline checks passed before launch, and frozen provenance,
-receipts and review bindings passed after completion. The persistent budget is
-430 of 1,000 attempts. Recommend a small explanation change within an existing
-example to demonstrate why an individual member cannot inherit the full group's
-restrictions, tested first on S004; no next draft or run is approved by these
-results. Production adoption and the recorded semantic questions remain open.
+receipts and review bindings passed after completion. The comparison closed at
+430 attempts against the then-1,000 ceiling. Its recommendation to explain
+group/member direction is superseded by the authorized isolation task above.
+Production
+adoption and the recorded semantic questions remain open.
 
 The approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md)
 is complete: 54 fresh medium answers and output-bound agent reviews, no runner
@@ -55,9 +63,10 @@ numbered witnesses and limits. ASv6.73 stayed fixed; the campaign budget was
 246 of 1,000 attempts at that checkpoint. Prompt revision and adoption remained
 open.
 
-The user authorized autonomous SP iteration on 2026-10-02, with at most
-1,000 attempts on `gpt-6.1-sol` at `low` or `medium` reasoning. This is an upper
-bound, not a target. Use the subscription `openai-codex` route, without paid
+The initial autonomous SP authorization on 2026-10-02 allowed at most 1,000
+attempts on `gpt-6.1-sol` at `low` or `medium`; the later isolation task raises
+the persistent ceiling to 2,000. This is an upper bound, not a target.
+Use the subscription `openai-codex` route, without paid
 fallback. MP and production adoption remain outside this campaign.
 
 Start from ASv6.58 (candidate, tested with failures). Frozen SP ASv6.48 remains
