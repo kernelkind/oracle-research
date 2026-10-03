@@ -17,8 +17,15 @@ restores the association in the edited controls. The source omission therefore
 persists without hierarchy generation and is not repaired by removing C1.
 See the isolation report for all witnesses and limits. The diagnostic phase
 closes at 676 of 2,000. [ASv6.76](../asv6.76/README.md), which changes only
-the reference-resolution paragraph, is undergoing fixed screening; no
-replacement SP is adopted.
+the reference-resolution paragraph, completed its 36-answer screen with
+24 bounded accepts, eleven confirmed failures and one uncertainty. The short
+S006 recipe relationship improves to 3/3, but all original N096/N100 answers
+still have failures. [ASv6.77's framing comparison](../asv6.77/README.md) completes
+with 23/12/1 and does not establish a reliable gain. All 72 answers complete
+on the first attempt with native output-bound reviews, no runner errors or
+reuse. The budget reaches 748. [ASv6.78](../asv6.78/README.md) tests a correct
+partial/shared-action demonstration in C1 independently of that framing edit;
+no replacement SP is adopted.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with
@@ -177,7 +184,7 @@ for repeated qualified subjects. No new rule is introduced.
 
 | Case | Primary clauses | Demonstration |
 | --- | --- | --- |
-| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75 (candidate, tested with failures) uses explicit food ingredients and mixing, with generic salt and recipient-only tissue outside food parents. Both demonstrate R19 through separate participants. |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75/76/77 use explicit food ingredients and mixing, with generic salt and recipient-only tissue outside food parents. ASv6.78 demonstrates partial cutting and the complete shared action, adding R17's shared-predicate aspect as a secondary demonstration. All retain R19's separate participants. |
 | C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved name; qualified new-app first use. ASv6.73 adds a blocking exception. |
 | C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
 | C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |

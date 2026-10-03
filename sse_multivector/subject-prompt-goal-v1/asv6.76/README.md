@@ -1,6 +1,6 @@
 # ASv6.76 complete source-reference clarification
 
-Status: candidate, untested. The authorized five-hour investigation isolates
+Status: candidate, tested with failures. The authorized five-hour investigation isolates
 a source relationship omission before hierarchy generation. R1 and R2 both
 omit the named recipe association in all three S006 trials; R2 removes only
 C1. S002 retains that association in all three trials of both versions.
@@ -63,3 +63,49 @@ SP remains one call per post. Input work changes only by this short paragraph;
 the repeated hierarchy-output obligation is unchanged. Commit the source,
 template, criteria and example audit before generation. Expand to fresh
 cross-topic validation only after a concrete source/placement improvement.
+
+## Completed screen
+
+All 36 medium answers completed on the first attempt, with no runner errors,
+retries or reuse. Current native agent reviews bind the exact saved inputs and
+outputs. The latest review counts are 24 bounded accepts, eleven confirmed
+rejections and one uncertainty. The fixed development screen closes at 712;
+later experiments keep using that same persistent budget.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| S002 | A | A | A |
+| S004 | A | R | R |
+| S006 | A | A | A |
+| D004 | A | A | A |
+| D005 | A | A | A |
+| D006 | A | A | A |
+| D007 | A | A | R |
+| D008 | A | A | U |
+| N063 | A | A | R |
+| N074 | R | A | A |
+| N096 | R | R | R |
+| N100 | R | R | R |
+
+S006 retains the full recipe relationship in 3/3 answers, versus 1/3 of the
+paired saved ASv6.75 full-hierarchy answers. In N096 the counted sautéing action
+now retains a named recipe/dish purpose in all three answers; trials 2 and 3
+still omit part of the most specific recipe qualification. Trial 1 instead
+misses the complete seasoning pair beneath its returned Food parent 2.
+These findings separate a source-association gain from overall SP correctness.
+
+Scope and placement remain independent failures: S004 trial 2 returns
+Food → Salt at 1.3; trial 3 misses the complete seasoning combination beneath
+the dish at 5.1.1.1. N063 trial 3 similarly misses the ingredient group beneath
+the dish at 1.1.1. N074 trial 1 returns a complete combined diet characterization
+but omits it beneath the literal click-comparison source parent 1.1.2.
+All three N100 answers omit the complete joint quantified trimming action;
+trial 3 also puts recipient-only trimming beneath Dog food.
+
+D008 trial 3 retains the complete joint trim but returns no Dog food parent.
+Its Food → Beef/tissue membership is an excluded semantic question, not a
+confirmed scope error. An initial rejecting agent comment was corrected to
+uncertain after this distinction; native history preserves both comments, and
+the latest output-bound review determines the table. There are no user labels.
+No candidate is adopted, and none of these development counts is a full-SP
+gold or unseen generalization rate.

@@ -244,3 +244,42 @@ adds constraints, and [ComplexBench](https://arxiv.org/abs/2407.03978), which
 evaluates how constraints compose and depend on one another. These older
 benchmarks do not measure this exact Sol model or explain its particular
 answers; the repository's controlled inputs provide that evidence.
+# Full-post joint-action controls, frozen before generation
+
+The first two prompt screens both omit N100's complete quantified joint trim
+in all three original-post trials. The first completed ASv6.78 original answer
+also omits it. The short shared trimming sentence is retained in all D005
+answers of ASv6.76/77. This contrast warrants a narrowly targeted integration
+check; it does not establish an internal attention or reasoning cause.
+
+SP-Isolation-R3 and R4 append the exact unchanged R1 flat-response operation to
+the complete ASv6.76 and ASv6.78 templates respectively. Keep the source rules,
+examples, original N100 input, evidence and medium settings. Use three trials
+per diagnostic, with native same-trial ASv6.76 inputs and saved outputs. This
+is six fresh answers, testing complete source retention while removing only
+the hierarchy response obligation. No production multi-pass change is proposed.
+
+T001 deletes only N100's independent vacuum-sealer paragraph, retaining every
+other source byte, including the purchase/cutting context, shared trim,
+myoglobin/chicken clause, hashtags and image URL. Use the unchanged ASv6.76
+full SP prompt for three fresh medium trials. This tests whether that exact
+additional paragraph changes retention of the unchanged focal joint action;
+it does not separate input length from topic/constraint interference.
+
+Before any of these nine generations, freeze the focal criterion: at least one
+subject heading must retain the full shared trim of about 3 lb fat for tallow
+and about a quarter pound of connective tissue and scrap meat for the dog from
+the sirloin strip subprimal. Counts attach to the fat and the combined tissue/
+scraps respectively. Check equivalent complete wording throughout the array.
+Partial actions, contexts and other headings cannot replace the combination.
+Flat diagnostics are graded only for bounded source retention, not hierarchy
+placements. T001 additionally preserves the ordinary scope and compatible
+source-parent placement criteria. Do not certify unrelated clauses as gold.
+
+Use only native prepare/run/show/review, subscription Sol 6.1 medium, unchanged
+WebSocket/1,800-second/no-output-cap settings and persistent history/budget.
+The next nine first attempts after ASv6.78 would reach 793, still below 2,000.
+Count every failure, retry only explicit transient provider failures once and
+retain unknown failures. At most six requests are active across all runners;
+these diagnostics wait for capacity rather than exceeding the screen's bound.
+Review every answer and preserve all receipts; no quality reruns or early stop.

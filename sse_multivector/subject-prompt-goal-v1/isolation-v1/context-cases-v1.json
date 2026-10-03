@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "T001",
+      "text": "Alright today's been pretty solid. \n\nPicked up a sirloin strip sub primal for $10 a lb cut 15 steaks about 1.5-2\" thickness. \n\nTrimmed about 3lb of fat for making tallow and about a quarter pound of some connective tissue and scrap meat for the dog. \n\n\nSaved the excess myoglobin to add in the dogs food and will put some some cold water and sunflower seeds for the chickens tomorrow. \n\n\n\n#beef #foodstr #foodpreservation #cooking #steak #cooking #grownostr #prepping #plebchain #homesteading \n\n https://image.nostr.build/270bbbc11299301ee5b4678883c5d48ab2f95eb13b1417093186ba855f4d90e5.jpg",
+      "origin": {
+        "kind": "authored_sp_context_ablation",
+        "variation": "N100 with only the independent sealer paragraph removed; complete trimming, purchase/cutting, myoglobin/chicken, hashtags and URL retained byte for byte",
+        "rubric": "README.md#full-post-joint-action-controls-frozen-before-generation"
+      }
+    }
+  ]
+}
