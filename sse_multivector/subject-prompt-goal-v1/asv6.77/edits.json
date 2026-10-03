@@ -1,0 +1,9 @@
+{
+  "base_sha256": "b8fbf3b633704e4df1479a8ea44f9f3040d6f6ba77f99eb8e3a493451b4bb204",
+  "edits": [
+    {
+      "old": "Build a hierarchy of this social-media post's subjects, like a book's subject index.",
+      "new": "Build a hierarchy of this social-media post's subjects, from broader subjects to more specific subjects."
+    }
+  ]
+}
