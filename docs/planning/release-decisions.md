@@ -999,12 +999,27 @@ cycle. It saves brief subject responses separately, capped at 64 tokens, for the
 128-token chunks and check final decode at the full 4,096-token allowance;
 synthetic continuation is memory evidence only. Timings and CUDA peaks come
 from the same checks. The numerical memory policy remains a proposal.
-The final local VM rehearsal passed 53 tests, including the pinned real
-tokenizers and managed SSH deployment/retrieval; 59 local controller checks
-passed. The package and image export are local. Private publication, a compatible
+The revised local VM rehearsal passed 55 tests, including the pinned real
+tokenizers and timeout-free managed SSH deployment/retrieval; 65 local controller
+checks passed. The package and image export are local. Private publication, a compatible
 rental offer, spending approval, ledger reservation and actual GPU execution
 remain pending. Automatic deletion remains disabled. See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
+
+**October 3 stopping rule required by the user:** never terminate the
+fine-tuning job or its rental until all necessary data is complete, retrieved
+and verified locally. If data is missing, retain the resource and add the work.
+If stopping is preferable, ask for explicit user approval first. This withdraws
+the proposed 2.5-hour worker deadline. Elapsed time, watcher errors/interruption
+and spending alerts do not authorize termination. Continue observation until
+verified retrieval and explicit deletion. Spending approval remains separate;
+request extensions early when necessary.
+The rebuilt package disables its execution timeout. The shared watcher no longer
+stops this workload on expiry/error/interrupt, and both `stop` and direct deletion
+require a recorded completeness review bound to the operation, instance and
+verified retrieval. The operator rechecks local files. An incomplete stop
+requires the actual user-approved reason and records that exception. Original
+frozen inputs and defect evidence remain intact when additional work is needed.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new

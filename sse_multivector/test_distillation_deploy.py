@@ -13,6 +13,31 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_unbounded_child_finishes_after_operator_interrupt(self):
+        import signal
+        import time
+        with tempfile.TemporaryDirectory() as temporary:
+            ready, done = Path(temporary) / 'ready', Path(temporary) / 'done'
+            child = (f'from pathlib import Path; import time; Path({str(ready)!r}).touch(); '
+                     f'time.sleep(.5); Path({str(done)!r}).touch()')
+            parent = ('import sys; from sse_multivector.distillation_deploy import run_process; '
+                      f'run_process([sys.executable, "-c", {child!r}], None)')
+            process = subprocess.Popen([sys.executable, '-B', '-c', parent],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+            try:
+                deadline = time.monotonic() + 10
+                while not ready.exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(.01)
+                self.assertTrue(ready.exists())
+                process.send_signal(signal.SIGINT)
+                stdout, stderr = process.communicate(timeout=10)
+                self.assertEqual(process.returncode, 0, stderr.decode())
+                self.assertTrue(done.exists())
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait()
+
     def test_subjects_only_package_has_no_mask_prompt_dependency(self):
         from sse_multivector import distillation_data
         with tempfile.TemporaryDirectory() as temporary:
@@ -87,6 +112,8 @@ class SharedSSHTests(unittest.TestCase):
         write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
             'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
         settings, offer = quote()
+        if deploy.verify_package(inputs)['timeout_seconds'] is None:
+            settings['worker_timeout_seconds'] = None
         spec = make_spec(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
         if copy_while_running:
             spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 1024 * 1024, 'timeout_seconds': 120}
@@ -241,8 +268,9 @@ class SharedSSHTests(unittest.TestCase):
                                 'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4},
             'preparation': {'max_new_tokens': 4, 'cache_fill_tokens': 16,
                             'train_note_ids': training_ids, 'evaluation_note_ids': evaluation_ids}},
-            through='preparation')
+            through='preparation', seconds=None)
         result = self.run_package(root / 'inputs', root / 'operation')
+        self.assertIsNone(read_json(result / 'deployment.json')['deadline'])
         for name in ('first', 'second'):
             run = result / name
             self.assertEqual(read_json(run / 'report.json')['training'], {'examples': 6, 'updates': 2})

@@ -17,6 +17,98 @@ from test_generalization import FAKE_COMMAND
 
 
 class CommandWorkloadTest(unittest.TestCase):
+    def test_unbounded_stop_refuses_before_ssh_without_complete_review(self):
+        self.freeze()
+        self.context.config['workload']['work_seconds'] = None
+        runner.atomic_json(self.root / 'launch/create-result.json', {'success': True, 'new_contract': 42})
+        with mock.patch.object(self.module, 'ensure_ssh', side_effect=AssertionError('stop attempted SSH')), \
+                mock.patch.object(self.module, 'destroy_instance', side_effect=AssertionError('stop attempted deletion')):
+            with self.assertRaisesRegex(self.module.OperationError, 'complete.*review'):
+                self.module.stop(self.context)
+
+    def test_unbounded_watch_never_stops_on_expiry_error_or_interrupt(self):
+        self.spec['limits']['work_seconds'] = None
+        self.freeze()
+        runner.atomic_json(self.root / 'launch/watch-deadline.json', {'deadline_utc': '2000-01-01T00:00:00Z'})
+        runner.atomic_bytes(self.root / 'launch/create-request-attempted.txt', b'attempted')
+        with mock.patch.object(self.module, 'run', return_value={'state': 'retrieved'}) as run, \
+                mock.patch.object(self.module, 'stop') as stop:
+            self.assertEqual(self.module.run_watch(self.context, None)['state'], 'retrieved')
+        run.assert_called_once()
+        stop.assert_not_called()
+        for error in (ValueError('provider error'), KeyboardInterrupt()):
+            with mock.patch.object(self.module, 'run', side_effect=error), \
+                    mock.patch.object(self.module, 'stop') as stop:
+                with self.assertRaises(type(error)):
+                    self.module.run_watch(self.context, None)
+            stop.assert_not_called()
+
+    def test_unbounded_real_worker_has_no_inherited_deadline(self):
+        self.spec['limits']['work_seconds'] = None
+        self.spec['environment']['ORACLE_RUN_DEADLINE_UTC'] = '2000-01-01T00:00:00Z'
+        self.spec['command'] = [sys.executable, '-c',
+            "from pathlib import Path; import os,json; Path('output.txt').write_text(json.dumps(os.environ.get('ORACLE_RUN_DEADLINE_UTC')))"]
+        self.freeze()
+        self.assertEqual(self.prepare_and_run()['exit_status'], 0)
+        self.assertIsNone(json.loads((self.root / 'work/output.txt').read_text()))
+
+    def test_unbounded_remote_stop_requires_user_approval_before_signal(self):
+        self.spec['limits']['work_seconds'] = None
+        self.freeze()
+        with mock.patch.object(self.module, 'remote_attempt_status', return_value={'state': 'running', 'controller_pid': 123}), \
+                mock.patch.object(self.module, 'process_alive', return_value=True), \
+                mock.patch.object(self.module.os, 'killpg') as signal_job:
+            with self.assertRaisesRegex(self.module.OperationError, 'user stop approval'):
+                self.module.remote_stop(self.context, '001')
+            signal_job.assert_not_called()
+            self.module.remote_stop(self.context, '001', 'User approved stopping the incomplete test workload')
+            signal_job.assert_called_once()
+        self.assertTrue((self.root / 'work/full-build-attempts/001/user-approved-stop.json').exists())
+
+    def test_unbounded_destroy_requires_complete_review_before_provider_call(self):
+        self.spec['limits']['work_seconds'] = None
+        self.freeze()
+        with mock.patch.object(self.module, 'sanitized_live_instances', side_effect=AssertionError('deletion reached provider')):
+            with self.assertRaisesRegex(self.module.OperationError, 'complete.*review'):
+                self.module.destroy_instance(self.context, '42')
+
+    def test_unbounded_retrieval_requires_review_and_unchanged_complete_local_files(self):
+        self.spec['limits']['work_seconds'] = None
+        fixture = self.lifecycle_fixture()
+        self.assertEqual(fixture.invoke_with_tty_secret('run').returncode, 0)
+        fixture.set_provider(remote_status='terminal', remote_terminal_kind='full-build.exit')
+        self.assertEqual(fixture.invoke('run', '--watch').returncode, 0)
+        missing = fixture.invoke('stop')
+        self.assertNotEqual(missing.returncode, 0)
+        self.assertIn('completion review', missing.stderr)
+        self.assertEqual(fixture.provider()['destroy_calls'], 0)
+        receipt = self.root / 'launch/retrieval-verification.json'
+        runner.atomic_json(self.root / 'launch/completion-review.json', {
+            'complete': True, 'instance_id': runner.read_json(receipt)['instance_id'],
+            'operation_contract_sha256': runner.sha256_file(self.config),
+            'retrieval_verification_sha256': runner.sha256_file(receipt),
+            'checks': ['Required output and worker evidence are complete and saved locally.']})
+        output = self.root / 'result/work/result.bin'
+        saved = output.read_bytes()
+        output.unlink()
+        incomplete = fixture.invoke('stop')
+        self.assertNotEqual(incomplete.returncode, 0)
+        self.assertEqual(fixture.provider()['destroy_calls'], 0)
+        output.write_bytes(saved)
+        stopped = fixture.invoke('stop')
+        self.assertEqual(stopped.returncode, 0, stopped.stderr)
+        self.assertEqual(fixture.provider()['destroy_calls'], 1)
+
+    def test_unbounded_incomplete_stop_records_explicit_user_approval(self):
+        self.spec['limits']['work_seconds'] = None
+        fixture = self.lifecycle_fixture()
+        self.assertEqual(fixture.invoke_with_tty_secret('run').returncode, 0)
+        reason = 'User approved stopping this incomplete test workload after reviewing missing data.'
+        stopped = fixture.invoke('stop', '--incomplete-stop-approval', reason)
+        self.assertEqual(stopped.returncode, 0, stopped.stderr)
+        self.assertEqual(fixture.provider()['destroy_calls'], 1)
+        self.assertEqual(runner.read_json(self.root / 'launch/user-approved-incomplete-stop.json')['reason'], reason)
+
     def test_progressive_inventory_includes_only_published_files(self):
         self.spec['outputs'] = ['results']
         self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}

@@ -2934,10 +2934,11 @@ def remote_supervise(
                     break
                 time.sleep(0.1)
             if not controller_pid.is_file() or not started.is_file():
-                with contextlib.suppress(ProcessLookupError):
-                    os.killpg(worker.pid, signal.SIGTERM)
-                with contextlib.suppress(subprocess.TimeoutExpired):
-                    worker.wait(timeout=10)
+                if not command_requires_completion(context):
+                    with contextlib.suppress(ProcessLookupError):
+                        os.killpg(worker.pid, signal.SIGTERM)
+                    with contextlib.suppress(subprocess.TimeoutExpired):
+                        worker.wait(timeout=10)
                 raise OperationError(
                     "remote controller did not publish its durable start before exiting"
                 )
@@ -2990,7 +2991,10 @@ def remote_controller(context: Context, attempt_id: str) -> NoReturn:
         executable = arguments[0]
         os.chdir(context.path("work"))
         os.environ.update(workload.get("environment", {}))
-        os.environ["ORACLE_RUN_DEADLINE_UTC"] = utc_text(utc_now() + timedelta(seconds=workload["work_seconds"]))
+        if workload["work_seconds"] is None:
+            os.environ.pop("ORACLE_RUN_DEADLINE_UTC", None)
+        else:
+            os.environ["ORACLE_RUN_DEADLINE_UTC"] = utc_text(utc_now() + timedelta(seconds=workload["work_seconds"]))
     try:
         os.execv(executable, arguments)
     except OSError as error:
@@ -3069,11 +3073,17 @@ def remote_worker(context: Context, attempt_id: str) -> dict[str, object]:
         raise OperationError("remote worker did not acknowledge its start")
 
 
-def remote_stop(context: Context, attempt_id: str) -> dict[str, object]:
+def remote_stop(context: Context, attempt_id: str, incomplete_stop_approval: str | None = None) -> dict[str, object]:
     with file_lock(context.path("work/full-build-start.lock"), blocking=True):
         status = remote_attempt_status(context, attempt_id)
         if status["state"] == "terminal":
             return {"stop_requested": True, **status}
+        if command_requires_completion(context):
+            if not isinstance(incomplete_stop_approval, str) or not incomplete_stop_approval.strip():
+                raise OperationError("incomplete work requires explicit user stop approval")
+            atomic_json(context.path(f"work/full-build-attempts/{attempt_id}/user-approved-stop.json"),
+                        {"reason": incomplete_stop_approval, "recorded_at_utc": utc_text(),
+                         "operation_contract_sha256": sha256_file(context.config_path)})
         controller = status.get("controller_pid")
         if not isinstance(controller, int) or not process_alive(controller):
             raise OperationError("remote worker has no live controller to stop")
@@ -3686,6 +3696,8 @@ def destroy_instance(context: Context, instance_id: str) -> dict[str, object]:
         if not isinstance(proof, dict) or proof.get("instance_id") != instance_id:
             raise OperationError("destruction proof is invalid")
         return proof
+    if command_requires_completion(context):
+        verify_completion_review(context, instance_id, None)
     live = sanitized_live_instances()
     matches = [row for row in live if str(row.get("id")) == instance_id]
     label_matches = [row for row in live if row.get("label") == context.label]
@@ -4894,6 +4906,48 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
         raise OperationError("acknowledged worker has no recoverable remote state")
 
 
+def command_requires_completion(context: Context) -> bool:
+    return context.command_workload and context.config["workload"]["work_seconds"] is None
+
+
+def verify_completion_review(context: Context, instance_id: str | None, incomplete_stop_approval: str | None) -> None:
+    """File-transfer verification cannot establish that all required work exists."""
+    approval_path = context.path("launch/user-approved-incomplete-stop.json")
+    if approval_path.exists():
+        approval = read_json(approval_path)
+        if (not isinstance(approval, dict) or approval.get("instance_id") != instance_id
+                or approval.get("operation_contract_sha256") != sha256_file(context.config_path)
+                or not isinstance(approval.get("reason"), str) or not approval["reason"].strip()):
+            raise OperationError("recorded incomplete stop approval belongs to another operation")
+        return
+    if incomplete_stop_approval is not None:
+        if not isinstance(incomplete_stop_approval, str) or not incomplete_stop_approval.strip():
+            raise OperationError("incomplete stop approval must record the user's reason")
+        atomic_json(approval_path,
+                    {"instance_id": instance_id, "reason": incomplete_stop_approval,
+                     "operation_contract_sha256": sha256_file(context.config_path), "recorded_at_utc": utc_text()})
+        return
+    review_path = context.path("launch/completion-review.json")
+    receipt_path = context.path("launch/retrieval-verification.json")
+    if not review_path.is_file() or not receipt_path.is_file():
+        raise OperationError("complete locally verified data and a completion review are required before stop")
+    review = read_json(review_path)
+    receipt = read_json(receipt_path)
+    checks = review.get("checks") if isinstance(review, dict) else None
+    if (not isinstance(review, dict) or review.get("complete") is not True
+            or review.get("instance_id") != instance_id or receipt.get("instance_id") != instance_id
+            or review.get("operation_contract_sha256") != sha256_file(context.config_path)
+            or review.get("retrieval_verification_sha256") != sha256_file(receipt_path)
+            or not isinstance(checks, list) or not checks
+            or any(not isinstance(check, str) or not check.strip() for check in checks)):
+        raise OperationError("complete data review is missing, stale or belongs to another operation")
+    candidate = context.path("result") if context.path("result").is_dir() else context.path("result.next")
+    terminal = terminal_state(candidate / f"work/full-build-attempts/{parse_attempt_id(receipt['attempt_id'])}")
+    if terminal is None or terminal.get("kind") != "full-build.exit" or terminal.get("exit_status") != 0:
+        raise OperationError("complete data review requires a successful retrieved worker")
+    verify_command_results(context, candidate)
+
+
 def run_watch(context: Context, approval: str | None) -> dict[str, object]:
     """Supervise the existing resumable run; no separate provider lifecycle."""
     if not context.command_workload:
@@ -4912,8 +4966,15 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
             while True:
                 if utc_now() >= deadline:
                     if context.path("launch/create-request-attempted.txt").exists():
-                        return stop(context, delete=False)
-                    raise OperationError("watch deadline expired before creation; prepare a new operation")
+                        if not command_requires_completion(context):
+                            return stop(context, delete=False)
+                        warning = context.path("launch/watch-limit-warning.json")
+                        if not warning.exists():
+                            atomic_json(warning, {"deadline_utc": utc_text(deadline), "observed_at_utc": utc_text(),
+                                                 "work_continues": True, "approval_review_required": True})
+                            print("session estimate exceeded; job continues and requires review", file=sys.stderr, flush=True)
+                    else:
+                        raise OperationError("watch deadline expired before creation; prepare a new operation")
                 result = run(context, approval)
                 approval = None
                 if progressive_policy(context) is not None:
@@ -4934,9 +4995,11 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                         print(f"background copy failed: {error}", file=sys.stderr, flush=True)
                 if result.get("state") not in ("running", "preparing", "remote_access_pending"):
                     return result
-                time.sleep(min(30, max(0, (deadline - utc_now()).total_seconds())))
+                time.sleep(30 if command_requires_completion(context) else
+                           min(30, max(0, (deadline - utc_now()).total_seconds())))
         except (Exception, KeyboardInterrupt):
-            if context.path("launch/create-request-attempted.txt").exists():
+            if (context.path("launch/create-request-attempted.txt").exists()
+                    and not command_requires_completion(context)):
                 stop(context, delete=False)
             raise
         finally:
@@ -4964,12 +5027,16 @@ def status(context: Context, watch: bool) -> dict[str, object]:
         time.sleep(interval)
 
 
-def stop(context: Context, *, delete: bool = True) -> dict[str, object]:
+def stop(context: Context, *, delete: bool = True, incomplete_stop_approval: str | None = None) -> dict[str, object]:
     """Stop and retrieve; automatic command supervision passes delete=False."""
     with operation_lock(context.root):
         if context.path("result/settlement/settlement-result.json").exists():
             return settle(context)
         instance_id = recorded_instance_id(context)
+        if (command_requires_completion(context)
+                and not context.path("launch/destruction-confirmation.json").exists()
+                and (instance_id is not None or context.path("launch/create-request-attempted.txt").exists())):
+            verify_completion_review(context, instance_id, incomplete_stop_approval)
         if context.path("launch/result-loss-ledger-reconciliation.json").exists():
             if instance_id is None:
                 raise OperationError("result-loss evidence has no instance identity")
@@ -5056,6 +5123,7 @@ def stop(context: Context, *, delete: bool = True) -> dict[str, object]:
                     "_remote-stop",
                     "--attempt",
                     attempt_id,
+                    *(["--incomplete-stop-approval", incomplete_stop_approval] if incomplete_stop_approval else []),
                 )
                 if (
                     not isinstance(response, dict)
@@ -5126,7 +5194,9 @@ def parse_args() -> argparse.Namespace:
     copy_remote.add_argument("--files", required=True)
     copy_receive = subparsers.add_parser("_receive-copy", help=argparse.SUPPRESS)
     copy_receive.add_argument("--request", required=True, type=Path)
-    subparsers.add_parser("stop", help="stop the workload, retrieve results and delete the instance")
+    stop_parser = subparsers.add_parser("stop", help="stop the workload, retrieve results and delete the instance")
+    stop_parser.add_argument("--incomplete-stop-approval",
+                             help="record explicit user approval to stop before complete verified retrieval")
     subparsers.add_parser("_remote-verify-transfer", help=argparse.SUPPRESS)
     subparsers.add_parser("_remote-prepare", help=argparse.SUPPRESS)
     prepare_worker = subparsers.add_parser(
@@ -5143,6 +5213,8 @@ def parse_args() -> argparse.Namespace:
     ):
         hidden = subparsers.add_parser(operation, help=argparse.SUPPRESS)
         hidden.add_argument("--attempt", required=True)
+        if operation == "_remote-stop":
+            hidden.add_argument("--incomplete-stop-approval", help=argparse.SUPPRESS)
     supervise = subparsers.add_parser("_remote-supervise", help=argparse.SUPPRESS)
     supervise.add_argument("--attempt", required=True)
     supervise.add_argument("--start-lock-fd", required=True, type=int)
@@ -5307,7 +5379,8 @@ def validate_command_context(context: Context) -> None:
     if not isinstance(environment, dict) or any(not isinstance(k, str) or not k or "=" in k
             or not isinstance(v, str) or "\0" in k + v for k, v in environment.items()):
         raise OperationError("workload.environment must contain string environment variables")
-    required_positive_int(workload, "work_seconds")
+    if 'work_seconds' not in workload or workload['work_seconds'] is not None:
+        required_positive_int(workload, "work_seconds")
     outputs = workload.get("outputs")
     if not isinstance(outputs, list) or not outputs:
         raise OperationError("workload.outputs must list relative result paths")
@@ -5479,7 +5552,7 @@ def main() -> int:
             receive_copy(context, args.request)
             return 0
         elif args.operation == "stop":
-            result = stop(context)
+            result = stop(context, incomplete_stop_approval=args.incomplete_stop_approval)
         elif args.operation == "_remote-verify-transfer":
             result = remote_verify_transfer(context)
         elif args.operation == "_remote-prepare":
@@ -5495,7 +5568,7 @@ def main() -> int:
         elif args.operation == "_remote-status":
             result = remote_status_report(context, args.attempt)
         elif args.operation == "_remote-stop":
-            result = remote_stop(context, args.attempt)
+            result = remote_stop(context, args.attempt, args.incomplete_stop_approval)
         elif args.operation == "_remote-abort-unstarted":
             result = remote_abort_unstarted(context, args.attempt)
         else:

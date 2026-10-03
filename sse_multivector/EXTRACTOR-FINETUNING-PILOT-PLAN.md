@@ -409,9 +409,10 @@ Bind the verified registry digest before freezing the operation.
 `run --watch` repeatedly resumes the shared runner through execution and
 retrieval. **Command workloads never automatically delete the instance.**
 Successful and failed jobs retain the instance after retrieval. Startup failures
-retain it without starting training. On expiry, controller errors or interruption,
-the watcher requests a workload stop and attempts retrieval, preserving the
-instance even when SSH or retrieval fails. The returned result reports that
+retain it without starting training. Historical bounded packages request a stop
+and retrieval on expiry, controller errors or interruption. The current
+timeout-free preparation package keeps its job running in all three cases.
+The returned result reports that
 billing remains possible and manual stop is recommended.
 
 The explicit `stop` command stops the workload, retrieves available results and
@@ -419,13 +420,17 @@ The explicit `stop` command stops the workload, retrieves available results and
 action required to end the rental. A retained instance continues billing; stopping
 the worker does not stop rental charges or enforce the $25 ceiling. Budget
 admission, cost warnings and worker runtime limits remain in force.
+For the current timeout-free package, stop/delete additionally requires a
+completeness review and verified local data, or explicit user approval to stop
+incomplete work. Cost and elapsed-time thresholds call for review.
 
-The watcher preserves its first session deadline across restarts and leaves
+The September 29 informal operation preserves its first session deadline across restarts and leaves
 15 minutes for retrieval and explicit deletion before the approved 13-hour
 ceiling. An operator must act within that allowance. Run supervision in a
 persistent local session; if the local process or host dies, an operator must
-resume it. The worker separately enforces its frozen runtime limit across all
+resume it. That historical worker separately enforces its frozen runtime limit across all
 candidates and kills download/training subprocess groups on timeout or stop.
+The current timeout-free package has no such runtime limit.
 Application failures are retrieved without retrying training.
 
 `distillation_run.py CONFIG --output DIRECTORY` performs baseline → training →
@@ -1213,7 +1218,7 @@ output lengths or any additional labels needed by the chosen sorting method.
 
 `distillation_run --through preparation` uses the existing subjects-only export
 and normal training, adapter, generation, checkpoint and retrieval paths. The
-frozen proposal is under `target/distillation-pilot-v1/subject-preparation-20261003/`.
+frozen proposal is under `target/distillation-pilot-v1/subject-preparation-20261003-v2/`.
 ASv6.48 and the existing informal 80/20 split are retained; no future pilot
 validation or final test data is used.
 
@@ -1239,20 +1244,45 @@ and reserved CUDA memory. Compare future data and planned batch/cache shapes
 against the measured cases before booking the main pilot.
 
 The production-path CLI test first failed on the missing preparation mode.
-The final VM rehearsal passed 53 tests: tiny models exercise Qwen's linear/full
+The revised VM rehearsal passed 55 tests: tiny models exercise Qwen's linear/full
 cache and both Gemma sliding/full caches, adapter merge, training restoration,
 real pinned tokenizer preflights, managed SSH deployment and verified retrieval.
-The local controller/contract checks passed 59 tests. No paid GPU evidence or
+The local controller/contract checks passed 65 tests, including refusal to
+stop/delete with missing or changed local data, watcher expiry/error/interrupt
+preservation, an actual worker without an inherited deadline, and recorded
+user approval for incomplete stops. No paid GPU evidence or
 new image publication is claimed. Evidence:
-`target/distillation-vm-clean-deployment/attempt-1791044250692284676/`.
+`target/distillation-vm-clean-deployment/attempt-1791046788404742039/`.
 
 Proposed rental controls are one 600 W / 96GB RTX PRO 6000 WS, 300 GB disk,
-a $5 maximum charge, three total hours with a 2.5-hour worker deadline and
-explicit retrieval/deletion. Automatic deletion stays off; observation must
-continue until deletion is verified. The latest October 3 offers did not meet
+a proposed $5 spending approval and a three-hour cost-planning/review window.
+The user rejected the 2.5-hour worker stop: the current package freezes
+`timeout_seconds: null` and `work_seconds: null`. No execution timeout, watcher
+expiry/error/interrupt or budget alert may kill the job. Observation must
+continue until necessary data is complete, retrieved and verified, and explicit
+deletion is confirmed. The latest October 3 offers did not meet
 both compatibility requirements and that spending proposal. Refresh and freeze
 a qualifying offer before launch. Private publication, maximum charge approval,
 ledger reservation and launch remain pending.
+
+**Required stopping rule, approved October 3:** retain the job and rental while
+necessary data is missing. Add missing work; if stopping is preferable, obtain
+explicit user approval first. Spending approvals still apply; request any
+needed extension early instead of treating a financial threshold as permission
+to terminate incomplete work. The previously asked approval containing a
+2.5-hour job stop is withdrawn.
+
+The shared operator refuses `stop` and direct deletion for this timeout-free
+workload without `launch/completion-review.json`. That review records a positive
+completeness finding, the checks performed, instance identity, and hashes of the
+operation contract and verified retrieval receipt. It must follow actual
+response/checkpoint/measurement accounting; exit status zero and file hashes
+alone cannot establish all required work. The operator rechecks the retrieved
+files before deletion. Missing or changed files block it.
+Only an explicit user-approved exception may use `--incomplete-stop-approval`,
+recording the actual approval reason locally and with the remote stop request.
+This flag is not permission to invent an approval. Preserve original frozen
+inputs and defect evidence while adding any necessary repair work.
 
 ## Compute estimates and spending constraints
 

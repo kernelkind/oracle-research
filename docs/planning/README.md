@@ -26,7 +26,10 @@ Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete
 model on that GPU and the three students running sequentially. The specific
-rental offer, maximum charge, and launch remain open.
+rental offer, maximum charge, and launch remain open. No job timeout, watcher
+error or elapsed review window may terminate this work automatically. Stopping
+or deleting requires complete, verified local data, or explicit user approval
+to stop incomplete work. Keep the resource and supply any missing work.
 Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,

@@ -76,10 +76,11 @@ def code_hashes():
     return {name: sha256(CODE_ROOT / name) for name in CODE_FILES}
 
 
-def prepare(config_paths, output, timeout_seconds, through="report"):
+def prepare(config_paths, output, timeout_seconds=None, through="report"):
     """Copy only explicit inputs; no source code, credentials or host config."""
-    if timeout_seconds <= 0 or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation"):
-        raise ValueError("runs and a positive timeout are required")
+    if (timeout_seconds is not None and (type(timeout_seconds) is not int or timeout_seconds <= 0)
+            or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation")):
+        raise ValueError("runs and a positive timeout or no timeout are required")
     output = Path(output).resolve()
     if output.exists():
         raise FileExistsError(output)
@@ -137,14 +138,26 @@ def verify_package(package):
     return job
 
 
+class StopRequested(RuntimeError):
+    """An explicit controller stop, checked by the shared operator first."""
+
+
 def run_process(command, timeout, **kwargs):
-    """Bound the whole process group, including download/training children."""
+    """Wait without an automatic kill when the frozen timeout is disabled."""
     with subprocess.Popen(command, start_new_session=True, **kwargs) as process:
         try:
-            process.wait(timeout=timeout)
-        except BaseException:
-            os.killpg(process.pid, signal.SIGKILL)
-            process.wait()
+            while True:
+                try:
+                    process.wait(timeout=timeout)
+                    break
+                except KeyboardInterrupt:
+                    if timeout is not None:
+                        raise
+                    print("operator interrupted; unbounded job continues", file=sys.stderr, flush=True)
+        except BaseException as error:
+            if timeout is not None or isinstance(error, StopRequested):
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait()
             raise
         return process
 
@@ -155,18 +168,18 @@ def execute(package, output):
     package, output = Path(package).resolve(), Path(output).resolve()
     job = verify_package(package)
     output.mkdir(parents=True, exist_ok=True)
-    deadline = time.time() + job["timeout_seconds"]
-    if os.environ.get("ORACLE_RUN_DEADLINE_UTC"):
+    deadline = time.time() + job["timeout_seconds"] if job["timeout_seconds"] is not None else None
+    if deadline is not None and os.environ.get("ORACLE_RUN_DEADLINE_UTC"):
         deadline = min(deadline, datetime.fromisoformat(os.environ["ORACLE_RUN_DEADLINE_UTC"].replace("Z", "+00:00")).timestamp())
     state = {"state": "running", "package_sha256": sha256(package / "manifest.json"), "deadline": deadline}
     write_json(output / "deployment.json", state)
     def stop(signum, frame):
-        raise RuntimeError("stopped by controller")
+        raise StopRequested("stopped by controller")
     previous = signal.signal(signal.SIGTERM, stop)
     try:
         for relative in job["runs"]:
-            remaining = deadline - time.time()
-            if remaining <= 0:
+            remaining = deadline - time.time() if deadline is not None else None
+            if remaining is not None and remaining <= 0:
                 raise TimeoutError("experiment exceeded its frozen runtime limit")
             name = Path(relative).stem
             config = read_json(package / relative)
@@ -201,7 +214,8 @@ def main():
     prepare_parser = commands.add_parser("prepare")
     prepare_parser.add_argument("--config", type=Path, action="append", required=True)
     prepare_parser.add_argument("--output", type=Path, required=True)
-    prepare_parser.add_argument("--timeout-seconds", type=int, required=True)
+    prepare_parser.add_argument("--timeout-seconds", type=int,
+                                help="optional execution deadline; omitted means no automatic stop")
     prepare_parser.add_argument("--through", choices=("preflight", "baseline", "train", "report", "preparation"), default="report")
     offer_parser = commands.add_parser("check-offer", help="validate a saved quote without renting")
     offer_parser.add_argument("--settings", type=Path, required=True)

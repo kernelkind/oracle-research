@@ -22,6 +22,27 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_unbounded_preparation_has_no_worker_deadline(self):
+        sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
+        import package as packager
+        settings, offer = quote()
+        settings['worker_timeout_seconds'] = None
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/model', 'revision': 'a' * 40})
+            deploy.prepare([config], root / 'inputs', None, through='preparation')
+            spec = vast.make_spec(settings, offer, root / 'inputs',
+                                  settings['image_repository'] + '@sha256:' + '4' * 64)
+            ledger = root / 'ledger.json'
+            write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
+                'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
+            contract = read_json(packager.freeze(spec, root / 'operation', ledger))
+            self.assertIsNone(contract['workload']['work_seconds'])
+            self.assertIsNone(deploy.verify_package(root / 'inputs')['timeout_seconds'])
+
     def test_small_preparation_budget_freezes_in_shared_controller(self):
         sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
         import package as packager

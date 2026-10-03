@@ -45,10 +45,11 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
         raise runner.OperationError("session and transfer allowances exceed the maximum charge")
     workload = {"command": spec["command"], "outputs": spec["outputs"],
                 "python": spec.get("python", "/usr/bin/python3"), "environment": spec.get("environment", {}),
-                "work_seconds": runner.required_positive_int(limits, "work_seconds")}
+                "work_seconds": None if 'work_seconds' in limits and limits['work_seconds'] is None
+                                else runner.required_positive_int(limits, "work_seconds")}
     if "progressive_copy" in spec:
         workload["progressive_copy"] = spec["progressive_copy"]
-    if workload["work_seconds"] >= seconds:
+    if workload["work_seconds"] is not None and workload["work_seconds"] >= seconds:
         raise runner.OperationError("work_seconds must leave time for retrieval before session_seconds")
     document = {"schema_version": 1, "artifact_kind": "vast-command-operation", "label": spec["label"],
         "image": spec["image"], "canonical_ledger_path": str(ledger), "selected_offer": offer,

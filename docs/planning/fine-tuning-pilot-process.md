@@ -115,9 +115,13 @@ and disk activity. The copier starts automatically beside the observer; final
 retrieval reuses verified copies. A transfer failure is reported without stopping
 training.
 
-Before explicit deletion, verify both expected work and required local files.
-I inspect baseline and trained responses as they arrive and monitor training
-and GPU telemetry until explicit deletion. Automatic deletion stays off.
+Before stopping the job or deleting its rental, complete all necessary work
+and verify that its data is fully retrieved locally. A successful transfer
+alone does not establish completeness. If something is missing, keep the
+resource and add that work. If stopping is preferable, ask for user approval
+first. Automatic job timeouts, stops on watcher errors, and deletion are disabled;
+time/cost thresholds call for review. I inspect responses as they arrive and
+monitor training and GPU telemetry until explicit deletion.
 
 After interruption, reconcile the existing worker first. Reuse verified saved
 work under original settings; preserve defect evidence and prepare fixes locally.

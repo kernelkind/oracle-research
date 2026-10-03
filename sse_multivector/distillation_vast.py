@@ -12,7 +12,9 @@ def make_spec(settings, offer, package, image):
     job = verify_package(package)
     if not re.fullmatch(re.escape(settings['image_repository']) + r'@sha256:[a-f0-9]{64}', image):
         raise ValueError('supply the published image registry digest')
-    if job['timeout_seconds'] > settings['worker_timeout_seconds']:
+    if (job['timeout_seconds'] is None and settings['worker_timeout_seconds'] is not None or
+            job['timeout_seconds'] is not None and settings['worker_timeout_seconds'] is not None
+            and job['timeout_seconds'] > settings['worker_timeout_seconds']):
         raise ValueError('package exceeds the approved worker timeout')
     return {'version': 2, 'label': settings['label'], 'offer': offer, 'image': image,
         'disk_gb': settings['disk_gb'], 'onstart': settings['onstart'], 'ssh_direct': True,
