@@ -1,0 +1,9 @@
+{
+  "base_sha256": "ad2d0130f4bf0c1fb4afbeae32209a6ca82a0994b6da539832e34887045e5ccb",
+  "edits": [
+    {
+      "old": "<post>\n{POST}\n</post>",
+      "new": "For this diagnostic response only, perform the supplied operation below instead of discovering post subjects or returning a hierarchy. The diagnostic response format below replaces the subjects hierarchy format above.\n\nCollect supplied complete source subjects beneath supplied subject-index parent occurrences. Do not discover additional subjects, derive headings or build a tree. An action concerning an object can fit that object's subject-index topic.\n\nCompare only the proposed subject strings across possible posts in any domain. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship. Imagine another post that fits the child heading: if it could fail to fit the proposed parent heading, the child does not belong there. The post, context and other entries cannot supply a restriction missing from a heading.\n\nFor each supplied parent heading, collect every supplied source subject whose own wording passes this parent check. Use that complete collection beneath every numbered occurrence of the parent heading, even when another parent copy has the same heading. Return one entry for every supplied parent number, including an empty subject_ids array when no supplied subject fits. Order of subject IDs is immaterial. Keep the supplied IDs and numbers exactly. Return only {\"placements\": [{\"parent_number\": \"number\", \"subject_ids\": [\"source ID\"]}]}.\n\nComplete source subjects:\n{SUBJECTS}\n\nParent occurrences:\n{PARENTS}\n"
+    }
+  ]
+}

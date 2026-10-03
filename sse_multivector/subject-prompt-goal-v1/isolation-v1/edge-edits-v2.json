@@ -1,0 +1,9 @@
+{
+  "base_sha256": "ad2d0130f4bf0c1fb4afbeae32209a6ca82a0994b6da539832e34887045e5ccb",
+  "edits": [
+    {
+      "old": "<post>\n{POST}\n</post>",
+      "new": "For this diagnostic response only, perform the supplied operation below instead of discovering post subjects or returning a hierarchy. The diagnostic response format below replaces the subjects hierarchy format above.\n\nJudge a proposed subject-index parent/child relationship using only the two heading strings. An action concerning an object can fit that object's subject-index topic.\n\nFor each enumerated subject, derive broader headings by generalizing its meaning without adding restrictions. An item's usual purpose is not a property of every instance: a purpose-qualified heading cannot contain an unrestricted item heading. Compare only the proposed subject strings across possible posts in any domain, including uses unlike the one described here. Classify what each heading necessarily means; the domain of a post cannot narrow an unrestricted heading. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship. Imagine another post that fits the child heading: if it could fail to fit the proposed parent heading, the proposed relationship is invalid. The post, context and other entries cannot supply a restriction missing from a heading.\n\nReturn only {\"valid\": true or false, \"reason\": \"one brief concrete reason or counterexample\"}.\n\nParent heading: {PARENT}\nChild heading: {CHILD}\n"
+    }
+  ]
+}

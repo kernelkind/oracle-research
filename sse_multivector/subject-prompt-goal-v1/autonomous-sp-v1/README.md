@@ -8,6 +8,14 @@ every-parent collection before choosing the next SP revision. The exact
 subscription `gpt-6.1-sol` low/medium route remains authorized; MP and production
 adoption remain outside scope.
 
+The first isolation phase used 108 attempts: 61 valid answers and 47 runner
+failures, with no unknown-failure retries. All thirty completed pair judgments
+and twelve supplied collections pass their bounded checks. Flat generation
+still loses the complete recipe relationship in all three S006 answers and
+the sole completed N096 counted sautéing answer. See the isolation report for
+source witnesses, missing diagnostic coverage and the frozen next comparison.
+The persistent counter is 538 of 2,000; no replacement SP is adopted.
+
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with
 no runner errors, retries or reuse. [ASv6.75 (candidate, tested with
@@ -24,8 +32,7 @@ fixed. The 56 offline checks passed before launch, and frozen provenance,
 receipts and review bindings passed after completion. The comparison closed at
 430 attempts against the then-1,000 ceiling. Its recommendation to explain
 group/member direction is superseded by the authorized isolation task above.
-Production
-adoption and the recorded semantic questions remain open.
+Production adoption and the recorded semantic questions remain open.
 
 The approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md)
 is complete: 54 fresh medium answers and output-bound agent reviews, no runner
