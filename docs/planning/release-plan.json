@@ -12,21 +12,21 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nParallel candidate builds continue; independent comparison is available. User browsing acceptance is pending; no production workflow is selected."
+      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nAcceptance remains open: subject-generation errors and incorrect global relationships are separate unresolved quality problems. No production workflow is selected."
     },
     {
       "id": "03",
       "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
-      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nA 200-note experimental hierarchy using saved outputs has been generated and is under further development. New generation awaits prompt stress-testing; the 100-note acceptance gate remains open."
+      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nLatest 200-note construction returned all model answers, but cycles and incorrect retrieval paths remain. New generation awaits prompt stress-testing; 100-note acceptance remains open."
     },
     {
       "id": "04",
       "track": "shared",
       "title": "Define node sort score",
       "status": "IN PROGRESS",
-      "description": "Define and validate one sorting score per note within a hierarchy node.\nCandidate testing is underway; the formula, model inputs and any use of multiple masks remain undecided."
+      "description": "Define and validate one sorting score per note within a hierarchy node.\nThe candidate passed its browsing audit and is frozen for the next build. Validation in an actual hierarchy remains open."
     },
     {
       "id": "05",
@@ -180,7 +180,7 @@
       "track": "shared",
       "title": "Order notes within each node",
       "status": "IN PROGRESS",
-      "description": "Implement and validate note ordering within each hierarchy node.\nCandidate testing is underway; completion awaits a settled node sort score. Recursive sorting and parent-child score transfer are out of scope."
+      "description": "Implement and validate note ordering within each hierarchy node.\nThe sorting candidate is frozen for the next build; production integration and hierarchy browsing validation remain. Recursive sorting and parent-child score transfer are out of scope."
     },
     {
       "id": "28",
@@ -201,7 +201,7 @@
       "track": "shared",
       "title": "Stress-test prompts",
       "status": "IN PROGRESS",
-      "description": "Stress-test prompts before broader-corpus generation and final teacher selection.\nTesting is underway; corpus selection, offline preparation and teacher comparisons can continue."
+      "description": "Stress-test prompts before broader-corpus generation and final teacher selection.\nSubject-generation tests still expose missing relationships and incorrect parent links; new broader-corpus generation remains on hold. Corpus preparation and teacher comparisons can continue."
     }
   ],
   "links": [

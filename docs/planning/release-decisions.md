@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated October 2, 2026. This is the written record of the planning discussion.
+Updated October 3, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -53,6 +53,22 @@ progress; the planned validation ladder and 100-note acceptance gate remain open
 The Notedeck browser UI is approved and committed; task 15 is waiting for
 protocol agreement and service implementation before integration. Completion
 links, acceptance requirements and open implementation choices are unchanged.
+
+**Hierarchy-quality status reconciled October 3:** two separate quality problems
+remain open. Subject generation still omits supported relationships and produces
+incorrect parent links; correction continues in prompt stress-testing. Separately,
+the latest 200-note construction using saved inputs completed its model answers,
+but their combination contains cycles and incorrect ancestry that retrieves
+unrelated posts. Construction experiments continue; removing cycles alone would
+not establish browsing quality. Fixing either stage does not establish that the
+other is correct.
+
+The [subject-generation investigation](../../sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/README.md)
+and [current construction investigation](../../../oracle-mvp-scalable-hierarchy-v12/sse_multivector/scalable-hierarchy-v1/README.md#sh5-200--actual-browsing-menu-construction-sprint)
+retain detailed evidence. The board records these unresolved problems within
+the existing hierarchy investigation and prompt stress-testing, not as new
+tasks or chosen fixes. The useful 100-note hierarchy acceptance gate remains
+open. Tracks, dependencies, generation holds and production choices are unchanged.
 
 **Broader-corpus generation hold — October 1:** the user is undertaking prompt
 stress-testing and has put generation of the additional notes on hold until that
@@ -112,11 +128,11 @@ the replacement posts or hierarchies is claimed. Corrected source preparation
 is saved; 300/400/500-note hierarchies have not been built. Generation holds,
 open prompt/build choices and validation gates remain unchanged.
 
-**Current task 02 status (October 1):** parallel candidate builds continue, and
-the independent comparison started by the user is available. The comparison
-agent currently recommends the scalable subject-hierarchy candidate (SH04).
-This is an agent assessment, not user browsing acceptance or selection of a
-production workflow.
+**Current task 02 status (October 3):** user browsing acceptance remains open.
+Subject-generation errors and incorrect global relationships are separate
+unresolved quality problems, as recorded above. The October 1 independent
+comparison favored the scalable subject-hierarchy candidate (SH04); that earlier
+agent assessment is not acceptance or selection of a production workflow.
 
 The earlier
 [bounded 100-post build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)

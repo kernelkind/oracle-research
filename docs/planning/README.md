@@ -51,9 +51,12 @@ and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
 Task 28 supplies the validated launch-scale implementation and is required to
 complete 12; it does not own a separate release snapshot or select a workflow.
-Corpus and Notedeck preparation started September 30. A 200-note experimental
-hierarchy using saved outputs has since been generated and is under further
-development. The Notedeck browser UI is approved and committed; task 15 waits
+Corpus and Notedeck preparation started September 30. The latest 200-note
+construction using saved outputs completed its model answers, but their
+combination contains cycles and incorrect retrieval paths; further construction
+experiments continue. Subject-generation omissions and incorrect parent links
+are a separate unresolved quality problem in prompt stress-testing.
+The Notedeck browser UI is approved and committed; task 15 waits
 for protocol agreement and service implementation before integration.
 The reviewed-100-note prerequisite for the planned validation ladder remains open.
 
@@ -139,10 +142,11 @@ track. Shared construction measurements can inform both where applicable.
 Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
-Task 02 tracks the 100-note hierarchy investigation. Parallel candidate builds
-continue, and the independent comparison started by the user is available. Its
-current agent assessment favors SH04; user browsing acceptance and production
-workflow selection remain open.
+Task 02 tracks acceptance of a useful 100-note hierarchy. Subject-generation
+errors and incorrect global relationships remain separately unresolved. The
+October 1 independent comparison favored SH04; that earlier agent assessment
+is not user browsing acceptance or production workflow selection. Both remain
+open.
 
 The earlier
 [bounded build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)
