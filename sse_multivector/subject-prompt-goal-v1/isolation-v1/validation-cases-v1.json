@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "V001",
+      "text": "Exhibit printing:\nThree teaspoons of black ink and one tablespoon of water.\nMix them for the two-panel print.\nSeparately, water for the visitor.",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V002",
+      "text": "Emergency beacon service:\nOne copper tube and two red clips.\nFasten it with them.\nSeparately, a copper tube for the visitor.",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V003",
+      "text": "Cut two metres of red rope for the garden arch and three metres of blue cord for the boat.\n\nI also used the new #CloudNest camera for the first time. It is better than my old Elm camera and came from Harbor Shop at 20% off.",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V004",
+      "text": "For repairs at the CopperFox workshop:\nOne grey bracket and two black bolts.\nPaint it and them.\nSeparately, copper sheets for the gallery.",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V005",
+      "text": "The manual Quiet Harbor by Rowan recommends waiting at the first gate and closing both west gates unless a crowd blocks the entrance.\nSeparately, I photographed the east gate.",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V006",
+      "text": "On my second use, the new camera #NightOwl photographed the Moon through a blue filter. It was not better than the old camera Juniper.\nSeparately, Juniper Avenue was closed.",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V007",
+      "text": "I saw her crane.\nSeparately, I bought a blue notebook.\nProfile URL: https://crane.example/repair?count=12",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    },
+    {
+      "note_id": "V008",
+      "text": "I packed two orange jackets for the camping trip and one blue helmet for the cycling lesson. Neither the jackets nor the helmet are waterproof.\n#RainSongFestival",
+      "origin": {
+        "kind": "authored_fresh_sp_validation",
+        "rubric": "validation-v1.md",
+        "status": "frozen before any validation generation; fictional names, agent-authored criteria"
+      }
+    }
+  ]
+}

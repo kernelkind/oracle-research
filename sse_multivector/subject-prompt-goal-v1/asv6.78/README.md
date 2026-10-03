@@ -1,6 +1,6 @@
 # ASv6.78 shared-predicate example comparison
 
-Status: candidate, untested. All three completed ASv6.76 N100 answers still
+Status: tested, confirmed failures; not adopted. All three completed ASv6.76 N100 answers still
 omit the full counted joint trimming subject. The partial trimming actions
 elsewhere do not retain that expressed combination. The saved native answers
 are the production-path failing behavior for this intervention.
@@ -51,3 +51,31 @@ first-attempt completion of this screen reaches 784. Only explicitly transient
 provider failures may be retried once; unknown failures are not retryable.
 Commit the source, template, checks and frozen plan before generation.
 Production SP remains one call per post; no candidate is adopted.
+
+## Completed comparison
+
+All 36 first attempts completed with valid native receipts, without request
+failures, retries or reuse. All have output-bound native agent reviews: 23 accept and 13 reject
+on the frozen bounded checks. These are agent judgments, not independent human
+gold or overall SP certification. The persistent counter reached 784.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| S002 | accept | accept | accept |
+| S004 | accept | accept | accept |
+| S006 | accept | accept | reject |
+| D004 | accept | accept | accept |
+| D005 | accept | accept | accept |
+| D006 | accept | accept | reject |
+| D007 | reject | accept | accept |
+| D008 | accept | accept | accept |
+| N063 | accept | accept | reject |
+| N074 | reject | reject | accept |
+| N096 | reject | reject | reject |
+| N100 | reject | reject | reject |
+
+The changed example does not fix full-post joint-action retention: all N100 answers omit the complete quantified trim. S006 trial 3 loses recipe association; D006 trial 3 returns only five rows, omitting separate material participants and other source clauses despite valid JSON. D007 trial 1 omits the complete trim. N063 trial 3 omits the complete fifteen-ingredient combination. N074 trials 1/2 lose attributed advice or its compatible component placements. N096 trials 1/2 put generic olive oil under Food; trial 3 loses the oil amount in partial sautéing. D008 returns no Dog food heading in any trial, so its acceptance does not demonstrate correction of that edge.
+
+Optional classifications and the unresolved chicken/myoglobin reference remain
+excluded. Source presence alone is not placement success. Native receipts and
+reviews are in `sse_multivector/experiments/sp-autonomous-v1/as78-*`.

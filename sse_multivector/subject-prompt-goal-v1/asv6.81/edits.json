@@ -1,0 +1,9 @@
+{
+  "base_sha256": "09502b1457ed489be6afce093081d5fda7e08441969791294150ead91ea44cc1",
+  "edits": [
+    {
+      "old": "Identify individual subjects and particular instances as well as the combinations expressed by the post; a description of an event does not replace the subjects involved.",
+      "new": "Retain individual subjects, their particular instances and every expressed combination, with their complete supported referents, amounts, modifiers, negation and relationships in the subject strings; a description of an event does not replace the subjects involved."
+    }
+  ]
+}

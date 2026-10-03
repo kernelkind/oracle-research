@@ -1,6 +1,6 @@
 # ASv6.79 complete-combination heading clarification
 
-Status: candidate, untested. ASv6.76/77/78 each omit N100's complete joint trim
+Status: tested, confirmed failures; not adopted. ASv6.76/77/78 each omit N100's complete joint trim
 in all three full original-post trials. Full-post flat R3/R4 answers retain it
 in all six trials. A matched hierarchy control with the same late retention
 reminder also retains it in all three trials; hierarchy construction alone is
@@ -35,3 +35,23 @@ every failure, retry only explicit transient provider failures once, and never
 rerun for quality or stop a screen early for quality. Preserve native receipts,
 history and the same 2,000 ceiling. The 61 offline checks and exact source/
 template/example audits pass before generation. No candidate is adopted.
+
+## Completed comparison
+
+All 12 first attempts completed with valid native receipts, without request
+failures, retries or reuse. All have output-bound native agent reviews: 7 accept and 5 reject
+on the frozen bounded checks. These are agent judgments, not independent human
+gold or overall SP certification. The persistent counter reached 820 after both ASv6.79/80 screens.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| N063 | accept | reject | accept |
+| N074 | accept | accept | reject |
+| N096 | accept | reject | reject |
+| N100 | reject | accept | reject |
+
+N100's complete joint trim appears only in trial 2, where the checked material and partial-action copies are filled. N096 trial 1 passes the bounded source/action-copy targets; trials 2/3 omit compatible recipe or material placements. N063 trial 2 omits the full ingredient combination below all dish occurrences. N074 trial 3 omits attributed advice beneath component advice copies. This clarification is not established as reliable.
+
+Optional classifications and the unresolved chicken/myoglobin reference remain
+excluded. Source presence alone is not placement success. Native receipts and
+reviews are in `sse_multivector/experiments/sp-autonomous-v1/as79-*`.

@@ -23,9 +23,18 @@ S006 recipe relationship improves to 3/3, but all original N096/N100 answers
 still have failures. [ASv6.77's framing comparison](../asv6.77/README.md) completes
 with 23/12/1 and does not establish a reliable gain. All 72 answers complete
 on the first attempt with native output-bound reviews, no runner errors or
-reuse. The budget reaches 748. [ASv6.78](../asv6.78/README.md) tests a correct
-partial/shared-action demonstration in C1 independently of that framing edit;
-no replacement SP is adopted.
+reuse. [ASv6.78](../asv6.78/README.md) completes with 23 bounded accepts and
+13 failures; its corrected partial/shared-action example does not restore
+N100's whole action in any original trial. The full-post controls retain it
+in all six flat answers and all three hierarchies with a late explicit source
+reminder, while removing the sealer paragraph leaves it absent in 3/3. One
+reminded hierarchy still misses compatible action copies. ASv6.79's own-heading
+clarification retains it in 1/3; ASv6.80's position-only change in 0/3. Their
+bounded original results are 7/12 and 5/12 accepts. The persistent counter is
+820; subsequent attempts have valid first receipts, no errors, retries or reuse.
+ASv6.81/82 test the successful control's complete-retention wording at the two
+instruction positions. Eight fresh validation inputs and criteria are frozen
+before candidate selection. No replacement SP is adopted.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with

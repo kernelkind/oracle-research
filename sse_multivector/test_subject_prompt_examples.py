@@ -814,7 +814,7 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
 
     def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
         root = Path(__file__).parent
-        for version in range(59, 81):
+        for version in range(59, 83):
             with self.subTest(version=version):
                 candidate = (
                     root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"

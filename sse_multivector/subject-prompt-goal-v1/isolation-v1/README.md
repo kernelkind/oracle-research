@@ -302,3 +302,41 @@ count, every answer is reviewed and no quality retry is allowed. This brings
 the additional control total to twelve calls and first-attempt completion to
 796 after ASv6.78. The same subscription/native/history/timeouts and six-active
 bound apply. This is a finite diagnostic, not a production prompt or extra pass.
+
+## Completed full-post controls
+
+All twelve R3/R4/T001/R5 first attempts completed with valid native receipts,
+without errors, retries or reuse; the persistent counter reached 796. All have
+current output-bound native agent reviews. R3 and R4 each retain the complete
+original N100 joint trim in 3/3 flat answers. T001 retains it in 0/3 ordinary
+hierarchies after removing only the independent sealer paragraph. Matched R5
+retains it in 3/3 hierarchies: bounded reviews reject trial 1 for missing copies
+below partial trimming actions 2.1.2.1/2.1.2.2 and accept trials 2/3.
+
+The flat/hierarchy contrast alone therefore cannot identify hierarchy obligation
+as the cause: explicit late source-retention wording also changes the result.
+Removing the sealer paragraph does not repair the omission. Source retention
+and compatible placement can fail separately. These controlled behavioral
+findings do not reveal a unique internal attention or reasoning mechanism.
+
+ASv6.79 clarifies that each expressed combination gets its own complete heading;
+ASv6.80 moves the unchanged enumeration paragraph nearer the post. Their twelve
+original answers each complete on first attempts, taking the counter to 820.
+ASv6.79 retains N100's complete trim in 1/3; ASv6.80 in 0/3. Bounded original
+reviews are 7 accept/5 reject and 5 accept/7 reject respectively. Neither is a
+reliable fix. The complete trial tables and concrete witnesses are maintained
+in their candidate READMEs. All seven examples and the ordinary schema remain
+unchanged in both.
+
+The next comparison replaces the existing combination-retention sentence with
+the complete-source wording used in the successful R5 control. ASv6.81 places
+that paragraph at the end as ASv6.80 does; ASv6.82 keeps its ASv6.76 position.
+This isolates the same wording at two positions without a duplicated footer.
+Each gets twelve original-post answers with frozen unchanged bounded criteria,
+three medium trials, native same-trial baselines, and every answer reviewed.
+The 24 first attempts would reach 844. These remain development inputs.
+
+Eight fresh posts and prospective criteria are frozen in
+[validation-v1.md](validation-v1.md). Select and freeze the exact candidate from
+development evidence before generating any validation answers. Production SP
+remains one pass and no candidate is adopted.
