@@ -20,7 +20,7 @@ locally before booking. The separate preparation mode now implements two
 updates over 16 existing training notes per student, one save/merge/restore
 cycle, brief subject generation, and native cache checks. The local VM rehearsal
 passed, including the real tokenizers and retrieval over SSH. GPU execution
-and numeric memory allowances still need the paid preparation evidence.
+and numeric memory allowances now have evidence for the tested preparation shapes.
 Check the actual pilot data against those tested bounds when it is ready.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
@@ -30,8 +30,7 @@ proceeding with the $5 preparation on October 3. The tested image is now publish
 and verified private. A refreshed compatible 600 W quote is $1.4522/hour,
 with $4.41 planned for three hours including transfer allowances, within the
 approved $5. The $7 request is withdrawn. Its first creation request was rejected
-with HTTP 400; complete inventory recovery confirmed no instance and no charge.  The specific provider explanation was not retained. GPU preparation
-is still pending. The user approved revised selection filters and proceeding
+with HTTP 400; complete inventory recovery confirmed no instance and no charge.  The specific provider explanation was not retained. That rejected creation ran no GPU checks. The user approved revised selection filters and proceeding
 within $5. A better refreshed 96GB/600 W quote is offer [private ID removed] on machine
 [private ID removed] at $1.4656/hour, or $4.40 for three planned hours including transfers.
 The unchanged private image and native package use a new frozen operation. All 125 available work files and six startup files were reverified before the run ended on October 3.
@@ -39,28 +38,26 @@ The unchanged private image and native package use a new frozen operation. All 1
 20 brief responses and four cache checks; Gemma dense has its first checkpoint,
 and MoE did not start. The local per-layer dimension fix is committed and its
 rebuilt VM passes all 56 tests. Reuse was approved, then cancelled by the deletion
-instruction before implementation. Remaining GPU checks are incomplete.
+instruction before implementation. This attempt left the Gemma checks incomplete; the repaired run below completed them.
 Preliminary charges were $1.56.
 For prep rentals, repair straightforward failures immediately. If recovery needs
 substantial work, preserve and verify the available data, then delete under the
 user's standing approval; completion of all prep checks is not required.
 The full pilot still requires complete, verified local data or explicit user
 approval before stopping incomplete work. No automatic timeout or deletion.
-**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
-Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
-private image is frozen at
-`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
-VM checks passed. The compatible configuration meets the existing 96GB/600 W hardware checks at $1.4153/hour including storage. Earlier preparation had preliminary charges of $1.56. Allow 1.75 hours for further preparation cost planning. No
-automatic timeout or deletion. Repair straightforward failures immediately; otherwise
-verify available data and delete promptly under standing prep authorization. Observe
-through explicit deletion.
+**GPU preparation completed October 3:** all three students passed the measured
+training, checkpoint restoration, merge and generation/cache checks on the
+96GB card. Qwen evidence was reused; the repaired Gemma rental lasted 65.5 minutes.
+All 210 work files and six startup files were verified.  Preliminary preparation charges total $3.26 including the earlier failure.
+The shared launcher still needs the successful proxy route and small-file copy
+priority made automatic before the pilot. Future data must fit measured bounds.
 
 Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,
-with disposable merged evaluation and full training-state restoration. Numeric
-GPU allowances still need preparation evidence; measured throughput replaces
-the serial cost reference. The background copier transfers completed responses
+with disposable merged evaluation and full training-state restoration. The
+preparation now supplies measured cache bounds. Reprice the pilot using batched
+throughput and actual output lengths rather than the serial cost reference. The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 
 `release-plan.json` is the current task-and-dependency source for the focused

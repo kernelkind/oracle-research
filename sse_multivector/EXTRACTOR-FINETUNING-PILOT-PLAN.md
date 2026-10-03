@@ -51,19 +51,27 @@ All 125 available work files and six startup files were reverified. Qwen complet
 dense has only its first checkpoint, and MoE did not start. The local per-layer
 dimension fix is committed; its rebuilt VM passed all 56 tests. Reuse was
 approved, then cancelled by the deletion instruction before implementation.
-Remaining GPU checks are incomplete.
+This attempt left the Gemma checks incomplete; the repaired run below completed them.
 The preliminary resource charge was $1.56.
-**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
-Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
-private image is frozen at
-`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
-VM checks passed. a compatible offer on the host meets the existing 96GB/600 W hardware
-checks at $1.4153/hour including storage. The 1.75-hour duration is cost planning only. No
-automatic timeout or deletion. Repair straightforward failures immediately; otherwise
-verify available data and delete promptly under standing prep authorization. Observe
-through explicit deletion.
+**GPU preparation completed October 3:** Qwen's verified earlier checks are reused;
+Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject
+responses, native maximum-output cache checks and restored training on the preparation run
+(96GB/600 W, $1.4153/hour including storage). All 210 work files and six startup files
+were retrieved and independently rehashed. The local response review ran at 21:04 UTC,
+full completeness review passed at 21:17:21 UTC. This rental lasted 65.5 minutes.
+The preliminary preparation costs were $1.639 and $1.620 ($3.259 combined).
 
-The cases and numerical memory allowances below still await GPU evidence.
+Direct SSH copying was slow; the verified provider proxy route completed retrieval using
+the unchanged native transfer code. Small sealed responses and measurements were copied
+ahead of remaining checkpoints. Frozen remote code, inputs and operation contract stayed
+unchanged. These local recovery steps still need incorporation into the shared launcher
+before the pilot; automatic fallback and small-file priority are not implemented. Future
+pilot data must fit the measured training and cache shapes. Rentals below $1.60/hour
+need no further approval for the authorized prep; straightforward failures are repaired
+promptly, otherwise available data is verified and the prep rental explicitly deleted.
+No automatic timeout or deletion.
+
+GPU checks passed for the measured cases below; actual pilot data must fit those bounds.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -1259,8 +1267,9 @@ with synthetic continuation tokens in chunks of 128, then decode one token at
 the configured 4,096-token output allowance. They do not generate or judge a
 full hierarchy. Longest prompts are 3,232 Qwen tokens and 3,149 Gemma tokens.
 The proposed policy budgets 88 GiB, reserves 4 GiB workspace, allows 256 KiB
-prefill scratch per token and four attention-matrix buffers. These conservative
-numerical allowances are not approved main-pilot settings or proven GPU bounds.
+prefill scratch per token and four attention-matrix buffers. The tested
+cache shapes passed this preparation allowance. It is not an approved guarantee
+for longer training sequences or future main-pilot data.
 Record actual batch shapes, stage timings, raw/parsed responses and peak allocated
 and reserved CUDA memory. Compare future data and planned batch/cache shapes
 against the measured cases before booking the main pilot.
@@ -1326,7 +1335,7 @@ Gemma dense completed its first eight-example update but failed before batched
 generation because `head_dim` is a per-layer configuration attribute. The
 original tiny-model test used equal full/sliding dimensions and missed that
 condition. MoE did not start. All available files and checkpoint seals are
-verified locally; required Gemma work is explicitly missing.
+verified locally; that failed attempt did not complete the required Gemma work.
 The local fix sums cache sizes from each attention layer rather than accessing
 ambiguous global dimensions. A minimal production-path test fails with the
 original exception and passes for both Gemma variants after the fix. Existing
@@ -1336,14 +1345,46 @@ subsequent rebuilt VM passed all 56 tests, including the nine SSH checks and
 actual candidate tokenizer preflights. Its source hashes match the committed
 repair; evidence is under
 `target/distillation-vm-clean-deployment/attempt-1791054641206410906/`. The old
-image, package and results are unchanged. Corrected deployment and remaining
-GPU preparation are still pending. Do not infer complete
-three-student fit or a full pilot cost from this partial run. The user approved
+image, package and results are unchanged. Corrected deployment subsequently
+completed the remaining Gemma work, as recorded below. The partial first run
+did not establish a full pilot cost or cover future data lengths. The user approved
 reuse, then explicitly instructed deletion before any deployment support was
 implemented. All available files were rehashed again.
 The preliminary resource charge was $1.56. Evidence:
 `operation-5usd-r1/observations/available-data-integrity-review.json` and
 `closure-evidence.json` in the proposal directory.
+
+**Completed hardware measurements, October 3:** all candidates used the same
+16 existing training notes and 20 brief evaluation notes, thinking off. Qwen
+measurements come from the verified earlier run; Gemmas from the repaired run.
+
+| Student | Two update durations | Generated batch sizes | Max reserved cache memory | Longest training / cached sequence |
+|---|---:|---|---:|---:|
+| Qwen3.8-27B | 84.4 / 48.9 s | 6, 7, 6, 1 | 60.4 GiB | 6,531 / 7,328 tokens |
+| Gemma 4 31B | 50.8 / 86.6 s | 3, 3, 3, 3, 3, 3, 2 | 79.4 GiB | 6,440 / 7,245 tokens |
+| Gemma 4 26B-A4B | 21.1 / 29.7 s | 9, 9, 2 | 64.7 GiB | 6,440 / 7,245 tokens |
+
+Twenty 64-token responses took 46.0 s, 56.7 s and 18.2 s respectively,
+including batching and prefill. All are intentionally truncated; these
+are hardware samples, not quality baselines. Full-output timing still
+depends on actual pilot output lengths. Synthetic 128-token cache fills
+are parallel forwards and must not be counted as autoregressive decoding.
+Update-end reserved memory reached 93.7 GiB for Qwen, 90.9 GiB for dense
+and 80.1 GiB for MoE; these snapshots are not exact training peaks.
+Qwen and dense have little training headroom. The main data preflight must
+compare actual token lengths with the measured cases before rental.
+
+The repaired operation is under `subject-preparation-20261003-v3/`, with
+`results-summary.json`, `closure-evidence.json`, and the operation's
+`observations/full-pre-deletion-integrity-review.json`. The tested image
+digest is `sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8`.
+Direct copying transferred only kilobytes per second; the provider proxy
+transferred 8 MiB in 10.3 s including connection setup. Prioritizing 148
+small sealed response/measurement files put all 40 Gemma raw answers and
+parse outcomes locally before the remaining checkpoints finished. Native
+verification covers all 210 work files and six startup files. These
+operational recovery steps used unchanged frozen code; they are not yet
+automatic shared-launcher behavior.
 
 **Prep stopping exception, approved October 3:** repair straightforward failures
 immediately. If recovery requires substantial work, preserve and verify all

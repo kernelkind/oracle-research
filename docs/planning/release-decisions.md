@@ -1023,7 +1023,7 @@ its head dimension differs by attention layer, and the batch-memory calculation
 incorrectly read the global configuration. MoE never started. Retrieval and
 independent rehashing account for all 125 work files and six startup files.
 
-The preliminary preparation cost was $1.56. Required Gemma work remains incomplete. No automatic timeout or
+The preliminary preparation cost was $1.56. This attempt left required Gemma work incomplete; the repaired run below completed it. No automatic timeout or
 deletion occurred. Budget overruns must trigger a direct chat update, never an
 automatic stop. Ask questions directly in chat; do not use question tools.
 
@@ -1034,9 +1034,9 @@ now use distinct full/sliding head dimensions. Local pinned-image checks pass
 50 tests, with nine deployment-VM tests skipped. The old package/image/results
 remain immutable. The rebuilt VM subsequently passed all 56 tests, including
 managed SSH, tokenizer preflights and verified retrieval, with source hashes
-matching the committed repair. Deployment of the corrected package and
-remaining GPU preparation are still required; this failure does not establish
-all three students fit or settle the full pilot's duration/cost.
+matching the committed repair. The corrected package subsequently completed the remaining Gemma checks,
+recorded below. The first failure did not establish an OOM. The measured
+preparation shapes do not settle full pilot data fit or duration/cost.
 See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 
@@ -1047,14 +1047,19 @@ approval to stop incomplete prep work; do not hold an idle rental while seeking
 renewed approval or developing a substantial recovery change. The agent judges
 repair scope; no fixed time cutoff was approved.
 
-**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
-Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
-private image is frozen at
-`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
-VM checks passed. The compatible configuration meets the existing 96GB/600 W hardware checks at $1.4153/hour including storage. Earlier preparation had preliminary charges of $1.56. Allow 1.75 hours for further preparation cost planning. No
-automatic timeout or deletion. Repair straightforward failures immediately; otherwise
-verify available data and delete promptly under standing prep authorization. Observe
-through explicit deletion.
+**GPU preparation completed October 3:** Qwen's verified earlier checks were reused; Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject responses, native maximum-output cache checks and restored training on 96GB/600 W hardware at $1.4153/hour including storage. All 210 work files and six startup files
+were retrieved and independently rehashed.  This rental lasted 65.5 minutes.
+Preliminary preparation costs were $1.639 for this run and $1.620 for the earlier failed preparation: $3.259 combined. 
+
+Direct SSH copying was slow; the verified provider proxy route completed retrieval using
+the unchanged native transfer code. Small sealed responses and measurements were copied
+ahead of remaining checkpoints. Frozen remote code, inputs and operation contract stayed
+unchanged. These local recovery steps still need incorporation into the shared launcher
+before the pilot; automatic fallback and small-file priority are not implemented. Future
+pilot data must fit the measured training and cache shapes. Rentals below $1.60/hour
+need no further approval for the authorized prep; straightforward failures are repaired
+promptly, otherwise available data is verified and the prep rental explicitly deleted.
+No automatic timeout or deletion.
 
 **Full pilot stopping rule:** never terminate the
 fine-tuning job or its rental until all necessary data is complete, retrieved

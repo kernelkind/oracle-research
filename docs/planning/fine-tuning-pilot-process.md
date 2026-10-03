@@ -22,9 +22,9 @@ notes while the pilot data is pending. The proposed small check covers an
 adapter update, checkpoint save/reload/merge, brief batched generation at tested
 memory bounds, and restored training. The local package now uses two updates
 over 16 existing notes per student and saves brief subject responses separately.
-The VM rehearsal passed; actual GPU fit is pending. Check the pilot data and
-planned batch shapes against the measured bounds when ready. Future answer
-completeness, the rental offer and spending approval remain open.
+The VM rehearsal and hardware checks passed on the existing notes. Check the pilot data and
+planned batch shapes against the measured bounds when ready. Future pilot answer
+completeness, its rental offer and spending approval remain open.
 
 **Keep preparation cheap, approved October 3:** collect pilot timing estimates
 during the same hardware checks. Keep parser/recovery tests and automation
@@ -40,14 +40,10 @@ and saves batch receipts plus separate raw/parsed answers per note. GPU
 preparation checks numeric memory allowances. Brief generation timing alone does
 not establish the full pilot's runtime.
 
-**Remaining preparation approved October 3:** proceed with Gemma dense and MoE; reuse
-Qwen's completed checks. Rentals below $1.60/hour need no further approval. The repaired
-private image is frozen at
-`sha256:9bc15608524a0796ecfb5c9d570a4e9c6a7b639bee6e6accdc1b2ee5e34108e8` after all 56
-VM checks passed. The compatible configuration meets the existing 96GB/600 W hardware checks at $1.4153/hour including storage. Earlier preparation had preliminary charges of $1.56. Allow 1.75 hours for further preparation cost planning. No
-automatic timeout or deletion. Repair straightforward failures immediately; otherwise
-verify available data and delete promptly under standing prep authorization. Observe
-through explicit deletion.
+**Hardware preparation completed October 3:** all three students passed the
+tested save/reload/merge/generate/restore cycle on the 96GB card. Results were
+verified before explicit deletion. Check actual pilot data against the measured
+lengths and memory bounds. See the technical plan for measurements.
 
 ## 1. Freeze shared inputs — locally
 
@@ -168,11 +164,10 @@ Assuming 100 validation notes, 200 final test notes, and the previous
   fifteen checkpoints, and the winner's thinking-off final comparison.
 - **Main rental:** roughly **$149–178**, including training, checkpoint
   transitions, transfers and 25% headroom.
-- **Separate preparation, October 3 proposal:** roughly **1–3 hours / $2–5** on a compatible offer with cheap transfers.
-  Saved telemetry measured about 14 minutes fetching all three models and
-  3 minutes startup. Those times are included, not added again. The local
-  rehearsal passed; new GPU paths remain unmeasured. The latest search found
-  no compatible offer within the proposed $5 cap; spending remains unapproved.
+- **Completed preparation, October 3:** the repaired Gemma rental took **65.5 minutes**
+  and has **$1.64 preliminary charges**, including transfers. Qwen checks were reused.
+  Including the earlier failed prep, preliminary charges are **$3.26**, within $5.
+  All measured hardware checks passed.
 
 These amounts price serial evaluation, not the approved batched pilot. Revise
 the pilot estimate from measured batched throughput and actual output lengths
@@ -180,7 +175,7 @@ on the intended hardware.
 Memory arithmetic selects each batch's size; it does not establish
 runtime or imply dividing serial time by batch size.
 The thinking-on evaluations and their cost allowance have been removed.
-The specific rental offer, spending and preparation scope remain open.
+The main pilot's specific rental offer, maximum charge and data remain open.
 Teacher labeling and local review assume the existing Codex subscription;
 paid API work would be additional. See the technical plan for assumptions.
 
