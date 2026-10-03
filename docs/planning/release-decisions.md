@@ -1029,9 +1029,11 @@ error for both Gemma variants. The fix reads each layer's cache dimensions and
 keeps the existing batching interface; integrated tiny-model lifecycle checks
 now use distinct full/sliding head dimensions. Local pinned-image checks pass
 50 tests, with nine deployment-VM tests skipped. The old package/image/results
-remain immutable. A fresh VM rehearsal, package/image rebuild and remaining
-GPU preparation are still required; this failure does not establish all three
-students fit or settle the full pilot's duration/cost.
+remain immutable. The rebuilt VM subsequently passed all 56 tests, including
+managed SSH, tokenizer preflights and verified retrieval, with source hashes
+matching the committed repair. Deployment of the corrected package and
+remaining GPU preparation are still required; this failure does not establish
+all three students fit or settle the full pilot's duration/cost.
 See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 

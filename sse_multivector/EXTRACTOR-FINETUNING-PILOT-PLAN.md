@@ -51,8 +51,9 @@ The preparation run is retained and continuously observed after Gemma dense
 failed in batch-memory calculation. Qwen completed all checks. All available
 125 work files and six startup files are retrieved and independently rehashed;
 Gemma dense has only its first checkpoint, and MoE did not start. The local
-per-layer dimension fix and regression pass; fresh VM/package/GPU verification
-remains required. Incomplete deletion awaits explicit user approval.
+per-layer dimension fix and regression pass. The rebuilt VM passed all 56
+tests; corrected deployment and remaining GPU checks are pending. Reuse of the
+retained rental is under review; incomplete deletion requires user approval.
 The cases and numerical memory allowances below still await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
@@ -1320,9 +1321,13 @@ The local fix sums cache sizes from each attention layer rather than accessing
 ambiguous global dimensions. A minimal production-path test fails with the
 original exception and passes for both Gemma variants after the fix. Existing
 integrated lifecycle checks now use different full/sliding head dimensions.
-Pinned-image local tests: 50 pass, nine SSH/deployment-VM tests skipped. The old
-image, package and results are unchanged. A fresh VM rehearsal and rebuilt
-package/image are required before further GPU preparation. Do not infer complete
+Pinned-image local tests: 50 pass, nine SSH/deployment-VM tests skipped. The
+subsequent rebuilt VM passed all 56 tests, including the nine SSH checks and
+actual candidate tokenizer preflights. Its source hashes match the committed
+repair; evidence is under
+`target/distillation-vm-clean-deployment/attempt-1791054641206410906/`. The old
+image, package and results are unchanged. Corrected deployment and remaining
+GPU preparation are still pending. Do not infer complete
 three-student fit or a full pilot cost from this partial run. The rental remains
 retained pending explicit approval of incomplete deletion. Evidence:
 `operation-5usd-r1/observations/available-data-integrity-review.json`.

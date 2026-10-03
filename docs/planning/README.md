@@ -38,7 +38,7 @@ The unchanged private image and native package use a new frozen operation. Gemma
 checks. All 125 work files and six startup files are retrieved and rehashed;
 Gemma dense has only its first checkpoint, and MoE did not start. The local fix
 uses each attention layer's dimensions and has a passing regression test.
-Fresh VM/package/GPU verification remains pending.
+The rebuilt VM passes 56 tests, including managed SSH and retrieval. Deploying the corrected package and completing GPU checks remain pending. Incomplete deletion still requires user approval.
 No job timeout, watcher error or elapsed review window may terminate this work automatically. Stopping
 or deleting requires complete, verified local data, or explicit user approval
 to stop incomplete work. Keep the resource and supply any missing work.
