@@ -814,7 +814,7 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
 
     def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
         root = Path(__file__).parent
-        for version in range(59, 87):
+        for version in range(59, 88):
             with self.subTest(version=version):
                 candidate = (
                     root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"
@@ -1614,6 +1614,41 @@ class CompleteSharedActionSubjectPromptExampleTests(SharedActionSubjectPromptExa
         self.assertEqual(sources[0].rsplit("</example>", 1)[1], sources[1].rsplit("</example>", 1)[1])
         audited = re.findall(r"<example>\n.*?\n</example>", SHARED_ACTION_PROMPT_PATH.read_text(), re.S)
         self.assertEqual(blocks[1][0], audited[0])
+        self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
+                         Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
+
+
+class SpecificSourceEnumerationExampleTests(FoodSubjectPromptExampleTests):
+    path = Path(__file__).parent / "subject-prompt-goal-v1/asv6.87/ASv6.87.md"
+
+    def food_example(self, path=None):
+        return super().food_example(path or self.path)
+
+    def assert_food_parents(self, path=None):
+        return super().assert_food_parents(path or self.path)
+
+    def test_complete_source_subjects_are_demonstrated_before_generalization(self):
+        block = re.findall(r"<example>\n(.*?)\n</example>", self.path.read_text(), re.S)[0]
+        explanation = re.search(r"<explanation>\n(.*?)\n</explanation>", block, re.S).group(1)
+        for node in ("food_salt", "dog_tissue", "food_tissue", "food_meat", "group", "complete_mixing"):
+            with self.subTest(subject=node):
+                self.assertIn(FOOD_SUBJECTS[node], explanation,
+                              "C1 does not explicitly demonstrate the complete source enumeration")
+                self.assertLess(explanation.index(FOOD_SUBJECTS[node]),
+                                explanation.index("Then derive"))
+
+    def test_revision_preserves_instructions_other_examples_and_post_template(self):
+        before = (self.path.parent.parent / "asv6.81/ASv6.81.md").read_text()
+        after = self.path.read_text()
+        omit_first_explanation = lambda s: re.sub(
+            r"<explanation>\n.*?\n</explanation>", "<explanation/>", s, count=1, flags=re.S
+        )
+        self.assertEqual(omit_first_explanation(before), omit_first_explanation(after))
+        blocks = re.findall(r"<example>\n(.*?)\n</example>", after, re.S)
+        self.assertEqual(len(blocks), 7)
+        for block in blocks:
+            output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
+            experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 

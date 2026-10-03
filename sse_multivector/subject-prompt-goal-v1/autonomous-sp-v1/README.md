@@ -258,6 +258,14 @@ subjects validator and the reviewed positive/negative relationship fixtures;
 they independently check each parent occurrence and every displayed edge.
 The semantic fixtures are agent judgments, not an independent truth oracle.
 
+The resumed comparison preserves this map. ASv6.85 changes only C6's source
+order, demonstrating later-established cable lengths without changing its
+correct output. ASv6.86 imports ASv6.78's reviewed full/partial cutting C1 into
+ASv6.81. ASv6.87 changes only ASv6.81's C1 explanation to demonstrate complete
+specific source enumeration before deriving headings (R16), while preserving
+its post and JSON. All keep seven examples, every primary assignment and the
+five implications. These are authorized experimental drafts, not user adoption.
+
 ASv6.61 medium improves the N100 appreciation wording, but its recommendation
 still drops newness beneath a New Nesco heading. N096 also drops cooking
 purpose from chopping beneath a cooking-qualified onion. N074 drops the
