@@ -127,10 +127,20 @@ in full; this checkpoint neither stops controls nor selects a replacement.
 | Case | Fresh ASv6.81 | ASv6.88 | ASv6.89 | ASv6.90 |
 | --- | --- | --- | --- | --- |
 | N063 | accept / unavailable / accept | uncertain / reject / accept | accept / accept / accept | accept / reject / accept |
-| N074 | reject / reject / accept | accept / reject / accept | accept / reject / accept | accept / accept / accept |
+| N074 | accept / reject / accept | accept / reject / accept | accept / reject / accept | accept / accept / accept |
 | N096 | reject / reject / reject | reject / reject / reject | reject / accept / reject | reject / reject / reject |
 | N100 | accept / reject / accept | accept / accept / reject | reject / reject / reject | reject / accept / reject |
-| Total | 5 accept, 6 reject, 1 unavailable | 5 accept, 6 reject, 1 uncertain | 6 accept, 6 reject | 6 accept, 6 reject |
+| Total | 6 accept, 5 reject, 1 unavailable | 5 accept, 6 reject, 1 uncertain | 6 accept, 6 reject | 6 accept, 6 reject |
+
+The first root review of fresh ASv6.81 N074 trial 1 rejected generic constituent
+advice despite the complete attributed joint beneath every compatible occurrence.
+Independent comparison with accepted ASv6.89 trial 3 identified scoring drift:
+separate qualification of each broader constituent is expressly excluded by the
+frozen calibration. Supersede that current-phase review with accept, preserving
+its review history and every older campaign score. Trial 2's attributed joint
+exists only in Book/author branches and is absent from the generic advice copies,
+so its independent copy rejection remains. The table records corrected current
+reviews; neither candidate gains nor a new requirement justify this correction.
 
 ASv6.90 retains the explicit author/easy/never-fail/feeding-five recipe
 qualifications in all three complete counted N096 sautés. The fresh ASv6.81

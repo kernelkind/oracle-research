@@ -20,7 +20,7 @@ The next [source/collection comparison](source-completion-phase-v1.md) freezes
 ASv6.88, ASv6.89 and ASv6.90 plus occurrence guards before 105 first attempts.
 It later freezes twelve fresh ASv6.81 original controls before their calls.
 Its completed 48-attempt original checkpoint has 47 valid answers and one
-unknown runner error: fresh ASv6.81 5 accepts/6 rejects, ASv6.88 5 accepts/6
+unknown runner error: fresh ASv6.81 6 accepts/5 rejects, ASv6.88 5 accepts/6
 rejects/1 uncertain, and ASv6.89/90 each 6 accepts/6 rejects. ASv6.90 preserves
 N096's explicit complete recipe identity in three of three answers versus one
 of three fresh baseline answers, but independent copy failures persist in all
