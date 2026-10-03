@@ -41,9 +41,10 @@ pilot data's token lengths against those bounds when it is ready. Future answer
 completeness is not established by this preparation. The local preparation
 mode, frozen input package and VM rehearsal are ready. The user approved
 proceeding with the $5 preparation on October 3. The tested image is published
-and verified private; the cheapest compatible 600 W quote needs a proposed
-$7 budget, awaiting approval. The cases
-and numerical memory allowances below await GPU evidence.
+and verified private. A refreshed compatible 600 W quote fits the approved
+$5: $1.4522/hour, or $4.41 for three planned hours including transfer allowances.
+The $7 request is withdrawn. Launch uses the frozen shared operator. The cases and numerical
+memory allowances below await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -1262,20 +1263,27 @@ is rejected with HTTP 401. Publication evidence is in the proposal directory's
 `target/distillation-vm-clean-deployment/attempt-1791046788404742039/`.
 
 Proposed rental controls are one 600 W / 96GB RTX PRO 6000 WS, 300 GB disk,
-and a three-hour cost-planning/review window. The user approved proceeding with
-the proposed $5 preparation, but no current compatible offer fits that amount.
-The selected October 3 quote is offer 53902271, the host, at about
-$1.66/hour including storage. Three planned hours plus 200 GB inbound and
-10 GB outbound allowances cost $6.34. A $7 maximum is requested, still pending.
-The prepared unlaunched operation is `operation-proposed-7usd/` under the proposal
-directory; no reservation or paid commitment has been made.
+and a three-hour cost-planning/review window. The approved maximum is $5.
+The refreshed selected quote is a compatible offer, at
+$1.4522/hour including storage. Three planned hours plus 200 GB inbound and
+10 GB outbound allowances cost $4.41. The earlier $7 request is withdrawn.
 The user rejected the 2.5-hour worker stop: the current package freezes
 `timeout_seconds: null` and `work_seconds: null`. No execution timeout, watcher
 expiry/error/interrupt or budget alert may kill the job. Observation must
 continue until necessary data is complete, retrieved and verified, and explicit
 deletion is confirmed. The latest October 3 offers did not meet
-both compatibility requirements and the $5 spending proposal. The selected $7 proposal passed the shared operator preparation; launch remains pending. Refresh the selected offer
-before launch and continue to use the verified registry digest.
+the original very low transfer-fee filter. That filter was an unnecessarily
+strict proxy for total cost. The new fee ceilings are $0.0009/GB in each direction;
+three hours at the $1.60/hour ceiling plus 200/10 GB at those fee ceilings total
+$4.989, within $5. The selected quote's actual fees are lower. The $5 operation
+passed shared-operator preparation; use its approved plan and registry digest.
+
+The constraint review found that 600 W is a preference and 128 GiB host RAM is
+unmeasured headroom, not demonstrated minimum requirements. The existing 99.5%
+reliability, CPU-core, disk and network thresholds are conservative selection
+criteria. This launch satisfies all those hardware filters; none was weakened.
+The image uses CUDA runtime 13.0.96 and NVRTC 13.0.88, corresponding to CUDA 13.0
+Update 2; retain its driver floor of 580.95.05 ([NVIDIA release notes](https://docs.nvidia.com/cuda/archive/13.0.2/cuda-toolkit-release-notes/index.html)).
 
 **Required stopping rule, approved October 3:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain

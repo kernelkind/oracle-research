@@ -1003,11 +1003,13 @@ The revised local VM rehearsal passed 55 tests, including the pinned real
 tokenizers and timeout-free managed SSH deployment/retrieval; 65 local controller
 checks passed. The user approved proceeding with the $5 preparation on
 October 3. The exact VM image is now published and verified private, including
-read-only pull and anonymous rejection. The cheapest compatible 600 W quote
-is about $1.66/hour plus $1.37 in planned transfer allowances: $6.34 for three
-planned hours. A $7 maximum is requested; that approval, ledger reservation
-and GPU execution remain pending. No rental has started. Automatic deletion
-remains disabled. See the technical plan's
+read-only pull and anonymous rejection. The refreshed selected compatible
+600 W quote is offer [private ID removed] on machine [private ID removed] at $1.4522/hour including storage.
+Three planned hours with transfer allowances cost $4.41, within the approved $5;
+the $7 request is withdrawn. The original transfer-fee ceiling was unnecessarily
+strict: the revised ceilings still prove admission under $5. All existing
+hardware filters are satisfied. Launch uses the frozen shared operator. Automatic deletion remains
+disabled. See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 
 **October 3 stopping rule required by the user:** never terminate the
