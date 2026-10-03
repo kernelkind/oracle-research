@@ -7,10 +7,13 @@ this exact draft on 2026-10-02 after reviewing its delta and offline audit.
 The plan below was committed as `ce87c96a` before generation and stayed fixed.
 No candidate is adopted. Production SP remains ASv6.48; MP is outside scope.
 
-The minimized checks improve from 32/48 to 40/48 bounded accepts, and all six
+After the [Food evaluator correction](../isolation-v1/README.md#evaluator-audit-after-the-food-correction),
+the minimized checks compare 35/48 to 40/48 bounded accepts, replacing the
+original 32/48 baseline. All six
 repair checks remain accepted. Original-post confirmed failures change from
-13/20 to 14/20, with three earlier uncertainties becoming decided. Culinary
-salt and dog-recipient qualifications improve, but source combinations,
+13/20 to 14/20, with three earlier uncertainties becoming decided. Dog-recipient
+qualifications improve, but the generic-Food salt baseline was misclassified.
+Source combinations,
 numbered placements and group/member restrictions still fail. These are
 development-set agent assessments, not full-SP gold or generalization rates.
 
@@ -47,8 +50,11 @@ Reuse the committed criteria for
 and [repair interactions](../autonomous-sp-v1/interaction-audit-v1.md#pre-generation-criteria).
 Judge equivalent wording by meaning, without imposing a tree shape or phrase.
 
-- **Scope:** inspect heading strings alone. Generic salt/oil cannot inherit
-  food purpose; tissue or scraps merely for the dog cannot inherit feeding.
+- **Scope:** inspect heading strings alone. The original salt/oil criterion
+  conflated generic Food membership with an explicit food purpose; that
+  inference is withdrawn by the Food evaluator correction. Culinary-class
+  interpretations remain separate. The historical recipient-only tissue/scrap
+  criterion checks whether feeding is stated rather than inherited.
   Explicit qualified interpretations are allowed when supported. Inspect other
   displayed restrictions, including counts, medium size, first use and newness.
 - **Source:** preserve specific participants, amounts, modifiers, negation,
@@ -138,14 +144,15 @@ named trial to inspect the complete post, headings, receipt and agent review.
 
 **A** means accept under the bounded focal criteria; **R** means a confirmed
 rejection. Each sequence is trial 1, 2, 3. No candidate answer is uncertain.
-The saved baseline assessments are unchanged.
+The three S004 baseline assessments are corrected after user calibration;
+their original native reviews remain recorded.
 
 | Case | ASv6.74 | ASv6.75 | Candidate finding |
 | --- | --- | --- | --- |
 | S001 | A A A | A A A | Salt/pepper, to-taste meaning and checked placements retained. |
 | S002 | A A A | R A A | Trial 1 omits the complete recipe-qualified pair beneath Food. |
 | S003 | A A A | A A A | Focal recipe-qualified salt/pepper pair and checked role copies retained. |
-| S004 | R R R | R R A | Bare-Salt culinary failure absent; trial 1 misses a dish copy, trial 2 reverses group/member direction. |
+| S004 | A A A | R R A | Baseline Food → Salt is not disproved by de-icing use. Candidate trial 1 misses a dish copy, trial 2 reverses group/member direction. |
 | S005 | A A A | A A A | Explicit seasoning purpose and complete pair retained. |
 | S006 | R A R | A R R | Trials 2/3 omit the complete seasoning-pair/recipe relationship. |
 | S007 | A A A | A A A | Sea-salt seasoning scope and complete pair retained. |
@@ -159,7 +166,7 @@ The saved baseline assessments are unchanged.
 | D007 | R R R | R A R | Dog scope improves; trials 1/3 still omit the joint trimming heading. |
 | D008 | R R R | A A A | Joint trimming retained; zero dog-food/feeding parent exposure in all candidate trials. |
 
-The totals are 32 accepts/16 rejections for ASv6.74 and 40 accepts/eight
+The corrected totals are 35 accepts/13 rejections for ASv6.74 and 40 accepts/eight
 rejections for ASv6.75. These counts include source and placement checks;
 qualification alone does not determine a verdict.
 
@@ -167,7 +174,7 @@ qualification alone does not determine a verdict.
 
 | Check | ASv6.74 | ASv6.75 | Candidate exposure |
 | --- | --- | --- | --- |
-| S004 unrestricted salt beneath a culinary parent | 3/3 failures | 0/3 failures | Food returned in all three trials, with qualified salt below it. |
+| S004 Food classification | 0/3 confirmed failures after calibration | 0/3 confirmed failures | Food returned in all three trials; qualified wording does not demonstrate repair of the withdrawn baseline objection. |
 | D004 explicit feeding subject absent beneath Dog food copies | 3/3 failures | 0/3 failures | Two Dog food copies in every trial; all six copies contain the full material/action. |
 | D007 recipient-only tissue/scraps beneath dog-food parents | 1/3 failures | 0/3 failures | Two Dog food copies in every candidate trial, used for myoglobin. |
 | D008 recipient-only tissue/scraps beneath dog-food parents | 2/3 failures | 0/3 observed failures | No candidate dog-food/feeding parents: zero observations of this edge. |
@@ -220,12 +227,14 @@ posts; neither their ordering nor a changed count proves causation.
 
 | Focal scope check | ASv6.74 | ASv6.75 | Candidate exposure |
 | --- | --- | --- | --- |
-| N063 unrestricted oil/salt beneath culinary parents | 1/5 failures | 0/5 failures | Culinary food/ingredient parents returned in all five trials. |
+| N063 unrestricted oil/salt beneath culinary parents | Original 1/5 Food objection withdrawn | No originally scored failures | Culinary food/ingredient parents returned in all five trials; class/role semantics are not newly calibrated. |
 | N096 unrestricted Salt beneath culinary parents | 3/5 failures | 0/5 failures | Culinary ingredient/seasoning parents returned in all five trials. |
 | N100 recipient-only tissue/scraps beneath dog-food/feeding parents | 5/5 failures | 0/5 failures | Dog-food parents returned in all five trials. |
 
-These rows concern their stated restrictions. The N096 group/member failure
-below is another scope violation, and N100 retains other source/scope errors.
+The original N063 scope-improvement claim is withdrawn. The remaining rows
+preserve historical role labels, not newly calibrated culinary-class judgments.
+The N096 group/member failure below is another scope violation, and N100 retains
+other source/scope errors.
 
 - **N063:** trials 1/2/4/5 retain all fifteen individually qualified ingredient
   subjects and the explicit group or complete ingredient combination beneath

@@ -67,10 +67,11 @@ fall from four of five to zero, but N096/N100 still fail all five repeats each.
 Its complete N100 joint trim survives only one repeat, which loses both partial
 actions. The development improvement does not establish a reliable correction.
 
-Candidate N096 repeat 1 additionally places unrestricted Olive oil directly
-under Food (1/1.10). The qualified recipe-use child cannot repair that edge.
-The original material-purpose scope pattern still occurs during generation;
-this witness is added to an already rejected answer without changing totals.
+Candidate N096 repeat 1 places Olive oil directly under Food (1/1.10). The
+former lamp-use scope witness is withdrawn after the [Food evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction):
+another use alone does not exclude olive oil from Food. Missing complete sauté
+copies keep this answer rejected without changing totals; this Food edge does
+not establish a generated scope failure.
 
 The [twelve attribute controls](../isolation-v1/late-attribute-v1.md) complete
 with ten bounded accepts/two rejects and valid first receipts, no errors or
@@ -89,10 +90,11 @@ remains incomplete. Production ASv6.48 and MP remain unchanged.
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with
 no runner errors, retries or reuse. [ASv6.75 (candidate, tested with
-failures)](../asv6.75/README.md) improves minimized checks from 32/48 to 40/48
-bounded accepts; all six repair checks remain accepted. Original-post confirmed
-failures are N063 1/5, N074 3/5, N096 5/5 and N100 5/5. Culinary salt and
-dog-recipient scope improve with actual original-post parent exposure, but
+failures)](../asv6.75/README.md) compares minimized checks at 35/48 versus 40/48
+bounded accepts after withdrawing three erroneous baseline Food → Salt rejects
+(originally reported as 32/48). All six repair checks remain accepted. Original-post confirmed
+failures are N063 1/5, N074 3/5, N096 5/5 and N100 5/5. Dog-recipient
+scope has additional actual original-post parent exposure, but
 complete source combinations, numbered placements and reversed group/member
 edges still fail. D008 returns no dog-food parent, so its apparent scope gain
 does not establish a corrected edge. See the report for all trials and witnesses.
@@ -106,8 +108,9 @@ Production adoption and the recorded semantic questions remain open.
 
 The approved [ASv6.74 salt/dog scope minimization](scope-minimization-v1.md)
 is complete: 54 fresh medium answers and output-bound agent reviews, no runner
-errors or reuse. The title/salt line/original hashtags reproduce Food → Salt
-in 3/3 answers; the trimming sentence/original hashtags reproduce dog-food
+errors or reuse. The title/salt line/original hashtags return Food → Salt
+in 3/3 answers; the alleged classification failure is withdrawn after calibration
+and all three bounded reviews accept. The trimming sentence/original hashtags reproduce dog-food
 parents containing recipient-only material in 2/3. Separate dog-food co-mention
 alone does not reproduce that scope error in six shortened answers. Explicit
 feeding wording with that co-mention preserves scope but omits both Dog food
@@ -122,8 +125,9 @@ agent reviews, with no runner errors or reuse. The repair diagnostics improve
 from four confirmed placement failures in six answers to none; they closely
 resemble the replacement example. Confirmed-error counts on the original posts
 stay N063 1/5, N074 2/5, N096 5/5 and N100 5/5. Three additional N063 answers
-and five soup diagnostics remain uncertain. N063 also introduces an unrestricted
-olive-oil/salt scope error. This is local progress, not a demonstrated general
+and five soup diagnostics remain uncertain. N063's former Food → Olive oil/Salt
+scope objection is withdrawn; its independent missing ingredient-group copies
+retain rejection. This is local progress, not a demonstrated general
 fix. Forty offline tests passed; the budget was 302 of 1,000 at that checkpoint.
 Instructions and the other six examples are unchanged. Production adoption
 remains open.
@@ -218,13 +222,14 @@ its already-correct negative parent checks and repeated placements. Its
 instructions, example posts and JSON outputs are otherwise identical to
 ASv6.59; it introduces no extra post or normative rule.
 
-ASv6.60 medium still fails all four original regression posts: unrestricted
-sea salt under Food and drink (N063), the Nostr-diet relationship omitted from
+ASv6.60 medium still fails all four original regression posts: the expressed
+whole ingredient group omitted from both dish branches (N063), the Nostr-diet relationship omitted from
 the mother/child exception (N074), salt under Seasonings (N096), and appreciation
 under use of a new sealer without newness (N100). Four of six low diagnostics pass the bounded pair targets. The original
 D006 acceptance was corrected: it reaches both kinds of parent but omits
 four numbered parent copies (1.1.1, 1.2.1, 1.3.1, 1.4.1).
-That is not a full SP correctness score.
+That is not a full SP correctness score. The original N063 objection to Sea salt
+under Food and drink was withdrawn by the Food evaluator correction.
 
 [ASv6.61 (candidate, tested with failures)](../asv6.61/ASv6.61.md) revises C2 to name a new
 app and explicitly place help and appreciation on first use. All source
@@ -243,7 +248,7 @@ for repeated qualified subjects. No new rule is introduced.
 
 | Case | Primary clauses | Demonstration |
 | --- | --- | --- |
-| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75/76/77 use explicit food ingredients and mixing, with generic salt and recipient-only tissue outside food parents. ASv6.78 demonstrates partial cutting and the complete shared action, adding R17's shared-predicate aspect as a secondary demonstration. All retain R19's separate participants. |
+| C1 | R01, R02, R04, R16, R20–R23, R25–R31, R34 | Counted source subjects, resolved action references, explicit purpose restrictions and every valid branch. ASv6.74 uses a repair-material pair and attachment; ASv6.75/76/77 use explicit food ingredients and mixing. Their blanket generic-Food exclusion rationale is withdrawn; Food seasoning and recipient-specific feeding roles need separate checks. ASv6.78 demonstrates partial cutting and the complete shared action, adding R17's shared-predicate aspect as a secondary demonstration. All retain R19's separate participants. |
 | C2 | R03, R05, R06, R17 | Hashtag name, figurative help, rhetorical appreciation, unresolved name; qualified new-app first use. ASv6.73 adds a blocking exception. |
 | C3 | R07, R24 | Bare URL and opaque identifier contribute no subjects; empty JSON array. |
 | C4 | R08 | Prose establishes profile URL and event identifier without a cross-link. |
@@ -442,10 +447,11 @@ these trial counts. Do not revise either prompt or stop early based on quality.
 The review criteria are fixed before these calls:
 
 - **Scope:** inspect every displayed parent-child edge using the heading strings
-  alone. In particular, unrestricted olive oil cannot inherit culinary purpose
-  (N063); unrestricted salt cannot inherit food-seasoning purpose (N096); a
-  material merely "for the dog" cannot inherit feeding purpose (N100). A lamp
-  oil, de-icing salt or chew toy supplies the corresponding counterexample.
+  alone. The original olive-oil criterion used lamp oil to reject culinary
+  parents (N063); its generic-Food objection is withdrawn, and class-versus-
+  particular-role interpretations need calibration. Preserve the earlier
+  food-seasoning Salt label (N096) separately from Food membership, and the
+  historical recipient-versus-feeding checks for material "for the dog" (N100).
 - **Placement:** check each relevant source subject beneath every numbered
   occurrence of each applicable returned parent, including repeated copies.
   For N063, check the expressed ingredient group beneath the dish and all 15
@@ -476,21 +482,26 @@ No candidate was adopted, and neither prompt changed during the comparison.
 
 | Post | ASv6.58 answers with confirmed errors | ASv6.73 answers with confirmed errors |
 | --- | --- | --- |
-| N063 | 5/5 | 1/5 |
+| N063 | 3/5 rejects, one accept, one uncertain after calibration | 1/5 |
 | N074 | 5/5 | 2/5 |
 | N096 | 5/5 | 5/5 |
 | N100 | 5/5 | 5/5 |
 
 These counts concern errors found under the fixed agent review criteria. The
 other seven ASv6.73 answers were accepted under those bounded checks; they are
-not independent full-SP gold passes. The aggregate is 20/20 versus 13/20 answers
-with confirmed errors on these four development posts, not a generalization
-score or a claim that ASv6.73 is ready for adoption.
+not independent full-SP gold passes. After the generic-Food correction the
+recorded baseline has 1 accept/18 rejects/1 uncertain versus 7 accepts/13 rejects
+for ASv6.73, replacing 20/20 baseline rejects. Trial 4's use-only Culinary
+ingredients objection becomes uncertain; further class/role interpretation and
+other historical labels remain open. This is not a generalization score or an adoption claim.
 
 The specific findings distinguish corrections from remaining failures:
 
-- **N063:** material-purpose scope fails in 5/5 ASv6.58 trials and 0/5 ASv6.73
-  trials. Whole-group/dish and member-copy placement fails in 3/5 versus 1/5.
+- **N063:** the former 5/5-versus-0/5 material-purpose scope claim is not a
+  calibrated result: the generic Food witnesses in trials 1/5 are withdrawn,
+  and other culinary-class witnesses need actual meaning/suitability checks.
+  Trial 1 accepts under the frozen target; trial 4 is uncertain about Culinary
+  ingredients class versus particular-use meaning. Whole-group/dish and member-copy placement fails in 3/5 versus 1/5.
   ASv6.73 trial 4 retains all 15 ingredients beneath both specific dishes and
   beneath the standalone ingredient group, but omits the group itself beneath
   both dish copies (1.1.1.1 and 3.1.1).

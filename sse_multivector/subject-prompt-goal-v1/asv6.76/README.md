@@ -94,8 +94,9 @@ still omit part of the most specific recipe qualification. Trial 1 instead
 misses the complete seasoning pair beneath its returned Food parent 2.
 These findings separate a source-association gain from overall SP correctness.
 
-Scope and placement remain independent failures: S004 trial 2 returns
-Food → Salt at 1.3; trial 3 misses the complete seasoning combination beneath
+S004 trial 2's former Food → Salt witness is withdrawn after user calibration;
+it still rejects because Spaghetti Bolognaise 1.1 is a leaf without the formed
+complete recipe-qualified pair. Trial 3 misses the complete seasoning combination beneath
 the dish at 5.1.1.1. N063 trial 3 similarly misses the ingredient group beneath
 the dish at 1.1.1. N074 trial 1 returns a complete combined diet characterization
 but omits it beneath the literal click-comparison source parent 1.1.2.
@@ -107,5 +108,7 @@ Its Food → Beef/tissue membership is an excluded semantic question, not a
 confirmed scope error. An initial rejecting agent comment was corrected to
 uncertain after this distinction; native history preserves both comments, and
 the latest output-bound review determines the table. There are no user labels.
+The [Food evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+therefore changes the trial-2 rationale without changing screen totals.
 No candidate is adopted, and none of these development counts is a full-SP
 gold or unseen generalization rate.

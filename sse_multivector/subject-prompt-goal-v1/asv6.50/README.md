@@ -1179,7 +1179,8 @@ mean every SP requirement passed.
 | N096 | Fail; 260 entries | Fail; 225 entries | Fail; 210 entries |
 | N100 | Pass; 230 entries | Pass; 193 entries | Fail; 211 entries |
 
-The five scope findings are:
+The five originally scored scope findings are listed below. The Cooking oils
+interpretation is not newly calibrated by the later Food evaluator correction.
 
 - **N063 T3, 8.1 -> 8.1.1:** Edible fats and oils -> Vegetable oils. The generic
   child includes nonedible oils. Tung oil is a concrete counterexample,
@@ -1187,9 +1188,9 @@ The five scope findings are:
   [USDA Fats and Oils report](https://ers.usda.gov/sites/default/files/_laserfiche/outlooks/37342/32910_ius6c_002.pdf).
   The edible olive-oil instance in this source cannot narrow that generic heading.
 - **N096 T1, 1.6 -> 1.6.1, and T3, 1.7 -> 1.7.1:** Cooking oils -> Olive oil.
-  The child itself does not specify a cooking role; another post can concern
-  olive oil used outside cooking. This uses the same entity/role criterion as
-  the saved ingredient-role failures, rather than borrowing the recipe context.
+  The original review used olive oil outside cooking as its counterexample.
+  Another use does not disprove suitability for cooking; the class-versus-
+  particular-role meaning remains uncalibrated, so this is a historical label.
 - **N096 T2, 1.2.1.2 -> 1.2.1.2.1:** Translucent sautéed onions -> Moving
   sautéed ingredients to the pan's side and adding 500 g ground beef when onions
   turn translucent, for spaghetti Bolognaise. The child calls the moved
@@ -1820,26 +1821,31 @@ approval of the prompt and test.
 | N096 | 232 / 251 / 223 | 2 / 3 | 3 / 3 |
 | N100 | 217 / 191 / 187 | 2 / 3 | 3 / 3 |
 
-**Scope fails in 4/12 answers; valid branch retention fails in 12/12.** No
+**Originally scored scope failures: 4/12; valid branch-retention failures: 12/12.**
+The later [evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+withdraws alternative-use-only classification reasoning. Cooking oils and
+other culinary class-versus-particular-role labels below need calibration;
+their original scope total is not a newly validated count. No
 answer passes both reviewed checks. ASv6.57 had four scope failures and eleven
 placement failures, with N063 T2 its only bounded pass. The approved
 heading-purpose edit does not resolve these regressions in this sample. These
 small stochastic samples do not establish a causal change in failure rate or
 generalization to other topics.
 
-Confirmed heading-only scope witnesses are:
+Original heading-only scope witnesses, with the noted classification limit:
 
 | Answer | Direct parent → child | Counterexample that fits the child but loses the parent restriction |
 | --- | --- | --- |
-| N096 T2 | 2.6 Cooking oils → 2.6.1 Olive oil | Olive oil used in a lamp does not establish a cooking role. |
+| N096 T2 | 2.6 Cooking oils → 2.6.1 Olive oil | Lamp use alone does not disprove suitability for cooking. The class-versus-particular-role interpretation is uncalibrated. |
 | N096 T3 | 1.6 Seasonings → 1.6.1 Salt | Salt used to de-ice a road does not establish a seasoning role. |
 | N100 T1 | 3 Food preparation → 3.1 Beef preparation | Preparing beef tissue as a laboratory specimen does not establish food preparation. |
 | N100 T3 | 14.1.1.1 Using the new Nesco VS-12 vacuum sealer → 14.1.1.1.1 Appreciation for the Nesco VS-12 vacuum sealer after use | Appreciation after using an old VS-12 does not establish use of a new sealer. |
 
 The N100 T3 edge also occurs at 14.3.1 → 14.3.1.1 and
 19.1.1 → 19.1.1.1. N096 T2 also puts generic subjects under Culinary herbs,
-Seasonings, Cookware and Food containers. This table supplies a confirmed
-witness per failing answer rather than an exhaustive count of bad edges.
+Seasonings, Cookware and Food containers. This table records a witness
+per originally scored failing answer rather than an exhaustive or
+currently calibrated count of bad edges.
 An instance's `context` does not repair restrictions missing from its heading.
 
 Each answer also omits at least one already-returned subject from an applicable
@@ -1942,11 +1948,12 @@ cannot restore a missing cooking role, edible grade, food-preparation purpose,
 advice role, method or modifier. The same counterexample must receive the same
 assessment across prompt versions.
 
-Applying this criterion consistently finds twelve additional failing answers.
-The scope columns count answers with at least one confirmed witness, not bad
-edges and not overall acceptances:
+The historical audit scored twelve additional failing answers. Some oil labels
+relied on an uncalibrated class-versus-particular-role reading; these totals are
+not newly validated by the Food evaluator correction. The columns record
+original answer-level scope scores, not bad edges or overall acceptances:
 
-| Tested candidate | Original scope failures / 12 | Confirmed scope failures / 12 after audit |
+| Tested candidate | Original scope failures / 12 | Historical revised scope failures / 12 |
 | --- | --- | --- |
 | ASv6.50 | 2 | 8 |
 | ASv6.51 | 2 | 5 |
@@ -1957,7 +1964,8 @@ edges and not overall acceptances:
 | ASv6.58 | 4 | 4 |
 
 Each counted answer has a direct-parent witness verified against its saved
-parse. The twelve corrections are:
+parse, which does not by itself validate its semantics. The twelve historical
+corrections are:
 
 | Candidate / answer | Previously missed direct relationship |
 | --- | --- |
@@ -1974,9 +1982,12 @@ parse. The twelve corrections are:
 | ASv6.56 N100 T2 | 10 Food preparation → 10.1 Meat preparation |
 | ASv6.57 N100 T3 | 3 Food preparation → 3.1 Meat preparation |
 
-The oil witnesses use the same lampante/nonfood counterexample as the later
-reviews; the [USDA olive-oil grades](https://www.ams.usda.gov/grades-standards/olive-oil-and-olive-pomace-oil-grades-and-standards)
-already supplied its basis. Preparing or cutting meat samples for laboratory
+The oil witnesses must distinguish actual inedibility from an alternative use.
+The Edible oils witness cites lampante actually unfit for consumption without
+processing, as defined by the [USDA olive-oil grades](https://www.ams.usda.gov/grades-standards/olive-oil-and-olive-pomace-oil-grades-and-standards).
+The Cooking fats/oils witnesses also invoked nonfood use; that alone does not
+disprove suitability for cooking. Those class interpretations and the historical
+whole-answer scores await meaning-based rechecking. Preparing or cutting meat samples for laboratory
 testing fits the generic preparation/cutting child without food preparation,
 the same distinction used in ASv6.58 N100 T1. Satisfaction after someone's
 first use of a previously owned VS-12 fits the ASv6.51 child without use of a
@@ -2047,11 +2058,12 @@ N074 T1 has no confirmed
 failure in this bounded audit; that is not an exhaustive pass. Thus an earlier
 candidate's scope-only acceptance cannot be used as an overall control pass.
 
-For ASv6.58, the four scope witnesses remain confirmed. The placement witnesses
+For ASv6.58, the four scope witnesses remain historically recorded; the cooking-
+oil class interpretation is not newly calibrated. The placement witnesses
 for subjects expressed by the post in N063 T1/T2 and N096 T1/T3 also remain
 supported. Their
-union confirms failures in at least seven answers independently of requiring
-every derived broader heading. The remaining five answers' recorded rejections
+historically reported union covered at least seven answers, including that
+uncalibrated scope label, and has not been recalculated here. The remaining five answers' recorded rejections
 depend on broader-heading omission witnesses in the completed review. The
 earlier 12/12 placement figure remains the historical assessment under that
 interpretation, not a settled common-criterion score.
@@ -2059,7 +2071,7 @@ interpretation, not a settled common-criterion score.
 ### Evidence preservation and diagnostic proposal
 
 Twenty native `experiment.py review --role agent` reassessments record the
-twelve additional scope findings and thirteen early source-placement witnesses;
+twelve originally scored additional scope findings and thirteen early source-placement witnesses;
 several answers have both. Every preceding review remains in its JSONL history.
 No user judgments were added. The saved source-coverage and N100 grounding
 caveats remain available separately from the confirmed failures.

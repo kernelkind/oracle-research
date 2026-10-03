@@ -74,8 +74,10 @@ gold or overall SP certification. The persistent counter reached 784.
 | N096 | reject | reject | reject |
 | N100 | reject | reject | reject |
 
-The changed example does not fix full-post joint-action retention: all N100 answers omit the complete quantified trim. S006 trial 3 loses recipe association; D006 trial 3 returns only five rows, omitting separate material participants and other source clauses despite valid JSON. D007 trial 1 omits the complete trim. N063 trial 3 preserves all fifteen qualified ingredients but uses only the ingredient-role group; the frozen alternative-group exclusion makes this uncertain. N074 trials 1/2 lose attributed advice or its compatible component placements. N096 trials 1/2 put generic olive oil under Food; trial 3 loses the oil amount in partial sautéing. D008 returns no Dog food heading in any trial, so its acceptance does not demonstrate correction of that edge.
+The changed example does not fix full-post joint-action retention: all N100 answers omit the complete quantified trim. S006 trial 3 loses recipe association; D006 trial 3 returns only five rows, omitting separate material participants and other source clauses despite valid JSON. D007 trial 1 omits the complete trim. N063 trial 3 preserves all fifteen qualified ingredients but uses only the ingredient-role group; the frozen alternative-group exclusion makes this uncertain. N074 trials 1/2 lose attributed advice or its compatible component placements. N096 trials 1/2 leave compatible named dishes without the formed complete sauté and seasoning pair; their former Food → Olive oil lamp-use objections are withdrawn. Trial 3 loses the oil amount in partial sautéing. D008 returns no Dog food heading in any trial, so its acceptance does not demonstrate correction of that edge.
 
 Optional classifications and the unresolved chicken/myoglobin reference remain
-excluded. Source presence alone is not placement success. Native receipts and
+excluded. The [Food evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+changes the first two N096 rationales without changing their independent copy
+rejections or totals. Source presence alone is not placement success. Native receipts and
 reviews are in `sse_multivector/experiments/sp-autonomous-v1/as78-*`.

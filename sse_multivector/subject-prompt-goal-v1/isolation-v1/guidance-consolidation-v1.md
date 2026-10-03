@@ -163,24 +163,27 @@ outside those 24 pairs. Agent agreement is not human accuracy; the prior Salt
 calibration still covers only one related restriction distinction.
 
 The unblinded broker appends a final assessment separately from the blind locks.
-Native `review` stores 158 hash-bound events: 90 fixed blind assessments, one
+Native `review` originally stores 158 hash-bound events: 90 fixed blind assessments, one
 initial judgment subsequently corrected, one extra blind cross-check, and 66
 explicitly marked final broker verdicts. Live native `show` verifies all events
 against the same current inputs and outputs. Its `current` field means matching
-hashes, not latest or adjudicated; scoring uses the single event per case whose
-comment starts `Final broker adjudication`. No human-role whole-answer review
-is invented.
+hashes, not latest or adjudicated. After the user's Food correction, one additional
+agent event brings this comparison to 159 events. Current scoring uses the latest
+hash-current agent event, selecting the post-calibration event where present and
+otherwise the final broker adjudication. Original blind judgments and the earlier
+final assessment remain recorded. No human-role whole-answer review is invented.
 
 | Assessment | ASv6.95 accept / reject / uncertain | ASv6.96 accept / reject / uncertain |
 | --- | --- | --- |
 | Locked primary, after existing-calibration corrections | 22 / 9 / 2 | 20 / 13 / 0 |
-| Final broker, retaining disputed boundaries as uncertainty | 22 / 9 / 2 | 19 / 10 / 4 |
+| Original final broker, retaining disputed boundaries as uncertainty | 22 / 9 / 2 | 19 / 10 / 4 |
+| After user Food classification calibration and bounded recheck | 22 / 9 / 2 | 20 / 9 / 4 |
 
-Final bounded verdicts by repeated development post:
+Current bounded verdicts by repeated development post after that calibration:
 
 | Post | ASv6.95 accept / reject / uncertain | ASv6.96 accept / reject / uncertain |
 | --- | --- | --- |
-| N063 | 2 / 1 / 0 | 2 / 1 / 0 |
+| N063 | 2 / 1 / 0 | 3 / 0 / 0 |
 | N074 | 0 / 2 / 1 | 0 / 0 / 3 |
 | N096 | 0 / 3 / 0 | 0 / 3 / 0 |
 | N100 | 0 / 2 / 1 | 0 / 3 / 0 |
@@ -191,10 +194,10 @@ Final bounded verdicts by repeated development post:
 | K001 | 3 / 0 / 0 | 2 / 0 / 1 |
 | K002 | 3 / 0 / 0 | 3 / 0 / 0 |
 | K003 | 3 / 0 / 0 | 3 / 0 / 0 |
-| Total | 22 / 9 / 2 | 19 / 10 / 4 |
+| Total | 22 / 9 / 2 | 20 / 9 / 4 |
 
 The original-post subset is 2 accepts/8 rejects/2 uncertain for ASv6.95 and
-2 accepts/7 rejects/3 uncertain for ASv6.96. Both fail the frozen reliable-fix
+3 accepts/6 rejects/3 uncertain for ASv6.96. Both fail the reliable-fix
 gate. Counts are not independent-post accuracy estimates or evidence of a
 statistically established regression. There is no demonstrated benefit from
 the shorter instruction block in this comparison. All eight prospective-v2
@@ -202,9 +205,12 @@ posts remain unused.
 
 ## Concrete failures and assessment boundaries
 
-- **Scope, revised N063 E01:** Food `1` contains Sea salt `1.13` without a food
-  restriction. Both blind reviewers identify this Salt-like failure; food context
-  cannot supply the missing restriction in the child heading.
+- **Withdrawn scope allegation, revised N063 E01:** both blind reviewers
+  rejected Food `1` → Sea salt `1.13` for nonfood uses; one also cited Shrimp
+  `1.1` for aquarium use. The user corrects the parent interpretation: other
+  uses do not disqualify food substances. Two post-calibration rechecks find no
+  remaining source/scope/copy failure, so bounded agent reject becomes accept.
+  Human approval concerns the Sea salt edge and principle, not the whole answer.
 - **Source, revised N100 E03:** `9.1` retains trimming about 3 lb of fat for
   tallow; `9.2`/`9.3.1` retain the joint quarter-pound tissue-and-scrap portion for
   the dog. No complete subject joins those two main portions in the shared
@@ -256,7 +262,11 @@ preregistered human gold set. The already-pending N100 implicit-origin question
 also remains unanswered; origin alone does not decide rejection. Clear failures
 remain without resolving any of these questions. Consolidation satisfies the
 authored checks but does not repair SP behavior; no unique internal cause or
-generalization claim follows.
+generalization claim follows. The later [evaluator audit](README.md#evaluator-audit-after-the-food-correction)
+withdraws the N063 scope allegation and corrects affected older assessments,
+example explanations and test assumptions. Agreement between the original
+reviewers did not make their shared Food interpretation correct. Raw outputs,
+source hashes, frozen experiment settings and call counts remain unchanged.
 
 Native results and append-only reviews remain ignored under
 `sse_multivector/experiments/sp-autonomous-v1/guidance-consolidation-v1/E01`–`E06`.

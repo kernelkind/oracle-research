@@ -3,9 +3,11 @@
 Status: candidate, tested with failures. The five-hour investigation shows correct
 full-context supplied judgments/collections alongside errors in full hierarchy
 generation. ASv6.76's completed S006 answers retain the recipe relationship in
-3/3 trials, but S004 trial 2 still returns Food → unrestricted Salt at 1.3.
-The native production-path source/heading witness is the minimal failing
-behavior for this intervention; de-icing salt does not fit Food. The three
+3/3 trials. The earlier motivating Food → Salt witness in S004 trial 2 is
+withdrawn: de-icing use alone does not disqualify the material from Food.
+That answer still omits the complete seasoning pair beneath its named dish;
+the purported scope witness does not establish the framing intervention's cause.
+The three
 completed N100 answers also omit the full quantified joint trimming.
 
 [ASv6.77](ASv6.77.md) changes only the opening analogy in ASv6.76:
@@ -68,8 +70,9 @@ This small development comparison does not establish reliable improvement.
 | N096 | R | R | R |
 | N100 | R | R | R |
 
-The short dinner cases no longer return bare Salt beneath Food in these three
-answers, but S004 trial 3 misses the recipe-seasoning combination beneath the
+The short dinner cases do not return bare Salt beneath Food in these three
+answers; that ordering observation is not a repaired classification failure.
+S004 trial 3 misses the recipe-seasoning combination beneath the
 dish at 1.1.1.1. S006 trial 1 retains the recipe relationship but misses its
 placement below the dish 2.1; trial 3 loses the relationship entirely. The
 source change therefore retains its target in 2/3 framing answers versus 3/3
@@ -82,3 +85,6 @@ N100 still omits the full joint trim in all three answers. D006/D007 trial 1
 also omit the joint trim. D008 trial 3 is uncertain on Food/material membership
 and has no Dog food exposure; optional memberships are not confirmed failures.
 The framing edit is not promoted into the independent ASv6.78 example test.
+The [Food evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+also withdraws N096 trial 3's lamp-use scope objection; its independent empty
+dish copy preserves rejection and all totals.

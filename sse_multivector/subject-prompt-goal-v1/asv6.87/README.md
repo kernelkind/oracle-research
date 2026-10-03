@@ -52,7 +52,8 @@ candidate frozen before any new validation generation.
 ## Completed screen
 
 All 24 first attempts complete with valid answers, no retries, reuse, errors
-or unrun cases. Every answer has exactly one current native agent review.
+or unrun cases. Every answer has output-bound native agent reviews; the later
+Food correction appends a second review for N096 trial 1 without changing its output.
 The fixed ASv6.81 comparison remains 11 accept/13 reject; ASv6.87 has
 12 accept/12 reject. These small, differently timed samples establish no
 reliable improvement. Originals alone remain 5 accepts/7 rejects.
@@ -69,8 +70,11 @@ reliable improvement. Originals alone remain 5 accepts/7 rejects.
 | J002 | R / R / R |
 
 A/R are bounded agent assessments, not independent human gold. N074 trial 1
-loses book attribution. All N096 trials lose complete recipe qualifications;
-trial 1 independently puts generic Olive oil 1.6 directly under Food 1.
+loses book attribution. All N096 trials lose complete recipe qualifications.
+Trial 1's former Food 1 → Olive oil 1.6 scope objection is withdrawn after
+the [Food evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction);
+lamp use alone is not exclusion from Food. Source defects keep every N096
+rejection and all screen totals unchanged.
 N100 trials 1/2 retain full and partial trims but lose the sirloin-strip origin;
 trial 3 retains both origin-qualified partial trims but omits their full joint
 trim. This distinction prevents treating every N100 rejection as an origin

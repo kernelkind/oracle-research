@@ -53,9 +53,12 @@ Use the existing heading-alone scope rule and numbered-copy requirement.
 Judge meaning rather than exact wording or a required tree shape.
 
 1. **Salt scope:** inspect each returned occurrence of the focal salt topic
-   and its salt/pepper combination. Unrestricted Salt or Sea salt cannot inherit
-   a food, ingredient or seasoning restriction from context or ancestors.
-   De-icing supplies a counterexample. A heading that states food-seasoning or
+   and its salt/pepper combination. The original criterion combined Food with
+   ingredient and seasoning restrictions, using de-icing as a counterexample.
+   The Food evaluator correction withdraws that inference: another use does
+   not disprove Food membership. Culinary class versus particular-use meanings
+   need separate calibration; retain the earlier Seasonings → Salt user label.
+   A heading that states food-seasoning or
    recipe-ingredient purpose may belong beneath the corresponding parent.
    Retain salt, pepper, their expressed combination and supported to-taste/role
    meaning; do not require a named optional derived heading.
@@ -134,11 +137,15 @@ committed as `cd27a60b` before inference. Post-run verification checked the
 unchanged ASv6.74 source/template and exact rendering; identical diagnostic
 inputs/settings; preserved full-original inputs, evidence and baseline outputs;
 every receipt; and every current review's input/output hashes. Each answer has
-exactly one agent review and no user label. The persistent budget is 356 of
+one initial agent review and no user label. The later Food correction appends
+three agent reviews for S004; scoring uses each latest hash-current verdict.
+The persistent budget at initial completion is 356 of
 1,000 attempts. Native preparation/validation and Git whitespace checks passed.
 
-The salt failure class now has a short repeated reproduction. The dog failure
-also occurs in shortened passages, with variable exposure and repeatability.
+The originally claimed generic-Food salt reproduction is withdrawn after the
+[evaluator correction](../isolation-v1/README.md#evaluator-audit-after-the-food-correction).
+Dog-related historical labels also occur in shortened passages, with variable
+exposure and repeatability; their parent-role meanings need separate checking.
 The prompt has not improved during this experiment: it stayed fixed while the
 inputs were changed to expose its behavior.
 
@@ -153,7 +160,7 @@ count does not count missing parent exposure as success.
 | S001, isolated salt line | Accept | Accept | Accept | 0/3 | Trial 1 has no food/seasoning parent; other trials retain role-qualified children. |
 | S002, recipe title + salt line | Accept | Accept | Accept | 0/3 | Full recipe/pair relationship and checked copies retained. |
 | S003, complete ingredient list | Accept | Accept | Accept | 0/3 | Salt recipe roles retained; full ingredient-list coverage is not certified. |
-| S004, title + salt line + hashtags | Reject | Reject | Reject | 3/3 | Food → unrestricted Salt in every answer. |
+| S004, title + salt line + hashtags | Accept | Accept | Accept | 0/3 after calibration | Food → Salt is not disproved by another use; qualified recipe pair/copies pass. |
 | S005, explicit seasoning purpose | Accept | Accept | Accept | 0/3 | Food-seasoning parents use qualified children. |
 | S006, title + explicit purpose | Reject | Accept | Reject | 0/3 | Trials 1/3 omit the salt/pepper relationship with the recipe. |
 | S007, Sea salt line | Accept | Accept | Accept | 0/3 | Seasoning parents use to-taste children. |
@@ -167,8 +174,10 @@ count does not count missing parent exposure as success.
 | D007, plus complete chicken clause | Reject | Reject | Reject | 1/3 | Trials 2/3 omit joint trimming; trial 1 has the dog-food scope failure. |
 | D008, trimming + original hashtags | Reject | Reject | Reject | 2/3 | Trials 1/3 have scope failures; trial 2 omits joint trimming and returns no dog-food/feeding parent. |
 
-These forty-eight diagnostic reviews total 32 bounded accepts and sixteen
-rejections. Six answers have the focal material-purpose scope failure. Counts
+After calibration these forty-eight reviews total 35 bounded accepts and
+thirteen rejections, replacing 32/16. The three generic-Food salt scope labels
+are withdrawn; three dog-related historical scope labels remain separately
+recorded. Counts
 for different contrasts are not a combined SP accuracy score or a claim about
 unseen posts. No unresolved ingredient membership or derived-heading closure
 is counted as a confirmed error.
@@ -185,17 +194,17 @@ Salt and pepper to taste
 #food #recipe #easy #spaghetti #bolognaise #tomato #dinner
 ```
 
-Its failing edges are Food 1 → Salt 1.3 in trial 1 and Food 2 → Salt 2.3 in
-trials 2 and 3. De-icing salt fits the unrestricted child without food purpose.
-All three answers also return qualified to-taste/recipe subjects elsewhere.
-Those subjects and the descendants of Salt cannot narrow the Salt heading.
-The shorter post reproduces the original material-purpose failure class; its
-parent is Food, rather than the original Seasonings.
+Its previously rejected edges are Food 1 → Salt 1.3 in trial 1 and Food 2 →
+Salt 2.3 in trials 2 and 3. De-icing use alone does not make salt fall outside
+Food. All three answers retain the complete qualified recipe pair and its
+required focal copies; their corrected bounded verdicts accept. Food and the
+original Seasonings parent were incorrectly treated as the same restriction.
+The shorter post therefore does not establish the claimed scope reproduction.
 
 S002 differs only by omitting the final hashtags. All three S002 answers use
 role-qualified children beneath seasoning parents and preserve the full
 recipe/pair relationship. This controlled source contrast associates the
-returned broad Food branch with the observed failure in these samples; it
+returned broad Food branch with a former erroneous label in these samples; it
 does not establish the model's internal cause or a universal hashtag effect.
 
 The isolated original salt line and Sea salt variants do not fail the scope
@@ -285,7 +294,8 @@ audit preserves C1's count, reference, participant and action coverage and the
 existing clause assignments. No calls were made for that drafting task. Review
 of the exact draft subsequently led to the now-completed
 [fixed comparison](../asv6.75/comparison-v1.md). Its 74 fresh medium answers
-improve minimized bounded accepts from 32/48 to 40/48 and retain all six repair
+compare minimized bounded accepts at 35/48 versus 40/48 after calibration,
+replacing the earlier 32/48 baseline, and retain all six repair
 accepts, but original-post failures persist. D008's candidate trials expose no
 dog-food parents; the observed scope improvements with exposure are recorded
 separately. The campaign budget is now 430 of 1,000. Adoption remains open.

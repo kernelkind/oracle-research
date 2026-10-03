@@ -66,8 +66,11 @@ Review each answer separately for these dimensions:
    interpretation. A feeding-qualified child must be supported by that complete
    post. Do not require an invented food use to make a parent work.
 2. **Scope:** inspect every focal parent-child edge by its heading strings.
-   Seasonings or soup-seasoning role parents cannot contain unrestricted Salt
-   or Sea salt: road de-icing supplies a counterexample. Dog food/feeding cannot
+   Check explicit Seasonings or soup-seasoning roles separately from generic
+   Food classification. The later [evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+   withdraws other-use-only exclusion from Food; de-icing use alone is not a
+   classification counterexample. The earlier Seasonings human label remains
+   recorded. Dog food/feeding cannot
    contain material merely "for the dog": a chew/scent-training use supplies
    a counterexample. Generic onion/oil/plate/bolt headings cannot inherit a
    preparation or repair role from context. Distinguish unrestricted material

@@ -120,8 +120,10 @@ All fifty-six fresh answers completed on their first attempt, with valid native
 receipts, no runner errors and no answer reuse. The prompt stayed fixed through
 all eight experiments. Post-run checks verified the exact frozen source/template,
 rendering, paired complete inputs/evidence/settings and saved baseline outputs.
-Every answer has exactly one current agent review bound to its input and output
-hashes; none is a user label. The persistent budget is 302 of 1,000 attempts.
+Every answer has an initial agent review bound to its input and output hashes;
+none is a user label. The Food correction appends a trial-5 N063 agent review
+with an independent copy-failure rationale. The persistent budget at initial
+completion is 302 of 1,000 attempts.
 The forty offline example/attempt-budget tests passed before generation.
 
 The C1 revision improved the closely related repair diagnostics, but did not
@@ -175,13 +177,14 @@ reviews are preserved, rather than retrospectively relabelled.
 ASv6.74 has thirteen rejections, three uncertain answers and four bounded
 accepts on the twenty original-post answers. ASv6.73 has thirteen rejections
 and seven bounded accepts. Equal confirmed-error counts do not establish equal
-quality: N063 introduces a new scope error, while three other answers change
+quality: N063 retains an ingredient-copy error, while three other answers change
 the ingredient-group representation and cannot be confidently accepted.
 
-- **N063:** trial 5 places unrestricted Olive oil 1.10 and Salt 1.13 beneath
-  Food 1; lamp oil and de-icing salt supply counterexamples. This material-scope
-  failure occurs in 1/5 ASv6.74 answers versus 0/5 saved ASv6.73 answers. The
-  full fifteen-ingredient dish combination also occurs only at 1.1.1.1.16,
+- **N063:** the original trial 5 objection to Olive oil 1.10 and Salt 1.13
+  beneath Food 1 is withdrawn: lamp and de-icing uses do not disprove Food
+  membership. The claimed new scope error was an evaluator error. Trial 5
+  remains rejected because the full fifteen-ingredient dish combination occurs
+  only at 1.1.1.1.16,
   missing all forty-five qualified ingredient-role copies; Arborio rice copies
   1.1.1.1.2, 1.3.1.1 and 3.1.2 provide witnesses. Trials 1–3 retain a complete
   dish description naming all fifteen ingredients without a separate ingredient

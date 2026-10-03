@@ -1411,14 +1411,17 @@ class FoodSubjectPromptExampleTests(unittest.TestCase):
                 with self.subTest(number=entry["number"]):
                     self.assertIn(ids[parent["subject"]], ancestors[ids[entry["subject"]]])
 
-    def test_generic_materials_and_recipient_only_tissue_stay_outside_food(self):
+    def test_explicit_food_roles_and_combination_restrictions(self):
         entries = self.food_example()
         for parent in entries:
             descendants = {
                 e["subject"] for e in entries
                 if e["number"].startswith(parent["number"] + ".")
             }
-            if parent["subject"] in ("Food", "Dog food", "Dog-food ingredients", "Food seasoning"):
+            # Preserve C1's existing role interpretations pending calibration.
+            # Food itself is not an exclusive-use restriction: another use
+            # does not make an edible material nonfood.
+            if parent["subject"] in ("Dog food", "Dog-food ingredients", "Food seasoning"):
                 for node in ("salt", "tissue", "dog_tissue", "meat", "mixing"):
                     with self.subTest(parent=parent["number"], child=node):
                         self.assertNotIn(FOOD_SUBJECTS[node], descendants)
@@ -1542,7 +1545,6 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
     def test_food_role_and_combination_restrictions_are_not_borrowed(self):
         entries = self.entries()
         invalid = {
-            "food": ("salt", "tissue", "dog_tissue", "meat", "cutting"),
             "dog_food": ("tissue", "dog_tissue", "meat", "cutting"),
             "group": ("food_tissue", "food_meat", "tissue_cutting", "meat_cutting"),
             "complete_cutting": ("group", "tissue_cutting", "meat_cutting"),
@@ -1697,7 +1699,7 @@ class OriginQualifiedSubjectPromptExampleTests(SharedActionSubjectPromptExampleT
     def test_recipient_only_tissue_does_not_gain_food_or_source_role(self):
         entries = self.entries()
         for parent in entries:
-            if parent["subject"] in ("Food", "Dog food", "Specimens", "Specimen A"):
+            if parent["subject"] in ("Dog food", "Specimens", "Specimen A"):
                 self.assertFalse(any(
                     e["subject"] == ORIGIN_SUBJECTS["dog_tissue"]
                     and e["number"].startswith(parent["number"] + ".")

@@ -9,7 +9,9 @@ example unchanged. All 66 fresh contemporaneous answers finish valid on their
 first attempts without errors, retries or reuse, with randomized runner slots
 and version-blinded assessment. All 137 authored checks and two semantic audits
 pass; raw JSON reaches validation unchanged. Final bounded verdicts are ASv6.95
-22 accepts/9 rejects/2 uncertain and ASv6.96 19 accepts/10 rejects/4 uncertain.
+22 accepts/9 rejects/2 uncertain and ASv6.96 20 accepts/9 rejects/4 uncertain
+after the user's Food classification correction. The earlier ASv6.96
+19/10/4 assessment incorrectly rejected Food → Sea salt for its other uses.
 The 24 independent original-post review pairs agree in 20 cases after existing
 calibration corrections; disputed interpretations and all initial judgments are
 preserved separately from the unblinded broker's final reviews. The comparison
@@ -101,10 +103,11 @@ These operations fail separately. A named recipe can remain in one heading
 while its sauté loses the recipe relationship; a complete sauté can remain in
 the recipe branch while disappearing from compatible ingredient branches.
 
-The original material-versus-purpose scope pattern also persists: candidate
-N096 repeat 1 places unrestricted Olive oil directly under Food. A supported
-culinary-use child does not repair its generic parent's invalid placement.
-Supplied-pair correctness does not guarantee correct edges during generation.
+The former Food → Olive oil scope witness in candidate N096 repeat 1 is
+withdrawn: using olive oil in a lamp does not exclude it from Food. The answer
+still omits complete sautéing copies beneath compatible ingredient occurrences.
+The Food witness therefore does not establish a generated scope failure after
+correct supplied-pair judgments.
 
 ASv6.81 improves particular cases, but the fixed five-trial original replication
 still rejects every N096/N100 answer. The fresh comparison is 22/24 versus
@@ -121,6 +124,93 @@ new attempts. Failed and interrupted attempts count; only native provider
 failures permit a second total attempt. Use native `experiment.py` throughout,
 the existing campaign history and budget, and ignored native experiment output.
 No production pass, grader, repair stage or component is introduced.
+
+## Evaluator audit after the Food correction
+
+The user rejects the claim that nonfood uses disqualify a substance from Food,
+and accepts Food → Sea salt here. The evaluator had silently read Food as
+exclusive food use. A child may have another use and still fit the parent's
+class; a counterexample must establish that the child falls outside the actual
+parent meaning. The post's culinary setting is not the only evidence: ordinary
+heading meanings and supported type membership matter. Explicit modifiers,
+amounts, recipe relationships, negation and genuine purpose restrictions still
+need their own checks.
+
+The audit text-screens 323 native review files, then inspects 15 affected answers
+through live native `show`. Five prior rejects become bounded agent accepts;
+ten retain independently checked source/copy defects. Fifteen append-only native
+agent corrections preserve the original reviews and hashes. Three further
+culinary-class answers are checked below, bringing the bounded audit to 18
+answers and corrections: five accept, twelve reject and one uncertain.
+Human confirmation
+concerns the classification principle and Sea salt edge, not whole-answer labels.
+No new teacher calls are made; the counter stays 1,487/2,000.
+
+| Native run under experiments/sp-autonomous-v1 | Case | Corrected agent verdict | Surviving independent reason |
+| --- | --- | --- | --- |
+| as60-regression-medium | N063 | Reject | No whole expressed ingredient group, including no alternative group parent. |
+| fixed-as58-medium-r1 | N063 | Accept, bounded | None under the original target; both explicit groups collect all 15 members. |
+| as74-scope-min-medium-r1/r2/r3 | S004 | Accept / accept / accept | Complete qualified pair fills all focal copies. |
+| as76-scope-min-medium-r2 | S004 | Reject | Named dish 1.1 is a leaf without the formed complete seasoning pair. |
+| as78-original-medium-r1/r2 | N096 | Reject / reject | Named dish occurrences omit the formed complete sauté and seasoning pair. |
+| guidance-consolidation-v1/E01 | N063 | Accept, bounded | No remaining source/scope/copy failure found in two rechecks. |
+| fixed-as58-medium-r5 | N063 | Reject | Dish 1.5.2.1 lacks its ingredient group and members. |
+| as74-original-medium-r5 | N063 | Reject | Full ingredient combination missing compatible individual-ingredient copies. |
+| as74-scope-original-medium-r1 | N096 | Reject | Complete sauté loses the source recipe relationship. |
+| as77-original-medium-r3 | N096 | Reject | Named dish 2.1 is a leaf without the complete sauté. |
+| replication-as81-medium-r1 | N096 | Reject | Complete sauté missing qualified ingredient copies. |
+| enumeration-as87-original-medium-r1 | N096 | Reject | Sauté and seasoning subjects lose complete recipe qualifications. |
+| fixed-as58-medium-r2 | N063 | Reject | Two of four ingredient-group copies are empty; culinary-salt class interpretation remains separate. |
+| fixed-as58-medium-r3 | N063 | Reject | No ingredient group; duplicate named dish 1.1.2.1 is empty. |
+| fixed-as58-medium-r4 | N063 | Uncertain | Culinary ingredients class versus particular-use meaning is open; frozen source/placement target passes. |
+
+Live native scores after these corrections are fixed ASv6.58 1 accept/18 rejects/
+1 uncertain among 20; ASv6.74 minimized 35 accepts/13 rejects among 48; fresh ASv6.95
+22/9/2 and ASv6.96 20/9/4 among 33 each. These are bounded corrected subsets,
+not a complete historical score audit. The claimed ASv6.75 minimized gain is
+40 versus 35 accepts, replacing 40 versus 32. The purported generic-Food salt
+failure reproduced in S004 is withdrawn in all three trials. Other historical
+classifications remain subject to the distinct suitability/role boundary below.
+
+The earliest located generic-Food rejection is ASv6.60 N063 at 2026-10-02
+19:55:29 UTC. The same inference entered the C1 explanation in ASv6.75 and
+propagated through ASv6.81/78/86/92/93/94/95/96. The rendered C1 output itself
+does not contain a demonstrated wrong Food edge: leaving an optional broader
+Salt heading outside Food is not a missing mandatory source copy. Its explanation
+and semantic test fixtures nevertheless taught blanket exclusion. The fixtures
+now stop grouping Food with Food seasoning, Dog food and named-source restrictions.
+All 137 focused checks still pass; they verify authored structures, receipts and
+adapter behavior, not independent semantic correctness. Earlier rule-map counts
+and agent agreement did not validate the mistaken parent interpretation.
+
+Frozen prompts, templates and receipts retain their exact historical bytes.
+Their source preservation is a verified fact, not proof that every explanation
+is correct. A future versioned example revision must demonstrate an accepted
+Food classification alongside separately calibrated purpose restrictions; it
+must not add optional broader-heading closure or verbose roles to repair a
+grader mistake.
+
+Cooking fats, Cooking oils, Culinary salt and Edible oils need meaning-based
+review rather than automatic treatment as exclusive current-use headings.
+Lamp use alone does not disprove suitability for cooking or eating. Some older
+Edible oils witnesses instead name lampante oil actually unfit for consumption
+without processing, a distinct grade fact supported by the
+[USDA grade definitions](https://www.ams.usda.gov/grades-standards/olive-oil-and-olive-pomace-oil-grades-and-standards).
+That fact does not automatically settle a particular heading's intended class.
+The user's earlier Seasonings → Salt judgment stays recorded; no new blanket
+decision on all culinary classes is inferred from the Food correction.
+Four further historical edges are inspected without a full-answer re-audit:
+ASv6.59/62/63 N063 cite lampante's actual inedibility, while fixed ASv6.58
+trial 5 N096 mixes a use-only Cooking oils objection with separately recorded
+Seasonings and Water as a cooking ingredient restrictions. Their old whole-
+answer scores are not newly validated by this audit.
+
+The remaining copy/source omissions are observed evidence. The claims that
+generic Food scope persisted, that C1 had fully verified semantics, and that
+more explicit food-role wording fixed the S004 baseline were not supported.
+No unique internal model cause or reliable SP correction has been established.
+The useful next step is to settle the class-versus-particular-role examples
+before another prompt revision or broad model comparison.
 
 ## Questions fixed before the first calls
 

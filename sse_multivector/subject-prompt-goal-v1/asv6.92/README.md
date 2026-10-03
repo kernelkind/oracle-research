@@ -9,7 +9,9 @@ Instruction positions, schema and the one-call POST wrapper are unchanged.
 
 C1 demonstrates both partial cutting actions and their complete shared action,
 the counted ingredient participants and group, every compatible numbered copy,
-and unrestricted salt/recipient-only tissue outside food-purpose headings.
+and explicit seasoning/feeding roles. The later [evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+finds the preserved explanation's blanket Food exclusion invalid; optional
+broader-heading placements are not additional required source copies.
 All 34 primary clause assignments and five tracked implications remain covered;
 the existing shared-predicate aspect of R17 retains its secondary C1
 demonstration. No new rule, field or inference pass is introduced.

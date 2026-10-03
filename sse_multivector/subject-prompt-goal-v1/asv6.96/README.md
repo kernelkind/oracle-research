@@ -36,7 +36,7 @@ The semantic before/after review is separate from counting static IDs.
 | R17 | 2 | C2: nonliteral helpfulness and rhetorical appreciation are expressed subjects even without literal concept names. |
 | R18 | 2 | C6: each named cable and the expressed counted pair remain separately represented. |
 | R19 | 2 | C5: ducks, people and notebooks remain alongside their observation/purchase events. |
-| R20–R23 | 8–9 | C1: general Salt/Tissue remain outside food-purpose headings; compatible shared headings and every numbered copy retain complete source descendants, with each entry represented. |
+| R20–R23 | 8–9 | C1: preserved Food seasoning and Dog food role interpretations remain subject to calibration; compatible shared headings and every numbered copy retain complete source descendants, with each entry represented. General Food is not an exclusive-use restriction. |
 | R25–R26 | 10 | C1: section-style numbering, parent precedence and number/context/subject field order. |
 | R27–R28 | 10 | C1: contexts establish references and local purposes while also supporting unrestricted general headings. |
 | R29–R31 | 7–8 | C1: unrestricted subjects and qualified specific subjects coexist; each heading is meaningful alone, and general headings need not retell the instance's role. |
@@ -46,7 +46,7 @@ The semantic before/after review is separate from counting static IDs.
 | Tracked implication | Paragraphs | Existing example witness |
 | --- | --- | --- |
 | Combinations obey the same heading test | 2, 8–9 | C1: complete joint cutting descends from each partial action; partial actions do not descend from their joint action. |
-| Context cannot repair a missing heading restriction | 8 | C1: unrestricted Salt and recipient-only tissue remain outside Food despite the surrounding ingredient context. |
+| Context cannot repair a missing heading restriction | 8 | C1: Salt for food seasoning retains the explicit seasoning purpose; recipient-only tissue does not establish a feeding relationship. The former blanket Food exclusion was a grading error. |
 | Every numbered compatible parent occurrence needs its collection | 9 | C1: both Dog food occurrences collect the complete supported ingredient and cutting subjects. |
 | An unrestricted entity differs from its purpose-qualified instance | 7–8 | C1: Salt and Salt for food seasoning are distinct levels of generality. |
 | Parent restrictions appear in the child's own wording | 7–8 | C1: complete cutting retains counted material participants and their food-ingredient/recipient roles. |
@@ -59,7 +59,12 @@ not necessarily as a direct child. No optional broader-heading closure, exact
 tree or grouped-output requirement is added. Equivalent wording remains allowed.
 
 Independent semantic audits found no missing, weakened or newly introduced output
-rule. They do not establish exhaustive linguistic correctness or model adherence.
+rule in the revision. The later [evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+finds that C1's preserved explanation incorrectly uses alternative uses to exclude
+generic materials from Food. Its optional broader-heading placements do not
+establish an incorrect output edge. The tested bytes remain frozen for provenance;
+the explanation needs a versioned correction before another candidate. Earlier
+preservation audits do not establish semantic correctness or model adherence.
 
 ## Provenance and verification
 
@@ -81,10 +86,12 @@ reaches validation unchanged. Instruction consolidation therefore does not
 explain away the remaining failures as an adapter or delivery corruption.
 
 Final bounded verdicts are ASv6.95 22 accepts/9 rejects/2 uncertain and ASv6.96
-19 accepts/10 rejects/4 uncertain across 33 answers per arm. This repeated
+20 accepts/9 rejects/4 uncertain across 33 answers per arm after user calibration.
+The earlier 19/10/4 result incorrectly rejected Food → Sea salt. This repeated
 development sample does not demonstrate a benefit; it is not population accuracy.
-ASv6.96 still places unrestricted Sea salt beneath Food in one N063 answer,
-omits the complete shared trimming action in one N100 answer, and loses formed
+Food → Sea salt is accepted after the user's correction; a full recheck finds no
+other decisive failure in that N063 answer. ASv6.96 still omits the complete
+shared trimming action in one N100 answer and loses formed
 subjects from compatible branches. It is not a reliable correction. Disputed
 N074 interpretations and implicit N100 origins remain separate uncertainties;
 they are not used as confirmed failures. The comparison records original blind

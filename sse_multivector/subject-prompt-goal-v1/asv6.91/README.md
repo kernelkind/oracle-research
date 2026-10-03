@@ -21,7 +21,9 @@ cutting subject lacks one ingredient and cannot fit that exact group heading.
 C1 retains heading-established food roles, resolved counts and references,
 individual participants, both partial actions and their complete combination.
 Generic Salt, recipient-only Connective tissue for the dog and generic Cutting
-stay outside Food and Dog food. The separate recipient clause adds no food role.
+remain in their authored optional branches. The later [evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction)
+withdraws the explanation's blanket Food exclusion: another use does not
+exclude a food substance. A recipient alone does not establish feeding.
 These preserve R01/R02/R04/R16, R20–R23, R25–R31 and R34, with existing secondary
 demonstrations of R17–R19. The unchanged C2–C7 retain their primary assignments.
 All 34 primary clauses and five tracked implications remain demonstrated under
