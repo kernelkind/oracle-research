@@ -283,3 +283,22 @@ Count every failure, retry only explicit transient provider failures once and
 retain unknown failures. At most six requests are active across all runners;
 these diagnostics wait for capacity rather than exceeding the screen's bound.
 Review every answer and preserve all receipts; no quality reruns or early stop.
+
+## Matched hierarchy control, frozen before generation
+
+The complete original N100 joint trim appears in all three ASv6.76 flat R3
+answers. Removing the sealer paragraph leaves it absent in all three T001 full
+hierarchies. R3 also adds an explicit source-retention reminder, so this alone
+does not isolate hierarchy obligation from that wording/position change.
+
+SP-Isolation-R5 changes only R3's response-mode sentences back to hierarchy
+construction, repeated compatible branches and section-style numbering. Its
+opening enumeration sentence, complete-retention sentence, JSON fields, full
+ASv6.76 prompt and original post remain identical. Freeze three fresh medium
+N100 trials with same-trial ASv6.76 native inputs/baselines before generation.
+Reuse the preceding focal joint-action criterion, recording scope/placement
+failures separately; source presence is not overall acceptance. All attempts
+count, every answer is reviewed and no quality retry is allowed. This brings
+the additional control total to twelve calls and first-attempt completion to
+796 after ASv6.78. The same subscription/native/history/timeouts and six-active
+bound apply. This is a finite diagnostic, not a production prompt or extra pass.
