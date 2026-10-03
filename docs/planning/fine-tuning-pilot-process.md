@@ -17,10 +17,12 @@ execution settings, and review rubric remain open.
 baselines/training/evaluation → verified retrieval → local scoring and comparison.**
 
 Prepare candidate settings and rehearse automation locally before booking the
-preparation rental. Test thinking-off subject output limits on
-representative and long notes: check complete answers, truncation, GPU memory,
-and runtime. Choose and freeze the pilot limits after those checks.
-Preparation scope, the specific rental offer and maximum charge remain open.
+separate preparation rental, confirmed in principle October 3. Use existing
+notes while the pilot data is pending. The proposed small check covers an
+adapter update, checkpoint save/reload/merge, brief batched generation at tested
+memory bounds, and restored training. It does not establish future answer quality
+or completeness. Check the actual pilot data's token lengths against those
+bounds when ready. Exact checks, implementation, offer and maximum charge remain open.
 
 **Dynamic subject evaluation batches are approved.** Before each batch,
 tokenize the waiting notes and choose how many fit the frozen per-GPU memory
@@ -28,7 +30,8 @@ budget. Account for resident weights, padding, caches through the allowed
 output length, temporary buffers and headroom. Short notes can form larger
 batches; long notes get smaller ones. The worker now implements this calculation
 and saves batch receipts plus separate raw/parsed answers per note. GPU
-preparation confirms numeric memory allowances and measures throughput for pricing.
+preparation checks numeric memory allowances. Brief generation timing alone does
+not establish the full pilot's runtime.
 
 ## 1. Freeze shared inputs — locally
 
@@ -140,11 +143,14 @@ Assuming 100 validation notes, 200 final test notes, and the previous
   fifteen checkpoints, and the winner's thinking-off final comparison.
 - **Main rental:** roughly **$149–178**, including training, checkpoint
   transitions, transfers and 25% headroom.
-- **Preparation:** a provisional **$10–25 allowance**, not a measured or approved
-  rental budget. Combined GPU planning estimate: **$159–203**.
+- **Separate preparation, October 3 proposal:** roughly **1–3 hours / $2–6**,
+  conditional on locally rehearsing brief generation and the check of maximum
+  generation/cache shapes. This replaces the larger placeholder; a quote and
+  spending cap remain open.
 
 These amounts price serial evaluation, not the approved batched pilot. Revise
-the pilot estimate from measured batched throughput on the intended hardware.
+the pilot estimate from measured batched throughput and actual output lengths
+on the intended hardware.
 Memory arithmetic selects each batch's size; it does not establish
 runtime or imply dividing serial time by batch size.
 The thinking-on evaluations and their cost allowance have been removed.

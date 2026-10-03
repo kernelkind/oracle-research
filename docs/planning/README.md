@@ -14,9 +14,12 @@ per training note and no mask generation. Each checkpoint generates its own
 subject hierarchies on the same held-out validation notes. Thinking stays off
 throughout preparation, training, baselines, checkpoints and the final test.
 Semantic review happens outside the GPU rental. A separate
-paid GPU preparation step is agreed in principle; prepare candidate settings and
-checks locally before booking. Test output limits during preparation and freeze
-them before the main pilot. Use one 96GB RTX PRO 6000, with each complete
+paid GPU preparation step is confirmed in principle October 3, using existing
+notes while the pilot data is pending. Prepare its minimal checks and automation
+locally before booking. Verify training, checkpoint reload/merge, batched
+generation and training continuation within declared input/output memory bounds.
+Check the actual pilot data against those tested bounds when it is ready.
+Use one 96GB RTX PRO 6000, with each complete
 model on that GPU and the three students running sequentially. The specific
 rental offer, maximum charge, and launch remain open.
 Subject evaluation batching is implemented: each batch's size follows token
@@ -204,10 +207,11 @@ agreement. The Notedeck browser UI is approved and committed; task 15 is waiting
 for service integration. Dependencies are unchanged; no protocol design is
 selected by this planning update.
 
-The user agreed in principle to a separate preparation rental for the larger
-pilot, after preparing candidate settings and agreeing on checks locally; output
-limits are selected from preparation measurements. That does not authorize
-immediate execution or spending; the larger pilot remains waiting.
+The user confirmed separate GPU preparation in principle October 3 because the
+pilot data is not ready. Existing notes can exercise the hardware workflow;
+they cannot certify the lengths or completeness of future pilot answers.
+Exact checks, local packaging, the offer and maximum charge remain open;
+the larger pilot remains waiting for its data.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier

@@ -958,17 +958,21 @@ reviews. Comparable research does not establish the benefit of enabling thinking
 after our particular answer-only fine-tune. Output limits, numeric batching
 budgets, preparation scope, spending and launch remain open.
 
-**October 1 separate paid GPU preparation agreed in principle:** prepare the
-candidate pilot configuration and identify all required GPU checks before booking
-a preparation rental. Rehearse the packaged workflow locally, then verify its
-chosen GPU configuration before the larger pilot begins. Thinking-off subject
-output limits are candidates for preparation: test complete
-answers, truncation, GPU memory and runtime on representative and long notes,
-then select and freeze limits before the main pilot. Suggested numeric caps are
-not selected by this clarification. The pilot runs its settled training and
-evaluation procedure. Preparation scope, the specific rental offer, maximum
-charge, and launch remain open; this decision accepts a separate paid preparation
-step without authorizing a rental commitment.
+**Separate paid GPU preparation agreed October 1; confirmed October 3:** use
+existing notes for a small preparation run while the larger pilot data is pending.
+Prepare candidate settings and exact checks locally and rehearse the packaged
+workflow before booking. The proposed minimum checks an adapter update,
+checkpoint save/reload/merge, brief batched generation plus the maximum admitted
+memory shape, and a further update after restoring training. Full hierarchy
+comparisons, output-quality review and tuning sweeps are outside this preparation.
+Exact cases, counts and the brief maximum-shape method remain proposals, not
+implemented GPU evidence. Preparation verifies only its tested input/output
+bounds; it cannot establish completeness of future pilot answers. When the real
+data arrives, tokenize it locally against those bounds before the main rental.
+Out-of-bounds data requires reconsidering the configuration locally.
+The pilot runs its settled training and evaluation procedure. Preparation scope,
+the specific rental offer, maximum charge and launch remain open; this accepts
+separate preparation in principle without authorizing a rental commitment.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
@@ -1088,14 +1092,17 @@ attempts. Budget admission passed before the run; no replacement rental is autho
 $1.4167/hour hardware's measured subject speed, ordinary validation and the
 winner's thinking-off final comparison cost about $108–113. Allowing subject-only
 training, checkpoint transitions, 25% headroom and transfers gives roughly
-**$149–178 for the main pilot** after removing the thinking-on allowance. A
-**$10–25 preparation placeholder** gives a **$159–203 combined GPU estimate**;
-preparation scope and charge are not approved. Longer outputs, expanded expert
+**$149–178 for the main pilot** after removing the thinking-on allowance.
+The October 3 small-preparation proposal is provisionally **1–3 hours / $2–6**,
+conditional on local rehearsal of brief generation and maximum generation/cache shapes;
+it replaces the larger placeholder and is not a quote or approved cap.
+Preparation scope and charge are not approved. Longer outputs, expanded expert
 adapters and the new lifecycle are unmeasured. The estimate
 assumes the proposed 100 validation / 200 final test notes and thinking off on
 the final test. Paid API labels/reviews are additional; the existing subscription
 route is assumed. These amounts retain the single-note timing reference;
-the approved batched pilot needs repricing from preparation throughput.
+the approved batched pilot needs repricing from measured batched throughput and
+actual output lengths. Brief preparation timing alone does not price full answers.
 No spending is authorized by this reference.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,

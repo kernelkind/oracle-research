@@ -31,13 +31,15 @@ Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
 
-**October 1 preparation decision:** a separate paid GPU preparation step is agreed
-in principle. Prepare candidate settings and agree on required GPU checks, then
-rehearse the packaged workflow locally before booking. Test subject output
-limits with thinking off for completion, truncation, memory and runtime
-on representative and long notes. Select and freeze limits after preparation,
-before the larger pilot starts. Preparation scope, hardware, maximum charge, and launch
-remain open.
+**Separate preparation agreed October 1; confirmed October 3:** use existing
+notes for a small GPU preparation run while the larger pilot data is pending.
+Prepare the minimal hardware checks and rehearse the packaged workflow locally
+before booking. Training, checkpoint reload/merge, batched generation and
+restored training are the proposed checks, with thinking off throughout.
+Evidence applies only to tested input/output memory bounds; audit the actual
+pilot data's token lengths against those bounds when it is ready. Future answer
+completeness is not established by this preparation. Exact cases and checks,
+local implementation, the offer, maximum charge and launch remain open.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -818,10 +820,11 @@ separately from review findings and any subsequent changes.
 
 ## Proposed run sequence and controls
 
-1. **Check each training setup on a small sample.** Verify complete-note input,
-   the agreed subject-hierarchy format, working training, GPU memory use,
-   and measured speed. Training loss and
-   successful parsing are setup diagnostics, not evidence of semantic quality.
+1. **Prepare each training setup in a separate small GPU run.** Use existing
+   notes before the larger dataset is ready; verify the proposed hardware cycle
+   below. Audit the real pilot data locally against the tested bounds before
+   booking the main rental. Training loss and successful parsing are setup
+   diagnostics, not evidence of semantic quality.
 2. **Measure the three untuned baselines.** Use thinking off on the shared
    validation notes and preserve their outputs before fine-tuning.
 3. **Start one continuing training run per student.** Initialize the adapter
@@ -864,13 +867,16 @@ memory-based subject batching and the save/merge/evaluate/restore lifecycle.
 The background copier is implemented locally. Preparation and the pilot use
 thinking off throughout.
 
-Start with historical N18 (long diary: dense hierarchy and subject truncation),
-N00 (soda bread: negation and qualifiers), and N15 (gianduja/store: short note).
-These notes do not establish the actual corpus maximum. Tokenize the finalized
-training/preparation corpus and add a distinct case only when needed to cover a
-maximum training sequence, rendered input or generation/cache shape. Keep the
-reserved final test out of preparation. Freeze source IDs, prompt versions,
-example IDs and profile identities locally.
+Use existing notes; preparation is not blocked by the future 1,000-note dataset.
+Historical N18 (long diary), N00 (soda bread) and N15 (short gianduja/store note)
+are candidate cases, not an approved three-note evaluation set. Tokenize the
+available cases and declare the maximum training sequence, rendered input and
+generation/cache shapes to test. Freeze source IDs, prompt versions, example
+IDs and profile identities locally. The final cases and shape-testing method
+remain open. When the pilot data arrives, audit its token lengths against the
+tested bounds locally; reconsider out-of-bounds configurations before booking.
+Keep reserved final test notes out of preparation. A few existing notes cannot
+prove that future trained subject hierarchies finish within an output limit.
 
 **Dynamic evaluation batching approved October 2:** prepare a per-GPU memory
 budget locally under the actual model placement. Before each generation batch,
@@ -884,46 +890,42 @@ memory. Each batch's count can change with its token lengths; choose the count
 before generating. The worker now implements the calculation with explicit
 frozen allowances; numeric GPU budgets remain open.
 Freeze the thinking-off batching policy per student and match baseline/checkpoints;
-preserve per-note outputs. The existing preparation sequence confirms execution
-and peak memory and measures throughput; no standalone batch-size rental sweep
-is prescribed. Historical recipes retain serial subject generation unless
-the new `subject_batching` policy is supplied.
+preserve per-note outputs. The proposed small preparation checks execution and
+peak memory; brief timing is not a complete-answer throughput estimate. No
+standalone batch-size rental sweep is prescribed. Historical recipes retain
+serial subject generation unless the new `subject_batching` policy is supplied.
 
-**Combined GPU sequence, once per student:**
+**Proposed minimum GPU cycle, once per student; exact cases/counts remain open:**
 
-1. Verify model revision, kernels, dtypes and adapter targets; generate untuned
-   thinking-off subject answers and check every expected response immediately.
-2. Train the first of two small complete-note blocks, using one teacher hierarchy
-   per note. Use enough notes to exercise complete eight-example updates and a
-   smaller final group in preparation. Check the longest training sequence after
-   Adam state exists, finite loss/gradients, actual adapter changes, frozen base
-   and router, activated expert gradients and exact example/token accounting.
-3. Save and seal the full checkpoint. Record a reference next-block update from
-   that state. Unload training, reload a fresh BF16 base with the saved adapter,
-   merge and evaluate a short note. Discard evaluation, restore full training
-   state and repeat the same next update. Require exact counters, order, cursor
-   and random state; compare loss, adapter and Adam state under declared numerical
-   tolerances. Finish the second block and retain both verified checkpoints.
-   Establish equivalence locally through production paths before the GPU check.
-4. With a fresh merged preparation adapter, test thinking-off subject output
-   limits. Save complete raw/parsed answers, truncation,
-   tokens, timing and memory. Exercise a proposed maximum generation/cache shape
-   separately if natural answers terminate early. Verify the dynamic subject
-   batch calculation on short and long inputs, including a smaller final batch,
-   and measure complete-batch throughput. Caps and numeric memory budgets
-   remain proposals; there is no mask-batching trial.
-5. Exercise the background copier with saved responses and a checkpoint. Verify
-   local hashes and uninterrupted progress; reconnect/reconcile without duplicate
-   work. Observe responses, training and telemetry until verified retrieval and
-   explicit deletion. Automatic deletion stays off.
+1. Verify model revision, kernels, dtypes and adapter targets. Perform one
+   eight-example adapter update with existing teacher subject hierarchies;
+   record finite loss/gradients, adapter changes, frozen base/router, expert
+   gradients and actual example/token accounting.
+2. Save and seal the full checkpoint. Unload training, reload a fresh BF16 base
+   with the saved adapter, and merge it. Record reload/merge time and peak memory.
+3. Run brief thinking-off batched generation; save raw/parsed responses, tokens,
+   timing and peak memory. Check every expected response immediately. Separately
+   exercise the maximum admitted generation/cache shape on the GPU if the brief
+   answers end early. That brief shape-check method must be implemented and
+   rehearsed locally before booking; a short answer alone cannot verify it.
+4. Discard evaluation, restore full training state and perform a further update,
+   exercising the declared training length with Adam state resident. Verify
+   restored counters, order, cursor and random state; retain verified checkpoints.
 
-Replay accepted JSON fences, malformed/truncated hierarchies, missing responses,
-partial checkpoints and interrupted transfers locally using saved responses and
-production paths. Preparation reports allocated/reserved CUDA peaks, GPU
-utilization/power, host memory/disk, training/generation throughput, lifecycle
-and copying overhead, call accounting and verified files. Choose and freeze
-pilot limits and revise cost from that evidence. Numerical tolerances, trial
-counts, implementation and spending remain open.
+The existing worker performs full subject-evaluation stages. The proposed brief
+generation, maximum-shape check and merge/generation peak measurements still
+need local implementation and rehearsal. Use the production training and
+save/merge/restore paths. Do not add complete baseline/checkpoint hierarchy
+comparisons, semantic review or tuning sweeps to this paid preparation.
+
+Keep parser, missing-response, partial-checkpoint, continuation-equivalence and
+interrupted-transfer checks local through production paths. The copier still
+transfers preparation files as they become complete. Observe responses, training
+and telemetry until verified retrieval and explicit deletion; automatic deletion
+stays off. Record allocated/reserved CUDA peaks, GPU utilization/power, host
+memory/disk, lifecycle timing, call accounting and verified files. A failure
+preserves evidence for retrieval; fix and rehearse locally before any new rental.
+Numeric memory budgets, caps, exact checks, implementation and spending remain open.
 
 ### Execution and failure handling (draft)
 
@@ -935,7 +937,9 @@ informal configuration still uses both tasks.
 
 - **Local preparation:** freeze note splits, teacher subject hierarchies, prompt
   versions, model revisions, data order and approved recipe. Rehearse locally;
-  settle thinking-off output limits during separate GPU preparation.
+  check the finalized data against the separate preparation's tested memory
+  bounds. Freeze admitted lengths and thinking-off output limits before launch;
+  brief GPU preparation does not establish future answer completeness.
 - **GPU execution:** generate one thinking-off untuned validation baseline per
   student using batched independent notes under the frozen policy. Use the same
   policy for its trained checkpoints and preserve each note's answer separately.
@@ -1253,9 +1257,11 @@ previous runtime and cost allowances are excluded from this calculation.
 Together the retained rows give **82.42–94.61 GPU hours / $116.76–134.03**. Add
 illustrative 25% headroom and $3–10 transfers: approximately **$149–178 for the
 main pilot**. These are planning allowances, not confidence intervals or
-approved caps. Preparation is separate: a **$10–25 placeholder** gives a
-**$159–203 combined GPU estimate**; its scope, duration,
-specific rental offer and maximum charge remain open. Measure merged inference,
+approved caps. Separate preparation's October 3 proposal is provisionally
+**1–3 hours / $2–6**, conditional on local rehearsal of the brief generation
+and maximum generation/cache shapes. It replaces the larger placeholder; it is not a quote
+or approved cap. Its scope, specific rental offer and maximum charge remain open.
+Brief preparation timing cannot price full future answers. Measure merged inference,
 full output lengths and lifecycle overhead on the selected single 96GB RTX PRO
 6000 before final pricing.
 Dropping masks reduces work but does not establish lower peak training memory.
