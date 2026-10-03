@@ -47,6 +47,7 @@ The $7 request is withdrawn. Vast rejected the request with HTTP 400.
 The specific rejection explanation was not retained. The user approved revised
 selection filters and proceeding within $5. A better refreshed 96GB/600 W offer on the host costs $1.4656/hour, or $4.40 for three planned hours
 including transfers. A new frozen operation uses the unchanged tested image and package.
+Verified inputs and automatic startup succeeded, and Qwen preparation has started.
 The cases and numerical memory allowances below still await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved

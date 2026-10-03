@@ -34,7 +34,7 @@ with HTTP 400; complete inventory recovery confirmed no instance and no charge. 
 is still pending. The user approved revised selection filters and proceeding
 within $5. A better refreshed 96GB/600 W quote is offer [private ID removed] on machine
 [private ID removed] at $1.4656/hour, or $4.40 for three planned hours including transfers.
-The unchanged private image and native package use a new frozen operation.
+The unchanged private image and native package use a new frozen operation. Qwen preparation has started.
 No job timeout, watcher error or elapsed review window may terminate this work automatically. Stopping
 or deleting requires complete, verified local data, or explicit user approval
 to stop incomplete work. Keep the resource and supply any missing work.

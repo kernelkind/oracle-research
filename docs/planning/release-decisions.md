@@ -1017,7 +1017,8 @@ revised selection filters and proceeding within $5: 125 GiB host RAM and
 450 Mbps download floors, with price/transfer ceilings that jointly fit $5.
 A better refreshed 96GB/600 W quote is offer [private ID removed] on machine [private ID removed] at
 $1.4656/hour including storage and $4.40 for three planned hours including
-transfers. It also meets the original hardware floors. The tested private image and native package remain unchanged; a new frozen operation was prepared. No automatic timeout or deletion.
+transfers. It also meets the original hardware floors. The tested private image and native package remain unchanged; a new frozen operation was prepared. On October 3, managed SSH, package verification and automatic worker startup succeeded. Qwen is downloading weights under continuous observation.
+No automatic timeout or deletion.
 See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 
