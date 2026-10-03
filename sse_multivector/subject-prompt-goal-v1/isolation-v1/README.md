@@ -129,7 +129,10 @@ No production pass, grader, repair stage or component is introduced.
 
 The user subsequently approves a versioned C1 correction and regression test.
 [ASv6.97](../asv6.97/README.md) demonstrates Food → Sea salt alongside the
-complete source-seasoning purpose; its fixed 18-answer screen is pending.
+complete source-seasoning purpose. Its fixed 18-answer medium screen completes
+at 2 bounded accepts/15 rejects/1 uncertain, with all 18 valid first answers,
+no errors/retries/reuse and a 1,505/2,000 counter. Clear source/copy failures remain;
+the authored correction does not establish reliable model transfer.
 
 The user rejects the claim that nonfood uses disqualify a substance from Food,
 and accepts Food → Sea salt here. The evaluator had silently read Food as

@@ -1,6 +1,6 @@
 # ASv6.97 Food classification example correction
 
-Status: experimental draft; offline checks pass; regression testing pending.
+Status: tested experimental draft; clear failures remain; not adopted.
 The user approves correcting C1 after the [Food evaluator audit](../isolation-v1/README.md#evaluator-audit-after-the-food-correction),
 then testing the corrected prompt. Production adoption remains a separate decision.
 
@@ -109,3 +109,81 @@ Any clear original-post rejection prevents a reliable-fix claim. Complete all
 fixed trials and record results even if the first answer fails. Rendered requests,
 answers and native reports stay ignored artifacts. This changes only the prompt's
 example demonstration; per-request context remains one prompt plus one post.
+
+## Completed results
+
+All 18 planned medium calls complete with valid first answers, no errors, retries,
+reuse or unrun cases. The persistent counter is 1,505/2,000. All 146 focused
+checks pass; the source/template stay frozen at pre-inference commit `982a5c7c`.
+The actual SDK inputs match the frozen requests; structural validity and authored
+example audits do not imply correct teacher behavior.
+
+| Case | Q1 | Q2 | Q3 | Remaining finding |
+| --- | --- | --- | --- | --- |
+| N063 | A | U | A | All 15 ingredient roles and full list copies retained; Q2 Foodstr-to-Nostr membership remains open. |
+| N074 | R | R | R | Complete mother/ten-year-old vegetable instruction missing compatible Plants as food, Food intake or Dietary advice copies. |
+| N096 | R | R | R | Full quantified sauté retained; other complete instruction copies or source quantities/recipe identity missing. |
+| N100 | R | R | R | Full shared trimming retained; Q1 misses a Beef copy on its chosen reading, Q2 a Tallow copy, Q3 a long-awaited-use qualifier. |
+| S006 | R | R | R | Seasoning sources lose the complete enclosing recipe relationship. |
+| D006 | R | R | R | Q1/Q2 miss Food copies; Q3 omits the full shared trimming action. |
+
+Current totals are 2 bounded accepts, 15 rejects and 1 uncertain. The original-
+post subset is 2/9/1 among 12; all six diagnostics reject. The historical baseline
+labels remain 8/7/3, but their differing time and assessment history prevent a
+causal regression claim. This is not a reliable SP correction or population
+accuracy estimate. The eight prospective posts remain unused.
+
+Concrete independent witnesses, checked through native `show`, include:
+
+- Q2 N096 forms its full quantified sauté at 1.1.1.2.1, but Cooking instructions
+  4 contains only spaghetti packet instructions/cooking. Its context cannot
+  restrict that general heading to the packet.
+- Q2 N100 forms the complete two-portion trimming at 1.1.2.1.1, but Tallow 3.2
+  collects only the partial tallow-making source. The combined quarter-pound
+  tissue/scrap amount is preserved; inferred origin is not the rejection basis.
+- Q3 N100 parent 12.1.1 specifies the author's long-awaited use of the new sealer;
+  child 12.1.1.1 names love after using it and omits long-awaited qualification.
+- Q1/Q2 D006 form the complete joint trimming at 1.1.1.1 but Food 8/9 collects
+  only saved myoglobin for dog food. Scrap meat is a food substance; another
+  participant's tallow purpose does not exclude the full action's Food topic.
+  The more-specific dog-feeding role is kept as a separate uncertainty.
+- Q3 D006 forms only partial fat/tallow and tissue/scrap/dog trimming. The
+  expressed complete shared action never forms, so this is source loss rather
+  than an independent missing-copy count.
+
+Food appears in 10 of 18 answers. N063's sea salt is always qualified as a dish
+ingredient, so there is no direct generic Food → Sea salt exposure in this
+screen. Q1 S006 directly returns Food → Salt/Pepper; those class edges are
+accepted, while its missing recipe relationship independently rejects. No
+Seasonings → bare Salt rejection is used. Correcting the authored example is
+established; general transfer of its class distinction is not.
+
+## Assessment corrections and limits
+
+Two answer reviewers see only complete POST and unchanged parsed subjects,
+without prompt/version or old labels. Their initial judgments reveal another
+contract error: one initially requires is-a-only edges, rejecting dish → its
+ingredients and Food → food sharing. The existing subject-index contract allows
+topics about their parent through actions/relationships; the three initial
+N063 rejects are withdrawn. This is a grader correction, not a teacher repair.
+
+The duplicated some in N100 also remains open: the first some could refer to
+saved myoglobin, or be a repeated word. The initial invented chicken-link
+objection is withdrawn as decisive evidence. Q1's selected beef-myoglobin
+chicken provision still lacks a Beef copy whenever that reading is supported.
+Q3's initial uncertainty changes after an actual missing parent qualifier is
+identified. N074 readings, dinner/purchase attachment, sauce membership and
+implicit sirloin origin stay separate from independently supported failures.
+
+Native history preserves six initial/superseded judgments and the subsequent
+reviewer verdict summaries and broker assessments. Earlier reviewer-labelled
+comments include combined broker witnesses; the latest broker event explicitly
+separates each reviewer's actual reasons, including the Q3 N096 mixing claim:
+missing participant quantities are source loss, not an independent mixing-copy
+failure. All 78 events match the unchanged input/output hashes. Scoring uses
+one latest clarified broker verdict per case; hash-current does not mean latest.
+No human whole-answer labels or independent agreement-rate claim is invented.
+
+The useful next prompt target is S006's short, repeated loss of the enclosing
+recipe relationship. Its source defect survives the corrected Food interpretation
+and provides a concrete example requirement before another wording change.

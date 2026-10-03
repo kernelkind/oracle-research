@@ -4,7 +4,8 @@ Status: tested experimental draft; clear failures remain; not adopted.
 
 The user-approved [ASv6.97 C1 correction](../asv6.97/README.md) now demonstrates
 Food → Sea salt and retains the explicit source-seasoning purpose. ASv6.96's
-tested bytes remain frozen; the new version's regression screen is pending.
+tested bytes remain frozen. The new version's 18-answer medium screen completes
+at 2 bounded accepts/15 rejects/1 uncertain; it is not a reliable correction.
 
 [ASv6.96](ASv6.96.md) consolidates ASv6.95's repeated instruction checks into
 ten paragraphs before its seven unchanged examples. Instruction words decrease
