@@ -358,3 +358,30 @@ original examples remain audited through the production subjects adapter.
 If this screen exposes a regression requiring another edit, freeze and finish
 that edit's development screen before candidate selection for validation;
 these eight fresh posts remain ungenerated meanwhile.
+
+## Completed wording comparison and next fixed screen
+
+ASv6.81 completes with 8/12 bounded accepts and four confirmed failures;
+ASv6.82 with 4 accepts, 7 failures and one uncertainty. All 24 answers have
+valid first receipts and current native reviews, with no errors, retries or
+reuse; the counter is 844. Under the frozen selection rule ASv6.81 wins among
+ASv6.76–82. It names N100's joined trim in 3/3, preserving its full enclosing
+sirloin source in 2/3. N063/N074 pass the bounded checks in 3/3 each; all N096
+answers still fail, two solely through concrete compatible placement omissions.
+This is development improvement, not reliable full-SP completion.
+
+Before fresh validation, ASv6.83 clarifies only the existing collection sentence:
+complete actions and combinations involving a heading's subject belong in its
+collection when their own wording passes the parent check. The ASv6.81 N096
+trial-2 missing onion/celery/carrot/oil placements are the saved production-path
+failing case. C1's mixing action and C6's full cable combination already
+correctly demonstrate that existing implication; examples remain unchanged.
+
+Freeze three full-original trials and the planned three eight-case minimized
+plus two-case repair trials for ASv6.83: 42 first attempts. Inherit same-trial
+ASv6.81 originals, ASv6.76 minimized cases and ASv6.75 repair inputs/settings,
+with all existing criteria unchanged. Review every answer, keep errors and
+uncertainties, no quality reruns/early stopping. At most six requests remain
+active. First-attempt completion reaches 886. Compare originals with ASv6.81;
+keep the same selection ordering, extending eligibility to the exact ASv6.83
+only after its entire screen completes. Validation remains ungenerated.

@@ -32,9 +32,12 @@ reminded hierarchy still misses compatible action copies. ASv6.79's own-heading
 clarification retains it in 1/3; ASv6.80's position-only change in 0/3. Their
 bounded original results are 7/12 and 5/12 accepts. The persistent counter is
 820; subsequent attempts have valid first receipts, no errors, retries or reuse.
-ASv6.81/82 test the successful control's complete-retention wording at the two
-instruction positions. Eight fresh validation inputs and criteria are frozen
-before candidate selection. No replacement SP is adopted.
+ASv6.81/82 complete with 8/12 and 4/12 bounded accepts. ASv6.81 names N100's
+joined trim in 3/3, preserving its enclosing sirloin source in 2/3, and passes
+N063/N074 in all trials. Its remaining N096 failures include compatible
+placements, motivating ASv6.83's clarification of the existing collection rule.
+The counter is 844. Eight fresh validation inputs/criteria remain frozen and
+ungenerated before final candidate selection. No replacement SP is adopted.
 
 The approved [ASv6.75 fixed comparison](../asv6.75/comparison-v1.md) is complete:
 74 fresh medium answers and current output-bound native agent reviews, with

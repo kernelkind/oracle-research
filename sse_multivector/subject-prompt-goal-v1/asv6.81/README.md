@@ -1,6 +1,6 @@
 # ASv6.81 complete-source retention wording
 
-Status: candidate, untested; not adopted. The matched full hierarchy R5 control
+Status: tested, confirmed failures; not adopted. The matched full hierarchy R5 control
 retains N100's complete quantified trim in 3/3, while the ordinary ASv6.76/78
 hierarchies retain it in 0/3. ASv6.79's own-heading wording retains it in 1/3;
 ASv6.80's position-only change retains it in 0/3.
@@ -10,7 +10,7 @@ with R5's complete-source retention wording, preserving separate participants.
 The existing paragraph remains at the end, immediately before the post.
 The rest of the source, seven examples, POST field, numbering and output schema
 remain unchanged. C1/C6 demonstrate complete combinations, C2 conditional and
-rhetorical meaning, and C5 attribution; the 34 clauses/five implications remain
+rhetorical meaning, and C5 separate participants; the 34 clauses/five implications remain
 covered. This clarifies already stated restrictions, not a new rule or pass.
 
 ## Frozen development comparison
@@ -28,3 +28,23 @@ runner and six overall. Twenty-four first attempts take the counter from 820
 to 844; only explicit provider-transient failures can be retried once. Freeze
 source/template receipts and run relevant offline checks before generation.
 Fresh validation remains untouched until exact candidate selection is frozen.
+
+## Completed comparison
+
+All twelve first attempts complete with valid receipts, without request failures,
+retries or reuse. All have current output-bound native agent reviews: 8 accept and 4 reject
+on frozen bounded checks. The counter reaches 844 after both screens.
+These are development judgments, not full-SP gold or independent human labels.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| N063 | accept | accept | accept |
+| N074 | accept | accept | accept |
+| N096 | reject | reject | reject |
+| N100 | accept | reject | accept |
+
+Every N100 answer names the joined trim; trials 1/3 preserve its sirloin source and checked placements, while trial 2 loses that enclosing source relation. N096 trial 1 loses the recipe title's easy/never-fail/serving-five qualifications; trials 2/3 retain them but miss compatible ingredient/pan placements. N063/N074 pass all frozen bounded checks in all three trials.
+
+All optional classifications and recorded source ambiguities remain excluded.
+The complete-source sentence near the post is a stronger development candidate
+than either position-only or original-position wording, but still fails.

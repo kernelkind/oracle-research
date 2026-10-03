@@ -1,0 +1,9 @@
+{
+  "base_sha256": "0539158131a807b9d6afcb389adf8dab73317e6d5ddbce110740accee2a7b609",
+  "edits": [
+    {
+      "old": "For each returned heading, collect every enumerated source subject whose own wording passes the parent check.",
+      "new": "For each returned heading, collect every enumerated source subject whose own wording passes the parent check, including complete actions and combinations involving that heading's subject."
+    }
+  ]
+}
