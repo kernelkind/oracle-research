@@ -245,29 +245,44 @@ def subject_batch_memory(model, config):
     layers = getattr(c, "layer_types", None) or ["full_attention"] * c.num_hidden_layers
     if len(layers) != c.num_hidden_layers or set(layers) - {"full_attention", "sliding_attention", "linear_attention"}:
         raise ValueError("unsupported subject batch cache layers")
-    if "sliding_attention" in layers and not getattr(c, "sliding_window", 0):
-        raise ValueError("subject batch sliding cache requires a window")
     size = model.get_input_embeddings().weight.element_size()
-    d = getattr(c, "head_dim", None) or c.hidden_size // c.num_attention_heads
-    full_layer = 2 * (getattr(c, "num_global_key_value_heads", None) or c.num_key_value_heads) * (
-        getattr(c, "global_head_dim", None) or d) * size
-    sliding_layer = 2 * c.num_key_value_heads * d * size
-    recurrent_layer = convolution_layer = 0
-    if "linear_attention" in layers:
-        if c.model_type != "qwen3_5_text":
-            raise ValueError("unsupported recurrent subject batch cache")
-        recurrent_layer = c.linear_num_value_heads * c.linear_key_head_dim * c.linear_value_head_dim * 4
-        convolution_layer = (2*c.linear_num_key_heads*c.linear_key_head_dim
-                             + c.linear_num_value_heads*c.linear_value_head_dim) * c.linear_conv_kernel_dim * size
+    per_layer = getattr(c, "per_layer_config", None)
+    full, sliding, windows, states, recurrent, heads = [], [], [], [], [], []
+    for index, kind in enumerate(layers):
+        layer = c if per_layer is None else per_layer[index]
+        heads.append(layer.num_attention_heads)
+        if kind == "linear_attention":
+            if c.model_type != "qwen3_5_text":
+                raise ValueError("unsupported recurrent subject batch cache")
+            state = layer.linear_num_value_heads * layer.linear_key_head_dim * layer.linear_value_head_dim * 4
+            convolution = (2*layer.linear_num_key_heads*layer.linear_key_head_dim
+                           + layer.linear_num_value_heads*layer.linear_value_head_dim) * layer.linear_conv_kernel_dim * size
+            recurrent.append(state)
+            states.append(state + convolution)
+            continue
+        dimension = getattr(layer, "head_dim", None) or layer.hidden_size // layer.num_attention_heads
+        kv_heads = layer.num_key_value_heads
+        if per_layer is None and kind == "full_attention":
+            dimension = getattr(c, "global_head_dim", None) or dimension
+            kv_heads = getattr(c, "num_global_key_value_heads", None) or kv_heads
+        cache = 2 * kv_heads * dimension * size
+        if kind == "full_attention":
+            full.append(cache)
+        else:
+            window = getattr(layer, "sliding_window", 0)
+            if not window:
+                raise ValueError("subject batch sliding cache requires a window")
+            sliding.append(cache)
+            windows.append(window)
     return {"resident_bytes": sum(t.numel()*t.element_size() for t in tensors),
-            "kv_bytes_per_token": layers.count("full_attention")*full_layer,
-            "sliding_bytes_per_token": layers.count("sliding_attention")*sliding_layer,
-            "sliding_window": getattr(c, "sliding_window", 0) or 0,
-            "state_bytes_per_note": layers.count("linear_attention")*(recurrent_layer+convolution_layer),
-            "full_layer_bytes_per_token": full_layer if "full_attention" in layers else 0,
-            "sliding_layer_bytes_per_token": sliding_layer if "sliding_attention" in layers else 0,
-            "recurrent_layer_bytes": recurrent_layer,
-            "attention_heads": c.num_attention_heads,
+            "kv_bytes_per_token": sum(full),
+            "sliding_bytes_per_token": sum(sliding),
+            "sliding_window": max(windows, default=0),
+            "state_bytes_per_note": sum(states),
+            "full_layer_bytes_per_token": max(full, default=0),
+            "sliding_layer_bytes_per_token": max(sliding, default=0),
+            "recurrent_layer_bytes": max(recurrent, default=0),
+            "attention_heads": max(heads),
             "vocab_size": getattr(c, "vocab_size", 0)}
 
 

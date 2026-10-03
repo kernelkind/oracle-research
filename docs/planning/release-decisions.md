@@ -1017,8 +1017,21 @@ revised selection filters and proceeding within $5: 125 GiB host RAM and
 450 Mbps download floors, with price/transfer ceilings that jointly fit $5.
 A better refreshed 96GB/600 W quote is offer [private ID removed] on machine [private ID removed] at
 $1.4656/hour including storage and $4.40 for three planned hours including
-transfers. It also meets the original hardware floors. The tested private image and native package remain unchanged; a new frozen operation was prepared. On October 3, managed SSH, package verification and automatic worker startup succeeded. Qwen is downloading weights under continuous observation.
-No automatic timeout or deletion.
+transfers. It also meets the original hardware floors. The tested private image and native package remain unchanged; a new frozen operation was prepared. On October 3, managed SSH, package verification and automatic worker startup succeeded. Qwen completed both updates, 20 brief responses and four cache
+checks. Gemma dense completed its first update but failed before generation:
+its head dimension differs by attention layer, and the batch-memory calculation
+incorrectly read the global configuration. MoE never started. Retrieval and
+independent rehashing account for all 125 work files and six startup files.
+ No automatic timeout or deletion.
+
+The minimal local production-path test reproduces the same per-layer attribute
+error for both Gemma variants. The fix reads each layer's cache dimensions and
+keeps the existing batching interface; integrated tiny-model lifecycle checks
+now use distinct full/sliding head dimensions. Local pinned-image checks pass
+50 tests, with nine deployment-VM tests skipped. The old package/image/results
+remain immutable. A fresh VM rehearsal, package/image rebuild and remaining
+GPU preparation are still required; this failure does not establish all three
+students fit or settle the full pilot's duration/cost.
 See the technical plan's
 [preparation package](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#small-gpu-preparation--local-package-ready-october-3).
 

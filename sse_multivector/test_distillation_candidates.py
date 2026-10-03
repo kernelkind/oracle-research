@@ -55,6 +55,25 @@ class GPUPackageTests(unittest.TestCase):
 
 
 class CandidateArchitectureTests(unittest.TestCase):
+    def test_subject_batch_memory_uses_each_gemma_attention_layer(self):
+        from transformers import Gemma4TextConfig, Gemma4ForCausalLM
+        for moe in (False, True):
+            with self.subTest(moe=moe):
+                config = Gemma4TextConfig(vocab_size=32, hidden_size=32, intermediate_size=64,
+                    num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=1, head_dim=16,
+                    per_layer_config={1: {"head_dim": 32, "num_key_value_heads": 2}},
+                    layer_types=["sliding_attention", "full_attention"], sliding_window=64,
+                    hidden_size_per_layer_input=0, enable_moe_block=moe,
+                    num_experts=4 if moe else None, top_k_experts=2 if moe else None,
+                    moe_intermediate_size=32 if moe else None)
+                model = Gemma4ForCausalLM(config)
+                memory = runner.subject_batch_memory(model, {"device": "cpu", "quantization": "none",
+                    "subject_batching": {"budget_bytes": 16*1024*1024, "workspace_bytes": 0,
+                                         "prefill_bytes_per_token": 1024, "attention_matrix_count": 4}})
+                self.assertEqual(memory["kv_bytes_per_token"], 2*2*32*4)
+                self.assertEqual(memory["sliding_bytes_per_token"], 2*1*16*4)
+                self.assertEqual(memory["attention_heads"], 2)
+
     def assert_batch_matches_single(self, model, tokenizer, config):
         messages = [[{"role": "user", "content": text}] for text in
                     ("Tea", "Tea tastes good.", "Tea is a drink.", "Tea tastes good. Only tea is named.")]
@@ -122,7 +141,7 @@ class CandidateArchitectureTests(unittest.TestCase):
             ]
             for moe in (False, True):
                 variants.append(("gemma-moe" if moe else "gemma-dense", Gemma4ForCausalLM, Gemma4Config,
-                    Gemma4TextConfig(**common, global_head_dim=16, num_global_key_value_heads=1,
+                    Gemma4TextConfig(**common, global_head_dim=32, num_global_key_value_heads=1,
                         layer_types=["sliding_attention", "full_attention"], sliding_window=64,
                         attention_k_eq_v=True, hidden_size_per_layer_input=0, enable_moe_block=moe,
                         num_experts=4 if moe else None, top_k_experts=2 if moe else None,

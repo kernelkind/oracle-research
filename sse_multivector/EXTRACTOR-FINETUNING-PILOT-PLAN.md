@@ -47,7 +47,12 @@ The $7 request is withdrawn. Vast rejected the request with HTTP 400.
 The specific rejection explanation was not retained. The user approved revised
 selection filters and proceeding within $5. A better refreshed 96GB/600 W offer on the host costs $1.4656/hour, or $4.40 for three planned hours
 including transfers. A new frozen operation uses the unchanged tested image and package.
-Verified inputs and automatic startup succeeded, and Qwen preparation has started.
+The preparation run is retained and continuously observed after Gemma dense
+failed in batch-memory calculation. Qwen completed all checks. All available
+125 work files and six startup files are retrieved and independently rehashed;
+Gemma dense has only its first checkpoint, and MoE did not start. The local
+per-layer dimension fix and regression pass; fresh VM/package/GPU verification
+remains required. Incomplete deletion awaits explicit user approval.
 The cases and numerical memory allowances below still await GPU evidence.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
@@ -1299,6 +1304,28 @@ The user approved revising those cutoffs and proceeding. The subsequent better
 quote selected above has more host RAM, faster download and lower transfer fees.
 The image uses CUDA runtime 13.0.96 and NVRTC 13.0.88, corresponding to CUDA 13.0
 Update 2; retain its driver floor of 580.95.05 ([NVIDIA release notes](https://docs.nvidia.com/cuda/archive/13.0.2/cuda-toolkit-release-notes/index.html)).
+
+**October 3 preparation evidence and local repair:** Qwen completed both
+eight-example updates, checkpoint restore, merge, 20 brief saved responses and
+four maximum-output cache checks. The largest cache shape reached 7,328 tokens;
+maximum reserved generation memory across the checks was about 60.4 GiB. Its
+second training update recorded about 93.7 GiB reserved, leaving little memory
+headroom on this card. These observations cover the actual tested shapes only.
+Gemma dense completed its first eight-example update but failed before batched
+generation because `head_dim` is a per-layer configuration attribute. The
+original tiny-model test used equal full/sliding dimensions and missed that
+condition. MoE did not start. All available files and checkpoint seals are
+verified locally; required Gemma work is explicitly missing.
+The local fix sums cache sizes from each attention layer rather than accessing
+ambiguous global dimensions. A minimal production-path test fails with the
+original exception and passes for both Gemma variants after the fix. Existing
+integrated lifecycle checks now use different full/sliding head dimensions.
+Pinned-image local tests: 50 pass, nine SSH/deployment-VM tests skipped. The old
+image, package and results are unchanged. A fresh VM rehearsal and rebuilt
+package/image are required before further GPU preparation. Do not infer complete
+three-student fit or a full pilot cost from this partial run. The rental remains
+retained pending explicit approval of incomplete deletion. Evidence:
+`operation-5usd-r1/observations/available-data-integrity-review.json`.
 
 **Required stopping rule, approved October 3:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain
