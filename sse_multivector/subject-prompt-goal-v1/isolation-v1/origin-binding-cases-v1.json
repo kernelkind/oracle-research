@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "note_id": "O001",
+      "text": "I bought a cedar trunk and cut six planks from it. Then I trimmed about three kilograms of bark for composting and a combined half-kilogram of wood shavings and offcuts for the craft workshop.",
+      "origin": {
+        "kind": "authored_sp_origin_binding_control",
+        "variation": "Coherent earlier source; origin implicit in the processing narrative",
+        "rubric": "origin-binding-v1.md"
+      }
+    },
+    {
+      "note_id": "O002",
+      "text": "I bought a cedar trunk and cut six planks from it. From that cedar trunk, I trimmed about three kilograms of bark for composting and a combined half-kilogram of wood shavings and offcuts for the craft workshop.",
+      "origin": {
+        "kind": "authored_sp_origin_binding_control",
+        "variation": "Explicit anaphoric shared origin before the coordinated trimming objects",
+        "rubric": "origin-binding-v1.md"
+      }
+    },
+    {
+      "note_id": "O003",
+      "text": "I bought a cedar trunk and cut six planks from it. \nTrimmings from that cedar trunk:\nAbout three kilograms of bark for composting and a combined half-kilogram of wood shavings and offcuts for the craft workshop.\nI trimmed these materials.",
+      "origin": {
+        "kind": "authored_sp_origin_binding_control",
+        "variation": "Origin supplied by enclosing heading and action reference",
+        "rubric": "origin-binding-v1.md"
+      }
+    },
+    {
+      "note_id": "O004",
+      "text": "I bought a cedar trunk and cut six planks from it. I trimmed about three kilograms of bark from the cedar trunk for composting and a combined half-kilogram of wood shavings and offcuts from the same cedar trunk for the craft workshop.",
+      "origin": {
+        "kind": "authored_sp_origin_binding_control",
+        "variation": "Origin directly qualifies both coordinated material descriptions",
+        "rubric": "origin-binding-v1.md"
+      }
+    },
+    {
+      "note_id": "O005",
+      "text": "I bought a cedar trunk and cut six planks from it. Separately, from an oak branch, I trimmed about three kilograms of bark for composting and a combined half-kilogram of wood shavings and offcuts for the craft workshop.",
+      "origin": {
+        "kind": "authored_sp_origin_binding_control",
+        "variation": "Explicit different origin; no cedar-origin trimming relationship",
+        "rubric": "origin-binding-v1.md"
+      }
+    }
+  ]
+}
