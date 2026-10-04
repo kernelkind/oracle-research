@@ -1,6 +1,6 @@
 # ASv6.100 generalization validation v1
 
-Status: authorized and resumed; completing preregistration before validation calls.
+Status: validation running; preregistration frozen at `050267d5` before calls.
 
 The user accepts the observed returned-relationship error rates for
 [ASv6.100](../asv6.100/ASv6.100.md) and authorizes testing its consistency on
@@ -48,8 +48,8 @@ not add a production grading pass or change corpus-scale inference architecture.
 Use ignored artifacts under
 `experiments/sp-autonomous-v1/asv6.100-generalization-v1/`, with the existing
 `experiments/sp-autonomous-v1` history root. Freeze all three plans with `--repeat`
-before inference. Each runner has concurrency one; three independent runners
-allow three simultaneous requests. Bound T1/T2/T3 at 67/67/66 new attempts,
+before inference. Initially each runner had concurrency one, allowing three
+simultaneous requests. Bound T1/T2/T3 at 67/67/66 new attempts,
 respectively: 180 intentional first calls and at most 200 total attempts.
 Only existing provider-transient retries qualify, with at most two attempts per
 case. No quality retry or prompt editing during the test.
@@ -59,6 +59,18 @@ trials would reach 1,784; this task's 200-attempt maximum reaches 1,804. Failed
 attempts remain charged. Existing subscription use adds no incremental cash;
 quota consumption remains unmeasured. Every run uses
 `target/sp-autonomous-v1/attempt-budget.json` and preserves native receipts.
+
+The user subsequently requested higher concurrency. The original three
+schedulers were interrupted with SIGINT; their executor contexts waited for
+active calls to finish and persist receipts before exiting. T1/T2/T3 retain
+20/20/21 valid answers, with no failed calls. Native `prepare --from --only
+CASE_ID --repeat --concurrency 8` created `T1-concurrency8`, `T2-concurrency8`
+and `T3-concurrency8` for only the remaining 40/40/39 untouched cases. The
+continuations allow **24 simultaneous model calls**; no completed answer is
+rerun and the immutable original plans remain intact. Their new-attempt
+allowances are 47/47/45, preserving the original combined 200-attempt maximum
+and shared counter. Report each logical trial across its two disjoint native
+plans. Prompt bytes, inputs, model settings and frozen rubrics are unchanged.
 
 ## Preregistered review
 
@@ -130,3 +142,21 @@ participants, clarified unresolved reference attachment and collapsed an
 equal-meaning tennis target that would have required an identical descendant.
 No source post, prompt or runner setting changes. All T1/T2/T3 cases remain
 unrun at this checkpoint.
+
+### Review calibration during validation
+
+Review retains the frozen item IDs, counts and rubric hashes. An entity heading
+that explicitly states the complete action can retain both meanings, as in
+"Article written by the author"; an action-only heading does not replace its
+participant entity. Clear loss of a required complete meaning counts as source
+omission even when a broader partial topic remains.
+
+Some fixed pairs concern scalar properties of one event or a qualified entity
+and its description. When one faithful entry explicitly retains both source
+facts, the frozen strict-descendant target's applicability is uncertain: the
+prompt does not require every possible broader intermediate heading or an
+identical descendant. Record these as requirement uncertainty, without removing
+targets or counting an optional absent heading as missing placement. This does
+not exempt distinct individual/shared action sources or missing descendants at
+actual compatible broader occurrences. The resulting rate describes clear
+applicable bounded targets, with uncertain and source-blocked shares alongside.
