@@ -170,17 +170,23 @@ a child of all eight individual occurrences. Each retains food-seasoning purpose
 to taste, author, never-fail recipe, dish and five-person capacity. No absent easy
 claim is required; bare Salt remains a separate broader root.
 
-| Case | V1 | V2 | V3 | Broker finding |
+The following are saved broker verdicts under the criteria used for this run.
+The N074 vegetable-copy reason is withdrawn by the user calibration below;
+N074's grades and aggregate totals await reassessment and must not be presented
+as current three-of-three failures.
+
+| Case | V1 | V2 | V3 | Historical broker finding |
 | --- | --- | --- | --- | --- |
 | N063 | U | U | U | Ingredient source/copy check passes; Foodstr/Nostr membership coverage remains open. |
-| N074 | R | R | R | V1 complete vegetable source never forms; V2/V3 formed vegetable sources lack children/mother copies. V2 individual quantity advice also lacks Food copy. |
+| N074 | R | R | R | V1 qualified vegetable source absent; V2/V3 vegetable copies under children/mothers were required by the review, but that requirement is now withdrawn. V2's Food-quantity copy finding remains separately uncalibrated by this decision. |
 | N096 | R | R | R | V1/V3 individual additions never form; V2 formed additions lack beef copies. V2 also loses shared-sauté fine chopping. |
 | N100 | R | R | R | V1/V3 full fat-plus-quarter-pound shared trimming never forms; V2 full shared source lacks copies under repeated partial occurrences. |
 | S006 | A | A | A | Complete individual/shared recipe-qualified seasoning meanings and all copies retained. |
 | D006 | R | R | R | V1/V3 joint-qualified individual material sources lack reciprocal member copies; V2 separate materials never retain the joint quantity enclosure. |
 
-Whole-answer totals are **3 bounded accepts, 12 rejects, 3 uncertain**.
-The twelve original answers are 0/9/3; diagnostics are 3/3/0. Historical ASv6.99
+Saved whole-answer totals under the then-used criteria are **3 bounded accepts,
+12 rejects, 3 uncertain**. They are historical evidence, not current calibrated
+scores. The twelve original answers were 0/9/3; diagnostics were 3/3/0. Historical ASv6.99
 labels remain unchanged. These totals include optional returned headings and
 unresolved meanings, and are not a causal quality score. Eight prospective posts
 remain unused. Food is not rejected because its members can have nonfood uses.
@@ -197,12 +203,15 @@ independent evidence or user whole-answer gold.
 Native history preserves **61 hash-current agent review events**: seven initial/
 superseded assessments, 36 final individual reviewer assessments and 18 broker
 adjudications. Actual reviewer reasons remain separate from broker-selected
-witnesses. Score the latest broker verdict per case.
+witnesses. The latest broker verdict records the assessment under its criteria;
+apply subsequent user calibration before reporting it as a current quality grade.
 
 Reviewer A initially overextends event-versus-participant retention into a
 mandatory child-centered rewrite, then withdraws it: Ten-year-old children already
 retains the age. N074 subsequently changes from uncertainty-only to reject for
-actual vegetable source loss/copy gaps and V2's separate Food-quantity copy.
+a qualified vegetable-source omission, the assumed vegetable-copy requirement,
+and V2's separate Food-quantity copy. The vegetable-copy requirement is withdrawn
+by the subsequent user calibration below.
 Both reviewers change V3 N100 U→R after checking the full shared fat/quarter-pound
 trimming conjunction. Reviewer B changes V1 D006 U→R after checking exact
 reciprocal copies of the sources' explicit joint enclosure.
@@ -241,3 +250,19 @@ Two additional returned-edge defects remain separate from this bounded metric.
 The fresh all-steps result differs from the previous C005 cohort; it establishes
 variability, not a prompt improvement or unique cause. The shared counter is
 1,592/2,000 with 408 attempts remaining. ASv6.100 is not rerun or promoted.
+
+## User calibration: vegetable placement
+
+The user explicitly rejects requiring **Vegetables a mother tells her ten-year-old
+child to eat** beneath **Mothers** and **Ten-year-old children**. Naming those
+participants in that vegetable description does not require those placements.
+The V2/V3 vegetable-copy failure reason is withdrawn. The prior current-status
+claim that N074 fails three of three trials is withdrawn pending reassessment;
+this correction does not establish whole-answer accepts.
+
+Saved posts, outputs, frozen prompts and native review history remain evidence
+of what was generated and how it was assessed. No teacher calls or prompt changes
+are made for this correction. Whether other action/material/tool placements,
+the V1 qualified vegetable-source requirement or the V2 Food-quantity advice
+placement follow the intended hierarchy needs separate calibration. This decision
+does not resolve those broader requirements.
