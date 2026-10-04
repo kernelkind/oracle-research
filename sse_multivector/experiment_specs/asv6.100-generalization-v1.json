@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "ASv6.100",
+    "path": "asv6.100-hr01-post-template.txt"
+  },
+  "dataset": {
+    "adapter": "subjects",
+    "path": "../experiments/sp-autonomous-v1/asv6.100-generalization-v1/sources.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "websocket",
+    "timeout_seconds": 1800,
+    "concurrency": 1,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "number": {"type": "string", "pattern": "^[1-9][0-9]*(\\.[1-9][0-9]*)*$"},
+              "context": {"type": "string", "minLength": 1},
+              "subject": {"type": "string", "minLength": 1}
+            },
+            "required": ["number", "context", "subject"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["subjects"],
+      "additionalProperties": false
+    }
+  }
+}

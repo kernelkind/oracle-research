@@ -87,6 +87,47 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(candidate['cases'][0]['prompt'], first['prompt'])
         self.assertEqual(self.calls(), calls)
 
+    def test_posts_adapter_gathers_selected_jsonl_and_saved_posts_from_sources(self):
+        self.write('authored.json', dict(schema_version=1, notes=[
+            dict(note_id='authored', text='Two red screens.', origin=dict(prompt_id='H1'))]))
+        (self.root / 'corpus.jsonl').write_text('\n'.join(json.dumps(row) for row in [
+            dict(note_id='real-one', content='Full original post {POST}.', pubkey='author', split='test'),
+            dict(note_id='real-two', content='Unselected post', pubkey='other', split='train')]) + '\n')
+        self.write('sources.json', dict(schema_version=1, sources=[
+            dict(path='corpus.jsonl', format='jsonl', select=['real-one']),
+            dict(path='authored.json', format='posts')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subjects', path='sources.json')
+        self.write('spec.json', spec)
+        self.prepare('gathered')
+        shown = self.show('gathered')
+        self.assertEqual([c['id'] for c in shown['cases']], ['real-one', 'H1'])
+        real = self.show('gathered', '--case', 'real-one')
+        self.assertEqual(real['inputs'], {'POST': 'Full original post {POST}.'})
+        self.assertEqual(real['evidence']['origin']['pubkey'], 'author')
+        self.assertEqual(real['evidence']['origin']['source_row'], 1)
+        plan = json.loads((self.root / 'gathered' / 'experiment.json').read_text())['plan']
+        for name in ('sources.json', 'corpus.jsonl', 'authored.json'):
+            self.assertEqual(plan['sources'][str(self.root / name)],
+                hashlib.sha256((self.root / name).read_bytes()).hexdigest())
+        self.assertEqual(self.calls(), [])
+
+    def test_post_sources_reject_unknown_selection_and_cross_file_duplicates(self):
+        self.write('a.json', dict(schema_version=1, notes=[dict(note_id='one', text='Tea')]))
+        self.write('b.json', dict(schema_version=1, notes=[dict(note_id='one', text='Coffee')]))
+        self.write('sources.json', dict(schema_version=1, sources=[
+            dict(path='a.json', format='posts', select=['missing'])]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='posts', path='sources.json')
+        self.write('spec.json', spec)
+        error = self.cli('prepare', 'unknown', '--spec', self.spec, ok=False)
+        self.assertIn('unknown post requested', error.stderr)
+        self.write('sources.json', dict(schema_version=1, sources=[
+            dict(path='a.json', format='posts'), dict(path='b.json', format='posts')]))
+        error = self.cli('prepare', 'duplicate', '--spec', self.spec, ok=False)
+        self.assertIn('duplicate post identity', error.stderr)
+        self.assertEqual(self.calls(), [])
+
     def test_posts_adapter_selection_and_duplicate_identity_checks(self):
         posts = dict(schema_version=1, notes=[dict(note_id='one', text='Tea'),
                                               dict(note_id='two', text='Coffee')])
