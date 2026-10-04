@@ -1,6 +1,6 @@
 # ASv6.100 Individual action copies under a condition participant
 
-Status: experimental draft; 169 focused offline checks pass; fixed screen pending.
+Status: experimental, tested; 169 focused offline checks pass; fixed target 0/3.
 The user approves this next N096 target after the [ASv6.99 results](../asv6.99/README.md#completed-results).
 Production adoption remains a separate decision.
 
@@ -96,3 +96,135 @@ relationship aboutness. Keep unresolved readings separate from decisive defects.
 Review native full POST and parsed outputs with prompt/baseline/old-label projections
 withheld, preserve actual reviewer reasons/corrections in native `review`, then
 broker adjudicate. Agent assessments are not human whole-answer gold.
+
+## Completed results
+
+All 18 planned medium calls return valid first answers. There are no failures,
+invalid receipts, retries, reused answers or unrun cases. All three native runners
+exit successfully; the shared counter moves from 1,541 to **1,559/2,000**, leaving
+**441 attempts**. Source/template and plans remain frozen at checkpoint
+`d6ef62a1`. All 169 focused offline checks pass; aligned examples and mechanical
+validity do not establish teacher correctness.
+
+**The individual-addition/beef-copy target remains 0/3.** V1 and V3 never form
+the three individual addition sources. V2 forms them, including the large pan,
+but puts none below its returned beef occurrence. All three retain a separate
+shared addition beneath every actual beef occurrence. That shared source does
+not replace an individual source.
+
+| Trial | Individual tomato / purée / water addition sources | Actual beef occurrences | Individual copies under beef | Shared addition under beef |
+| --- | --- | --- | --- | --- |
+| V1 | None form | 1.1.1.1.6; 2.1.1.6 | Not separately counted for absent sources | 1.1.1.1.6.3; 2.1.1.6.3 |
+| V2 | 1.1.1.7.1 / 1.1.1.8.1 / 1.1.1.13.1 | 1.1.1.6 | All three absent | 1.1.1.6.3 |
+| V3 | None form | 1.1.1.6; 7.1; broad Ground beef 7 | Not separately counted for absent sources | 1.1.1.6.3; 7.1.3 also covers 7 |
+
+V2's individual chopped-tomato source at 1.1.1.7.1 is:
+
+> Adding the 400 g tin of chopped tomatoes to the large pan once the 500 g ground beef is all the same colour for the author's easy, never-fail spaghetti bolognaise dinner recipe feeding five people
+
+The analogous purée source retains its 400 g tin, and water retains one tin.
+All retain the complete focused recipe and beef condition in their own wording;
+all also occur beneath the pan at 2.1.7/8/9, with the shared addition below each.
+Beef 1.1.1.6 contains only the shared addition, not these three individual sources.
+The condition relationship establishes compatibility without an adjacency inference.
+
+| Frozen check | Historical ASv6.99 | Fresh ASv6.100 |
+| --- | --- | --- |
+| All three ingredient/condition/recipe individual sources form | 2/3 | 1/3 |
+| All beef copies, given formed individual source set | 0/2 | 0/1 |
+| Individual formation plus beef copies jointly | 0/3 | 0/3 |
+| Separate shared addition copied under every returned beef occurrence | 3/3 | 3/3 |
+| All three individuals retain large pan in their own wording | 0/3 | 1/3 |
+| Complete individual sautés and all oil copies | 3/3 | 3/3 |
+| Complete individual/shared sauté sources and all oil copies | 3/3 | 2/3 |
+| S006 full recipe-qualified individual/shared seasoning sources and copies | 3/3 | 3/3 |
+
+Large-pan retention is a separate source check, not a successful joint repair.
+V1's shared addition retains large pan; V3's shared addition omits it. Neither
+forms individual additions. No extra missing-copy count is charged for those
+absent individual targets. These small historical contrasts are not causal
+comparisons or estimates of unseen accuracy.
+
+**Full sauté preservation is 2/3.** V1 and V3 keep the three complete individual
+actions and complete shared action beneath every oil occurrence. V1's oil sources
+are 1.1.1.1.11 and 2.1.1.11; V3's are 1.1.1.11 and 11.1. Each has all three
+individual actions with the shared action beneath each.
+
+V2 also retains the three individual actions at 1.1.1.1.1, 1.1.1.2.1 and
+1.1.1.3.1 and all oil copies beneath 1.1.1.11. Definite singular onion/celery/
+carrot wording preserves each single ingredient; fine chopping, two tablespoons
+of oil, large pan, medium heat and full recipe remain in the individual actions.
+But its repeated shared action at 1.1.1.1.1.1 begins:
+
+> Sautéing the finely chopped medium onion, one celery stick and medium carrot together in two tablespoons of olive oil
+
+That wording explicitly qualifies the onion. The intervening one before celery
+prevents safely distributing finely chopped to celery and carrot. Correct
+individual entries cannot supply missing modifiers to the shared source. This
+loss fails the predeclared full individual/shared preservation check, even though
+individual source retention and oil placement remain 3/3.
+
+**S006 remains 3/3.** In every trial complete salt and pepper sources occur at
+1.1.1/1.1.2, 2.1.1/2.1.2, 3.1/4.1 and 5.1/5.2. The separate shared source is
+a child of all eight individual occurrences. Each retains food-seasoning purpose,
+to taste, author, never-fail recipe, dish and five-person capacity. No absent easy
+claim is required; bare Salt remains a separate broader root.
+
+| Case | V1 | V2 | V3 | Broker finding |
+| --- | --- | --- | --- | --- |
+| N063 | U | U | U | Ingredient source/copy check passes; Foodstr/Nostr membership coverage remains open. |
+| N074 | R | R | R | V1 complete vegetable source never forms; V2/V3 formed vegetable sources lack children/mother copies. V2 individual quantity advice also lacks Food copy. |
+| N096 | R | R | R | V1/V3 individual additions never form; V2 formed additions lack beef copies. V2 also loses shared-sauté fine chopping. |
+| N100 | R | R | R | V1/V3 full fat-plus-quarter-pound shared trimming never forms; V2 full shared source lacks copies under repeated partial occurrences. |
+| S006 | A | A | A | Complete individual/shared recipe-qualified seasoning meanings and all copies retained. |
+| D006 | R | R | R | V1/V3 joint-qualified individual material sources lack reciprocal member copies; V2 separate materials never retain the joint quantity enclosure. |
+
+Whole-answer totals are **3 bounded accepts, 12 rejects, 3 uncertain**.
+The twelve original answers are 0/9/3; diagnostics are 3/3/0. Historical ASv6.99
+labels remain unchanged. These totals include optional returned headings and
+unresolved meanings, and are not a causal quality score. Eight prospective posts
+remain unused. Food is not rejected because its members can have nonfood uses.
+
+## Review corrections and limits
+
+Two independent reviewers inspect only complete native POST and parsed outputs
+for quality, with prompt/version definitions, baseline answers and old labels
+withheld. Readiness reads project only status/summary. A later read-only provenance
+audit is separate from their completed quality judgments. Broker follow-ups point
+to exact actual sources and existing criteria; corrected judgments are not new
+independent evidence or user whole-answer gold.
+
+Native history preserves **61 hash-current agent review events**: seven initial/
+superseded assessments, 36 final individual reviewer assessments and 18 broker
+adjudications. Actual reviewer reasons remain separate from broker-selected
+witnesses. Score the latest broker verdict per case.
+
+Reviewer A initially overextends event-versus-participant retention into a
+mandatory child-centered rewrite, then withdraws it: Ten-year-old children already
+retains the age. N074 subsequently changes from uncertainty-only to reject for
+actual vegetable source loss/copy gaps and V2's separate Food-quantity copy.
+Both reviewers change V3 N100 U→R after checking the full shared fat/quarter-pound
+trimming conjunction. Reviewer B changes V1 D006 U→R after checking exact
+reciprocal copies of the sources' explicit joint enclosure.
+
+For V3 D006, A withdraws a provisional trim/save-state-only rejection and uses
+the missing reciprocal joint-qualified material copies. B retains the state-loss
+reason. The broker uses the explicit joint-enclosure copy gap, without deciding
+the state-only question. A accepts all N063 answers; B keeps Foodstr/Nostr
+membership coverage uncertain, and the broker preserves that uncertainty.
+
+Advice/Unless/real-food and vegetable/plant-food readings, mother instruction
+versus Dietary advice, dinner/purchase attachment, sauce membership, implicit
+sirloin origin, duplicated some, usual vacuum-sealer purpose and dog-recipient
+versus explicit food purpose remain open. They do not supply the decisive reject
+witnesses above. The reviews expose concrete source and copy failures; reviewer
+agreement is not proof of general correctness.
+
+ASv6.100 does not earn promotion: the focused repair remains 0/3, full sauté
+preservation loses one trial, and each request adds 2,829 characters. Keep
+ASv6.99 as the experimental comparison prompt; this does not change production.
+The useful next investigation is a controlled minimal-post test of the same
+individual additions and beef condition, followed by adding recipe scope and
+surrounding steps one factor at a time. That can distinguish failure on the
+relationship itself from failure as source resolution and output work grow,
+before another example change. This is a proposal, not another experiment.

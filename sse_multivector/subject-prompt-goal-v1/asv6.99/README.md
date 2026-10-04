@@ -173,5 +173,7 @@ proposal for a subsequent iteration, not another run or production adoption.
 
 The user approves this target. [ASv6.100](../asv6.100/README.md) adds a separately
 named condition participant to existing C1 while preserving Knife and C8.
-Its fixed screen is pending; source completeness and conditional copies are
-predeclared separately.
+Its [completed fixed screen](../asv6.100/README.md#completed-results) keeps the
+individual-addition/beef-copy target at 0/3 and full sauté preservation at 2/3;
+S006 remains 3/3. ASv6.100 is not a promotion candidate. Source completeness and
+conditional copies remain separately reported.
