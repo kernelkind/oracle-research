@@ -223,11 +223,12 @@ agreement is not proof of general correctness.
 ASv6.100 does not earn promotion: the focused repair remains 0/3, full sauté
 preservation loses one trial, and each request adds 2,829 characters. Keep
 ASv6.99 as the experimental comparison prompt; this does not change production.
-The useful next investigation is a controlled minimal-post test of the same
-individual additions and beef condition, followed by adding recipe scope and
-surrounding steps one factor at a time. That can distinguish failure on the
-relationship itself from failure as source resolution and output work grow,
-before another example change. The user approves this investigation; the
+The user-approved controlled minimal-post investigation tests the same individual
+additions and beef condition, then adds recipe scope and surrounding steps. The
 [ASv6.99 condition source diagnostic](../asv6.99/README.md#condition-source-diagnostic-v1)
-freezes six input variants with the comparison prompt unchanged. Its calls are
-pending; ASv6.100 is not rerun or promoted.
+completes all 18 fresh medium calls with the comparison prompt unchanged.
+Individual and shared formation and pan copying each pass 18/18; beef individual
+copying passes 16/18, with both failures in the nearby-steps variant C005.
+The scope-plus-steps variant passes 3/3, so these results do not establish a
+monotonic post-length effect. The proposed next investigation separates frying,
+mixing and simmering; it has not started. ASv6.100 is not rerun or promoted.

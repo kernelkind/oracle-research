@@ -180,7 +180,7 @@ conditional copies remain separately reported.
 
 ## Condition source diagnostic v1
 
-Status: user-approved input investigation; ASv6.99 stays unchanged; calls pending.
+Status: user-approved input investigation completed; ASv6.99 stays unchanged.
 The user approves testing a minimal addition/condition post, then adding recipe
 scope and surrounding steps separately after the ASv6.100 result. This changes
 test inputs, not the prompt or production. These are six synthetic development
@@ -277,3 +277,91 @@ experiment/hierarchy-input checks pass under cached `uv` with repository-pinned
 `tiktoken==0.14.0`. The default Python first lacks that dependency for one
 unrelated parent-guide check; the complete suite passes in the cached environment.
 No production code, dependency pin or global Python environment is changed.
+
+### Results
+
+Source freeze commit `20991334` precedes the requests. All 18 answers finish on
+their first attempt: six native-valid answers per trial, no failed requests,
+malformed outputs, invalid receipts, retries or reuse. Saved wire inputs match
+the frozen renderings and all source/settings pins remain valid. The shared
+counter moves **1,559→1,577/2,000**, leaving **423** attempts. Review records add
+no model calls. W1 has `missing_baseline`; W2/W3 have `not_comparable` because
+their frozen W1 baseline has no answers. These are fresh input comparisons,
+not a measured prompt-version improvement or matched original-N096 control.
+
+The following measures require all three individual additions in an answer.
+Formation checks the frozen common fields; individual copying checks every
+actually returned compatible occurrence. Shared formation is reported separately.
+Neither the table nor its verdicts grade every rule or the complete answer.
+
+| Case | W1 | W2 | W3 | Individual formation | Separate shared formation | All beef individual copies | All pan individual copies |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| C001: minimal resolved sentence | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| C002: add matching list | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| C003: shorten references | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| C004: add recipe scope | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| C005: add nearby steps | R | A | R | 3/3 | 3/3 | **1/3** | 3/3 |
+| C006: scope plus nearby steps | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+
+Thus individual formation, separate shared formation and pan copying each pass
+**18/18**; all beef individual copies pass **16/18**. Both recipe-scoped cases
+retain author, easy, never-fail, dish and five-person capacity in all three
+individual additions in every trial. Every answer has separate beef and pan
+participant subjects and eligible occurrences; none receives vacuous success.
+
+The two rejects are observable copying failures, with complete individual sources
+already present elsewhere:
+
+- **W1/C005:** `2.1.2`, `2.2.2` and `3.1.2` form the complete chopped-tomato,
+  purée and water additions. Under `1` Ground beef, `1.1` 500 g ground beef and
+  `1.1.2` 500 g ground beef becoming uniformly coloured, only shared addition
+  `1.1.2.1` appears. None of the individual additions appears below these
+  compatible occurrences. Large-pan copies `4.2`, `4.3` and `4.4` are complete.
+- **W3/C005:** `2.1.2`, `3.1.2` and `4.1.2` form the same three complete sources.
+  Beef occurrences `1`, `1.1` and `1.1.3` Uniform colour of all 500 g ground beef
+  contain only shared addition `1.1.3.1`. The equal-meaning colour occurrence
+  `6.1` does contain all three individuals at `6.1.1`, `6.1.2` and `6.1.3`.
+  That separate branch cannot repair the missing beef branch. Pan copies
+  `10.1.1`, `10.1.2` and `10.1.3` are complete.
+
+W2/C005 retains every individual below beef `1.1` at `1.1.2`, `1.1.3` and
+`1.1.4`, and below Large pans `2` at `2.1`, `2.2` and `2.3`. For the combined
+intervention, W1/C006 retains them beneath all three recipe-qualified beef
+occurrences (`1.1.1`, `2.1.1`, `3.1`) and Large pans `7`; W2/W3 also pass.
+This establishes that the teacher can form and place these conditional meanings.
+The omission is intermittent in this batch; the longer C006 passing 3/3 does
+not support a monotonic post-length explanation.
+
+Nearby steps are a bundled intervention. C003 passes 3/3 while C005 loses two
+trials, but this does not isolate frying, mixing or simmering, or an internal
+mechanism. Recipe scope does not lose the target in this sample, including in
+C006; three repetitions do not establish that it reliably prevents the failure.
+All six answers with nearby steps omit the earlier gently-frying-without-browning
+wording from their addition subjects. That observation remains separate from
+whether such prior-action detail must enter every complete referent description;
+the common-field formation passes do not adjudicate it or full source completeness.
+Original N096's inherited pan and additional ingredients remain untested factors.
+
+### Review corrections and next investigation
+
+A reviewer reads actual full POST/parsed answers with prompt/version definitions,
+baseline answers and old labels withheld; the broker reads all numbered subjects.
+Follow-ups clarify the existing parent restriction check and exact witnesses;
+final agreement is not independent accuracy proof or user whole-answer gold.
+Native history preserves **40 hash-current agent events**: four earlier actual
+assessments, 18 final reviewer assessments and 18 broker adjudications. Score
+the latest broker verdict per case, limited to the primary target above.
+
+The reviewer initially rejects all C002 trials and W3/C003 for missing individual
+copies under combined beef/chopped-tomato/purée headings. Those four rejects are
+withdrawn: an individual addition's own wording does not preserve every material
+restriction of the combined parent, so that parent is incompatible. Explicit
+beef condition aboutness still supports simple beef/colour headings. Likewise,
+plain additions do not qualify for frying, mixing or simmering parents whose
+action restrictions they omit. This correction fixes the assessment, not the
+prompt, and does not remove either C005 copying failure.
+
+The next proposed investigation is to add frying, mixing and simmering separately
+to C003, retaining C003/C005 as fresh controls, before another prompt change.
+That would test which instruction additions reproduce the observed omission.
+This further batch is proposed only; no new cases or requests are started.
