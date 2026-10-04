@@ -1,6 +1,7 @@
 # ASv6.100 generalization validation v1
 
-Status: validation running; preregistration frozen at `050267d5` before calls.
+Status: bounded validation and scoring complete, 2026-10-04; preregistration
+frozen at `050267d5` before calls. Exhaustive compatible-copy recall is unmeasured.
 
 The user accepts the observed returned-relationship error rates for
 [ASv6.100](../asv6.100/ASv6.100.md) and authorizes testing its consistency on
@@ -160,3 +161,88 @@ targets or counting an optional absent heading as missing placement. This does
 not exempt distinct individual/shared action sources or missing descendants at
 actual compatible broader occurrences. The resulting rate describes clear
 applicable bounded targets, with uncertain and source-blocked shares alongside.
+
+## Completed assessment
+
+All **180 answers** are valid: 60 unchanged inputs in each of three independent
+`gpt-6.1-sol/medium` trials. The original plans retain 20/20/21 answers and their
+disjoint concurrency-eight continuations add 40/40/39. There were **180 model
+attempts, zero failures, zero retries and zero reused answers**. The shared
+counter moved from 1,604 to 1,784/2,000, within this task's 200-attempt maximum.
+The remaining 119 calls completed in about ten minutes after concurrency rose
+from three to 24. Prompt, input and rubric bytes remain unchanged.
+
+Four agents completed the assessments, including the coordinating agent. Native
+agent reviews retain exact numbered witnesses and input/output hashes. The
+assessment uses the **latest current review once per trial/input**, matching its
+final plaintext note. Earlier duplicate or corrected review events remain in
+the audit trail; they do not create additional samples or increase denominators.
+
+| Measurement | Correct / retained / satisfied | Incorrect / omitted / missing | Uncertain | Other | Error rate |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Returned immediate relationships | 5,638 | 96 | 104 | — | **1.64%**, 96/5,838 |
+| Required source headings | 1,452 | 137 | 25 | — | **8.49%**, 137/1,614 |
+| Fixed refinement targets | 274 | 2 | 60 | 48 source-blocked | **0.72%**, 2/(274+2) |
+
+Returned relationships are 96.57% clearly correct and 1.78% uncertain. Missing
+placement uses only the 276 clear applicable fixed targets. Of all 384 frozen
+targets, 48 are blocked by source omissions and 60 have uncertain meaning or
+applicability; neither group is silently counted as satisfied. The source checks
+include complete participant headings. A role-qualified participant occurring
+only inside an action counts as an omitted participant heading even when all
+its underlying facts survive elsewhere.
+
+| Inputs | Relationships C/I/U | Incorrect relationships | Source headings retained/omitted/U | Omitted headings | Fixed targets S/M/B/U | Missing among clear targets |
+| --- | --- | --- | --- | --- | --- | --- |
+| 40 real posts × 3 | 3,434/94/77 | **2.61%**, 94/3,605 | 906/62/19 | 6.28%, 62/987 | 170/2/42/41 | 1.16%, 2/172 |
+| 20 authored cases × 3 | 2,204/2/27 | **0.09%**, 2/2,233 | 546/75/6 | 11.96%, 75/627 | 104/0/6/19 | 0%, 0/104 |
+
+| Trial | Relationships C/I/U | Incorrect relationships | Source headings retained/omitted/U | Fixed targets S/M/B/U |
+| --- | --- | --- | --- | --- |
+| T1 | 1,886/34/25 | 1.75% | 479/52/7 | 91/0/16/21 |
+| T2 | 1,897/38/19 | 1.94% | 497/34/7 | 91/2/13/22 |
+| T3 | 1,855/24/60 | 1.24% | 476/51/11 | 92/0/19/17 |
+
+Each real topic contains four posts repeated three times. C/I/U are correct,
+incorrect and uncertain relationships; S/M/B/U are satisfied, missing,
+source-blocked and uncertain fixed targets.
+
+| Real topic | Relationships C/I/U | Incorrect relationships | Source headings retained/omitted/U | Fixed targets S/M/B/U |
+| --- | --- | --- | --- | --- |
+| Arts, books and music | 220/0/0 | 0% | 61/14/3 | 7/0/4/1 |
+| Finance and economics | 411/8/4 | 1.89% | 96/3/0 | 8/0/12/16 |
+| Health and personal | 433/14/32 | 2.92% | 167/6/4 | 47/1/0/3 |
+| Nature, travel and food | 280/26/26 | 7.83% | 74/10/0 | 13/0/2/0 |
+| Politics and society | 443/6/0 | 1.34% | 101/7/0 | 5/1/15/0 |
+| Relationships and home | 438/30/5 | 6.34% | 109/13/7 | 16/0/5/3 |
+| Science and space | 368/0/0 | 0% | 82/2/0 | 27/0/0/0 |
+| Software and computing | 360/0/5 | 0% | 86/5/5 | 16/0/2/9 |
+| Sport and fitness | 135/10/3 | 6.76% | 60/0/0 | 4/0/0/2 |
+| Work and business | 346/0/2 | 0% | 70/2/0 | 27/0/2/7 |
+
+The clear returned-link failures drop a parent restriction: “always”; “kind”;
+an explicit death-prevention purpose; the identity of a restarter; a hike's
+leading-to relationship; one score in a two-set result; or one side of a combined
+audience. A parent for cursing one's father also incorrectly contains a child
+for cursing one's father or mother. Exact strings and numbered copies are in the native
+reviews. Proper-name type aliases, possessive-role readings, modifier attachment
+and same-entry target applicability remain uncertain where interpretations
+differ. Generic subjects of denied claims do not assert actual particular
+instances: H015's generic Injuries heading retains its unmodified hypothetical
+injury topic. Fully stated state facts can co-map with an event describing them.
+
+These results measure this unchanged prompt on the selected 60 inputs. The
+larger error rate on real posts is evidence that the authored cases alone are
+insufficient to estimate performance on natural posts. It does not establish a
+population rate, a causal comparison with another prompt, or identical-output
+consistency. The 180 answers are repeats of 60 inputs, and the rubrics are agent
+judgments rather than independent human gold. Exhaustive compatible-copy recall
+was not completed; additional concrete witnesses are retained, but no percentage
+for that separate measurement is reported.
+
+The ignored `quality-summary.md` under the experiment root contains pooled,
+per-trial, per-topic and all 60 per-input results, including how many of each
+input's three trials unambiguously meet every bounded scored criterion. Every
+answer has a latest current native review, every returned-edge count matches
+the parsed numbered output, and every per-input source/target denominator
+matches its frozen rubric. The complete denominators remain 1,614 and 384.
