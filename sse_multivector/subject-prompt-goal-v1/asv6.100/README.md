@@ -233,4 +233,11 @@ The scope-plus-steps variant passes 3/3, so these results do not establish a
 monotonic post-length effect. The user approves separating frying, mixing and
 simmering with fresh reference/all-steps controls. The
 [ASv6.99 condition step diagnostic](../asv6.99/README.md#condition-step-diagnostic-v1)
-freezes 15 first calls; inference is pending. ASv6.100 is not rerun or promoted.
+completes all 15 fresh medium first calls without retries or errors. Individual
+and separate shared formation and pan copying each pass 15/15; beef individual
+copying passes 14/15. Mixing alone reproduces one copying failure (T3/S003),
+while fresh reference, frying, simmering and all-steps controls each pass 3/3.
+Two additional returned-edge defects remain separate from this bounded metric.
+The fresh all-steps result differs from the previous C005 cohort; it establishes
+variability, not a prompt improvement or unique cause. The shared counter is
+1,592/2,000 with 408 attempts remaining. ASv6.100 is not rerun or promoted.

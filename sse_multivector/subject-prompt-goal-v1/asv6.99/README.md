@@ -364,13 +364,13 @@ prompt, and does not remove either C005 copying failure.
 The user approves adding frying, mixing and simmering separately to C003,
 retaining C003/C005 as fresh controls, before another prompt change. The
 [condition step diagnostic](#condition-step-diagnostic-v1) freezes that batch;
-its calls are pending. This tests which instruction additions reproduce the
+its 15 calls are complete. This tests which instruction additions reproduce the
 observed omission.
 
 ## Condition step diagnostic v1
 
-Status: user-approved input investigation; plans frozen before inference; calls
-pending. ASv6.99 remains the experimental comparison prompt. This adds five
+Status: user-approved input investigation, complete; plans frozen before inference.
+ASv6.99 remains the experimental comparison prompt. This adds five
 synthetic development inputs, not a prompt change, new production stage or
 prospective evaluation. The original N096's inherited pan and other ingredients,
 and extra-step-dependent complete referent requirements, remain open.
@@ -400,9 +400,10 @@ the two controls retain the previous complete POST bytes:
 
 Freeze the same bounded primary check: form three distinct individual additions
 with one 400 g tin for each tomato material or one tin of water, the 500 g
-ground-beef uniform-colour condition and large pan in their own wording. Separately form the
-expressed shared three-material addition. Copy each formed **individual** under
-every actually returned compatible beef occurrence; assess pan copies separately.
+ground-beef uniform-colour condition and large pan in their own wording.
+Separately form the expressed shared three-material addition. Copy each formed
+**individual** under every actually returned compatible beef occurrence; assess
+pan copies separately.
 Equivalent faithful paraphrases count. Context, another entry or another branch
 cannot supply a missing field or placement. Never-formed individuals are source
 loss, not extra absent-copy counts. Missing separate participants or zero eligible
@@ -444,3 +445,84 @@ prior conversation context; this is not a fully blinded evaluation. Provenance
 audit remains separate. The scoped metrics and explicit uncertainty follow the
 [official OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices);
 reviewer agreement does not establish human-label accuracy.
+
+### Completed step results
+
+All 15 planned medium calls return valid first answers; all three native runners
+exit successfully. No provider failures, malformed answers, invalid receipts,
+retries, reused answers or unrun cases occur. The shared counter moves from 1,577
+to **1,592/2,000**, leaving **408 attempts**. Spec, fixture, prompt template and
+plans remain unchanged from freeze commit **`392fd7cb`**. Native preparation and
+the completed runs validate production input/schema/receipt paths; unchanged
+runner/unit checks are not rerun for this input-only investigation.
+
+A/R below are bounded primary agent judgments, not whole-answer scores. Individual
+formation, separate shared formation and all compatible pan copies each pass
+**15/15**; all compatible beef individual copies pass **14/15**. Every answer
+has separate material/pan participants and eligible beef/pan occurrences, so
+none receives vacuous copying success.
+
+| Case | T1 | T2 | T3 | Individual formation | Shared formation | All beef individual copies | All pan individual copies |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S001: fresh reference control | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| S002: frying alone | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| S003: mixing alone | A | A | R | 3/3 | 3/3 | **2/3** | 3/3 |
+| S004: simmering alone | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+| S005: fresh all-steps control | A | A | A | 3/3 | 3/3 | 3/3 | 3/3 |
+
+**T3/S003 is a copying failure.** Complete individual sources appear at `1.2.2`
+(one 400 g tin chopped tomatoes), `1.3.2` (one 400 g tin tomato purée) and `1.4.1`
+(one tin water). Each names the large pan and all 500 g ground beef becoming the
+same colour. Simple beef occurrence `1.1` **500 g ground beef** has none of these
+three individual descendants; it contains only shared addition `1.1.1.1`.
+Pan copies `2.1`, `2.2` and `2.3` are complete. The qualified condition heading
+`1.1.1` adds the joint tomatoes-and-water relationship and is incompatible with
+the individual sources; the decisive absent-copy witness is simple beef `1.1`.
+No never-formed source is charged as a copying omission.
+
+This reproduces the missing-copy pattern with mixing alone, without frying,
+simmering or recipe scope. It does not prove that mixing uniquely causes it or
+explain an internal model mechanism. The fresh all-steps control passes 3/3,
+where the previous separate C005 cohort passed 1/3. Keep both cohorts and their
+labels: this is variability evidence, not a prompt improvement or a reason to
+pool controls as matched samples. Three repeats with fixed case order do not
+estimate a stable failure rate; original N096 remains a different input.
+
+### Additional relationships and review scope
+
+Two separate reviewer assessments and broker adjudication agree on the bounded
+14 A / 1 R / 0 U outcomes. Native history contains **45 hash-current agent review
+events**, one per reviewer and broker per case; no teacher calls are made by
+review commands. Score the latest broker event for the frozen target only.
+Reviewer A has no holds or corrections. Reviewer B withholds an initial
+T3/S002 primary label until the scope is clarified, then accepts its bounded
+target while retaining the actual qualified-pan edge defect below. No provisional
+verdict was given, so no earlier accept/reject/uncertain event is invented.
+The scope clarification is not independent accuracy evidence; neither reviewer
+agreement nor a bounded accept certifies the entire answer.
+
+Two actual returned-edge defects are recorded separately from the frozen
+formation/missing-copy metrics:
+
+- **T3/S002:** `4.1` Large pan for adding the contents of the tomato tins and
+  water adds joint purpose/material restrictions. Its direct children
+  `4.1.1`, `4.1.2` and `4.1.3` describe individual additions without preserving
+  that whole relationship. Generic Pans `4` is compatible and has all three
+  descendants, so the bounded pan-copy check still passes.
+- **T2/S004:** `1.1.2` 500 g ground beef being all the same colour as the
+  prerequisite for adding the tomato tins and water adds the joint relationship.
+  Direct children `1.1.2.1`, `1.1.2.2` and `1.1.2.3` omit some of its materials.
+  Simple beef `1`/`1.1` is compatible and covered. The actual edges are defective
+  even though the bounded missing-copy check passes.
+
+Historical action detail remains a separate observation. In S002, T2/T3's
+addition strings retain gently frying without browning and therefore qualify
+for their actual frying-qualified beef occurrences; T1 omits it. All three
+S005 answers omit that earlier frying detail. These observations neither impose
+a new primary requirement nor establish complete retention of every source detail.
+
+The next prompt investigation is not started. The existing instruction already
+requires every formed source under every compatible occurrence, and ASv6.100's
+condition-example extension failed its original N096 target. Any proposed delta
+must distinguish execution of that existing rule from adding another duplicate
+rule or condition example; the smaller S003 failure supplies a concrete witness.
