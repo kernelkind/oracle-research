@@ -529,9 +529,11 @@ or condition example; the smaller S003 failure supplies a concrete witness.
 
 ## ASv6.101 placement-order experiment
 
-Status: approved experimental draft; all plans prepared before inference; results
-pending. Production remains unchanged. This tests one execution hypothesis,
-not an established internal explanation of the model's omission.
+Status: approved comparison completed; draft not promoted. All plans were prepared
+and committed before inference at `d5638edd`. Production remains unchanged. The
+draft forms complete individual additions more often in these original-post
+samples, but neither repeatability nor complete coverage is established. This
+tests one execution hypothesis, not an internal explanation of the omission.
 
 [ASv6.101](../asv6.101/ASv6.101.md) replaces only the placement paragraph:
 instead of comparing each complete source with every heading, compare every
@@ -614,3 +616,120 @@ They know the proposed wording and retain prior conversation context, so this
 is not fully blinded. Broker adjudication checks actual numbered witnesses;
 native review preserves each real verdict/hold/correction. Reviewer agreement
 is not user gold. Provenance inspection remains separate from quality review.
+
+### Completed comparison
+
+All twelve calls completed with native-valid, request-bound receipts: exactly one
+first attempt and one provider attempt each, zero errors, retries, reuse or invalid
+receipts. POSTs, prompt pins, settings, strict schema and runner pins match the
+frozen plans. The final shared counter is **1,604/2,000**, leaving **396**. Calls
+ran with up to three concurrent native runners. Each plan retains its own native
+usage receipt; no separate usage aggregation or new experiment driver was added.
+The 127 checks passed before the source freeze; results add only maintained
+documentation and native reviews, with no further prompt or runner changes.
+
+`A` means the bounded primary target is demonstrated, `R` a concrete primary
+defect, and `U` unresolved coverage. None certifies the whole answer. A dash in a
+copy column means complete individual sources never formed, so copying is not
+assessed and no additional missing-copy charge is made. All N096 individual
+additions that exist retain the full recipe; absent individuals have no recipe
+retention success. Every shared N096 addition retains the full recipe.
+
+| Plan | Arm | Case | Complete individuals | Complete shared | Beef copies | Pan copies | Primary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| K01 | ASv6.99 | S003 | 3/3 | A | A | A | A |
+| K02 | ASv6.101 | S003 | 3/3 | A | A | A | A |
+| K03 | ASv6.99 | N096 | 0/3; all omit pan | R; pan omitted | — | — | R |
+| K04 | ASv6.101 | N096 | 0/3; absent | R; pan omitted | — | — | R |
+| K05 | ASv6.99 | S003 | 3/3 | A | R; six missing | A | R |
+| K06 | ASv6.101 | S003 | 3/3 | A | A | A | A |
+| K07 | ASv6.99 | N096 | 0/3; absent | R; pan omitted | — | — | R |
+| K08 | ASv6.101 | N096 | 3/3 | A | U; no eligible head | U; no eligible head | U |
+| K09 | ASv6.99 | S003 | 3/3 | A | A | A | A |
+| K10 | ASv6.101 | S003 | 3/3 | A | A | A | A |
+| K11 | ASv6.99 | N096 | 0/3; absent | A | — | — | R |
+| K12 | ASv6.101 | N096 | 3/3 | A | A | U; no eligible head | U |
+
+On S003, ASv6.99 demonstrates the target in **2/3**, ASv6.101 in **3/3**.
+All six form the complete individual and shared additions. K05 is a placement
+failure: complete individual sources `1.2.3`, `1.3.3`, `1.4.1` are missing beneath
+each actual pure colour-beef heading `1.1.2` and `2.1.2`. Each heading contains only
+the shared addition (`1.1.2.1` / `2.1.2.1`). These six missing individual copies
+remain defects even though the generic beef and separate colour branch contain
+them. Ingredient-role, ingredient-group and mixing restrictions are excluded
+where the individual strings do not preserve them.
+
+On original N096, complete individual formation is **0/3** for ASv6.99 and
+**2/3** for ASv6.101. Complete shared formation is **1/3** versus **2/3**.
+K03 forms three partial additions (`1.1.7.2`, `1.1.8.2`, `1.1.13.1`) with amounts,
+beef colour and recipe but no large pan; its shared `1.1.6.3` also omits the pan.
+K04, K07 and K11 return only combined additions, with no individual additions
+anywhere. K11's shared `1.1.6.3` does retain the pan, unlike K04 and K07. Thus
+formation loss is distinct from K05's loss of copies of already complete sources.
+
+K08's complete individual sources are `1.1.2.7.1`, `1.1.2.8.1`, `1.1.2.13.1`,
+with shared `1.1.2.7.1.1.1`. Its beef participant `1.1.2.6` specifies **as an
+ingredient of** the recipe, while the individual strings name beef as a colour
+condition. Frying heads `1.1.2.6.2` and `1.1.3.1.7` additionally locate the
+preceding beef frying in the large pan; the addition strings locate the added
+material there without locating that preceding frying there. These are not
+established compatible parents. Pan `1.1.3.1` specifies **used to prepare the
+bolognaise sauce**, which the additions do not independently preserve. Its
+individual copies `1.1.3.1.8` / `.9` / `.10` exist, but their placement cannot be
+counted as compatible pan coverage.
+
+K12 forms complete individual sources `1.7.2`, `1.8.2`, `1.13.1` and shared
+`1.6.3.1.1`. Its plain beef participant `1.6` has all three copies at `1.6.3` /
+`.4` / `.5`. Its only separate pan participant `1.14` specifies **for preparing
+the sauce**, absent from the addition strings. Copies `1.14.7` / `.8` / `.9`
+appear there, but that purpose mismatch leaves eligible pan coverage undemonstrated.
+Frying headings impose additional action restrictions absent from the additions.
+
+The frozen nonvacuous criterion requires eligible occurrences, but the prompt
+does not require optional generic beef or pan headings. Zero eligible occurrences
+therefore do not prove a literal missing-copy defect, and do not earn copying
+success. **K08 and K12 remain U**, rather than being counted as failed copying
+or accepted because every member of an empty eligible set was covered. Actual
+pan-purpose edge defects are recorded separately from the bounded primary.
+
+### Preservation checks and actual review history
+
+All six N096 answers form complete individual and shared sautés retaining the
+singular quantities, fine chopping, two tablespoons of olive oil, large pan,
+medium heat and full recipe. Copies appear beneath their returned oil participants.
+The all-compatible-oil-occurrence check is A in K03, K04, K08, K11 and K12;
+K07 is R for six missing complete individual copies below broader individual
+sauté headings, despite correct copies beneath its two oil participants.
+The decisive pair for chopped onion is broader `1.1.1.1.1` (olive oil with no
+amount) and complete source `1.1.1.11.1` (two tablespoons of olive oil). The latter
+preserves the former's restrictions; only the shared full sauté is a descendant.
+The six incomplete occurrences are `1.1.1.1.1`, `1.1.1.2.1`, `1.1.1.3.1`,
+`2.1.1.1.1.1.1`, `2.1.1.1.1.2.1`, `2.1.1.1.1.3.1`.
+
+Separate returned restriction-loss observations include ingredient-role edge
+`1.1.1→1.1.1.2` in K01, combined-group edge `1.1.1→1.1.1.1` in K02,
+ingredient-role edge `2.1→2.1.2` in K05, listed-ingredient edges
+`2.1.1→2.1.1.2` and `2.2.1→2.2.1.2` in K06, ingredient-role edge
+`1.1→1.1.2` in K09, and the pan-purpose edges described above in K08/K12
+(also `1.1.14→1.1.14.7` in K11). These findings prevent interpreting a primary
+A as whole-answer correctness; they do not expand the frozen primary target.
+
+Two separate initial reviews and the broker's final review are saved for every
+plan using native `review --role agent`: **40 events**, including four actual
+correction events, each making zero model calls. The final three assessments
+agree on **5 A, 5 R, 2 U**. Reviewer A's K07 secondary oil-copy assessment changed
+from A to R when the broader sauté occurrences were included. K08 history is
+preserved: both initially marked R; A held beef eligibility, withdrew the literal
+copy charge while briefly retaining R under nonvacuity, then changed to U; B
+changed R to U after distinguishing absent eligible coverage from a proved
+defect. No other primary verdict changed. A typographic apostrophe correction
+in B's K03 witness did not change a verdict. Reviewer context and lack of full
+blinding remain as declared above; final agreement is not user gold.
+
+ASv6.101 stays an experimental draft. These small samples give a useful observed
+formation improvement, with one original-post trial still omitting all three
+individual additions and no confirmed full primary pass on N096. They do not
+establish that reversing the comparison loop caused the difference or that it
+generalizes. The next proposed diagnostic would separate missing individual
+action formation from retention of the inherited pan reference; it has not been
+started. The eight prospective posts remain unused.
