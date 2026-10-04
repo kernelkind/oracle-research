@@ -1,13 +1,20 @@
 # ASv6.100 generalization validation v1
 
-Status: authorized, preparing; no validation teacher calls yet.
+Status: authorized and resumed; completing preregistration before validation calls.
 
 The user accepts the observed returned-relationship error rates for
 [ASv6.100](../asv6.100/ASv6.100.md) and authorizes testing its consistency on
 fresh, diverse inputs. This does not adopt the prompt into production or establish
-that it outperforms ASv6.101. ASv6.101 has only the small
-[ASv6.99-controlled comparison](../asv6.99/README.md#completed-comparison), with
-promising source formation and unresolved original-post coverage.
+that it outperforms ASv6.101 generally. The six saved ASv6.101 answers from the
+[ASv6.99-controlled comparison](../asv6.99/README.md#completed-comparison)
+have now been scored across all 501 returned immediate relationships: 459 correct,
+36 incorrect and six uncertain. On the shared N096 input, three ASv6.101 answers
+have 246 correct, 22 incorrect and three uncertain relationships out of 271;
+three ASv6.100 answers have 257 correct, two incorrect and nine uncertain out of
+268. These agent assessments favor ASv6.100's returned-link correctness on this
+small shared sample; they do not measure overall missing-relationship rates or
+establish a causal prompt effect. The user approves resuming the unchanged
+ASv6.100 diverse-input test before further prompt revision.
 
 ## Frozen experiment
 
@@ -96,3 +103,30 @@ rejecting unknown selections and duplicate identities across files.
 Of 210 workflow/runner/revision/title tests, 209 passed initially; the remaining
 test needed `tiktoken` and passed with the cached dependency. Forty prompt
 consolidation checks also pass. The prompt bytes remain unchanged.
+
+## Preregistration checkpoint
+
+The 40 real inputs retain their original complete texts, with four posts in each
+of ten broad topics, 40 authors and an equal short/long split. The source-only
+rubrics cover 329 required source meanings and 85 fixed refinement targets per
+real-post trial; the 20 authored inputs add 209 meanings and 43 targets. Across
+three complete trials the planned denominators are **1,614 source checks and
+384 fixed targets**. These are bounded agent judgments, not an exhaustive
+inventory or a required tree. Missing-placement rates use only clear targets
+with both endpoints represented; source-blocked and uncertain targets remain
+separate.
+
+Frozen rubric artifacts under the ignored experiment root:
+
+| Rubric | Source meanings | Fixed targets | SHA-256 |
+| --- | ---: | ---: | --- |
+| `real-selection/rubric-a.md` | 153 | 49 | `610288bbca1a6db9e36e184a548e6829f444280bb565e5d33ce49f27b2ee8005` |
+| `real-selection/rubric-b.md` | 176 | 36 | `f9845a4e5fdb18e38b9671c5800112135db7c189b639533f5f4f272b512a5468` |
+| `prospective-audit/rubric.md` | 76 | 14 | `d5f492cb978c2e4a48a0d1b24f6fd8e9dfa58c4b96ae5050c12fe252be95980f` |
+| `authored-new/rubric.md` | 133 | 29 | `c72956f484154380f2e1ec46b8360178d85a987396165f64dfdfb3697da918b2` |
+
+Before inference, independent source review corrected missing standalone named
+participants, clarified unresolved reference attachment and collapsed an
+equal-meaning tennis target that would have required an identical descendant.
+No source post, prompt or runner setting changes. All T1/T2/T3 cases remain
+unrun at this checkpoint.
