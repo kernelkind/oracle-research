@@ -521,8 +521,96 @@ for their actual frying-qualified beef occurrences; T1 omits it. All three
 S005 answers omit that earlier frying detail. These observations neither impose
 a new primary requirement nor establish complete retention of every source detail.
 
-The next prompt investigation is not started. The existing instruction already
-requires every formed source under every compatible occurrence, and ASv6.100's
-condition-example extension failed its original N096 target. Any proposed delta
-must distinguish execution of that existing rule from adding another duplicate
-rule or condition example; the smaller S003 failure supplies a concrete witness.
+The user approves testing the placement-order replacement below. The existing
+instruction already requires every formed source under every compatible occurrence,
+and ASv6.100's condition-example extension failed its original N096 target.
+ASv6.101 changes how that existing check is ordered, without adding another rule
+or condition example; the smaller S003 failure supplies a concrete witness.
+
+## ASv6.101 placement-order experiment
+
+Status: approved experimental draft; all plans prepared before inference; results
+pending. Production remains unchanged. This tests one execution hypothesis,
+not an established internal explanation of the model's omission.
+
+[ASv6.101](../asv6.101/ASv6.101.md) replaces only the placement paragraph:
+instead of comparing each complete source with every heading, compare every
+complete source against each heading. Source subjects remain children; headings
+remain parents. Equality still needs no identical descendant; all more-specific
+compatible sources remain descendants at every numbered occurrence. The parent
+restriction and source completeness rules are unchanged. All eight examples and
+their 154 entries remain byte-identical; the existing 34 primary assignments
+and five implications retain their mappings. The source/template each grow by
+**3 characters**, not a measured token increase. The same single inference per
+post and same source/heading comparison work remain; no production stage is added.
+
+Pinned [source edits](../asv6.101/prompt-edits.json) and
+[template edits](../asv6.101/edits.json) are applied through native `revise` with
+separate receipts. Source SHA256:
+`7d162e39a8b8c12ba99da3bf973f6ffa38c3fb745d865e4f849799d21b93d7b1`.
+Template SHA256:
+`785f5929ccd51af05692231c15412de5279a290344a8b44ee82e6dd611676ed1`.
+Static inspection finds no change-induced example or rule-coverage inconsistency.
+The test replays both revisions through native `revise`, checks that all other
+bytes are preserved, and validates unchanged worked outputs through production
+subject validation. Its initial run fails because the new revision is absent.
+The final native revision, subject-example and focused placement checks pass
+**127 tests** across the native revision, subject-example and focused placement
+test modules.
+These checks establish the intended delta, not teacher correctness. This follows
+[official OpenAI guidance on simple instructions and aligned examples](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+
+### Frozen comparison and criteria
+
+Prepare twelve one-case native plans with `--only` and `--repeat` under
+`experiments/sp-autonomous-v1/placement-order-v1/`, preserving the existing history
+root. S003 inherits its full POST/evidence from condition-step T3; N096 inherits
+its original full POST/evidence from shared-tool U1. No fixture assembly or
+new workflow capability is needed. Each arm has three fresh repeats per case:
+
+| Case | Fresh ASv6.99 controls | ASv6.101 draft |
+| --- | --- | --- |
+| S003: mixing alone | K01, K05, K09 | K02, K06, K10 |
+| N096: original post | K03, K07, K11 | K04, K08, K12 |
+
+Every plan's frozen native baseline is historical. The six new ASv6.99 answers
+are the actual fresh controls with matching POST/evidence/settings; native text
+comparison to historical answers is not a quality score. Finish all twelve
+intentional first calls regardless of outcomes, scheduling K01–K12 in order
+with at most three active native runners and no completion barrier between groups.
+Settings stay subscription openai-codex/gpt-6.1-sol/medium, WebSocket,
+1,800-second timeout, concurrency one per runner, strict subject schema and no
+output cap. Each `run --max-new-attempts 2` uses the shared counter, initially
+**1,592/2,000**. Twelve first calls would reach 1,604, leaving 396. At most one
+existing provider-transient retry per case bounds this experiment at 24 attempts;
+no local/validation/quality retry, model switch or paid fallback. Subscription
+adds no incremental cash; quota is unmeasured. Eight prospective posts stay unused.
+
+Primary checks are declared before calls. Form the three individual additions
+and separate shared addition with one 400 g tin for each tomato material or one
+tin water, the uniform-colour condition for all 500 g ground beef and large pan
+in their own wording. For N096 also retain the author's easy, never-fail spaghetti
+Bolognaise recipe feeding five; record recipe retention separately. Then retain
+each formed individual beneath every actual compatible beef occurrence and,
+separately, every compatible pan occurrence. Record common-field formation,
+recipe retention, shared formation and copying separately; never-formed targets
+are source loss, not extra absent-copy counts. Separate material/pan participants
+and eligible occurrences must exist; do not award vacuous copying success.
+For N096 separately preserve complete individual/shared sautés and all compatible
+oil copies, including the quantities, fine chopping, large pan, two tablespoons
+of oil, medium heat and full recipe. Do not extend initial medium heat to later
+additions. Earlier-step propagation remains unsettled and outside the primary.
+
+Compatibility uses only the two subject strings and preserves every parent
+restriction. Joint-material/purpose or action-qualified headings are incompatible
+when an individual source omits their restrictions. Additional actual returned
+edge defects remain separately recorded, so a bounded accept is not whole-answer
+correctness. Unresolved primary readings remain uncertain. Small development
+samples cannot establish a stable failure rate, unseen accuracy or promotion.
+
+Two reviewers inspect full native POST/parsed answers separately with arm
+mapping, baselines and other new labels withheld during initial assessments.
+They know the proposed wording and retain prior conversation context, so this
+is not fully blinded. Broker adjudication checks actual numbered witnesses;
+native review preserves each real verdict/hold/correction. Reviewer agreement
+is not user gold. Provenance inspection remains separate from quality review.
