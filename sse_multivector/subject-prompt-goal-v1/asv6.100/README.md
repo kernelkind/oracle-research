@@ -227,4 +227,7 @@ The useful next investigation is a controlled minimal-post test of the same
 individual additions and beef condition, followed by adding recipe scope and
 surrounding steps one factor at a time. That can distinguish failure on the
 relationship itself from failure as source resolution and output work grow,
-before another example change. This is a proposal, not another experiment.
+before another example change. The user approves this investigation; the
+[ASv6.99 condition source diagnostic](../asv6.99/README.md#condition-source-diagnostic-v1)
+freezes six input variants with the comparison prompt unchanged. Its calls are
+pending; ASv6.100 is not rerun or promoted.

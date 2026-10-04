@@ -177,3 +177,103 @@ Its [completed fixed screen](../asv6.100/README.md#completed-results) keeps the
 individual-addition/beef-copy target at 0/3 and full sauté preservation at 2/3;
 S006 remains 3/3. ASv6.100 is not a promotion candidate. Source completeness and
 conditional copies remain separately reported.
+
+## Condition source diagnostic v1
+
+Status: user-approved input investigation; ASv6.99 stays unchanged; calls pending.
+The user approves testing a minimal addition/condition post, then adding recipe
+scope and surrounding steps separately after the ASv6.100 result. This changes
+test inputs, not the prompt or production. These are six synthetic development
+cases, not prospective posts or matched controls for the original N096.
+In particular, this diagnostic explicitly names large pan in the target;
+original N096 supplies it in earlier instructions and has additional ingredients.
+Differences from that original cannot be attributed solely to post length.
+
+The reusable [native spec](../../experiment_specs/asv6.99-condition-source-diagnostic-v1.json)
+uses the production subjects adapter. Input data remain ignored at
+`target/sp-autonomous-v1/condition-source-diagnostic-v1/posts.json`; native plans
+pin exact bytes and preserve the full POST. The controlled source parts are:
+
+Input fixture SHA256:
+`27809bf08532646c47e53af3d2ee855d0ee2bebead94c311f14d1ca06d7df436`.
+Spec SHA256:
+`de3e4a3346afd00adfed35f9df2c68275e1abb3349e403ee5985e95f6c4d06ae`.
+Unchanged ASv6.99 template SHA256:
+`2f51994997528e001647faf73469344ca7341ece9b4a51619b2df9d1c01afcbf`.
+
+Resolved target sentence:
+
+```text
+Once 500g ground beef is all the same colour, add 1x 400g tin chopped tomatoes and 1x 400g tin tomato purée plus 1 tin of water to a large pan.
+```
+
+Matching list:
+
+```text
+500g ground beef
+1x 400g tin chopped tomatoes
+1x 400g tin tomato purée
+```
+
+Reference-form target sentence:
+
+```text
+Once beef is all the same colour, add both tins of tomatoes plus 1 tin of water to a large pan.
+```
+
+Recipe scope prefixes `My #neverfail Spaghetti Bolognaise recipe that feeds 5.`
+and suffixes `#easy`. Nearby steps insert `Gently fry beef without browning.`
+before the target, then `Mix all ingredients thoroughly. Simmer on low heat for
+45min-1hr.` after it. No medium heat is added to the target. Native preparation
+sends only POST, not case labels or review evidence.
+
+| Case | Input | Fixed comparison |
+| --- | --- | --- |
+| C001 | Resolved target sentence alone | Minimal formation/copy check |
+| C002 | Matching list, blank line, resolved target | C001→C002 adds list and redundant descriptions |
+| C003 | Same list and reference-form target | C002→C003 shortens only target references |
+| C004 | C003 plus recipe scope | C003→C004 adds scope |
+| C005 | C003 plus nearby steps | C003→C005 adds other instructions |
+| C006 | C003 plus both scope and nearby steps | C004/C005→C006 checks their interaction |
+
+List presence is not a pure length intervention. Recipe scope bundles author,
+never-fail, dish, five-person capacity and easy. Nearby steps reuse the entity
+inventory but add actions, references and potential referent details; that is not
+a pure length intervention either. The diagnostic can locate an observable
+failure boundary, not establish an internal cognitive mechanism.
+
+Freeze primary checks before inference: three distinct individual additions and
+their separate expressed combination, each retaining the respective 400 g tin
+or one tin of water, the 500 g ground-beef same-colour condition and large pan.
+C004/C006 additionally retain the full stated recipe scope. Then check each
+formed target source under every actually returned compatible beef occurrence;
+check compatible pan copies separately. Own subject wording establishes
+relationships, including condition aboutness. Equivalent paraphrases count;
+context or a separate entry cannot restore a missing target field.
+
+Never-formed individual targets are source loss, not additional missing-copy
+counts. Combined targets cannot replace individual sources. Missing separate
+beef/pan participant sources or zero compatible returned occurrences are reported
+separately, not counted as vacuous copying success. Generic wider headings are
+optional. Extra-step-dependent full referent completeness is a separate check;
+passing the common target subset does not prove full source completeness. Do not
+infer a specific colour, require browning, or calculate a water amount.
+
+Prepare W1 from the spec, then W2/W3 through native `prepare --from W1`, all with
+`--repeat` under `experiments/sp-autonomous-v1/condition-source-diagnostic-v1/`.
+Each has all six cases in order and unchanged subscription
+openai-codex/gpt-6.1-sol/medium, WebSocket, 1,800-second timeout, no output cap,
+concurrency one. Three runners allow three simultaneous requests. Freeze all
+source/plans before calls and finish all 18 first attempts regardless of quality.
+Each `run --max-new-attempts 12` uses the shared 1,559/2,000 attempt counter.
+Only provider-transient retries qualify, at most two total per case; no quality
+retry, paid fallback or model switch. Subscription adds no incremental cash;
+quota remains unmeasured. No production stage or prompt growth is introduced.
+Review native full POST/parsed outputs and record bounded target assessments
+through `review`; do not treat them as user gold or whole-answer accuracy.
+
+Pre-inference case-design and native provenance audits pass. All 118 existing
+experiment/hierarchy-input checks pass under cached `uv` with repository-pinned
+`tiktoken==0.14.0`. The default Python first lacks that dependency for one
+unrelated parent-guide check; the complete suite passes in the cached environment.
+No production code, dependency pin or global Python environment is changed.
