@@ -230,5 +230,7 @@ completes all 18 fresh medium calls with the comparison prompt unchanged.
 Individual and shared formation and pan copying each pass 18/18; beef individual
 copying passes 16/18, with both failures in the nearby-steps variant C005.
 The scope-plus-steps variant passes 3/3, so these results do not establish a
-monotonic post-length effect. The proposed next investigation separates frying,
-mixing and simmering; it has not started. ASv6.100 is not rerun or promoted.
+monotonic post-length effect. The user approves separating frying, mixing and
+simmering with fresh reference/all-steps controls. The
+[ASv6.99 condition step diagnostic](../asv6.99/README.md#condition-step-diagnostic-v1)
+freezes 15 first calls; inference is pending. ASv6.100 is not rerun or promoted.

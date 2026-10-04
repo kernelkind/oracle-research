@@ -361,7 +361,86 @@ plain additions do not qualify for frying, mixing or simmering parents whose
 action restrictions they omit. This correction fixes the assessment, not the
 prompt, and does not remove either C005 copying failure.
 
-The next proposed investigation is to add frying, mixing and simmering separately
-to C003, retaining C003/C005 as fresh controls, before another prompt change.
-That would test which instruction additions reproduce the observed omission.
-This further batch is proposed only; no new cases or requests are started.
+The user approves adding frying, mixing and simmering separately to C003,
+retaining C003/C005 as fresh controls, before another prompt change. The
+[condition step diagnostic](#condition-step-diagnostic-v1) freezes that batch;
+its calls are pending. This tests which instruction additions reproduce the
+observed omission.
+
+## Condition step diagnostic v1
+
+Status: user-approved input investigation; plans frozen before inference; calls
+pending. ASv6.99 remains the experimental comparison prompt. This adds five
+synthetic development inputs, not a prompt change, new production stage or
+prospective evaluation. The original N096's inherited pan and other ingredients,
+and extra-step-dependent complete referent requirements, remain open.
+
+The [native spec](../../experiment_specs/asv6.99-condition-step-diagnostic-v1.json)
+uses the production subjects adapter and unchanged medium subscription settings.
+The ignored fixture is
+`target/sp-autonomous-v1/condition-step-diagnostic-v1/posts.json`.
+Fixture SHA256:
+`ba4d0cd4bec543c7e26ce4e022b28af71b6f1798e9db35db055e5ad4d17e36da`.
+Spec SHA256:
+`8c6d818c3ecf501f6402aa53df8a5324658aad96a9c6e84dc1d676bc3a9d61b7`.
+ASv6.99 template remains
+`2f51994997528e001647faf73469344ca7341ece9b4a51619b2df9d1c01afcbf`.
+
+All cases reuse the matching list and reference-form target sentence above.
+There is no recipe scope. Single-step cases change exactly one instruction;
+the two controls retain the previous complete POST bytes:
+
+| Case | Intervention relative to C003 | Purpose |
+| --- | --- | --- |
+| S001 | None; exact C003 | Fresh reference-form control |
+| S002 | Insert `Gently fry beef without browning.` before target | Frying alone |
+| S003 | Append `Mix all ingredients thoroughly.` on next line | Mixing alone |
+| S004 | Append `Simmer on low heat for 45min-1hr.` on next line | Simmering alone |
+| S005 | Exact C005: frying before target; mixing and simmering on one final line | Fresh all-steps control |
+
+Freeze the same bounded primary check: form three distinct individual additions
+with one 400 g tin for each tomato material or one tin of water, the 500 g
+ground-beef uniform-colour condition and large pan in their own wording. Separately form the
+expressed shared three-material addition. Copy each formed **individual** under
+every actually returned compatible beef occurrence; assess pan copies separately.
+Equivalent faithful paraphrases count. Context, another entry or another branch
+cannot supply a missing field or placement. Never-formed individuals are source
+loss, not extra absent-copy counts. Missing separate participants or zero eligible
+occurrences are reported separately, never treated as vacuous copying success.
+
+Compatibility requires each child's own wording to preserve every parent
+restriction. A combined-material heading adds material restrictions; frying,
+mixing and simmering headings add action restrictions. Mentioning beef or a pan
+does not by itself make such a heading compatible. Explicit condition aboutness
+still supports simple beef and colour headings. Extra-step-dependent referent
+details remain separate observations, not newly imposed primary requirements.
+Accept requires all primary checks; reject requires a concrete failure witness;
+unresolved primary readings remain uncertain. These are agent target judgments,
+not user gold or whole-answer accuracy.
+
+Prepare T1 from the spec, then unrun T2/T3 from T1, each with `--repeat`, under
+`experiments/sp-autonomous-v1/condition-step-diagnostic-v1/`. Finish all 15 first
+attempts regardless of quality. Use unchanged openai-codex/gpt-6.1-sol/medium,
+WebSocket, 1,800-second timeout, no output cap and concurrency one per runner;
+three runners permit three simultaneous requests. Each `run --max-new-attempts 10`
+uses the shared **1,577/2,000** counter. Automatic retries remain provider-only,
+at most two total attempts per case, including resumes; no local or quality retry,
+model switch or paid fallback. Fifteen first calls would end at 1,592, leaving
+408; the permitted retry ceiling is 30 total calls. Subscription adds no
+incremental cash; quota is unmeasured. This bounded investigation adds no
+corpus-scale process.
+
+Case order remains S001–S005 in all trials; the native CLI preserves source order.
+Three repeats and fixed ordering do not establish a precise failure rate, a unique
+causal mechanism or general correctness. Fresh control answers are not reused
+old samples. T2/T3's unrun T1 baselines have no saved answers and are not matched
+quality controls. Compare actual current POST/parsed targets, not native text-diff
+labels. Preserve receipts and all real review corrections through native review.
+
+Two reviewers assess actual POST/parsed answers separately, followed by broker
+adjudication of exact numbered witnesses. Prompt/version definitions and other
+reviewer verdicts are withheld during their initial assessments, but they retain
+prior conversation context; this is not a fully blinded evaluation. Provenance
+audit remains separate. The scoped metrics and explicit uncertainty follow the
+[official OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices);
+reviewer agreement does not establish human-label accuracy.
