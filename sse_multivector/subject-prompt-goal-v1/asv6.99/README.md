@@ -2,6 +2,8 @@
 
 Status: tested experimental draft; both focused targets pass; whole-answer failures
 remain; not adopted.
+[ASv6.100 is the current SOTA SP](../asv6.100/README.md), designated by the user
+on 2026-10-04. This document retains the ASv6.99 comparison and diagnostic evidence.
 The user approves the next N096 target after the [ASv6.98 results](../asv6.98/README.md#completed-results).
 Production adoption remains a separate decision.
 
@@ -175,8 +177,8 @@ The user approves this target. [ASv6.100](../asv6.100/README.md) adds a separate
 named condition participant to existing C1 while preserving Knife and C8.
 Its [completed fixed screen](../asv6.100/README.md#completed-results) keeps the
 individual-addition/beef-copy target at 0/3 and full sauté preservation at 2/3;
-S006 remains 3/3. ASv6.100 is not a promotion candidate. Source completeness and
-conditional copies remain separately reported.
+S006 remains 3/3. ASv6.100 was not selected for promotion at that checkpoint.
+Source completeness and conditional copies remain separately reported.
 
 ## Condition source diagnostic v1
 

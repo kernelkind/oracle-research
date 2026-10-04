@@ -3,6 +3,11 @@
 Status: bounded validation and scoring complete, 2026-10-04; preregistration
 frozen at `050267d5` before calls. Exhaustive compatible-copy recall is unmeasured.
 
+The user designated unchanged [ASv6.100](../asv6.100/ASv6.100.md) as the
+**current SOTA SP** on 2026-10-04 after reviewing the completed assessment below.
+It is the baseline for future SP comparisons. This designation retains the
+measured errors, omissions and uncertainties; production adoption is separate.
+
 The user accepts the observed returned-relationship error rates for
 [ASv6.100](../asv6.100/ASv6.100.md) and authorizes testing its consistency on
 fresh, diverse inputs. This does not adopt the prompt into production or establish

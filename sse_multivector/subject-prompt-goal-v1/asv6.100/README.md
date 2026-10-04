@@ -1,8 +1,19 @@
 # ASv6.100 Individual action copies under a condition participant
 
-Status: experimental, tested; 169 focused offline checks pass; fixed target 0/3.
-The user approves this next N096 target after the [ASv6.99 results](../asv6.99/README.md#completed-results).
-Production adoption remains a separate decision.
+Status: **current SOTA SP**, user-designated on 2026-10-04; tested, prompt unchanged.
+Use [ASv6.100](ASv6.100.md) as the baseline for future SP comparisons.
+The [completed generalization assessment](../asv6.100-generalization-v1/README.md#completed-assessment)
+covers 60 diverse inputs with three independent `gpt-6.1-sol/medium` trials each:
+1.64% clearly incorrect returned relationships overall, 2.61% on real posts.
+Missing placement is 0.72% among clear applicable fixed targets; exhaustive
+compatible-copy recall remains unmeasured. Source-heading omissions and uncertain
+judgments remain reported separately. Production adoption remains a separate decision.
+
+## Original condition-example change and fixed screen
+
+The user approved this N096 target after the [ASv6.99 results](../asv6.99/README.md#completed-results).
+The original focused screen below retains its 0/3 target result; 169 focused
+offline checks passed. These earlier findings do not describe the current SOTA decision.
 
 [ASv6.100](ASv6.100.md) extends C1's shared instruction:
 
@@ -25,7 +36,7 @@ copy demonstrations (R01/R02/R04/R16/R20–R23), without a new requirement or st
 C1 grows from 61 to 66 entries; eight examples total 159, up from 154. The exact
 addition is 2,829 characters per request, not a measured token increase. The same
 single prompt/post inference remains. Repeated context still costs input at corpus
-scale, so the experimental example is not adopted without demonstrated benefit.
+scale; production adoption remains separate from the current SOTA designation.
 The minimal condition-copy check first fails on ASv6.99 for its absent condition
 participant. ASv6.100 passes 169 focused consolidation, example, revision and
 attempt-budget checks through production subject validation. Static correctness
@@ -229,9 +240,11 @@ versus explicit food purpose remain open. They do not supply the decisive reject
 witnesses above. The reviews expose concrete source and copy failures; reviewer
 agreement is not proof of general correctness.
 
-ASv6.100 does not earn promotion: the focused repair remains 0/3, full sauté
-preservation loses one trial, and each request adds 2,829 characters. Keep
-ASv6.99 as the experimental comparison prompt; this does not change production.
+The original fixed screen did not demonstrate the focused repair: it remained
+0/3, full sauté preservation lost one trial, and each request added 2,829
+characters. ASv6.99 remained the experimental comparison prompt at that
+checkpoint. The later SOTA designation above uses the completed generalization
+assessment and does not change these saved measurements.
 The user-approved controlled minimal-post investigation tests the same individual
 additions and beef condition, then adds recipe scope and surrounding steps. The
 [ASv6.99 condition source diagnostic](../asv6.99/README.md#condition-source-diagnostic-v1)
@@ -249,7 +262,8 @@ while fresh reference, frying, simmering and all-steps controls each pass 3/3.
 Two additional returned-edge defects remain separate from this bounded metric.
 The fresh all-steps result differs from the previous C005 cohort; it establishes
 variability, not a prompt improvement or unique cause. The shared counter is
-1,592/2,000 with 408 attempts remaining. ASv6.100 is not rerun or promoted.
+1,592/2,000 with 408 attempts remaining at that checkpoint; ASv6.100 had not
+then been rerun or promoted.
 
 ## User calibration: vegetable placement
 

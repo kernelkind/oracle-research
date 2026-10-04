@@ -1,5 +1,13 @@
 # Autonomous SP iteration
 
+**Current SOTA SP: [ASv6.100](../asv6.100/ASv6.100.md)**, designated by the user
+on 2026-10-04 and retained unchanged as the baseline for future SP comparisons.
+The [completed generalization assessment](../asv6.100-generalization-v1/README.md#completed-assessment)
+records the measured errors, omissions, uncertainties and coverage limits.
+Production adoption and MP remain outside this decision.
+
+## Failure isolation and iteration evidence
+
 The user has authorized [five hours of SP failure isolation and prompt
 correction](../isolation-v1/README.md), starting 2026-10-03 02:38:46 UTC, with
 a 2,000-call cap. The existing 430-call counter is preserved and its ceiling

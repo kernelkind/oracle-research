@@ -1,6 +1,15 @@
 # Subject-prompt goal
 
-ASv6.23 is now [frozen as a validated package](./asv6.23/frozen.json), using Astra low and the tested context/subject output schema. It passed unchanged development and final validation. Production defaults and downstream components are unchanged.
+**Current SOTA SP: [ASv6.100](./asv6.100/ASv6.100.md)**, designated by the user on
+2026-10-04. It is the baseline for future SP comparisons. The
+[completed generalization assessment](./asv6.100-generalization-v1/README.md#completed-assessment)
+records its measured error rates and limits across 60 diverse inputs, three
+independent `gpt-6.1-sol/medium` trials each. This designation does not change
+production defaults, downstream components or MP.
+
+## Earlier validated package and comparisons
+
+ASv6.23 was [frozen as a validated package](./asv6.23/frozen.json), using Astra low and the tested context/subject output schema. It passed unchanged development and final validation. Production defaults and downstream components were unchanged by that decision.
 
 [Final results](./asv6.23-validation-v1/final/results.md): 57/60 first outputs and 80/84 total outputs fully accepted; 809/819 subjects accepted. Ten subjects remain unresolved and count against acceptance. No definite error, prohibited recurrence or severe fidelity error was identified. [Remaining questions](./asv6.23-validation-v1/final/remaining-questions.md) preserve full source context and review disagreements.
 
