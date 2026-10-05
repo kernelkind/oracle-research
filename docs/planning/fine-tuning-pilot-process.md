@@ -10,8 +10,15 @@ preparation, training and evaluation, approved October 2.
 **GPU selected:** one **96GB RTX PRO 6000** for preparation and the pilot.
 Keep each complete model on that GPU and run the three students sequentially.
 
-The collection and recovery flow is implemented locally. Final launch settings
-and the local review rubric remain open.
+The collection and recovery flow is implemented locally. The combined prep→pilot
+inputs are frozen and match the tested VM runtime. Image publication, spending
+approval, GPU measurements and the local review rubric remain open.
+
+**October 5 planning estimate:** prep about **$1.50–3**; combined prep and pilot
+roughly **78–127 hours / $114–184** at a current **$1.44/hour** quote, including
+storage and transfer allowances. These are arithmetic scenarios using actual
+ASv6.100 lengths and older GPU timings; prep must establish new throughput.
+The technical plan records the assumptions and a slower sensitivity case.
 
 **Local rehearsal → Vast prep → baselines/training/validation and sealed test
 answers on the same rental → verified retrieval → local validation review →

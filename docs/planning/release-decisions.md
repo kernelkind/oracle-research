@@ -1357,9 +1357,9 @@ candidates use **20,480-token context / 10,240-token output** and omit the
 128-node guard. The planner may omit headwise score matrices only with enforced
 efficient CUDA attention. Pinned-container integration and SSH checks passed;
 actual CUDA loss/gradient agreement, long-example memory fit, generation cache
-and timing remain open. The new configurations are candidates, not frozen launch
-inputs. The preserved three-way data package was subsequently prepared through
-the shared workflow without repartitioning (integrity safeguards below).
+and timing remain open. The configurations have since been frozen in the paired
+prep→pilot input package (packaging status below). The preserved three-way data
+package was prepared through the shared workflow without repartitioning (integrity safeguards below).
 No rental, publication or additional teacher call occurred. The technical plan
 records checks and limitations.
 
@@ -1416,8 +1416,27 @@ early for background transfer. Retry failed copiers at most three times, with
 exhausted failures visible and no worker stop. Freeze the detailed status command
 and save mechanical progress plus GPU utilization/memory and disk observations
 locally, excluding reserved-test content and failure counts. The training recipe
-and frozen data are unchanged; actual ASv6.100 CUDA checks, launch packaging and
+and frozen data are unchanged; actual ASv6.100 CUDA checks, image publication and
 spending remain open. The technical plan records local recovery verification.
+
+**Paired package frozen and priced October 5:** the user approved preparing the
+combined prep→pilot inputs and updating the estimate. The shared packager froze
+all three candidates with matched prep recipes, unchanged ASv6.100/data bindings
+and no automatic timeout. Runtime hashes match the tested, stopped VM. All six
+native-tokenizer preflights passed. Prep uses three complete training examples
+in two continuing partial updates: one initializes Adam state, then two include
+the longest example after gradient accumulation with restored Adam state. Fresh
+main adapters retain eight examples per update and 125 updates per student.
+The 300 GB storage draft allows 200 GB inbound / 60 GB outbound, covering the
+approximately 27.25 GB checkpoint payload and a possible second retrieval copy.
+A compatible current 600 W quote is $1.44/hour including storage. Conditional
+arithmetic gives prep $1.50–3 and combined prep/pilot 78–127 hours / $114–184;
+a quadratic training sensitivity gives 151 hours / $219. These assumptions use
+actual native token lengths and older GPU timings, with teacher answer lengths
+as generation proxies; they are not measured ASv6.100 throughput or guarantees.
+The financial draft is not approval. Image publication, GPU checks, maximum
+spending and local semantic grading remain open. No rental or publication occurred.
+The technical plan records hashes, quote evidence and the calculation.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third

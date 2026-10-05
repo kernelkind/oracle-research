@@ -74,8 +74,15 @@ The old memory rule also rejects Qwen and dense Gemma even at batch size one;
 these are planner estimates, not observed GPU failures. The new subjects-only
 candidates use 20,480-token context / 10,240-token output, with no node-count
 cap. The worker enforces efficient SDPA and uses training-only Liger fused loss.
-Pinned-container integration and SSH checks passed locally; GPU kernels, fit,
-throughput and the launch estimate still need verification on ASv6.100.
+Pinned-container integration and SSH checks passed locally; GPU kernels, fit
+and throughput still need verification on ASv6.100. The combined prep→pilot
+input package is now frozen and matches the tested VM runtime. Native preflight
+passed for all three pilot and paired prep configurations. A current 600 W quote
+is $1.44/hour including 300 GB storage. Conditional arithmetic projects prep
+at $1.50–3 and the combined run at 78–127 hours / $114–184; the technical plan
+records the assumptions and slower sensitivity. The draft allows 200 GB inbound
+and 60 GB outbound. Image publication and launch spending remain open;
+there is no automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

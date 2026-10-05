@@ -22,8 +22,9 @@ Collect the 1,200 test responses during the main rental, sealed through local
 validation review and model selection. Keep all five 100-note validation stages
 to show learning progress; earlier checkpoints are retained diagnostics.
 Final-test collection and completeness checks are implemented locally; automatic
-reports exclude test answers and semantic scores. The full ASv6.100 workload
-still needs hardware checks and repricing.
+reports exclude test answers and semantic scores. The full ASv6.100 workload is
+packaged and conditionally priced (October 5 section below); hardware checks
+and launch spending remain open.
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
@@ -1971,10 +1972,74 @@ No rental, publication or real reserved-test inference occurred.
 Evidence: `target/distillation-pilot-v1/final-integrity-audit-20261005/` and
 `target/distillation-pilot-v1/final-integrity-fixes-20261005/`.
 Real ASv6.100 CUDA numerical agreement, long-example fit, cache allowances and
-timing remain the next hardware checks. A new paired launch package/image,
-transfer allowance and spending approval remain open; the old 20GB outbound
-allowance is insufficient for all pilot/prep checkpoints. These controls cannot
-guarantee recovery of unexfiltrated work after sudden host/storage loss.
+timing remain the next hardware checks. The paired input package and revised
+transfer draft are now frozen below; image publication and spending approval
+remain open. These controls cannot guarantee recovery of unexfiltrated work after
+sudden host/storage loss.
+
+### Frozen paired package and conditional cost — October 5
+
+The shared `distillation_deploy prepare` workflow froze the combined package at
+`target/distillation-pilot-v1/combined-asv6.100-20261005-v2/package/`, with manifest
+SHA-256 `1a61f7d0d8cd948b7aaaa3383e4915c8d015472f0e557ae4f45e594ce6b328c4`.
+It preserves the approved three candidates, full ASv6.100, the 1,000/100/200
+splits and training recipe. All six native-tokenizer pilot/prep preflights passed.
+The three main training plans match exactly: each note appears once, with 125
+updates and the five approved validation milestones. No timeout is configured.
+
+Matched prep selects three existing training notes: two median-length examples
+and the longest complete example for every candidate. Its first partial update
+initializes Adam state on one example. Restore that checkpoint, then accumulate
+gradients on another example before training on the longest example in the
+second partial update. This tests its activations alongside restored optimizer
+state and already-accumulated gradients. These adapters are discarded before the
+fresh main runs, which retain eight examples per update. Brief generation uses
+one validation note per candidate with a 64-token limit. Production preparation independently
+checks full native caches covering all validation/test batch shapes, and actual
+CUDA fused-loss/adapter-gradient agreement. No reserved test note is used in prep.
+Actual fit and speed remain unmeasured.
+
+All runtime hashes match the tested VM export from the final integrity audit.
+The image archive SHA-256 is
+`1557f799bbb4b1aa37293bf8a32e5ce62519ff4d5e7f27bc7264feaa0d8e3ed6`;
+this is an archive hash, not a registry digest. The new image is not published.
+
+The current read-only quote, offer **49942717**, provides the selected one
+96GB/600 W RTX PRO 6000 WS for **$1.4444/hour including 300 GB storage**.
+The input/checkpoint payload projection is **169.72 GB models + 27.25 GB
+checkpoints**; 300 GB leaves about 103 GB before image, responses and logs.
+The draft allows **200 GB inbound / 60 GB outbound**, about **$0.76** at this
+quote's transfer rates. Outbound covers two copies of the checkpoint payload
+plus output/metadata overhead. Transfers overlap compute; quoted hourly storage
+is not added again. Prices can change; no offer was reserved. See
+[Vast pricing](https://docs.vast.ai/guides/instances/pricing).
+
+| Arithmetic scenario | Training hours | Validation hours | Test hours | Combined hours, with headroom | Cost at current quote |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Linear training scaling, old decode latency | 13.87 | 28.77 | 19.13 | 78.46 | $114 |
+| Linear training scaling, cache-length-scaled decode | 13.87 | 51.51 | 34.29 | 127.09 | $184 |
+| Quadratic training sensitivity, cache-length-scaled decode | 33.34 | 51.51 | 34.29 | 151.43 | $219 |
+
+These are conditional arithmetic scenarios, not confidence intervals, upper
+bounds or measured ASv6.100 throughput. Training extrapolates the old two-update
+timings using actual native sequence totals. Generation uses the actual batch
+layouts and each batch's longest teacher answer as a proxy; student answer
+lengths are unknown. New efficient attention and fused loss can change speed.
+Count all **1,800 validation + 1,200 test** responses once, with no training
+restarts, masks, thinking evaluation or separate winner rental. A shared 1–2 hour
+lifecycle allowance includes downloads, small prep, loads/save/merge/restore and
+final retrieval. Apply 25% headroom once to the combined hours, then add transfer
+fees once. At $1.60/hour, the same scenarios are approximately $126/$204/$243.
+Prep alone has a **0.5–1.5 hour / $1.50–3** planning allowance at the current
+quote, already included in combined lifecycle; do not add it again.
+
+Evidence and calculation: `target/distillation-pilot-v1/combined-asv6.100-20261005-v2/`
+contains `freeze-verification.json`, `native-preflight.json`, `offers.json`,
+`cost-estimate.json` and the read-only `calculate.py`. The launch settings remain
+a financial draft without an `approved_maximum_usd`; no reservation, rental or
+publication was performed. No automatic timeout, budget kill or deletion is
+enabled. Publication and maximum spending approval precede a launch; GPU prep
+must validate execution/fit, and its measured timings should revise the estimate.
 
 ### Historical conditional subjects-only batched cost reference — October 3
 
