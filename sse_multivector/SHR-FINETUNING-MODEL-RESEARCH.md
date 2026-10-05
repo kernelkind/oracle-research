@@ -1,0 +1,374 @@
+# SHR student model research
+
+Research date: October 5, 2026. **Recommendations for evaluation, not an
+approved model choice or training plan.** No models were run or trained for
+this investigation, and no paid resources were used.
+
+## Recommendation
+
+SHR deserves its own model comparison. Its five labels permit a much cheaper
+output than SP, but do not establish that a small classifier can learn its
+semantics. The strongest initial quality candidates are modern Qwen/Gemma
+foundations and decision-trained versions of them. Encoders remain an
+important cost comparison, rather than the assumed quality winner.
+
+My recommended order of investigation is:
+
+| Purpose | Candidates | Why these belong |
+| --- | --- | --- |
+| Compact decision student | **Kev-9B**, alongside **Qwen3.5-9B-Base**; **Qwen3.5-9B instruct** as an additional control | Relevant training on decisions, explicit restrictions and missing evidence; its actual base checkpoint tests whether that specialization survives SHR tuning. |
+| Quality reference and larger decision student | **Qwen3.8-27B**, **Kev-27B v2**, **Gemma 4 31B-it** | More knowledge and reasoning capacity; Kev supplies a decision-trained alternative at the same Qwen foundation. No evidence establishes an SHR winner among them. |
+| Independent compact foundation | **Gemma 4 12B-it** | Avoids making the compact comparison entirely dependent on one Qwen family. |
+| Low-cost encoder | **Ettin encoder 1B**, with **DeBERTa-v3-large-mnli-fever-anli-ling-wanli** as the NLI warm start | Tests modern encoder capacity against relevant existing relation supervision. Start with these two rather than many near-duplicate classifier checkpoints. |
+| If compact models work and cost still matters | **Mapika decider-4b v2.1** / **Kev-4B**, Ettin 400M | Compression step after establishing which SHR distinctions remain difficult. |
+| If the quality reference fails | **gpt-oss-120b**, potentially **Mistral Small 4** | Larger total-capacity alternatives; neither is excluded by an artificial 96GB ceiling. Exact local training speed remains unmeasured. |
+
+**Bespoke-Nimble-9B is a credible additional warm start**, particularly if
+reusing a standard language-model fine-tuning path is materially simpler than
+supporting Kev's head. It is not yet a better-supported first choice than Kev:
+its training is narrower and its strongest headline comparison uses synthetic
+labels. Gemma 4 26B-A4B-it is also worth retaining when reusing the SP pilot's
+existing setup or exploring a larger model with fewer active parameters.
+
+These are hypotheses about suitability after SHR-specific training. They are
+not a ranking of measured SHR accuracy. A decision checkpoint beating an
+untuned foundation on its own task does not show that it will beat the same
+foundation after both receive identical SHR training.
+
+## Project constraints and task meaning
+
+The project needs useful automatically constructed subject hierarchies for
+readers. Pair accuracy matters through its effects on combining equivalent
+topics and placing broader/narrower hierarchy nodes. SHR training remains
+conditional on a useful SHR-built hierarchy; this research does not authorize
+training or change the release plan. See
+[release decisions](../docs/planning/release-decisions.md) and the
+[existing SP pilot](EXTRACTOR-FINETUNING-PILOT-PLAN.md).
+
+The user's correction is authoritative: **SHR-single-v26 is the last approved
+revision**, not v15. Later tested revisions do not become approved baselines
+through their version numbers. The prompt is still being developed. The v26
+source inspected was `sse_multivector/shr_single_pair/SHR-single-v26.md` in the
+SHR worktree at commit `672aff1339f9c213a7ac205af557a552883a56d5`; that branch's
+prompt sources are not present in this research worktree's base commit.
+
+SHR's input is two lists of `{subject, context}` entries, each representing
+one consistent topic. Its output relation is one of `equivalent`,
+`a_parent_of_b`, `b_parent_of_a`, `neither`, or `uncertain`.
+
+| Concrete input or change | Required distinction | Model capability implicated |
+| --- | --- | --- |
+| `Books` versus `Bookshops` | Books is broader although a shop is not a kind of book. | Knowledge plus the supplied containment rule, beyond ordinary noun hypernymy. |
+| `Cutlery` versus `Steel`, with a steel fork in context | Neither contains the other; the example fork must not narrow either subject. | Separate reference resolution from importing context restrictions. |
+| `Literature` versus `Artistic creation` | Neither: literature includes works, reading and study as well as creation. | Preserve the whole field rather than select one overlapping activity. |
+| `Rhea Stone's gardening advice` versus `Mulching garden beds` | Neither, even with the same advice in both contexts. | Preserve the explicit author/advice restriction and both directions. |
+| One side combines `Bread baking` and `Loaves of bread` | Uncertain because the entries establish conflicting topics. | Integrate all entries without converting related meanings into one meaning. |
+| Reverse A and B | Reverse the two parent labels; preserve the other labels. | Directional consistency. |
+
+General knowledge is allowed to identify names. Therefore a model trained only
+to derive facts from a supplied passage can have an unhelpful prior. Conversely,
+a model that freely uses associations can invent containment. Both tendencies
+must be measured.
+
+The user only needs the relation at inference; reasons are mostly diagnostic.
+The existing v26 prompt still requests `relation` and `reason`: no prompt or
+runtime contract was changed here. Also, **`uncertain` has a semantic meaning**
+in SHR. Low classifier confidence must not automatically be relabeled as
+`uncertain`. An NLI checkpoint is a warm start for a newly trained five-way
+decision; its entailment/neutral/contradiction labels cannot be mapped directly
+to SHR's relations.
+
+## What the closest studies establish
+
+### Taxonomy and lexical containment
+
+[TaxoLLaMA's extended study](https://www.inf.uni-hamburg.de/en/inst/ab/lt/publications/2026-moskvoretskiietal-swj.pdf)
+is unusually relevant: it fine-tunes language models on WordNet noun relations
+and evaluates lexical entailment, taxonomy construction and insertion. It
+supports learning semantic relations from focused supervision, including
+definitions. It does **not** establish the best SHR checkpoint: its relation
+is chiefly noun IS-A, whereas SHR includes devoted businesses and activities.
+Its taxonomy results also include tuned edge thresholds and graph processing,
+so they are not evidence of naturally consistent raw pair decisions.
+
+[TaxoInstruct](https://aclanthology.org/2025.findings-acl.167/)
+shows that jointly learning parents and siblings improves Llama-2-based
+taxonomy expansion and related tasks. However, generating a parent within an
+existing taxonomy differs from judging two independently established topics.
+Its tree-oriented construction experiments also leave the project's
+multi-parent setting unresolved. These papers favor considering a language
+model with relation supervision; they do not justify importing their taxonomy
+rules or selecting an old specialized checkpoint over a newer foundation.
+
+### Hard semantic inference versus ordinary classification
+
+[Pushing the boundary on Natural Language Inference](https://arxiv.org/html/2504.18376v1)
+trains Qwen2.5 models on hard ANLI cases using reasoning and reinforcement
+learning. Its 7B/14B/32B trained models score 61.83/63.58/71.75 on ANLI round 3.
+This is evidence that difficult semantic decisions can benefit from capacity
+and inference-time reasoning, even when the answer has only three classes.
+The comparisons do not control for all pretraining differences, and generated
+reasoning is part of the procedure. These scores cannot be assigned to an
+SHR label head, or used to declare today's encoders inferior.
+
+[Ettin](https://arxiv.org/html/2507.11412v1)
+provides the cleaner architecture comparison: matched encoder/decoder models
+from 17M to 1B parameters, with encoders stronger on classification. Its 400M
+and 1B encoders obtain 91.3 and 91.8 MNLI accuracy. This supports an encoder
+experiment, but it does not compare them with modern 4–31B instruction or
+decision models on SHR-like scope rules. The 1B encoder received 667B training
+tokens, rather than the 400M model's 2T; size alone does not summarize their
+training. [Released checkpoints](https://huggingface.co/jhu-clsp/ettin-encoder-1b)
+use the ModernBERT architecture and are practical classifier foundations.
+
+NLI tuning is not uniformly beneficial. The
+[ModernCE author's comparison](https://huggingface.co/dleemiller/ModernCE-large-nli)
+reports ANLI round 3 accuracy of 49.25% for tasksource ModernBERT-large-nli,
+44.08% after ModernCE's further AllNLI tuning, and 64.0% for the named Laurer
+DeBERTa checkpoint. Those are developer-reported results, not SHR measurements,
+but they are a concrete reason to retain the older adversarial-NLI warm start
+and avoid selecting ModernCE merely because its name or ordinary MNLI score
+looks stronger. The
+[tasksource checkpoint](https://huggingface.co/tasksource/ModernBERT-large-nli/blob/main/config.json)
+has a 2,048-position configuration; it should not inherit the base model's
+advertised context limit without checking.
+
+## Decision-trained students: promising, with different evidence
+
+| Checkpoint | Training and output | Implication for SHR |
+| --- | --- | --- |
+| [Kev-9B](https://huggingface.co/jaredpalmer/kev-9b) | Qwen3.5-9B-Base plus LoRA and option-scoring heads; public task labels and generated policy, rule and missing-evidence cases. | Best initial compact decision hypothesis. Supplied option descriptions suit five relations; policy scope is relevant. Continued task training is supported. |
+| [Kev-27B v2](https://huggingface.co/jaredpalmer/kev-27b) | Full-weight tuning of Qwen3.8-27B, followed by blending with v1; 145,840 records and a pointer head. | A serious larger warm start, rather than restricting decision models to 4–9B. Corpus disclosure is partial. |
+| [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) | Qwen3.5-9B instruct plus LoRA; 2,676 synthetic training records; scores answer-letter logits. | Relevant contrastive restrictions, and no separate classifier head required. Narrower supervision and a 2,048-token training/serving contract. |
+| [Mapika decider-4b](https://huggingface.co/Mapika/decider-4b) | Qwen3.5-4B-Base; broad decision training followed by hard-case LoRA; answer-letter scoring. | Plausible cheap student. v2.1 improves some hard families but does not dominate earlier versions on every held-out panel. |
+| [AutoTrust JEV-9B](https://huggingface.co/autotrust/JEV-9B) | Qwen3.5-9B instruct, LoRA and a decision head distilled from closed Jev probabilities. | Useful alternative; fidelity to Jev is not evidence of correctness under SHR. It can preserve teacher errors. |
+| [GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide) | Gemma 4 26B-A4B-it plus a decision adapter/head; previously JEV-Gemma4-26B-A4B, with the same weights. | A relevant Gemma warm start. Its headline 62.48 Decision Index mixes direct decisions and adaptive reasoning; do not treat it as a one-pass score. |
+
+Kev-9B's hard-policy gains coexist with essentially unchanged broad transfer
+between its releases. Kev-27B v2 improves its trained skill families markedly,
+but its locked out-of-domain comparison with v1 is slightly lower and its
+all-14-dataset breadth gain has a confidence interval spanning zero. Relevant
+specialization is a reason to test, not an assurance of universal improvement.
+
+The [Qwen3.5-9B-Base release](https://huggingface.co/Qwen/Qwen3.5-9B-Base)
+is a pretraining checkpoint, distinct from Qwen3.5-9B instruct. Kev uses the
+former; Nimble uses the latter. A matched warm-start comparison must preserve
+that difference. An untuned Base model's failure to follow the full prompt
+would not establish its quality after supervised SHR training.
+
+Nimble's synthetic holdout scores 90.12% versus its untuned 9B foundation's
+66.36%, but spans just six source families. More usefully, its
+[separate human-labeled public suite](https://github.com/bespokelabsai/nimble/blob/main/docs/PUBLIC_BENCHMARKS.md)
+reports 85.3% on a 299-item MultiNLI subset, 82.8% on PAWS and 76.6% on
+VitaminC. Candidate-order sensitivity remains unmeasured there. This is credible
+semantic-decision evidence, but not a matched SHR-tuning comparison with Kev
+or Qwen.
+
+[AlexWortega/openjev](https://huggingface.co/AlexWortega/openjev)
+is another NLI-based Qwen warm start. Its v5 disclosure explicitly includes
+both train and test portions of several popular benchmarks. Their reported
+scores therefore cannot establish generalization for that checkpoint. Its
+generic decision interface also evaluates options separately, which would
+repeat input work for SHR's five labels. Neither property prevents future
+SHR-specific tuning, but both lower its priority.
+
+## Foundations: quality, knowledge and the cost of reasoning
+
+[Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B)
+and the larger Gemma 4 models are quality references because SHR combines
+language, factual identification and explicit rule application. Qwen's broad
+instruction benchmark is encouraging, but much of its release evidence concerns
+coding and agents. This is a suitability inference, not direct evidence that it
+is the best containment model. The repository already has a fine-tuning path
+and SP preparation evidence for the three larger pilot foundations.
+
+The [Gemma 4 study](https://arxiv.org/html/2607.02770v1)
+reports MMLU-Pro scores of 77.2/82.6/85.2 for 12B/26B-A4B/31B, and BBEH
+53.0/64.8/74.4. These support a capacity prior within the family; reasoning-mode
+scores do not predict direct label accuracy. The 26B model retains all experts
+in memory despite lower active computation. E4B likewise has more total
+parameters than its effective-size name suggests, so it is not a straightforward
+4B memory comparison.
+
+[gpt-oss-20b](https://developers.openai.com/api/docs/models/gpt-oss-20b)
+has 21B total/3.6B active parameters;
+[gpt-oss-120b](https://developers.openai.com/api/docs/models/gpt-oss-120b)
+has 117B total/5.1B active. Both are fine-tunable open-weight reasoning models.
+They deserve consideration for knowledge and rule-heavy failures. The
+[official 20B fine-tuning example](https://developers.openai.com/cookbook/articles/gpt-oss/fine-tune-transfomers)
+uses LoRA on an H100 and dequantizes the base. That recipe alone proves neither
+120B fit nor fast training on GB10. Their reasoning strengths also must not be
+credited to an untested no-reasoning head.
+
+Models screened but given lower initial priority:
+
+| Family | Reason to consider later |
+| --- | --- |
+| [Ministral 3 14B](https://huggingface.co/mistralai/Ministral-3-14B-Instruct-2512) | Independent compact foundation with instruction/reasoning variants. Its published comparisons emphasize broad chat, knowledge and reasoning rather than pair containment. Useful if Qwen/Gemma share systematic failures. |
+| [Mistral Small 4](https://huggingface.co/mistralai/Mistral-Small-4-119B-2603) | 119B total, 6.5B active; optional reasoning and an Axolotl tuning example. Larger memory and unmeasured GB10 training cost make it an escalation candidate. |
+| [GLM-4.7-Flash](https://huggingface.co/zai-org/GLM-4.7-Flash) | 30B-A3B alternative; no located SHR-like tuned comparison makes it preferable to the initial foundations. |
+| [LFM2.5-8B-A1B](https://huggingface.co/LiquidAI/LFM2.5-8B-A1B) | 8.3B total/1.5B active, with LoRA tuning support. Interesting cost alternative, but the publisher identifies knowledge-heavy questions without retrieval as a weakness; SHR sometimes needs that knowledge. |
+| [Nemotron 3 Nano 4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-4B-BF16) | Reasoning-capable hybrid foundation and NeMo tuning support; NVIDIA Open Model License, distinct from Apache. Exact GB10 kernels and direct-decision quality need verification. |
+| [Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next) | Larger total capacity with sparse active computation, but additional architecture/offload complexity and no demonstrated SHR advantage. |
+| [GLM-5.3-Flash](https://huggingface.co/zai-org/GLM-5.3-Flash), [DeepSeek-V4-Flash-0731](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731) | Current large sparse foundations, rather than assuming the older Flash releases are their latest models. Their total checkpoint scale adds substantial local/offload or rental cost without direct SHR evidence; lower priority for this MVP. |
+| [EuroBERT 2.1B](https://huggingface.co/EuroBERT/EuroBERT-2.1B) | Larger multilingual encoder if the first encoder comparison exposes a capacity or language gap. Its multilingual benchmark strength alone does not establish an English SHR advantage. |
+| [T5Gemma 2](https://arxiv.org/html/2512.14856v1), [LLM2Vec](https://arxiv.org/abs/2404.05961) | Alternative encoder representations; additional conversion/training work without direct SHR evidence. Jointly classify the pair rather than substituting cosine similarity for containment. |
+| [MiniCheck](https://huggingface.co/bespokelabs/Bespoke-MiniCheck-7B), [GLiClass](https://huggingface.co/knowledgator/gliclass-modern-large-v3.0) | Claim support and supplied-label classification provide useful data ideas. Neither task supplies SHR's directional, context-sensitive topic relation directly. |
+
+## Relation-only output does not require a new architecture
+
+The smallest change to a language-model training path is to predict one verified
+single-token code and map it to an SHR relation. A language-model forward pass
+already produces that token's scores. A five-class head also uses one forward
+pass and avoids unnecessary vocabulary output, but introduces a new training,
+checkpoint and serving contract. The latter is justified by measured benefit,
+not by comparing it against verbose explanation generation.
+
+[SecJev](https://arxiv.org/html/2610.03073v1)
+provides a useful controlled check: after domain tuning, its 4B decision model
+scores 94.48 macro-F1 versus 94.34 for a matched single-token generative model;
+reported latency is 109.1 versus 116.9 ms. Specialization produces much larger
+gains than this interface difference. Its security-domain results do not
+forecast SHR accuracy or training-data requirements.
+
+A relation-only final answer is also compatible with internal reasoning. Begin
+by measuring direct decisions; use bounded reasoning diagnostically on the
+same difficult cases if necessary. A systematic improvement would distinguish
+missing inference computation from an unsuitable foundation. It would not
+automatically authorize an adaptive cascade or justify reasoning on every
+production pair. Teacher reasons can remain diagnostic material without being
+mandatory student output.
+
+Encoders trained to implement a fixed task can take the pair entries directly,
+with the rules learned through SHR-specific supervision. This is a different
+input contract from prompting an untuned model with v26 and its examples. The
+named [DeBERTa configuration](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli/blob/main/config.json)
+has 512 positions, so it cannot simply receive the full v26 prompt. Nimble's
+2,048-token contract also needs an actual token-length check. Preserve every
+entry and all subject/context text; reject overlength inputs rather than
+truncate them. Record any instruction shortening separately from model changes.
+If real merged pairs exceed DeBERTa's budget, prefer the longer-context encoder
+rather than introduce a context-selection step solely to fit it.
+
+## GB10 path and whole-process cost
+
+The user's GB10 is the preferred path for anything that trains quickly there;
+96GB is not a model requirement. Memory fit and training speed are separate.
+Dense parameter count, active expert count and theoretical FLOPS cannot supply
+a reliable wall-clock forecast for short pair training.
+
+[Unsloth's actual DGX Spark guide](https://unsloth.ai/docs/blog/fine-tuning-llms-with-nvidia-dgx-spark-and-unsloth)
+reports roughly 68GB unified memory for gpt-oss-120b QLoRA, and demonstrates
+gpt-oss-20b reinforcement learning locally. Its four-hour, 1,000-step game
+example is not a forecast for SHR supervised fine-tuning, but it rules out
+discarding 120B merely because of the old GPU limit.
+
+An [independent GB10 decision experiment](https://morethanamachine.com/posts/jev-style-decisions-dgx-spark/)
+ran both ModernCE and Qwen3.5-4B. Its encoder's short-request latency was much
+lower, but the WANLI evaluation overlaps upstream training source groups and
+the paired accuracy interval spans zero. It establishes local runtime
+plausibility, not an SHR quality winner or a demonstrated training duration.
+
+For a subsequently authorized pilot, use the local path first for encoders
+and compact LoRA students. Verify the exact model, ARM64/Blackwell kernels,
+forward/backward, checkpoint reload and intended sequence lengths before
+calling training fast. Measure a representative training segment and extrapolate
+the actual proposed example count. A larger model that passes the same local
+time/fit check should use GB10 too; rental is conditional on measured need and
+separate spending approval.
+
+The construction algorithm determines how many pairs SHR sees. No proposed
+evaluation or deployment should score every possible pair in the full corpus.
+For Q unique comparisons, total model work includes Q times the instructions,
+pair entries and any reasoning tokens; merged nodes can enlarge each input.
+Report batch throughput and full hierarchy build time as well as isolated
+latency. Historical one-entry diagnostics do not establish future merged-input
+bounds. Avoid five separately rendered NLI questions when one five-way
+comparison can use the same information.
+
+## Why SHR and SP can choose different students
+
+SP ASv6.100 consumes a complete post and generates a variable-length hierarchy
+of subjects, contexts and numbering. SHR consumes already supplied topics and
+chooses one relation. The existing SP pilot compares Qwen3.8-27B, Gemma 4 31B-it
+and Gemma 4 26B-A4B-it; no winner has been selected. Its long generation and
+token bounds are not requirements for an SHR student.
+
+SHR can therefore select a classifier or decision-trained foundation that
+cannot generate SP's output. Conversely, sharing a foundation can reduce
+deployment and fine-tuning complexity if both tasks meet their quality and
+whole-process cost requirements. The right sequence is independent task
+evaluation followed by a comparison of that benefit with maintaining another
+model. Neither sharing one model nor splitting the models is settled here.
+
+## Most useful next evidence while the prompt is unfinished
+
+The next proposed task is an **SHR semantic evaluation specification** built
+around stable, user-established distinctions, with disputed cases tracked
+separately. It would make the comparison useful before training labels are
+frozen. Preparing it, implementing SHR training and running models are not
+included in this research task.
+
+The eventual comparison should:
+
+1. Cover all five labels and report each confusion separately. A false parent
+   creates a different hierarchy error from missed equivalence or excessive
+   `uncertain`; overall agreement hides those differences.
+2. Include field/activity/product distinctions, named entities, explicit
+   restrictions, context-only restrictions, conflicting merged entries and
+   lexical overlap with no containment. Use minimal changes that should flip
+   the relation, and context paraphrases that should preserve it.
+3. Keep reversed pairs, aliases, repeated questions and source-post variants
+   together when splitting. Hold out semantic families and source posts where
+   feasible; report overlap of common broad topics rather than pretending
+   every repeated heading is removable leakage.
+4. Compare warm starts with their actual corresponding original checkpoints
+   after the same SHR training. Different foundation sizes, instruct/base
+   versions, reasoning budgets and training examples must remain visible.
+5. Measure direction reversal, entry-order invariance and conditional
+   equivalence/transitivity obligations. Consistency alone cannot prove correct
+   meanings. Do not repair graph outputs to conceal model contradictions.
+6. Check teacher labels semantically. Existing diagnostic outputs, including
+   contradictory relation sequences, are evidence about failures rather than
+   ready-made gold labels.
+
+This addresses the main remaining uncertainty: whether the inexpensive
+decision/encoder students preserve complete topic scope on unseen meanings.
+It also keeps label generation from freezing the unfinished prompt's mistakes
+into the distilled model.
+
+## Checkpoint identities inspected
+
+These are Hugging Face repository revisions resolved on October 5, not adopted
+production pins. Published results retain their authors' checkpoint versions
+and protocols; not every benchmark used the current revision. Shortened
+revisions below identify the inspected state; the
+full metadata and cached source material are ignored research artifacts under
+`target/shr-student-research-v1/sources/`. Model labels describe families, not
+exact text-only parameter or training-memory totals.
+
+| Repository | Inspected revision |
+| --- | --- |
+| `jaredpalmer/kev-9b` | `db029f08b290` |
+| `jaredpalmer/kev-27b` | `af0e6d551bdc` |
+| `bespokelabs/Bespoke-Nimble-9B` | `bd792f44ec8e` |
+| `Qwen/Qwen3.5-9B` | `c20223623576` |
+| `Qwen/Qwen3.5-9B-Base` | `68c46c4b3498` |
+| `Qwen/Qwen3.8-27B` | `1d4bf0f2ff60` |
+| `google/gemma-4-12B-it` | `707f0a3b8a3c` |
+| `google/gemma-4-31B-it` | `842da3794eaa` |
+| `google/gemma-4-26B-A4B-it` | `4d7ae4984b7d` |
+| `jhu-clsp/ettin-encoder-1b` | `befd76be43d0` |
+| `jhu-clsp/ettin-encoder-400m` | `7662476d60ab` |
+| `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` | `b3546ea6b034` |
+| `tasksource/ModernBERT-large-nli` | `ca476cb923a8` |
+| `Mapika/decider-4b` | `eb5fbdfc9448` |
+| `jaredpalmer/kev-4b` | `6cfce5c2fa4b` |
+| `openai/gpt-oss-20b` | `6cee5e81ee83` |
+| `openai/gpt-oss-120b` | `b5c939de8f75` |
+| `autotrust/GEV-26B-Decide` | `7c89590ead08` |
+
+The leading Qwen/Gemma/decision foundations identify Apache-2.0 licenses;
+Ettin and the named DeBERTa identify MIT. In particular, Gemma 4's
+[current linked license](https://ai.google.dev/gemma/docs/gemma_4_license)
+is Apache-2.0; older Gemma licensing must not be assumed for these checkpoints.
