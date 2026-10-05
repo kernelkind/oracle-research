@@ -1,0 +1,16 @@
+{
+  "model": "jhu-clsp/ettin-encoder-400m",
+  "revision": "7662476d60abb071a5bd319c9f3074f3072c062d",
+  "architecture": "encoder",
+  "method": "full",
+  "lengths": [256, 512, 2048],
+  "train_batch_size": 1,
+  "inference_batch_sizes": [1, 8],
+  "steps": 4,
+  "warmup_steps": 1,
+  "repetitions": 5,
+  "learning_rate": 0.00002,
+  "memory_budget_gib": 8,
+  "reserve_gib": 8,
+  "seed": 17
+}

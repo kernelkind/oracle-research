@@ -169,3 +169,28 @@ language-model path when memory permits. The 400M check does not replace the
 1B quality candidate. Kev's custom head needs its own validated training path;
 a Qwen backbone timing cannot be reported as a tested Kev implementation.
 Larger quality controls remain candidates regardless of a 96 GB threshold.
+
+The reusable capacity command is:
+
+```bash
+python3 -m sse_multivector.distillation_benchmark \
+  --config sse_multivector/distillation/benchmark-ettin400m.json \
+  --output target/shr-student-prep-v1/ettin400m
+```
+
+Pinned configurations also cover Ettin-1B full/LoRA, the DeBERTa warm start,
+and Qwen3.5-9B-Base LoRA. The benchmark admits runs only when available system
+memory exceeds its declared budget plus reserve, caps this process's CUDA
+allocator, and checks the reserve between workloads. Encoder full training uses
+FP32 parameters/AdamW states with BF16 autocast; these numbers must not be
+described as a BF16-parameter or quantized training run. LoRA uses rank 16.
+The five-column DeBERTa output replaces its original NLI head, as SHR requires
+five relations. Causal-LM loading and LoRA reuse `distillation_run`; it needs
+the existing FLA CUDA dependency before a Qwen training check can run.
+
+Every accepted run requires finite nonzero gradients, checkpoint hash recording,
+reload-logit agreement and finite five-column batched outputs. Failed admission
+does not download or load model weights. Benchmark output includes cold-load,
+warmup/steady optimization, save/reload and inference timings separately.
+Initial GPU validation remains in progress; source/config availability does
+not establish that a model has passed these checks.
