@@ -12,7 +12,7 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: relationship judgments remain inconsistent; construction reuse is being tested.\nVector: the ASv6.100 comparison is being prepared; training has not started.\nNeither approach is accepted or selected."
+      "description": "Highest priority: produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: relationship judgments remain inconsistent; construction reuse is being tested.\nVector: the ASv6.100 comparison is being prepared; training has not started.\nNeither approach is accepted or selected."
     },
     {
       "id": "03",
@@ -40,7 +40,7 @@
       "track": "model",
       "title": "Choose model through larger fine-tuning pilot",
       "status": "WAITING",
-      "description": "Compare three trained students with their untuned baselines for subject quality, hierarchies, runtime and cost to choose the distilled model.\nSubjects-only pilot data is ready; GPU training has not started. Runtime preparation, hardware checks and local semantic evaluation remain.\nConfirm weight-release permission before selection."
+      "description": "Second priority: complete the SP pilot to inform all future fine-tuning decisions, comparing three trained models with their untuned baselines for quality, runtime and cost.\nSubjects-only pilot data is ready; GPU training has not started. Final checks and local semantic evaluation remain.\nConfirm weight-release permission before selection."
     },
     {
       "id": "07",

@@ -174,8 +174,9 @@ node; task 27 implements and validates ordering using that definition. Both
 are paused as nice-to-have work, as directed October 5. Node sorting no longer
 blocks broader hierarchy validation, teacher selection or pilot training data.
 The 04 → 27 dependency remains within that optional effort; 27 → 03 is helpful,
-not required. The immediate priorities are a useful hierarchy and SP/SHR
-fine-tuning; SHR fine-tuning still needs validation in a generated hierarchy.
+not required. The first priority is actually good hierarchies; the second is
+the SP pilot, which informs all future fine-tuning decisions. SHR fine-tuning
+still needs validation in a generated hierarchy.
 The October 2 finite audit froze the experimental PPv35-post-meaning-v1 method
 for a browsing build: full-post prominence against a fixed saved node
 meaning, multiplied by SP subject-plus-context relevance to the existing title;

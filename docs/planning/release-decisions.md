@@ -38,6 +38,13 @@ timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
+**Current priorities — October 5:** first, generate actually good hierarchies;
+second, complete the SP distillation pilot to inform all future fine-tuning
+decisions. The two efforts can proceed in parallel. SHR fine-tuning remains
+conditional on validating an SHR-built hierarchy; it is not a current training
+commitment. Node sorting is deferred as nice-to-have work. The release
+requirements, deadline and task readiness remain unchanged.
+
 **Task-summary convention approved October 1:** the graph is a planning view,
 not an experiment log. Every task description gives a brief outcome, current
 state and real blockers or start conditions. Keep model settings, experiment
@@ -474,9 +481,9 @@ or other additional outputs is undecided. Existing prominence experiments and
 frozen informal-pilot settings are unchanged; no production method is adopted.
 Both tasks are now paused as nice-to-have work. The user clarified that the
 deferral applies to node sorting, not just prominence. Establishing a useful
-automated hierarchy and fine-tuning subject generation and SHR relationship
-decisions take priority; SHR fine-tuning still depends on validation in a
-generated hierarchy. Sorting no longer gates hierarchy validation, teacher
+automated hierarchy and completing the SP pilot take priority; that pilot
+informs all future fine-tuning decisions. SHR fine-tuning depends on validation
+in a generated hierarchy. Sorting no longer gates hierarchy validation, teacher
 selection, pilot training data or release. Retain 04 → 27 within the optional
 effort, change 27 → 03 to helpful, and remove 04 → 05 and 04 → 17. The saved
 candidate and review evidence remain intact; when to resume sorting is open.
