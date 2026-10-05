@@ -1210,25 +1210,30 @@ an illustrative $1.60/hour gives $58–65. Brief generation plus a single long-c
 decode step is a projection, not measured full-output throughput. No full-pilot
 spending is authorized. Preparation's preliminary total was $3.26.
 
-**Full student prompt (approved October 3):** students use the complete subject
-prompt, including all worked examples, during training, untuned baselines,
-checkpoint validation and final testing. Context and memory settings must
-accommodate that full prompt, the complete note and the answer allowance.
-**The SP remains under development; no pilot SP version is selected.** The
-full-prompt requirement does not select ASv6.98 or any other experimental version.
-Finalize context/memory settings and the launch estimate against the chosen
-pilot version before running it.
+**Subject prompt frozen for the pilot (October 4):** the user selected the full
+[ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md),
+including all worked examples, for training, untuned baselines, checkpoint
+validation and final testing. Source SHA-256:
+`76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d`.
+This settles the pilot SP version. Record that version and hash in future
+pilot data/package manifests. Historical ASv6.48 packages and results stay frozen.
 
-**Input audit (October 3):** prep used **ASv6.48**. Experimental **ASv6.98**
-was checked only to diagnose input lengths. Offline actual-tokenizer checks on
-the existing 100 notes find
-ASv6.98 prompts of 8,066–8,507 Qwen tokens and 7,921–8,375 Gemma tokens.
-All 100 prompts plus the 4,096-token output allowance exceed the configured
-8,192-token context. Pairing them with old teacher answers solely for length
-checking also exceeds that limit for 79/80 Qwen and 74/80 Gemma training examples.
-This demonstrates a configuration mismatch, not a measured GPU memory failure.
-The exact full prompt version, context/memory settings and actual data must be settled before
-freezing pilot inputs; the batched estimate above does not price ASv6.98.
+**ASv6.100 input audit (October 4):** offline native tokenizer checks on the
+existing 80 training / 20 held-out notes find 9,210–9,651 Qwen prompt tokens and
+9,041–9,495 Gemma prompt tokens. With the existing 4,096-token output allowance,
+the largest totals are 13,747 / 13,591. The 8,192-token preflight rejects all
+three students; a 16,384-token context passes token checks on this diagnostic
+collection. Old teacher answers were used solely to measure lengths, not as
+pilot labels. Actual pilot notes/ASv6.100 labels still need their own checks.
+
+The current 88-GiB memory policy predicts one-note requirements of
+88.32–91.50 GiB for Qwen, 110.70–115.27 GiB for dense Gemma and 75.27–77.55 GiB
+for Gemma MoE. It rejects Qwen and dense Gemma even at batch size one.
+These are planner calculations, not measured GPU requirements or proof of OOM.
+Increasing the context limit alone does not establish that the worker can run.
+Context/memory settings and the launch estimate still need updating for the full
+ASv6.100 prompt; the ASv6.48 cost reference above does not price this pilot.
+
 The source corpus exists, but pilot note selection and teacher labels remain
 pending. Teachers, review details, validation/test counts, final-test collection
 arrangement and the specific rental remain open. Paid API labels/reviews are

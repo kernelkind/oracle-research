@@ -10,7 +10,7 @@ preparation, training and evaluation, approved October 2.
 **GPU selected:** one **96GB RTX PRO 6000** for preparation and the pilot.
 Keep each complete model on that GPU and run the three students sequentially.
 
-The execution flow below is a draft. Prompt versions, remaining output format details,
+The execution flow below is a draft. Remaining output format details,
 execution settings, and review rubric remain open.
 
 **Local preparation → separate paid GPU preparation → Vast
@@ -51,16 +51,15 @@ Freeze shared training, validation, and final test notes, checked teacher
 answers, prompts, model revisions, and training settings. Keep authors and duplicates
 within one split.
 
-**Full student prompt, approved October 3:** use the complete SP chosen for the
-pilot, including all instructions and worked examples, in training and every
-evaluation. **The SP remains under development; no pilot version is selected.**
-Finalize context, memory and the launch estimate against that chosen version.
+**SP frozen October 4:** use full
+[ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md),
+including every worked example, in training and every evaluation. The technical
+plan records its source hash.
 
-**Prompt-length check, October 3:** prep used **ASv6.48**. The audited experimental
-**ASv6.98** needs about 7,900–8,500 input tokens on the existing notes, before
-answers. Every note exceeds the current 8,192-token limit when its 4,096-token
-output allowance is included. This is a diagnostic for ASv6.98, not a pilot SP
-selection or a final context/memory requirement.
+**Input check:** the existing notes need up to **13,747 tokens** including the
+current output allowance. A 16K context passes local token checks, but the old
+memory policy rejects Qwen and dense Gemma even at batch size one. Context,
+memory settings and the pilot estimate remain to be finalized for ASv6.100.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
 and 1,000**, are approved. **100 validation** and **200 final test** notes remain
@@ -182,9 +181,9 @@ final comparison:
   transfer fees. At an illustrative $1.60/hour, this is **$58–65**.
 
 These are projections from brief generation and one-token decode measurements,
-not a measured full pilot or a spending cap. They **do not price ASv6.98**:
-that prompt exceeds the tested configuration. Actual pilot data, exact prompt version
-and final-test collection arrangement must be settled before a launch estimate.
+not a measured full pilot or a spending cap. They **do not price the frozen
+ASv6.100 pilot**. Update the memory/throughput setup, check actual pilot data,
+and settle final-test collection before a launch estimate.
 Teacher labels and local review assume the existing subscription; paid APIs add cost.
 
 Completed prep's preliminary charges are **$3.26**, including the failed attempt;

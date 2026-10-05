@@ -58,15 +58,14 @@ Subject evaluation batching is implemented: each batch's size follows token
 lengths and a frozen per-GPU memory budget, with separate saved raw/parsed
 answers. Subjects-only training now continues through retained checkpoints,
 with disposable merged evaluation and full training-state restoration. The
-preparation now supplies measured cache bounds. The student uses the full subject
-prompt, including all worked examples, in training and every evaluation,
-approved October 3. The SP remains under development; no pilot version is selected.
-The conditional ASv6.48 projection
-is 36–40 hours / $51–58 at the prep rate, including overhead and headroom.
-The audited experimental ASv6.98 exceeds the tested 8,192-token configuration
-on every existing note when the output allowance is included. These checks do
-not select ASv6.98. Final context/memory settings and the launch estimate depend
-on the chosen pilot SP; that cost reference does not price ASv6.98.
+preparation now supplies measured cache bounds for the old ASv6.48 inputs.
+The user froze full ASv6.100 for the pilot on October 4, including all worked
+examples in training and every evaluation. Native length checks on the existing
+notes pass a 16K context, with up to 13,747 tokens including output allowance.
+The old memory rule rejects Qwen and dense Gemma even at batch size one;
+these are calculated requirements, not observed GPU failures. Context/memory
+settings and the launch estimate need updating for ASv6.100. The conditional
+ASv6.48 projection of 36–40 hours / $51–58 does not price the frozen pilot.
 The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 

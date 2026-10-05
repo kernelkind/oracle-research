@@ -781,11 +781,11 @@ The node-sorting workstream determines the scoring method and whether it needs
 additional teacher/model outputs. Neither prominence nor mask-level scoring is
 prescribed here; existing prominence experiments retain their own frozen inputs.
 
-Use the subject prompt validated by the current extraction work for this pilot.
-The eventual mask task also requires its validated mask prompt; the superseded
-ASv6.23 / MPv3.5 commitment does not select either prompt. Freeze the exact prompt versions,
-teacher model settings, output format and reviewed labels for each controlled
-comparison. This plan does not select successor prompt versions. Preserve the
+The user froze full ASv6.100 for the larger subject-only pilot on October 4,
+as recorded below. The eventual mask task requires its separately validated
+mask prompt; the superseded ASv6.23 / MPv3.5 commitment does not select that prompt.
+Freeze teacher model settings, output format and reviewed labels for each
+controlled comparison. Preserve the
 per-note subject hierarchies, raw annotations and review findings for diagnosis;
 do not silently mix outputs from different annotation policies.
 
@@ -1480,13 +1480,15 @@ that the pilot is scientifically sufficient. Its amount and the final-training
 reserve remain open; one complete training pass is approved. No fixed pilot/rest
 ratio has been adopted.
 
-**Full student prompt, approved October 3:** use the complete subject prompt,
-including every worked example, for training, untuned baselines, all checkpoint
-validations and the final test. Size context and memory for the full prompt,
-complete note and allowed answer. **The SP remains under development; no pilot
-SP version is selected.** This full-prompt decision does not select ASv6.98 or
-any other experimental version. Final context/memory settings and the launch
-estimate depend on the chosen pilot SP.
+**Subject prompt frozen October 4:** use full
+[ASv6.100](subject-prompt-goal-v1/asv6.100/ASv6.100.md), including every worked
+example, for training, untuned baselines, checkpoint validation and the final test.
+Source SHA-256:
+`76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d`.
+Future pilot data/package manifests must pin this version and hash. Historical
+ASv6.48 inputs and results remain immutable evidence. Actual pilot notes,
+ASv6.100 teacher labels, context/memory settings and the launch estimate remain
+pending; prompt selection alone does not complete those prerequisites.
 
 ### Conditional subjects-only batched cost reference — October 3
 
@@ -1495,7 +1497,7 @@ batch shapes under **ASv6.48** and historical complete/truncated subject-answer
 lengths. It assumes 1,000 distinct training notes per student, one continuing
 pass, the proposed 100 validation / 200 final test notes, thinking off, and
 only the selected student's final baseline/trained comparison. It does not price
-the longer experimental ASv6.98 prompt or authorize spending.
+the frozen full ASv6.100 pilot or authorize spending.
 
 | Component | Projected GPU hours | Counted work |
 | --- | ---: | --- |
@@ -1542,43 +1544,60 @@ samples and a single incremental step cannot guarantee full-output throughput.
 New prompts/data may reduce batch sizes, increase training time, or need a
 changed configuration. Reprice after those inputs are selected.
 
-**Prompt-length audit, October 3:** offline native chat-template/tokenizer checks
-used all 80 existing subject training examples and 20 held-out prompts. ASv6.98
-is an experimental draft, not an adopted pilot prompt. Old teacher answers were
-paired with it only for this length check; no new labels or quality results were
-produced and no pilot input was frozen.
+**ASv6.100 input audit, October 4:** offline native chat-template/tokenizer checks
+used all 80 existing subject training examples and 20 held-out notes. The full
+prompt matches the frozen source hash above. Old teacher answers were paired
+with ASv6.100 solely for length checks; they are not adopted as pilot labels.
+No new model calls, paid resources or pilot-note selection occurred.
 
 | Token measure | Qwen3.8-27B | Both Gemma students |
 | --- | ---: | ---: |
-| ASv6.98 prompt alone, existing 100 notes | 8,066–8,507 | 7,921–8,375 |
-| Longest prompt plus 4,096-token output allowance | 12,603 | 12,471 |
-| Longest training sequence with old teacher answer | 11,806 | 11,644 |
-| Existing training examples exceeding 8,192 | 79/80 | 74/80 |
+| Full ASv6.100 prompt, existing 100 notes | 9,210–9,651 | 9,041–9,495 |
+| Longest prompt plus 4,096-token output allowance | 13,747 | 13,591 |
+| Longest diagnostic training sequence with old teacher answer | 12,950 | 12,764 |
+| Diagnostic training examples exceeding 8,192 | 80/80 | 80/80 |
 | Prompts plus allowance exceeding 8,192 | 100/100 | 100/100 |
 
-The existing worker therefore rejects that diagnostic input under its current
-8,192-token setting. This is a configuration mismatch, not proof of an actual
-GPU memory failure. Prep tested training lengths only through 6,531 Qwen /
-6,440 Gemma tokens and cached generation through 7,328 / 7,245 tokens.
-Freeze the exact full prompt version and establish appropriate context/memory settings before
-freezing or launching. Do not truncate prompts, notes or labels to bypass this gate.
-The raw source corpus exists; pilot note selection and selected-teacher labels
-remain pending. The existing 100-note annotations establish no broader coverage.
+All three native 8,192-token preflights reject this input, as expected. All three
+16,384-token preflights pass **token checks only** on the diagnostic collection.
+That does not establish GPU fit, sufficient output allowance for future teacher
+labels, or the context needed by the eventual pilot notes. Do not truncate the
+full prompt, complete notes or teacher answers to force them into old bounds.
+
+Using the saved planner memory constants and existing 88-GiB budget:
+
+| Student | Calculated memory for one existing note | Current policy |
+| --- | ---: | --- |
+| Qwen3.8-27B | 88.32–91.50 GiB | Rejects even one note |
+| Gemma 4 31B | 110.70–115.27 GiB | Rejects even one note |
+| Gemma 4 26B-A4B | 75.27–77.55 GiB | One-note estimate is within budget |
+
+The arithmetic reproduces every saved prep batch estimate exactly. These are
+planner estimates, not observed GPU allocations or proof of OOM. Changing only
+`max_length` leaves the worker's Qwen/dense memory rejection intact. Examine the
+actual attention/cache workspace and update context/memory settings locally
+before another hardware preparation. Preserve the selected one-96GB-GPU design,
+complete BF16 models and full prompt; no new runtime configuration is approved
+by these diagnostic calculations. The old hardware checks tested training only
+through 6,531 Qwen / 6,440 Gemma tokens and generation caches through 7,328 / 7,245.
+Actual pilot data and the updated settings require their own validation.
+The raw corpus exists; pilot note selection and selected-teacher labels remain pending.
 
 At the proposed split sizes, teacher annotation requires **1,300 subject calls**,
 with training labels shared across checkpoints. There are **1,800 validation
-reviews plus 400 winner final reviews**. Prompt/model selection and actual token
-lengths are required to price labels/reviews. The existing subscription route
+reviews plus 400 winner final reviews**. Teacher/reviewer selection, the review
+prompt and actual token lengths are required to price labels/reviews. The existing subscription route
 assumes zero incremental API cash; paid API work would be additional and requires
 separate admission/approval.
 
-Evidence: `target/distillation-pilot-v1/batched-cost-and-input-audit-20261003/`
-contains `calculate.py`, `batched-cost.json` with source hashes, and
-`prompt-length-audit.json`, and `production-preflight-check.json`. All three
-ASv6.48 native preflights passed; all three ASv6.98 diagnostics were rejected
-for exceeding 8,192 tokens, as expected. Inputs are native prep receipts under
-`subject-preparation-20261003-v2/` (Qwen) and `subject-preparation-20261003-v3/`
-(Gemmas), plus saved subject answers from `launch-20260929-v2/`.
+Evidence: `target/distillation-pilot-v1/asv6.100-input-audit-20261004/` contains
+`tokenizer-audit.json` with the frozen prompt hash/native preflights and
+`memory-policy-audit.json` with verified planner arithmetic. The earlier
+`batched-cost-and-input-audit-20261003/` retains the reproducible historical
+ASv6.48 cost calculation and superseded ASv6.98 length diagnostic. Native prep
+receipts are under `subject-preparation-20261003-v2/` (Qwen) and
+`subject-preparation-20261003-v3/` (Gemmas), plus saved subject answers from
+`launch-20260929-v2/`.
 The older hardware/runtime scenarios below do not price this subjects-only recipe.
 
 ### GPU alternatives and duration — October 1, provisional
