@@ -86,7 +86,8 @@ with a slower 80-hour / $239 sensitivity case. Older workstation timings are
 proxies; actual server-card throughput remains unmeasured. The draft allows
 200 GB inbound and 60 GB outbound. The user approved private image publication
 and a **$285 combined prep→pilot budget** on October 5. The exact tested image is published and verified private.
-GPU measurements and local semantic grading remain pending. There is no automatic
+GPU startup is in progress for the two-GPU preparation at $2.9889/hour including storage. GPU prep and local semantic grading remain
+pending. There is no automatic
 time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;

@@ -14,7 +14,8 @@ All three prep checks and all three baselines must pass before training starts.
 The collection and recovery flow is implemented locally. The combined prep→pilot
 inputs are frozen and match the rebuilt, tested VM runtime. The user approved
 private image publication and a **$285 combined prep→pilot budget** on October 5.
-The image is published and verified private. GPU measurements and the local review rubric remain open.
+The image is published and verified private. GPU startup is in progress; all prep and baseline gates remain required. GPU measurements and the local review
+rubric remain open.
 
 **October 5 two-GPU planning estimate:** combined prep and pilot roughly
 **40–66 hours / $122–197** at a saved **$2.99/hour** quote for two 96GB/600 W

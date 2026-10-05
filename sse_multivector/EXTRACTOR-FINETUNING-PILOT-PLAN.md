@@ -2072,7 +2072,9 @@ the frozen package, `freeze-verification.json`, test logs and a copied cost repo
 The user approved **$285** for private publication and the combined rental.
 The frozen plan allows **90 hours at up to $3.10/hour**, plus **$2.60** transfer
 allowance: $281.60 in planning quantities, within the approval. The 90 hours and
-cost thresholds are review parameters, not automatic stop/deletion limits. The GPU stage has not started.
+cost thresholds are review parameters, not automatic stop/deletion limits.
+The recorded rental rate was $2.9889/hour. Private image startup is underway under
+continuous observation; all prep and baseline integrity gates remain required.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous
 observation continues through complete local retrieval/review and explicit
