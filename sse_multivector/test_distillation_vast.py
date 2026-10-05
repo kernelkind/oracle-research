@@ -22,6 +22,27 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_two_gpu_package_rejects_a_one_gpu_offer(self):
+        settings, offer = quote()
+        settings['worker_timeout_seconds'] = None
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            paths = []
+            for name in ('first', 'second'):
+                path = root / (name + '.json')
+                write_json(path, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                                 'model': 'example/model', 'revision': 'a'*40})
+                paths.append(path)
+            inputs = root / 'inputs'
+            deploy.prepare(paths, inputs, through='preflight', gpu_assignments={'first': 0, 'second': 1})
+            image = settings['image_repository'] + '@sha256:' + '4'*64
+            with self.assertRaisesRegex(ValueError, 'requires 2 GPUs'):
+                vast.make_spec(settings, offer, inputs, image)
+            settings['offer_equals']['num_gpus'] = offer['num_gpus'] = 2
+            spec = vast.make_spec(settings, offer, inputs, image)
+            self.assertEqual(spec['offer']['num_gpus'], 2)
+
     def test_launch_settings_select_proxy_and_preserve_explicit_direct_override(self):
         settings, offer = quote()
         with self.subTest(default='proxy'):

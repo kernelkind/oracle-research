@@ -19,6 +19,11 @@ FAKE_COMMAND = reference_tests.FAKE_COMMAND.replace(
     '        if state.get("fail_ssh_config"):\n'
     '            print("local SSH configuration rejected", file=sys.stderr)\n'
     '            raise SystemExit(255)\n'
+    '        raise SystemExit(0)\n').replace(
+    'if tool == "nvidia-smi":\n',
+    'if tool == "nvidia-smi":\n'
+    '    if "--query-gpu=index,uuid,utilization.gpu,memory.used,memory.total" in args:\n'
+    '        print("0, GPU-fixture, 37, 2048, 98304")\n'
     '        raise SystemExit(0)\n')
 
 

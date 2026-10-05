@@ -31,10 +31,10 @@ copier retries. Mechanical progress and GPU/memory/disk observations are saved
 locally. Older attempts and reviews cannot authorize deletion of newer work.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
-Use one 96GB RTX PRO 6000, with each complete
-model on that GPU and the three students running sequentially. The user approved
-proceeding with the $5 preparation on October 3. The tested image is now published
-and verified private. A refreshed compatible 600 W quote is $1.4522/hour,
+Use two 96GB RTX PRO 6000 cards, with a complete model on each. Gemma dense
+runs on GPU 0; Qwen followed by Gemma MoE runs on GPU 1. The earlier separate
+preparation was approved for $5 on October 3; its image was published and
+verified private. A refreshed compatible 600 W quote is $1.4522/hour,
 with $4.41 planned for three hours including transfer allowances, within the
 approved $5. The $7 request is withdrawn. Its first creation request was rejected
 with HTTP 400; complete inventory recovery confirmed no instance and no charge.  The specific provider explanation was not retained. That rejected creation ran no GPU checks. The user approved revised selection filters and proceeding
@@ -76,12 +76,15 @@ candidates use 20,480-token context / 10,240-token output, with no node-count
 cap. The worker enforces efficient SDPA and uses training-only Liger fused loss.
 Pinned-container integration and SSH checks passed locally; GPU kernels, fit
 and throughput still need verification on ASv6.100. The combined prep→pilot
-input package is now frozen and matches the tested VM runtime. Native preflight
-passed for all three pilot and paired prep configurations. A current 600 W quote
-is $1.44/hour including 300 GB storage. Conditional arithmetic projects prep
-at $1.50–3 and the combined run at 78–127 hours / $114–184; the technical plan
-records the assumptions and slower sensitivity. The draft allows 200 GB inbound
-and 60 GB outbound. Image publication and launch spending remain open;
+two-GPU input package is frozen and matches the rebuilt VM, which passed
+91 tests with one optional native-tokenizer check skipped. The 149 controller
+regressions passed, including both GPUs' identified utilization/memory observations. All six
+pilot/prep configurations and their data are byte-identical to the passed native
+preflights. A saved two-card 96GB/600 W RTX PRO 6000 Server quote is $2.99/hour
+including 300 GB storage. Conditional arithmetic projects 40–66 hours / $122–197,
+with a slower 80-hour / $239 sensitivity case. Older workstation timings are
+proxies; actual server-card throughput remains unmeasured. The draft allows
+200 GB inbound and 60 GB outbound. Image publication and launch spending remain open;
 there is no automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;

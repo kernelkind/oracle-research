@@ -7,18 +7,20 @@ learning from teacher answers improve quality, and what does it cost?
 hierarchy. Generate no masks for this pilot. Thinking stays **off** throughout
 preparation, training and evaluation, approved October 2.
 
-**GPU selected:** one **96GB RTX PRO 6000** for preparation and the pilot.
-Keep each complete model on that GPU and run the three students sequentially.
+**Two-GPU execution approved October 5:** keep each complete student on one
+**96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
+All three prep checks and all three baselines must pass before training starts.
 
 The collection and recovery flow is implemented locally. The combined prep→pilot
-inputs are frozen and match the tested VM runtime. Image publication, spending
+inputs are frozen and match the rebuilt, tested VM runtime. Image publication, spending
 approval, GPU measurements and the local review rubric remain open.
 
-**October 5 planning estimate:** prep about **$1.50–3**; combined prep and pilot
-roughly **78–127 hours / $114–184** at a current **$1.44/hour** quote, including
-storage and transfer allowances. These are arithmetic scenarios using actual
-ASv6.100 lengths and older GPU timings; prep must establish new throughput.
-The technical plan records the assumptions and a slower sensitivity case.
+**October 5 two-GPU planning estimate:** combined prep and pilot roughly
+**40–66 hours / $122–197** at a saved **$2.99/hour** quote for two 96GB/600 W
+RTX PRO 6000 Server cards, including storage and transfer allowances. A slower
+sensitivity case gives **80 hours / $239**. These use older workstation timings;
+prep must establish actual server-card fit and throughput. Prep alone is projected
+at $2.30–5.30 and is already included in the combined estimate.
 
 **Local rehearsal → Vast prep → baselines/training/validation and sealed test
 answers on the same rental → verified retrieval → local validation review →
@@ -153,7 +155,7 @@ gradients, and optimizer state. LoRA dropout 0, frozen biases, standard initiali
 **Training loss:** average prediction error over all teacher-answer and native
 turn-ending tokens in each update, excluding prompts and padding. No extra
 answer or note weighting; longer answers contribute more tokens within an update.
-Block membership, the seed value, and remaining model settings stay open.
+Block membership, seed **17**, and the model settings are frozen in the candidate configurations.
 Record loss, resource telemetry, and actual example coverage at each stage.
 This compares
 the tested configurations under a modest budget; one pass is not established as

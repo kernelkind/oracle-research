@@ -17,6 +17,19 @@ from test_generalization import FAKE_COMMAND
 
 
 class CommandWorkloadTest(unittest.TestCase):
+    def test_hardware_status_reports_both_gpus_with_identity(self):
+        self.freeze()
+        observation = subprocess.CompletedProcess([], 0,
+            stdout=b'0, GPU-first, 99, 72000, 97887\n1, GPU-second, 85, 68000, 97887\n')
+        with mock.patch.object(self.module, 'completed_process', return_value=observation) as command:
+            hardware = self.module.hardware_status(self.context)
+        devices = hardware['gpu']['devices']
+        self.assertEqual([gpu['index'] for gpu in devices], [0, 1])
+        self.assertEqual([gpu['uuid'] for gpu in devices], ['GPU-first', 'GPU-second'])
+        self.assertEqual([gpu['utilization_percent'] for gpu in devices], [99, 85])
+        self.assertEqual([gpu['memory_used_bytes'] for gpu in devices], [72000*1024**2, 68000*1024**2])
+        self.assertIn('index,uuid,utilization.gpu,memory.used,memory.total', command.call_args.args[0][1])
+
     def test_remote_json_preserves_continuation_reason_as_one_shell_argument(self):
         import shlex
         self.freeze()

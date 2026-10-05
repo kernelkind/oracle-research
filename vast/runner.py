@@ -2532,24 +2532,38 @@ def hardware_status(context: Context) -> dict[str, object]:
         "available_bytes": usage.free,
     }
     try:
+        fields = "utilization.gpu,memory.used,memory.total"
+        if context.command_workload:
+            fields = "index,uuid," + fields
         observation = completed_process(
             [
                 "nvidia-smi",
-                "--query-gpu=utilization.gpu,memory.used,memory.total",
+                "--query-gpu=" + fields,
                 "--format=csv,noheader,nounits",
             ]
         ).stdout.decode("utf-8", errors="strict").strip()
         rows = [line.strip() for line in observation.splitlines() if line.strip()]
-        if len(rows) != 1:
+        if not rows or not context.command_workload and len(rows) != 1:
             raise ValueError("expected exactly one GPU")
-        values = [int(value.strip()) for value in rows[0].split(",")]
-        if len(values) != 3 or any(value < 0 for value in values):
-            raise ValueError("GPU metrics are invalid")
-        gpu: dict[str, object] = {
-            "utilization_percent": values[0],
-            "memory_used_bytes": values[1] * 1024 * 1024,
-            "memory_total_bytes": values[2] * 1024 * 1024,
-        }
+        devices = []
+        for row in rows:
+            parts = [value.strip() for value in row.split(",")]
+            identity = {}
+            if context.command_workload:
+                if len(parts) != 5 or not parts[1].startswith("GPU-"):
+                    raise ValueError("GPU identity is invalid")
+                identity = {"index": int(parts[0]), "uuid": parts[1]}
+                parts = parts[2:]
+            values = [int(value) for value in parts]
+            if len(values) != 3 or any(value < 0 for value in values):
+                raise ValueError("GPU metrics are invalid")
+            devices.append({**identity, "utilization_percent": values[0],
+                "memory_used_bytes": values[1] * 1024 * 1024,
+                "memory_total_bytes": values[2] * 1024 * 1024})
+        if context.command_workload and (len({d["index"] for d in devices}) != len(devices)
+                or len({d["uuid"] for d in devices}) != len(devices) or any(d["index"] < 0 for d in devices)):
+            raise ValueError("GPU identities are not distinct")
+        gpu: dict[str, object] = devices[0] if len(devices) == 1 else {"devices": devices}
     except (OperationError, UnicodeDecodeError, ValueError) as error:
         gpu = {"error": f"GPU observation unavailable: {error}"}
     return {"disk": disk, "gpu": gpu}

@@ -10,6 +10,9 @@ from sse_multivector.distillation_run import read_json, write_json
 def make_spec(settings, offer, package, image):
     check_offer(settings, offer)
     job = verify_package(package)
+    required_gpus = max(job.get('gpu_assignments', {}).values(), default=0) + 1
+    if offer['num_gpus'] < required_gpus:
+        raise ValueError(f'package requires {required_gpus} GPUs')
     if not re.fullmatch(re.escape(settings['image_repository']) + r'@sha256:[a-f0-9]{64}', image):
         raise ValueError('supply the published image registry digest')
     if (job['timeout_seconds'] is None and settings['worker_timeout_seconds'] is not None or

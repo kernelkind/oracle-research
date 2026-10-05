@@ -727,15 +727,17 @@ This pilot supplies subject evidence for model selection; it cannot establish
 mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
 
-**October 2 GPU choice confirmed by the user:** use one **96GB RTX PRO 6000**
-for preparation and the larger pilot. The subsequently approved paired flow
-continues on the same rental when prep passes. Keep the complete student model
-on that GPU; run the three students sequentially. Prior NVLink alternatives are
-research evidence, not the selected execution configuration. The subjects-only
-scope, one continuing pass, approved training recipe and dynamic evaluation
-batching remain unchanged. Numeric batching budgets, generation limits, the
-specific card edition/power setting and rental offer, maximum charge and launch
-remain open. This hardware choice does not authorize a paid commitment.
+**October 5 two-GPU execution approved:** implement and test concurrent execution
+locally. Keep each complete student on one **96GB RTX PRO 6000**: GPU 0 runs
+Gemma dense; GPU 1 runs Qwen followed by Gemma MoE. The paired prep→pilot flow
+uses the same rental, with all three prep results and all three baselines verified
+before any main training. Preserve the subjects-only scope, one continuing pass,
+training recipe, dynamic per-GPU batching and 1,000/100/200 splits. GPU assignment
+is frozen in the package; independent subprocesses receive separate CUDA device
+bindings. A failed candidate blocks queued work while other active work finishes
+and is preserved. Explicit stopping reaches both workers. No automatic timeout,
+budget kill or deletion. The live card edition/offer, GPU fit/timing, maximum
+charge and launch remain open; local implementation approval is not spending approval.
 
 **October 2 dynamic subject evaluation batching approved:** before each batch,
 tokenize waiting notes and choose their count from a frozen per-GPU memory
@@ -831,8 +833,8 @@ labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
-Block membership, seed value, remaining model settings and validation/test
-counts remain open. Loss was subsequently approved below. This corrects the
+Block membership, seed 17, model settings and the 100/200 validation/test
+counts are now frozen by the subsequent approvals. Loss was subsequently approved below. This corrects the
 intended design. The subjects-only continuation is now implemented locally;
 execution and fit on the selected GPU still need preparation evidence.
 No rental, model calls, or spending is authorized by this correction.
@@ -1429,24 +1431,31 @@ the longest example after gradient accumulation with restored Adam state. Fresh
 main adapters retain eight examples per update and 125 updates per student.
 The 300 GB storage draft allows 200 GB inbound / 60 GB outbound, covering the
 approximately 27.25 GB checkpoint payload and a possible second retrieval copy.
-A compatible current 600 W quote is $1.44/hour including storage. Conditional
-arithmetic gives prep $1.50–3 and combined prep/pilot 78–127 hours / $114–184;
-a quadratic training sensitivity gives 151 hours / $219. These assumptions use
+The two-GPU update supersedes the single-card launch package and estimate.
+A saved pair of 96GB/600 W RTX PRO 6000 Server cards costs $2.99/hour including
+storage. Conditional scheduling gives 40–66 hours / $122–197; a quadratic
+training sensitivity gives 80 hours / $239. These assumptions use
 actual native token lengths and older GPU timings, with teacher answer lengths
 as generation proxies; they are not measured ASv6.100 throughput or guarantees.
 The financial draft is not approval. Image publication, GPU checks, maximum
 spending and local semantic grading remain open. No rental or publication occurred.
-The technical plan records hashes, quote evidence and the calculation.
+The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
+149 shared-controller regressions passed. Real concurrent CPU workers verified
+prep→pilot, early copies from both workers, checkpoint continuation and complete
+retrieval/review. All six native configurations/data are unchanged from their
+passed preflights. The tested export and runtime hashes match the new frozen
+package. This is automation evidence; server-card CUDA execution/fit/speed remain
+open. The technical plan records hashes, quote evidence and the calculation.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subjects,
 hierarchy and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
-advantage. The larger pilot's remaining training settings, remaining output
-format details, sorting-related output requirements and spending amounts remain open. The
-informal subject/mask settings and $25 approval above apply only to the current
-short experiment.
+advantage. The larger pilot's numeric recipe, full ASv6.100, splits and
+collection settings are frozen. Live hardware/offer, spending and local semantic
+review remain open. The informal subject/mask settings and $25 approval above
+apply only to the completed preliminary experiment.
 
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 already identifies Muse. A later [12-note diagnostic](../../sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)

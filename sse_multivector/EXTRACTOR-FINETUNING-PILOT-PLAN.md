@@ -12,8 +12,8 @@ subject discovery and hierarchy only. One teacher hierarchy per training note
 yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
 mask labeling, training or generation belongs to this pilot. The combined
 preliminary experiment remains historical evidence; the eventual mask-based
-release task below has its separate scope. One 96GB RTX PRO 6000 is selected;
-the specific offer and spending remain open. Thinking stays off throughout
+release task below has its separate scope. Two 96GB RTX PRO 6000 cards are
+selected for local execution preparation; the live offer and spending remain open. Thinking stays off throughout
 preparation, training and evaluation, approved October 2.
 
 **Primary comparison approved October 5:** compare all three final 1,000-note
@@ -979,10 +979,11 @@ also needs checks for biases such as rewarding verbosity, documented in
 
 ### GPU preparation cases and checks — draft
 
-**GPU choice confirmed October 2:** use one **96GB RTX PRO 6000** for
-preparation and the larger pilot, holding each complete student model on that
-GPU and running the three students sequentially. The specific card edition/power
-setting, rental offer, preparation scope/cases and maximum charge remain open.
+**Two-GPU execution approved October 5:** keep each complete student on one
+**96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
+All preparation results and baselines are verified before training. Matched prep
+cases and numeric settings are frozen; the live card edition/offer, actual GPU
+fit/throughput and maximum charge remain open.
 Use the same pinned models and approved subject-only adapter recipe as the
 pilot. Prepare locally and rehearse production paths in the VM before booking.
 The worker now supports subjects-only preparation/training, expert adapters,
@@ -1172,8 +1173,8 @@ do not establish their optimality for this task. Physical batching must retain
 the approved eight examples total per update. Physical groups may vary with
 memory while preserving update membership, example order and the update-level
 supervised-token denominator. One model replica can accumulate eight one-example
-groups on the selected single 96GB RTX PRO 6000. Generation limits, numeric
-batching budgets and remaining runtime choices stay open; merged BF16
+groups on its assigned 96GB RTX PRO 6000. Generation limits and numeric
+batching budgets are frozen in the candidate configurations; merged BF16
 checkpoint evaluation/resume was approved October 2. All preparation,
 training and evaluation use thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
@@ -1240,9 +1241,10 @@ restoration; legacy configurations retain the replacement sampler.
 There are **three main continuing fine-tunes**, each with five approved
 milestone checkpoints, alongside untuned baselines, setup checks and any
 separately justified confirmation work. The 1,000-note comparison is included.
-The selected single 96GB RTX PRO 6000 runs the students sequentially, with each
-later milestone continuing from its preceding checkpoint. Validation/test
-counts and spending remain open.
+Two 96GB RTX PRO 6000 cards run independent students concurrently: Gemma dense
+on one, Qwen then Gemma MoE on the other. Each later milestone continues its
+preceding checkpoint. The 100 validation / 200 final test counts are approved;
+spending remains open.
 
 ## Evaluation and decisions
 
@@ -1977,69 +1979,95 @@ transfer draft are now frozen below; image publication and spending approval
 remain open. These controls cannot guarantee recovery of unexfiltrated work after
 sudden host/storage loss.
 
-### Frozen paired package and conditional cost — October 5
+### Frozen two-GPU package and conditional cost — October 5
+
+The approved local update assigns Gemma dense to GPU 0 and Qwen followed by
+Gemma MoE to GPU 1. Each subprocess holds one complete model and receives its
+own `CUDA_VISIBLE_DEVICES` binding. The shared controller runs one process per
+card, preserves inherited device masks, and records active candidates and their
+GPU assignments. All three prep verifications finish before baselines; all three
+complete validation/test baselines finish before any main training.
+A failure blocks queued work while other active work finishes and is preserved.
+An explicit stop reaches both child process groups. Hardware observations identify
+each GPU by index/UUID with separate utilization and memory metrics; single-GPU
+GTE observation behavior is retained.
 
 The shared `distillation_deploy prepare` workflow froze the combined package at
-`target/distillation-pilot-v1/combined-asv6.100-20261005-v2/package/`, with manifest
-SHA-256 `1a61f7d0d8cd948b7aaaa3383e4915c8d015472f0e557ae4f45e594ce6b328c4`.
-It preserves the approved three candidates, full ASv6.100, the 1,000/100/200
-splits and training recipe. All six native-tokenizer pilot/prep preflights passed.
-The three main training plans match exactly: each note appears once, with 125
-updates and the five approved validation milestones. No timeout is configured.
+`target/distillation-pilot-v1/two-gpu-implementation-20261005/package/`, with manifest
+SHA-256 `26d9727104c40cde72707a59ce08d3c04f7847724768a45401f4c91cd93ca764`.
+The reusable assignment file is `sse_multivector/distillation/subject-gpu-assignments.json`.
+All six pilot/prep configurations and datasets are byte-identical to the passed
+October 5 native preflights. Token encoding/training code is unchanged. Each main
+plan uses every note once, with 125 updates and the five approved milestones.
+Only deployment, Vast workload validation and shared hardware observation changed.
+No timeout is configured; the old single-card package remains frozen evidence.
 
 Matched prep selects three existing training notes: two median-length examples
 and the longest complete example for every candidate. Its first partial update
 initializes Adam state on one example. Restore that checkpoint, then accumulate
 gradients on another example before training on the longest example in the
-second partial update. This tests its activations alongside restored optimizer
-state and already-accumulated gradients. These adapters are discarded before the
-fresh main runs, which retain eight examples per update. Brief generation uses
-one validation note per candidate with a 64-token limit. Production preparation independently
-checks full native caches covering all validation/test batch shapes, and actual
+second partial update. These adapters are discarded before the fresh main runs,
+which retain eight examples per update. Brief generation uses one validation
+note per candidate with a 64-token limit. Production preparation independently
+checks full native caches covering validation/test batch shapes and actual
 CUDA fused-loss/adapter-gradient agreement. No reserved test note is used in prep.
-Actual fit and speed remain unmeasured.
+Actual concurrent hardware fit and speed remain unmeasured.
 
-All runtime hashes match the tested VM export from the final integrity audit.
-The image archive SHA-256 is
-`1557f799bbb4b1aa37293bf8a32e5ce62519ff4d5e7f27bc7264feaa0d8e3ed6`;
-this is an archive hash, not a registry digest. The new image is not published.
+The rebuilt VM passed **91 tests**, with **one optional native-tokenizer check
+skipped** because no tokenizer package was supplied. The unchanged six native
+preflights are bound by exact config/data hashes. **149 shared-controller** and
+**30 host package/data** tests also passed. The CPU VM does not emulate GPU
+kernels. Its real concurrent workers verified checkpoint restoration, continuation,
+progressive copies from both candidates, all required raw/parsed/test responses,
+and complete local retrieval/review; missing or changed data blocks review.
+The first rehearsal exposed a timing assumption in its test: the tiny main run
+finished before a main checkpoint copy, although both baselines and prep
+checkpoints had already copied. The corrected test verifies those early seals
+from both workers and all main checkpoints at final retrieval. No transfer
+runtime repair was needed. The complete rehearsal then passed.
 
-The current read-only quote, offer **49942717**, provides the selected one
-96GB/600 W RTX PRO 6000 WS for **$1.4444/hour including 300 GB storage**.
-The input/checkpoint payload projection is **169.72 GB models + 27.25 GB
-checkpoints**; 300 GB leaves about 103 GB before image, responses and logs.
-The draft allows **200 GB inbound / 60 GB outbound**, about **$0.76** at this
-quote's transfer rates. Outbound covers two copies of the checkpoint payload
-plus output/metadata overhead. Transfers overlap compute; quoted hourly storage
-is not added again. Prices can change; no offer was reserved. See
-[Vast pricing](https://docs.vast.ai/guides/instances/pricing).
+All 15 frozen runtime source/config hashes match the stopped VM snapshot at
+`target/distillation-vm-clean-deployment/attempt-1791242606321467393/`.
+The exported image archive SHA-256 is
+`b9ffbcecb8c47cc35364a1970f23899dcb7fd258765926e4b44ab511ff3c0b69`;
+this is an archive hash, not a registry digest. The image is unpublished.
 
-| Arithmetic scenario | Training hours | Validation hours | Test hours | Combined hours, with headroom | Cost at current quote |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Linear training scaling, old decode latency | 13.87 | 28.77 | 19.13 | 78.46 | $114 |
-| Linear training scaling, cache-length-scaled decode | 13.87 | 51.51 | 34.29 | 127.09 | $184 |
-| Quadratic training sensitivity, cache-length-scaled decode | 33.34 | 51.51 | 34.29 | 151.43 | $219 |
+A read-only quote, offer **48926607**, supplies two **96GB/600 W RTX PRO 6000
+Server** cards for **$2.9889/hour including 300 GB storage**. It has about
+387 GB host RAM, 32 effective CPU cores, driver 580.173.02 and reliability 0.9966.
+The model/checkpoint projection remains **169.72 GB + 27.25 GB**; 300 GB leaves
+about 103 GB before image, responses and logs. Allow **200 GB inbound / 60 GB
+outbound**, about **$0.77** at the saved transfer rates. No offer is reserved.
+The server cards' throughput has not been measured; the calculation conditionally
+uses the old 600 W workstation measurements. Shared CPU/disk contention is also
+unmeasured. Preserve the same batches and recipe on each GPU.
 
-These are conditional arithmetic scenarios, not confidence intervals, upper
-bounds or measured ASv6.100 throughput. Training extrapolates the old two-update
-timings using actual native sequence totals. Generation uses the actual batch
-layouts and each batch's longest teacher answer as a proxy; student answer
-lengths are unknown. New efficient attention and fused loss can change speed.
-Count all **1,800 validation + 1,200 test** responses once, with no training
-restarts, masks, thinking evaluation or separate winner rental. A shared 1–2 hour
-lifecycle allowance includes downloads, small prep, loads/save/merge/restore and
-final retrieval. Apply 25% headroom once to the combined hours, then add transfer
-fees once. At $1.60/hour, the same scenarios are approximately $126/$204/$243.
-Prep alone has a **0.5–1.5 hour / $1.50–3** planning allowance at the current
-quote, already included in combined lifecycle; do not add it again.
+| Arithmetic scenario | One-GPU hours | Two-GPU hours, with headroom | Conditional cost at two-card quote |
+| --- | ---: | ---: | ---: |
+| Linear training scaling, old decode latency | 78.46 | 40.43 | $122 |
+| Linear training scaling, cache-length-scaled decode | 127.09 | 65.71 | $197 |
+| Quadratic training sensitivity, cache-length-scaled decode | 151.43 | 79.60 | $239 |
 
-Evidence and calculation: `target/distillation-pilot-v1/combined-asv6.100-20261005-v2/`
-contains `freeze-verification.json`, `native-preflight.json`, `offers.json`,
-`cost-estimate.json` and the read-only `calculate.py`. The launch settings remain
-a financial draft without an `approved_maximum_usd`; no reservation, rental or
-publication was performed. No automatic timeout, budget kill or deletion is
-enabled. Publication and maximum spending approval precede a launch; GPU prep
-must validate execution/fit, and its measured timings should revise the estimate.
+These are scheduling scenarios, not measured ASv6.100 throughput, confidence
+intervals or runtime bounds. Compute each model's baseline and trained stages;
+for each stage use the longer of dense Gemma versus Qwen plus Gemma MoE, keeping
+the global baseline gate. Add shared lifecycle time once and 25% headroom once,
+then transfer fees once. Generation uses each batch's longest teacher answer
+as a proxy; actual student lengths and new-kernel speed are unknown. Count all
+**1,800 validation + 1,200 test** responses once. No training restarts, duplicated
+responses, masks, thinking evaluation or separate winner rental are added.
+Prep alone is projected at **0.5–1.5 hours / $2.30–5.30**, already included in
+combined lifecycle. Current two-card scenarios give about **1.9×** speedup.
+
+Evidence: `target/distillation-pilot-v1/two-gpu-review-20261005/` contains saved
+quotes and `schedule-comparison.json`; `two-gpu-implementation-20261005/` contains
+the frozen package, `freeze-verification.json`, test logs and a copied cost report.
+The financial draft proposes **90 hours at up to $3.10/hour**, plus **$2.60**
+transfer allowance: **$281.60 maximum**, not approved. The 90 hours and cost
+thresholds are review parameters, not automatic stop/deletion limits. No
+`approved_maximum_usd`, reservation, rental or publication exists for this launch.
+Publication and spending approval precede a rental; prep must establish actual
+execution/fit and refine throughput. No automatic time/budget kill or deletion.
 
 ### Historical conditional subjects-only batched cost reference — October 3
 
@@ -2201,14 +2229,14 @@ schedule.
 There are three student training paths, each with dependent
 200/400/600/800/1,000-note stages. The earlier nine-independent-training-job
 packing does not apply.
-The selected pilot runs the three students sequentially on one 96GB RTX PRO
-6000. Each complete model stays on that GPU. Preserve the same per-response
+The selected pilot uses two 96GB RTX PRO 6000 cards, with a complete model on
+each: Gemma dense on GPU 0, Qwen then Gemma MoE on GPU 1. Preserve the same per-response
 generation settings and complete call accounting; dynamic batching controls
 how many independent notes that GPU evaluates together.
 
 Teacher labeling and local semantic review/selection add elapsed time outside
 the rental. The historical price comparison does not reserve a specific offer
-or authorize spending. Prepare and test the selected single-GPU launch
+or authorize spending. Prepare and test the selected two-GPU launch
 configuration locally before renting.
 
 Offer evidence is saved in `target/distillation-pilot-v1/cost-estimate-20261001/`;
