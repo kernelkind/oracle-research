@@ -177,8 +177,17 @@ def preflight(tokenizer, data, config):
         if length + config["max_new_tokens"]["subjects"] > config["max_length"]:
             raise ValueError("evaluation input exceeds generation allowance")
         evaluation_max = max(evaluation_max, length)
-    return {"training": stats, "evaluation_notes": len(data.get("full_evaluation", data["evaluation"])),
-            "evaluation_max_prompt_tokens": evaluation_max, "enable_thinking": False}
+    result = {"training": stats, "evaluation_notes": len(data.get("full_evaluation", data["evaluation"])),
+              "evaluation_max_prompt_tokens": evaluation_max, "enable_thinking": False}
+    if "test" in data and "preparation" not in config:
+        maximum = 0
+        for row in data["test"]:
+            length = len(tokenizer.encode(generation_prompt(tokenizer, row["messages"]), add_special_tokens=False))
+            if length + config["max_new_tokens"]["subjects"] > config["max_length"]:
+                raise ValueError("test input exceeds generation allowance")
+            maximum = max(maximum, length)
+        result.update(test_notes=len(data["test"]), test_max_prompt_tokens=maximum)
+    return result
 
 
 def parse_subjects(raw):
@@ -437,7 +446,7 @@ def generate_subject_batches(model, tokenizer, rows, config, directory):
             yield indices[offset], rows[indices[offset]]
 
 
-def evaluate(model, tokenizer, data, config, directory):
+def evaluate(model, tokenizer, data, config, directory, *, split="evaluation"):
     """Persist each completed call, including malformed answers, without retries."""
     directory = Path(directory)
     if (directory / "complete.json").exists():
@@ -448,10 +457,12 @@ def evaluate(model, tokenizer, data, config, directory):
     tasks = config.get("evaluation_tasks", ["subjects", "mask"])
     if tasks not in (["subjects"], ["subjects", "mask"]):
         raise ValueError("invalid evaluation tasks")
+    if split not in ("evaluation", "test") or split == "test" and tasks != ["subjects"]:
+        raise ValueError("invalid evaluation split")
     if "subject_batching" in config:
-        rows = generate_subject_batches(model, tokenizer, data["evaluation"], config, directory)
+        rows = generate_subject_batches(model, tokenizer, data[split], config, directory)
     else:
-        rows = enumerate(data["evaluation"])
+        rows = enumerate(data[split])
 
     def call(path, messages, task):
         if path.exists():
@@ -966,12 +977,12 @@ def subject_result(note_id, answer, max_subjects=None):
     return result
 
 
-def subject_stage_summary(directory, data):
+def subject_stage_summary(directory, data, *, split="evaluation"):
     directory = Path(directory)
     if not verify_saved(directory):
         raise ValueError("subject evaluation hash mismatch")
     results = read_json(directory / "results.json")
-    expected = [row["note_id"] for row in data["evaluation"]]
+    expected = [row["note_id"] for row in data[split]]
     if [row["note_id"] for row in results] != expected:
         raise ValueError("subject response accounting differs")
     plan = read_json(directory / "subject-batches.json")
@@ -982,7 +993,7 @@ def subject_stage_summary(directory, data):
     for batch_index, batch in enumerate(plan["batches"]):
         name = f"subjects-{batch_index:04}.json"
         receipt = read_json(directory / name)
-        selected = [data["evaluation"][i] for i in batch["indices"]]
+        selected = [data[split][i] for i in batch["indices"]]
         if (receipt["batch"] != batch or receipt["note_ids"] != [r["note_id"] for r in selected]
                 or receipt["messages"] != [r["messages"] for r in selected]
                 or receipt["input_tokens"] != [plan["inputs"][i]["tokens"] for i in batch["indices"]]
@@ -993,7 +1004,7 @@ def subject_stage_summary(directory, data):
         note = directory / f"note-{index:04}"
         raw = read_json(note / "subjects.json")
         parsed = read_json(note / "subjects-result.json")
-        if (raw["note_id"] != row["note_id"] or raw["messages"] != data["evaluation"][index]["messages"]
+        if (raw["note_id"] != row["note_id"] or raw["messages"] != data[split][index]["messages"]
                 or parsed != {key: row[key] for key in ("note_id", "subjects", "errors")} or row["masks"]):
             raise ValueError("subject response accounting differs")
         if not verify_saved(note):
@@ -1010,6 +1021,38 @@ def subject_stage_summary(directory, data):
             "returned_subjects": sum(len(row["subjects"]) for row in results)}
 
 
+def subject_test_source(output, checkpoint=None):
+    return {"split": "test", "run_manifest_sha256": sha256(output / "manifest.json"),
+            "checkpoint": str(checkpoint.relative_to(output)) if checkpoint is not None else None,
+            "checkpoint_sha256": sha256(checkpoint / "complete.json") if checkpoint is not None else None}
+
+
+def subject_test_summary(output, data, config, checkpoint=None):
+    """Check held-out files mechanically without exposing answers or semantic scores."""
+    directory = output / "test" / (checkpoint.name if checkpoint is not None else "baseline")
+    if read_json(directory / "test-collection.json") != subject_test_source(output, checkpoint):
+        raise ValueError("test collection source differs from required base/checkpoint")
+    summary = subject_stage_summary(directory, data, split="test")
+    plan = read_json(directory / "subject-batches.json")
+    if (plan["policy"] != config["subject_batching"]
+            or plan["max_new_tokens"] != config["max_new_tokens"]["subjects"]):
+        raise ValueError("test generation policy differs")
+    return {"notes": summary["notes"], "outputs": str(directory.relative_to(output))}
+
+
+def collect_subject_test(model, tokenizer, data, config, output, checkpoint=None):
+    directory = output / "test" / (checkpoint.name if checkpoint is not None else "baseline")
+    path = directory / "test-collection.json"
+    source = subject_test_source(output, checkpoint)
+    if path.exists():
+        if read_json(path) != source:
+            raise ValueError("test collection source differs from required base/checkpoint")
+    else:
+        write_json(path, source)
+    evaluate(model, tokenizer, data, config, directory, split="test")
+    return subject_test_summary(output, data, config, checkpoint)
+
+
 def preparation_data(data, config):
     """Select existing complete examples; preparation never repairs teacher data."""
     settings = config["preparation"]
@@ -1022,6 +1065,7 @@ def preparation_data(data, config):
     if settings["max_new_tokens"] > config["max_new_tokens"]["subjects"]:
         raise ValueError("preparation output limit exceeds the subject allowance")
     selected = dict(data)
+    selected.pop("test", None)
     selected["full_train"] = data["train"]
     selected["full_evaluation"] = data["evaluation"]
     for name, key in (("train", "train_note_ids"), ("evaluation", "evaluation_note_ids")):
@@ -1293,6 +1337,7 @@ def run_subject_pilot(config, tokenizer, data, output, through):
     else:
         write_json(plan_path, plan)
     baseline = subject_stage_summary(output / "baseline", data)
+    baseline_test = subject_test_summary(output, data, config) if "test" in data else None
     previous = None
     stages = []
     for milestone in plan["milestones"]:
@@ -1305,7 +1350,9 @@ def run_subject_pilot(config, tokenizer, data, output, through):
             print(f"stage: subject training through {milestone} notes", flush=True)
             checkpoint = train_subject_block(config, tokenizer, data, output, plan, milestone, previous)
         stage = output / "evaluations" / checkpoint.name
-        if not (stage / "complete.json").exists():
+        final_test = "test" in data and milestone == plan["milestones"][-1]
+        if (not (stage / "complete.json").exists() or
+                final_test and not (output / "test" / checkpoint.name / "complete.json").exists()):
             print(f"stage: merged subject evaluation at {milestone} notes", flush=True)
             model = load_model(config, checkpoint)
             verify_adapter(model, checkpoint)
@@ -1314,6 +1361,9 @@ def run_subject_pilot(config, tokenizer, data, output, through):
                 raise ValueError("subject evaluation still contains unmerged adapters")
             try:
                 evaluate(model, tokenizer, data, config, stage)
+                if final_test:
+                    print("stage: reserved final subject test (content sealed)", flush=True)
+                    collect_subject_test(model, tokenizer, data, config, output, checkpoint)
             finally:
                 del model
                 gc.collect()
@@ -1331,6 +1381,9 @@ def run_subject_pilot(config, tokenizer, data, output, through):
             "training": {"examples": len(plan["note_ids"]),
                          "updates": read_json(previous / "training.json")["updates"]},
             "semantic_review": "Pending; saved subject answers require local correctness/coverage review."}
+        if baseline_test is not None:
+            report["test"] = {"review_status": "sealed", "baseline": baseline_test,
+                              previous.name: subject_test_summary(output, data, config, previous)}
         report_path = output / "report.json"
         if report_path.exists() and read_json(report_path) != report:
             raise ValueError("saved subject pilot report differs")
@@ -1416,7 +1469,18 @@ def verify_subject_run(output, data, config, through="report"):
             or first_plan["max_new_tokens"] != config["max_new_tokens"]["subjects"]
             or report["baseline"] != baseline or report["checkpoints"] != stages):
         raise ValueError("subject comparison report differs from saved work")
-    return {"status": "complete", "baseline": baseline, "checkpoints": stages, "training": report["training"]}
+    checked = {"status": "complete", "baseline": baseline, "checkpoints": stages, "training": report["training"]}
+    if "test" in data:
+        final = output / "checkpoints" / f"checkpoint-{plan['milestones'][-1]}"
+        tests = {"review_status": "sealed", "baseline": subject_test_summary(output, data, config),
+                 final.name: subject_test_summary(output, data, config, final)}
+        if (read_json(output / "test/baseline/subject-batches.json") !=
+                read_json(output / "test" / final.name / "subject-batches.json")):
+            raise ValueError("test batching differs from baseline")
+        if report.get("test") != tests:
+            raise ValueError("subject test report differs from saved work")
+        checked["test"] = tests
+    return checked
 
 
 def run(config_path, output, through="report"):
@@ -1529,14 +1593,28 @@ def run(config_path, output, through="report"):
             return
         print("stage: baseline", flush=True)
         baseline_path = output / "baseline" / "results.json"
-        if not (baseline_path.parent / "complete.json").exists():
+        baseline_test = pilot and "test" in data
+        if (not (baseline_path.parent / "complete.json").exists() or
+                baseline_test and not (output / "test/baseline/complete.json").exists()):
             model = load_model(config)
-            baseline = evaluate(model, tokenizer, data, config, output / "baseline")
-            del model
+            try:
+                baseline = evaluate(model, tokenizer, data, config, output / "baseline")
+                if pilot:
+                    subject_stage_summary(output / "baseline", data)
+                if baseline_test:
+                    print("stage: reserved baseline subject test (content sealed)", flush=True)
+                    collect_subject_test(model, tokenizer, data, config, output)
+            finally:
+                del model
+                gc.collect()
+                if config["device"] == "cuda":
+                    torch.cuda.empty_cache()
         else:
             if not verify_saved(baseline_path.parent):
                 raise ValueError("baseline hash mismatch")
             baseline = read_json(baseline_path)
+        if baseline_test:
+            subject_test_summary(output, data, config)
         if through == "baseline":
             if pilot:
                 write_json(output / "baseline-integrity.json", subject_stage_summary(output / "baseline", data))

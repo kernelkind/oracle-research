@@ -212,8 +212,9 @@ peak remains evidence in the learning curve; confirming that earlier version
 on the test notes would require additional inference. Test results do not revise
 the experiment or choose another checkpoint.
 
-Test collection/sealing and its completeness checks still need implementation
-and verification. Actual GPU duration and maximum spending remain open.
+Test collection and completeness checks passed the local VM rehearsal. Separate test
+files stay outside content review; automatic reports expose only their counts
+and locations. Actual GPU fit, duration and maximum spending remain open.
 
 ## Historical conditional batched cost reference — October 3
 

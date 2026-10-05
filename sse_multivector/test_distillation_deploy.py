@@ -13,6 +13,31 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_missing_reserved_baseline_test_blocks_all_candidate_training(self):
+        from sse_multivector import distillation_data
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            splits = root / "splits.json"
+            write_json(splits, {"train": ["0", "1"], "validation": ["2", "3"], "test": ["4", "5"]})
+            prepared = root / "subjects"
+            distillation_data.prepare(root / "source.json", root / "annotations.json", root / "subjects.txt",
+                None, "AS-test", None, 2, "test", prepared, tasks=("subjects",), splits_path=splits)
+            config = root / "first.json"
+            write_json(config, {"data": str(prepared), "model": "org/model", "revision": "a"*40,
+                               "training_milestones": [1, 2], "evaluation_tasks": ["subjects"]})
+            package = root / "package"
+            deploy.prepare([config], package)
+            calls = []
+            def child(command, **kwargs):
+                calls.append(command[-1])
+                return type("Result", (), {"returncode": 0})()
+            with patch.object(deploy, "run_process", side_effect=child), \
+                    patch.object(deploy, "subject_stage_summary", return_value={"notes": 2}):
+                with self.assertRaises(FileNotFoundError):
+                    deploy.execute(package, root / "results")
+            self.assertEqual(calls, ["baseline"])
+
     def test_completion_review_requires_verified_retrieval(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -183,9 +208,10 @@ class SharedSSHTests(unittest.TestCase):
     def test_prep_continues_into_fresh_pilot_and_verifies_retrieved_results(self):
         from sse_multivector.distillation_run import load_data
         root = self.fixture_package('prep-then-pilot', {
-            'training_milestones': [1, 2, 3, 4, 6], 'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'training_milestones': [1, 2, 3, 4], 'batch_size': 1, 'gradient_accumulation_steps': 8,
             'evaluation_tasks': ['subjects'], 'subject_batching': {'budget_bytes': 8*1024*1024,
-                'workspace_bytes': 0, 'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}}, seconds=None)
+                'workspace_bytes': 0, 'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}},
+            seconds=None, test_notes=True)
         paths, preparations = [], []
         for name in ('first', 'second'):
             path = root / (name + '.json')
@@ -193,7 +219,7 @@ class SharedSSHTests(unittest.TestCase):
             config = read_json(path)
             data = load_data(config['data'])
             prep = root / 'prep-configs' / (name + '.json')
-            write_json(prep, {**config, 'training_milestones': [3, 6], 'preparation': {
+            write_json(prep, {**config, 'training_milestones': [2, 4], 'preparation': {
                 'max_new_tokens': 4, 'cache_fill_tokens': 16,
                 'train_note_ids': data['manifest']['train_note_ids'],
                 'evaluation_note_ids': data['manifest']['evaluation_note_ids']}})
@@ -210,7 +236,21 @@ class SharedSSHTests(unittest.TestCase):
         for name in checked['candidates']:
             self.assertEqual(read_json(result / 'preparation' / name / 'report.json')['training']['updates'], 2)
             self.assertEqual(read_json(result / name / 'checkpoints/checkpoint-1/training.json')['updates'], 1)
-            self.assertEqual(read_json(result / name / 'report.json')['training']['updates'], 5)
+            self.assertEqual(read_json(result / name / 'report.json')['training']['updates'], 4)
+            self.assertFalse((result / 'preparation' / name / 'test').exists())
+            self.assertEqual(set(checked['candidates'][name]['test']), {'review_status', 'baseline', 'checkpoint-4'})
+            for stage in ('baseline', 'checkpoint-4'):
+                self.assertEqual(checked['candidates'][name]['test'][stage]['notes'], 2)
+                answers = read_json(result / name / 'test' / stage / 'results.json')
+                self.assertEqual([row['note_id'] for row in answers], ['6', '7'])
+        missing = result / 'first/test/checkpoint-4/note-0001/subjects.json'
+        saved = missing.read_bytes()
+        missing.unlink()
+        with self.assertRaises((ValueError, FileNotFoundError)):
+            deploy.verify_results(package, result)
+        with self.assertRaisesRegex(Exception, 'file set does not match the sealed manifest'):
+            deploy.review_completion(package, root / 'operation')
+        missing.write_bytes(saved)
         report = read_json(result / 'first/report.json')
         report['checkpoints'].pop()
         write_json(result / 'first/report.json', report)
@@ -381,7 +421,7 @@ class SharedSSHTests(unittest.TestCase):
             results = root / 'result.next/work/results'
         return results
 
-    def fixture_package(self, name, changes=None, seconds=180, through='report'):
+    def fixture_package(self, name, changes=None, seconds=180, through='report', test_notes=False):
         root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / name
         root.mkdir(parents=True)
         config = read_json(Path(os.environ['DISTILLATION_TEST_OUTPUT']) / 'config.json')
@@ -389,8 +429,13 @@ class SharedSSHTests(unittest.TestCase):
         if 'training_milestones' in config:
             from sse_multivector import distillation_data
             source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
+            splits = None
+            if test_notes:
+                splits = root / 'splits.json'
+                write_json(splits, {'train': ['0', '1', '2', '3'],
+                                    'validation': ['4', '5'], 'test': ['6', '7']})
             distillation_data.prepare(source / 'source.json', source / 'annotations.json', source / 'subjects.txt',
-                None, 'AS-test', None, 2, 'test', root / 'subject-data', tasks=('subjects',))
+                None, 'AS-test', None, 2, 'test', root / 'subject-data', tasks=('subjects',), splits_path=splits)
             config['data'] = str(root / 'subject-data')
             for key in ('mask_prompt', 'mask_batch_size', 'subject_fraction', 'max_steps', 'save_steps'):
                 config.pop(key)

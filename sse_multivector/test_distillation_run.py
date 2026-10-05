@@ -16,6 +16,23 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_preflight_checks_reserved_test_allowance_without_using_test_in_preparation(self):
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return "".join(m["content"] for m in messages) + ("!" if not kwargs.get("add_generation_prompt") else "")
+            def encode(self, text, **kwargs):
+                return list(text.encode())
+        data = {"train": [{"note_id": "train", "task": "subjects",
+                          "prompt": [{"role": "user", "content": "x"}],
+                          "completion": [{"role": "assistant", "content": "y"}]}],
+                "evaluation": [{"messages": [{"role": "user", "content": "x"}]}],
+                "test": [{"messages": [{"role": "user", "content": "x" * 90}]}]}
+        config = {"max_length": 100, "max_new_tokens": {"subjects": 20}}
+        with self.assertRaisesRegex(ValueError, "test input exceeds generation allowance"):
+            distillation_run.preflight(Tokenizer(), data, config)
+        result = distillation_run.preflight(Tokenizer(), data, {**config, "preparation": {}})
+        self.assertNotIn("test_notes", result)
+
     def test_preparation_preflight_requires_the_longest_complete_training_example(self):
         class Tokenizer:
             def apply_chat_template(self, messages, **kwargs):
@@ -716,6 +733,71 @@ class TinyWorkflowTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("frozen run differs", result.stderr)
         self.assertEqual(before, distillation_run.file_hashes(output))
+
+    def test_subject_pilot_collects_only_baseline_and_final_reserved_test_and_resumes(self):
+        import shutil
+        import torch
+        root = self.root
+        splits = root / "reserved-splits.json"
+        distillation_run.write_json(splits, {"train": ["0", "1", "2", "3"],
+                                            "validation": ["4", "5"], "test": ["6", "7"]})
+        prepared = root / "reserved-data"
+        distillation_data.prepare(root / "source.json", root / "annotations.json", root / "subjects.txt",
+            None, "AS-test", None, 2, "test", prepared, tasks=("subjects",), splits_path=splits)
+        config = {k: v for k, v in self.config.items() if k not in
+                  ("mask_prompt", "max_steps", "save_steps", "subject_fraction", "mask_batch_size")}
+        config.update(data=str(prepared), training_milestones=[2, 4], batch_size=1,
+            gradient_accumulation_steps=8, evaluation_tasks=["subjects"], max_new_tokens={"subjects": 120},
+            subject_batching={"budget_bytes": 8*1024*1024, "workspace_bytes": 0,
+                              "prefill_bytes_per_token": 1024, "attention_matrix_count": 4})
+        path, output = root / "reserved-config.json", root / "reserved-run"
+        distillation_run.write_json(path, config)
+        with patch.object(distillation_run, "load_model", wraps=distillation_run.load_model) as loads:
+            distillation_run.run(path, output)
+        self.assertTrue(distillation_run.verify_saved(output / "test/baseline"))
+        self.assertTrue(distillation_run.verify_saved(output / "test/checkpoint-4"))
+        self.assertFalse((output / "test/checkpoint-2").exists())
+        self.assertEqual(loads.call_count, 5)  # base, two training loads, two merged evaluation loads
+        data = distillation_run.load_data(prepared)
+        checked = distillation_run.verify_subject_run(output, data, config)
+        self.assertEqual(checked["test"]["review_status"], "sealed")
+        for stage in ("baseline", "checkpoint-4"):
+            rows = distillation_run.read_json(output / "test" / stage / "results.json")
+            self.assertEqual([r["note_id"] for r in rows], ["6", "7"])
+            self.assertEqual(checked["test"][stage]["notes"], 2)
+            self.assertNotIn("subject_failures", checked["test"][stage])
+        state = torch.load(output / "checkpoints/checkpoint-4/training-state.pt", weights_only=True)
+        self.assertEqual(set(state["consumed_note_ids"]), {"0", "1", "2", "3"})
+        before = distillation_run.file_hashes(output)
+        with patch.object(distillation_run, "load_model", side_effect=AssertionError("repeated completed work")):
+            distillation_run.run(path, output)
+        self.assertEqual(before, distillation_run.file_hashes(output))
+        # Recover a missing baseline test before entering the training loop.
+        shutil.rmtree(output / "test/baseline")
+        with patch.object(distillation_run, "train_subject_block", side_effect=AssertionError("retrained")), \
+                patch.object(distillation_run, "load_model", wraps=distillation_run.load_model) as loads:
+            distillation_run.run(path, output)
+        self.assertEqual(loads.call_count, 1)
+        distillation_run.verify_subject_run(output, data, config)
+        # Recover a final test after validation was already sealed; never train again.
+        saved = root / "reserved-test-backup"
+        shutil.copytree(output / "test/checkpoint-4", saved)
+        shutil.rmtree(output / "test/checkpoint-4")
+        with self.assertRaises((ValueError, FileNotFoundError)):
+            distillation_run.verify_subject_run(output, data, config)
+        with patch.object(distillation_run, "train_subject_block", side_effect=AssertionError("retrained")), \
+                patch.object(distillation_run, "load_model", wraps=distillation_run.load_model) as loads:
+            distillation_run.run(path, output)
+        self.assertEqual(loads.call_count, 1)
+        distillation_run.verify_subject_run(output, data, config)
+        # A resealed collection cannot claim the wrong checkpoint.
+        stage = output / "test/checkpoint-4"
+        binding = distillation_run.read_json(stage / "test-collection.json")
+        binding["checkpoint"] = "checkpoints/checkpoint-2"
+        distillation_run.write_json(stage / "test-collection.json", binding)
+        distillation_run.write_json(stage / "complete.json", distillation_run.file_hashes(stage))
+        with self.assertRaisesRegex(ValueError, "test collection source differs"):
+            distillation_run.verify_subject_run(output, data, config)
 
     def test_subject_preparation_cli_checks_cache_and_restores_training_without_full_evaluations(self):
         prepared = self.root / "preparation-data"

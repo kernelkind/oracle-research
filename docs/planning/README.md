@@ -23,8 +23,8 @@ package locally before booking; new hardware execution remains pending.
 The primary comparison uses all three final 1,000-note adapters and their
 untuned baselines on 200 reserved test notes: 1,200 responses collected during
 the main rental and kept sealed through local validation review. Earlier
-checkpoints show learning progress. Test collection/sealing and its completeness
-checks still need implementation and verification.
+checkpoints show learning progress. Test collection and completeness checks are
+verified in the local VM; automatic reports exclude test answers and semantic scores.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete
@@ -260,8 +260,8 @@ BF16 base/mixed computation and FP32 adapter/optimizer state, plus LoRA dropout 
 frozen biases and standard initialization. Each milestone retains a complete
 training checkpoint, evaluates a disposable BF16 base with the saved adapter
 baked in, then restores the full training state. Answer-only training and
-every evaluation use thinking off. Pilot data is frozen; final-test
-implementation/verification, scoring and hardware execution remain open; see the
+every evaluation use thinking off. Pilot data is frozen; final-test collection
+is implemented locally. Scoring and hardware execution remain open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
@@ -278,8 +278,8 @@ The local package and VM rehearsal are ready. Its exact cases and memory
 allowances are a concrete proposal; rental approval remains open. No compatible
 low-transfer offer met the proposed $5 cap in the latest October 3 search.
 The larger pilot data is frozen and packaged. Final-test collection on the main
-rental is approved; its implementation/verification, hardware fit/timing and
-launch spending remain open.
+rental is approved and implemented locally; hardware fit/timing and launch
+spending remain open.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier

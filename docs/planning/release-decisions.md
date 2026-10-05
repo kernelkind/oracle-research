@@ -1336,8 +1336,9 @@ against the native path before its first update. Recheck all required responses,
 continuing checkpoints and coverage locally before recording the deletion review.
 The shared three-way data package preserves 1,000 train / 100 validation / 200
 reserved final test notes. Local semantic grading need not be settled to collect
-GPU outputs; its rubric/reviewer remain open. Actual hardware checks, final-test
-implementation/verification and new launch spending remain open. These safeguards cannot guarantee
+GPU outputs; its rubric/reviewer remain open. Final-test collection is now
+implemented locally (below). Actual hardware checks and new launch spending
+remain open. These safeguards cannot guarantee
 a clear performance difference between students.
 
 **Primary pilot comparison and final-test collection approved October 5:**
@@ -1356,9 +1357,16 @@ This supplies evidence about the tested recipes, not each student's optimal
 checkpoint. An earlier validation peak can motivate separately authorized test
 inference; do not use test results to select another checkpoint or revise the
 experiment. Check the semantic grader locally and report uncertainty; close or
-unconfirmed gains can remain inconclusive. Test collection/sealing and its
-completeness checks still need implementation and verification. Actual ASv6.100
+unconfirmed gains can remain inconclusive. Test collection and completeness
+checks are now implemented locally: reuse the loaded base and final merged
+evaluation copy, save separate test files bound to the run/checkpoint, and
+require both complete test stages before completion review. Automatic reports
+expose only test counts/locations; semantic grading and opening test content
+remain separate local work after validation/model selection. Actual ASv6.100
 GPU fit/throughput, launch duration and maximum spending remain open.
+The shared SSH rehearsal passed after correcting one error-message assertion;
+all three native tokenizers also passed the actual train/validation/test preflight.
+The technical plan records evidence and limits. No rental or publication occurred.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third

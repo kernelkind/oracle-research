@@ -13,7 +13,7 @@ import time
 
 from gte.full_build_package import write_manifest, verify_manifest
 from sse_multivector.distillation_run import (load_data, read_json, sha256, write_json,
-    preparation_data, subject_stage_summary, verify_subject_run)
+    preparation_data, subject_stage_summary, subject_test_summary, verify_subject_run)
 
 
 CODE_ROOT = Path(__file__).resolve().parents[1]
@@ -249,7 +249,10 @@ def execute(package, output):
             baselines = {}
             for relative in pilots:
                 directory, config = invoke(relative, "baseline")
-                baselines[directory.name] = subject_stage_summary(directory / "baseline", load_data(config["data"]))
+                data = load_data(config["data"])
+                baselines[directory.name] = subject_stage_summary(directory / "baseline", data)
+                if "test" in data:
+                    baselines[directory.name]["test"] = subject_test_summary(directory, data, config)
             write_json(output / "baselines-integrity.json", baselines)
         if job["through"] != "baseline" or not pilots:
             for relative in job["runs"]:
@@ -314,6 +317,7 @@ def review_completion(package, operation):
         "retrieval_verification_sha256": sha256(receipt_path),
         "integrity_sha256": sha256(operation / "launch/completion-integrity.json"),
         "checks": ["All required candidate baselines and checkpoint evaluations accounted for.",
+                   "Reserved baseline/final test collections complete, source-bound and sealed for local review.",
                    "Raw/parsed subjects and batch receipts agree; model failures remain counted.",
                    "Every training note used once; all continuing checkpoints retained.",
                    "Matched preparation and local transfer verification complete."]}

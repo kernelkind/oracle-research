@@ -21,8 +21,9 @@ adapters with their untuned baselines on the same 200 held-out test notes.
 Collect the 1,200 test responses during the main rental, sealed through local
 validation review and model selection. Keep all five 100-note validation stages
 to show learning progress; earlier checkpoints are retained diagnostics.
-Final-test collection/sealing and its completeness checks still need implementation
-and verification. The full ASv6.100 workload still needs hardware checks and repricing.
+Final-test collection and completeness checks are implemented locally; automatic
+reports exclude test answers and semantic scores. The full ASv6.100 workload
+still needs hardware checks and repricing.
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
@@ -1862,9 +1863,56 @@ No rental or image publication occurred.
 
 These checks establish compute/data completeness, not semantic quality or a
 clear winner. Actual CUDA agreement, long-example fit and throughput remain
-hardware checks. The October 5 decision above settles final-test collection on
-the main rental. Its implementation/verification and launch spending remain
-open; no final-test inference has been added.
+hardware checks. Final-test collection on the main rental is now implemented
+as described below; launch spending remains open. No real student inference
+on the reserved test notes has occurred.
+
+### Reserved final-test collection — October 5
+
+For subjects-only pilots, the prepared test split requires one untuned and one
+final-adapter test collection per candidate. Collect the untuned test while its
+base is loaded, then the final test while the last disposable merged evaluation
+copy is loaded. Earlier checkpoints generate validation only; no additional
+training pass or scheduled model load is introduced. Prep removes the test
+split from its execution view. Pilot preflight checks reserved prompt lengths
+without generation.
+
+Save test work separately under `test/baseline/` and `test/checkpoint-1000/`.
+Retain native batch plans/receipts, raw and parsed answers, and per-note/stage
+file seals. `test-collection.json` binds the stage to the frozen run manifest
+and final checkpoint seal. Hash seals protect transfer integrity. Keep content
+review postponed until validation and model selection are recorded. Automatic reports
+and offline integrity summaries expose only collection counts/locations and
+`review_status: sealed`, with no answers, subject counts or semantic scores.
+The local semantic grader/unsealing procedure remains separate, unimplemented
+work; settle its rubric and selection before opening the test.
+
+All baseline validation/test work is checked before any pilot training. Offline
+verification requires both test stages, their exact reserved IDs, raw/parsed
+agreement, batch receipts, source binding and matched baseline/final batching.
+Completion review cannot accept missing test work. Completed collections are
+reused; an interrupted final test can finish from its saved adapter without
+retraining, even when final validation is already sealed.
+
+Minimal production-path checks first failed for missing test collection, ignored
+test token allowances, and training advancing without baseline test work. The
+corrected pinned VM rehearsal passed **81 tests**, with one optional
+candidate-tokenizer SSH preflight skipped (6 candidate, 42 workflow, 34
+deployment tests including the skip). The combined real-SSH prep/pilot test
+retrieved baseline/final test answers, verified both candidates, and rejected a
+missing test response before completion review. A first rehearsal correctly
+rejected that missing file but failed because the test expected a checksum-error
+message; only that assertion changed before the successful rerun.
+
+All three native-tokenizer preflights also passed against the actual frozen
+**1,000 train / 100 validation / 200 test** data without loading weights. Maximum
+test prompt lengths are **9,584 Qwen / 9,404 Gemma** tokens, within the
+20,480 context and 10,240 output bounds. Twelve source/prepared files were
+rehashed unchanged. These checks establish collection/recovery/completeness and
+token limits; actual CUDA execution, fit and speed remain hardware checks.
+Evidence: `target/distillation-pilot-v1/final-test-design-20261005/` and VM
+attempt `target/distillation-vm-clean-deployment/attempt-1791231456496036400/`.
+No rental, publication or real reserved-test inference occurred.
 
 ### Historical conditional subjects-only batched cost reference — October 3
 
