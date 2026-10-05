@@ -1630,6 +1630,98 @@ memory audit:
 `09e033d85ea5218e547bf4740febbce77fd41d3b50cb0ac019a02cba5101f79b`.
 Teacher answers have structural/receipt checks; semantic review remains open.
 
+### Local runtime memory investigation — October 5
+
+The authorized local investigation separates generation planning from training
+loss allocations. It uses the pinned **PyTorch 2.12.1+cu130 / Transformers 5.17.0**
+runtime recorded by GPU prep, all actual pilot token counts, saved prep allocations
+and versioned primary source. No worker, dependency or frozen input changed.
+
+**Attention:** the worker supplies no attention override. Transformers defaults
+these supported models to SDPA; CUDA chooses a kernel for each call. The old
+receipts do not record that choice. Qwen's full heads are 256-dimensional; Gemma
+uses 256-dimensional sliding heads and **512-dimensional global heads**.
+PyTorch 2.12.1's CUDA Flash path caps dimensions at 256, and its cuDNN gate also
+rejects 512. Its memory-efficient path and generated BF16 forward/backward kernels
+include 512 and SM120 in their source eligibility ranges. Transformers repeats
+Gemma's K/V heads before SDPA at dimension 512, satisfying that path's equal-head
+requirement. Source eligibility still does not prove the image has the kernels
+or that the real GPU/masks/layouts launch successfully.
+[PyTorch 2.12.1 CUDA selection](https://github.com/pytorch/pytorch/blob/v2.12.1/aten/src/ATen/native/transformers/cuda/sdp_utils.cpp),
+[forward kernels](https://github.com/pytorch/pytorch/blob/v2.12.1/aten/src/ATen/native/transformers/cuda/mem_eff_attention/kernels/cutlassF.h),
+[backward kernels](https://github.com/pytorch/pytorch/blob/v2.12.1/aten/src/ATen/native/transformers/cuda/mem_eff_attention/kernels/cutlassB.h),
+[Transformers SDPA adapter](https://github.com/huggingface/transformers/blob/v5.17.0/src/transformers/integrations/sdpa_attention.py).
+
+The existing four headwise attention-matrix allowance contributes **33.54 GiB
+Qwen / 43.17 dense Gemma / 21.59 MoE** at the longest prompt, plus separate mask
+allowance. Replaying the same arithmetic with zero headwise score matrices,
+while retaining masks, resident weights, caches, 4-GiB workspace and per-token
+prefill buffers, gives the following **conditional generation estimates** with
+10,240 output tokens:
+
+| Student | One-note conditional estimate | Native BF16 training score tensor | Native FP32 training score tensor |
+| --- | ---: | ---: | ---: |
+| Qwen3.8-27B | 58.39–58.60 GiB | 8.38 GiB | 16.76 GiB |
+| Gemma 4 31B | 71.73–72.32 GiB | 8.98 GiB | 17.96 GiB |
+| Gemma 4 26B-A4B | 55.79–56.07 GiB | 8.98 GiB | 17.96 GiB |
+
+This calculation is not a replacement policy or GPU measurement. Retaining the
+old numeric scratch allowances does not validate them for a different kernel.
+A future implementation must select SDPA's compatible Flash/memory-efficient
+backends explicitly and exclude silent math fallback before budgeting without
+those matrices. GPU prep must test both prefill and the full output cache.
+
+**Training loss:** current `model(**batch, use_cache=False).loss` computes a
+sequence-by-vocabulary score tensor for all positions, including ignored prompt
+positions. Native loss casts it to FP32 and computes log-softmax/NLL. Gemma also
+retains a softcap result for backward. Ordinary unfused tensor-lifetime projections
+for the longest training examples give about **41.89 GiB Qwen / 53.89 GiB Gemma**
+for the overlapping head/loss buffers, before decoder activations, LoRA state and
+allocator overhead. These are source-based projections, not observed allocations.
+The old GPU prep reached 74.19 / 85.34 / 71.58 GiB allocated during training at only
+6,531 / 6,440 / 6,440 tokens; it does not validate the new 18K sequences.
+[Native loss](https://github.com/huggingface/transformers/blob/v5.17.0/src/transformers/loss/loss_utils.py),
+[PyTorch cross-entropy](https://github.com/pytorch/pytorch/blob/v2.12.1/aten/src/ATen/native/LossNLL.cpp).
+
+**Implementation candidate:** use released **Liger 0.8.4 fused linear
+cross-entropy only**, disabling its other replacements. Its Qwen and Gemma
+integrations pass full decoder hidden states into a chunked classifier/loss,
+with ignored-label masking, mean over supervised targets, frozen classifier
+weights and Gemma's softcap 30 preserved. The current worker's token-weighted
+accumulation can then retain the same objective. At default chunk settings,
+transient BF16 score chunks are **0.237 / 0.250 / 0.125 GiB** for the respective
+longest examples; these are just score-buffer sizes, not total training memory.
+The Gemma helper emits an eager-attention recommendation, so combining it with
+the proposed SDPA backend needs explicit numerical verification. The native
+Gemma attention path has no attention-logit softcap; its final classifier softcap
+must remain intact. MoE's decoder/expert adapters also need their own check.
+[Released integrations](https://github.com/linkedin/Liger-Kernel/blob/v0.8.4/src/liger_kernel/transformers/monkey_patch.py),
+[Gemma forward](https://github.com/linkedin/Liger-Kernel/blob/v0.8.4/src/liger_kernel/transformers/model/gemma4.py),
+[fused-loss implementation](https://github.com/linkedin/Liger-Kernel/blob/v0.8.4/src/liger_kernel/ops/fused_linear_cross_entropy.py).
+
+Before adoption, verify pinned imports and native forward compatibility locally;
+compare loss/adapter gradients with the ordinary path, including ignored prompt
+positions, Gemma softcap and token-weighted updates. Rehearse checkpoint reload,
+merge and restoration. A brief GPU check must then verify selected kernels,
+finite gradients and peak memory on the longest real training examples and
+planned generation batches through the full cache allowance. CUDA equivalence
+and fit cannot be established with this source inspection. No candidate kernel
+or dependency was installed or executed in this investigation.
+
+The discussed 20,480-context / 10,240-output bounds cover every saved example
+arithmetically; student output sufficiency still needs checking. Removal of the
+128-node guard for this subjects-only pilot remains an implementation proposal.
+Preserve complete prompts, notes, teacher labels, the continuing training recipe
+and the selected one-96GB-GPU design. Repricing follows measured new throughput.
+
+Evidence: `target/distillation-pilot-v1/asv6.100-runtime-memory-audit-20261005/`
+contains `runtime-memory-audit.json`, the exact offline invocation and **18**
+versioned primary-source snapshots. Five installed Transformers files match the
+release tag byte-for-byte. All **77** bound files were rehashed, including all
+38 frozen files from the prior audit, and 3,900 saved per-note planner estimates
+were reproduced exactly. Runtime audit SHA-256:
+`b5bd2fb35c8788e66b143ac00a67c102fd9eeb47aeb8b50f962479d68241ce41`.
+
 ### Conditional subjects-only batched cost reference — October 3
 
 This replaces the serial reference with a **projection**, using measured prep

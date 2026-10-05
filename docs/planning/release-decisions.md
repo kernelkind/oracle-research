@@ -1287,6 +1287,25 @@ memory settings, hardware validation and repricing remain open. The
 records native preflights, all split counts and artifact hashes. No rental or
 additional model call was used for this audit.
 
+**Local runtime memory investigation, October 5:** the user authorized tracing
+attention and training memory. The pinned runtime defaults to SDPA, but old GPU
+receipts do not identify the selected CUDA kernel. PyTorch 2.12.1 source includes
+memory-efficient BF16 forward/backward paths for Gemma's 512-dimensional global
+heads; Flash and cuDNN paths reject that dimension. A candidate that excludes math
+fallback gives conditional one-note generation estimates of **58.39–58.60 GiB
+Qwen / 71.73–72.32 dense Gemma / 55.79–56.07 MoE**, retaining cache, mask,
+workspace and prefill allowances. This is not an approved replacement policy
+or measured GPU fit.
+
+Training also materializes scores for ignored prompt positions, followed by FP32
+cross-entropy buffers. Released **Liger 0.8.4 fused linear cross-entropy** is a
+candidate that preserves ignored labels, token averaging and Gemma's softcap
+while processing scores in chunks. Its source has Qwen and Gemma integrations;
+LoRA/MoE compatibility, loss/gradient agreement and CUDA execution remain to be
+tested. No dependency, worker, frozen configuration or hardware was changed.
+The technical plan records the implementation candidate and verification gates;
+this investigation does not authorize a new rental or assert training fit.
+
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subjects,
