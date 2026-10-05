@@ -12,7 +12,8 @@ import sys
 import time
 
 from gte.full_build_package import write_manifest, verify_manifest
-from sse_multivector.distillation_run import load_data, read_json, sha256, write_json
+from sse_multivector.distillation_run import (load_data, read_json, sha256, write_json,
+    preparation_data, subject_stage_summary, verify_subject_run)
 
 
 CODE_ROOT = Path(__file__).resolve().parents[1]
@@ -76,12 +77,35 @@ def code_hashes():
     return {name: sha256(CODE_ROOT / name) for name in CODE_FILES}
 
 
-def prepare(config_paths, output, timeout_seconds=None, through="report"):
+def prepare(config_paths, output, timeout_seconds=None, through="report", preparation_configs=None):
     """Copy only explicit inputs; no source code, credentials or host config."""
     if (timeout_seconds is not None and (type(timeout_seconds) is not int or timeout_seconds <= 0)
             or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation")):
         raise ValueError("runs and a positive timeout or no timeout are required")
     output = Path(output).resolve()
+    configurations = list(map(read_json, config_paths))
+    pilots = [c for c in configurations if "training_milestones" in c and "preparation" not in c]
+    if pilots:
+        shared = [{k: v for k, v in c.items() if k not in
+                   ("model", "revision", "lora_target_modules", "subject_batching")} for c in pilots]
+        if len(pilots) != len(configurations) or any(c != shared[0] for c in shared[1:]):
+            raise ValueError("shared pilot inputs or recipe differ between candidates")
+    if through in ("report", "train") and not preparation_configs:
+        if any(c.get("device") == "cuda" and c.get("fused_linear_cross_entropy")
+               and "training_milestones" in c and "preparation" not in c
+               for c in configurations):
+            raise ValueError("CUDA subject pilot requires matched GPU preparation")
+    if preparation_configs:
+        if through != "report" or len(preparation_configs) != len(config_paths):
+            raise ValueError("paired preparation requires one config per complete pilot run")
+        for pilot_path, prep_path in zip(config_paths, preparation_configs):
+            pilot, prep = read_json(pilot_path), read_json(prep_path)
+            if (Path(pilot_path).stem != Path(prep_path).stem or "preparation" in pilot
+                    or "preparation" not in prep or "training_milestones" not in pilot
+                    or {k: v for k, v in prep.items() if k not in ("preparation", "training_milestones")}
+                       != {k: v for k, v in pilot.items() if k != "training_milestones"}):
+                raise ValueError("preparation recipe differs from the pilot")
+            preparation_data(load_data(prep["data"], prep.get("mask_prompt")), prep)
     if output.exists():
         raise FileExistsError(output)
     staging = output.with_name(output.name + ".partial")
@@ -89,19 +113,21 @@ def prepare(config_paths, output, timeout_seconds=None, through="report"):
     try:
         names = set()
         runs = []
-        for path in config_paths:
+        all_paths = [(path, "configs") for path in config_paths]
+        all_paths += [(path, "preparation-configs") for path in preparation_configs or []]
+        for path, folder in all_paths:
             path = Path(path)
             name = path.stem
-            if not re.fullmatch(r"[a-z][a-z0-9_-]*", name) or name in names:
+            if not re.fullmatch(r"[a-z][a-z0-9_-]*", name) or (folder, name) in names:
                 raise ValueError("config filenames must be distinct lowercase run names")
-            names.add(name)
+            names.add((folder, name))
             config = read_json(path)
             data = Path(config["data"])
             prompt = Path(config["mask_prompt"]) if "mask_prompt" in config else None
             load_data(data, prompt)
             data_relative = "data/" + sha256(data / "manifest.json")
             (staging / data_relative).mkdir(parents=True, exist_ok=True)
-            for filename in ("manifest.json", "train.jsonl", "evaluation.jsonl", "references.jsonl"):
+            for filename in ("manifest.json", *read_json(data / "manifest.json")["outputs"]):
                 shutil.copyfile(data / filename, staging / data_relative / filename)
             config["data"] = data_relative
             if prompt is not None:
@@ -112,15 +138,19 @@ def prepare(config_paths, output, timeout_seconds=None, through="report"):
             model = Path(config["model"])
             if model.is_dir():
                 model_relative = "models/" + name
-                shutil.copytree(model, staging / model_relative)
+                if not (staging / model_relative).exists():
+                    shutil.copytree(model, staging / model_relative)
                 config["model"] = model_relative
             elif not re.fullmatch(r"[a-f0-9]{40}", config.get("revision") or ""):
                 raise ValueError("remote models require an immutable revision")
-            relative = "configs/" + name + ".json"
+            relative = folder + "/" + name + ".json"
             write_json(staging / relative, config)
             runs.append(relative)
-        write_json(staging / "job.json", {"runs": runs, "timeout_seconds": timeout_seconds, "through": through,
-                                          "code": code_hashes()})
+        job = {"runs": runs[:len(config_paths)], "timeout_seconds": timeout_seconds, "through": through,
+               "code": code_hashes()}
+        if preparation_configs:
+            job["preparation_runs"] = runs[len(config_paths):]
+        write_json(staging / "job.json", job)
         write_manifest(staging, staging / "manifest.json", "distillation-inputs")
         staging.rename(output)
     except BaseException:
@@ -177,10 +207,7 @@ def execute(package, output):
         raise StopRequested("stopped by controller")
     previous = signal.signal(signal.SIGTERM, stop)
     try:
-        for relative in job["runs"]:
-            remaining = deadline - time.time() if deadline is not None else None
-            if remaining is not None and remaining <= 0:
-                raise TimeoutError("experiment exceeded its frozen runtime limit")
+        def candidate(relative):
             name = Path(relative).stem
             config = read_json(package / relative)
             for key in ("data", "mask_prompt"):
@@ -188,15 +215,50 @@ def execute(package, output):
                     config[key] = str(package / config[key])
             if (package / config["model"]).is_dir():
                 config["model"] = str(package / config["model"])
-            config_path = output / "configs" / (name + ".json")
+            return name, config
+
+        def invoke(relative, mode, preparing=False):
+            remaining = deadline - time.time() if deadline is not None else None
+            if remaining is not None and remaining <= 0:
+                raise TimeoutError("experiment exceeded its frozen runtime limit")
+            name, config = candidate(relative)
+            root = output / "preparation" if preparing else output
+            root.mkdir(parents=True, exist_ok=True)
+            config_path = root / "configs" / (name + ".json")
             write_json(config_path, config)
-            with (output / (name + ".log")).open("a") as log:
+            state.update(stage=mode, candidate=name, preparation=preparing)
+            write_json(output / "deployment.json", state)
+            with (root / (name + ".log")).open("a") as log:
                 result = run_process([sys.executable, "-m", "sse_multivector.distillation_run",
-                    str(config_path), "--output", str(output / name), "--through", job["through"]],
+                    str(config_path), "--output", str(root / name), "--through", mode],
                     cwd=CODE_ROOT, stdout=log, stderr=subprocess.STDOUT,
                     env={**os.environ, "PYTHONPATH": str(CODE_ROOT)}, timeout=remaining)
             if result.returncode:
                 raise RuntimeError(f"run {name} failed with exit code {result.returncode}; see {name}.log")
+            return root / name, config
+
+        for relative in job.get("preparation_runs", []):
+            directory, config = invoke(relative, "preparation", preparing=True)
+            verify_subject_run(directory, load_data(config["data"]), config, "preparation")
+
+        pilots = [r for r in job["runs"] if "training_milestones" in read_json(package / r)
+                  and "preparation" not in read_json(package / r)]
+        if pilots and len(pilots) != len(job["runs"]):
+            raise ValueError("subject pilot candidates cannot be mixed with legacy runs")
+        if pilots and job["through"] in ("baseline", "train", "report"):
+            baselines = {}
+            for relative in pilots:
+                directory, config = invoke(relative, "baseline")
+                baselines[directory.name] = subject_stage_summary(directory / "baseline", load_data(config["data"]))
+            write_json(output / "baselines-integrity.json", baselines)
+        if job["through"] != "baseline" or not pilots:
+            for relative in job["runs"]:
+                directory, config = invoke(relative, job["through"])
+                if "training_milestones" in config and job["through"] in ("report", "preparation"):
+                    data = load_data(config["data"])
+                    verify_subject_run(directory, data, config, job["through"])
+        if pilots and job["through"] == "report":
+            write_json(output / "integrity.json", verify_results(package, output))
         state["state"] = "complete"
         return state
     except BaseException as error:
@@ -208,11 +270,65 @@ def execute(package, output):
         signal.signal(signal.SIGTERM, previous)
 
 
+def verify_results(package, output):
+    """Recheck retrieved comparisons locally; no GPU, generation or provider calls."""
+    package, output = Path(package), Path(output)
+    job = verify_package(package)
+    results = {}
+    for relative in job["runs"]:
+        config = read_json(package / relative)
+        if "training_milestones" not in config or job["through"] != "report":
+            raise ValueError("comparison verification requires subject pilot reports")
+        name = Path(relative).stem
+        data = load_data(package / config["data"])
+        results[name] = verify_subject_run(output / name, data, config, "report")
+    for relative in job.get("preparation_runs", []):
+        config = read_json(package / relative)
+        data = load_data(package / config["data"])
+        verify_subject_run(output / "preparation" / Path(relative).stem, data, config, "preparation")
+    return {"status": "complete", "candidates": results,
+            "semantic_review": "Pending local review; compute completeness does not establish a winner."}
+
+
+def review_completion(package, operation):
+    """Write the shared deletion prerequisite only after local work verification."""
+    from vast import runner
+    operation = Path(operation).resolve()
+    receipt_path = operation / "launch/retrieval-verification.json"
+    receipt = read_json(receipt_path)
+    context = runner.Context.load(argparse.Namespace(root=operation,
+        config=operation / "operation-contract.json", operation="status"))
+    instance_id = runner.recorded_instance_id(context)
+    if instance_id is None or receipt["instance_id"] != instance_id:
+        raise ValueError("retrieval belongs to another instance")
+    if sha256(Path(package) / "manifest.json") != sha256(context.path("transport/workload/inputs/manifest.json")):
+        raise ValueError("comparison package differs from the frozen operation")
+    candidate = context.path("result") if context.path("result").is_dir() else context.path("result.next")
+    # Check transfer integrity first, then account for every baseline/checkpoint/
+    # evaluation. Neither a worker's exit code nor its own report is sufficient.
+    runner.verify_command_results(context, candidate)
+    checked = verify_results(package, candidate / "work/results")
+    write_json(operation / "launch/completion-integrity.json", checked)
+    review = {"complete": True, "instance_id": instance_id,
+        "operation_contract_sha256": sha256(context.config_path),
+        "retrieval_verification_sha256": sha256(receipt_path),
+        "integrity_sha256": sha256(operation / "launch/completion-integrity.json"),
+        "checks": ["All required candidate baselines and checkpoint evaluations accounted for.",
+                   "Raw/parsed subjects and batch receipts agree; model failures remain counted.",
+                   "Every training note used once; all continuing checkpoints retained.",
+                   "Matched preparation and local transfer verification complete."]}
+    write_json(operation / "launch/completion-review.json", review)
+    runner.verify_completion_review(context, instance_id, None)
+    return review
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="operation", required=True)
     prepare_parser = commands.add_parser("prepare")
     prepare_parser.add_argument("--config", type=Path, action="append", required=True)
+    prepare_parser.add_argument("--preparation-config", type=Path, action="append",
+                                help="paired prep recipe; verified prep continues into fresh pilot runs")
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--timeout-seconds", type=int,
                                 help="optional execution deadline; omitted means no automatic stop")
@@ -224,9 +340,15 @@ def main():
     execute_parser = commands.add_parser("execute")
     execute_parser.add_argument("--package", type=Path, required=True)
     execute_parser.add_argument("--output", type=Path, default=Path("results"))
+    verify_parser = commands.add_parser("verify-results", help="check retrieved subject pilot completeness offline")
+    verify_parser.add_argument("--package", type=Path, required=True)
+    verify_parser.add_argument("--output", type=Path, required=True)
+    verify_parser.add_argument("--operation-root", type=Path,
+                               help="also verify the retrieved operation and record its completion review")
     args = parser.parse_args()
     if args.operation == "prepare":
-        result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through)}
+        result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through,
+                                             args.preparation_config)}
     elif args.operation == "check-offer":
         offers = read_json(args.offers)
         if isinstance(offers, dict):
@@ -235,6 +357,10 @@ def main():
         if len(matches) != 1:
             raise ValueError("expected exactly one matching offer")
         result = check_offer(read_json(args.settings), matches[0])
+    elif args.operation == "verify-results":
+        result = verify_results(args.package, args.output)
+        if args.operation_root:
+            result["completion_review"] = review_completion(args.package, args.operation_root)
     else:
         result = execute(args.package, args.output)
     print(json.dumps(result))

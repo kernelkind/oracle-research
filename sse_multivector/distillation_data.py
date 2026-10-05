@@ -61,7 +61,7 @@ def selections(text, spans, fragments):
 
 def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path,
             subject_prompt_id, mask_prompt_id, evaluation_notes, seed, output,
-            tasks=("subjects", "mask")):
+            tasks=("subjects", "mask"), splits_path=None):
     tasks = tuple(tasks)
     if tasks not in (("subjects",), ("subjects", "mask")):
         raise ValueError("expected subjects or subjects and masks")
@@ -108,21 +108,48 @@ def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path
                     if mapping[key] == other:
                         mapping[key] = group
         author_groups[author] = text_groups[content] = group
-    ordered = sorted(groups.values(), key=lambda ids: hashlib.sha256(
-        (seed + "\n" + "\n".join(sorted(ids))).encode()).hexdigest())
-    # Find an exact-size whole-group split without dropping any notes.
-    choices = {0: set()}
-    for group in ordered:
-        for count, ids in list(choices.items()):
-            new_count = count + len(group)
-            if new_count <= evaluation_notes and new_count not in choices:
-                choices[new_count] = ids | group
-    if evaluation_notes not in choices:
-        raise ValueError("requested evaluation size would split an author/content group")
-    held_out = choices[evaluation_notes]
-    train, evaluation, references = [], [], []
+    if splits_path is not None:
+        split_files = ([splits_path / (name + ".json") for name in ("train", "validation", "test")]
+                       if splits_path.is_dir() else [splits_path])
+        if splits_path.is_dir():
+            splits = {}
+            for name, path in zip(("train", "validation", "test"), split_files):
+                definition = json.loads(path.read_text())
+                sources = definition["sources"]
+                if (definition["schema_version"] != 1 or len(sources) != 1
+                        or sources[0]["format"] != "posts"
+                        or Path(sources[0]["path"]).resolve() != source_path.resolve()):
+                    raise ValueError("frozen split does not select the supplied source")
+                splits[name] = sources[0]["select"]
+        else:
+            splits = json.loads(splits_path.read_text())
+        if (not isinstance(splits, dict) or set(splits) != {"train", "validation", "test"}
+                or any(not isinstance(ids, list) or not ids or any(not isinstance(i, str) for i in ids)
+                       for ids in splits.values())):
+            raise ValueError("expected nonempty train/validation/test note ID lists")
+        order = [i for ids in splits.values() for i in ids]
+        if len(order) != len(set(order)) or set(order) != originals.keys() or len(splits["validation"]) != evaluation_notes:
+            raise ValueError("frozen splits differ from source note set or evaluation count")
+        assignments = {i: name for name, ids in splits.items() for i in ids}
+        if any(len({assignments[i] for i in group}) != 1 for group in groups.values()):
+            raise ValueError("frozen split crosses an author/content group")
+        held_out, reserved = set(splits["validation"]), set(splits["test"])
+    else:
+        ordered = sorted(groups.values(), key=lambda ids: hashlib.sha256(
+            (seed + "\n" + "\n".join(sorted(ids))).encode()).hexdigest())
+        # Find an exact-size whole-group split without dropping any notes.
+        choices = {0: set()}
+        for group in ordered:
+            for count, ids in list(choices.items()):
+                new_count = count + len(group)
+                if new_count <= evaluation_notes and new_count not in choices:
+                    choices[new_count] = ids | group
+        if evaluation_notes not in choices:
+            raise ValueError("requested evaluation size would split an author/content group")
+        held_out, reserved, order = choices[evaluation_notes], set(), sorted(originals)
+    train, evaluation, test, references = [], [], [], []
     empty_count = subject_count = 0
-    for note_id in sorted(originals):
+    for note_id in order:
         original, note = originals[note_id], labels[note_id]
         if original["text"] != note["text"]:
             raise ValueError("annotation source text differs")
@@ -150,28 +177,36 @@ def prepare(source_path, annotations_path, subject_prompt_path, mask_prompt_path
             examples.append({"note_id": note_id, "task": "mask", "subject_id": subject["id"],
                              "prompt": [{"role": "user", "content": content}],
                              "completion": [{"role": "assistant", "content": target}]})
-        if note_id in held_out:
+        if note_id in held_out or note_id in reserved:
             # End-to-end evaluation begins with subjects. Its mask inputs must
             # be constructed from the candidate's answers, not teacher subjects.
-            evaluation.append({"note_id": note_id, "messages": messages})
+            (test if note_id in reserved else evaluation).append({"note_id": note_id, "messages": messages})
         else:
             train.extend(examples)
-        references.append({**note, "split": "evaluation" if note_id in held_out else "train"})
+        references.append({**note, "pubkey": original["pubkey"],
+                           "split": "test" if note_id in reserved else "evaluation" if note_id in held_out else "train"})
     manifest = {
         "schema_version": 2, "seed": seed,
         "tasks": {"subjects": subject_prompt_id, **({"mask": mask_prompt_id} if "mask" in tasks else {})},
         "inputs": {str(p.resolve()): digest(p) for p in
-                   [source_path, annotations_path, subject_prompt_path] + ([mask_prompt_path] if "mask" in tasks else [])},
-        "train_note_ids": sorted(originals.keys() - held_out),
+                   [source_path, annotations_path, subject_prompt_path] + ([mask_prompt_path] if "mask" in tasks else [])
+                   + (split_files if splits_path is not None else [])},
+        "subject_instruction_sha256": hashlib.sha256(subject_instruction.encode()).hexdigest(),
+        "train_note_ids": [i for i in order if i not in held_out | reserved],
         "evaluation_note_ids": [n["note_id"] for n in evaluation],
         "subject_entries": subject_count, "empty_subject_masks": empty_count,
         "training_examples": {task: sum(r["task"] == task for r in train) for task in tasks},
         "semantic_status": "Saved teacher outputs; no new semantic review or approval.",
     }
     output.mkdir(parents=True)
-    for name, rows in [("train", train), ("evaluation", evaluation), ("references", references)]:
+    if splits_path is not None:
+        manifest["test_note_ids"] = [n["note_id"] for n in test]
+    outputs = [("train", train), ("evaluation", evaluation), ("references", references)]
+    if splits_path is not None:
+        outputs.append(("test", test))
+    for name, rows in outputs:
         (output / (name + ".jsonl")).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
-    manifest["outputs"] = {name: digest(output / name) for name in ["train.jsonl", "evaluation.jsonl", "references.jsonl"]}
+    manifest["outputs"] = {name + ".jsonl": digest(output / (name + ".jsonl")) for name, _ in outputs}
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 
@@ -186,10 +221,11 @@ def main():
     parser.add_argument("--tasks", nargs="+", choices=("subjects", "mask"), default=("subjects", "mask"))
     parser.add_argument("--evaluation-notes", type=int, required=True)
     parser.add_argument("--seed", required=True)
+    parser.add_argument("--splits", type=Path, help="frozen ID lists or directory of train/validation/test source selections")
     args = parser.parse_args()
     manifest = prepare(args.source, args.annotations, args.subject_prompt, args.mask_prompt,
                        args.subject_prompt_id, args.mask_prompt_id,
-                       args.evaluation_notes, args.seed, args.output, tasks=args.tasks)
+                       args.evaluation_notes, args.seed, args.output, tasks=args.tasks, splits_path=args.splits)
     print(json.dumps({"train_notes": len(manifest["train_note_ids"]),
                       "evaluation_notes": len(manifest["evaluation_note_ids"]),
                       "training_examples": manifest["training_examples"]}))

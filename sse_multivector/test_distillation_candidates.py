@@ -154,6 +154,16 @@ class FusedLossTests(unittest.TestCase):
                              "completion": [{"role": "assistant", "content": answer}]}, 512)
                             for text, answer in (("Tea tastes good.", "Tea"), ("Tea", "Tea is a drink."))]
                         total = sum(sum(v != -100 for v in row["labels"][1:]) for row in rows)
+                        # The same production check runs before GPU prep's first update.
+                        with patch(loss_name, side_effect=lambda *args, **kwargs: reference_kernel(*args, **kwargs) * 0):
+                            with self.assertRaisesRegex(ValueError, "training loss agreement"):
+                                runner.verify_training_loss(model, rows, config)
+                        self.assertTrue(all(p.grad is None for p in model.parameters()))
+                        with patch(loss_name, side_effect=reference_kernel):
+                            check = runner.verify_training_loss(model, rows, config)
+                        self.assertFalse(check["actual_cuda_kernel"])
+                        self.assertEqual(check["examples"], 2)
+                        kernel_calls.clear()
                         with patch(loss_name, side_effect=reference_kernel):
                             for row in rows:
                                 batch = {key: torch.tensor([value]) for key, value in row.items()}

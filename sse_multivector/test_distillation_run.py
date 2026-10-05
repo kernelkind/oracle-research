@@ -16,6 +16,66 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_preparation_preflight_requires_the_longest_complete_training_example(self):
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return "".join(m["content"] + "!" for m in messages) + ("?" if kwargs.get("add_generation_prompt") else "")
+            def encode(self, text, **kwargs):
+                return list(text.encode())
+        rows = [{"note_id": str(i), "task": "subjects", "prompt": [{"role": "user", "content": "x" * width}],
+                 "completion": [{"role": "assistant", "content": '{"subjects":[]}'}]}
+                for i, width in enumerate((4, 8, 80))]
+        data = {"train": rows[:2], "full_train": rows, "evaluation": [{"messages": rows[0]["prompt"]}]}
+        config = {"max_length": 200, "max_new_tokens": {"subjects": 100}, "preparation": {}}
+        with self.assertRaisesRegex(ValueError, "longest complete training example"):
+            distillation_run.preflight(Tokenizer(), data, config)
+
+    def test_subject_stage_reparses_raw_answers_even_when_files_are_resealed(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        with tempfile.TemporaryDirectory() as temporary, patch.object(distillation_run, "generate_batch",
+                return_value={"answers": [answer], "seconds": 1.}):
+            root = Path(temporary)
+            distillation_run.evaluate(model, tokenizer, data, config, root)
+            parsed = {"note_id": "0", "subjects": [], "errors": [{"task": "subjects", "error": "parser defect"}]}
+            distillation_run.write_json(root / "note-0000/subjects-result.json", parsed)
+            distillation_run.write_json(root / "results.json", [{**parsed, "masks": []}])
+            distillation_run.write_json(root / "note-0000/complete.json", distillation_run.file_hashes(root / "note-0000"))
+            distillation_run.write_json(root / "complete.json", distillation_run.file_hashes(root))
+            with self.assertRaisesRegex(ValueError, "parsed subject result differs from raw"):
+                distillation_run.subject_stage_summary(root, data)
+
+    def test_subject_stage_rechecks_generation_receipt(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        with tempfile.TemporaryDirectory() as temporary, patch.object(distillation_run, "generate_batch",
+                return_value={"answers": [answer], "seconds": 1.}):
+            root = Path(temporary)
+            distillation_run.evaluate(model, tokenizer, data, config, root)
+            receipt = distillation_run.read_json(root / "subjects-0000.json")
+            receipt["answers"] = []
+            distillation_run.write_json(root / "subjects-0000.json", receipt)
+            distillation_run.write_json(root / "complete.json", distillation_run.file_hashes(root))
+            with self.assertRaisesRegex(ValueError, "receipt"):
+                distillation_run.subject_stage_summary(root, data)
+
+    def test_invalid_generation_metadata_is_not_a_model_failure(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        for key, value in (("raw", None), ("tokens", -1), ("truncated", "false")):
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as temporary, \
+                    patch.object(distillation_run, "generate_batch", return_value={
+                        "answers": [{**answer, key: value}], "seconds": 1.}):
+                with self.assertRaisesRegex(ValueError, "generation answer contract"):
+                    distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+                self.assertFalse((Path(temporary) / "complete.json").exists())
+
+    def test_malformed_model_answers_remain_counted_results(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        answer["raw"] = "not JSON"
+        with tempfile.TemporaryDirectory() as temporary, patch.object(distillation_run, "generate_batch",
+                return_value={"answers": [answer], "seconds": 1.}):
+            root = Path(temporary)
+            distillation_run.evaluate(model, tokenizer, data, config, root)
+            self.assertEqual(distillation_run.subject_stage_summary(root, data)["subject_failures"], 1)
+
     def test_subjects_only_evaluation_preserves_a_large_valid_hierarchy(self):
         model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
         subjects = [{"number": str(i), "context": "Tea", "subject": f"Tea topic {i}"}
@@ -322,7 +382,7 @@ class DataContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)
             distillation_run.write_json(output / "note-0000/subjects.json", {"messages": messages,
-                "answer": {"raw": f"```json\n{json.dumps({'subjects': subjects})}\n```", "truncated": False}})
+                "answer": {"raw": f"```json\n{json.dumps({'subjects': subjects})}\n```", "truncated": False, "tokens": 10}})
             original_hash = distillation_run.sha256(output / "note-0000/subjects.json")
             with patch.object(distillation_run, "generate", side_effect=AssertionError("repeated subjects")), \
                     patch.object(distillation_run, "generate_batch", return_value={"answers": [answer], "seconds": 1}) as calls:
@@ -341,7 +401,7 @@ class DataContractTests(unittest.TestCase):
         data = {"evaluation": [{"note_id": "a", "messages": [{"role": "user", "content": "Subjects?"}]}],
                 "references": {"a": {"text": "Tea tastes good.", "subjects": [{"subject": "Teacher only"}]}},
                 "mask_prompt": "{POST}\n{INDEXED_POST}\nSubject: {SUBJECT}"}
-        subject_answer = {"raw": json.dumps({"subjects": subjects}), "truncated": False}
+        subject_answer = {"raw": json.dumps({"subjects": subjects}), "truncated": False, "tokens": 10}
         valid = json.dumps({"meaning": "Tea", "expressible": True, "evidence": "Tea", "mask": [[1, 1]]})
         empty = json.dumps({"meaning": "Drink", "expressible": False, "evidence": "Only tea", "mask": []})
         def batch(raw):

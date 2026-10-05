@@ -13,15 +13,13 @@ The larger pilot is subjects only, approved October 2: one teacher hierarchy
 per training note and no mask generation. Each checkpoint generates its own
 subject hierarchies on the same held-out validation notes. Thinking stays off
 throughout preparation, training, baselines, checkpoints and the final test.
-Semantic review happens outside the GPU rental. A separate
-paid GPU preparation step is confirmed in principle October 3, using existing
-notes while the pilot data is pending. Prepare its minimal checks and automation
-locally before booking. The separate preparation mode now implements two
-updates over 16 existing training notes per student, one save/merge/restore
-cycle, brief subject generation, and native cache checks. The local VM rehearsal
-passed, including the real tokenizers and retrieval over SSH. GPU execution
-and numeric memory allowances now have evidence for the tested preparation shapes.
-Check the actual pilot data against those tested bounds when it is ready.
+Semantic review happens outside the GPU rental. Freeze prep and pilot stages
+locally, then continue on the same rental with fresh pilot adapters only after
+prep checks pass. The October 3 separate preparation passed on older inputs;
+its hardware evidence does not cover the longer ASv6.100 data. The paired mode
+checks complete training, reload/merge/restore, brief subject generation, full
+validation cache shapes and actual fused/native loss agreement. Rehearse this
+package locally before booking; new hardware execution remains pending.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete
@@ -69,6 +67,11 @@ candidates use 20,480-token context / 10,240-token output, with no node-count
 cap. The worker enforces efficient SDPA and uses training-only Liger fused loss.
 Pinned-container integration and SSH checks passed locally; GPU kernels, fit,
 throughput and the launch estimate still need verification on ASv6.100.
+Paired prep/pilot execution and completeness checks are implemented locally:
+all three baselines precede training; raw/parsed answers reconcile with receipts;
+local verification accounts for all checkpoint comparisons before deletion review.
+Prep covers the longest example and full validation cache shapes, with actual
+CUDA loss/gradient agreement required on hardware. Semantic grading remains local.
 The conditional ASv6.48 projection of 36–40 hours / $51–58 does not price the frozen pilot.
 Pilot data selection and label generation are approved: **1,000 train / 100
 validation / 200 final test**, extending the existing fresh-corpus random draw
@@ -268,7 +271,8 @@ they cannot certify the lengths or completeness of future pilot answers.
 The local package and VM rehearsal are ready. Its exact cases and memory
 allowances are a concrete proposal; rental approval remains open. No compatible
 low-transfer offer met the proposed $5 cap in the latest October 3 search.
-The larger pilot remains waiting for its data.
+The larger pilot data is frozen and packaged; hardware fit/timing, final-test
+collection and launch spending remain open.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier

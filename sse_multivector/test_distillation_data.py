@@ -8,6 +8,49 @@ from sse_multivector import distillation_data
 
 
 class DistillationDataTests(unittest.TestCase):
+    def test_saved_training_prompt_must_still_bind_full_instruction_and_note(self):
+        from sse_multivector.distillation_run import load_data, read_json, write_json, sha256
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.prepare(root)
+            output = root / "subjects"
+            distillation_data.prepare(root / "source.json", root / "annotations.json", root / "subjects.txt",
+                None, "AS-test", None, 2, "pilot", output, tasks=("subjects",))
+            path = output / "train.jsonl"
+            rows = [json.loads(line) for line in path.read_text().splitlines()]
+            rows[0]["prompt"][0]["content"] = "Short instruction\n\n<post>\nwrong note\n</post>"
+            path.write_text("".join(json.dumps(row) + "\n" for row in rows))
+            manifest = read_json(output / "manifest.json")
+            manifest["outputs"][path.name] = sha256(path)
+            write_json(output / "manifest.json", manifest)
+            with self.assertRaisesRegex(ValueError, "subject prompt differs"):
+                load_data(output)
+
+    def test_frozen_three_way_split_is_preserved_and_reserved(self):
+        from sse_multivector.distillation_run import load_data
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.prepare(root)
+            splits = root / "splits.json"
+            assignments = {"train": ["3", "2"], "validation": ["0", "1"], "test": ["5", "4"]}
+            splits.write_text(json.dumps(assignments))
+            output = root / "three-way"
+            manifest = distillation_data.prepare(root / "source.json", root / "annotations.json",
+                root / "subjects.txt", None, "AS-test", None, 2, "pilot", output,
+                tasks=("subjects",), splits_path=splits)
+            data = load_data(output)
+            self.assertEqual([r["note_id"] for r in data["train"]], assignments["train"])
+            self.assertEqual([r["note_id"] for r in data["evaluation"]], assignments["validation"])
+            self.assertEqual([r["note_id"] for r in data["test"]], assignments["test"])
+            self.assertEqual(manifest["test_note_ids"], assignments["test"])
+            self.assertEqual({r["split"] for r in data["references"].values()}, {"train", "evaluation", "test"})
+            assignments["train"], assignments["test"] = ["2", "4"], ["3", "5"]
+            splits.write_text(json.dumps(assignments))
+            with self.assertRaisesRegex(ValueError, "author/content group"):
+                distillation_data.prepare(root / "source.json", root / "annotations.json",
+                    root / "subjects.txt", None, "AS-test", None, 2, "pilot", root / "bad",
+                    tasks=("subjects",), splits_path=splits)
+
     def prepare(self, root, bad_fragment=False):
         text = "é Tea #tea"
         source = {"notes": [

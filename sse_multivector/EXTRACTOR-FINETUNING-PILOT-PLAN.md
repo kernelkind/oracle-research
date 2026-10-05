@@ -228,7 +228,9 @@ on the rented server. Candidate training settings and Vast launch limits are
 now frozen locally. On September 29 the user authorized publication and one
 Vast rental, then approved up to $1.66/hour and 13 hours total within $25.
 For that completed informal run, GPU compatibility was checked during its rental.
-The larger pilot uses the separate preparation step agreed above.
+The larger pilot freezes prep and pilot stages together. Successful prep
+continues on the same rental with fresh pilot adapters; failed prep preserves
+verified evidence before deletion and local repair.
 
 ### Frozen informal settings
 
@@ -1024,13 +1026,13 @@ informal configuration still uses both tasks.
 
 - **Local preparation:** freeze note splits, teacher subject hierarchies, prompt
   versions, model revisions, data order and approved recipe. Rehearse locally;
-  check the finalized data against the separate preparation's tested memory
-  bounds. Freeze admitted lengths and thinking-off output limits before launch;
+  use paired GPU prep to cover the finalized longest training example and full
+  validation cache shapes. Freeze admitted lengths and thinking-off output limits before launch;
   brief GPU preparation does not establish future answer completeness.
 - **GPU execution:** generate one thinking-off untuned validation baseline per
   student using batched independent notes under the frozen policy. Use the same
   policy for its trained checkpoints and preserve each note's answer separately.
-  Check all expected note responses before training. Initialize one
+  Verify all three complete baselines before any pilot training. Initialize one
   adapter and optimizer per student; learn each new 200-note block once. Shuffle
   its 200 subject examples with a fixed seed and take consecutive groups of
   eight total across all GPUs: 25 updates per block and 125 through 1,000 notes.
@@ -1728,9 +1730,9 @@ The user approved implementing the attention/loss candidate and testing it
 locally before preparing another GPU check. New reusable candidate settings live
 in `sse_multivector/distillation/subjects/`: **20,480 context / 10,240 output**,
 subjects only, no `max_subjects` cap, existing five continuing checkpoints and
-unchanged training recipe. Their `prepared` data path is not populated yet;
-package the preserved train/validation/test split through the shared workflow
-before freezing launch inputs. Historical packages/configurations remain intact.
+unchanged training recipe. The shared workflow has now populated `prepared`
+from the preserved 1,000/100/200 split without repartitioning; final test data stays
+reserved. Historical packages/configurations remain intact.
 
 `efficient_attention` selects native SDPA and restricts CUDA calls to Flash and
 memory-efficient backends during generation, cache checks, training forward and
@@ -1774,6 +1776,57 @@ No paid action or image publication occurred. Actual CUDA kernel/loss/gradient
 agreement, full long-example training memory, full generation cache allowance
 and throughput still require the brief hardware check; these local results do
 not establish 96GB fit or a revised price/duration.
+
+### Experiment integrity safeguards — October 5
+
+The user authorized fixing paths that can train without producing a valid
+comparison. Semantic correctness/coverage grading remains local and does not
+block GPU execution; its rubric and reviewer remain open.
+
+- The shared data preparation accepts frozen three-way splits. Loading verifies
+  target/teacher agreement, full instruction/source-note bindings, exact response
+  IDs, author/content separation, hashes, and canonical/fenced parser behavior.
+  The 200 final test notes cannot enter prep or pilot training/validation.
+- CUDA fused-loss pilot packages require paired preparation configs with the
+  same dataset, model revision and training/generation recipe. Prep output has its
+  own directory; passing prep continues into fresh pilot adapters on that rental.
+- Preflight covers all examples and requires prep to include the longest complete
+  training sequence. Actual native cache checks cover every full-validation batch
+  shape by testing the largest combinations of batch size and padded width. Brief
+  generation remains a memory/timing check, not a baseline quality result.
+- Before prep's first update, the loaded training model compares actual fused and
+  native loss/backward on short inputs, with ignored prompt labels and unequal
+  token weights. RNG, instance forward and gradients are restored; no optimizer
+  update is added. BF16 mean-loss tolerances follow
+  [Liger 0.8.4 correctness tests](https://github.com/linkedin/Liger-Kernel/blob/v0.8.4/test/transformers/test_fused_linear_cross_entropy.py).
+- All candidates finish and verify their full baselines before any pilot training.
+  Every checkpoint evaluation is verified before continuation. Bad model answers
+  remain counted; missing work, invalid generation metadata, receipt mismatches,
+  and raw/parsed inconsistencies block progress.
+- `distillation_deploy verify-results` rechecks every required stage and checkpoint
+  locally, including training coverage and unchanged batching. With
+  `--operation-root`, it verifies the retrieved tree and records the shared
+  completion review required before explicit deletion. It neither rents nor deletes.
+
+Pinned VM validation passed **78 tests**, with one optional tokenizer-package
+SSH preflight skipped: 6 candidate, 40 workflow and 33 deployment tests (32 passed).
+The suites include actual prep-to-pilot execution over SSH, fresh pilot adapters,
+continuation, live copying, offline completeness review and rejection of corrupt
+retrieved results. CPU tests replace the CUDA loss kernel with a reference; they
+also demonstrate that a wrong loss blocks the production numerical check.
+Native-tokenizer preflight also passed on the actual prepared data for all three
+candidates: 1,000 full training examples and 100 validation prompts each, without
+loading weights. Maxima reproduce 18,114 Qwen / 18,396 Gemma training tokens and
+8,452 / 8,881 answer tokens. Source labels and the exact 1,000/100/200 split order
+were reverified unchanged. The final test remains reserved.
+The VM is stopped. Evidence is `target/distillation-pilot-v1/pilot-integrity-20261005/`
+and VM attempt `target/distillation-vm-clean-deployment/attempt-1791226564765712096/`.
+No rental or image publication occurred.
+
+These checks establish compute/data completeness, not semantic quality or a
+clear winner. Actual CUDA agreement, long-example fit and throughput remain
+hardware checks. Final-test output collection strategy and launch spending remain
+open; no final-test inference has been added.
 
 ### Conditional subjects-only batched cost reference — October 3
 

@@ -13,24 +13,19 @@ Keep each complete model on that GPU and run the three students sequentially.
 The execution flow below is a draft. Remaining output format details,
 execution settings, and review rubric remain open.
 
-**Local preparation → separate paid GPU preparation → Vast
-baselines/training/evaluation → verified retrieval → local scoring and comparison.**
+**Local rehearsal → Vast prep → baselines/training/evaluation on the same
+rental → verified retrieval → local scoring and comparison.**
 
-Prepare candidate settings and rehearse automation locally before booking the
-separate preparation rental, confirmed in principle October 3. The completed
-preparation used existing notes; pilot notes and labels are now frozen.
-The small check covered an
-adapter update, checkpoint save/reload/merge, brief batched generation at tested
-memory bounds, and restored training. The local package now uses two updates
-over 16 existing notes per student and saves brief subject responses separately.
-The VM rehearsal and hardware checks passed on the existing notes. Check the pilot data and
-planned batch shapes against the measured bounds when ready. Future pilot answer
-completeness, its rental offer and spending approval remain open.
+Freeze both stages locally. Prep checks the longest complete training example,
+two continuing updates, save/reload/merge, brief generation, and full native
+caches covering the planned validation batch shapes. It also compares the actual
+fused CUDA loss and adapter gradients against the native forward on short inputs.
+If all checks pass, discard prep adapters and start fresh pilot adapters on the
+same rental. If prep needs substantial repair, retrieve and verify its evidence,
+delete, and fix locally before renting again. Keep prep cheap and capture timing.
 
-**Keep preparation cheap, approved October 3:** collect pilot timing estimates
-during the same hardware checks. Keep parser/recovery tests and automation
-rehearsal local. Compare qualifying offers by total expected charge, including
-startup and transfers; retrieve, verify and explicitly delete promptly after checks.
+The October 3 prep passed on older, shorter inputs. The ASv6.100 checks are
+implemented locally; actual CUDA execution, memory fit and timing remain open.
 
 **Dynamic subject evaluation batches are approved.** Before each batch,
 tokenize the waiting notes and choose how many fit the frozen per-GPU memory
@@ -98,8 +93,11 @@ Generate independent notes in batches whose size follows the memory budget.
 Freeze the thinking-off batching policy per student; use it for that
 student's baseline and trained checkpoints. Check and save each answer separately.
 
-**Check every response immediately, before training.**
-Account for one subject response per validation note and save parsing failures.
+**Verify all three complete baselines before any pilot training.**
+Check each answer as it arrives. Reparse raw responses and reconcile each note
+with its generation receipt; count invalid/truncated model answers as failures.
+The parser is checked against saved teacher answers, including JSON fences,
+before weights load. Missing work, broken metadata or inconsistent parsing blocks progress.
 
 A bad model answer is a measured failure. Missing work or a parser bug blocks
 the affected comparison from advancing.
@@ -160,7 +158,9 @@ training.
 For the full pilot, complete all necessary work before stopping the job or
 deleting its rental
 and verify that its data is fully retrieved locally. A successful transfer
-alone does not establish completeness. If something is missing, keep the
+alone does not establish completeness. Offline verification must account for all
+three baselines, fifteen checkpoint evaluations, continuing training coverage,
+and all saved checkpoints before recording the completion review required for deletion. If something is missing, keep the
 resource and add that work. If stopping is preferable, ask for user approval
 first. Automatic job timeouts, stops on watcher errors, and deletion are disabled;
 time/cost thresholds call for review. I inspect responses as they arrive and

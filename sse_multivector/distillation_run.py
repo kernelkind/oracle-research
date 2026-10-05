@@ -54,7 +54,8 @@ def load_data(directory, mask_prompt=None):
     if tasks not in ({"subjects"}, {"subjects", "mask"}):
         raise ValueError("unexpected dataset tasks")
     rows = {}
-    for name in ("train", "evaluation", "references"):
+    names = ["train", "evaluation", "references"] + (["test"] if "test_note_ids" in manifest else [])
+    for name in names:
         path = directory / (name + ".jsonl")
         if sha256(path) != manifest["outputs"][path.name]:
             raise ValueError(f"dataset hash mismatch: {path.name}")
@@ -65,7 +66,8 @@ def load_data(directory, mask_prompt=None):
             raise ValueError("mask prompt hash differs from prepared data")
     train = set(manifest["train_note_ids"])
     evaluation = set(manifest["evaluation_note_ids"])
-    if not train or not evaluation or train & evaluation:
+    test = set(manifest.get("test_note_ids", []))
+    if not train or not evaluation or train & evaluation or test & (train | evaluation):
         raise ValueError("training/evaluation note split overlaps or is empty")
     if ({r["note_id"] for r in rows["train"]} != train or
             {r["note_id"] for r in rows["evaluation"]} != evaluation):
@@ -73,11 +75,49 @@ def load_data(directory, mask_prompt=None):
     if any(r["task"] not in tasks for r in rows["train"]):
         raise ValueError("unexpected training task")
     references = {r["note_id"]: r for r in rows["references"]}
-    if len(references) != len(rows["references"]) or references.keys() != train | evaluation:
+    if len(references) != len(rows["references"]) or references.keys() != train | evaluation | test:
         raise ValueError("reference note set differs")
-    for note_id in train | evaluation:
-        if references[note_id]["split"] != ("train" if note_id in train else "evaluation"):
+    for note_id in train | evaluation | test:
+        if references[note_id]["split"] != ("train" if note_id in train else "evaluation" if note_id in evaluation else "test"):
             raise ValueError("reference split differs")
+    for name in ("evaluation", "test"):
+        if name not in rows:
+            continue
+        ids = manifest[name + "_note_ids"]
+        if not ids or len(ids) != len(set(ids)) or [r["note_id"] for r in rows[name]] != ids:
+            raise ValueError(f"{name} example IDs disagree with split")
+    if tasks == {"subjects"}:
+        if len(rows["train"]) != len(train) or len(manifest["train_note_ids"]) != len(train):
+            raise ValueError("expected one subject example per training note")
+        for row in rows["train"]:
+            target = row["completion"]
+            if (len(target) != 1 or target[0]["role"] != "assistant"
+                    or parse_subjects(target[0]["content"]) != [
+                        {k: s[k] for k in ("number", "context", "subject")}
+                        for s in references[row["note_id"]]["subjects"]]):
+                raise ValueError("training target differs from saved teacher hierarchy")
+        # Check the production parser against known answers before loading weights.
+        for note in references.values():
+            target = [{k: subject[k] for k in ("number", "context", "subject")} for subject in note["subjects"]]
+            text = json.dumps({"subjects": target}, ensure_ascii=False)
+            if parse_subjects(text) != target or parse_subjects("```json\n" + text + "\n```") != target:
+                raise ValueError("subject parser rejected a saved teacher hierarchy")
+        if "subject_instruction_sha256" in manifest:
+            authors, copies = {}, {}
+            for note in references.values():
+                for value, mapping in ((note["pubkey"], authors), (" ".join(note["text"].split()), copies)):
+                    if value in mapping and mapping[value] != note["split"]:
+                        raise ValueError("dataset crosses an author/content group")
+                    mapping[value] = note["split"]
+            for name in ("train", "evaluation", "test"):
+                for row in rows.get(name, []):
+                    messages = row["prompt"] if name == "train" else row["messages"]
+                    suffix = "\n\n<post>\n" + references[row["note_id"]]["text"] + "\n</post>"
+                    if (len(messages) != 1 or messages[0]["role"] != "user"
+                            or not messages[0]["content"].endswith(suffix)
+                            or hashlib.sha256(messages[0]["content"][:-len(suffix)].encode()).hexdigest()
+                               != manifest["subject_instruction_sha256"]):
+                        raise ValueError("subject prompt differs from full instruction or source note")
     rows.update(manifest=manifest, references=references)
     if "mask" in tasks:
         rows["mask_prompt"] = Path(mask_prompt).read_text()
@@ -115,9 +155,12 @@ def preflight(tokenizer, data, config):
     """Validate actual tokenization and configured allowances without model weights."""
     stats = {t: {"examples": 0, "max_tokens": 0, "max_answer_tokens": 0, "total_tokens": 0}
              for t in ("subjects", "mask")}
-    for row in data["train"]:
+    longest = (0, None)
+    for row in data.get("full_train", data["train"]):
         encoded = encode_example(tokenizer, row, config["max_length"])
         tokens = len(encoded["input_ids"])
+        if tokens > longest[0]:
+            longest = (tokens, row.get("note_id"))
         answer = sum(label != -100 for label in encoded["labels"])
         task = row["task"]
         allowance = config["max_new_tokens"][task]
@@ -127,12 +170,14 @@ def preflight(tokenizer, data, config):
         s.update(examples=s["examples"] + 1, max_tokens=max(s["max_tokens"], tokens),
                  max_answer_tokens=max(s["max_answer_tokens"], answer), total_tokens=s["total_tokens"] + tokens)
     evaluation_max = 0
-    for row in data["evaluation"]:
+    if "preparation" in config and longest[1] not in {row["note_id"] for row in data["train"]}:
+        raise ValueError("preparation must include the longest complete training example")
+    for row in data.get("full_evaluation", data["evaluation"]):
         length = len(tokenizer.encode(generation_prompt(tokenizer, row["messages"]), add_special_tokens=False))
         if length + config["max_new_tokens"]["subjects"] > config["max_length"]:
             raise ValueError("evaluation input exceeds generation allowance")
         evaluation_max = max(evaluation_max, length)
-    return {"training": stats, "evaluation_notes": len(data["evaluation"]),
+    return {"training": stats, "evaluation_notes": len(data.get("full_evaluation", data["evaluation"])),
             "evaluation_max_prompt_tokens": evaluation_max, "enable_thinking": False}
 
 
@@ -424,15 +469,7 @@ def evaluate(model, tokenizer, data, config, directory):
         original = data["references"][note_id]
         note_directory = directory / f"note-{index:04}"
         answer = call(note_directory / "subjects.json", row["messages"], "subjects")
-        result = {"note_id": note_id, "subjects": [], "masks": [], "errors": []}
-        try:
-            if answer["truncated"]:
-                raise ValueError("subject answer reached output limit")
-            result["subjects"] = parse_subjects(answer["raw"])
-            if "mask" in tasks and len(result["subjects"]) > config["max_subjects"]:
-                raise ValueError("subject count exceeds configured limit")
-        except (ValueError, TypeError) as error:
-            result["errors"].append({"task": "subjects", "error": str(error)})
+        result = {**subject_result(note_id, answer, config["max_subjects"] if "mask" in tasks else None), "masks": []}
         if "subject_batching" in config:
             parsed_path = note_directory / "subjects-result.json"
             parsed = {"note_id": note_id, "subjects": result["subjects"], "errors": result["errors"]}
@@ -824,6 +861,14 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
         raise ValueError("subject training cannot skip a milestone")
     set_seed(config["seed"])
     model = subject_training_model(config, previous)
+    if previous is None and "preparation" in config and config.get("fused_linear_cross_entropy", False):
+        encoded = [encode_example(tokenizer, row, config["max_length"]) for row in data["train"][:2]]
+        probes = []
+        for index, row in enumerate(encoded):
+            boundary = next(i for i, label in enumerate(row["labels"]) if label != -100)
+            start, end = max(0, boundary-8), min(len(row["input_ids"]), boundary+8+index*3)
+            probes.append({key: value[start:end] for key, value in row.items()})
+        write_json(output / "training-loss-check.json", verify_training_loss(model, probes, config))
     parameters = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"], betas=(.9, .999), eps=1e-8, weight_decay=0.)
     schedule = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.)
@@ -900,6 +945,27 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
             torch.cuda.empty_cache()
 
 
+def subject_result(note_id, answer, max_subjects=None):
+    """Separate invalid transport metadata from an invalid model answer."""
+    if (not isinstance(answer, dict) or not {"raw", "tokens", "truncated"} <= set(answer)
+            or set(answer) - {"raw", "tokens", "truncated", "seconds"}
+            or not isinstance(answer["raw"], str) or type(answer["tokens"]) is not int or answer["tokens"] < 0
+            or type(answer["truncated"]) is not bool
+            or "seconds" in answer and (type(answer["seconds"]) not in (int, float)
+                                        or not math.isfinite(answer["seconds"]) or answer["seconds"] < 0)):
+        raise ValueError("invalid generation answer contract")
+    result = {"note_id": note_id, "subjects": [], "errors": []}
+    try:
+        if answer["truncated"]:
+            raise ValueError("subject answer reached output limit")
+        result["subjects"] = parse_subjects(answer["raw"])
+        if max_subjects is not None and len(result["subjects"]) > max_subjects:
+            raise ValueError("subject count exceeds configured limit")
+    except ValueError as error:
+        result["errors"].append({"task": "subjects", "error": str(error)})
+    return result
+
+
 def subject_stage_summary(directory, data):
     directory = Path(directory)
     if not verify_saved(directory):
@@ -908,6 +974,21 @@ def subject_stage_summary(directory, data):
     expected = [row["note_id"] for row in data["evaluation"]]
     if [row["note_id"] for row in results] != expected:
         raise ValueError("subject response accounting differs")
+    plan = read_json(directory / "subject-batches.json")
+    indices = [i for batch in plan["batches"] for i in batch["indices"]]
+    if sorted(indices) != list(range(len(expected))) or [r["note_id"] for r in plan["inputs"]] != expected:
+        raise ValueError("subject batch response accounting differs")
+    receipts = {}
+    for batch_index, batch in enumerate(plan["batches"]):
+        name = f"subjects-{batch_index:04}.json"
+        receipt = read_json(directory / name)
+        selected = [data["evaluation"][i] for i in batch["indices"]]
+        if (receipt["batch"] != batch or receipt["note_ids"] != [r["note_id"] for r in selected]
+                or receipt["messages"] != [r["messages"] for r in selected]
+                or receipt["input_tokens"] != [plan["inputs"][i]["tokens"] for i in batch["indices"]]
+                or len(receipt["answers"]) != len(selected)):
+            raise ValueError("subject batch receipt differs")
+        receipts[name] = receipt
     for index, row in enumerate(results):
         note = directory / f"note-{index:04}"
         raw = read_json(note / "subjects.json")
@@ -915,6 +996,16 @@ def subject_stage_summary(directory, data):
         if (raw["note_id"] != row["note_id"] or raw["messages"] != data["evaluation"][index]["messages"]
                 or parsed != {key: row[key] for key in ("note_id", "subjects", "errors")} or row["masks"]):
             raise ValueError("subject response accounting differs")
+        if not verify_saved(note):
+            raise ValueError("subject response hash mismatch")
+        batch = raw["batch"]
+        receipt = receipts.get(batch["file"])
+        offset = batch["offset"]
+        if (receipt is None or type(offset) is not int or not 0 <= offset < len(receipt["answers"])
+                or receipt["note_ids"][offset] != row["note_id"] or receipt["answers"][offset] != raw["answer"]):
+            raise ValueError("subject response differs from batch receipt")
+        if parsed != subject_result(row["note_id"], raw["answer"]):
+            raise ValueError("parsed subject result differs from raw response")
     return {"notes": len(results), "subject_failures": sum(bool(row["errors"]) for row in results),
             "returned_subjects": sum(len(row["subjects"]) for row in results)}
 
@@ -931,6 +1022,8 @@ def preparation_data(data, config):
     if settings["max_new_tokens"] > config["max_new_tokens"]["subjects"]:
         raise ValueError("preparation output limit exceeds the subject allowance")
     selected = dict(data)
+    selected["full_train"] = data["train"]
+    selected["full_evaluation"] = data["evaluation"]
     for name, key in (("train", "train_note_ids"), ("evaluation", "evaluation_note_ids")):
         ids = settings[key]
         if (not isinstance(ids, list) or not ids or any(not isinstance(i, str) for i in ids)
@@ -958,6 +1051,78 @@ def cuda_measurement(config, reset=False):
         torch.cuda.reset_peak_memory_stats()
     return {"peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
             "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved()}
+
+
+def verify_training_loss(model, rows, config):
+    """Compare actual instance-patched loss/backward with the native forward.
+
+    Short inputs bound reference logits memory on the full loaded model. This
+    performs no optimizer step and restores RNG/forward/gradients even on failure.
+    BF16 mean-loss tolerances follow Liger 0.8.4's upstream correctness tests:
+    test/transformers/test_fused_linear_cross_entropy.py (atol=.005, rtol=.05).
+    """
+    import torch
+    base = model.get_base_model()
+    patched = base.forward
+    native = type(base).forward.__get__(base)
+    if not patched.__module__.startswith("liger_kernel."):
+        raise ValueError("training loss agreement requires the fused instance forward")
+    parameters = {name: p for name, p in model.named_parameters() if p.requires_grad}
+    if not parameters or any(p.grad is not None for p in parameters.values()):
+        raise ValueError("training loss agreement requires clean adapter gradients")
+    random_state = training_random_state()
+    device = next(model.parameters()).device
+    total = sum(sum(v != -100 for v in row["labels"][1:]) for row in rows)
+    if not total:
+        raise ValueError("training loss agreement requires supervised tokens")
+    atol, rtol = (.005, .05) if device.type == "cuda" else (2e-5, 2e-4)
+    measurements = []
+    try:
+        for row in rows:
+            batch = {key: torch.tensor([value], device=device) for key, value in row.items()}
+            weight = int((batch["labels"][:, 1:] != -100).sum()) / total
+            losses, gradients = [], []
+            state = training_random_state()
+            for forward in (patched, native):
+                base.forward = forward
+                training_random_state(state)
+                model.zero_grad(set_to_none=True)
+                context = torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext()
+                with attention_context(config):
+                    with context:
+                        result = model(**batch, use_cache=False)
+                        loss = result.loss * weight
+                    if not bool(torch.isfinite(loss)):
+                        raise ValueError("training loss agreement produced nonfinite loss")
+                    loss.backward()
+                losses.append(float(loss.detach()))
+                gradients.append({name: None if p.grad is None else p.grad.detach().cpu().clone()
+                                  for name, p in parameters.items()})
+                del result, loss
+            if not math.isclose(*losses, rel_tol=rtol, abs_tol=atol):
+                raise ValueError(f"training loss agreement failed: {losses}")
+            nonzero, maximum = False, 0.
+            for name in parameters:
+                actual, expected = gradients[0][name], gradients[1][name]
+                if actual is None or expected is None:
+                    if actual is not expected:
+                        raise ValueError(f"training loss agreement gradient missing: {name}")
+                    continue
+                if not bool(torch.isfinite(actual).all()) or not torch.allclose(actual, expected, atol=atol, rtol=rtol):
+                    raise ValueError(f"training loss agreement gradient differs: {name}")
+                nonzero |= bool(actual.count_nonzero()) and bool(expected.count_nonzero())
+                maximum = max(maximum, float((actual-expected).abs().max()))
+            if not nonzero:
+                raise ValueError("training loss agreement has no nonzero adapter gradients")
+            measurements.append({"fused_loss": losses[0], "native_loss": losses[1],
+                                 "token_weight": weight, "maximum_gradient_error": maximum})
+        return {"status": "complete", "actual_cuda_kernel": device.type == "cuda", "examples": len(rows),
+                "atol": atol, "rtol": rtol, "measurements": measurements,
+                "purpose": "Numerical check; no optimizer update or quality result."}
+    finally:
+        base.forward = patched
+        model.zero_grad(set_to_none=True)
+        training_random_state(random_state)
 
 
 def generation_cache_check(model, tokenizer, encoded, config, chunk_tokens):
@@ -1042,6 +1207,9 @@ def run_subject_preparation(config, tokenizer, data, output):
             timings.append({"stage": f"training-{milestone}", "seconds": time.monotonic()-started})
             write_json(timing_path, timings)
         metadata = subject_checkpoint_metadata(checkpoint, output, plan)
+        if (config["device"] == "cuda" and
+                metadata["peak_cuda_reserved_bytes"] > config["subject_batching"]["budget_bytes"]):
+            raise ValueError("observed training peak exceeds the frozen memory budget")
         if index:
             continue
         if (stages / "complete.json").exists():
@@ -1080,16 +1248,19 @@ def run_subject_preparation(config, tokenizer, data, output):
                     note = stages / f"note-{i:04}"
                     write_json(note / "subjects.json", {"note_id": row["note_id"],
                                "messages": row["messages"], "answer": answer})
-                    parsed = {"note_id": row["note_id"], "subjects": [], "errors": []}
-                    try:
-                        parsed["subjects"] = parse_subjects(answer["raw"])
-                    except ValueError as error:
-                        parsed["errors"].append({"task": "subjects", "error": str(error)})
+                    parsed = subject_result(row["note_id"], answer)
                     write_json(note / "subjects-result.json", parsed)
                     write_json(note / "complete.json", file_hashes(note))
                 batches.append(receipt)
-                check = generation_cache_check(model, tokenizer, [encoded[i] for i in indices],
-                                                config, config["preparation"]["cache_fill_tokens"])
+            # Cover every planned full-validation batch shape, testing only shapes
+            # not dominated in both batch size and padded prompt width by another.
+            full_plan, full_encoded = subject_batch_plan(model, tokenizer, data["full_evaluation"], config)
+            shapes = {(len(batch["indices"]), batch["prompt_width"]): batch for batch in full_plan["batches"]}
+            shapes = {shape: batch for shape, batch in shapes.items()
+                      if not any(other != shape and other[0] >= shape[0] and other[1] >= shape[1] for other in shapes)}
+            for batch_index, batch in enumerate(shapes.values()):
+                check = generation_cache_check(model, tokenizer, [full_encoded[i] for i in batch["indices"]],
+                                               config, config["preparation"]["cache_fill_tokens"])
                 if (config["device"] == "cuda" and
                         check["peak_cuda_reserved_bytes"] > config["subject_batching"]["budget_bytes"]):
                     raise ValueError("observed generation cache peak exceeds the frozen memory budget")
@@ -1097,7 +1268,7 @@ def run_subject_preparation(config, tokenizer, data, output):
                 write_json(stages / f"cache-{batch_index:04}.json", check)
             write_json(stages / "measurements.json", {"subject_answers": len(data["evaluation"]),
                 "max_new_tokens": brief["max_new_tokens"]["subjects"], "merge": merge,
-                "batches": batches, "cache_checks": cache_checks})
+                "batches": batches, "cache_checks": cache_checks, "full_validation_plan": full_plan})
             write_json(stages / "complete.json", file_hashes(stages))
         finally:
             del model
@@ -1166,6 +1337,86 @@ def run_subject_pilot(config, tokenizer, data, output, through):
         if not report_path.exists():
             write_json(report_path, report)
     print("stage: subject pilot complete", flush=True)
+
+
+def verify_subject_run(output, data, config, through="report"):
+    """Verify the required work, not merely the existence of a completion report."""
+    output = Path(output)
+    frozen = read_json(output / "manifest.json")
+    expected_config = {**config, "evaluation_tasks": ["subjects"]}
+    if (frozen["dataset"] != data["manifest"] or
+            {k: v for k, v in frozen["config"].items() if k not in ("data", "model")}
+            != {k: v for k, v in expected_config.items() if k not in ("data", "model")}):
+        raise ValueError("saved run differs from the packaged comparison")
+    for key in ("data", "model"):
+        actual, expected = Path(frozen["config"][key]), Path(config[key])
+        if actual != expected and (expected.is_absolute() or actual.parts[-len(expected.parts):] != expected.parts):
+            raise ValueError(f"saved run {key} differs from the packaged comparison")
+    if through == "preparation":
+        data = preparation_data(data, config)
+    plan = subject_training_plan(data, config)
+    if read_json(output / "training-plan.json") != plan:
+        raise ValueError("saved subject training plan differs")
+    metadata = [subject_checkpoint_metadata(output / "checkpoints" / f"checkpoint-{m}", output, plan)
+                for m in plan["milestones"]]
+    report = read_json(output / "report.json")
+    if (report.get("status") != "complete" or report["training"] != {
+            "examples": len(plan["note_ids"]), "updates": metadata[-1]["updates"]}):
+        raise ValueError("subject report training coverage differs")
+    if through == "preparation":
+        stages = output / "preparation"
+        if not verify_saved(stages):
+            raise ValueError("preparation hash mismatch")
+        measurements = read_json(stages / "measurements.json")
+        if report["preparation"] != measurements or measurements["subject_answers"] != len(data["evaluation"]):
+            raise ValueError("preparation response accounting differs")
+        if config.get("fused_linear_cross_entropy", False):
+            check = read_json(output / "training-loss-check.json")
+            if check["status"] != "complete" or not check["actual_cuda_kernel"]:
+                raise ValueError("preparation lacks actual CUDA training loss agreement")
+        if not measurements["cache_checks"] or not measurements["batches"]:
+            raise ValueError("preparation is missing generation or cache checks")
+        indices = [i for batch in measurements["batches"] for i in batch["indices"]]
+        if sorted(indices) != list(range(len(data["evaluation"]))):
+            raise ValueError("preparation response accounting differs")
+        for index, row in enumerate(data["evaluation"]):
+            note = stages / f"note-{index:04}"
+            raw = read_json(note / "subjects.json")
+            parsed = read_json(note / "subjects-result.json")
+            if (not verify_saved(note) or raw["note_id"] != row["note_id"] or raw["messages"] != row["messages"]
+                    or parsed != subject_result(row["note_id"], raw["answer"])):
+                raise ValueError("preparation saved response differs")
+        for check in measurements["cache_checks"]:
+            if (check["cached_tokens"] != check["prompt_width"] + config["max_new_tokens"]["subjects"]
+                    or config["device"] == "cuda" and
+                    check["peak_cuda_reserved_bytes"] > config["subject_batching"]["budget_bytes"]):
+                raise ValueError("preparation cache check differs")
+        full_plan = measurements["full_validation_plan"]
+        if (full_plan["policy"] != config["subject_batching"]
+                or full_plan["max_new_tokens"] != config["max_new_tokens"]["subjects"]
+                or [r["note_id"] for r in full_plan["inputs"]] != [r["note_id"] for r in data["full_evaluation"]]
+                or any(not any(check["batch_size"] >= len(batch["indices"])
+                                   and check["prompt_width"] >= batch["prompt_width"]
+                                   for check in measurements["cache_checks"])
+                       for batch in full_plan["batches"])):
+            raise ValueError("preparation did not cover the full validation batch shapes")
+        return {"status": "complete", "training": report["training"]}
+    baseline = subject_stage_summary(output / "baseline", data)
+    stages = []
+    first_plan = read_json(output / "baseline/subject-batches.json")
+    for milestone in plan["milestones"]:
+        checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
+        stage = output / "evaluations" / checkpoint.name
+        summary = subject_stage_summary(stage, data)
+        if read_json(stage / "subject-batches.json") != first_plan:
+            raise ValueError("evaluation batching differs from baseline")
+        stages.append({"notes_trained": milestone, "checkpoint": str(checkpoint.relative_to(output)),
+                       "evaluation": summary, "merged_reload_verified": True})
+    if (first_plan["policy"] != config["subject_batching"]
+            or first_plan["max_new_tokens"] != config["max_new_tokens"]["subjects"]
+            or report["baseline"] != baseline or report["checkpoints"] != stages):
+        raise ValueError("subject comparison report differs from saved work")
+    return {"status": "complete", "baseline": baseline, "checkpoints": stages, "training": report["training"]}
 
 
 def run(config_path, output, through="report"):
@@ -1287,6 +1538,8 @@ def run(config_path, output, through="report"):
                 raise ValueError("baseline hash mismatch")
             baseline = read_json(baseline_path)
         if through == "baseline":
+            if pilot:
+                write_json(output / "baseline-integrity.json", subject_stage_summary(output / "baseline", data))
             return
         if pilot:
             run_subject_pilot(config, tokenizer, data, output, through)

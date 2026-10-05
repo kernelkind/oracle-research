@@ -13,6 +13,88 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_completion_review_requires_verified_retrieval(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaisesRegex(FileNotFoundError, 'retrieval-verification.json'):
+                deploy.review_completion(root / 'package', root / 'operation')
+            self.assertFalse((root / 'operation/launch/completion-review.json').exists())
+
+    def test_cuda_fused_pilot_cannot_be_packaged_without_matched_preparation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / 'candidate.json'
+            write_json(path, {'device': 'cuda', 'fused_linear_cross_entropy': True, 'training_milestones': [1000]})
+            with self.assertRaisesRegex(ValueError, 'requires matched GPU preparation'):
+                deploy.prepare([path], root / 'inputs')
+
+    def test_all_subject_baselines_are_verified_before_any_training(self):
+        from sse_multivector import distillation_data, distillation_run
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            data_path = root / "subjects"
+            distillation_data.prepare(root / "source.json", root / "annotations.json", root / "subjects.txt",
+                None, "AS-test", None, 2, "pilot", data_path, tasks=("subjects",))
+            configs = []
+            for name in ("first", "second"):
+                path = root / (name + ".json")
+                write_json(path, {"data": str(data_path), "model": "org/model", "revision": "a"*40,
+                                  "training_milestones": [2, 4], "evaluation_tasks": ["subjects"]})
+                configs.append(path)
+            package, output = root / "package", root / "results"
+            changed = read_json(configs[1])
+            write_json(configs[1], {**changed, "training_milestones": [1, 4]})
+            with self.assertRaisesRegex(ValueError, "shared pilot inputs or recipe differ"):
+                deploy.prepare(configs, root / "mixed-inputs")
+            write_json(configs[1], changed)
+            deploy.prepare(configs, package)
+            calls = []
+            def child(command, timeout, **kwargs):
+                name = Path(command[3]).stem
+                mode = command[-1]
+                calls.append((name, mode))
+                return type("Result", (), {"returncode": 0})()
+            with patch.object(deploy, "run_process", side_effect=child), \
+                    patch.object(deploy, "subject_stage_summary", return_value={"notes": 2}), \
+                    patch.object(deploy, "verify_subject_run", return_value={"status": "complete"}):
+                deploy.execute(package, output)
+            self.assertEqual(calls, [("first", "baseline"), ("second", "baseline"),
+                                     ("first", "report"), ("second", "report")])
+            calls.clear()
+            with patch.object(deploy, "run_process", side_effect=child), \
+                    patch.object(deploy, "subject_stage_summary", side_effect=ValueError("missing response")):
+                with self.assertRaisesRegex(ValueError, "missing response"):
+                    deploy.execute(package, root / "broken")
+            self.assertEqual(calls, [("first", "baseline")])
+
+    def test_paired_preparation_requires_identical_pilot_recipe(self):
+        from sse_multivector import distillation_data
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            data = root / "subjects"
+            manifest = distillation_data.prepare(root / "source.json", root / "annotations.json", root / "subjects.txt",
+                None, "AS-test", None, 2, "pilot", data, tasks=("subjects",))
+            pilot = root / "pilot/candidate.json"
+            prep = root / "prep/candidate.json"
+            config = {"data": str(data), "model": "org/model", "revision": "a"*40,
+                      "training_milestones": [2, 4], "evaluation_tasks": ["subjects"], "learning_rate": .0001,
+                      "max_new_tokens": {"subjects": 8}}
+            write_json(pilot, config)
+            prepared = {**config, "training_milestones": [1, 2], "preparation": {
+                "train_note_ids": manifest["train_note_ids"][:2], "evaluation_note_ids": manifest["evaluation_note_ids"][:1],
+                "max_new_tokens": 4, "cache_fill_tokens": 16}}
+            write_json(prep, prepared)
+            package = root / "package"
+            deploy.prepare([pilot], package, preparation_configs=[prep])
+            job = deploy.verify_package(package)
+            self.assertEqual(job["preparation_runs"], ["preparation-configs/candidate.json"])
+            self.assertEqual(job["timeout_seconds"], None)
+            write_json(prep, {**prepared, "learning_rate": .01})
+            with self.assertRaisesRegex(ValueError, "preparation recipe differs"):
+                deploy.prepare([pilot], root / "bad", preparation_configs=[prep])
+
     def test_unbounded_child_finishes_after_operator_interrupt(self):
         import signal
         import time
@@ -98,6 +180,45 @@ class PackageTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
 class SharedSSHTests(unittest.TestCase):
+    def test_prep_continues_into_fresh_pilot_and_verifies_retrieved_results(self):
+        from sse_multivector.distillation_run import load_data
+        root = self.fixture_package('prep-then-pilot', {
+            'training_milestones': [1, 2, 3, 4, 6], 'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'], 'subject_batching': {'budget_bytes': 8*1024*1024,
+                'workspace_bytes': 0, 'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}}, seconds=None)
+        paths, preparations = [], []
+        for name in ('first', 'second'):
+            path = root / (name + '.json')
+            paths.append(path)
+            config = read_json(path)
+            data = load_data(config['data'])
+            prep = root / 'prep-configs' / (name + '.json')
+            write_json(prep, {**config, 'training_milestones': [3, 6], 'preparation': {
+                'max_new_tokens': 4, 'cache_fill_tokens': 16,
+                'train_note_ids': data['manifest']['train_note_ids'],
+                'evaluation_note_ids': data['manifest']['evaluation_note_ids']}})
+            preparations.append(prep)
+        package = root / 'combined-inputs'
+        deploy.prepare(paths, package, preparation_configs=preparations)
+        result = self.run_package(package, root / 'operation')
+        checked = deploy.verify_results(package, result)
+        self.assertEqual(checked['status'], 'complete')
+        self.assertEqual(set(checked['candidates']), {'first', 'second'})
+        reviewed = deploy.review_completion(package, root / 'operation')
+        self.assertTrue(reviewed['complete'])
+        self.assertEqual(reviewed['instance_id'], 'offline-fixture')
+        for name in checked['candidates']:
+            self.assertEqual(read_json(result / 'preparation' / name / 'report.json')['training']['updates'], 2)
+            self.assertEqual(read_json(result / name / 'checkpoints/checkpoint-1/training.json')['updates'], 1)
+            self.assertEqual(read_json(result / name / 'report.json')['training']['updates'], 5)
+        report = read_json(result / 'first/report.json')
+        report['checkpoints'].pop()
+        write_json(result / 'first/report.json', report)
+        with self.assertRaisesRegex(ValueError, 'comparison report differs'):
+            deploy.verify_results(package, result)
+        with self.assertRaisesRegex(Exception, 'integrity verification'):
+            deploy.review_completion(package, root / 'operation')
+
     def test_chunked_copy_prioritizes_new_responses_over_real_ssh(self):
         import argparse
         import importlib.util
@@ -195,6 +316,7 @@ class SharedSSHTests(unittest.TestCase):
         # retrieval below are the real frozen shared runner over real SSH.
         for name in ('approval-plan', 'approval', 'offer', 'create-result', 'instance', 'pre-transfer-instance-validation'):
             write_json(root / f'launch/{name}.json', {})
+        write_json(root / 'launch/create-result.json', {'success': True, 'new_contract': 'offline-fixture'})
         shutil.copyfile(ledger, root / 'launch/reserved-budget-ledger.json')
         write_json(root / 'launch/full-build-reservation.json', {'ledger_sha256': sha256(ledger)})
         shutil.copyfile(config, root / 'launch/operation-contract.json')

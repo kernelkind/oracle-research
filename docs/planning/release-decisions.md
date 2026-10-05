@@ -691,7 +691,8 @@ mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
 
 **October 2 GPU choice confirmed by the user:** use one **96GB RTX PRO 6000**
-for separate preparation and the larger pilot. Keep the complete student model
+for preparation and the larger pilot. The subsequently approved paired flow
+continues on the same rental when prep passes. Keep the complete student model
 on that GPU; run the three students sequentially. Prior NVLink alternatives are
 research evidence, not the selected execution configuration. The subjects-only
 scope, one continuing pass, approved training recipe and dynamic evaluation
@@ -1316,9 +1317,24 @@ candidates use **20,480-token context / 10,240-token output** and omit the
 efficient CUDA attention. Pinned-container integration and SSH checks passed;
 actual CUDA loss/gradient agreement, long-example memory fit, generation cache
 and timing remain open. The new configurations are candidates, not frozen launch
-inputs; preparing the preserved three-way data package remains separate work.
+inputs. The preserved three-way data package was subsequently prepared through
+the shared workflow without repartitioning (integrity safeguards below).
 No rental, publication or additional teacher call occurred. The technical plan
 records checks and limitations.
+
+**Experiment integrity fixes authorized October 5:** freeze paired prep/pilot
+stages locally; successful prep continues on the same rental with fresh pilot
+adapters. Before pilot training, verify all three complete validation baselines.
+Distinguish malformed model answers from missing work, parser defects and broken
+receipts. Prep must cover the longest complete training example and planned full
+validation cache shapes, and compare actual fused CUDA loss/adapter gradients
+against the native path before its first update. Recheck all required responses,
+continuing checkpoints and coverage locally before recording the deletion review.
+The shared three-way data package preserves 1,000 train / 100 validation / 200
+reserved final test notes. Local semantic grading need not be settled to collect
+GPU outputs; its rubric/reviewer remain open. Actual hardware checks, final-test
+collection and new launch spending remain open. These safeguards cannot guarantee
+a clear performance difference between students.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
