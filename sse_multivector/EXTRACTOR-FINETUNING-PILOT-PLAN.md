@@ -1526,6 +1526,31 @@ the bundle. Earlier provisional splits and one unused teacher preparation are
 preserved as evidence; no inference occurred on them. Teacher generation uses
 `asv6.100-subject-pilot-teacher-v1.json` and the final bundle.
 
+**Teacher generation partial — October 5:** `asv6.100-final-v1` saved 39 valid
+WebSocket answers and 99 failed handshakes at concurrency 32. Failed calls saved
+zero frames/bytes; proxy logs reported HTTP 403. The native classifier treats
+them as unknown causes, ineligible for automatic retry. All 138 attempt receipts
+are preserved. `asv6.100-sse-v1` completed the 1,162 previously unattempted notes
+over SSE transport at concurrency 24, with 1,162 valid answers, normal stop reasons
+and no failed
+attempts or retries. Its exact rendered prompts, inputs, schema, teacher model
+and reasoning setting match the initial preparation.
+
+`asv6.100-websocket-saved-v1` reused the earlier 39 answers with no new inference.
+Native collection published `teacher-labels-partial-v1/subjects.json` and
+`provenance.json` beside `sample-final/`: **1,201 labels (919 train / 95 validation /
+187 test)**, preserving original text, author, split, raw response receipts and
+source hashes. `teacher-labels-partial-verification.json` verifies structural
+numbering, all nine protected collection sources and exact missing-note identity.
+The persistent attempt budget records 1,300 claimed calls and 1,300 saved attempt
+receipts; cached reuse adds no claims.
+
+**99 labels remain missing: 81 train / 5 validation / 13 test.** Notes, frozen
+prompts and failure evidence remain unchanged. An explicit user exception to
+AGENTS.md is required before another attempt on these failures. The collection
+is partial and has not undergone semantic review. No rental, paid API fallback
+or additional cash commitment was used.
+
 
 ### Conditional subjects-only batched cost reference — October 3
 

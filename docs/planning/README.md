@@ -72,7 +72,9 @@ with hierarchy input exclusions and author/copy protections. Full ASv6.100
 teacher labels use **GPT-6.1 Sol / medium** through the subscription runner at
 **32 concurrent calls**, reducing to 24 if needed. Selection and generation are
 authorized. The 1,300-note selection and three splits are frozen; original texts,
-lengths and author/development exposure checks passed. See the [pilot process](fine-tuning-pilot-process.md#1-freeze-shared-inputs--locally).
+lengths and author/development exposure checks passed. Teacher generation saved
+1,201 labels; 99 failed handshakes still need completion. SSE transport at 24 concurrency
+completed without failures. See the [pilot process](fine-tuning-pilot-process.md#1-freeze-shared-inputs--locally).
 The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 
