@@ -3324,10 +3324,7 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
     return "unknown"
 
 
-def provider_retry_delay(record: dict[str, Any]) -> float | None:
-    """At most one retry per case, with a bounded delay honoring Retry-After."""
-    if prompt_failure_kind(record) != "provider_transient" or record["attempt"] >= 2:
-        return None
+def _provider_retry_after_delay(record: dict[str, Any]) -> float | None:
     value = (record.get("model_result") or {}).get("response_metadata", {}).get("retry_after")
     delay = 2.0
     if value is not None:
@@ -3338,9 +3335,17 @@ def provider_retry_delay(record: dict[str, Any]) -> float | None:
                 delay = parsedate_to_datetime(value).timestamp() - time.time()
         except (ValueError, TypeError, OverflowError):
             return None
-        if not math.isfinite(delay) or delay > 60:
+        if not math.isfinite(delay):
             return None
     return max(2.0, delay)
+
+
+def provider_retry_delay(record: dict[str, Any]) -> float | None:
+    """At most one retry per case, with a bounded delay honoring Retry-After."""
+    if prompt_failure_kind(record) != "provider_transient" or record["attempt"] >= 2:
+        return None
+    delay = _provider_retry_after_delay(record)
+    return delay if delay is not None and delay <= 60 else None
 
 
 def _execute_prompt_batch(
@@ -3469,45 +3474,73 @@ def _execute_prompt_batch(
         return {"prompt_id": prompt.prompt_id, "response": response}
 
     ready = []
-    delayed = []
     responses = {}
     failures = []
     fatal = False
+    backoff_seconds = 0.0
+    backoff_until = 0.0
+
+    def backoff(record: dict[str, Any], now: float) -> None:
+        nonlocal backoff_seconds, backoff_until
+        # Failures already in flight share the current wait. A failure after
+        # that wait doubles it, including cases with no retry remaining.
+        if now >= backoff_until:
+            backoff_seconds = min(60.0, max(2.0, backoff_seconds * 2))
+        backoff_until = max(backoff_until, now + max(
+            backoff_seconds, _provider_retry_after_delay(record) or 0.0))
+
     for index, prompt in enumerate(config.prompts):
         previous = latest.get("prompt:" + prompt.prompt_id)
         if previous is not None and previous["status"] == "failed":
             kind = prompt_failure_kind(previous)
+            now = time.monotonic()
+            if kind == "provider_transient":
+                backoff(previous, now)
             delay = provider_retry_delay(previous)
             if delay is not None:
-                heapq.heappush(delayed, (time.monotonic() + delay, index, prompt))
+                retry_at = now + delay
+                backoff_until = max(backoff_until, retry_at)
+                heapq.heappush(ready, (retry_at, index, prompt))
             else:
                 failures.append(f"{prompt.prompt_id}: {previous.get('error')}")
                 fatal |= kind == "provider_fatal"
         else:
             heapq.heappush(ready, (float("inf"), index, prompt))
-    # Keep at most concurrency futures. Slow calls and retry delays do not hold
-    # unrelated cases behind a wave barrier. Due retries precede untouched cases,
-    # ordered by deadline. Each case still has two lifetime attempts.
+    # Keep at most concurrency futures. Provider backoff gates retries and fresh
+    # cases together; slow calls and local failures remain independent. Due
+    # retries precede untouched cases. Each case still has two lifetime attempts.
     with ThreadPoolExecutor(max_workers=concurrency) as pool:
         active = {}
-        while active or (not fatal and (ready or delayed)):
-            while delayed and delayed[0][0] <= time.monotonic():
-                heapq.heappush(ready, heapq.heappop(delayed))
-            while ready and len(active) < concurrency and not fatal:
+        while active or (not fatal and ready):
+            while (ready and len(active) < concurrency and not fatal
+                   and time.monotonic() >= backoff_until):
                 _, index, prompt = heapq.heappop(ready)
                 previous = latest.get("prompt:" + prompt.prompt_id)
-                active[pool.submit(execute, prompt)] = (index, prompt, previous)
+                submitted_at = time.monotonic()
+                active[pool.submit(execute, prompt)] = (index, prompt, previous, submitted_at)
+            now = time.monotonic()
+            launch_at = None
+            if not fatal and len(active) < concurrency:
+                if ready:
+                    launch_at = max(now, backoff_until)
             if not active:
-                if delayed and not fatal:
-                    time.sleep(max(0, delayed[0][0] - time.monotonic()))
+                if launch_at is not None:
+                    time.sleep(max(0, launch_at - now))
                 continue
-            delay = (max(0, delayed[0][0] - time.monotonic())
-                     if delayed and len(active) < concurrency and not fatal else None)
+            delay = max(0, launch_at - now) if launch_at is not None else None
             completed, _ = wait(active, timeout=delay, return_when=FIRST_COMPLETED)
-            for future in completed:
-                index, prompt, previous = active.pop(future)
+            # Observe failures before successes completed in the same wait, so
+            # a concurrent success cannot erase a newly required backoff.
+            for future in sorted(completed, key=lambda item: item.exception() is None):
+                index, prompt, previous, submitted_at = active.pop(future)
                 try:
                     responses[index] = future.result()
+                    record = latest.get("prompt:" + prompt.prompt_id)
+                    # Saved/reused answers and calls sent before backoff cannot
+                    # establish recovery. Only a new successful request can.
+                    if (submitted_at >= backoff_until and record is not previous
+                            and record.get("execution") != "cross_run_reuse"):
+                        backoff_seconds = 0.0
                 except NewJobLimitReached as limit:
                     failures.append(str(limit) or "new-attempt allowance exhausted")
                     fatal = True
@@ -3518,9 +3551,14 @@ def _execute_prompt_batch(
                     if record is previous or record is None:
                         raise
                     kind = prompt_failure_kind(record)
+                    now = time.monotonic()
+                    if kind == "provider_transient" and not fatal:
+                        backoff(record, now)
                     delay = provider_retry_delay(record)
                     if delay is not None and not fatal:
-                        heapq.heappush(delayed, (time.monotonic() + delay, index, prompt))
+                        retry_at = now + delay
+                        backoff_until = max(backoff_until, retry_at)
+                        heapq.heappush(ready, (retry_at, index, prompt))
                     else:
                         failures.append(f"{prompt.prompt_id}: {record.get('error')}")
                         fatal |= kind == "provider_fatal"

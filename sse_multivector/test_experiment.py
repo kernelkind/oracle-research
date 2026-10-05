@@ -1153,6 +1153,41 @@ class ExperimentTests(unittest.TestCase):
     def calls(self):
         return json.loads(self.log.read_text()) if self.log.exists() else []
 
+    def execute_with_backoff_clock(self, failures, *, concurrency=1, env=None, failed=False):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from sse_multivector import extraction_pipeline as engine
+
+        config = engine.PromptRunnerConfig.load(self.root / 'E1/runner-config.json')
+        manifest = json.loads((config.run_directory / 'manifest.json').read_text())
+        clock = [1000.0]
+        waits, starts = [], []
+        invoke_model = engine._invoke_model
+
+        def sleep(seconds):
+            waits.append(seconds)
+            clock[0] += seconds
+
+        def invoke(*args, **kwargs):
+            starts.append((args[2].splitlines()[0], clock[0]))
+            return invoke_model(*args, **kwargs)
+
+        with patch.dict(os.environ, {
+            'FAKE_RUNNER_LOG': str(self.log),
+            'FAKE_RUNNER_FAILURES': json.dumps(failures),
+            **(env or {}),
+        }), patch.object(engine, 'time', SimpleNamespace(
+                monotonic=lambda: clock[0], sleep=sleep, time=engine.time.time)), \
+                patch.object(engine, '_invoke_model', side_effect=invoke):
+            if failed:
+                with self.assertRaisesRegex(engine.RunnerError, 'unresolved prompt cases'):
+                    engine._execute_prompt_batch(config, manifest, retry_failed=False,
+                                                 concurrency=concurrency)
+            else:
+                engine._execute_prompt_batch(config, manifest, retry_failed=False,
+                                             concurrency=concurrency)
+        return waits, starts
+
     def test_prepare_is_offline_freezes_inputs_and_separates_review_evidence(self):
         result = self.prepare()
         self.assertIn("Model calls made: 0", result.stdout)
@@ -1791,6 +1826,9 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(self.show()["summary"]["valid"], 1)
 
     def test_codex_processing_error_retries_only_missing_case_on_resume(self):
+        data = json.loads(self.cases.read_text())
+        data['cases'].reverse()
+        self.write('cases.json', data)
         self.prepare()
         message = ("Codex error: An error occurred while processing your request. "
                    "You can retry your request, or contact us through our help center "
@@ -1841,6 +1879,135 @@ class ExperimentTests(unittest.TestCase):
                 self.assertEqual(prompt_failure_kind(candidate), expected)
                 self.assertIsNone(provider_retry_delay(candidate))
 
+    def test_provider_backoff_pauses_fresh_cases_before_retry(self):
+        self.prepare()
+        waits, starts = self.execute_with_backoff_clock({'Tea': {
+            'attempts': 1, 'metadata': {'http_status': 429, 'retry_after': '5'}}})
+        self.assertEqual([c['prompt'].splitlines()[0] for c in self.calls()],
+                         ['GENERIC PROMPT Tea {POST}', 'GENERIC PROMPT Tea {POST}',
+                          'GENERIC PROMPT Coffee'])
+        self.assertEqual(waits, [5.0])
+        self.assertEqual([t for _, t in starts], [1000.0, 1005.0, 1005.0])
+        self.assertEqual(self.show()['summary']['valid'], 2)
+
+    def test_provider_backoff_doubles_across_exhausted_cases_and_caps_at_60_seconds(self):
+        posts = ['Tea', 'Coffee', 'Milk', 'Water']
+        self.write('cases.json', {'cases': [
+            {'id': text, 'inputs': {'POST': text}} for text in posts]})
+        self.prepare()
+        waits, starts = self.execute_with_backoff_clock({
+            text: {'metadata': {'http_status': 429}} for text in posts}, failed=True)
+        self.assertEqual(waits, [2.0, 4.0, 8.0, 16.0, 32.0, 60.0, 60.0])
+        self.assertEqual([t for _, t in starts],
+                         [1000.0, 1002.0, 1006.0, 1014.0, 1030.0, 1062.0, 1122.0, 1182.0])
+        self.assertEqual(len(self.calls()), 8)
+        self.assertEqual(self.show()['summary']['failed'], 4)
+        self.execute_with_backoff_clock({}, failed=True)
+        self.assertEqual(len(self.calls()), 8, 'resume retried exhausted cases')
+
+    def test_provider_backoff_resets_after_a_new_successful_request(self):
+        posts = ['Tea', 'Coffee', 'Milk']
+        self.write('cases.json', {'cases': [
+            {'id': text, 'inputs': {'POST': text}} for text in posts]})
+        self.prepare()
+        waits, starts = self.execute_with_backoff_clock({
+            text: {'attempts': 1, 'metadata': {'http_status': 503}} for text in posts})
+        self.assertEqual(waits, [2.0, 2.0, 2.0])
+        self.assertEqual([t for _, t in starts],
+                         [1000.0, 1002.0, 1002.0, 1004.0, 1004.0, 1006.0])
+        self.assertEqual(self.show()['summary']['valid'], 3)
+
+    def test_concurrent_rejections_share_backoff_before_any_fresh_case(self):
+        posts = ['Tea', 'Coffee', 'Milk', 'Water', 'Juice']
+        self.write('cases.json', {'cases': [
+            {'id': text, 'inputs': {'POST': text}} for text in posts]})
+        self.prepare()
+        barrier = self.root / 'barrier'
+        barrier.mkdir()
+        waits, starts = self.execute_with_backoff_clock({
+            text: {'attempts': 1, 'metadata': {'http_status': 429, 'retry_after': '5'}}
+            for text in posts[:4]}, concurrency=4, env={
+                'FAKE_RUNNER_BARRIER': str(barrier), 'FAKE_RUNNER_BARRIER_COUNT': '4'})
+        self.assertEqual(waits, [5.0])
+        self.assertEqual([t for _, t in starts[:4]], [1000.0] * 4)
+        self.assertTrue(all(t == 1005.0 for _, t in starts[4:]))
+        self.assertEqual(len(self.calls()), 9)
+        self.assertEqual(self.show()['summary']['valid'], 5)
+
+    def test_success_from_before_backoff_does_not_reset_exponential_delay(self):
+        posts = ['Tea', 'Coffee', 'Milk', 'Water']
+        self.write('cases.json', {'cases': [
+            {'id': text, 'inputs': {'POST': text}} for text in posts]})
+        self.prepare()
+        waits, starts = self.execute_with_backoff_clock({
+            'Tea': {'metadata': {'http_status': 429}}}, concurrency=2, failed=True,
+            env={'FAKE_RUNNER_SEQUENCE': json.dumps({
+                text: {'sleep_seconds': 0.2} for text in ['Coffee', 'Milk']})})
+        self.assertEqual(waits, [2.0, 4.0])
+        self.assertIn(('GENERIC PROMPT Water', 1006.0), starts)
+        self.assertEqual(self.show()['summary']['valid'], 3)
+
+    def test_reused_answer_does_not_reset_provider_backoff(self):
+        self.write('cases.json', {'cases': [{'id': 'Coffee', 'inputs': {'POST': 'Coffee'}}]})
+        self.prepare('warm')
+        self.cli('run', 'warm')
+        self.write('cases.json', {'cases': [
+            {'id': text, 'inputs': {'POST': text}} for text in ['Tea', 'Coffee', 'Milk']]})
+        self.prepare()
+        waits, _ = self.execute_with_backoff_clock({
+            'Tea': {'metadata': {'http_status': 429}},
+            'Milk': {'attempts': 1, 'metadata': {'http_status': 429}},
+        }, failed=True)
+        self.assertEqual(waits, [2.0, 4.0, 8.0])
+        self.assertEqual(len(self.calls()), 5)
+        self.assertEqual(self.show()['summary']['reused'], 1)
+
+    def test_provider_backoff_does_not_pause_a_separate_provider_batch(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Event
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from sse_multivector import extraction_pipeline as engine
+
+        self.write('cases.json', {'cases': [{'id': 'Tea', 'inputs': {'POST': 'Tea'}}]})
+        self.prepare()
+        first = engine.PromptRunnerConfig.load(self.root / 'E1/runner-config.json')
+        first_manifest = json.loads((first.run_directory / 'manifest.json').read_text())
+        self.write('cases.json', {'cases': [{'id': 'Coffee', 'inputs': {'POST': 'Coffee'}}]})
+        spec = json.loads(self.spec.read_text())
+        spec['runner']['provider'] = 'openrouter'
+        self.write('spec.json', spec)
+        self.prepare('E2')
+        second = engine.PromptRunnerConfig.load(self.root / 'E2/runner-config.json')
+        second_manifest = json.loads((second.run_directory / 'manifest.json').read_text())
+        waiting, release = Event(), Event()
+        real_time = engine.time
+
+        def sleep(seconds):
+            waiting.set()
+            self.assertTrue(release.wait(5), 'other provider could not run during backoff')
+            real_time.sleep(seconds)
+
+        with patch.dict(os.environ, {
+            'FAKE_RUNNER_LOG': str(self.log),
+            'FAKE_RUNNER_FAILURES': json.dumps({'Tea': {
+                'attempts': 1, 'metadata': {'http_status': 429}}}),
+        }), patch.object(engine, 'time', SimpleNamespace(
+                monotonic=real_time.monotonic, sleep=sleep, time=real_time.time)), \
+                ThreadPoolExecutor(max_workers=1) as pool:
+            active = pool.submit(engine._execute_prompt_batch, first, first_manifest,
+                                 retry_failed=False)
+            try:
+                self.assertTrue(waiting.wait(5), 'first provider never entered backoff')
+                engine._execute_prompt_batch(second, second_manifest, retry_failed=False)
+                self.assertEqual(len(self.calls()), 2)
+                self.assertFalse(active.done())
+            finally:
+                release.set()
+            active.result(timeout=5)
+        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual(self.show('E2')['summary']['valid'], 1)
+
     def test_due_retries_precede_untouched_cases_in_deadline_order(self):
         self.write("cases.json", {"cases": [
             {"id": text, "inputs": {"POST": text}}
@@ -1856,7 +2023,7 @@ class ExperimentTests(unittest.TestCase):
         })
         self.assertEqual([c["prompt"].splitlines()[0] for c in self.calls()],
                          ["GENERIC PROMPT " + text for text in
-                          ["Tea", "Coffee", "Milk", "Tea", "Coffee", "Water"]])
+                          ["Tea", "Tea", "Coffee", "Coffee", "Milk", "Water"]])
         self.assertEqual(self.show()["summary"]["valid"], 4)
 
     def test_resumed_retry_precedes_untouched_cases_when_due(self):
@@ -1876,7 +2043,7 @@ class ExperimentTests(unittest.TestCase):
         })
         self.assertEqual([c["prompt"].splitlines()[0] for c in self.calls()],
                          ["GENERIC PROMPT " + text for text in
-                          ["Tea", "Coffee", "Tea", "Milk"]])
+                          ["Tea", "Tea", "Coffee", "Milk"]])
         self.assertTrue((self.root / "E1/run/results.jsonl").read_bytes().startswith(before))
         self.assertEqual(self.show()["summary"]["valid"], 3)
 
@@ -1997,9 +2164,10 @@ class ExperimentTests(unittest.TestCase):
 
     def test_long_retry_after_is_not_ignored(self):
         self.prepare()
-        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({
+        waits, _ = self.execute_with_backoff_clock({
             "Tea": {"metadata": {"http_status": 429, "retry_after": "120"}}
-        })})
+        }, failed=True)
+        self.assertEqual(waits, [120.0])
         self.assertEqual(len(self.calls()), 2)
         self.assertEqual(self.show()["summary"]["valid"], 1)
 
@@ -2013,6 +2181,7 @@ class ExperimentTests(unittest.TestCase):
 
     def test_resume_retries_provider_case_but_not_local_case(self):
         data = json.loads(self.cases.read_text())
+        data['cases'].reverse()
         data["cases"].append({"id": "three", "inputs": {"POST": "Third"}})
         self.write("cases.json", data)
         self.prepare()
@@ -2025,7 +2194,7 @@ class ExperimentTests(unittest.TestCase):
         self.cli("run", "E1", ok=False)
         self.assertEqual(len(self.calls()), 4)
         self.assertEqual(self.show()["summary"]["valid"], 2)
-        self.assertEqual(self.show()["cases"][1]["failure_kind"], "local")
+        self.assertEqual(self.show()["cases"][0]["failure_kind"], "local")
 
     def test_same_id_different_inputs_cannot_be_paired_with_baseline(self):
         self.prepare()

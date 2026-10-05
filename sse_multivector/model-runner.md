@@ -534,9 +534,11 @@ and the saved-result prefix hash without rewriting the original plan or receipts
 Engine changes also use the existing `runner-upgrades.jsonl` provenance ledger.
 Without that explicit reason, changed workflow code still refuses to run.
 
-The shared prompt executor fills available concurrency slots independently; a
-slow or failed case does not hold later cases behind a batch barrier. Only an
-explicit temporary provider error (HTTP/stream error code 408, 429, 500, 502,
+The shared prompt executor fills available concurrency slots independently;
+slow calls and local failures do not hold later cases behind a batch barrier.
+Temporary provider failures pause new requests throughout the running batch,
+regardless of configured concurrency. Only an explicit temporary provider error
+(HTTP/stream error code 408, 429, 500, 502,
 503 or 504) qualifies for automatic retry. The Codex HTTP-200 stream failure
 beginning `Codex error: An error occurred while processing your request. You can
 retry your request, or contact us` also qualifies, only with provider
@@ -549,10 +551,20 @@ timeouts, validation/parsing errors and unknown transport failures are never
 retried. Malformed completed output is retained, not repaired. The experiment
 CLI no longer offers a blanket `--retry-failed` override.
 
-Once their wait expires, eligible retries run before untouched cases, ordered
-by retry deadline. While a retry is still waiting, independent cases can run.
-Already-running calls are not interrupted. This priority also applies on resume;
-it changes neither retry eligibility nor the two-total-attempts limit.
+Provider backoff starts at two seconds and doubles after another failure following
+the wait, up to 60 seconds. Already-running failures share the current wait;
+any longer valid `Retry-After` extends it, even above the internal 60-second cap
+and even when the failed case has no retry left. Fresh cases and eligible retries
+both wait. A new successful request sent after the wait resets the exponential
+delay; saved/reused answers and calls sent before the wait do not establish
+recovery. Local failures do not trigger provider backoff.
+
+Once the shared wait expires, eligible retries run before untouched cases, ordered by
+retry deadline. Already-running calls are not interrupted. Resuming also applies
+the shared wait from saved transient failures, without changing retry eligibility
+or the two-total-attempts limit. The backoff is internal to one batch invocation,
+which uses one configured provider/credential route; it does not coordinate
+separate runner processes or ordinary Codex chats.
 
 Provider authentication, credit/permission or endpoint errors (401, 402, 403,
 404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
