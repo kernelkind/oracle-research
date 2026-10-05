@@ -139,6 +139,8 @@ stage.
 - [`research/existing-nostr-recommendation-systems.md`](research/existing-nostr-recommendation-systems.md)
 - [`research/nostr-semantic-recommendation-prior-art.md`](research/nostr-semantic-recommendation-prior-art.md)
 - [`research/nostr-relay-storage-research.md`](research/nostr-relay-storage-research.md)
+- [`research/paid-hierarchy-relays.md`](research/paid-hierarchy-relays.md) — paid
+  relay findings and the provisional Cellar choice for hierarchy publication.
 
 ### Operational guidance
 

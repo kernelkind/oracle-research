@@ -3234,8 +3234,17 @@ build the hierarchy or require live model inference for browsing.
 Hosting is optional — the cherry-on-top demo — and not a release requirement.
 If the user elects to run it, six months remains a **provisional planning
 target**, not a finalized commitment; from an October 18 launch that would
-extend through April 18, 2027. The hosting provider, capacity and cost remain
+extend through April 18, 2027. Operating duration, capacity and total cost remain
 open.
+
+**Paid hierarchy relay provisionally selected October 5:** use Cellar
+(`wss://cellar.nostr.wine`) for hierarchy events and original-post references;
+the relay need not retain the original posts. The user prefers its metered
+1-sat-per-event/year model for the expected larger-than-average upload.
+[Paid-relay findings](../recommendation-engine/research/paid-hierarchy-relays.md)
+record policies, live limits, read checks and alternatives. Protocol kinds
+remain experimental; funded custom-kind writes and upload pacing still need
+verification. This provisional choice approves no spending or publication.
 
 The $1,000 lifetime paid-resource cap still applies, including prior spending,
 Vast.ai training and snapshot GPU costs, hosting, storage, transfers and reruns.
