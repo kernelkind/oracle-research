@@ -60,10 +60,11 @@ answers. Subjects-only training now continues through retained checkpoints,
 with disposable merged evaluation and full training-state restoration. The
 preparation now supplies measured cache bounds for the old ASv6.48 inputs.
 The user froze full ASv6.100 for the pilot on October 4, including all worked
-examples in training and every evaluation. Native length checks on the existing
-notes pass a 16K context, with up to 13,747 tokens including output allowance.
-The old memory rule rejects Qwen and dense Gemma even at batch size one;
-these are calculated requirements, not observed GPU failures. Context/memory
+examples in training and every evaluation. The October 5 audit of all 1,300
+teacher labels finds training sequences up to 18,114 Qwen / 18,396 Gemma tokens.
+The old 8K context, 4K output and 128-node limits do not cover this dataset.
+The memory rule also rejects Qwen and dense Gemma even at batch size one;
+these are planner estimates, not observed GPU failures. Context/output/memory
 settings and the launch estimate need updating for ASv6.100. The conditional
 ASv6.48 projection of 36–40 hours / $51–58 does not price the frozen pilot.
 Pilot data selection and label generation are approved: **1,000 train / 100

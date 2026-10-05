@@ -1486,9 +1486,9 @@ example, for training, untuned baselines, checkpoint validation and the final te
 Source SHA-256:
 `76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d`.
 Future pilot data/package manifests must pin this version and hash. Historical
-ASv6.48 inputs and results remain immutable evidence. The pilot notes and splits
-are now frozen; ASv6.100 teacher labels, context/memory settings and the launch
-estimate remain pending.
+ASv6.48 inputs and results remain immutable evidence. The pilot notes, splits
+and all ASv6.100 teacher labels are now frozen; context/output/memory settings
+and the launch estimate remain pending.
 
 **Pilot data approved October 4:** freeze 1,000 training, 100 validation and 200
 final test notes. Extend the original 1,000-note fresh-corpus SHA-256 draw using
@@ -1557,6 +1557,78 @@ or additional cash commitment was used. Full-pilot context/memory checks and
 packaging remain open. `subjects.json` SHA-256:
 `aca9b45674730a33d7c869c69403e7f4b1143c19ff418a41bb230b04e647ec9e`.
 
+
+### Full pilot input audit — October 5
+
+Offline checks use all **1,000 train / 100 validation / 200 final test** notes and
+actual ASv6.100 teacher answers. The prep's pinned Transformers **5.17.0** and
+Tokenizers **0.23.2** run the production `generation_prompt`, `encode_example`
+and `preflight` paths with thinking off. Every saved native prepared prompt
+matches production's full SP plus complete post. Native reports revalidate all
+1,300 successful raw responses. Canonical targets use production's
+`json.dumps({"subjects": [...]}, ensure_ascii=False)` formatting, preserving
+number, context and subject. Counts include native assistant turn endings;
+no input or answer is truncated, and the three frozen splits are preserved.
+Final-test content was checked only for capacity, with no student predictions
+or semantic quality scoring.
+
+| Token measure, actual 1,300 notes | Qwen3.8-27B | Both Gemma students |
+| --- | ---: | ---: |
+| Prompt range | 9,206–9,684 | 9,037–9,515 |
+| Canonical prompt + answer range | 9,238–18,114 | 9,069–18,396 |
+| Largest canonical answer, including turn ending | 8,452 | 8,881 |
+| Canonical answers above 4,096, all splits | 66/1,300 | 70/1,300 |
+| Canonical answers above 4,096, training | 53/1,000 | 57/1,000 |
+| Canonical answers above 4,096, validation / final test | 5/100 / 8/200 | 5/100 / 8/200 |
+| Training sequences above 16,384 | 5/1,000 | 3/1,000 |
+| Largest raw teacher answer, including turn ending | 7,672 | 8,226 |
+
+All 1,300 prompts exceed the frozen 8,192-token context before answers.
+Native preflights reject 8,192; 16,384 and 32,768 also reject when retaining the
+4,096-token output allowance. Diagnostic fixed output allowances of 8,452 Qwen /
+8,881 Gemma, with contexts of 18,136 / 18,396 respectively, pass native token
+checks on the 1,000 training and 100 validation examples and the 200 test inputs.
+These data-derived minima cover the saved canonical answers, not arbitrary future
+student responses. All three model configs advertise 262,144 positions, but
+that architectural limit does not establish GPU capacity. No runtime setting
+was changed or approved by these diagnostics.
+
+Seven **training** hierarchies contain more than the worker's `max_subjects=128`;
+the maximum is **145** (median 28, 95th percentile 75 across all 1,300). Neither
+holdout exceeds 128. This is a conflict with the generation output guard, not
+an invalid teacher receipt or a semantic quality finding. Keep complete labels.
+
+Replaying the production planner arithmetic against the saved prep measurements
+reproduces **all 4 Qwen, 7 dense Gemma and 3 MoE Gemma batch estimates exactly**.
+Using the current policy on actual pilot prompt widths:
+
+| Student | One-note estimate, current 4,096 output allowance | Inputs over 88-GiB budget | Estimate using observed canonical output maximum |
+| --- | ---: | ---: | ---: |
+| Qwen3.8-27B | 88.30–91.74 GiB | 1,300/1,300 | 88.58–92.02 GiB |
+| Gemma 4 31B | 110.66–115.48 GiB | 1,300/1,300 | 110.66–115.48 GiB |
+| Gemma 4 26B-A4B | 75.26–77.66 GiB | 0/1,300 | 75.26–77.66 GiB |
+
+These are conservative planner estimates, **not measured current-input GPU
+allocations or proof of OOM**. No weights were loaded and no training/inference
+or rental occurred. MoE's estimated evaluation fit does not prove its training
+fit. The prior GPU checks used shorter ASv6.48 examples and cannot validate these
+new shapes. Resolve context, output/node guards and the actual attention/cache
+memory allowance locally before a new hardware check or pilot launch. The
+selected one-96GB-GPU design and all frozen configurations remain unchanged;
+the historical ASv6.48 cost reference still does not price this dataset.
+
+Evidence: `target/distillation-pilot-v1/pilot-data-asv6.100-20261004/input-audit-20261005/`
+contains the exact offline invocation, `tokenizer-audit.json`,
+`per-note-token-counts.json` and `memory-policy-audit.json`. All **38** bound
+source files were rehashed after analysis, including prompt, notes, labels,
+split references, native ledgers, worker/data code, tokenizer metadata and prep
+batch plans. Token audit SHA-256:
+`c612d1d8bf7d7fada9f8d47ea2d437b7dc65795997232253db3db45b7f8f749a`;
+per-note counts:
+`c8430fdef36411909bf137e543a2ee06a12ff8ef9b784ded506c6acdce5d77c4`;
+memory audit:
+`09e033d85ea5218e547bf4740febbce77fd41d3b50cb0ac019a02cba5101f79b`.
+Teacher answers have structural/receipt checks; semantic review remains open.
 
 ### Conditional subjects-only batched cost reference — October 3
 
@@ -1648,8 +1720,8 @@ before another hardware preparation. Preserve the selected one-96GB-GPU design,
 complete BF16 models and full prompt; no new runtime configuration is approved
 by these diagnostic calculations. The old hardware checks tested training only
 through 6,531 Qwen / 6,440 Gemma tokens and generation caches through 7,328 / 7,245.
-Actual pilot data and the updated settings require their own validation.
-The raw corpus exists; pilot note selection and selected-teacher labels remain pending.
+The actual pilot-data audit is recorded above; revised settings still require
+validation. Pilot notes and all selected-teacher labels are now frozen.
 
 At the proposed split sizes, teacher annotation requires **1,300 subject calls**,
 with training labels shared across checkpoints. There are **1,800 validation

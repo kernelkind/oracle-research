@@ -17,8 +17,9 @@ execution settings, and review rubric remain open.
 baselines/training/evaluation → verified retrieval → local scoring and comparison.**
 
 Prepare candidate settings and rehearse automation locally before booking the
-separate preparation rental, confirmed in principle October 3. Use existing
-notes while the pilot data is pending. The proposed small check covers an
+separate preparation rental, confirmed in principle October 3. The completed
+preparation used existing notes; pilot notes and labels are now frozen.
+The small check covered an
 adapter update, checkpoint save/reload/merge, brief batched generation at tested
 memory bounds, and restored training. The local package now uses two updates
 over 16 existing notes per student and saves brief subject responses separately.
@@ -56,10 +57,12 @@ within one split.
 including every worked example, in training and every evaluation. The technical
 plan records its source hash.
 
-**Input check:** the existing notes need up to **13,747 tokens** including the
-current output allowance. A 16K context passes local token checks, but the old
-memory policy rejects Qwen and dense Gemma even at batch size one. Context,
-memory settings and the pilot estimate remain to be finalized for ASv6.100.
+**Input check, October 5:** the actual dataset needs up to **18,396 tokens**
+per training example; some answers exceed the old 4,096-token output limit.
+Seven training hierarchies also exceed the old 128-node limit. The current
+memory policy rejects Qwen and dense Gemma even at batch size one.
+Context, output and memory settings need revision before launch; this local
+audit does not establish GPU fit.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
 and 1,000**, plus **100 validation** and **200 final test** notes, are approved.
@@ -203,7 +206,7 @@ final comparison:
 
 These are projections from brief generation and one-token decode measurements,
 not a measured full pilot or a spending cap. They **do not price the frozen
-ASv6.100 pilot**. Update the memory/throughput setup, check actual pilot data,
+ASv6.100 pilot**. Update and validate the context/output/memory setup,
 and settle final-test collection before a launch estimate.
 Teacher labels and local review assume the existing subscription; paid APIs add cost.
 

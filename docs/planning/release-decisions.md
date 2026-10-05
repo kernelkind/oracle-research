@@ -1224,7 +1224,8 @@ existing 80 training / 20 held-out notes find 9,210–9,651 Qwen prompt tokens a
 the largest totals are 13,747 / 13,591. The 8,192-token preflight rejects all
 three students; a 16,384-token context passes token checks on this diagnostic
 collection. Old teacher answers were used solely to measure lengths, not as
-pilot labels. Actual pilot notes/ASv6.100 labels still need their own checks.
+pilot labels. Actual pilot notes/ASv6.100 labels were unavailable then; the
+October 5 full-data audit below supersedes these diagnostic length bounds.
 
 The current 88-GiB memory policy predicts one-note requirements of
 88.32–91.50 GiB for Qwen, 110.70–115.27 GiB for dense Gemma and 75.27–77.55 GiB
@@ -1271,6 +1272,20 @@ overlap. Earlier 1,201 labels are preserved exactly. All labels retain the same
 full ASv6.100 prompt, teacher model, reasoning effort and schema. Structural and
 receipt checks passed; semantic review has not been performed. The full collection
 and verification are saved beside `sample-final/`. No rental or paid API was used.
+
+**Full pilot input audit, October 5:** offline production tokenization of all
+1,300 actual labels finds longest training sequences of **18,114 Qwen / 18,396
+Gemma tokens**. Canonical answers require up to **8,452 / 8,881 tokens**, including
+native turn endings; **53 / 57 training answers** exceed the frozen 4,096-token
+output allowance. Seven training hierarchies exceed the 128-node output guard,
+with a maximum of 145. Increasing context alone cannot fix the output bounds.
+The current 88-GiB planner rejects every Qwen/dense input even at batch size one;
+MoE's one-note estimates remain within budget. These are calculations, not GPU
+measurements. Frozen inputs/configurations are unchanged; revised context/output/
+memory settings, hardware validation and repricing remain open. The
+[technical plan](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#full-pilot-input-audit--october-5)
+records native preflights, all split counts and artifact hashes. No rental or
+additional model call was used for this audit.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
