@@ -45,6 +45,18 @@ def write_json(path, value):
     temporary.replace(path)
 
 
+def seal_files(directory, name, filenames):
+    """Publish an immutable subset without sealing its still-growing directory."""
+    directory = Path(directory)
+    path = directory / name
+    hashes = {filename: sha256(directory / filename) for filename in filenames}
+    if path.exists():
+        if read_json(path) != hashes:
+            raise ValueError(f"published files changed: {path}")
+    else:
+        write_json(path, hashes)
+
+
 def load_data(directory, mask_prompt=None):
     directory = Path(directory)
     manifest = read_json(directory / "manifest.json")
@@ -410,6 +422,8 @@ def generate_subject_batches(model, tokenizer, rows, config, directory):
             raise ValueError("saved subject batch plan differs")
     else:
         write_json(plan_path, plan)
+    seal_files(directory, "subject-batches.complete.json", [plan_path.name] +
+               (["test-collection.json"] if (directory / "test-collection.json").exists() else []))
     for index, batch in enumerate(plan["batches"]):
         indices = batch["indices"]
         paths = [directory / f"note-{i:04}/subjects.json" for i in indices]
@@ -426,13 +440,28 @@ def generate_subject_batches(model, tokenizer, rows, config, directory):
                 raise ValueError("saved subject answers have no batch receipt")
             attempt = directory / f"subjects-{index:04}.started.json"
             if attempt.exists():
-                raise ValueError("subject batch has an unfinished generation attempt; reconcile it before restarting")
-            write_json(attempt, {**inputs, "started_unix": time.time()})
+                number = os.environ.get("ORACLE_RUN_ATTEMPT_ID", "")
+                reason = os.environ.get("ORACLE_RUN_CONTINUATION_REASON", "")
+                previous = os.environ.get("ORACLE_RUN_PREVIOUS_ATTEMPT_ID", "")
+                if (not re.fullmatch(r"[0-9]{3}", number) or not re.fullmatch(r"[0-9]{3}", previous)
+                        or not reason.strip()):
+                    raise ValueError("subject batch has an unfinished generation attempt; reconcile it before restarting")
+                original = attempt
+                attempt = directory / f"subjects-{index:04}.resume-{number}.started.json"
+                if attempt.exists():
+                    raise ValueError("this continuation also has an unfinished generation attempt")
+                write_json(attempt, {**inputs, "started_unix": time.time(), "previous_attempt": previous,
+                    "reason": reason, "original_attempt_sha256": sha256(original),
+                    "plan_sha256": sha256(plan_path), "result_of_previous_generation": "unknown; no answer saved"})
+            else:
+                write_json(attempt, {**inputs, "started_unix": time.time()})
+            seal_files(directory, attempt.stem + ".complete.json", [attempt.name])
             generated = generate_batch(model, tokenizer, messages, config, "subjects",
                                        encoded=[encoded[i] for i in indices])
             saved = {**inputs, **generated}
             # Preserve defective batch evidence too; never retry an answer-count defect.
             write_json(receipt, saved)
+        seal_files(directory, receipt.stem + ".complete.json", [receipt.name])
         if len(saved["answers"]) != len(indices):
             raise ValueError("subject generation batch answer count differs")
         for offset, (path, prompt, answer) in enumerate(zip(paths, messages, saved["answers"])):
@@ -743,6 +772,18 @@ def subject_training_plan(data, config):
     return {"note_ids": order, "milestones": milestones, "examples_per_update": 8}
 
 
+def save_subject_training_plan(data, config, output):
+    plan = subject_training_plan(data, config)
+    path = output / "training-plan.json"
+    if path.exists():
+        if read_json(path) != plan:
+            raise ValueError("frozen subject training plan differs")
+    else:
+        write_json(path, plan)
+    seal_files(output, "provenance.complete.json", ["manifest.json", path.name])
+    return plan
+
+
 def configure_training_loss(model, config):
     """Patch only this training instance; evaluation reloads native model code."""
     if not config.get("fused_linear_cross_entropy", False):
@@ -929,6 +970,11 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
                             "seconds": time.monotonic()-update_started,
                             "cuda_allocated_bytes": torch.cuda.memory_allocated() if config["device"] == "cuda" else None,
                             "cuda_reserved_bytes": torch.cuda.memory_reserved() if config["device"] == "cuda" else None})
+            metrics[-1]["attempt_id"] = os.environ.get("ORACLE_RUN_ATTEMPT_ID")
+            with (output / "subject-training-updates.jsonl").open("a") as log:
+                log.write(json.dumps(metrics[-1], allow_nan=False) + "\n")
+                log.flush()
+                os.fsync(log.fileno())
             print(json.dumps({"stage": "subject training", **metrics[-1]}), flush=True)
         optimizer.zero_grad(set_to_none=True)
         checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
@@ -1224,11 +1270,7 @@ def generation_cache_check(model, tokenizer, encoded, config, chunk_tokens):
 
 def run_subject_preparation(config, tokenizer, data, output):
     """One save/merge/generate/restore cycle and two actual optimizer updates."""
-    plan = subject_training_plan(data, config)
-    plan_path = output / "training-plan.json"
-    if plan_path.exists() and read_json(plan_path) != plan:
-        raise ValueError("frozen preparation training plan differs")
-    write_json(plan_path, plan)
+    plan = save_subject_training_plan(data, config, output)
     stages = output / "preparation"
     checkpoints = [output / "checkpoints" / f"checkpoint-{m}" for m in plan["milestones"]]
     if (output / "report.json").exists():
@@ -1329,13 +1371,7 @@ def run_subject_preparation(config, tokenizer, data, output):
 
 
 def run_subject_pilot(config, tokenizer, data, output, through):
-    plan = subject_training_plan(data, config)
-    plan_path = output / "training-plan.json"
-    if plan_path.exists():
-        if read_json(plan_path) != plan:
-            raise ValueError("frozen subject training plan differs")
-    else:
-        write_json(plan_path, plan)
+    plan = save_subject_training_plan(data, config, output)
     baseline = subject_stage_summary(output / "baseline", data)
     baseline_test = subject_test_summary(output, data, config) if "test" in data else None
     previous = None
@@ -1572,6 +1608,8 @@ def run(config_path, output, through="report"):
                 raise ValueError("frozen run differs; use a new output directory")
         else:
             write_json(manifest_path, frozen)
+        if pilot:
+            save_subject_training_plan(data, config, output)
         if not pilot and through == "report" and (output / "report.json").exists():
             for stage in ("baseline", "adapter", "trained"):
                 if not verify_saved(output / stage):

@@ -1815,7 +1815,7 @@ def remote_json(
     *arguments: str,
 ) -> object:
     return command_json(
-        remote_arguments(context, private_key, target, operation, *arguments)
+        remote_arguments(context, private_key, target, operation, *(shlex.quote(value) for value in arguments))
     )
 
 
@@ -2211,9 +2211,11 @@ def ensure_worker_started(
             )
         if status["state"] != "absent":
             raise OperationError("unresolved worker invocation has an invalid remote state")
-        record_pre_worker_cost(
-            context, instance_id, attempt_id, "redeliver-unstarted-invocation"
-        )
+        pending = read_json(context.path(f"launch/worker-invocations/{attempt_id}.json"))
+        if "resume_from" not in pending:
+            record_pre_worker_cost(
+                context, instance_id, attempt_id, "redeliver-unstarted-invocation"
+            )
     else:
         attempt_id = next_attempt_id(context)
         record_pre_worker_cost(context, instance_id, attempt_id, "initial-invocation")
@@ -2232,6 +2234,13 @@ def ensure_worker_started(
                 "invoked_at_utc": utc_text(),
             },
         )
+    continuation_args = []
+    saved_invocation = read_json(invocation)
+    if "resume_from" in saved_invocation:
+        if not context.path(f"launch/worker-invocations/{attempt_id}.prepared.json").is_file():
+            raise OperationError("continuation retrieval archive is not prepared; rerun resume")
+        continuation_args = ["--resume-from", saved_invocation["resume_from"],
+                             "--reason", saved_invocation["reason"]]
     try:
         response = remote_json(
             context,
@@ -2240,6 +2249,7 @@ def ensure_worker_started(
             "_remote-worker",
             "--attempt",
             attempt_id,
+            *continuation_args,
         )
     except OperationError as error:
         raise OperationError(
@@ -2387,7 +2397,17 @@ def remote_attempt_status(context: Context, attempt_id: str) -> dict[str, object
 
 def remote_status_report(context: Context, attempt_id: str) -> dict[str, object]:
     result = remote_attempt_status(context, attempt_id)
+    result.update(hardware_status(context))
     if context.command_workload:
+        command = context.config["workload"].get("status_command")
+        if command:
+            try:
+                work = context.path("work")
+                result["progress"] = json.loads(subprocess.run(command, cwd=work if work.exists() else context.root,
+                    env={**os.environ, **context.config["workload"].get("environment", {})},
+                    capture_output=True, check=True, timeout=30).stdout)
+            except (subprocess.SubprocessError, OSError, ValueError) as error:
+                result["progress"] = {"error": str(error)}
         return result
     representation = context.path("work/representation")
     progress: dict[str, object] = {
@@ -2500,6 +2520,11 @@ def remote_status_report(context: Context, attempt_id: str) -> dict[str, object]
             progress["newest_new_shard_age_seconds"] = max(
                 0, int(time.time() - newest)
             )
+    result["progress"] = progress
+    return result
+
+
+def hardware_status(context: Context) -> dict[str, object]:
     usage = shutil.disk_usage(context.root)
     disk = {
         "total_bytes": usage.total,
@@ -2527,8 +2552,7 @@ def remote_status_report(context: Context, attempt_id: str) -> dict[str, object]
         }
     except (OperationError, UnicodeDecodeError, ValueError) as error:
         gpu = {"error": f"GPU observation unavailable: {error}"}
-    result.update({"progress": progress, "disk": disk, "gpu": gpu})
-    return result
+    return {"disk": disk, "gpu": gpu}
 
 
 def spawn_remote_child(
@@ -2991,6 +3015,14 @@ def remote_controller(context: Context, attempt_id: str) -> NoReturn:
         executable = arguments[0]
         os.chdir(context.path("work"))
         os.environ.update(workload.get("environment", {}))
+        os.environ["ORACLE_RUN_ATTEMPT_ID"] = attempt_id
+        for key in ("ORACLE_RUN_PREVIOUS_ATTEMPT_ID", "ORACLE_RUN_CONTINUATION_REASON"):
+            os.environ.pop(key, None)
+        resume = attempt / "resume.json"
+        if resume.exists():
+            document = read_json(resume)
+            os.environ["ORACLE_RUN_PREVIOUS_ATTEMPT_ID"] = document["previous_attempt"]
+            os.environ["ORACLE_RUN_CONTINUATION_REASON"] = document["reason"]
         if workload["work_seconds"] is None:
             os.environ.pop("ORACLE_RUN_DEADLINE_UTC", None)
         else:
@@ -3001,15 +3033,31 @@ def remote_controller(context: Context, attempt_id: str) -> NoReturn:
         raise OperationError(f"could not exec the full-build controller: {error}") from error
 
 
-def remote_worker(context: Context, attempt_id: str) -> dict[str, object]:
+def remote_worker(context: Context, attempt_id: str, resume_from: str | None = None,
+                  reason: str | None = None) -> dict[str, object]:
     attempt_id = parse_attempt_id(attempt_id)
     attempts = context.path("work/full-build-attempts")
     attempts.mkdir(parents=True, exist_ok=True, mode=0o700)
     attempt = attempts / attempt_id
+    resume = None
+    if resume_from is not None:
+        resume_from = parse_attempt_id(resume_from)
+        if (not context.command_workload or context.config["workload"].get("resumable") is not True
+                or not isinstance(reason, str) or not reason.strip() or resume_from >= attempt_id):
+            raise OperationError("continuation requires an explicitly resumable workload and a reason")
+        verify_reviewed_artifacts(context)
+        try:
+            full_build_package.verify_manifest(context.path("package"), context.path("package/package-manifest.json"))
+        except (OSError, ValueError) as error:
+            raise OperationError(f"continuation package verification failed: {error}") from error
+        resume = {"previous_attempt": resume_from, "reason": reason,
+                  "operation_contract_sha256": sha256_file(context.config_path)}
     with file_lock(
         context.path("work/full-build-start.lock"), blocking=True
     ) as start_lock:
         if attempt.is_dir():
+            if resume is not None and read_json(attempt / "resume.json") != resume:
+                raise OperationError("continuation delivery differs from the saved intent")
             status = remote_attempt_status(context, attempt_id)
             if status["state"] in ("running", "starting", "terminal"):
                 acknowledged = (
@@ -3033,6 +3081,7 @@ def remote_worker(context: Context, attempt_id: str) -> dict[str, object]:
                     else:
                         atomic_bytes(attempt / "start.exit", b"75\n")
                 return {"acknowledged": False, **remote_attempt_status(context, attempt_id)}
+        committed = []
         for prior in sorted(attempts.iterdir()):
             if prior == attempt or not prior.is_dir():
                 continue
@@ -3040,12 +3089,25 @@ def remote_worker(context: Context, attempt_id: str) -> dict[str, object]:
             if terminal is None:
                 raise OperationError(f"prior worker attempt is unresolved: {prior.name}")
             if terminal.get("kind") != "start.exit":
-                raise OperationError(
-                    f"prior worker attempt consumed the full-build execution: {prior.name}"
-                )
+                committed.append(prior.name)
+        if committed and (resume is None or committed[-1] != resume_from):
+            raise OperationError(f"prior worker attempt consumed the full-build execution: {committed[-1]}")
+        if resume is not None and (not committed or committed[-1] != resume_from):
+            raise OperationError("continuation does not follow the latest terminal execution")
         with file_lock(context.path("work/full-build.lock"), blocking=False):
             pass
+        if resume is not None:
+            for source, name in ((context.path("work/retrieval-manifest.json"), "retrieval-work-manifest.json"),
+                                 (context.path("preparation-attempts/retrieval-manifest.json"), "retrieval-preparation-manifest.json")):
+                saved = attempts / resume_from / name
+                if source.exists():
+                    if saved.exists():
+                        raise OperationError("previous retrieval manifest archive already exists")
+                    os.replace(source, saved)
+                    sync_directory(saved.parent)
         attempt.mkdir(mode=0o700)
+        if resume is not None:
+            atomic_json(attempt / "resume.json", resume)
         pid = spawn_remote_child(
             context,
             "_remote-supervise",
@@ -3214,6 +3276,16 @@ def copy_records(records: object) -> list[dict[str, object]]:
         if type(length) is not int or not 0 <= length <= size - offset or (length == 0 and offset < size):
             raise OperationError("invalid copy length")
         require_sha256(required_string(record, "sha256"), "copy SHA256")
+        if "completion_files" in record:
+            members = record["completion_files"]
+            if not isinstance(members, list) or not members or any(not isinstance(n, str) for n in members):
+                raise OperationError("invalid completion file list")
+            if len(set(members)) != len(members) or record["path"] in members:
+                raise OperationError("duplicate completion file")
+            for member in members:
+                member_path = command_relative_path(member)
+                if member_path.as_posix() != member or not member_path.is_relative_to(path.parent):
+                    raise OperationError("completion file is outside its sealed directory")
     return records
 
 
@@ -3237,23 +3309,27 @@ def remote_progress(context: Context) -> dict[str, object]:
     records = {}
     for relative in context.config["workload"]["outputs"]:
         root = context.path("work") / relative
-        for seal in sorted(root.rglob("complete.json")):
+        for seal in sorted({*root.rglob("complete.json"), *root.rglob("*.complete.json")}):
             if any(".partial" in part or part.startswith(".") for part in seal.relative_to(root).parts):
                 continue
             contents = read_json(copy_source(context, str(seal.relative_to(context.root))))
             if not isinstance(contents, dict) or not contents:
                 raise OperationError("invalid progressive completion record")
             files = dict(contents)
-            files["complete.json"] = sha256_file(seal)
+            files[seal.name] = sha256_file(seal)
             for name, digest in files.items():
                 path = seal.parent / command_relative_path(name)
                 record = {"path": str(path.relative_to(context.root)),
                           "bytes": copy_source(context, str(path.relative_to(context.root))).stat().st_size,
                           "sha256": digest}
+                if name == seal.name and seal.name != "complete.json":
+                    record["completion_files"] = [str((seal.parent / command_relative_path(n)).relative_to(context.root))
+                                                  for n in contents]
                 copy_records([record])
-                if record["path"] in records and records[record["path"]] != record:
+                existing = records.get(record["path"], {})
+                if any(key in existing and existing[key] != value for key, value in record.items()):
                     raise OperationError("published progressive files disagree")
-                records[record["path"]] = record
+                records[record["path"]] = {**existing, **record}
     return {"files": list(records.values())}
 
 
@@ -3346,12 +3422,28 @@ def copy_files(context: Context, private_key: Path, target: list[str], records: 
 
     def priority(record):
         path = Path(record["path"])
+        if path in subsets:
+            size, group, marker = subsets[path]
+            return (size, group, marker, record["bytes"], record["path"])
         directory = next((parent for parent in path.parents if parent in sizes), None)
         return (sizes[directory] if directory is not None else record["bytes"],
                 str(directory if directory is not None else path),
                 path.name == "complete.json", record["bytes"], record["path"])
 
-    # Prioritize small sealed directories, with each completion marker last.
+    subsets = {}
+    by_path = {record["path"]: record for record in records}
+    for marker in records:
+        if "completion_files" not in marker:
+            continue
+        names = [*marker["completion_files"], marker["path"]]
+        if any(n not in by_path for n in names):
+            raise OperationError("completion marker has a missing copy dependency")
+        size = sum(by_path[n]["bytes"] for n in names)
+        for name in names:
+            group = (size, marker["path"], name == marker["path"])
+            if Path(name) not in subsets or group < subsets[Path(name)]:
+                subsets[Path(name)] = group
+    # Prioritize small sealed subsets/directories, with their markers last.
     # Descendant directories are smaller than ancestors, so enclosing markers
     # also follow the files they certify. Unsealed files use their own size.
     records = sorted(records, key=priority)
@@ -3504,7 +3596,8 @@ def ensure_retrieved(
     receipt_path = context.path("launch/retrieval-verification.json")
     if receipt_path.exists():
         receipt = read_json(receipt_path)
-        if not isinstance(receipt, dict) or receipt.get("instance_id") != instance_id:
+        if (not isinstance(receipt, dict) or receipt.get("instance_id") != instance_id
+                or receipt.get("attempt_id") != attempt_id):
             raise OperationError("retrieval verification receipt is invalid")
         return receipt
     response = remote_json(
@@ -3521,6 +3614,14 @@ def ensure_retrieved(
     if progressive:
         atomic_json(context.path("progressive/terminal.json"), {"attempt_id": attempt_id})
         records = [{**record, "path": "work/" + record["path"]} for record in work_records]
+        by_path = {record["path"]: record for record in records}
+        inventory = remote_json(context, private_key, target, "_remote-progress")
+        for published in copy_records(inventory["files"]):
+            sealed = by_path.get(published["path"])
+            if sealed is None or any(sealed[key] != published[key] for key in ("bytes", "sha256")):
+                raise OperationError("progressive publication differs from terminal retrieval seal")
+            if "completion_files" in published:
+                sealed["completion_files"] = published["completion_files"]
         # The terminal manifest itself is excluded from its file list. Copy it
         # using its small authoritative bytes from the sealed response.
         copied = copy_files(context, private_key, target, records, terminal=True)
@@ -3556,6 +3657,98 @@ def ensure_retrieved(
         receipt["progressive_copy"] = copied
     atomic_json(receipt_path, receipt)
     return receipt
+
+
+def resume(context: Context, reason: str) -> dict[str, object]:
+    """Explicitly continue an opted-in frozen job on its existing instance."""
+    verify_reviewed_artifacts(context)
+    if not context.command_workload or context.config["workload"].get("resumable") is not True:
+        raise OperationError("the frozen workload does not permit continuation")
+    if not isinstance(reason, str) or not reason.strip():
+        raise OperationError("continuation requires a recorded reason")
+    with file_lock(context.path("watch.lock"), blocking=False), \
+            file_lock(context.path("progressive/watch.lock"), blocking=False), operation_lock(context.root):
+        if any(context.path(name).exists() for name in (
+                "launch/destruction-confirmation.json", "launch/provider-final-charge.json",
+                "result/settlement/settlement-result.json")):
+            raise OperationError("cannot continue a destroyed or settled instance")
+        instance_id = recorded_instance_id(context)
+        previous = last_attempt_id(context)
+        if instance_id is None or previous is None:
+            raise OperationError("continuation requires an existing instance and worker attempt")
+        private, target = ensure_ssh(context, instance_id)
+        invocation = read_json(context.path(f"launch/worker-invocations/{previous}.json"))
+        if invocation.get("resume_from") and invocation.get("reason") == reason:
+            attempt_id = previous
+            previous = parse_attempt_id(invocation["resume_from"])
+        else:
+            state = worker_status(context, private, target, previous)
+            if state["state"] not in ("terminal", "orphaned"):
+                raise OperationError("continuation requires a terminal worker; running work is preserved")
+            receipt = ensure_retrieved(context, instance_id, private, target, previous)
+            tree = context.path("result") if context.path("result").is_dir() else context.path("result.next")
+            validate_file_records(tree / "work", receipt["work_files"])
+            attempt_id = next_attempt_id(context)
+            invocation = {
+                "schema_version": 1, "attempt_id": attempt_id, "instance_id": instance_id,
+                "resume_from": previous, "reason": reason, "invoked_at_utc": utc_text(),
+                "operation_contract_sha256": sha256_file(context.config_path),
+                "previous_retrieval_sha256": sha256_file(context.path("launch/retrieval-verification.json")),
+            }
+            atomic_json(context.path(f"launch/worker-invocations/{attempt_id}.json"), invocation)
+            atomic_json(context.path(f"launch/worker-invocations/{previous}.terminal.json"), state)
+        if invocation.get("instance_id") != instance_id or invocation.get("operation_contract_sha256") != sha256_file(context.config_path):
+            raise OperationError("continuation invocation belongs to another instance or contract")
+        prepared = context.path(f"launch/worker-invocations/{attempt_id}.prepared.json")
+        archive = context.path(f"retrieval-attempts/{previous}")
+        if not prepared.exists():
+            archive.mkdir(parents=True, exist_ok=True, mode=0o700)
+            prior_terminal = context.path(f"launch/worker-invocations/{previous}.terminal.json")
+            if not prior_terminal.exists():
+                atomic_json(prior_terminal, worker_status(context, private, target, previous))
+            if not (archive / "result").exists():
+                tree = context.path("result") if context.path("result").is_dir() else context.path("result.next")
+                os.replace(tree, archive / "result")
+                sync_directory(archive)
+            # Each move is idempotent, so delivery can be reconciled after a
+            # controller interruption without deleting earlier evidence.
+            for source, destination in (
+                    ("launch/retrieval-verification.json", "retrieval-verification.json"),
+                    ("launch/worker-started.json", "worker-started.json"),
+                    ("launch/completion-review.json", "completion-review.json"),
+                    ("launch/user-approved-incomplete-stop.json", "user-approved-incomplete-stop.json"),
+                    *(("progressive/" + n, "progressive/" + n) for n in
+                      ("terminal.json", "status.json", "verified", "partial", "failures"))):
+                path, saved = context.path(source), archive / destination
+                if path.exists():
+                    if saved.exists():
+                        raise OperationError("continuation archive destination already exists")
+                    saved.parent.mkdir(parents=True, exist_ok=True)
+                    os.replace(path, saved)
+                    sync_directory(saved.parent)
+            old_receipt = archive / "retrieval-verification.json"
+            if sha256_file(old_receipt) != invocation["previous_retrieval_sha256"]:
+                raise OperationError("previous retrieval receipt changed during continuation")
+            receipt = read_json(old_receipt)
+            validate_file_records(archive / "result/work", receipt["work_files"])
+            context.path("result.next").mkdir(exist_ok=True)
+            if progressive_policy(context) is not None:
+                inventory = remote_json(context, private, target, "_remote-progress")
+                for record in copy_records(inventory["files"]):
+                    source = archive / "result" / record["path"]
+                    destination = copy_destination(context, record)
+                    if not source.is_file() or source.stat().st_size != record["bytes"] or sha256_file(source) != record["sha256"]:
+                        raise OperationError("published continuation input differs from retrieved evidence")
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    if destination.exists():
+                        if sha256_file(destination) != record["sha256"]:
+                            raise OperationError("continuation copy differs from saved evidence")
+                    else:
+                        os.link(source, destination)
+            atomic_json(prepared, {"previous_attempt": previous, "archive": str(archive.relative_to(context.root))})
+        started = ensure_worker_started(context, instance_id, private, target)
+        return {"state": "running", "instance_id": instance_id, "attempt_id": started,
+                "remote": worker_status(context, private, target, started)}
 
 
 def publish_verified_result(context: Context, attempt_id: str) -> bool:
@@ -4614,6 +4807,9 @@ def worker_status(
         raise OperationError("remote worker status has an unknown state")
     normalized = dict(response)
     normalized["state"] = state
+    if context.command_workload:
+        atomic_json(context.path(f"observations/{time.time_ns()}-{attempt_id}.json"),
+                    {"observed_at_utc": utc_text(), "attempt_id": attempt_id, "remote": normalized})
     return normalized
 
 
@@ -4965,8 +5161,10 @@ def verify_completion_review(context: Context, instance_id: str | None, incomple
     review = read_json(review_path)
     receipt = read_json(receipt_path)
     checks = review.get("checks") if isinstance(review, dict) else None
+    latest = last_attempt_id(context)
     if (not isinstance(review, dict) or review.get("complete") is not True
             or review.get("instance_id") != instance_id or receipt.get("instance_id") != instance_id
+            or latest is not None and receipt.get("attempt_id") != latest
             or review.get("operation_contract_sha256") != sha256_file(context.config_path)
             or review.get("retrieval_verification_sha256") != sha256_file(receipt_path)
             or not isinstance(checks, list) or not checks
@@ -4993,6 +5191,7 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                 atomic_json(path, {"deadline_utc": utc_text(utc_now() + timedelta(seconds=seconds))})
             deadline = parse_utc(read_json(path)["deadline_utc"], "watch deadline")
         copier = None
+        failures = len(list(context.path("progressive/failures").glob("*.json")))
         try:
             while True:
                 if utc_now() >= deadline:
@@ -5010,7 +5209,7 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                 approval = None
                 if progressive_policy(context) is not None:
                     try:
-                        if copier is None and result.get("state") == "running":
+                        if copier is None and failures <= 3 and result.get("state") == "running":
                             private = context.path("launch/ssh/id_ed25519")
                             target = resolve_ssh_target(context, result["instance_id"])
                             copier = start_progressive_copy(context, private, target)
@@ -5019,13 +5218,20 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                         if context.path("progressive/status.json").exists():
                             result["progressive_copy"] = read_json(context.path("progressive/status.json"))
                     except (OperationError, OSError) as error:
-                        state = {"state": "failed", "error": str(error), "observed_at_utc": utc_text()}
+                        if copier is None or copier.poll() is not None:
+                            failures += 1
+                            copier = None
+                            atomic_json(context.path(f"progressive/failures/{failures:03}.json"),
+                                        {"error": str(error), "observed_at_utc": utc_text()})
+                        state = {"state": "failed", "error": str(error), "observed_at_utc": utc_text(),
+                                 "will_retry": failures <= 3}
                         result["progressive_copy"] = state
                         with contextlib.suppress(OperationError, OSError):
                             atomic_json(context.path("progressive/status.json"), state, replace=True)
                         print(f"background copy failed: {error}", file=sys.stderr, flush=True)
                 if result.get("state") not in ("running", "preparing", "remote_access_pending"):
                     return result
+                print("watch status: " + json.dumps(result, sort_keys=True), file=sys.stderr, flush=True)
                 time.sleep(30 if command_requires_completion(context) else
                            min(30, max(0, (deadline - utc_now()).total_seconds())))
         except (Exception, KeyboardInterrupt):
@@ -5216,6 +5422,9 @@ def parse_args() -> argparse.Namespace:
     run_parser = subparsers.add_parser("run")
     run_parser.add_argument("--approve")
     run_parser.add_argument("--watch", action="store_true")
+    resume_parser = subparsers.add_parser("resume", help="explicitly continue a terminal resumable command job")
+    resume_parser.add_argument("--reason", required=True)
+    resume_parser.add_argument("--watch", action="store_true")
     status_parser = subparsers.add_parser("status")
     status_parser.add_argument("--watch", action="store_true")
     copy_parser = subparsers.add_parser("copy", help="copy completed files without stopping the worker")
@@ -5244,6 +5453,9 @@ def parse_args() -> argparse.Namespace:
     ):
         hidden = subparsers.add_parser(operation, help=argparse.SUPPRESS)
         hidden.add_argument("--attempt", required=True)
+        if operation == "_remote-worker":
+            hidden.add_argument("--resume-from", help=argparse.SUPPRESS)
+            hidden.add_argument("--reason", help=argparse.SUPPRESS)
         if operation == "_remote-stop":
             hidden.add_argument("--incomplete-stop-approval", help=argparse.SUPPRESS)
     supervise = subparsers.add_parser("_remote-supervise", help=argparse.SUPPRESS)
@@ -5412,6 +5624,14 @@ def validate_command_context(context: Context) -> None:
         raise OperationError("workload.environment must contain string environment variables")
     if 'work_seconds' not in workload or workload['work_seconds'] is not None:
         required_positive_int(workload, "work_seconds")
+    if not isinstance(workload.get("resumable", False), bool):
+        raise OperationError("workload.resumable must be a boolean")
+    if "status_command" in workload:
+        status_command = workload["status_command"]
+        if (not isinstance(status_command, list) or not status_command
+                or any(not isinstance(v, str) or not v for v in status_command)
+                or not Path(status_command[0]).is_absolute()):
+            raise OperationError("workload.status_command must be an absolute executable argument array")
     outputs = workload.get("outputs")
     if not isinstance(outputs, list) or not outputs:
         raise OperationError("workload.outputs must list relative result paths")
@@ -5570,6 +5790,10 @@ def main() -> int:
             result = prepare(context)
         elif args.operation == "run":
             result = run_watch(context, args.approve) if args.watch else run(context, args.approve)
+        elif args.operation == "resume":
+            result = resume(context, args.reason)
+            if args.watch:
+                result = run_watch(context, None)
         elif args.operation == "status":
             result = status(context, args.watch)
         elif args.operation == "copy":
@@ -5591,7 +5815,7 @@ def main() -> int:
         elif args.operation == "_remote-prepare-worker":
             result = remote_prepare_worker(context, args.start_lock_fd)
         elif args.operation == "_remote-worker":
-            result = remote_worker(context, args.attempt)
+            result = remote_worker(context, args.attempt, args.resume_from, args.reason)
         elif args.operation == "_remote-supervise":
             result = remote_supervise(context, args.attempt, args.start_lock_fd)
         elif args.operation == "_remote-controller":

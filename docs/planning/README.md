@@ -25,6 +25,10 @@ untuned baselines on 200 reserved test notes: 1,200 responses collected during
 the main rental and kept sealed through local validation review. Earlier
 checkpoints show learning progress. Test collection and completeness checks are
 verified in the local VM; automatic reports exclude test answers and semantic scores.
+The October 5 final audit added recorded continuation on the existing rental,
+fresh retrieval after recovery, early provenance/receipt copies and bounded
+copier retries. Mechanical progress and GPU/memory/disk observations are saved
+locally. Older attempts and reviews cannot authorize deletion of newer work.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete

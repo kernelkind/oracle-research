@@ -28,6 +28,8 @@ def make_spec(settings, offer, package, image):
             'HF_HUB_DISABLE_TELEMETRY': '1', 'TOKENIZERS_PARALLELISM': 'false',
             'PYTHONUNBUFFERED': '1', 'PYTHONDONTWRITEBYTECODE': '1'},
         'outputs': ['results'],
+        'resumable': all('training_milestones' in read_json(Path(package) / path) for path in job['runs']),
+        'status_command': [REMOTE_PYTHON, '-m', 'sse_multivector.distillation_deploy', 'status', '--output', 'results'],
         'progressive_copy': settings.get('progressive_copy', {
             'poll_seconds': 5, 'bytes_per_second': 8 * 1024 * 1024, 'timeout_seconds': 900}),
         'limits': {'maximum_charge_cents': int(settings['approved_maximum_usd'] * 100),

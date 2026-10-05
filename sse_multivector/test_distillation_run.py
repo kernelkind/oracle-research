@@ -16,6 +16,38 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_subject_training_provenance_is_published_before_baseline_progression(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            distillation_run.write_json(output / 'manifest.json', {'frozen': True})
+            config = {'seed': 17, 'batch_size': 1, 'gradient_accumulation_steps': 8, 'training_milestones': [1]}
+            data = {'train': [{'note_id': 'one', 'task': 'subjects'}]}
+            with self.assertRaises(FileNotFoundError):
+                distillation_run.run_subject_pilot(config, None, data, output, 'report')
+            seal = distillation_run.read_json(output / 'provenance.complete.json')
+            self.assertEqual(seal['manifest.json'], distillation_run.sha256(output / 'manifest.json'))
+            self.assertEqual(seal['training-plan.json'], distillation_run.sha256(output / 'training-plan.json'))
+
+    def test_explicit_worker_continuation_reconciles_unsaved_generation_without_retrying_saved_answers(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            with patch.object(distillation_run, 'generate_batch', side_effect=RuntimeError('worker interrupted')):
+                with self.assertRaisesRegex(RuntimeError, 'worker interrupted'):
+                    distillation_run.evaluate(model, tokenizer, data, config, directory)
+            original = (directory / 'subjects-0000.started.json').read_bytes()
+            with patch.dict(os.environ, {'ORACLE_RUN_ATTEMPT_ID': '002', 'ORACLE_RUN_PREVIOUS_ATTEMPT_ID': '001',
+                                        'ORACLE_RUN_CONTINUATION_REASON': 'Resume after a recorded worker interruption'}), \
+                    patch.object(distillation_run, 'generate_batch', return_value={'answers': [answer], 'seconds': 1.}) as generate:
+                distillation_run.evaluate(model, tokenizer, data, config, directory)
+                self.assertEqual(generate.call_count, 1)
+                distillation_run.evaluate(model, tokenizer, data, config, directory)
+                self.assertEqual(generate.call_count, 1)
+            self.assertEqual((directory / 'subjects-0000.started.json').read_bytes(), original)
+            self.assertTrue((directory / 'subjects-0000.resume-002.started.json').is_file())
+            self.assertTrue((directory / 'subjects-0000.complete.json').is_file())
+            self.assertTrue((directory / 'subject-batches.complete.json').is_file())
+
     def test_preflight_checks_reserved_test_allowance_without_using_test_in_preparation(self):
         class Tokenizer:
             def apply_chat_template(self, messages, **kwargs):

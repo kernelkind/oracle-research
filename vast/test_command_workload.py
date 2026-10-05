@@ -17,6 +17,170 @@ from test_generalization import FAKE_COMMAND
 
 
 class CommandWorkloadTest(unittest.TestCase):
+    def test_remote_json_preserves_continuation_reason_as_one_shell_argument(self):
+        import shlex
+        self.freeze()
+        reason = "Continue saved work; preserve the user's evidence $(literal)"
+        with mock.patch.object(self.module, 'ssh_arguments', return_value=['ssh', 'test-host']), \
+                mock.patch.object(self.module, 'command_json', return_value={}) as command:
+            self.module.remote_json(self.context, Path('/unused'), ['unused'], '_remote-worker',
+                                    '--attempt', '002', '--resume-from', '001', '--reason', reason)
+        sent = shlex.split(' '.join(command.call_args.args[0][2:]))
+        self.assertEqual(sent[-2:], ['--reason', reason])
+
+    def test_controller_continuation_archives_failed_retrieval_and_refreshes_successful_result(self):
+        self.spec['resumable'] = True
+        self.spec['command'] = [sys.executable, '-c', "from pathlib import Path; saved=Path('checkpoint'); "
+            "first=not saved.exists(); saved.write_text('saved') if first else None; "
+            "Path('output.txt').write_text('complete') if not first else None; raise SystemExit(7 if first else 0)"]
+        self.freeze()
+        terminal = self.prepare_and_run()
+        runner.atomic_json(self.root / 'launch/create-result.json', {'success': True, 'new_contract': 42}, replace=True)
+        runner.atomic_json(self.root / 'launch/worker-invocations/001.json', {'attempt_id': '001', 'instance_id': '42'})
+        self.module.publish_worker_acknowledgement(self.context, '42', '001', terminal)
+        (self.root / 'result.next').mkdir()
+        def remote(_context, _key, _target, operation, *args):
+            return self.call(operation, *args)
+        def download(_context, _key, _target, source, destination):
+            shutil.copytree(self.root / ('work' if source.endswith('/work/') else 'preparation-attempts'),
+                            destination, dirs_exist_ok=True)
+        with mock.patch.object(self.module, 'ensure_ssh', return_value=(Path('/unused'), ['unused'])), \
+                mock.patch.object(self.module, 'remote_json', side_effect=remote), \
+                mock.patch.object(self.module, 'tar_download_directory', side_effect=download):
+            self.module.ensure_retrieved(self.context, '42', Path('/unused'), ['unused'], '001')
+            old = (self.root / 'launch/retrieval-verification.json').read_bytes()
+            publish = self.module.atomic_json
+            def interrupted(path, document, **kwargs):
+                if path.name == '002.prepared.json':
+                    raise OSError('interrupted after archiving the first retrieval')
+                return publish(path, document, **kwargs)
+            with mock.patch.object(self.module, 'atomic_json', side_effect=interrupted):
+                with self.assertRaisesRegex(OSError, 'interrupted after archiving'):
+                    self.module.resume(self.context, 'Continue after the known test failure')
+            self.module.resume(self.context, 'Continue after the known test failure')
+            for _ in range(100):
+                terminal = self.call('_remote-status', '--attempt', '002')
+                if terminal['state'] == 'terminal':
+                    break
+                time.sleep(.05)
+            self.assertEqual(terminal['exit_status'], 0)
+            self.module.ensure_retrieved(self.context, '42', Path('/unused'), ['unused'], '002')
+            with self.assertRaisesRegex(self.module.OperationError, 'receipt is invalid'):
+                self.module.ensure_retrieved(self.context, '42', Path('/unused'), ['unused'], '001')
+        self.assertEqual((self.root / 'retrieval-attempts/001/retrieval-verification.json').read_bytes(), old)
+        self.assertEqual(runner.read_json(self.root / 'launch/retrieval-verification.json')['attempt_id'], '002')
+        self.assertTrue(self.module.publish_verified_result(self.context, '002'))
+        self.assertEqual((self.root / 'result/work/output.txt').read_text(), 'complete')
+
+    def test_explicit_continuation_preserves_failed_attempt_and_reuses_saved_work(self):
+        self.spec['resumable'] = True
+        self.spec['command'] = [sys.executable, '-c',
+            "from pathlib import Path; import os; saved=Path('checkpoint'); "
+            "first=not saved.exists(); saved.write_text('saved') if first else None; "
+            "Path('output.txt').write_text('complete') if not first else None; "
+            "Path('invocations').open('a').write(os.environ.get('ORACLE_RUN_ATTEMPT_ID','001')+'\\n'); "
+            "raise SystemExit(7 if first else 0)"]
+        self.freeze()
+        self.assertEqual(self.prepare_and_run()['exit_status'], 7)
+        terminal = (self.root / 'work/full-build-attempts/001/full-build.exit').read_bytes()
+        result = self.call('_remote-worker', '--attempt', '002', '--resume-from', '001',
+                           '--reason', 'Continue the immutable test job after the recorded failure')
+        for _ in range(100):
+            result = self.call('_remote-status', '--attempt', '002')
+            if result['state'] == 'terminal':
+                break
+            time.sleep(.05)
+        self.assertEqual(result['exit_status'], 0)
+        self.assertEqual((self.root / 'work/full-build-attempts/001/full-build.exit').read_bytes(), terminal)
+        self.assertEqual((self.root / 'work/checkpoint').read_text(), 'saved')
+        self.call('_remote-worker', '--attempt', '002', '--resume-from', '001',
+                  '--reason', 'Continue the immutable test job after the recorded failure')
+        self.assertEqual((self.root / 'work/invocations').read_text(), '001\n002\n')
+        self.assertIn('consumed', self.call('_remote-worker', '--attempt', '003', returncode=1).stderr)
+        self.assertEqual(runner.read_json(self.root / 'work/full-build-attempts/002/resume.json')['previous_attempt'], '001')
+
+    def test_named_completion_marker_copies_frozen_provenance(self):
+        self.spec['outputs'] = ['results']
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        directory = self.root / 'work/results/student'
+        directory.mkdir(parents=True)
+        (directory / 'manifest.json').write_text('frozen input identity')
+        (directory / 'training-plan.json').write_text('frozen note order')
+        runner.atomic_json(directory / 'provenance.complete.json', {
+            name: runner.sha256_file(directory / name) for name in ('manifest.json', 'training-plan.json')})
+        records = self.call('_remote-progress')['files']
+        self.assertEqual({Path(r['path']).name for r in records},
+                         {'manifest.json', 'training-plan.json', 'provenance.complete.json'})
+
+    def test_subset_completion_records_can_also_belong_to_a_completed_stage(self):
+        self.spec['outputs'] = ['results']
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        stage = self.root / 'work/results/student/baseline'
+        stage.mkdir(parents=True)
+        (stage / 'subject-batches.json').write_text('frozen batch plan')
+        runner.atomic_json(stage / 'subject-batches.complete.json', {
+            'subject-batches.json': runner.sha256_file(stage / 'subject-batches.json')})
+        runner.atomic_json(stage / 'complete.json', {
+            name: runner.sha256_file(stage / name) for name in ('subject-batches.json', 'subject-batches.complete.json')})
+        records = self.call('_remote-progress')['files']
+        self.assertEqual(len(records), 3)
+        subset = next(r for r in records if r['path'].endswith('subject-batches.complete.json'))
+        self.assertEqual(subset['completion_files'], ['work/results/student/baseline/subject-batches.json'])
+
+    def test_terminal_retrieval_preserves_named_marker_dependencies(self):
+        self.spec['outputs'] = ['results']
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        stage = self.root / 'work/results/student'
+        stage.mkdir(parents=True)
+        (stage / 'manifest.json').write_text('frozen provenance' * 1000)
+        runner.atomic_json(stage / 'provenance.complete.json', {'manifest.json': runner.sha256_file(stage / 'manifest.json')})
+        self.prepare_and_run()
+        (self.root / 'result.next').mkdir()
+        received = []
+        def copy(_context, _key, _target, records, **kwargs):
+            received.extend(records)
+            for record in records:
+                destination = self.root / 'result.next' / record['path']
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(self.root / record['path'], destination)
+            return {'copied_files': len(records)}
+        def download(_context, _key, _target, source, destination):
+            shutil.copytree(self.root / 'preparation-attempts', destination)
+        with mock.patch.object(self.module, 'remote_json', side_effect=lambda _c, _k, _t, op, *args: self.call(op, *args)), \
+                mock.patch.object(self.module, 'copy_files', side_effect=copy), \
+                mock.patch.object(self.module, 'tar_download_directory', side_effect=download):
+            self.module.ensure_retrieved(self.context, '42', Path('/unused'), ['unused'], '001')
+        marker = next(r for r in received if r['path'].endswith('provenance.complete.json'))
+        self.assertEqual(marker.get('completion_files'), ['work/results/student/manifest.json'])
+
+    def test_watch_restarts_failed_copier_with_a_bounded_visible_limit(self):
+        self.spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 65536, 'timeout_seconds': 30}
+        self.freeze()
+        copier = mock.Mock()
+        copier.poll.return_value = 1
+        copier.returncode = 1
+        with mock.patch.object(self.module, 'run', side_effect=[
+                *[{'state': 'running', 'instance_id': '42'} for _ in range(6)], {'state': 'retrieved'}]), \
+                mock.patch.object(self.module, 'resolve_ssh_target', return_value=['unused']), \
+                mock.patch.object(self.module, 'start_progressive_copy', return_value=copier) as starts, \
+                mock.patch.object(self.module.time, 'sleep'), mock.patch.object(self.module, 'stop') as stop:
+            result = self.module.run_watch(self.context, None)
+        self.assertEqual(starts.call_count, 4)
+        self.assertFalse(result['progressive_copy']['will_retry'])
+        self.assertEqual(len(list((self.root / 'progressive/failures').glob('*.json'))), 4)
+        stop.assert_not_called()
+
+    def test_command_status_collects_hardware_and_frozen_progress_command(self):
+        self.spec['status_command'] = [sys.executable, '-c', 'import json; print(json.dumps({"notes": 7}))']
+        self.freeze()
+        status = self.call('_remote-status', '--attempt', '001')
+        self.assertGreater(status['disk']['available_bytes'], 0)
+        self.assertIn('gpu', status)
+        self.assertEqual(status['progress'], {'notes': 7})
+
     def test_unbounded_stop_refuses_before_ssh_without_complete_review(self):
         self.freeze()
         self.context.config['workload']['work_seconds'] = None
@@ -88,6 +252,13 @@ class CommandWorkloadTest(unittest.TestCase):
             'operation_contract_sha256': runner.sha256_file(self.config),
             'retrieval_verification_sha256': runner.sha256_file(receipt),
             'checks': ['Required output and worker evidence are complete and saved locally.']})
+        invocation = self.root / 'launch/worker-invocations/002.json'
+        runner.atomic_json(invocation, {'attempt_id': '002', 'resume_from': '001'})
+        stale = fixture.invoke('stop')
+        self.assertNotEqual(stale.returncode, 0)
+        self.assertIn('stale', stale.stderr)
+        self.assertEqual(fixture.provider()['destroy_calls'], 0)
+        invocation.unlink()
         output = self.root / 'result/work/result.bin'
         saved = output.read_bytes()
         output.unlink()

@@ -86,7 +86,9 @@ class CommandContractTest(unittest.TestCase):
         # cost-estimation repairs, plus explicit local SSH configuration/preflight.
         # Optional workload startup/endpoint settings are approved. Command
         # workloads now preserve instances until explicit stop; GTE retains
-        # its original deletion behavior.
+        # its original deletion behavior. Approved unbounded command jobs add
+        # completeness reviews; explicit continuation and observation reuse the
+        # same worker/transfer flow with attempt-bound retrieval receipts.
         allowed_changes = {"Context", "verify_reviewed_artifacts", "select_offer", "verify_image",
             "ensure_retrieval_destination", "refresh_approved_offer", "ensure_reservation", "invoke_private_create",
             "recover_or_freeze_create", "record_instance_ownership", "freeze_running_instance", "remote_arguments",
@@ -94,14 +96,14 @@ class CommandContractTest(unittest.TestCase):
             "verify_destroy_ownership", "cost_record_from_instance", "live_cost_record",
             "record_pre_worker_cost", "status_once", "ssh_options", "run", "ensure_ssh", "main", "parse_args",
             "cleanup_preworker_instance", "ledger_reconciliation_state", "destroy_without_remote_retrieval",
-            "cleanup_terminal", "stop", "ensure_retrieved"}
+            "cleanup_terminal", "stop", "ensure_retrieved", "remote_json", "ensure_worker_started",
+            "remote_worker", "remote_supervise", "remote_stop", "destroy_instance", "worker_status"}
         self.assertTrue(set(before) <= set(after))
         changed = {name for name in before if ast.dump(before[name]) != ast.dump(after[name])}
         self.assertEqual(changed, allowed_changes)
         # In particular, these execute the original control flow, without a substitute controller.
         for name in ("tar_upload_directory", "tar_download_directory",
-                     "ensure_remote_prepared", "ensure_worker_started", "remote_worker", "remote_supervise",
-                     "destroy_instance", "invoke_destroy_request", "ensure_final_charge"):
+                     "ensure_remote_prepared", "invoke_destroy_request", "ensure_final_charge"):
             self.assertEqual(ast.dump(before[name]), ast.dump(after[name]), name)
         # Progressive retrieval is optional for command workloads. Removing its
         # branches must leave the established terminal retrieval flow identical.
@@ -112,6 +114,9 @@ class CommandContractTest(unittest.TestCase):
             elif isinstance(node, ast.If) and isinstance(node.test, ast.Name) and node.test.id == "progressive":
                 index = body.index(node)
                 body[index:index+1] = node.orelse
+        # Fresh retrieval must also match the requested worker attempt.
+        receipt_guard = body[1].body[1]
+        receipt_guard.test = ast.parse('not isinstance(receipt, dict) or receipt.get("instance_id") != instance_id', mode='eval').body
         self.assertEqual(ast.dump(before["ensure_retrieved"]), ast.dump(after["ensure_retrieved"]))
         # Endpoint resolution is the only change to the proven attachment and
         # authentication-readiness loop; preserve its retries and receipts.

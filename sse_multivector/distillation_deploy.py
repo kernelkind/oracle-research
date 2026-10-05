@@ -273,6 +273,52 @@ def execute(package, output):
         signal.signal(signal.SIGTERM, previous)
 
 
+def status(output):
+    """Read mechanical progress, keeping reserved-test results out of review."""
+    output = Path(output)
+    path = output / "deployment.json"
+    result = {"deployment": read_json(path) if path.exists() else {}, "candidates": {}, "preparation": {}}
+    for root, group in ((output, "candidates"), (output / "preparation", "preparation")):
+        for config in sorted((root / "configs").glob("*.json")):
+            directory = root / config.stem
+            path = directory / "preflight.json"
+            counts = read_json(path) if path.exists() else {}
+            candidate = {"evaluations": {}, "tests": {}, "checkpoints": []}
+            ages = []
+            for prefix, target in (("baseline", "evaluations"), ("evaluations", "evaluations"), ("test", "tests")):
+                stages = [directory / prefix] if prefix == "baseline" else sorted((directory / prefix).glob("*"))
+                for stage in stages:
+                    notes = sorted(stage.glob("note-*/complete.json"))
+                    if not notes:
+                        continue
+                    ages.extend(p.stat().st_mtime for p in notes)
+                    summary = {"notes": len(notes), "expected_notes": counts.get(
+                        "test_notes" if target == "tests" else "evaluation_notes")}
+                    if target != "tests":
+                        summary["subject_failures"] = sum(bool(read_json(p.parent / "subjects-result.json")["errors"])
+                                                          for p in notes)
+                    candidate[target][stage.name] = summary
+            for checkpoint in sorted((directory / "checkpoints").glob("checkpoint-*/complete.json")):
+                metadata = read_json(checkpoint.parent / "training.json")
+                candidate["checkpoints"].append({key: metadata[key] for key in ("cursor", "updates")})
+                ages.append(checkpoint.stat().st_mtime)
+            updates = directory / "subject-training-updates.jsonl"
+            if updates.exists():
+                with updates.open("rb") as source:
+                    source.seek(max(0, updates.stat().st_size - 65536))
+                    tail = source.read()
+                lines = tail.splitlines() if tail.endswith(b"\n") else tail.splitlines()[:-1]
+                if lines:
+                    last = json.loads(lines[-1])
+                    candidate["training"] = {key: last[key] for key in (
+                        "cursor", "update", "updates", "loss", "gradient_norm", "seconds", "cuda_allocated_bytes",
+                        "cuda_reserved_bytes", "attempt_id") if key in last}
+                    ages.append(updates.stat().st_mtime)
+            candidate["last_progress_age_seconds"] = max(0, time.time() - max(ages)) if ages else None
+            result[group][config.stem] = candidate
+    return result
+
+
 def verify_results(package, output):
     """Recheck retrieved comparisons locally; no GPU, generation or provider calls."""
     package, output = Path(package), Path(output)
@@ -344,13 +390,17 @@ def main():
     execute_parser = commands.add_parser("execute")
     execute_parser.add_argument("--package", type=Path, required=True)
     execute_parser.add_argument("--output", type=Path, default=Path("results"))
+    status_parser = commands.add_parser("status", help="read progress without exposing test answers")
+    status_parser.add_argument("--output", type=Path, required=True)
     verify_parser = commands.add_parser("verify-results", help="check retrieved subject pilot completeness offline")
     verify_parser.add_argument("--package", type=Path, required=True)
     verify_parser.add_argument("--output", type=Path, required=True)
     verify_parser.add_argument("--operation-root", type=Path,
                                help="also verify the retrieved operation and record its completion review")
     args = parser.parse_args()
-    if args.operation == "prepare":
+    if args.operation == "status":
+        result = status(args.output)
+    elif args.operation == "prepare":
         result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through,
                                              args.preparation_config)}
     elif args.operation == "check-offer":

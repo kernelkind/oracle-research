@@ -13,6 +13,22 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_live_status_reports_validation_failures_without_exposing_test_results(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            write_json(root / 'deployment.json', {'state': 'running', 'candidate': 'student', 'stage': 'report'})
+            write_json(root / 'configs/student.json', {'training_milestones': [200, 400, 600, 800, 1000]})
+            write_json(root / 'student/preflight.json', {'evaluation_notes': 100, 'test_notes': 200})
+            for stage in ('baseline', 'test/baseline'):
+                note = root / 'student' / stage / 'note-0000'
+                write_json(note / 'subjects-result.json', {'subjects': [], 'errors': [{'error': 'malformed'}]})
+                write_json(note / 'complete.json', {})
+            (root / 'student/subject-training-updates.jsonl').write_text('{"cursor":8,"updates":1,"loss":1.5}\n')
+            status = deploy.status(root)
+            self.assertEqual(status['candidates']['student']['evaluations']['baseline']['subject_failures'], 1)
+            self.assertEqual(status['candidates']['student']['tests']['baseline'], {'notes': 1, 'expected_notes': 200})
+            self.assertEqual(status['candidates']['student']['training']['cursor'], 8)
+
     def test_missing_reserved_baseline_test_blocks_all_candidate_training(self):
         from sse_multivector import distillation_data
         with tempfile.TemporaryDirectory() as temporary:
@@ -301,6 +317,32 @@ class SharedSSHTests(unittest.TestCase):
         write_json(operation / 'progressive/endpoint.json', {'identity': str(key), 'target': endpoint})
         weights = operation / 'result.next/work/results/checkpoints/adapter/weights.bin'
         subject = operation / 'result.next/work/results/responses/note/subjects.json'
+        # Interrupt a real SSH transfer after 100 bytes. The production
+        # receiver must retain those bytes without publishing the checkpoint.
+        import json
+        import shlex
+        import subprocess
+        record = {'path': 'work/results/checkpoints/adapter/weights.bin',
+                  'bytes': (checkpoint / 'weights.bin').stat().st_size,
+                  'sha256': sha256(checkpoint / 'weights.bin')}
+        request = operation / 'interrupted-copy.json'
+        write_json(request, [record])
+        producer = subprocess.Popen(module.remote_arguments(context, key, endpoint, '_remote-copy',
+            '--files', shlex.quote(json.dumps([record]))), stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        try:
+            prefix = producer.stdout.read(100)
+            self.assertEqual(len(prefix), 100)
+        finally:
+            producer.stdout.close()
+            producer.terminate()
+            producer.wait(timeout=20)
+        interrupted = subprocess.run([sys.executable, '-B', str(context.operator_path),
+            '--root', str(operation), '--config', str(config), '_receive-copy', '--request', str(request)],
+            input=prefix, capture_output=True, timeout=20)
+        self.assertNotEqual(interrupted.returncode, 0)
+        self.assertIn(b'ended early', interrupted.stderr)
+        self.assertFalse(weights.exists())
+        self.assertEqual((operation / 'progressive/partial' / record['path']).read_bytes(), prefix)
         stream, groups = module.stream_processes, []
         def copy(*args):
             stream(*args)
@@ -319,12 +361,13 @@ class SharedSSHTests(unittest.TestCase):
         with patch.object(module, 'stream_processes', side_effect=copy):
             self.assertEqual(module.progressive_copy(context, watch=True)['state'], 'stopped')
         self.assertEqual(len(groups), 3)
+        self.assertEqual(groups[0][0]['offset'], 100)
         self.assertEqual(sha256(weights), sha256(checkpoint / 'weights.bin'))
         self.assertEqual(sha256(subject), sha256(note / 'subjects.json'))
         write_json(root / 'transfer-checks.json', {'groups': groups, 'response_before_checkpoint': True,
                                                 'checkpoint_sha256': sha256(weights), 'subject_sha256': sha256(subject)})
 
-    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False):
+    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False, continue_after_checkpoint=False):
         import argparse
         import importlib.util
         import shutil
@@ -374,16 +417,26 @@ class SharedSSHTests(unittest.TestCase):
         while not call('_remote-prepare').get('prepared'):
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.2)
-        call('_remote-worker', '--attempt', '001')
+        started = call('_remote-worker', '--attempt', '001')
+        module.atomic_json(root / 'launch/worker-invocations/001.json',
+                           {'attempt_id': '001', 'instance_id': 'offline-fixture'})
+        module.publish_worker_acknowledgement(context, 'offline-fixture', '001', started)
         copier = module.start_progressive_copy(context, key, endpoint) if copy_while_running else None
         if copier is not None:
             self.addCleanup(lambda: copier.terminate() if copier.poll() is None else None)
         copied_before_terminal = None
+        interruption_requested = False
         if stop:
             time.sleep(2)
             call('_remote-stop', '--attempt', '001')
         while True:
             state = call('_remote-status', '--attempt', '001')
+            if continue_after_checkpoint and not interruption_requested:
+                checkpoints = state.get('progress', {}).get('candidates', {}).get('first', {}).get('checkpoints', [])
+                if checkpoints:
+                    call('_remote-stop', '--attempt', '001', '--incomplete-stop-approval',
+                         'Interrupt the offline SSH rehearsal after its first saved checkpoint')
+                    interruption_requested = True
             if copier is not None and state['state'] == 'running':
                 local = root / 'result.next/work/results/first'
                 notes = list(local.glob('baseline/note-*/complete.json'))
@@ -396,9 +449,42 @@ class SharedSSHTests(unittest.TestCase):
             if state['state'] == 'terminal':
                 break
             self.assertLess(time.monotonic(), deadline)
-            time.sleep(.5)
+            time.sleep(.1 if continue_after_checkpoint else .5)
         (root / 'result.next').mkdir(exist_ok=True)
         module.ensure_retrieved(context, 'offline-fixture', key, endpoint, '001')
+        if continue_after_checkpoint:
+            self.assertTrue(interruption_requested, state)
+            self.assertNotEqual(state['exit_status'], 0)
+            inventory = call('_remote-progress')['files']
+            preserved = {r['path']: r['sha256'] for r in inventory}
+            self.assertTrue(any('/baseline/' in p for p in preserved))
+            self.assertTrue(any('/checkpoints/checkpoint-' in p for p in preserved))
+            receipt_hash = sha256(root / 'launch/retrieval-verification.json')
+            with patch.object(module, 'ensure_ssh', return_value=(key, endpoint)):
+                resumed = module.resume(context, 'Continue the frozen offline subject pilot from saved work')
+                # Repeated delivery reconciles the same continuation.
+                duplicate = module.resume(context, 'Continue the frozen offline subject pilot from saved work')
+            self.assertEqual(resumed['attempt_id'], '002')
+            self.assertEqual(duplicate['attempt_id'], '002')
+            while True:
+                state = call('_remote-status', '--attempt', '002')
+                if state['state'] == 'terminal':
+                    break
+                self.assertLess(time.monotonic(), deadline)
+                time.sleep(.2)
+            module.ensure_retrieved(context, 'offline-fixture', key, endpoint, '002')
+            self.assertEqual(sha256(root / 'retrieval-attempts/001/retrieval-verification.json'), receipt_hash)
+            self.assertEqual(read_json(root / 'launch/retrieval-verification.json')['attempt_id'], '002')
+            for name, digest in preserved.items():
+                self.assertEqual(sha256(root / 'result.next' / name), digest, name)
+            self.assertFalse((root / 'launch/completion-review.json').exists())
+            self.assertTrue(module.publish_verified_result(context, '002'),
+                            (root / 'result.next/work/full-build-attempts/002/full-build.log').read_text()
+                            if (root / 'result.next').exists() else '')
+            write_json(root / 'continuation-checks.json', {'attempts': ['001', '002'],
+                'preserved_files': preserved, 'first_retrieval_sha256': receipt_hash,
+                'final_retrieval_sha256': sha256(root / 'launch/retrieval-verification.json')})
+            return root / 'result/work/results'
         if copier is not None:
             self.assertIsNotNone(copied_before_terminal, (root / 'progressive/copier.log').read_text())
             self.assertEqual(copier.wait(timeout=20), 0, (root / 'progressive/copier.log').read_text())
@@ -486,6 +572,20 @@ class SharedSSHTests(unittest.TestCase):
             for milestone in (1, 2, 3, 4, 6):
                 self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
                 self.assertTrue(verify_saved(run / f'evaluations/checkpoint-{milestone}'))
+
+    def test_subject_pilot_continues_saved_checkpoint_and_refreshes_retrieval_over_ssh(self):
+        policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                  'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}
+        root = self.fixture_package('continued-subject-pilot', {'training_milestones': [1, 2, 3, 4],
+            'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'], 'subject_batching': policy}, seconds=None, test_notes=True)
+        result = self.run_package(root / 'inputs', root / 'operation', continue_after_checkpoint=True)
+        from sse_multivector.distillation_run import verify_saved
+        for name in ('first', 'second'):
+            self.assertEqual(read_json(result / name / 'report.json')['training'], {'examples': 4, 'updates': 4})
+            for stage in ('baseline', 'checkpoints/checkpoint-1', 'checkpoints/checkpoint-4',
+                          'evaluations/checkpoint-4', 'test/baseline', 'test/checkpoint-4'):
+                self.assertTrue(verify_saved(result / name / stage))
 
     def test_subject_preparation_retrieves_all_checks_without_baseline(self):
         from sse_multivector.distillation_run import load_data, verify_saved

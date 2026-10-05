@@ -49,6 +49,9 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
                                 else runner.required_positive_int(limits, "work_seconds")}
     if "progressive_copy" in spec:
         workload["progressive_copy"] = spec["progressive_copy"]
+    for key in ("resumable", "status_command"):
+        if key in spec:
+            workload[key] = spec[key]
     if workload["work_seconds"] is not None and workload["work_seconds"] >= seconds:
         raise runner.OperationError("work_seconds must leave time for retrieval before session_seconds")
     document = {"schema_version": 1, "artifact_kind": "vast-command-operation", "label": spec["label"],

@@ -589,7 +589,12 @@ The command workload supports optional `progressive_copy` with positive integer
 specifications freeze software defaults of 5 seconds, 8 MiB/s and 900 seconds;
 settings can supply other controls before freezing. These defaults are not GPU
 throughput measurements. `run --watch` starts one local copier, with separate
-locks and status under `progressive/`. The worker seals each raw/parsed subject
+locks and status under `progressive/`. It records failures and allows three
+automatic restarts; the fourth failure requires inspection. The worker seals
+root `manifest.json`/`training-plan.json` provenance before loading weights, and
+publishes named completion records for batch plans, started calls and receipts
+before the whole stage completes. Discovery includes those immutable subsets,
+prioritizing their files before their markers. The worker seals each raw/parsed subject
 response before the next generation batch; completed checkpoints already have
 atomic directory publication. Discovery reads completion records and file
 sizes, without repeatedly hashing large remote tensors. Exclude partial
@@ -1913,6 +1918,63 @@ token limits; actual CUDA execution, fit and speed remain hardware checks.
 Evidence: `target/distillation-pilot-v1/final-test-design-20261005/` and VM
 attempt `target/distillation-vm-clean-deployment/attempt-1791231456496036400/`.
 No rental, publication or real reserved-test inference occurred.
+
+### Final integrity audit and recovery — October 5
+
+The final audit confirmed input/split bindings, rejected 13 corrupted or
+incomplete result copies, and checked that test batch shapes are covered by the
+planned validation-cache shapes. Those are offline checks, not measured GPU fit.
+Its actionable gaps were terminal-worker recovery, stale retrieval reuse,
+progressive provenance coverage and command-workload observation. The user
+authorized local fixes; the frozen data and training recipe stay unchanged.
+
+Subject pilot specifications now opt into explicit `resume --reason ...` on
+the existing instance. First reconcile a terminal/orphaned worker and checksum
+verify its available results. Archive its local result and receipts under
+`retrieval-attempts/<attempt>/`; preserve remote attempt evidence and retrieval
+manifests. Reuse only published immutable files in the next retrieval tree.
+The recorded invocation survives interruptions during archiving or delivery,
+so repeating the same continuation reconciles its original attempt. A running
+worker cannot be replaced. Frozen transport and installed inputs are checked;
+normal starts still cannot execute a second committed worker.
+
+Saved malformed answers and answer-count defects are never regenerated. A call
+interrupted before saving its answer may run again only under a new recorded
+worker continuation, retaining its original started-call evidence. Training
+restores the latest complete checkpoint, including optimizer/RNG/cursor state.
+Work after that checkpoint can be recomputed; discarded updates do not accumulate
+in restored weights. Per-update JSONL records carry the attempt ID, so they are
+diagnostic history rather than the authority for completed training coverage.
+
+Every continuation needs a new sealed retrieval and offline completeness review.
+Old receipts/reviews cannot authorize stopping or deleting newer work. Frozen
+status commands report saved validation counts/failures, checkpoint cursors,
+latest updates and progress age. Local observations also save GPU utilization,
+GPU memory and disk space. Reserved-test status reports counts only, with no
+answers, subject counts or failure totals. Copier failures permit three bounded
+restarts without stopping training; exhausted failures require operator attention.
+
+Final verification passed **148 controller regressions and 85 pinned-VM tests**;
+one optional candidate-tokenizer SSH test was skipped because no package was
+supplied. The actual frozen data passed production loading again, with unchanged
+ASv6.100/data hashes and the exact 1,000/100/200 counts. Real SSH interruption
+and continuation preserved **96 published files**, produced a new retrieval,
+and completed both tiny candidates' validation/final-test collections. A real
+SSH copy resumed after 100 received bytes, with no incomplete checkpoint
+publication. Initial rehearsals exposed SSH reason quoting and overlapping-seal
+discovery defects, corrected before this final pass; the new transfer test also
+needed a missing import. All **22 packaged runtime files** match the final VM
+snapshot; the container export is verified and the VM is stopped. Evidence is
+VM attempt `target/distillation-vm-clean-deployment/attempt-1791236491666470396/`.
+No rental, publication or real reserved-test inference occurred.
+
+Evidence: `target/distillation-pilot-v1/final-integrity-audit-20261005/` and
+`target/distillation-pilot-v1/final-integrity-fixes-20261005/`.
+Real ASv6.100 CUDA numerical agreement, long-example fit, cache allowances and
+timing remain the next hardware checks. A new paired launch package/image,
+transfer allowance and spending approval remain open; the old 20GB outbound
+allowance is insufficient for all pilot/prep checkpoints. These controls cannot
+guarantee recovery of unexfiltrated work after sudden host/storage loss.
 
 ### Historical conditional subjects-only batched cost reference — October 3
 

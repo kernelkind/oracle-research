@@ -10,8 +10,8 @@ preparation, training and evaluation, approved October 2.
 **GPU selected:** one **96GB RTX PRO 6000** for preparation and the pilot.
 Keep each complete model on that GPU and run the three students sequentially.
 
-The execution flow below is a draft. Remaining output format details,
-execution settings, and review rubric remain open.
+The collection and recovery flow is implemented locally. Final launch settings
+and the local review rubric remain open.
 
 **Local rehearsal → Vast prep → baselines/training/validation and sealed test
 answers on the same rental → verified retrieval → local validation review →
@@ -160,8 +160,10 @@ and copy small response files first. Check for new results between checkpoint
 chunks. Completion markers follow verified files. Verify local copies
 and retain remote originals at least until verification. Limit transfer bandwidth
 and disk activity. The copier starts automatically beside the observer; final
-retrieval reuses verified copies. A transfer failure is reported without stopping
-training.
+retrieval reuses verified copies. Frozen run metadata, batch plans, started-call
+records and saved batch receipts transfer before whole stages finish. The copier
+automatically retries up to three times after failure; exhausted retries stay
+visible and require inspection. Transfer failures never stop training.
 
 For the full pilot, complete all necessary work before stopping the job or
 deleting its rental
@@ -181,8 +183,13 @@ and semantic scores stay out of review and selection until validation review end
 substantial work, retrieve and verify available data, then delete the rental
 under the user's standing approval. Completing all prep checks is not required.
 
-After interruption, reconcile the existing worker first. Reuse verified saved
-work under original settings; preserve defect evidence and prepare fixes locally.
+After interruption, reconcile the existing worker first. A failed worker needs
+an explicit, recorded continuation on the same rental. Preserve its evidence,
+reuse saved answers and complete training checkpoints, and verify a fresh
+retrieval and completion review. Never regenerate a saved bad answer. An
+interrupted call with no saved answer can run again only through that recorded
+continuation. Keep monitoring GPU use, memory, disk space, updates and response
+counts; save observations locally without opening test content.
 
 ## 5. Score and compare — locally, after the rental
 

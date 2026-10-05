@@ -1392,6 +1392,20 @@ The shared SSH rehearsal passed after correcting one error-message assertion;
 all three native tokenizers also passed the actual train/validation/test preflight.
 The technical plan records evidence and limits. No rental or publication occurred.
 
+**Final integrity audit fixes authorized October 5:** opted-in subject pilots
+can explicitly continue a terminal worker on the same rental under a recorded
+reason and the unchanged frozen package. Retrieve and verify the failed attempt
+first, preserve its evidence, reuse saved answers/checkpoints, and require a
+new retrieval and completion review. Saved malformed answers are never retried;
+an interrupted generation with no saved answer needs an explicit continuation.
+Publish immutable run provenance, batch plans, started-call records and receipts
+early for background transfer. Retry failed copiers at most three times, with
+exhausted failures visible and no worker stop. Freeze the detailed status command
+and save mechanical progress plus GPU utilization/memory and disk observations
+locally, excluding reserved-test content and failure counts. The training recipe
+and frozen data are unchanged; actual ASv6.100 CUDA checks, launch packaging and
+spending remain open. The technical plan records local recovery verification.
+
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subjects,
