@@ -12,8 +12,9 @@ preparation, training and evaluation, approved October 2.
 All three prep checks and all three baselines must pass before training starts.
 
 The collection and recovery flow is implemented locally. The combined prep→pilot
-inputs are frozen and match the rebuilt, tested VM runtime. Image publication, spending
-approval, GPU measurements and the local review rubric remain open.
+inputs are frozen and match the rebuilt, tested VM runtime. The user approved
+private image publication and a **$285 combined prep→pilot budget** on October 5.
+The image is published and verified private. GPU measurements and the local review rubric remain open.
 
 **October 5 two-GPU planning estimate:** combined prep and pilot roughly
 **40–66 hours / $122–197** at a saved **$2.99/hour** quote for two 96GB/600 W
@@ -230,7 +231,8 @@ the experiment or choose another checkpoint.
 
 Test collection and completeness checks passed the local VM rehearsal. Separate test
 files stay outside content review; automatic reports expose only their counts
-and locations. Actual GPU fit, duration and maximum spending remain open.
+and locations. The combined rental is approved up to $285; actual GPU fit and
+duration remain unmeasured.
 
 ## Historical conditional batched cost reference — October 3
 

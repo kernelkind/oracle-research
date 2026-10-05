@@ -721,8 +721,8 @@ evaluation note. Keep the three students, one complete 1,000-note pass,
 evaluation/resume lifecycle. Thinking stays off throughout the pilot, as
 subsequently approved below. Eight examples
 per update give **125 updates per student, 25 per block**. The proposed 100
-validation and 200 final test notes and spending remain open. The GPU choice
-is recorded below.
+validation and 200 final test counts were subsequently approved, along with the
+$285 combined rental budget below. The GPU choice is recorded below.
 This pilot supplies subject evidence for model selection; it cannot establish
 mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
@@ -736,8 +736,10 @@ training recipe, dynamic per-GPU batching and 1,000/100/200 splits. GPU assignme
 is frozen in the package; independent subprocesses receive separate CUDA device
 bindings. A failed candidate blocks queued work while other active work finishes
 and is preserved. Explicit stopping reaches both workers. No automatic timeout,
-budget kill or deletion. The live card edition/offer, GPU fit/timing, maximum
-charge and launch remain open; local implementation approval is not spending approval.
+budget kill or deletion. The user subsequently approved private image publication
+and **up to $285** for the combined two-GPU prep→pilot rental. Select compatible
+96GB/600 W RTX PRO 6000 Server cards within the frozen $3.10/hour ceiling. Actual
+GPU fit/timing and local semantic grading remain pending.
 
 **October 2 dynamic subject evaluation batching approved:** before each batch,
 tokenize waiting notes and choose their count from a frozen per-GPU memory
@@ -1402,7 +1404,8 @@ evaluation copy, save separate test files bound to the run/checkpoint, and
 require both complete test stages before completion review. Automatic reports
 expose only test counts/locations; semantic grading and opening test content
 remain separate local work after validation/model selection. Actual ASv6.100
-GPU fit/throughput, launch duration and maximum spending remain open.
+GPU fit/throughput and launch duration remain unmeasured; the combined rental
+was subsequently approved up to $285 below.
 The shared SSH rehearsal passed after correcting one error-message assertion;
 all three native tokenizers also passed the actual train/validation/test preflight.
 The technical plan records evidence and limits. No rental or publication occurred.
@@ -1418,8 +1421,9 @@ early for background transfer. Retry failed copiers at most three times, with
 exhausted failures visible and no worker stop. Freeze the detailed status command
 and save mechanical progress plus GPU utilization/memory and disk observations
 locally, excluding reserved-test content and failure counts. The training recipe
-and frozen data are unchanged; actual ASv6.100 CUDA checks, image publication and
-spending remain open. The technical plan records local recovery verification.
+and frozen data are unchanged; actual ASv6.100 CUDA checks remain for the rental.
+Image publication and $285 spending were subsequently approved below. The
+technical plan records local recovery verification.
 
 **Paired package frozen and priced October 5:** the user approved preparing the
 combined prep→pilot inputs and updating the estimate. The shared packager froze
@@ -1437,8 +1441,11 @@ storage. Conditional scheduling gives 40–66 hours / $122–197; a quadratic
 training sensitivity gives 80 hours / $239. These assumptions use
 actual native token lengths and older GPU timings, with teacher answer lengths
 as generation proxies; they are not measured ASv6.100 throughput or guarantees.
-The financial draft is not approval. Image publication, GPU checks, maximum
-spending and local semantic grading remain open. No rental or publication occurred.
+The user approved private image publication and a **$285 combined rental budget**.
+The tested image is published and verified private: read-only pulling succeeds,
+anonymous manifest access returns HTTP 401, and all runtime/file hashes match
+the tested VM.  Actual GPU
+checks and local semantic grading remain pending; no rental has started.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete
@@ -1453,8 +1460,8 @@ candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subje
 hierarchy and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
 advantage. The larger pilot's numeric recipe, full ASv6.100, splits and
-collection settings are frozen. Live hardware/offer, spending and local semantic
-review remain open. The informal subject/mask settings and $25 approval above
+collection settings are frozen. Two-GPU launch spending is approved up to $285;
+actual hardware measurements and local semantic review remain pending. The informal subject/mask settings and $25 approval above
 apply only to the completed preliminary experiment.
 
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)

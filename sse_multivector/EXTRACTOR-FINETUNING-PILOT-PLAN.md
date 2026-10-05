@@ -13,7 +13,8 @@ yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
 mask labeling, training or generation belongs to this pilot. The combined
 preliminary experiment remains historical evidence; the eventual mask-based
 release task below has its separate scope. Two 96GB RTX PRO 6000 cards are
-selected for local execution preparation; the live offer and spending remain open. Thinking stays off throughout
+approved for the combined rental up to $285; actual GPU fit and speed remain
+pending. Thinking stays off throughout
 preparation, training and evaluation, approved October 2.
 
 **Primary comparison approved October 5:** compare all three final 1,000-note
@@ -24,7 +25,7 @@ to show learning progress; earlier checkpoints are retained diagnostics.
 Final-test collection and completeness checks are implemented locally; automatic
 reports exclude test answers and semantic scores. The full ASv6.100 workload is
 packaged and conditionally priced (October 5 section below); hardware checks
-and launch spending remain open.
+remain pending; the combined rental is approved up to $285.
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
@@ -982,8 +983,9 @@ also needs checks for biases such as rewarding verbosity, documented in
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
 All preparation results and baselines are verified before training. Matched prep
-cases and numeric settings are frozen; the live card edition/offer, actual GPU
-fit/throughput and maximum charge remain open.
+cases and numeric settings are frozen. Private publication and up to $285 are
+approved for a compatible two-card 96GB/600 W RTX PRO 6000 Server rental within
+the $3.10/hour ceiling; actual GPU fit/throughput remains pending.
 Use the same pinned models and approved subject-only adapter recipe as the
 pilot. Prepare locally and rehearse production paths in the VM before booking.
 The worker now supports subjects-only preparation/training, expert adapters,
@@ -997,7 +999,8 @@ minimum cycle to project a pilot duration/cost range; separate cold setup from
 repeated work. Keep parser/recovery testing and automation rehearsal local.
 Compare qualifying 96GB offers by expected total charge, including startup,
 storage and transfers. After checks, finish verified retrieval and explicit
-deletion promptly. Exact scope and maximum spending approval remain open.
+deletion promptly when prep is separate. The current matched prep scope is
+frozen and the combined prep→pilot rental is approved up to $285.
 
 Use existing notes; preparation is not blocked by the future 1,000-note dataset.
 Historical N18 (long diary), N00 (soda bread) and N15 (short gianduja/store note)
@@ -1214,8 +1217,9 @@ Separate GPU preparation must measure that overhead and merge peak memory, and
 verify continuation across the full transition. The subjects-only worker now
 retains every milestone checkpoint and restores its full unmerged state after
 evaluating a disposable merged copy. Legacy two-task configurations retain
-their unmerged endpoint evaluation and two rolling checkpoints. Additional recovery-checkpoint cadence,
-generation limits, numeric batching budgets and spending remain open.
+their unmerged endpoint evaluation and two rolling checkpoints. Additional
+recovery-checkpoint cadence remains open. Generation limits and numeric
+batching budgets are frozen; the combined rental is approved up to $285.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -1243,8 +1247,8 @@ milestone checkpoints, alongside untuned baselines, setup checks and any
 separately justified confirmation work. The 1,000-note comparison is included.
 Two 96GB RTX PRO 6000 cards run independent students concurrently: Gemma dense
 on one, Qwen then Gemma MoE on the other. Each later milestone continues its
-preceding checkpoint. The 100 validation / 200 final test counts are approved;
-spending remains open.
+preceding checkpoint. The 100 validation / 200 final test counts and up to $285
+for the combined rental are approved.
 
 ## Evaluation and decisions
 
@@ -1975,8 +1979,8 @@ Evidence: `target/distillation-pilot-v1/final-integrity-audit-20261005/` and
 `target/distillation-pilot-v1/final-integrity-fixes-20261005/`.
 Real ASv6.100 CUDA numerical agreement, long-example fit, cache allowances and
 timing remain the next hardware checks. The paired input package and revised
-transfer draft are now frozen below; image publication and spending approval
-remain open. These controls cannot guarantee recovery of unexfiltrated work after
+transfer draft are frozen below; private image publication and a $285 combined
+rental budget are approved. These controls cannot guarantee recovery of unexfiltrated work after
 sudden host/storage loss.
 
 ### Frozen two-GPU package and conditional cost — October 5
@@ -2030,9 +2034,12 @@ All 15 frozen runtime source/config hashes match the stopped VM snapshot at
 `target/distillation-vm-clean-deployment/attempt-1791242606321467393/`.
 The exported image archive SHA-256 is
 `b9ffbcecb8c47cc35364a1970f23899dcb7fd258765926e4b44ab511ff3c0b69`;
-this is an archive hash, not a registry digest. The image is unpublished.
+this is an archive hash, not a registry digest. The tested image is published as
+`docker.io/kernelkind/oracle-mvp@sha256:58dd4c3c256b13724f5fb79b59373e4b43fca2c8cba0cb1439c25c36d061ea64`.
+Loaded filesystem/runtime configuration and all 15 source hashes match the VM;
+read-only pulling succeeds and anonymous manifest access returns HTTP 401.
 
-A read-only quote, offer **48926607**, supplies two **96GB/600 W RTX PRO 6000
+The refreshed read-only quote, a compatible offer, supplies two **96GB/600 W RTX PRO 6000
 Server** cards for **$2.9889/hour including 300 GB storage**. It has about
 387 GB host RAM, 32 effective CPU cores, driver 580.173.02 and reliability 0.9966.
 The model/checkpoint projection remains **169.72 GB + 27.25 GB**; 300 GB leaves
@@ -2062,12 +2069,14 @@ combined lifecycle. Current two-card scenarios give about **1.9×** speedup.
 Evidence: `target/distillation-pilot-v1/two-gpu-review-20261005/` contains saved
 quotes and `schedule-comparison.json`; `two-gpu-implementation-20261005/` contains
 the frozen package, `freeze-verification.json`, test logs and a copied cost report.
-The financial draft proposes **90 hours at up to $3.10/hour**, plus **$2.60**
-transfer allowance: **$281.60 maximum**, not approved. The 90 hours and cost
-thresholds are review parameters, not automatic stop/deletion limits. No
-`approved_maximum_usd`, reservation, rental or publication exists for this launch.
-Publication and spending approval precede a rental; prep must establish actual
-execution/fit and refine throughput. No automatic time/budget kill or deletion.
+The user approved **$285** for private publication and the combined rental.
+The frozen plan allows **90 hours at up to $3.10/hour**, plus **$2.60** transfer
+allowance: $281.60 in planning quantities, within the approval. The 90 hours and
+cost thresholds are review parameters, not automatic stop/deletion limits. The GPU stage has not started.
+Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
+Prep must establish actual execution/fit and refine throughput. Continuous
+observation continues through complete local retrieval/review and explicit
+deletion. No automatic time/budget kill or deletion.
 
 ### Historical conditional subjects-only batched cost reference — October 3
 

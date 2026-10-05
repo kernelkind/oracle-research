@@ -84,8 +84,10 @@ preflights. A saved two-card 96GB/600 W RTX PRO 6000 Server quote is $2.99/hour
 including 300 GB storage. Conditional arithmetic projects 40–66 hours / $122–197,
 with a slower 80-hour / $239 sensitivity case. Older workstation timings are
 proxies; actual server-card throughput remains unmeasured. The draft allows
-200 GB inbound and 60 GB outbound. Image publication and launch spending remain open;
-there is no automatic time limit or deletion.
+200 GB inbound and 60 GB outbound. The user approved private image publication
+and a **$285 combined prep→pilot budget** on October 5. The exact tested image is published and verified private.
+GPU measurements and local semantic grading remain pending. There is no automatic
+time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.
@@ -303,8 +305,8 @@ The local package and VM rehearsal are ready. Its exact cases and memory
 allowances are a concrete proposal; rental approval remains open. No compatible
 low-transfer offer met the proposed $5 cap in the latest October 3 search.
 The larger pilot data is frozen and packaged. Final-test collection on the main
-rental is approved and implemented locally; hardware fit/timing and launch
-spending remain open.
+rental is approved and implemented locally. Private publication and a $285
+combined rental budget are approved; actual hardware fit/timing remains pending.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier
