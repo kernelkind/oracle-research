@@ -1234,10 +1234,23 @@ Increasing the context limit alone does not establish that the worker can run.
 Context/memory settings and the launch estimate still need updating for the full
 ASv6.100 prompt; the ASv6.48 cost reference above does not price this pilot.
 
-The source corpus exists, but pilot note selection and teacher labels remain
-pending. Teachers, review details, validation/test counts, final-test collection
-arrangement and the specific rental remain open. Paid API labels/reviews are
-additional; the existing subscription route is assumed.
+**Pilot data generation approved October 4:** select **1,000 train / 100 validation /
+200 final test** notes by extending the existing fresh-corpus random hash draw.
+Preserve complete original readable-English root posts and provenance; exclude
+replies (including address-tag replies), quote posts, mixed-language prose, inline
+Nostr note references and posts exceeding 512 SSE tokens. Check the existing
+16 writing forms at their natural proportions, without topic or form quotas.
+Keep authors and related copies within one split; known prompt-development
+authors and repeated development templates belong in training. Freeze selection
+and splits before teacher inference.
+
+Generate all 1,300 SP labels using full frozen ASv6.100 with the tested
+**GPT-6.1 Sol / medium** subscription configuration, native experiment workflow
+and raw/parsed/receipt preservation. **32 concurrent calls** are approved; reduce
+to 24 if limits or transport problems require it. No paid API fallback. This
+settles the pilot-label teacher, not the general teacher comparison. Student
+thinking stays off. Selection and labels are in progress; review rubric,
+final-test collection arrangement, context/memory settings and the rental remain open.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third

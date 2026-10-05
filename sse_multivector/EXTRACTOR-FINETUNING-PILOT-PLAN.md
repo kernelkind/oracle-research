@@ -1490,6 +1490,26 @@ ASv6.48 inputs and results remain immutable evidence. Actual pilot notes,
 ASv6.100 teacher labels, context/memory settings and the launch estimate remain
 pending; prompt selection alone does not complete those prerequisites.
 
+**Pilot data approved October 4:** freeze 1,000 training, 100 validation and 200
+final test notes. Extend the original 1,000-note fresh-corpus SHA-256 draw using
+its exact domain and frozen eligible ID ordering. Export complete original
+events read-only, verifying canonical IDs and tags. Exclude replies, address-tag
+replies, quote posts, inline note/nevent/naddr references, mixed-language prose
+and complete posts above 512 SSE tokens. Reuse the original reviewed sample
+where text/author match; review newly selected English prose and writing forms.
+Keep natural corpus proportions instead of the earlier balanced form quotas.
+Freeze authors in one split, remove repeated templates and near copies, and keep
+known development authors/templates in training. Hash-bind all selection inputs.
+
+Labels use full ASv6.100 and its tested GPT-6.1 Sol / medium subscription
+configuration. Native `experiment.py prepare/run/collect` preserves original
+responses, parsed subjects and receipts. Start at 32 concurrent requests and
+reduce to 24 if provider/transport problems arise. At most one provider-transient
+retry per case; no quality retries, output cap or paid fallback. Teacher medium
+reasoning does not change the approved thinking-off student configuration.
+General teacher comparison remains a separate decision. Generation authorization
+is for these 1,300 SP notes, not masks or additional experiments.
+
 ### Conditional subjects-only batched cost reference — October 3
 
 This replaces the serial reference with a **projection**, using measured prep

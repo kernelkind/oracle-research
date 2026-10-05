@@ -1174,6 +1174,21 @@ def compact(result, *, prepared=False):
 def parser():
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    p = commands.add_parser('count-post-tokens', help='save complete original-post SSE token counts; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--tokenizer', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('review-post-sample', help='save source-bound agent English/form decisions; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--accept', default='')
+    p.add_argument('--reject', default='')
+    p.add_argument('--forms', action='append', default=[], metavar='FORM:ORDINALS')
+    p.add_argument('--reason', required=True)
+    p = commands.add_parser('freeze-post-sample', help='freeze original posts and three author-separated splits; no inference')
+    p.add_argument('destination', type=Path)
+    p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--preview', action='store_true', help='save pending English reviews without freezing a sample')
     p = commands.add_parser('prepare-bounded-hierarchy',
                             help='freeze a bounded multi-pass hierarchy build; no inference')
     p.add_argument('destination', type=Path)
@@ -1311,7 +1326,19 @@ def parser():
 def main(argv=None):
     args = parser().parse_args(argv)
     try:
-        if args.command == "prepare":
+        if args.command in {'count-post-tokens', 'review-post-sample', 'freeze-post-sample'}:
+            try:
+                from . import post_sampling
+            except ImportError:
+                import post_sampling
+            if args.command == 'count-post-tokens':
+                result = post_sampling.count_tokens(args.source, args.tokenizer, args.output)
+            elif args.command == 'review-post-sample':
+                result = post_sampling.review(args.source, args.output, args.accept, args.reject, args.forms, args.reason)
+            else:
+                result = post_sampling.freeze(args.spec, args.destination, args.preview)
+            print(json.dumps(result, indent=2))
+        elif args.command == "prepare":
             if args.from_experiment and args.baseline:
                 raise ValueError("--from already specifies the baseline")
             compact(prepare(args), prepared=True)

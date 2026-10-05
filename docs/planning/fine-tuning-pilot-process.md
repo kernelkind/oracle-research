@@ -62,8 +62,23 @@ memory policy rejects Qwen and dense Gemma even at batch size one. Context,
 memory settings and the pilot estimate remain to be finalized for ASv6.100.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
-and 1,000**, are approved. **100 validation** and **200 final test** notes remain
-proposals. Keep final test notes out of development.
+and 1,000**, plus **100 validation** and **200 final test** notes, are approved.
+Keep final test notes out of development.
+
+**Data selection approved October 4:** extend the existing random hash draw from
+the fresh English corpus. Keep readable English root posts with no quote/reply
+tags or inline references to other notes, and at most 512 SSE tokens in the full
+original text. Preserve ordinary short and difficult posts. Use natural writing-form
+proportions; check coverage with the existing 16-form review. Keep authors and
+related copies within one split, with known prompt-development authors in training.
+Freeze all 1,300 notes and splits before labels.
+
+Generate all subject teacher labels using full frozen **ASv6.100**, **GPT-6.1 Sol /
+medium**, through the subscription runner. Start at **32 concurrent calls**,
+reducing to 24 if provider limits or transport errors arise. Save original responses,
+parsed hierarchies and receipts; no masks or paid API fallback. Student thinking
+stays off. This selects the teacher for these pilot labels; general teacher
+comparison remains separate.
 
 ## 2. Generate untuned baselines — Vast
 
@@ -89,7 +104,7 @@ Start **one continuing training run per student**:
    the complete training checkpoint. Unload training from the GPU; load the
    saved adapter on a fresh BF16 base and bake its changes into this evaluation copy.
    Verify reloads under that policy. Generate subject hierarchies on the
-   **same validation notes** (100 proposed); save raw and parsed outputs and
+   **same 100 validation notes**; save raw and parsed outputs and
    check response accounting immediately.
 4. Discard the evaluation copy and restore the complete training state, including
    the exact next example. Continue through **400, 600, 800, and 1,000 notes**,

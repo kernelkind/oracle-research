@@ -104,6 +104,10 @@ name = "materialize-semantic-map-input"
 path = "src/bin/materialize_semantic_map_input.rs"
 
 [[bin]]
+name = "export-corpus-post-sample"
+path = "src/bin/export_corpus_post_sample.rs"
+
+[[bin]]
 name = "scaled-fine-segments"
 path = "src/bin/scaled_fine_segments.rs"
 

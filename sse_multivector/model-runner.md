@@ -15,6 +15,34 @@ It documents exact edits against a baseline hash, preservation and refusal check
 diff-only output, and the automatically generated revision receipt. It makes no
 model calls; revision instructions are kept in that command's help.
 
+## Offline corpus post samples
+
+`experiment.py count-post-tokens SOURCE --tokenizer DIRECTORY --output RECEIPT`
+counts complete original texts with the SSE tokenizer, special tokens included,
+without truncation. `freeze-post-sample DEST --spec CONFIG --preview` saves pending
+agent English/form reviews in corpus hash order. `review-post-sample SOURCE
+--output REVIEWS --accept ORDINALS --reject ORDINALS --forms FORM:ORDINALS
+--reason TEXT` saves explicit decisions bound to source, text and author. Ordinals
+are one-based source positions; comma lists and inclusive ranges are supported.
+These commands make no model calls.
+
+`freeze-post-sample DEST --spec CONFIG` requires every selected post to have a
+source-bound review. Config names candidates, token_counts, prior_review, reviews,
+development_sources, seed, and train/validation/test counts under splits. It
+preserves original text and authors, rejects source/token/review mismatches,
+filters root/quote/reference/language/length failures, removes repeated templates
+and near copies, and chooses exact-size complete author groups. Known development
+IDs, authors and templates stay out of holdouts. Writing-form coverage is reported
+without quotas. Final notes, original events, split references, hashes and a
+selection manifest are published together. Missing reviews/counts fail before
+publication. Native `prepare` accepts the saved notes or split source references.
+
+`export-corpus-post-sample CONFIG OUTPUT` is the bounded Rust corpus reader:
+it validates the frozen ID-order checksum, chooses lowest domain-separated hashes,
+opens sealed NostrDB read-only without reader-table writes, exports original
+events with verified canonical IDs, and uses the production English classifier
+when configured. Run under its own user scope for per-process I/O pressure control.
+
 ## Offline preview
 
 Examples use this checkout's location; the tool itself has no fixed working

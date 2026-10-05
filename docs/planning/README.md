@@ -66,6 +66,12 @@ The old memory rule rejects Qwen and dense Gemma even at batch size one;
 these are calculated requirements, not observed GPU failures. Context/memory
 settings and the launch estimate need updating for ASv6.100. The conditional
 ASv6.48 projection of 36–40 hours / $51–58 does not price the frozen pilot.
+Pilot data selection and label generation are approved: **1,000 train / 100
+validation / 200 final test**, extending the existing fresh-corpus random draw
+with hierarchy input exclusions and author/copy protections. Full ASv6.100
+teacher labels use **GPT-6.1 Sol / medium** through the subscription runner at
+**32 concurrent calls**, reducing to 24 if needed. Selection and generation are
+in progress. See the [pilot process](fine-tuning-pilot-process.md#1-freeze-shared-inputs--locally).
 The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 
