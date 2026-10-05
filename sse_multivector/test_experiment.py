@@ -1924,6 +1924,28 @@ class ExperimentTests(unittest.TestCase):
         })})
         self.assertEqual(self.show()["summary"]["valid"], 3)
 
+    def test_execution_concurrency_cap_serializes_without_changing_frozen_settings(self):
+        spec = json.loads(self.spec.read_text())
+        spec['runner']['concurrency'] = 2
+        self.write('spec.json', spec)
+        self.prepare()
+        frozen = {name: (self.root / 'E1' / name).read_bytes()
+                  for name in ('experiment.json', 'runner-config.json')}
+        barrier = self.root / 'barrier'
+        barrier.mkdir()
+        # First caller cannot meet the two-caller barrier under a one-caller cap.
+        # The second caller starts after that failure and completes normally.
+        self.cli('run', 'E1', '--max-concurrency', '1', ok=False, env={
+            'FAKE_RUNNER_BARRIER': str(barrier), 'FAKE_RUNNER_BARRIER_COUNT': '2'})
+        result = self.show()
+        self.assertEqual(result['summary']['failed'], 1)
+        self.assertEqual(result['summary']['valid'], 1)
+        self.assertEqual(result['summary']['attempts'], 2)
+        self.assertEqual(result['settings']['concurrency'], 2)
+        self.assertEqual(result['execution_settings'][-1]['concurrency'], 1)
+        self.assertTrue(all((self.root / 'E1' / name).read_bytes() == value
+                            for name, value in frozen.items()))
+
     def test_local_abort_overrides_provider_error_and_unknown_transport_not_retried(self):
         self.prepare()
         self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({

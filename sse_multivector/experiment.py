@@ -683,6 +683,12 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
         "cases": cases,
         "baseline_only": sorted(set(baseline) - {c["id"] for c in cases}),
     }
+    execution_settings = directory / 'execution-settings.jsonl'
+    if execution_settings.exists():
+        with execution_settings.open() as f:
+            result['execution_settings'] = [json.loads(line) for line in f]
+        if any(r['manifest_sha256'] != manifest_hash for r in result['execution_settings']):
+            raise ValueError('execution settings belong to another manifest')
     result["requests"] = (
         request_preview(plan, manifest, cases) if not plan["imported"] else None
     )
@@ -891,10 +897,11 @@ def reconcile_costs(directory):
 
 
 def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
-        max_cost_usd=None, max_request_cost_usd=None, attempt_budget_path=None):
+        max_cost_usd=None, max_request_cost_usd=None, attempt_budget_path=None,
+        max_concurrency=None):
     directory = directory.resolve()
     if (directory / 'bounded-build.json').exists():
-        if any(x is not None for x in (max_cost_usd, max_request_cost_usd, attempt_budget_path)):
+        if any(x is not None for x in (max_cost_usd, max_request_cost_usd, attempt_budget_path, max_concurrency)):
             raise ValueError('bounded builds use their frozen shared attempt budget and subscription route')
         try:
             from .bounded_hierarchy_build import run_build
@@ -907,11 +914,18 @@ def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
             raise ValueError(
                 "imported experiments are read-only; prepare --from this experiment to run a candidate"
             )
+        if max_concurrency is not None and not 1 <= max_concurrency <= config.concurrency:
+            raise ValueError('execution concurrency cap must be positive and at most the prepared concurrency')
+        concurrency = config.concurrency if max_concurrency is None else max_concurrency
         identity = engine._runner_identity(config)
         if any(identity[k] != manifest[k] for k in ("runner_version", "runner_sha256")):
             raise ValueError("model runner changed since preparation")
         engine._validate_auth_file(config.auth_file)
         execution_upgrade(directory, plan, runner_upgrade_reason)
+        engine._append_json_line(directory / 'execution-settings.jsonl', dict(
+            manifest_sha256=inputs.digest(manifest), concurrency=concurrency,
+            prepared_concurrency=config.concurrency,
+            started_at_utc=datetime.now(timezone.utc).isoformat()))
         provenance = engine._load_runner_upgrades(
             config.run_directory, manifest_sha256=inputs.digest(manifest),
             initial_wrapper_sha256=manifest["wrapper_sha256"],
@@ -930,7 +944,7 @@ def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
                 config,
                 manifest,
                 retry_failed=False,
-                concurrency=config.concurrency,
+                concurrency=concurrency,
                 validate_output=validate_output,
                 max_new_attempts=max_new_attempts,
                 max_cost_usd=max_cost_usd,
@@ -1248,6 +1262,8 @@ def parser():
                    help="cap newly sent attempts, including provider retries; reserve spending for this allowance")
     p.add_argument("--attempt-budget", type=Path,
                    help="persistent cross-experiment launch counter; failed/interrupted attempts are not refunded")
+    p.add_argument('--max-concurrency', type=int,
+                   help='lower execution concurrency without changing frozen requests/settings; saved in execution receipts')
     p.add_argument("--max-cost-usd", type=float,
                    help="cumulative experiment spending allowance; includes prior attempts, never truncates responses")
     p.add_argument("--max-request-cost-usd", type=float,
@@ -1399,7 +1415,7 @@ def main(argv=None):
                 raise ValueError("--runner-upgrade-reason must not be blank")
             result = run(args.experiment, args.max_new_attempts, args.runner_upgrade_reason,
                          max_cost_usd=args.max_cost_usd, max_request_cost_usd=args.max_request_cost_usd,
-                         attempt_budget_path=args.attempt_budget)
+                         attempt_budget_path=args.attempt_budget, max_concurrency=args.max_concurrency)
             if (args.experiment / 'bounded-build.json').exists():
                 print(json.dumps(result, indent=2))
                 return int(result.get('status') != 'finished')

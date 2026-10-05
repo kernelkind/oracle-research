@@ -15,6 +15,15 @@ It documents exact edits against a baseline hash, preservation and refusal check
 diff-only output, and the automatically generated revision receipt. It makes no
 model calls; revision instructions are kept in that command's help.
 
+## Lower execution concurrency
+
+`experiment.py run EXPERIMENT --max-concurrency N` caps live requests below the
+prepared concurrency without changing prompts, provider/model settings or frozen
+files. Each execution saves actual concurrency and the prepared limit in
+`execution-settings.jsonl`; `show --json` includes these receipts. Existing valid
+answers are reused and failed-attempt/retry rules remain enforced. A cap cannot
+exceed the prepared limit. Bounded hierarchy builds keep their frozen settings.
+
 ## Offline corpus post samples
 
 `experiment.py count-post-tokens SOURCE --tokenizer DIRECTORY --output RECEIPT`
