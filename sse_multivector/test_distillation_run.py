@@ -16,6 +16,33 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_subjects_only_evaluation_preserves_a_large_valid_hierarchy(self):
+        model, tokenizer, data, config, answer = self.subject_batch_fixture((4,))
+        subjects = [{"number": str(i), "context": "Tea", "subject": f"Tea topic {i}"}
+                    for i in range(1, 146)]
+        answer["raw"] = json.dumps({"subjects": subjects})
+        with tempfile.TemporaryDirectory() as temporary, patch.object(distillation_run, "generate_batch",
+                return_value={"answers": [answer], "seconds": 1.}):
+            results = distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+            self.assertEqual(results[0]["errors"], [])
+            self.assertEqual(len(results[0]["subjects"]), 145)
+            self.assertTrue(distillation_run.verify_saved(temporary))
+        config["evaluation_tasks"] = ["subjects", "mask"]
+        with tempfile.TemporaryDirectory() as temporary, patch.object(distillation_run, "generate_batch",
+                return_value={"answers": [answer], "seconds": 1.}):
+            results = distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
+            self.assertEqual(results[0]["errors"], [{"task": "subjects", "error": "subject count exceeds configured limit"}])
+
+    def test_zero_attention_matrices_require_enforced_efficient_cuda_attention(self):
+        for device, enabled in (("cpu", False), ("cpu", True), ("cuda", False)):
+            model, tokenizer, data, config, _ = self.subject_batch_fixture((4,))
+            config["device"] = device
+            config["efficient_attention"] = enabled
+            config["subject_batching"]["attention_matrix_count"] = 0
+            with self.subTest(device=device, enabled=enabled):
+                with self.assertRaisesRegex(ValueError, "zero attention matrices require efficient CUDA attention"):
+                    distillation_run.subject_batch_memory(model, config)
+
     def test_subject_response_is_sealed_before_next_generation_batch(self):
         model, tokenizer, data, config, answer = self.subject_batch_fixture()
         with tempfile.TemporaryDirectory() as temporary:
@@ -449,6 +476,11 @@ class TinyWorkflowTests(unittest.TestCase):
             self.assertEqual(answer_ids[-1], self.tokenizer.eos_token_id)
             with self.assertRaisesRegex(ValueError, "exceeds"):
                 distillation_run.encode_example(self.tokenizer, row, len(encoded["input_ids"]) - 1)
+
+    def test_fused_loss_rejects_unsupported_architecture_before_training(self):
+        config = {**self.config, "fused_linear_cross_entropy": True}
+        with self.assertRaisesRegex(ValueError, "unsupported fused training loss model"):
+            distillation_run.subject_training_model(config)
 
     def test_batched_generation_handles_left_padding_stop_tokens_and_output_limits(self):
         import torch

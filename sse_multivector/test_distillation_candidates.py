@@ -4,6 +4,7 @@ import unittest
 import subprocess
 import sys
 import os
+import copy
 from unittest.mock import patch
 from pathlib import Path
 
@@ -11,6 +12,20 @@ from sse_multivector import distillation_run as runner
 
 
 class ChatTemplateTests(unittest.TestCase):
+    def test_efficient_attention_excludes_math_and_restores_backend_flags(self):
+        import torch
+        flags = lambda: (torch.backends.cuda.flash_sdp_enabled(),
+                         torch.backends.cuda.mem_efficient_sdp_enabled(),
+                         torch.backends.cuda.math_sdp_enabled(), torch.backends.cuda.cudnn_sdp_enabled())
+        original = flags()
+        with self.assertRaisesRegex(RuntimeError, "interrupted forward"):
+            with runner.attention_context({"device": "cuda", "efficient_attention": True}):
+                self.assertEqual(flags(), (True, True, False, False))
+                raise RuntimeError("interrupted forward")
+        self.assertEqual(flags(), original)
+        with runner.attention_context({"device": "cpu", "efficient_attention": True}):
+            self.assertEqual(flags(), original)
+
     def test_training_uses_disabled_thinking_prefix_and_native_turn_end(self):
         from tokenizers import Tokenizer, models, pre_tokenizers
         from transformers import PreTrainedTokenizerFast
@@ -52,6 +67,128 @@ class GPUPackageTests(unittest.TestCase):
             "from importlib.metadata import version; assert version('fla-core') == '0.5.2'"],
             check=True, timeout=60,
             env={k: v for k, v in os.environ.items() if k != "DISTILLATION_GPU_PACKAGES"})
+        subprocess.run([sys.executable, "-c", "from sse_multivector.distillation_run import load_gpu_packages; "
+            "load_gpu_packages({'device': 'cuda'}); "
+            "from liger_kernel.transformers.monkey_patch import apply_liger_kernel_to_gemma4_text, "
+            "apply_liger_kernel_to_qwen3_5; "
+            "from importlib.metadata import version; assert version('liger-kernel') == '0.8.4'"],
+            check=True, timeout=60)
+
+
+class FusedLossTests(unittest.TestCase):
+    def test_training_forward_matches_native_loss_and_adapter_gradients(self):
+        # GPU-package imports cache FLA modules. Keep that state out of the CPU
+        # regression interpreter even after its search path has been restored.
+        subprocess.run([sys.executable, "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_training_forward_matches_native_loss_and_adapter_gradients()"],
+            check=True, timeout=120)
+
+    def check_training_forward_matches_native_loss_and_adapter_gradients(self):
+        """Exercise real Liger forwards/PEFT; replace only its CUDA loss kernel.
+
+        CPU reference loss tests integration, masking, softcap, weighting and
+        restoration. Actual Triton numerical agreement still requires a GPU.
+        """
+        import torch
+        from transformers import (Gemma4TextConfig, Gemma4ForCausalLM,
+                                  Qwen3_5TextConfig, Qwen3_5ForCausalLM)
+        from sse_multivector import test_distillation_run as fixtures
+        # Import the native CPU Qwen implementation before exposing FLA kernels.
+        fixtures.TinyWorkflowTests.setUpClass()
+        try:
+            fixture = fixtures.TinyWorkflowTests
+            common = dict(vocab_size=len(fixture.tokenizer), hidden_size=32, intermediate_size=64,
+                num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=1, head_dim=16,
+                max_position_embeddings=512, eos_token_id=fixture.tokenizer.eos_token_id,
+                pad_token_id=fixture.tokenizer.pad_token_id, bos_token_id=None)
+            variants = [(Qwen3_5ForCausalLM, Qwen3_5TextConfig(**common,
+                layer_types=["linear_attention", "full_attention"], linear_key_head_dim=16,
+                linear_value_head_dim=16, linear_num_key_heads=1, linear_num_value_heads=2,
+                rope_parameters={"rope_type": "default", "rope_theta": 10000.,
+                                 "partial_rotary_factor": 1., "mrope_section": [2, 3, 3]}))]
+            for moe in (False, True):
+                variants.append((Gemma4ForCausalLM, Gemma4TextConfig(**common,
+                    per_layer_config={1: {"head_dim": 512}},
+                    layer_types=["sliding_attention", "full_attention"], sliding_window=64,
+                    hidden_size_per_layer_input=0, final_logit_softcapping=30., enable_moe_block=moe,
+                    num_experts=4 if moe else None, top_k_experts=2 if moe else None,
+                    moe_intermediate_size=32 if moe else None)))
+            with patch.object(sys, "path", list(sys.path)):
+                runner.load_gpu_packages({"device": "cuda"})
+                for model_class, text_config in variants:
+                    with self.subTest(model=text_config.model_type, moe=getattr(text_config, "enable_moe_block", False)):
+                        base = model_class(text_config)
+                        base.set_attn_implementation("sdpa")
+                        # Make Gemma's softcap numerically relevant rather than a near identity.
+                        with torch.no_grad():
+                            base.lm_head.weight.mul_(100.)
+                        untouched_forward = model_class.forward
+                        config = {**fixture.config, "fused_linear_cross_entropy": True,
+                                  "gradient_checkpointing": True, "lora_target_modules":
+                                  ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj",
+                                   "in_proj_qkv", "in_proj_z", "in_proj_b", "in_proj_a", "out_proj"]}
+                        original = copy.deepcopy(base)
+                        with patch.object(runner, "load_model", return_value=base):
+                            model = runner.subject_training_model(config)
+                        self.assertTrue(model.get_base_model().forward.__module__.startswith("liger_kernel."))
+                        self.assertIs(model_class.forward, untouched_forward)
+                        self.assertFalse(model.get_base_model().lm_head.weight.requires_grad)
+                        reference = copy.deepcopy(model)
+                        reference.get_base_model().forward = untouched_forward.__get__(reference.get_base_model())
+                        reference.set_attn_implementation("eager")
+                        kernel_calls = []
+                        def reference_kernel(hidden_states, lm_head_weight, labels, **kwargs):
+                            kernel_calls.append(kwargs)
+                            self.assertFalse(lm_head_weight.requires_grad)
+                            logits = torch.nn.functional.linear(hidden_states, lm_head_weight)
+                            cap = kwargs.get("final_logit_softcapping")
+                            self.assertEqual(cap, getattr(text_config, "final_logit_softcapping", None))
+                            if cap is not None:
+                                logits = (logits / cap).tanh() * cap
+                            return torch.nn.functional.cross_entropy(logits[:, :-1].float().reshape(-1, logits.shape[-1]),
+                                labels[:, 1:].reshape(-1), ignore_index=-100)
+                        module = "gemma4" if text_config.model_type == "gemma4_text" else "qwen3_5"
+                        loss_name = f"liger_kernel.transformers.model.{module}.LigerForCausalLMLoss"
+                        rows = [runner.encode_example(fixture.tokenizer,
+                            {"prompt": [{"role": "user", "content": text}],
+                             "completion": [{"role": "assistant", "content": answer}]}, 512)
+                            for text, answer in (("Tea tastes good.", "Tea"), ("Tea", "Tea is a drink."))]
+                        total = sum(sum(v != -100 for v in row["labels"][1:]) for row in rows)
+                        with patch(loss_name, side_effect=reference_kernel):
+                            for row in rows:
+                                batch = {key: torch.tensor([value]) for key, value in row.items()}
+                                weight = int((batch["labels"][:, 1:] != -100).sum()) / total
+                                actual, expected = model(**batch, use_cache=False), reference(**batch, use_cache=False)
+                                self.assertIsNone(actual.logits)
+                                torch.testing.assert_close(actual.loss, expected.loss, rtol=1e-5, atol=1e-5)
+                                (actual.loss * weight).backward()
+                                (expected.loss * weight).backward()
+                        self.assertEqual(len(kernel_calls), 2)
+                        expected_parameters = dict(reference.named_parameters())
+                        changed = False
+                        for name, parameter in model.named_parameters():
+                            if parameter.requires_grad:
+                                self.assertIsNotNone(parameter.grad, name)
+                                torch.testing.assert_close(parameter.grad, expected_parameters[name].grad,
+                                                           rtol=2e-4, atol=2e-5, msg=name)
+                                changed |= bool(parameter.grad.count_nonzero())
+                            else:
+                                self.assertIsNone(parameter.grad, name)
+                        self.assertTrue(changed)
+                        optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=1e-4)
+                        optimizer.step()
+                        with tempfile.TemporaryDirectory() as temporary:
+                            model.save_pretrained(temporary)
+                            with patch.object(runner, "load_model", side_effect=lambda _: copy.deepcopy(original)):
+                                restored = runner.subject_training_model(config, temporary)
+                                self.assertTrue(restored.get_base_model().forward.__module__.startswith("liger_kernel."))
+                                native = runner.load_model(config)
+                                from peft import PeftModel
+                                evaluation = PeftModel.from_pretrained(native, temporary).merge_and_unload(safe_merge=True)
+                            self.assertFalse(evaluation.forward.__module__.startswith("liger_kernel."))
+                            self.assertFalse(any("lora_" in name for name, _ in evaluation.named_parameters()))
+        finally:
+            fixtures.TinyWorkflowTests.tearDownClass()
 
 
 class CandidateArchitectureTests(unittest.TestCase):

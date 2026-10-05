@@ -59,10 +59,11 @@ plan records its source hash.
 
 **Input check, October 5:** the actual dataset needs up to **18,396 tokens**
 per training example; some answers exceed the old 4,096-token output limit.
-Seven training hierarchies also exceed the old 128-node limit. The current
-memory policy rejects Qwen and dense Gemma even at batch size one.
-Context, output and memory settings need revision before launch; this local
-audit does not establish GPU fit.
+Seven training hierarchies also exceed the old 128-node limit. The new candidate
+settings use **20,480-token context / 10,240-token output**, with no node-count
+cap for subjects-only evaluation. Memory-efficient attention and fused training
+loss are implemented and checked locally. Actual GPU fit and timing remain
+unverified; check the longest complete examples before launch.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
 and 1,000**, plus **100 validation** and **200 final test** notes, are approved.

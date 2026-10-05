@@ -1,3 +1,5 @@
-# Qwen's Triton attention kernels. Kept off the CPU interpreter's import path.
+# CUDA attention and training loss. Kept off the CPU interpreter's import path.
 # Torch and Triton come from the same immutable PyTorch base as the CPU workflow.
+torch==2.12.1
 fla-core==0.5.2
+liger-kernel==0.8.4

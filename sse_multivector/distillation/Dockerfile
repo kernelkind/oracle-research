@@ -21,7 +21,8 @@ RUN uv venv --system-site-packages /opt/distillation-venv \
 COPY sse_multivector/distillation/requirements-gpu.lock /tmp/requirements-gpu.lock
 RUN uv pip install --python /opt/distillation-venv/bin/python --target /opt/distillation-gpu \
     --no-cache --no-deps --only-binary :all: --require-hashes \
-    --requirement /tmp/requirements-gpu.lock
+    --requirement /tmp/requirements-gpu.lock \
+    && PYTHONPATH=/opt/distillation-gpu python -m pip check
 
 WORKDIR /work
 COPY gte/full_build_package.py gte/calibration_package.py gte/vast_private_create.py /work/gte/

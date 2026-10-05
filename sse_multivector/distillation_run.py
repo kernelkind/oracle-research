@@ -17,6 +17,7 @@ import shutil
 import site
 import sys
 import time
+from contextlib import nullcontext
 from pathlib import Path
 
 from sse_multivector.extraction_pipeline import prepare_mask_inputs
@@ -158,6 +159,14 @@ def generate(model, tokenizer, messages, config, task="subjects"):
     return {**batch["answers"][0], "seconds": batch["seconds"]}
 
 
+def attention_context(config):
+    """Exclude quadratic CUDA math attention when its buffers are not budgeted."""
+    if config["device"] != "cuda" or not config.get("efficient_attention", False):
+        return nullcontext()
+    from torch.nn.attention import SDPBackend, sdpa_kernel
+    return sdpa_kernel([SDPBackend.FLASH_ATTENTION, SDPBackend.EFFICIENT_ATTENTION])
+
+
 def generate_batch(model, tokenizer, messages, config, task, *, encoded=None):
     import torch
     if not messages:
@@ -182,7 +191,7 @@ def generate_batch(model, tokenizer, messages, config, task, *, encoded=None):
     stop_ids = [eos] if isinstance(eos, int) else eos
     model.eval()
     started = time.monotonic()
-    with torch.inference_mode():
+    with torch.inference_mode(), attention_context(config):
         result = model.generate(input_ids=inputs, attention_mask=attention,
                                 do_sample=False, max_new_tokens=allowance, use_cache=True,
                                 pad_token_id=tokenizer.pad_token_id,
@@ -216,6 +225,9 @@ def subject_batch_memory(model, config):
     """
     if config["quantization"] != "none":
         raise ValueError("dynamic subject batching requires an unquantized model")
+    if config["subject_batching"]["attention_matrix_count"] == 0 and (
+            config["device"] != "cuda" or config.get("efficient_attention") is not True):
+        raise ValueError("zero attention matrices require efficient CUDA attention")
     generation = model.generation_config
     # In the pinned Transformers version, None resolves to one greedy sequence.
     if (generation.num_beams not in (None, 1) or generation.num_return_sequences not in (None, 1)
@@ -238,6 +250,9 @@ def subject_batch_memory(model, config):
     c = model.config
     if hasattr(c, "get_text_config"):
         c = c.get_text_config()
+    if config.get("efficient_attention", False) and config["device"] == "cuda" and (
+            c._attn_implementation != "sdpa" or getattr(c, "output_attentions", False)):
+        raise ValueError("efficient attention requires SDPA without attention outputs")
     if c.model_type not in ("qwen3_5_text", "gemma4_text", "llama"):
         raise ValueError(f"unsupported subject batch cache model: {c.model_type}")
     if getattr(c, "num_kv_shared_layers", 0):
@@ -414,7 +429,7 @@ def evaluate(model, tokenizer, data, config, directory):
             if answer["truncated"]:
                 raise ValueError("subject answer reached output limit")
             result["subjects"] = parse_subjects(answer["raw"])
-            if len(result["subjects"]) > config["max_subjects"]:
+            if "mask" in tasks and len(result["subjects"]) > config["max_subjects"]:
                 raise ValueError("subject count exceeds configured limit")
         except (ValueError, TypeError) as error:
             result["errors"].append({"task": "subjects", "error": str(error)})
@@ -552,6 +567,8 @@ def load_model(config, adapter=None):
     from peft import PeftModel
     options = {"revision": config["revision"], "trust_remote_code": False,
                "dtype": torch.float32 if config["device"] == "cpu" else torch.bfloat16}
+    if config.get("efficient_attention", False):
+        options["attn_implementation"] = "sdpa"
     architecture = AutoConfig.from_pretrained(config["model"], revision=config["revision"], trust_remote_code=False)
     if config["device"] == "cuda" and architecture.model_type in ("qwen3_5", "qwen3_5_text"):
         # Fail on a broken CUDA dependency instead of silently using a slow fallback.
@@ -678,11 +695,30 @@ def subject_training_plan(data, config):
     return {"note_ids": order, "milestones": milestones, "examples_per_update": 8}
 
 
+def configure_training_loss(model, config):
+    """Patch only this training instance; evaluation reloads native model code."""
+    if not config.get("fused_linear_cross_entropy", False):
+        return
+    kind = model.config.model_type
+    if kind not in ("qwen3_5_text", "gemma4_text"):
+        raise ValueError(f"unsupported fused training loss model: {kind}")
+    load_gpu_packages(config)
+    from liger_kernel.transformers.monkey_patch import (
+        apply_liger_kernel_to_gemma4_text, apply_liger_kernel_to_qwen3_5)
+    options = dict(rope=False, cross_entropy=False, fused_linear_cross_entropy=True,
+                   rms_norm=False, model=model)
+    if kind == "gemma4_text":
+        apply_liger_kernel_to_gemma4_text(geglu=False, **options)
+    else:
+        apply_liger_kernel_to_qwen3_5(swiglu=False, **options)
+
+
 def subject_training_model(config, checkpoint=None):
     """Create FP32 trainable adapters, including both packed Gemma expert weights."""
     import torch
     from peft import LoraConfig, PeftModel, get_peft_model
     model = load_model(config)
+    configure_training_loss(model, config)
     experts = []
     if getattr(model.config, "enable_moe_block", False):
         if model.config.model_type != "gemma4_text":
@@ -770,7 +806,6 @@ def subject_checkpoint_metadata(checkpoint, output, plan):
 def train_subject_block(config, tokenizer, data, output, plan, milestone, previous=None):
     """Continue unmerged training, preserving the actual cursor and token objective."""
     import torch
-    from contextlib import nullcontext
     from transformers import DataCollatorForSeq2Seq, set_seed
     output = Path(output)
     identity = {"manifest_sha256": sha256(output / "manifest.json"),
@@ -818,11 +853,12 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
                          collator(rows[start:start+config["batch_size"]]).items()}
                 count = int((batch["labels"][:, 1:] != -100).sum())
                 context = torch.autocast("cuda", dtype=torch.bfloat16) if config["device"] == "cuda" else nullcontext()
-                with context:
-                    loss = model(**batch, use_cache=False).loss * (count / tokens)
-                if not torch.isfinite(loss):
-                    raise ValueError("nonfinite subject training loss")
-                loss.backward()
+                with attention_context(config):
+                    with context:
+                        loss = model(**batch, use_cache=False).loss * (count / tokens)
+                    if not torch.isfinite(loss):
+                        raise ValueError("nonfinite subject training loss")
+                    loss.backward()
                 loss_value += float(loss.detach())
                 del batch, loss
             norm = torch.nn.utils.clip_grad_norm_(parameters, 1., error_if_nonfinite=True)
@@ -948,7 +984,7 @@ def generation_cache_check(model, tokenizer, encoded, config, chunk_tokens):
     cache, done, calls = None, 0, 0
     prefill_seconds = fill_seconds = decode_seconds = 0.
     cuda_measurement(config, reset=True)
-    with torch.inference_mode():
+    with torch.inference_mode(), attention_context(config):
         while done < target:
             end = width if done == 0 else min(target-1, done+chunk_tokens) if done < target-1 else target
             started = time.monotonic()
@@ -1141,11 +1177,21 @@ def run(config_path, output, through="report"):
         "gradient_checkpointing", "lora_target_modules", "mask_batch_size"}
     pilot = "training_milestones" in config
     if pilot:
-        required = required - {"mask_prompt", "mask_batch_size", "max_steps", "save_steps", "subject_fraction"}
+        required = required - {"mask_prompt", "mask_batch_size", "max_steps", "save_steps", "subject_fraction", "max_subjects"}
         required |= {"training_milestones", "subject_batching"}
-    optional = {"subject_batching", "evaluation_tasks", "preparation"}
+    optional = {"subject_batching", "evaluation_tasks", "preparation", "max_subjects",
+                "efficient_attention", "fused_linear_cross_entropy"}
     if required - set(config) or set(config) - required - optional:
         raise ValueError(f"configuration fields differ: {set(config) ^ required}")
+    for key in ("efficient_attention", "fused_linear_cross_entropy"):
+        if key in config and type(config[key]) is not bool:
+            raise ValueError(f"invalid {key}")
+        if config.get(key, False) and not pilot:
+            raise ValueError(f"{key} requires the subject pilot")
+    if "max_subjects" in config and (type(config["max_subjects"]) is not int or config["max_subjects"] < 1):
+        raise ValueError("invalid max_subjects")
+    if config.get("fused_linear_cross_entropy", False) and config["device"] != "cuda":
+        raise ValueError("fused training loss requires CUDA")
     if "subject_batching" in config:
         validate_subject_batching(config["subject_batching"])
     if pilot:
@@ -1199,7 +1245,8 @@ def run(config_path, output, through="report"):
         "python": sys.version,
         "packages": {p: importlib.metadata.version(p) for p in ("torch", "transformers", "peft", "accelerate",
                                                                  "tokenizers", "safetensors", "bitsandbytes", "numpy")
-                     + (("fla-core", "einops") if config["device"] == "cuda" else ())},
+                     + (("fla-core", "einops") if config["device"] == "cuda" else ())
+                     + (("liger-kernel",) if config.get("fused_linear_cross_entropy", False) else ())},
         "local_model": file_hashes(local_model) if local_model.is_dir() else None}
     output.mkdir(parents=True, exist_ok=True)
     with (output / ".lock").open("w") as lock:

@@ -1722,6 +1722,59 @@ release tag byte-for-byte. All **77** bound files were rehashed, including all
 were reproduced exactly. Runtime audit SHA-256:
 `b5bd2fb35c8788e66b143ac00a67c102fd9eeb47aeb8b50f962479d68241ce41`.
 
+### Runtime implementation and local verification — October 5
+
+The user approved implementing the attention/loss candidate and testing it
+locally before preparing another GPU check. New reusable candidate settings live
+in `sse_multivector/distillation/subjects/`: **20,480 context / 10,240 output**,
+subjects only, no `max_subjects` cap, existing five continuing checkpoints and
+unchanged training recipe. Their `prepared` data path is not populated yet;
+package the preserved train/validation/test split through the shared workflow
+before freezing launch inputs. Historical packages/configurations remain intact.
+
+`efficient_attention` selects native SDPA and restricts CUDA calls to Flash and
+memory-efficient backends during generation, cache checks, training forward and
+checkpointed backward. Math and cuDNN fallback are excluded. Zero headwise
+attention matrices require that CUDA configuration and SDPA without attention
+outputs. Existing 88-GiB budget, mask, workspace and prefill allowances remain
+**candidate numerical settings requiring hardware validation**.
+
+`fused_linear_cross_entropy` patches only the training model instance using
+**Liger 0.8.4**. Its other kernel replacements are disabled; fresh evaluation
+loads native model code before adapter merge. GPU dependencies remain isolated
+from CPU execution, hash locked, and checked against the immutable image's
+Torch/Triton and core dependencies. Prompt/target masking, token-weighted updates,
+classifier freezing, Gemma softcap 30, expert LoRA and full-state continuation
+remain unchanged. Legacy subject/mask runs retain their subject-count guard.
+
+Local checks reproduced the original node-limit and missing attention-policy
+guard failures before implementation. Pinned **2.12.1+cu130 / 5.17.0 / 0.21.0**
+container suites passed: **6 candidate, 33 workflow, 24 deployment tests**; one
+optional candidate-tokenizer SSH preflight was skipped because no package was
+supplied. The loss check exercises real Qwen/Gemma/MoE Liger forwards and PEFT,
+including 512-dimensional Gemma global heads, comparing loss and adapter
+gradients against native eager attention. **Only the CUDA loss calculation is
+replaced with a CPU reference in that test.** It checks prompt masking, softcap,
+unequal answer-token weighting, adapter save/restore and native merged evaluation;
+it does not execute or validate Triton numerics. Existing tests cover continuing
+optimizer/random state, all checkpoints, raw/parsed response seals and shared
+SSH copying/retrieval/recovery. The first VM attempt exposed GPU import state
+leaking into a later CPU test; that check now runs in a separate process.
+
+The older host **Torch 2.8.0+cpu** regression run had one tight numerical-tolerance
+failure in the existing physical-batch weighting check (maximum mismatch
+2.08e-6); the same unchanged check passed in the pinned container. No tolerance
+was relaxed. All **3,900** saved shapes fit the candidate context/output bounds,
+and **76** bound input/source files were rehashed unchanged, including all frozen
+notes, teacher labels, splits and old configurations.
+
+Evidence: `target/distillation-pilot-v1/asv6.100-runtime-implementation-20261005/`
+and VM attempt `target/distillation-vm-clean-deployment/attempt-1791223686198026208/`.
+No paid action or image publication occurred. Actual CUDA kernel/loss/gradient
+agreement, full long-example training memory, full generation cache allowance
+and throughput still require the brief hardware check; these local results do
+not establish 96GB fit or a revised price/duration.
+
 ### Conditional subjects-only batched cost reference — October 3
 
 This replaces the serial reference with a **projection**, using measured prep

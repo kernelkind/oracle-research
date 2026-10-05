@@ -1306,6 +1306,20 @@ tested. No dependency, worker, frozen configuration or hardware was changed.
 The technical plan records the implementation candidate and verification gates;
 this investigation does not authorize a new rental or assert training fit.
 
+**Runtime implementation approved and completed locally, October 5:** add
+explicit SDPA with Flash/memory-efficient CUDA backends and no math fallback,
+plus **Liger 0.8.4 fused linear cross-entropy for training only**. Retain the full
+prompt, note, teacher target, ignored prompt labels, supervised-token averaging,
+Gemma softcap 30 and existing LoRA/continuation recipe. New subjects-only
+candidates use **20,480-token context / 10,240-token output** and omit the
+128-node guard. The planner may omit headwise score matrices only with enforced
+efficient CUDA attention. Pinned-container integration and SSH checks passed;
+actual CUDA loss/gradient agreement, long-example memory fit, generation cache
+and timing remain open. The new configurations are candidates, not frozen launch
+inputs; preparing the preserved three-way data package remains separate work.
+No rental, publication or additional teacher call occurred. The technical plan
+records checks and limitations.
+
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subjects,

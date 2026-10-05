@@ -63,11 +63,12 @@ The user froze full ASv6.100 for the pilot on October 4, including all worked
 examples in training and every evaluation. The October 5 audit of all 1,300
 teacher labels finds training sequences up to 18,114 Qwen / 18,396 Gemma tokens.
 The old 8K context, 4K output and 128-node limits do not cover this dataset.
-The memory rule also rejects Qwen and dense Gemma even at batch size one;
-these are planner estimates, not observed GPU failures. Context/output/memory
-settings and the launch estimate need updating for ASv6.100. Local runtime
-inspection identifies supported memory-efficient attention source paths and a
-released fused-loss candidate; GPU compatibility and fit remain unverified.
+The old memory rule also rejects Qwen and dense Gemma even at batch size one;
+these are planner estimates, not observed GPU failures. The new subjects-only
+candidates use 20,480-token context / 10,240-token output, with no node-count
+cap. The worker enforces efficient SDPA and uses training-only Liger fused loss.
+Pinned-container integration and SSH checks passed locally; GPU kernels, fit,
+throughput and the launch estimate still need verification on ASv6.100.
 The conditional ASv6.48 projection of 36–40 hours / $51–58 does not price the frozen pilot.
 Pilot data selection and label generation are approved: **1,000 train / 100
 validation / 200 final test**, extending the existing fresh-corpus random draw
