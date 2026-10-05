@@ -33,7 +33,9 @@ def write(path, value):
 
 
 def rows(path):
-    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+    # JSON strings may contain literal Unicode line separators; only LF frames JSONL.
+    with Path(path).open() as f:
+        return [json.loads(line) for line in f if line.strip()]
 
 
 def count_tokens(source, tokenizer, output):

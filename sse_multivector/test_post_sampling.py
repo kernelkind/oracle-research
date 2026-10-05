@@ -13,11 +13,11 @@ class PostSamplingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder)
             texts=['Address reply', 'Quote post', 'Read nostr:note1abcde for background', 'Identical copied sentence',
-                   'Identical copied sentence', 'Apricots taste wonderful.', 'Bicycle wheels need repairs.',
+                   'Identical copied sentence', 'Apricots\u2028taste wonderful.', 'Bicycle wheels need repairs.',
                    'Clarinets require practice.', 'Dragons belong in stories.', 'Elephants have trunks.']
             records=[dict(note_id=f'{i:064x}',pubkey=f'{i:064x}',text=text,selection_order_sha256=f'{i:064x}',
                 root_non_quote=i>1,canonical_event_id_verified=True,language_decision='keep_english') for i,text in enumerate(texts)]
-            source=root/'candidates.jsonl';source.write_text(''.join(json.dumps(r)+'\n' for r in records))
+            source=root/'candidates.jsonl';source.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in records))
             tokens=root/'tokens.json';tokens.write_text(json.dumps(dict(source_sha256=sha(source),maximum_tokens=512,
                 records=[dict(note_id=r['note_id'],text_sha256=hashlib.sha256(r['text'].encode()).hexdigest(),tokens=20) for r in records])))
             prior=root/'prior.json';prior.write_text(json.dumps(dict(notes=[])))
@@ -28,7 +28,8 @@ class PostSamplingTests(unittest.TestCase):
             self.assertFalse((root/'incomplete').exists())
             r=self.cli(root,'freeze-post-sample',root/'preview','--spec',spec,'--preview')
             self.assertEqual(r.returncode,0,r.stderr)
-            pending=[json.loads(s) for s in (root/'preview/review-needed.jsonl').read_text().splitlines()]
+            with (root/'preview/review-needed.jsonl').open() as f:
+                pending=[json.loads(s) for s in f]
             self.assertEqual([r['ordinal'] for r in pending],[4,6,7,8])
             r=self.cli(root,'review-post-sample',source,'--output',root/'reviews.jsonl','--accept','4,6-8',
                        '--forms','FACT:4,6-8','--reason','Full original prose is English.')
