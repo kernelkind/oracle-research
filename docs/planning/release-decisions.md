@@ -759,7 +759,8 @@ returns separate **correctness** and **coverage** scores with evidence for each.
 Correctness assesses returned subjects and relationships; coverage
 assesses missing required subjects or information. Output reliability is
 checked mechanically. The scoring scale, rubric, reviewer model, reliability
-checks, and checkpoint/model selection rule remain design choices. The user deferred
+checks, and model selection rule remain design choices. The primary comparison's
+checkpoint is fixed by the October 5 decision below. The user deferred
 review-prompt and grading details while the overall pilot pipeline is designed.
 The walkthrough also keeps remaining data choices, remaining output format details,
 remaining training settings, continuation rules, and new spending open. It authorizes no
@@ -962,7 +963,9 @@ selected adapter's matched untuned/fine-tuned final test. Remove the three
 previously planned terminal thinking-on evaluations. With N validation notes,
 there are **18N** subject responses and semantic reviews; at the proposed 100
 notes, **1,800**. The proposed 200-note final comparison adds 400 responses and
-reviews. Comparable research does not establish the benefit of enabling thinking
+reviews under that decision; the October 5 final-test decision below expands
+the comparison to all three final adapters and baselines. Comparable research
+does not establish the benefit of enabling thinking
 after our particular answer-only fine-tune. Output limits, numeric batching
 budgets, preparation scope, spending and launch remain open.
 
@@ -1199,7 +1202,7 @@ attempts. Budget admission passed before the run; no replacement rental is autho
   [existing fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md),
   not the teacher selection. Its preliminary 100-note experiment is tracked in 29.
 
-**Conditional batched GPU reference (October 3):** the completed prep measured
+**Historical conditional batched GPU reference (October 3):** the completed prep measured
 all three subject-only setups on a 96GB/600 W RTX PRO 6000. Combining its
 ASv6.48 batch shapes and incremental-token timings with saved historical answer
 lengths gives about **5.6 hours training** and **22–24.5 hours generation** for
@@ -1209,7 +1212,8 @@ comparison. Assuming the proposed 100 validation / 200 final test notes,
 transfer fees gives **36–40 hours / $51–58** at the prep's historical $1.4153/hour;
 an illustrative $1.60/hour gives $58–65. Brief generation plus a single long-cache
 decode step is a projection, not measured full-output throughput. No full-pilot
-spending is authorized. Preparation's preliminary total was $3.26.
+spending is authorized. This former winner-only calculation does not price the
+approved six-version final test or the frozen ASv6.100 inputs. Preparation's preliminary total was $3.26.
 
 **Subject prompt frozen for the pilot (October 4):** the user selected the full
 [ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md),
@@ -1256,8 +1260,8 @@ generation is authorized. All 16 writing forms occur in the full sample. Known
 exposure checks cover 716 saved source files, with zero holdout conflicts;
 original texts/authors match and full-post SSE lengths range from 2 to 505 tokens.
 Validation contains no CREATIVE-form notes in this natural draw; final test has six.
-The review rubric,
-final-test collection arrangement, context/memory settings and the rental remain open.
+The review rubric, context/memory settings and the rental remain open. The
+final-test collection arrangement was subsequently settled on October 5 below.
 
 **Pilot label generation complete October 5:** the initial WebSocket run at 32 concurrency saved 39 valid answers and 99 failed handshakes, with zero frames/bytes for those failures; failed handshakes reported HTTP 403. Its 138 attempts and
 all receipts remain saved. The 1,162 untouched notes completed over SSE transport
@@ -1333,8 +1337,28 @@ continuing checkpoints and coverage locally before recording the deletion review
 The shared three-way data package preserves 1,000 train / 100 validation / 200
 reserved final test notes. Local semantic grading need not be settled to collect
 GPU outputs; its rubric/reviewer remain open. Actual hardware checks, final-test
-collection and new launch spending remain open. These safeguards cannot guarantee
+implementation/verification and new launch spending remain open. These safeguards cannot guarantee
 a clear performance difference between students.
+
+**Primary pilot comparison and final-test collection approved October 5:**
+compare the three students after the same 1,000 teacher-labeled notes, using
+each final adapter and its corresponding untuned baseline. Keep the five
+100-note validation checkpoints for learning progress and regressions; earlier
+checkpoints remain saved but are not candidates for the primary test comparison.
+During the main rental, collect all six versions' answers on the same 200
+reserved test notes: **1,200 test responses**, alongside **1,800 validation
+responses**. Keep test content and semantic scores sealed through local validation
+review and model selection. Mechanical accounting, parsing and file verification
+can proceed immediately; verify all six complete test collections before deletion.
+Then unseal and score all three comparisons locally under frozen review criteria.
+
+This supplies evidence about the tested recipes, not each student's optimal
+checkpoint. An earlier validation peak can motivate separately authorized test
+inference; do not use test results to select another checkpoint or revise the
+experiment. Check the semantic grader locally and report uncertainty; close or
+unconfirmed gains can remain inconclusive. Test collection/sealing and its
+completeness checks still need implementation and verification. Actual ASv6.100
+GPU fit/throughput, launch duration and maximum spending remain open.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third

@@ -20,6 +20,11 @@ its hardware evidence does not cover the longer ASv6.100 data. The paired mode
 checks complete training, reload/merge/restore, brief subject generation, full
 validation cache shapes and actual fused/native loss agreement. Rehearse this
 package locally before booking; new hardware execution remains pending.
+The primary comparison uses all three final 1,000-note adapters and their
+untuned baselines on 200 reserved test notes: 1,200 responses collected during
+the main rental and kept sealed through local validation review. Earlier
+checkpoints show learning progress. Test collection/sealing and its completeness
+checks still need implementation and verification.
 Minimize preparation's total billed cost, approved October 3. Collect pilot
 timing estimates during those same checks; keep parser/recovery testing local.
 Use one 96GB RTX PRO 6000, with each complete
@@ -72,7 +77,8 @@ all three baselines precede training; raw/parsed answers reconcile with receipts
 local verification accounts for all checkpoint comparisons before deletion review.
 Prep covers the longest example and full validation cache shapes, with actual
 CUDA loss/gradient agreement required on hardware. Semantic grading remains local.
-The conditional ASv6.48 projection of 36–40 hours / $51–58 does not price the frozen pilot.
+The historical winner-only ASv6.48 projection of 36–40 hours / $51–58 does not
+price the frozen pilot or the now-approved six-version test collection.
 Pilot data selection and label generation are approved: **1,000 train / 100
 validation / 200 final test**, extending the existing fresh-corpus random draw
 with hierarchy input exclusions and author/copy protections. Full ASv6.100
@@ -254,8 +260,8 @@ BF16 base/mixed computation and FP32 adapter/optimizer state, plus LoRA dropout 
 frozen biases and standard initialization. Each milestone retains a complete
 training checkpoint, evaluates a disposable BF16 base with the saved adapter
 baked in, then restores the full training state. Answer-only training and
-every evaluation use thinking off. Remaining data choices and
-execution details are open; see the
+every evaluation use thinking off. Pilot data is frozen; final-test
+implementation/verification, scoring and hardware execution remain open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
 Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
@@ -271,8 +277,9 @@ they cannot certify the lengths or completeness of future pilot answers.
 The local package and VM rehearsal are ready. Its exact cases and memory
 allowances are a concrete proposal; rental approval remains open. No compatible
 low-transfer offer met the proposed $5 cap in the latest October 3 search.
-The larger pilot data is frozen and packaged; hardware fit/timing, final-test
-collection and launch spending remain open.
+The larger pilot data is frozen and packaged. Final-test collection on the main
+rental is approved; its implementation/verification, hardware fit/timing and
+launch spending remain open.
 
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier

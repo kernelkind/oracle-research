@@ -13,8 +13,9 @@ Keep each complete model on that GPU and run the three students sequentially.
 The execution flow below is a draft. Remaining output format details,
 execution settings, and review rubric remain open.
 
-**Local rehearsal → Vast prep → baselines/training/evaluation on the same
-rental → verified retrieval → local scoring and comparison.**
+**Local rehearsal → Vast prep → baselines/training/validation and sealed test
+answers on the same rental → verified retrieval → local validation review →
+unseal and score test answers.**
 
 Freeze both stages locally. Prep checks the longest complete training example,
 two continuing updates, save/reload/merge, brief generation, and full native
@@ -89,6 +90,8 @@ are saved; semantic review has not been performed.
 
 Save one **thinking-off** baseline per candidate on the shared validation notes.
 Each model generates its own subject hierarchy. Preserve original responses.
+Also collect each baseline's answers on the 200 reserved test notes; keep those
+answers sealed through local validation review.
 Generate independent notes in batches whose size follows the memory budget.
 Freeze the thinking-off batching policy per student; use it for that
 student's baseline and trained checkpoints. Check and save each answer separately.
@@ -118,6 +121,11 @@ Start **one continuing training run per student**:
    the exact next example. Continue through **400, 600, 800, and 1,000 notes**,
    saving and evaluating at each milestone. Keep all five complete checkpoints.
    Validation leaves the saved adapter, optimizer, schedule, and random state intact.
+
+While each final 1,000-note evaluation copy is loaded, also generate its answers
+on the 200 reserved test notes and keep them sealed. Earlier checkpoints generate
+validation answers only. The primary comparison uses the three final adapters
+and their corresponding untuned baselines.
 
 **One complete pass is approved:** use every subject training example
 once, without replacement, in five new 200-note blocks. Earlier notes and labels
@@ -160,11 +168,14 @@ deleting its rental
 and verify that its data is fully retrieved locally. A successful transfer
 alone does not establish completeness. Offline verification must account for all
 three baselines, fifteen checkpoint evaluations, continuing training coverage,
-and all saved checkpoints before recording the completion review required for deletion. If something is missing, keep the
+all saved checkpoints, and six complete 200-note test collections before recording
+the completion review required for deletion. If something is missing, keep the
 resource and add that work. If stopping is preferable, ask for user approval
 first. Automatic job timeouts, stops on watcher errors, and deletion are disabled;
-time/cost thresholds call for review. I inspect responses as they arrive and
-monitor training and GPU telemetry until explicit deletion.
+time/cost thresholds call for review. I inspect validation responses as they
+arrive and monitor training and GPU telemetry until explicit deletion. Test
+responses receive mechanical accounting, parsing and file checks; their content
+and semantic scores stay out of review and selection until validation review ends.
 
 **Prep only:** repair straightforward failures immediately. If recovery needs
 substantial work, retrieve and verify available data, then delete the rental
@@ -183,16 +194,28 @@ with evidence. Prompt and grading details are deferred; reviewer selection is op
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Missing reviewer judgments are evaluation failures.
 Assess the returned subject hierarchies before model selection.
+Use the final 1,000-note validation versions for primary model selection; the
+five checkpoints show learning progress and regressions. Check the semantic
+grader locally and freeze the review criteria before unsealing test answers.
 
 ## 6. Confirm on the final test
 
-After model and checkpoint are settled from validation, use the reserved test
-to confirm gains over the corresponding untuned baseline, with thinking off
-for both. Whether GPU test outputs are
-collected during the main rental and kept sealed, or generated later, is open.
-Rental grouping, duration, and spending also remain open.
+After validation review and model selection are fixed, unseal the saved test
+answers. Score **all three final 1,000-note adapters and all three untuned
+baselines** on the same 200 notes: **1,200 test responses**, collected during
+the main rental with thinking off. Report each student's gains, failures, speed
+and cost, with uncertainty; a close or unconfirmed gain can remain inconclusive.
 
-## Conditional batched cost reference — October 3
+This compares the tested recipes after the same 1,000 training notes. It does
+not establish each student's best possible checkpoint. An earlier validation
+peak remains evidence in the learning curve; confirming that earlier version
+on the test notes would require additional inference. Test results do not revise
+the experiment or choose another checkpoint.
+
+Test collection/sealing and its completeness checks still need implementation
+and verification. Actual GPU duration and maximum spending remain open.
+
+## Historical conditional batched cost reference — October 3
 
 Using prep's **ASv6.48** input/batch shapes, saved historical answer lengths,
 **100 validation / 200 final test notes** (proposed), and only the winner's
@@ -205,10 +228,11 @@ final comparison:
   **$1.4153/hour**, including 1–2 hours extra overhead, 25% headroom and $1
   transfer fees. At an illustrative $1.60/hour, this is **$58–65**.
 
-These are projections from brief generation and one-token decode measurements,
-not a measured full pilot or a spending cap. They **do not price the frozen
-ASv6.100 pilot**. Update and validate the context/output/memory setup,
-and settle final-test collection before a launch estimate.
+These historical projections use the former winner-only test scope and brief
+generation/one-token decode measurements. They are not a measured full pilot or
+a spending cap and **do not price the frozen ASv6.100 pilot or the now-approved
+six-version test collection**. Update and validate the context/output/memory
+setup and reprice that complete workload before launch.
 Teacher labels and local review assume the existing subscription; paid APIs add cost.
 
 Completed prep's preliminary charges are **$3.26**, including the failed attempt;

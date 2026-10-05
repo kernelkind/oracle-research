@@ -16,14 +16,24 @@ release task below has its separate scope. One 96GB RTX PRO 6000 is selected;
 the specific offer and spending remain open. Thinking stays off throughout
 preparation, training and evaluation, approved October 2.
 
+**Primary comparison approved October 5:** compare all three final 1,000-note
+adapters with their untuned baselines on the same 200 held-out test notes.
+Collect the 1,200 test responses during the main rental, sealed through local
+validation review and model selection. Keep all five 100-note validation stages
+to show learning progress; earlier checkpoints are retained diagnostics.
+Final-test collection/sealing and its completeness checks still need implementation
+and verification. The full ASv6.100 workload still needs hardware checks and repricing.
+
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
 model-selection pilot is **06 · Choose model through larger fine-tuning pilot**,
-waiting for its data in 05. The planned pilot includes a comparison trained on
+waiting for larger-run preparation and semantic scoring. Its data is frozen.
+The planned pilot includes a comparison trained on
 1,000 notes, approved September 30. On October 1 the user requested three
 continuing student training runs, replacing separate fresh starts at each size,
 and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
-notes. Validation/test counts remain open. Task 18's preliminary training setup
+notes. The 1,000 train / 100 validation / 200 test split was approved October 4.
+Task 18's preliminary training setup
 is complete. The subjects-only continuing worker is implemented locally;
 GPU fit remains open. The background copier
 is implemented locally.
@@ -857,7 +867,7 @@ formatting. Comparing their practical quality and cost does not isolate the
 effect of architecture alone. A Qwen-only setup test cannot establish that
 either Gemma checkpoint's training setup works.
 
-## Proposed data
+## Approved pilot data
 
 | Set | Distinct notes | Purpose |
 |---|---:|---|
@@ -866,13 +876,13 @@ either Gemma checkpoint's training setup works.
 | Third training checkpoint | 600 | Measure improvement along the same training run |
 | Fourth training checkpoint | 800 | Measure improvement along the same training run |
 | Fifth training checkpoint | 1,000 | Included comparison, approved September 30 |
-| Validation set | 100 | Compare development runs and select settings |
-| Final test set | 200 | Evaluate selected candidates after development stops |
+| Validation set | 100 | Track learning progress and select among final 1,000-note versions |
+| Final test set | 200 | Compare all three final adapters and untuned baselines after validation review |
 
 The user approved inclusion of the 1,000-note training comparison on September 30,
 validation every 200 training notes on October 1, and one complete training pass
-after the October 1 research. Validation/test counts
-remain proposed. These are for the larger pilot, separate from the informal
+after the October 1 research. The 100 validation / 200 test counts were approved
+October 4. These are for the larger pilot, separate from the informal
 100-note experiment. Each student has five trained validation points plus its
 untuned baseline.
 
@@ -884,8 +894,9 @@ The informal experiment deliberately starts with available data; its findings
 must be described in terms of that selected collection.
 
 Split before training. Keep duplicate, closely related, and same-author material
-within one split. Reserve the final test notes now, but defer their annotation
-until needed. Do not use test outputs to revise the experiment.
+within one split. The final test notes and their teacher labels are frozen;
+keep their outputs out of development and selection. Do not use test outputs
+to revise the experiment.
 
 Mechanically check every teacher subject hierarchy and note/example identity.
 Semantically review a varied sample of training annotations and every
@@ -901,13 +912,14 @@ separately from review findings and any subsequent changes.
 
 ## Proposed run sequence and controls
 
-1. **Prepare each training setup in a separate small GPU run.** Use existing
-   notes before the larger dataset is ready; verify the proposed hardware cycle
-   below. Audit the real pilot data locally against the tested bounds before
-   booking the main rental. Training loss and successful parsing are setup
-   diagnostics, not evidence of semantic quality.
+1. **Freeze and rehearse paired prep/pilot stages locally.** Check the actual
+   longest complete pilot examples and planned cache shapes on the selected
+   GPU. If all prep checks pass, discard prep adapters and continue into fresh
+   pilot adapters on the same rental. Training loss and successful parsing are
+   setup diagnostics, not evidence of semantic quality.
 2. **Measure the three untuned baselines.** Use thinking off on the shared
-   validation notes and preserve their outputs before fine-tuning.
+   validation notes and preserve their outputs before fine-tuning. While each
+   untuned base is loaded, also collect its 200 test answers and keep them sealed.
 3. **Start one continuing training run per student.** Initialize the adapter
    and optimizer from the original pretrained model once. Use every frozen
    subject example from the first 200-note block once, without
@@ -927,13 +939,36 @@ separately from review findings and any subsequent changes.
    separate design decision; milestones do not impose a wall-clock training limit.
    These checkpoints measure progression through one training history, including
    both added data and accumulated training; they do not isolate data size alone.
-6. **Confirm decision-critical comparisons.** Repeat with a different random
-   seed when a small gain or model difference would determine the next action.
-   Keep the same evaluation notes and report uncertainty rather than treating
-   subjects within one note as independent observations.
-7. **Use the final test after selection.** Compare selected fine-tuned
-   candidates with their corresponding untuned baselines on the reserved notes,
-   using thinking off for both.
+6. **Complete and verify sealed test collection on the main rental.** Generate
+   the 200 reserved notes for each final 1,000-note adapter, using thinking off,
+   alongside the untuned test answers collected above. Collect final-adapter test
+   answers while its evaluation copy is loaded. Check accounting/parsing/files
+   immediately; keep test content
+   and semantic scores out of review and selection. Verify all 1,200 test
+   responses and all other required work locally before explicit deletion.
+7. **Review validation, then unseal the test locally.** Use the final 1,000-note
+   validation versions for primary model selection. Score and report all three
+   final adapter/baseline comparisons on the same test notes. Freeze review
+   criteria and check the grader before unsealing. Report uncertainty without
+   treating subjects within one note as independent observations. One seed
+   does not measure training-seed variance; extra trials require a separate
+   decision if a small difference would determine the next action.
+
+The primary comparison is fixed at 1,000 notes; it does not establish each
+student's best possible checkpoint. Keep earlier validation peaks in the
+learning curves. Confirming an earlier checkpoint on the test notes requires
+additional inference, not retraining; do not select it from test results.
+
+**Research basis for this scoped comparison:** [GuideX](https://arxiv.org/html/2506.00649v1)
+reports untuned/trained variants on shared held-out extraction tasks.
+[September 2026 checkpoint-selection research](https://arxiv.org/html/2609.36569v1)
+finds no clear overall gain over the final checkpoint in its math/commonsense
+experiments; that is not proof for subject hierarchies. Fixing the primary
+comparison at 1,000 notes is a practical pilot decision, not a claim that the
+last checkpoint is universally best. [NLP evaluation research](https://aclanthology.org/2020.emnlp-main.745/)
+warns that small evaluation sets can exaggerate differences. The local grader
+also needs checks for biases such as rewarding verbosity, documented in
+[LLM-as-a-judge research](https://arxiv.org/html/2306.05685v4).
 
 ### GPU preparation cases and checks — draft
 
@@ -1056,10 +1091,11 @@ informal configuration still uses both tasks.
 - **Local scoring:** mechanically check output reliability; review subject and
   hierarchy correctness/coverage after retrieval. Keep model failures, semantic
   findings and missing reviewer verdicts distinct.
-- **Final test:** reserve it until model and checkpoint are settled from
-  validation. Use thinking off for selected adapter and untuned baseline. Whether
-  to generate and seal test outputs during the main rental or in a later job
-  remains open.
+- **Final test — approved October 5:** collect all three final 1,000-note
+  adapters and all three untuned baselines on the main rental, with thinking
+  off. Keep answers sealed through local validation review/model selection.
+  Then score all three paired comparisons; verify test collection completeness
+  before deletion. Earlier checkpoints remain learning-curve diagnostics.
 
 | What happened | Response |
 |---|---|
@@ -1078,10 +1114,11 @@ implemented locally. Full-size GPU behavior still needs preparation evidence.
 With three students and five checkpoints each, thinking-off validation has
 18 versions (three bases and fifteen checkpoints). For N validation notes,
 **18N subject responses and semantic reviews**; at 100 notes, **1,800**. The
-winner's proposed 200-note trained/base final comparison adds 400. Freeze generation/review lengths, stored adapters, transfer
+approved six-version 200-note final test adds **1,200**, for **3,000 total**
+student responses and semantic reviews. Freeze generation/review lengths, stored adapters, transfer
 volumes and resource allocation before launch. Report over-limit reviewer
-inputs rather than truncating them. Rental grouping, runtime and spending
-remain open.
+inputs rather than truncating them. Test generation is assigned to the main
+rental; implementation/verification, runtime and spending remain open.
 
 **Complete-pass budget approved October 1, scoped to subjects October 2:** each frozen subject
 training example is used once, without replacement, in five new 200-note blocks.
@@ -1825,10 +1862,11 @@ No rental or image publication occurred.
 
 These checks establish compute/data completeness, not semantic quality or a
 clear winner. Actual CUDA agreement, long-example fit and throughput remain
-hardware checks. Final-test output collection strategy and launch spending remain
+hardware checks. The October 5 decision above settles final-test collection on
+the main rental. Its implementation/verification and launch spending remain
 open; no final-test inference has been added.
 
-### Conditional subjects-only batched cost reference — October 3
+### Historical conditional subjects-only batched cost reference — October 3
 
 This replaces the serial reference with a **projection**, using measured prep
 batch shapes under **ASv6.48** and historical complete/truncated subject-answer
@@ -1875,8 +1913,8 @@ extra allowance and headroom, rather than counted once per overlapping copy.
 
 If all three final baseline/trained comparisons are generated before local
 selection, the same projection is **45.84–47.09 hours / $66–68** at the historical
-rate, rather than the winner-only amount. Final-test collection and rental
-arrangement remain decisions, so neither variant is an approved run contract.
+rate. The October 5 decision adopts that six-version test scope on the main
+rental; neither historical projection prices ASv6.100 or approves spending.
 Full autoregressive generation is unmeasured under the new lifecycle; short
 samples and a single incremental step cannot guarantee full-output throughput.
 New prompts/data may reduce batch sizes, increase training time, or need a
@@ -1921,10 +1959,10 @@ through 6,531 Qwen / 6,440 Gemma tokens and generation caches through 7,328 / 7,
 The actual pilot-data audit is recorded above; revised settings still require
 validation. Pilot notes and all selected-teacher labels are now frozen.
 
-At the proposed split sizes, teacher annotation requires **1,300 subject calls**,
-with training labels shared across checkpoints. There are **1,800 validation
-reviews plus 400 winner final reviews**. Teacher/reviewer selection, the review
-prompt and actual token lengths are required to price labels/reviews. The existing subscription route
+The approved splits require **1,300 teacher subject calls**, now complete,
+with training labels shared across checkpoints. The approved comparison has
+**1,800 validation reviews plus 1,200 final reviews**. Reviewer selection, the
+review prompt and actual token lengths are required to price reviews. The existing subscription route
 assumes zero incremental API cash; paid API work would be additional and requires
 separate admission/approval.
 
