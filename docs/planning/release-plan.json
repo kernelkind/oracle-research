@@ -12,14 +12,14 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Produce a useful 100-note hierarchy accepted by the user in browsing review.\nFrontier-based: 200-note candidate is cycle-free; browsing quality remains open.\nVector-space: 100-note build and larger-model test completed; quality problems remain.\nNeither approach selected; subject-generation errors remain unresolved."
+      "description": "Produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: relationship judgments remain inconsistent; construction reuse is being tested.\nVector: the ASv6.100 comparison is being prepared; training has not started.\nNeither approach is accepted or selected."
     },
     {
       "id": "03",
       "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
-      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nFrontier-based 200-note candidate is cycle-free, not yet accepted. New generation awaits prompt stress-testing; 100-note acceptance remains open."
+      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nThe latest frontier 200-note run was incomplete and did not meet the quality goal. New generation still awaits prompt stress-testing; 100-note acceptance remains open."
     },
     {
       "id": "04",
@@ -33,14 +33,14 @@
       "track": "model",
       "title": "Prepare pilot training data",
       "status": "WAITING",
-      "description": "Prepare teacher subject hierarchies and a separate evaluation set for the subjects-only larger fine-tuning pilot.\nAwaits selected teachers. The preliminary experiment uses existing data."
+      "description": "Prepare teacher subject hierarchies and separate evaluation sets for the subjects-only larger fine-tuning pilot.\nAll 1,300 ASv6.100 labels are collected and verified. The general teacher-selection prerequisite remains unchanged."
     },
     {
       "id": "06",
       "track": "model",
       "title": "Choose model through larger fine-tuning pilot",
       "status": "WAITING",
-      "description": "Compare untuned and trained subject quality, returned hierarchies, runtime and cost to inform distilled-model selection. Three continuing student runs on one 96GB RTX PRO 6000 use one subject example per note once, with validation at 200/400/600/800/1,000 notes and dynamic subject evaluation batching from token lengths and a frozen per-GPU memory budget; masks are excluded from this pilot. The primary comparison uses all three final 1,000-note adapters and their untuned baselines on 200 reserved test notes: collect 1,200 responses on the main rental, sealed through local validation review/model selection.\nPilot data is frozen. Final-test collection and completeness checks passed local VM rehearsal; larger-run hardware preparation and local semantic scoring remain open. Confirm weight-release permission before selection."
+      "description": "Compare three trained students with their untuned baselines for subject quality, hierarchies, runtime and cost to choose the distilled model.\nSubjects-only pilot data is ready; GPU training has not started. Runtime preparation, hardware checks and local semantic evaluation remain.\nConfirm weight-release permission before selection."
     },
     {
       "id": "07",
@@ -201,7 +201,7 @@
       "track": "shared",
       "title": "Stress-test prompts",
       "status": "IN PROGRESS",
-      "description": "Stress-test prompts before broader-corpus generation and final teacher selection.\nSubject-generation tests still expose missing relationships and incorrect parent links; new broader-corpus generation remains on hold. Corpus preparation and teacher comparisons can continue."
+      "description": "Stress-test subject and mask prompts before broader-corpus generation and final teacher selection.\nASv6.100 is the approved subject baseline; measured omissions and relationship errors remain.\nThe broader-generation hold remains. Corpus preparation and teacher comparisons can continue."
     }
   ],
   "links": [

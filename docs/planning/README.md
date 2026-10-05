@@ -116,11 +116,15 @@ and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
 Task 28 supplies the validated launch-scale implementation and is required to
 complete 12; it does not own a separate release snapshot or select a workflow.
-Corpus and Notedeck preparation started September 30. The frontier-based
-200-note candidate is now cycle-free after joint review, but browsing quality
-and user acceptance remain open. Construction experiments continue.
-Subject-generation omissions and incorrect parent links are a separate
-unresolved quality problem in prompt stress-testing.
+Corpus and Notedeck preparation started September 30. The earlier frontier-based
+200-note candidate became cycle-free without establishing browsing quality.
+The subsequent sequential run exhausted its allowance before broader placement
+finished and did not meet the quality goal. Equivalence-aware reuse is now
+implemented in its worktree; relationship-prompt testing and saved-run checks
+continue. No complete hierarchy is accepted.
+ASv6.100 is the approved subject baseline after diverse-input testing, with
+measured omissions and relationship errors still reported. Its designation
+does not clear the broader-generation hold or select a production workflow.
 The Notedeck browser UI is approved and committed; task 15 waits
 for protocol agreement and service implementation before integration.
 The reviewed-100-note prerequisite for the planned validation ladder remains open.
@@ -130,9 +134,9 @@ On October 1, the user is undertaking prompt stress-testing. Shared task 30,
 corpus inputs in 03. Corpus selection and offline preparation may continue;
 completed prompt-development task 01 remains complete. Task 03 stays in progress
 for corpus preparation and experimental 200-note construction using saved outputs.
-The experiment uses 100 food/drink and 100 music notes; food has current subjects,
-masks and vectors, while music has older-prompt outputs. It does not establish
-acceptance of the validation ladder or freeze the release corpus.
+The experiment retains saved outputs from 100 food/drink and 100 music notes
+with their original provenance; it has not been regenerated with ASv6.100.
+It does not establish acceptance of the validation ladder or freeze the release corpus.
 Stress-testing completion does not authorize generation calls.
 
 Whether HDBSCAN will be used remains open (September 29 clarification).
@@ -208,12 +212,13 @@ Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
 Task 02 tracks acceptance of a useful 100-note hierarchy, with frontier-based
-and vector-space construction tested in parallel. The frontier-based 200-note
-candidate is cycle-free but not accepted. The vector-space 100-note build and
-larger-model test are complete, but quality problems remain. Their separate
-evidence is linked in [the decision record](release-decisions.md).
-Subject-generation corrections remain shared work. Neither construction
-approach is selected or accepted; release tracks and dependencies are unchanged.
+and vector-space construction tested in parallel. Frontier relationship judgments
+remain inconsistent; construction reuse is being tested. The vector comparison
+now uses ASv6.100 subjects, with shared relationship labels and model preparation
+underway; fitting has not started. Older vector builds are historical evidence,
+not results for the new source. Their separate evidence is linked in
+[the decision record](release-decisions.md). Neither construction approach is
+selected or accepted; release tracks and dependencies are unchanged.
 
 The earlier
 [bounded build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)
