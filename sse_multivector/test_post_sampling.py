@@ -12,7 +12,7 @@ class PostSamplingTests(unittest.TestCase):
     def test_preview_requires_reviews_and_freeze_excludes_references_replies_and_copies(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder)
-            texts=['Address reply', 'Quote post', 'Read nostr:note1abcde for background', 'Identical copied sentence',
+            texts=['Address reply', 'Quote post', 'Read nostr:'+'a'*64+' for background', 'Identical copied sentence',
                    'Identical copied sentence', 'Apricots\u2028taste wonderful.', 'Bicycle wheels need repairs.',
                    'Clarinets require practice.', 'Dragons belong in stories.', 'Elephants have trunks.']
             records=[dict(note_id=f'{i:064x}',pubkey=f'{i:064x}',text=text,selection_order_sha256=f'{i:064x}',

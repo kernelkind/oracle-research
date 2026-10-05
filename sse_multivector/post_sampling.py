@@ -8,7 +8,7 @@ from pathlib import Path
 
 FORMS = set('NEWS OPINION REPORT PERSONAL PROMO CAPTION RESOURCE QUOTE EXPLANATION ADVICE SOCIAL QUESTION HUMOR CREATIVE FACT METADATA'.split())
 POINTER = re.compile(r'https?://\S+|(?:nostr:)?(?:npub|nprofile|note|nevent|naddr|nsec)1[a-zA-Z0-9]+')
-NOTE_POINTER = re.compile(r'(?i)(?:nostr:)?(?:note|nevent|naddr)1[a-z0-9]+')
+NOTE_POINTER = re.compile(r'(?i)(?:nostr:)?(?:note|nevent|naddr)1[a-z0-9]+|nostr:[0-9a-f]{64}')
 ID = re.compile(r'(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])')
 
 
