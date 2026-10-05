@@ -1526,30 +1526,36 @@ the bundle. Earlier provisional splits and one unused teacher preparation are
 preserved as evidence; no inference occurred on them. Teacher generation uses
 `asv6.100-subject-pilot-teacher-v1.json` and the final bundle.
 
-**Teacher generation partial — October 5:** `asv6.100-final-v1` saved 39 valid
+**Teacher generation complete — October 5:** `asv6.100-final-v1` saved 39 valid
 WebSocket answers and 99 failed handshakes at concurrency 32. Failed calls saved
 zero frames/bytes; proxy logs reported HTTP 403. The native classifier treats
 them as unknown causes, ineligible for automatic retry. All 138 attempt receipts
 are preserved. `asv6.100-sse-v1` completed the 1,162 previously unattempted notes
-over SSE transport at concurrency 24, with 1,162 valid answers, normal stop reasons
-and no failed
-attempts or retries. Its exact rendered prompts, inputs, schema, teacher model
-and reasoning setting match the initial preparation.
+over SSE transport at concurrency 24, with 1,162 valid answers and no failed
+attempts or retries.
 
+The user explicitly approved completing the missing 99 over SSE at 24 concurrency
+on October 5. This authorizes that exception to the unknown-cause retry restriction.
+`asv6.100-sse-completion-v1` completed those 99 notes with 99 valid answers, normal
+stop reasons and no failures or retries. Its exact rendered prompts, inputs,
+schema, teacher model and reasoning setting match the initial preparation.
 `asv6.100-websocket-saved-v1` reused the earlier 39 answers with no new inference.
-Native collection published `teacher-labels-partial-v1/subjects.json` and
-`provenance.json` beside `sample-final/`: **1,201 labels (919 train / 95 validation /
-187 test)**, preserving original text, author, split, raw response receipts and
-source hashes. `teacher-labels-partial-verification.json` verifies structural
-numbering, all nine protected collection sources and exact missing-note identity.
-The persistent attempt budget records 1,300 claimed calls and 1,300 saved attempt
-receipts; cached reuse adds no claims.
 
-**99 labels remain missing: 81 train / 5 validation / 13 test.** Notes, frozen
-prompts and failure evidence remain unchanged. An explicit user exception to
-AGENTS.md is required before another attempt on these failures. The collection
-is partial and has not undergone semantic review. No rental, paid API fallback
-or additional cash commitment was used.
+Native collection published `teacher-labels-final-v1/subjects.json` and
+`provenance.json` beside `sample-final/`: **all 1,300 labels (1,000 train /
+100 validation / 200 final test)**. `teacher-labels-final-verification.json`
+verifies original text/author/split preservation, zero duplicate or missing IDs,
+zero author overlap, structural numbering and all twelve protected collection
+sources. All successful responses report normal stop reasons. The earlier
+1,201 collected label records are preserved exactly; partial collections and
+original failure receipts remain saved. The persistent attempt budget records
+1,399 claimed calls and saved attempt receipts, including the initial 99 failures;
+cached reuse adds no claims.
+
+The full collection has not undergone semantic review. No rental, paid API fallback
+or additional cash commitment was used. Full-pilot context/memory checks and
+packaging remain open. `subjects.json` SHA-256:
+`aca9b45674730a33d7c869c69403e7f4b1143c19ff418a41bb230b04e647ec9e`.
 
 
 ### Conditional subjects-only batched cost reference — October 3

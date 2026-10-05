@@ -1257,16 +1257,20 @@ Validation contains no CREATIVE-form notes in this natural draw; final test has 
 The review rubric,
 final-test collection arrangement, context/memory settings and the rental remain open.
 
-**Pilot label generation partial October 5:** the initial WebSocket run at 32 concurrency saved 39 valid answers and 99 failed handshakes, with zero frames/bytes for those failures; failed handshakes reported HTTP 403. Its 138 attempts and
-all receipts remain saved. The 1,162 untouched notes completed over SSE transport at 24
-concurrency, without failed attempts or retries. Native cached reuse preserves
-the earlier 39 answers with zero new calls. Native collection verified **1,201
-labels: 919 train / 95 validation / 187 test**, with no text, author or split
-mismatches. All labels retain the same full ASv6.100 prompt, teacher model,
-reasoning effort and schema. Semantic review has not been performed.
-**99 labels remain missing (81 train / 5 validation / 13 test).**
-Repository AGENTS.md excludes unknown transport failures from automatic retry;
-completion requires an explicit user exception. No rental or paid API was used.
+**Pilot label generation complete October 5:** the initial WebSocket run at 32 concurrency saved 39 valid answers and 99 failed handshakes, with zero frames/bytes for those failures; failed handshakes reported HTTP 403. Its 138 attempts and
+all receipts remain saved. The 1,162 untouched notes completed over SSE transport
+at 24 concurrency, without failed attempts or retries. The user then explicitly
+approved completing the 99 missing labels over SSE at 24, granting that exception
+to the unknown-cause retry restriction. `asv6.100-sse-completion-v1` saved 99 valid
+answers in 99 attempts, with no failures or retries. Native cached reuse preserves
+the earlier 39 answers with zero new calls.
+
+Native collection verified **all 1,300 labels: 1,000 train / 100 validation /
+200 final test**, with no missing IDs, text/author/split mismatches or author
+overlap. Earlier 1,201 labels are preserved exactly. All labels retain the same
+full ASv6.100 prompt, teacher model, reasoning effort and schema. Structural and
+receipt checks passed; semantic review has not been performed. The full collection
+and verification are saved beside `sample-final/`. No rental or paid API was used.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third

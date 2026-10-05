@@ -82,9 +82,9 @@ parsed hierarchies and receipts; no masks or paid API fallback. Student thinking
 stays off. This selects the teacher for these pilot labels; general teacher
 comparison remains separate.
 
-**Labels saved October 5:** 1,201 of 1,300 passed structural and receipt checks.
-The 99 transport failures still need completion; original responses and evidence
-are preserved. Semantic review has not been performed.
+**Labels complete October 5:** all 1,300 passed structural and receipt checks:
+1,000 train / 100 validation / 200 final test. Original responses and receipts
+are saved; semantic review has not been performed.
 
 ## 2. Generate untuned baselines — Vast
 
