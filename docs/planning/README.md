@@ -171,9 +171,13 @@ relevant-content coverage remain required in 03, without mandating that rule.
 
 Task 04 defines and validates one sorting score per note within a hierarchy
 node; task 27 implements and validates ordering using that definition. Both
-remain in progress, with the 04 → 27 → 03 completion dependencies unchanged.
+are paused as nice-to-have work, as directed October 5. Node sorting no longer
+blocks broader hierarchy validation, teacher selection or pilot training data.
+The 04 → 27 dependency remains within that optional effort; 27 → 03 is helpful,
+not required. The immediate priorities are a useful hierarchy and SP/SHR
+fine-tuning; SHR fine-tuning still needs validation in a generated hierarchy.
 The October 2 finite audit froze the experimental PPv35-post-meaning-v1 method
-for the next browsing build: full-post prominence against a fixed saved node
+for a browsing build: full-post prominence against a fixed saved node
 meaning, multiplied by SP subject-plus-context relevance to the existing title;
 a post takes its highest related entry sorting score. Retain SSE's final learned
 layers. The earlier 11 clear Coffee/Eggs/Music preferences, Photography's
@@ -187,7 +191,8 @@ percentages and exact neighboring orders need not repeat. Stop prompt and
 architecture search, reopening only for a concrete substantial recurring
 browsing failure. Smaller cohorts, music-heavy coverage and meaning boundaries
 limit generalization claims. Production implementation, actual hierarchy
-browsing and any additional teacher/model outputs remain open. See
+browsing and any additional teacher/model outputs remain open, but are deferred.
+The candidate and evidence are preserved, not mandated for the next build. See
 [the stopping rule and result](release-decisions.md) and
 [the native evidence](../../sse_multivector/model-runner.md).
 

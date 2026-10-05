@@ -19,14 +19,14 @@
       "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
-      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, adding note ordering and scalable construction.\nThe latest frontier 200-note run was incomplete and did not meet the quality goal. New generation still awaits prompt stress-testing; 100-note acceptance remains open."
+      "description": "Validate browsing quality at 200, 300, 500 and ~1–2k notes, expanding topic coverage and testing scalable construction.\nThe latest frontier 200-note run was incomplete and did not meet the quality goal. New generation still awaits prompt stress-testing; 100-note acceptance remains open."
     },
     {
       "id": "04",
       "track": "shared",
       "title": "Define node sort score",
-      "status": "IN PROGRESS",
-      "description": "Define and validate one sorting score per note within a hierarchy node.\nThe candidate passed its browsing audit and is frozen for the next build. Validation in an actual hierarchy remains open."
+      "status": "PAUSED",
+      "description": "Define and validate one sorting score per note within a hierarchy node.\nDeferred as nice-to-have. The saved candidate and review evidence are preserved; sorting does not block hierarchy validation or fine-tuning."
     },
     {
       "id": "05",
@@ -68,7 +68,7 @@
       "track": "model",
       "title": "Check distilled-model build time and cost",
       "status": "WAITING",
-      "description": "Assess whether the distilled model and chosen construction/sorting workflow can build a launch-scale hierarchy within time and budget.\nAwaits the packaged model, selected corpus and scale measurements. This is a model-track check, not a release gate."
+      "description": "Assess whether the distilled model and chosen hierarchy-construction workflow can build a launch-scale hierarchy within time and budget.\nAwaits the packaged model, selected corpus and scale measurements. This is a model-track check, not a release gate."
     },
     {
       "id": "11",
@@ -117,7 +117,7 @@
       "track": "shared",
       "title": "Compare teachers",
       "status": "IN PROGRESS",
-      "description": "Select teachers by comparing subject/mask quality, cost, speed, terms and resulting hierarchies on the same notes.\nCandidate testing continues; no teachers selected. Final selection awaits prompt stress-testing and the node sort score requirements."
+      "description": "Select teachers by comparing subject/mask quality, cost, speed, terms and resulting hierarchies on the same notes.\nCandidate testing continues; no teachers selected. Final selection awaits prompt stress-testing, not deferred node sorting."
     },
     {
       "id": "18",
@@ -131,7 +131,7 @@
       "track": "shared",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Estimate teacher generation and chosen construction/sorting resources for the 2–5k-note release.\nAwaits construction measurements; include HDBSCAN only if selected. Keep optional model-track estimates separate so they do not block the release estimate."
+      "description": "Estimate teacher generation and chosen hierarchy-construction resources for the 2–5k-note release.\nAwaits construction measurements; include HDBSCAN only if selected. Keep optional model-track estimates separate so they do not block the release estimate."
     },
     {
       "id": "21",
@@ -179,8 +179,8 @@
       "id": "27",
       "track": "shared",
       "title": "Order notes within each node",
-      "status": "IN PROGRESS",
-      "description": "Implement and validate note ordering within each hierarchy node.\nThe sorting candidate is frozen for the next build; production integration and hierarchy browsing validation remain. Recursive sorting and parent-child score transfer are out of scope."
+      "status": "PAUSED",
+      "description": "Implement and validate note ordering within each hierarchy node.\nDeferred as nice-to-have; not a hierarchy or fine-tuning gate. The saved candidate remains available for later integration and browsing validation."
     },
     {
       "id": "28",
@@ -242,7 +242,8 @@
     {
       "source": "27",
       "target": "03",
-      "kind": "required"
+      "kind": "helpful",
+      "label": "optional note ordering; deferred"
     },
     {
       "source": "24",
@@ -277,11 +278,6 @@
     },
     {
       "source": "01",
-      "target": "05",
-      "kind": "required"
-    },
-    {
-      "source": "04",
       "target": "05",
       "kind": "required"
     },
@@ -351,12 +347,6 @@
       "target": "17",
       "kind": "required",
       "label": "subject/mask prompts"
-    },
-    {
-      "source": "04",
-      "target": "17",
-      "kind": "required",
-      "label": "node sort score requirements"
     },
     {
       "source": "06",

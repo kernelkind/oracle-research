@@ -6,6 +6,10 @@ compute locations and budget remain in [release decisions](release-decisions.md)
 
 ## User decisions and scope
 
+- October 5: node sorting is deferred as nice-to-have work. It does not block
+  hierarchy validation, teacher selection, fine-tuning or release resource
+  estimates. Preserve existing sorting evidence; no replacement method is
+  selected.
 - September 29 clarification: HDBSCAN use is undecided. Its scale assessment
   (21) is required for 20 and 28 only if HDBSCAN is used. Time and cost checks
   for the chosen workflow remain required. The investigation below remains
@@ -133,7 +137,7 @@ benchmarks are not evidence for our 768-dimensional SSE workload.
 
 | Stage | Evidence and remaining question |
 | --- | --- |
-| Subject/mask generation and note sorting | The required 2–5k release uses teachers; estimate generation time and cost from teacher measurements, including any additional outputs required by the chosen note-sorting method. That method and related outputs remain undecided. Keep optional pilot/distilled-model generation measurements separate. The old 30-billion-token estimate describes an earlier teacher workload, not a forecast for either current track. |
+| Subject/mask generation | The required 2–5k release uses teachers; estimate generation time and cost from teacher measurements. Node sorting is deferred and adds no required outputs or resource checks. Keep optional pilot/distilled-model generation measurements separate. The old 30-billion-token estimate describes an earlier teacher workload, not a forecast for either current track. |
 | SSE | Two saved 100-note CPU runs took about 67 seconds each. The encoder processes a note once, then pools its selected token representations for each mask. Large-batch GPU throughput remains unmeasured. |
 | Node titles | Current inputs include all distinct mask instances in each group. Neither launch-scale node counts nor group-input sizes are established; scaling 61 groups to 610,000 is not a forecast. |
 | Node relationships | The launch relationship method is open. Earlier Jev/manual-placement evidence remains preserved. NSP-Astra-Masks-v1 is tested experimentally with HR02-NMP09 groups and merges fixed. HR02-NSP-MASKS02 expands the first test to 48 structurally valid comparisons: 36 new Astra-low subscription calls plus 12 exact-request reuses, no retries. Initial agent review accepted 29 new answers, rejected two and left five uncertain; this is not measured accuracy. The user subsequently resolved the three linked meat comparisons, rejecting two answers and accepting one, and confirmed the missed Positive emotions parent of Enjoyment of food. Fire/Ash, Pizza, Ice/ice cream and the earlier Preservation comparison remain unresolved; the agent withdrew its likely-miss assessment of Ice/ice cream. No graph changes followed. The earlier user-confirmed rejection remains recorded separately. Existing tree links and the bounded cross-branch shortlist yield 566 unique pairs over 148 groups; this is a saved-input count, not full-pass authorization or a scale estimate. Combined merging/placement is deferred. Candidate coverage, graph-conflict handling, throughput and production-scale input costs remain unvalidated. |

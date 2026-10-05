@@ -464,7 +464,7 @@ Approved placement decisions for that separate hierarchy (changes not yet applie
 | Foods | Meat consumption | Keep. Discussing eating meat necessarily concerns food. The hierarchy organizes topics, so the child need not name a food item rather than an activity. No change to this baseline link is needed. |
 | Meat consumption | Beef | Remove. Discussing beef, such as its cuts or storage, does not necessarily discuss eating it. Retain Beef's Meat and animal fat products parent. The Jev baseline remains unchanged. |
 
-**Scoring scope clarified September 30:** **04 · Define node sort score**
+**Scoring scope clarified September 30; priority revised October 5:** **04 · Define node sort score**
 defines and validates one sorting score per note within a hierarchy node,
 including its inputs and output format. **27 · Order notes within each node**
 implements and validates ordering using that definition. Prominence may be a
@@ -472,9 +472,14 @@ component, but is not the task's required end state. The sorting mechanism is
 still being developed; whether teachers or the distilled model need prominence
 or other additional outputs is undecided. Existing prominence experiments and
 frozen informal-pilot settings are unchanged; no production method is adopted.
-Both tasks remain in progress. 04 is in launch scope and actively worked on,
-superseding the earlier pause notes; it need not wait for the 100-note hierarchy
-or title correction. Statuses and completion dependencies are unchanged.
+Both tasks are now paused as nice-to-have work. The user clarified that the
+deferral applies to node sorting, not just prominence. Establishing a useful
+automated hierarchy and fine-tuning subject generation and SHR relationship
+decisions take priority; SHR fine-tuning still depends on validation in a
+generated hierarchy. Sorting no longer gates hierarchy validation, teacher
+selection, pilot training data or release. Retain 04 → 27 within the optional
+effort, change 27 → 03 to helpful, and remove 04 → 05 and 04 → 17. The saved
+candidate and review evidence remain intact; when to resume sorting is open.
 The user labels GPT-6.1 Sol low as the provisional favorite for SP
 (subject generation), and GPT-6.1 Sol medium as the provisional favorite for
 grouped masks (one call for all subjects in a post). These are provisional
@@ -595,10 +600,10 @@ hierarchy over 2–5k notes demonstrates a correct process at small scale, and
 the roadmap to scalability names fine-tuning models for the expensive steps as
 the credible next step toward larger corpora. The user's browsing review
 remains the acceptance bar. Teacher selection (17) stays on the release path
-because teachers label the release corpus. Node sort score definition (04) is
-in launch scope and active, superseding the earlier pause notes. Task 27 orders
-notes using that definition. The mechanism and any additional teacher outputs
-it needs are undecided; prominence is an experimental option, not a requirement.
+because teachers label the release corpus. Node sorting (04 and 27) is deferred
+as nice-to-have work and is not a release or training prerequisite. Its mechanism
+and any additional teacher outputs remain undecided; existing experiments are
+preserved for later use.
 
 The model-track quality gate requires acceptable masks and any agreed additional
 outputs on unseen notes (08), plus a hierarchy that passes the user's browsing
@@ -669,7 +674,8 @@ the builds should inform acceptance, not an invented accuracy percentage.
 The 100-note work tests hierarchy correctness at minimal scope and must
 establish an initial useful hierarchy; HR02 has not yet met that gate. The
 planned 200-note / 2-topic build checks
-correctness and note ordering using the node sort score. The 300-note / 3-topic
+correctness across more topics. Node sorting is optional and deferred, not a
+completion condition for any rung. The 300-note / 3-topic
 build checks correctness while testing scalable construction choices; candidate-pair
 filtering must preserve useful parent–child links, not just reduce relationship
 checks.
@@ -1453,11 +1459,10 @@ end-to-end hierarchy quality.
 The comparison needs to establish:
 
 - Whether candidates produce suitable subjects and masks under the validated
-  requirements, plus any additional outputs the chosen sorting method needs.
-  Those additional outputs are undecided. Subject-only evidence does not
-  establish mask quality or the quality of additional outputs.
+  requirements. Deferred node sorting adds no required teacher outputs.
+  Subject-only evidence does not establish mask quality.
 - Whether hierarchies built from each candidate's own outputs on the same notes,
-  with downstream construction and note sorting held fixed, offer useful
+  with downstream construction held fixed, offer useful
   browsing paths.
   Compare the hierarchies before selecting teachers; distinguish differences
   caused by teacher outputs from failures shared by the construction pipeline.
@@ -1467,11 +1472,10 @@ The comparison needs to establish:
 - Whether provider data-use and output-use terms permit the intended training
   and open-weight release.
 
-Completing 17 needs the validated subject/mask prompts from 01, completed prompt
-stress-testing in 30, and the scoring definition from 04 to establish whether
-additional teacher outputs are needed and what to evaluate. It does not
-presuppose a prominence prompt. These are completion prerequisites; comparison
-work may continue before stress-testing is complete. Final selection needs
+Completing 17 needs the validated subject/mask prompts from 01 and completed
+prompt stress-testing in 30. Deferred node sorting and prominence are not
+completion prerequisites. Comparison work may continue before stress-testing
+is complete. Final selection needs
 evidence for the prompts we will actually use; any rechecking belongs to the
 comparison workstream.
 
@@ -1499,7 +1503,8 @@ subject-generation call for each final-corpus note.
 
 The shared hierarchy construction is masks → SSE vectors → flat HDBSCAN groups →
 node descriptions → cosine-filtered candidate pairs → subsumption judgments →
-directed node hierarchy. Prominence supports note ordering. The relationship
+directed node hierarchy. Prominence is part of the deferred note-ordering
+candidate, not a required construction stage. The relationship
 method remains open: TRUE generated HR02, but its judgments were not good
 enough. The separate Jev hierarchy remains a diagnostic baseline; the earlier
 manual-placement decisions remain preserved and unapplied. On September 28,
@@ -1750,7 +1755,7 @@ select implementation methods or new dates:
 | **24 · Recover missing node memberships** | If HDBSCAN is used, a repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03 only if HDBSCAN is used; available measurements inform 20 without waiting for all of 24. |
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Complete for HR02; not a prerequisite for 02 or 03. The newer hierarchy's merging and conflict decisions remain within 02. |
 | **26 · Collapse equal-note navigation steps** | Earlier mask-group navigation rule, implemented and regression-tested including shared children; validation remains pending. Preserve note sets, masks and provenance. | Not a prerequisite for 03. Any reuse in the newer hierarchy needs an explicit decision within 02; useful navigation remains required in 03. |
-| **27 · Order notes within each node** | Implement and validate ordering using the node sort score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope. | Needs score definition 04; required to finish 03. |
+| **27 · Order notes within each node** | Optional, deferred implementation and validation using the node sort score defined in 04. Recursive sorting and parent-child score transfer are out of scope. | Needs score definition 04 if resumed; helpful to 03, not required. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to complete release snapshot 12 and model-track feasibility check 10. |
 
 Task 24's recovery work is waiting for the workflow choice and is needed only
@@ -1780,7 +1785,8 @@ Earlier trials used prominence times relevance. The September 30 scope
 clarification made the node sort score the required outcome, not that
 particular formula. At that point its inputs and treatment of multiple masks
 remained open under 04; 27 applies the selected definition. The later October 2
-audit below freezes the experimental choice for the next browsing build.
+audit below froze an experimental choice. The October 5 deferral preserves it
+without requiring its use in the next browsing build.
 
 **Good-enough sorting evaluation approved October 2:** The user rejects
 perfect prompts or identical repeated percentages as acceptance requirements.
@@ -2922,7 +2928,8 @@ model calls or editing frozen plans. [Exact results and verification](../../sse_
 are saved with this repeated pair, separate from the eleven original clear
 Coffee/Eggs/Music checks and the Photography ordering judgment.
 
-04 and 27 remain in progress. The saved candidate matches the eleven clear
+04 and 27 are paused as nice-to-have work. The saved candidate matches the
+eleven clear
 Coffee/Eggs/Music pair preferences, Photography's three-post order and the
 accepted fourteen-post Coffee and seven-post Eggs orders; one Coffee comparison
 repeated successfully.
@@ -2940,13 +2947,11 @@ The 100-note build exposed a relationship-quality blocker at minimal scope,
 without membership expansion or a claim to exercise scalable construction.
 Task 25 is complete for HR02 and no longer gates 02 or 03. Task 02 remains open
 for the current merging and conflict decisions and the user's browsing review.
-Preliminary 200-note construction
-can follow 02 before the node sort score is settled, but its ordering check needs
-04 and 27. The 300-note
-scalable-construction work can proceed without waiting for that ordering
-check. Completing the combined 500-note validation (03) requires
-27, plus 24 only if HDBSCAN is used. Relevant-content coverage is required
-either way. The scoring dependency remains 04 → 27 → 03. The stages' internal
+The 200-note correctness and 300-note scalable-construction work do not wait
+for node sorting. Completing the combined 500-note validation (03) also does
+not require sorting; 24 remains required only if HDBSCAN is used.
+Relevant-content coverage is required either way. The optional sorting effort
+retains 04 → 27, with only a helpful link from 27 to 03. The stages' internal
 processing order must respect their inputs, but this does not impose a serial
 development schedule.
 
@@ -3095,13 +3100,12 @@ cutoff, measured rates and counts, and the final corpus size remain open.
 
 ## Approved scheduling changes
 
-1. After the good 100-note hierarchy, use 200 notes to test correctness and
-   within-node note ordering, 300 to test correctness and scalable construction,
-   and 500 to validate them together and profile the build. The 200-note
-   construction can start before the node sort score is settled, but its ordering
-   check cannot finish without 04 and 27. The 300-note work need not wait for that
-   check. The combined 500-note validation still needs 27, plus 24 only if
-   HDBSCAN is used. Relevant-content coverage remains required either way.
+1. After the good 100-note hierarchy, use 200 notes to test correctness across
+   more topics, 300 to test correctness and scalable construction, and 500 to
+   validate them together and profile the build. The October 5 decision defers
+   node sorting as nice-to-have work; it does not gate any rung. The combined
+   500-note validation needs 24 only if HDBSCAN is used. Relevant-content
+   coverage remains required either way.
 2. Start scale measurements during Week 2. Measure the complete chosen workflow,
    rather than relying only on distilled-model training or generation speed.
    Node 22 measures SSE and hierarchy-construction stages using saved inputs;
@@ -3110,9 +3114,9 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    findings with teacher generation measurements and growing-build counts to
    inform release corpus selection in 09. It retains pilot-model measurements
    separately for the optional model track.
-   Node 10 then checks time and cost for the distilled model's agreed outputs,
-   hierarchy construction and the chosen note-sorting method across the intended
-   launch corpus.
+   Node 10 then checks time and cost for the distilled model's agreed outputs
+   and hierarchy construction across the intended launch corpus. Deferred
+   sorting is not required for either resource check.
 3. Bring protocol work and basic service/Notedeck integration forward, using a
    small saved hierarchy snapshot rather than waiting for the final corpus.
    Do not leave the first complete integration to Week 5; preserve time then
@@ -3127,8 +3131,9 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    training data, alongside the fine-tuning pilot. Muse is the leading teacher
    candidate to evaluate, not an approved production choice. Week 2 is the proposed window for both
    pilots; their exact schedules remain open.
-5. Target **September 27, 2026** for training-data readiness: suitable masks and
-   prominence data available for training, with training/evaluation separation.
+5. Target **September 27, 2026** for training-data readiness: suitable masks
+   available for training, with training/evaluation separation. The October 5
+   deferral removes node-sorting data from the required scope.
    The volume, quality checks and handling of unsuitable annotations remain
    open; the target does not prescribe a correction workflow.
 
@@ -3156,16 +3161,16 @@ page is recoverable from Git, not a second current planning view.
 **Week 1 · September 28 – October 4: settle the quality foundation.** Review
 the completed mask-based parent-child diagnostic and settle the automated
 relationship method the user is pleased with (02) — the release's top risk,
-gating every build. Define and validate the node sort score (04)
-and implement node-note ordering (27). Land membership recovery (24) if HDBSCAN
+gating every build. Node sorting (04 and 27) is now deferred as nice-to-have
+work. Land membership recovery (24) if HDBSCAN
 is used; 24 gates 03 only for HDBSCAN.
 Define the Nostr hierarchy protocol (13), now in progress and independent.
 Begin corpus selection inside
 the decided 2–5k band (09).
 
 **Week 2 · October 5 – 11: validate the process; select the teachers.** Run
-the ladder with full user review at each rung: 200 (correctness + within-node
-note ordering), 300 (correctness + scalable construction), 500 (combined +
+the ladder with full user review at each rung: 200 (correctness across more
+topics), 300 (correctness + scalable construction), 500 (combined +
 profile), then the ~1–2k review rung. The four reviews are the week's
 bottleneck; if review time slips, the proposal is to drop rungs from the
 bottom (200 first, then 300) and never from the top. Freeze the corpus IDs
@@ -3184,8 +3189,8 @@ demo publish only if they have already earned it.
 
 **Known risks.** If the relationship-quality review (02) absorbs week 1, it
 eats ladder time. Week 2 assumes the user's attention for consecutive-day
-reviews. Teacher labeling throughput and the cost of the chosen note-sorting
-method are unmeasured at 2–5k notes. Task ownership remains unassigned.
+reviews. Teacher labeling throughput is unmeasured at 2–5k notes. Task
+ownership remains unassigned; deferred node sorting is not a release blocker.
 
 ## Compute, hosting and budget
 
