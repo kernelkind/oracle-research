@@ -6,7 +6,7 @@
   },
   "dataset": {
     "adapter": "subjects",
-    "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/sample/notes.json"
+    "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/sample-final/notes.json"
   },
   "runner": {
     "provider": "openai-codex",

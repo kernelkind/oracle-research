@@ -71,7 +71,8 @@ validation / 200 final test**, extending the existing fresh-corpus random draw
 with hierarchy input exclusions and author/copy protections. Full ASv6.100
 teacher labels use **GPT-6.1 Sol / medium** through the subscription runner at
 **32 concurrent calls**, reducing to 24 if needed. Selection and generation are
-in progress. See the [pilot process](fine-tuning-pilot-process.md#1-freeze-shared-inputs--locally).
+authorized. The 1,300-note selection and three splits are frozen; original texts,
+lengths and author/development exposure checks passed. See the [pilot process](fine-tuning-pilot-process.md#1-freeze-shared-inputs--locally).
 The background copier transfers completed responses
 and checkpoints, verifies local copies and reuses them during final retrieval.
 

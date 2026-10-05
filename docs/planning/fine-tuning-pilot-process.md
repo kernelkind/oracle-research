@@ -71,7 +71,9 @@ tags or inline references to other notes, and at most 512 SSE tokens in the full
 original text. Preserve ordinary short and difficult posts. Use natural writing-form
 proportions; check coverage with the existing 16-form review. Keep authors and
 related copies within one split, with known prompt-development authors in training.
-Freeze all 1,300 notes and splits before labels.
+Freeze all 1,300 notes and splits before labels. The October 4 selection is now
+frozen and verified; all 16 writing forms occur in the full sample.
+Validation has no CREATIVE-form notes in this natural draw.
 
 Generate all subject teacher labels using full frozen **ASv6.100**, **GPT-6.1 Sol /
 medium**, through the subscription runner. Start at **32 concurrent calls**,

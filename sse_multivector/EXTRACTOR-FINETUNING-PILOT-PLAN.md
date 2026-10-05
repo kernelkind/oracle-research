@@ -1486,9 +1486,9 @@ example, for training, untuned baselines, checkpoint validation and the final te
 Source SHA-256:
 `76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d`.
 Future pilot data/package manifests must pin this version and hash. Historical
-ASv6.48 inputs and results remain immutable evidence. Actual pilot notes,
-ASv6.100 teacher labels, context/memory settings and the launch estimate remain
-pending; prompt selection alone does not complete those prerequisites.
+ASv6.48 inputs and results remain immutable evidence. The pilot notes and splits
+are now frozen; ASv6.100 teacher labels, context/memory settings and the launch
+estimate remain pending.
 
 **Pilot data approved October 4:** freeze 1,000 training, 100 validation and 200
 final test notes. Extend the original 1,000-note fresh-corpus SHA-256 draw using
@@ -1509,6 +1509,23 @@ retry per case; no quality retries, output cap or paid fallback. Teacher medium
 reasoning does not change the approved thinking-off student configuration.
 General teacher comparison remains a separate decision. Generation authorization
 is for these 1,300 SP notes, not masks or additional experiments.
+
+**Selection frozen October 4:** the saved bundle is
+`target/distillation-pilot-v1/pilot-data-asv6.100-20261004/sample-final/`.
+It contains 1,000 train / 100 validation / 200 final test notes from 686 authors,
+with zero author overlap. Original event content and authors match the bounded
+read-only export. Canonical event IDs are verified; full-post SSE token lengths
+are 2–505 (median 92), with no truncation. All 16 forms occur overall; validation
+contains no CREATIVE-form notes, and final test contains six. Categories overlap
+and form counts are descriptive, not a measured semantic accuracy score.
+The exposure audit binds 716 native and historical input/plan files, including
+the saved 90-ID exclusion list; known development IDs/authors/templates are
+absent from both holdouts. It does not establish absence from model pretraining.
+The final selection verification and exact source/split hashes are saved beside
+the bundle. Earlier provisional splits and one unused teacher preparation are
+preserved as evidence; no inference occurred on them. Teacher generation uses
+`asv6.100-subject-pilot-teacher-v1.json` and the final bundle.
+
 
 ### Conditional subjects-only batched cost reference — October 3
 

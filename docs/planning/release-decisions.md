@@ -1249,7 +1249,12 @@ Generate all 1,300 SP labels using full frozen ASv6.100 with the tested
 and raw/parsed/receipt preservation. **32 concurrent calls** are approved; reduce
 to 24 if limits or transport problems require it. No paid API fallback. This
 settles the pilot-label teacher, not the general teacher comparison. Student
-thinking stays off. Selection and labels are in progress; review rubric,
+thinking stays off. The 1,300-note selection is frozen and verified; label
+generation is authorized. All 16 writing forms occur in the full sample. Known
+exposure checks cover 716 saved source files, with zero holdout conflicts;
+original texts/authors match and full-post SSE lengths range from 2 to 505 tokens.
+Validation contains no CREATIVE-form notes in this natural draw; final test has six.
+The review rubric,
 final-test collection arrangement, context/memory settings and the rental remain open.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
