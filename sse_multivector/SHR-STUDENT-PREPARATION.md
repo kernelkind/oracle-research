@@ -87,6 +87,96 @@ while Kev inference was resident. Its separate nonresident rerun passed.
 The CPU-only Anvil check cannot run the Torch-dependent distillation class;
 that missing-package result is retained rather than counted as a pass.
 
+### Provisional comparison results
+
+All 140 completed calls below used published checkpoints, not the synthetic
+optimization checkpoints. Each had one attempt and a valid five-relation JSON
+answer. Baseline agreement ignores diagnostic reason wording. No paid calls
+or SHR teacher-label generation occurred.
+
+| Checkpoint/readout, NF4 | Original teacher agreement / reversal consistency | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Qwen3.5-9B instruct, greedy JSON | 25/40; 15/20 | 4/8; 1/4 | 7/22; 6/11 | 36/70; 22/35 |
+| Kev-9B published adapter and pointer head | 33/40; 18/20 | 6/8; 2/4 | 22/22; 11/11 | 61/70; 31/35 |
+
+These are development diagnostics, not accuracy or a ranking after equal SHR
+training. Repeated topics and related cases are not independent samples.
+Kev's explicit choice question, decision training and readout differ from
+Qwen's generation contract. Its published temperature is not SHR calibration;
+option probabilities do not redefine semantic `uncertain`.
+
+Native agent reviews record concrete failures: Qwen narrowed Music using a
+context hashtag, confused parent direction despite a correct scope explanation,
+and treated an omelette as a cooking activity. Kev handled those broad-field
+and direction controls better, but still merged Music recording with Music
+recordings, imported an author restriction from context, and inconsistently
+treated a recipe step as necessary. Agent review leaves a broader field/person
+judgment unresolved; agreement with that teacher answer is not acceptance of its
+semantics. The reviewed cases and comments remain in native experiment files.
+
+A roster-only check of the 22 source-note IDs attached to the saved development
+cases found zero matches in ASv6.100 training, validation or reserved final-test
+membership. It read the prepared manifest's IDs, not final-test content or
+references. This phase does not erase the earlier exposure record below.
+
+Gemma-4-12B-it's complete and corrected text-only loads were both stopped when
+co-resident CPU memory pressure caused heavy swapping. No Gemma decisions or
+optimization updates were produced. The corrected text loader passed the
+native small-checkpoint test; the full candidate remains unmeasured, not
+disqualified. Its 70 saved cases and pinned synthetic capacity configuration
+are ready for an authorized free GPU window. The user has been asked before
+pausing the separate LibreChat/OpenCode model server; no pause is assumed.
+
+### Verified Kev capacity path
+
+The full native NF4/LoRA/head check passed at 512 and 2,048 tokens with the
+existing server resident. It trained 45.38 million parameters, including a
+2.10 million-parameter pointer head. K-bit preparation promotes nonquantized
+base parameters to FP32; LoRA/head parameters are FP32 with BF16 autocast.
+The base LM's vocabulary head is absent from this pointer path.
+
+| Synthetic complete input | Seconds/update | Peak allocated GiB, training | Examples/sec, batch 8 | Peak allocated GiB, batch-8 inference |
+| --- | ---: | ---: | ---: | ---: |
+| 512 tokens | 1.47 | 8.30 | 3.25 | 8.43 |
+| 2,048 tokens | 4.77 | 9.82 | 0.84 | 11.72 |
+
+Each length used one warmup update, four measured updates and five warmed
+inference repetitions. These are capacity measurements, not SHR convergence,
+deployment throughput or a comparison at identical nonquantized precision.
+The correct reference causal convolution was used; this is not an optimized
+throughput ceiling. Short samples do not forecast a full training run.
+
+Checkpoint validation uses separate workers when needed:
+
+```bash
+python3 -m sse_multivector.distillation_benchmark \
+  --config sse_multivector/distillation/benchmark-kev9b-nf4.json \
+  --output target/shr-student-diagnostics-v1/kev-training-v3 --stage train
+python3 -m sse_multivector.distillation_benchmark \
+  --config sse_multivector/distillation/benchmark-kev9b-nf4.json \
+  --output target/shr-student-diagnostics-v1/kev-training-v3 --stage verify
+```
+
+The training worker saves a source-bound synthetic input/logit probe alongside
+adapter/head weights. Verification checks configuration, code and checkpoint
+hashes before loading, then requires matching probe logits and finite five-way
+batched outputs. It performs no repeated training. The verified workers had
+different PIDs; the report records both. Single-worker save/reload remains the
+default for smaller paths. Memory admission and reserve checks occur before
+loading and between workloads; they are not a continuous CPU-load limit.
+
+The fully verified report is ignored at `kev-training-v3/report.json` on GB10,
+with an owned Anvil copy `kev-training-v3-report.json`. Its SHA-256 is
+`7a57d03a782ee6622ade4c3d630603b3a32483db2a0703e5bb730ecc6baf0d3d`.
+Source at `a56fc473` reproduces its recorded implementation hashes; later
+cleanup removes an unused serving-loader training flag, with optimization
+controlled solely by the tested capacity path. The prior OOM and reload
+admission reports remain unchanged. All eight native capacity tests passed
+after adding staged verification. The final full shared CPU suite passed
+218 tests with nine optional skips; the subsequent focused source checks
+passed 14 tests with three native-weight/CUDA skips. Native GB10 coverage also
+includes the 44 production distillation tests and two checkpoint/identity tests.
+
 ## Dataset audit
 
 The immutable ASv6.100 bundle is at

@@ -1,8 +1,11 @@
 # SHR student model research
 
 Research date: October 5, 2026. **Recommendations for evaluation, not an
-approved model choice or training plan.** No models were run or trained for
-this investigation, and no paid resources were used.
+approved model choice or SHR training plan.** The initial literature phase
+performed no runs. Subsequent user-authorized capacity checks and provisional
+v26 comparisons are recorded in [student preparation](SHR-STUDENT-PREPARATION.md).
+Those synthetic optimization checks do not train an SHR student. No paid
+resources were used.
 
 ## Recommendation
 
@@ -34,6 +37,18 @@ These are hypotheses about suitability after SHR-specific training. They are
 not a ranking of measured SHR accuracy. A decision checkpoint beating an
 untuned foundation on its own task does not show that it will beat the same
 foundation after both receive identical SHR training.
+
+The provisional v26 diagnostics now provide task-specific support for keeping
+Kev-9B high in that comparison: its published NF4 pointer path agreed with
+61/70 saved teacher relations and preserved 31/35 reversals, versus 36/70 and
+22/35 for Qwen3.5-9B instruct with greedy JSON generation. Both received the
+complete saved prompt; Kev also received an explicit choice question. This
+different readout and prior training prevent attributing the difference solely
+to the head architecture. The teacher answers are development evidence,
+not gold. Kev's actual LoRA/head optimization, checkpoint reload and batched
+inference passed on GB10 while the separate server remained resident.
+Gemma's co-resident load caused heavy swapping; its comparison awaits an
+authorized resource window. That does not exclude Gemma on quality grounds.
 
 ## Project constraints and task meaning
 
@@ -303,11 +318,17 @@ model. Neither sharing one model nor splitting the models is settled here.
 
 ## Most useful next evidence while the prompt is unfinished
 
-The next proposed task is an **SHR semantic evaluation specification** built
-around stable, user-established distinctions, with disputed cases tracked
-separately. It would make the comparison useful before training labels are
-frozen. Preparing it, implementing SHR training and running models are not
-included in this research task.
+The user subsequently authorized evaluation preparation, GB10 capacity checks,
+the selected-source data audit and provisional v26 diagnostics. These are
+documented in [student preparation](SHR-STUDENT-PREPARATION.md); they supply
+useful evidence before the prompt is finished. Completed SHR training labels
+and a final model choice remain unavailable.
+
+The next useful quality comparison needs the same accepted training labels
+and budget for Kev, its Qwen foundation, Ettin-1B and the DeBERTa warm start.
+It should use reviewed semantic distinctions and track disputed cases
+separately. It is a proposed next phase, not permission to fit partial teacher
+outputs or put validation examples into gradients.
 
 The eventual comparison should:
 

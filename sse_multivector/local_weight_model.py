@@ -38,7 +38,7 @@ class LocalWeights:
         model = load_model(dict(c, device='cuda', max_length=c['max_input_tokens'], efficient_attention=True))
         self.head = self.encoder = None
         if c['kind'] == 'pointer':
-            from peft import PeftModel, prepare_model_for_kbit_training
+            from peft import PeftModel
             from huggingface_hub import snapshot_download
             upstream = Path(c['upstream_path'])
             if sha256(upstream/'kev'/'model.py') != c['upstream_model_sha256']:
@@ -52,12 +52,7 @@ class LocalWeights:
                     or meta.get('option_isolation', False) or meta.get('special_embeddings', False)):
                 raise ValueError('unsupported pointer checkpoint or mismatched foundation')
             backbone = model.model
-            if c.get('trainable', False):
-                backbone = prepare_model_for_kbit_training(backbone, use_gradient_checkpointing=True)
-            self.model = PeftModel.from_pretrained(backbone, adapter, is_trainable=c.get('trainable', False))
-            if c.get('trainable', False):
-                self.model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
-                self.model.config.use_cache = False
+            self.model = PeftModel.from_pretrained(backbone, adapter, is_trainable=False)
             self.head = PointerHead(self.model.config.hidden_size, meta.get('head_dim', 256)).to('cuda')
             self.head.load_state_dict(meta['head'], strict=True)
             self.head.temperature = meta.get('temperature', 1.)
