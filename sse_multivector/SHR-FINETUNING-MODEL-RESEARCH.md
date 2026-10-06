@@ -97,6 +97,15 @@ than choosing the more favorable one; syntax and code compliance may change
 with SHR training. Native decision models trained on conditional-code loss
 should not be judged by full-vocabulary code mass alone.
 
+Gemma's completed answer-prefix control materially corrects that readout issue.
+Agreement is 49/70 and 54/70 in the two orders, reversals 33/35 and 31/35, and
+65/70 decisions survive rotation. Median original-order allowed-code mass is
+0.999987. The simple Coffee and puzzlement directional errors disappear, while
+activity/product and broad Culture errors remain. The earlier bare-code scores
+overstated its order sensitivity. It remains a useful independent foundation
+for matched SHR training; the prefix correction does not close Kev's current
+lead or establish post-training quality.
+
 The current Nimble native NF4 schema path gives 56/70 agreement and 29/35
 reversals. Rotation gives 51/70 and 24/35, with 61/70 decisions unchanged.
 It handles the related Culture transfer cluster well but still misses an

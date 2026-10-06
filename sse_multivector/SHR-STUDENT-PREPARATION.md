@@ -425,7 +425,38 @@ task data, prompt layout and head architecture or predicting post-SHR tuning.
 Native experiments are `qwen-options-prefix-*-v1` and
 `qwen-options-prefix-rotate-*-v1`. The teacher-baseline views
 `qwen-options-prefix-rotate-teacher-*-v1` reuse all 70 rotated answers with zero
-new attempts. Gemma and Qwen-27B prefix results remain pending at this checkpoint.
+new attempts. Qwen-27B prefix results remain pending at this checkpoint.
+
+Gemma's original-order prefix run now completes all 70 cases with valid
+one-attempt answers. It gives 34/40 agreement and 20/20 reversals on the original
+cases, 6/8 and 3/4 on scope, and 9/22 and 10/11 on transfer: **49/70 and 33/35**
+overall. Median allowed-code mass is 0.999987; every unrestricted top token is
+one of A–E. The position correction fixes the simple Coffee and puzzlement
+direction errors seen in its raw generated labels, but preserves the recording
+activity/product merger, an unsupported Cooking/omelette edge, and most Culture
+containment failures. Native agent reviews record the omelette error and the
+missed Cats/Nature direction. These are new scored results, not repaired versions
+of the earlier Markdown-fenced responses.
+
+| Gemma-12B with `Answer: (` | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Original option order | 34/40; 20/20 | 6/8; 3/4 | 9/22; 10/11 | 49/70; 33/35 |
+| Rotated option order | 35/40; 19/20 | 7/8; 3/4 | 12/22; 9/11 | 54/70; 31/35 |
+
+All 70 rotated answers are also valid in one attempt. The corrected readout
+preserves 65/70 decisions across orders: 39/40 original, 7/8 scope, 19/22 transfer.
+Its old bare-letter controls preserved only 38/70. Answer position therefore
+accounts for much of the previously observed order sensitivity; the corrected
+semantic disagreements remain meaningful development evidence. The two orders
+are both retained without selecting the more favorable one.
+
+Native experiments are `gemma-options-prefix-*-v2` and
+`gemma-options-prefix-rotate-*-v2`. Teacher-baseline views
+`gemma-options-prefix-rotate-teacher-*-v2` reuse all 70 rotated answers with zero
+new attempts. Unrun older prefix-free alternatives and all failed generated-JSON
+receipts remain unchanged. These corrected controls retain Gemma as an independent
+training foundation, below Kev's current diagnostic lead without ranking them
+after matched SHR adaptation.
 
 ### Kev option-order check
 
