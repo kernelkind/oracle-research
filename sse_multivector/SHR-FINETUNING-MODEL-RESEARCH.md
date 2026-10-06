@@ -23,7 +23,7 @@ use a decision checkpoint or encoder even if it cannot produce SP's output.
 Sharing a foundation remains useful only if its quality and whole-process
 cost justify doing so.
 
-The completed six-model comparison uses the same 70 v26 development inputs,
+The completed seven-model NF4 comparison uses the same 70 v26 development inputs,
 including 35 exact A/B reversal pairs. The two scored orders change the mapping
 between answer codes and relations. Agreement is with saved teacher decisions,
 **not semantic gold or held-out accuracy**. Twelve related Culture judgments
@@ -34,6 +34,7 @@ the readout. All scored outputs below were valid in one HTTP attempt.
 | Published checkpoint, NF4 direct readout | Teacher agreement, two code orders | Reversal consistency, two orders | Decisions unchanged by code rotation | Provisional role |
 | --- | --- | --- | --- | --- |
 | Kev-9B, native pointer | 61/70; 60/70 | 31/35; 31/35 | 66/70 | Leading compact decision warm start |
+| Kev-27B, learned full backbone and native pointer | 51/70; 51/70 | 32/35; 30/35 | 66/70 | Larger decision reference; no demonstrated quality gain |
 | Nimble-9B v3-12026, native schema and LM scores | 56/70; 51/70 | 29/35; 24/35 | 61/70 | Standard LM adapter alternative; continued-adapter optimization unmeasured |
 | Gemma 4 12B-it, checked chat answer prefix | 49/70; 54/70 | 33/35; 31/35 | 65/70 | Independent foundation; scope and activity/product errors remain |
 | Qwen3.8-27B, checked chat answer prefix | 53/70; 52/70 | 28/35; 27/35 | 59/70 | Larger quality reference; no demonstrated advantage over the compact decision warm starts |
@@ -43,6 +44,12 @@ the readout. All scored outputs below were valid in one HTTP attempt.
 These checkpoints have different prior supervision and native input layouts.
 Kev's stronger results support trying its decision specialization, but do not
 isolate its head architecture or show superiority after matched SHR training.
+Kev-27B's additional size does not improve this developmental comparison. BF16
+scores 49/70 in both orders, with 32/35 reversal consistency in each and 68/70
+decisions unchanged by rotation. Higher precision therefore has not rescued
+its quality result. Its full-size capacity check is still pending. The two Kev releases
+also differ in foundation and published training history, so they do not
+isolate a model-size effect or resolve a post-finetuning capacity plateau.
 Nimble currently uses the 12,026-row, 8,192-token release, rather than its
 original 2,676-row release. Qwen3.5-9B instruct is also distinct from Kev's
 Base foundation; the latter remains the corresponding matched-training control.

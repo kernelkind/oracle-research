@@ -9,25 +9,26 @@ by these preparation results. See [model research](SHR-FINETUNING-MODEL-RESEARCH
 
 ## Current outcome, October 6
 
-The authorized model investigation is complete enough to prioritize a matched
-training comparison: Kev-9B and its actual Qwen Base control, with Ettin-1B as
-the low-cost arm. Nimble-9B offers the standard LM adapter alternative; Gemma-12B
-is the independent foundation. Six published checkpoints completed both
-relation-only code orders on 70 developmental cases, alongside generated-output
-controls and verified local capacity paths. See the consolidated
+The authorized model investigation prioritizes a matched training comparison:
+Kev-9B and its actual Qwen Base control, with Ettin-1B as the low-cost arm.
+Nimble-9B offers the standard LM adapter alternative; Gemma-12B is the
+independent foundation. Seven published checkpoints completed both NF4
+relation-only option orders on 70 developmental cases, alongside generated
+output controls and verified local capacity paths. See the consolidated
 [recommendation and measured tables](SHR-FINETUNING-MODEL-RESEARCH.md#recommendation).
-No post-finetuning winner is established. Suitable complete SHR training labels
-and reviewed evaluation roles remain the next dependency; none of these
-provisional cases was used for fitting. The final capacity check below closes
-the larger Qwen reference, without expanding to additional model families.
 
-Final read-only native `show` checks confirm that all six original-order paths
-have identical case IDs, complete prompt text and input hashes, with 70 valid
-single-attempt answers each. Their relation metrics match the consolidated
-table. The last behavior-change regression suite reports 127 tests, OK with
-10 optional skips; all six native weight tests pass on GB10. Historical failed
-and unavailable checks remain recorded below. No behavior changes followed
-those passing checks. All GPU experiment workers stopped.
+The requested Kev-27B follow-up completed 280 valid single-attempt answers
+covering NF4 and BF16 in both orders. Its 51/70 NF4 and 49/70 BF16 agreement
+in each order do not improve on Kev-9B's 61/70 and 60/70. This does not isolate
+model size or establish a post-finetuning plateau. Suitable complete SHR
+training labels and reviewed evaluation roles remain the next dependency;
+none of these provisional cases entered gradients or the reserved final test.
+
+The latest shared regression suite passed 147 tests with 13 optional skips,
+and all 15 native loader/benchmark tests passed on GB10. Historical failures
+remain recorded below. The larger pointer capacity check is running at 512,
+2,048 and 3,072 tokens; the latter exceeds the complete v26 inputs' maximum
+2,684 tokens. Only its experiment worker is active. 
 
 ## Authorized provisional v26 comparison
 
@@ -755,14 +756,74 @@ including exact saved-weight checks, independent native pointer probabilities,
 NF4 optimization and adapter/head reload. The shared CPU suite passed 147 tests
 with 13 optional native/dependency skips. Initial fixture failures are retained:
 the fixture needed a native Qwen tokenizer and BF16 loading that preserves
-FP32 rotary buffers. Quality and full-size capacity results are pending.
+FP32 rotary buffers. Full-size capacity results are pending.
 
-The same published checkpoint will also receive a BF16 inference control in
+The same published checkpoint also received a BF16 inference control in
 both option orders, using `diagnostic-kev27b-bf16.json` and
 `diagnostic-kev27b-options-rotate-bf16.json`. These configurations change only
 quantization and the declared process budget (72 GiB, with the same 8 GiB
 reserve). This tests precision sensitivity without new downloads, teacher
 generation or SHR fitting. The original service remains stopped.
+
+### Kev-27B published-checkpoint results
+
+Both NF4 orders completed 140 new valid single-attempt answers; both BF16
+orders completed another 140. All retain the exact saved v26 prompt and input
+hashes. Teacher agreement is diagnostic, not semantic gold or held-out
+accuracy. These developmental inputs were not used for gradients.
+
+| Native pointer path | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| NF4, original order | 33/40; 19/20 | 5/8; 3/4 | 13/22; 10/11 | 51/70; 32/35 |
+| NF4, rotated order | 34/40; 18/20 | 6/8; 2/4 | 11/22; 10/11 | 51/70; 30/35 |
+| BF16, original order | 33/40; 19/20 | 5/8; 3/4 | 11/22; 10/11 | 49/70; 32/35 |
+| BF16, rotated order | 33/40; 19/20 | 6/8; 2/4 | 10/22; 11/11 | 49/70; 32/35 |
+
+NF4 rotation preserves 66/70 decisions, matching Kev-9B's order-stability
+count. It changes `B02-forward`, `R05-forward`, `R10-forward` and `R13-reverse`.
+The first two corrections leave their reversed inputs wrong. BF16 preserves
+68/70 original-order NF4 decisions; `R10-forward` and `R13-forward` change from
+Culture-parent answers to `neither`, reducing teacher agreement. BF16 rotation
+preserves 68/70 decisions, changing `R05-forward` and `R13-reverse`. Its greater
+order stability does not produce better teacher agreement. Reversal
+consistency can include two consistently wrong answers.
+
+The comparison with Kev-9B preserves 54/70 first-order decisions. Native agent
+reviews reject the Kitchen work/Cooking containment, the omelette/activity
+containment, the author restriction imported into an eating practice, and the
+Culture/song-creation field-scope error. The broader Culture/person teacher
+judgment remains disputed. Nine first-order transfer disagreements with the
+teacher belong to the related Culture cluster; they are not nine independent
+failures. Removing the two disputed person directions would still leave a
+gap, but does not turn the other teacher judgments into gold.
+
+Median first-order reported inference time is 2.883 seconds in NF4 and 2.599
+seconds in BF16. Peak first-order CUDA allocation is approximately 14.65 GiB
+and 48.29 GiB respectively. These are individual complete v26 requests, not
+batched deployment throughput. Fresh-process loading takes several minutes.
+Higher precision has not demonstrated a quality benefit on this evidence.
+
+Native experiments are `kev27b-{part}-v1`,
+`kev27b-options-rotate-{part}-v1`, and
+`kev27b-options-rotate-teacher-{part}-v1`. The latter reuse all 70 rotated
+answers with zero new attempts. `kev27b-vs-kev9-{part}-v1` similarly reuses
+all 70 normal answers to preserve the direct cross-model comparison.
+BF16 normal runs are `kev27b-bf16-{part}-v1`; their
+`kev27b-bf16-vs-nf4-{part}-v1` views reuse all 70 answers. Config SHA values
+are `d9acc421ef836666bc6acb93760efab20f6235bbfdaafae5d4b3082ae156bc57`
+and `23c395a3105f6a7b57069372f1d2f45db029306d367319bb7bf54ca194e41bfd`
+for NF4, and `59730cdf2b6201af9fcec7f143cd4e006a0383a233cfe77ff8d993f4fe96bfe2`
+and `3d5fdb7f9f7b0ed33858833d7b475d7f9607ea509fe8958f152eb15eda823394`
+for BF16. All live under the owned diagnostics history root. Their checkpoints,
+configs, receipts and native reviews remain preserved.
+
+The corresponding BF16 rotated and teacher-view experiments are
+`kev27b-bf16-options-rotate-{part}-v1` and
+`kev27b-bf16-options-rotate-teacher-{part}-v1`; teacher views reuse all 70
+answers with zero new attempts. Their median reported inference time is 2.594
+seconds. The two published Kev releases have different foundations and prior
+training; this comparison does not isolate capacity or establish either
+student's plateau after matched SHR supervision.
 
 ## Dataset audit
 
