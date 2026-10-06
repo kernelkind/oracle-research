@@ -9,12 +9,14 @@ resources were used.
 
 ## Recommendation
 
-**Keep Kev-9B as the leading compact SHR warm start, and Ettin-1B as the
-important low-cost training comparison.** Compare Kev with its actual
-Qwen3.5-9B-Base foundation after identical SHR supervision. Retain Gemma 4
-12B-it as the independent foundation and Nimble-9B as the alternative that
-reuses standard language-model adapter training. These are priorities for a
-future comparison, not an approved student or a post-finetuning winner.
+**Keep a larger quality reference in matched SHR training.** Qwen3.8-27B and
+Kev-27B are strongest on the current v79 panel; the standard LM is at least
+as competitive as the pointer checkpoint. Kev-9B remains a useful compact
+comparison alongside its actual Qwen3.5-9B-Base control, and Ettin-1B is the
+cheap training arm. Gemma 4 12B-it retains the independent-foundation role:
+it handles the clear original cases well but misses inconsistent groups.
+Nimble and Decider have no current diagnostic quality advantage. These are
+priorities for evaluation, not an approved student or post-finetuning ranking.
 
 SHR should have a separate student decision from SP. It jointly compares two
 supplied topics and returns one of five relations; SP generates a variable
@@ -62,18 +64,35 @@ unmodified greedy-JSON path agreed with 36/70 decisions; correcting its scored
 answer position does not close the current gap to Kev. Reasons are diagnostic,
 so the student need not reproduce this generation contract.
 
-The separately authorized v79 TRAIN-panel comparison is now in progress. Its
-first three checkpoints overturn the earlier Kev ranking on these inputs:
-Kev-27B gives 53/60 and 51/60 agreement with 29/30 and 27/30 reversals;
-Kev-9B gives 44/60 and 40/60 with 18/30 and 14/30 reversals. Nimble gives
-36/60 and 37/60. Excluding repeated entry-order controls, Kev-27B matches
-37/40 and 36/40 original orientations, versus Kev-9B's 27/40 and 26/40.
-The other four checkpoints are pending. This is a different prompt **and**
-case panel, with provisional teachers and only 20 families; it is not an
-isolated prompt/size effect or held-out accuracy. The larger pointer model
-must remain in the quality comparison. Final selection still needs matched
-SHR supervision and evaluation. See
-[the current v79 evidence](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-published-checkpoint-comparison).
+The separately authorized v79 TRAIN-panel comparison is complete: 840 valid
+single-attempt answers on the exact 60 teacher cases, in two option orders.
+
+| Published checkpoint, NF4 | v79 teacher agreement, two orders /60 | Original orientations /40 | A/B reversals /30 |
+| --- | --- | --- | --- |
+| Qwen3.8-27B | 53; 53 | 37; 38 | 27; 28 |
+| Kev-27B | 53; 51 | 37; 36 | 29; 27 |
+| Kev-9B | 44; 40 | 27; 26 | 18; 14 |
+| Gemma 4 12B-it | 42; 40 | 30; 28 | 25; 27 |
+| Nimble-9B | 36; 37 | 25; 25 | 23; 22 |
+| Decider-4B | 36; 34 | 24; 23 | 23; 22 |
+| Qwen3.5-9B instruct | 33; 39 | 21; 27 | 17; 23 |
+
+Both 27B checkpoints match all 36 non-uncertain answers in each order. Their
+remaining disagreements largely concern unresolved meanings and inconsistent
+multi-entry groups. The Kev-9B lead on v26 does not transfer, while Gemma has
+stronger original-case and reversal behavior than Kev-9B but misses most
+constructed conflicts. Nimble/Decider each match 4/24 uncertain answers in the
+first order. Qwen-9B is most sensitive to option rotation: only 38/60 decisions
+remain unchanged. These error profiles support a larger reference and diverse
+supervision rather than a uniform compact-model winner.
+
+This changes both prompt **and** case panel; its provisional TRAIN teachers
+and 20 families do not establish an isolated prompt/size effect, held-out
+accuracy or a finetuning plateau. The current real-data trainer supports SP/MP
+only. Building reusable SHR relation-only training support is therefore a useful
+next preparation while the prompt remains unfinished, before matched supervised
+fits and separately reviewed evaluation. Final selection remains open. See
+[the complete v79 evidence](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-published-checkpoint-comparison).
 
 GB10 measurements establish usable local training paths, independently of
 semantic quality. They use synthetic token tensors, finite gradients,
@@ -105,13 +124,14 @@ containment. Its unmodified greedy-JSON run gave 42 agreements among 69 valid
 answers; one of 70 attempts hit the 512-token limit during a repetitive
 Nature/Cats explanation. The full scored inputs are 2,638–2,724 tokens and median
 reported inference time is 2.980 seconds in each code order. This confirms a
-local relation-only path, without a current quality advantage over Kev-9B.
+local relation-only path, without a v26 quality advantage over Kev-9B.
 Its native LoRA path also passes training, save, fresh-process reload and all
 four inference shapes on GB10. It peaks at 20.07 GiB allocated during the
 2,048-token updates; batch-eight inference at that length gives 0.388 examples
 per second. Load/reload take 412/327 seconds in this stack. These observations
-retain it as a local escalation candidate, without a demonstrated reason to
-prefer it over the compact decision warm starts. Bounded internal reasoning
+retain it as a local escalation candidate, without a demonstrated v26 reason to
+prefer it over the compact decision warm starts; the v79 panel now supports
+retaining it as a serious larger quality reference. Bounded internal reasoning
 and matched SHR finetuning remain untested.
 
 Kev-27B likewise passes native NF4 LoRA/head training, save, fresh-process
@@ -347,7 +367,8 @@ with the rules learned through SHR-specific supervision. This is a different
 input contract from prompting an untuned model with v26 and its examples. The
 named [DeBERTa configuration](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli/blob/main/config.json)
 has 512 positions, so it cannot simply receive the full v26 prompt. Nimble's
-current 8,192-token contract also needs an actual token-length check. Preserve every
+current v79 schema inputs measure 4,719–4,820 tokens, within its 8,192-token
+contract. Future pair selections still need complete-length checks. Preserve every
 entry and all subject/context text; reject overlength inputs rather than
 truncate them. Record any instruction shortening separately from model changes.
 If real merged pairs exceed DeBERTa's budget, prefer the longer-context encoder

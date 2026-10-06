@@ -11,12 +11,13 @@ are unchanged. See
 
 ## Current outcome, October 6
 
-The authorized model investigation prioritizes a matched training comparison:
-Kev-9B and its actual Qwen Base control, with Ettin-1B as the low-cost arm.
-Nimble-9B offers the standard LM adapter alternative; Gemma-12B is the
-independent foundation. Seven published checkpoints completed both NF4
-relation-only option orders on 70 developmental cases, alongside generated
-output controls and verified local capacity paths. See the consolidated
+Seven published checkpoints completed both NF4 relation-only option orders
+on the earlier 70 v26 development cases and the new 60 v79 TRAIN coverage
+cases. On the new panel Qwen3.8-27B gives 53/60 in both orders, Kev-27B gives
+53/60 and 51/60, and Kev-9B gives 44/60 and 40/60. The earlier compact lead
+does not transfer; no final student or SHR training plan is selected. Results
+support a larger quality reference in future matched supervision,
+with compact and cheap training comparisons. See the consolidated
 [recommendation and measured tables](SHR-FINETUNING-MODEL-RESEARCH.md#recommendation).
 
 The requested Kev-27B follow-up completed 280 valid single-attempt answers
@@ -32,7 +33,9 @@ earlier on GB10. Historical failures remain recorded below. The larger pointer
 capacity check passed training, save, fresh-process reload and six inference
 shapes at 512, 2,048 and 3,072 tokens; the latter exceeds the complete v26 inputs'
 maximum 2,684 tokens.
-At that checkpoint, all experiment workers stopped. The current v79 comparison uses one GB10 inference worker. 
+All experiment workers stopped.
+ Current v79 inference uses
+longer sequences than the earlier synthetic training checks.
 
 The October 6 input-selection follow-up prepared 640 nomination
 families / 1,280 exact A/B orientations from 576 TRAIN notes and 292 authors.
@@ -1306,34 +1309,60 @@ these exact 60 v79 TRAIN cases. Native `prepare --from` freezes the completed
 teacher experiment as baseline; all fourteen plans preserve the complete prompt,
 inputs and evidence. Each checkpoint uses its unchanged pinned NF4 configuration
 and both previous option orders. Native `run` is bounded to 60 new attempts per
-experiment, concurrency one, with the loopback local runner. No new teachers,
-validation/final-test inputs, fitting, downloads or paid providers are required.
-
-The first six experiments are complete: 360 valid answers, each in one attempt,
-with no failures, retries or reuse. Gemma-12B, Qwen-27B, Decider-4B and Qwen-9B
-are still pending at this checkpoint. Their prepared plans are not model results.
+experiment, concurrency one, with the loopback local runner. All 840 answers are
+valid in one attempt each, with no failures, retries or reuse. No new teachers,
+validation/final-test inputs, fitting, model downloads or paid providers were used.
 
 | Checkpoint | Teacher agreement, two orders /60 | Original orientations /40 | A/B reversals /30 | Decisions unchanged by option rotation /60 | Reordered cases retaining original decision /20 |
 | --- | --- | --- | --- | --- | --- |
-| Kev-9B | 44; 40 | 27; 26 | 18; 14 | 52 | 16; 17 |
+| Qwen3.8-27B | 53; 53 | 37; 38 | 27; 28 | 57 | 18; 17 |
 | Kev-27B | 53; 51 | 37; 36 | 29; 27 | 58 | 18; 18 |
+| Kev-9B | 44; 40 | 27; 26 | 18; 14 | 52 | 16; 17 |
+| Gemma 4 12B-it | 42; 40 | 30; 28 | 25; 27 | 56 | 18; 18 |
 | Nimble-9B | 36; 37 | 25; 25 | 23; 22 | 52 | 17; 15 |
+| Decider-4B | 36; 34 | 24; 23 | 23; 22 | 53 | 19; 19 |
+| Qwen3.5-9B instruct | 33; 39 | 21; 27 | 17; 23 | 38 | 17; 18 |
 
 The 40 original orientations are two directions for each of 20 families. The
 additional 20 cases test entry order, so all 60 are not independent samples.
-Both original directions agree with the teacher in 10/9 families for Kev-9B,
-18/17 for Kev-27B and 11/11 for Nimble. The source remains 35 TRAIN entries
-from 27 notes and 25 authors; constructed conflict groups are diagnostic inputs,
-not accepted hierarchy nodes. Labels/reviews remain provisional.
+The source remains 35 TRAIN entries from 27 notes and 25 authors. Constructed
+conflict groups are diagnostic inputs, not accepted hierarchy nodes. Teachers
+and reviews remain provisional; these scores measure agreement, not held-out
+accuracy or quality after SHR finetuning.
 
-Kev-27B matches all 36 non-uncertain teacher answers in both orders. Its seven
-first-order misses are all uncertain cases: unresolved America scope, differently
-qualified trading entries, and reordered photography/image entries. Kev-9B also
-misses simple alias and related-topic cases and has weaker reversals. Nimble's
-first order matches 4/24 uncertain answers. Native agent reviews reject the
-Kev-9B Lightning alias miss, Kev-27B America and inconsistent-qualifier misses,
-and Nimble's mixed-football `neither`; one accepts Kev-27B's mixed-football
-`uncertain`. These are attributed prompt-grounded assessments, not human gold.
+| Checkpoint | Families with both original directions agreeing /20, two option orders |
+| --- | --- |
+| Qwen3.8-27B | 18; 19 |
+| Kev-27B | 18; 17 |
+| Kev-9B | 10; 9 |
+| Gemma 4 12B-it | 13; 13 |
+| Nimble-9B | 11; 11 |
+| Decider-4B | 11; 10 |
+| Qwen3.5-9B instruct | 9; 12 |
+
+Both 27B checkpoints match all 36 non-uncertain teacher answers in both option
+orders. Their seven first-order misses are all uncertain cases; five overlap,
+including all four differently qualified trading cases. Qwen-27B's two-order
+agreement is at least as competitive as the larger pointer model's. Neither
+native readout has established superiority after matched SHR supervision.
+
+The compact models have different weaknesses. Gemma matches 29/32 original
+orientations outside the intentionally conflicting groups in its first order,
+versus Kev-9B's 21/32. Inside those groups, Kev matches 6/8 and Gemma 1/8.
+Kev-9B also has weaker reversals and misses the Lightning alias in one direction.
+Nimble and Decider each match only 4/24 uncertain answers in their first order.
+Qwen-9B reverses both clear Bitcoin/mining reverse cases in its first order;
+only 38/60 decisions survive option rotation. Thus no compact checkpoint is a
+uniform quality winner across the earlier v26 and current v79 diagnostics.
+
+Nine native agent reviews assess exact case evidence: eight reject observed
+alias, scope, attribution, consistency or directional errors; one accepts
+Kev-27B's mixed-football uncertainty. All are attributed assessments under
+provisional v79, not independent human gold or approved supervision. Gemma's
+Bitcoin/mining conflict error has about 0.9997 conditional option probability;
+a simple low-score cutoff would not catch it. These scores are not calibrated
+semantic confidence. Qwen-27B repeats the inconsistent-trading error through
+a different readout, so it is not a demonstrated pointer-specific defect.
 
 The Kev-9B lead on the earlier 70 v26 development cases does not transfer to
 this panel. That comparison changes both prompt and cases; it cannot attribute
@@ -1341,22 +1370,72 @@ the difference solely to v79, model size or architecture. The two Kev releases
 also have different foundations and published training histories. No measured
 post-finetuning plateau or final student choice follows from these results.
 
-Both Kev layouts process 3,593–3,689 tokens. Median native inference is
-1.844 seconds in each order for Kev-9B, and 3.771/3.803 seconds for Kev-27B;
-maximum allocated CUDA memory is 6.10/14.84 GiB respectively. Nimble's native
-schema layout uses 4,719–4,820 tokens, median 2.176 seconds and 7.97 GiB.
-The separate service is stopped throughout. Cold loads remain separate from
-these timings. Complete v79 inference does not extend the earlier synthetic
-training-capacity checks to these longer sequences or establish convergence.
+| Checkpoint | Complete input tokens | Median native seconds/case, two orders | Maximum allocated CUDA GiB |
+| --- | --- | --- | --- |
+| Qwen3.8-27B | 3,633–3,729 | 3.852; 3.848 | 17.21 |
+| Kev-27B | 3,593–3,689 | 3.771; 3.803 | 14.84 |
+| Kev-9B | 3,593–3,689 | 1.844; 1.844 | 6.10 |
+| Gemma 4 12B-it | 3,662–3,759 | 2.563; 2.556 | 7.64 |
+| Nimble-9B | 4,719–4,820 | 2.176; 2.176 | 7.97 |
+| Decider-4B | 3,605–3,701 | 0.856; 0.860 | 3.40 |
+| Qwen3.5-9B instruct | 3,633–3,729 | 1.278; 1.274 | 7.66 |
+
+The separate service is stopped throughout, unlike some earlier compact-model
+capacity runs. Cold loads take minutes and are separate from these inference
+timings. All complete inputs fit their unchanged 8,192-token limits without
+truncation. Nimble's schema overhead increases its token count. These are
+published-checkpoint/readout measurements, not a matched architecture speed
+ranking or a forecast for a distilled model receiving shorter pair-only inputs.
+Complete v79 inference does not extend the earlier synthetic training-capacity
+checks to these longer sequences or establish convergence.
 
 Artifacts live under `target/shr-student-diagnostics-v79/`. Native experiments
-are `experiments/{kev9b,kev27b,nimble9b}-{original,rotate}-v1`; each retains its
-frozen `experiment.json`, `run/manifest.json`, `run/results.jsonl`, native report
-and any reviews. Source configuration hashes and all five shared model-loading
-files match the isolated GB10 checkout before calls. Fourteen prepared plans
-were checked against the exact source teacher cases, prompt and 60 saved answers.
-The unchanged shared workflow's previously passing regression remains applicable;
-this follow-up adds no software behavior or accepted training targets.
+are `experiments/{qwen27b,kev27b,kev9b,gemma12b,nimble9b,decider4b,qwen9b}-{original,rotate}-v1`;
+each retains its frozen `experiment.json`, `run/manifest.json`,
+`run/results.jsonl`, native report and any reviews. The source configurations
+remain the existing `distillation/diagnostic-*.json` files: checked chat answer
+prefixes for Qwen/Gemma, native schema for Nimble, native plain layout for
+Decider and native pointer heads for Kev. No rendered batches or comparison
+JSON were manually assembled. Receipt bindings:
+
+| Experiment prefix | Original results SHA-256 | Rotated results SHA-256 |
+| --- | --- | --- |
+| qwen27b | `cb0d8f52e2b1637a8f0f6d06f7ba94d215b3a123895aa49552103a8e690d43de` | `d9052f5c5c5966ad8a449a329cf46a16cbcd2bd8e8fba17a226de1b816451d84` |
+| kev27b | `a9e00a78ca29b94c5d7b34ef245c3fbba9d02a1cad247f11bbb5061b025d89af` | `9a68f20c100107383255a05b9229ce2c103975bf344a494896476985692cdcee` |
+| kev9b | `80a1fb94627f6b9ae5a7623d1098e8d3d7d64e4c5b0259c3be0b47fb4238c4d1` | `a1acdd20bc2a50ed69fb0f0113c58f98436b9200520361956217998f27b25b74` |
+| gemma12b | `394657057a3e9666089189d7332a223630f3619084be6b01bec5e93fbd851602` | `02f6b02f340d13dc7a5b92e60b94876e9b8cf3bb767c942d59c2c070c4f5df07` |
+| nimble9b | `84387e1d026ccaf1a0545f3abf69fd923b44ade1e244c020a4c0d777a322ad4f` | `2706690fc72faf91ff7fe466996cca707650c38b5c013551ce11d4ee431a0357` |
+| decider4b | `9dc1deb517e08bc39e5e8b44b080fc6de622f141ad3c9cab1501573cbe8f1560` | `0ef669e4fe2b7f3af62e3cb31c64c5fea72c85dadc83409e1982ddf35e082936` |
+| qwen9b | `f5005d0688e3f8e8011ff7a1048426029c45abb43c182c5ad6cbe770079a1e2d` | `e0761922a1ed479969fc65191238e1591e2c6a75f9a7a2739961b2d5335d3ba6` |
+
+Source configuration hashes and all five shared model-loading files match the
+isolated GB10 checkout before calls. Final verification checks all 840 succeeded,
+single-HTTP-attempt receipts; all fourteen native reports; each plan digest,
+frozen source case/prompt/preparation, local provider and NF4 metadata; current
+code hashes and six protected input source bindings. The source teacher plan,
+results and reviews remain byte-identical to the preceding pilot. The unchanged
+workflow's earlier passing regression remains applicable; this follow-up adds
+no software behavior or accepted training targets. The initial orchestration
+check read a nonexistent `counts` key instead of native `summary`; correcting
+that check preserved completed answers without rerunning them. One review
+command needed corrected shell quoting before native review succeeded.
+
+All experiment workers stopped. GB10 reports no
+compute process and about 118 GiB system availability; its isolated checkout
+remains clean. 
+Checkpoint commit `88e6082b` preserves the first three-model findings; this
+completed panel supersedes its pending status without changing earlier evidence.
+
+The most useful next preparation is reusable real-data SHR relation-only
+training support for the shortlisted native pointer, standard LM and encoder
+paths. `distillation_run.load_data` currently accepts only `subjects` or
+`subjects`/`mask`, so the synthetic capacity checks and offline SHR collector
+do not yet constitute a real SHR fitting workflow. This engineering dependency
+can be removed while prompt development continues. Subsequent matched fitting
+should retain a larger quality reference, the compact Kev/Base comparison and
+the cheap Ettin arm, with source-bound targets and separately reviewed evaluation
+roles. That next implementation/fitting is proposed, not begun or authorized by
+this diagnostic; accepted training targets and the final student remain open.
 
 ## Dataset audit
 

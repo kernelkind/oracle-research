@@ -121,6 +121,17 @@ the earlier `teacher-coverage-v79-collected/` snapshot has only 42 reviewed
 cases. See [the recorded pilot](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-coverage-pilot)
 for evidence bindings and provisional interpretation.
 
+The authorized local follow-up uses native `prepare --from` that completed
+teacher experiment, with the existing configuration-bound local model names,
+`--provider local --transport http --reasoning-effort off --concurrency 1` and
+`--runner-binary sse_multivector/run-local-model.sh`. All seven published
+checkpoints completed both option orders: 840 valid one-attempt answers,
+with no teacher reruns, changed inputs, failures or reuse. The ignored native
+experiments are under `target/shr-student-diagnostics-v79/experiments/`. See
+[the full comparison](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-published-checkpoint-comparison)
+for scores, current reviews and receipt bindings. It supplies model diagnostics,
+not an accepted training corpus or real SHR fitting support.
+
 ## Offline preview
 
 Examples use this checkout's location; the tool itself has no fixed working
