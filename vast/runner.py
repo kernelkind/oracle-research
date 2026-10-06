@@ -1979,19 +1979,23 @@ def remote_volume_prepare(context: Context, volume_root: Path) -> dict[str, obje
         else:
             archive = volume_root / "recoveries" / recovery["previous_contract_sha256"]
             intent = archive / "replacement-intent.json"
-            with file_lock(volume_root / "work/full-build-start.lock", blocking=False), \
-                    file_lock(volume_root / "work/full-build.lock", blocking=False):
+            reuse_work = recovery.get("reuse_work", True)
+            work = volume_root / "work"
+            if not work.exists() and not reuse_work:
+                work = archive / "work"
+            with file_lock(work / "full-build-start.lock", blocking=False), \
+                    file_lock(work / "full-build.lock", blocking=False):
                 if intent.exists():
                     if read_json(intent) != {"contract_sha256": digest, "recovery": recovery}:
                         raise OperationError("volume replacement intent differs from this contract")
                     # Delivery can resume after interruption between directory renames.
-                    validate_file_records(volume_root / "work", recovery["work_files"])
+                    validate_file_records(work, recovery["work_files"])
                 else:
                     verify_sha(prior_path, recovery["previous_contract_sha256"], "previous volume contract")
-                    validate_file_records(volume_root / "work", recovery["work_files"])
+                    validate_file_records(work, recovery["work_files"])
                     atomic_json(intent, {"contract_sha256": digest, "recovery": recovery})
                 for relative in ("launch", "transport", "package", "preparation-attempts",
-                                 "work/retrieval-manifest.json"):
+                                 "work/retrieval-manifest.json" if reuse_work else "work"):
                     source = volume_root / relative
                     destination = archive / Path(relative).name
                     if source.exists():
@@ -2000,6 +2004,7 @@ def remote_volume_prepare(context: Context, volume_root: Path) -> dict[str, obje
                         os.rename(source, destination)
                         sync_directory(destination.parent)
                 result = {"prepared": True, "recovered": True, "contract_sha256": digest,
+                          "reused_work": reuse_work,
                           "previous_instance_id": recovery["previous_instance_id"],
                           "archive": str(archive.relative_to(volume_root))}
         atomic_json(receipt, result)
@@ -2169,7 +2174,8 @@ def next_attempt_id(context: Context) -> str:
         for path in directory.glob("[0-9][0-9][0-9].json")
         if path.stem.isdecimal()
     )
-    previous = int(context.config.get("volume_recovery", {}).get("previous_attempt", "000"))
+    recovery = context.config.get("volume_recovery", {})
+    previous = int(recovery.get("previous_attempt", "000")) if recovery.get("reuse_work", True) else 0
     value = (existing[-1] if existing else previous) + 1
     if value > 999:
         raise OperationError("worker attempt namespace is exhausted")
@@ -2318,6 +2324,8 @@ def ensure_worker_started(
     continuation_args = []
     saved_invocation = read_json(invocation)
     recovery = context.config.get("volume_recovery")
+    if recovery is not None and not recovery.get("reuse_work", True):
+        recovery = None
     if recovery is not None and "resume_from" not in saved_invocation:
         saved_invocation.update(resume_from=recovery["previous_attempt"],
             reason="Continue the identical workload after verified volume-backed instance replacement")
@@ -5719,6 +5727,10 @@ def validate_command_context(context: Context) -> None:
             raise OperationError("replacement requires sealed work records")
         if context.config["workload"].get("resumable") is not True:
             raise OperationError("volume replacement requires a resumable workload")
+        if type(recovery.get("reuse_work", True)) is not bool:
+            raise OperationError("volume reuse_work must be a boolean")
+        if not recovery.get("reuse_work", True):
+            required_string(recovery, "reason")
     if "cleanup_seconds" in context.config:
         cleanup = required_nonnegative_int(context.config, "cleanup_seconds")
         if cleanup >= required_positive_int(context.config, "session_seconds"):

@@ -52,6 +52,9 @@ def make_spec(settings, offer, package, image):
         spec['environment']['HF_HOME'] = '/workspace/oracle-full-build/model-cache'
         if 'recover_from' in settings:
             spec['recover_from'] = settings['recover_from']
+            for key in ('reuse_work', 'recovery_reason'):
+                if key in settings:
+                    spec[key] = settings[key]
     elif 'recover_from' in settings:
         raise ValueError('replacement requires a local volume')
     return spec

@@ -563,7 +563,9 @@ class SharedSSHTests(unittest.TestCase):
         result = self.run_package(root / 'inputs', root / 'replacement', local_volume=True, recover_from=old)
         after = file_hashes(result)
         for path, digest in before.items():
-            if path != 'deployment.json':
+            if path.endswith('.log'):
+                self.assertTrue((result / path).read_bytes().startswith((old / 'result/work/results' / path).read_bytes()))
+            elif path != 'deployment.json':
                 self.assertEqual(after[path], digest, path)
         receipt = read_json(root / 'replacement/launch/volume-prepared.json')['remote_receipt']
         self.assertTrue(receipt['recovered'])

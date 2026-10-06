@@ -2216,7 +2216,11 @@ operation path and sets `HF_HOME` to its persistent model cache. Replacement
 freezing verifies the previous local retrieval and deletion, identical volume,
 image, workload and input manifest. Remote preparation rechecks all saved work,
 archives old launch/transport/preparation receipts, preserves worker attempts
-and resumes with the next attempt ID. Interrupted setup can be redelivered.
+and resumes with the next attempt ID. For a repaired runtime, freeze
+`reuse_work: false` with a `recovery_reason`: archive the entire previous work
+tree, retain the model cache and start fresh under the new image/configuration.
+The previous retrieval and deletion are still required. Interrupted setup
+can be redelivered.
 The controller passes its worker-lock descriptor through each candidate; abrupt
 controller death cannot seal changing files or admit another worker. A CPU
 heartbeat regression first reproduced the orphan/sealing defect and now passes.

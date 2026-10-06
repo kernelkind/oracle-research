@@ -115,11 +115,17 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
         prior = runner.read_json(prior_config)
         proof = runner.read_json(source / "launch/destruction-confirmation.json")
         retrieved = runner.read_json(source / "launch/retrieval-verification.json")
+        reuse_work = spec.get("reuse_work", True)
+        if type(reuse_work) is not bool:
+            raise runner.OperationError("reuse_work must be a boolean")
+        reason = spec.get("recovery_reason", "Continue the identical frozen workload")
+        if not isinstance(reason, str) or not reason.strip() or not reuse_work and "recovery_reason" not in spec:
+            raise runner.OperationError("discarding previous work from continuation requires a recorded reason")
         if (workload.get("resumable") is not True or "local_volume" not in document
                 or prior.get("local_volume") != document["local_volume"]
-                or prior.get("image") != document["image"] or prior.get("workload") != workload
-                or prior["pins"]["execution_package_manifest_sha256"]
-                != document["pins"]["execution_package_manifest_sha256"]):
+                or reuse_work and (prior.get("image") != document["image"] or prior.get("workload") != workload
+                    or prior["pins"]["execution_package_manifest_sha256"]
+                    != document["pins"]["execution_package_manifest_sha256"])):
             raise runner.OperationError("replacement requires the same volume, image and frozen workload")
         if (proof.get("absent_from_complete_inventory") is not True
                 or proof.get("absence_observations", 0) < 2
@@ -133,7 +139,8 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
         records = runner.validate_file_records(saved, retrieved.get("work_files"))
         document["volume_recovery"] = {"previous_contract_sha256": runner.sha256_file(prior_config),
             "previous_instance_id": retrieved["instance_id"],
-            "previous_attempt": runner.parse_attempt_id(retrieved.get("attempt_id")), "work_files": records}
+            "previous_attempt": runner.parse_attempt_id(retrieved.get("attempt_id")),
+            "reuse_work": reuse_work, "reason": reason, "work_files": records}
     runner.atomic_json(config, document)
     return config
 

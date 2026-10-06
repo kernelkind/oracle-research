@@ -38,7 +38,9 @@ on a persistent local volume. Favor a machine with observed spare GPUs so a
 replacement container can reuse that volume. The launcher now preserves model
 downloads and verified work across replacement, using the same image/data/recipe
 and continuing the saved worker attempts. It requires verified retrieval and
-confirmed deletion of the previous instance. Local checks pass; VM rehearsal
+confirmed deletion of the previous instance. If a repair changes the runtime,
+retain downloads, archive the previous work and start a fresh comparison.
+Local checks pass; VM rehearsal
 and MoE CUDA confirmation remain pending. No volume or replacement is rented.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives

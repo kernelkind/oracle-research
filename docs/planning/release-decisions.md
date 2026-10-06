@@ -1538,8 +1538,9 @@ proof of future free GPUs; the volume attaches only on its physical machine.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical
-image/data/recipe, verified local retrieval and confirmed prior deletion. A
-controller-crash regression now keeps the worker lock in live training children,
+image/data/recipe, verified local retrieval and confirmed prior deletion. An
+explicit runtime repair may retain downloads while archiving all previous work
+and starting a fresh comparison; its reason is frozen. A controller-crash regression now keeps the worker lock in live training children,
 blocking sealing and reentry until writers exit. Local checks pass; VM rehearsal
 and the full MoE CUDA replay remain pending. No volume or replacement is rented.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;

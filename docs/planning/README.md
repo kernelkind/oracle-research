@@ -109,7 +109,8 @@ skipped. Full CUDA confirmation and a new frozen runtime remain pending.
 Persistent-volume mounting and verified replacement are implemented locally.
 A controller-crash regression proves that live children block result sealing;
 replacement preserves work paths and requires the same image/data/recipe,
-verified retrieval and prior instance deletion. Local checks pass; VM rehearsal
+verified retrieval and prior instance deletion. A changed runtime keeps downloads
+but archives prior work and starts fresh. Local checks pass; VM rehearsal
 and full MoE CUDA confirmation remain pending. There is no automatic time limit
 or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:

@@ -105,6 +105,28 @@ class WorkloadTests(unittest.TestCase):
             changed = {**spec, 'image': settings['image_repository'] + '@sha256:' + '5'*64}
             with self.assertRaisesRegex(Exception, 'same volume, image and frozen workload'):
                 packager.freeze(changed, root / 'changed', ledger)
+            changed.update(reuse_work=False, recovery_reason='Rebuild after a runtime repair; retain downloads only')
+            cached = root / 'cache-only-volume'
+            cached.mkdir()
+            (cached / 'launch').mkdir()
+            shutil.copy2(old_config, cached / 'launch/operation-contract.json')
+            shutil.copytree(old / 'result.next/work', cached / 'work')
+            shutil.copytree(volume / 'model-cache', cached / 'model-cache')
+            cache_staging = cached / 'replacements/new-runtime'
+            cache_config = packager.freeze(changed, cache_staging, ledger)
+            self.assertFalse(read_json(cache_config)['volume_recovery']['reuse_work'])
+            definition = importlib.util.spec_from_file_location('cache_volume_runner', cache_staging / 'transport/control/vast_full_build.py')
+            cache_module = importlib.util.module_from_spec(definition)
+            sys.modules[definition.name] = cache_module
+            definition.loader.exec_module(cache_module)
+            cache_context = cache_module.Context.load(argparse.Namespace(root=cache_staging, config=cache_config,
+                                                                          operation='_remote-volume-prepare'))
+            with patch.object(cache_module, 'completed_process'):
+                reset = cache_module.remote_volume_prepare(cache_context, cached)
+            self.assertFalse(reset['reused_work'])
+            self.assertFalse((cached / 'work').exists())
+            self.assertEqual((cached / reset['archive'] / 'work/checkpoint.bin').read_bytes(), b'checkpoint')
+            self.assertEqual((cached / 'model-cache/download.bin').read_bytes(), b'cached weights')
             # A damaged local source cannot become a replacement approval.
             (old / 'result.next/work/checkpoint.bin').write_bytes(b'bad')
             with self.assertRaisesRegex(Exception, 'integrity'):
