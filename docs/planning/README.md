@@ -92,6 +92,9 @@ time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.
+The user approved autonomous pilot error repair, including necessary code/recipe
+corrections: preserve evidence, record changes, restore saved state and rerun
+affected comparisons. Complete-data deletion and spending rules still apply.
 Prep covers the longest example and full validation cache shapes, with actual
 CUDA loss/gradient agreement required on hardware. Semantic grading remains local.
 The historical winner-only ASv6.48 projection of 36–40 hours / $51–58 does not

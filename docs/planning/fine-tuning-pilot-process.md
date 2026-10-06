@@ -194,6 +194,12 @@ and semantic scores stay out of review and selection until validation review end
 substantial work, retrieve and verify available data, then delete the rental
 under the user's standing approval. Completing all prep checks is not required.
 
+**Pilot recovery approved October 5:** diagnose and repair errors autonomously,
+including necessary code or recipe corrections. Record changes and interruptions,
+resume from verified saved state, and rerun affected comparisons when a repair
+changes their conditions. Repair itself needs no further user approval. Preserve
+original evidence; the completeness/deletion and spending rules still apply.
+
 After interruption, reconcile the existing worker first. A failed worker needs
 an explicit, recorded continuation on the same rental. Preserve its evidence,
 reuse saved answers and complete training checkpoints, and verify a fresh

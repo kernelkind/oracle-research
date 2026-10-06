@@ -1129,6 +1129,13 @@ record the standing approval and the concrete failure/repair assessment using
 `--incomplete-stop-approval`. Original frozen inputs and defect evidence remain
 intact when additional work is needed.
 
+**Autonomous pilot recovery approved October 5:** diagnose and fix errors
+without asking the user to approve the repair, including necessary code or recipe
+corrections. Preserve original frozen inputs and failure evidence, record each
+change and interruption, restore verified saved state, and rerun comparisons
+affected by changed conditions. This authorizes repairs; the approved spending
+and complete-data requirements before stopping/deletion remain in force.
+
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
 notes at each milestone through 1,000; the smaller sets are shared subsets.

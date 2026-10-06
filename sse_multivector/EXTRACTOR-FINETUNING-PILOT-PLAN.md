@@ -1488,6 +1488,13 @@ to stop incomplete prep work; completing all prep checks is not required. Do not
 hold paid hardware idle for substantial new development or renewed permission.
 Judge repair scope rather than imposing a fixed time cutoff.
 
+**Autonomous pilot recovery approved October 5:** diagnose and fix errors
+without requesting approval for the repair, including necessary code or recipe
+corrections. Preserve original frozen inputs and failure evidence, record every
+change and interruption, restore verified saved state, and rerun comparisons
+affected by changed conditions. The approved spending and complete-data
+requirements before stopping/deletion still apply.
+
 **Full pilot stopping rule:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain
 explicit user approval first. Spending approvals still apply; request any
