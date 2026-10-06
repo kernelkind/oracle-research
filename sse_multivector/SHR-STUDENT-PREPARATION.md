@@ -458,6 +458,42 @@ receipts remain unchanged. These corrected controls retain Gemma as an independe
 training foundation, below Kev's current diagnostic lead without ranking them
 after matched SHR adaptation.
 
+### Larger Qwen reference
+
+The pinned Qwen3.8-27B native NF4 path completed 70 new single-attempt calls
+with the unchanged v26 generation prompt. There were 69 valid JSON answers and
+one failed output; failed receipts are preserved without repair or retry.
+
+| Qwen-27B greedy JSON | Teacher agreement / comparable cases | Reversal consistency / comparable pairs |
+| --- | --- | --- |
+| Original | 30/40 | 16/20 |
+| Scope | 3/8 | 1/4 |
+| Transfer | 9/21 valid; one failed attempt | 7/10; one noncomparable pair |
+| Total | 42/69 valid; 70 attempted | 24/34 |
+
+The failed `C06-forward` output hit the 512-token limit during a repetitive
+Nature/Cats explanation. Its initial `neither` judgment also treats the
+unrestricted Nature field as excluding animals; native agent review rejects
+both the invalid answer and this scope reasoning. Other native reviews reject
+Coffee/Coffee drinking's reversed relation despite an explanation identifying
+Coffee as broader, and the Cooking/omelette answer that imports an activity
+into the product topic. The larger checkpoint repeats activity/product and
+broad Culture failures, so its additional capacity has not established a
+quality advantage on these development cases.
+
+Native experiments are `qwen27b-json-{original,scope,transfer}-v2`. Config-bound
+identity uses revision `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0` and configuration
+SHA `046bcb0b111d0711f662472025ed63d2c6060d2b449077b4db5b07fe6c930bf0`.
+Median reported inference times were 7.728, 9.368 and 9.799 seconds by case
+group, including each group's output generation. They are single-request
+observations, not warmed batched deployment throughput. Full prompt input was
+preserved. Internal thinking was disabled, as in the other chat controls;
+these results do not evaluate bounded reasoning or SHR finetuning.
+
+Checked answer-prefix direct scoring in both code orders and native LoRA
+capacity are pending at this checkpoint. These complete the finite six-model
+comparison rather than treating public benchmark scores as SHR evidence.
+
 ### Kev option-order check
 
 The published native Kev pointer path completed all 70 rotated v26 cases in

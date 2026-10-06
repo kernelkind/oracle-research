@@ -1,6 +1,6 @@
 # SHR student model research
 
-Research date: October 5, 2026. **Recommendations for evaluation, not an
+Research dates: October 5–6, 2026. **Recommendations for evaluation, not an
 approved model choice or SHR training plan.** The initial literature phase
 performed no runs. Subsequent user-authorized capacity checks and provisional
 v26 comparisons are recorded in [student preparation](SHR-STUDENT-PREPARATION.md).
@@ -9,131 +9,88 @@ resources were used.
 
 ## Recommendation
 
-SHR deserves its own model comparison. Its five labels permit a much cheaper
-output than SP, but do not establish that a small classifier can learn its
-semantics. The strongest initial quality candidates are modern Qwen/Gemma
-foundations and decision-trained versions of them. Encoders remain an
-important cost comparison, rather than the assumed quality winner.
+**Keep Kev-9B as the leading compact SHR warm start, and Ettin-1B as the
+important low-cost training comparison.** Compare Kev with its actual
+Qwen3.5-9B-Base foundation after identical SHR supervision. Retain Gemma 4
+12B-it as the independent foundation and Nimble-9B as the alternative that
+reuses standard language-model adapter training. These are priorities for a
+future comparison, not an approved student or a post-finetuning winner.
 
-My recommended order of investigation is:
+SHR should have a separate student decision from SP. It jointly compares two
+supplied topics and returns one of five relations; SP generates a variable
+subject hierarchy from a whole post. A relation-only SHR student can therefore
+use a decision checkpoint or encoder even if it cannot produce SP's output.
+Sharing a foundation remains useful only if its quality and whole-process
+cost justify doing so.
 
-| Purpose | Candidates | Why these belong |
-| --- | --- | --- |
-| Compact decision student | **Kev-9B**, alongside **Qwen3.5-9B-Base**; **Qwen3.5-9B instruct** as an additional control | Relevant training on decisions, explicit restrictions and missing evidence; its actual base checkpoint tests whether that specialization survives SHR tuning. |
-| Quality reference and larger decision student | **Qwen3.8-27B**, **Kev-27B v2**, **Gemma 4 31B-it** | More knowledge and reasoning capacity; Kev supplies a decision-trained alternative at the same Qwen foundation. No evidence establishes an SHR winner among them. |
-| Independent compact foundation | **Gemma 4 12B-it** | Avoids making the compact comparison entirely dependent on one Qwen family. |
-| Low-cost encoder | **Ettin encoder 1B**, with **DeBERTa-v3-large-mnli-fever-anli-ling-wanli** as the NLI warm start | Tests modern encoder capacity against relevant existing relation supervision. Start with these two rather than many near-duplicate classifier checkpoints. |
-| If compact models work and cost still matters | **Mapika decider-4b v2.1** / **Kev-4B**, Ettin 400M | Compression step after establishing which SHR distinctions remain difficult. |
-| If the quality reference fails | **gpt-oss-120b**, potentially **Mistral Small 4** | Larger total-capacity alternatives; neither is excluded by an artificial 96GB ceiling. Exact local training speed remains unmeasured. |
+The completed compact comparison uses the same 70 v26 development inputs,
+including 35 exact A/B reversal pairs. The two scored orders change the mapping
+between answer codes and relations. Agreement is with saved teacher decisions,
+**not semantic gold or held-out accuracy**. Twelve related Culture judgments
+are a substantial correlated cluster. Chat models receive a checked
+`Answer: (` prefix so that punctuation before an answer code does not distort
+the readout. All scored outputs below were valid in one HTTP attempt.
 
-**Bespoke-Nimble-9B is a credible additional warm start**, particularly if
-reusing a standard language-model fine-tuning path is materially simpler than
-supporting Kev's head. The current pinned release is v3-12026, with 12,026
-training rows and an 8,192-token contract. The earlier description of 2,676
-rows and a 2,048-token limit applied to the original release, not this checkpoint.
-Its suitability still needs the direct SHR comparison. Gemma 4 26B-A4B-it is
-also worth retaining when reusing the SP pilot's
-existing setup or exploring a larger model with fewer active parameters.
+| Published checkpoint, NF4 direct readout | Teacher agreement, two code orders | Reversal consistency, two orders | Decisions unchanged by code rotation | Provisional role |
+| --- | --- | --- | --- | --- |
+| Kev-9B, native pointer | 61/70; 60/70 | 31/35; 31/35 | 66/70 | Leading compact decision warm start |
+| Nimble-9B v3-12026, native schema and LM scores | 56/70; 51/70 | 29/35; 24/35 | 61/70 | Standard LM adapter alternative; continued-adapter optimization unmeasured |
+| Gemma 4 12B-it, checked chat answer prefix | 49/70; 54/70 | 33/35; 31/35 | 65/70 | Independent foundation; scope and activity/product errors remain |
+| Mapika decider-4b v2.1, native plain layout | 45/70; 42/70 | 28/35; 30/35 | 58/70 | Cheaper compression comparison |
+| Qwen3.5-9B instruct, checked chat answer prefix | 35/70; 39/70 | 20/35; 28/35 | 47/70 | Instruct control; no current diagnostic advantage |
 
-These are hypotheses about suitability after SHR-specific training. They are
-not a ranking of measured SHR accuracy. A decision checkpoint beating an
-untuned foundation on its own task does not show that it will beat the same
-foundation after both receive identical SHR training.
+These checkpoints have different prior supervision and native input layouts.
+Kev's stronger results support trying its decision specialization, but do not
+isolate its head architecture or show superiority after matched SHR training.
+Nimble currently uses the 12,026-row, 8,192-token release, rather than its
+original 2,676-row release. Qwen3.5-9B instruct is also distinct from Kev's
+Base foundation; the latter remains the corresponding matched-training control.
 
-The provisional v26 diagnostics now provide task-specific support for keeping
-Kev-9B high in that comparison: its published NF4 pointer path agreed with
-61/70 saved teacher relations and preserved 31/35 reversals, versus 36/70 and
-22/35 for Qwen3.5-9B instruct with greedy JSON generation. Both received the
-complete saved prompt; Kev also received an explicit choice question. This
-different readout and prior training prevent attributing the difference solely
-to the head architecture. The teacher answers are development evidence,
-not gold. Kev's actual LoRA/head optimization, checkpoint reload and batched
-inference passed on GB10 while the separate server remained resident.
-Gemma's co-resident load caused heavy swapping. After the human authorized and
-performed a temporary serving-container stop, its pinned NF4 text path
-completed the same 70 cases. All answers were Markdown-fenced JSON, so native
-strict validation rejected all 70. Separate raw-label inspection agrees with
-48/70 teacher relations and preserves 32/35 reversals; failed receipts remain
-unchanged and are not fitted targets. Its largest disagreement cluster is the
-12 related Culture transfer judgments, so that count is not independent
-evidence. It also repeats activity/product and directional-label errors.
-These observations retain Kev as the stronger provisional warm start while
-keeping Gemma as an independent foundation for matched SHR training. A syntax
-failure on the published checkpoint does not establish its post-training
-quality. The [preparation report](SHR-STUDENT-PREPARATION.md) records the
-source-bound raw inspection separately from validated native metrics.
+Correcting the chat answer position matters. Gemma's initial bare-code
+rotation preserved only 38/70 decisions; its checked prefix preserves 65/70.
+Its generated v26 answers were all Markdown-fenced and failed strict JSON
+validation. Those failures remain preserved, not repaired targets. Qwen-9B's
+unmodified greedy-JSON path agreed with 36/70 decisions; correcting its scored
+answer position does not close the current gap to Kev. Reasons are diagnostic,
+so the student need not reproduce this generation contract.
 
-Gemma's actual native NF4 LoRA training/save/reload/inference path also passed
-on GB10 in that paused-server window: synthetic updates took 1.57 seconds at
-512 tokens and 6.33 seconds at 2,048, with 65.57 million FP32 adapter parameters
-and matching reload logits. This establishes a practical local training path.
-It does not establish SHR convergence or a matched speed advantage: Kev uses
-a different head and frozen-weight preparation, and its server was resident.
+GB10 measurements establish usable local training paths, independently of
+semantic quality. They use synthetic token tensors, finite gradients,
+checkpoint save and a separate process checking reload logits. They do not
+fit any SHR labels or estimate convergence. Sequence lengths, trained weights,
+precision and service contention differ; these are capacity observations,
+not a controlled architecture speed ranking.
 
-Qwen's subsequent readout controls do not close the provisional gap: explicit
-choices with generated JSON give 34/70 agreement and 19/35 reversals; direct
-option scoring gives 34/70 and 11/35. Rotating every option code gives 36/70 and
-26/35, but changes 38 of the 70 decisions. These are additional development
-diagnostics, not a post-training architecture comparison. Those bare-letter
-controls do not isolate the benefit of decision pretraining: a chat model can
-prefer punctuation before its option code, making its first-position letter
-scores a different answer contract. A native answer-prefix control is now
-checked before interpreting that gap as a specialization advantage.
-The completed Qwen-9B prefix control assigns median 0.99945 vocabulary mass
-to its allowed letters but gives only 35/70 agreement and 20/35 reversals;
-rotation gives 39/70 and 28/35, preserving 47/70 decisions. Correcting that
-format mismatch does not close its gap to the decision warm starts. Their
-different foundations, prior task training and native layouts still prevent
-attributing the whole difference solely to a head or forecasting matched
-SHR adaptation.
+| Verified training path | Seconds/update at 512 tokens | Seconds/update at 2,048 tokens | What was updated |
+| --- | ---: | ---: | --- |
+| Ettin-1B full, service stopped | 0.628 | 1.055 | All 1.031 billion FP32 parameters; 32 GiB allocator budget |
+| Decider-4b NF4, service stopped | 0.613 | 2.241 | 32.46 million FP32 LoRA parameters over the merged decision checkpoint |
+| Kev-9B native NF4, service resident | 1.467 | 4.774 | Published LoRA plus pointer head, 45.38 million parameters |
+| Gemma 4 12B-it NF4, service stopped | 1.566 | 6.332 | 65.57 million FP32 LoRA parameters |
 
-Gemma's scored readout is also sensitive to code order: agreement changes from
-37/70 to 54/70, reversal consistency from 13/35 to 24/35, and only 38/70 labels
-survive rotation. The rotated run's allowed standalone letters have median
-full-vocabulary probability mass 0.00180; most unrestricted top tokens start a
-parenthesized answer. These forced-choice diagnostics do not establish a stable
-replacement for its generated-label path. Keep the two orders visible rather
-than choosing the more favorable one; syntax and code compliance may change
-with SHR training. Native decision models trained on conditional-code loss
-should not be judged by full-vocabulary code mass alone.
+Ettin's speed makes it worth training once suitable labels exist. It currently
+has no meaningful untuned five-relation quality score: a new random SHR head
+cannot answer the task. DeBERTa's adversarial-NLI warm start remains secondary
+because its 512-position limit constrains complete merged pairs; NLI labels
+cannot be mapped directly to SHR. Ettin-400M also has a verified cheap full
+training path if compression becomes necessary.
 
-Gemma's completed answer-prefix control materially corrects that readout issue.
-Agreement is 49/70 and 54/70 in the two orders, reversals 33/35 and 31/35, and
-65/70 decisions survive rotation. Median original-order allowed-code mass is
-0.999987. The simple Coffee and puzzlement directional errors disappear, while
-activity/product and broad Culture errors remain. The earlier bare-code scores
-overstated its order sensitivity. It remains a useful independent foundation
-for matched SHR training; the prefix correction does not close Kev's current
-lead or establish post-training quality.
+The larger Qwen3.8-27B reference is being completed before closing this
+investigation. Its unmodified v26 greedy-JSON run gave 42 agreements among 69
+valid answers, with 24/34 comparable reversals. One of 70 attempts hit the
+512-token limit during a repetitive Nature/Cats explanation. Direct scoring
+and local LoRA capacity remain pending at this checkpoint. Its extra size has
+not yet shown a quality advantage. This does not test bounded internal reasoning
+or matched SHR finetuning.
 
-The current Nimble native NF4 schema path gives 56/70 agreement and 29/35
-reversals. Rotation gives 51/70 and 24/35, with 61/70 decisions unchanged.
-It handles the related Culture transfer cluster well but still misses an
-unidentified hashtag and assumes Cooking lies below Kitchen work. Its original
-allowed-code mass is high, so those errors are not explained by ignoring the
-letter output format. These results retain Nimble as a useful alternative
-warm start, below Kev's current diagnostic lead. Kev's completed rotation
-preserves 66/70 decisions, gives 60/70 teacher agreement and retains 31/35
-reversal consistency. Its lead survives this check, though Coffee's direction
-still flips and the related Culture cluster remains overrepresented.
-Nimble's continued-adapter optimization remains unmeasured on GB10.
-
-The native full Ettin-1B cost arm now also passes on GB10 with the service
-stopped: 0.628 seconds/update at 512 tokens and 1.055 at 2,048, saving and
-reloading all 1.031 billion FP32 parameters with matching logits. A 32 GiB
-allocator cap succeeds after the earlier 20 GiB cap failed. This strengthens
-the case for retaining an encoder in matched SHR training; it provides no
-untuned five-relation accuracy estimate. Its fixed task would learn the rules
-from supervised examples rather than receive the full v26 prompt every time.
-
-Decider-4b's native NF4 v2.1 path gives 45/70 teacher agreement and 28/35
-reversals, versus 42/70 and 30/35 after rotation; 58/70 decisions survive.
-Its gap concentrates in broad Culture containment, alongside activity/product
-and directional errors. Its merged-checkpoint LoRA/save/fresh-reload path passes
-on GB10: 0.613 seconds/update at 512 tokens and 2.241 at 2,048, with 32.46 million
-FP32 adapter parameters. It remains a useful cheap training comparison, below
-the 9B decision warm starts on these diagnostics. The cheaper inference and
-training path alone does not establish adequate SHR quality.
+The literature below retains Kev-27B v2, Gemma 4 31B/26B-A4B and larger sparse
+foundations as possible escalation candidates. A 96GB ceiling is not a
+requirement. Their published general benchmarks alone are insufficient reason
+to expand the local comparison before matched SHR training resolves the
+compact models' scope errors. No final student, real SHR fit, paid run or
+release-plan decision is made here. Exact experiment identities, failures,
+case reviews, test results and capacity hashes are in
+[student preparation](SHR-STUDENT-PREPARATION.md).
 
 ## Project constraints and task meaning
 
