@@ -297,6 +297,52 @@ parity check made no model calls. The current 12,026-row/8,192-token Nimble
 release replaces the initial report's attribution of the original smaller
 release. No published score is silently reassigned to the new checkpoint.
 
+### Current Nimble native comparison
+
+The pinned v3-12026 Nimble adapter completed all 70 v26 cases with its native
+schema builder and NF4 Qwen3.5-9B instruct foundation. Every answer is valid
+in one attempt; reasons are empty by design. This is a published-checkpoint
+comparison, not continued SHR training.
+
+| Nimble native schema readout | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Original option order | 29/40; 15/20 | 6/8; 4/4 | 21/22; 10/11 | 56/70; 29/35 |
+| Rotated option order | 28/40; 14/20 | 6/8; 4/4 | 17/22; 6/11 | 51/70; 24/35 |
+
+All 70 rotated answers are also valid in one attempt. The two orders preserve
+61/70 decisions: 35/40 original, 8/8 scope and 18/22 transfer. Native rotation
+experiments use the first order as baseline; the teacher-baseline views reuse
+all 70 rotated answers with zero new attempts. This is more stable than the
+chat-model letter controls but still introduces directional inconsistencies.
+The original order's median full-vocabulary code mass is 0.9986, with all
+unrestricted top tokens among the five allowed letters. Output-format failure
+does not explain these original-order semantic disagreements. Full native schema
+inputs range from 3,443 to 3,533 tokens; median reported inference is 1.62 seconds.
+This warmed diagnostic rate is not deployment throughput or a training forecast.
+
+Agent reviews reject `neither` for Music versus an unidentified `#coffeechain`,
+and the parent link placing unrestricted Cooking below Kitchen work. The latter
+assumption fails for outdoor cooking, including the supplied rocket-stove
+context. It also reverses the Coffee/Coffee drinking direction and treats two
+unrestricted Food subjects asymmetrically. The strong transfer count includes
+the related Culture cluster; these remain development evidence, not independent
+gold examples. The rotated order is retained without selecting the better one.
+
+Native experiments are `nimble9b-{original,scope,transfer}-v1`. Full reports,
+source receipts and agent reviews remain ignored. The source-bound native
+builder treats context as data; v26 is supplied as context and a separate
+question directs applying those rules to the final input. This interface is
+different from Qwen/Gemma chat and Kev's pointer state. Exact adapter tensors
+and all 70 tokenizer inputs/candidate IDs were verified before inference.
+Continued optimization of this particular adapter is not yet measured; the
+verified native warm-start optimization remains Kev's.
+
+Native rotation experiments are `nimble-options-rotate-*-v1`; teacher-baseline
+views are `nimble-options-rotate-teacher-*-v1`. Pinned synthetic capacity
+configurations also now cover decider-4b and Qwen3.8-27B. Their measurements
+remain pending at this checkpoint; configuration validation is not a passed
+training or quality test.
+
 ### Verified Kev capacity path
 
 The full native NF4/LoRA/head check passed at 512 and 2,048 tokens with the

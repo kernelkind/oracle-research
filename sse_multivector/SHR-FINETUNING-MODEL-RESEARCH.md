@@ -87,6 +87,15 @@ than choosing the more favorable one; syntax and code compliance may change
 with SHR training. Native decision models trained on conditional-code loss
 should not be judged by full-vocabulary code mass alone.
 
+The current Nimble native NF4 schema path gives 56/70 agreement and 29/35
+reversals. Rotation gives 51/70 and 24/35, with 61/70 decisions unchanged.
+It handles the related Culture transfer cluster well but still misses an
+unidentified hashtag and assumes Cooking lies below Kitchen work. Its original
+allowed-code mass is high, so those errors are not explained by ignoring the
+letter output format. These results retain Nimble as a useful alternative
+warm start, below Kev's current diagnostic lead; Kev's order check is pending.
+Nimble's continued-adapter optimization remains unmeasured on GB10.
+
 ## Project constraints and task meaning
 
 The project needs useful automatically constructed subject hierarchies for

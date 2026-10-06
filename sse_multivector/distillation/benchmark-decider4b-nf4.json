@@ -1,0 +1,23 @@
+{
+  "model": "Mapika/decider-4b",
+  "revision": "eb5fbdfc9448473ec25e399882912863afbdb70e",
+  "architecture": "causal_lm",
+  "method": "lora",
+  "quantization": "nf4",
+  "lengths": [
+    512,
+    2048
+  ],
+  "train_batch_size": 1,
+  "inference_batch_sizes": [
+    1,
+    8
+  ],
+  "steps": 4,
+  "warmup_steps": 1,
+  "repetitions": 5,
+  "learning_rate": 2e-05,
+  "memory_budget_gib": 12,
+  "reserve_gib": 8,
+  "seed": 17
+}
