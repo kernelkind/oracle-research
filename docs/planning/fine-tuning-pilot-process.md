@@ -18,8 +18,9 @@ The image is published and verified private. The preparation failed: Qwen passed
 main baseline or training started. All 86 available files (4.35 GB) were retrieved and independently rehashed.
 Preliminary charges are **$1.974** against the original $285 total. Local repairs
 pass 94 VM tests and six native tokenizer preflights; one VM tokenizer test was
-skipped and covered by the separate preflights. GPU checks remain. No replacement
-is running. Semantic review remains open.
+skipped and covered by the separate preflights. The corrected image is published
+and verified private. GPU checks remain. GPU execution has not started. Semantic review
+remains open.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,

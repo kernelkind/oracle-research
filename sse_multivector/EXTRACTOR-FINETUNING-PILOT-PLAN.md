@@ -2132,6 +2132,17 @@ global baseline gate and 25% headroom once; they do not measure current throughp
 or bound runtime. The replacement experiment allowance is at most **$281**. Review planning
 uses 89 hours at the $3.10/hour ceiling plus transfer quantities; this creates
 no automatic stop or deletion.
+
+The corrected VM export is published and verified private at
+`sha256:c376ec124faabd71c018e52044faf9ee6bbc4b02b6d7a48bf90f1cbfa8f806e5`.
+The exported archive is `a198d81a029af0449137ba81d7744607a5e7fbc79960ce5144bb63cfde940efd`;
+all filesystem layers, runtime defaults and 15 source hashes match the passed VM.
+Docker export normalizes empty metadata fields; execution settings are identical.
+Read-only pulling succeeds and anonymous manifest access returns HTTP 401.
+New frozen package manifest:
+`8e7018275fa7cbdc3f05231d6c676ae5049daf9e8f30e5bb378e07038f19f50a`.
+The replacement has not been created. Evidence is under
+`target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous
 observation continues through complete local retrieval/review and explicit

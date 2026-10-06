@@ -1472,6 +1472,13 @@ timing to 53–83 hours, with a 93-hour sensitivity case; projected replacement
 costs are $159–248 / $279 at the saved $2.99/hour quote. Including the earlier
 preliminary bill, those scenarios fit the original $285 total. Current server-card
 throughput and student answer lengths remain unmeasured.
+
+The corrected VM export is published privately as
+`sha256:c376ec124faabd71c018e52044faf9ee6bbc4b02b6d7a48bf90f1cbfa8f806e5`.
+Its filesystem layers, runtime settings and all 15 source hashes match the VM;
+Docker export normalizes empty metadata defaults without changing execution.
+Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  No
+replacement is running yet; there is no automatic time/budget stop or deletion.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete
