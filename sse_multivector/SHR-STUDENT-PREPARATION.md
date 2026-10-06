@@ -7,6 +7,45 @@ SHR-single-v26 remains the user-approved prompt reference. No final student,
 new prompt, SHR teacher labels, paid run, or release-plan decision is approved
 by these preparation results. See [model research](SHR-FINETUNING-MODEL-RESEARCH.md).
 
+## Authorized provisional v26 comparison
+
+The user subsequently authorized comparing candidate behavior on the existing
+v26 diagnostic cases and checking training support for additional promising
+checkpoints. This phase is local and provisional. It does not require completed
+SHR training labels. Untuned encoders with a new SHR head cannot give meaningful
+five-relation predictions; their existing capacity checks remain useful.
+
+The comparison uses Qwen3.5-9B instruct, Gemma-4-12B-it, and Kev-9B's native
+pointer head with its published adapter. All use explicit NF4 loading while the
+separate serving process remains resident. Each receives the unchanged saved
+SHR-single-v26 prompt. Kev additionally receives a configured choice question
+and returns the highest-scoring native option with an empty diagnostic reason.
+That different readout contract and its probabilities must remain visible.
+
+The selected existing experiments are `v26-regression-original` (40 cases),
+`v26-regression-scope` (8) and `v26-regression-transfer` (22), in the read-only
+`oracle-mvp-shr-single-pair-v1/target/shr-single-iteration-v1/` worktree. They
+contain 70 directed cases / 35 reversal pairs per checkpoint. They are prompt
+development diagnostics, separate from the ASv6.100 split. The old teacher
+answers are comparison evidence, not semantic gold. No ASv6.100 final-test
+records, new teacher calls or validation gradients are involved.
+
+Preparation uses native `experiment.py prepare --from` with the owned local
+runner; `run`, `show` and `review` retain native provenance and case evidence.
+Source configurations are in `distillation/diagnostic-*.json`; model weights,
+review artifacts and upstream source snapshots stay ignored under
+`target/shr-student-diagnostics-v1/`. Qwen instruct is pinned to `c202236`,
+Gemma to `707f0a3`, Kev's adapter to `db029f0`, and its Qwen base to `68c46c4`;
+the configurations retain full immutable revisions. Kev source is pinned to
+GitHub `5e42a7a` with an implementation hash. This verifies a composed native
+NF4 path in our environment, not upstream's different declared Torch environment.
+
+At the transport checkpoint, all 203 shared experiment/extraction tests passed
+with six optional skips, and all four local HTTP integration tests passed.
+Those tests exercise actual preparation, CLI execution, exact prompt/schema
+preservation, receipt reuse, invalid output and identity rejection. Inference
+and additional training measurements are pending at this checkpoint.
+
 ## Dataset audit
 
 The immutable ASv6.100 bundle is at

@@ -374,6 +374,26 @@ or provider acceptance. User approval and the repository spending rules still
 apply before `run`; preparing an experiment does not authorize spending.
 
 The general `run-model.sh` transport remains available to non-experiment callers.
+Local weights use the same experiment workflow with `--provider local`,
+`--transport http`, `--runner-binary sse_multivector/run-local-model.sh` and
+`--reasoning-effort off`. Set `LOCAL_MODEL_URL` to an owned HTTP loopback server
+with an explicit port. The local client preserves the exact rendered prompt,
+schema, model identity and raw response in native receipts. It makes one
+request, validates completed JSON against the schema, and retains failures.
+It has no authentication or paid fallback. A loopback SSH tunnel can connect
+an owned remote execution checkout without exposing its model server.
+
+`python3 -m sse_multivector.local_model serve --config CONFIG --port PORT`
+loads pinned weights with a declared process memory budget and system reserve.
+The causal-LM backend uses native chat templates and greedy decoding, without
+input truncation. The optional pointer backend checks its pinned upstream
+implementation and adapter, preserves the complete prompt as state, and records
+native option probabilities. Its configured empty reason field is not generated
+reasoning. The model name binds the checkpoint revision and configuration hash;
+the experiment also freezes local transport/loader code hashes. Local runs need
+the isolated environment's `jsonschema` package. Quantized output is evidence
+for that precision and input/readout contract only.
+
 For OpenRouter experiments, `run --max-cost-usd N --max-request-cost-usd M`
 can bound total experiment spending without imposing an output-token limit.
 Both arguments are required together. The caller must verify M against the
@@ -513,7 +533,7 @@ python3 sse_multivector/experiment.py prepare experiments/E2 \
   --from experiments/E1 --prompt prompts/P2.txt --prompt-id P2
 ```
 
-Optional `--model`, `--reasoning-effort`, `--provider`, `--concurrency` and
+Optional `--model`, `--runner-binary`, `--reasoning-effort`, `--provider`, `--concurrency` and
 `--max-output-tokens` override only the stated settings during preparation.
 Add `--only CASE_ID` once per case to prepare a subset, without copying inputs
 or rerunning the baseline. Only selected cases and their matching saved baseline

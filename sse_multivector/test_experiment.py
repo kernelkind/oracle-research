@@ -16,6 +16,17 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_local_provider_preserves_native_experiment_receipts(self):
+        spec = json.loads(self.spec.read_text())
+        spec['runner'].update(provider='local', transport='http', reasoning_effort='off', max_output_tokens=32)
+        self.write('spec.json', spec)
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_RESULT_OVERRIDE': '{"transport":"http"}'})
+        shown = self.show()
+        self.assertEqual(shown['summary']['valid'], 2)
+        self.assertEqual(shown['settings']['provider'], 'local')
+        self.assertEqual(len(self.calls()), 2)
+
     def test_parent_policy_comparison_has_an_offline_cli(self):
         result = self.cli("compare-parent-policies", "missing-export", "policy-views", ok=False)
         self.assertNotIn("invalid choice", result.stderr)

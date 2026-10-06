@@ -194,6 +194,9 @@ def prepare(args):
         )
         if getattr(args, k) is not None
     }
+    if getattr(args, 'runner_binary', None) is not None:
+        overrides['runner_binary'] = str(engine._resolve_executable(
+            args.runner_binary, 'runner_binary', Path.cwd()))
     setup["runner"] = {**setup["runner"], **overrides}
     if args.prompt:
         if not args.prompt_id:
@@ -302,6 +305,10 @@ def prepare(args):
                   if Path(__file__).with_name(name).exists()),
             )
         }
+        if config.provider == 'local':
+            for name in ('local_model.py', 'local_weight_model.py', 'distillation_run.py'):
+                code = Path(__file__).with_name(name)
+                plan['code'][name] = engine._sha256_file(code)
         if plan["dataset"]["adapter"] in {"bounded_parent_guides", "bounded_parent_comparisons"}:
             for name in ("parent_guide_measurement.py", "parent_guide_workflow.py",
                          "ancestor_cosine_probe.py"):
@@ -1238,11 +1245,12 @@ def parser():
     p.add_argument("--repeat", action="store_true")
     p.add_argument("--history-root", type=Path)
     p.add_argument("--model")
+    p.add_argument("--runner-binary", help="override the executable transport while retaining exact saved cases")
     p.add_argument("--reasoning-effort")
-    p.add_argument("--provider", choices=("openai-codex", "openrouter"))
+    p.add_argument("--provider", choices=("openai-codex", "openrouter", "local"))
     p.add_argument("--concurrency", type=int)
     p.add_argument("--max-output-tokens", type=int)
-    p.add_argument("--transport", choices=("sse", "websocket"),
+    p.add_argument("--transport", choices=("sse", "websocket", "http"),
                    help="explicit transport; websocket is subscription-only, without fallback")
     p.add_argument(
         "--import-config",
