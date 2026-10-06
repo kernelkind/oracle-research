@@ -2408,9 +2408,19 @@ checks head gradients separately, then compares native/fused adapter gradients
 using the identical incoming head gradient. It adds a relative L2 check using
 the existing rtol, so absolute tolerance cannot hide corrupted tiny gradients.
 Both new production-path regressions failed before repair and pass afterward;
-all five fused-loss tests pass. Full VM verification and actual CUDA prep are
-still required. Prompts, data, models and training/evaluation recipe are unchanged.
-Evidence: `target/distillation-pilot-v1/moe-gradient-diagnostic-20261006/`.
+all five fused-loss tests pass. Full VM validation now passes: 10 candidate,
+46 workflow, 48 deployment, four cache and four explicit replacement/handoff
+checks; all four deployment skips are covered separately. Candidate tokenizer
+preflight uses verified offline metadata. Caching reuses passed stages; the exact
+VM export and refreshed package are published privately and verified, at image
+digest `afa90bc64233b227da5db36f1336d7395138d9528bfb8c0d3a7dadc5f7256bad`.
+Actual CUDA prep remains required.
+The recorded resource rate was $2.8139/hour. Archive verified diagnostic
+work, reuse the model cache and start fresh pilot adapters after all three CUDA
+preps and all three baselines pass. No automatic stop or deletion. Prompts, data,
+models and training/evaluation recipe are unchanged. Evidence:
+`target/distillation-pilot-v1/moe-gradient-diagnostic-20261006/` and
+`target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/`.
 
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
