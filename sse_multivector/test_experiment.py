@@ -16,6 +16,27 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_relation_diagnostics_pairs_actual_inputs_and_counts_relation_only_agreement(self):
+        from sse_multivector.experiment import relation_diagnostics
+        def case(name, a, b, label, prior=None, status='valid'):
+            return {'id': name, 'inputs': {'INPUT_JSON': json.dumps({'A': [a], 'B': [b]})},
+                    'status': status, 'parsed': {'relation': label, 'reason': name},
+                    'baseline': {'status': 'valid', 'parsed': {'relation': prior, 'reason': 'Different'}}}
+        rows = [case('arbitrary-1', 'Animals', 'Cats', 'a_parent_of_b', 'a_parent_of_b'),
+                case('arbitrary-2', 'Cats', 'Animals', 'b_parent_of_a', 'b_parent_of_a'),
+                case('misleading-forward', 'Music', 'Jazz', 'a_parent_of_b', 'a_parent_of_b'),
+                case('different-id', 'Jazz', 'Music', 'a_parent_of_b', 'b_parent_of_a'),
+                case('self', 'Food', 'Food', 'equivalent'),
+                case('failed', 'Steel', 'Forks', 'neither', 'neither', status='failed'),
+                case('valid-companion', 'Forks', 'Steel', 'neither', 'neither')]
+        result = relation_diagnostics(rows)
+        self.assertEqual(result['baseline_comparable'], 5)
+        self.assertEqual(result['baseline_agree'], 4)
+        self.assertEqual(result['reversal_comparable'], 2)
+        self.assertEqual(result['reversal_consistent'], 1)
+        self.assertEqual(len(result['reversal_pairs']), 3)
+        self.assertNotIn('self', [name for p in result['reversal_pairs'] for name in p['cases']])
+
     def test_local_provider_preserves_native_experiment_receipts(self):
         spec = json.loads(self.spec.read_text())
         spec['runner'].update(provider='local', transport='http', reasoning_effort='off', max_output_tokens=32)

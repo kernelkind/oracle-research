@@ -389,10 +389,20 @@ The causal-LM backend uses native chat templates and greedy decoding, without
 input truncation. The optional pointer backend checks its pinned upstream
 implementation and adapter, preserves the complete prompt as state, and records
 native option probabilities. Its configured empty reason field is not generated
-reasoning. The model name binds the checkpoint revision and configuration hash;
+reasoning. `local_model model-name --config CONFIG` prints the same identity
+without loading weights. A pointer model names its learned adapter and revision;
+a causal LM names its foundation checkpoint. Both bind the configuration hash;
 the experiment also freezes local transport/loader code hashes. Local runs need
 the isolated environment's `jsonschema` package. Quantized output is evidence
 for that precision and input/readout contract only.
+
+For completed direct five-relation answers, `show --json` includes
+`relation_diagnostics`: relation-only teacher agreement/confusion and exact
+input A/B reversal consistency. Different reason strings do not affect those
+counts. Reversals match the supplied groups, including contexts and order,
+rather than guessing from case IDs. Failed outputs, missing partners, repeated
+ordered inputs and self-identical groups do not establish consistency. These
+counts are diagnostics; teacher agreement is not an accuracy claim.
 
 For OpenRouter experiments, `run --max-cost-usd N --max-request-cost-usd M`
 can bound total experiment spending without imposing an output-token limit.

@@ -102,10 +102,16 @@ def main():
     serve = commands.add_parser('serve')
     serve.add_argument('--config', type=Path, required=True)
     serve.add_argument('--port', type=int, required=True)
+    name = commands.add_parser('model-name', help='print the exact configuration-bound checkpoint identity without loading weights')
+    name.add_argument('--config', type=Path, required=True)
     args = parser.parse_args()
     if args.command == 'serve':
         from sse_multivector.local_weight_model import serve
         serve(args.config, args.port)
+        return
+    if args.command == 'model-name':
+        from sse_multivector.local_weight_model import checkpoint_name
+        print(checkpoint_name(json.loads(args.config.read_text()), hashlib.sha256(args.config.read_bytes()).hexdigest()))
         return
     result = call(json.load(sys.stdin), os.environ['LOCAL_MODEL_URL'])
     print(json.dumps(result, ensure_ascii=False, allow_nan=False))

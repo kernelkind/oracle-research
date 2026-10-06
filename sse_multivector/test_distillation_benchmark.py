@@ -47,9 +47,59 @@ class DistillationBenchmarkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "causal"):
             distillation_benchmark.validate_config(config)
 
+    def test_pointer_training_requires_its_pinned_native_configuration(self):
+        config = {**self.config(), 'architecture': 'pointer', 'method': 'lora',
+                  'quantization': 'nf4', 'pointer_config': 'diagnostic-kev9b.json'}
+        distillation_benchmark.validate_config(config)
+        del config['pointer_config']
+        with self.assertRaisesRegex(ValueError, 'pointer_config'):
+            distillation_benchmark.validate_config(config)
+
 
 @unittest.skipUnless(os.environ.get("RUN_BENCHMARK_GPU_TESTS") == "1", "explicit CUDA integration run")
 class BenchmarkGPUIntegrationTests(unittest.TestCase):
+    def test_pointer_optimization_checkpoints_the_extracted_quantized_backbone(self):
+        import sys
+        import torch
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from transformers import Qwen2Config, Qwen2ForCausalLM
+        from peft import LoraConfig, get_peft_model
+        from sse_multivector.distillation_run import load_model, read_json, sha256
+        source = read_json(Path(__file__).parent / 'distillation/diagnostic-kev9b.json')
+        upstream = Path(source['upstream_path'])
+        self.assertEqual(sha256(upstream/'kev/model.py'), source['upstream_model_sha256'])
+        sys.path.insert(0, str(upstream))
+        from kev.model import PointerHead
+        self.assertTrue(torch.cuda.is_available())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            tiny = Qwen2ForCausalLM(Qwen2Config(vocab_size=2048, hidden_size=64,
+                intermediate_size=128, num_hidden_layers=2, num_attention_heads=4,
+                num_key_value_heads=2, max_position_embeddings=256))
+            tiny.save_pretrained(root/'base')
+            del tiny
+            config = {**DistillationBenchmarkTests().config(), 'model': str(root/'base'),
+                'architecture': 'pointer', 'method': 'lora', 'quantization': 'nf4',
+                'lengths': [32], 'inference_batch_sizes': [1, 2], 'steps': 2,
+                'memory_budget_gib': 2, 'pointer_config': 'pointer.json'}
+            write_json(root/'pointer.json', {**source, **{k: config[k] for k in
+                       ('model', 'revision', 'quantization', 'memory_budget_gib', 'reserve_gib')}})
+            write_json(root/'config.json', config)
+            loaded = []
+            def native_pointer(path):
+                base = load_model(dict(config, device='cuda', max_length=32))
+                model = get_peft_model(base.model, LoraConfig(task_type='FEATURE_EXTRACTION',
+                                      target_modules='all-linear', r=16, lora_alpha=32))
+                loaded.append(model)
+                return SimpleNamespace(model=model, head=PointerHead(64, dp=16).to('cuda'))
+            with patch('sse_multivector.local_weight_model.LocalWeights', side_effect=native_pointer):
+                result = distillation_benchmark.run(root/'config.json', root/'benchmark')
+            self.assertTrue(result['complete'])
+            self.assertTrue(result['reload_matches'])
+            self.assertTrue(all(m.is_gradient_checkpointing for m in loaded),
+                            'extracted NF4 backbones must checkpoint training activations')
+
     def test_nf4_counts_logical_parameters_and_verifies_a_real_checkpoint(self):
         import torch
         from transformers import Qwen2Config, Qwen2ForCausalLM

@@ -22,21 +22,27 @@ def validate_config(config):
     fields = {"model", "revision", "architecture", "method", "lengths", "train_batch_size",
               "inference_batch_sizes", "steps", "warmup_steps", "repetitions", "learning_rate",
               "memory_budget_gib", "reserve_gib", "seed"}
-    if not fields <= set(config) <= fields | {"quantization"}:
+    if not fields <= set(config) <= fields | {"quantization", "pointer_config"}:
         raise ValueError("unexpected or missing benchmark configuration fields")
     if not re.fullmatch(r"[0-9a-f]{40}", config["revision"]):
         raise ValueError("model revision must be an immutable commit")
-    if config["architecture"] not in {"encoder", "causal_lm"} or config["method"] not in {"full", "lora"}:
-        raise ValueError("expected encoder/causal_lm and full/lora")
-    if config["architecture"] == "causal_lm" and config["method"] != "lora":
-        raise ValueError("causal LM benchmark requires LoRA")
+    if config["architecture"] not in {"encoder", "causal_lm", "pointer"} or config["method"] not in {"full", "lora"}:
+        raise ValueError("expected encoder/causal_lm/pointer and full/lora")
+    if config["architecture"] in {"causal_lm", "pointer"} and config["method"] != "lora":
+        raise ValueError("causal LM and pointer benchmarks require LoRA")
+    if (config['architecture'] == 'pointer') != ('pointer_config' in config):
+        raise ValueError('pointer_config is required only for native pointer training')
+    if 'pointer_config' in config and (not isinstance(config['pointer_config'], str) or not config['pointer_config']):
+        raise ValueError('pointer_config must name the pinned native configuration')
     quantization = config.get("quantization", "none")
-    if quantization not in {"none", "nf4"} or quantization != "none" and config["architecture"] != "causal_lm":
-        raise ValueError("quantization must be none, or nf4 for causal LoRA")
+    if quantization not in {"none", "nf4"} or quantization != "none" and config["architecture"] not in {"causal_lm", "pointer"}:
+        raise ValueError("quantization must be none, or nf4 for causal/pointer LoRA")
     for name in ("lengths", "inference_batch_sizes"):
         values = config[name]
         if not isinstance(values, list) or not values or any(type(n) is not int or n <= 0 for n in values):
             raise ValueError(f"{name} must contain positive integers")
+    if config['architecture'] == 'pointer' and min(config['lengths']) < 7:
+        raise ValueError('pointer lengths require five distinct option positions and a decision position')
     for name in ("train_batch_size", "steps", "warmup_steps", "repetitions"):
         if type(config[name]) is not int or config[name] <= 0:
             raise ValueError(f"{name} must be a positive integer")
@@ -62,7 +68,7 @@ def admit(config, available):
 def run(config_path, output):
     import torch
     from transformers import AutoConfig, AutoModelForSequenceClassification
-    from peft import LoraConfig, PeftModel, get_peft_model
+    from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
 
     config_path, output = Path(config_path).resolve(), Path(output).resolve()
     config = read_json(config_path)
@@ -102,7 +108,34 @@ def run(config_path, output):
                      lora_target_modules="all-linear", lora_rank=16, lora_alpha=32,
                      gradient_checkpointing=True)
 
+    pointer = None
+
     def load(checkpoint=None):
+        nonlocal pointer
+        if config['architecture'] == 'pointer':
+            from sse_multivector.local_weight_model import LocalWeights
+            path = (config_path.parent / config['pointer_config']).resolve()
+            native = read_json(path)
+            if (native['kind'] != 'pointer' or any(native[k] != config[k] for k in
+                    ('model', 'revision', 'quantization', 'memory_budget_gib', 'reserve_gib'))):
+                raise ValueError('pointer source or resource binding differs from benchmark')
+            report['pointer_config_sha256'] = sha256(path)
+            report['code_sha256']['local_weight_model.py'] = sha256(Path(__file__).with_name('local_weight_model.py'))
+            report['pointer_upstream_model_sha256'] = native['upstream_model_sha256']
+            pointer = LocalWeights(path)
+            pointer.model = prepare_model_for_kbit_training(pointer.model, use_gradient_checkpointing=True)
+            if checkpoint:
+                pointer.model.delete_adapter('default')
+                pointer.model.load_adapter(checkpoint, adapter_name='default', is_trainable=True)
+                saved = torch.load(checkpoint / 'head.pt', map_location='cpu', weights_only=True)
+                if saved['source_config_sha256'] != sha256(path):
+                    raise ValueError('saved pointer head source binding differs')
+                pointer.head.load_state_dict(saved['head'], strict=True)
+                pointer.head.temperature = saved['temperature']
+            pointer.model.set_adapter('default')
+            pointer.model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+            pointer.model.config.use_cache = False
+            return pointer.model
         if config["architecture"] == "causal_lm":
             return subject_training_model(lm_config, checkpoint)
         options = dict(num_labels=5, dtype=torch.float32, device_map={"": "cuda"},
@@ -128,6 +161,12 @@ def run(config_path, output):
 
     def logits(inputs):
         with torch.autocast("cuda", dtype=torch.bfloat16):
+            if pointer is not None:
+                h = model(**inputs).last_hidden_state.float()
+                size, length, width = h.shape
+                ends = torch.linspace(1, length - 2, 5, device='cuda').long()
+                owner = torch.arange(size, device='cuda').repeat_interleave(5)
+                return pointer.head.many(h[:, -1], h[:, ends].reshape(-1, width), owner).reshape(size, 5)
             if config["architecture"] == "encoder":
                 return model(**inputs).logits
             # Qwen's native one-position projection avoids projecting the whole
@@ -139,18 +178,28 @@ def run(config_path, output):
         start = sync_time()
         model = load()
         report["load_seconds"] = sync_time() - start
+        report['gradient_checkpointing'] = model.is_gradient_checkpointing
         limit = getattr(model.config, "max_position_embeddings", None)
         if limit is not None and max(config["lengths"]) > limit:
             raise ValueError("requested complete sequence exceeds model position limit")
         parameters = [p for p in model.parameters() if p.requires_grad]
+        if pointer is not None:
+            parameters += list(pointer.head.parameters())
         stored = sum(p.numel() for p in model.parameters())
         # PEFT accounts for the packed storage of four-bit weights.
         total = model.get_nb_trainable_parameters()[1] if config["method"] == "lora" else stored
+        if pointer is not None:
+            total += sum(p.numel() for p in pointer.head.parameters())
+            stored += sum(p.numel() for p in pointer.head.parameters())
         report["parameters"] = {"total": total, "stored_tensor_elements": stored,
                                 "trainable": sum(p.numel() for p in parameters)}
+        if pointer is not None:
+            report['parameters']['pointer_head'] = sum(p.numel() for p in pointer.head.parameters())
         optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"])
         for length in config["lengths"]:
             model.train()
+            if pointer is not None:
+                pointer.head.train()
             inputs = batch(length, config["train_batch_size"])
             times, losses, warmup = [], [], []
             torch.cuda.reset_peak_memory_stats()
@@ -177,21 +226,29 @@ def run(config_path, output):
         optimizer.zero_grad(set_to_none=True)
         del optimizer, parameters, inputs, loss, norm
         model.eval()
+        if pointer is not None:
+            pointer.head.eval()
         probe = batch(min(config["lengths"]), 1)
         with torch.inference_mode():
             before = logits(probe).float().cpu()
         checkpoint = output / "checkpoint"
         start = sync_time()
         model.save_pretrained(checkpoint)
+        if pointer is not None:
+            torch.save({'head': pointer.head.state_dict(), 'temperature': pointer.head.temperature,
+                        'source_config_sha256': report['pointer_config_sha256']}, checkpoint / 'head.pt')
         report["save_seconds"] = sync_time() - start
         report["checkpoint_hashes"] = file_hashes(checkpoint)
         del model
+        pointer = None
         gc.collect()
         torch.cuda.empty_cache()
         start = sync_time()
         model = load(checkpoint)
         report["reload_seconds"] = sync_time() - start
         model.eval()
+        if pointer is not None:
+            pointer.head.eval()
         with torch.inference_mode():
             after = logits(probe).float().cpu()
         torch.testing.assert_close(after, before, rtol=1e-4, atol=1e-4)

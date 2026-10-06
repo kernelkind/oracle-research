@@ -14,6 +14,12 @@ from sse_multivector.distillation_benchmark import admit, available_memory
 from sse_multivector.distillation_run import load_model, read_json, sha256
 
 
+def checkpoint_name(config, config_sha256):
+    key = 'adapter' if config['kind'] == 'pointer' else 'model'
+    revision = config['adapter_revision'] if key == 'adapter' else config['revision']
+    return f'{config[key]}/{revision}/{config_sha256}'
+
+
 class LocalWeights:
     def __init__(self, path):
         import torch
@@ -27,7 +33,7 @@ class LocalWeights:
         torch.set_num_threads(4)
         total = torch.cuda.get_device_properties(0).total_memory
         torch.cuda.set_per_process_memory_fraction(min(1., c['memory_budget_gib'] * 2**30 / total))
-        self.name = f"{c['model']}/{c['revision']}/{self.config_sha256}"
+        self.name = checkpoint_name(c, self.config_sha256)
         self.tokenizer = AutoTokenizer.from_pretrained(c['model'], revision=c['revision'])
         model = load_model(dict(c, device='cuda', max_length=c['max_input_tokens'], efficient_attention=True))
         self.head = self.encoder = None
@@ -49,6 +55,9 @@ class LocalWeights:
             if c.get('trainable', False):
                 backbone = prepare_model_for_kbit_training(backbone, use_gradient_checkpointing=True)
             self.model = PeftModel.from_pretrained(backbone, adapter, is_trainable=c.get('trainable', False))
+            if c.get('trainable', False):
+                self.model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+                self.model.config.use_cache = False
             self.head = PointerHead(self.model.config.hidden_size, meta.get('head_dim', 256)).to('cuda')
             self.head.load_state_dict(meta['head'], strict=True)
             self.head.temperature = meta.get('temperature', 1.)

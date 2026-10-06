@@ -525,6 +525,61 @@ def generation_usage(config, manifest, selected, records, latest, files, reconci
             "sources": sources}
 
 
+def relation_diagnostics(cases):
+    """Compare five-way decisions and exact A/B reversals, without gold claims."""
+    inverse = {'equivalent': 'equivalent', 'a_parent_of_b': 'b_parent_of_a',
+               'b_parent_of_a': 'a_parent_of_b', 'neither': 'neither', 'uncertain': 'uncertain'}
+
+    def relation(case):
+        parsed = case.get('parsed')
+        value = parsed.get('relation') if isinstance(parsed, dict) else None
+        return value if case.get('status') == 'valid' and isinstance(value, str) and value in inverse else None
+
+    counts, confusion, by_input = Counter(), Counter(), {}
+    for case in cases:
+        value = relation(case)
+        if value is not None:
+            counts[value] += 1
+            prior = relation(case.get('baseline') or {})
+            if prior is not None:
+                confusion[prior, value] += 1
+        try:
+            data = json.loads(case['inputs']['INPUT_JSON'])
+            if set(data) != {'A', 'B'} or not all(isinstance(data[k], list) for k in ('A', 'B')):
+                continue
+            key = json.dumps([data['A'], data['B']], sort_keys=True, ensure_ascii=False)
+            reverse = json.dumps([data['B'], data['A']], sort_keys=True, ensure_ascii=False)
+        except (KeyError, TypeError, ValueError):
+            continue
+        by_input.setdefault(key, []).append((case, reverse))
+    if not counts:
+        return None
+    pairs, seen = [], set()
+    for key, rows in by_input.items():
+        if len(rows) != 1 or key in seen:
+            continue
+        case, reverse = rows[0]
+        other = by_input.get(reverse, [])
+        # Repeated ordered inputs and self-identical A/B groups are ambiguous;
+        # do not pick a partner by case ID or count self-agreement as evidence.
+        if key == reverse or len(other) != 1:
+            continue
+        seen.update((key, reverse))
+        values = [relation(case), relation(other[0][0])]
+        comparable = all(v is not None for v in values)
+        pairs.append({'cases': [case['id'], other[0][0]['id']], 'relations': values,
+                      'consistent': values[1] == inverse[values[0]] if comparable else None})
+    return {'interpretation': 'Teacher agreement and reversal consistency are diagnostic, not accuracy.',
+            'relation_counts': dict(counts),
+            'baseline_comparable': sum(confusion.values()),
+            'baseline_agree': sum(n for (a, b), n in confusion.items() if a == b),
+            'baseline_confusion': [{'baseline': a, 'candidate': b, 'count': n}
+                                   for (a, b), n in sorted(confusion.items())],
+            'reversal_comparable': sum(p['consistent'] is not None for p in pairs),
+            'reversal_consistent': sum(p['consistent'] is True for p in pairs),
+            'reversal_pairs': pairs}
+
+
 def report(directory, only=None, note_ids=None, *, generation_costs=False):
     directory = Path(directory).resolve()
     files = engine.ReceiptFiles()
@@ -690,6 +745,9 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
         "cases": cases,
         "baseline_only": sorted(set(baseline) - {c["id"] for c in cases}),
     }
+    diagnostics = relation_diagnostics(cases)
+    if diagnostics is not None:
+        result['relation_diagnostics'] = diagnostics
     execution_settings = directory / 'execution-settings.jsonl'
     if execution_settings.exists():
         with execution_settings.open() as f:

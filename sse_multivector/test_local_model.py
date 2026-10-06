@@ -68,6 +68,7 @@ class LocalModelTests(unittest.TestCase):
         shown = json.loads(self.cli('show', 'first', '--json').stdout)
         self.assertEqual(shown['summary']['valid'], 1)
         self.assertEqual(shown['cases'][0]['parsed']['relation'], 'neither')
+        self.assertEqual(shown['relation_diagnostics']['relation_counts'], {'neither': 1})
         self.cli('prepare', 'second', '--from', 'first', '--history-root', str(self.root),
                  '--runner-binary', str(Path(__file__).with_name('run-local-model.sh')))
         self.cli('run', 'second')

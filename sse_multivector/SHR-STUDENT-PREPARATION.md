@@ -46,6 +46,47 @@ Those tests exercise actual preparation, CLI execution, exact prompt/schema
 preservation, receipt reuse, invalid output and identity rejection. Inference
 and additional training measurements are pending at this checkpoint.
 
+The subsequent shared report adds relation-only baseline agreement/confusion
+and exact-input reversal diagnostics. All 215 shared workflow/local/benchmark
+tests passed with seven optional skips. Native GB10 tests first exposed that
+the existing loader selected Gemma-4's complete unified multimodal model;
+the corrected production loader selects `gemma4_unified_text`, remaps the
+saved language-model keys and checks all text weights. A tiny native unified
+checkpoint now reproduces its original text logits without audio/vision
+modules. These two checkpoint/identity tests passed on GB10.
+
+The first Gemma load was stopped when available memory crossed its reserve;
+its execution config also predated the frozen source config. It produced no
+student answers. The first Kev experiment rejected all 40 requests before
+inference because its execution config's memory-budget field differed, giving
+a different model identity. Those failed receipts remain unchanged. Corrected
+source files/configs are checked by hash before new calls. Kev's new native
+experiment names the learned adapter rather than the base model; its identity
+and request differ from the failed experiment. Failed cases are not resumed or
+automatically retried. No inference output from either failed path is scored.
+
+The capacity runner now supports native pointer heads alongside encoder and
+causal-LM paths. It measures synthetic five-option positions through the native
+batched pointer head, trains published LoRA weights plus the head, and verifies
+saved adapter/head reload logits. The shared pointer configuration binds the
+foundation, quantization, memory limits and upstream implementation. Its
+synthetic positions are capacity inputs, not SHR labels or a convergence test.
+Pinned capacity configurations cover Kev-9B and Gemma-4-12B-it at 512 and
+2,048 tokens. Full candidate measurements remain pending at this checkpoint.
+
+The first full Kev optimization exceeded its 12 GiB allocator cap before any
+completed updates. Extracting the backbone loses the outer LM's k-bit marker;
+PEFT's preparation therefore did not enable checkpointing automatically. A
+small native NF4/LoRA/pointer optimization and save/reload test reproduced
+disabled checkpointing. The production path now explicitly enables native
+checkpointing on that backbone with `use_reentrant=False` and disables its
+training cache. All eight capacity tests passed on GB10, including both native
+CUDA integration tests. The 44 production distillation tests also passed;
+the earlier combined run's sole error was the tiny GPU benchmark's admission
+while Kev inference was resident. Its separate nonresident rerun passed.
+The CPU-only Anvil check cannot run the Torch-dependent distillation class;
+that missing-package result is retained rather than counted as a pass.
+
 ## Dataset audit
 
 The immutable ASv6.100 bundle is at

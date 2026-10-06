@@ -650,9 +650,9 @@ def load_model(config, adapter=None):
     if config["device"] == "cuda" and architecture.model_type in ("qwen3_5", "qwen3_5_text"):
         # Fail on a broken CUDA dependency instead of silently using a slow fallback.
         from fla.ops.gated_delta_rule import chunk_gated_delta_rule, fused_recurrent_gated_delta_rule
-    if architecture.model_type in ("gemma4", "qwen3_5"):
+    if architecture.model_type in ("gemma4", "gemma4_unified", "qwen3_5"):
         options["config"] = architecture.get_text_config()
-        if architecture.model_type == "gemma4":
+        if architecture.model_type in ("gemma4", "gemma4_unified"):
             options["key_mapping"] = {r"^model\.language_model\.": "model."}
     if config["quantization"] == "nf4":
         options.update(device_map={"": config["device"]}, quantization_config=BitsAndBytesConfig(
