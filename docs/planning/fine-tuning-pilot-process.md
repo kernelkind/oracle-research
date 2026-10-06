@@ -84,12 +84,19 @@ checks; all four deployment skips are covered separately. Candidate tokenizer
 preflight uses verified offline metadata. Caching reuses passed stages; the exact
 VM export and refreshed package are published privately and verified, at image
 digest `afa90bc64233b227da5db36f1336d7395138d9528bfb8c0d3a7dadc5f7256bad`.
-Actual CUDA prep remains required. The planned replacement two-GPU prep→pilot configuration quotes **$2.8139/hour**, within the original $285 experiment maximum. Archive verified diagnostic
-work, reuse the model cache and start fresh pilot adapters after all three CUDA
-preps and all three baselines pass. No automatic stop or deletion. Prompts, data,
-models and training/evaluation recipe are unchanged. Evidence:
-`target/distillation-pilot-v1/moe-gradient-diagnostic-20261006/` and
-`target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/`.
+All three actual CUDA loss/head/adapter-gradient checks now pass, with zero
+backbone-gradient differences using the verified identical head gradient.
+The preparation passed Qwen and dense Gemma full prep. MoE stopped on its
+seven-note native generation-cache probe: **88.080 GiB reserved versus 88 GiB
+budget**, without OOM. **No pilot baseline or training started.** All **116 work files / 6.82 GB**, six preparation files, five sealed checkpoints and the three gradient-check reports were retrieved, independently rehashed and reviewed.  Preliminary charges were **$1.361**.  The corrected two-GPU configuration cost **$2.8139/hour**. Only MoE inference workspace changes **4 → 12 GiB**, consistently
+in prep and pilot; total inference budget stays 88 GiB and the widest predicted
+batch falls **seven → five**. Exact image, code, prompts, data, models and
+training recipe are unchanged. Package verification and native preparation pass;
+fresh full CUDA prep must confirm fit before baselines and pilot training.
+Archive all verified prior work and retain the model cache. No automatic stop
+or deletion. Evidence:
+`target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent
