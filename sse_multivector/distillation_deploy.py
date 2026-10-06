@@ -21,6 +21,7 @@ from sse_multivector.distillation_run import (load_data, read_json, sha256, writ
 CODE_ROOT = Path(__file__).resolve().parents[1]
 CODE_FILES = (
     "sse_multivector/distillation_deploy.py", "sse_multivector/distillation_run.py",
+    "sse_multivector/distillation_cache.py",
     "sse_multivector/distillation_data.py", "sse_multivector/extraction_pipeline.py",
     "sse_multivector/mask_positions.py", "sse_multivector/distillation/requirements.lock",
     "sse_multivector/distillation/requirements-gpu.lock",
@@ -88,7 +89,7 @@ def validate_gpu_assignments(assignments, names):
 
 
 def prepare(config_paths, output, timeout_seconds=None, through="report", preparation_configs=None,
-            gpu_assignments=None):
+            gpu_assignments=None, cache_manifest=None):
     """Copy only explicit inputs; no source code, credentials or host config."""
     if (timeout_seconds is not None and (type(timeout_seconds) is not int or timeout_seconds <= 0)
             or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation")):
@@ -97,6 +98,9 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
     if gpu_assignments is not None:
         validate_gpu_assignments(gpu_assignments, [Path(path).stem for path in config_paths])
     configurations = list(map(read_json, config_paths))
+    if cache_manifest is not None:
+        from sse_multivector.distillation_cache import bind
+        bind(read_json(cache_manifest), configurations)
     pilots = [c for c in configurations if "training_milestones" in c and "preparation" not in c]
     if pilots:
         shared = [{k: v for k, v in c.items() if k not in
@@ -165,6 +169,9 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
             job["preparation_runs"] = runs[len(config_paths):]
         if gpu_assignments is not None:
             job["gpu_assignments"] = gpu_assignments
+        if cache_manifest is not None:
+            shutil.copyfile(cache_manifest, staging / "model-cache.json")
+            job["cache_manifest"] = "model-cache.json"
         write_json(staging / "job.json", job)
         write_manifest(staging, staging / "manifest.json", "distillation-inputs")
         staging.rename(output)
@@ -182,6 +189,12 @@ def verify_package(package):
         raise ValueError("container code or dependencies differ from the prepared package")
     if "gpu_assignments" in job:
         validate_gpu_assignments(job["gpu_assignments"], [Path(path).stem for path in job["runs"]])
+    if "cache_manifest" in job:
+        from sse_multivector.distillation_cache import bind
+        if job["cache_manifest"] != "model-cache.json":
+            raise ValueError("invalid cache manifest path")
+        bind(read_json(package / job["cache_manifest"]),
+             [read_json(package / r) for r in job["runs"] + job.get("preparation_runs", [])])
     return job
 
 
@@ -247,6 +260,9 @@ def execute(package, output):
     previous = signal.signal(signal.SIGTERM, stop)
     previous_interrupt = signal.signal(signal.SIGINT, interrupt) if deadline is None else None
     try:
+        if "cache_manifest" in job:
+            from sse_multivector.distillation_cache import verify
+            verify(package / job["cache_manifest"], output / "cache-verification.json")
         if assignments and visible is not None and (len(visible.split(",")) <= max(assignments.values())
                 or any(not value.strip() for value in visible.split(","))):
             raise ValueError("GPU assignments exceed the inherited CUDA_VISIBLE_DEVICES")
@@ -278,6 +294,9 @@ def execute(package, output):
             config_path = root / "configs" / (name + ".json")
             write_json(config_path, config)
             env = {**os.environ, "PYTHONPATH": str(CODE_ROOT)}
+            if "cache_manifest" in job:
+                env.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
+                           HF_HUB_DISABLE_IMPLICIT_TOKEN="1")
             gpu = assignments.get(name)
             if gpu is not None:
                 env["CUDA_VISIBLE_DEVICES"] = bindings[gpu]
@@ -486,6 +505,8 @@ def main():
                                 help="paired prep recipe; verified prep continues into fresh pilot runs")
     prepare_parser.add_argument("--gpu-assignments", type=Path,
                                 help="JSON mapping each candidate name to its exclusive GPU index")
+    prepare_parser.add_argument("--cache-manifest", type=Path,
+                                help="required model files, verified offline before any GPU work")
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--timeout-seconds", type=int,
                                 help="optional execution deadline; omitted means no automatic stop")
@@ -510,7 +531,8 @@ def main():
     elif args.operation == "prepare":
         result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through,
                                              args.preparation_config,
-                                             read_json(args.gpu_assignments) if args.gpu_assignments else None)}
+                                             read_json(args.gpu_assignments) if args.gpu_assignments else None,
+                                             args.cache_manifest)}
     elif args.operation == "check-offer":
         offers = read_json(args.offers)
         if isinstance(offers, dict):

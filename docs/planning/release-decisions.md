@@ -1546,6 +1546,19 @@ container. Retain the volume. The two-card rental then reattaches it, verifies
 the cache without network downloads, and runs the full concurrent GPU prep
 before any pilot work. This changes setup scheduling; models, inputs, recipe
 and the existing combined spending limit stay fixed.
+**Download handoff implemented and VM-tested October 6:** pin 42 required files
+at the same revisions, totaling 169.81 GB, with size/content checksums and 32 GiB
+reserved for saved work. Retrieve and locally review download, file and volume
+evidence before deletion. The VM destroys the download container, retains its
+volume, then completes offline prep and fresh pilot execution with two workers.
+Missing/corrupt cache files block every worker; incomplete retrieved evidence
+blocks completion review. Host regressions pass 181 checks (16 VM-only skips);
+the rebuilt VM passes 109 checks, with the four checks executed
+separately and one optional native-tokenizer check skipped. All six
+configurations and data are unchanged. Evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/`. Actual Vast volume
+attachment, new private publication and full MoE CUDA confirmation remain
+pending; no paid resource was created for this implementation.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

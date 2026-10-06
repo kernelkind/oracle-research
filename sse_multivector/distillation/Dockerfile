@@ -34,6 +34,7 @@ COPY sse_multivector/distillation_run.py sse_multivector/distillation_data.py \
     sse_multivector/extraction_pipeline.py sse_multivector/mask_positions.py \
     sse_multivector/test_distillation_run.py sse_multivector/test_distillation_data.py \
     sse_multivector/distillation_deploy.py sse_multivector/test_distillation_deploy.py \
+    sse_multivector/distillation_cache.py sse_multivector/test_distillation_cache.py \
     sse_multivector/test_distillation_candidates.py \
     sse_multivector/distillation_vast.py sse_multivector/test_distillation_vast.py \
     /work/sse_multivector/

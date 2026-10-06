@@ -22,6 +22,32 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_one_gpu_download_workload_requires_volume_and_no_training(self):
+        from gte.full_build_package import write_manifest
+        settings, offer = quote()
+        settings['offer_equals']['num_gpus'] = offer['num_gpus'] = 1
+        settings['worker_timeout_seconds'] = None
+        settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary)
+            write_json(package / 'model-cache.json', {'version': 1, 'reserve_bytes': 0, 'models': [{
+                'model': 'fixture/cached', 'revision': 'a'*40, 'files': [{
+                    'path': 'config.json', 'size': 2, 'git_blob_sha1': 'b'*40}]}]})
+            write_json(package / 'job.json', {'cache_manifest': 'model-cache.json',
+                'timeout_seconds': None, 'code': deploy.code_hashes()})
+            write_manifest(package, package / 'manifest.json', 'distillation-model-cache')
+            image = settings['image_repository'] + '@sha256:' + '4'*64
+            spec = vast.make_cache_spec(settings, offer, package, image)
+            self.assertIn('sse_multivector.distillation_cache', spec['command'])
+            self.assertIn('download', spec['command'])
+            self.assertNotIn('distillation_deploy', spec['command'])
+            self.assertTrue(spec['resumable'])
+            self.assertIsNone(spec['limits']['work_seconds'])
+            self.assertEqual(spec['environment']['HF_HOME'], '/workspace/oracle-full-build/model-cache')
+            del settings['local_volume']
+            with self.assertRaisesRegex(ValueError, 'requires a local volume'):
+                vast.make_cache_spec(settings, offer, package, image)
+
     def test_volume_replacement_verifies_work_and_archives_old_launch_receipts(self):
         import argparse
         import importlib.util

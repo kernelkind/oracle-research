@@ -26,6 +26,7 @@ PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
     "test_distillation_run.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
     "test_distillation_candidates.py", "distillation_vast.py", "test_distillation_vast.py",
+    "distillation_cache.py", "test_distillation_cache.py",
     "distillation/vast-launch.json",
     "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
     "distillation/requirements-gpu.in", "distillation/requirements-gpu.lock",
@@ -188,6 +189,9 @@ docker run --rm --network distillation-local \\
   -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_PREFLIGHT_PACKAGE=/results/preflight-package -v "$result_dir":/results \\
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
   sse_multivector.test_distillation_deploy sse_multivector.test_distillation_vast
+docker run --rm --network distillation-local \\
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
+  sse_multivector.test_distillation_cache
 docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1
 # Replace an actual container while keeping its volume. Both operator phases
 # use the frozen shared runner over SSH and run with networking disabled.
@@ -210,6 +214,27 @@ docker run --rm --network distillation-local \\
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
   sse_multivector.test_distillation_deploy.SharedSSHTests.test_recover_volume_after_container_replacement
 docker logs distillation-target > "$result_dir/volume-replacement.log" 2>&1
+# Download over the real Hub client to a mounted volume, retrieve evidence,
+# destroy the container, then use only the retained cache for two-worker prep
+# and fresh pilot training. The replacement's Hub endpoint is unreachable.
+docker rm -f distillation-target
+docker volume rm "$recovery_volume"
+docker volume create "$recovery_volume"
+start_target -v "$recovery_volume":/workspace/oracle-full-build
+docker run --rm --network distillation-local \\
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_CACHE_STAGE=download -v "$result_dir":/results \\
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_download_models_on_volume_and_retrieve_evidence
+docker logs distillation-target > "$result_dir/cache-download-target.log" 2>&1
+docker rm -f distillation-target
+start_target -v "$recovery_volume":/workspace/oracle-full-build
+docker run --rm --network distillation-local \\
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_CACHE_STAGE=pilot -v "$result_dir":/results \\
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_cached_models_survive_replacement_and_run_two_worker_prep_and_pilot_offline
+docker logs distillation-target > "$result_dir/cache-pilot-target.log" 2>&1
 rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 docker save notedeck-distillation:local | gzip -1 > "$result_dir/container.tar.gz"
 """

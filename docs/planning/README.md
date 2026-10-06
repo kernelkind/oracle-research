@@ -122,7 +122,12 @@ Use a one-card rental on that machine to verify attachment and download all
 three pinned models onto the actual volume, approved October 6. Verify files
 and retrieve evidence before deleting the container; retain the volume for
 offline cache verification and full concurrent prep on two cards. This new
-download stage is planned; the frozen pilot workload is unchanged.
+download stage is implemented and its full handoff passes in the VM: verified
+local retrieval, actual container replacement, offline cache verification and
+prep→pilot with two workers. Missing/corrupt files block every worker before prep.
+The new packages preserve all six configurations and data. Private publication
+and actual Vast attachment/CUDA checks are next. Evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/`.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

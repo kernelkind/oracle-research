@@ -13,6 +13,49 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_missing_or_corrupt_download_cache_blocks_every_candidate(self):
+        import hashlib
+        from gte.full_build_package import write_manifest
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'fixture/cached', 'revision': 'a'*40, 'device': 'cpu'})
+            package = root / 'inputs'
+            deploy.prepare([config], package, through='preflight')
+            payload = b'complete weights'
+            write_json(package / 'model-cache.json', {'version': 1, 'reserve_bytes': 0, 'models': [{
+                'model': 'fixture/cached', 'revision': 'a'*40, 'files': [{
+                    'path': 'model.safetensors', 'size': len(payload),
+                    'sha256': hashlib.sha256(payload).hexdigest()}]}]})
+            job = read_json(package / 'job.json')
+            job['cache_manifest'] = 'model-cache.json'
+            write_json(package / 'job.json', job)
+            write_manifest(package, package / 'manifest.json', 'distillation-inputs')
+            cached = root / ('cache/hub/models--fixture--cached/snapshots/'+'a'*40+'/model.safetensors')
+            for state in ('missing', 'corrupt'):
+                if state == 'corrupt':
+                    cached.parent.mkdir(parents=True)
+                    cached.write_bytes(b'wrong weights!!!')
+                with patch.dict(os.environ, {'HF_HOME': str(root / 'cache')}), \
+                        patch.object(deploy, 'run_process', return_value=subprocess.CompletedProcess([], 0)) as child:
+                    with self.assertRaisesRegex(ValueError, 'cache verification failed'):
+                        deploy.execute(package, root / state)
+                    child.assert_not_called()
+                    self.assertEqual(read_json(root / state / 'deployment.json')['state'], 'failed')
+            cached.write_bytes(payload)
+            with patch.dict(os.environ, {'HF_HOME': str(root / 'cache')}), \
+                    patch.object(deploy, 'run_process', return_value=subprocess.CompletedProcess([], 0)) as child:
+                self.assertEqual(deploy.execute(package, root / 'valid')['state'], 'complete')
+                self.assertEqual(child.call_args.kwargs['env']['HF_HUB_OFFLINE'], '1')
+                self.assertEqual(child.call_args.kwargs['env']['TRANSFORMERS_OFFLINE'], '1')
+            wrong = read_json(package / 'model-cache.json')
+            wrong['models'][0]['revision'] = 'b'*40
+            write_json(root / 'wrong-cache.json', wrong)
+            with self.assertRaisesRegex(ValueError, 'models or revisions differ'):
+                deploy.prepare([config], root / 'wrong', cache_manifest=root / 'wrong-cache.json')
+
     def test_supervisor_identifies_the_lock_descriptor_inherited_by_the_controller(self):
         from vast import runner
         with tempfile.TemporaryDirectory() as temporary:
@@ -544,6 +587,92 @@ deploy.execute(Path({str(package)!r}), Path({str(output)!r}))
 
 @unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
 class SharedSSHTests(unittest.TestCase):
+    @unittest.skipUnless(os.environ.get('DISTILLATION_CACHE_STAGE') == 'download', 'requires the cache handoff rehearsal')
+    def test_download_models_on_volume_and_retrieve_evidence(self):
+        import hashlib
+        import socket
+        from gte.full_build_package import write_manifest
+        from sse_multivector.test_distillation_cache import fixture_hub
+        source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
+        model = Path(read_json(source / 'config.json')['model'])
+        files = {str(p.relative_to(model)): p.read_bytes() for p in model.rglob('*') if p.is_file()}
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'cache-handoff'
+        inputs = root / 'download-inputs'
+        inputs.mkdir(parents=True)
+        write_json(inputs / 'model-cache.json', {'version': 1, 'reserve_bytes': 0, 'models': [{
+            'model': 'fixture/cached', 'revision': 'a'*40, 'files': [
+                {'path': n, 'size': len(p), 'sha256': hashlib.sha256(p).hexdigest()} for n, p in files.items()]}]})
+        write_json(inputs / 'job.json', {'cache_manifest': 'model-cache.json',
+            'timeout_seconds': None, 'code': deploy.code_hashes()})
+        write_manifest(inputs, inputs / 'manifest.json', 'distillation-model-cache')
+        with socket.create_connection(('target', 22)) as connection:
+            address = connection.getsockname()[0]
+        with fixture_hub(files, '0.0.0.0') as (port, requests):
+            result = self.run_package(inputs, root / 'download-operation', local_volume=True,
+                download_only=True, environment={'HF_ENDPOINT': f'http://{address}:{port}', 'HF_HUB_DISABLE_XET': '1'})
+        receipt = read_json(result / 'volume.json')
+        self.assertTrue(receipt['write_read_verified'])
+        self.assertEqual(receipt['volume_identity']['id'], 881)
+        self.assertEqual(receipt['volume_identity']['machine_id'], 12)
+        report = read_json(result / 'verification.json')
+        self.assertEqual(len(report['files']), len(files))
+        self.assertTrue(all(r['verified'] for r in report['files']))
+        self.assertFalse(any('model.safetensors' in p['path'] for p in read_json(
+            root / 'download-operation/launch/retrieval-verification.json')['work_files']))
+        self.assertTrue(all(auth is None for method, p, auth in requests))
+        from sse_multivector import distillation_cache
+        self.assertTrue(distillation_cache.review_completion(inputs, root / 'download-operation')['complete'])
+        missing = result / 'verification.json'
+        saved = missing.read_bytes()
+        report['files'].pop()
+        write_json(missing, report)
+        with self.assertRaises(Exception):
+            distillation_cache.review_completion(inputs, root / 'download-operation')
+        missing.write_bytes(saved)
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_CACHE_STAGE') == 'pilot', 'requires the cache handoff rehearsal')
+    def test_cached_models_survive_replacement_and_run_two_worker_prep_and_pilot_offline(self):
+        from sse_multivector.distillation_run import load_data
+        cache_root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'cache-handoff'
+        old = cache_root / 'download-operation'
+        write_json(old / 'launch/destruction-confirmation.json', {'instance_id': 'offline-fixture',
+            'absent_from_complete_inventory': True, 'absence_observations': 2})
+        root = self.fixture_package('cached-pilot', {'model': 'fixture/cached', 'revision': 'a'*40,
+            'training_milestones': [1, 2, 3, 4], 'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'], 'subject_batching': {
+                'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}}, seconds=None, test_notes=True)
+        paths, preparations = [], []
+        for name in ('first', 'second'):
+            path = root / (name+'.json')
+            config = read_json(path)
+            data = load_data(config['data'])
+            prep = root / 'prep-configs' / (name+'.json')
+            write_json(prep, {**config, 'training_milestones': [2, 4], 'preparation': {
+                'max_new_tokens': 4, 'cache_fill_tokens': 16,
+                'train_note_ids': data['manifest']['train_note_ids'],
+                'evaluation_note_ids': data['manifest']['evaluation_note_ids']}})
+            paths.append(path)
+            preparations.append(prep)
+        package = root / 'cached-inputs'
+        deploy.prepare(paths, package, preparation_configs=preparations,
+            gpu_assignments={'first': 0, 'second': 1},
+            cache_manifest=cache_root / 'download-inputs/model-cache.json')
+        result = self.run_package(package, root / 'operation', local_volume=True,
+            recover_from=old, reuse_work=False,
+            environment={'HF_ENDPOINT': 'http://127.0.0.1:1'})
+        self.assertEqual(read_json(result / 'cache-verification.json')['state'], 'complete')
+        self.assertEqual(deploy.verify_results(package, result)['status'], 'complete')
+        self.assertTrue(deploy.review_completion(package, root / 'operation')['complete'])
+        for name in ('first', 'second'):
+            self.assertEqual(read_json(result / name / 'report.json')['training']['examples'], 4)
+            self.assertEqual(read_json(result / 'preparation' / name / 'report.json')['training']['updates'], 2)
+        receipt = read_json(root / 'operation/launch/volume-prepared.json')['remote_receipt']
+        self.assertTrue(receipt['recovered'])
+        write_json(cache_root / 'handoff-checks.json', {'download_retrieved_before_replacement': True,
+            'old_download_work_archived': True, 'cache_verified_offline': True,
+            'two_worker_prep_and_fresh_pilot_complete': True, 'volume_receipt': receipt})
+
     @unittest.skipUnless(os.environ.get('DISTILLATION_VOLUME_STAGE') == 'seed', 'requires the volume replacement rehearsal')
     def test_seed_volume_before_container_replacement(self):
         root = self.fixture_package('volume-replacement', {'training_milestones': [1, 2, 3, 4],
@@ -722,7 +851,8 @@ class SharedSSHTests(unittest.TestCase):
                                                 'checkpoint_sha256': sha256(weights), 'subject_sha256': sha256(subject)})
 
     def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False,
-                    continue_after_checkpoint=False, local_volume=False, recover_from=None):
+                    continue_after_checkpoint=False, local_volume=False, recover_from=None,
+                    download_only=False, environment=None, reuse_work=True):
         import argparse
         import importlib.util
         import shutil
@@ -731,12 +861,16 @@ class SharedSSHTests(unittest.TestCase):
         import package as packager
         import runner
         from sse_multivector.test_distillation_vast import quote
-        from sse_multivector.distillation_vast import make_spec
+        from sse_multivector.distillation_vast import make_spec, make_cache_spec
         ledger = root.parent / (root.name + '-ledger.json')
         write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
             'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
         settings, offer = quote()
-        job = deploy.verify_package(inputs)
+        if download_only:
+            from sse_multivector.distillation_cache import verify_package
+            job = verify_package(inputs)
+        else:
+            job = deploy.verify_package(inputs)
         gpu_count = max(job.get('gpu_assignments', {}).values(), default=0) + 1
         settings['offer_equals']['num_gpus'] = offer['num_gpus'] = gpu_count
         if local_volume:
@@ -744,9 +878,14 @@ class SharedSSHTests(unittest.TestCase):
         if recover_from is not None:
             settings['recover_from'] = str(recover_from)
             settings['label'] += '-replacement'
-        if deploy.verify_package(inputs)['timeout_seconds'] is None:
+            if not reuse_work:
+                settings.update(reuse_work=False,
+                    recovery_reason='Verified model downloads hand off to fresh two-GPU prep and pilot')
+        if job['timeout_seconds'] is None:
             settings['worker_timeout_seconds'] = None
-        spec = make_spec(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
+        builder = make_cache_spec if download_only else make_spec
+        spec = builder(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
+        spec['environment'].update(environment or {})
         if copy_while_running:
             spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 1024 * 1024, 'timeout_seconds': 120}
         config = packager.freeze(spec, root, ledger)
@@ -786,7 +925,7 @@ class SharedSSHTests(unittest.TestCase):
         if recover_from is not None:
             with patch.object(module, 'record_pre_worker_cost'):
                 attempt_id = module.ensure_worker_started(context, 'offline-fixture', key, endpoint)
-            self.assertEqual(attempt_id, '002')
+            self.assertEqual(attempt_id, '002' if reuse_work else '001')
         else:
             attempt_id = '001'
             started = call('_remote-worker', '--attempt', attempt_id)
@@ -879,7 +1018,7 @@ class SharedSSHTests(unittest.TestCase):
             self.assertEqual(state['exit_status'], 0, (root / f'result.next/work/full-build-attempts/{attempt_id}/full-build.log').read_text())
             self.assertTrue(module.publish_verified_result(context, attempt_id))
             results = root / 'result/work/results'
-            self.assertEqual(read_json(results / 'deployment.json')['state'], 'complete')
+            self.assertEqual(read_json(results / ('verification.json' if download_only else 'deployment.json'))['state'], 'complete')
             # A new SSH call cannot start a second execution after completion.
             self.assertEqual(call('_remote-worker', '--attempt', attempt_id)['exit_status'], 0)
         else:

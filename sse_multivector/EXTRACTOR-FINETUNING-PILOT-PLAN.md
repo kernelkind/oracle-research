@@ -2252,8 +2252,9 @@ Actual provider attachment remains untested. Startup checks the mount before
 setup or training; the VM replacement verifies the recovery logic separately.
 **One-GPU download stage approved October 6:** use a one-card offer on the same
 machine and the actual 300 GB volume to verify attachment and cache all three
-frozen model revisions. The existing payload projection is 169.72 GB; confirm
-pinned file sizes before booking and check volume free space before downloading.
+frozen model revisions. The 42 required files total 169.81 GB, including weight
+shards listed in the index and tokenizer/configuration/chat-template files.
+Check free space for missing downloads, a temporary shard and 32 GiB for saved work.
 Verify all required weight shards,
 tokenizer/configuration files and completion receipts, retrieving evidence
 locally before explicit container deletion. Retain the volume and reattach it
@@ -2263,8 +2264,22 @@ training. The one-card stage downloads only; it does not replace concurrent
 hardware checks. The observed one-card quote is $1.3444/hour plus $0.0833/hour
 for the 300 GB volume, before transfers. Count downloads once, include the
 additional startup and retained-volume charges, and keep all paid stages within
-the existing combined approval. This stage is planned, not yet implemented or
-executed; the frozen two-card workload and its inputs remain unchanged.
+the existing combined approval.
+This stage is implemented and VM-tested, with no paid execution yet. It saves
+the download log, file sizes/checksums and a volume receipt recording the
+machine, mount path, free space and write/read check. Local `verify-results`
+checks every required file and transfer integrity before completion review.
+The VM rehearsal retrieves those receipts, destroys the download container,
+reattaches its volume and completes prep and fresh pilot execution with two
+workers. The Hub endpoint is unreachable and model access stays offline.
+Missing/corrupt cache files block every worker before prep. Host regressions
+pass 181 checks (16 VM-only skips); the VM passes 109 checks. Four skipped checks
+are exercised separately; only the optional native-tokenizer check remains
+skipped. The new download/pilot packages match the exported runtime; all six
+configurations and data are byte-identical to the previous package. Evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/`.
+Actual Vast attachment, new private publication and full MoE CUDA confirmation
+remain pending.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.

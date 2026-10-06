@@ -52,6 +52,10 @@ volume. Verify every required file and retrieve the evidence before deleting
 that container. Keep the volume. Reattach it to the two-GPU rental, verify the
 cache offline, then run full concurrent prep and the pilot. The one-GPU stage
 collects no baseline or training results.
+Save the download log, file sizes/checksums and a volume/machine receipt with
+write/read and free-space checks. Verify the retrieved evidence locally before
+deleting the download container. The two-card startup rejects missing or corrupt
+cached files before prep; model loading stays offline throughout prep and pilot.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,
