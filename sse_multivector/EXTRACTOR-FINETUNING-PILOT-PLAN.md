@@ -2397,13 +2397,20 @@ The two-GPU preparation passed cache attachment and offline verification. Qwen a
 Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
 **No pilot baseline or training started.** All **97 work files / 5.85 GB** and
 six preparation files were retrieved and independently rehashed.
-The preliminary resource charge was **$1.445**. A locally tested, frozen one-GPU diagnostic is reserved
-within that allowance ($2 maximum) to compare output-head and adapter gradients
-without optimizer updates. Reuse verified volume [private ID removed] and the unchanged
-private image; archive prior prep work and collect both default and FP32-reduction
-cases before retrieval, integrity review and explicit deletion. Prompts, data,
-models and training recipe remain unchanged. Evidence:
-`target/distillation-pilot-v1/moe-gradient-diagnostic-20261006/`.
+The preliminary resource charge was **$1.445**. The one-GPU diagnostic completed both cases
+without training updates. All **20 files / 3.17 MB**, including all four saved
+head-state/gradient pairs, were retrieved, independently rehashed and opened.
+The preliminary resource charge was **$0.21**. Head relative L2 error is **0.294–0.321%** with identical inputs;
+296 of 156,119,040 adapter-gradient elements fail pointwise tolerance after
+backpropagation. Disabling reduced-precision reductions improves head agreement
+but does not resolve the deep comparison. A locally tested reference correction
+checks head gradients separately, then compares native/fused adapter gradients
+using the identical incoming head gradient. It adds a relative L2 check using
+the existing rtol, so absolute tolerance cannot hide corrupted tiny gradients.
+Both new production-path regressions failed before repair and pass afterward;
+all five fused-loss tests pass. Full VM verification and actual CUDA prep are
+still required. Prompts, data, models and training/evaluation recipe are unchanged.
+Evidence: `target/distillation-pilot-v1/moe-gradient-diagnostic-20261006/`.
 
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:

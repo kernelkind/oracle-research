@@ -1157,6 +1157,11 @@ def verify_training_loss(model, rows, config, measurements_path=None):
     backward applies the note's scalar weight. The native reference applies
     that weight at the same boundary, after the LM-head backward. Scaling the
     CE first changes BF16 rounding and can falsely fail adapter agreement.
+    Check the output-head gradient at that boundary, including its relative
+    L2 error so absolute tolerance cannot hide corrupted small gradients.
+    Replay the fused head gradient through the native backbone for the adapter
+    comparison: propagating two accepted, differently rounded BF16 head gradients
+    can amplify cancellation and falsely reject a correct loss kernel.
     Only the short numerical reference uses these hooks; training and evaluation
     instances keep their existing forwards, normalization and precision.
     """
@@ -1188,6 +1193,8 @@ def verify_training_loss(model, rows, config, measurements_path=None):
             batch = {key: torch.tensor([value], device=device) for key, value in row.items()}
             weight = int((batch["labels"][:, 1:] != -100).sum()) / total
             losses, gradients = [], []
+            measurement, captured = {}, {}
+            measurements.append(measurement)
             state = training_random_state()
             for forward in (patched, native):
                 base.forward = forward
@@ -1195,11 +1202,44 @@ def verify_training_loss(model, rows, config, measurements_path=None):
                 model.zero_grad(set_to_none=True)
                 context = torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext()
                 gradient_hooks = []
+                def fused_hidden(_module, _inputs, output):
+                    hidden = output.last_hidden_state
+                    captured["hidden"] = hidden.detach().clone()
+                    def remember_gradient(gradient):
+                        captured["gradient"] = gradient.detach().clone()
+                        return gradient
+                    gradient_hooks.append(hidden.register_hook(remember_gradient))
                 def reference_head(_module, inputs, output):
-                    gradient_hooks.append(inputs[0].register_hook(
-                        lambda gradient: (gradient.float() * weight).to(gradient.dtype)))
+                    if not torch.equal(inputs[0].detach(), captured["hidden"]):
+                        raise ValueError("training loss agreement output-head inputs differ")
+                    def reference_gradient(gradient):
+                        expected = (gradient.float() * weight).to(gradient.dtype)
+                        actual = captured.get("gradient")
+                        if actual is None:
+                            raise ValueError("training loss agreement output-head gradient missing")
+                        finite = bool(torch.isfinite(actual).all() and torch.isfinite(expected).all())
+                        difference = actual.double()-expected.double() if finite else None
+                        reference_norm = float(torch.linalg.vector_norm(expected.double())) if finite else 0.
+                        error_norm = float(torch.linalg.vector_norm(difference)) if finite else None
+                        relative = error_norm / reference_norm if reference_norm else (0. if error_norm == 0 else None)
+                        head = {"finite": finite, "elements": actual.numel(),
+                            "failing_elements": int((~torch.isclose(actual, expected, atol=atol, rtol=rtol)).sum()),
+                            "maximum_absolute_error": float(difference.abs().max()) if finite else None,
+                            "maximum_reference_gradient": float(expected.abs().max()) if finite else None,
+                            "relative_l2_error": relative}
+                        measurement["output_head_gradient"] = head
+                        if (not finite or not torch.allclose(actual, expected, atol=atol, rtol=rtol)
+                                or relative is None or relative > rtol):
+                            measurement["gradient_failure"] = {"parameter": "lm_head.input", **head}
+                            raise ValueError("training loss agreement gradient differs: lm_head.input")
+                        # The loss gradients have been compared independently.
+                        # Identical incoming gradients keep the backbone check
+                        # from measuring amplification of accepted head rounding.
+                        return actual
+                    gradient_hooks.append(inputs[0].register_hook(reference_gradient))
                     return output.float() if softcap is not None else output
-                hook = base.lm_head.register_forward_hook(reference_head) if forward is native else None
+                hook = (base.lm_head.register_forward_hook(reference_head) if forward is native
+                        else base.model.register_forward_hook(fused_hidden))
                 try:
                     with attention_context(config):
                         with context:
@@ -1207,6 +1247,8 @@ def verify_training_loss(model, rows, config, measurements_path=None):
                             loss = result.loss * weight
                         if not bool(torch.isfinite(loss)):
                             raise ValueError("training loss agreement produced nonfinite loss")
+                        measurement["native_loss" if forward is native else "fused_loss"] = float(loss.detach())
+                        measurement["token_weight"] = weight
                         (result.loss if forward is native else loss).backward()
                 finally:
                     if hook is not None:
@@ -1217,8 +1259,6 @@ def verify_training_loss(model, rows, config, measurements_path=None):
                 gradients.append({name: None if p.grad is None else p.grad.detach().cpu().clone()
                                   for name, p in parameters.items()})
                 del result, loss
-            measurement = {"fused_loss": losses[0], "native_loss": losses[1], "token_weight": weight}
-            measurements.append(measurement)
             if not math.isclose(*losses, rel_tol=rtol, abs_tol=atol):
                 raise ValueError(f"training loss agreement failed: {losses}")
             nonzero, maximum = False, 0.

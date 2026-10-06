@@ -81,7 +81,17 @@ class FusedLossTests(unittest.TestCase):
             "FusedLossTests; FusedLossTests().check_bfloat16_mean_loss_scaling()"],
             check=True, timeout=120)
 
-    def check_bfloat16_mean_loss_scaling(self):
+    def test_bfloat16_loss_check_does_not_amplify_accepted_head_rounding(self):
+        subprocess.run([sys.executable, "-B", "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_bfloat16_mean_loss_scaling(rounded_head=True)"],
+            check=True, timeout=120)
+
+    def test_bfloat16_loss_check_rejects_wrong_small_gradients(self):
+        subprocess.run([sys.executable, "-B", "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_bfloat16_mean_loss_scaling(small_gradient=True)"],
+            check=True, timeout=120)
+
+    def check_bfloat16_mean_loss_scaling(self, rounded_head=False, small_gradient=False):
         """Real MoE/PEFT backward with only the unavailable CUDA loss emulated."""
         import torch
         from transformers import Gemma4TextConfig, Gemma4ForCausalLM
@@ -100,12 +110,19 @@ class FusedLossTests(unittest.TestCase):
                 moe_intermediate_size=64)).to(torch.bfloat16)
             base.set_attn_implementation("sdpa")
             with torch.no_grad():
-                base.lm_head.weight.mul_(100.)
+                base.lm_head.weight.mul_(.001 if small_gradient else 100.)
             config = {**fixture.config, "fused_linear_cross_entropy": True,
                       "gradient_checkpointing": True, "lora_target_modules":
                       ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]}
             with patch.object(runner, "load_model", return_value=base):
                 model = runner.subject_training_model(config)
+            if rounded_head:
+                # B starts at zero, so scaling A preserves the exact forward
+                # while exposing cancellation in the adapter's BF16 backward.
+                with torch.no_grad():
+                    for name, parameter in model.named_parameters():
+                        if "lora_A" in name:
+                            parameter.mul_(10000.)
             rows = [runner.encode_example(fixture.tokenizer,
                 {"prompt": [{"role": "user", "content": question}],
                  "completion": [{"role": "assistant", "content": answer}]}, 512)
@@ -124,6 +141,9 @@ class FusedLossTests(unittest.TestCase):
                             logits[:, :-1].reshape(-1, logits.shape[-1]), labels[:, 1:].reshape(-1),
                             ignore_index=-100)
                         gradient, = torch.autograd.grad(loss, detached)
+                    if rounded_head:
+                        gradient = torch.where(gradient != 0, torch.nextafter(
+                            gradient, torch.full_like(gradient, float("inf"))), gradient)
                     ctx.save_for_backward(gradient)
                     ctx.gradient_scale = gradient_scale
                     return loss.detach()
@@ -147,10 +167,14 @@ class FusedLossTests(unittest.TestCase):
                 self.assertEqual([m["token_weight"] for m in check["measurements"]], [.25, .75])
                 self.assertTrue(all(m["maximum_gradient_error"] == 0 for m in check["measurements"]))
                 self.assertEqual((check["atol"], check["rtol"]), (.005, .05))
+                if rounded_head:
+                    self.assertTrue(all(0 < m["output_head_gradient"]["relative_l2_error"] < .05
+                                        for m in check["measurements"]))
                 gradient_scale = 1.25
                 with self.assertRaisesRegex(ValueError, "gradient differs"):
                     runner.verify_training_loss(model, rows, config)
             self.assertIs(base.forward, forward)
+            self.assertFalse(base.model._forward_hooks)
             self.assertFalse(base.lm_head._forward_hooks)
             self.assertFalse(base.lm_head._forward_pre_hooks)
             self.assertTrue(all(p.grad is None for p in model.parameters()))
