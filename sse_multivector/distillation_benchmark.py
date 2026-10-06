@@ -8,6 +8,7 @@ import argparse
 import gc
 import importlib.metadata
 import math
+import os
 import platform
 import re
 import statistics
@@ -65,7 +66,7 @@ def admit(config, available):
         raise ValueError("insufficient available system memory for benchmark budget plus reserve")
 
 
-def run(config_path, output):
+def run(config_path, output, *, stage='all'):
     import torch
     from transformers import AutoConfig, AutoModelForSequenceClassification
     from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
@@ -73,13 +74,15 @@ def run(config_path, output):
     config_path, output = Path(config_path).resolve(), Path(output).resolve()
     config = read_json(config_path)
     validate_config(config)
-    if output.exists():
+    if stage not in {'all', 'train', 'verify'}:
+        raise ValueError('benchmark stage must be all, train or verify')
+    if output.exists() and stage != 'verify':
         raise FileExistsError(output)
     available = available_memory()
     admit(config, available)
     if not torch.cuda.is_available() or not torch.cuda.is_bf16_supported():
         raise ValueError("benchmark requires BF16 CUDA")
-    output.mkdir(parents=True)
+    output.mkdir(parents=True, exist_ok=stage == 'verify')
     total = torch.cuda.get_device_properties(0).total_memory
     torch.cuda.set_per_process_memory_fraction(min(1., config["memory_budget_gib"] * 2 ** 30 / total))
     torch.manual_seed(config["seed"])
@@ -91,6 +94,16 @@ def run(config_path, output):
                          "available_bytes_before_load": available, "cuda_total_bytes": total},
               "versions": {name: importlib.metadata.version(name) for name in ("torch", "transformers", "peft")},
               "training": [], "inference": [], "complete": False}
+    if stage == 'verify':
+        report = read_json(output/'report.json')
+        if (report['config_sha256'] != sha256(config_path) or not report.get('checkpoint_saved')
+                or report['checkpoint_hashes'] != file_hashes(output/'checkpoint')):
+            raise ValueError('checkpoint or configuration differs from saved training')
+        if report['complete']:
+            raise ValueError('checkpoint verification is already complete')
+        for name, digest in report['code_sha256'].items():
+            if sha256(Path(__file__).with_name(Path(name).name)) != digest:
+                raise ValueError('checkpoint verification code differs from training')
 
     def publish():
         write_json(output / "report.json", report)
@@ -175,77 +188,93 @@ def run(config_path, output):
 
     publish()
     try:
-        start = sync_time()
-        model = load()
-        report["load_seconds"] = sync_time() - start
-        report['gradient_checkpointing'] = model.is_gradient_checkpointing
-        limit = getattr(model.config, "max_position_embeddings", None)
-        if limit is not None and max(config["lengths"]) > limit:
-            raise ValueError("requested complete sequence exceeds model position limit")
-        parameters = [p for p in model.parameters() if p.requires_grad]
-        if pointer is not None:
-            parameters += list(pointer.head.parameters())
-        stored = sum(p.numel() for p in model.parameters())
-        # PEFT accounts for the packed storage of four-bit weights.
-        total = model.get_nb_trainable_parameters()[1] if config["method"] == "lora" else stored
-        if pointer is not None:
-            total += sum(p.numel() for p in pointer.head.parameters())
-            stored += sum(p.numel() for p in pointer.head.parameters())
-        report["parameters"] = {"total": total, "stored_tensor_elements": stored,
-                                "trainable": sum(p.numel() for p in parameters)}
-        if pointer is not None:
-            report['parameters']['pointer_head'] = sum(p.numel() for p in pointer.head.parameters())
-        optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"])
-        for length in config["lengths"]:
-            model.train()
+        checkpoint = output/'checkpoint'
+        if stage == 'verify':
+            saved = torch.load(checkpoint/'probe.pt', map_location='cpu', weights_only=True)
+            if saved['config_sha256'] != sha256(config_path):
+                raise ValueError('synthetic probe configuration differs')
+            probe = {k: v.to('cuda') for k, v in saved['inputs'].items()}
+            before = saved['logits']
+        else:
+            start = sync_time()
+            model = load()
+            report["load_seconds"] = sync_time() - start
+            report['gradient_checkpointing'] = model.is_gradient_checkpointing
+            limit = getattr(model.config, "max_position_embeddings", None)
+            if limit is not None and max(config["lengths"]) > limit:
+                raise ValueError("requested complete sequence exceeds model position limit")
+            parameters = [p for p in model.parameters() if p.requires_grad]
             if pointer is not None:
-                pointer.head.train()
-            inputs = batch(length, config["train_batch_size"])
-            times, losses, warmup = [], [], []
-            torch.cuda.reset_peak_memory_stats()
-            for step in range(config["warmup_steps"] + config["steps"]):
-                reserve()
-                start = sync_time()
-                optimizer.zero_grad(set_to_none=True)
-                labels = (torch.arange(config["train_batch_size"], device="cuda") + step) % 5
-                loss = torch.nn.functional.cross_entropy(logits(inputs).float(), labels)
-                loss.backward()
-                norm = torch.nn.utils.clip_grad_norm_(parameters, 1.)
-                if not torch.isfinite(loss) or not torch.isfinite(norm) or norm <= 0:
-                    raise ValueError("nonfinite loss/gradient or zero gradient")
-                optimizer.step()
-                seconds = sync_time() - start
-                (warmup if step < config["warmup_steps"] else times).append(seconds)
-                losses.append(loss.item())
-            report["training"].append({"tokens_per_example": length, "batch_size": config["train_batch_size"],
-                "steps": config["steps"], "step_seconds": times, "warmup_step_seconds": warmup,
-                "median_step_seconds": statistics.median(times), "losses": losses,
-                "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
-                "available_system_bytes_after": available_memory()})
-            publish()
-        optimizer.zero_grad(set_to_none=True)
-        del optimizer, parameters, inputs, loss, norm
-        model.eval()
-        if pointer is not None:
-            pointer.head.eval()
-        probe = batch(min(config["lengths"]), 1)
-        with torch.inference_mode():
-            before = logits(probe).float().cpu()
-        checkpoint = output / "checkpoint"
-        start = sync_time()
-        model.save_pretrained(checkpoint)
-        if pointer is not None:
-            torch.save({'head': pointer.head.state_dict(), 'temperature': pointer.head.temperature,
-                        'source_config_sha256': report['pointer_config_sha256']}, checkpoint / 'head.pt')
-        report["save_seconds"] = sync_time() - start
-        report["checkpoint_hashes"] = file_hashes(checkpoint)
-        del model
-        pointer = None
-        gc.collect()
-        torch.cuda.empty_cache()
+                parameters += list(pointer.head.parameters())
+            stored = sum(p.numel() for p in model.parameters())
+            # PEFT accounts for the packed storage of four-bit weights.
+            total = model.get_nb_trainable_parameters()[1] if config["method"] == "lora" else stored
+            if pointer is not None:
+                total += sum(p.numel() for p in pointer.head.parameters())
+                stored += sum(p.numel() for p in pointer.head.parameters())
+            report["parameters"] = {"total": total, "stored_tensor_elements": stored,
+                                    "trainable": sum(p.numel() for p in parameters)}
+            if pointer is not None:
+                report['parameters']['pointer_head'] = sum(p.numel() for p in pointer.head.parameters())
+            optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"])
+            for length in config["lengths"]:
+                model.train()
+                if pointer is not None:
+                    pointer.head.train()
+                inputs = batch(length, config["train_batch_size"])
+                times, losses, warmup = [], [], []
+                torch.cuda.reset_peak_memory_stats()
+                for step in range(config["warmup_steps"] + config["steps"]):
+                    reserve()
+                    start = sync_time()
+                    optimizer.zero_grad(set_to_none=True)
+                    labels = (torch.arange(config["train_batch_size"], device="cuda") + step) % 5
+                    loss = torch.nn.functional.cross_entropy(logits(inputs).float(), labels)
+                    loss.backward()
+                    norm = torch.nn.utils.clip_grad_norm_(parameters, 1.)
+                    if not torch.isfinite(loss) or not torch.isfinite(norm) or norm <= 0:
+                        raise ValueError("nonfinite loss/gradient or zero gradient")
+                    optimizer.step()
+                    seconds = sync_time() - start
+                    (warmup if step < config["warmup_steps"] else times).append(seconds)
+                    losses.append(loss.item())
+                report["training"].append({"tokens_per_example": length, "batch_size": config["train_batch_size"],
+                    "steps": config["steps"], "step_seconds": times, "warmup_step_seconds": warmup,
+                    "median_step_seconds": statistics.median(times), "losses": losses,
+                    "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
+                    "available_system_bytes_after": available_memory()})
+                publish()
+            optimizer.zero_grad(set_to_none=True)
+            del optimizer, parameters, inputs, loss, norm
+            model.eval()
+            if pointer is not None:
+                pointer.head.eval()
+            probe = batch(min(config["lengths"]), 1)
+            with torch.inference_mode():
+                before = logits(probe).float().cpu()
+            checkpoint = output / "checkpoint"
+            start = sync_time()
+            model.save_pretrained(checkpoint)
+            if pointer is not None:
+                torch.save({'head': pointer.head.state_dict(), 'temperature': pointer.head.temperature,
+                            'source_config_sha256': report['pointer_config_sha256']}, checkpoint / 'head.pt')
+            torch.save({'inputs': {k: v.cpu() for k, v in probe.items()}, 'logits': before,
+                        'config_sha256': sha256(config_path)}, checkpoint / 'probe.pt')
+            report["save_seconds"] = sync_time() - start
+            report["checkpoint_hashes"] = file_hashes(checkpoint)
+            report['checkpoint_saved'] = True
+            report['training_pid'] = os.getpid()
+            report['awaiting_verification'] = True
+            del model
+            pointer = None
+            gc.collect()
+            torch.cuda.empty_cache()
+            if stage == 'train':
+                return report
         start = sync_time()
         model = load(checkpoint)
         report["reload_seconds"] = sync_time() - start
+        report['verification_pid'] = os.getpid()
         model.eval()
         if pointer is not None:
             pointer.head.eval()
@@ -274,6 +303,7 @@ def run(config_path, output):
                     "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated()})
                 publish()
         report["complete"] = True
+        report['awaiting_verification'] = False
     except Exception as error:
         report["error"] = f"{type(error).__name__}: {error}"
         raise
@@ -286,9 +316,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument('--stage', choices=['all', 'train', 'verify'], default='all',
+                        help='verify a saved synthetic probe in a fresh worker without repeating training')
     args = parser.parse_args()
-    result = run(args.config, args.output)
-    print(f"Completed {result['config']['model']}: {args.output / 'report.json'}")
+    result = run(args.config, args.output, stage=args.stage)
+    action = 'Completed' if result['complete'] else 'Saved checkpoint; verification pending'
+    print(f"{action} {result['config']['model']}: {args.output / 'report.json'}")
 
 
 if __name__ == "__main__":

@@ -94,7 +94,10 @@ class BenchmarkGPUIntegrationTests(unittest.TestCase):
                 loaded.append(model)
                 return SimpleNamespace(model=model, head=PointerHead(64, dp=16).to('cuda'))
             with patch('sse_multivector.local_weight_model.LocalWeights', side_effect=native_pointer):
-                result = distillation_benchmark.run(root/'config.json', root/'benchmark')
+                trained = distillation_benchmark.run(root/'config.json', root/'benchmark', stage='train')
+                self.assertFalse(trained['complete'])
+                self.assertTrue(trained['checkpoint_saved'])
+                result = distillation_benchmark.run(root/'config.json', root/'benchmark', stage='verify')
             self.assertTrue(result['complete'])
             self.assertTrue(result['reload_matches'])
             self.assertTrue(all(m.is_gradient_checkpointing for m in loaded),
