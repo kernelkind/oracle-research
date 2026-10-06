@@ -42,13 +42,13 @@ the readout. All scored outputs below were valid in one HTTP attempt.
 | Qwen3.5-9B instruct, checked chat answer prefix | 35/70; 39/70 | 20/35; 28/35 | 47/70 | Instruct control; no current diagnostic advantage |
 
 These checkpoints have different prior supervision and native input layouts.
-Kev's stronger results support trying its decision specialization, but do not
+Kev-9B's stronger results support trying its decision specialization, but do not
 isolate its head architecture or show superiority after matched SHR training.
 Kev-27B's additional size does not improve this developmental comparison. BF16
 scores 49/70 in both orders, with 32/35 reversal consistency in each and 68/70
 decisions unchanged by rotation. Higher precision therefore has not rescued
-its quality result. Its full-size capacity check is still pending. The two Kev releases
-also differ in foundation and published training history, so they do not
+its quality result. Its native local capacity path also passes. The two Kev
+releases differ in foundation and published training history, so they do not
 isolate a model-size effect or resolve a post-finetuning capacity plateau.
 Nimble currently uses the 12,026-row, 8,192-token release, rather than its
 original 2,676-row release. Qwen3.5-9B instruct is also distinct from Kev's
@@ -74,6 +74,7 @@ not a controlled architecture speed ranking.
 | Ettin-1B full, service stopped | 0.628 | 1.055 | All 1.031 billion FP32 parameters; 32 GiB allocator budget |
 | Decider-4b NF4, service stopped | 0.613 | 2.241 | 32.46 million FP32 LoRA parameters over the merged decision checkpoint |
 | Kev-9B native NF4, service resident | 1.467 | 4.774 | Published LoRA plus pointer head, 45.38 million parameters |
+| Kev-27B native NF4, service stopped | 4.134 | 13.750 | Fresh LoRA over the learned full backbone plus pointer head, 119.35 million parameters |
 | Gemma 4 12B-it NF4, service stopped | 1.566 | 6.332 | 65.57 million FP32 LoRA parameters |
 | Qwen3.8-27B NF4, service stopped | 3.150 | 9.985 | 116.73 million FP32 LoRA parameters |
 
@@ -100,11 +101,23 @@ retain it as a local escalation candidate, without a demonstrated reason to
 prefer it over the compact decision warm starts. Bounded internal reasoning
 and matched SHR finetuning remain untested.
 
-The literature below retains Kev-27B v2, Gemma 4 31B/26B-A4B and larger sparse
-foundations as possible escalation candidates. A 96GB ceiling is not a
-requirement. Their published general benchmarks alone are insufficient reason
-to expand the local comparison before matched SHR training resolves the
-compact models' scope errors. No final student, real SHR fit, paid run or
+Kev-27B likewise passes native NF4 LoRA/head training, save, fresh-process
+reload and six inference shapes. At 3,072 tokens, above the current complete
+v26 inputs, updates take 19.954 seconds and peak at 23.77 GiB allocated;
+batch-eight inference gives 0.177 examples/second and peaks at 26.36 GiB.
+Load/reload take 332/405 seconds. These measurements use the correct reference
+causal convolution and FP32 k-bit preparation with BF16 autocast, rather than
+an optimized throughput ceiling. Kev-9B's earlier measurement had the separate
+service resident, so the roughly threefold update-time difference is an
+observation across those runs. Local hardware can handle the larger pointer
+warm start; its extra iteration cost has no demonstrated v26 quality return.
+
+Kev-27B v2 is now a tested larger decision reference. The literature below
+retains Gemma 4 31B/26B-A4B and larger sparse foundations as possible escalation
+candidates. A 96GB ceiling is not a requirement. Published general benchmarks
+alone are insufficient reason to expand the local comparison before matched
+SHR training resolves the compact models' scope errors. No final student,
+real SHR fit, paid run or
 release-plan decision is made here. Exact experiment identities, failures,
 case reviews, test results and capacity hashes are in
 [student preparation](SHR-STUDENT-PREPARATION.md).
@@ -212,7 +225,7 @@ advertised context limit without checking.
 | Checkpoint | Training and output | Implication for SHR |
 | --- | --- | --- |
 | [Kev-9B](https://huggingface.co/jaredpalmer/kev-9b) | Qwen3.5-9B-Base plus LoRA and option-scoring heads; public task labels and generated policy, rule and missing-evidence cases. | Best initial compact decision hypothesis. Supplied option descriptions suit five relations; policy scope is relevant. Continued task training is supported. |
-| [Kev-27B v2](https://huggingface.co/jaredpalmer/kev-27b) | Full-weight tuning of Qwen3.8-27B, followed by blending with v1; 145,840 records and a pointer head. | A serious larger warm start, rather than restricting decision models to 4–9B. Corpus disclosure is partial. |
+| [Kev-27B v2](https://huggingface.co/jaredpalmer/kev-27b) | Full-weight tuning of Qwen3.8-27B, followed by blending with v1; 145,840 records and a pointer head. | Tested larger warm start; below Kev-9B's v26 teacher agreement at NF4 and BF16. Corpus disclosure is partial; post-SHR-finetuning quality remains unknown. |
 | [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) | Current v3-12026: Qwen3.5-9B instruct plus LoRA; 12,026 training rows, including contrastive/long-form decisions and public task data; scores answer-letter logits. | Relevant restrictions without a separate head. Its [pinned training contract](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B/resolve/bd792f44ec8e265be861bfcdf4e05967ffe0e858/schema_config.json) is 8,192 tokens, with reconstructed training inputs up to 6,231. |
 | [Mapika decider-4b](https://huggingface.co/Mapika/decider-4b) | Qwen3.5-4B-Base; broad decision training followed by hard-case LoRA; answer-letter scoring. | Plausible cheap student. v2.1 improves some hard families but does not dominate earlier versions on every held-out panel. |
 | [AutoTrust JEV-9B](https://huggingface.co/autotrust/JEV-9B) | Qwen3.5-9B instruct, LoRA and a decision head distilled from closed Jev probabilities. | Useful alternative; fidelity to Jev is not evidence of correctness under SHR. It can preserve teacher errors. |

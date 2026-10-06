@@ -26,9 +26,11 @@ none of these provisional cases entered gradients or the reserved final test.
 
 The latest shared regression suite passed 147 tests with 13 optional skips,
 and all 15 native loader/benchmark tests passed on GB10. Historical failures
-remain recorded below. The larger pointer capacity check is running at 512,
-2,048 and 3,072 tokens; the latter exceeds the complete v26 inputs' maximum
-2,684 tokens. Only its experiment worker is active. 
+remain recorded below. The larger pointer capacity check passed training,
+save, fresh-process reload and six inference shapes at 512, 2,048 and 3,072
+tokens; the latter exceeds the complete v26 inputs' maximum 2,684 tokens.
+All experiment workers stopped.
+
 
 ## Authorized provisional v26 comparison
 
@@ -756,7 +758,7 @@ including exact saved-weight checks, independent native pointer probabilities,
 NF4 optimization and adapter/head reload. The shared CPU suite passed 147 tests
 with 13 optional native/dependency skips. Initial fixture failures are retained:
 the fixture needed a native Qwen tokenizer and BF16 loading that preserves
-FP32 rotary buffers. Full-size capacity results are pending.
+FP32 rotary buffers. The completed full-size capacity check follows below.
 
 The same published checkpoint also received a BF16 inference control in
 both option orders, using `diagnostic-kev27b-bf16.json` and
@@ -824,6 +826,51 @@ answers with zero new attempts. Their median reported inference time is 2.594
 seconds. The two published Kev releases have different foundations and prior
 training; this comparison does not isolate capacity or establish either
 student's plateau after matched SHR supervision.
+
+### Verified Kev-27B native capacity
+
+The full native NF4 path passed LoRA/head updates, checkpoint save,
+fresh-process reload and finite five-way inference at both batch sizes for
+all three lengths. It trains 119,349,760 FP32 parameters, including a
+2,621,952-parameter pointer head, with BF16 autocast. Rank-16 all-linear LoRA
+is added over the **published learned full backbone**, while the learned head
+continues training. The logical parameter total including LoRA/head is
+25,743,949,824; no vocabulary head is created. K-bit preparation promotes
+nonquantized base parameters to FP32. This does not perform full-weight
+optimization or fit any SHR labels.
+
+| Synthetic complete input | Seconds/update | Peak allocated GiB, training | Examples/sec, batch 8 | Peak allocated GiB, batch-8 inference |
+| --- | ---: | ---: | ---: | ---: |
+| 512 tokens | 4.134 | 19.02 | 1.005 | 18.52 |
+| 2,048 tokens | 13.750 | 21.86 | 0.274 | 23.23 |
+| 3,072 tokens | 19.954 | 23.77 | 0.177 | 26.36 |
+
+Each length has one warmup and four measured updates, then five warmed
+inference repetitions per shape. All losses and gradients are finite, and
+the saved probe logits match after reload within `rtol=atol=1e-4`. Training
+PID `1925879` and verification PID `1927821` are distinct and have exited.
+Load/reload take 331.936/405.154 seconds; saving takes 3.731 seconds.
+The 32 GiB allocator budget and 8 GiB system reserve remain intact. Available
+system memory after the three training workloads is 94.33/91.44/87.13 GiB.
+The original service remains stopped, and no other GPU worker is present.
+
+Configuration is `distillation/benchmark-kev27b-nf4.json`. The fully verified
+native report lives in `target/shr-student-diagnostics-v1/kev27b-training-v1/`
+on GB10; the owned Anvil copy is `kev27b-training-v1-report.json`. Both have
+SHA-256 `fd96bb797c67c8d740797f63be25b407a9ab004445506eb88e3d9bd612624dc9`.
+All recorded source/config hashes match the owned checkout; the report also
+binds native checkpoint files and upstream pointer source. Artifacts and
+published model caches remain ignored and preserved.
+
+The native stack and correct reference PyTorch causal convolution match the
+earlier capacity path. Optimized causal convolution remains absent, so these
+are current-stack observations. Kev-9B's earlier 512/2,048-token update times
+were 1.467/4.774 seconds with the service resident. Kev-27B's measured update
+times are about 2.8–2.9 times longer, with different service contention and
+prior training. Hardware supports the larger warm start, but neither its
+NF4 nor BF16 v26 decisions demonstrate a quality benefit for that cost.
+Matched SHR supervision and independently reviewed evaluation remain the
+useful next step; no final model choice is made by this benchmark.
 
 ## Dataset audit
 
