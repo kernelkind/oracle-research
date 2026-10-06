@@ -490,9 +490,41 @@ observations, not warmed batched deployment throughput. Full prompt input was
 preserved. Internal thinking was disabled, as in the other chat controls;
 these results do not evaluate bounded reasoning or SHR finetuning.
 
-Checked answer-prefix direct scoring in both code orders and native LoRA
-capacity are pending at this checkpoint. These complete the finite six-model
-comparison rather than treating public benchmark scores as SHR evidence.
+Checked answer-prefix scoring now completes both code orders, with 140 new
+valid one-attempt answers. The prefix remains `Answer: (`; no generated answer
+or reason is repaired. The teacher-baseline views reuse all 70 rotated answers
+with zero new attempts.
+
+| Qwen-27B checked scored readout | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Original code order | 32/40; 20/20 | 6/8; 2/4 | 15/22; 6/11 | 53/70; 28/35 |
+| Rotated code order | 33/40; 19/20 | 6/8; 2/4 | 13/22; 6/11 | 52/70; 27/35 |
+| Same decision across code orders | 39/40 | 8/8 | 12/22 | 59/70 |
+
+Median allowed-code vocabulary mass is 0.998767 / 0.998723 in the two orders;
+all unrestricted top tokens are allowed A–E codes. Thus the remaining gap is
+not the earlier bare-letter punctuation mismatch. Both medians of reported
+inference time are 2.980 seconds, with full inputs 2,638–2,724 tokens. These are
+single-request timings, not a batched deployment comparison.
+
+The readout fixes Coffee and the other simple parent-direction mistakes,
+plus the generated Nature/Cats failure in its original order. It retains
+Cooking/product, recording activity/works and food-damage errors. Native agent
+review rejects Cooking/Kitchen work's imported kitchen restriction and the
+Culture/Song creation field-scope error. Rotation changes ten transfer answers:
+four Culture forward answers become parents while five reverse answers become
+`neither`; Nature/Cats reverse also becomes `neither`. The Culture cases are
+related diagnostics, not ten independent failures. The larger foundation's
+additional size does not establish an advantage over Kev's 61/70 and 60/70
+on this provisional evidence. This does not rank post-finetuning models.
+
+Native experiments are `qwen27b-options-prefix-{part}-v2`,
+`qwen27b-options-prefix-rotate-{part}-v2` and the zero-call teacher views
+`qwen27b-options-prefix-rotate-teacher-{part}-v2`. Config SHA values are
+`59e55d1efe562309ecf82ba960fb3e6c24e6878fd29d701a1f528ab387241c2e`
+and `510800c41181d78ac0a214a76145314b7eaddd702c4a21ee91d5367592fb975b`.
+All use the published pinned weights rather than synthetic optimization
+checkpoints. Native LoRA capacity remains pending at this checkpoint.
 
 ### Kev option-order check
 

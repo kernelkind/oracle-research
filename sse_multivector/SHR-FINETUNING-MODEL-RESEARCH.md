@@ -23,7 +23,7 @@ use a decision checkpoint or encoder even if it cannot produce SP's output.
 Sharing a foundation remains useful only if its quality and whole-process
 cost justify doing so.
 
-The completed compact comparison uses the same 70 v26 development inputs,
+The completed six-model comparison uses the same 70 v26 development inputs,
 including 35 exact A/B reversal pairs. The two scored orders change the mapping
 between answer codes and relations. Agreement is with saved teacher decisions,
 **not semantic gold or held-out accuracy**. Twelve related Culture judgments
@@ -36,6 +36,7 @@ the readout. All scored outputs below were valid in one HTTP attempt.
 | Kev-9B, native pointer | 61/70; 60/70 | 31/35; 31/35 | 66/70 | Leading compact decision warm start |
 | Nimble-9B v3-12026, native schema and LM scores | 56/70; 51/70 | 29/35; 24/35 | 61/70 | Standard LM adapter alternative; continued-adapter optimization unmeasured |
 | Gemma 4 12B-it, checked chat answer prefix | 49/70; 54/70 | 33/35; 31/35 | 65/70 | Independent foundation; scope and activity/product errors remain |
+| Qwen3.8-27B, checked chat answer prefix | 53/70; 52/70 | 28/35; 27/35 | 59/70 | Larger quality reference; no demonstrated advantage over the compact decision warm starts |
 | Mapika decider-4b v2.1, native plain layout | 45/70; 42/70 | 28/35; 30/35 | 58/70 | Cheaper compression comparison |
 | Qwen3.5-9B instruct, checked chat answer prefix | 35/70; 39/70 | 20/35; 28/35 | 47/70 | Instruct control; no current diagnostic advantage |
 
@@ -75,13 +76,16 @@ because its 512-position limit constrains complete merged pairs; NLI labels
 cannot be mapped directly to SHR. Ettin-400M also has a verified cheap full
 training path if compression becomes necessary.
 
-The larger Qwen3.8-27B reference is being completed before closing this
-investigation. Its unmodified v26 greedy-JSON run gave 42 agreements among 69
-valid answers, with 24/34 comparable reversals. One of 70 attempts hit the
-512-token limit during a repetitive Nature/Cats explanation. Direct scoring
-and local LoRA capacity remain pending at this checkpoint. Its extra size has
-not yet shown a quality advantage. This does not test bounded internal reasoning
-or matched SHR finetuning.
+Qwen3.8-27B's completed direct readout gives 53/70 and 52/70 agreement,
+with 28/35 and 27/35 reversals. Rotation preserves 59/70 decisions. It fixes
+simple directional errors but changes which direction recognizes Culture
+containment. Its unmodified greedy-JSON run gave 42 agreements among 69 valid
+answers; one of 70 attempts hit the 512-token limit during a repetitive
+Nature/Cats explanation. The full scored inputs are 2,638–2,724 tokens and median
+reported inference time is 2.980 seconds in each code order. This confirms a
+local relation-only path, without a current quality advantage over Kev-9B.
+Native LoRA capacity remains pending at this checkpoint. Bounded internal
+reasoning and matched SHR finetuning remain untested.
 
 The literature below retains Kev-27B v2, Gemma 4 31B/26B-A4B and larger sparse
 foundations as possible escalation candidates. A 96GB ceiling is not a
