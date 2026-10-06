@@ -6,7 +6,9 @@ pointer decision checkpoint uses its pinned upstream encoder and head.
 import gc
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import math
 from pathlib import Path
+import string
 import sys
 import time
 
@@ -20,6 +22,20 @@ def checkpoint_name(config, config_sha256):
     return f'{config[key]}/{revision}/{config_sha256}'
 
 
+def choice_prompt(state, question, readout):
+    """Preserve the complete state and make the answer interface explicit."""
+    keys = list(question['criteria'])
+    if not 2 <= len(keys) <= 26 or readout not in {'generation', 'options'}:
+        raise ValueError('expected 2 to 26 choices and a supported readout')
+    codes = list(string.ascii_uppercase[:len(keys)])
+    options = '\n'.join(f'({code}) {key}: {question["criteria"][key]}'
+                        for code, key in zip(codes, keys))
+    suffix = ('Return the JSON object requested by the state, using the selected relation label.'
+              if readout == 'generation' else
+              'For this answer, return only the selected option letter, replacing the earlier JSON output format.')
+    return state + '\n\n# Decision question\n' + question['instructions'] + '\nOptions:\n' + options + '\n' + suffix
+
+
 class LocalWeights:
     def __init__(self, path):
         import torch
@@ -27,7 +43,8 @@ class LocalWeights:
         self.config = c = read_json(path)
         self.config_sha256 = sha256(path)
         if (c['kind'] not in {'causal_lm', 'pointer'} or len(c['revision']) != 40
-                or c['quantization'] not in {'none', 'nf4'}):
+                or c['quantization'] not in {'none', 'nf4'}
+                or c.get('readout', 'generation') not in {'generation', 'options'}):
             raise ValueError('expected a pinned causal LM or pointer checkpoint')
         admit(c, available_memory())
         torch.set_num_threads(4)
@@ -107,20 +124,59 @@ class LocalWeights:
                 metadata['probabilities'] = dict(zip(keys, p.cpu().tolist()))
                 output_tokens, stop = 0, 'stop'
             else:
-                inputs = self.tokenizer.apply_chat_template(body['messages'], add_generation_prompt=True,
+                readout = c.get('readout', 'generation')
+                messages = body['messages']
+                if 'question' in c:
+                    prompt = choice_prompt(prompt, c['question'], readout)
+                    messages = [{'role': 'user', 'content': prompt}]
+                    metadata['choice_prompt'] = prompt
+                elif readout == 'options':
+                    raise ValueError('option scoring requires a choice question')
+                inputs = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
                     enable_thinking=False, tokenize=True, return_dict=True, return_tensors='pt')
+                inputs.pop('token_type_ids', None)
                 tokens = inputs['input_ids'].shape[-1]
-                cap = min(body.get('max_tokens', c['max_new_tokens']), c['max_new_tokens'])
+                cap = (1 if readout == 'options' else
+                       min(body.get('max_tokens', c['max_new_tokens']), c['max_new_tokens']))
                 if tokens + cap > c['max_input_tokens']:
                     raise ValueError('complete chat input plus output reserve exceeds its configured limit')
                 inputs = {k: v.to('cuda') for k, v in inputs.items()}
-                output = self.model.generate(**inputs, max_new_tokens=cap, do_sample=False,
+                if readout == 'options':
+                    keys = list(c['question']['criteria'])
+                    codes = list(string.ascii_uppercase[:len(keys)])
+                    encoded = [self.tokenizer.encode(code, add_special_tokens=False) for code in codes]
+                    if (any(len(row) != 1 or row[0] in self.tokenizer.all_special_ids for row in encoded)
+                            or len({row[0] for row in encoded}) != len(keys)):
+                        raise ValueError('option codes must be distinct single tokens')
+                    rendered = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
+                        enable_thinking=False, tokenize=False)
+                    prefix = inputs['input_ids'][0].tolist()
+                    if any(self.tokenizer.encode(rendered + code, add_special_tokens=False) != prefix + row
+                           for code, row in zip(codes, encoded)):
+                        raise ValueError('option code tokenization changes at the answer boundary')
+                    temperature = c.get('temperature', 1.)
+                    if isinstance(temperature, bool) or not math.isfinite(temperature) or temperature <= 0:
+                        raise ValueError('choice temperature must be positive and finite')
+                    with torch.autocast('cuda', dtype=torch.bfloat16):
+                        logits = self.model(**inputs, use_cache=False, logits_to_keep=1).logits[0, -1].float()
+                    z = logits[[row[0] for row in encoded]]
+                    if not torch.isfinite(z).all():
+                        raise ValueError('nonfinite option scores')
+                    p = (z / temperature).softmax(-1)
+                    metadata.update(probabilities=dict(zip(keys, p.cpu().tolist())),
+                        option_logits=dict(zip(keys, z.cpu().tolist())), option_codes=dict(zip(keys, codes)),
+                        temperature=temperature, readout=readout)
+                    raw = json.dumps({c['question']['output_field']: keys[p.argmax().item()],
+                                      **{k: '' for k in c['question'].get('empty_fields', [])}})
+                    output_tokens, stop = 0, 'stop'
+                else:
+                    output = self.model.generate(**inputs, max_new_tokens=cap, do_sample=False,
                                              pad_token_id=self.tokenizer.eos_token_id)
-                generated = output[0, tokens:]
-                output_tokens = len(generated)
-                raw = self.tokenizer.decode(generated, skip_special_tokens=True).strip()
-                eos = self.model.generation_config.eos_token_id
-                stop = 'stop' if generated[-1].item() in ([eos] if isinstance(eos, int) else eos) else 'length'
+                    generated = output[0, tokens:]
+                    output_tokens = len(generated)
+                    raw = self.tokenizer.decode(generated, skip_special_tokens=True).strip()
+                    eos = self.model.generation_config.eos_token_id
+                    stop = 'stop' if generated[-1].item() in ([eos] if isinstance(eos, int) else eos) else 'length'
         torch.cuda.synchronize()
         metadata.update(seconds=time.monotonic()-start, input_tokens=tokens,
                         peak_cuda_allocated_bytes=torch.cuda.max_memory_allocated())

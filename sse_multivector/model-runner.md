@@ -396,6 +396,18 @@ the experiment also freezes local transport/loader code hashes. Local runs need
 the isolated environment's `jsonschema` package. Quantized output is evidence
 for that precision and input/readout contract only.
 
+A causal-LM configuration can also supply a `question` with ordered `criteria`,
+an `output_field` and optional `empty_fields`. With `readout: "generation"`,
+the complete original prompt receives an explicit choice question and the model
+generates its requested JSON. With `readout: "options"`, the output instruction
+instead requests one option letter. One native forward pass scores the allowed
+single-token codes; no text is generated. The backend rejects split, duplicate
+or boundary-dependent code tokens and overlength complete inputs. It records
+the actual choice prompt, code mapping, logits, temperature and option
+probabilities before returning the chosen field and configured empty fields.
+Reordering criteria changes the codes and the configuration-bound model name.
+These probabilities are not calibrated task confidence or semantic uncertainty.
+
 For completed direct five-relation answers, `show --json` includes
 `relation_diagnostics`: relation-only teacher agreement/confusion and exact
 input A/B reversal consistency. Different reason strings do not affect those

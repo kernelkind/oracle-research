@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "causal_lm",
+  "quantization": "nf4",
+  "max_input_tokens": 8192,
+  "max_new_tokens": 512,
+  "memory_budget_gib": 12,
+  "reserve_gib": 6,
+  "model": "google/gemma-4-12B-it",
+  "revision": "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7",
+  "readout": "generation",
+  "question": {
+    "instructions": "Apply the SHR instructions in the state to its final supplied input. Choose exactly one relation in the supplied A/B order.",
+    "criteria": {
+      "equivalent": "A and B have the same meaning and are equally broad or specific.",
+      "a_parent_of_b": "A is the broader topic under the supplied containment test.",
+      "b_parent_of_a": "B is the broader topic under the supplied containment test.",
+      "neither": "Both meanings are clear, they are not equivalent, and both parent directions fail the containment test.",
+      "uncertain": "A topic's meaning or the relationship remains unresolved."
+    },
+    "output_field": "relation",
+    "empty_fields": [
+      "reason"
+    ]
+  }
+}

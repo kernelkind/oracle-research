@@ -1,13 +1,28 @@
 """Native checkpoint identity and text-only multimodal loading checks."""
 import os
+import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import local_weight_model, distillation_run
 
 
 class LocalWeightTests(unittest.TestCase):
+    def test_choice_prompt_retains_state_and_order_for_both_readouts(self):
+        state = 'All original instructions\n{"A": [], "B": []}'
+        question = {'instructions': 'Apply the state',
+                    'criteria': {'second': 'Second meaning', 'first': 'First meaning'}}
+        for readout in ('generation', 'options'):
+            prompt = local_weight_model.choice_prompt(state, question, readout)
+            self.assertTrue(prompt.startswith(state))
+            self.assertIn('(A) second: Second meaning\n(B) first: First meaning', prompt)
+        with self.assertRaises(ValueError):
+            local_weight_model.choice_prompt(state, question, 'unknown')
+        with self.assertRaises(ValueError):
+            local_weight_model.choice_prompt(state, {**question, 'criteria': {'only': 'One'}}, 'options')
+
     def test_pointer_identity_names_the_learned_adapter(self):
         config = {'kind': 'pointer', 'model': 'Qwen/base', 'revision': 'a'*40,
                   'adapter': 'owner/decision', 'adapter_revision': 'b'*40}
@@ -17,6 +32,54 @@ class LocalWeightTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('RUN_LOCAL_WEIGHT_TESTS') == '1', 'native weight integration environment')
 class LocalWeightIntegrationTests(unittest.TestCase):
+    def test_complete_scores_native_single_token_options_and_preserves_mapping(self):
+        import torch
+        from tokenizers import Tokenizer, models, pre_tokenizers
+        from transformers import PreTrainedTokenizerFast, Qwen2Config, Qwen2ForCausalLM
+        vocabulary = {word: i for i, word in enumerate(
+            ['[UNK]', '[PAD]', 'A', 'B', 'C', 'D', 'E', 'pair', 'broader'])}
+        tokenizer = Tokenizer(models.WordLevel(vocabulary, unk_token='[UNK]'))
+        tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+        tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer, unk_token='[UNK]',
+            pad_token='[PAD]', chat_template="{% for m in messages %}{{ m['content'] }}{% endfor %}\n")
+        backend = object.__new__(local_weight_model.LocalWeights)
+        backend.config = {'kind': 'causal_lm', 'readout': 'options', 'reserve_gib': 1,
+            'quantization': 'none', 'max_input_tokens': 512, 'max_new_tokens': 8,
+            'question': {'instructions': 'Compare pair',
+                'criteria': {'left': 'left broader', 'right': 'right broader', 'same': 'same pair'},
+                'output_field': 'relation', 'empty_fields': ['reason']}}
+        backend.config_sha256, backend.name = 'a'*64, 'tiny-options'
+        backend.tokenizer = tokenizer
+        torch.manual_seed(17)
+        backend.model = Qwen2ForCausalLM(Qwen2Config(vocab_size=16, hidden_size=32,
+            intermediate_size=64, num_hidden_layers=1, num_attention_heads=2,
+            num_key_value_heads=1, max_position_embeddings=512)).cuda().eval()
+        backend.encoder = backend.head = None
+        body = {'model': backend.name, 'messages': [{'role': 'user', 'content': 'pair'}]}
+        with patch.object(backend.model, 'generate', side_effect=AssertionError('must not decode')):
+            reply = backend.complete(body)
+        prompt = reply['metadata']['choice_prompt']
+        self.assertTrue(prompt.startswith('pair'))
+        ids = tokenizer.apply_chat_template([{'role': 'user', 'content': prompt}],
+            add_generation_prompt=True, return_dict=True, return_tensors='pt')
+        ids = {k: v.cuda() for k, v in ids.items() if k != 'token_type_ids'}
+        with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+            logits = backend.model(**ids, use_cache=False, logits_to_keep=1).logits[0, -1].float()
+        codes = [tokenizer.encode(c, add_special_tokens=False)[0] for c in 'ABC']
+        expected = logits[codes].softmax(-1).cpu().tolist()
+        observed = reply['metadata']['probabilities']
+        self.assertEqual(list(observed), ['left', 'right', 'same'])
+        torch.testing.assert_close(torch.tensor(list(observed.values())), torch.tensor(expected))
+        self.assertEqual(reply['raw_text'], json.dumps(
+            {'relation': list(observed)[logits[codes].argmax().item()], 'reason': ''}))
+        self.assertEqual(reply['usage']['output'], 0)
+        with patch.object(tokenizer, 'encode', return_value=[2, 3]):
+            with self.assertRaisesRegex(ValueError, 'single tokens'):
+                backend.complete(body)
+        backend.config['max_input_tokens'] = 2
+        with self.assertRaisesRegex(ValueError, 'exceeds'):
+            backend.complete(body)
+
     def test_gemma_unified_loads_complete_text_weights_without_multimodal_modules(self):
         import torch
         from transformers import (Gemma4UnifiedConfig, Gemma4UnifiedTextConfig,

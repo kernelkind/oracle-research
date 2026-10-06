@@ -15,6 +15,25 @@ checkpoints. This phase is local and provisional. It does not require completed
 SHR training labels. Untuned encoders with a new SHR head cannot give meaningful
 five-relation predictions; their existing capacity checks remain useful.
 
+The user subsequently authorized autonomous continuation until there is
+sufficient model evidence. The next local comparison preserves all 70 v26
+inputs and compares an added explicit choice question with generated JSON,
+direct option-token scoring, and reversed option order. The original prompt
+and options stay visible; the scoring variant explicitly replaces only its
+answer format. This checks a readout and output-contract hypothesis, not a
+matched test of pretraining or head architecture. A decision-trained alternative
+and a larger foundation will be measured if needed to resolve the shortlist.
+This authorization does not supply completed SHR training labels or permit
+reserved final-test access, paid resources, or a release model decision.
+
+The native option-scoring integration test first failed because the old path
+decoded text. Its production forward-pass replacement passed all four local
+weight tests on GB10. The shared workflow/local/production regression run passed
+212 tests with eight optional skips. The initial regression command named a
+nonexistent input-test module; that invocation error is preserved, and the
+corrected suite passed. Scored answers use no generated reason; their logits,
+code mapping and actual rendered choice prompt remain in native receipts.
+
 The comparison uses Qwen3.5-9B instruct, Gemma-4-12B-it, and Kev-9B's native
 pointer head with its published adapter. All use explicit NF4 loading. Qwen
 and Kev were measured with the separate serving process resident; Gemma used
