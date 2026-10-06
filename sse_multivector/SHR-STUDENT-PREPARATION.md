@@ -405,7 +405,27 @@ The real tokenizers confirm that `Answer: (` preserves standalone A–E tokens
 for all three checkpoints; bare `(` does not for Qwen. Each complete input is
 also checked at inference for code-boundary agreement and input length. The
 actual prefix and rendered scoring prompt remain in native response metadata.
-Prefix-control results are pending at this checkpoint.
+The Qwen-9B prefix controls are complete: 140 new valid one-attempt answers.
+All original-order unrestricted top tokens are A–E; median allowed-code mass
+is 0.99945, with full inputs 2,638–2,724 tokens. The prefix fixes the measured
+format mismatch but does not close the semantic gap to the decision warm starts.
+
+| Qwen-9B with `Answer: (` | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Original option order | 24/40; 14/20 | 1/8; 0/4 | 10/22; 6/11 | 35/70; 20/35 |
+| Rotated option order | 26/40; 16/20 | 6/8; 2/4 | 7/22; 10/11 | 39/70; 28/35 |
+
+Only 47/70 decisions survive rotation: 28/40 original, 3/8 scope and 16/22
+transfer. This improves stability over the earlier bare-code controls but
+remains below Kev's 66/70 and Nimble's 61/70. The original generated-JSON path
+gave 36/70 and 22/35. These comparisons support a semantic benefit hypothesis
+for decision specialization without isolating the effects of base pretraining,
+task data, prompt layout and head architecture or predicting post-SHR tuning.
+
+Native experiments are `qwen-options-prefix-*-v1` and
+`qwen-options-prefix-rotate-*-v1`. The teacher-baseline views
+`qwen-options-prefix-rotate-teacher-*-v1` reuse all 70 rotated answers with zero
+new attempts. Gemma and Qwen-27B prefix results remain pending at this checkpoint.
 
 ### Kev option-order check
 

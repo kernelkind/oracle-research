@@ -78,7 +78,14 @@ diagnostics, not a post-training architecture comparison. Those bare-letter
 controls do not isolate the benefit of decision pretraining: a chat model can
 prefer punctuation before its option code, making its first-position letter
 scores a different answer contract. A native answer-prefix control is now
-being checked before interpreting that gap as a specialization advantage.
+checked before interpreting that gap as a specialization advantage.
+The completed Qwen-9B prefix control assigns median 0.99945 vocabulary mass
+to its allowed letters but gives only 35/70 agreement and 20/35 reversals;
+rotation gives 39/70 and 28/35, preserving 47/70 decisions. Correcting that
+format mismatch does not close its gap to the decision warm starts. Their
+different foundations, prior task training and native layouts still prevent
+attributing the whole difference solely to a head or forecasting matched
+SHR adaptation.
 
 Gemma's scored readout is also sensitive to code order: agreement changes from
 37/70 to 54/70, reversal consistency from 13/35 to 24/35, and only 38/70 labels
