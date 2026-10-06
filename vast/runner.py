@@ -52,6 +52,10 @@ class RemoteAccessUnavailable(OperationError):
     """The bound paid host is temporarily unreachable."""
 
 
+class InstanceStartupPending(OperationError):
+    """The created command instance is still starting or awaiting observation."""
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -1340,6 +1344,8 @@ def freeze_running_instance(
             if interval:
                 time.sleep(interval)
         if frozen is None:
+            if context.command_workload:
+                raise InstanceStartupPending("created Vast instance is still starting")
             raise OperationError("created Vast instance did not become running")
         atomic_json(instance_path, frozen)
     try:
@@ -5183,6 +5189,12 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
         instance_id = calibration_package.created_instance_id(create_result)
         try:
             instance = freeze_running_instance(context, offer, create_result)
+        except InstanceStartupPending:
+            return {
+                "state": "instance_starting",
+                "instance_id": instance_id,
+                "billing_possible": True,
+            }
         except OperationError as error:
             if not context.path("launch/preworker-instance-failure.log").exists():
                 atomic_bytes(

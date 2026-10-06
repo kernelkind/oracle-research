@@ -46,8 +46,10 @@ The download requests were rejected before allocating a GPU; no GPU charge or
 training. The retry identified an invalid mount path. The launcher now mounts
 at `/workspace`, keeping files under `/workspace/oracle-full-build`; local
 checks and all 109 VM checks pass. The private runtime passes native preparation.
-The quoted download-only rate was $1.4278/hour including storage.  Container mount/cache checks and full MoE
-CUDA confirmation remain pending.
+**Download stage completed October 6:** actual mounting and write/read checks
+passed. All **42 files / 169.8 GB** were checksum verified on the volume; local completion review passed.  The preliminary GPU/transfer cost was **$0.455**. Full concurrent CUDA prep and MoE confirmation are still next.
+The controller now retries slow image startup on the same instance; local
+regressions pass, with VM rehearsal/private publication before the main launch.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent

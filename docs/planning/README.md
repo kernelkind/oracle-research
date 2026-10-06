@@ -118,9 +118,12 @@ The storage rate was $0.0833/hour. Both download create requests were rejected b
 The retry revealed an invalid mount path. Use `/workspace`, retaining experiment
 paths beneath it. Local CLI/controller/cache/workload checks pass; the updated
 VM rehearsal passed 109 checks; the private image and unchanged packages pass
-native prepare. The quoted download-only rate was $1.4278/hour including storage.  Container
-mount/cache checks and CUDA confirmation remain pending. No automatic stop or
-deletion.
+native prepare. The quoted download-only rate was $1.4278/hour including storage. The download completed: all **42 files / 169.8 GB** were checksum verified on the volume, and all completion evidence was verified locally. 
+The preliminary cost was $0.455. No baseline/training yet. Slow image startup now stays pending
+and retries on the same instance; 176 local tests succeed (three VM-only skips).
+Updated VM rehearsal/private publication precede the main two-card launch. Full
+concurrent CUDA/MoE confirmation and main spending admission remain pending.
+No automatic stop or deletion.
 Use a one-card rental on that machine to verify attachment and download all
 three pinned models onto the actual volume, approved October 6. Verify files
 and retrieve evidence before deleting the container; retain the volume for

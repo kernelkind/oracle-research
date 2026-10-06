@@ -179,6 +179,25 @@ target = parse_vast_ssh_target(result.stdout)''').body
                         calls.append(node.func.id)
         self.assertCountEqual(calls, ["ledger_reconciliation_state", "cleanup_terminal",
                                      *["cleanup_preworker_instance"] * 3])
+        # Only command workloads can raise this retryable startup state. The
+        # original GTE startup and fatal-error handling remain identical.
+        pending = ast.parse('''try:
+    pass
+except InstanceStartupPending:
+    return {
+        "state": "instance_starting",
+        "instance_id": instance_id,
+        "billing_possible": True,
+    }
+''').body[0].handlers[0]
+        removed = 0
+        for node in ast.walk(after["run"]):
+            if isinstance(node, ast.Try):
+                for handler in list(node.handlers):
+                    if ast.dump(handler) == ast.dump(pending):
+                        node.handlers.remove(handler)
+                        removed += 1
+        self.assertEqual(removed, 1)
         self.assertEqual(ast.dump(before["run"]), ast.dump(after["run"]))
         options = after["ssh_options"].body[0].value.elts
         self.assertEqual([node.value for node in options[1:3]], ["-F", "/dev/null"])

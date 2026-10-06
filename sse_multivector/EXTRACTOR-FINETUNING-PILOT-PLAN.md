@@ -2303,10 +2303,19 @@ allocation. The fix mounts
 controller/generalization, four cache and 13 workload-spec checks pass. Updated
 VM rehearsal passed all 109 checks, including parent mounting and offline
 handoff; the private immutable publication matches it and native prepare passes.
-The recorded resource rate was $1.4278/hour. Image
-layers are downloading. Container mount/cache checks precede model downloads.
-All six configs, data and model requirements match the previous package. No
-pilot baseline or training yet.
+The recorded resource rate was $1.4278/hour. The preparation run completed
+the download stage: all 42 pinned files (169,808,998,964 bytes) are checksum
+verified on the actual volume in 768.797 seconds. Parent mounting, selected
+volume identity and write/read checks pass. All 12 work and six preparation
+files were retrieved and verified; production completion review passed.
+The preliminary resource charge was $0.455. Slow cold image startup exceeded the readiness window; preserved original
+evidence and a guarded unchanged-controller retry recovered the same instance,
+without a second create or remote edits. Future command startup remains pending
+and retries after each bounded readiness window. The CLI regression failed
+first and now passes; 176 local tests succeed (three VM-only skips). Rebuilt
+packages preserve all six configs, data and model file requirements byte for
+byte, changing only the controller runtime hash. Updated VM rehearsal/private
+publication remain before main launch. No pilot baseline or training yet.
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.

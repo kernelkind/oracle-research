@@ -1196,6 +1196,28 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertEqual(fixture.invoke("stop").returncode, 0)
         self.assertEqual(fixture.provider()["destroy_calls"], 1)
 
+    def test_cli_slow_image_startup_continues_on_same_instance(self):
+        fixture = self.lifecycle_fixture()
+        fixture.set_provider(crash_on_first_show_instance=True)
+        self.assertNotEqual(fixture.invoke_with_tty_secret("run").returncode, 0)
+        fixture.set_instance(actual_status="loading")
+        waiting = fixture.invoke("run")
+        self.assertEqual(waiting.returncode, 0, waiting.stderr)
+        self.assertEqual(fixture.output_json(waiting)["state"], "instance_starting")
+        self.assertTrue(fixture.output_json(waiting)["billing_possible"])
+        self.assertFalse((self.root / "launch/preworker-instance-failure.log").exists())
+        self.assertEqual(fixture.provider()["remote_prepare_calls"], 0)
+        self.assertEqual(fixture.provider()["worker_start_calls"], 0)
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+
+        fixture.set_instance(actual_status="running")
+        started = fixture.invoke("run")
+        self.assertEqual(started.returncode, 0, started.stderr)
+        self.assertEqual(fixture.output_json(started)["state"], "running")
+        self.assertEqual(fixture.provider()["create_calls"], 1)
+        self.assertEqual(fixture.provider()["worker_start_calls"], 1)
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+
     def test_watch_resumes_shared_run_until_retrieval_without_second_approval(self):
         self.freeze()
         states = [{'state': 'preparing'}, {'state': 'running'}, {'state': 'retrieved'}]
