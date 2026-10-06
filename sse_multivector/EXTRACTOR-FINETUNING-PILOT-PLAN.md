@@ -2152,6 +2152,16 @@ GPU prep are continuously observed. The verified image, package, all 15 runtime
 source hashes and recipe are unchanged. Continuous observation, live copying and complete-data
 deletion rules apply. New launch evidence is
 `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`.
+At 02:15:54 UTC, a local $1 setup gate refused worker admission after successful
+SSH, transfer and remote preparation: estimated rental $0.314536 plus the whole
+planned $0.755209 transfer allowance exceeded $1. A production-path reproduction
+confirmed the refusal. A recorded local Context with $5 startup allowance started attempt 001. A second call returned the same attempt. No remote code, original
+Context/contract/transport, data, prompts or model recipe was changed; hashes
+were verified again. The original frozen supervisor/observer were restarted.
+Failure evidence, old supervisor receipts, effective local configuration and
+repair verification are in `operation/launch/startup-recovery/001/`. Future
+launch settings use $5 startup allowance. Main baselines/training had not
+started; no comparison was changed. GPU prep is now running.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.

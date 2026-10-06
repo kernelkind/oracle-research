@@ -1489,7 +1489,14 @@ Native frozen preparation passed without a paid action. The proposed experiment 
 Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. The preparation used two-GPU hardware at **$2.9389/hour** including 300 GB storage. Startup and GPU prep are
 continuously observed; live exfiltration, unchanged prep/complete-baseline gates
 and complete-data explicit deletion rules govern this run. No automatic stop or
-deletion is enabled.
+deletion is enabled. The local $1 setup gate rejected worker admission: $0.314536 rental estimate plus the full $0.755209 planned transfer allowance exceeded $1. SSH, transfer and remote preparation had
+succeeded. A production-path reproduction confirmed that refusal. Under standing autonomous repair authorization, a separate local Context with a $5 startup admission allowance started worker attempt 001; calling worker start again returned the same attempt. The original
+Context/contract/transport, remote code, prompts and model recipe were not
+modified; their hashes were verified again. Failed admission/old supervisor
+receipts are archived under `launch/startup-recovery/001/`, with the effective
+local configuration and repair result. The original frozen supervisor and
+observer were restarted. Future launch settings use a $5 setup allowance. No main baseline or training preceded the
+repair; there is no comparison change to rerun. GPU prep is now running.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

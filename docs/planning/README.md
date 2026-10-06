@@ -96,7 +96,10 @@ skipped and covered separately. The corrected VM export is published and verifie
 private. A replacement failed before SSH or experiment work because container DNS failed. Startup diagnostics were saved and hashed. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**. Both attempts failed.  A different compatible host quotes $2.9389/hour.
 
 Native preparation passed. The preparation uses a **$2.9389/hour** configuration and is observed through startup, prep, the pilot and retrieval. Machine
-146170 is excluded. GPU checks and local semantic grading remain. There is no
+146170 is excluded. A local $1 setup gate refused worker admission after
+successful startup/input verification because it counted the full planned
+transfer allowance. A $5 local setup allowance resumed attempt 001 without changing remote code, inputs or the model recipe. GPU prep is running. GPU checks and local semantic grading
+remain. There is no
 automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
