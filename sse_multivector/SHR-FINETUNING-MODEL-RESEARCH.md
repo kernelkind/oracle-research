@@ -77,6 +77,16 @@ option scoring gives 34/70 and 11/35. Rotating every option code gives 36/70 and
 diagnostics, not a post-training architecture comparison. They weaken the
 hypothesis that Kev's lead comes simply from bypassing JSON and reasons.
 
+Gemma's scored readout is also sensitive to code order: agreement changes from
+37/70 to 54/70, reversal consistency from 13/35 to 24/35, and only 38/70 labels
+survive rotation. The rotated run's allowed standalone letters have median
+full-vocabulary probability mass 0.00180; most unrestricted top tokens start a
+parenthesized answer. These forced-choice diagnostics do not establish a stable
+replacement for its generated-label path. Keep the two orders visible rather
+than choosing the more favorable one; syntax and code compliance may change
+with SHR training. Native decision models trained on conditional-code loss
+should not be judged by full-vocabulary code mass alone.
+
 ## Project constraints and task meaning
 
 The project needs useful automatically constructed subject hierarchies for

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "causal_lm",
+  "quantization": "nf4",
+  "max_input_tokens": 8192,
+  "max_new_tokens": 512,
+  "memory_budget_gib": 12,
+  "reserve_gib": 8,
+  "model": "Mapika/decider-4b",
+  "revision": "eb5fbdfc9448473ec25e399882912863afbdb70e",
+  "readout": "options",
+  "question": {
+    "instructions": "Apply the SHR instructions in the state to its final supplied input. Choose exactly one relation in the supplied A/B order.",
+    "criteria": {
+      "b_parent_of_a": "B is the broader topic under the supplied containment test.",
+      "neither": "Both meanings are clear, they are not equivalent, and both parent directions fail the containment test.",
+      "uncertain": "A topic's meaning or the relationship remains unresolved.",
+      "equivalent": "A and B have the same meaning and are equally broad or specific.",
+      "a_parent_of_b": "A is the broader topic under the supplied containment test."
+    },
+    "output_field": "relation",
+    "empty_fields": [
+      "reason"
+    ]
+  },
+  "prompt_layout": "decider",
+  "temperature": 1.11,
+  "upstream_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/shr-student-diagnostics-v1/upstream/decider",
+  "upstream_source_sha256": {
+    "prompt.py": "46f8158cd00c708408f6340340517c5a0c50fb0a339d0e46cd0a30f8801624cd"
+  }
+}

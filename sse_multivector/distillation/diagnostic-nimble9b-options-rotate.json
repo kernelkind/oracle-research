@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "causal_lm",
+  "quantization": "nf4",
+  "max_input_tokens": 8192,
+  "max_new_tokens": 512,
+  "memory_budget_gib": 12,
+  "reserve_gib": 8,
+  "model": "Qwen/Qwen3.5-9B",
+  "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "readout": "options",
+  "question": {
+    "instructions": "Apply the SHR instructions in the state to its final supplied input. Choose exactly one relation in the supplied A/B order.",
+    "criteria": {
+      "b_parent_of_a": "B is the broader topic under the supplied containment test.",
+      "neither": "Both meanings are clear, they are not equivalent, and both parent directions fail the containment test.",
+      "uncertain": "A topic's meaning or the relationship remains unresolved.",
+      "equivalent": "A and B have the same meaning and are equally broad or specific.",
+      "a_parent_of_b": "A is the broader topic under the supplied containment test."
+    },
+    "output_field": "relation",
+    "empty_fields": [
+      "reason"
+    ]
+  },
+  "adapter": "bespokelabs/Bespoke-Nimble-9B",
+  "adapter_revision": "bd792f44ec8e265be861bfcdf4e05967ffe0e858",
+  "adapter_sha256": "29ef39b072dee97287947455337879c1e916705c2f727287922a2d81f5e2f20a",
+  "adapter_key_mapping": {
+    "^model\\.language_model\\.": "model."
+  },
+  "prompt_layout": "schema",
+  "upstream_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/shr-student-prep-v1/huggingface/hub/models--bespokelabs--Bespoke-Nimble-9B/snapshots/bd792f44ec8e265be861bfcdf4e05967ffe0e858",
+  "upstream_source_sha256": {
+    "serving_schema.py": "17b81d6cc3e26ec501e24f1609615f2386f974b618119b7a7102319c330c31ac",
+    "parallel_schema.py": "a0a0f94d0f65e972bc20d088678ad3d595ff1c42b9c0d78f96034526303f63fc",
+    "extended_schema.py": "fb51ac3d51922bb93caa207a34493d6addaa22c9ec1c26df594ba9d46f7a2285",
+    "candidate_schema.py": "f695b402c473a9a50ff98c3cc5041fa337ce524f0a429f9c7f6276275fd6a7b5"
+  }
+}

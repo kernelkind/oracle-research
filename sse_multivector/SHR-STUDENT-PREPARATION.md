@@ -241,6 +241,45 @@ teacher-agreement row without duplicate inference or manual comparison files.
 The local serving source is `06fb274c`; rotation configurations are at
 `b9135f7e`. Full native reports and failed command invocations remain ignored.
 
+### Gemma option-order controls
+
+The autonomous continuation also completed 140 new Gemma scored calls, all
+valid in one attempt. Its published NF4 weights and all v26 inputs remain the
+same; the two choice orders are the same as Qwen's controls above.
+
+| Gemma-4-12B-it, NF4 | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Direct scoring, original order | 25/40; 10/20 | 1/8; 2/4 | 11/22; 1/11 | 37/70; 13/35 |
+| Direct scoring, rotated order | 34/40; 16/20 | 6/8; 3/4 | 14/22; 5/11 | 54/70; 24/35 |
+
+Only 38/70 decisions survive rotation: 27/40 original, 1/8 scope and 10/22
+transfer. Selecting the better order after observing these diagnostics would
+overstate generalization. The original order incorrectly calls Coffee and
+Coffee drinking equivalent; rotation fixes that case but introduces a parent
+label between two unrestricted Food subjects. These are native agent reviews,
+not user approvals. Neither readout supplies SHR fitting targets.
+
+The rotated run additionally records full-vocabulary scoring evidence. Allowed
+letter mass ranges from 0.0000465 to 0.161, with median 0.00180. The unrestricted
+top token is `(` in 56 cases, a JSON opener in 13 and a Markdown fence in one.
+Thus most next-token probability lies outside the requested standalone letters.
+The conditional option probabilities alone do not show reliable output-format
+compliance or semantic confidence. This observation motivates retaining the
+generated-label comparison for chat foundations; it does not establish their
+quality after task training. Restricted-code decision training has a different
+loss and need not assign high full-vocabulary mass to its codes.
+
+Native experiments are `gemma-options-{original,scope,transfer}-v1` and
+`gemma-options-rotate-*-v1`; the latter use the first order as immediate baseline.
+The `gemma-options-rotate-teacher-*-v1` views reuse all 70 rotated answers with
+zero new attempts. Reports, reviews and receipts remain ignored under the owned
+diagnostic directory. Scoring metadata and saved usage/stop reasons are exposed
+through native `show`, with production HTTP/report tests and all six GB10 native
+weight tests passing. The final experiment regression passed 117 tests with six
+optional skips; the ten local tests passed with four native-weight skips on
+Anvil. An initial test assertion expected twelve fixture input tokens although
+the fixture returns ten; the corrected test passed without a production change.
+
 The next comparison adds the current Nimble adapter, native decider-4b v2.1 and
 Qwen3.8-27B as a larger foundation, while checking Gemma's same readout controls.
 Native format tests first exposed the missing causal adapter and the different
