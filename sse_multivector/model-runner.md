@@ -898,7 +898,7 @@ target/infomap-review-build/debug/sse-subject-navigation \
 Do not enable display-collapse options. Append `--check` for noninteractive
 validation. No saved LG01 output is rewritten.
 
-### Collect subjects, masks and node descriptions into reusable inputs
+### Collect saved answers into reusable inputs
 
 `collect` is offline. It validates saved answers and receipts through the same
 report loader as `show`, then writes a fresh output directory. Collection paths,
@@ -908,6 +908,17 @@ prompt versions, teacher settings and saved-answer reuse are data supplied to
 - Collect completed `subjects` experiments into `subjects.json`, retaining
   complete posts, IDs, source metadata, numbered SP entries and contexts. Supply
   that file to the existing `masks` or `grouped_masks` adapter.
+- Collect completed `subject_pairs` experiments into `relationships.json`.
+  Preserve exact template variables, all source evidence, split and reversal
+  family IDs when supplied, five-way relation/reason answers, receipts and
+  attributed reviews. Store each distinct prompt template once, with its hash
+  and version IDs. Different experiments and prompt versions remain separate
+  decisions; duplicate experiment/case records are rejected. Missing answers,
+  unsupported labels/fields and changed sources prevent publication.
+  Review verdicts and their current/stale bindings remain separate from the
+  semantic relation. Collection assigns no accepted training status and does
+  not repair reversal disagreements. Its provisional outputs still require
+  training-role selection and semantic review; validation evidence is not TRAIN.
 - Collect completed `masks` (word-position format) or `grouped_masks` experiments
   into `masked-posts.json`, `vector-map.json` and, when masks are nonempty,
   `worker-request.json`. Keep every original SP entry, including valid empty MP

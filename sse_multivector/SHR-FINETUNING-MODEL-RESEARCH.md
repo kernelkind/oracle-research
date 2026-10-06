@@ -410,6 +410,12 @@ nominated and no model call or fitting was added. See
 [the rule review](SHR-STUDENT-PREPARATION.md#rule-review-against-shr-single-v26) and
 [TRAIN pair preparation](SHR-STUDENT-PREPARATION.md#train-pair-preparation).
 
+The subsequent offline collection support preserves complete SHR answers,
+source identities, prompt versions and review history through the shared
+workflow. It does not select accepted targets or fit a model. The 640 prepared
+TRAIN families remain unrun pending the label-prompt choice; see
+[SHR answer collection](SHR-STUDENT-PREPARATION.md#shr-answer-collection).
+
 The next useful quality comparison needs the same accepted training labels
 and budget for Kev-9B, its Qwen3.5-9B-Base foundation and Ettin-1B. Gemma-12B
 provides the independent foundation; Nimble can replace a custom-head warm

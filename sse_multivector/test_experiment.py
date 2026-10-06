@@ -1301,6 +1301,115 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual([(c['id'], c['inputs']) for c in self.show('E2')['cases']],
                          [(c['id'], c['inputs']) for c in shown['cases']])
 
+    def test_collect_subject_pairs_preserves_decisions_reviews_and_train_identity(self):
+        self.registry_pairs_spec()
+        self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')
+        self.prepare()
+        planned = self.show()['cases']
+        case_id = planned[0]['id']
+        self.cli('review', 'E1', '--case', case_id, '--role', 'agent',
+                 '--verdict', 'uncertain', '--comment', 'Input review, not a relation target')
+        answer = dict(relation='uncertain', reason='A saved diagnostic reason.')
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.cli('review', 'E1', '--case', case_id, '--role', 'agent',
+                 '--verdict', 'reject', '--comment', 'Disputed teacher decision')
+        protected = {str(p): p.read_bytes() for p in [self.log,
+            self.root / 'E1/run/results.jsonl', self.root / 'E1/reviews.jsonl',
+            self.root / 'registry.json', self.root / 'split-manifest.json']}
+        self.cli('collect', 'E1', '--output', 'collected')
+        data = json.loads((self.root / 'collected/relationships.json').read_text())
+        self.assertEqual(data['schema_version'], 1)
+        self.assertIn('Provisional', data['semantic_status'])
+        self.assertEqual(len(data['cases']), len(planned))
+        for actual, expected in zip(data['cases'], planned):
+            self.assertEqual(actual['case_id'], expected['id'])
+            self.assertEqual(actual['inputs'], expected['inputs'])
+            self.assertEqual(actual['evidence'], expected['evidence'])
+            self.assertEqual(actual['answer'], answer)
+            self.assertEqual(actual['evidence']['split'], 'train')
+            self.assertIn(actual['prompt_sha256'], data['prompts'])
+            self.assertNotIn('accepted', actual)
+            self.assertNotIn('prompt', actual)
+        reviews = data['cases'][0]['reviews']
+        self.assertEqual([r['verdict'] for r in reviews], ['uncertain', 'reject'])
+        self.assertEqual([r['current'] for r in reviews], [False, True])
+        provenance = json.loads((self.root / 'collected/provenance.json').read_text())
+        self.assertEqual(provenance['inference_calls'], 0)
+        for path, before in protected.items():
+            self.assertEqual(Path(path).read_bytes(), before)
+            if path != str(self.log):
+                self.assertEqual(provenance['sources'][path], hashlib.sha256(before).hexdigest())
+        self.assertFalse((self.root / 'sealed.json').exists())
+
+    def test_collect_subject_pairs_refuses_incomplete_duplicate_and_changed_sources(self):
+        self.subject_pairs_spec()
+        self.prepare()
+        error = self.cli('collect', 'E1', '--output', 'incomplete', ok=False)
+        self.assertIn('complete valid saved answers', error.stderr)
+        self.assertFalse((self.root / 'incomplete').exists())
+        self.assertEqual(self.calls(), [])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                 json.dumps(dict(relation='neither', reason='Saved answer.'))})
+        calls = self.log.read_bytes()
+        error = self.cli('collect', 'E1', 'E1', '--output', 'duplicate', ok=False)
+        self.assertIn('duplicate collected subject-pair', error.stderr)
+        self.assertFalse((self.root / 'duplicate').exists())
+        source = self.root / 'subjects.json'
+        source.write_text(source.read_text() + '\n')
+        error = self.cli('collect', 'E1', '--output', 'changed', ok=False)
+        self.assertIn('protected source changed', error.stderr)
+        self.assertFalse((self.root / 'changed').exists())
+        self.assertEqual(self.log.read_bytes(), calls)
+
+    def test_collect_subject_pairs_rejects_unsupported_answers(self):
+        self.subject_pairs_spec()
+        for i, answer in enumerate([
+                dict(relation='unknown', reason='Not one of the five relations.'),
+                dict(relation='neither', reason=3),
+                dict(relation='neither', reason='Extra field.', accepted=True)]):
+            name = 'E' + str(i)
+            self.prepare(name, '--repeat')
+            self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+            calls = self.log.read_bytes()
+            error = self.cli('collect', name, '--output', name + '-collected', ok=False)
+            self.assertIn('unsupported subject-pair relation/reason answer', error.stderr)
+            self.assertFalse((self.root / (name + '-collected')).exists())
+            self.assertEqual(self.log.read_bytes(), calls)
+
+    def test_collect_subject_pairs_keeps_inconsistent_reversals_without_repair(self):
+        self.subject_pairs_spec()
+        self.prepare()
+        answer = dict(relation='a_parent_of_b', reason='Both directions claim the same parent.')
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        calls = self.log.read_bytes()
+        self.cli('collect', 'E1', '--output', 'collected')
+        rows = json.loads((self.root / 'collected/relationships.json').read_text())['cases']
+        a, b = [json.loads(row['inputs']['INPUT_JSON']) for row in rows]
+        self.assertEqual(a['A'], b['B'])
+        self.assertEqual(a['B'], b['A'])
+        self.assertEqual([row['answer'] for row in rows], [answer, answer])
+        self.assertEqual(self.log.read_bytes(), calls)
+
+    def test_collect_subject_pairs_keeps_separate_prompt_versions_and_decisions(self):
+        self.subject_pairs_spec()
+        self.prepare()
+        first = dict(relation='neither', reason='First saved decision.')
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(first)})
+        (self.root / 'v2.txt').write_text(self.prompt.read_text() + '\nDifferent instructions.')
+        spec = json.loads(self.spec.read_text())
+        spec['prompt'] = dict(id='P2', path='v2.txt')
+        self.write('spec2.json', spec)
+        self.cli('prepare', 'E2', '--spec', 'spec2.json')
+        second = dict(relation='equivalent', reason='Second saved decision.')
+        self.cli('run', 'E2', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(second)})
+        calls = self.log.read_bytes()
+        self.cli('collect', 'E1', 'E2', '--output', 'collected')
+        data = json.loads((self.root / 'collected/relationships.json').read_text())
+        self.assertEqual(len(data['prompts']), 2)
+        self.assertEqual([row['answer'] for row in data['cases']], [first, first, second, second])
+        self.assertEqual([row['prompt_id'] for row in data['cases']], ['P1', 'P1', 'P2', 'P2'])
+        self.assertEqual(self.log.read_bytes(), calls)
+
     def test_registry_pair_selection_rejects_unbound_or_changed_sources(self):
         self.registry_pairs_spec()
         for key in ('registry', 'manifest', 'split_manifest'):

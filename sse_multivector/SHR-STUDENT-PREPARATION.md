@@ -24,10 +24,11 @@ model size or establish a post-finetuning plateau. Suitable complete SHR
 training labels and reviewed evaluation roles remain the next dependency;
 none of these provisional cases entered gradients or the reserved final test.
 
-The latest shared regression suite passed 147 tests with 13 optional skips,
-and all 15 native loader/benchmark tests passed on GB10. Historical failures
-remain recorded below. The larger pointer capacity check passed training,
-save, fresh-process reload and six inference shapes at 512, 2,048 and 3,072
+The latest workflow/collection regression run completed 163 tests: 157 passed
+and six optional tests skipped. All 15 native loader/benchmark tests passed
+earlier on GB10. Historical failures remain recorded below. The larger pointer
+capacity check passed training, save, fresh-process reload and six inference
+shapes at 512, 2,048 and 3,072
 tokens; the latter exceeds the complete v26 inputs' maximum 2,684 tokens.
 All experiment workers stopped.
 
@@ -40,6 +41,12 @@ case against v26's explicit named-painter example; the Food/crop-attack case
 remains open. No validation cases, training targets, model calls or SHR fitting
 were added. See [TRAIN pair preparation](#train-pair-preparation) and
 [the rule review](#rule-review-against-shr-single-v26).
+
+The shared offline collector now supports SHR relation answers with complete
+source identity, prompt versions and attributed review history. It retains
+disputed decisions without making them accepted training targets. Label
+generation still needs the prompt choice; the 640 TRAIN families remain unrun.
+See [SHR answer collection](#shr-answer-collection).
 
 ## Authorized provisional v26 comparison
 
@@ -1005,6 +1012,42 @@ changed hashes, validation selection, extra source paths and cross-split edges.
 The remaining dependency is stable relation rules and reviewed SHR targets.
 The prepared inputs can be reused under a later accepted prompt with
 `prepare --from`; no prompt revision, target generation or fitting was done.
+
+### SHR answer collection
+
+The user authorized proceeding toward reviewed labels and matched training.
+The existing `collect` command now supports complete saved `subject_pairs`
+experiments without inference. It writes `relationships.json` with exact input
+variables, complete original evidence, family/split identities, relation/reason
+answers, source-bound reviews and receipts. Prompt templates are stored once
+per hash rather than copied into each decision. Existing provenance records
+the model settings and protects the source files, reviews and collection code.
+
+Every exported answer remains provisional. A review verdict is distinct from
+the semantic relation: rejecting a teacher's `neither` does not turn it into
+`uncertain`. Collection preserves inconsistent reversals and separate prompt
+versions for later review rather than repairing or combining their labels.
+It refuses incomplete runs, unsupported relation/reason contracts, repeated
+experiment/case identities and changed protected sources. No validation or
+final-test population is selected or assigned a new role by this capability.
+
+The minimal production CLI test first failed because SHR collection was
+unsupported. Five CLI integration checks now cover identity preservation,
+current/stale review bindings, semantic `uncertain`, refusal paths, unchanged
+sources, conflicting reversals and separate prompt versions. Test fixtures
+make no actual model calls. The prepared 1,280 real inputs still have no saved
+answers; no teacher labels or trained student are supplied by this change.
+Collection of that real unrun set fails as expected before publishing an output.
+The experiment/selection, node-description, hierarchy-input and node-sorting
+regression suites completed 163 tests: 157 passed, six optional skips.
+
+Whether to generate provisional labels under approved **SHR-single-v26** now
+or wait for a finalized prompt remains the requested choice. The Food/crop-attack
+scope question also remains open. The next model-quality comparison still
+requires reviewed targets and a separately defined evaluation role.
+If provisional labeling is selected, start with the 20 input-reviewed TRAIN
+families in both directions (40 teacher requests), then review those decisions
+before labeling the rest. This is a proposal, not a completed or approved run.
 
 ## Dataset audit
 

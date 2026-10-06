@@ -781,7 +781,7 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
 
 
 def collect(directories, output, worker_config=None):
-    """Publish validated extraction inputs without inference or source writes."""
+    """Publish validated saved decisions without inference or source writes."""
     output = output.expanduser().resolve()
     if output.exists():
         raise ValueError("collection output already exists")
@@ -793,6 +793,10 @@ def collect(directories, output, worker_config=None):
         plan, _, _ = load(directory)
         if "path" not in plan["dataset"]:
             raise ValueError("collect requires source-bound preparation; import or prepare a new experiment")
+        if plan['dataset']['adapter'] == 'subject_pairs':
+            reviews_path = directory / 'reviews.jsonl'
+            if reviews_path.exists():
+                protected[str(reviews_path)] = engine._sha256_file(reviews_path)
         result = report(directory)
         if any(c["status"] not in {"valid", "empty"} or not c.get("receipt") for c in result["cases"]):
             raise ValueError("collect requires complete valid saved answers")
@@ -815,6 +819,38 @@ def collect(directories, output, worker_config=None):
     adapters = {p["dataset"]["adapter"] for p, _ in bundles}
     if adapters == {"subjects"}:
         files = inputs.hierarchy_inputs.collect_subjects(bundles)
+    elif adapters == {'subject_pairs'}:
+        decisions, prompts, seen = [], {}, set()
+        for plan, result in bundles:
+            prompt_hash = engine._sha256_bytes(plan['prompt']['text'].encode())
+            prompts.setdefault(prompt_hash, dict(text=plan['prompt']['text'], prompt_ids=[]))
+            if plan['prompt']['id'] not in prompts[prompt_hash]['prompt_ids']:
+                prompts[prompt_hash]['prompt_ids'].append(plan['prompt']['id'])
+            planned = {case['id']: case for case in plan['cases']}
+            for case in result['cases']:
+                key = (plan['experiment'], case['id'])
+                if key in seen:
+                    raise ValueError('duplicate collected subject-pair decision')
+                seen.add(key)
+                answer = json.loads(case['output'],
+                                    object_pairs_hook=engine._position_decoder().unique_object)
+                if (not isinstance(answer, dict) or set(answer) != {'relation', 'reason'}
+                        or not isinstance(answer['reason'], str)
+                        or not isinstance(answer['relation'], str)
+                        or answer['relation'] not in {'equivalent', 'a_parent_of_b',
+                                                     'b_parent_of_a', 'neither', 'uncertain'}):
+                    raise ValueError('unsupported subject-pair relation/reason answer')
+                decisions.append(dict(experiment=plan['experiment'], case_id=case['id'],
+                    prompt_id=plan['prompt']['id'], prompt_sha256=prompt_hash,
+                    input_sha256=planned[case['id']]['input_sha256'], inputs=case['inputs'],
+                    answer=answer, evidence=case['evidence'], reviews=case['reviews'],
+                    receipt=case['receipt']))
+        if not decisions:
+            raise ValueError('subject-pair collection requires saved decisions')
+        protected[str(Path(__file__).resolve())] = engine._sha256_file(Path(__file__))
+        files = {'relationships.json': dict(schema_version=1, prompts=prompts, cases=decisions,
+            semantic_status='Provisional saved model decisions; reviews do not automatically '
+                            'approve training targets or establish semantic gold.')}
     elif adapters <= {"masks", "grouped_masks"}:
         files = inputs.hierarchy_inputs.collect_masks(bundles)
     elif adapters == {"node_descriptions"}:
@@ -855,7 +891,7 @@ def collect(directories, output, worker_config=None):
         files = {'node-sorting.json': dict(schema_version=1,
                   nodes=[nodes[nid] for nid in sorted(nodes)])}
     else:
-        raise ValueError("collect supports subjects, masks, grouped_masks, node_descriptions and node_sorting experiments")
+        raise ValueError("collect supports subjects, subject_pairs, masks, grouped_masks, node_descriptions and node_sorting experiments")
     if worker_config is not None:
         if not adapters <= {"masks", "grouped_masks"}:
             raise ValueError("--worker-config requires mask experiments")
