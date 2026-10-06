@@ -2301,7 +2301,10 @@ The retry captured its HTTP 400 cause: invalid volume mount path, before GPU
 allocation. The fix mounts
 `/workspace` and keeps the experiment/cache paths beneath it. Nine CLI, 149
 controller/generalization, four cache and 13 workload-spec checks pass. Updated
-VM rehearsal/publication precede the next retry. All six configs, data and model
+VM rehearsal passed all 109 checks, including parent mounting and offline
+handoff; the private immutable publication matches it and native prepare passes.
+The recorded resource rate was $1.4278/hour. The GPU retry has not started.
+All six configs, data and model
 requirements match the previous package. No download or pilot training yet.
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:

@@ -1596,9 +1596,17 @@ all experiment/cache paths beneath it. Cache receipts name their logical
 `volume_root` accurately. Both pinned CLI mount assertions failed first; the
 receipt regression also failed first. Nine CLI, 149 controller/generalization,
 four cache and 13 workload-spec checks pass. The initial VM rehearsal caught the
-old mount assertion; the corrected full rehearsal is running. All six configs,
+old mount assertion; the corrected full rehearsal subsequently passed. All six
+configs,
 data and required model files remain byte-identical; no recipe change or pilot
 training. Evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
+The final VM rehearsal passes 109 checks and stops cleanly, including the actual
+parent mount, replacement and offline two-worker handoff. Both packages verify
+inside the imported image. Its private registry digest is
+`docker.io/kernelkind/oracle-mvp@sha256:633c684c0b64d064df34e8de9de64c07bc0b764423073a2c7a25aa561bd57a4b`;
+VM layers/effective configuration/source hashes match, read-only pull succeeds
+and anonymous manifest access is HTTP 401.   Combined rate is $1.4278/hour. The retry has
+not allocated a GPU yet. Evidence: `target/distillation-pilot-v1/download-launch-20261006-v3/`.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

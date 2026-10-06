@@ -117,7 +117,8 @@ previous configurations/data. Full MoE CUDA confirmation remains pending.
 The storage rate was $0.0833/hour. Both download create requests were rejected before allocation, with no GPU charge.
 The retry revealed an invalid mount path. Use `/workspace`, retaining experiment
 paths beneath it. Local CLI/controller/cache/workload checks pass; the updated
-VM rehearsal is running before private publication and a new download retry.
+VM rehearsal passed 109 checks; the private image and unchanged packages pass
+native prepare. The quoted download-only rate was $1.4278/hour including storage; this retry has not started GPU execution.
 Actual Vast attachment/CUDA confirmation remain pending. No automatic stop or
 deletion.
 Use a one-card rental on that machine to verify attachment and download all
