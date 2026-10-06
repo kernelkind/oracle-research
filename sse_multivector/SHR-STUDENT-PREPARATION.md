@@ -343,6 +343,32 @@ configurations also now cover decider-4b and Qwen3.8-27B. Their measurements
 remain pending at this checkpoint; configuration validation is not a passed
 training or quality test.
 
+### Kev option-order check
+
+The published native Kev pointer path completed all 70 rotated v26 cases in
+one attempt each. It preserves 66/70 first-order decisions: 37/40 original,
+7/8 scope and 22/22 transfer. Its teacher agreement changes from 61/70 to
+60/70; reversal consistency stays 31/35.
+
+| Kev native pointer, rotated criteria | Teacher agreement | Reversal consistency |
+| --- | ---: | ---: |
+| Original | 31/40 | 17/20 |
+| Scope | 7/8 | 3/4 |
+| Transfer | 22/22 | 11/11 |
+| Total | 60/70 | 31/35 |
+
+The changed cases are `P03-forward`, `B01-forward`, `B02-forward` and
+`R06-reverse`. Rotation introduces a reversed parent direction for Coffee and
+Coffee drinking, despite preserving the whole related Culture cluster. These
+results support Kev as the strongest tested compact decision warm start so
+far, without claiming order invariance or semantic accuracy. The Culture/person
+teacher judgment remains unresolved in the existing agent review.
+
+Native experiments are `kev-options-rotate-*-v1`; teacher-baseline views are
+`kev-options-rotate-teacher-*-v1`. The latter reuse all 70 answers with zero new
+attempts. The original `kev-*-v2` answers, prior failures, native reviews and
+configurations remain unchanged.
+
 ### Verified Kev capacity path
 
 The full native NF4/LoRA/head check passed at 512 and 2,048 tokens with the
@@ -426,6 +452,39 @@ Source at `e7d3dc5e` reproduces the recorded code hashes and configuration.
 All experiment workers stopped after the check; system availability returned to about 118 GiB.
 The service script and Compose file fingerprints match their pre-pause
 values. 
+
+### Verified full Ettin-1B capacity with the service stopped
+
+The existing 20 GiB full-training configuration exceeded its allocator cap
+before completing an update, even after the service stop. Its failed report
+remains unchanged. A fresh configuration changes only the cap to 32 GiB,
+preserving the 8 GiB system reserve, model pin and synthetic workload. That
+native full-training path passes all three lengths, saves the checkpoint, and
+reloads it in a different worker with matching logits. It updates all
+1,031,272,709 parameters in FP32, with BF16 autocast and native checkpointing.
+
+| Complete synthetic input | Seconds/update | Peak allocated GiB, training | Examples/sec, batch 8 |
+| --- | ---: | ---: | ---: |
+| 256 tokens | 0.582 | 19.27 | 56.41 |
+| 512 tokens | 0.628 | 19.27 | 28.17 |
+| 2,048 tokens | 1.055 | 19.27 | 6.73 |
+
+Batch-one inference gives 23.98, 18.85 and 6.16 examples/sec at those lengths.
+Maximum batch-eight allocated memory is 4.89 GiB at 2,048 tokens. The allocator
+cap includes reserved memory beyond the reported allocated peak; the failed
+20 GiB run does not imply that the GB10 cannot train this model. Loading,
+saving and fresh-worker reloading take 19.19, 32.61 and 33.62 seconds. The
+synthetic labels verify finite optimization and reload, not SHR convergence.
+The earlier LoRA/co-resident measurements are a different precision/optimization
+and contention condition, not a controlled full-versus-LoRA speed experiment.
+
+Configuration: `distillation/benchmark-ettin1b-full-paused.json`. The completed
+GB10 report is `ettin1b-full-paused-v2/report.json`, with an owned local copy
+`ettin1b-full-paused-v2-report.json`; SHA-256 is
+`1564c61bbae04c03489d93a92ecae624f12cd92a5e423f80fdd6a0bd5c91a3c1`.
+Training worker `1475815` and verification worker `1476572` are distinct.
+The service remains stopped as the human requested; this check does not alter
+its configuration or restart policy.
 
 ## Dataset audit
 
@@ -687,9 +746,11 @@ positions. These are short capacity samples, not full training-time forecasts.
 
 The FP32 Ettin-1B full-training configuration correctly refused admission while
 the server was resident: it reserves a 20 GiB process budget plus 8 GiB for
-other work. This establishes current contention, not a GB10 hardware limit.
+other work. This established contention in that window, not a GB10 hardware limit.
 BF16 Qwen-9B similarly has an intentionally larger admission budget. Those
-configurations have not passed a training run. Qwen-9B NF4 passed all requested
+original configurations have not passed a training run. The subsequent paused
+Ettin full-training check above passes with a fresh 32 GiB configuration.
+Qwen-9B NF4 passed all requested
 checks, including 3,072-token training and batches of eight at that length,
 while the original serving process stayed resident. No service pause was needed.
 

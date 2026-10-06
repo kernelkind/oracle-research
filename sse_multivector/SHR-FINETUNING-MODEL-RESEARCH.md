@@ -93,8 +93,19 @@ It handles the related Culture transfer cluster well but still misses an
 unidentified hashtag and assumes Cooking lies below Kitchen work. Its original
 allowed-code mass is high, so those errors are not explained by ignoring the
 letter output format. These results retain Nimble as a useful alternative
-warm start, below Kev's current diagnostic lead; Kev's order check is pending.
+warm start, below Kev's current diagnostic lead. Kev's completed rotation
+preserves 66/70 decisions, gives 60/70 teacher agreement and retains 31/35
+reversal consistency. Its lead survives this check, though Coffee's direction
+still flips and the related Culture cluster remains overrepresented.
 Nimble's continued-adapter optimization remains unmeasured on GB10.
+
+The native full Ettin-1B cost arm now also passes on GB10 with the service
+stopped: 0.628 seconds/update at 512 tokens and 1.055 at 2,048, saving and
+reloading all 1.031 billion FP32 parameters with matching logits. A 32 GiB
+allocator cap succeeds after the earlier 20 GiB cap failed. This strengthens
+the case for retaining an encoder in matched SHR training; it provides no
+untuned five-relation accuracy estimate. Its fixed task would learn the rules
+from supervised examples rather than receive the full v26 prompt every time.
 
 ## Project constraints and task meaning
 
