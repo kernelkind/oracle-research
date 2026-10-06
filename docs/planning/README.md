@@ -132,6 +132,7 @@ run budgets immediately after verified deletion, retaining only bounded unbooked
 charges. It releases $848.37 and keeps $2.63 pending; actual spend is $68.50.
  Full concurrent CUDA/MoE confirmation
 remains pending.
+  Repeat the tested one-GPU download stage, then attach its verified cache to the two-GPU prep/pilot.
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
 pinned models. Reattach the retained volume for offline verification and full

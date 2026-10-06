@@ -2343,6 +2343,14 @@ The four closed attempts had a conservative cost bound of $8.52. The two product
 and exposure checks failed before correction and pass afterward. Evidence:
 `target/distillation-pilot-v1/deleted-rental-budget-20261006/`.
 
+**Host switch and retained backup, approved October 6:** the host has
+only one rentable GPU. The available compatible pair on the host costs
+$2.8139/hour plus $0.0833/hour for 300GB persistent storage. All storage, transfers and failed attempts remain inside $285. Use the existing
+tested single-GPU cache-download/retrieval/deletion stage, then the new volume
+and unchanged two-GPU package for concurrent CUDA prep and pilot. No source,
+model, prompt, data or recipe changes. No automatic deletion/cutoff. Evidence:
+`target/distillation-pilot-v1/host-switch-20261006/`.
+
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.

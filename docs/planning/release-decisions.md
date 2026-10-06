@@ -1650,6 +1650,14 @@ The production budget check rejects admission before this adjustment and passes
 after it. Both exposure and admission checks pass; original records are intact.
 
 
+  The replacement configuration used two 96GB/600W cards at $2.8139/hour plus $0.0833/hour for a 300GB volume. Hardware checks and volume capacity pass.
+ A proposed $3 download allowance
+leaves $256.48 for main GPU work inside the original $285 including failures.
+ No automatic deletion or time/budget cutoff. The unchanged
+tested private runtime and one-GPU download → two-GPU prep/pilot flow apply;
+all cache checks and global prep/baseline gates remain required. Evidence:
+`target/distillation-pilot-v1/host-switch-20261006/`.
+
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

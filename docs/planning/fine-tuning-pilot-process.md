@@ -60,6 +60,11 @@ rental.
 The original $285 experiment total still includes every attempt and storage;
 its remaining allowance is conservatively **$274.48** before a new commitment.
 
+  Each 300GB volume costs $0.0833/hour.
+ Repeat the tested one-GPU download and
+verified retrieval stage on the new host, then launch its two-GPU prep/pilot
+with unchanged prompts, data, models and training recipe.
+
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent
 volume. Verify every required file and retrieve the evidence before deleting
