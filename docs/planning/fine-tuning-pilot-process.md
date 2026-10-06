@@ -44,7 +44,8 @@ retain downloads, archive the previous work and start a fresh comparison.
 The rebuilt VM passes 101 checks, including container replacement with saved
 answers/checkpoints unchanged and an offline cache hit. The inputs match the
 rebuilt runtime. The latest VM image is published and verified private; MoE
-CUDA confirmation remains pending. No volume or replacement is rented.
+CUDA confirmation remains pending. The storage rate was **$0.0833/hour**.  No GPU
+rental has started yet.
 Actual Vast attachment remains untested; check the mount before setup or
 training. The VM has verified recovery across container replacement.
 

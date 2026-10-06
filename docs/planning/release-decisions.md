@@ -1567,7 +1567,8 @@ configurations and data are unchanged. Evidence:
 is now published at the immutable digest in `publication/publication-receipt.json`;
 its filesystem/configuration match the VM, read-only pull succeeds, and anonymous
 manifest access returns HTTP 401. Actual Vast attachment and full MoE CUDA
-confirmation remain pending. GPU execution has not started for this stage.
+confirmation remain pending. A $2 volume reservation covers 24 hours of storage
+for the approved download stage. The download configuration used 300 GB storage at $0.0833/hour. Frozen native preparation covers the quoted download-only rate of $1.4278/hour including storage. No GPU rental has started.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

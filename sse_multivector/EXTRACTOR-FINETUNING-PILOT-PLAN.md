@@ -2291,7 +2291,8 @@ The rebuilt image is published and verified private at
 All filesystem layers/configuration match the VM; the rental credential pulls
 it and anonymous manifest access returns HTTP 401. Actual Vast attachment and
 full MoE CUDA confirmation remain pending.
-The recorded resource rate was $0.0833/hour. Evidence:
+The recorded resource rate was $0.0833/hour. The separate download stage passes native frozen prepare. Its three-hour duration is a planning/review
+allowance, with no automatic stop/deletion. The GPU stage has not started. Evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.

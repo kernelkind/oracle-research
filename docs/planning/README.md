@@ -113,8 +113,9 @@ verified retrieval and prior instance deletion. A changed runtime keeps download
 but archives prior work and starts fresh. The rebuilt VM passes 101 checks,
 including actual container replacement, unchanged saved answers/checkpoints and
 an offline cache hit. The frozen package matches this runtime and all six
-previous configurations/data. Full MoE CUDA confirmation and private publication
-remain pending. No GPU execution is active; there is no automatic time limit or deletion.
+previous configurations/data. Full MoE CUDA confirmation remains pending.
+ No GPU rental has started yet; no automatic
+time limit or deletion.
 The next attempt uses a cheaper compatible Bulgarian host with a local volume,
 approved October 6. Actual Vast attachment remains untested; startup checks
 the mount before setup or training. Container recovery is verified in the VM.
