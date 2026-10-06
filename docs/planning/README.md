@@ -128,6 +128,8 @@ prep→pilot with two workers. Missing/corrupt files block every worker before p
 The new packages preserve all six configurations and data. Private publication
 and actual Vast attachment/CUDA checks are next. Evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/`.
+The user reconfirmed one main rental with two GPUs on October 6 after comparing
+separate rentals; keep the tested deployment and shared prep/baseline checks.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

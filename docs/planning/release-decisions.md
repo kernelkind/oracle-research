@@ -1546,6 +1546,13 @@ container. Retain the volume. The two-card rental then reattaches it, verifies
 the cache without network downloads, and runs the full concurrent GPU prep
 before any pilot work. This changes setup scheduling; models, inputs, recipe
 and the existing combined spending limit stay fixed.
+**Main rental layout reconfirmed October 6:** after comparing two separate
+one-card rentals, retain one main rental with two GPUs following the approved
+one-card download stage. The modest projected savings do not justify changing
+the locally tested storage and shared prep/baseline checks. This decision
+keeps the existing models, inputs, recipe, spending and deletion requirements;
+fresh offer availability and actual CUDA fit/throughput remain open. Comparison
+evidence: `target/distillation-pilot-v1/separate-rentals-comparison-20261006/`.
 **Download handoff implemented and VM-tested October 6:** pin 42 required files
 at the same revisions, totaling 169.81 GB, with size/content checksums and 32 GiB
 reserved for saved work. Retrieve and locally review download, file and volume

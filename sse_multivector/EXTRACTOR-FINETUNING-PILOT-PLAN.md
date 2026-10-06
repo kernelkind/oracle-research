@@ -2250,6 +2250,14 @@ transfer charges. Recheck the actual offers before creation; this is not a
 reservation. Do not pay the Texas premium solely for additional spare GPUs.
 Actual provider attachment remains untested. Startup checks the mount before
 setup or training; the VM replacement verifies the recovery logic separately.
+**Main rental layout reconfirmed October 6:** keep one rental with two GPUs
+after the one-card download stage. Separate rentals project about $9–14 saved
+at the selected host's saved prices, or $19–26 against fresh alternative offers,
+with similar completion time. These savings do not justify changing the tested
+storage and shared prep/baseline checks. Estimates include storage and 25%
+headroom; prior charges, transfers and extra split-specific setup are excluded.
+No new host is selected or reserved by this comparison. Evidence:
+`target/distillation-pilot-v1/separate-rentals-comparison-20261006/comparison.json`.
 **One-GPU download stage approved October 6:** use a one-card offer on the same
 machine and the actual 300 GB volume to verify attachment and cache all three
 frozen model revisions. The 42 required files total 169.81 GB, including weight

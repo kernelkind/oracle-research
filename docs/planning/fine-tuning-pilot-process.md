@@ -10,6 +10,8 @@ preparation, training and evaluation, approved October 2.
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
 All three prep checks and all three baselines must pass before training starts.
+Keeping both GPUs on one main rental was reconfirmed October 6 after comparing
+separate rentals; retain the locally tested deployment and shared checks.
 
 The collection and recovery flow is implemented locally. The combined prep→pilot
 inputs are frozen and match the rebuilt, tested VM runtime. The user approved
