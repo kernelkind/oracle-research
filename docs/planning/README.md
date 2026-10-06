@@ -94,7 +94,9 @@ softcap. Dense inference reserves 12 GiB scratch under the same 88 GiB budget.
 94 VM tests and six native tokenizer preflights pass; one VM tokenizer test is
 skipped and covered separately. The corrected VM export is published and verified
 private. A replacement failed before SSH or experiment work because container DNS failed. Startup diagnostics were saved and hashed. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**.   A different compatible host quotes $2.9389/hour.
-A proposed $280 experiment maximum fits the original approval; machine 146170 is excluded. GPU checks and local semantic grading remain. There is no
+
+Native preparation passed; GPU creation remains pending.
+Machine 146170 is excluded. GPU checks and local semantic grading remain. There is no
 automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;

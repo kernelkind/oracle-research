@@ -1485,7 +1485,10 @@ deletion.   No GPU execution is active.    A proposed $280 replacement projects
 99,013 cents, leaving 987 cents beneath the lifetime cap; this does not add to
 the original $285 pilot approval. The selected configuration has two 96GB/600 W server cards at $2.9389/hour including 300 GB storage. The verified
 private image, package, 15 runtime source hashes and model recipe are unchanged.
-Native launch preparation remains pending.
+Native frozen preparation passed without a paid action. The proposed experiment maximum was **$280**.  This remains within the original $285 experiment maximum, not a new allocation.
+Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. Creation
+has not occurred; continuous observation/live exfiltration and unchanged prep/
+complete-baseline gates will govern the run.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

@@ -2146,9 +2146,12 @@ DNS failed before SSH, inputs or worker startup. One provider reboot did not
 repair it. All necessary available startup logs and direct/proxy diagnostics
 were saved and independently hashed. No experiment data was produced. The preliminary resource charge was **$0.76**; the two failed attempts had a rounded preliminary cost total of **$2.74**. The next search excludes machine 146170. A different
 compatible offer quotes $2.9389/hour including 300 GB
-storage for two 96GB/600 W server cards. Native preparation/reservation/creation
-remain. The verified image, package, all 15 runtime source hashes and recipe are
-unchanged. No automatic time/budget stop or deletion. Evidence is under
+storage for two 96GB/600 W server cards. Native frozen preparation passed.
+Creation remains. The verified image, package, all 15 runtime source hashes and
+recipe are unchanged. Continuous observation, live copying and complete-data
+deletion rules apply. New launch evidence is
+`target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`.
+No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous
