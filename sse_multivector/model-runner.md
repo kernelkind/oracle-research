@@ -112,6 +112,15 @@ python3 sse_multivector/experiment.py prepare \
 Its 60 cases remain unrun under **SHR-single-v26**. Preparation and input review
 do not authorize the saved GPT-6.1 Sol medium runner settings to make calls.
 
+The separately authorized **SHR-single-v79** teacher pilot uses
+[`distillation/shr-train-teacher-coverage-v79.json`](distillation/shr-train-teacher-coverage-v79.json)
+on those exact 60 inputs. It completed 60 valid new answers and native agent
+reviews. Its current complete collection is
+`target/shr-student-pairs-v1/teacher-coverage-v79-reviewed-collected/`;
+the earlier `teacher-coverage-v79-collected/` snapshot has only 42 reviewed
+cases. See [the recorded pilot](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-coverage-pilot)
+for evidence bindings and provisional interpretation.
+
 ## Offline preview
 
 Examples use this checkout's location; the tool itself has no fixed working

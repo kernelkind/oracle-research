@@ -132,9 +132,12 @@ training or change the release plan. See
 [release decisions](../docs/planning/release-decisions.md) and the
 [existing SP pilot](EXTRACTOR-FINETUNING-PILOT-PLAN.md).
 
-The user's correction is authoritative: **SHR-single-v26 is the last approved
-revision**, not v15. Later tested revisions do not become approved baselines
-through their version numbers. The prompt is still being developed. The v26
+The user's correction identified **SHR-single-v26** as the approved reference
+for the earlier model investigation. The user subsequently selected
+**SHR-single-v79** for the current provisional teacher-labeling pilot; that
+choice does not select a release prompt or final training corpus. Later tested
+revisions are evaluated from their evidence, not their version numbers.
+The prompt is still being developed. The v26
 source inspected was `sse_multivector/shr_single_pair/SHR-single-v26.md` in the
 SHR worktree at commit `672aff1339f9c213a7ac205af557a552883a56d5`; that branch's
 prompt sources are not present in this research worktree's base commit.
@@ -429,9 +432,18 @@ pairs, name ambiguity, related-topic contrasts, and proposed consistent or
 deliberately conflicting multi-entry groups with reversal/order controls.
 The pending input-review verdicts are not semantic `uncertain` targets.
 See [coverage input preparation](SHR-STUDENT-PREPARATION.md#coverage-input-preparation).
-Teacher answers and semantic review on that extension are the next proposed
-step before larger labeling or training. These results check supervision
-preparation; they add no post-finetuning model evidence.
+The user subsequently chose **SHR-single-v79** for that teacher pilot. It
+completed 60 valid new answers in 60 attempts, with all 30 A/B reversals and
+20 reordered-case checks consistent. The labels are 24 equivalent, 24 uncertain,
+eight neither and four directed-parent answers. All 60 current native agent
+reviews support the answers under v79, and the final collection preserves their
+source/split/prompt/receipt/review bindings. The original v26 preparation and
+earlier teacher pilot remain unchanged. See
+[the v79 coverage pilot](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-coverage-pilot).
+This is provisional supervision on TRAIN inputs, not independent human gold,
+held-out accuracy or post-finetuning model evidence. A matched local diagnostic
+under v79 is the next proposed model check; the earlier v26 ranking cannot
+simply be carried forward to the updated prompt.
 
 The next useful quality comparison needs the same accepted training labels
 and budget for Kev-9B, its Qwen3.5-9B-Base foundation and Ettin-1B. Gemma-12B

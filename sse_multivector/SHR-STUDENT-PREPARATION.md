@@ -3,9 +3,10 @@
 The user authorized three preparation tasks: GB10 feasibility checks, evaluation
 design, and an audit of the existing 1,300-note corpus. Work lives on
 `research/shr-student-prep-v1`, in `oracle-mvp-shr-student-prep-v1`.
-SHR-single-v26 remains the user-approved prompt reference. The separately
-authorized teacher pilot now supplies provisional SHR labels. A final student
-and accepted training corpus remain open; release-plan choices are unchanged. See
+The user selected SHR-single-v79 for the current provisional teacher pilot.
+Earlier model comparisons and the first teacher pilot retain their v26 reference.
+A final student and accepted training corpus remain open; release-plan choices
+are unchanged. See
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md).
 
 ## Current outcome, October 6
@@ -59,6 +60,13 @@ pairs, name-ambiguity candidates, related-topic contrasts, and consistent
 and intentionally conflicting multi-entry groups with reversal/order controls.
 It supplies no new answers or accepted training targets. See
 [coverage input preparation](#coverage-input-preparation).
+
+The user subsequently chose **SHR-single-v79** for labeling this panel. All 60
+new teacher answers are valid, with no failures, retries or reuse. All 30 exact
+A/B reversals and 20 reordered-case checks agree, including all eight
+multi-entry families. All 60 attributed native agent reviews support the answers
+under v79; supervision remains provisional. See
+[the v79 coverage pilot](#provisional-shr-single-v79-coverage-pilot).
 
 ## Authorized provisional v26 comparison
 
@@ -1202,11 +1210,96 @@ duplicate families/IDs, and the existing saved-answer collector with grouped
 inputs. The relevant regression run completed 167 tests: 161 passed and six
 optional tests skipped. No provider calls occur in the fixtures.
 
-The next useful step is a separately authorized teacher pilot on these 60
-prepared inputs, followed by answer review and reversal/order-consistency
-checks. That would test the missing semantic distinctions before scaling label
-generation or comparing trained models. This preparation does not authorize
-that run or establish a balanced, accepted SHR corpus.
+The user subsequently authorized the teacher pilot using v79, documented below.
+The original v26 preparation remains unrun, with its input reviews unchanged.
+
+### Provisional SHR-single-v79 coverage pilot
+
+The user chose **SHR-single-v79** following this agent's read-only check of newer
+prompt-development evidence. V79 is that investigation's working experimental
+prompt, with
+replicated local gains and remaining broader consistency failures. The saved
+30-pair focused v79/v94 comparison completed 60 answers per arm, with four
+reversal conflicts in each. V94 has not established an improvement from that
+count. Those are separate development inputs from this coverage panel; their
+answers, reviews and prompt-owner files were not modified by this task.
+The selection is a provisional teacher-pilot choice, not a completed prompt
+acceptance gate or release decision.
+
+The [v79 teacher specification](distillation/shr-train-teacher-coverage-v79.json)
+uses the same frozen coverage selectors and previous runner settings:
+**GPT-6.1 Sol medium**, subscription SSE, concurrency two, 1,800-second timeout,
+and the relation/reason JSON contract. Native preparation compared all 60
+inputs/evidence records to the original v26 preparation and found them exactly
+unchanged. The v79 template SHA-256 is
+`eab2ac5dcaa48c777f357aa5caeb99e36f01520e9640083dd9b6d847bf4294d8`.
+The 120-attempt ceiling allowed the normal two-attempt provider-only recovery;
+the actual run used **60 attempts for 60 valid new answers**, with zero failures,
+retries, reuse or unresolved cases. No transport, retry or workflow code changed.
+
+| Relation | Directed answers |
+| --- | ---: |
+| equivalent | 24 |
+| a_parent_of_b | 2 |
+| b_parent_of_a | 2 |
+| neither | 8 |
+| uncertain | 24 |
+
+All 30 exact reversal pairs agree; all 20 additional reordered cases retain
+their original-orientation relation. The differently worded and consistent
+multi-entry equivalents retain the named entities/photographic-image scope.
+Bitcoin contains the three-entry Bitcoin-mining activity in both entry orders.
+All four related-topic contrasts remain neither: trading qualifiers, named
+attributions, camera versus dated photography, and recommendation versus writing
+preserve their separate meanings. All four name ambiguities and all four
+constructed conflicting groups remain uncertain. These controls represent
+20 families, not 60 independent examples or deployment frequencies.
+
+Every exact case view, complete input, answer and reason received an attributed
+native agent semantic review; all 60 current reviews support the saved decision
+under v79. They do not establish independent human gold or approval of an SHR
+training corpus. The source is still 35 original TRAIN entries from 27 notes
+and 25 authors. No validation/final-test selection, student fitting or final
+model decision occurred. Earlier student rankings measure v26 behavior; they
+have not yet been established for v79.
+
+Native `collect` preserves all 60 answers, current reviews, prompt and original
+source/split/receipt identities in
+`target/shr-student-pairs-v1/teacher-coverage-v79-reviewed-collected/`.
+All eleven protected source-file hashes verify. The original nomination plan,
+coverage preparation/input reviews and v26 teacher pilot/collection are unchanged.
+An earlier export was made before review writes finished: it contains all
+60 answers but only 42 reviewed cases. It is preserved at
+`target/shr-student-pairs-v1/teacher-coverage-v79-collected/` as a historical
+snapshot; its review-file binding is superseded by the completed review history.
+Use only the final reviewed collection for this pilot's complete evidence.
+All experiment outputs and snapshots remain ignored.
+
+Artifact bindings:
+
+- Experiment: `target/shr-student-pairs-v1/teacher-coverage-v79/experiment.json`,
+  SHA-256 `a4d3a222e4df20f06c5304b0c53dc116b2e8758b447f480a3cfea60372d638bb`.
+- Native results: SHA-256
+  `eb4252f796da09c208d186e22f1e09473bc72bbda60e09c7a81d586b67068124`.
+- Native reviews: SHA-256
+  `68844bd6653fd5a45790cdeb94abc4bf22a5cc5aabc8899cde916df1c54f1877`.
+- Final collected relationships: SHA-256
+  `38b9acf031f1db5cc318ee288ba80658c5617db35e35fc9be0e17081709f3bf7`.
+- Final provenance: SHA-256
+  `4bee94e0d0659744ebbd83875c84a17baf8ee0e64ffc64163fccb110208ee854`.
+
+Native preparation, receipt validation, input/control checks, review bindings and
+collection checks passed. The unchanged workflow's latest regression remains
+167 tests: 161 passed and six optional skips; no new software behavior was added
+in this phase. Native usage reports 34,104 input tokens, 165,888 cached input
+tokens and 4,467 output tokens including 791 reasoning tokens. These are native
+counters, not a subscription invoice; no paid fallback was used.
+
+The next useful model-quality check is a matched local diagnostic on these
+v79 cases for the shortlisted students, to learn whether the earlier v26
+ranking transfers. The extra controls and semantic uncertainty improve coverage,
+but this TRAIN panel cannot establish held-out accuracy. Prompt development,
+accepted training targets and separately reviewed evaluation roles remain open.
 
 ## Dataset audit
 
