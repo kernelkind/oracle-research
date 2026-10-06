@@ -2250,6 +2250,21 @@ transfer charges. Recheck the actual offers before creation; this is not a
 reservation. Do not pay the Texas premium solely for additional spare GPUs.
 Actual provider attachment remains untested. Startup checks the mount before
 setup or training; the VM replacement verifies the recovery logic separately.
+**One-GPU download stage approved October 6:** use a one-card offer on the same
+machine and the actual 300 GB volume to verify attachment and cache all three
+frozen model revisions. The existing payload projection is 169.72 GB; confirm
+pinned file sizes before booking and check volume free space before downloading.
+Verify all required weight shards,
+tokenizer/configuration files and completion receipts, retrieving evidence
+locally before explicit container deletion. Retain the volume and reattach it
+to the two-card rental. Verify cache completeness with networking disabled for
+model access, then run the full concurrent GPU preparation before baselines or
+training. The one-card stage downloads only; it does not replace concurrent
+hardware checks. The observed one-card quote is $1.3444/hour plus $0.0833/hour
+for the 300 GB volume, before transfers. Count downloads once, include the
+additional startup and retained-volume charges, and keep all paid stages within
+the existing combined approval. This stage is planned, not yet implemented or
+executed; the frozen two-card workload and its inputs remain unchanged.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.

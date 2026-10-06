@@ -118,6 +118,11 @@ remain pending. No GPU execution is active; there is no automatic time limit or 
 The next attempt uses a cheaper compatible Bulgarian host with a local volume,
 approved October 6. Actual Vast attachment remains untested; startup checks
 the mount before setup or training. Container recovery is verified in the VM.
+Use a one-card rental on that machine to verify attachment and download all
+three pinned models onto the actual volume, approved October 6. Verify files
+and retrieve evidence before deleting the container; retain the volume for
+offline cache verification and full concurrent prep on two cards. This new
+download stage is planned; the frozen pilot workload is unchanged.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

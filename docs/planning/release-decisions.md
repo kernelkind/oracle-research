@@ -1538,6 +1538,14 @@ volume for the next attempt; paying the Texas premium solely for additional
 spare GPUs is not approved. Check current GPU and volume offers before launch.
 A reliability score is uptime evidence, not proof of future free GPUs;
 the volume attaches only on its physical machine.
+**One-GPU download stage approved October 6:** use that host's cheaper one-card
+rental to verify attachment and download all three students at their frozen
+revisions onto the actual persistent volume. Verify required weights, tokenizer
+and configuration files; retrieve completion evidence before deleting the
+container. Retain the volume. The two-card rental then reattaches it, verifies
+the cache without network downloads, and runs the full concurrent GPU prep
+before any pilot work. This changes setup scheduling; models, inputs, recipe
+and the existing combined spending limit stay fixed.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

@@ -46,6 +46,13 @@ No volume or replacement is rented.
 Actual Vast attachment remains untested; check the mount before setup or
 training. The VM has verified recovery across container replacement.
 
+**Download stage approved October 6:** rent one GPU on the chosen machine,
+verify attachment, and download all three pinned models onto the persistent
+volume. Verify every required file and retrieve the evidence before deleting
+that container. Keep the volume. Reattach it to the two-GPU rental, verify the
+cache offline, then run full concurrent prep and the pilot. The one-GPU stage
+collects no baseline or training results.
+
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,
 including storage, transfer and prep. A slower sensitivity case gives
@@ -54,7 +61,8 @@ These use older workstation timings and teacher-length proxies. Prep must
 establish actual server-card fit and throughput; student answer lengths remain
 unknown. The replacement uses the remaining original $285 approval.
 
-**Local rehearsal → Vast prep → baselines/training/validation and sealed test
+**Local rehearsal → one-GPU downloads and volume verification → two-GPU Vast
+prep → baselines/training/validation and sealed test
 answers on the same rental → verified retrieval → local validation review →
 unseal and score test answers.**
 
