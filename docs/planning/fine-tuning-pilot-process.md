@@ -28,7 +28,7 @@ transfer allowance and refused worker admission after successful SSH/input
 verification. The refusal was reproduced, then admission was retried with a $5 local setup allowance. Worker attempt 001 started; no remote code, frozen inputs or experimental recipe changed.
 Qwen prep passed. Dense completed its updates but hit an erroneous **88 GiB**
 training cutoff; MoE failed its gradient check. All **101 available files / 5.85 GB** were verified.
-Preliminary cost was **$2.543**.
+Preliminary cost was **$2.543**, subsequently updated to **$2.687**. 
 The local fix removes the training cutoff and keeps inference checks. The MoE
 reference also now matches Liger’s gradient-scaling order; the local regression
 passes without relaxing tolerances. The local workflow suite passes 89 tests;
@@ -49,7 +49,16 @@ checks and all 109 VM checks pass. The private runtime passes native preparation
 **Download stage completed October 6:** actual mounting and write/read checks
 passed. All **42 files / 169.8 GB** were checksum verified on the volume; local completion review passed.  The preliminary GPU/transfer cost was **$0.455**. Full concurrent CUDA prep and MoE confirmation are still next.
 The controller now retries slow image startup on the same instance. Local
-regressions, VM rehearsal and private publication pass. The next stage reattaches the verified cache to two GPUs for prep.
+regressions, VM rehearsal and private publication pass. Main launch reattaches
+this volume to two GPUs for prep.
+
+**Deleted-rental accounting approved October 6:** after verified deletion, release
+the unused run budget immediately. Retain only unbooked rent for elapsed time at
+the approved maximum rate plus the full transfer allowance, floored by posted
+charges. Final invoices are reconciled separately and do not block the next
+rental.  
+The original $285 experiment total still includes every attempt and storage;
+its remaining allowance is conservatively **$274.48** before a new commitment.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent

@@ -88,19 +88,22 @@ proxies; actual server-card throughput remains unmeasured. The draft allows
 and a **$285 combined prep→pilot budget** on October 5. The exact tested image is published and verified private.
 The preparation completed only Qwen prep; dense Gemma exceeded the cache memory guard and Gemma MoE failed gradient agreement. The prep gate blocked all
 main baselines and training. All 86 available files (4.35 GB), saved checkpoints and failure logs were retrieved and independently rehashed.
-Preliminary charges were **$1.974**. Local repairs preserve
+Preliminary charges were **$1.974**. Local repairs
+preserve
 failed measurements and align Gemma's numerical reference with Liger's FP32
 softcap. Dense inference reserves 12 GiB scratch under the same 88 GiB budget.
 94 VM tests and six native tokenizer preflights pass; one VM tokenizer test is
 skipped and covered separately. The corrected VM export is published and verified
-private. A replacement failed before SSH or experiment work because container DNS failed. Startup diagnostics were saved and hashed. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**. Both attempts failed.  A different compatible host quotes $2.9389/hour.
+private. A replacement failed before SSH or experiment work because container DNS failed. Startup diagnostics were saved and hashed. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**. Both attempts failed.  A different compatible host
+quotes $2.9389/hour.
 
 Native preparation passed. The two-GPU preparation used a $2.9389/hour configuration and was observed through startup, prep and retrieval; no pilot work started. Machine
 146170 is excluded. A local $1 setup gate refused worker admission after
 successful startup/input verification because it counted the full planned
 transfer allowance. A $5 local setup allowance resumed attempt 001 without changing remote code, inputs or the model recipe. Qwen prep passed; dense completed both updates but was
 wrongly rejected at **88.43 GiB** against the **88 GiB inference budget**, without
-CUDA OOM. MoE failed native gradient agreement before its first update. All **101 available files / 5.85 GB** were independently verified. Preliminary charges were **$2.543**. The local fix removes the training cutoff and preserves
+CUDA OOM. MoE failed native gradient agreement before its first update. All **101 available files / 5.85 GB** were independently verified. Preliminary charges were **$2.543**.
+The local fix removes the training cutoff and preserves
 inference checks; 73 local tests passed, 12 VM-only checks were skipped. The
 MoE reference now applies token weighting after LM-head backward, matching
 Liger’s BF16 rounding order; its local regression passes without relaxing
@@ -119,11 +122,16 @@ The retry revealed an invalid mount path. Use `/workspace`, retaining experiment
 paths beneath it. Local CLI/controller/cache/workload checks pass; the updated
 VM rehearsal passed 109 checks; the private image and unchanged packages pass
 native prepare. The quoted download-only rate was $1.4278/hour including storage. The download completed: all **42 files / 169.8 GB** were checksum verified on the volume, and all completion evidence was verified locally. 
-The preliminary cost was $0.455. No baseline/training yet. Slow image startup now stays pending
+The preliminary download-stage cost was $0.455. No baseline/training yet. Slow image
+startup now stays pending
 and retries on the same instance; 176 local tests succeed (three VM-only skips).
 The updated VM passes 109 checks and stops cleanly; the rebuilt private image
 and both unchanged-input packages verify against it. Read-only pull succeeds
-and anonymous access is rejected. Full concurrent CUDA/MoE confirmation remains pending.
+and anonymous access is rejected. Deleted-rental accounting now releases unused
+run budgets immediately after verified deletion, retaining only bounded unbooked
+charges. It releases $848.37 and keeps $2.63 pending; actual spend is $68.50.
+ Full concurrent CUDA/MoE confirmation
+remains pending.
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
 pinned models. Reattach the retained volume for offline verification and full

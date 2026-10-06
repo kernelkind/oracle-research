@@ -1608,7 +1608,8 @@ VM layers/effective configuration/source hashes match, read-only pull succeeds
 and anonymous manifest access is HTTP 401.   Combined rate is $1.4278/hour. The download stage completed. Actual mounting, provider attachment and write/read receipts agreed. All 42 pinned
 files (169,808,998,964 bytes) are checksum verified; download took 768.797
 seconds. All 12 work and six preparation files were retrieved and verified locally, and production completion review passed.  No baseline or training.
-The preliminary download-stage cost was $0.455.  
+Preliminary download-stage cost was $0.455.   
+The original $285 approval is unchanged.
 Cold private-image loading outlasted the controller readiness window. Original
 failure/watcher evidence is preserved under `startup-recovery/001`; a guarded
 retry of the unchanged controller on the same bound instance completed setup
@@ -1633,6 +1634,22 @@ concurrent CUDA prep remains a gate before every main baseline/training run.
 No pilot baseline or training had started. Evidence:
 `target/distillation-pilot-v1/download-launch-20261006-v3/` and
 `target/distillation-pilot-v1/startup-retry-20261006/`.
+
+**Deleted-rental accounting approved October 6:** the user rejected holding full
+run budgets after confirmed deletion. For Vast command rentals, replace that
+hold immediately with the bounded unbooked charge: elapsed time from reservation
+through verified deletion at the approved maximum hourly rate, plus the full
+approved transfer allowance, floored by posted exact-instance invoices. Round
+time and cents upward; subtract all previously booked charges from the hold.
+Keep final invoice confirmation and later adjustments without making their
+24½-hour observation delay a gate for a new rental. Active rentals/volumes keep
+their reservations; the lifetime $1,000 cap and original $285 experiment total
+remain. Apply this policy in the local ledger.
+The four pilot/preparation attempts had a bounded combined cost of $8.52. The four attempts' latest posted charges totaled $5.813.   
+The production budget check rejects admission before this adjustment and passes
+after it. Both exposure and admission checks pass; original records are intact.
+
+
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

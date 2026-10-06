@@ -2091,7 +2091,8 @@ must preserve these measurements before rejecting work. The global prep gate
 blocked every main baseline and training run. All 80 work and six startup files
 (4,346,589,909 bytes), available checkpoints and failure logs were retrieved
 and independently rehashed.
-The preliminary resource charge was **$1.974**. Repairs were completed locally and the original image/
+The preliminary resource charge was **$1.974**. Repairs were completed
+locally and the original image/
 input/operation are preserved.
 
 **Local recovery — October 6:** before rejecting a cache peak, write its full
@@ -2308,7 +2309,8 @@ the download stage: all 42 pinned files (169,808,998,964 bytes) are checksum
 verified on the actual volume in 768.797 seconds. Parent mounting, selected
 volume identity and write/read checks pass. All 12 work and six preparation
 files were retrieved and verified; production completion review passed.
-The preliminary resource charge was $0.455. Slow cold image startup exceeded the readiness window; preserved original
+The preliminary resource charge was $0.455.
+Slow cold image startup exceeded the readiness window; preserved original
 evidence and a guarded unchanged-controller retry recovered the same instance,
 without a second create or remote edits. Future command startup remains pending
 and retries after each bounded readiness window. The CLI regression failed
@@ -2327,6 +2329,20 @@ VM layers/runtime/source and both packages match, read-only pull succeeds and
 anonymous manifest access is HTTP 401. Actual concurrent CUDA prep remains
 before main baseline/training.
 No pilot baseline or training yet.
+
+Bound remaining
+exposure using elapsed time from the earlier reservation timestamp through
+deleted-at at the approved maximum hourly rate plus the entire approved transfer
+allowance, rounding upward and flooring at posted exact-instance charges. Book
+only increases above prior bookings and hold only the unbooked difference.
+Final invoices still need their delayed complete-snapshot confirmation; later
+settlement subtracts every prior booking and releases only the remaining hold.
+No frozen image/package or training recipe changes are needed. Active resource
+reservations, the $1,000 lifetime cap and original $285 total remain in force.
+The four closed attempts had a conservative cost bound of $8.52. The two production-path budget
+and exposure checks failed before correction and pass afterward. Evidence:
+`target/distillation-pilot-v1/deleted-rental-budget-20261006/`.
+
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
