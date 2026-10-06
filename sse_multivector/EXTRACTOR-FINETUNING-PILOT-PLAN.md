@@ -2141,9 +2141,12 @@ Docker export normalizes empty metadata fields; execution settings are identical
 Read-only pulling succeeds and anonymous manifest access returns HTTP 401.
 New frozen package manifest:
 `8e7018275fa7cbdc3f05231d6c676ae5049daf9e8f30e5bb378e07038f19f50a`.
-The recorded rental rate was $2.9889/hour including 300 GB storage. Startup
-and prep are continuously observed; all checks and complete baselines must
-precede training. No automatic time/budget stop or deletion. Evidence is under
+The recorded rental rate was $2.9889/hour including 300 GB storage. Container
+DNS failed before SSH, inputs or worker startup. One provider reboot did not
+repair it. All necessary available startup logs and direct/proxy diagnostics
+were saved and independently hashed. No experiment data was produced. The preliminary resource charge was **$0.76**; the two failed attempts had a rounded preliminary cost total of **$2.74**. The next search excludes machine 146170; no alternative meets
+the approved quote constraints now. The verified image and
+package are unchanged. No automatic time/budget stop or deletion. Evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous

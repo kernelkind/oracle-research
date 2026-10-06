@@ -1477,7 +1477,10 @@ The corrected VM export is published privately as
 `sha256:c376ec124faabd71c018e52044faf9ee6bbc4b02b6d7a48bf90f1cbfa8f806e5`.
 Its filesystem layers, runtime settings and all 15 source hashes match the VM;
 Docker export normalizes empty metadata defaults without changing execution.
-Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  The replacement two-GPU configuration cost **$2.9889/hour** including 300 GB storage.  There is no automatic time/budget stop or deletion.
+Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  The replacement two-GPU configuration cost **$2.9889/hour** including 300 GB storage. Container DNS failed before
+SSH, inputs or worker startup; one reboot did not resolve it. Necessary startup logs and direct/proxy probes were saved and hashed under the standing prep-only policy.  Its preliminary cost was **$0.76**; the two failed attempts cost **$2.74**, within the original $285 experiment maximum.   Exclude machine 146170 from replacement searches. No other approved compatible offer is currently available. The frozen
+recipe/image/package are unchanged. There is no automatic time/budget stop or
+deletion.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete
