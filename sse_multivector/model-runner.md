@@ -415,6 +415,14 @@ mass to those codes.
 Reordering criteria changes the codes and the configuration-bound model name.
 These probabilities are not calibrated task confidence or semantic uncertainty.
 
+For chat option scoring, `answer_prefix` can prefill the assistant answer after
+the native generation template. The complete rendered template plus prefix is
+tokenized without extra special tokens and preserved in `scoring_prompt`.
+Boundary checks still require every option to be a distinct single-token
+continuation. This changes the scored answer position and configuration-bound
+model identity; it does not generate or repair text. Generation, schema and
+decider layouts reject nonempty answer prefixes.
+
 Published causal-LM adapters additionally bind their revision and weight hash.
 Loading verifies every saved adapter tensor after any declared text-prefix
 conversion. `prompt_layout: "schema"` uses the pinned native schema prompt

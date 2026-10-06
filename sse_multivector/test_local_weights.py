@@ -168,6 +168,28 @@ class LocalWeightIntegrationTests(unittest.TestCase):
         self.assertEqual(reply['raw_text'], json.dumps(
             {'relation': list(observed)[logits[codes].argmax().item()], 'reason': ''}))
         self.assertEqual(reply['usage']['output'], 0)
+        for prefix in ['Answer: (', '(']:
+            backend.config['answer_prefix'] = prefix
+            prefixed = backend.complete(body)
+            rendered = tokenizer.apply_chat_template([{'role': 'user', 'content': prompt}],
+                add_generation_prompt=True, tokenize=False) + prefix
+            native = tokenizer(rendered, add_special_tokens=False, return_tensors='pt')
+            native = {k: v.cuda() for k, v in native.items() if k != 'token_type_ids'}
+            self.assertEqual(prefixed['metadata']['input_tokens'], native['input_ids'].shape[-1])
+            with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                z = backend.model(**native, use_cache=False, logits_to_keep=1).logits[0, -1].float()
+            torch.testing.assert_close(torch.tensor(list(prefixed['metadata']['probabilities'].values())),
+                                       z[codes].softmax(-1).cpu())
+            self.assertEqual(prefixed['metadata']['answer_prefix'], prefix)
+            self.assertEqual(prefixed['metadata']['scoring_prompt'], rendered)
+        backend.config['readout'] = 'generation'
+        with self.assertRaisesRegex(ValueError, 'chat option scoring'):
+            backend.complete(body)
+        backend.config['readout'] = 'options'
+        backend.config['prompt_layout'] = 'schema'
+        with self.assertRaisesRegex(ValueError, 'chat option scoring'):
+            backend.complete(body)
+        del backend.config['prompt_layout'], backend.config['answer_prefix']
         with patch.object(tokenizer, 'encode', return_value=[2, 3]):
             with self.assertRaisesRegex(ValueError, 'single tokens'):
                 backend.complete(body)

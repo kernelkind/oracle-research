@@ -343,6 +343,70 @@ configurations also now cover decider-4b and Qwen3.8-27B. Their measurements
 remain pending at this checkpoint; configuration validation is not a passed
 training or quality test.
 
+### Decider-4b native comparison
+
+The pinned v2.1 merged decision checkpoint completed all 70 cases through its
+native plain state-first builder, without chat wrapping, shuffling or truncation.
+NF4 weights give a valid relation-only result in one attempt for every case.
+Its published choice temperature 1.110 is preserved, not calibrated on SHR.
+
+| Decider-4b native readout | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Original option order | 30/40; 17/20 | 5/8; 2/4 | 10/22; 9/11 | 45/70; 28/35 |
+| Rotated option order | 29/40; 17/20 | 5/8; 2/4 | 8/22; 11/11 | 42/70; 30/35 |
+
+All 70 rotated answers are also valid in one attempt. The orders preserve
+58/70 decisions: 34/40 original, 4/8 scope and 20/22 transfer. Higher rotated
+reversal consistency accompanies more rejected containment links; consistency
+alone is not correctness. The original 40 cases have median full-vocabulary
+code mass 0.561, and all unrestricted top tokens are allowed letters.
+
+Agent reviews reject merging Music recording as an activity with Music
+recordings as works, and reversing the parent direction between a specified
+writer's puzzlement and unrestricted Puzzlement. It also rejects the Culture /
+Song creation parent link, missing v26's preservation of creative activities
+within a general field. Most transfer disagreements are the related Culture
+cluster, not twelve independent observations. The Culture/person judgment
+remains unresolved; teacher disagreement alone is not semantic rejection.
+
+Native experiments are `decider4b-{original,scope,transfer}-v1` and
+`decider-options-rotate-*-v1`. Teacher-baseline views named
+`decider-options-rotate-teacher-*-v1` reuse all 70 rotated answers with zero
+new attempts. Published direct-decision
+behavior supports retaining this small model as a cheaper training candidate,
+below the tested 9B warm starts; it does not rank it after SHR adaptation.
+
+Its native NF4 LoRA capacity check now passes with 32,464,896 FP32 adapter
+parameters over the published merged checkpoint. Frozen nonquantized parameters
+remain BF16, with BF16 autocast and native gradient checkpointing. Updates take
+0.613 seconds at 512 tokens and 2.241 at 2,048, with allocated peaks 3.62 and
+4.17 GiB. Batch-eight inference gives 6.08 and 1.62 examples/sec, with peaks
+3.58 and 5.12 GiB. Load/save/fresh reload take 51.29/1.25/58.01 seconds.
+The separate workers `1480212` / `1518386` verify matching saved logits and
+finite five-way inference. Synthetic targets establish capacity, not SHR
+convergence; these trained probes are not the checkpoint used for diagnostics.
+The owned local report copy is `decider4b-training-v1-report.json`, SHA-256
+`52a6ccf9acfd458b78e9192c4c961f749eb03f782567424536dde1081c2b1ad0`.
+
+### Chat answer-prefix control
+
+Bare-letter scoring is not a matched substitute for a model that wants to
+begin its answer with punctuation. The next control prefills `Answer: (` after
+the native chat generation template, retaining the complete v26 state and the
+same choice definitions. It scores the letter at that answer position without
+generating or repairing text. Both criterion orders are frozen for Qwen-9B,
+Gemma-12B and Qwen-27B; the latter is also retained with unmodified generated JSON.
+These are new experiments, not retries of failed formatting receipts.
+
+The native production test first fails on 47 input tokens versus the expected
+50, reproducing the ignored prefix. After implementation all six native weight
+tests pass on GB10; 127 shared workflow/local tests pass with ten optional skips.
+The real tokenizers confirm that `Answer: (` preserves standalone A–E tokens
+for all three checkpoints; bare `(` does not for Qwen. Each complete input is
+also checked at inference for code-boundary agreement and input length. The
+actual prefix and rendered scoring prompt remain in native response metadata.
+Prefix-control results are pending at this checkpoint.
+
 ### Kev option-order check
 
 The published native Kev pointer path completed all 70 rotated v26 cases in

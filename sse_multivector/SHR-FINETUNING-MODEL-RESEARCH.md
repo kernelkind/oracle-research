@@ -74,8 +74,11 @@ Qwen's subsequent readout controls do not close the provisional gap: explicit
 choices with generated JSON give 34/70 agreement and 19/35 reversals; direct
 option scoring gives 34/70 and 11/35. Rotating every option code gives 36/70 and
 26/35, but changes 38 of the 70 decisions. These are additional development
-diagnostics, not a post-training architecture comparison. They weaken the
-hypothesis that Kev's lead comes simply from bypassing JSON and reasons.
+diagnostics, not a post-training architecture comparison. Those bare-letter
+controls do not isolate the benefit of decision pretraining: a chat model can
+prefer punctuation before its option code, making its first-position letter
+scores a different answer contract. A native answer-prefix control is now
+being checked before interpreting that gap as a specialization advantage.
 
 Gemma's scored readout is also sensitive to code order: agreement changes from
 37/70 to 54/70, reversal consistency from 13/35 to 24/35, and only 38/70 labels
@@ -106,6 +109,15 @@ allocator cap succeeds after the earlier 20 GiB cap failed. This strengthens
 the case for retaining an encoder in matched SHR training; it provides no
 untuned five-relation accuracy estimate. Its fixed task would learn the rules
 from supervised examples rather than receive the full v26 prompt every time.
+
+Decider-4b's native NF4 v2.1 path gives 45/70 teacher agreement and 28/35
+reversals, versus 42/70 and 30/35 after rotation; 58/70 decisions survive.
+Its gap concentrates in broad Culture containment, alongside activity/product
+and directional errors. Its merged-checkpoint LoRA/save/fresh-reload path passes
+on GB10: 0.613 seconds/update at 512 tokens and 2.241 at 2,048, with 32.46 million
+FP32 adapter parameters. It remains a useful cheap training comparison, below
+the 9B decision warm starts on these diagnostics. The cheaper inference and
+training path alone does not establish adequate SHR quality.
 
 ## Project constraints and task meaning
 

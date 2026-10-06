@@ -134,6 +134,10 @@ class LocalWeights:
         if available_memory() < c['reserve_gib'] * 2**30:
             raise ValueError('system memory fell below reserve')
         prompt = body['messages'][0]['content']
+        prefix = c.get('answer_prefix', '')
+        if (not isinstance(prefix, str) or prefix and (c['kind'] != 'causal_lm'
+                or c.get('readout', 'generation') != 'options' or c.get('prompt_layout', 'chat') != 'chat')):
+            raise ValueError('answer_prefix requires chat option scoring')
         metadata = {'config_sha256': self.config_sha256, 'quantization': c['quantization']}
         torch.cuda.reset_peak_memory_stats()
         start = time.monotonic()
@@ -195,8 +199,14 @@ class LocalWeights:
                 elif readout == 'options':
                     raise ValueError('option scoring requires a choice question')
                 if choice_encoder is None and decider_encoder is None:
-                    inputs = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
-                        enable_thinking=False, tokenize=True, return_dict=True, return_tensors='pt')
+                    if prefix:
+                        rendered = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
+                            enable_thinking=False, tokenize=False) + prefix
+                        inputs = self.tokenizer(rendered, add_special_tokens=False, return_tensors='pt')
+                        metadata.update(answer_prefix=prefix, scoring_prompt=rendered)
+                    else:
+                        inputs = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
+                            enable_thinking=False, tokenize=True, return_dict=True, return_tensors='pt')
                 inputs.pop('token_type_ids', None)
                 tokens = inputs['input_ids'].shape[-1]
                 cap = (1 if readout == 'options' else
@@ -216,9 +226,9 @@ class LocalWeights:
                             raise ValueError('schema option codes differ at the answer boundary')
                     elif decider_encoder is None:
                         rendered = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
-                            enable_thinking=False, tokenize=False)
-                        prefix = inputs['input_ids'][0].tolist()
-                        if any(self.tokenizer.encode(rendered + code, add_special_tokens=False) != prefix + row
+                            enable_thinking=False, tokenize=False) + prefix
+                        input_ids = inputs['input_ids'][0].tolist()
+                        if any(self.tokenizer.encode(rendered + code, add_special_tokens=False) != input_ids + row
                                for code, row in zip(codes, encoded)):
                             raise ValueError('option code tokenization changes at the answer boundary')
                     temperature = c.get('temperature', 1.)
