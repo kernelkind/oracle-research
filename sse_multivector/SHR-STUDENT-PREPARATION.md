@@ -7,6 +7,28 @@ SHR-single-v26 remains the user-approved prompt reference. No final student,
 new prompt, SHR teacher labels, paid run, or release-plan decision is approved
 by these preparation results. See [model research](SHR-FINETUNING-MODEL-RESEARCH.md).
 
+## Current outcome, October 6
+
+The authorized model investigation is complete enough to prioritize a matched
+training comparison: Kev-9B and its actual Qwen Base control, with Ettin-1B as
+the low-cost arm. Nimble-9B offers the standard LM adapter alternative; Gemma-12B
+is the independent foundation. Six published checkpoints completed both
+relation-only code orders on 70 developmental cases, alongside generated-output
+controls and verified local capacity paths. See the consolidated
+[recommendation and measured tables](SHR-FINETUNING-MODEL-RESEARCH.md#recommendation).
+No post-finetuning winner is established. Suitable complete SHR training labels
+and reviewed evaluation roles remain the next dependency; none of these
+provisional cases was used for fitting. The final capacity check below closes
+the larger Qwen reference, without expanding to additional model families.
+
+Final read-only native `show` checks confirm that all six original-order paths
+have identical case IDs, complete prompt text and input hashes, with 70 valid
+single-attempt answers each. Their relation metrics match the consolidated
+table. The last behavior-change regression suite reports 127 tests, OK with
+10 optional skips; all six native weight tests pass on GB10. Historical failed
+and unavailable checks remain recorded below. No behavior changes followed
+those passing checks. All GPU experiment workers stopped.
+
 ## Authorized provisional v26 comparison
 
 The user subsequently authorized comparing candidate behavior on the existing
@@ -425,7 +447,7 @@ task data, prompt layout and head architecture or predicting post-SHR tuning.
 Native experiments are `qwen-options-prefix-*-v1` and
 `qwen-options-prefix-rotate-*-v1`. The teacher-baseline views
 `qwen-options-prefix-rotate-teacher-*-v1` reuse all 70 rotated answers with zero
-new attempts. Qwen-27B prefix results remain pending at this checkpoint.
+new attempts. The later larger-Qwen section records its completed prefix comparison.
 
 Gemma's original-order prefix run now completes all 70 cases with valid
 one-attempt answers. It gives 34/40 agreement and 20/20 reversals on the original
@@ -524,7 +546,7 @@ Native experiments are `qwen27b-options-prefix-{part}-v2`,
 `59e55d1efe562309ecf82ba960fb3e6c24e6878fd29d701a1f528ab387241c2e`
 and `510800c41181d78ac0a214a76145314b7eaddd702c4a21ee91d5367592fb975b`.
 All use the published pinned weights rather than synthetic optimization
-checkpoints. Native LoRA capacity remains pending at this checkpoint.
+checkpoints. The completed native capacity path is recorded below.
 
 ### Kev option-order check
 
@@ -668,6 +690,46 @@ GB10 report is `ettin1b-full-paused-v2/report.json`, with an owned local copy
 Training worker `1475815` and verification worker `1476572` are distinct.
 The service remains stopped as the human requested; this check does not alter
 its configuration or restart policy.
+
+### Verified larger Qwen capacity
+
+The pinned Qwen3.8-27B native NF4 LoRA path passes 512- and 2,048-token
+optimization, checkpoint saving, a fresh-worker reload with matching logits,
+and batch-one/batch-eight inference at both lengths. Logical parameters total
+27,012,726,272; 116,727,808 trainable parameters are FP32 LoRA, enforced by the
+shared subject-training loader. The loader requests BF16 for the frozen nonquantized base, with
+BF16 autocast and native gradient checkpointing. Five arbitrary vocabulary
+positions supply synthetic targets; no SHR labels or cases enter optimization.
+
+| Complete synthetic input | Seconds/update | Peak allocated GiB, training | Examples/sec, batch 8 | Peak allocated GiB, batch-8 inference |
+| --- | ---: | ---: | ---: | ---: |
+| 512 tokens | 3.150 | 18.80 | 1.391 | 17.72 |
+| 2,048 tokens | 9.985 | 20.07 | 0.388 | 20.08 |
+
+Batch-one inference gives 1.032 and 0.332 examples/sec at those lengths.
+The same one-warmup/four-update and five-inference-repetition protocol applies.
+Loading, saving and reloading take 411.97, 4.02 and 326.61 seconds. Initial
+512-token warmup takes 16.33 seconds; steady update medians exclude it.
+The correct reference PyTorch causal convolution is used because the optional
+optimized kernel is absent. These are observations of this stack, not an
+optimized GB10 ceiling or a matched architecture speed ranking.
+
+Configuration `distillation/benchmark-qwen27b-nf4.json` retains a 32 GiB
+allocator budget plus an 8 GiB system reserve. It succeeds with the service
+stopped, showing that the model has a usable local fitting path. The measured
+2,048-token training workload is shorter than the full 2,638–2,724-token
+zero-shot scored prompt; it does not certify all future training-input lengths.
+The 27B checkpoint's additional cost has not established better developmental
+SHR decisions than Kev-9B. No convergence or final accuracy claim follows.
+
+GB10 report: `qwen27b-training-v1/report.json`; owned Anvil copy:
+`qwen27b-training-v1-report.json`. SHA-256:
+`e35e8c71e5179036066b1ab47017143766484943fea367964b01fb3ea8518c23`.
+Configuration SHA-256:
+`e81c6c33eaf0fa49696782913dd612634c685c50c0624888bf8a0a918fb363c9`.
+Training worker `1572240` and verification worker `1578205` are distinct.
+The report is complete and reload logits match. The existing service remains
+stopped as the user requested; all owned GPU workers have exited.
 
 ## Dataset audit
 

@@ -68,6 +68,7 @@ not a controlled architecture speed ranking.
 | Decider-4b NF4, service stopped | 0.613 | 2.241 | 32.46 million FP32 LoRA parameters over the merged decision checkpoint |
 | Kev-9B native NF4, service resident | 1.467 | 4.774 | Published LoRA plus pointer head, 45.38 million parameters |
 | Gemma 4 12B-it NF4, service stopped | 1.566 | 6.332 | 65.57 million FP32 LoRA parameters |
+| Qwen3.8-27B NF4, service stopped | 3.150 | 9.985 | 116.73 million FP32 LoRA parameters |
 
 Ettin's speed makes it worth training once suitable labels exist. It currently
 has no meaningful untuned five-relation quality score: a new random SHR head
@@ -84,8 +85,13 @@ answers; one of 70 attempts hit the 512-token limit during a repetitive
 Nature/Cats explanation. The full scored inputs are 2,638–2,724 tokens and median
 reported inference time is 2.980 seconds in each code order. This confirms a
 local relation-only path, without a current quality advantage over Kev-9B.
-Native LoRA capacity remains pending at this checkpoint. Bounded internal
-reasoning and matched SHR finetuning remain untested.
+Its native LoRA path also passes training, save, fresh-process reload and all
+four inference shapes on GB10. It peaks at 20.07 GiB allocated during the
+2,048-token updates; batch-eight inference at that length gives 0.388 examples
+per second. Load/reload take 412/327 seconds in this stack. These observations
+retain it as a local escalation candidate, without a demonstrated reason to
+prefer it over the compact decision warm starts. Bounded internal reasoning
+and matched SHR finetuning remain untested.
 
 The literature below retains Kev-27B v2, Gemma 4 31B/26B-A4B and larger sparse
 foundations as possible escalation candidates. A 96GB ceiling is not a
@@ -362,7 +368,7 @@ whole-process cost requirements. The right sequence is independent task
 evaluation followed by a comparison of that benefit with maintaining another
 model. Neither sharing one model nor splitting the models is settled here.
 
-## Most useful next evidence while the prompt is unfinished
+## Completed preparation and next useful evidence
 
 The user subsequently authorized evaluation preparation, GB10 capacity checks,
 the selected-source data audit and provisional v26 diagnostics. These are
@@ -371,8 +377,10 @@ useful evidence before the prompt is finished. Completed SHR training labels
 and a final model choice remain unavailable.
 
 The next useful quality comparison needs the same accepted training labels
-and budget for Kev, its Qwen foundation, Ettin-1B and the DeBERTa warm start.
-It should use reviewed semantic distinctions and track disputed cases
+and budget for Kev-9B, its Qwen3.5-9B-Base foundation and Ettin-1B. Gemma-12B
+provides the independent foundation; Nimble can replace a custom-head warm
+start if keeping the standard LM path matters.
+That comparison should use reviewed semantic distinctions and track disputed cases
 separately. It is a proposed next phase, not permission to fit partial teacher
 outputs or put validation examples into gradients.
 
