@@ -16,6 +16,19 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_preparation_memory_checks_include_reserved_test_input_shapes(self):
+        data = {"train": [{"note_id": str(i)} for i in range(3)],
+                "evaluation": [{"note_id": "validation"}], "test": [{"note_id": "reserved-test"}]}
+        config = {"training_milestones": [1, 3], "max_new_tokens": {"subjects": 120},
+                  "preparation": {"max_new_tokens": 4, "cache_fill_tokens": 16,
+                                  "train_note_ids": ["0", "1", "2"],
+                                  "evaluation_note_ids": ["validation"]}}
+        selected = distillation_run.preparation_data(data, config)
+        self.assertEqual([row["note_id"] for row in selected["full_evaluation"]],
+                         ["validation", "reserved-test"])
+        self.assertEqual([row["note_id"] for row in selected["evaluation"]], ["validation"])
+        self.assertNotIn("test", selected)
+
     def test_subject_training_provenance_is_published_before_baseline_progression(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)
@@ -277,6 +290,7 @@ class DataContractTests(unittest.TestCase):
                 with patch.object(distillation_run, "generate_batch", side_effect=batch) as calls:
                     distillation_run.evaluate(model, tokenizer, data, config, Path(temporary))
                 self.assertEqual([len(call.args[2]) for call in calls.call_args_list], expected)
+
 
     def test_subject_batch_resume_uses_receipt_after_partial_note_publication(self):
         model, tokenizer, data, config, answer = self.subject_batch_fixture()
@@ -830,6 +844,62 @@ class TinyWorkflowTests(unittest.TestCase):
         distillation_run.write_json(stage / "complete.json", distillation_run.file_hashes(stage))
         with self.assertRaisesRegex(ValueError, "test collection source differs"):
             distillation_run.verify_subject_run(output, data, config)
+
+    def test_subject_preparation_saves_cache_measurement_before_memory_rejection(self):
+        import shutil
+        prepared = self.root / "failed-cache-data"
+        distillation_data.prepare(self.root / "source.json", self.root / "annotations.json",
+            self.root / "subjects.txt", None, "AS-test", None, 2, "test", prepared, tasks=("subjects",))
+        data = distillation_run.load_data(prepared)
+        removed = {"mask_prompt", "max_steps", "save_steps", "subject_fraction", "mask_batch_size"}
+        config = {key: value for key, value in self.config.items() if key not in removed}
+        config.update(data=str(prepared), training_milestones=[1, 3], batch_size=1,
+            gradient_accumulation_steps=8, evaluation_tasks=["subjects"], max_new_tokens={"subjects": 120},
+            subject_batching={"budget_bytes": 8*1024*1024, "workspace_bytes": 0,
+                              "prefill_bytes_per_token": 1024, "attention_matrix_count": 4},
+            preparation={"max_new_tokens": 4, "cache_fill_tokens": 16,
+                         "train_note_ids": [row["note_id"] for row in data["train"]][:3],
+                         "evaluation_note_ids": [row["note_id"] for row in data["evaluation"]]})
+        path, output = self.root / "failed-cache.json", self.root / "failed-cache"
+        distillation_run.write_json(path, config)
+        # Save real checkpoints and preparation through the production CLI first.
+        subprocess.run([sys.executable, "-B", "-m", "sse_multivector.distillation_run", str(path),
+                        "--output", str(output), "--through", "preparation"],
+                       check=True, capture_output=True, timeout=120)
+        shutil.move(output / "preparation", self.root / "previous-cache-preparation")
+        (output / "report.json").unlink()
+        cpu_data = distillation_run.preparation_data(data, config)
+        original_load = distillation_run.load_model
+        original_plan = distillation_run.subject_batch_plan
+        original_generate = distillation_run.generate_batch
+        original_check = distillation_run.generation_cache_check
+        original_metadata = distillation_run.subject_checkpoint_metadata
+        cuda_config = {**config, "device": "cuda"}
+        # Emulate only the unavailable GPU and its measured peak. Tokenization,
+        # native-cache execution, adapter reload and output publication stay real.
+        def cache(model, tokenizer, encoded, cfg, chunk):
+            return {**original_check(model, tokenizer, encoded, {**cfg, "device": "cpu"}, chunk),
+                    "peak_cuda_allocated_bytes": config["subject_batching"]["budget_bytes"] - 1,
+                    "peak_cuda_reserved_bytes": config["subject_batching"]["budget_bytes"] + 1}
+        with patch.object(distillation_run, "load_model", side_effect=lambda cfg, adapter=None:
+                original_load({**cfg, "device": "cpu"}, adapter)), \
+             patch.object(distillation_run, "subject_batch_plan", side_effect=lambda m, t, rows, cfg:
+                original_plan(m, t, rows, {**cfg, "device": "cpu"})), \
+             patch.object(distillation_run, "generate_batch", side_effect=lambda m, t, rows, cfg, task, **kw:
+                original_generate(m, t, rows, {**cfg, "device": "cpu"}, task, **kw)), \
+             patch.object(distillation_run, "generation_cache_check", side_effect=cache), \
+             patch.object(distillation_run, "subject_checkpoint_metadata", side_effect=lambda *args:
+                {**original_metadata(*args), "peak_cuda_reserved_bytes": 0}), \
+             patch.object(distillation_run, "cuda_measurement", return_value={
+                "peak_cuda_allocated_bytes": 0, "peak_cuda_reserved_bytes": 0}):
+            with self.assertRaisesRegex(ValueError, "generation cache peak"):
+                distillation_run.run_subject_preparation(cuda_config, self.tokenizer, cpu_data, output)
+        check = distillation_run.read_json(output / "preparation/cache-0000.json")
+        self.assertEqual(check["peak_cuda_reserved_bytes"], config["subject_batching"]["budget_bytes"] + 1)
+        self.assertTrue((output / "preparation/full-validation-batches.json").is_file())
+        self.assertFalse((output / "preparation/complete.json").exists())
+        self.assertFalse((output / "report.json").exists())
+        self.assertTrue(distillation_run.verify_saved(output / "checkpoints/checkpoint-1"))
 
     def test_subject_preparation_cli_checks_cache_and_restores_training_without_full_evaluations(self):
         prepared = self.root / "preparation-data"

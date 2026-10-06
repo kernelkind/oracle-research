@@ -88,8 +88,11 @@ proxies; actual server-card throughput remains unmeasured. The draft allows
 and a **$285 combined prep→pilot budget** on October 5. The exact tested image is published and verified private.
 The preparation completed only Qwen prep; dense Gemma exceeded the cache memory guard and Gemma MoE failed gradient agreement. The prep gate blocked all
 main baselines and training. All 86 available files (4.35 GB), saved checkpoints and failure logs were retrieved and independently rehashed.
-Preliminary charges were **$1.974**. Repairs are local and
-no replacement is running. Semantic grading remains pending. There is no automatic
+Preliminary charges were **$1.974**. Local repairs preserve
+failed measurements and align Gemma's numerical reference with Liger's FP32
+softcap. Dense inference reserves 12 GiB scratch under the same 88 GiB budget.
+94 VM tests and six native tokenizer preflights pass; one VM tokenizer test is
+skipped and covered separately. Actual GPU checks remain; no replacement is running. Semantic grading remains pending. There is no automatic
 time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
@@ -97,8 +100,8 @@ local verification accounts for all checkpoint comparisons before deletion revie
 The user approved autonomous pilot error repair, including necessary code/recipe
 corrections: preserve evidence, record changes, restore saved state and rerun
 affected comparisons. Complete-data deletion and spending rules still apply.
-Prep covers the longest example and full validation cache shapes, with actual
-CUDA loss/gradient agreement required on hardware. Semantic grading remains local.
+Prep covers the longest example and validation/reserved-test input cache shapes,
+with actual CUDA loss/gradient agreement required on hardware. Semantic grading remains local.
 The historical winner-only ASv6.48 projection of 36–40 hours / $51–58 does not
 price the frozen pilot or the now-approved six-version test collection.
 Pilot data selection and label generation are approved: **1,000 train / 100

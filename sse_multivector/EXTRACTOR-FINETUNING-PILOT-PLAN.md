@@ -2021,7 +2021,9 @@ second partial update. These adapters are discarded before the fresh main runs,
 which retain eight examples per update. Brief generation uses one validation
 note per candidate with a 64-token limit. Production preparation independently
 checks full native caches covering validation/test batch shapes and actual
-CUDA fused-loss/adapter-gradient agreement. No reserved test note is used in prep.
+CUDA fused-loss/adapter-gradient agreement. Reserved test inputs contribute only
+native lengths and synthetic cache shapes; prep never trains on, generates, or
+semantically reviews their answers.
 Actual concurrent hardware fit and speed remain unmeasured.
 
 The rebuilt VM passed **91 tests**, with **one optional native-tokenizer check
@@ -2091,6 +2093,45 @@ blocked every main baseline and training run. All 80 work and six startup files
 and independently rehashed.
 The preliminary resource charge was **$1.974**. Repairs are local; no replacement is running and the original image/
 input/operation are preserved.
+
+**Local recovery — October 6:** before rejecting a cache peak, write its full
+measurement and admitted batch plan. `training-loss-check.json` now preserves
+failed losses and parameter-specific gradient differences, including maximum
+absolute error, failing-element counts and relative L2 error. The short Gemma
+native reference promotes projected logits to FP32 before softcapping, matching
+[Liger 0.8.4 TorchLMHeadCE](https://github.com/linkedin/Liger-Kernel/blob/v0.8.4/test/transformers/test_fused_linear_cross_entropy.py).
+The native head, weights, gradients, RNG and forward are restored after the
+check. CUDA `atol=.005` / `rtol=.05` are unchanged; the training loss/kernel and
+evaluation computation are unchanged. BF16 CPU reproductions verify the
+reference correction and still reject deliberately corrupted loss/gradients.
+This does not prove the full MoE CUDA check now passes.
+
+Dense inference now reserves **12 GiB workspace**, keeping the **88 GiB** budget
+and full output allowance. With the measured resident/cache shapes and a
+9,442-token prompt, this admits one note per batch. Qwen/MoE retain 4 GiB.
+The same candidate policy governs baseline and every trained collection.
+Preparation covers both validation and reserved-test input lengths using native
+caches with synthetic continuation tokens; only validation notes receive brief
+prep responses. Freeze new paired configs/image rather than editing the failed
+operation. All teacher data, update membership, optimization and saved original
+evidence are retained. **94 VM tests pass** (one native tokenizer test skipped
+and covered separately), all **six native tokenizer preflights pass**, and the
+host settings test confirms dense singleton admission through the real planner.
+The VM integration exercises continuing updates, saved adapter reload, parallel
+prep/baseline gates, live copying and verified retrieval. Actual GPU checks remain
+required before main training.
+
+`two-gpu-recovery-20261006/revised-cost-estimate.json` prices dense singleton
+generation using the nearest old measured batch-two decode latency, without
+assuming a singleton speedup. Qwen/MoE, update counts and response counts are
+unchanged. Conditional replacement scenarios become **53.11 / 82.61 / 93.07 hours**
+and **$159.51 / $247.69 / $278.94** at the saved $2.9889/hour quote. Including the
+failed prep’s recorded provisional $1.98 gives **$161.49 / $249.67 / $280.92**.
+They retain teacher-answer-length proxies, old workstation kernel timings, the
+global baseline gate and 25% headroom once; they do not measure current throughput
+or bound runtime. The replacement experiment allowance is at most **$281**. Review planning
+uses 89 hours at the $3.10/hour ceiling plus transfer quantities; this creates
+no automatic stop or deletion.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous
 observation continues through complete local retrieval/review and explicit

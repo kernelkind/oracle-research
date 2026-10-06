@@ -17,15 +17,17 @@ private image publication and a **$285 combined prep→pilot budget** on October
 The image is published and verified private. The preparation failed: Qwen passed, dense Gemma exceeded its cache-memory guard, and Gemma MoE failed gradient agreement. No
 main baseline or training started. All 86 available files (4.35 GB) were retrieved and independently rehashed.
 Preliminary charges are **$1.974** against the original $285 total. Local repairs
-and repeated GPU prep remain; no replacement is running. Semantic review remains
-open.
+pass 94 VM tests and six native tokenizer preflights; one VM tokenizer test was
+skipped and covered by the separate preflights. GPU checks remain. No replacement
+is running. Semantic review remains open.
 
-**October 5 two-GPU planning estimate:** combined prep and pilot roughly
-**40–66 hours / $122–197** at a saved **$2.99/hour** quote for two 96GB/600 W
-RTX PRO 6000 Server cards, including storage and transfer allowances. A slower
-sensitivity case gives **80 hours / $239**. These use older workstation timings;
-prep must establish actual server-card fit and throughput. Prep alone is projected
-at $2.30–5.30 and is already included in the combined estimate.
+**October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
+roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,
+including storage, transfer and prep. A slower sensitivity case gives
+**93 hours / $279**; including the failed prep’s preliminary bill gives $281.
+These use older workstation timings and teacher-length proxies. Prep must
+establish actual server-card fit and throughput; student answer lengths remain
+unknown. The replacement uses the remaining original $285 approval.
 
 **Local rehearsal → Vast prep → baselines/training/validation and sealed test
 answers on the same rental → verified retrieval → local validation review →
@@ -33,8 +35,9 @@ unseal and score test answers.**
 
 Freeze both stages locally. Prep checks the longest complete training example,
 two continuing updates, save/reload/merge, brief generation, and full native
-caches covering the planned validation batch shapes. It also compares the actual
-fused CUDA loss and adapter gradients against the native forward on short inputs.
+caches covering validation and reserved-test input shapes, using synthetic
+continuations. It also checks the fused CUDA loss and adapter gradients against
+native computation on short inputs, with Liger's FP32 softcap reference.
 If all checks pass, discard prep adapters and start fresh pilot adapters on the
 same rental. If prep needs substantial repair, retrieve and verify its evidence,
 delete, and fix locally before renting again. Keep prep cheap and capture timing.

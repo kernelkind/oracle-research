@@ -920,7 +920,7 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
             boundary = next(i for i, label in enumerate(row["labels"]) if label != -100)
             start, end = max(0, boundary-8), min(len(row["input_ids"]), boundary+8+index*3)
             probes.append({key: value[start:end] for key, value in row.items()})
-        write_json(output / "training-loss-check.json", verify_training_loss(model, probes, config))
+        verify_training_loss(model, probes, config, measurements_path=output / "training-loss-check.json")
     parameters = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"], betas=(.9, .999), eps=1e-8, weight_decay=0.)
     schedule = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.)
@@ -1113,7 +1113,9 @@ def preparation_data(data, config):
     selected = dict(data)
     selected.pop("test", None)
     selected["full_train"] = data["train"]
-    selected["full_evaluation"] = data["evaluation"]
+    # Fit checks cover every scheduled collection without generating or judging
+    # reserved test answers during preparation.
+    selected["full_evaluation"] = data["evaluation"] + data.get("test", [])
     for name, key in (("train", "train_note_ids"), ("evaluation", "evaluation_note_ids")):
         ids = settings[key]
         if (not isinstance(ids, list) or not ids or any(not isinstance(i, str) for i in ids)
@@ -1143,13 +1145,16 @@ def cuda_measurement(config, reset=False):
             "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved()}
 
 
-def verify_training_loss(model, rows, config):
+def verify_training_loss(model, rows, config, measurements_path=None):
     """Compare actual instance-patched loss/backward with the native forward.
 
     Short inputs bound reference logits memory on the full loaded model. This
     performs no optimizer step and restores RNG/forward/gradients even on failure.
-    BF16 mean-loss tolerances follow Liger 0.8.4's upstream correctness tests:
-    test/transformers/test_fused_linear_cross_entropy.py (atol=.005, rtol=.05).
+    BF16 mean-loss tolerances and FP32 softcapping follow Liger 0.8.4's upstream
+    TorchLMHeadCE in test/transformers/test_fused_linear_cross_entropy.py. Native
+    Gemma otherwise softcaps BF16 logits in BF16, which is a different reference.
+    Only the short numerical reference uses the hook; training and evaluation
+    instances keep their existing forwards and precision.
     """
     import torch
     base = model.get_base_model()
@@ -1165,8 +1170,14 @@ def verify_training_loss(model, rows, config):
     total = sum(sum(v != -100 for v in row["labels"][1:]) for row in rows)
     if not total:
         raise ValueError("training loss agreement requires supervised tokens")
-    atol, rtol = (.005, .05) if device.type == "cuda" else (2e-5, 2e-4)
+    low_precision = device.type == "cuda" or base.lm_head.weight.dtype in (torch.bfloat16, torch.float16)
+    atol, rtol = (.005, .05) if low_precision else (2e-5, 2e-4)
     measurements = []
+    softcap = getattr(base.config, "final_logit_softcapping", None)
+    report = {"status": "running", "actual_cuda_kernel": device.type == "cuda", "examples": len(rows),
+              "atol": atol, "rtol": rtol, "measurements": measurements,
+              "reference_softcap_dtype": "float32" if softcap is not None else None,
+              "purpose": "Numerical check; no optimizer update or quality result."}
     try:
         for row in rows:
             batch = {key: torch.tensor([value], device=device) for key, value in row.items()}
@@ -1178,17 +1189,25 @@ def verify_training_loss(model, rows, config):
                 training_random_state(state)
                 model.zero_grad(set_to_none=True)
                 context = torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext()
-                with attention_context(config):
-                    with context:
-                        result = model(**batch, use_cache=False)
-                        loss = result.loss * weight
-                    if not bool(torch.isfinite(loss)):
-                        raise ValueError("training loss agreement produced nonfinite loss")
-                    loss.backward()
+                hook = (base.lm_head.register_forward_hook(lambda _module, _inputs, output: output.float())
+                        if forward is native and softcap is not None else None)
+                try:
+                    with attention_context(config):
+                        with context:
+                            result = model(**batch, use_cache=False)
+                            loss = result.loss * weight
+                        if not bool(torch.isfinite(loss)):
+                            raise ValueError("training loss agreement produced nonfinite loss")
+                        loss.backward()
+                finally:
+                    if hook is not None:
+                        hook.remove()
                 losses.append(float(loss.detach()))
                 gradients.append({name: None if p.grad is None else p.grad.detach().cpu().clone()
                                   for name, p in parameters.items()})
                 del result, loss
+            measurement = {"fused_loss": losses[0], "native_loss": losses[1], "token_weight": weight}
+            measurements.append(measurement)
             if not math.isclose(*losses, rel_tol=rtol, abs_tol=atol):
                 raise ValueError(f"training loss agreement failed: {losses}")
             nonzero, maximum = False, 0.
@@ -1199,16 +1218,31 @@ def verify_training_loss(model, rows, config):
                         raise ValueError(f"training loss agreement gradient missing: {name}")
                     continue
                 if not bool(torch.isfinite(actual).all()) or not torch.allclose(actual, expected, atol=atol, rtol=rtol):
+                    finite = bool(torch.isfinite(actual).all()) and bool(torch.isfinite(expected).all())
+                    difference = actual.double()-expected.double() if finite else None
+                    reference_norm = float(torch.linalg.vector_norm(expected.double())) if finite else 0.
+                    measurement["gradient_failure"] = {"parameter": name, "finite": finite,
+                        "elements": actual.numel(),
+                        "failing_elements": int((~torch.isclose(actual, expected, atol=atol, rtol=rtol)).sum()),
+                        "maximum_absolute_error": float(difference.abs().max()) if finite else None,
+                        "maximum_reference_gradient": float(expected.abs().max()) if finite else None,
+                        "relative_l2_error": float(torch.linalg.vector_norm(difference)) / reference_norm
+                            if reference_norm else None}
                     raise ValueError(f"training loss agreement gradient differs: {name}")
                 nonzero |= bool(actual.count_nonzero()) and bool(expected.count_nonzero())
                 maximum = max(maximum, float((actual-expected).abs().max()))
             if not nonzero:
                 raise ValueError("training loss agreement has no nonzero adapter gradients")
-            measurements.append({"fused_loss": losses[0], "native_loss": losses[1],
-                                 "token_weight": weight, "maximum_gradient_error": maximum})
-        return {"status": "complete", "actual_cuda_kernel": device.type == "cuda", "examples": len(rows),
-                "atol": atol, "rtol": rtol, "measurements": measurements,
-                "purpose": "Numerical check; no optimizer update or quality result."}
+            measurement["maximum_gradient_error"] = maximum
+        report["status"] = "complete"
+        if measurements_path is not None:
+            write_json(measurements_path, report)
+        return report
+    except Exception as error:
+        report.update(status="failed", error=str(error))
+        if measurements_path is not None:
+            write_json(measurements_path, report)
+        raise
     finally:
         base.forward = patched
         model.zero_grad(set_to_none=True)
@@ -1338,20 +1372,21 @@ def run_subject_preparation(config, tokenizer, data, output):
                     write_json(note / "subjects-result.json", parsed)
                     write_json(note / "complete.json", file_hashes(note))
                 batches.append(receipt)
-            # Cover every planned full-validation batch shape, testing only shapes
+            # Cover validation and reserved test input shapes, testing only shapes
             # not dominated in both batch size and padded prompt width by another.
             full_plan, full_encoded = subject_batch_plan(model, tokenizer, data["full_evaluation"], config)
+            write_json(stages / "full-validation-batches.json", full_plan)
             shapes = {(len(batch["indices"]), batch["prompt_width"]): batch for batch in full_plan["batches"]}
             shapes = {shape: batch for shape, batch in shapes.items()
                       if not any(other != shape and other[0] >= shape[0] and other[1] >= shape[1] for other in shapes)}
             for batch_index, batch in enumerate(shapes.values()):
                 check = generation_cache_check(model, tokenizer, [full_encoded[i] for i in batch["indices"]],
                                                config, config["preparation"]["cache_fill_tokens"])
+                write_json(stages / f"cache-{batch_index:04}.json", check)
                 if (config["device"] == "cuda" and
                         check["peak_cuda_reserved_bytes"] > config["subject_batching"]["budget_bytes"]):
                     raise ValueError("observed generation cache peak exceeds the frozen memory budget")
                 cache_checks.append(check)
-                write_json(stages / f"cache-{batch_index:04}.json", check)
             write_json(stages / "measurements.json", {"subject_answers": len(data["evaluation"]),
                 "max_new_tokens": brief["max_new_tokens"]["subjects"], "merge": merge,
                 "batches": batches, "cache_checks": cache_checks, "full_validation_plan": full_plan})

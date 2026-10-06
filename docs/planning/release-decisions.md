@@ -1457,8 +1457,21 @@ checks and local semantic grading remain pending. The October 5 preparation used
 adapter-gradient agreement before its first update. The prep gate blocked every
 main baseline and training run. All 86 available files (4.35 GB), available checkpoints and failure logs were retrieved and independently rehashed under the standing prep-only substantial-repair authorization. 
 Preliminary charges were **$1.974**. Repair proceeds
-locally; no replacement rental is running. Failed checks must preserve numerical
-evidence before rejecting work; the original frozen artifacts remain unchanged.
+locally; no replacement rental is running. Failed checks now preserve numerical
+evidence before rejecting work. The short Gemma reference promotes projected
+logits to FP32 before softcapping, matching Liger 0.8.4's correctness reference;
+CUDA tolerances and training computation are unchanged. Dense inference reserves
+12 GiB scratch rather than 4 GiB under the same 88 GiB budget, before either
+baseline or trained generation. Prep checks both validation and reserved-test
+input shapes with synthetic continuations, without generating or semantically
+reviewing reserved answers. The original frozen artifacts remain unchanged.
+Local reproductions, 94 VM tests and six native tokenizer preflights pass; one
+VM tokenizer test is skipped and covered by those separate preflights. Actual
+GPU checks remain required. Singleton dense generation updates the conditional
+timing to 53–83 hours, with a 93-hour sensitivity case; projected replacement
+costs are $159–248 / $279 at the saved $2.99/hour quote. Including the earlier
+preliminary bill, those scenarios fit the original $285 total. Current server-card
+throughput and student answer lengths remain unmeasured.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete
