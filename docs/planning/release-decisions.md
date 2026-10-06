@@ -1533,9 +1533,11 @@ hardware remains required; the rebuilt runtime is recorded below. Evidence is
 
 **Persistent recovery storage approved:** retain model downloads and compatible
 saved work on a separately rented local volume across failed-container
-replacement. Favor machines with observed spare GPUs, checking availability
-while resolving local errors. A reliability score is uptime evidence, not
-proof of future free GPUs; the volume attaches only on its physical machine.
+replacement. On October 6, choose a cheaper compatible Bulgarian host with a
+volume for the next attempt; paying the Texas premium solely for additional
+spare GPUs is not approved. Check current GPU and volume offers before launch.
+A reliability score is uptime evidence, not proof of future free GPUs;
+the volume attaches only on its physical machine.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical
@@ -1551,6 +1553,9 @@ The exported image matches the frozen package; all six configurations/data are
 unchanged. One optional native-tokenizer check remains covered by the prior
 unchanged-input preflights. Full MoE CUDA replay and new private publication
 remain pending. No volume or replacement is rented.
+The actual Vast volume attachment remains untested; startup checks the mount
+before setup or training. Recovery across container replacement is verified
+in the VM.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

@@ -115,6 +115,9 @@ including actual container replacement, unchanged saved answers/checkpoints and
 an offline cache hit. The frozen package matches this runtime and all six
 previous configurations/data. Full MoE CUDA confirmation and private publication
 remain pending. No GPU execution is active; there is no automatic time limit or deletion.
+The next attempt uses a cheaper compatible Bulgarian host with a local volume,
+approved October 6. Actual Vast attachment remains untested; startup checks
+the mount before setup or training. Container recovery is verified in the VM.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

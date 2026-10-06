@@ -34,9 +34,8 @@ passes without relaxing tolerances. The local workflow suite passes 89 tests;
 the runtime is rebuilt below.
 
 **Recovery storage approved:** keep model downloads and compatible saved work
-on a persistent local volume. Favor a machine with observed spare GPUs so a
-replacement container can reuse that volume. The launcher now preserves model
-downloads and verified work across replacement, using the same image/data/recipe
+on a persistent local volume. Use a compatible two-GPU configuration for the next attempt, approved October 6; check current GPU and volume availability before booking. The launcher now preserves model downloads and verified work
+across replacement, using the same image/data/recipe
 and continuing the saved worker attempts. It requires verified retrieval and
 confirmed deletion of the previous instance. If a repair changes the runtime,
 retain downloads, archive the previous work and start a fresh comparison.
@@ -44,6 +43,8 @@ The rebuilt VM passes 101 checks, including container replacement with saved
 answers/checkpoints unchanged and an offline cache hit. The inputs match the
 rebuilt runtime. MoE CUDA confirmation and private publication remain pending.
 No volume or replacement is rented.
+Actual Vast attachment remains untested; check the mount before setup or
+training. The VM has verified recovery across container replacement.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,

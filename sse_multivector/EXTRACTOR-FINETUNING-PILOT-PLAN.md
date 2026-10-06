@@ -2210,10 +2210,10 @@ Confirm the full CUDA check before main pilot work; the rebuilt/frozen runtime
 is recorded below. Evidence:
 `target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
 
-**Persistent-volume recovery approved:** favor a machine with observed spare
-GPUs and retain model downloads plus compatible saved work on a local volume
-across container replacement. The volume stays on its physical machine and
-does not reserve GPUs. The launcher mounts the frozen volume ID at the same
+**Persistent-volume recovery approved:** retain model downloads plus compatible
+saved work on a local volume across container replacement. The volume stays
+on its physical machine and does not reserve GPUs. The launcher mounts the
+frozen volume ID at the same
 operation path and sets `HF_HOME` to its persistent model cache. Replacement
 freezing verifies the previous local retrieval and deletion, identical volume,
 image, workload and input manifest. Remote preparation rechecks all saved work,
@@ -2242,6 +2242,14 @@ fields; all 16 filesystem layers and the effective runtime configuration match
 the passed VM. Both image IDs and that normalization are saved in the verification
 record. Full MoE CUDA replay and new private publication remain pending; no
 volume or new rental exists.
+**Host choice approved October 6:** use a cheaper compatible Bulgarian host with
+a local volume for the next attempt, keeping the two-card configuration and
+existing spending limits. The read-only candidate is the host, quoted at
+$2.7611/hour for two GPUs, 30 GB container storage and a 300 GB volume, before
+transfer charges. Recheck the actual offers before creation; this is not a
+reservation. Do not pay the Texas premium solely for additional spare GPUs.
+Actual provider attachment remains untested. Startup checks the mount before
+setup or training; the VM replacement verifies the recovery logic separately.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
