@@ -1514,7 +1514,8 @@ maximum absolute error 0.015625 and relative L2 error 0.035727. Tolerances remai
 unchanged; the cause is unresolved. The prep gate blocked all main baselines
 and training. All **95 work + 6 startup files / 5,849,177,916 bytes** were independently rehashed; available checkpoint/response seals and complete Qwen prep were verified under the standing prep-only substantial-repair instruction.  Preliminary charges were **$2.543**.
  The three failed attempts cost $5.29 within the original $285 experiment maximum; no remote edit was made.
-Integrity evidence is the launch directory’s `closure-evidence.json` and `operation/observations/full-pre-deletion-integrity-review.json`. The MoE numerical issue and a new frozen runtime remain open.
+Integrity evidence is the launch directory’s `closure-evidence.json` and `operation/observations/full-pre-deletion-integrity-review.json`. MoE CUDA confirmation remains open; the subsequent local
+repair and rebuilt runtime are recorded below.
 
 **October 6 local MoE reference repair:** reproduce a false gradient rejection
 with real BF16 Gemma MoE/PEFT and an emulation of Liger’s unavailable CUDA loss.
@@ -1527,7 +1528,7 @@ production-path regression first fails on adapter agreement, then passes with
 zero gradient difference and still rejects deliberately corrupted gradients.
 The local workflow suite passes 89 tests, with 12 deployment-VM-only checks
 skipped. The full original CUDA failure is not yet replayed; confirmation on
-hardware and a new frozen runtime remain required. Evidence is
+hardware remains required; the rebuilt runtime is recorded below. Evidence is
 `target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
 
 **Persistent recovery storage approved:** retain model downloads and compatible
@@ -1540,9 +1541,16 @@ verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical
 image/data/recipe, verified local retrieval and confirmed prior deletion. An
 explicit runtime repair may retain downloads while archiving all previous work
-and starting a fresh comparison; its reason is frozen. A controller-crash regression now keeps the worker lock in live training children,
-blocking sealing and reentry until writers exit. Local checks pass; VM rehearsal
-and the full MoE CUDA replay remain pending. No volume or replacement is rented.
+and starting a fresh comparison; its reason is frozen. A controller-crash
+regression keeps the worker lock in live training children, blocking sealing
+and reentry until writers exit. Host regressions pass 137 checks, with 16
+VM/optional-SDK skips; the pinned SDK payload test passes. The rebuilt VM passes
+101 checks: actual container replacement preserves 242 saved data files, logs
+retain their original prefixes, and the model cache remains readable offline.
+The exported image matches the frozen package; all six configurations/data are
+unchanged. One optional native-tokenizer check remains covered by the prior
+unchanged-input preflights. Full MoE CUDA replay and new private publication
+remain pending. No volume or replacement is rented.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

@@ -2188,8 +2188,9 @@ or remote code edit was made.
 Evidence: `launch-20261006-two-gpu-r2/closure-evidence.json`, the operation’s
 `observations/full-pre-deletion-integrity-review.json`,
 `observations/training-memory-guard-local-repair.json`, and
-`observations/preliminary-billing/summary.json`. MoE numerical validation and a
-new frozen runtime are required before another rental.
+`observations/preliminary-billing/summary.json`. MoE CUDA confirmation remains
+required before main pilot work; the subsequent local repair and rebuilt runtime
+are recorded below.
 
 **Subsequent local MoE reference repair — October 6:** Liger’s mean loss
 computes and rounds the hidden-state gradient during forward, then multiplies
@@ -2205,7 +2206,8 @@ tensor hooks, gradients, RNG and forward on success/failure. The report records
 The regression runs locally with PyTorch 2.12.1 CPU, Transformers 5.17.0, PEFT
 0.21.0 and Liger 0.8.4; it is not a replay of the full original CUDA model.
 The full local suite passes 89 tests, with 12 deployment-VM-only checks skipped.
-Rebuild/freeze and confirm the full CUDA check before main pilot work. Evidence:
+Confirm the full CUDA check before main pilot work; the rebuilt/frozen runtime
+is recorded below. Evidence:
 `target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
 
 **Persistent-volume recovery approved:** favor a machine with observed spare
@@ -2224,9 +2226,22 @@ can be redelivered.
 The controller passes its worker-lock descriptor through each candidate; abrupt
 controller death cannot seal changing files or admit another worker. A CPU
 heartbeat regression first reproduced the orphan/sealing defect and now passes.
-Host regressions pass 136 checks (16 VM/optional-SDK skips); the pinned SDK
-volume payload test passes. VM replacement rehearsal and full MoE CUDA replay
-remain pending; no volume or new rental exists.
+Host regressions pass 137 checks (16 VM/optional-SDK skips); all eight pinned
+SDK checks pass. The exact rebuilt VM passes 101 checks, including independent
+container replacement: all 242 saved data files are unchanged, logs preserve
+their prefixes, both students retain four updates, and a real HF cache lookup
+succeeds offline. The two volume tests run separately after their ordinary-suite
+skips; one optional native-tokenizer check remains covered by prior unchanged
+input preflights. The exported image verifies the new frozen package; all six
+configurations and data are byte-identical to the previous package. Evidence:
+`target/distillation-pilot-v1/downstream-recovery-20261006/`, including
+`package-v2/` and `freeze-verification-v2.json`; VM/export evidence:
+`target/distillation-vm-clean-deployment/attempt-1791260449813548697/`.
+Import into the local Docker version normalizes absent/default configuration
+fields; all 16 filesystem layers and the effective runtime configuration match
+the passed VM. Both image IDs and that normalization are saved in the verification
+record. Full MoE CUDA replay and new private publication remain pending; no
+volume or new rental exists.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.

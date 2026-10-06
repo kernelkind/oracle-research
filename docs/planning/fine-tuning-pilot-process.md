@@ -30,8 +30,8 @@ Preliminary cost was **$2.543**.
 The local fix removes the training cutoff and keeps inference checks. The MoE
 reference also now matches Liger’s gradient-scaling order; the local regression
 passes without relaxing tolerances. The local workflow suite passes 89 tests;
-12 VM-only checks are skipped. Full CUDA confirmation and a new frozen runtime
-remain pending.
+12 VM-only checks were skipped. Full CUDA confirmation remains pending;
+the runtime is rebuilt below.
 
 **Recovery storage approved:** keep model downloads and compatible saved work
 on a persistent local volume. Favor a machine with observed spare GPUs so a
@@ -40,8 +40,10 @@ downloads and verified work across replacement, using the same image/data/recipe
 and continuing the saved worker attempts. It requires verified retrieval and
 confirmed deletion of the previous instance. If a repair changes the runtime,
 retain downloads, archive the previous work and start a fresh comparison.
-Local checks pass; VM rehearsal
-and MoE CUDA confirmation remain pending. No volume or replacement is rented.
+The rebuilt VM passes 101 checks, including container replacement with saved
+answers/checkpoints unchanged and an offline cache hit. The inputs match the
+rebuilt runtime. MoE CUDA confirmation and private publication remain pending.
+No volume or replacement is rented.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,
