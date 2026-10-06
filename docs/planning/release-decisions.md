@@ -1456,8 +1456,8 @@ checks and local semantic grading remain pending. The October 5 preparation used
 88 GiB cache-memory guard without CUDA OOM, and Gemma MoE failed native/fused
 adapter-gradient agreement before its first update. The prep gate blocked every
 main baseline and training run. All 86 available files (4.35 GB), available checkpoints and failure logs were retrieved and independently rehashed under the standing prep-only substantial-repair authorization. 
-Preliminary charges were **$1.974**. Repair proceeds
-locally; no replacement rental is running. Failed checks now preserve numerical
+Preliminary charges were **$1.974**. Repairs were completed
+locally before the new frozen version below. Failed checks now preserve numerical
 evidence before rejecting work. The short Gemma reference promotes projected
 logits to FP32 before softcapping, matching Liger 0.8.4's correctness reference;
 CUDA tolerances and training computation are unchanged. Dense inference reserves
@@ -1477,8 +1477,7 @@ The corrected VM export is published privately as
 `sha256:c376ec124faabd71c018e52044faf9ee6bbc4b02b6d7a48bf90f1cbfa8f806e5`.
 Its filesystem layers, runtime settings and all 15 source hashes match the VM;
 Docker export normalizes empty metadata defaults without changing execution.
-Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  No
-replacement is running yet; there is no automatic time/budget stop or deletion.
+Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  The replacement two-GPU configuration cost **$2.9889/hour** including 300 GB storage.  There is no automatic time/budget stop or deletion.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

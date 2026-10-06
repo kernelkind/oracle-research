@@ -19,8 +19,9 @@ main baseline or training started. All 86 available files (4.35 GB) were retriev
 Preliminary charges are **$1.974** against the original $285 total. Local repairs
 pass 94 VM tests and six native tokenizer preflights; one VM tokenizer test was
 skipped and covered by the separate preflights. The corrected image is published
-and verified private. GPU checks remain. GPU execution has not started. Semantic review
-remains open.
+and verified private. GPU startup began using two 96GB/600 W server GPUs at **$2.9889/hour**.
+Its $281 commitment uses the original $285 total. GPU checks and semantic review
+remain.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,

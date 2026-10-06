@@ -2091,7 +2091,7 @@ must preserve these measurements before rejecting work. The global prep gate
 blocked every main baseline and training run. All 80 work and six startup files
 (4,346,589,909 bytes), available checkpoints and failure logs were retrieved
 and independently rehashed.
-The preliminary resource charge was **$1.974**. Repairs are local; no replacement is running and the original image/
+The preliminary resource charge was **$1.974**. Repairs were completed locally and the original image/
 input/operation are preserved.
 
 **Local recovery — October 6:** before rejecting a cache peak, write its full
@@ -2141,7 +2141,9 @@ Docker export normalizes empty metadata fields; execution settings are identical
 Read-only pulling succeeds and anonymous manifest access returns HTTP 401.
 New frozen package manifest:
 `8e7018275fa7cbdc3f05231d6c676ae5049daf9e8f30e5bb378e07038f19f50a`.
-The replacement has not been created. Evidence is under
+The recorded rental rate was $2.9889/hour including 300 GB storage. Startup
+and prep are continuously observed; all checks and complete baselines must
+precede training. No automatic time/budget stop or deletion. Evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous

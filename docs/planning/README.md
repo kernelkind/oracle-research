@@ -92,8 +92,10 @@ Preliminary charges were **$1.974**. Local repairs preserve
 failed measurements and align Gemma's numerical reference with Liger's FP32
 softcap. Dense inference reserves 12 GiB scratch under the same 88 GiB budget.
 94 VM tests and six native tokenizer preflights pass; one VM tokenizer test is
-skipped and covered separately. The corrected VM export is published and verified private; GPU execution has not started. GPU checks and local semantic grading remain. There is no
-automatic time limit or deletion.
+skipped and covered separately. The corrected VM export is published and verified
+private. GPU startup began using two 96GB/600 W server cards at **$2.9889/hour**, within the original $285 experiment maximum.
+Startup/prep is continuously observed; GPU checks and local semantic grading
+remain. There is no automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.
