@@ -32,6 +32,95 @@ class LocalWeightTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('RUN_LOCAL_WEIGHT_TESTS') == '1', 'native weight integration environment')
 class LocalWeightIntegrationTests(unittest.TestCase):
+    def test_full_pointer_loads_saved_backbone_and_head_and_trains_reloadable_lora(self):
+        import sys
+        import torch
+        from tokenizers.pre_tokenizers import ByteLevel
+        from transformers import Qwen2Config, Qwen2Model, Qwen2Tokenizer
+        from sse_multivector import distillation_benchmark
+        source = distillation_run.read_json(Path(__file__).parent / 'distillation/diagnostic-kev9b.json')
+        sys.path.insert(0, source['upstream_path'])
+        from kev.model import PointerHead, SPECIAL, encode
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            torch.manual_seed(17)
+            base = Qwen2Model(Qwen2Config(vocab_size=2048, hidden_size=64,
+                intermediate_size=128, num_hidden_layers=2, num_attention_heads=4,
+                num_key_value_heads=2, max_position_embeddings=512))
+            with torch.no_grad():
+                base.embed_tokens.weight.add_(0.125)
+            base.save_pretrained(root/'full')
+            words = ['[UNK]', '[PAD]', *sorted(ByteLevel.alphabet())]
+            tokenizer = Qwen2Tokenizer(vocab=dict(zip(words, range(len(words)))), merges=[],
+                unk_token='[UNK]', pad_token='[PAD]', additional_special_tokens=SPECIAL)
+            tokenizer.save_pretrained(root/'full')
+            head = PointerHead(64, 16)
+            meta = {'base': 'tiny-foundation', 'base_revision': 'a'*40, 'weights': 'full',
+                    'head': head.state_dict(), 'head_dim': 16, 'temperature': 1.3}
+            torch.save(meta, root/'full/head.pt')
+            config = {k:v for k,v in source.items() if k not in ('adapter', 'adapter_revision')}
+            config.update(model=str(root/'full'), revision='b'*40, base_model='tiny-foundation',
+                base_revision='a'*40, quantization='none', max_input_tokens=512,
+                memory_budget_gib=2, reserve_gib=8)
+            config['question'] = {'instructions':'Compare pair', 'criteria':{
+                'equivalent':'same', 'a_parent_of_b':'left broader',
+                'b_parent_of_a':'right broader', 'neither':'neither', 'uncertain':'unknown'},
+                'output_field':'relation', 'empty_fields':['reason']}
+            path = root/'pointer.json'
+            distillation_run.write_json(path, config)
+            actual = local_weight_model.LocalWeights(path)
+            self.assertFalse(hasattr(actual.model, 'lm_head'))
+            self.assertEqual(actual.name, str(root/'full')+'/'+'b'*40+'/'+distillation_run.sha256(path))
+            for name, expected in base.state_dict().items():
+                torch.testing.assert_close(actual.model.state_dict()[name].cpu(),
+                                           expected.to(torch.bfloat16), rtol=0, atol=0)
+            body = {'model': actual.name, 'messages': [{'role':'user', 'content':'pair'}]}
+            reply = actual.complete(body)
+            question = config['question']
+            record = {'state':'pair', 'questions':[{'instr':question['instructions'],
+                'options':[f'{k}: {v}' for k,v in question['criteria'].items()], 'label':0}]}
+            encoded = encode(tokenizer, record, max_state=512, max_branch=512, strict=True)
+            self.assertEqual(encoded, encode(actual.tokenizer, record, max_state=512,
+                                              max_branch=512, strict=True))
+            # Native BF16 loading preserves FP32 rotary buffers; casting an
+            # already-built FP32 model also rounds those buffers.
+            base = Qwen2Model.from_pretrained(root/'full', dtype=torch.bfloat16,
+                attn_implementation='sdpa').cuda().eval()
+            head = head.cuda().eval()
+            head.temperature = 1.3
+            for name, expected in head.state_dict().items():
+                torch.testing.assert_close(actual.head.state_dict()[name], expected, rtol=0, atol=0)
+            for name, expected in base.named_buffers():
+                torch.testing.assert_close(dict(actual.model.named_buffers())[name], expected, rtol=0, atol=0)
+            with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                ids = torch.tensor([encoded['ids']], device='cuda')
+                h = base(input_ids=ids, position_ids=torch.tensor([encoded['pos']], device='cuda'),
+                         attention_mask=torch.ones_like(ids)).last_hidden_state[0].float()
+                loaded_h = actual.model(input_ids=ids,
+                    position_ids=torch.tensor([encoded['pos']], device='cuda'),
+                    attention_mask=torch.ones_like(ids)).last_hidden_state[0].float()
+                torch.testing.assert_close(loaded_h, h, rtol=0, atol=0)
+                expected = head(h[encoded['decide_idx'][0]], h[encoded['opt_idx'][0]]).float().softmax(-1)
+            torch.testing.assert_close(torch.tensor(list(reply['metadata']['probabilities'].values())),
+                                       expected.cpu())
+            del actual, base, head
+            distillation_run.write_json(path, {**config, 'base_revision':'c'*40})
+            with self.assertRaisesRegex(ValueError, 'mismatched foundation'):
+                local_weight_model.LocalWeights(path)
+            distillation_run.write_json(path, {**config, 'quantization':'nf4'})
+            benchmark = dict(model=config['model'], revision=config['revision'], architecture='pointer',
+                method='lora', quantization='nf4', pointer_config='pointer.json', lengths=[32],
+                train_batch_size=1, inference_batch_sizes=[1,2], steps=2, warmup_steps=1,
+                repetitions=2, learning_rate=2e-5, memory_budget_gib=2, reserve_gib=8, seed=17)
+            distillation_run.write_json(root/'benchmark.json', benchmark)
+            trained = distillation_benchmark.run(root/'benchmark.json', root/'run', stage='train')
+            self.assertTrue(trained['checkpoint_saved'])
+            result = distillation_benchmark.run(root/'benchmark.json', root/'run', stage='verify')
+            self.assertTrue(result['complete'])
+            self.assertTrue(result['reload_matches'])
+            self.assertGreater(result['parameters']['trainable'], result['parameters']['pointer_head'])
+            self.assertTrue(result['gradient_checkpointing'])
+
     def test_decider_uses_native_segmented_tokens_without_chat_wrapping(self):
         import importlib.util
         from types import SimpleNamespace

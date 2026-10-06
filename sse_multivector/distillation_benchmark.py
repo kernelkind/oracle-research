@@ -138,13 +138,19 @@ def run(config_path, output, *, stage='all'):
             pointer = LocalWeights(path)
             pointer.model = prepare_model_for_kbit_training(pointer.model, use_gradient_checkpointing=True)
             if checkpoint:
-                pointer.model.delete_adapter('default')
-                pointer.model.load_adapter(checkpoint, adapter_name='default', is_trainable=True)
+                if isinstance(pointer.model, PeftModel):
+                    pointer.model.delete_adapter('default')
+                    pointer.model.load_adapter(checkpoint, adapter_name='default', is_trainable=True)
+                else:
+                    pointer.model = PeftModel.from_pretrained(pointer.model, checkpoint, is_trainable=True)
                 saved = torch.load(checkpoint / 'head.pt', map_location='cpu', weights_only=True)
                 if saved['source_config_sha256'] != sha256(path):
                     raise ValueError('saved pointer head source binding differs')
                 pointer.head.load_state_dict(saved['head'], strict=True)
                 pointer.head.temperature = saved['temperature']
+            elif not isinstance(pointer.model, PeftModel):
+                pointer.model = get_peft_model(pointer.model, LoraConfig(task_type='FEATURE_EXTRACTION',
+                    target_modules='all-linear', r=16, lora_alpha=32, lora_dropout=0.))
             pointer.model.set_adapter('default')
             pointer.model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
             pointer.model.config.use_cache = False

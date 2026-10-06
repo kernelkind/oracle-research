@@ -1,0 +1,24 @@
+{
+  "model": "jaredpalmer/kev-27b",
+  "revision": "af0e6d551bdc2cc724f3e9d7a8bee1cd4fb8f7bf",
+  "architecture": "pointer",
+  "method": "lora",
+  "quantization": "nf4",
+  "pointer_config": "diagnostic-kev27b.json",
+  "lengths": [
+    512,
+    2048
+  ],
+  "train_batch_size": 1,
+  "inference_batch_sizes": [
+    1,
+    8
+  ],
+  "steps": 4,
+  "warmup_steps": 1,
+  "repetitions": 5,
+  "learning_rate": 2e-05,
+  "memory_budget_gib": 32,
+  "reserve_gib": 8,
+  "seed": 17
+}

@@ -640,7 +640,7 @@ def load_gpu_packages(config):
 def load_model(config, adapter=None):
     load_gpu_packages(config)
     import torch
-    from transformers import AutoConfig, AutoModelForCausalLM, BitsAndBytesConfig
+    from transformers import AutoConfig, AutoModel, AutoModelForCausalLM, BitsAndBytesConfig
     from peft import PeftModel
     options = {"revision": config["revision"], "trust_remote_code": False,
                "dtype": torch.float32 if config["device"] == "cpu" else torch.bfloat16}
@@ -658,8 +658,10 @@ def load_model(config, adapter=None):
         options.update(device_map={"": config["device"]}, quantization_config=BitsAndBytesConfig(
             load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
             bnb_4bit_compute_dtype=torch.bfloat16))
-    model, loading = AutoModelForCausalLM.from_pretrained(config["model"], output_loading_info=True, **options)
-    if loading["missing_keys"] or loading["mismatched_keys"] or loading.get("error_msgs"):
+    loader = AutoModel if config.get('backbone_only', False) else AutoModelForCausalLM
+    model, loading = loader.from_pretrained(config["model"], output_loading_info=True, **options)
+    if (loading["missing_keys"] or loading["mismatched_keys"] or loading.get("error_msgs")
+            or config.get('backbone_only', False) and loading['unexpected_keys']):
         raise ValueError(f"incomplete model weights: {loading}")
     limit = getattr(model.config, "max_position_embeddings", None)
     if limit is not None and config["max_length"] > limit:

@@ -731,6 +731,32 @@ Training worker `1572240` and verification worker `1578205` are distinct.
 The report is complete and reload logits match. The existing service remains
 stopped as the user requested; all owned GPU workers have exited.
 
+### Kev-27B benchmark preparation
+
+The human requested a Kev-27B benchmark on October 6. The pinned public
+checkpoint is `jaredpalmer/kev-27b@af0e6d551bdc2cc724f3e9d7a8bee1cd4fb8f7bf`.
+Its `head.pt` identifies `Qwen/Qwen3.8-27B` at
+`1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0` as the foundation, but supplies a
+**learned full backbone**, rather than Kev-9B's adapter. The full checkpoint's
+native text-backbone keys must load through `AutoModel`, without creating a
+vocabulary head or replacing the learned weights with the foundation.
+
+The shared local loader now supports both full and adapter pointer checkpoints,
+checks foundation and checkpoint metadata, and retains the native encoder and
+head. The capacity runner adds rank-16 all-linear LoRA to a full pointer
+backbone and saves/reloads that adapter with the updated head. This remains
+synthetic capacity measurement, not full-weight optimization or SHR fitting.
+Reusable configurations preserve the existing v26 readout and its rotated
+criteria, NF4 precision, 32 GiB process budget and 8 GiB system reserve.
+
+The new native production-path test first failed on the old loader's missing
+vocabulary-head weights. All 15 native loader/benchmark tests now pass,
+including exact saved-weight checks, independent native pointer probabilities,
+NF4 optimization and adapter/head reload. The shared CPU suite passed 147 tests
+with 13 optional native/dependency skips. Initial fixture failures are retained:
+the fixture needed a native Qwen tokenizer and BF16 loading that preserves
+FP32 rotary buffers. Quality and full-size capacity results are pending.
+
 ## Dataset audit
 
 The immutable ASv6.100 bundle is at

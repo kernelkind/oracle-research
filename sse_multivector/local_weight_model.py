@@ -55,7 +55,9 @@ class LocalWeights:
         torch.cuda.set_per_process_memory_fraction(min(1., c['memory_budget_gib'] * 2**30 / total))
         self.name = checkpoint_name(c, self.config_sha256)
         self.tokenizer = AutoTokenizer.from_pretrained(c['model'], revision=c['revision'])
-        model = load_model(dict(c, device='cuda', max_length=c['max_input_tokens'], efficient_attention=True))
+        full_pointer = c['kind'] == 'pointer' and 'adapter' not in c
+        model = load_model(dict(c, device='cuda', max_length=c['max_input_tokens'], efficient_attention=True,
+                               backbone_only=full_pointer))
         self.head = self.encoder = self.choice_encoder = self.decider_encoder = None
         if c['kind'] == 'pointer':
             from peft import PeftModel
@@ -65,20 +67,26 @@ class LocalWeights:
                 raise ValueError('pointer implementation differs from its pinned source')
             sys.path.insert(0, str(upstream))
             from kev.model import encode, PointerHead
-            adapter = snapshot_download(c['adapter'], revision=c['adapter_revision'],
-                                        allow_patterns=['*.json', '*.safetensors', 'head.pt'])
-            meta = torch.load(Path(adapter)/'head.pt', map_location='cpu', weights_only=True)
-            if (meta['base'] != c['model'] or meta.get('base_revision') != c['revision']
+            repository = c['model'] if full_pointer else c['adapter']
+            revision = c['revision'] if full_pointer else c['adapter_revision']
+            checkpoint = (repository if Path(repository).is_dir() else snapshot_download(
+                repository, revision=revision, allow_patterns=['*.json', '*.safetensors', 'head.pt']))
+            meta = torch.load(Path(checkpoint)/'head.pt', map_location='cpu', weights_only=True)
+            base = c['base_model'] if full_pointer else c['model']
+            base_revision = c['base_revision'] if full_pointer else c['revision']
+            if (meta['base'] != base or meta.get('base_revision') != base_revision
+                    or (meta.get('weights') == 'full') != full_pointer
                     or meta.get('option_isolation', False) or meta.get('special_embeddings', False)):
                 raise ValueError('unsupported pointer checkpoint or mismatched foundation')
-            backbone = model.model
-            self.model = PeftModel.from_pretrained(backbone, adapter, is_trainable=False)
+            self.model = (model if full_pointer else
+                          PeftModel.from_pretrained(model.model, checkpoint, is_trainable=False))
             self.head = PointerHead(self.model.config.hidden_size, meta.get('head_dim', 256)).to('cuda')
             self.head.load_state_dict(meta['head'], strict=True)
             self.head.temperature = meta.get('temperature', 1.)
             self.head.eval()
             self.encoder = encode
-            self.adapter_path = adapter
+            if not full_pointer:
+                self.adapter_path = checkpoint
             self.meta = meta
             del model
             gc.collect()

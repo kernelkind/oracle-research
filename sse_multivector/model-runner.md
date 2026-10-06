@@ -387,15 +387,26 @@ an owned remote execution checkout without exposing its model server.
 loads pinned weights with a declared process memory budget and system reserve.
 The causal-LM backend uses native chat templates and greedy decoding, without
 input truncation. The optional pointer backend checks its pinned upstream
-implementation and adapter, preserves the complete prompt as state, and records
+implementation and learned checkpoint, preserves the complete prompt as state,
+and records
 native option probabilities. Its configured empty reason field is not generated
 reasoning. `local_model model-name --config CONFIG` prints the same identity
-without loading weights. A pointer model names its learned adapter and revision;
+without loading weights. A pointer model names its learned adapter or full
+checkpoint and revision;
 a causal LM with an adapter also names that adapter; other causal LMs name
 their foundation checkpoint. All bind the configuration hash;
 the experiment also freezes local transport/loader code hashes. Local runs need
 the isolated environment's `jsonschema` package. Quantized output is evidence
 for that precision and input/readout contract only.
+
+A pointer configuration with `adapter` loads the named foundation and learned
+adapter. Without `adapter`, `model` names a saved full backbone: the loader uses
+`AutoModel`, rejects incomplete or unexpected weights, and loads its saved
+`head.pt`. `base_model` and `base_revision` must match the full checkpoint's
+foundation metadata; they do not replace its learned weights. Both forms use
+the pinned native encoder and pointer head. Synthetic capacity checks continue
+an existing adapter, or add rank-16 all-linear LoRA to a full backbone, and
+update the pointer head. Saved adapters and heads must reload together.
 
 A causal-LM configuration can also supply a `question` with ordered `criteria`,
 an `output_field` and optional `empty_fields`. With `readout: "generation"`,
