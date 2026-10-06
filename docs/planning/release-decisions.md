@@ -1605,8 +1605,7 @@ parent mount, replacement and offline two-worker handoff. Both packages verify
 inside the imported image. Its private registry digest is
 `docker.io/kernelkind/oracle-mvp@sha256:633c684c0b64d064df34e8de9de64c07bc0b764423073a2c7a25aa561bd57a4b`;
 VM layers/effective configuration/source hashes match, read-only pull succeeds
-and anonymous manifest access is HTTP 401.   Combined rate is $1.4278/hour. The retry has
-not allocated a GPU yet. Evidence: `target/distillation-pilot-v1/download-launch-20261006-v3/`.
+and anonymous manifest access is HTTP 401.   Combined rate is $1.4278/hour.   Container mount/cache checks are next. Evidence: `target/distillation-pilot-v1/download-launch-20261006-v3/`.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

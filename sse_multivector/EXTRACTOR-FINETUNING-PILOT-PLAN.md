@@ -2303,9 +2303,10 @@ allocation. The fix mounts
 controller/generalization, four cache and 13 workload-spec checks pass. Updated
 VM rehearsal passed all 109 checks, including parent mounting and offline
 handoff; the private immutable publication matches it and native prepare passes.
-The recorded resource rate was $1.4278/hour. The GPU retry has not started.
-All six configs, data and model
-requirements match the previous package. No download or pilot training yet.
+The recorded resource rate was $1.4278/hour. Image
+layers are downloading. Container mount/cache checks precede model downloads.
+All six configs, data and model requirements match the previous package. No
+pilot baseline or training yet.
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.

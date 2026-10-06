@@ -46,8 +46,8 @@ The download requests were rejected before allocating a GPU; no GPU charge or
 training. The retry identified an invalid mount path. The launcher now mounts
 at `/workspace`, keeping files under `/workspace/oracle-full-build`; local
 checks and all 109 VM checks pass. The private runtime passes native preparation.
-The quoted download-only rate was $1.4278/hour including storage. This retry has not started GPU execution. Actual Vast
-attachment and full MoE CUDA confirmation remain pending.
+The quoted download-only rate was $1.4278/hour including storage.  Container mount/cache checks and full MoE
+CUDA confirmation remain pending.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent
