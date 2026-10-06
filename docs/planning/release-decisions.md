@@ -1068,7 +1068,7 @@ its head dimension differs by attention layer, and the batch-memory calculation
 incorrectly read the global configuration. MoE never started. Retrieval and
 independent rehashing account for all 125 work files and six startup files.
 
-The preliminary preparation cost was $1.56. This attempt left required Gemma work incomplete; the repaired run below completed it. No automatic timeout or
+The preparation cost was initially estimated at $1.56 and later updated to $1.620. The final preparation cost was $1.620. This attempt left required Gemma work incomplete; the repaired run below completed it. No automatic timeout or
 deletion occurred. Budget overruns must trigger a direct chat update, never an
 automatic stop. Ask questions directly in chat; do not use question tools.
 
@@ -1094,7 +1094,7 @@ repair scope; no fixed time cutoff was approved.
 
 **GPU preparation completed October 3:** Qwen's verified earlier checks were reused; Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject responses, native maximum-output cache checks and restored training on 96GB/600 W hardware at $1.4153/hour including storage. All 210 work files and six startup files
 were retrieved and independently rehashed.  This rental lasted 65.5 minutes.
-Preliminary preparation costs were $1.639 for this run and $1.620 for the earlier failed preparation: $3.259 combined. 
+The two preparation runs cost $1.756 and $1.620, $3.376 combined.  
 
 Direct SSH copying was slow; the verified provider proxy route completed retrieval using
 the unchanged native transfer code. Small sealed responses and measurements were copied
@@ -1199,7 +1199,7 @@ frozen-input verification passed. Qwen preflight and weight download completed. 
 then wrote an unexpected Python cache file into the frozen transport. The supervisor rejected the changed file set, stopped the workload and verified retrieval. No baseline output or training
 completed, and no GPU failure was reported. The cache is preserved outside
 transport; its original manifest verifies, including after a bytecode-disabled
-local import. Preliminary charges were $0.338.
+local import. Preliminary charges were $0.338. The final cost of the failed run was $0.395.
 The manual-deletion policy is implemented and regression-tested locally. On
 September 29, the rebuilt image and `package-v9` passed all 24 local VM tests,
 including real SSH training/retrieval and all three candidate preflights. The
@@ -1261,7 +1261,7 @@ transfer fees gives **36–40 hours / $51–58** at the prep's historical $1.415
 an illustrative $1.60/hour gives $58–65. Brief generation plus a single long-cache
 decode step is a projection, not measured full-output throughput. No full-pilot
 spending is authorized. This former winner-only calculation does not price the
-approved six-version final test or the frozen ASv6.100 inputs. Preparation's preliminary total was $3.26.
+approved six-version final test or the frozen ASv6.100 inputs. The earlier preparation cost $3.376 combined.
 
 **Subject prompt frozen for the pilot (October 4):** the user selected the full
 [ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md),
@@ -1480,7 +1480,7 @@ Docker export normalizes empty metadata defaults without changing execution.
 Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  The replacement two-GPU configuration cost **$2.9889/hour** including 300 GB storage. Container DNS failed before
 SSH, inputs or worker startup; one reboot did not resolve it. Necessary startup logs and direct/proxy probes were saved and hashed under the standing prep-only policy.  Its preliminary cost was **$0.76**; the two failed attempts cost **$2.74**, within the original $285 experiment maximum.   Exclude machine 146170 from replacement searches. No other approved compatible offer is currently available. The frozen
 recipe/image/package are unchanged. There is no automatic time/budget stop or
-deletion.
+deletion.   No GPU execution is active.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

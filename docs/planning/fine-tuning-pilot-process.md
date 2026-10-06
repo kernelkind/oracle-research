@@ -268,8 +268,8 @@ six-version test collection**. Update and validate the context/output/memory
 setup and reprice that complete workload before launch.
 Teacher labels and local review assume the existing subscription; paid APIs add cost.
 
-Completed prep's preliminary charges are **$3.26**, including the failed attempt;
-those already-incurred charges are separate. 
+The earlier October 3 preparation cost **$3.376**, including its failed attempt; those already-incurred charges are separate.
+
 
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

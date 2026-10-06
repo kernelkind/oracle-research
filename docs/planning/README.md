@@ -55,7 +55,7 @@ approval before stopping incomplete work. No automatic timeout or deletion.
 **GPU preparation completed October 3:** all three students passed the measured
 training, checkpoint restoration, merge and generation/cache checks on the
 96GB card. Qwen evidence was reused; the repaired Gemma rental lasted 65.5 minutes.
-All 210 work files and six startup files were verified.  Preliminary preparation charges total $3.26 including the earlier failure.
+All 210 work files and six startup files were verified.  The two preparation runs cost $1.620 and $1.756, $3.376 combined. 
 The shared launcher now selects the provider SSH proxy by default and prioritizes
 saved responses before checkpoints. Completion markers follow their files.
 Checkpoint streams are limited to 64 MiB, with new response discovery between

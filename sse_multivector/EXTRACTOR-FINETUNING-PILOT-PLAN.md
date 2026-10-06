@@ -64,15 +64,15 @@ All 125 available work files and six startup files were reverified. Qwen complet
 dense has only its first checkpoint, and MoE did not start. The local per-layer
 dimension fix is committed; its rebuilt VM passed all 56 tests. Reuse was
 approved, then cancelled by the deletion instruction before implementation.
-This attempt left the Gemma checks incomplete; the repaired run below completed them.
-The preliminary resource charge was $1.56.
+This attempt left the Gemma checks incomplete; the repaired run below completed
+them. The final resource cost was $1.620.
 **GPU preparation completed October 3:** Qwen's verified earlier checks are reused;
 Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject
 responses, native maximum-output cache checks and restored training on the preparation run
 (96GB/600 W, $1.4153/hour including storage). All 210 work files and six startup files
 were retrieved and independently rehashed. The local response review ran at 21:04 UTC,
 full completeness review passed at 21:17:21 UTC. This rental lasted 65.5 minutes.
-The preliminary preparation costs were $1.639 and $1.620 ($3.259 combined).
+The final preparation costs were $1.756 and $1.620 ($3.376 combined).
 
 Direct SSH copying was slow; the verified provider proxy route completed retrieval using
 the unchanged native transfer code. Small sealed responses and measurements were copied
@@ -2456,10 +2456,9 @@ utilization, VRAM, power draw and power limit from September 29 at 17:46 UTC
 through September 30 at 02:56 UTC. Four sampling gaps exceeded two minutes;
 the longest was about 6.7 minutes. Maximum sampled VRAM use was 96,581 MiB.
 
-The preliminary resource charge was **$13.392**. Evidence is
-`observations/preliminary-charge-summary.json` and its native invoice snapshot. Including
-the earlier failed rental's $0.338, posted charges total **$13.73** across both
-rentals; unposted charges remain unresolved. The next steps are completing the
+The final resource cost was **$13.392**. Evidence is
+`observations/preliminary-charge-summary.json` and its native invoice snapshot.
+The earlier failed rental's final resource cost was $0.395, bringing the combined final cost to **$13.787**. The next steps are completing the
 Gemma baseline mask generation and semantic review before candidate selection.
 The old frozen launch retains its
 original code. Candidate recipes and Vast limits are unchanged. The prior
@@ -2492,7 +2491,8 @@ out restored the original frozen transport hashes and file set. A local
 cache files. All future inspection of frozen Python modules must disable
 bytecode writes before import. This verification is local and incurred no rental.
 
-The preliminary resource charge was **$0.338**. The supervisor has exited.
+The preliminary resource charge was **$0.338**.
+The final resource cost was **$0.395**. The supervisor has exited.
 Following this failure, the user explicitly requested removal of automatic
 deletion. The current shared command runner preserves instances on completion,
 errors, expiry and interruption; only an explicit `stop` command deletes them.
