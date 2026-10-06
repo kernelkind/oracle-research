@@ -1662,8 +1662,11 @@ Its preliminary bill is $1.22, with 28 cents retained under the $1.50 bound.
 The two-GPU run passed cache attachment and offline verification. Qwen and
 Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
 **No pilot baseline or training started.** All **97 work files / 5.85 GB** and six preparation files were retrieved and independently rehashed. Preliminary charges were **$1.445**.
- Investigate the saved MoE discrepancy locally before another
-pilot launch; prompts, data, models and training recipe remain unchanged.
+ A locally tested, frozen one-GPU diagnostic is reserved
+within that allowance ($2 maximum) to compare output-head and adapter gradients
+without optimizer updates. Reuse the verified cache and unchanged private image; archive prior prep work and collect both default and FP32-reduction cases before retrieval and integrity review. Prompts, data,
+models and training recipe remain unchanged. Evidence:
+`target/distillation-pilot-v1/moe-gradient-diagnostic-20261006/`.
 
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
