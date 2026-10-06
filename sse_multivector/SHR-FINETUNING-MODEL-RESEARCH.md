@@ -396,6 +396,15 @@ documented in [student preparation](SHR-STUDENT-PREPARATION.md); they supply
 useful evidence before the prompt is finished. Completed SHR training labels
 and a final model choice remain unavailable.
 
+The subsequently authorized input-selection phase prepared 640 source-bound
+TRAIN nomination families / 1,280 complete A/B orientations, with source notes,
+authors, frozen membership, SP provenance and reversal identity preserved.
+The five nomination rules provide review candidates, not relation labels.
+Twenty input reviews and nineteen diagnostic assessments distinguish v26
+regressions from unresolved Food/Culture scope questions. No validation case
+was nominated and no model call or fitting was added. See
+[TRAIN pair preparation](SHR-STUDENT-PREPARATION.md#train-pair-preparation).
+
 The next useful quality comparison needs the same accepted training labels
 and budget for Kev-9B, its Qwen3.5-9B-Base foundation and Ettin-1B. Gemma-12B
 provides the independent foundation; Nimble can replace a custom-head warm

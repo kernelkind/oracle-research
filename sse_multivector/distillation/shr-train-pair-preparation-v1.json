@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "SHR-single-v26",
+    "path": "../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/SHR-single-v26.md"
+  },
+  "dataset": {
+    "adapter": "subject_pairs",
+    "path": "shr-train-pair-selection-v1.json"
+  },
+  "runner": {
+    "provider": "local",
+    "model": "jaredpalmer/kev-9b/db029f08b290afd9fee4aa4bbcd9ae48602d1eb0/b3a8b31831d55b58f056f6adba2a409d0d68ee2ec2bb53d4e17d3dae4483a5ab",
+    "reasoning_effort": "off",
+    "transport": "http",
+    "concurrency": 1,
+    "timeout_seconds": 600,
+    "auth_file": null,
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relation",
+        "reason"
+      ],
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": [
+            "equivalent",
+            "a_parent_of_b",
+            "b_parent_of_a",
+            "neither",
+            "uncertain"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "runner_binary": "../run-local-model.sh",
+    "max_output_tokens": 512
+  }
+}

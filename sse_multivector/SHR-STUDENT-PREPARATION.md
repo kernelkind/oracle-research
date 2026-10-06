@@ -32,6 +32,12 @@ tokens; the latter exceeds the complete v26 inputs' maximum 2,684 tokens.
 All experiment workers stopped.
 
 
+The October 6 input-selection follow-up is complete: 640 unlabelled nomination
+families / 1,280 exact A/B orientations from 576 TRAIN notes and 292 authors.
+Twenty source-bound input reviews and nineteen additional diagnostic assessments
+are saved locally. No validation cases, relation targets, model calls or SHR
+fitting were added. See [TRAIN pair preparation](#train-pair-preparation).
+
 ## Authorized provisional v26 comparison
 
 The user subsequently authorized comparing candidate behavior on the existing
@@ -871,6 +877,92 @@ prior training. Hardware supports the larger warm start, but neither its
 NF4 nor BF16 v26 decisions demonstrate a quality benefit for that cost.
 Matched SHR supervision and independently reviewed evaluation remain the
 useful next step; no final model choice is made by this benchmark.
+
+## TRAIN pair preparation
+
+The human authorized selecting and organizing complete TRAIN pair inputs and
+reviewing existing diagnostic disagreements while the prompt remains unfinished.
+The shared `subject_pairs` adapter now reads a hash-bound registry selection
+directly; it does not require an accepted hierarchy, vectors or SHR answers.
+It verifies the selected registry, its manifest and prepared split roster;
+checks author separation; and retains original entry indices, post IDs,
+subject numbers, authors, split membership and teacher provenance in evidence.
+Original subject/context strings are rendered in full, with no truncation.
+Only TRAIN entries are nominated. Embedded upstream paths are never followed.
+
+The maintained [selection specification](distillation/shr-train-pair-selection-v1.json)
+sets seed `SHR-TRAIN-PAIR-SELECTION-v1`, 128 families per rule, at most four
+selected families per source note and eight per casefolded subject wording.
+Cross-post equal-wording groups use one source-bound representative per note;
+lexical postings above 64 occurrences are skipped. Hashed adjacent pairs avoid
+quadratic enumeration within large groups. These are nomination controls,
+not estimated deployment frequencies or balanced relation supervision.
+
+| Nomination rule | Bounded candidate pairs | Selected families |
+| --- | ---: | ---: |
+| Saved SP parent/child links | 26,465 | 128 |
+| Siblings under a saved SP parent | 7,131 | 128 |
+| Same subject wording across notes | 3,363 | 128 |
+| Cross-post lexical overlap | 36,846 | 128 |
+| Hash-selected cross-post controls | 33,190 | 128 |
+
+This selection produced 640 distinct families, each with an exact A/B reversal,
+from 576 notes and 292 authors. The observed maximum is four families per note
+and seven per subject wording. There are **zero SHR relation labels**.
+SP numbering, equal strings, lexical matches and random controls cannot supply
+them. The existing 100 validation posts retain their 32-diagnostic/68-calibration
+allocation; none is nominated here. No final-test content was reopened, and the
+earlier input exposure remains disclosed in the dataset audit below.
+
+```bash
+python3 sse_multivector/experiment.py prepare \
+  target/shr-student-pairs-v1/train-inputs \
+  --spec sse_multivector/distillation/shr-train-pair-preparation-v1.json
+```
+
+The [preparation specification](distillation/shr-train-pair-preparation-v1.json)
+uses **SHR-single-v26**, the approved reference still under development, and
+copies the existing Kev-9B diagnostic runner settings. Preparing those inputs
+is not approval to run the model or a final student decision. All 1,280 cases
+remain unrun. The native plan/report retain source hashes, code bindings,
+nomination statistics, complete evidence and reversal family IDs. Generated
+artifacts are ignored under `target/shr-student-pairs-v1/`; source specifications,
+the reusable adapter, tests and these maintained records are committed.
+
+Twenty native agent input reviews inspect four examples from each rule. Their
+pending review verdicts describe input relevance, not semantic `uncertain`
+targets. The samples include national/author/object restrictions, activity and
+product distinctions, same-named entities in different contexts, shared-word
+controls and unrelated-looking topics. Lexical overlap includes incidental
+words such as heavy and resulting; it does not establish semantic proximity.
+This collection does not establish aliases, all-five-relation coverage,
+accepted multi-entry nodes, multilingual quality or a new evaluation split.
+
+Nineteen additional native agent assessments review ten existing Kev-27B/Kev-9B
+diagnostic families. They preserve prior reviews and receipts. Puzzlement scope,
+kitchen restrictions, recording activity/products, Pollan attribution and
+explicitly musical topics provide useful regressions. Food versus squirrel
+attacks on tomatoes and Culture versus an unrestricted person remain rule
+questions; their four pending verdicts assign no accepted target. Reversal
+failures in the recording and Culture/song-creation cases can be identified
+without an independently accepted gold answer. Culture variants remain
+correlated. Existing Kev-9B omelette and recipe-technique reviews were inspected
+without new model calls. Detailed evidence is in the ignored
+`target/shr-student-pairs-v1/diagnostic-review.md` and native experiment reviews.
+
+The minimal CLI test initially failed because registry-based pair selection
+was unsupported. With the adapter, 140 shared experiment/selection/audit tests
+pass, with six optional skips, using the existing isolated check environment.
+The system Python lacked `tiktoken`; the cached check environment resolves it.
+A mistyped test-module name also failed discovery before the corrected suite
+passed. No production regression was hidden or worked around. Tests exercise
+native preparation, deterministic selection, complete entry preservation,
+reversal families, provenance bindings, source/wording caps and refusal of
+changed hashes, validation selection, extra source paths and cross-split edges.
+
+The remaining dependency is stable relation rules and reviewed SHR targets.
+The prepared inputs can be reused under a later accepted prompt with
+`prepare --from`; no prompt revision, target generation or fitting was done.
 
 ## Dataset audit
 

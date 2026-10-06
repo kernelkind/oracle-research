@@ -52,6 +52,37 @@ opens sealed NostrDB read-only without reader-table writes, exports original
 events with verified canonical IDs, and uses the production English classifier
 when configured. Run under its own user scope for per-process I/O pressure control.
 
+## Offline TRAIN subject-pair nominations
+
+The `subject_pairs` adapter also accepts a registry selection specification.
+It references the selected SP registry, its manifest and the prepared split
+manifest with explicit SHA-256 bindings. Preparation reads only those files,
+checks frozen membership and author separation, and selects TRAIN entries.
+Upstream provenance paths are retained as evidence and never followed.
+
+The reusable selection specification is
+[`distillation/shr-train-pair-selection-v1.json`](distillation/shr-train-pair-selection-v1.json).
+Its five nomination rules cover SP edges, siblings, cross-post equal wording,
+bounded lexical overlap and hash-selected cross-post controls. Each rule has a
+pair quota; post/wording caps limit repetition. Hashed adjacent pairs within
+groups avoid enumerating all corpus pairs. None of these rules assigns a
+relation, guarantees semantic proximity or estimates deployment frequencies.
+
+```bash
+python3 sse_multivector/experiment.py prepare \
+  target/shr-student-pairs-v1/train-inputs \
+  --spec sse_multivector/distillation/shr-train-pair-preparation-v1.json
+```
+
+This prepares complete inputs against the **SHR-single-v26** approved reference;
+the prompt remains under development. The pinned Kev-9B runner settings are
+inherited from its existing diagnostics, not a final model decision or
+authorization to run. Exact source entries, note IDs, authors, split, provenance,
+nomination rules and forward/reverse family IDs remain in review evidence.
+`show --case ID` and `review --case ID --role agent ...` use the normal saved
+workflow. Input-review verdicts must not be mistaken for accepted relation labels.
+Later prompt revisions can reuse the frozen cases with `prepare --from`.
+
 ## Offline preview
 
 Examples use this checkout's location; the tool itself has no fixed working

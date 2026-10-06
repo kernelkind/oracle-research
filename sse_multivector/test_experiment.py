@@ -1236,6 +1236,133 @@ class ExperimentTests(unittest.TestCase):
             all(c["prompt"].startswith("GENERIC PROMPT") for c in self.calls())
         )
 
+    def registry_pairs_spec(self):
+        self.prompt.write_text('PAIR INPUTS\n{INPUT_JSON}')
+        posts = [dict(note_id=n, pubkey='author-' + n, split=split,
+                      text_sha256='unused-post-hash', origin=dict(source='sealed.json'))
+                 for n, split in [('T1', 'train'), ('T2', 'train'),
+                                  ('T3', 'train'), ('V1', 'validation')]]
+        subjects = [dict(index=i, note_id=n, split=split, number=number,
+                         source_subject_index=i, subject=name, context=context)
+                    for i, (n, split, number, name, context) in enumerate([
+                        ('T1', 'train', '1', 'Books', 'Reading books {INPUT_JSON}.'),
+                        ('T1', 'train', '1.1', 'Bookshops', 'Buying a novel.'),
+                        ('T1', 'train', '1.2', 'Book reviews', 'Reviewing a book.'),
+                        ('T2', 'train', '1', 'Books', 'Different books context.'),
+                        ('T3', 'train', '1', 'Music', 'Listening to music.'),
+                        ('V1', 'validation', '1', 'VALIDATION ONLY', 'Held out.')])]
+        self.write('registry.json', dict(schema_version=1, posts=posts,
+            subjects=subjects, edges=[[0, 1], [0, 2]],
+            protected_sources={'sealed.json': 'DO NOT FOLLOW'}))
+        file_hash = lambda name: hashlib.sha256((self.root / name).read_bytes()).hexdigest()
+        self.write('registry-manifest.json', dict(schema_version=1,
+            files={'registry.json': file_hash('registry.json')},
+            protected_sources={'sealed.json': 'DO NOT FOLLOW'}))
+        self.write('split-manifest.json', dict(schema_version=2,
+            train_note_ids=['T1', 'T2', 'T3'], evaluation_note_ids=['V1'],
+            test_note_ids=['SEALED']))
+        self.write('selection.json', dict(schema_version=1, split='train',
+            registry=dict(path='registry.json', sha256=file_hash('registry.json')),
+            manifest=dict(path='registry-manifest.json', sha256=file_hash('registry-manifest.json')),
+            split_manifest=dict(path='split-manifest.json', sha256=file_hash('split-manifest.json')),
+            seed='selection-v1', per_rule=2, max_per_post=10,
+            max_per_subject=10, posting_cap=8))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='selection.json')
+        self.write('spec.json', spec)
+
+    def test_registry_pair_selection_preserves_train_entries_and_reversal_families(self):
+        self.registry_pairs_spec()
+        self.prepare()
+        shown = self.show()
+        self.assertEqual(self.calls(), [])
+        self.assertTrue(all(c['status'] == 'unrun' for c in shown['cases']))
+        self.assertEqual(len(shown['cases']) % 2, 0)
+        families = {}
+        for case in shown['cases']:
+            evidence = case['evidence']
+            self.assertEqual(evidence['split'], 'train')
+            self.assertTrue(all(p['split'] == 'train' for p in evidence['source_posts']))
+            self.assertNotIn('VALIDATION ONLY', case['prompt'])
+            self.assertNotIn('relation', evidence)
+            for side in ('A', 'B'):
+                original = evidence[side]['subject_entries'][0]
+                self.assertEqual(json.loads(case['inputs']['INPUT_JSON'])[side],
+                                 [{k: original[k] for k in ('subject', 'context')}])
+            families.setdefault(evidence['family_id'], []).append(case)
+        for forward, reverse in families.values():
+            f, r = [json.loads(c['inputs']['INPUT_JSON']) for c in (forward, reverse)]
+            self.assertEqual(f, dict(A=r['B'], B=r['A']))
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        self.assertIn('subject_pair_candidates.py', plan['code'])
+        self.assertEqual(len(plan['sources']), 6)
+        self.assertFalse(any('sealed.json' in p for p in plan['sources']))
+        self.prepare('E2')
+        self.assertEqual([(c['id'], c['inputs']) for c in self.show('E2')['cases']],
+                         [(c['id'], c['inputs']) for c in shown['cases']])
+
+    def test_registry_pair_selection_rejects_unbound_or_changed_sources(self):
+        self.registry_pairs_spec()
+        for key in ('registry', 'manifest', 'split_manifest'):
+            with self.subTest(key=key):
+                spec = json.loads((self.root / 'selection.json').read_text())
+                saved = dict(spec[key])
+                spec[key]['sha256'] = '0' * 64
+                self.write('selection.json', spec)
+                error = self.cli('prepare', key, '--spec', self.spec, ok=False)
+                self.assertIn(key + ' hash mismatch', error.stderr)
+                self.assertFalse((self.root / key).exists())
+                spec[key] = saved
+                self.write('selection.json', spec)
+        self.assertEqual(self.calls(), [])
+
+    def test_registry_pair_selection_refuses_validation_and_extra_source_paths(self):
+        self.registry_pairs_spec()
+        spec = json.loads((self.root / 'selection.json').read_text())
+        spec['split'] = 'validation'
+        self.write('selection.json', spec)
+        error = self.cli('prepare', 'held-out', '--spec', self.spec, ok=False)
+        self.assertIn('TRAIN inputs only', error.stderr)
+        spec['split'] = 'train'
+        spec['teacher_labels'] = 'sealed.json'
+        self.write('selection.json', spec)
+        error = self.cli('prepare', 'extra', '--spec', self.spec, ok=False)
+        self.assertIn('registry pair selection.teacher_labels', error.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_registry_pair_selection_caps_source_repetition_and_common_tokens(self):
+        self.registry_pairs_spec()
+        spec = json.loads((self.root / 'selection.json').read_text())
+        spec.update(per_rule=100, max_per_post=1, max_per_subject=1, posting_cap=1)
+        self.write('selection.json', spec)
+        self.prepare()
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        selected = plan['preparation']
+        self.assertEqual(selected['selected_families'], 1)
+        self.assertEqual(selected['max_selected_pairs_per_post'], 1)
+        self.assertEqual(selected['candidate_pairs_by_rule']['lexical_overlap'], 0)
+        self.assertGreater(selected['skipped_common_token_postings'], 0)
+        self.assertEqual(selected['relation_labels'], 0)
+        self.assertEqual(self.calls(), [])
+
+    def test_registry_pair_selection_refuses_cross_split_edges(self):
+        self.registry_pairs_spec()
+        registry = json.loads((self.root / 'registry.json').read_text())
+        registry['edges'].append([0, 5])
+        self.write('registry.json', registry)
+        h = hashlib.sha256((self.root / 'registry.json').read_bytes()).hexdigest()
+        manifest = json.loads((self.root / 'registry-manifest.json').read_text())
+        manifest['files']['registry.json'] = h
+        self.write('registry-manifest.json', manifest)
+        spec = json.loads((self.root / 'selection.json').read_text())
+        spec['registry']['sha256'] = h
+        spec['manifest']['sha256'] = hashlib.sha256(
+            (self.root / 'registry-manifest.json').read_bytes()).hexdigest()
+        self.write('selection.json', spec)
+        error = self.cli('prepare', 'cross-split', '--spec', self.spec, ok=False)
+        self.assertIn('SP edge crosses frozen splits', error.stderr)
+        self.assertEqual(self.calls(), [])
+
     def subject_pairs_spec(self):
         self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')
         (self.root / 'selection').mkdir()

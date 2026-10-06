@@ -206,6 +206,13 @@ def prepare_file(dataset, path, template, load_report=None):
             source[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
         source['source'] = references
+    if dataset['adapter'] == 'subject_pairs' and 'registry' in source:
+        try:
+            from . import subject_pair_candidates
+        except ImportError:
+            import subject_pair_candidates
+        cases, preparation = subject_pair_candidates.prepare(source, path.parent, read)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'subject_pairs':
         modes = [key for key in ('pairs', 'comparisons', 'selection', 'parent_candidates') if key in source]
         if len(modes) != 1:

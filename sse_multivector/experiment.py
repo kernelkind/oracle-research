@@ -309,6 +309,9 @@ def prepare(args):
             for name in ('local_model.py', 'local_weight_model.py', 'distillation_run.py'):
                 code = Path(__file__).with_name(name)
                 plan['code'][name] = engine._sha256_file(code)
+        if (plan.get('preparation') or {}).get('method') == 'registry_subject_pairs':
+            code = Path(__file__).with_name('subject_pair_candidates.py')
+            plan['code'][code.name] = engine._sha256_file(code)
         if plan["dataset"]["adapter"] in {"bounded_parent_guides", "bounded_parent_comparisons"}:
             for name in ("parent_guide_measurement.py", "parent_guide_workflow.py",
                          "ancestor_cosine_probe.py"):
