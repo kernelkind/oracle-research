@@ -43,8 +43,8 @@ confirmed deletion of the previous instance. If a repair changes the runtime,
 retain downloads, archive the previous work and start a fresh comparison.
 The rebuilt VM passes 101 checks, including container replacement with saved
 answers/checkpoints unchanged and an offline cache hit. The inputs match the
-rebuilt runtime. MoE CUDA confirmation and private publication remain pending.
-No volume or replacement is rented.
+rebuilt runtime. The latest VM image is published and verified private; MoE
+CUDA confirmation remains pending. No volume or replacement is rented.
 Actual Vast attachment remains untested; check the mount before setup or
 training. The VM has verified recovery across container replacement.
 

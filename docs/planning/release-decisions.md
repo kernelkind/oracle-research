@@ -1563,9 +1563,11 @@ blocks completion review. Host regressions pass 181 checks (16 VM-only skips);
 the rebuilt VM passes 109 checks, with the four checks executed
 separately and one optional native-tokenizer check skipped. All six
 configurations and data are unchanged. Evidence:
-`target/distillation-pilot-v1/model-cache-stage-20261006/`. Actual Vast volume
-attachment, new private publication and full MoE CUDA confirmation remain
-pending; no paid resource was created for this implementation.
+`target/distillation-pilot-v1/model-cache-stage-20261006/`. The rebuilt image
+is now published at the immutable digest in `publication/publication-receipt.json`;
+its filesystem/configuration match the VM, read-only pull succeeds, and anonymous
+manifest access returns HTTP 401. Actual Vast attachment and full MoE CUDA
+confirmation remain pending. GPU execution has not started for this stage.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

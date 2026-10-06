@@ -2286,8 +2286,13 @@ are exercised separately; only the optional native-tokenizer check remains
 skipped. The new download/pilot packages match the exported runtime; all six
 configurations and data are byte-identical to the previous package. Evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/`.
-Actual Vast attachment, new private publication and full MoE CUDA confirmation
-remain pending.
+The rebuilt image is published and verified private at
+`docker.io/kernelkind/oracle-mvp@sha256:d85666da177a3a3459059e0f5409db689d29e0b4e6b6d9cdb64fc1668770f0b7`.
+All filesystem layers/configuration match the VM; the rental credential pulls
+it and anonymous manifest access returns HTTP 401. Actual Vast attachment and
+full MoE CUDA confirmation remain pending.
+The recorded resource rate was $0.0833/hour. Evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
