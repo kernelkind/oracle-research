@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "SHR-single-v26",
+    "path": "../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/SHR-single-v26.md"
+  },
+  "dataset": {
+    "adapter": "subject_pairs",
+    "path": "shr-train-coverage-selection-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "concurrency": 2,
+    "timeout_seconds": 1800,
+    "auth_file": null,
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation", "reason"],
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": ["equivalent", "a_parent_of_b", "b_parent_of_a", "neither", "uncertain"]
+        },
+        "reason": {"type": "string"}
+      }
+    },
+    "runner_binary": "../run-model.sh"
+  }
+}

@@ -1301,6 +1301,103 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual([(c['id'], c['inputs']) for c in self.show('E2')['cases']],
                          [(c['id'], c['inputs']) for c in shown['cases']])
 
+    def registry_groups_spec(self):
+        self.registry_pairs_spec()
+        selection = json.loads((self.root / 'selection.json').read_text())
+        for key in ('seed', 'per_rule', 'max_per_post', 'max_per_subject', 'posting_cap'):
+            del selection[key]
+        selection.update(entry_order_controls=True, pairs=[dict(
+            id='GROUP', A=[0, 3], B=[1, 2], coverage=['multi_entry'],
+            purpose='Diagnostic grouping, not an accepted hierarchy node.')])
+        self.write('selection.json', selection)
+
+    def test_registry_groups_preserve_entries_and_control_order_without_inference(self):
+        self.registry_groups_spec()
+        self.prepare()
+        cases = self.show()['cases']
+        self.assertEqual(len(cases), 8)
+        self.assertEqual(self.calls(), [])
+        self.assertTrue(all(c['status'] == 'unrun' for c in cases))
+        original = json.loads((self.root / 'registry.json').read_text())['subjects']
+        orders = set()
+        for forward, reverse in zip(cases[::2], cases[1::2]):
+            f, r = [json.loads(c['inputs']['INPUT_JSON']) for c in (forward, reverse)]
+            self.assertEqual(f, dict(A=r['B'], B=r['A']))
+            orders.add(tuple(tuple(e['index'] for e in forward['evidence'][side]['subject_entries'])
+                             for side in ('A', 'B')))
+            for case in (forward, reverse):
+                self.assertEqual(case['evidence']['split'], 'train')
+                self.assertEqual(case['evidence']['coverage'], ['multi_entry'])
+                self.assertIn('not an accepted hierarchy node', case['evidence']['grouping_status'])
+                self.assertNotIn('relation', case['evidence'])
+                for side in ('A', 'B'):
+                    saved = case['evidence'][side]['subject_entries']
+                    self.assertEqual(saved, [original[e['index']] for e in saved])
+                    self.assertEqual(json.loads(case['inputs']['INPUT_JSON'])[side],
+                        [{k: e[k] for k in ('subject', 'context')} for e in saved])
+        self.assertEqual(orders, {((0, 3), (1, 2)), ((3, 0), (1, 2)),
+                                 ((0, 3), (2, 1)), ((3, 0), (2, 1))})
+        self.assertEqual(len({c['evidence']['family_id'] for c in cases}), 1)
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        self.assertIn('subject_pair_candidates.py', plan['code'])
+        self.assertFalse(any('sealed.json' in p for p in plan['sources']))
+        self.assertEqual(plan['preparation']['selection_mode'], 'explicit_groups')
+        self.assertEqual(plan['preparation']['relation_labels'], 0)
+        self.prepare('E2')
+        self.assertEqual([(c['id'], c['inputs']) for c in self.show('E2')['cases']],
+                         [(c['id'], c['inputs']) for c in cases])
+
+    def test_registry_groups_refuse_invalid_or_held_out_indices_and_target_fields(self):
+        self.registry_groups_spec()
+        original = json.loads((self.root / 'selection.json').read_text())
+        for i, (side, value) in enumerate([
+                ('A', [5]), ('A', [999]), ('A', [True]), ('B', []),
+                ('B', [1, 1]), ('A', [0] * 65)]):
+            selection = json.loads(json.dumps(original))
+            selection['pairs'][0][side] = value
+            self.write('selection.json', selection)
+            error = self.cli('prepare', 'invalid-' + str(i), '--spec', self.spec, ok=False)
+            self.assertIn('registry group side', error.stderr)
+            self.assertFalse((self.root / ('invalid-' + str(i))).exists())
+        original['pairs'][0]['relation'] = 'equivalent'
+        self.write('selection.json', original)
+        error = self.cli('prepare', 'target', '--spec', self.spec, ok=False)
+        self.assertIn('registry group pair.relation` is not supported', error.stderr)
+        self.assertFalse((self.root / 'target').exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_registry_groups_refuse_duplicate_families_and_generated_id_collisions(self):
+        self.registry_groups_spec()
+        original = json.loads((self.root / 'selection.json').read_text())
+        duplicate = dict(original['pairs'][0], id='ANOTHER', A=[2, 1], B=[3, 0])
+        for i, (pair, expected) in enumerate([
+                (duplicate, 'repeated registry groups'),
+                (dict(duplicate, id='GROUP', A=[4], B=[0]), 'repeated registry group pair id'),
+                (dict(duplicate, id='GROUP-reverse_A', A=[4], B=[0]), 'collide')]):
+            self.write('selection.json', dict(original, pairs=original['pairs'] + [pair]))
+            error = self.cli('prepare', 'duplicate-' + str(i), '--spec', self.spec, ok=False)
+            self.assertIn(expected, error.stderr)
+            self.assertFalse((self.root / ('duplicate-' + str(i))).exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_registry_groups_optional_order_controls_and_collection_use_saved_inputs(self):
+        self.registry_groups_spec()
+        selection = json.loads((self.root / 'selection.json').read_text())
+        selection['entry_order_controls'] = False
+        self.write('selection.json', selection)
+        self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')
+        self.prepare()
+        cases = self.show()['cases']
+        self.assertEqual(len(cases), 2)
+        answer = dict(relation='uncertain', reason='Diagnostic test answer.')
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.cli('collect', 'E1', '--output', 'collected')
+        collected = json.loads((self.root / 'collected/relationships.json').read_text())
+        for row, case in zip(collected['cases'], cases):
+            self.assertEqual(row['inputs'], case['inputs'])
+            self.assertEqual(row['evidence'], case['evidence'])
+            self.assertEqual(row['answer'], answer)
+
     def test_collect_subject_pairs_preserves_decisions_reviews_and_train_identity(self):
         self.registry_pairs_spec()
         self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')

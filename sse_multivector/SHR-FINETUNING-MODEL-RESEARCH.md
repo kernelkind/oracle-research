@@ -423,9 +423,15 @@ gold. It contains eight equivalence, eight directed-parent and 24 neither
 answers, with no uncertain examples. The original 640-family selection has
 620 unlabelled families remaining. See
 [the teacher pilot](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v26-teacher-pilot).
-The missing uncertainty, alias and difficult related-pair coverage needs a
-small reviewed extension before larger labeling or training. This result
-checks supervision preparation; it adds no post-finetuning model evidence.
+The subsequently authorized coverage extension now has 20 source-bound families /
+60 unrun cases, with 60 native input reviews. It covers differently worded
+pairs, name ambiguity, related-topic contrasts, and proposed consistent or
+deliberately conflicting multi-entry groups with reversal/order controls.
+The pending input-review verdicts are not semantic `uncertain` targets.
+See [coverage input preparation](SHR-STUDENT-PREPARATION.md#coverage-input-preparation).
+Teacher answers and semantic review on that extension are the next proposed
+step before larger labeling or training. These results check supervision
+preparation; they add no post-finetuning model evidence.
 
 The next useful quality comparison needs the same accepted training labels
 and budget for Kev-9B, its Qwen3.5-9B-Base foundation and Ettin-1B. Gemma-12B

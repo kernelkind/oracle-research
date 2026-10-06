@@ -83,6 +83,35 @@ nomination rules and forward/reverse family IDs remain in review evidence.
 workflow. Input-review verdicts must not be mistaken for accepted relation labels.
 Later prompt revisions can reuse the frozen cases with `prepare --from`.
 
+For explicit diagnostic groups from that same permitted registry, replace the
+nomination seed/quotas/caps with `entry_order_controls: true|false` and `pairs`.
+Each pair has `id`, `A` and `B` arrays of original registry indices, plus
+`coverage` string tags and a `purpose` string. These metadata stay in evidence;
+only original subject/context entries enter the prompt. Both sides must contain
+1–64 distinct TRAIN indices; at most 10,000 specified pairs are supported.
+Identical entry sets, including reversed or reordered pairs, cannot be entered
+as additional families. Generated case-ID collisions also fail preparation.
+
+Every pair gets forward/reverse cases. When order controls are enabled, a
+multi-entry side also gets its reversed entry order; for two multi-entry sides,
+each side and both together are reversed. This yields at most eight controls
+per family without enumerating permutations. Original entries and their source
+identities stay intact, even when distinct occurrences have equal wording.
+Explicit groups do not assert accepted hierarchy-node membership or relation
+targets. Coverage tags and review verdicts do not supply semantic labels.
+
+The source-bound example is
+[`distillation/shr-train-coverage-selection-v1.json`](distillation/shr-train-coverage-selection-v1.json):
+
+```bash
+python3 sse_multivector/experiment.py prepare \
+  target/shr-student-pairs-v1/coverage-inputs-v1 \
+  --spec sse_multivector/distillation/shr-train-coverage-preparation-v1.json
+```
+
+Its 60 cases remain unrun under **SHR-single-v26**. Preparation and input review
+do not authorize the saved GPT-6.1 Sol medium runner settings to make calls.
+
 ## Offline preview
 
 Examples use this checkout's location; the tool itself has no fixed working

@@ -25,7 +25,7 @@ model size or establish a post-finetuning plateau. Suitable complete SHR
 training labels and reviewed evaluation roles remain the next dependency;
 none of these provisional cases entered gradients or the reserved final test.
 
-The latest workflow/collection regression run completed 163 tests: 157 passed
+The latest workflow/collection regression run completed 167 tests: 161 passed
 and six optional tests skipped. All 15 native loader/benchmark tests passed
 earlier on GB10. Historical failures remain recorded below. The larger pointer
 capacity check passed training, save, fresh-process reload and six inference
@@ -51,6 +51,14 @@ TRAIN families, with 40 current agent reviews and 20/20 consistent reversals.
 The remaining 620 families are unlabelled. There are eight equivalence answers,
 eight directed parent answers and 24 neither answers; none is uncertain.
 See [the teacher pilot](#provisional-shr-single-v26-teacher-pilot).
+
+The authorized coverage follow-up prepared 20 additional diagnostic families /
+60 unrun cases from 35 original TRAIN entries, 27 notes and 25 authors.
+All 60 have source-bound native input reviews. The panel adds differently worded
+pairs, name-ambiguity candidates, related-topic contrasts, and consistent
+and intentionally conflicting multi-entry groups with reversal/order controls.
+It supplies no new answers or accepted training targets. See
+[coverage input preparation](#coverage-input-preparation).
 
 ## Authorized provisional v26 comparison
 
@@ -1113,12 +1121,92 @@ pinned runner dependencies. Installing them with
 package lock. Repeated native preparation and all input/receipt/collection
 checks passed. No transport or retry implementation changed.
 
-The next useful preparation is a small coverage extension for ambiguous or
-conflicting meanings (`uncertain`), differently worded equivalents and related
-non-parents. Consistent and conflicting multi-entry topics also remain untested
-by this singleton-input pilot. Prepare and review those cases before expanding
-teacher labeling or comparing trained students; this extension is proposed,
-not approved by the completed pilot.
+The user subsequently authorized preparing and reviewing the coverage extension
+below. The singleton pilot still supplies no measured behavior on ambiguous
+names or multi-entry groups.
+
+### Coverage input preparation
+
+The [coverage selection](distillation/shr-train-coverage-selection-v1.json)
+names original TRAIN registry indices rather than copying or rewriting their
+subject/context strings. The shared registry adapter now accepts explicit A/B
+entry groups as well as bounded singleton nominations. Both paths use the same
+source-hash, frozen-roster, author-separation and original-entry validation.
+No upstream provenance path is followed. The explicit groups are diagnostic
+inputs, not accepted hierarchy nodes or inferred memberships.
+
+The [preparation specification](distillation/shr-train-coverage-preparation-v1.json)
+uses the unchanged **SHR-single-v26** template and the previous pilot's
+GPT-6.1 Sol medium runner settings. These settings do not authorize inference.
+Native `prepare` produced 20 families and 60 complete unrun cases, retaining
+35 distinct original entries from 27 TRAIN notes and 25 authors.
+
+| Coverage purpose | Families | Cases including controls |
+| --- | ---: | ---: |
+| Different wording | 4 | 8 |
+| Name ambiguity | 4 | 8 |
+| Related-topic contrasts | 4 | 8 |
+| Consistent multi-entry candidates | 4 | 20 |
+| Deliberately conflicting multi-entry groups | 4 | 16 |
+| Total | 20 | 60 |
+
+The differently worded pairs compare Bitcoin/BTC-expanded wording, Lightning/
+Bitcoin Lightning Network, short/full United States names and Photographs/Photos.
+The ambiguity candidates include an unexplained numeric hashtag, an operation
+whose type is omitted, America's geographical extent, and a football entry
+whose own context omits its code. General knowledge may resolve some names;
+these are candidates for review, not guaranteed `uncertain` targets.
+
+The related-topic pairs preserve independent noncustodial/frictionless trading
+qualifiers, attribution of the same view to different people, dated photography
+versus a camera used in its context, and book recommendations versus writing.
+The multi-entry controls propose consistent network, Bitcoin, mining and photo
+topics, then deliberately mix different football codes, independent trading
+qualifiers, photographic products with their field, and Bitcoin with mining.
+Each conflicting group is constructed from unchanged real entries. Its role
+does not imply that the source SP collection made that grouping or that such
+groups occur at the same rate in deployment.
+
+Every family has an exact A/B reversal. Multi-entry sides also receive a reverse
+entry-order control; the two-sided Lightning case reverses each side separately
+and both together. These controls retain one source-bound family identity and
+are not independent samples. The adapter never enumerates all permutations or
+all corpus pairs: it scans the permitted registry once, then renders at most
+eight controls per specified pair. Limits are 10,000 explicit pairs and 64
+entries per side; actual request context still needs its own budget review.
+This panel uses at most three entries on a side.
+
+All 60 exact native case views were checked against original entry indices,
+identities, full subject/context strings and TRAIN membership. Native agent
+input reviews record the purpose and any unresolved interpretation. Their
+pending `uncertain` review verdict means no answer is approved; it is not a
+semantic relation label. There are no model calls, receipts with answers,
+new collected labels or student fitting in this phase. The existing 100
+validation posts keep their 32-diagnostic/68-calibration roles and the final
+200 remain sealed.
+
+The original 1,280-case plan, 40-answer teacher pilot, its reviews and collected
+answers are unchanged. All six new protected source-file hashes verify.
+The ignored artifact directory is
+`target/shr-student-pairs-v1/coverage-inputs-v1/`, with bindings:
+
+- Experiment SHA-256
+  `383ac64887f694f5f1b956bde3c3b60a19fc2e5bf3a81c660ac0d5bd91d4fa7f`.
+- Native input-review SHA-256
+  `bac646fffdd5744c472798fd7761ea0ec9a3fc3e33e668342577fa5d01551d60`.
+
+The first production CLI test failed because explicit groups were unsupported.
+Four new integration tests now exercise complete entry preservation,
+reversal/order controls, TRAIN-only refusal, invalid indices and target fields,
+duplicate families/IDs, and the existing saved-answer collector with grouped
+inputs. The relevant regression run completed 167 tests: 161 passed and six
+optional tests skipped. No provider calls occur in the fixtures.
+
+The next useful step is a separately authorized teacher pilot on these 60
+prepared inputs, followed by answer review and reversal/order-consistency
+checks. That would test the missing semantic distinctions before scaling label
+generation or comparing trained models. This preparation does not authorize
+that run or establish a balanced, accepted SHR corpus.
 
 ## Dataset audit
 

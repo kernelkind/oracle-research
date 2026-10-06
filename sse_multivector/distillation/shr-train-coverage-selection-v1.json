@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "registry": {
+    "path": "../../../oracle-mvp-vector-hierarchy-v1/target/subject-collection-vectors-v1/VC15-asv6.100-subject-vectors-v1/inputs.json",
+    "sha256": "85d97e6b36493f3726b7869e9b98ab6905bf629c05ca1f2f68332345fa95d696"
+  },
+  "manifest": {
+    "path": "../../../oracle-mvp-vector-hierarchy-v1/target/subject-collection-vectors-v1/VC15-asv6.100-subject-vectors-v1/manifest.json",
+    "sha256": "c2c34d54fe77cb3a6bfe2efdb84e53a5cd89d26fa12983c2534daf714ee83d2d"
+  },
+  "split_manifest": {
+    "path": "../../../oracle-mvp/target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json",
+    "sha256": "ee734d39ec007fb832763b273e96f24c250c32f0ef79a018e8cc08ac0b941349"
+  },
+  "split": "train",
+  "entry_order_controls": true,
+  "pairs": [
+    {
+      "id": "SHRCOV-alias-bitcoin",
+      "A": [399], "B": [7959],
+      "coverage": ["different_wording"],
+      "purpose": "Compare the named Bitcoin topic with its saved BTC-expanded wording. Contexts identify the referent without adding post-specific limits."
+    },
+    {
+      "id": "SHRCOV-alias-lightning",
+      "A": [4890], "B": [8331],
+      "coverage": ["different_wording"],
+      "purpose": "Compare Lightning identified as the Bitcoin payment network with the explicit Bitcoin Lightning Network wording."
+    },
+    {
+      "id": "SHRCOV-alias-us",
+      "A": [190], "B": [2156],
+      "coverage": ["different_wording"],
+      "purpose": "Compare the short and full country names with their own source contexts."
+    },
+    {
+      "id": "SHRCOV-alias-photos",
+      "A": [6673], "B": [19792],
+      "coverage": ["different_wording"],
+      "purpose": "Compare Photographs and Photos without adding ownership or depicted-subject limits from context."
+    },
+    {
+      "id": "SHRCOV-name-hashtag",
+      "A": [13839], "B": [13831],
+      "coverage": ["name_ambiguity"],
+      "purpose": "The numeric hashtag is present beside a freedom topic, but its own saved context does not identify what it names. Shared source-post membership supplies no relation."
+    },
+    {
+      "id": "SHRCOV-name-operation",
+      "A": [12026], "B": [26682],
+      "coverage": ["name_ambiguity"],
+      "purpose": "Test a named operation whose own context omits the operation type against an explicitly military operation topic. Do not infer a mission from its codename or another entry."
+    },
+    {
+      "id": "SHRCOV-name-america",
+      "A": [11910], "B": [11911],
+      "coverage": ["name_ambiguity"],
+      "purpose": "America's own context supplies only a geographical reading. Test whether that establishes its extent without borrowing the other side's explicit United States disambiguation."
+    },
+    {
+      "id": "SHRCOV-name-football",
+      "A": [7904], "B": [1363],
+      "coverage": ["name_ambiguity"],
+      "purpose": "The football-themed advertisement and award context does not explicitly name a football code. Compare it with Soccer using only the supplied entries; inspect residual ambiguity rather than force a label."
+    },
+    {
+      "id": "SHRCOV-related-trading",
+      "A": [2582], "B": [2586],
+      "coverage": ["related_topics"],
+      "purpose": "The same trading activity has independent noncustodial and frictionless qualifiers. Shared context does not add the missing qualifier to either subject."
+    },
+    {
+      "id": "SHRCOV-related-attribution",
+      "A": [1781], "B": [1783],
+      "coverage": ["related_topics"],
+      "purpose": "Two people hold the same stablecoin-growth view, but each subject explicitly attributes it to a different named person. Preserve both attributions."
+    },
+    {
+      "id": "SHRCOV-related-camera",
+      "A": [17615], "B": [17627],
+      "coverage": ["related_topics"],
+      "purpose": "The dated Gadwal photography and the Ricoh GR camera share a post. Keep the photography's explicit date/place and the camera topic's full scope without importing its one use from context."
+    },
+    {
+      "id": "SHRCOV-related-writing",
+      "A": [15977], "B": [5686],
+      "coverage": ["related_topics"],
+      "purpose": "Book recommendation and writing are associated activities. Test their whole scopes rather than equating recommendation with written recommendation or limiting writing to books."
+    },
+    {
+      "id": "SHRCOV-multi-lightning",
+      "A": [4890, 2600], "B": [8331, 11074],
+      "coverage": ["multi_entry_consistency"],
+      "purpose": "Both diagnostic groups use differently worded entries identifying the Bitcoin payment network. Reverse each side's entry order separately and together. These are proposed groups, not accepted hierarchy nodes."
+    },
+    {
+      "id": "SHRCOV-multi-bitcoin",
+      "A": [399, 7959], "B": [839],
+      "coverage": ["multi_entry_consistency"],
+      "purpose": "Different Bitcoin wordings and source posts propose one topic; retain every original context and compare against a separate singleton."
+    },
+    {
+      "id": "SHRCOV-multi-mining",
+      "A": [5798, 7228, 9245], "B": [399],
+      "coverage": ["multi_entry_consistency"],
+      "purpose": "Three Bitcoin-mining entries describe different posts. Compare their proposed activity topic with Bitcoin without restricting mining to one block or the author's miners."
+    },
+    {
+      "id": "SHRCOV-multi-photos",
+      "A": [6673, 19792], "B": [23426],
+      "coverage": ["multi_entry_consistency"],
+      "purpose": "Propose a common photographs topic across varied contexts and wording; ownership and depicted objects remain context-only details."
+    },
+    {
+      "id": "SHRCOV-conflict-football",
+      "A": [6347, 19732], "B": [1363],
+      "coverage": ["multi_entry_conflict"],
+      "purpose": "Intentionally group Sunderland association football with explicitly American football. A related sport family does not establish one consistent topic. This constructed grouping is a diagnostic control."
+    },
+    {
+      "id": "SHRCOV-conflict-qualifiers",
+      "A": [2582, 2586], "B": [2581],
+      "coverage": ["multi_entry_conflict"],
+      "purpose": "Intentionally combine trading subjects with independent qualifiers. Test whether the broader singleton improperly erases their difference; no accepted group membership is claimed."
+    },
+    {
+      "id": "SHRCOV-conflict-field-product",
+      "A": [6673, 17614], "B": [19792],
+      "coverage": ["multi_entry_conflict"],
+      "purpose": "Intentionally mix Photographs with the Photography field. Related products and a field with activities are different scopes; the diagnostic group must not be silently broadened to agree."
+    },
+    {
+      "id": "SHRCOV-conflict-broad-narrow",
+      "A": [399, 5798], "B": [7959],
+      "coverage": ["multi_entry_conflict"],
+      "purpose": "Intentionally combine Bitcoin and Bitcoin mining. The broader and narrower topics are related but do not name the same full scope; this is an input conflict control, not an inferred hierarchy node."
+    }
+  ]
+}
