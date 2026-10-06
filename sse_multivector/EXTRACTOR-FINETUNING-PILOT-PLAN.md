@@ -2390,8 +2390,12 @@ tested single-GPU cache-download/retrieval/deletion stage, then the new volume
 and unchanged two-GPU package for concurrent CUDA prep and pilot. No source,
 model, prompt, data or recipe changes. No automatic deletion/cutoff. Evidence:
 `target/distillation-pilot-v1/host-switch-20261006/`.
-New volume is created and verified on the host. The tested private image/package passes native
-prepare for a compatible one-GPU offer at $1.4972/hour with the new volume. Mounting and download checks follow.
+The model-cache volume on the host now contains all **42 files / 169.8 GB**,
+checksum verified. The download stage completed successfully; all
+evidence was retrieved and independently reviewed locally. Native prepare
+passes for a compatible two-GPU offer, at **$2.8139/hour** plus separate storage. The private runtime, prompts, data, models and recipe are
+unchanged. All three concurrent prep checks and all three baselines precede
+training; observe through complete retrieval/review and explicit GPU deletion.
 
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:

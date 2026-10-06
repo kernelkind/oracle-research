@@ -133,7 +133,10 @@ charges. It releases $848.37 and keeps $2.63 pending; actual spend is $68.50.
  Full concurrent CUDA/MoE confirmation
 remains pending.
   Repeat the tested one-GPU download stage, then attach its verified cache to the two-GPU prep/pilot.
-The new cache volume was created and verified. The tested private image/package passed native prepare for the one-GPU configuration at $1.4972/hour. Mounting and download checks remain pending.
+The download cache contained all **42 files / 169.8 GB**, checksum verified. The download completed successfully; all evidence was retrieved and independently reviewed locally.   Native prepare passed for the two-GPU configuration at **$2.8139/hour** plus separate storage.
+ The private runtime, prompts, data, models and recipe are
+unchanged. All three concurrent prep checks and all three baselines precede
+training; observe through complete retrieval/review and explicit GPU deletion.
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
 pinned models. Reattach the retained volume for offline verification and full

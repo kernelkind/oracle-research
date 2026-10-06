@@ -64,7 +64,10 @@ its remaining allowance is conservatively **$274.48** before a new commitment.
  Repeat the tested one-GPU download and
 verified retrieval stage on the new host, then launch its two-GPU prep/pilot
 with unchanged prompts, data, models and training recipe.
-The new cache volume was created and verified. The tested private image/package passed native prepare for the one-GPU configuration at $1.4972/hour. Mounting and download checks remain pending.
+The download cache contained all **42 files / 169.8 GB**, checksum verified. The download completed successfully; all evidence was retrieved and independently reviewed locally.   Native prepare passed for the two-GPU configuration at **$2.8139/hour** plus separate storage.
+ The private runtime, prompts, data, models and recipe are
+unchanged. All three concurrent prep checks and all three baselines precede
+training; observe through complete retrieval/review and explicit GPU deletion.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent
