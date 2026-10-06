@@ -401,8 +401,13 @@ TRAIN nomination families / 1,280 complete A/B orientations, with source notes,
 authors, frozen membership, SP provenance and reversal identity preserved.
 The five nomination rules provide review candidates, not relation labels.
 Twenty input reviews and nineteen diagnostic assessments distinguish v26
-regressions from unresolved Food/Culture scope questions. No validation case
-was nominated and no model call or fitting was added. See
+regressions from the open Food/crop-attack scope question. Six corrective native
+reviews resolve the named-musician interpretation against v26's explicit
+named-painter example: Kev-9B preserves containment; Kev-27B rejects it in both
+directions. Earlier assessments and all measured scores remain preserved; this
+is prompt-grounded agent review, not independent gold. No validation case was
+nominated and no model call or fitting was added. See
+[the rule review](SHR-STUDENT-PREPARATION.md#rule-review-against-shr-single-v26) and
 [TRAIN pair preparation](SHR-STUDENT-PREPARATION.md#train-pair-preparation).
 
 The next useful quality comparison needs the same accepted training labels

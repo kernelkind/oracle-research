@@ -35,8 +35,11 @@ All experiment workers stopped.
 The October 6 input-selection follow-up is complete: 640 unlabelled nomination
 families / 1,280 exact A/B orientations from 576 TRAIN notes and 292 authors.
 Twenty source-bound input reviews and nineteen additional diagnostic assessments
-are saved locally. No validation cases, relation targets, model calls or SHR
-fitting were added. See [TRAIN pair preparation](#train-pair-preparation).
+are saved locally. Six corrective reviews subsequently resolve the named-musician
+case against v26's explicit named-painter example; the Food/crop-attack case
+remains open. No validation cases, training targets, model calls or SHR fitting
+were added. See [TRAIN pair preparation](#train-pair-preparation) and
+[the rule review](#rule-review-against-shr-single-v26).
 
 ## Authorized provisional v26 comparison
 
@@ -163,9 +166,11 @@ context hashtag, confused parent direction despite a correct scope explanation,
 and treated an omelette as a cooking activity. Kev handled those broad-field
 and direction controls better, but still merged Music recording with Music
 recordings, imported an author restriction from context, and inconsistently
-treated a recipe step as necessary. Agent review leaves a broader field/person
-judgment unresolved; agreement with that teacher answer is not acceptance of its
-semantics. The reviewed cases and comments remain in native experiment files.
+treated a recipe step as necessary. The earlier field/person uncertainty is
+superseded by [the v26 rule review](#rule-review-against-shr-single-v26): the
+named-painter example supports named-musician containment. Agreement with a
+teacher answer alone does not establish semantic gold. The reviewed cases and
+comments remain in native experiment files.
 
 A roster-only check of the 22 source-note IDs attached to the saved development
 cases found zero matches in ASv6.100 training, validation or reserved final-test
@@ -213,8 +218,9 @@ author/advice limit is imported into an unrestricted eating principle. On the
 Culture transfer cases it returns `neither` in both directions, sometimes
 reasoning that Culture includes other activities or is not limited to the
 narrower topic; those facts do not refute narrower-to-broader containment.
-The Culture/person whole-topic judgment remains unresolved in agent review,
-as it was for Kev. Teacher disagreement alone does not settle that judgment.
+The [v26 rule review](#rule-review-against-shr-single-v26) now supports the
+named-musician containment from the prompt's named-painter example. The earlier
+uncertain reviews remain recorded; teacher disagreement alone is not gold.
 
 Fresh native experiments are `gemma-{original,scope,transfer}-v3`; the unused
 v2 plans predate final serving-loader cleanup and remain preserved. Preparing
@@ -397,8 +403,10 @@ recordings as works, and reversing the parent direction between a specified
 writer's puzzlement and unrestricted Puzzlement. It also rejects the Culture /
 Song creation parent link, missing v26's preservation of creative activities
 within a general field. Most transfer disagreements are the related Culture
-cluster, not twelve independent observations. The Culture/person judgment
-remains unresolved; teacher disagreement alone is not semantic rejection.
+cluster, not twelve independent observations. The
+[v26 rule review](#rule-review-against-shr-single-v26) now supports the
+named-musician containment from the prompt's named-painter example; that
+assessment does not turn teacher agreement into independently approved gold.
 
 Native experiments are `decider4b-{original,scope,transfer}-v1` and
 `decider-options-rotate-*-v1`. Teacher-baseline views named
@@ -575,8 +583,9 @@ The changed cases are `P03-forward`, `B01-forward`, `B02-forward` and
 `R06-reverse`. Rotation introduces a reversed parent direction for Coffee and
 Coffee drinking, despite preserving the whole related Culture cluster. These
 results support Kev as the strongest tested compact decision warm start so
-far, without claiming order invariance or semantic accuracy. The Culture/person
-teacher judgment remains unresolved in the existing agent review.
+far, without claiming order invariance or semantic accuracy. The earlier
+Culture/person uncertainty is superseded by
+[the v26 rule review](#rule-review-against-shr-single-v26).
 
 Native experiments are `kev-options-rotate-*-v1`; teacher-baseline views are
 `kev-options-rotate-teacher-*-v1`. The latter reuse all 70 answers with zero new
@@ -799,11 +808,12 @@ consistency can include two consistently wrong answers.
 The comparison with Kev-9B preserves 54/70 first-order decisions. Native agent
 reviews reject the Kitchen work/Cooking containment, the omelette/activity
 containment, the author restriction imported into an eating practice, and the
-Culture/song-creation field-scope error. The broader Culture/person teacher
-judgment remains disputed. Nine first-order transfer disagreements with the
-teacher belong to the related Culture cluster; they are not nine independent
-failures. Removing the two disputed person directions would still leave a
-gap, but does not turn the other teacher judgments into gold.
+Culture/song-creation field-scope error. The
+[v26 rule review](#rule-review-against-shr-single-v26) also rejects both
+Culture/person `neither` answers using the explicit named-painter precedent.
+Nine first-order transfer disagreements with the teacher belong to the related
+Culture cluster; they are not nine independent failures. Prompt-grounded agent
+assessments remain distinct from independently approved semantic gold.
 
 Median first-order reported inference time is 2.883 seconds in NF4 and 2.599
 seconds in BF16. Peak first-order CUDA allocation is approximately 14.65 GiB
@@ -942,13 +952,45 @@ Nineteen additional native agent assessments review ten existing Kev-27B/Kev-9B
 diagnostic families. They preserve prior reviews and receipts. Puzzlement scope,
 kitchen restrictions, recording activity/products, Pollan attribution and
 explicitly musical topics provide useful regressions. Food versus squirrel
-attacks on tomatoes and Culture versus an unrestricted person remain rule
-questions; their four pending verdicts assign no accepted target. Reversal
+attacks on tomatoes remains a rule question. The earlier Culture/person
+uncertainty is corrected in the rule review below. These diagnostic assessments
+assign no accepted training target. Reversal
 failures in the recording and Culture/song-creation cases can be identified
 without an independently accepted gold answer. Culture variants remain
 correlated. Existing Kev-9B omelette and recipe-technique reviews were inspected
 without new model calls. Detailed evidence is in the ignored
 `target/shr-student-pairs-v1/diagnostic-review.md` and native experiment reviews.
+The ignored Markdown is the earlier assessment snapshot; the appended native
+reviews and current analysis below correct its Culture/person conclusion.
+
+### Rule review against SHR-single-v26
+
+The approved reference explicitly places **Mara Vale**, identified as a painter,
+beneath **Visual art**. Its general-field rule includes works and ordinary
+creative activities. Those instructions support **Culture / Jesus Molina**,
+whose entry identifies a jazz musician: `a_parent_of_b` forward and
+`b_parent_of_a` reverse. The prompt does not require every biographical fact
+about the named creator to concern the broader field. The earlier agent
+uncertainty missed this example.
+
+All three relevant frozen experiment templates exactly match
+[SHR-single-v26](../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/SHR-single-v26.md),
+SHA-256 `6d4fca680aef4f809eeb0a98a558159203df10b843876a4d11c5c1e1299771b4`,
+and both orientations retain that example. Six appended native agent reviews
+accept Kev-9B's two containment answers and reject Kev-27B's two `neither`
+answers in its direct and Kev-9B comparison views. The experiments are
+`kev-transfer-v2`, `kev27b-transfer-v1` and `kev27b-vs-kev9-transfer-v1`.
+Earlier assessments and model receipts remain preserved. These are corrected
+prompt-grounded assessments, not new inference, independent semantic gold or
+evidence that the prompt is finished. Measured agreement totals are unchanged.
+
+**Food / Squirrel attacks on tomatoes** has no equally direct precedent. Its
+entries do not distinguish damage to tomato plants from eating edible produce.
+Whether Food contains the complete crop-attack topic remains a requested scope
+decision. Keep both directions unscored until that decision is resolved;
+review uncertainty does not assign SHR's semantic `uncertain` label.
+
+### Preparation checks
 
 The minimal CLI test initially failed because registry-based pair selection
 was unsupported. With the adapter, 140 shared experiment/selection/audit tests
