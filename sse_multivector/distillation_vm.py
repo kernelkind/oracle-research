@@ -197,7 +197,7 @@ docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1
 # use the frozen shared runner over SSH and run with networking disabled.
 docker rm -f distillation-target
 docker volume create "$recovery_volume"
-start_target -v "$recovery_volume":/workspace/oracle-full-build
+start_target -v "$recovery_volume":/workspace
 docker run --rm --network distillation-local \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
   -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_VOLUME_STAGE=seed -v "$result_dir":/results \\
@@ -206,7 +206,7 @@ docker run --rm --network distillation-local \\
 docker exec distillation-target /opt/distillation-venv/bin/python -c 'from pathlib import Path; p=Path("/workspace/oracle-full-build/model-cache/hub/models--fixture--cached/snapshots/"+"a"*40+"/config.json"); p.parent.mkdir(parents=True); p.write_text("cached model config")'
 docker logs distillation-target > "$result_dir/volume-original.log" 2>&1
 docker rm -f distillation-target
-start_target -v "$recovery_volume":/workspace/oracle-full-build
+start_target -v "$recovery_volume":/workspace
 docker exec distillation-target /opt/distillation-venv/bin/python -c 'from huggingface_hub import hf_hub_download; from pathlib import Path; p=hf_hub_download("fixture/cached","config.json",revision="a"*40,cache_dir="/workspace/oracle-full-build/model-cache/hub",local_files_only=True); assert Path(p).read_text()=="cached model config"'
 docker run --rm --network distillation-local \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
@@ -220,7 +220,7 @@ docker logs distillation-target > "$result_dir/volume-replacement.log" 2>&1
 docker rm -f distillation-target
 docker volume rm "$recovery_volume"
 docker volume create "$recovery_volume"
-start_target -v "$recovery_volume":/workspace/oracle-full-build
+start_target -v "$recovery_volume":/workspace
 docker run --rm --network distillation-local \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
   -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_CACHE_STAGE=download -v "$result_dir":/results \\
@@ -228,7 +228,7 @@ docker run --rm --network distillation-local \\
   sse_multivector.test_distillation_deploy.SharedSSHTests.test_download_models_on_volume_and_retrieve_evidence
 docker logs distillation-target > "$result_dir/cache-download-target.log" 2>&1
 docker rm -f distillation-target
-start_target -v "$recovery_volume":/workspace/oracle-full-build
+start_target -v "$recovery_volume":/workspace
 docker run --rm --network distillation-local \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
   -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_CACHE_STAGE=pilot -v "$result_dir":/results \\

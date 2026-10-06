@@ -120,7 +120,7 @@ class WorkloadTests(unittest.TestCase):
             with patch.object(module, 'completed_process') as mount:
                 result = module.remote_volume_prepare(context, volume)
                 self.assertTrue(result['recovered'])
-                mount.assert_called_once_with(['mountpoint', '-q', str(volume)])
+                mount.assert_called_once_with(['mountpoint', '-q', str(volume.parent)])
                 self.assertEqual(module.remote_volume_prepare(context, volume), result)
             self.assertEqual((volume / 'work/checkpoint.bin').read_bytes(), b'checkpoint')
             self.assertEqual((volume / 'model-cache/download.bin').read_bytes(), b'cached weights')

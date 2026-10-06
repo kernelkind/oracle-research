@@ -50,7 +50,7 @@ def vast_create_arguments(
         "1",
     ]
     if local_volume_id is not None:
-        arguments += ["--link-volume", str(local_volume_id), "--mount-path", "/workspace/oracle-full-build"]
+        arguments += ["--link-volume", str(local_volume_id), "--mount-path", "/workspace"]
     if entrypoint is None:
         position = arguments.index("--cancel-unavail")
         arguments[position:position] = ["--ssh", "--direct"]

@@ -41,17 +41,12 @@ across replacement, using the same image/data/recipe
 and continuing the saved worker attempts. It requires verified retrieval and
 confirmed deletion of the previous instance. If a repair changes the runtime,
 retain downloads, archive the previous work and start a fresh comparison.
-The rebuilt VM passes 101 checks, including container replacement with saved
-answers/checkpoints unchanged and an offline cache hit. The inputs match the
-rebuilt runtime. The latest VM image is published and verified private; MoE
-CUDA confirmation remains pending. The storage rate was **$0.0833/hour**. Vast rejected the first download GPU create request
-with HTTP 400; complete inventory checks confirm no instance and zero GPU charge.
- The
-launcher discarded the error reason; bounded credential-redacted capture is now
-locally tested and the updated VM rehearsal passed before another attempt.
-The quoted download-only rate was $1.4278/hour including storage. Local preflight passes; this retry has not started GPU execution.
-Actual Vast attachment remains untested; check the mount before setup or
-training. The VM has verified recovery across container replacement.
+The storage rate was **$0.0833/hour**.
+The download requests were rejected before allocating a GPU; no GPU charge or
+training. The retry identified an invalid mount path. The launcher now mounts
+at `/workspace`, keeping files under `/workspace/oracle-full-build`; local
+checks pass and the VM rehearsal is running before a new retry. Actual Vast
+attachment and full MoE CUDA confirmation remain pending.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent

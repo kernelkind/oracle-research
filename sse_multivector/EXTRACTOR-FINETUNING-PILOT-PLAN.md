@@ -2297,9 +2297,14 @@ unknown. The helper now preserves bounded credential-redacted reasons; nine
 pinned CLI tests and 68 controller checks pass. Updated VM rehearsal passed
 before another creation request. Model/recipe/data are unchanged. The three-hour
 download allowance remains for planning/review only; no automatic stop/deletion.
-The rebuilt private image and unchanged download/pilot packages pass native local
-preflight.
-The recorded resource rate was $1.4278/hour. The GPU retry has not started. Evidence:
+The retry captured its HTTP 400 cause: invalid volume mount path, before GPU
+allocation. The fix mounts
+`/workspace` and keeps the experiment/cache paths beneath it. Nine CLI, 149
+controller/generalization, four cache and 13 workload-spec checks pass. Updated
+VM rehearsal/publication precede the next retry. All six configs, data and model
+requirements match the previous package. No download or pilot training yet.
+Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
+Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.

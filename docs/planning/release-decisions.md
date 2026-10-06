@@ -1587,6 +1587,18 @@ Registry config/rootfs match the imported VM; both frozen packages verify inside
 the image, read-only pull succeeds and anonymous access returns HTTP 401.   Combined rate
 $1.4278/hour is below standing $1.60 approval. This retry has not started GPU execution.
 Evidence: `target/distillation-pilot-v1/download-launch-20261006-v2/`.
+The retry also received HTTP 400 before allocation; its captured reason is an
+invalid `volume_info.mount_path` of `/workspace/oracle-full-build`. Completed
+controller reconciliation and independent complete inventories confirm no GPU,
+zero charge and an unattached volume.  The [official creation API guide](https://docs.vast.ai/api-reference/creating-instances-with-api#attaching-volumes)
+uses `/workspace`; the launcher and mount checks now use that parent, retaining
+all experiment/cache paths beneath it. Cache receipts name their logical
+`volume_root` accurately. Both pinned CLI mount assertions failed first; the
+receipt regression also failed first. Nine CLI, 149 controller/generalization,
+four cache and 13 workload-spec checks pass. The initial VM rehearsal caught the
+old mount assertion; the corrected full rehearsal is running. All six configs,
+data and required model files remain byte-identical; no recipe change or pilot
+training. Evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

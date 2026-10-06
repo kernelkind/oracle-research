@@ -177,7 +177,7 @@ def download(manifest_path, output):
     probe.unlink()
     identity = home.parent / 'volume-identity.json'
     write_json(output / 'volume.json', {'cache_path': str(home), 'write_read_verified': readable,
-        'mount_path': str(home.parent),
+        'volume_root': str(home.parent),
         'volume_identity': read_json(identity) if identity.exists() else None,
         'disk_free_bytes': shutil.disk_usage(home).free, 'observed': time.time()})
     report = {'state': 'running', 'manifest_sha256': sha256(manifest_path),

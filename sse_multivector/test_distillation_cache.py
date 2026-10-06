@@ -110,6 +110,7 @@ class CacheTests(unittest.TestCase):
                 self.assertEqual(report['state'], 'failed')
                 self.assertEqual(len(report['files']), 1)
                 self.assertTrue((root / 'results/volume.json').exists())
+                self.assertEqual(read_json(root / 'results/volume.json')['volume_root'], str(root))
                 self.assertTrue((root / 'results/download.jsonl').exists())
                 files['model.safetensors'] = b'weights'
                 before = len(requests)

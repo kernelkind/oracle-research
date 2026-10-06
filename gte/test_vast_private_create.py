@@ -57,7 +57,7 @@ class VastPrivateCreateTest(unittest.TestCase):
         arguments = vast_create_arguments('123', 'docker.io/kernelkind/oracle-mvp@sha256:' + '4'*64,
             'pilot', 'secret', local_volume_id=881)
         self.assertEqual(arguments[arguments.index('--link-volume') + 1], '881')
-        self.assertEqual(arguments[arguments.index('--mount-path') + 1], '/workspace/oracle-full-build')
+        self.assertEqual(arguments[arguments.index('--mount-path') + 1], '/workspace')
 
     @unittest.skipUnless(importlib.util.find_spec("vastai"), "requires pinned Vast SDK")
     def test_real_cli_passes_optional_onstart_without_replacing_managed_ssh(self):
@@ -86,7 +86,7 @@ class VastPrivateCreateTest(unittest.TestCase):
                 assert create.call_args.kwargs["onstart_cmd"] == hook
                 assert create.call_args.kwargs["disk"] == 100
                 assert create.call_args.kwargs["volume_info"] == {
-                    "mount_path": "/workspace/oracle-full-build", "create_new": False, "volume_id": 881}
+                    "mount_path": "/workspace", "create_new": False, "volume_id": 881}
                 assert marker.exists()
                 assert json.loads(outcome.read_text())["new_contract"] == 42
         ''')

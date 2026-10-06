@@ -1941,7 +1941,7 @@ def ensure_remote_volume(context: Context, private_key: Path, target: list[str],
             raise OperationError("volume receipt differs from this instance or contract")
         return
     root = "/workspace/oracle-full-build"
-    completed_process([*ssh_arguments(context, private_key, target), "mountpoint", "-q", root])
+    completed_process([*ssh_arguments(context, private_key, target), "mountpoint", "-q", "/workspace"])
     staging = root + "/replacements/" + digest
     tar_upload_directory(context, private_key, target, context.path("transport"), staging + "/transport/")
     tar_upload_directory(context, private_key, target, remote_receipts, staging + "/launch/")
@@ -1957,7 +1957,7 @@ def remote_volume_prepare(context: Context, volume_root: Path) -> dict[str, obje
     """Keep saved work at its original paths; retire only prior control receipts."""
     if "local_volume" not in context.config:
         raise OperationError("volume preparation requires a frozen local volume")
-    completed_process(["mountpoint", "-q", str(volume_root)])
+    completed_process(["mountpoint", "-q", str(volume_root.parent)])
     verify_reviewed_artifacts(context, require_local_execution_package=False)
     identity = volume_root / "volume-identity.json"
     if identity.exists():

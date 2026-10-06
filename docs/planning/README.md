@@ -114,15 +114,12 @@ but archives prior work and starts fresh. The rebuilt VM passes 101 checks,
 including actual container replacement, unchanged saved answers/checkpoints and
 an offline cache hit. The frozen package matches this runtime and all six
 previous configurations/data. Full MoE CUDA confirmation remains pending.
-The download GPU create request was rejected with HTTP 400, with no instance or GPU charge.
-
-The helper now preserves bounded credential-redacted error messages; local CLI
-and controller checks pass, and the updated VM rehearsal passed. No automatic
-time limit or deletion.
-The rebuilt private image and unchanged packages pass local preflight; the quoted download-only rate was $1.4278/hour including storage. This retry has not started GPU execution.
-The next attempt uses a cheaper compatible Bulgarian host with a local volume,
-approved October 6. Actual Vast attachment remains untested; startup checks
-the mount before setup or training. Container recovery is verified in the VM.
+The storage rate was $0.0833/hour. Both download create requests were rejected before allocation, with no GPU charge.
+The retry revealed an invalid mount path. Use `/workspace`, retaining experiment
+paths beneath it. Local CLI/controller/cache/workload checks pass; the updated
+VM rehearsal is running before private publication and a new download retry.
+Actual Vast attachment/CUDA confirmation remain pending. No automatic stop or
+deletion.
 Use a one-card rental on that machine to verify attachment and download all
 three pinned models onto the actual volume, approved October 6. Verify files
 and retrieve evidence before deleting the container; retain the volume for
