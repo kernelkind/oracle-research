@@ -407,6 +407,46 @@ a source snapshot, serial/build logs and a result directory. Use a new
 `--directory` for a clean-machine test; reusing it retains the stopped VM disk
 and Docker cache. The launcher collects results and stops the VM on exit.
 
+Verification now defaults to **cached** mode. It automatically reuses successful
+candidate, workflow and deployment stages when their source/test/dependency
+hashes match and every saved evidence file verifies. A controller-only edit
+reruns deployment checks while retaining model checks. Model, runtime or
+unclassified dependency changes invalidate the dependent checks. Optional
+preflight inputs are snapshotted and hashed; changed inputs rerun deployment.
+When the VM boots, reuse also requires the exact installed Docker `runtime`
+image ID, including system and Python dependencies.
+
+Use **`--full`** to force every check to run; Docker build caching remains active.
+Agents may choose either mode, but cannot override evidence validation. A new
+`--directory` still provides a clean-machine check. Legacy attempts without the
+new stage receipts cannot supply cached test evidence.
+
+Stages are sealed only after their commands and cleanup succeed. An export or
+collection failure can therefore reuse any intact, retrieved successful stages
+on the next invocation. Partial exports are removed; failed stages rerun.
+An unchanged complete attempt verifies locally and returns its existing result
+without booting QEMU.
+
+Each new attempt records executed/reused stages and timings in
+`verification.json`. Stage logs and hashed receipts live under
+`results/stages/{candidates,workflow,deployment}/`; `complete.json` identifies
+the workflow report and hashes the final archive and image metadata. These
+checks establish the local workflow; full-size CUDA fit still needs GPU prep.
+
+**October 6 verification:** 53 host checks and 109 VM checks passed, with five
+expected VM skips (four exercised in their separate volume phases, one requiring
+an optional tokenizer package). The cold full rehearsal took 14.5 minutes;
+an unchanged cached invocation took 2.24 seconds. With the local archive
+temporarily withheld and preserved, a real export retry reused all three stages
+and completed in 99.6 seconds. Both VM attempts stopped and their results verified.
+
+**October 6 cutover:** integrated into `main`. The matching verified attempt
+is copied to `target/distillation-vm-clean-deployment/`; the normal cached
+invocation verifies in 2.22 seconds and all 53 host regressions pass there.
+The Dockerfile now names its dependency-only `runtime` stage. Future
+launch images and packages must use this updated Dockerfile; earlier frozen
+inputs and private publication evidence remain intact.
+
 The container's CUDA/PyTorch base is pinned by digest, and Python dependencies
 are version/hash locked. The same container runs CPU validation locally and
 can later run on a GPU. Tests run with networking disabled, using a generated

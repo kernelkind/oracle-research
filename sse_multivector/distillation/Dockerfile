@@ -1,4 +1,4 @@
-FROM pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427
+FROM pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427 AS runtime
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends openssh-server openssh-client util-linux \
@@ -25,6 +25,7 @@ RUN uv pip install --python /opt/distillation-venv/bin/python --target /opt/dist
     && PYTHONPATH=/opt/distillation-gpu python -m pip check
 
 WORKDIR /work
+FROM runtime
 COPY gte/full_build_package.py gte/calibration_package.py gte/vast_private_create.py /work/gte/
 COPY sse_multivector/distillation/requirements.lock sse_multivector/distillation/Dockerfile \
     sse_multivector/distillation/requirements-gpu.lock \

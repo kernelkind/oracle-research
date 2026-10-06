@@ -3356,6 +3356,22 @@ Setup completion does not verify the newer larger-pilot worker or configuration,
 select a model, prove all full-size candidates work or complete the model track.
 Further larger-run preparation remains within 06.
 
+**October 6 VM verification decision:** the existing local launcher defaults to
+automatic reuse of successful stages with matching source, test, dependency and
+input hashes and intact saved evidence. An agent may choose `--full` to rerun
+every check while retaining Docker build caching. Changed or uncertain
+dependencies force checks; there is no forced stale-evidence mode. Successful
+retrieved stages survive export failures, and identical complete results can be
+verified without starting the VM. Implementation and initial verification used
+a separate worktree and VM directory. **Cutover approved October 6:** integrate
+into `main` and transfer matching verified evidence into the existing VM
+directory. The unchanged parent invocation verifies in 2.22 seconds; all
+53 host regressions pass. Future launches need an image and frozen packages
+built from the updated Dockerfile; existing publication evidence is preserved.
+This changes local rehearsal, with the pilot recipe and hardware decisions
+unchanged. Full-size CUDA fit remains the GPU preparation gate. Operational
+details are in the technical plan's **Local VM workflow** section.
+
 Final training-example formatting and output-quality evaluation remain within
 **06 · Choose model through larger fine-tuning pilot**. Its completion needs the
 agreed output format and quality criteria, reviewed pilot data and training
