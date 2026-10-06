@@ -191,6 +191,13 @@ class StopRequested(RuntimeError):
 
 def run_process(command, timeout, *, stop_event=None, **kwargs):
     """Wait without an automatic kill when the frozen timeout is disabled."""
+    worker_fd = os.environ.get("ORACLE_RUN_WORKER_LOCK_FD")
+    if worker_fd is not None:
+        descriptor = int(worker_fd)
+        if descriptor < 3:
+            raise ValueError("invalid inherited worker lock descriptor")
+        os.fstat(descriptor)
+        kwargs["pass_fds"] = tuple(set(kwargs.get("pass_fds", ())) | {descriptor})
     with subprocess.Popen(command, start_new_session=True, **kwargs) as process:
         deadline = time.monotonic() + timeout if timeout is not None else None
         try:

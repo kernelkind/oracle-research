@@ -19,7 +19,7 @@ def make_spec(settings, offer, package, image):
             job['timeout_seconds'] is not None and settings['worker_timeout_seconds'] is not None
             and job['timeout_seconds'] > settings['worker_timeout_seconds']):
         raise ValueError('package exceeds the approved worker timeout')
-    return {'version': 2, 'label': settings['label'], 'offer': offer, 'image': image,
+    spec = {'version': 2, 'label': settings['label'], 'offer': offer, 'image': image,
         'disk_gb': settings['disk_gb'], 'onstart': settings['onstart'], 'ssh_direct': settings['ssh_direct'],
         'python': REMOTE_PYTHON,
         'inputs': [{'source': str(Path(package).resolve()), 'destination': 'inputs'}],
@@ -42,6 +42,19 @@ def make_spec(settings, offer, package, image):
             'setup_cost_cents': settings.get('setup_cost_cents', 500),
             'manual_stop_cost_cents': settings.get('manual_stop_cost_cents', 2460),
             'inbound_gb': settings['inbound_gb'], 'outbound_gb': settings['outbound_gb']}}
+    if 'local_volume' in settings:
+        volume = settings['local_volume']
+        if (not isinstance(volume, dict) or set(volume) != {'id', 'machine_id'}
+                or any(type(v) is not int or v <= 0 for v in volume.values())
+                or volume['machine_id'] != offer['machine_id']):
+            raise ValueError('local volume must identify the selected physical machine')
+        spec['local_volume'] = dict(volume)
+        spec['environment']['HF_HOME'] = '/workspace/oracle-full-build/model-cache'
+        if 'recover_from' in settings:
+            spec['recover_from'] = settings['recover_from']
+    elif 'recover_from' in settings:
+        raise ValueError('replacement requires a local volume')
+    return spec
 
 
 def main():

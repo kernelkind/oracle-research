@@ -18,6 +18,12 @@ from vast_private_create import (
 
 
 class VastPrivateCreateTest(unittest.TestCase):
+    def test_volume_uses_the_pinned_clis_explicit_link_option(self):
+        arguments = vast_create_arguments('123', 'docker.io/kernelkind/oracle-mvp@sha256:' + '4'*64,
+            'pilot', 'secret', local_volume_id=881)
+        self.assertEqual(arguments[arguments.index('--link-volume') + 1], '881')
+        self.assertEqual(arguments[arguments.index('--mount-path') + 1], '/workspace/oracle-full-build')
+
     @unittest.skipUnless(importlib.util.find_spec("vastai"), "requires pinned Vast SDK")
     def test_real_cli_passes_optional_onstart_without_replacing_managed_ssh(self):
         # Vast's parser is process-global. Exercise the real helper entry point
@@ -32,7 +38,8 @@ class VastPrivateCreateTest(unittest.TestCase):
                 marker, outcome = Path(tmp) / "attempt", Path(tmp) / "outcome.json"
                 hook = "ssh-keygen -A && service ssh start"
                 argv = ["helper", "123", "docker.io/kernelkind/oracle-mvp@sha256:" + "4" * 64,
-                        "pilot", str(marker), str(outcome), "--disk-gb", "100", "--onstart-cmd", hook]
+                        "pilot", str(marker), str(outcome), "--disk-gb", "100", "--onstart-cmd", hook,
+                        "--local-volume-id", "881"]
                 with patch("sys.argv", argv), patch("sys.stdin", io.StringIO("fake-token")), \\
                         patch.dict(os.environ, {"VASTAI_NO_UPDATE_CHECK": "1"}), \\
                         patch.object(instances, "get_client", return_value=object()), \\
@@ -43,6 +50,8 @@ class VastPrivateCreateTest(unittest.TestCase):
                 assert create.call_args.kwargs["runtype"] == "ssh_direc ssh_proxy"
                 assert create.call_args.kwargs["onstart_cmd"] == hook
                 assert create.call_args.kwargs["disk"] == 100
+                assert create.call_args.kwargs["volume_info"] == {
+                    "mount_path": "/workspace/oracle-full-build", "create_new": False, "volume_id": 881}
                 assert marker.exists()
                 assert json.loads(outcome.read_text())["new_contract"] == 42
         ''')

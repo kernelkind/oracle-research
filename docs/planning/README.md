@@ -106,8 +106,12 @@ MoE reference now applies token weighting after LM-head backward, matching
 Liger’s BF16 rounding order; its local regression passes without relaxing
 tolerances. The local workflow suite passes 89 tests; 12 VM-only checks are
 skipped. Full CUDA confirmation and a new frozen runtime remain pending.
-The approved persistent-volume recovery path still needs implementation and
-verification before another rental. There is no automatic time limit or deletion.
+Persistent-volume mounting and verified replacement are implemented locally.
+A controller-crash regression proves that live children block result sealing;
+replacement preserves work paths and requires the same image/data/recipe,
+verified retrieval and prior instance deletion. Local checks pass; VM rehearsal
+and full MoE CUDA confirmation remain pending. There is no automatic time limit
+or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

@@ -67,6 +67,8 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
         "pins": {key: "0" * 64 for key in ("operator_sha256", "control_sha256s_sha256",
                  "transport_manifest_sha256", "execution_package_manifest_sha256")}}
     config = root / "operation-contract.json"
+    if "local_volume" in spec:
+        document["local_volume"] = spec["local_volume"]
     context = runner.Context(root, config, ledger, document)
     context.validate()
     runner.validate_offer(context, offer, str(offer.get("id")))
@@ -107,6 +109,31 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
         "control_sha256s_sha256": runner.sha256_file(control / "SHA256SUMS"),
         "transport_manifest_sha256": runner.sha256_file(root / "transport/transport-manifest.json"),
         "execution_package_manifest_sha256": runner.sha256_file(payload / "package-manifest.json")}
+    if "recover_from" in spec:
+        source = Path(spec["recover_from"]).resolve()
+        prior_config = source / "operation-contract.json"
+        prior = runner.read_json(prior_config)
+        proof = runner.read_json(source / "launch/destruction-confirmation.json")
+        retrieved = runner.read_json(source / "launch/retrieval-verification.json")
+        if (workload.get("resumable") is not True or "local_volume" not in document
+                or prior.get("local_volume") != document["local_volume"]
+                or prior.get("image") != document["image"] or prior.get("workload") != workload
+                or prior["pins"]["execution_package_manifest_sha256"]
+                != document["pins"]["execution_package_manifest_sha256"]):
+            raise runner.OperationError("replacement requires the same volume, image and frozen workload")
+        if (proof.get("absent_from_complete_inventory") is not True
+                or proof.get("absence_observations", 0) < 2
+                or proof.get("instance_id") != retrieved.get("instance_id")
+                or not retrieved.get("instance_id")):
+            raise runner.OperationError("replacement requires verified retrieval and instance destruction")
+        saved = next((source / path for path in ("result.next/work", "result/work")
+                      if (source / path).is_dir()), None)
+        if saved is None:
+            raise runner.OperationError("replacement has no retrieved work")
+        records = runner.validate_file_records(saved, retrieved.get("work_files"))
+        document["volume_recovery"] = {"previous_contract_sha256": runner.sha256_file(prior_config),
+            "previous_instance_id": retrieved["instance_id"],
+            "previous_attempt": runner.parse_attempt_id(retrieved.get("attempt_id")), "work_files": records}
     runner.atomic_json(config, document)
     return config
 

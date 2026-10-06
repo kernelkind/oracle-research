@@ -1535,8 +1535,13 @@ saved work on a separately rented local volume across failed-container
 replacement. Favor machines with observed spare GPUs, checking availability
 while resolving local errors. A reliability score is uptime evidence, not
 proof of future free GPUs; the volume attaches only on its physical machine.
-The launcher still needs volume support and a tested replacement/recovery
-path. No volume, replacement rental or additional spending was created.
+The launcher now mounts the selected volume, retains model downloads and
+verifies saved work before replacement. It preserves work paths and worker
+attempts while archiving the previous launch receipts. Reuse requires identical
+image/data/recipe, verified local retrieval and confirmed prior deletion. A
+controller-crash regression now keeps the worker lock in live training children,
+blocking sealing and reentry until writers exit. Local checks pass; VM rehearsal
+and the full MoE CUDA replay remain pending. No volume or replacement is rented.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

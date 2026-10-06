@@ -15,7 +15,7 @@ from pathlib import Path
 def vast_create_arguments(
     offer_id: str, image: str, label: str, docker_pat: str, *,
     disk_gb: int = 200, entrypoint: str | None = None, environment: str | None = None,
-    onstart: str | None = None,
+    onstart: str | None = None, local_volume_id: int | None = None,
 ) -> list[str]:
     if not offer_id.isdecimal() or int(offer_id) <= 0:
         raise ValueError("offer ID must be a positive integer")
@@ -29,6 +29,8 @@ def vast_create_arguments(
         raise ValueError("onstart must be a string without NUL characters")
     if onstart and entrypoint is not None:
         raise ValueError("onstart requires Vast-managed SSH, not an entrypoint override")
+    if local_volume_id is not None and (type(local_volume_id) is not int or local_volume_id <= 0):
+        raise ValueError("local volume ID must be a positive integer")
     arguments = [
         "vastai",
         "create",
@@ -47,6 +49,8 @@ def vast_create_arguments(
         "--retry",
         "1",
     ]
+    if local_volume_id is not None:
+        arguments += ["--link-volume", str(local_volume_id), "--mount-path", "/workspace/oracle-full-build"]
     if entrypoint is None:
         position = arguments.index("--cancel-unavail")
         arguments[position:position] = ["--ssh", "--direct"]
@@ -171,6 +175,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--entrypoint")
     parser.add_argument("--environment")
     parser.add_argument("--onstart-cmd")
+    parser.add_argument("--local-volume-id", type=int)
     return parser.parse_args()
 
 
@@ -179,7 +184,7 @@ def main() -> int:
     docker_pat = sys.stdin.read().strip()
     arguments = vast_create_arguments(args.offer_id, args.image, args.label, docker_pat,
         disk_gb=args.disk_gb, entrypoint=args.entrypoint, environment=args.environment,
-        onstart=args.onstart_cmd)
+        onstart=args.onstart_cmd, local_volume_id=args.local_volume_id)
     del docker_pat
     from vastai.cli.main import main as vast_main
 

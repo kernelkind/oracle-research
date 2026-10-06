@@ -22,6 +22,112 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_volume_replacement_verifies_work_and_archives_old_launch_receipts(self):
+        import argparse
+        import importlib.util
+        import shutil
+        sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
+        import package as packager
+        from vast import runner
+        settings, offer = quote()
+        settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/model', 'revision': 'a'*40, 'training_milestones': [1, 2]})
+            deploy.prepare([config], root / 'inputs', 43200)
+            spec = vast.make_spec(settings, offer, root / 'inputs',
+                                 settings['image_repository'] + '@sha256:' + '4'*64)
+            ledger = root / 'ledger.json'
+            write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
+                'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
+            old = root / 'old'
+            old_config = packager.freeze(spec, old, ledger)
+            volume = root / 'volume'
+            volume.mkdir()
+            shutil.copytree(old / 'transport', volume / 'transport')
+            (volume / 'launch').mkdir(exist_ok=True)
+            shutil.copy2(old_config, volume / 'launch/operation-contract.json')
+            (volume / 'work/full-build-attempts/001').mkdir(parents=True)
+            (volume / 'work/full-build-attempts/001/full-build.exit').write_text('1\n')
+            (volume / 'work/checkpoint.bin').write_bytes(b'checkpoint')
+            (volume / 'work/full-build-start.lock').touch()
+            (volume / 'work/full-build.lock').touch()
+            (volume / 'model-cache').mkdir()
+            (volume / 'model-cache/download.bin').write_bytes(b'cached weights')
+            records = runner.tree_file_records(volume / 'work', {'retrieval-manifest.json'})
+            write_json(volume / 'work/retrieval-manifest.json', {'files': records})
+            shutil.copytree(volume / 'work', old / 'result.next/work')
+            write_json(old / 'launch/retrieval-verification.json', {'instance_id': '42', 'attempt_id': '001', 'work_files': records})
+            write_json(old / 'launch/destruction-confirmation.json', {'instance_id': '42',
+                'absent_from_complete_inventory': True, 'absence_observations': 2})
+            spec['recover_from'] = str(old)
+            spec['label'] += '-replacement'
+            staging = volume / 'replacements/new'
+            new_config = packager.freeze(spec, staging, ledger)
+            self.assertEqual(read_json(new_config)['volume_recovery']['previous_attempt'], '001')
+            (staging / 'launch').mkdir()
+            shutil.copy2(new_config, staging / 'launch/operation-contract.json')
+            definition = importlib.util.spec_from_file_location('volume_runner', staging / 'transport/control/vast_full_build.py')
+            module = importlib.util.module_from_spec(definition)
+            sys.modules[definition.name] = module
+            definition.loader.exec_module(module)
+            context = module.Context.load(argparse.Namespace(root=staging, config=new_config, operation='_remote-volume-prepare'))
+            with patch.object(module, 'completed_process'), \
+                    module.file_lock(volume / 'work/full-build.lock', blocking=False):
+                with self.assertRaisesRegex(Exception, 'lock'):
+                    module.remote_volume_prepare(context, volume)
+            (volume / 'work/checkpoint.bin').write_bytes(b'bad')
+            with patch.object(module, 'completed_process'), self.assertRaisesRegex(Exception, 'integrity'):
+                module.remote_volume_prepare(context, volume)
+            (volume / 'work/checkpoint.bin').write_bytes(b'checkpoint')
+            rename = module.os.rename
+            def interrupted(source, destination):
+                if Path(source).name == 'transport':
+                    raise OSError('interrupted replacement')
+                return rename(source, destination)
+            with patch.object(module, 'completed_process'), patch.object(module.os, 'rename', side_effect=interrupted):
+                with self.assertRaisesRegex(OSError, 'interrupted replacement'):
+                    module.remote_volume_prepare(context, volume)
+            with patch.object(module, 'completed_process') as mount:
+                result = module.remote_volume_prepare(context, volume)
+                self.assertTrue(result['recovered'])
+                mount.assert_called_once_with(['mountpoint', '-q', str(volume)])
+                self.assertEqual(module.remote_volume_prepare(context, volume), result)
+            self.assertEqual((volume / 'work/checkpoint.bin').read_bytes(), b'checkpoint')
+            self.assertEqual((volume / 'model-cache/download.bin').read_bytes(), b'cached weights')
+            self.assertFalse((volume / 'launch/operation-contract.json').exists())
+            self.assertEqual((volume / 'work/full-build-attempts/001/full-build.exit').read_text(), '1\n')
+            archive = volume / result['archive']
+            self.assertEqual(read_json(archive / 'launch/operation-contract.json'), read_json(old_config))
+            changed = {**spec, 'image': settings['image_repository'] + '@sha256:' + '5'*64}
+            with self.assertRaisesRegex(Exception, 'same volume, image and frozen workload'):
+                packager.freeze(changed, root / 'changed', ledger)
+            # A damaged local source cannot become a replacement approval.
+            (old / 'result.next/work/checkpoint.bin').write_bytes(b'bad')
+            with self.assertRaisesRegex(Exception, 'integrity'):
+                packager.freeze(spec, root / 'rejected', ledger)
+
+    def test_volume_spec_binds_the_host_and_keeps_model_downloads(self):
+        settings, offer = quote()
+        settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/model', 'revision': 'a'*40})
+            deploy.prepare([config], root / 'inputs', 43200)
+            image = settings['image_repository'] + '@sha256:' + '4'*64
+            spec = vast.make_spec(settings, offer, root / 'inputs', image)
+            self.assertEqual(spec['local_volume'], settings['local_volume'])
+            self.assertEqual(spec['environment']['HF_HOME'], '/workspace/oracle-full-build/model-cache')
+            settings['local_volume']['machine_id'] += 1
+            with self.assertRaisesRegex(ValueError, 'machine'):
+                vast.make_spec(settings, offer, root / 'inputs', image)
+
     def test_two_gpu_package_rejects_a_one_gpu_offer(self):
         settings, offer = quote()
         settings['worker_timeout_seconds'] = None

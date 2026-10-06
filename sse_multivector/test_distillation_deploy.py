@@ -13,6 +13,105 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_supervisor_identifies_the_lock_descriptor_inherited_by_the_controller(self):
+        from vast import runner
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            context = runner.Context(root, root / 'contract.json', root / 'ledger.json', {})
+            attempt = context.path('work/full-build-attempts/001')
+            attempt.mkdir(parents=True)
+            (attempt / 'controller.pid').write_text('42\n')
+            (attempt / 'full-build.started').write_text('started\n')
+            preparation = context.path('preparation-attempts/001/preparation.exit')
+            preparation.parent.mkdir(parents=True)
+            preparation.write_text('0\n')
+            def child(*args, **kwargs):
+                fd, = kwargs['pass_fds']
+                self.assertEqual(kwargs['env']['ORACLE_RUN_WORKER_LOCK_FD'], str(fd))
+                self.assertEqual(os.fstat(fd).st_ino, (root / 'work/full-build.lock').stat().st_ino)
+                return type('Process', (), {'wait': lambda self: 0})()
+            with runner.file_lock(root / 'work/full-build-start.lock', blocking=False) as lock, \
+                    patch.object(runner.subprocess, 'Popen', side_effect=child):
+                result = runner.remote_supervise(context, '001', os.dup(lock.fileno()))
+            self.assertEqual(result['exit_status'], 0)
+
+    def test_controller_crash_keeps_live_child_unsealed_until_it_finishes(self):
+        import ctypes
+        import signal
+        import time
+        from vast import runner
+        libc = ctypes.CDLL(None, use_errno=True)
+        previous = ctypes.c_int()
+        self.assertEqual(libc.prctl(37, ctypes.byref(previous), 0, 0, 0), 0)
+        self.assertEqual(libc.prctl(36, 1, 0, 0, 0), 0)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = {'artifact_kind': 'vast-command-operation', 'workload': {'work_seconds': None}}
+            context = runner.Context(root, root / 'contract.json', root / 'ledger.json', config)
+            attempt = context.path('work/full-build-attempts/001')
+            attempt.mkdir(parents=True)
+            context.path('preparation-attempts').mkdir()
+            context.path('preparation-attempts/preparation.exit').write_text('0\n')
+            child = '''import os,time
+from pathlib import Path
+from vast import runner
+root=Path(%r)
+runner.atomic_bytes(root/'child.pid',f'{os.getpid()}\\n'.encode())
+while not (root/'finish').exists():
+    runner.atomic_json(root/'work/heartbeat.json',{'updated':time.time_ns()},replace=True)
+    time.sleep(.02)
+''' % str(root)
+            parent = '''import os,sys
+from pathlib import Path
+from vast import runner
+from sse_multivector.distillation_deploy import run_process
+root=Path(%r)
+with runner.file_lock(root/'work/full-build.lock',blocking=False) as lock:
+    os.environ['ORACLE_RUN_WORKER_LOCK_FD']=str(lock.fileno())
+    runner.atomic_bytes(root/'work/full-build-attempts/001/controller.pid',f'{os.getpid()}\\n'.encode())
+    runner.atomic_bytes(root/'work/full-build-attempts/001/full-build.started',b'started\\n')
+    run_process([sys.executable,'-B','-c',%r],None)
+''' % (str(root), child)
+            process = subprocess.Popen([sys.executable, '-B', '-c', parent],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            pid = None
+            try:
+                deadline = time.monotonic() + 10
+                while not (root / 'child.pid').exists() and process.poll() is None:
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(.01)
+                pid = int((root / 'child.pid').read_text())
+                process.kill()
+                process.communicate(timeout=5)
+                # A surviving child also protects against a terminal exit receipt
+                # published by the supervisor after the controller's death.
+                for terminal in (False, True):
+                    if terminal:
+                        runner.atomic_bytes(attempt / 'full-build.exit', b'137\n')
+                    self.assertEqual(runner.remote_attempt_status(context, '001')['state'], 'running')
+                    with self.assertRaisesRegex(runner.OperationError, 'lock'):
+                        runner.remote_seal(context, '001')
+                    self.assertFalse(context.path('work/retrieval-manifest.json').exists())
+                (root / 'finish').touch()
+                os.waitpid(pid, 0)
+                pid = None
+                self.assertEqual(runner.remote_attempt_status(context, '001')['state'], 'terminal')
+                sealed = runner.remote_seal(context, '001')
+                self.assertTrue(sealed['terminal'])
+                record = next(r for r in sealed['work_files'] if r['path'] == 'heartbeat.json')
+                self.assertEqual(runner.sha256_file(root / 'work/heartbeat.json'), record['sha256'])
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.communicate(timeout=5)
+                if pid is not None:
+                    try:
+                        os.killpg(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    os.waitpid(pid, 0)
+                libc.prctl(36, previous.value, 0, 0, 0)
+
     def test_tokenizer_preflight_needs_no_cuda_but_gpu_work_requires_two_devices(self):
         from types import SimpleNamespace
         with tempfile.TemporaryDirectory() as temporary:
@@ -445,6 +544,32 @@ deploy.execute(Path({str(package)!r}), Path({str(output)!r}))
 
 @unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
 class SharedSSHTests(unittest.TestCase):
+    @unittest.skipUnless(os.environ.get('DISTILLATION_VOLUME_STAGE') == 'seed', 'requires the volume replacement rehearsal')
+    def test_seed_volume_before_container_replacement(self):
+        root = self.fixture_package('volume-replacement', {'training_milestones': [1, 2, 3, 4],
+            'batch_size': 1, 'gradient_accumulation_steps': 8, 'evaluation_tasks': ['subjects'],
+            'subject_batching': {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}}, seconds=None, test_notes=True)
+        self.run_package(root / 'inputs', root / 'original', local_volume=True)
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_VOLUME_STAGE') == 'recover', 'requires the volume replacement rehearsal')
+    def test_recover_volume_after_container_replacement(self):
+        from sse_multivector.distillation_run import file_hashes
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'volume-replacement'
+        old = root / 'original'
+        write_json(old / 'launch/destruction-confirmation.json', {'instance_id': 'offline-fixture',
+            'absent_from_complete_inventory': True, 'absence_observations': 2})
+        before = file_hashes(old / 'result/work/results')
+        result = self.run_package(root / 'inputs', root / 'replacement', local_volume=True, recover_from=old)
+        after = file_hashes(result)
+        for path, digest in before.items():
+            if path != 'deployment.json':
+                self.assertEqual(after[path], digest, path)
+        receipt = read_json(root / 'replacement/launch/volume-prepared.json')['remote_receipt']
+        self.assertTrue(receipt['recovered'])
+        write_json(root / 'replacement-checks.json', {'unchanged_files': before,
+            'receipt': receipt, 'checkpoint_and_answers_reused': True})
+
     def test_two_gpu_prep_continues_into_fresh_pilot_and_verifies_retrieved_results(self):
         from sse_multivector.distillation_run import load_data
         root = self.fixture_package('prep-then-pilot', {
@@ -594,7 +719,8 @@ class SharedSSHTests(unittest.TestCase):
         write_json(root / 'transfer-checks.json', {'groups': groups, 'response_before_checkpoint': True,
                                                 'checkpoint_sha256': sha256(weights), 'subject_sha256': sha256(subject)})
 
-    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False, continue_after_checkpoint=False):
+    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False,
+                    continue_after_checkpoint=False, local_volume=False, recover_from=None):
         import argparse
         import importlib.util
         import shutil
@@ -611,6 +737,11 @@ class SharedSSHTests(unittest.TestCase):
         job = deploy.verify_package(inputs)
         gpu_count = max(job.get('gpu_assignments', {}).values(), default=0) + 1
         settings['offer_equals']['num_gpus'] = offer['num_gpus'] = gpu_count
+        if local_volume:
+            settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+        if recover_from is not None:
+            settings['recover_from'] = str(recover_from)
+            settings['label'] += '-replacement'
         if deploy.verify_package(inputs)['timeout_seconds'] is None:
             settings['worker_timeout_seconds'] = None
         spec = make_spec(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
@@ -635,11 +766,14 @@ class SharedSSHTests(unittest.TestCase):
         shutil.copyfile(config, root / 'launch/operation-contract.json')
         remote = '/workspace/oracle-full-build'
         module.verify_local_ssh(context)
+        if local_volume:
+            module.ensure_remote_volume(context, key, endpoint, root / 'launch', 'offline-fixture')
         module.tar_upload_directory(context, key, endpoint, root / 'transport', remote + '/transport')
         module.tar_upload_directory(context, key, endpoint, root / 'launch', remote + '/launch')
         # Each independent test uses a fresh operation on the same SSH target.
-        module.completed_process([*module.ssh_arguments(context, key, endpoint),
-            'rm -rf /workspace/oracle-full-build/work /workspace/oracle-full-build/package /workspace/oracle-full-build/preparation-attempts'])
+        if not local_volume:
+            module.completed_process([*module.ssh_arguments(context, key, endpoint),
+                'rm -rf /workspace/oracle-full-build/work /workspace/oracle-full-build/package /workspace/oracle-full-build/preparation-attempts'])
         def call(operation, *args):
             return module.remote_json(context, key, endpoint, operation, *args)
         self.assertTrue(call('_remote-verify-transfer')['verified'])
@@ -647,10 +781,16 @@ class SharedSSHTests(unittest.TestCase):
         while not call('_remote-prepare').get('prepared'):
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.2)
-        started = call('_remote-worker', '--attempt', '001')
-        module.atomic_json(root / 'launch/worker-invocations/001.json',
-                           {'attempt_id': '001', 'instance_id': 'offline-fixture'})
-        module.publish_worker_acknowledgement(context, 'offline-fixture', '001', started)
+        if recover_from is not None:
+            with patch.object(module, 'record_pre_worker_cost'):
+                attempt_id = module.ensure_worker_started(context, 'offline-fixture', key, endpoint)
+            self.assertEqual(attempt_id, '002')
+        else:
+            attempt_id = '001'
+            started = call('_remote-worker', '--attempt', attempt_id)
+            module.atomic_json(root / f'launch/worker-invocations/{attempt_id}.json',
+                               {'attempt_id': attempt_id, 'instance_id': 'offline-fixture'})
+            module.publish_worker_acknowledgement(context, 'offline-fixture', attempt_id, started)
         copier = module.start_progressive_copy(context, key, endpoint) if copy_while_running else None
         if copier is not None:
             self.addCleanup(lambda: copier.terminate() if copier.poll() is None else None)
@@ -658,9 +798,9 @@ class SharedSSHTests(unittest.TestCase):
         interruption_requested = False
         if stop:
             time.sleep(2)
-            call('_remote-stop', '--attempt', '001')
+            call('_remote-stop', '--attempt', attempt_id)
         while True:
-            state = call('_remote-status', '--attempt', '001')
+            state = call('_remote-status', '--attempt', attempt_id)
             if continue_after_checkpoint and not interruption_requested:
                 checkpoints = state.get('progress', {}).get('candidates', {}).get('first', {}).get('checkpoints', [])
                 if checkpoints:
@@ -689,7 +829,7 @@ class SharedSSHTests(unittest.TestCase):
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.1 if continue_after_checkpoint else .5)
         (root / 'result.next').mkdir(exist_ok=True)
-        module.ensure_retrieved(context, 'offline-fixture', key, endpoint, '001')
+        module.ensure_retrieved(context, 'offline-fixture', key, endpoint, attempt_id)
         if continue_after_checkpoint:
             self.assertTrue(interruption_requested, state)
             self.assertNotEqual(state['exit_status'], 0)
@@ -734,12 +874,12 @@ class SharedSSHTests(unittest.TestCase):
             module.completed_process([*module.ssh_arguments(context, key, endpoint),
                 'test -f /workspace/oracle-full-build/work/results/first/baseline/note-0000/subjects.json'])
         if expected == 0:
-            self.assertEqual(state['exit_status'], 0, (root / 'result.next/work/full-build-attempts/001/full-build.log').read_text())
-            self.assertTrue(module.publish_verified_result(context, '001'))
+            self.assertEqual(state['exit_status'], 0, (root / f'result.next/work/full-build-attempts/{attempt_id}/full-build.log').read_text())
+            self.assertTrue(module.publish_verified_result(context, attempt_id))
             results = root / 'result/work/results'
             self.assertEqual(read_json(results / 'deployment.json')['state'], 'complete')
             # A new SSH call cannot start a second execution after completion.
-            self.assertEqual(call('_remote-worker', '--attempt', '001')['exit_status'], 0)
+            self.assertEqual(call('_remote-worker', '--attempt', attempt_id)['exit_status'], 0)
         else:
             self.assertNotEqual(state['exit_status'], 0)
             results = root / 'result.next/work/results'

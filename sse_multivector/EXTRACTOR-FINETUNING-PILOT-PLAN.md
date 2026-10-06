@@ -2211,8 +2211,18 @@ Rebuild/freeze and confirm the full CUDA check before main pilot work. Evidence:
 **Persistent-volume recovery approved:** favor a machine with observed spare
 GPUs and retain model downloads plus compatible saved work on a local volume
 across container replacement. The volume stays on its physical machine and
-does not reserve GPUs. Volume mounting, verified reuse and replacement recovery
-need launcher implementation/rehearsal; no volume or new rental exists.
+does not reserve GPUs. The launcher mounts the frozen volume ID at the same
+operation path and sets `HF_HOME` to its persistent model cache. Replacement
+freezing verifies the previous local retrieval and deletion, identical volume,
+image, workload and input manifest. Remote preparation rechecks all saved work,
+archives old launch/transport/preparation receipts, preserves worker attempts
+and resumes with the next attempt ID. Interrupted setup can be redelivered.
+The controller passes its worker-lock descriptor through each candidate; abrupt
+controller death cannot seal changing files or admit another worker. A CPU
+heartbeat regression first reproduced the orphan/sealing defect and now passes.
+Host regressions pass 136 checks (16 VM/optional-SDK skips); the pinned SDK
+volume payload test passes. VM replacement rehearsal and full MoE CUDA replay
+remain pending; no volume or new rental exists.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.

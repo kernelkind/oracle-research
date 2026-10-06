@@ -1155,6 +1155,9 @@ def invoke_private_create(
         arguments += ["--disk-gb", str(context.limit("disk_gb"))]
         if context.config.get("onstart"):
             arguments += ["--onstart-cmd", context.config["onstart"]]
+        if "local_volume" in context.config:
+            volume = context.config["local_volume"]
+            arguments += ["--local-volume-id", str(volume["id"])]
     try:
         subprocess.run(
             arguments,
@@ -1928,6 +1931,81 @@ def retrieve_preparation_failure(
         )
 
 
+def ensure_remote_volume(context: Context, private_key: Path, target: list[str],
+                         remote_receipts: Path, instance_id: str) -> None:
+    receipt = context.path("launch/volume-prepared.json")
+    digest = sha256_file(context.config_path)
+    if receipt.exists():
+        saved = read_json(receipt)
+        if saved.get("instance_id") != instance_id or saved.get("contract_sha256") != digest:
+            raise OperationError("volume receipt differs from this instance or contract")
+        return
+    root = "/workspace/oracle-full-build"
+    completed_process([*ssh_arguments(context, private_key, target), "mountpoint", "-q", root])
+    staging = root + "/replacements/" + digest
+    tar_upload_directory(context, private_key, target, context.path("transport"), staging + "/transport/")
+    tar_upload_directory(context, private_key, target, remote_receipts, staging + "/launch/")
+    result = command_json([*ssh_arguments(context, private_key, target), context.remote_python,
+        staging + "/transport/control/vast_full_build.py", "--root", staging,
+        "--config", staging + "/launch/operation-contract.json", "_remote-volume-prepare"])
+    if not isinstance(result, dict) or result.get("prepared") is not True:
+        raise OperationError("persistent volume preparation was not acknowledged")
+    atomic_json(receipt, {"instance_id": instance_id, "contract_sha256": digest, "remote_receipt": result})
+
+
+def remote_volume_prepare(context: Context, volume_root: Path) -> dict[str, object]:
+    """Keep saved work at its original paths; retire only prior control receipts."""
+    if "local_volume" not in context.config:
+        raise OperationError("volume preparation requires a frozen local volume")
+    completed_process(["mountpoint", "-q", str(volume_root)])
+    verify_reviewed_artifacts(context, require_local_execution_package=False)
+    identity = volume_root / "volume-identity.json"
+    if identity.exists():
+        if read_json(identity) != context.config["local_volume"]:
+            raise OperationError("mounted volume identity differs from the frozen volume")
+    else:
+        atomic_json(identity, context.config["local_volume"])
+    digest = sha256_file(context.config_path)
+    receipt = volume_root / "volume-receipts" / (digest + ".json")
+    with file_lock(volume_root / "volume.lock", blocking=False):
+        if receipt.exists():
+            return read_json(receipt)
+        prior_path = volume_root / "launch/operation-contract.json"
+        recovery = context.config.get("volume_recovery")
+        if recovery is None:
+            if prior_path.exists() or (volume_root / "work").exists():
+                raise OperationError("existing volume work requires an explicit verified replacement")
+            result = {"prepared": True, "recovered": False, "contract_sha256": digest}
+        else:
+            archive = volume_root / "recoveries" / recovery["previous_contract_sha256"]
+            intent = archive / "replacement-intent.json"
+            with file_lock(volume_root / "work/full-build-start.lock", blocking=False), \
+                    file_lock(volume_root / "work/full-build.lock", blocking=False):
+                if intent.exists():
+                    if read_json(intent) != {"contract_sha256": digest, "recovery": recovery}:
+                        raise OperationError("volume replacement intent differs from this contract")
+                    # Delivery can resume after interruption between directory renames.
+                    validate_file_records(volume_root / "work", recovery["work_files"])
+                else:
+                    verify_sha(prior_path, recovery["previous_contract_sha256"], "previous volume contract")
+                    validate_file_records(volume_root / "work", recovery["work_files"])
+                    atomic_json(intent, {"contract_sha256": digest, "recovery": recovery})
+                for relative in ("launch", "transport", "package", "preparation-attempts",
+                                 "work/retrieval-manifest.json"):
+                    source = volume_root / relative
+                    destination = archive / Path(relative).name
+                    if source.exists():
+                        if destination.exists():
+                            raise OperationError("volume recovery archive already contains " + relative)
+                        os.rename(source, destination)
+                        sync_directory(destination.parent)
+                result = {"prepared": True, "recovered": True, "contract_sha256": digest,
+                          "previous_instance_id": recovery["previous_instance_id"],
+                          "archive": str(archive.relative_to(volume_root))}
+        atomic_json(receipt, result)
+        return result
+
+
 def ensure_remote_prepared(
     context: Context,
     instance_id: str,
@@ -1938,6 +2016,8 @@ def ensure_remote_prepared(
     local_receipt = context.path("launch/remote-prepared.json")
     if local_receipt.exists():
         return True
+    if "local_volume" in context.config:
+        ensure_remote_volume(context, private_key, target, remote_receipts, instance_id)
     transfer_receipt = context.path("launch/remote-transfer-verified.json")
     if transfer_receipt.exists():
         transfer = read_json(transfer_receipt)
@@ -2089,7 +2169,8 @@ def next_attempt_id(context: Context) -> str:
         for path in directory.glob("[0-9][0-9][0-9].json")
         if path.stem.isdecimal()
     )
-    value = (existing[-1] + 1) if existing else 1
+    previous = int(context.config.get("volume_recovery", {}).get("previous_attempt", "000"))
+    value = (existing[-1] if existing else previous) + 1
     if value > 999:
         raise OperationError("worker attempt namespace is exhausted")
     return f"{value:03d}"
@@ -2236,6 +2317,18 @@ def ensure_worker_started(
         )
     continuation_args = []
     saved_invocation = read_json(invocation)
+    recovery = context.config.get("volume_recovery")
+    if recovery is not None and "resume_from" not in saved_invocation:
+        saved_invocation.update(resume_from=recovery["previous_attempt"],
+            reason="Continue the identical workload after verified volume-backed instance replacement")
+        atomic_json(invocation, saved_invocation, replace=True)
+    if recovery is not None and saved_invocation.get("resume_from") == recovery["previous_attempt"]:
+        prepared = context.path(f"launch/worker-invocations/{attempt_id}.prepared.json")
+        if not prepared.exists():
+            volume = read_json(context.path("launch/volume-prepared.json"))
+            if volume.get("instance_id") != instance_id or not volume.get("remote_receipt", {}).get("recovered"):
+                raise OperationError("volume continuation has not verified its saved work")
+            atomic_json(prepared, {"volume_receipt_sha256": sha256_file(context.path("launch/volume-prepared.json"))})
     if "resume_from" in saved_invocation:
         if not context.path(f"launch/worker-invocations/{attempt_id}.prepared.json").is_file():
             raise OperationError("continuation retrieval archive is not prepared; rerun resume")
@@ -2369,17 +2462,29 @@ def remote_attempt_status(context: Context, attempt_id: str) -> dict[str, object
     attempt = context.path(f"work/full-build-attempts/{attempt_id}")
     if not attempt.is_dir():
         return {"state": "absent", "attempt_id": attempt_id}
+    # Controller exit is not proof that its independently running children
+    # stopped writing. They inherit this lock until their own process exits.
+    worker_lock = context.path("work/full-build.lock")
+    worker_lock_held = False
+    if worker_lock.exists():
+        with worker_lock.open("rb") as descriptor:
+            try:
+                fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                worker_lock_held = True
+            else:
+                fcntl.flock(descriptor, fcntl.LOCK_UN)
     terminal = terminal_state(attempt)
-    if terminal is not None:
+    if terminal is not None and not worker_lock_held:
         return {"state": "terminal", "attempt_id": attempt_id, **terminal}
     started = (attempt / "full-build.started").is_file()
     supervisor = read_pid(attempt / "full-build.pid")
     controller = read_pid(attempt / "controller.pid")
     supervisor_alive = process_alive(supervisor)
     controller_alive = process_alive(controller)
-    if started and controller_alive:
+    if started and (controller_alive or worker_lock_held):
         state = "running"
-    elif supervisor_alive or controller_alive:
+    elif supervisor_alive or controller_alive or worker_lock_held:
         state = "starting"
     else:
         state = "orphaned"
@@ -2392,6 +2497,7 @@ def remote_attempt_status(context: Context, attempt_id: str) -> dict[str, object
         "supervisor_alive": supervisor_alive,
         "controller_pid": controller,
         "controller_alive": controller_alive,
+        "worker_lock_held": worker_lock_held,
     }
 
 
@@ -2960,6 +3066,7 @@ def remote_supervise(
                     start_new_session=True,
                     close_fds=True,
                     pass_fds=(worker_lock.fileno(),),
+                    env={**os.environ, "ORACLE_RUN_WORKER_LOCK_FD": str(worker_lock.fileno())},
                 )
             finally:
                 log.close()
@@ -3214,8 +3321,8 @@ def remote_seal(context: Context, attempt_id: str) -> dict[str, object]:
         with file_lock(context.path("work/full-build.lock"), blocking=False):
             terminal = terminal_state(attempt)
             if terminal is None:
-                status = remote_attempt_status(context, attempt_id)
-                if status["state"] != "orphaned":
+                if any(process_alive(read_pid(attempt / name))
+                       for name in ("full-build.pid", "controller.pid")):
                     raise OperationError("worker is not terminal and cannot be sealed")
                 if attempt_execution_committed(attempt):
                     atomic_bytes(
@@ -5457,6 +5564,7 @@ def parse_args() -> argparse.Namespace:
         "_remote-prepare-worker", help=argparse.SUPPRESS
     )
     prepare_worker.add_argument("--start-lock-fd", required=True, type=int)
+    subparsers.add_parser("_remote-volume-prepare", help=argparse.SUPPRESS)
     for operation in (
         "_remote-worker",
         "_remote-controller",
@@ -5594,6 +5702,23 @@ def recover_create_result(
 
 
 def validate_command_context(context: Context) -> None:
+    if "local_volume" in context.config:
+        volume = required_object(context.config, "local_volume")
+        if (set(volume) != {"id", "machine_id"}
+                or any(type(v) is not int or v <= 0 for v in volume.values())
+                or volume["machine_id"] != context.config["selected_offer"]["machine_id"]):
+            raise OperationError("local volume must belong to the selected physical machine")
+    if "volume_recovery" in context.config:
+        recovery = required_object(context.config, "volume_recovery")
+        if "local_volume" not in context.config:
+            raise OperationError("replacement requires a local volume")
+        require_sha256(required_string(recovery, "previous_contract_sha256"), "previous volume contract")
+        parse_attempt_id(required_string(recovery, "previous_attempt"))
+        required_string(recovery, "previous_instance_id")
+        if not recovery.get("work_files"):
+            raise OperationError("replacement requires sealed work records")
+        if context.config["workload"].get("resumable") is not True:
+            raise OperationError("volume replacement requires a resumable workload")
     if "cleanup_seconds" in context.config:
         cleanup = required_nonnegative_int(context.config, "cleanup_seconds")
         if cleanup >= required_positive_int(context.config, "session_seconds"):
@@ -5636,6 +5761,11 @@ def validate_command_context(context: Context) -> None:
     if not isinstance(environment, dict) or any(not isinstance(k, str) or not k or "=" in k
             or not isinstance(v, str) or "\0" in k + v for k, v in environment.items()):
         raise OperationError("workload.environment must contain string environment variables")
+    if "ORACLE_RUN_WORKER_LOCK_FD" in environment:
+        raise OperationError("worker lock descriptor is reserved for the supervisor")
+    if ("local_volume" in context.config
+            and environment.get("HF_HOME") != "/workspace/oracle-full-build/model-cache"):
+        raise OperationError("local volume requires the persistent model cache")
     if 'work_seconds' not in workload or workload['work_seconds'] is not None:
         required_positive_int(workload, "work_seconds")
     if not isinstance(workload.get("resumable", False), bool):
@@ -5824,6 +5954,10 @@ def main() -> int:
             result = stop(context, incomplete_stop_approval=args.incomplete_stop_approval)
         elif args.operation == "_remote-verify-transfer":
             result = remote_verify_transfer(context)
+        elif args.operation == "_remote-volume-prepare":
+            if context.root.parent != Path('/workspace/oracle-full-build/replacements'):
+                raise OperationError("volume staging root is invalid")
+            result = remote_volume_prepare(context, Path('/workspace/oracle-full-build'))
         elif args.operation == "_remote-prepare":
             result = remote_prepare(context)
         elif args.operation == "_remote-prepare-worker":

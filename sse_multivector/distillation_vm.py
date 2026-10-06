@@ -157,16 +157,19 @@ docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
 ssh-keygen -q -t ed25519 -N '' -f "$result_dir/deployment-key"
 chmod 600 "$result_dir/deployment-key"
 docker network create --internal distillation-local
+recovery_volume=distillation-recovery-${result_dir##*/}
 cleanup_target() {
   docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1 || true
   docker rm -f distillation-target >/dev/null 2>&1 || true
   docker network rm distillation-local >/dev/null 2>&1 || true
+  docker volume rm "$recovery_volume" >/dev/null 2>&1 || true
   rm -f "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 }
 trap cleanup_target EXIT
 # Model Vast managed SSH: override entrypoint, run the approved onstart,
 # attach the temporary key separately. No image-specific SSH daemon.
-docker run -d --name distillation-target --network distillation-local --network-alias target --entrypoint /bin/sh notedeck-distillation:local -c 'ssh-keygen -A && service ssh start && exec sleep infinity'
+start_target() {
+docker run -d --name distillation-target --network distillation-local --network-alias target "$@" --entrypoint /bin/sh notedeck-distillation:local -c 'ssh-keygen -A && service ssh start && exec sleep infinity'
 docker exec distillation-target mkdir -p /root/.ssh
 docker exec -i distillation-target sh -c 'cat > /root/.ssh/authorized_keys; chmod 600 /root/.ssh/authorized_keys' < "$result_dir/deployment-key.pub"
 for attempt in $(seq 1 30); do
@@ -174,6 +177,8 @@ for attempt in $(seq 1 30); do
   test "$(docker inspect -f '{{.State.Running}}' distillation-target)" = true
   sleep 1
 done
+}
+start_target
 cat > "$result_dir/ssh-target.json" <<'TARGET'
 {"host":"root@target","port":22,"identity":"/results/deployment-key"}
 TARGET
@@ -184,6 +189,27 @@ docker run --rm --network distillation-local \\
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
   sse_multivector.test_distillation_deploy sse_multivector.test_distillation_vast
 docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1
+# Replace an actual container while keeping its volume. Both operator phases
+# use the frozen shared runner over SSH and run with networking disabled.
+docker rm -f distillation-target
+docker volume create "$recovery_volume"
+start_target -v "$recovery_volume":/workspace/oracle-full-build
+docker run --rm --network distillation-local \\
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_VOLUME_STAGE=seed -v "$result_dir":/results \\
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_seed_volume_before_container_replacement
+docker exec distillation-target /opt/distillation-venv/bin/python -c 'from pathlib import Path; p=Path("/workspace/oracle-full-build/model-cache/hub/models--fixture--cached/snapshots/"+"a"*40+"/config.json"); p.parent.mkdir(parents=True); p.write_text("cached model config")'
+docker logs distillation-target > "$result_dir/volume-original.log" 2>&1
+docker rm -f distillation-target
+start_target -v "$recovery_volume":/workspace/oracle-full-build
+docker exec distillation-target /opt/distillation-venv/bin/python -c 'from huggingface_hub import hf_hub_download; from pathlib import Path; p=hf_hub_download("fixture/cached","config.json",revision="a"*40,cache_dir="/workspace/oracle-full-build/model-cache/hub",local_files_only=True); assert Path(p).read_text()=="cached model config"'
+docker run --rm --network distillation-local \\
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_VOLUME_STAGE=recover -v "$result_dir":/results \\
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_recover_volume_after_container_replacement
+docker logs distillation-target > "$result_dir/volume-replacement.log" 2>&1
 rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 docker save notedeck-distillation:local | gzip -1 > "$result_dir/container.tar.gz"
 """
