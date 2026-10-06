@@ -192,5 +192,123 @@ Every accepted run requires finite nonzero gradients, checkpoint hash recording,
 reload-logit agreement and finite five-column batched outputs. Failed admission
 does not download or load model weights. Benchmark output includes cold-load,
 warmup/steady optimization, save/reload and inference timings separately.
-Initial GPU validation remains in progress; source/config availability does
-not establish that a model has passed these checks.
+An explicit NF4 Qwen configuration tests whether the 9B path can coexist with
+serving. This is a different precision experiment from BF16 LoRA, not a silent
+change to that configuration or an assertion that their quality is equal.
+
+### Measured results, 2026-10-05
+
+These runs used the live GB10 with its existing server still resident. The
+workload has synthetic IDs and cyclic five-way targets; it tests execution,
+not SHR accuracy or convergence. Each length used one warmup update and four
+measured updates, batch size one, gradient checkpointing, BF16 autocast and
+AdamW. Inference values below are medians of five warmed batches of eight at
+512 tokens. No tokenizer, prompt-rendering, request transport or data-loading
+time is included in those inference values.
+
+| Model/path | Seconds/update, 512 tokens | Peak allocated GiB, training | Examples/sec, batch 8, 512 tokens | Save/reload and five-way inference |
+| --- | ---: | ---: | ---: | --- |
+| Ettin-400M, full FP32 | 0.249 | 7.44 | 56.9 | Passed |
+| Ettin-1B, FP32 base plus LoRA | 0.196 | 4.26 | 18.1 | Passed |
+| DeBERTa NLI warm start, full FP32 and new five-way head | 0.408 | 8.17 | 23.0 | Passed |
+| Qwen3.5-9B-Base, NF4 plus FP32 LoRA | 1.021 | 8.08 | 4.2 | Passed |
+
+Ettin-1B's quicker optimization than Ettin-400M here is **not** a controlled
+model-size comparison: it trains 11.65 million parameters through LoRA, whereas
+the 400M run updates all 395.84 million. DeBERTa updates 435.07 million.
+The original NLI output head is replaced rather than mapped to SHR labels.
+The Ettin runs also passed complete 2,048-token training and inference; training
+took 0.457 sec/update for 400M and 0.755 sec/update for 1B LoRA. Their peaks at
+that length were 7.44 and 4.75 GiB respectively. DeBERTa is limited to 512
+positions. These are short capacity samples, not full training-time forecasts.
+
+The FP32 Ettin-1B full-training configuration correctly refused admission while
+the server was resident: it reserves a 20 GiB process budget plus 8 GiB for
+other work. This establishes current contention, not a GB10 hardware limit.
+BF16 Qwen-9B similarly has an intentionally larger admission budget. Those
+configurations have not passed a training run. Qwen-9B NF4 passed all requested
+checks, including 3,072-token training and batches of eight at that length,
+while the original serving process stayed resident. No service pause was needed.
+
+For the longer Qwen workload, optimization took 4.830 sec/update with a 9.38 GiB
+peak; batch-eight inference produced 0.77 examples/sec with a 10.65 GiB peak.
+The run used the correct reference PyTorch causal-convolution implementation
+because the optional `causal_conv1d` optimized kernel was absent. These are
+measurements of that path, not an optimized Qwen throughput ceiling. Native FLA
+CUDA kernels were present. Compilation/setup contributed 38.2 sec to the first
+256-token update and 17.0 sec to the first 3,072-token update; those times are
+recorded separately from steady updates. NF4 results do not establish equal
+quality to BF16 training or validate Kev's separate decision head.
+
+Evidence remains ignored under `target/shr-student-prep-v1/`; report identities:
+
+- `ettin400m-report.json`: `eda0742300d8becc27ba435fc2f69ca51f6f254e66de8f4f4061b226186ed0b3`.
+- `ettin1b-lora-report.json`: `98e2a1587a84752ba98cf36e0474978a66bbdad3136b5e2a1650f21372a10b37`.
+- `deberta-report.json`: `cd6723c6e211b37aed39019f381216e147aa19256a282f0ecd20022ee78d9137`.
+- `qwen9b-nf4-report.json`: `0f36d462a687629e2eaa45ff44e454c8adfd3ecb3eed38667711358125c28d1e`.
+
+Each report contains exact per-step/per-batch timings, loss/gradient checks,
+model/config/code identities, package versions and checkpoint file hashes.
+Cold load timings include uncached downloads where needed: 7.6 sec (400M),
+139.0 sec (1B), 18.7 sec (DeBERTa). They are not an architecture comparison.
+Save/reload took 20.1/8.8, 1.2/14.6 and 15.5/13.2 sec respectively.
+Qwen's weights were downloaded before its load timer: load/save/reload took
+55.2/2.0/59.6 sec. Its original report's `parameters.total` counts packed tensor
+elements, not logical four-bit parameters. A subsequent tested metadata fix
+uses PEFT's logical count and records stored tensor elements separately; the
+original measurement artifact is unchanged. Its 43.28 million trainable
+parameter count is unaffected.
+
+### Isolated GB10 environment
+
+The working directory on GB10 is an isolated execution checkout at the same
+absolute path as the Anvil worktree. Its shallow snapshot preserves source
+bytes; imported commit IDs differ because parent history was omitted. Model
+revisions and file hashes, rather than assuming those commit IDs match, bind
+benchmark evidence to source. Nothing in the serving repository was changed.
+
+The verified native stack is Python 3.12.3, `torch==2.12.1+cu130`,
+`transformers==5.17.0`, `peft==0.21.0`, `accelerate==1.15.0` and
+`fla-core==0.5.2`. The explicit four-bit trial adds `bitsandbytes==0.50.2`.
+The [official CUDA-13 PyTorch index](https://download.pytorch.org/whl/cu130/torch/)
+provided the ARM64 wheel. BF16 CUDA matmul/backward passed on SM 12.1, and FLA's
+gated-delta CUDA forward/backward passed as a separate environment check.
+
+The host lacks Python development headers. FLA imported with a CPU fallback
+until the headers were available, so a successful import alone was insufficient.
+Download/extract `libpython3.12-dev` inside ignored artifacts and set `CPATH`
+to its `usr/include` and `usr/include/python3.12` directories. No privileged
+installation is needed. The initial ModernBERT run also exposed an obsolete
+`reference_compile` loader option; removing that option restored native loading.
+Both failed artifacts are preserved separately from the accepted runs.
+
+Use this layout to reproduce the environment, from the execution checkout:
+
+```bash
+python3 -m venv target/shr-student-prep-v1/venv
+target/shr-student-prep-v1/venv/bin/python -m pip install \
+  --cache-dir target/shr-student-prep-v1/pip-cache \
+  torch==2.12.1 --index-url https://download.pytorch.org/whl/cu130
+target/shr-student-prep-v1/venv/bin/python -m pip install \
+  --cache-dir target/shr-student-prep-v1/pip-cache \
+  transformers==5.17.0 peft==0.21.0 accelerate==1.15.0 \
+  fla-core==0.5.2 bitsandbytes==0.50.2
+```
+
+Keep `HF_HOME`, `TRITON_CACHE_DIR`, `TORCHINDUCTOR_CACHE_DIR` and scratch
+`TMPDIR` within `target/shr-student-prep-v1/`. For the Qwen check, include the
+extracted-header `CPATH`. Pin every model download to the configuration's
+revision. Record the resolved environment; the saved `requirements-resolved`
+artifact is evidence of this run, not a universal ARM/CUDA environment lock.
+
+Repository validation: the 15 audit/data/benchmark tests passed. The full shared
+experiment suite passed 115 tests with six optional-dependency skips after
+`tiktoken` was installed in an isolated check environment. The original
+missing-dependency failure is recorded separately from this passing run.
+A separate CUDA integration test uses a small native Qwen model through the
+same benchmark loader, NF4/LoRA optimization, checkpoint save/reload and batched
+five-way inference. It also checks logical versus packed parameter counting;
+enable it with `RUN_BENCHMARK_GPU_TESTS=1` on the GPU environment. It requires
+CUDA. All six benchmark tests passed with the GPU integration enabled. The
+existing serving process retained PID 3440281 and its `/health` endpoint
+returned HTTP 200 after the runs.

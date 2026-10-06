@@ -1,0 +1,17 @@
+{
+  "model": "Qwen/Qwen3.5-9B-Base",
+  "revision": "68c46c4b3498877f3ef123c856ecfde50c39f404",
+  "architecture": "causal_lm",
+  "method": "lora",
+  "quantization": "nf4",
+  "lengths": [256, 512, 3072],
+  "train_batch_size": 1,
+  "inference_batch_sizes": [1, 8],
+  "steps": 4,
+  "warmup_steps": 1,
+  "repetitions": 5,
+  "learning_rate": 0.00002,
+  "memory_budget_gib": 12,
+  "reserve_gib": 8,
+  "seed": 17
+}

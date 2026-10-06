@@ -1,7 +1,11 @@
 """Exercise benchmark admission before any model or CUDA allocation."""
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
 from sse_multivector import distillation_benchmark
+from sse_multivector.distillation_run import write_json
 
 
 class DistillationBenchmarkTests(unittest.TestCase):
@@ -35,6 +39,38 @@ class DistillationBenchmarkTests(unittest.TestCase):
         config["architecture"] = "causal_lm"
         with self.assertRaisesRegex(ValueError, "LoRA"):
             distillation_benchmark.validate_config(config)
+
+    def test_nf4_is_an_explicit_causal_lora_workload(self):
+        config = {**self.config(), "architecture": "causal_lm", "method": "lora", "quantization": "nf4"}
+        distillation_benchmark.validate_config(config)
+        config["architecture"] = "encoder"
+        with self.assertRaisesRegex(ValueError, "causal"):
+            distillation_benchmark.validate_config(config)
+
+
+@unittest.skipUnless(os.environ.get("RUN_BENCHMARK_GPU_TESTS") == "1", "explicit CUDA integration run")
+class BenchmarkGPUIntegrationTests(unittest.TestCase):
+    def test_nf4_counts_logical_parameters_and_verifies_a_real_checkpoint(self):
+        import torch
+        from transformers import Qwen2Config, Qwen2ForCausalLM
+        self.assertTrue(torch.cuda.is_available())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            model = Qwen2ForCausalLM(Qwen2Config(vocab_size=2048, hidden_size=64,
+                intermediate_size=128, num_hidden_layers=2, num_attention_heads=4,
+                num_key_value_heads=2, max_position_embeddings=256))
+            model.save_pretrained(root / "base")
+            del model
+            config = {**DistillationBenchmarkTests().config(), "model": str(root / "base"),
+                "architecture": "causal_lm", "method": "lora", "quantization": "nf4",
+                "lengths": [32], "inference_batch_sizes": [1, 2], "steps": 2}
+            path = root / "config.json"
+            write_json(path, config)
+            result = distillation_benchmark.run(path, root / "benchmark")
+            self.assertTrue(result["complete"])
+            self.assertTrue(result["reload_matches"])
+            self.assertEqual(len(result["inference"]), 2)
+            self.assertGreater(result["parameters"]["total"], result["parameters"]["stored_tensor_elements"])
 
 
 if __name__ == "__main__":

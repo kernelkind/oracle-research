@@ -22,7 +22,7 @@ def validate_config(config):
     fields = {"model", "revision", "architecture", "method", "lengths", "train_batch_size",
               "inference_batch_sizes", "steps", "warmup_steps", "repetitions", "learning_rate",
               "memory_budget_gib", "reserve_gib", "seed"}
-    if set(config) != fields:
+    if not fields <= set(config) <= fields | {"quantization"}:
         raise ValueError("unexpected or missing benchmark configuration fields")
     if not re.fullmatch(r"[0-9a-f]{40}", config["revision"]):
         raise ValueError("model revision must be an immutable commit")
@@ -30,6 +30,9 @@ def validate_config(config):
         raise ValueError("expected encoder/causal_lm and full/lora")
     if config["architecture"] == "causal_lm" and config["method"] != "lora":
         raise ValueError("causal LM benchmark requires LoRA")
+    quantization = config.get("quantization", "none")
+    if quantization not in {"none", "nf4"} or quantization != "none" and config["architecture"] != "causal_lm":
+        raise ValueError("quantization must be none, or nf4 for causal LoRA")
     for name in ("lengths", "inference_batch_sizes"):
         values = config[name]
         if not isinstance(values, list) or not values or any(type(n) is not int or n <= 0 for n in values):
@@ -95,7 +98,7 @@ def run(config_path, output):
             raise ValueError("system memory fell below the configured reserve")
 
     lm_config = dict(model=config["model"], revision=config["revision"], device="cuda",
-                     quantization="none", max_length=max(config["lengths"]), efficient_attention=True,
+                     quantization=config.get("quantization", "none"), max_length=max(config["lengths"]), efficient_attention=True,
                      lora_target_modules="all-linear", lora_rank=16, lora_alpha=32,
                      gradient_checkpointing=True)
 
@@ -107,7 +110,7 @@ def run(config_path, output):
         architecture = AutoConfig.from_pretrained(checkpoint if checkpoint and config["method"] == "full"
                                                  else config["model"], revision=config["revision"])
         if architecture.model_type == "modernbert":
-            options.update(reference_compile=False, attn_implementation="sdpa")
+            options.update(attn_implementation="sdpa")
         if checkpoint and config["method"] == "full":
             return AutoModelForSequenceClassification.from_pretrained(checkpoint, **options)
         model = AutoModelForSequenceClassification.from_pretrained(
@@ -140,7 +143,10 @@ def run(config_path, output):
         if limit is not None and max(config["lengths"]) > limit:
             raise ValueError("requested complete sequence exceeds model position limit")
         parameters = [p for p in model.parameters() if p.requires_grad]
-        report["parameters"] = {"total": sum(p.numel() for p in model.parameters()),
+        stored = sum(p.numel() for p in model.parameters())
+        # PEFT accounts for the packed storage of four-bit weights.
+        total = model.get_nb_trainable_parameters()[1] if config["method"] == "lora" else stored
+        report["parameters"] = {"total": total, "stored_tensor_elements": stored,
                                 "trainable": sum(p.numel() for p in parameters)}
         optimizer = torch.optim.AdamW(parameters, lr=config["learning_rate"])
         for length in config["lengths"]:
