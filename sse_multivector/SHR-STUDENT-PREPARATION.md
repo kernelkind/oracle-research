@@ -16,9 +16,11 @@ SHR training labels. Untuned encoders with a new SHR head cannot give meaningful
 five-relation predictions; their existing capacity checks remain useful.
 
 The comparison uses Qwen3.5-9B instruct, Gemma-4-12B-it, and Kev-9B's native
-pointer head with its published adapter. All use explicit NF4 loading while the
-separate serving process remains resident. Each receives the unchanged saved
-SHR-single-v26 prompt. Kev additionally receives a configured choice question
+pointer head with its published adapter. All use explicit NF4 loading. Qwen
+and Kev were measured with the separate serving process resident; Gemma used
+the subsequently human-authorized pause described below. Each receives the
+unchanged saved SHR-single-v26 prompt. Kev additionally receives a configured
+choice question
 and returns the highest-scoring native option with an empty diagnostic reason.
 That different readout contract and its probabilities must remain visible.
 
@@ -89,9 +91,10 @@ that missing-package result is retained rather than counted as a pass.
 
 ### Provisional comparison results
 
-All 140 completed calls below used published checkpoints, not the synthetic
-optimization checkpoints. Each had one attempt and a valid five-relation JSON
-answer. Baseline agreement ignores diagnostic reason wording. No paid calls
+The 140 Qwen/Kev calls in this table used published checkpoints, not the
+synthetic optimization checkpoints. Each had one attempt and a valid
+five-relation JSON answer. Baseline agreement ignores diagnostic reason
+wording. No paid calls
 or SHR teacher-label generation occurred.
 
 | Checkpoint/readout, NF4 | Original teacher agreement / reversal consistency | Scope | Transfer | Total |
@@ -119,13 +122,67 @@ cases found zero matches in ASv6.100 training, validation or reserved final-test
 membership. It read the prepared manifest's IDs, not final-test content or
 references. This phase does not erase the earlier exposure record below.
 
-Gemma-4-12B-it's complete and corrected text-only loads were both stopped when
-co-resident CPU memory pressure caused heavy swapping. No Gemma decisions or
-optimization updates were produced. The corrected text loader passed the
-native small-checkpoint test; the full candidate remains unmeasured, not
-disqualified. Its 70 saved cases and pinned synthetic capacity configuration
-are ready for an authorized free GPU window. The user has been asked before
-pausing the separate LibreChat/OpenCode model server; no pause is assumed.
+Gemma-4-12B-it's earlier complete and corrected text-only loads were stopped
+when co-resident CPU memory pressure caused heavy swapping. The user then
+explicitly authorized a temporary pause while preserving the serving system.
+The co-resident serving process was paused for the subsequent capacity checks.
+
+### Gemma decisions and output contract
+
+The paused-server window allowed the unchanged pinned Gemma text model to load
+with the existing 12 GiB CUDA allocation cap. Available system memory before
+loading was about 118 GiB. It completed all 70 saved v26 cases, each in one
+attempt. Every response enclosed its JSON answer in a Markdown fence, violating
+v26's explicit no-Markdown instruction. All 70 remain native failed receipts;
+none was repaired, retried, converted into a valid output or used for fitting.
+`relation_diagnostics` therefore reports no validated Gemma decisions.
+
+Read-only inspection of the raw answers gives a separate development assessment:
+
+| Raw-label inspection | Teacher agreement | Reversal consistency |
+| --- | ---: | ---: |
+| Original | 32/40 | 18/20 |
+| Scope | 6/8 | 3/4 |
+| Transfer | 10/22 | 11/11 |
+| Total | 48/70 | 32/35 |
+
+This is an agent inspection of raw labels, not the native validated-output
+metric or semantic gold. The original disagreements are `P03-forward`,
+`P05-forward`, both `B01`, both `B03` and both `B06` directions; scope differs
+on both `R05` directions; transfer differs on both directions of `R10` through
+`R15`. Inconsistent raw reversals are `P03`, `P05` and `R05`. All other displayed
+raw labels match the saved baseline and its reversed order. Repeated Culture
+cases do not supply twelve independent observations.
+
+Native agent reviews preserve concrete evidence. Gemma's Music/Jazz and
+Science/Psychology decisions preserve the broad fields. Coffee/Coffee drinking
+and general/specific puzzlement each have a forward parent-label error despite
+an explanation identifying the broader topic. It treats an omelette as beneath
+Cooking and merges the recording activity with its resulting works. Pollan's
+author/advice limit is imported into an unrestricted eating principle. On the
+Culture transfer cases it returns `neither` in both directions, sometimes
+reasoning that Culture includes other activities or is not limited to the
+narrower topic; those facts do not refute narrower-to-broader containment.
+The Culture/person whole-topic judgment remains unresolved in agent review,
+as it was for Kev. Teacher disagreement alone does not settle that judgment.
+
+Fresh native experiments are `gemma-{original,scope,transfer}-v3`; the unused
+v2 plans predate final serving-loader cleanup and remain preserved. Preparing
+v3 froze the committed runner identity while retaining the exact saved v26
+inputs, prompt, greedy settings and teacher baseline. The initial missing
+history-directory preparation error made no calls and is retained. Full
+native `show --json` views remain ignored at `gemma-*-v3-show.json`.
+The three `run/results.jsonl` SHA-256 bindings, in original/scope/transfer order,
+are `e5f3ef7df1ca384f831778672aa86efacd77494f8a5d740f909e57cafb0c0054`,
+`0ac9e4e56d6fcb9fc54dd2c277306740a3a458f55a15e64f8022d2c841a9cbf7`, and
+`f404c79b425b286767601bbc2496790ea79e26f65c16ff34d05658870b0de0ca`.
+
+Kev remains the better-supported provisional decision warm start. Gemma's
+raw-label assessment exceeds Qwen instruct's validated agreement, but its
+published checkpoint still exhibits scope and direction failures. Its output
+formatting can change with task training; these results do not disqualify the
+foundation or rank students after matched SHR training. High reversal
+consistency alone does not establish correct containment.
 
 ### Verified Kev capacity path
 
@@ -176,6 +233,40 @@ after adding staged verification. The final full shared CPU suite passed
 218 tests with nine optional skips; the subsequent focused source checks
 passed 14 tests with three native-weight/CUDA skips. Native GB10 coverage also
 includes the 44 production distillation tests and two checkpoint/identity tests.
+
+### Verified Gemma capacity path
+
+The pinned NF4 Gemma text model also passed native LoRA optimization, save,
+fresh-worker reload/probe-logit agreement, and all four finite five-way
+inference shapes. Its 65,568,768 trainable parameters are FP32 LoRA weights;
+the shared subject-training loader requests a BF16 frozen base and the
+benchmark uses BF16 autocast with native gradient checkpointing. It does not
+apply the pointer path's k-bit preparation. The five synthetic scores come
+from arbitrary vocabulary IDs through the native one-position projection,
+not a trained SHR head or generated reasons.
+
+| Synthetic complete input | Seconds/update | Peak allocated GiB, training | Examples/sec, batch 8 | Peak allocated GiB, batch-8 inference |
+| --- | ---: | ---: | ---: | ---: |
+| 512 tokens | 1.57 | 8.44 | 2.58 | 8.02 |
+| 2,048 tokens | 6.33 | 9.44 | 0.64 | 9.93 |
+
+The same one-warmup/four-update and five-inference-repetition protocol was
+used. Training and verification workers were PIDs 1409658 and 1410442. The
+report is complete, reload logits match, and no error is recorded. Load and
+reload took about 148 and 190 seconds. This model path fits the existing
+12 GiB CUDA cap when the serving container is paused; loading memory remains
+a separate issue. It is a successful synthetic capacity check, not an SHR
+training result or full-run forecast. The Kev and Gemma paths differ in their
+head, frozen-weight preparation and serving contention, so these timings are
+not a controlled architecture comparison.
+
+The ignored GB10 report is `gemma-training-paused-v1/report.json`, with an
+owned Anvil copy `gemma-training-paused-v1-report.json`. Its SHA-256 is
+`9623f99781de43c44cbb03f2bfdb43a7336c12ede4ce8e80b5c1f68536afb9dd`.
+Source at `e7d3dc5e` reproduces the recorded code hashes and configuration.
+All experiment workers stopped after the check; system availability returned to about 118 GiB.
+The service script and Compose file fingerprints match their pre-pause
+values. 
 
 ## Dataset audit
 

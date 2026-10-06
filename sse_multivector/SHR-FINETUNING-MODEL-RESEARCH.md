@@ -47,8 +47,26 @@ different readout and prior training prevent attributing the difference solely
 to the head architecture. The teacher answers are development evidence,
 not gold. Kev's actual LoRA/head optimization, checkpoint reload and batched
 inference passed on GB10 while the separate server remained resident.
-Gemma's co-resident load caused heavy swapping; its comparison awaits an
-authorized resource window. That does not exclude Gemma on quality grounds.
+Gemma's co-resident load caused heavy swapping. After the human authorized and
+performed a temporary serving-container stop, its pinned NF4 text path
+completed the same 70 cases. All answers were Markdown-fenced JSON, so native
+strict validation rejected all 70. Separate raw-label inspection agrees with
+48/70 teacher relations and preserves 32/35 reversals; failed receipts remain
+unchanged and are not fitted targets. Its largest disagreement cluster is the
+12 related Culture transfer judgments, so that count is not independent
+evidence. It also repeats activity/product and directional-label errors.
+These observations retain Kev as the stronger provisional warm start while
+keeping Gemma as an independent foundation for matched SHR training. A syntax
+failure on the published checkpoint does not establish its post-training
+quality. The [preparation report](SHR-STUDENT-PREPARATION.md) records the
+source-bound raw inspection separately from validated native metrics.
+
+Gemma's actual native NF4 LoRA training/save/reload/inference path also passed
+on GB10 in that paused-server window: synthetic updates took 1.57 seconds at
+512 tokens and 6.33 seconds at 2,048, with 65.57 million FP32 adapter parameters
+and matching reload logits. This establishes a practical local training path.
+It does not establish SHR convergence or a matched speed advantage: Kev uses
+a different head and frozen-weight preparation, and its server was resident.
 
 ## Project constraints and task meaning
 
