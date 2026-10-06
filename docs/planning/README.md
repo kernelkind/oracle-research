@@ -133,11 +133,13 @@ charges. It releases $848.37 and keeps $2.63 pending; actual spend is $68.50.
  Full concurrent CUDA/MoE confirmation
 remains pending.
   Repeat the tested one-GPU download stage, then attach its verified cache to the two-GPU prep/pilot.
-The download cache contained all **42 files / 169.8 GB**, checksum verified. The download completed successfully; all evidence was retrieved and independently reviewed locally. Independent review confirmed the retrieved evidence. The preliminary download-stage cost was **$1.22**.
-The two-GPU configuration cost **$2.8139/hour** plus separate storage.  The unchanged worker checks the cache offline, then requires all three
-concurrent CUDA prep checks and all three baselines before training. The private
-runtime, prompts, data, models and recipe are unchanged; observe through complete
-retrieval/review and explicit GPU deletion.
+The download cache held all **42 files / 169.8 GB**, checksum verified. The download completed successfully; local completeness review verified the retrieved evidence.
+Its preliminary bill is $1.22, with 28 cents retained under the $1.50 bound.
+The two-GPU run passed cache attachment and offline verification. Qwen and
+Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
+**No pilot baseline or training started.** All **97 work files / 5.85 GB** and six preparation files were retrieved and independently rehashed. Preliminary charges were **$1.445**.
+ Investigate the saved MoE discrepancy locally before another
+pilot launch; prompts, data, models and training recipe remain unchanged.
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
 pinned models. Reattach the retained volume for offline verification and full

@@ -1657,11 +1657,13 @@ leaves $256.48 for main GPU work inside the original $285 including failures.
 tested private runtime and one-GPU download → two-GPU prep/pilot flow apply;
 all cache checks and global prep/baseline gates remain required. Evidence:
 `target/distillation-pilot-v1/host-switch-20261006/`.
-The download cache contained all **42 files / 169.8 GB**, checksum verified. The download completed successfully; all evidence was retrieved and independently reviewed locally. Independent review confirmed the retrieved evidence. The preliminary download-stage cost was **$1.22**.
-The two-GPU configuration cost **$2.8139/hour** plus separate storage.  The unchanged worker checks the cache offline, then requires all three
-concurrent CUDA prep checks and all three baselines before training. The private
-runtime, prompts, data, models and recipe are unchanged; observe through complete
-retrieval/review and explicit GPU deletion.
+The download cache held all **42 files / 169.8 GB**, checksum verified. The download completed successfully; local completeness review verified the retrieved evidence.
+Its preliminary bill is $1.22, with 28 cents retained under the $1.50 bound.
+The two-GPU run passed cache attachment and offline verification. Qwen and
+Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
+**No pilot baseline or training started.** All **97 work files / 5.85 GB** and six preparation files were retrieved and independently rehashed. Preliminary charges were **$1.445**.
+ Investigate the saved MoE discrepancy locally before another
+pilot launch; prompts, data, models and training recipe remain unchanged.
 
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker

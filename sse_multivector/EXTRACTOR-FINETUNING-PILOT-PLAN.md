@@ -2390,14 +2390,15 @@ tested single-GPU cache-download/retrieval/deletion stage, then the new volume
 and unchanged two-GPU package for concurrent CUDA prep and pilot. No source,
 model, prompt, data or recipe changes. No automatic deletion/cutoff. Evidence:
 `target/distillation-pilot-v1/host-switch-20261006/`.
-The model-cache volume on the host now contains all **42 files / 169.8 GB**,
-checksum verified. The download stage completed successfully; all
-evidence was retrieved and independently reviewed locally.
-The preliminary resource charge was **$1.22**.
-The recorded rental rate was $2.8139/hour. The unchanged worker checks the cache offline, then requires all three
-concurrent CUDA prep checks and all three baselines before training. The private
-runtime, prompts, data, models and recipe are unchanged; observe through complete
-retrieval/review and explicit GPU deletion.
+The model-cache volume on the host holds all **42 files / 169.8 GB**,
+checksum verified. The download stage completed successfully; local completeness review was performed.
+The preliminary resource charge was $1.22.
+The two-GPU preparation passed cache attachment and offline verification. Qwen and
+Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
+**No pilot baseline or training started.** All **97 work files / 5.85 GB** and
+six preparation files were retrieved and independently rehashed.
+The preliminary resource charge was **$1.445**. Investigate the saved MoE discrepancy locally before another
+pilot launch; prompts, data, models and training recipe remain unchanged.
 
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
