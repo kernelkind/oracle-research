@@ -121,19 +121,18 @@ VM rehearsal passed 109 checks; the private image and unchanged packages pass
 native prepare. The quoted download-only rate was $1.4278/hour including storage. The download completed: all **42 files / 169.8 GB** were checksum verified on the volume, and all completion evidence was verified locally. 
 The preliminary cost was $0.455. No baseline/training yet. Slow image startup now stays pending
 and retries on the same instance; 176 local tests succeed (three VM-only skips).
-Updated VM rehearsal/private publication precede the main two-card launch. Full
-concurrent CUDA/MoE confirmation and main spending admission remain pending.
+The updated VM passes 109 checks and stops cleanly; the rebuilt private image
+and both unchanged-input packages verify against it. Read-only pull succeeds
+and anonymous access is rejected. Full concurrent CUDA/MoE confirmation remains pending.
 No automatic stop or deletion.
-Use a one-card rental on that machine to verify attachment and download all
-three pinned models onto the actual volume, approved October 6. Verify files
-and retrieve evidence before deleting the container; retain the volume for
-offline cache verification and full concurrent prep on two cards. This new
-download stage is implemented and its full handoff passes in the VM: verified
-local retrieval, actual container replacement, offline cache verification and
-prep→pilot with two workers. Missing/corrupt files block every worker before prep.
-The new packages preserve all six configurations and data. The rebuilt image is
-published and verified private; actual Vast attachment/CUDA checks are next. Evidence:
-`target/distillation-pilot-v1/model-cache-stage-20261006/`.
+The approved one-card stage verified actual attachment and downloaded all three
+pinned models. Reattach the retained volume for offline verification and full
+concurrent prep on two cards. Missing/corrupt files block every worker before
+prep. The full handoff passes in the VM, including verified local retrieval,
+container replacement and two-worker prep→pilot. Both packages preserve all six
+configurations and data. Current runtime/publication evidence:
+`target/distillation-pilot-v1/startup-retry-20261006/`; actual download evidence:
+`target/distillation-pilot-v1/download-launch-20261006-v3/`.
 The user reconfirmed one main rental with two GPUs on October 6 after comparing
 separate rentals; keep the tested deployment and shared prep/baseline checks.
 Paired prep/pilot execution and completeness checks are implemented locally:

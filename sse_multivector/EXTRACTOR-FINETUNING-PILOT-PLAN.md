@@ -2314,8 +2314,19 @@ without a second create or remote edits. Future command startup remains pending
 and retries after each bounded readiness window. The CLI regression failed
 first and now passes; 176 local tests succeed (three VM-only skips). Rebuilt
 packages preserve all six configs, data and model file requirements byte for
-byte, changing only the controller runtime hash. Updated VM rehearsal/private
-publication remain before main launch. No pilot baseline or training yet.
+byte, changing only the controller runtime hash. Updated VM rehearsal and
+private publication pass. The first export filled the 64GB VM disk after all
+checks passed; five verified duplicate archives were removed from the VM while
+preserving their host copies. The standard rerun passes 109 checks, separately
+covers four earlier volume/cache skips, exports the verified image and stops
+cleanly. The unchanged optional candidate-tokenizer check is not rerun.
+Current main runtime/package evidence is under
+`target/distillation-pilot-v1/startup-retry-20261006/`. Its private digest is
+`docker.io/kernelkind/oracle-mvp@sha256:b99b4e9f23211bada17f37a5c73c8e26b1fde3bc66a1403783aee2d774567d1a`;
+VM layers/runtime/source and both packages match, read-only pull succeeds and
+anonymous manifest access is HTTP 401. Actual concurrent CUDA prep remains
+before main baseline/training.
+No pilot baseline or training yet.
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.

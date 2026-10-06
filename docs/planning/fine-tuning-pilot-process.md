@@ -48,8 +48,8 @@ at `/workspace`, keeping files under `/workspace/oracle-full-build`; local
 checks and all 109 VM checks pass. The private runtime passes native preparation.
 **Download stage completed October 6:** actual mounting and write/read checks
 passed. All **42 files / 169.8 GB** were checksum verified on the volume; local completion review passed.  The preliminary GPU/transfer cost was **$0.455**. Full concurrent CUDA prep and MoE confirmation are still next.
-The controller now retries slow image startup on the same instance; local
-regressions pass, with VM rehearsal/private publication before the main launch.
+The controller now retries slow image startup on the same instance. Local
+regressions, VM rehearsal and private publication pass. The next stage reattaches the verified cache to two GPUs for prep.
 
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent

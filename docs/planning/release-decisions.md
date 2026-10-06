@@ -1617,8 +1617,20 @@ now returns `instance_starting` after a readiness window and automatically
 retries on the same instance; fatal identity errors still fail. The production
 CLI regression failed first, then passed; 176 local tests succeed with three
 VM-only skips. All six configs, data and model file requirements are byte
-identical; only `vast/runner.py` changes in runtime hashes. Updated VM rehearsal
-and private publication precede the main launch. Evidence:
+identical; only `vast/runner.py` changes in runtime hashes. The first updated
+VM passed every runtime check but ran out of its 64GB disk during image export.
+Five duplicate archives were checksum matched to preserved host copies before
+removal, freeing 15.65GB. The standard rehearsal then completed: 109 checks
+pass, four volume/cache checks rerun their earlier skips, the unchanged optional
+candidate-tokenizer check remains skipped, and the VM stops cleanly. Export
+SHA256 is `133a80cbd02c58d678f990c206321b958fbc1f9b0225ac0e1fee358488638d41`.
+The rebuilt private image is
+`docker.io/kernelkind/oracle-mvp@sha256:b99b4e9f23211bada17f37a5c73c8e26b1fde3bc66a1403783aee2d774567d1a`.
+VM layers/effective configuration/source hashes and both frozen packages match;
+read-only pull succeeds and anonymous manifest access is HTTP 401. Actual
+concurrent CUDA prep remains a gate before every main baseline/training run.
+
+No pilot baseline or training had started. Evidence:
 `target/distillation-pilot-v1/download-launch-20261006-v3/` and
 `target/distillation-pilot-v1/startup-retry-20261006/`.
 The launcher now mounts the selected volume, retains model downloads and
