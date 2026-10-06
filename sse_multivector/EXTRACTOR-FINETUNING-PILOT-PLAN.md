@@ -2148,7 +2148,7 @@ were saved and independently hashed. No experiment data was produced. The prelim
 compatible offer quotes $2.9389/hour including 300 GB
 storage for two 96GB/600 W server cards. Native frozen preparation passed.
 The recorded rental rate was $2.9389/hour including 300 GB storage. Startup/
-GPU prep are continuously observed. The verified image, package, all 15 runtime
+GPU prep were observed. The verified image, package, all 15 runtime
 source hashes and recipe are unchanged. Continuous observation, live copying and complete-data
 deletion rules apply. New launch evidence is
 `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`.
@@ -2161,7 +2161,35 @@ were verified again. The original frozen supervisor/observer were restarted.
 Failure evidence, old supervisor receipts, effective local configuration and
 repair verification are in `operation/launch/startup-recovery/001/`. Future
 launch settings use $5 startup allowance. Main baselines/training had not
-started; no comparison was changed. GPU prep is now running.
+started; no comparison was changed.
+
+**Verified closure, October 6:** Qwen prep completed. Dense completed both
+updates, saved checkpoints, verified reload/merge, brief generation and cache
+checks. Its **94,948,556,800-byte / 88.43-GiB** training reservation exceeded the
+**88-GiB inference budget**, despite fitting the GPU without CUDA OOM. Applying
+that inference allowance to completed training was incorrect. The local fix
+removes the training rejection only; measured training peaks remain recorded,
+and inference batching/cache limits stay enforced. The production-path test
+first reproduced the rejection and then passed; the cache-rejection test also
+passed. Local exact-image tests with the source mounted read-only passed
+**73 tests**, with **12 deployment-VM checks skipped**. This source fix is not
+yet published or newly VM/CUDA validated.
+MoE failed native/fused gradient agreement before its first optimizer update.
+The actual CUDA measurement is saved: loss 2.59095550 versus 2.59095573; six of
+360,448 finite adapter-gradient elements failed the existing atol=0.005 /
+rtol=0.05 check, maximum absolute error 0.015625, relative L2 error 0.035727.
+The cause is unresolved; no tolerance or training recipe was changed. No main
+baseline, validation, final-test collection or pilot training started.
+All **95 work and 6 startup files / 5,849,177,916 bytes** were retrieved and
+independently rehashed before deletion. Four available checkpoints and their
+response/cache seals, complete Qwen prep and both failures were inspected.
+The preliminary resource charge was **$2.543**. The rounded preliminary failed-attempt cost total was **$5.29**. No replacement rental
+or remote code edit was made.
+Evidence: `launch-20261006-two-gpu-r2/closure-evidence.json`, the operation’s
+`observations/full-pre-deletion-integrity-review.json`,
+`observations/training-memory-guard-local-repair.json`, and
+`observations/preliminary-billing/summary.json`. MoE numerical validation and a
+new frozen runtime are required before another rental.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.

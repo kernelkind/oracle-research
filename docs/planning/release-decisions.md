@@ -1486,8 +1486,8 @@ deletion.       A proposed $280 replacement projects
 the original $285 pilot approval. The selected configuration has two 96GB/600 W server cards at $2.9389/hour including 300 GB storage. The verified
 private image, package, 15 runtime source hashes and model recipe are unchanged.
 Native frozen preparation passed without a paid action. The proposed experiment maximum was **$280**.  This remains within the original $285 experiment maximum, not a new allocation.
-Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. The preparation used two-GPU hardware at **$2.9389/hour** including 300 GB storage. Startup and GPU prep are
-continuously observed; live exfiltration, unchanged prep/complete-baseline gates
+Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. The preparation used two-GPU hardware at **$2.9389/hour** including 300 GB storage. Startup and GPU prep were
+observed; live exfiltration, unchanged prep/complete-baseline gates
 and complete-data explicit deletion rules govern this run. No automatic stop or
 deletion is enabled. The local $1 setup gate rejected worker admission: $0.314536 rental estimate plus the full $0.755209 planned transfer allowance exceeded $1. SSH, transfer and remote preparation had
 succeeded. A production-path reproduction confirmed that refusal. Under standing autonomous repair authorization, a separate local Context with a $5 startup admission allowance started worker attempt 001; calling worker start again returned the same attempt. The original
@@ -1496,7 +1496,25 @@ modified; their hashes were verified again. Failed admission/old supervisor
 receipts are archived under `launch/startup-recovery/001/`, with the effective
 local configuration and repair result. The original frozen supervisor and
 observer were restarted. Future launch settings use a $5 setup allowance. No main baseline or training preceded the
-repair; there is no comparison change to rerun. GPU prep is now running.
+repair; there is no comparison change to rerun.
+
+**October 6 verified prep closure:** Qwen passed. Dense completed both optimizer
+updates, adapter reload/merge, brief generation and singleton cache checks, but
+its **88.43 GiB** reserved training peak was wrongly compared with the **88 GiB
+inference batch budget**. No CUDA OOM occurred. Earlier prep already recorded
+training reservations above 88 GiB; this inference setting is not a training
+acceptance limit. The local fix removes that check without changing training
+computation or inference memory checks. A production-path regression first
+failed on that cutoff, then both targeted checks passed. The published base
+image with a local source mount passed 73 tests; 12 VM-only checks were skipped.
+The new fix is not yet published or newly validated in the deployment VM.
+Gemma MoE still failed native CUDA gradient agreement before its first update;
+its finite gradient evidence records six failing elements out of 360,448,
+maximum absolute error 0.015625 and relative L2 error 0.035727. Tolerances remain
+unchanged; the cause is unresolved. The prep gate blocked all main baselines
+and training. All **95 work + 6 startup files / 5,849,177,916 bytes** were independently rehashed; available checkpoint/response seals and complete Qwen prep were verified under the standing prep-only substantial-repair instruction.  Preliminary charges were **$2.543**.
+ The three failed attempts cost $5.29 within the original $285 experiment maximum; no remote edit was made.
+Integrity evidence is the launch directory’s `closure-evidence.json` and `operation/observations/full-pre-deletion-integrity-review.json`. The MoE numerical issue and a new frozen runtime remain open.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

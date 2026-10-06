@@ -1327,9 +1327,6 @@ def run_subject_preparation(config, tokenizer, data, output):
             timings.append({"stage": f"training-{milestone}", "seconds": time.monotonic()-started})
             write_json(timing_path, timings)
         metadata = subject_checkpoint_metadata(checkpoint, output, plan)
-        if (config["device"] == "cuda" and
-                metadata["peak_cuda_reserved_bytes"] > config["subject_batching"]["budget_bytes"]):
-            raise ValueError("observed training peak exceeds the frozen memory budget")
         if index:
             continue
         if (stages / "complete.json").exists():

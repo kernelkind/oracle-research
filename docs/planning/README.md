@@ -95,11 +95,14 @@ softcap. Dense inference reserves 12 GiB scratch under the same 88 GiB budget.
 skipped and covered separately. The corrected VM export is published and verified
 private. A replacement failed before SSH or experiment work because container DNS failed. Startup diagnostics were saved and hashed. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**. Both attempts failed.  A different compatible host quotes $2.9389/hour.
 
-Native preparation passed. The preparation uses a **$2.9389/hour** configuration and is observed through startup, prep, the pilot and retrieval. Machine
+Native preparation passed. The two-GPU preparation used a $2.9389/hour configuration and was observed through startup, prep and retrieval; no pilot work started. Machine
 146170 is excluded. A local $1 setup gate refused worker admission after
 successful startup/input verification because it counted the full planned
-transfer allowance. A $5 local setup allowance resumed attempt 001 without changing remote code, inputs or the model recipe. GPU prep is running. GPU checks and local semantic grading
-remain. There is no
+transfer allowance. A $5 local setup allowance resumed attempt 001 without changing remote code, inputs or the model recipe. Qwen prep passed; dense completed both updates but was
+wrongly rejected at **88.43 GiB** against the **88 GiB inference budget**, without
+CUDA OOM. MoE failed native gradient agreement before its first update. All **101 available files / 5.85 GB** were independently verified. Preliminary charges were **$2.543**. The local fix removes the training cutoff and preserves
+inference checks; 73 local tests passed, 12 VM-only checks were skipped. The
+MoE numerical issue and a new frozen runtime remain pending. There is no
 automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;

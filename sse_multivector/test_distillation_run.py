@@ -937,6 +937,17 @@ class TinyWorkflowTests(unittest.TestCase):
         for milestone in (3, 6):
             self.assertTrue(distillation_run.verify_saved(output / "checkpoints" / f"checkpoint-{milestone}"))
         self.assertTrue(distillation_run.verify_saved(output / "preparation"))
+        # Training may use more memory than the inference batch budget. Reuse
+        # real sealed checkpoints, emulating only the unavailable GPU peak.
+        (output / "report.json").unlink()
+        original_metadata = distillation_run.subject_checkpoint_metadata
+        with patch.object(distillation_run, "subject_checkpoint_metadata", side_effect=lambda *args:
+                {**original_metadata(*args), "peak_cuda_reserved_bytes":
+                 config["subject_batching"]["budget_bytes"] + 1}):
+            distillation_run.run_subject_preparation({**config, "device": "cuda"}, self.tokenizer,
+                distillation_run.preparation_data(data, config), output)
+        self.assertEqual(distillation_run.read_json(output / "report.json")["training"],
+                         {"examples": 6, "updates": 2})
         for index, row in enumerate(data["evaluation"]):
             note = output / "preparation" / f"note-{index:04}"
             saved = distillation_run.read_json(note / "subjects.json")
