@@ -1153,8 +1153,12 @@ def verify_training_loss(model, rows, config, measurements_path=None):
     BF16 mean-loss tolerances and FP32 softcapping follow Liger 0.8.4's upstream
     TorchLMHeadCE in test/transformers/test_fused_linear_cross_entropy.py. Native
     Gemma otherwise softcaps BF16 logits in BF16, which is a different reference.
-    Only the short numerical reference uses the hook; training and evaluation
-    instances keep their existing forwards and precision.
+    Liger's mean reduction caches the rounded hidden-state gradient before
+    backward applies the note's scalar weight. The native reference applies
+    that weight at the same boundary, after the LM-head backward. Scaling the
+    CE first changes BF16 rounding and can falsely fail adapter agreement.
+    Only the short numerical reference uses these hooks; training and evaluation
+    instances keep their existing forwards, normalization and precision.
     """
     import torch
     base = model.get_base_model()
@@ -1177,6 +1181,7 @@ def verify_training_loss(model, rows, config, measurements_path=None):
     report = {"status": "running", "actual_cuda_kernel": device.type == "cuda", "examples": len(rows),
               "atol": atol, "rtol": rtol, "measurements": measurements,
               "reference_softcap_dtype": "float32" if softcap is not None else None,
+              "reference_gradient_scaling": "after_lm_head",
               "purpose": "Numerical check; no optimizer update or quality result."}
     try:
         for row in rows:
@@ -1189,8 +1194,12 @@ def verify_training_loss(model, rows, config, measurements_path=None):
                 training_random_state(state)
                 model.zero_grad(set_to_none=True)
                 context = torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext()
-                hook = (base.lm_head.register_forward_hook(lambda _module, _inputs, output: output.float())
-                        if forward is native and softcap is not None else None)
+                gradient_hooks = []
+                def reference_head(_module, inputs, output):
+                    gradient_hooks.append(inputs[0].register_hook(
+                        lambda gradient: (gradient.float() * weight).to(gradient.dtype)))
+                    return output.float() if softcap is not None else output
+                hook = base.lm_head.register_forward_hook(reference_head) if forward is native else None
                 try:
                     with attention_context(config):
                         with context:
@@ -1198,10 +1207,12 @@ def verify_training_loss(model, rows, config, measurements_path=None):
                             loss = result.loss * weight
                         if not bool(torch.isfinite(loss)):
                             raise ValueError("training loss agreement produced nonfinite loss")
-                        loss.backward()
+                        (result.loss if forward is native else loss).backward()
                 finally:
                     if hook is not None:
                         hook.remove()
+                    for gradient_hook in gradient_hooks:
+                        gradient_hook.remove()
                 losses.append(float(loss.detach()))
                 gradients.append({name: None if p.grad is None else p.grad.detach().cpu().clone()
                                   for name, p in parameters.items()})

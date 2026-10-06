@@ -102,8 +102,12 @@ transfer allowance. A $5 local setup allowance resumed attempt 001 without chang
 wrongly rejected at **88.43 GiB** against the **88 GiB inference budget**, without
 CUDA OOM. MoE failed native gradient agreement before its first update. All **101 available files / 5.85 GB** were independently verified. Preliminary charges were **$2.543**. The local fix removes the training cutoff and preserves
 inference checks; 73 local tests passed, 12 VM-only checks were skipped. The
-MoE numerical issue and a new frozen runtime remain pending. There is no
-automatic time limit or deletion.
+MoE reference now applies token weighting after LM-head backward, matching
+Liger’s BF16 rounding order; its local regression passes without relaxing
+tolerances. The local workflow suite passes 89 tests; 12 VM-only checks are
+skipped. Full CUDA confirmation and a new frozen runtime remain pending.
+The approved persistent-volume recovery path still needs implementation and
+verification before another rental. There is no automatic time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;
 local verification accounts for all checkpoint comparisons before deletion review.

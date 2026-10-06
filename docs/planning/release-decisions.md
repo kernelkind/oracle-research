@@ -1515,6 +1515,28 @@ unchanged; the cause is unresolved. The prep gate blocked all main baselines
 and training. All **95 work + 6 startup files / 5,849,177,916 bytes** were independently rehashed; available checkpoint/response seals and complete Qwen prep were verified under the standing prep-only substantial-repair instruction.  Preliminary charges were **$2.543**.
  The three failed attempts cost $5.29 within the original $285 experiment maximum; no remote edit was made.
 Integrity evidence is the launch directory’s `closure-evidence.json` and `operation/observations/full-pre-deletion-integrity-review.json`. The MoE numerical issue and a new frozen runtime remain open.
+
+**October 6 local MoE reference repair:** reproduce a false gradient rejection
+with real BF16 Gemma MoE/PEFT and an emulation of Liger’s unavailable CUDA loss.
+Liger caches the mean-loss hidden-state gradient during forward, then scales it
+by the note’s weight during backward. The old native reference scaled CE before
+LM-head backward, introducing different BF16 rounding. The short reference now
+applies the weight at the same hidden-state boundary; training computation,
+teacher-token weighting and atol=0.005 / rtol=0.05 stay unchanged. The new
+production-path regression first fails on adapter agreement, then passes with
+zero gradient difference and still rejects deliberately corrupted gradients.
+The local workflow suite passes 89 tests, with 12 deployment-VM-only checks
+skipped. The full original CUDA failure is not yet replayed; confirmation on
+hardware and a new frozen runtime remain required. Evidence is
+`target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
+
+**Persistent recovery storage approved:** retain model downloads and compatible
+saved work on a separately rented local volume across failed-container
+replacement. Favor machines with observed spare GPUs, checking availability
+while resolving local errors. A reliability score is uptime evidence, not
+proof of future free GPUs; the volume attaches only on its physical machine.
+The launcher still needs volume support and a tested replacement/recovery
+path. No volume, replacement rental or additional spending was created.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete

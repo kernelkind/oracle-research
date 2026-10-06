@@ -27,8 +27,16 @@ verification. The refusal was reproduced, then admission was retried with a $5 l
 Qwen prep passed. Dense completed its updates but hit an erroneous **88 GiB**
 training cutoff; MoE failed its gradient check. All **101 available files / 5.85 GB** were verified.
 Preliminary cost was **$2.543**.
-The local fix removes the training cutoff and keeps inference checks; MoE
-numerical validation and a new frozen runtime remain pending.
+The local fix removes the training cutoff and keeps inference checks. The MoE
+reference also now matches Liger’s gradient-scaling order; the local regression
+passes without relaxing tolerances. The local workflow suite passes 89 tests;
+12 VM-only checks are skipped. Full CUDA confirmation and a new frozen runtime
+remain pending.
+
+**Recovery storage approved:** keep model downloads and compatible saved work
+on a persistent local volume. Favor a machine with observed spare GPUs so a
+replacement container can reuse that volume. The launcher and replacement
+rehearsal still need this support; no volume or replacement is rented.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,

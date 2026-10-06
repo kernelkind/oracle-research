@@ -2190,6 +2190,29 @@ Evidence: `launch-20261006-two-gpu-r2/closure-evidence.json`, the operation’s
 `observations/training-memory-guard-local-repair.json`, and
 `observations/preliminary-billing/summary.json`. MoE numerical validation and a
 new frozen runtime are required before another rental.
+
+**Subsequent local MoE reference repair — October 6:** Liger’s mean loss
+computes and rounds the hidden-state gradient during forward, then multiplies
+it by the note’s scalar weight during backward. The native reference instead
+multiplied CE before LM-head backward. This changes BF16 rounding even when
+losses agree. A real tiny BF16 Gemma MoE/PEFT reproduction, emulating only the
+unavailable CUDA loss, fails the old production check. Matching scalar
+application after native LM-head backward makes every adapter gradient equal
+in that reproduction. Keep the actual training forward, token normalization,
+optimizer and numerical tolerances unchanged. Restore the temporary head and
+tensor hooks, gradients, RNG and forward on success/failure. The report records
+`reference_gradient_scaling: after_lm_head`. Corrupted gradients still fail.
+The regression runs locally with PyTorch 2.12.1 CPU, Transformers 5.17.0, PEFT
+0.21.0 and Liger 0.8.4; it is not a replay of the full original CUDA model.
+The full local suite passes 89 tests, with 12 deployment-VM-only checks skipped.
+Rebuild/freeze and confirm the full CUDA check before main pilot work. Evidence:
+`target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
+
+**Persistent-volume recovery approved:** favor a machine with observed spare
+GPUs and retain model downloads plus compatible saved work on a local volume
+across container replacement. The volume stays on its physical machine and
+does not reserve GPUs. Volume mounting, verified reuse and replacement recovery
+need launcher implementation/rehearsal; no volume or new rental exists.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
