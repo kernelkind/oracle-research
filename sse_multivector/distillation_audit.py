@@ -1,7 +1,9 @@
-"""Audit frozen SP inputs and training answers without opening held-out answers.
+"""Audit selected TRAIN/validation inputs and SP training answers.
 
 This inventories possible SHR inputs; it does not infer SHR relation labels.
-Run with --source notes.json --prepared prepared/ --output target/.../audit.json.
+Run with --registry inputs.json --prepared prepared/ --output target/.../audit.json.
+The selected registry's adjacent manifest binds its bytes. Mixed source files,
+final-test content and validation references are never followed or opened.
 """
 import argparse
 import hashlib
@@ -51,39 +53,36 @@ def near_copies(notes, assignments):
             "matches": matches, "exhaustive": False}
 
 
-def audit(source, prepared):
-    source, prepared = Path(source).resolve(), Path(prepared).resolve()
+def audit(registry, prepared):
+    registry, prepared = Path(registry).resolve(), Path(prepared).resolve()
     manifest_path = prepared / "manifest.json"
     manifest = read_json(manifest_path)
     if manifest["schema_version"] != 2 or set(manifest["tasks"]) != {"subjects"}:
         raise ValueError("expected prepared subject-only schema 2")
-    hashes = {str(source): sha256(source), str(manifest_path): sha256(manifest_path)}
-    if manifest["inputs"].get(str(source)) != hashes[str(source)]:
-        raise ValueError("source hash mismatch or source path differs")
-    saved_source = read_json(source)
-    prepare_posts(saved_source)  # Shared production post validation.
-    notes = {n["note_id"]: n for n in saved_source["notes"]}
+    registry_manifest_path = registry.parent / "manifest.json"
+    registry_manifest = read_json(registry_manifest_path)
+    hashes = {str(registry): sha256(registry), str(manifest_path): sha256(manifest_path),
+              str(registry_manifest_path): sha256(registry_manifest_path)}
+    if (registry_manifest["schema_version"] != 1
+            or registry_manifest["files"].get(registry.name) != hashes[str(registry)]):
+        raise ValueError("selected registry hash mismatch")
+    saved_registry = read_json(registry)
+    if saved_registry["schema_version"] != 1 or not isinstance(saved_registry.get("posts"), list):
+        raise ValueError("expected selected post registry schema 1")
+    posts = {n["note_id"]: n for n in saved_registry["posts"]}
     split_ids = {name: manifest[key] for name, key in (
         ("train", "train_note_ids"), ("validation", "evaluation_note_ids"), ("test", "test_note_ids"))}
     order = [nid for ids in split_ids.values() for nid in ids]
     if (any(not ids for ids in split_ids.values()) or len(set(order)) != len(order)
-            or set(order) != set(notes)):
-        raise ValueError("frozen splits overlap, are empty or differ from the source")
+            or len(posts) != len(saved_registry["posts"])
+            or set(split_ids["train"] + split_ids["validation"]) != set(posts)):
+        raise ValueError("frozen splits overlap, are empty or differ from the selected registry")
     assignments = {nid: name for name, ids in split_ids.items() for nid in ids}
-    authors, copies = defaultdict(set), defaultdict(list)
-    for nid, note in notes.items():
-        author = note.get("pubkey")
-        if not isinstance(author, str) or not author:
-            raise ValueError("every source note requires an author")
-        authors[author].add(assignments[nid])
-        copies[" ".join(note["text"].split())].append(nid)
-    if any(len(splits) != 1 for splits in authors.values()):
-        raise ValueError("author crosses frozen splits")
-    if any(len({assignments[nid] for nid in ids}) != 1 for ids in copies.values()):
-        raise ValueError("identical content crosses frozen splits")
+    if any(n["split"] != assignments[nid] for nid, n in posts.items()):
+        raise ValueError("registry split differs from frozen membership")
 
-    rows = {}
-    for split, filename in (("train", "train.jsonl"), ("validation", "evaluation.jsonl"), ("test", "test.jsonl")):
+    rows, notes = {}, {}
+    for split, filename in (("train", "train.jsonl"), ("validation", "evaluation.jsonl")):
         path = prepared / filename
         digest = sha256(path)
         if manifest["outputs"][filename] != digest:
@@ -100,9 +99,32 @@ def audit(source, prepared):
                     or set(messages[0]) != {"role", "content"} or messages[0]["role"] != "user"):
                 raise ValueError("expected one complete user prompt")
             content = messages[0]["content"]
-            suffix = "\n\n<post>\n" + notes[row["note_id"]]["text"] + "\n</post>"
-            if not content.endswith(suffix) or hashlib.sha256(content[:-len(suffix)].encode()).hexdigest() != manifest["subject_instruction_sha256"]:
+            delimiter, ending = "\n\n<post>\n", "\n</post>"
+            if not isinstance(content, str) or not content.endswith(ending):
                 raise ValueError("saved prompt differs from full instruction and source note")
+            boundary = next((m.start() for m in re.finditer(re.escape(delimiter), content)
+                             if hashlib.sha256(content[:m.start()].encode()).hexdigest()
+                             == manifest["subject_instruction_sha256"]), None)
+            if boundary is None:
+                raise ValueError("saved prompt differs from full instruction and source note")
+            text = content[boundary + len(delimiter):-len(ending)]
+            post = posts[row["note_id"]]
+            if hashlib.sha256(text.encode()).hexdigest() != post["text_sha256"]:
+                raise ValueError("saved prompt differs from full instruction and source note")
+            notes[row["note_id"]] = {"note_id": row["note_id"], "text": text, "pubkey": post["pubkey"]}
+
+    prepare_posts({"schema_version": 1, "notes": list(notes.values())})
+    authors, copies = defaultdict(set), defaultdict(list)
+    for nid, note in notes.items():
+        author = note.get("pubkey")
+        if not isinstance(author, str) or not author:
+            raise ValueError("every selected note requires an author")
+        authors[author].add(assignments[nid])
+        copies[" ".join(note["text"].split())].append(nid)
+    if any(len(splits) != 1 for splits in authors.values()):
+        raise ValueError("author crosses frozen splits")
+    if any(len({assignments[nid] for nid in ids}) != 1 for ids in copies.values()):
+        raise ValueError("identical content crosses frozen splits")
 
     entries, per_note, subject_groups, exact_groups = [], [], defaultdict(set), defaultdict(set)
     parent_candidates = 0
@@ -116,11 +138,18 @@ def audit(source, prepared):
             parent_candidates += "." in subject["number"]
             subject_groups[subject["subject"].casefold()].add(row["note_id"])
             exact_groups[(subject["subject"], subject["context"])].add(row["note_id"])
-    return {"schema_version": 1, "hashes": hashes, "tasks": manifest["tasks"],
-            "held_out_answers_opened": False, "shr_relation_labels": 0,
-            "splits": {name: {"notes": len(ids), "authors": len({notes[i]["pubkey"] for i in ids}),
-                                "post_characters": distribution([len(notes[i]["text"]) for i in ids])}
-                       for name, ids in split_ids.items()},
+    split_stats = {name: {"notes": len(ids), "content_opened": True,
+                          "authors": len({notes[i]["pubkey"] for i in ids}),
+                          "post_characters": distribution([len(notes[i]["text"]) for i in ids])}
+                   for name, ids in split_ids.items() if name != "test"}
+    split_stats["test"] = {"notes": len(split_ids["test"]), "content_opened": False}
+    return {"schema_version": 2, "hashes": hashes, "tasks": manifest["tasks"],
+            "reserved_final_test_content_opened": False, "reserved_final_test_answers_opened": False,
+            "validation_references_opened": False, "shr_relation_labels": 0,
+            "registry_contains_validation_sp_entries": any(
+                e["split"] == "validation" for e in saved_registry.get("subjects", [])),
+            "comparison_splits": ["train", "validation"],
+            "splits": split_stats,
             "author_overlap": 0, "exact_content_duplicate_groups": [ids for ids in copies.values() if len(ids) > 1],
             "near_copies": near_copies(notes, assignments),
             "training_subjects": {"entries": len(entries), "per_note": distribution(per_note),
@@ -135,11 +164,11 @@ def audit(source, prepared):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", required=True, type=Path)
+    parser.add_argument("--registry", required=True, type=Path)
     parser.add_argument("--prepared", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    write_json(args.output, audit(args.source, args.prepared))
+    write_json(args.output, audit(args.registry, args.prepared))
 
 
 if __name__ == "__main__":

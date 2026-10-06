@@ -9,34 +9,51 @@ by these preparation results. See [model research](SHR-FINETUNING-MODEL-RESEARCH
 
 ## Dataset audit
 
-The documented bundle is at
+The immutable ASv6.100 bundle is at
 `oracle-mvp/target/distillation-pilot-v1/pilot-data-asv6.100-20261004/`.
-The requested source-review handoff
-has been queued; confirmation of provenance and reuse constraints is pending.
-The following findings independently use the documented files read-only.
+The source review confirmed its provenance
+and read-only reuse boundary. SP teachers are **ASv6.100 / GPT-6.1 Sol medium**;
+ASv6.48 is historical. The split remains 1,000 training, 100 validation and
+200 reserved final-test posts. All final-test content, SP/MP answers, embeddings
+and student outputs are sealed. Roster metadata does not permit opening those
+records, and selection files must not be followed into mixed source files.
+
+**Exposure record:** before this boundary handoff, the first mechanical audit
+read all 1,300 source posts and the input-only final-test prompts. It did not
+open final-test teacher answers or student outputs, or judge their semantic
+quality. The ignored original `data-audit.json` preserves that run; it is not
+evidence of untouched final-test content. No further final-test content was
+opened. The revised audit below uses only the authenticated 1,100-post VC15
+registry and saved training/validation prompts. Final-test content exposure
+must remain disclosed in any later evaluation claim.
 
 ```bash
 python3 -m sse_multivector.distillation_audit \
-  --source ../oracle-mvp/target/distillation-pilot-v1/pilot-data-asv6.100-20261004/sample-final/notes.json \
+  --registry ../oracle-mvp-vector-hierarchy-v1/target/subject-collection-vectors-v1/VC15-asv6.100-subject-vectors-v1/inputs.json \
   --prepared ../oracle-mvp/target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared \
-  --output target/shr-student-prep-v1/data-audit.json
+  --output target/shr-student-prep-v1/data-audit-selected-v2.json
 ```
 
 The audit validates posts through the shared input adapter and training answers
-through the production subject parser. It checks source/output hashes, frozen
+through the production subject parser. It checks registry/output hashes, frozen
 membership and order, complete instruction/post preservation, author separation
-and duplicate content. It opens only source notes, the prepared manifest,
-training answers, and input-only validation/test files. It does not open
-`references.jsonl`, the combined teacher-label file, or any student outputs.
+and duplicate content **within training/validation**. The instruction hash
+identifies the saved post boundary; each recovered post must match its VC15
+text hash. The audit opens the registry, its adjacent manifest, the prepared
+manifest, `train.jsonl` and `evaluation.jsonl`. It never follows source pointers
+or opens mixed notes/labels, `test.jsonl`, validation references or student
+outputs. The supplied registry contains validation SP entries; those are
+allowed source inputs, and are not scored as SHR evaluation answers.
 
 | Split | Notes | Authors | Median post characters | Maximum post characters |
 | --- | ---: | ---: | ---: | ---: |
 | Training | 1,000 | 458 | 261 | 1,707 |
 | Validation | 100 | 78 | 191 | 1,605 |
-| Reserved test | 200 | 150 | 265 | 1,107 |
 
-There is no author overlap or exact whitespace-normalized content duplication.
-A bounded inverted-index search examined 3,934 nominated pairs and found no
+The reserved final-test roster contains 200 IDs; the revised audit reports
+only their count. Training and validation have no author overlap or exact
+whitespace-normalized content duplication. A bounded inverted-index search
+examined 3,584 nominated pairs within these two partitions and found no
 word-5-shingle Jaccard similarity of at least 0.8. Five overly common shingles
 were skipped; this heuristic is not an exhaustive near-duplicate or pretraining
 contamination check.
@@ -50,21 +67,45 @@ The **training** partition supplies 33,234 SP subject/context entries:
 | Casefolded subject strings recurring across notes | 991 groups | Cross-post equivalence/polysemy candidates, requiring semantic review. |
 | Exactly repeated subject/context across notes | 42 groups | Candidate duplication; text identity alone does not establish node membership. |
 | Entry JSON characters, subject and context only | median 175; p95 320; maximum 559 | Capacity can be tested with complete entries; these are not model token counts. |
-| SHR relation labels | 0 | This corpus cannot currently measure five-way SHR accuracy. |
+| SHR relation labels in the prepared SP training bundle | 0 | SP supervision does not supply five-way SHR targets. |
 
-The five relation frequencies, multi-entry group lengths, aliases, conflicting
+The deployment relation frequencies, multi-entry group lengths, aliases, conflicting
 meanings and false-parent difficulty are **unknown**. They cannot be inferred
 from SP answer counts. English, short, natural notes limit language/length
 coverage; this corpus does not establish multilingual or long-input quality.
-The final SP test partition must stay reserved. Dataset-derived development
-pairs can initially use only training notes. Validation-derived SHR pairs need
-an explicit selection protocol that preserves the existing SP holdout.
+Dataset-derived development pairs can initially use only training notes.
+The existing vector comparison reserves 32 validation query posts for its
+diagnostic pilot and uses the remaining 68 for separate calibration. Reusing
+that evidence must preserve this layout. A different SHR evaluation split or
+label role requires a separate scope decision; this proposal does not assign
+validation records to fitting or selection.
+
+The handoff identifies **VC16** as 256 inspected diagnostic judgments on 32
+complete eight-candidate lists: 20 candidate-parent, 21 query-parent,
+4 equivalent, 210 neither and 1 uncertain. These are existing diagnostics,
+not training labels, gold or final accuracy; no duplicate pilot calls are
+needed. The separately nominated training collection remains incomplete:
+4,096 frozen nominations, 3,136 returned answers and 960 unanswered, with
+no strict `relationships.json` published. The approved recovery is pending;
+the separately approved 1,024-question calibration is not a returned-label
+corpus. Counts, partial receipts, missing answers and validation judgments
+cannot substitute for completed training targets.
+
+The VC15 registry inventories 36,030 SP occurrences (33,234 training / 2,796
+validation) and 28,651 local links (26,465 / 2,186). Its existing 14,416 unique
+768D wording encodings need no regeneration. If reused later, encoding IDs
+must map through saved receipt ordinals; entry index is not the vector row.
+The optional normalized bank is input data, not a trained student. This audit
+does not read or transform either vector bank or any MP-mask inventory.
 
 Artifact identity:
 
-- Source SHA-256: `0ed88bec41a69b367be8e7eed65d94047b30291558825ff5799bc5742d53df38`.
-- Prepared manifest SHA-256 and each opened file hash are recorded in the audit
-  artifact, along with the exact source paths.
+- VC15 manifest SHA-256: `c2c34d54fe77cb3a6bfe2efdb84e53a5cd89d26fa12983c2534daf714ee83d2d`.
+- VC15 inputs SHA-256: `85d97e6b36493f3726b7869e9b98ab6905bf629c05ca1f2f68332345fa95d696`.
+- Prepared manifest SHA-256 and each opened file hash are recorded in the
+  selected audit artifact, along with the exact source paths. Both VC15 hashes
+  match the owner's handoff. Mixed source hashes are provenance only; their
+  content is not reopened to verify them.
 - Training SHA-256: `f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681`.
 
 ## Evaluation design
@@ -90,7 +131,9 @@ multi-entry variants belong to one partition. Keep connected source notes and
 authors together. Record repeated subject strings across partitions rather than
 declaring all shared words leakage: common topics need to generalize. Also keep
 an unseen-topic-family slice to test reliance on memorized entities. Never move
-cases between partitions because a student gets them wrong.
+cases between partitions because a student gets them wrong. This proposed
+family split does not supersede the existing VC16 32/68 validation layout or
+the sealed final-test boundary described above.
 
 | Case family | Concrete change to test | What to report |
 | --- | --- | --- |
@@ -301,7 +344,13 @@ extracted-header `CPATH`. Pin every model download to the configuration's
 revision. Record the resolved environment; the saved `requirements-resolved`
 artifact is evidence of this run, not a universal ARM/CUDA environment lock.
 
-Repository validation: the 15 audit/data/benchmark tests passed. The full shared
+Repository validation after the selected-source audit change: 17
+audit/data/benchmark tests passed; the CUDA test was skipped in the local CPU
+environment. The new boundary test first failed because the original auditor
+required the mixed source. It now passes with the mixed source, final-test
+prompts, combined labels and validation references absent, and rejects any
+attempt to open those paths. The revised production CLI also completed on the
+authenticated 1,100-post registry. The full shared
 experiment suite passed 115 tests with six optional-dependency skips after
 `tiktoken` was installed in an isolated check environment. The original
 missing-dependency failure is recorded separately from this passing run.
