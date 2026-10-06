@@ -94,6 +94,8 @@ class CommandContractTest(unittest.TestCase):
         # its original deletion behavior. Approved unbounded command jobs add
         # completeness reviews; explicit continuation and observation reuse the
         # same worker/transfer flow with attempt-bound retrieval receipts.
+        # Persistent volumes preserve attempt numbering across replacement;
+        # worker locks keep live children from being sealed as orphaned.
         allowed_changes = {"Context", "verify_reviewed_artifacts", "select_offer", "verify_image",
             "ensure_retrieval_destination", "refresh_approved_offer", "ensure_reservation", "invoke_private_create",
             "recover_or_freeze_create", "record_instance_ownership", "freeze_running_instance", "remote_arguments",
@@ -102,14 +104,26 @@ class CommandContractTest(unittest.TestCase):
             "record_pre_worker_cost", "status_once", "ssh_options", "run", "ensure_ssh", "main", "parse_args",
             "cleanup_preworker_instance", "ledger_reconciliation_state", "destroy_without_remote_retrieval",
             "cleanup_terminal", "stop", "ensure_retrieved", "remote_json", "ensure_worker_started",
-            "remote_worker", "remote_supervise", "remote_stop", "destroy_instance", "worker_status"}
+            "remote_worker", "remote_supervise", "remote_stop", "destroy_instance", "worker_status",
+            "ensure_remote_prepared", "next_attempt_id", "remote_seal", "remote_attempt_status"}
         self.assertTrue(set(before) <= set(after))
         changed = {name for name in before if ast.dump(before[name]) != ast.dump(after[name])}
         self.assertEqual(changed, allowed_changes)
         # In particular, these execute the original control flow, without a substitute controller.
         for name in ("tar_upload_directory", "tar_download_directory",
-                     "ensure_remote_prepared", "invoke_destroy_request", "ensure_final_charge"):
+                     "invoke_destroy_request", "ensure_final_charge"):
             self.assertEqual(ast.dump(before[name]), ast.dump(after[name]), name)
+        # Remove only the approved volume readiness branch, retaining the
+        # exact original preparation flow for operations without a volume.
+        volume_readiness = ast.parse('''if "local_volume" in context.config:
+    ensure_remote_volume(context, private_key, target, remote_receipts, instance_id)
+''').body[0]
+        body = after["ensure_remote_prepared"].body
+        matches = [node for node in body if ast.dump(node) == ast.dump(volume_readiness)]
+        self.assertEqual(len(matches), 1)
+        body.remove(matches[0])
+        self.assertEqual(ast.dump(before["ensure_remote_prepared"]),
+                         ast.dump(after["ensure_remote_prepared"]))
         # Progressive retrieval is optional for command workloads. Removing its
         # branches must leave the established terminal retrieval flow identical.
         body = after["ensure_retrieved"].body

@@ -77,8 +77,10 @@ def write_attempt_marker(path: Path) -> None:
         os.close(directory)
 
 
-def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[str, object]:
-    """Classify the one Vast create call without persisting provider messages."""
+def classify_create_capture(
+    stdout: str, stderr: str, exit_code: int, *, secrets: tuple[str, ...] = ()
+) -> dict[str, object]:
+    """Classify one create call and retain a bounded, credential-redacted reason."""
 
     def json_object(value: str) -> dict[str, object] | None:
         try:
@@ -86,6 +88,15 @@ def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[st
         except (json.JSONDecodeError, TypeError):
             return None
         return document if isinstance(document, dict) else None
+
+    def message(document: dict[str, object] | None) -> dict[str, str]:
+        value = None if document is None else document.get("msg")
+        if not isinstance(value, str):
+            return {}
+        for secret in sorted(set(secrets), key=len, reverse=True):
+            if secret:
+                value = value.replace(secret, "[REDACTED]")
+        return {"msg": value[:1000]}
 
     response = json_object(stdout.strip())
     if response is not None and response.get("success") is True:
@@ -114,6 +125,7 @@ def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[st
             "schema_version": 1,
             "outcome": "definitive_rejection",
             "success": False,
+            **message(response),
         }
 
     provider_error = next(
@@ -136,12 +148,14 @@ def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[st
             "outcome": "definitive_rejection",
             "success": False,
             "status_code": status_code,
+            **message(provider_error),
         }
     return {
         "schema_version": 1,
         "outcome": "ambiguous",
         "success": False,
         "exit_code": exit_code,
+        **message(provider_error),
     }
 
 
@@ -182,6 +196,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     docker_pat = sys.stdin.read().strip()
+    secrets = tuple(value for value in (docker_pat, os.environ.get("VAST_API_KEY")) if value)
     arguments = vast_create_arguments(args.offer_id, args.image, args.label, docker_pat,
         disk_gb=args.disk_gb, entrypoint=args.entrypoint, environment=args.environment,
         onstart=args.onstart_cmd, local_volume_id=args.local_volume_id)
@@ -204,7 +219,8 @@ def main() -> int:
         sys.argv = ["vastai"]
         del arguments
 
-    outcome = classify_create_capture(stdout.getvalue(), stderr.getvalue(), exit_code)
+    outcome = classify_create_capture(stdout.getvalue(), stderr.getvalue(), exit_code, secrets=secrets)
+    del secrets
     write_create_outcome(args.outcome, outcome)
     if outcome["outcome"] == "success":
         print(json.dumps(outcome, sort_keys=True))

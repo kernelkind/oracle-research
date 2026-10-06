@@ -18,6 +18,41 @@ from vast_private_create import (
 
 
 class VastPrivateCreateTest(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec("vastai"), "requires pinned Vast SDK")
+    def test_real_cli_preserves_rejection_reason_without_credentials(self):
+        program = textwrap.dedent('''
+            import io, json, os, sys, tempfile
+            from pathlib import Path
+            from unittest.mock import patch
+            import requests
+            from vast_private_create import main
+            response = requests.Response()
+            response.status_code = 400
+            response._content = json.dumps({"success": False,
+                "msg": "Invalid volume mount; registry=fake-token api=fake-api-key"}).encode()
+            with tempfile.TemporaryDirectory() as tmp:
+                marker, outcome = Path(tmp) / "attempt", Path(tmp) / "outcome.json"
+                argv = ["helper", "123", "docker.io/kernelkind/oracle-mvp@sha256:" + "4" * 64,
+                    "pilot", str(marker), str(outcome), "--local-volume-id", "881"]
+                with patch("sys.argv", argv), patch("sys.stdin", io.StringIO("fake-token")), \\
+                        patch.dict(os.environ, {"VASTAI_NO_UPDATE_CHECK": "1", "VAST_API_KEY": "fake-api-key"}), \\
+                        patch("requests.sessions.Session.send", return_value=response) as send:
+                    assert main() == 10
+                assert send.call_count == 1
+                assert marker.exists()
+                result = json.loads(outcome.read_text())
+                assert result["outcome"] == "definitive_rejection"
+                assert result["status_code"] == 400
+                assert result["msg"] == "Invalid volume mount; registry=[REDACTED] api=[REDACTED]"
+                assert "fake-token" not in outcome.read_text()
+                assert "fake-api-key" not in outcome.read_text()
+        ''')
+        result = subprocess.run([sys.executable, "-B", "-c", program], cwd=Path(__file__).parent,
+                                capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("fake-token", result.stdout + result.stderr)
+        self.assertNotIn("fake-api-key", result.stdout + result.stderr)
+
     def test_volume_uses_the_pinned_clis_explicit_link_option(self):
         arguments = vast_create_arguments('123', 'docker.io/kernelkind/oracle-mvp@sha256:' + '4'*64,
             'pilot', 'secret', local_volume_id=881)
@@ -149,6 +184,7 @@ class VastPrivateCreateTest(unittest.TestCase):
                 "outcome": "definitive_rejection",
                 "success": False,
                 "status_code": 400,
+                "msg": "unavailable",
             },
         )
         self.assertEqual(

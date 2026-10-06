@@ -1568,7 +1568,19 @@ is now published at the immutable digest in `publication/publication-receipt.jso
 its filesystem/configuration match the VM, read-only pull succeeds, and anonymous
 manifest access returns HTTP 401. Actual Vast attachment and full MoE CUDA
 confirmation remain pending. A $2 volume reservation covers 24 hours of storage
-for the approved download stage. The download configuration used 300 GB storage at $0.0833/hour. Frozen native preparation covers the quoted download-only rate of $1.4278/hour including storage. No GPU rental has started.
+for the approved download stage. The download configuration used 300 GB storage at $0.0833/hour. The quoted download-only rate was $1.4278/hour including storage. Its create request was definitively rejected with HTTP 400;
+complete controller inventory probes confirm no instance and zero GPU charge.
+ The old helper discarded the provider message, so the underlying
+rejection reason is unknown. A production CLI regression first reproduced the
+missing message; the helper now saves a bounded message after redacting registry
+and API credentials. All nine pinned CLI checks and 68 controller checks pass;
+the updated VM rehearsal passed before another creation request (109 passed
+checks, with the unchanged native-tokenizer check using prior evidence). The
+existing generalization guard was stale after approved volume recovery/child-lock
+changes; its exact non-volume preparation-flow assertion is retained. All 81
+generalization checks now pass; no controller behavior changed. No model,
+prompt, data or training recipe changes. Evidence:
+`target/distillation-pilot-v1/create-diagnostics-20261006/`.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

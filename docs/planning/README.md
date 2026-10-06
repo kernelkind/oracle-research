@@ -114,7 +114,10 @@ but archives prior work and starts fresh. The rebuilt VM passes 101 checks,
 including actual container replacement, unchanged saved answers/checkpoints and
 an offline cache hit. The frozen package matches this runtime and all six
 previous configurations/data. Full MoE CUDA confirmation remains pending.
- No GPU rental has started yet; no automatic
+The download GPU create request was rejected with HTTP 400, with no instance or GPU charge.
+
+The helper now preserves bounded credential-redacted error messages; local CLI
+and controller checks pass, and the updated VM rehearsal passed. No automatic
 time limit or deletion.
 The next attempt uses a cheaper compatible Bulgarian host with a local volume,
 approved October 6. Actual Vast attachment remains untested; startup checks

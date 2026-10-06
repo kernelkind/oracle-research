@@ -44,8 +44,11 @@ retain downloads, archive the previous work and start a fresh comparison.
 The rebuilt VM passes 101 checks, including container replacement with saved
 answers/checkpoints unchanged and an offline cache hit. The inputs match the
 rebuilt runtime. The latest VM image is published and verified private; MoE
-CUDA confirmation remains pending. The storage rate was **$0.0833/hour**.  No GPU
-rental has started yet.
+CUDA confirmation remains pending. The storage rate was **$0.0833/hour**. Vast rejected the first download GPU create request
+with HTTP 400; complete inventory checks confirm no instance and zero GPU charge.
+ The
+launcher discarded the error reason; bounded credential-redacted capture is now
+locally tested and the updated VM rehearsal passed before another attempt.
 Actual Vast attachment remains untested; check the mount before setup or
 training. The VM has verified recovery across container replacement.
 
