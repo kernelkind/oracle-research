@@ -32,8 +32,7 @@ earlier on GB10. Historical failures remain recorded below. The larger pointer
 capacity check passed training, save, fresh-process reload and six inference
 shapes at 512, 2,048 and 3,072 tokens; the latter exceeds the complete v26 inputs'
 maximum 2,684 tokens.
-All experiment workers stopped.
-
+At that checkpoint, all experiment workers stopped. The current v79 comparison uses one GB10 inference worker. 
 
 The October 6 input-selection follow-up prepared 640 nomination
 families / 1,280 exact A/B orientations from 576 TRAIN notes and 292 authors.
@@ -1260,8 +1259,8 @@ native agent semantic review; all 60 current reviews support the saved decision
 under v79. They do not establish independent human gold or approval of an SHR
 training corpus. The source is still 35 original TRAIN entries from 27 notes
 and 25 authors. No validation/final-test selection, student fitting or final
-model decision occurred. Earlier student rankings measure v26 behavior; they
-have not yet been established for v79.
+model decision occurred in that teacher phase. The separately authorized local
+comparison below checks whether earlier v26 student rankings transfer to v79.
 
 Native `collect` preserves all 60 answers, current reviews, prompt and original
 source/split/receipt identities in
@@ -1295,11 +1294,69 @@ in this phase. Native usage reports 34,104 input tokens, 165,888 cached input
 tokens and 4,467 output tokens including 791 reasoning tokens. These are native
 counters, not a subscription invoice; no paid fallback was used.
 
-The next useful model-quality check is a matched local diagnostic on these
-v79 cases for the shortlisted students, to learn whether the earlier v26
-ranking transfers. The extra controls and semantic uncertainty improve coverage,
-but this TRAIN panel cannot establish held-out accuracy. Prompt development,
-accepted training targets and separately reviewed evaluation roles remain open.
+The user subsequently authorized the matched local diagnostic below. The extra
+controls and semantic uncertainty improve coverage, but this TRAIN panel cannot
+establish held-out accuracy. Prompt development, accepted training targets and
+separately reviewed evaluation roles remain open.
+
+## Provisional SHR-single-v79 published-checkpoint comparison
+
+The user authorized comparing the previously benchmarked seven checkpoints on
+these exact 60 v79 TRAIN cases. Native `prepare --from` freezes the completed
+teacher experiment as baseline; all fourteen plans preserve the complete prompt,
+inputs and evidence. Each checkpoint uses its unchanged pinned NF4 configuration
+and both previous option orders. Native `run` is bounded to 60 new attempts per
+experiment, concurrency one, with the loopback local runner. No new teachers,
+validation/final-test inputs, fitting, downloads or paid providers are required.
+
+The first six experiments are complete: 360 valid answers, each in one attempt,
+with no failures, retries or reuse. Gemma-12B, Qwen-27B, Decider-4B and Qwen-9B
+are still pending at this checkpoint. Their prepared plans are not model results.
+
+| Checkpoint | Teacher agreement, two orders /60 | Original orientations /40 | A/B reversals /30 | Decisions unchanged by option rotation /60 | Reordered cases retaining original decision /20 |
+| --- | --- | --- | --- | --- | --- |
+| Kev-9B | 44; 40 | 27; 26 | 18; 14 | 52 | 16; 17 |
+| Kev-27B | 53; 51 | 37; 36 | 29; 27 | 58 | 18; 18 |
+| Nimble-9B | 36; 37 | 25; 25 | 23; 22 | 52 | 17; 15 |
+
+The 40 original orientations are two directions for each of 20 families. The
+additional 20 cases test entry order, so all 60 are not independent samples.
+Both original directions agree with the teacher in 10/9 families for Kev-9B,
+18/17 for Kev-27B and 11/11 for Nimble. The source remains 35 TRAIN entries
+from 27 notes and 25 authors; constructed conflict groups are diagnostic inputs,
+not accepted hierarchy nodes. Labels/reviews remain provisional.
+
+Kev-27B matches all 36 non-uncertain teacher answers in both orders. Its seven
+first-order misses are all uncertain cases: unresolved America scope, differently
+qualified trading entries, and reordered photography/image entries. Kev-9B also
+misses simple alias and related-topic cases and has weaker reversals. Nimble's
+first order matches 4/24 uncertain answers. Native agent reviews reject the
+Kev-9B Lightning alias miss, Kev-27B America and inconsistent-qualifier misses,
+and Nimble's mixed-football `neither`; one accepts Kev-27B's mixed-football
+`uncertain`. These are attributed prompt-grounded assessments, not human gold.
+
+The Kev-9B lead on the earlier 70 v26 development cases does not transfer to
+this panel. That comparison changes both prompt and cases; it cannot attribute
+the difference solely to v79, model size or architecture. The two Kev releases
+also have different foundations and published training histories. No measured
+post-finetuning plateau or final student choice follows from these results.
+
+Both Kev layouts process 3,593–3,689 tokens. Median native inference is
+1.844 seconds in each order for Kev-9B, and 3.771/3.803 seconds for Kev-27B;
+maximum allocated CUDA memory is 6.10/14.84 GiB respectively. Nimble's native
+schema layout uses 4,719–4,820 tokens, median 2.176 seconds and 7.97 GiB.
+The separate service is stopped throughout. Cold loads remain separate from
+these timings. Complete v79 inference does not extend the earlier synthetic
+training-capacity checks to these longer sequences or establish convergence.
+
+Artifacts live under `target/shr-student-diagnostics-v79/`. Native experiments
+are `experiments/{kev9b,kev27b,nimble9b}-{original,rotate}-v1`; each retains its
+frozen `experiment.json`, `run/manifest.json`, `run/results.jsonl`, native report
+and any reviews. Source configuration hashes and all five shared model-loading
+files match the isolated GB10 checkout before calls. Fourteen prepared plans
+were checked against the exact source teacher cases, prompt and 60 saved answers.
+The unchanged shared workflow's previously passing regression remains applicable;
+this follow-up adds no software behavior or accepted training targets.
 
 ## Dataset audit
 

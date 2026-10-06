@@ -3,7 +3,7 @@
 Research dates: October 5–6, 2026. **Recommendations for evaluation, not an
 approved model choice or SHR training plan.** The initial literature phase
 performed no runs. Subsequent user-authorized capacity checks and provisional
-v26 comparisons are recorded in [student preparation](SHR-STUDENT-PREPARATION.md).
+v26/v79 comparisons are recorded in [student preparation](SHR-STUDENT-PREPARATION.md).
 Those synthetic optimization checks do not train an SHR student. No paid
 resources were used.
 
@@ -61,6 +61,19 @@ validation. Those failures remain preserved, not repaired targets. Qwen-9B's
 unmodified greedy-JSON path agreed with 36/70 decisions; correcting its scored
 answer position does not close the current gap to Kev. Reasons are diagnostic,
 so the student need not reproduce this generation contract.
+
+The separately authorized v79 TRAIN-panel comparison is now in progress. Its
+first three checkpoints overturn the earlier Kev ranking on these inputs:
+Kev-27B gives 53/60 and 51/60 agreement with 29/30 and 27/30 reversals;
+Kev-9B gives 44/60 and 40/60 with 18/30 and 14/30 reversals. Nimble gives
+36/60 and 37/60. Excluding repeated entry-order controls, Kev-27B matches
+37/40 and 36/40 original orientations, versus Kev-9B's 27/40 and 26/40.
+The other four checkpoints are pending. This is a different prompt **and**
+case panel, with provisional teachers and only 20 families; it is not an
+isolated prompt/size effect or held-out accuracy. The larger pointer model
+must remain in the quality comparison. Final selection still needs matched
+SHR supervision and evaluation. See
+[the current v79 evidence](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v79-published-checkpoint-comparison).
 
 GB10 measurements establish usable local training paths, independently of
 semantic quality. They use synthetic token tensors, finite gradients,
