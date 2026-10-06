@@ -49,6 +49,7 @@ with HTTP 400; complete inventory checks confirm no instance and zero GPU charge
  The
 launcher discarded the error reason; bounded credential-redacted capture is now
 locally tested and the updated VM rehearsal passed before another attempt.
+The quoted download-only rate was $1.4278/hour including storage. Local preflight passes; this retry has not started GPU execution.
 Actual Vast attachment remains untested; check the mount before setup or
 training. The VM has verified recovery across container replacement.
 

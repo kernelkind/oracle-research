@@ -1581,6 +1581,12 @@ changes; its exact non-volume preparation-flow assertion is retained. All 81
 generalization checks now pass; no controller behavior changed. No model,
 prompt, data or training recipe changes. Evidence:
 `target/distillation-pilot-v1/create-diagnostics-20261006/`.
+The rebuilt private runtime is
+`docker.io/kernelkind/oracle-mvp@sha256:da81c955532264e216653d0b742cecfc93fb63c99595a4fc8960f5ddeff2b642`.
+Registry config/rootfs match the imported VM; both frozen packages verify inside
+the image, read-only pull succeeds and anonymous access returns HTTP 401.   Combined rate
+$1.4278/hour is below standing $1.60 approval. This retry has not started GPU execution.
+Evidence: `target/distillation-pilot-v1/download-launch-20261006-v2/`.
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

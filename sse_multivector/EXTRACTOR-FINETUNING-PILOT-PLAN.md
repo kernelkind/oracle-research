@@ -2296,7 +2296,10 @@ rejected with HTTP 400. The discarded provider message leaves the rejection reas
 unknown. The helper now preserves bounded credential-redacted reasons; nine
 pinned CLI tests and 68 controller checks pass. Updated VM rehearsal passed
 before another creation request. Model/recipe/data are unchanged. The three-hour
-download allowance remains for planning/review only; no automatic stop/deletion. Evidence:
+download allowance remains for planning/review only; no automatic stop/deletion.
+The rebuilt private image and unchanged download/pilot packages pass native local
+preflight.
+The recorded resource rate was $1.4278/hour. The GPU retry has not started. Evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.

@@ -119,6 +119,7 @@ The download GPU create request was rejected with HTTP 400, with no instance or 
 The helper now preserves bounded credential-redacted error messages; local CLI
 and controller checks pass, and the updated VM rehearsal passed. No automatic
 time limit or deletion.
+The rebuilt private image and unchanged packages pass local preflight; the quoted download-only rate was $1.4278/hour including storage. This retry has not started GPU execution.
 The next attempt uses a cheaper compatible Bulgarian host with a local volume,
 approved October 6. Actual Vast attachment remains untested; startup checks
 the mount before setup or training. Container recovery is verified in the VM.
