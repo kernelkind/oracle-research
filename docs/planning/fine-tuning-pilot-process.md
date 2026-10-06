@@ -19,8 +19,9 @@ main baseline or training started. All 86 available files (4.35 GB) were retriev
 Preliminary charges are **$1.974** against the original $285 total. Local repairs
 pass 94 VM tests and six native tokenizer preflights; one VM tokenizer test was
 skipped and covered by the separate preflights. The corrected image is published
-and verified private. A replacement failed during container startup because host DNS prevented SSH. One reboot did not fix it. All necessary startup evidence was saved and hashed; no inputs, baseline or training reached the worker. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**, within the original $285 experiment maximum.   A different compatible two-card configuration quotes $2.9389/hour.
-Native launch preparation passed; GPU work remains pending. Machine 146170 is excluded. GPU checks and semantic review remain.
+and verified private. A replacement failed during container startup because host DNS prevented SSH. One reboot did not fix it. All necessary startup evidence was saved and hashed; no inputs, baseline or training reached the worker. Its preliminary cost was **$0.76**, bringing the two failed attempts to **$2.74**, within the original $285 experiment maximum. Both attempts failed.  A different compatible two-card configuration quotes $2.9389/hour.
+Native launch preparation passed. The preparation uses a **$2.9389/hour** configuration and is observed through startup, prep, the pilot and verified retrieval.
+Machine 146170 is excluded. GPU checks and semantic review remain.
 
 **October 6 recovery planning estimate:** singleton dense-Gemma evaluation gives
 roughly **53–83 hours / $159–248** at the saved **$2.99/hour** two-card quote,

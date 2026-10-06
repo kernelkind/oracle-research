@@ -1478,17 +1478,18 @@ The corrected VM export is published privately as
 Its filesystem layers, runtime settings and all 15 source hashes match the VM;
 Docker export normalizes empty metadata defaults without changing execution.
 Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  The replacement two-GPU configuration cost **$2.9889/hour** including 300 GB storage. Container DNS failed before
-SSH, inputs or worker startup; one reboot did not resolve it. Necessary startup logs and direct/proxy probes were saved and hashed under the standing prep-only policy.  Its preliminary cost was **$0.76**; the two failed attempts cost **$2.74**, within the original $285 experiment maximum.   Exclude machine 146170 from replacement searches. A different
+SSH, inputs or worker startup; one reboot did not resolve it. Necessary startup logs and direct/proxy probes were saved and hashed under the standing prep-only policy.  Its preliminary cost was **$0.76**; the two failed attempts cost **$2.74**, within the original $285 experiment maximum.  Both attempts failed. Exclude machine 146170 from replacement searches. A different
 compatible host now quotes $2.9389/hour. The frozen
 recipe/image/package are unchanged. There is no automatic time/budget stop or
-deletion.   No GPU execution is active.    A proposed $280 replacement projects
+deletion.       A proposed $280 replacement projects
 99,013 cents, leaving 987 cents beneath the lifetime cap; this does not add to
 the original $285 pilot approval. The selected configuration has two 96GB/600 W server cards at $2.9389/hour including 300 GB storage. The verified
 private image, package, 15 runtime source hashes and model recipe are unchanged.
 Native frozen preparation passed without a paid action. The proposed experiment maximum was **$280**.  This remains within the original $285 experiment maximum, not a new allocation.
-Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. Creation
-has not occurred; continuous observation/live exfiltration and unchanged prep/
-complete-baseline gates will govern the run.
+Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. The preparation used two-GPU hardware at **$2.9389/hour** including 300 GB storage. Startup and GPU prep are
+continuously observed; live exfiltration, unchanged prep/complete-baseline gates
+and complete-data explicit deletion rules govern this run. No automatic stop or
+deletion is enabled.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete
