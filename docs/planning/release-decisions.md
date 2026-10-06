@@ -1657,6 +1657,7 @@ leaves $256.48 for main GPU work inside the original $285 including failures.
 tested private runtime and one-GPU download → two-GPU prep/pilot flow apply;
 all cache checks and global prep/baseline gates remain required. Evidence:
 `target/distillation-pilot-v1/host-switch-20261006/`.
+The new cache volume was created and verified. The tested private image/package passed native prepare for the one-GPU configuration at $1.4972/hour. Mounting and download checks remain pending.
 
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
