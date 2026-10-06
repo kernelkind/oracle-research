@@ -757,6 +757,13 @@ with 13 optional native/dependency skips. Initial fixture failures are retained:
 the fixture needed a native Qwen tokenizer and BF16 loading that preserves
 FP32 rotary buffers. Quality and full-size capacity results are pending.
 
+The same published checkpoint will also receive a BF16 inference control in
+both option orders, using `diagnostic-kev27b-bf16.json` and
+`diagnostic-kev27b-options-rotate-bf16.json`. These configurations change only
+quantization and the declared process budget (72 GiB, with the same 8 GiB
+reserve). This tests precision sensitivity without new downloads, teacher
+generation or SHR fitting. The original service remains stopped.
+
 ## Dataset audit
 
 The immutable ASv6.100 bundle is at

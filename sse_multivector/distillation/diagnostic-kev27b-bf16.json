@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "kind": "pointer",
+  "quantization": "none",
+  "max_input_tokens": 8192,
+  "max_new_tokens": 512,
+  "memory_budget_gib": 72,
+  "reserve_gib": 8,
+  "model": "jaredpalmer/kev-27b",
+  "revision": "af0e6d551bdc2cc724f3e9d7a8bee1cd4fb8f7bf",
+  "upstream_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/shr-student-diagnostics-v1/upstream/kev",
+  "upstream_model_sha256": "2ff3b2e67c048e3bc5a0d1a32aafe50804ed315a5564fce06bb4b95697c5271c",
+  "question": {
+    "instructions": "Apply the SHR instructions in the state to its final supplied input. Choose exactly one relation in the supplied A/B order.",
+    "criteria": {
+      "equivalent": "A and B have the same meaning and are equally broad or specific.",
+      "a_parent_of_b": "A is the broader topic under the supplied containment test.",
+      "b_parent_of_a": "B is the broader topic under the supplied containment test.",
+      "neither": "Both meanings are clear, they are not equivalent, and both parent directions fail the containment test.",
+      "uncertain": "A topic's meaning or the relationship remains unresolved."
+    },
+    "output_field": "relation",
+    "empty_fields": [
+      "reason"
+    ]
+  },
+  "base_model": "Qwen/Qwen3.8-27B",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
+}
