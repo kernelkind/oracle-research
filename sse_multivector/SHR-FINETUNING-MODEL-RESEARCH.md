@@ -393,8 +393,8 @@ model. Neither sharing one model nor splitting the models is settled here.
 The user subsequently authorized evaluation preparation, GB10 capacity checks,
 the selected-source data audit and provisional v26 diagnostics. These are
 documented in [student preparation](SHR-STUDENT-PREPARATION.md); they supply
-useful evidence before the prompt is finished. Completed SHR training labels
-and a final model choice remain unavailable.
+useful evidence before the prompt is finished. A complete accepted SHR training
+corpus and a final model choice remain unavailable.
 
 The subsequently authorized input-selection phase prepared 640 source-bound
 TRAIN nomination families / 1,280 complete A/B orientations, with source notes,
@@ -412,9 +412,20 @@ nominated and no model call or fitting was added. See
 
 The subsequent offline collection support preserves complete SHR answers,
 source identities, prompt versions and review history through the shared
-workflow. It does not select accepted targets or fit a model. The 640 prepared
-TRAIN families remain unrun pending the label-prompt choice; see
+workflow. It does not select accepted targets or fit a model; see
 [SHR answer collection](SHR-STUDENT-PREPARATION.md#shr-answer-collection).
+
+The human then approved the 20-family **SHR-single-v26 / GPT-6.1 Sol medium**
+teacher pilot: 40 valid new answers, no failures/retries/reuse and 20/20
+consistent reversals. All 40 source-bound agent reviews support those answers
+under v26; the collected supervision remains provisional rather than human
+gold. It contains eight equivalence, eight directed-parent and 24 neither
+answers, with no uncertain examples. The original 640-family selection has
+620 unlabelled families remaining. See
+[the teacher pilot](SHR-STUDENT-PREPARATION.md#provisional-shr-single-v26-teacher-pilot).
+The missing uncertainty, alias and difficult related-pair coverage needs a
+small reviewed extension before larger labeling or training. This result
+checks supervision preparation; it adds no post-finetuning model evidence.
 
 The next useful quality comparison needs the same accepted training labels
 and budget for Kev-9B, its Qwen3.5-9B-Base foundation and Ettin-1B. Gemma-12B

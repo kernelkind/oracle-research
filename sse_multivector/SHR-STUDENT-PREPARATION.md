@@ -3,9 +3,10 @@
 The user authorized three preparation tasks: GB10 feasibility checks, evaluation
 design, and an audit of the existing 1,300-note corpus. Work lives on
 `research/shr-student-prep-v1`, in `oracle-mvp-shr-student-prep-v1`.
-SHR-single-v26 remains the user-approved prompt reference. No final student,
-new prompt, SHR teacher labels, paid run, or release-plan decision is approved
-by these preparation results. See [model research](SHR-FINETUNING-MODEL-RESEARCH.md).
+SHR-single-v26 remains the user-approved prompt reference. The separately
+authorized teacher pilot now supplies provisional SHR labels. A final student
+and accepted training corpus remain open; release-plan choices are unchanged. See
+[model research](SHR-FINETUNING-MODEL-RESEARCH.md).
 
 ## Current outcome, October 6
 
@@ -28,25 +29,28 @@ The latest workflow/collection regression run completed 163 tests: 157 passed
 and six optional tests skipped. All 15 native loader/benchmark tests passed
 earlier on GB10. Historical failures remain recorded below. The larger pointer
 capacity check passed training, save, fresh-process reload and six inference
-shapes at 512, 2,048 and 3,072
-tokens; the latter exceeds the complete v26 inputs' maximum 2,684 tokens.
+shapes at 512, 2,048 and 3,072 tokens; the latter exceeds the complete v26 inputs'
+maximum 2,684 tokens.
 All experiment workers stopped.
 
 
-The October 6 input-selection follow-up is complete: 640 unlabelled nomination
+The October 6 input-selection follow-up prepared 640 nomination
 families / 1,280 exact A/B orientations from 576 TRAIN notes and 292 authors.
 Twenty source-bound input reviews and nineteen additional diagnostic assessments
 are saved locally. Six corrective reviews subsequently resolve the named-musician
 case against v26's explicit named-painter example; the Food/crop-attack case
-remains open. No validation cases, training targets, model calls or SHR fitting
-were added. See [TRAIN pair preparation](#train-pair-preparation) and
+remains open. That input-selection phase added no validation cases, training
+targets, model calls or SHR fitting. See [TRAIN pair preparation](#train-pair-preparation) and
 [the rule review](#rule-review-against-shr-single-v26).
 
 The shared offline collector now supports SHR relation answers with complete
 source identity, prompt versions and attributed review history. It retains
-disputed decisions without making them accepted training targets. Label
-generation still needs the prompt choice; the 640 TRAIN families remain unrun.
-See [SHR answer collection](#shr-answer-collection).
+disputed decisions without making them accepted training targets. The authorized
+**SHR-single-v26 / GPT-6.1 Sol medium** pilot completed 40 new calls on 20 of those
+TRAIN families, with 40 current agent reviews and 20/20 consistent reversals.
+The remaining 620 families are unlabelled. There are eight equivalence answers,
+eight directed parent answers and 24 neither answers; none is uncertain.
+See [the teacher pilot](#provisional-shr-single-v26-teacher-pilot).
 
 ## Authorized provisional v26 comparison
 
@@ -925,9 +929,11 @@ not estimated deployment frequencies or balanced relation supervision.
 
 This selection produced 640 distinct families, each with an exact A/B reversal,
 from 576 notes and 292 authors. The observed maximum is four families per note
-and seven per subject wording. There are **zero SHR relation labels**.
-SP numbering, equal strings, lexical matches and random controls cannot supply
-them. The existing 100 validation posts retain their 32-diagnostic/68-calibration
+and seven per subject wording. Nomination produced no SHR relation labels;
+[the subsequent teacher pilot](#provisional-shr-single-v26-teacher-pilot)
+supplies 40 provisional answers for 20 families. SP numbering, equal strings,
+lexical matches and random controls cannot supply those answers. The existing
+100 validation posts retain their 32-diagnostic/68-calibration
 allocation; none is nominated here. No final-test content was reopened, and the
 earlier input exposure remains disclosed in the dataset audit below.
 
@@ -940,8 +946,9 @@ python3 sse_multivector/experiment.py prepare \
 The [preparation specification](distillation/shr-train-pair-preparation-v1.json)
 uses **SHR-single-v26**, the approved reference still under development, and
 copies the existing Kev-9B diagnostic runner settings. Preparing those inputs
-is not approval to run the model or a final student decision. All 1,280 cases
-remain unrun. The native plan/report retain source hashes, code bindings,
+is not approval to run the model or a final student decision. The original
+1,280-case plan remains unrun; the separately authorized teacher pilot reuses
+40 exact inputs in its own experiment. The native plan/report retain source hashes, code bindings,
 nomination statistics, complete evidence and reversal family IDs. Generated
 artifacts are ignored under `target/shr-student-pairs-v1/`; source specifications,
 the reusable adapter, tests and these maintained records are committed.
@@ -1041,13 +1048,77 @@ Collection of that real unrun set fails as expected before publishing an output.
 The experiment/selection, node-description, hierarchy-input and node-sorting
 regression suites completed 163 tests: 157 passed, six optional skips.
 
-Whether to generate provisional labels under approved **SHR-single-v26** now
-or wait for a finalized prompt remains the requested choice. The Food/crop-attack
-scope question also remains open. The next model-quality comparison still
-requires reviewed targets and a separately defined evaluation role.
-If provisional labeling is selected, start with the 20 input-reviewed TRAIN
-families in both directions (40 teacher requests), then review those decisions
-before labeling the rest. This is a proposal, not a completed or approved run.
+The user subsequently approved generating and reviewing the 20-family pilot
+under **SHR-single-v26**, documented below. The Food/crop-attack scope question
+remains open; no pilot pair uses that disputed case. The next model-quality
+comparison still requires broader reviewed targets and a separately defined
+evaluation role.
+
+### Provisional SHR-single-v26 teacher pilot
+
+The [teacher specification](distillation/shr-train-teacher-pilot-v26.json) selects
+the 20 previously input-reviewed TRAIN families, four from each nomination
+rule, with both orientations. They cover 31 source notes and 25 authors.
+Preparation verified that every complete input, context, evidence record,
+rendered v26 prompt and input hash exactly matches the original nomination.
+All source identities and frozen split membership remain intact.
+
+The pilot used **GPT-6.1 Sol medium**, subscription SSE, concurrency two,
+1,800-second timeouts and a 40-total-attempt limit. All 40 answers are valid,
+with no failures, retries, answer reuse or unresolved cases. All 20 exact
+reversals agree. This is consistency on selected development inputs, not
+semantic accuracy or final prompt acceptance.
+
+| Relation | Directed answers |
+| --- | ---: |
+| equivalent | 8 |
+| a_parent_of_b | 4 |
+| b_parent_of_a | 4 |
+| neither | 24 |
+| uncertain | 0 |
+
+All 40 inputs, answers and reasons received attributed native agent reviews;
+all are supported under v26. These assessments are not independent human gold
+or acceptance of an SHR training corpus. The source notes remain TRAIN; no
+validation or final-test data was selected, and no student fitting occurred.
+The review preserves the explicit country/transfer restrictions, context-only
+named-entity examples, the hashrate topic's growth-plus-stabilization conditions,
+and the Writing/Flash fiction activity/product distinction. Shared subject
+matter alone does not merge the two article assessments or the two trading
+claims. The lexical and hash-selected cross-post controls are largely easy
+unrelated topics; they do not establish difficult-negative coverage.
+
+Native `collect` publishes all 40 provisional answers and their current reviews
+under `target/shr-student-pairs-v1/teacher-pilot-v26-collected/`, retaining prompt,
+source, receipt and review bindings. All eleven protected file hashes verify;
+the original 1,280-case plan's hash is unchanged. Experiment artifacts, labels,
+reviews and installed runner dependencies remain ignored. No source dataset or
+other owner's worktree was edited.
+
+Artifact bindings:
+
+- Experiment: `target/shr-student-pairs-v1/teacher-pilot-v26/experiment.json`,
+  SHA-256 `00a979c3636e335e282065abcbfff77415b06d83e35d1db3bd5a12775a9b4690`.
+- Collected relationships: SHA-256
+  `f953730f693469afb725aade97a2dfbdac6b68ed5a65e9605e9dcc04dade31e6`.
+- Native reviews: SHA-256
+  `a79d05481dc28bb84ad091dd322996773dd19435c8fd737b5cca9f184b9db1e0`.
+- Native usage: 84,476 input tokens, 10,880 cached input tokens, 2,576 output
+  tokens including 403 reasoning tokens. These are the runner's reported
+  counters, not a subscription invoice or an assumed caching rate.
+
+Initial preparation stopped before inference because this worktree lacked the
+pinned runner dependencies. Installing them with
+`nix shell nixpkgs#nodejs_24 --command npm ci --ignore-scripts` preserved the
+package lock. Repeated native preparation and all input/receipt/collection
+checks passed. No transport or retry implementation changed.
+
+The next useful preparation is a small coverage extension for ambiguous or
+conflicting meanings (`uncertain`), differently worded equivalents and related
+non-parents. Consistent and conflicting multi-entry topics also remain untested
+by this singleton-input pilot. Prepare and review those cases before expanding
+teacher labeling or comparing trained students; this extension is proposed,
+not approved by the completed pilot.
 
 ## Dataset audit
 

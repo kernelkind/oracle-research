@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "SHR-single-v26",
+    "path": "../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/SHR-single-v26.md"
+  },
+  "dataset": {
+    "adapter": "subject_pairs",
+    "path": "shr-train-pair-selection-v1.json",
+    "select": [
+      "SPPAIR-1d7f9ba783e9a90613134d07-forward",
+      "SPPAIR-1d7f9ba783e9a90613134d07-reverse",
+      "SPPAIR-a0653df25e6d353544e2829e-forward",
+      "SPPAIR-a0653df25e6d353544e2829e-reverse",
+      "SPPAIR-461ecf27e200e84fe3b51fb9-forward",
+      "SPPAIR-461ecf27e200e84fe3b51fb9-reverse",
+      "SPPAIR-31a3048e390314b601df1289-forward",
+      "SPPAIR-31a3048e390314b601df1289-reverse",
+      "SPPAIR-7bb8ed1702b53b69d957f378-forward",
+      "SPPAIR-7bb8ed1702b53b69d957f378-reverse",
+      "SPPAIR-e15094d19c34cc6223402bc6-forward",
+      "SPPAIR-e15094d19c34cc6223402bc6-reverse",
+      "SPPAIR-f790cf97146214edec4cd1ca-forward",
+      "SPPAIR-f790cf97146214edec4cd1ca-reverse",
+      "SPPAIR-97ff59bed0b8f0db4afec6f0-forward",
+      "SPPAIR-97ff59bed0b8f0db4afec6f0-reverse",
+      "SPPAIR-4fa9d9d5be8e96eca9ce7001-forward",
+      "SPPAIR-4fa9d9d5be8e96eca9ce7001-reverse",
+      "SPPAIR-1122327554d5e7ba81d96dae-forward",
+      "SPPAIR-1122327554d5e7ba81d96dae-reverse",
+      "SPPAIR-c4ab328191988676fab854e7-forward",
+      "SPPAIR-c4ab328191988676fab854e7-reverse",
+      "SPPAIR-01531c740708d8e848009530-forward",
+      "SPPAIR-01531c740708d8e848009530-reverse",
+      "SPPAIR-4e36fffafbc4bcbdd500716e-forward",
+      "SPPAIR-4e36fffafbc4bcbdd500716e-reverse",
+      "SPPAIR-78ef939bb00457824581f6d1-forward",
+      "SPPAIR-78ef939bb00457824581f6d1-reverse",
+      "SPPAIR-96ae8b8692ffe01fd5af06ad-forward",
+      "SPPAIR-96ae8b8692ffe01fd5af06ad-reverse",
+      "SPPAIR-ae8540fa11f4872907eb08ee-forward",
+      "SPPAIR-ae8540fa11f4872907eb08ee-reverse",
+      "SPPAIR-4e15828d8b3a84b02cccfccc-forward",
+      "SPPAIR-4e15828d8b3a84b02cccfccc-reverse",
+      "SPPAIR-30002101c296048841b5c197-forward",
+      "SPPAIR-30002101c296048841b5c197-reverse",
+      "SPPAIR-3b0ebe95d3e5bf2367b4a349-forward",
+      "SPPAIR-3b0ebe95d3e5bf2367b4a349-reverse",
+      "SPPAIR-bc89045a91cf9cf8123e1f9a-forward",
+      "SPPAIR-bc89045a91cf9cf8123e1f9a-reverse"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "concurrency": 2,
+    "timeout_seconds": 1800,
+    "auth_file": null,
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relation",
+        "reason"
+      ],
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": [
+            "equivalent",
+            "a_parent_of_b",
+            "b_parent_of_a",
+            "neither",
+            "uncertain"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "runner_binary": "../run-model.sh"
+  }
+}
