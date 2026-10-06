@@ -203,6 +203,61 @@ formatting can change with task training; these results do not disqualify the
 foundation or rank students after matched SHR training. High reversal
 consistency alone does not establish correct containment.
 
+### Qwen readout and option-order controls
+
+The autonomous continuation completed 210 new Qwen calls, all valid in one
+attempt. The explicit option definitions match the Kev configuration. Generated
+JSON still requests a reason; scoring explicitly replaces that output contract
+with an option letter and returns an empty reason through the native adapter.
+All original v26 rules, examples and final supplied inputs are preserved.
+
+| Qwen3.5-9B instruct, NF4 | Original agreement / reversal | Scope | Transfer | Total |
+| --- | --- | --- | --- | --- |
+| Added choices, generated JSON | 25/40; 14/20 | 2/8; 0/4 | 7/22; 5/11 | 34/70; 19/35 |
+| Direct option scoring, original order | 25/40; 7/20 | 1/8; 0/4 | 8/22; 4/11 | 34/70; 11/35 |
+| Direct option scoring, rotated order | 25/40; 15/20 | 5/8; 2/4 | 6/22; 9/11 | 36/70; 26/35 |
+
+The original generated-JSON comparison was 36/70 and 22/35. These new interfaces
+do not establish an improvement. Rotation changes every code: the original
+order is equivalent, A-parent, B-parent, neither, uncertain; the rotated order
+is B-parent, neither, uncertain, equivalent, A-parent. Reversing five choices
+alone leaves the middle code unchanged, so those initially prepared reversal
+plans were not run.
+
+The two scored orders preserve only 32/70 decisions: 19/40 original, 0/8 scope,
+13/22 transfer. The original order never selects A-parent; the rotation never
+selects B-parent. Similar aggregate agreement hides different directional
+failures. Native agent reviews reject a parent edge between equivalent Cooking
+topics and a reversed edge between Coffee and Coffee drinking. This is evidence
+against using untuned letter scoring as Qwen's default, not evidence that it
+cannot learn a stable relation output after task-specific training.
+
+Native experiments are `qwen-{choices-json,options,options-rotate}-{original,
+scope,transfer}-v1`. Rotation experiments use the completed normal-order answers
+as their immediate baseline, measuring option-order stability. The separate
+`qwen-options-rotate-teacher-*-v1` views inherited the old teacher baseline and
+reused all 70 rotated answers with **zero new attempts**. They supply the rotated
+teacher-agreement row without duplicate inference or manual comparison files.
+The local serving source is `06fb274c`; rotation configurations are at
+`b9135f7e`. Full native reports and failed command invocations remain ignored.
+
+The next comparison adds the current Nimble adapter, native decider-4b v2.1 and
+Qwen3.8-27B as a larger foundation, while checking Gemma's same readout controls.
+Native format tests first exposed the missing causal adapter and the different
+schema/segmented input layouts. Their replacements verify exact learned tensors
+and native single-pass logits. These additions use published weights, not SHR
+training or synthetic benchmark checkpoints. Continued SHR fitting and final
+student selection still require accepted relationship supervision and semantic
+evaluation beyond these related development cases.
+
+The final expanded workflow regression passed 214 tests with ten optional
+skips; all six native weight tests passed on GB10. Nimble's tokenizer files
+have different hashes from its Qwen foundation, but vocabulary mappings and
+all 70 full native schema inputs/candidate IDs are identical. That exact-input
+parity check made no model calls. The current 12,026-row/8,192-token Nimble
+release replaces the initial report's attribution of the original smaller
+release. No published score is silently reassigned to the new checkpoint.
+
 ### Verified Kev capacity path
 
 The full native NF4/LoRA/head check passed at 512 and 2,048 tokens with the

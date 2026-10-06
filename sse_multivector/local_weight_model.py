@@ -4,6 +4,7 @@ Native causal text generation reuses the distillation loader. An optional
 pointer decision checkpoint uses its pinned upstream encoder and head.
 """
 import gc
+import importlib.util
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import math
@@ -11,13 +12,14 @@ from pathlib import Path
 import string
 import sys
 import time
+from types import SimpleNamespace
 
 from sse_multivector.distillation_benchmark import admit, available_memory
 from sse_multivector.distillation_run import load_model, read_json, sha256
 
 
 def checkpoint_name(config, config_sha256):
-    key = 'adapter' if config['kind'] == 'pointer' else 'model'
+    key = 'adapter' if 'adapter' in config else 'model'
     revision = config['adapter_revision'] if key == 'adapter' else config['revision']
     return f'{config[key]}/{revision}/{config_sha256}'
 
@@ -44,7 +46,8 @@ class LocalWeights:
         self.config_sha256 = sha256(path)
         if (c['kind'] not in {'causal_lm', 'pointer'} or len(c['revision']) != 40
                 or c['quantization'] not in {'none', 'nf4'}
-                or c.get('readout', 'generation') not in {'generation', 'options'}):
+                or c.get('readout', 'generation') not in {'generation', 'options'}
+                or c.get('prompt_layout', 'chat') not in {'chat', 'schema', 'decider'}):
             raise ValueError('expected a pinned causal LM or pointer checkpoint')
         admit(c, available_memory())
         torch.set_num_threads(4)
@@ -53,7 +56,7 @@ class LocalWeights:
         self.name = checkpoint_name(c, self.config_sha256)
         self.tokenizer = AutoTokenizer.from_pretrained(c['model'], revision=c['revision'])
         model = load_model(dict(c, device='cuda', max_length=c['max_input_tokens'], efficient_attention=True))
-        self.head = self.encoder = None
+        self.head = self.encoder = self.choice_encoder = self.decider_encoder = None
         if c['kind'] == 'pointer':
             from peft import PeftModel
             from huggingface_hub import snapshot_download
@@ -82,6 +85,36 @@ class LocalWeights:
             torch.cuda.empty_cache()
         else:
             self.model = model
+            if 'adapter' in c:
+                from peft import PeftModel, get_peft_model_state_dict
+                from peft.utils.save_and_load import load_peft_weights
+                from huggingface_hub import snapshot_download
+                adapter = (c['adapter'] if Path(c['adapter']).is_dir() else snapshot_download(
+                    c['adapter'], revision=c['adapter_revision'], allow_patterns=['*.json', '*.safetensors']))
+                if sha256(Path(adapter)/'adapter_model.safetensors') != c['adapter_sha256']:
+                    raise ValueError('causal adapter weight hash differs')
+                mapping = c.get('adapter_key_mapping')
+                self.model = PeftModel.from_pretrained(model, adapter, is_trainable=False, key_mapping=mapping)
+                expected = load_peft_weights(adapter, device='cpu', key_mapping=mapping)
+                actual = get_peft_model_state_dict(self.model)
+                if (set(actual) != set(expected) or any(
+                        not torch.equal(actual[k].cpu(), expected[k].to(actual[k].dtype)) for k in actual)):
+                    raise ValueError('causal adapter weights differ after loading')
+                self.adapter_path = adapter
+            if c.get('prompt_layout') in {'schema', 'decider'}:
+                upstream = Path(c['upstream_path'])
+                for name, expected in c['upstream_source_sha256'].items():
+                    if Path(name).name != name or sha256(upstream/name) != expected:
+                        raise ValueError('schema prompt source differs from its pinned implementation')
+                if c['prompt_layout'] == 'schema':
+                    sys.path.insert(0, str(upstream))
+                    from serving_schema import prepare_prompts
+                    self.choice_encoder = prepare_prompts
+                else:
+                    spec = importlib.util.spec_from_file_location('decider_prompt', upstream/'prompt.py')
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    self.decider_encoder = module.build
         self.model.eval()
 
     def pointer_logits(self, encoded):
@@ -126,14 +159,44 @@ class LocalWeights:
             else:
                 readout = c.get('readout', 'generation')
                 messages = body['messages']
-                if 'question' in c:
+                choice_encoder = getattr(self, 'choice_encoder', None)
+                decider_encoder = getattr(self, 'decider_encoder', None)
+                if decider_encoder is not None:
+                    if readout != 'options':
+                        raise ValueError('decider layout requires option scoring')
+                    if len(self.tokenizer.encode('Context:\n' + prompt, add_special_tokens=False)) > c['max_input_tokens']:
+                        raise ValueError('complete decider state exceeds its configured limit')
+                    question = c['question']
+                    keys = list(question['criteria'])
+                    record = SimpleNamespace(context=prompt, qs=[SimpleNamespace(text=question['instructions'],
+                        options=[f'{k}: {question["criteria"][k]}' for k in keys], gold=0)])
+                    prepared = decider_encoder(record, self.tokenizer,
+                        rng=SimpleNamespace(shuffle=lambda options: None), max_options=len(keys),
+                        max_ctx_tokens=c['max_input_tokens'])
+                    if prepared['perms'] != [list(range(len(keys)))] or prepared['slots'] != [len(prepared['ids'])-1]:
+                        raise ValueError('decider option order or answer slot differs')
+                    inputs = {'input_ids': torch.tensor([prepared['ids']])}
+                    inputs['attention_mask'] = torch.ones_like(inputs['input_ids'])
+                    metadata['choice_prompt'] = self.tokenizer.decode(prepared['ids'], skip_special_tokens=False)
+                elif choice_encoder is not None:
+                    if readout != 'options':
+                        raise ValueError('schema layout requires option scoring')
+                    question = c['question']
+                    schema = {question['output_field']: {'type': 'enum', 'description': question['instructions'],
+                        'choices': list(question['criteria']), 'choice_descriptions': question['criteria']}}
+                    prepared = choice_encoder(self.tokenizer, prompt, schema, c['max_input_tokens'])
+                    inputs = {'input_ids': torch.tensor([prepared.full_ids[0]])}
+                    inputs['attention_mask'] = torch.ones_like(inputs['input_ids'])
+                    metadata['choice_prompt'] = self.tokenizer.decode(prepared.full_ids[0], skip_special_tokens=False)
+                elif 'question' in c:
                     prompt = choice_prompt(prompt, c['question'], readout)
                     messages = [{'role': 'user', 'content': prompt}]
                     metadata['choice_prompt'] = prompt
                 elif readout == 'options':
                     raise ValueError('option scoring requires a choice question')
-                inputs = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
-                    enable_thinking=False, tokenize=True, return_dict=True, return_tensors='pt')
+                if choice_encoder is None and decider_encoder is None:
+                    inputs = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
+                        enable_thinking=False, tokenize=True, return_dict=True, return_tensors='pt')
                 inputs.pop('token_type_ids', None)
                 tokens = inputs['input_ids'].shape[-1]
                 cap = (1 if readout == 'options' else
@@ -148,12 +211,16 @@ class LocalWeights:
                     if (any(len(row) != 1 or row[0] in self.tokenizer.all_special_ids for row in encoded)
                             or len({row[0] for row in encoded}) != len(keys)):
                         raise ValueError('option codes must be distinct single tokens')
-                    rendered = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
-                        enable_thinking=False, tokenize=False)
-                    prefix = inputs['input_ids'][0].tolist()
-                    if any(self.tokenizer.encode(rendered + code, add_special_tokens=False) != prefix + row
-                           for code, row in zip(codes, encoded)):
-                        raise ValueError('option code tokenization changes at the answer boundary')
+                    if choice_encoder is not None:
+                        if [row[0] for row in encoded] != prepared.candidate_ids[0]:
+                            raise ValueError('schema option codes differ at the answer boundary')
+                    elif decider_encoder is None:
+                        rendered = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True,
+                            enable_thinking=False, tokenize=False)
+                        prefix = inputs['input_ids'][0].tolist()
+                        if any(self.tokenizer.encode(rendered + code, add_special_tokens=False) != prefix + row
+                               for code, row in zip(codes, encoded)):
+                            raise ValueError('option code tokenization changes at the answer boundary')
                     temperature = c.get('temperature', 1.)
                     if isinstance(temperature, bool) or not math.isfinite(temperature) or temperature <= 0:
                         raise ValueError('choice temperature must be positive and finite')

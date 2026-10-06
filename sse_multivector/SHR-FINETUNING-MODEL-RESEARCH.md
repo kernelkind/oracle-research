@@ -28,9 +28,11 @@ My recommended order of investigation is:
 
 **Bespoke-Nimble-9B is a credible additional warm start**, particularly if
 reusing a standard language-model fine-tuning path is materially simpler than
-supporting Kev's head. It is not yet a better-supported first choice than Kev:
-its training is narrower and its strongest headline comparison uses synthetic
-labels. Gemma 4 26B-A4B-it is also worth retaining when reusing the SP pilot's
+supporting Kev's head. The current pinned release is v3-12026, with 12,026
+training rows and an 8,192-token contract. The earlier description of 2,676
+rows and a 2,048-token limit applied to the original release, not this checkpoint.
+Its suitability still needs the direct SHR comparison. Gemma 4 26B-A4B-it is
+also worth retaining when reusing the SP pilot's
 existing setup or exploring a larger model with fewer active parameters.
 
 These are hypotheses about suitability after SHR-specific training. They are
@@ -67,6 +69,13 @@ on GB10 in that paused-server window: synthetic updates took 1.57 seconds at
 and matching reload logits. This establishes a practical local training path.
 It does not establish SHR convergence or a matched speed advantage: Kev uses
 a different head and frozen-weight preparation, and its server was resident.
+
+Qwen's subsequent readout controls do not close the provisional gap: explicit
+choices with generated JSON give 34/70 agreement and 19/35 reversals; direct
+option scoring gives 34/70 and 11/35. Rotating every option code gives 36/70 and
+26/35, but changes 38 of the 70 decisions. These are additional development
+diagnostics, not a post-training architecture comparison. They weaken the
+hypothesis that Kev's lead comes simply from bypassing JSON and reasons.
 
 ## Project constraints and task meaning
 
@@ -172,7 +181,7 @@ advertised context limit without checking.
 | --- | --- | --- |
 | [Kev-9B](https://huggingface.co/jaredpalmer/kev-9b) | Qwen3.5-9B-Base plus LoRA and option-scoring heads; public task labels and generated policy, rule and missing-evidence cases. | Best initial compact decision hypothesis. Supplied option descriptions suit five relations; policy scope is relevant. Continued task training is supported. |
 | [Kev-27B v2](https://huggingface.co/jaredpalmer/kev-27b) | Full-weight tuning of Qwen3.8-27B, followed by blending with v1; 145,840 records and a pointer head. | A serious larger warm start, rather than restricting decision models to 4–9B. Corpus disclosure is partial. |
-| [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) | Qwen3.5-9B instruct plus LoRA; 2,676 synthetic training records; scores answer-letter logits. | Relevant contrastive restrictions, and no separate classifier head required. Narrower supervision and a 2,048-token training/serving contract. |
+| [Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) | Current v3-12026: Qwen3.5-9B instruct plus LoRA; 12,026 training rows, including contrastive/long-form decisions and public task data; scores answer-letter logits. | Relevant restrictions without a separate head. Its [pinned training contract](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B/resolve/bd792f44ec8e265be861bfcdf4e05967ffe0e858/schema_config.json) is 8,192 tokens, with reconstructed training inputs up to 6,231. |
 | [Mapika decider-4b](https://huggingface.co/Mapika/decider-4b) | Qwen3.5-4B-Base; broad decision training followed by hard-case LoRA; answer-letter scoring. | Plausible cheap student. v2.1 improves some hard families but does not dominate earlier versions on every held-out panel. |
 | [AutoTrust JEV-9B](https://huggingface.co/autotrust/JEV-9B) | Qwen3.5-9B instruct, LoRA and a decision head distilled from closed Jev probabilities. | Useful alternative; fidelity to Jev is not evidence of correctness under SHR. It can preserve teacher errors. |
 | [GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide) | Gemma 4 26B-A4B-it plus a decision adapter/head; previously JEV-Gemma4-26B-A4B, with the same weights. | A relevant Gemma warm start. Its headline 62.48 Decision Index mixes direct decisions and adaptive reasoning; do not treat it as a one-pass score. |
@@ -189,7 +198,7 @@ former; Nimble uses the latter. A matched warm-start comparison must preserve
 that difference. An untuned Base model's failure to follow the full prompt
 would not establish its quality after supervised SHR training.
 
-Nimble's synthetic holdout scores 90.12% versus its untuned 9B foundation's
+Nimble's earlier synthetic holdout scores 90.12% versus its untuned 9B foundation's
 66.36%, but spans just six source families. More usefully, its
 [separate human-labeled public suite](https://github.com/bespokelabsai/nimble/blob/main/docs/PUBLIC_BENCHMARKS.md)
 reports 85.3% on a 299-item MultiNLI subset, 82.8% on PAWS and 76.6% on
@@ -277,7 +286,7 @@ with the rules learned through SHR-specific supervision. This is a different
 input contract from prompting an untuned model with v26 and its examples. The
 named [DeBERTa configuration](https://huggingface.co/MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli/blob/main/config.json)
 has 512 positions, so it cannot simply receive the full v26 prompt. Nimble's
-2,048-token contract also needs an actual token-length check. Preserve every
+current 8,192-token contract also needs an actual token-length check. Preserve every
 entry and all subject/context text; reject overlength inputs rather than
 truncate them. Record any instruction shortening separately from model changes.
 If real merged pairs exceed DeBERTa's budget, prefer the longer-context encoder

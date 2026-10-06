@@ -391,7 +391,8 @@ implementation and adapter, preserves the complete prompt as state, and records
 native option probabilities. Its configured empty reason field is not generated
 reasoning. `local_model model-name --config CONFIG` prints the same identity
 without loading weights. A pointer model names its learned adapter and revision;
-a causal LM names its foundation checkpoint. Both bind the configuration hash;
+a causal LM with an adapter also names that adapter; other causal LMs name
+their foundation checkpoint. All bind the configuration hash;
 the experiment also freezes local transport/loader code hashes. Local runs need
 the isolated environment's `jsonschema` package. Quantized output is evidence
 for that precision and input/readout contract only.
@@ -407,6 +408,14 @@ the actual choice prompt, code mapping, logits, temperature and option
 probabilities before returning the chosen field and configured empty fields.
 Reordering criteria changes the codes and the configuration-bound model name.
 These probabilities are not calibrated task confidence or semantic uncertainty.
+
+Published causal-LM adapters additionally bind their revision and weight hash.
+Loading verifies every saved adapter tensor after any declared text-prefix
+conversion. `prompt_layout: "schema"` uses the pinned native schema prompt
+builder; `prompt_layout: "decider"` uses the pinned native segmented state and
+question builder without chat wrapping or option shuffling. Both record their
+actual rendered input and reject overlength complete inputs. Upstream prompt
+sources stay ignored and their hashes are required in the serving configuration.
 
 For completed direct five-relation answers, `show --json` includes
 `relation_diagnostics`: relation-only teacher agreement/confusion and exact
