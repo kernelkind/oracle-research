@@ -86,8 +86,10 @@ with a slower 80-hour / $239 sensitivity case. Older workstation timings are
 proxies; actual server-card throughput remains unmeasured. The draft allows
 200 GB inbound and 60 GB outbound. The user approved private image publication
 and a **$285 combined prep→pilot budget** on October 5. The exact tested image is published and verified private.
-GPU startup is in progress for the two-GPU preparation at $2.9889/hour including storage. GPU prep and local semantic grading remain
-pending. There is no automatic
+The preparation completed only Qwen prep; dense Gemma exceeded the cache memory guard and Gemma MoE failed gradient agreement. The prep gate blocked all
+main baselines and training. All 86 available files (4.35 GB), saved checkpoints and failure logs were retrieved and independently rehashed.
+Preliminary charges were **$1.974**. Repairs are local and
+no replacement is running. Semantic grading remains pending. There is no automatic
 time limit or deletion.
 Paired prep/pilot execution and completeness checks are implemented locally:
 all three baselines precede training; raw/parsed answers reconcile with receipts;

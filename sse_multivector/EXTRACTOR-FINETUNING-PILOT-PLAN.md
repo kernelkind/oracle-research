@@ -2080,8 +2080,17 @@ The user approved **$285** for private publication and the combined rental.
 The frozen plan allows **90 hours at up to $3.10/hour**, plus **$2.60** transfer
 allowance: $281.60 in planning quantities, within the approval. The 90 hours and
 cost thresholds are review parameters, not automatic stop/deletion limits.
-The recorded rental rate was $2.9889/hour. Private image startup is underway under
-continuous observation; all prep and baseline integrity gates remain required.
+The recorded rental rate was $2.9889/hour. Qwen prep completed both updates and its
+maximum-output native-cache check. Dense Gemma saved checkpoint 1 and a brief
+response, then exceeded the frozen 88 GiB reserved-memory guard without CUDA
+OOM. Gemma MoE failed fused/native adapter-gradient agreement before its first
+update. Neither failed check persisted its numerical diagnostic, so repairs
+must preserve these measurements before rejecting work. The global prep gate
+blocked every main baseline and training run. All 80 work and six startup files
+(4,346,589,909 bytes), available checkpoints and failure logs were retrieved
+and independently rehashed.
+The preliminary resource charge was **$1.974**. Repairs are local; no replacement is running and the original image/
+input/operation are preserved.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
 Prep must establish actual execution/fit and refine throughput. Continuous
 observation continues through complete local retrieval/review and explicit

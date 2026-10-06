@@ -1452,8 +1452,13 @@ The user approved private image publication and a **$285 combined rental budget*
 The tested image is published and verified private: read-only pulling succeeds,
 anonymous manifest access returns HTTP 401, and all runtime/file hashes match
 the tested VM.  Actual GPU
-checks and local semantic grading remain pending. The October 5 preparation used two-GPU hardware at $2.9889/hour including storage. It is starting under continuous observation;
-all prep and baseline gates precede main training.
+checks and local semantic grading remain pending. The October 5 preparation used two-GPU hardware at $2.9889/hour including storage. Qwen prep passed; dense Gemma failed the
+88 GiB cache-memory guard without CUDA OOM, and Gemma MoE failed native/fused
+adapter-gradient agreement before its first update. The prep gate blocked every
+main baseline and training run. All 86 available files (4.35 GB), available checkpoints and failure logs were retrieved and independently rehashed under the standing prep-only substantial-repair authorization. 
+Preliminary charges were **$1.974**. Repair proceeds
+locally; no replacement rental is running. Failed checks must preserve numerical
+evidence before rejecting work; the original frozen artifacts remain unchanged.
 The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
 149 shared-controller regressions passed. Real concurrent CPU workers verified
 prep→pilot, early copies from both workers, checkpoint continuation and complete
