@@ -160,10 +160,14 @@ seven-note native generation-cache probe: **88.080 GiB reserved versus 88 GiB
 budget**, without OOM. **No pilot baseline or training started.** All **116 work files / 6.82 GB**, six preparation files, five sealed checkpoints and the three gradient-check reports were retrieved, independently rehashed and reviewed.  Preliminary charges were **$1.361**.  The corrected two-GPU configuration cost **$2.8139/hour**. Only MoE inference workspace changes **4 → 12 GiB**, consistently
 in prep and pilot; total inference budget stays 88 GiB and the widest predicted
 batch falls **seven → five**. Exact image, code, prompts, data, models and
-training recipe are unchanged. Package verification and native preparation pass;
-fresh full CUDA prep must confirm fit before baselines and pilot training.
-Archive all verified prior work and retain the model cache. No automatic stop
-or deletion. Evidence:
+training recipe are unchanged. Package verification and native preparation pass.
+The replacement passed all three full CUDA preps and started baselines in the same run. The widest real cache probes reserve **76.28 GiB Qwen
+(seven notes), 77.07 GiB dense Gemma (one), and 76.80 GiB MoE (five)**, all below
+88 GiB. Loss/gradient checks, merge/generation, long-input updates and saved
+continuation checks pass for every student. No pilot training starts until
+all three baselines pass. Observe continuously and progressively retrieve
+frozen responses/checkpoints. Archive all verified prior work and retain the
+model cache. No automatic stop or deletion. Evidence:
 `target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
 No automatic stop or deletion.
