@@ -406,6 +406,12 @@ single-token codes; no text is generated. The backend rejects split, duplicate
 or boundary-dependent code tokens and overlength complete inputs. It records
 the actual choice prompt, code mapping, logits, temperature and option
 probabilities before returning the chosen field and configured empty fields.
+It also records the allowed codes' probability mass within the full vocabulary
+and the unrestricted highest-scoring token. Option probabilities are conditional
+on the allowed codes. Low full-vocabulary mass can reveal a chat model preferring
+another output format; it is not a semantic confidence measure. Native decision
+models trained with restricted-code loss need not allocate high full-vocabulary
+mass to those codes.
 Reordering criteria changes the codes and the configuration-bound model name.
 These probabilities are not calibrated task confidence or semantic uncertainty.
 
@@ -416,6 +422,10 @@ builder; `prompt_layout: "decider"` uses the pinned native segmented state and
 question builder without chat wrapping or option shuffling. Both record their
 actual rendered input and reject overlength complete inputs. Upstream prompt
 sources stay ignored and their hashes are required in the serving configuration.
+
+`show --json` and `show --case CASE_ID --json` expose saved `response_metadata`,
+`usage` and `stop_reason` when the native receipt supplies them. This includes
+local scoring evidence without reopening or rewriting raw receipts.
 
 For completed direct five-relation answers, `show --json` includes
 `relation_diagnostics`: relation-only teacher agreement/confusion and exact

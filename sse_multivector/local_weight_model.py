@@ -227,11 +227,14 @@ class LocalWeights:
                     with torch.autocast('cuda', dtype=torch.bfloat16):
                         logits = self.model(**inputs, use_cache=False, logits_to_keep=1).logits[0, -1].float()
                     z = logits[[row[0] for row in encoded]]
-                    if not torch.isfinite(z).all():
-                        raise ValueError('nonfinite option scores')
+                    if not torch.isfinite(logits).all():
+                        raise ValueError('nonfinite language-model scores')
                     p = (z / temperature).softmax(-1)
+                    top = logits.argmax().item()
                     metadata.update(probabilities=dict(zip(keys, p.cpu().tolist())),
                         option_logits=dict(zip(keys, z.cpu().tolist())), option_codes=dict(zip(keys, codes)),
+                        option_probability_mass=(z.logsumexp(-1)-logits.logsumexp(-1)).exp().item(),
+                        unrestricted_top_token_id=top, unrestricted_top_token=self.tokenizer.decode([top]),
                         temperature=temperature, readout=readout)
                     raw = json.dumps({c['question']['output_field']: keys[p.argmax().item()],
                                       **{k: '' for k in c['question'].get('empty_fields', [])}})

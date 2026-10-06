@@ -67,6 +67,8 @@ class LocalModelTests(unittest.TestCase):
         self.assertEqual(self.received[0]['max_tokens'], 128)
         shown = json.loads(self.cli('show', 'first', '--json').stdout)
         self.assertEqual(shown['summary']['valid'], 1)
+        self.assertEqual(shown['cases'][0]['response_metadata']['config_sha256'], 'a'*64)
+        self.assertEqual(shown['cases'][0]['usage']['input'], 10)
         self.assertEqual(shown['cases'][0]['parsed']['relation'], 'neither')
         self.assertEqual(shown['relation_diagnostics']['relation_counts'], {'neither': 1})
         self.cli('prepare', 'second', '--from', 'first', '--history-root', str(self.root),

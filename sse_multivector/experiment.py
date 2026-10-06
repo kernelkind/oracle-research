@@ -645,6 +645,10 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
         row = {**case, "status": "unrun", "output": None, "baseline": None}
         if record:
             row["elapsed_seconds"] = record.get("elapsed_seconds")
+            model_result = record.get('model_result') or {}
+            for field in ('response_metadata', 'usage', 'stop_reason'):
+                if field in model_result:
+                    row[field] = model_result[field]
             row["receipt"] = {
                 "results_path": str(ledger),
                 "record_sha256": inputs.digest(record),

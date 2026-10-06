@@ -162,6 +162,9 @@ class LocalWeightIntegrationTests(unittest.TestCase):
         observed = reply['metadata']['probabilities']
         self.assertEqual(list(observed), ['left', 'right', 'same'])
         torch.testing.assert_close(torch.tensor(list(observed.values())), torch.tensor(expected))
+        self.assertAlmostEqual(reply['metadata']['option_probability_mass'],
+                               logits.softmax(-1)[codes].sum().item(), places=6)
+        self.assertEqual(reply['metadata']['unrestricted_top_token_id'], logits.argmax().item())
         self.assertEqual(reply['raw_text'], json.dumps(
             {'relation': list(observed)[logits[codes].argmax().item()], 'reason': ''}))
         self.assertEqual(reply['usage']['output'], 0)
