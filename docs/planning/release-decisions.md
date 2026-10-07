@@ -1695,6 +1695,14 @@ model cache. No automatic stop or deletion. Evidence:
 `target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
 
+**Baseline integrity, October 7 00:03 UTC:** dense Gemma's complete 100-note
+validation baseline is retrieved and verified locally with the production
+checker: hashes, full inputs, raw/parsed answers and batch receipts agree.
+Two invalid answers (repeated numbers) remain counted. Its 200 reserved test
+answers are being collected and kept sealed. Qwen continues; MoE is queued.
+No main training has started. Receipt:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
+
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical

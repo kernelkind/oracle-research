@@ -102,6 +102,14 @@ model cache. No automatic stop or deletion. Evidence:
 `target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
 
+**Baseline integrity, October 7 00:03 UTC:** dense Gemma's complete 100-note
+validation baseline is retrieved and verified locally with the production
+checker: hashes, full inputs, raw/parsed answers and batch receipts agree.
+Two invalid answers (repeated numbers) remain counted. Its 200 reserved test
+answers are being collected and kept sealed. Qwen continues; MoE is queued.
+No main training has started. Receipt:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
+
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent
 volume. Verify every required file and retrieve the evidence before deleting
@@ -135,8 +143,8 @@ If all checks pass, discard prep adapters and start fresh pilot adapters on the
 same rental. If prep needs substantial repair, retrieve and verify its evidence,
 delete, and fix locally before renting again. Keep prep cheap and capture timing.
 
-The October 3 prep passed on older, shorter inputs. The ASv6.100 checks are
-implemented locally; actual CUDA execution, memory fit and timing remain open.
+The October 3 prep used older, shorter inputs. Full ASv6.100 CUDA preparation
+passed October 6 on the current two-GPU rental; full-run timing is being measured.
 
 **Dynamic subject evaluation batches are approved.** Before each batch,
 tokenize the waiting notes and choose how many fit the frozen per-GPU memory
@@ -168,8 +176,9 @@ per training example; some answers exceed the old 4,096-token output limit.
 Seven training hierarchies also exceed the old 128-node limit. The new candidate
 settings use **20,480-token context / 10,240-token output**, with no node-count
 cap for subjects-only evaluation. Memory-efficient attention and fused training
-loss are implemented and checked locally. Actual GPU fit and timing remain
-unverified; check the longest complete examples before launch.
+loss are implemented and checked locally. The current CUDA preparation passed
+long-input training and full native cache checks October 6; full-run timing
+is being measured.
 
 **1,000 training notes**, with validation checkpoints at **200, 400, 600, 800,
 and 1,000**, plus **100 validation** and **200 final test** notes, are approved.

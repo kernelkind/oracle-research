@@ -19,7 +19,8 @@ prep checks pass. The October 3 separate preparation passed on older inputs;
 its hardware evidence does not cover the longer ASv6.100 data. The paired mode
 checks complete training, reload/merge/restore, brief subject generation, full
 validation cache shapes and actual fused/native loss agreement. Rehearse this
-package locally before booking; new hardware execution remains pending.
+package locally before booking. All three ASv6.100 CUDA preps passed October 6,
+as recorded below.
 The primary comparison uses all three final 1,000-note adapters and their
 untuned baselines on 200 reserved test notes: 1,200 responses collected during
 the main rental and kept sealed through local validation review. Earlier
@@ -74,8 +75,9 @@ The old memory rule also rejects Qwen and dense Gemma even at batch size one;
 these are planner estimates, not observed GPU failures. The new subjects-only
 candidates use 20,480-token context / 10,240-token output, with no node-count
 cap. The worker enforces efficient SDPA and uses training-only Liger fused loss.
-Pinned-container integration and SSH checks passed locally; GPU kernels, fit
-and throughput still need verification on ASv6.100. The combined prep→pilot
+Pinned-container integration and SSH checks passed locally. Actual ASv6.100
+CUDA execution and fit passed October 6; baseline throughput is being measured.
+The combined prep→pilot
 two-GPU input package is frozen and matches the rebuilt VM, which passed
 91 tests with one optional native-tokenizer check skipped. The 149 controller
 regressions passed, including both GPUs' identified utilization/memory observations. All six
@@ -170,6 +172,14 @@ frozen responses/checkpoints. Archive all verified prior work and retain the
 model cache. No automatic stop or deletion. Evidence:
 `target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
+
+**Baseline integrity, October 7 00:03 UTC:** dense Gemma's complete 100-note
+validation baseline is retrieved and verified locally with the production
+checker: hashes, full inputs, raw/parsed answers and batch receipts agree.
+Two invalid answers (repeated numbers) remain counted. Its 200 reserved test
+answers are being collected and kept sealed. Qwen continues; MoE is queued.
+No main training has started. Receipt:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
 pinned models. Reattach the retained volume for offline verification and full

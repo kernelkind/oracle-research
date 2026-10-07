@@ -2437,14 +2437,22 @@ model cache. No automatic stop or deletion. Evidence:
 `target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
 
+**Baseline integrity, October 7 00:03 UTC:** dense Gemma's complete 100-note
+validation baseline is retrieved and verified locally with the production
+checker: hashes, full inputs, raw/parsed answers and batch receipts agree.
+Two invalid answers (repeated numbers) remain counted. Its 200 reserved test
+answers are being collected and kept sealed. Qwen continues; MoE is queued.
+No main training has started. Receipt:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
+
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
 No automatic time/budget stop or deletion. Previous failure evidence is under
 `target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
 Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
-Prep must establish actual execution/fit and refine throughput. Continuous
-observation continues through complete local retrieval/review and explicit
+Actual execution and fit passed CUDA preparation October 6. Pilot throughput
+is being measured. Observation continues through complete local retrieval/review and explicit
 deletion. No automatic time/budget kill or deletion.
 
 ### Historical conditional subjects-only batched cost reference — October 3
