@@ -2461,20 +2461,22 @@ advanced to Qwen and dense Gemma training concurrently; MoE follows Qwen. Receip
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-reserved-baseline-integrity.json`.
 
-**Training progress verified, October 7 11:40 UTC:** Qwen has completed
+**Training progress verified, October 7 13:58 UTC:** Qwen has completed
 400 distinct notes in 50 continuing updates; dense Gemma has completed 200 notes
 in 25 updates. All three saved checkpoints, including adapter and optimizer/RNG
-state, are fully local and passed hashes, exact note coverage and counter checks.
+state, are local and passed hashes, exact note coverage and counter checks.
 Qwen's two training blocks took 34.9 and 33.2 minutes; dense Gemma's first took
-92.9 minutes. Qwen's validation after 200 notes is fully retrieved and verified
-against the same 100 inputs and batch plan as its baseline: 2 parsing failures
-versus 13 untuned. This measures output reliability; semantic correctness/coverage
-remain ungraded. Validation took 121.4 minutes versus 128.1 untuned. Qwen is now
-validating after 400 notes; dense Gemma is validating after 200 and MoE remains
-queued. Reserved test semantics remain unreviewed. Receipts:
+92.9 minutes. Both Qwen validation sets are fully retrieved and verified against
+the same 100 inputs and batch plan as baseline. Each has 2 parsing failures,
+versus 13 untuned; the two failures at 400 notes hit the output limit. Generation
+took 121.4 and 143.1 minutes, versus 128.1 untuned. Semantic correctness/coverage
+remain ungraded. Qwen continued training toward 600 notes; dense Gemma is
+validating after 200 and MoE remains queued. Reserved test semantics remain
+unreviewed. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-400-integrity.json`,
-`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-checkpoint-200-integrity.json` and
-`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-validation-integrity.json`.
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-checkpoint-200-integrity.json`,
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-validation-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-400-validation-integrity.json`.
 
 The preliminary backup storage charge was **$0.884**. The storage rate was **$0.0833/hour**, or **$2/day**.
 Evidence: `target/distillation-pilot-v1/backup-volume-removal-20261007/`.
