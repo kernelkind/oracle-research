@@ -2445,6 +2445,9 @@ MoE is queued; no main training has started. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
 
+The preliminary backup storage charge was **$0.884**. The storage rate was **$0.0833/hour**, or **$2/day**.
+Evidence: `target/distillation-pilot-v1/backup-volume-removal-20261007/`.
+
 Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
 Previous publication evidence:
 `target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.

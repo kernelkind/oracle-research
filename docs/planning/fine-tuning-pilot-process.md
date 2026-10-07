@@ -110,6 +110,9 @@ MoE is queued; no main training has started. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
 
+
+Preliminary backup storage charges were **$0.884**.   
+
 **Download stage approved October 6:** rent one GPU on the chosen machine,
 verify attachment, and download all three pinned models onto the persistent
 volume. Verify every required file and retrieve the evidence before deleting

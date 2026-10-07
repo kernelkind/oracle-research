@@ -180,6 +180,9 @@ answers remain counted. Both 200-note test collections are underway and sealed.
 MoE is queued; no main training has started. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
+
+
+Preliminary backup storage charges were **$0.884**.   
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
 pinned models. Reattach the retained volume for offline verification and full

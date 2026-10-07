@@ -1703,6 +1703,9 @@ MoE is queued; no main training has started. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
 
+
+Preliminary backup storage charges were **$0.884**.   
+
 The launcher now mounts the selected volume, retains model downloads and
 verifies saved work before replacement. It preserves work paths and worker
 attempts while archiving the previous launch receipts. Reuse requires identical
