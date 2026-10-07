@@ -799,13 +799,32 @@ version sees the full note, task prompt, subjects and hierarchy. It
 returns separate **correctness** and **coverage** scores with evidence for each.
 Correctness assesses returned subjects and relationships; coverage
 assesses missing required subjects or information. Output reliability is
-checked mechanically. The scoring scale, rubric, reviewer model, reliability
-checks, and model selection rule remain design choices. The primary comparison's
+checked mechanically. At that point, the scoring scale, rubric, reviewer model,
+reliability checks and model selection rule remained design choices. The primary comparison's
 checkpoint is fixed by the October 5 decision below. The user deferred
 review-prompt and grading details while the overall pilot pipeline is designed.
 The walkthrough also keeps remaining data choices, remaining output format details,
 remaining training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
+
+**Semantic review method agreed October 7:** assume the audited ASv6.100 standard
+is correct and use existing teacher answers as the coverage reference. The user
+selected **GPT-6.1 Sol / xhigh**: if it cannot review reliably, rethink the
+approach before bulk review. Review one answer in a fresh context with the full
+post/task/reference, mechanical exact matches and no model/checkpoint identity.
+Record explicit subject and incoming-link verdicts, full-meaning matches and all
+required compatible placements. Code calculates separate correctness and
+coverage fractions, averaging notes equally. Optional derived headings are not
+mandatory; different valid wording and hierarchy are allowed. Invalid/truncated
+outputs and empty answers to required tasks receive zeros; correct empty answers
+pass. Missing or incomplete reviewer judgments remain ungraded evaluation failures.
+Compare final validation versions primarily, retaining learning curves, failures,
+speed/cost and paired uncertainty; freeze decisions before test unsealing.
+The user authorized drafting [DSRv1](../../sse_multivector/distillation-review-v1/README.md):
+review prompt, structured report and known-result qualification cases including
+a full-size hierarchy. DSRv1 remains a draft, with application implementation
+and actual qualification pending. This decision does not authorize model calls,
+pilot semantic grading, test unsealing, extra spending or a teacher audit.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
@@ -1308,7 +1327,8 @@ generation is authorized. All 16 writing forms occur in the full sample. Known
 exposure checks cover 716 saved source files, with zero holdout conflicts;
 original texts/authors match and full-post SSE lengths range from 2 to 505 tokens.
 Validation contains no CREATIVE-form notes in this natural draw; final test has six.
-The review rubric, context/memory settings and the rental remain open. The
+The review rubric, context/memory settings and rental were open at that point.
+The semantic method and DSRv1 reviewer decision are recorded above. The
 final-test collection arrangement was subsequently settled on October 5 below.
 
 **Pilot label generation complete October 5:** the initial WebSocket run at 32 concurrency saved 39 valid answers and 99 failed handshakes, with zero frames/bytes for those failures; failed handshakes reported HTTP 403. Its 138 attempts and
@@ -1384,7 +1404,8 @@ against the native path before its first update. Recheck all required responses,
 continuing checkpoints and coverage locally before recording the deletion review.
 The shared three-way data package preserves 1,000 train / 100 validation / 200
 reserved final test notes. Local semantic grading need not be settled to collect
-GPU outputs; its rubric/reviewer remain open. Final-test collection is now
+GPU outputs; its rubric/reviewer were then open. The October 7 DSRv1 design
+above settles the reviewer and method, with qualification still pending. Final-test collection is now
 implemented locally (below). Actual hardware checks and new launch spending
 remain open. These safeguards cannot guarantee
 a clear performance difference between students.

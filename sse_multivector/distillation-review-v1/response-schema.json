@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DSRv1 semantic review report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "prompt_id", "subjects", "relationships", "coverage"],
+  "properties": {
+    "schema_version": {"type": "integer", "enum": [1]},
+    "prompt_id": {"type": "string", "enum": ["DSRv1"]},
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["number", "valid", "reason"],
+        "properties": {
+          "number": {"$ref": "#/$defs/number"},
+          "valid": {"type": "boolean"},
+          "reason": {"$ref": "#/$defs/reason"}
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["parent", "child", "valid", "reason"],
+        "properties": {
+          "parent": {"$ref": "#/$defs/number"},
+          "child": {"$ref": "#/$defs/number"},
+          "valid": {"type": "boolean"},
+          "reason": {"$ref": "#/$defs/reason"}
+        }
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["teacher_numbers", "required", "student_numbers", "compatible_heading_numbers", "reason"],
+        "properties": {
+          "teacher_numbers": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/number"}
+          },
+          "required": {"type": "boolean"},
+          "student_numbers": {"$ref": "#/$defs/numbers"},
+          "compatible_heading_numbers": {"$ref": "#/$defs/numbers"},
+          "reason": {"$ref": "#/$defs/reason"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "number": {"type": "string", "pattern": "^[1-9][0-9]*(\\.[1-9][0-9]*)*$"},
+    "numbers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/number"}
+    },
+    "reason": {"type": "string", "minLength": 1}
+  }
+}

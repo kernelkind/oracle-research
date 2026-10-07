@@ -354,13 +354,31 @@ counts; save observations locally without opening test content.
 
 ## 5. Score and compare — locally, after the rental
 
-Measure output reliability mechanically. One semantic review
-prompt per note and model version sees the full note, task prompt, subjects,
-and hierarchy. It returns separate **correctness** and **coverage** scores
-with evidence. Prompt and grading details are deferred; reviewer selection is open.
+Measure output reliability mechanically. The agreed semantic review uses
+**GPT-6.1 Sol / xhigh** through the existing subscription transport. One fresh
+review per note and model version sees the complete post, frozen ASv6.100,
+trusted teacher answer, candidate hierarchy and mechanical exact subject matches;
+model/checkpoint identities stay outside the prompt. Treat ASv6.100 as correct.
+Explicit subject, immediate-link and coverage findings feed code-calculated
+**correctness** and **coverage** scores. Correctness counts entries with valid
+subjects and incoming links; coverage counts required teacher meanings preserved
+completely at every compatible returned heading occurrence. Optional broader
+headings are not mandatory; equivalent wording and valid extra headings are allowed.
+Keep teacher meaning groups fixed across versions and average per-note scores equally.
+
+[DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
+report schema and qualification specification. Qualification checks trusted
+examples, controlled valid/invalid changes and a full-size training hierarchy
+before bulk review. If GPT-6.1 Sol / xhigh cannot perform this reliably, rethink
+the approach. Drafting this specification does not authorize qualification calls,
+bulk reviews or test unsealing; reusable implementation and actual reliability
+remain unestablished.
 
 Compare quality before/after training and across data sizes, with failures,
-speed, and cost visible. Missing reviewer judgments are evaluation failures.
+speed, and cost visible. Invalid/truncated output and an empty answer to a
+required task receive both zeros; a correct empty answer passes. Missing or
+incomplete reviewer judgments are ungraded evaluation failures. Missing output
+or provenance mismatches block evaluation rather than becoming model-output zeros.
 Assess the returned subject hierarchies before model selection.
 Use the final 1,000-note validation versions for primary model selection; the
 five checkpoints show learning progress and regressions. Check the semantic

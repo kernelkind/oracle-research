@@ -13,7 +13,10 @@ The larger pilot is subjects only, approved October 2: one teacher hierarchy
 per training note and no mask generation. Each checkpoint generates its own
 subject hierarchies on the same held-out validation notes. Thinking stays off
 throughout preparation, training, baselines, checkpoints and the final test.
-Semantic review happens outside the GPU rental. Freeze prep and pilot stages
+Semantic review happens outside the GPU rental. The agreed reviewer is
+GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
+drafts its prompt, report format and qualification cases. Qualification and
+bulk semantic review have not run. Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
 its hardware evidence does not cover the longer ASv6.100 data. The paired mode

@@ -715,7 +715,8 @@ masks and reference agreement. Token overlap uses whitespace-delimited source
 words (any selected part includes that word), with one-to-one matching and
 micro averaging over unique nonempty selections per note. Exact matching uses
 selected non-whitespace source characters. These mechanical measurements do
-not establish semantic correctness or approval; the semantic-review rubric remains open.
+not establish semantic correctness or approval. The current DSRv1 review design
+is described under [Semantic review](#semantic-review--approved-structure).
 
 The subjects-only worker checks baseline response accounting before training
 and checkpoint response accounting before advancing. Invalid/truncated model
@@ -728,8 +729,9 @@ records the larger pilot's response requirements. Semantic review of saved resul
 from the local workspace after retrieval, outside the GPU rental. The proposed
 teacher reviewer is an evaluation method, not another fine-tune. The
 [approved review structure](#semantic-review--approved-structure) uses one
-prompt with separate correctness and coverage scores; its rubric, reviewer
-model, and use in model selection remain open for design discussion.
+prompt with separate correctness and coverage scores. The October 7 DSRv1
+design fixes the method and GPT-6.1 Sol / xhigh reviewer; actual qualification
+and reusable implementation remain pending.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
@@ -1294,13 +1296,23 @@ for the combined rental are approved.
 
 ### Semantic review — approved structure
 
-One review prompt per note and model version receives the full note, task
-prompt, and that version's subjects and hierarchy. It returns separate
-**correctness** and **coverage** scores with evidence for each. Correctness
-assesses returned content; coverage assesses missing required content.
-Output reliability is checked mechanically. Review runs after retrieval,
-outside the rental, and is evaluation only. The scoring scale, rubric, reviewer
-model, reliability checks, and score aggregation remain open.
+The October 7 agreed method uses **GPT-6.1 Sol / xhigh** through the existing
+subscription route. A fresh review receives the full post, frozen ASv6.100,
+trusted teacher answer, one candidate hierarchy and mechanical exact subject
+matches, with model/checkpoint identities withheld. Treat ASv6.100 as correct.
+Explicit subject, immediate-link and coverage findings feed code-calculated
+**correctness** and **coverage** fractions, averaged equally across notes.
+An entry needs a valid subject and incoming link; a required source meaning
+needs complete own-string preservation and every compatible placement. Optional
+derived headings need not match the teacher's tree. Model-output failures score
+zero; incomplete reviewer reports remain ungraded evaluation failures.
+
+[DSRv1](distillation-review-v1/README.md) drafts the prompt, report schema and
+qualification cases, including valid variants, deliberate errors and a
+145-entry training hierarchy. Review runs after retrieval, outside the rental,
+and is evaluation only. If the selected reviewer cannot perform it reliably,
+rethink the approach. Application implementation, qualification and execution
+are pending; this draft authorizes no calls, teacher audit or test unsealing.
 
 ### Required pilot measurements
 
@@ -1878,7 +1890,9 @@ not establish 96GB fit or a revised price/duration.
 
 The user authorized fixing paths that can train without producing a valid
 comparison. Semantic correctness/coverage grading remains local and does not
-block GPU execution; its rubric and reviewer remain open.
+block GPU execution. The current method and selected DSRv1 reviewer are
+described under [Semantic review](#semantic-review--approved-structure);
+qualification and application implementation remain pending.
 
 - The shared data preparation accepts frozen three-way splits. Loading verifies
   target/teacher agreement, full instruction/source-note bindings, exact response
@@ -2586,8 +2600,9 @@ validation. Pilot notes and all selected-teacher labels are now frozen.
 
 The approved splits require **1,300 teacher subject calls**, now complete,
 with training labels shared across checkpoints. The approved comparison has
-**1,800 validation reviews plus 1,200 final reviews**. Reviewer selection, the
-review prompt and actual token lengths are required to price reviews. The existing subscription route
+**1,800 validation reviews plus 1,200 final reviews**. The selected reviewer is
+GPT-6.1 Sol / xhigh; DSRv1 is a draft, and actual qualification/token lengths
+are still required to estimate review capacity. The existing subscription route
 assumes zero incremental API cash; paid API work would be additional and requires
 separate admission/approval.
 
