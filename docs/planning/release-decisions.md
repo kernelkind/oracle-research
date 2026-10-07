@@ -1724,9 +1724,16 @@ on exactly 200 notes in 25 updates. Its adapter and optimizer/RNG state are loca
 all checkpoint hashes, note coverage and counters passed the production checks.
 The block took 34.9 minutes. The first seven validation responses also passed
 integrity checks: six valid hierarchies and one malformed JSON answer, retained
-as a failure. Dense Gemma continues training; MoE remains queued. Receipts:
+as a failure. Qwen and dense Gemma are now validating; MoE remains queued. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-first-validation-batch.json`.
+
+**Dense Gemma checkpoint verified, October 7 10:04 UTC:** its first 200-note
+block completed 25 updates in 92.9 minutes. Adapter and optimizer/RNG state are
+fully retrieved; production checks passed every checkpoint hash, exact note
+coverage, counters and supervised-token accounting. Both students are generating
+their first 100-note validation collections. Receipt:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-checkpoint-200-integrity.json`.
 
 
 Preliminary backup storage charges were **$0.884**.   
