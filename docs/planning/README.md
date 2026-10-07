@@ -173,12 +173,12 @@ model cache. No automatic stop or deletion. Evidence:
 `target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
 
-**Baseline integrity, October 7 00:03 UTC:** dense Gemma's complete 100-note
-validation baseline is retrieved and verified locally with the production
-checker: hashes, full inputs, raw/parsed answers and batch receipts agree.
-Two invalid answers (repeated numbers) remain counted. Its 200 reserved test
-answers are being collected and kept sealed. Qwen continues; MoE is queued.
-No main training has started. Receipt:
+**Baseline integrity, October 7 00:07 UTC:** Qwen and dense Gemma's 100-note
+validation baselines are retrieved and verified locally: hashes, full inputs,
+raw/parsed answers and batch receipts agree. Qwen's 13 and Gemma's two invalid
+answers remain counted. Both 200-note test collections are underway and sealed.
+MoE is queued; no main training has started. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
 No automatic stop or deletion.
 The approved one-card stage verified actual attachment and downloaded all three
