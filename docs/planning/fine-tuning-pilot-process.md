@@ -118,6 +118,13 @@ starting its baseline; no main training has started. Receipts:
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-reserved-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-reserved-baseline-integrity.json`.
 
+**MoE validation baseline complete, October 7 06:38 UTC:** all 100 responses
+passed the same production integrity checks locally. Six invalid answers remain
+counted: three output-limit hits and three hierarchy-format errors. All three
+validation baselines are now verified. MoE is collecting its 200 reserved baseline
+tests; no main training has started. Receipt:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-validation-baseline-integrity.json`.
+
 
 Preliminary backup storage charges were **$0.884**.   
 
