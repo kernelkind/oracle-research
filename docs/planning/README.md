@@ -197,6 +197,15 @@ advanced to Qwen and dense Gemma training concurrently; MoE follows Qwen. Receip
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-validation-baseline-integrity.json` and
 `target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-reserved-baseline-integrity.json`.
 
+**First trained checkpoint verified, October 7 09:05 UTC:** Qwen trained once
+on exactly 200 notes in 25 updates. Its adapter and optimizer/RNG state are local;
+all checkpoint hashes, note coverage and counters passed the production checks.
+The block took 34.9 minutes. The first seven validation responses also passed
+integrity checks: six valid hierarchies and one malformed JSON answer, retained
+as a failure. Dense Gemma continues training; MoE remains queued. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-first-validation-batch.json`.
+
 
 Preliminary backup storage charges were **$0.884**.   
 No automatic stop or deletion.
