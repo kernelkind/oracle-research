@@ -60,6 +60,14 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'distillation_review':
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        cases, protected, preparation = distillation_review.prepare_source(source, path.parent, dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'posts', 'subjects'} and 'sources' in source:
         engine._expect_fields(source, 'post sources', {'schema_version', 'sources'})
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
@@ -1222,6 +1230,12 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'distillation_review':
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        return distillation_review.validate(case, raw)
     if adapter == 'node_sorting':
         result['parsed'] = validate_node_sorting(json.loads(
             raw, object_pairs_hook=engine._position_decoder().unique_object))

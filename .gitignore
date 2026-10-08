@@ -49,6 +49,8 @@ __pycache__/
 !/sse_multivector/hierarchy-construction-prompt-v1/n100-selection.json
 !/sse_multivector/hierarchy-construction-prompt-v1/n100-spec.json
 !/sse_multivector/bounded-hierarchy-v1/HG100-SOL01.json
+!/sse_multivector/distillation-review-v1/qualification-source.json
+!/sse_multivector/distillation-review-v1/qualification-spec.json
 
 # The batch runner writes these schema copies into its run directories.
 /sse_multivector/*-v[0-9]*/**/prompt-output-schema.json

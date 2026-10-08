@@ -731,7 +731,8 @@ teacher reviewer is an evaluation method, not another fine-tune. The
 [approved review structure](#semantic-review--approved-structure) uses one
 prompt with separate correctness and coverage scores. The October 7 DSRv1
 design fixes the method and GPT-6.1 Sol / xhigh reviewer; actual qualification
-and reusable implementation remain pending.
+remains pending. The shared offline preparation, report validation and scoring
+implementation is now available with a concrete preview.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
@@ -1311,8 +1312,12 @@ zero; incomplete reviewer reports remain ungraded evaluation failures.
 qualification cases, including valid variants, deliberate errors and a
 145-entry training hierarchy. Review runs after retrieval, outside the rental,
 and is evaluation only. If the selected reviewer cannot perform it reliably,
-rethink the approach. Application implementation, qualification and execution
-are pending; this draft authorizes no calls, teacher audit or test unsealing.
+rethink the approach. The subsequent authorized offline implementation adds
+source-bound preparation, complete report validation, scoring and qualification
+checks in the shared workflow. All 22 controls are prepared without inference;
+an authored Q17 fixture demonstrates missing-branch scoring. The user requested
+this preview before calls. Actual qualification and pilot grading have not run;
+no teacher audit or test unsealing is authorized.
 
 ### Required pilot measurements
 
@@ -1892,7 +1897,8 @@ The user authorized fixing paths that can train without producing a valid
 comparison. Semantic correctness/coverage grading remains local and does not
 block GPU execution. The current method and selected DSRv1 reviewer are
 described under [Semantic review](#semantic-review--approved-structure);
-qualification and application implementation remain pending.
+offline preparation/report validation/scoring are implemented, with actual
+qualification still pending.
 
 - The shared data preparation accepts frozen three-way splits. Loading verifies
   target/teacher agreement, full instruction/source-note bindings, exact response

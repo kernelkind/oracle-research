@@ -4,8 +4,9 @@ Status: **draft**, prepared October 7, 2026; no qualification calls or pilot
 semantic reviews have run. The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package specifies [DSRv1](prompt.md), its [report schema](response-schema.json),
-and qualification cases. Application code, case preparation, scoring and
-execution are a subsequent task after review of this specification.
+and qualification cases. Offline source preparation, report validation, scoring
+and qualification checks are implemented in the shared experiment workflow.
+The reviewer has not been qualified; bulk pilot grading is not implemented here.
 
 ## Reviewer and inputs
 
@@ -51,8 +52,8 @@ Coverage rows partition teacher entries by meaning; exact duplicates belong to
 one row. Optional rows have empty compatibility lists. Preserve every mechanical
 exact match in its coverage row. Every full match of a required meaning must
 also be a compatible equal-meaning occurrence. Freeze the accepted teacher
-grouping and requirement flags for all versions of a note; resolve conflicting groupings as evaluation
-failures before comparison, using the teacher reference independently of which
+grouping and requirement flags for all versions of a note; resolve conflicting
+groupings as evaluation failures before comparison, using the teacher reference independently of which
 candidate wins. No separate source-inventory call is introduced.
 
 For each required coverage row, code checks that `student_numbers` is nonempty
@@ -88,6 +89,53 @@ improvement. Preserve tradeoffs or inconclusive results. Freeze the reviewer,
 rubric, scoring and validation decision before opening the saved 200-note test;
 score all three final adapters and all three baselines, keeping selection fixed.
 
+## Offline preparation and preview
+
+[qualification-source.json](qualification-source.json) records the source hashes,
+exact candidate changes and expected findings for all 22 cases. It contains
+definitions, not generated teacher or student batches.
+[qualification-spec.json](qualification-spec.json) pins DSRv1, its schema,
+GPT-6.1 Sol / xhigh, sequential calls and a one-hour overall request deadline.
+That deadline is an allowance, not measured completion time or reliability.
+
+Prepare through the supported workflow, without credentials or inference:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py prepare \
+  target/distillation-review-v1/qualification-preview \
+  --spec sse_multivector/distillation-review-v1/qualification-spec.json
+```
+
+Inspect the exact DSRv1 rendered prompt for Q17, including the unchanged task,
+full post, teacher, candidate and exact matches:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show \
+  target/distillation-review-v1/qualification-preview \
+  --case Q17 --prompt-only
+```
+
+[Q17-report.json](tests/fixtures/Q17-report.json) is an **authored expected report**
+for the missing Cumin copy, not a model response. Validate and score it against
+the frozen inputs:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py score-review \
+  target/distillation-review-v1/qualification-preview --case Q17 \
+  --report sse_multivector/distillation-review-v1/tests/fixtures/Q17-report.json
+```
+
+The result retains the supplied report and source hashes, with `source_kind:
+supplied_report` and zero inference calls. Correctness is `9/9`; coverage is
+`1/2`, with heading `3` missing its complete cumin occurrence. This preview
+does not create a model receipt, mark the experiment run, or establish reviewer
+capability. After real qualification, `show --json` reports known-control
+disagreements, teacher-group consistency and the large-case comparisons;
+missing cases keep qualification pending.
+
 ## Qualification cases and expected results
 
 The definitions below are maintained case specifications, not rendered batches
@@ -96,8 +144,8 @@ unchanged ASv6.100 source. Use their complete posts and outputs as trusted
 controls; do not regenerate or audit the examples. Change only the specified
 candidate fields. Preserve the original teacher and post. Keep the expectations
 outside the model input. Preparation must use the shared experiment workflow;
-add minimal reusable input support before running if source-bound preparation
-is not yet supported. Do not hand-build experiment artifacts or execution scripts.
+the `distillation_review` adapter provides this source-bound preparation.
+Do not hand-build experiment artifacts or execution scripts.
 
 For C6, fix four required teacher meaning groups:
 
@@ -113,6 +161,10 @@ required groups: the complete recipe (`1.1`, `2.1`) and the complete recipe-boun
 cumin subject (`1.1.1`, `2.1.1`, `3.1`, `4.1`). Its other headings are optional.
 These are annotations of the existing trusted examples for qualification, not
 independently extracted replacements for pilot teacher answers.
+Q06 and Q08 receive `teacher_meanings: null` so their initial grouping and
+required/optional classifications are tested against these known labels, kept
+outside the prompt. The controlled variants receive the fixed groups; their
+reports must also preserve them.
 
 For Q01–Q19, all unmentioned returned subjects and actual edges retain valid
 verdicts. Expected scores are exact fractions; compare individual findings as
@@ -203,5 +255,6 @@ and complete-meaning-plus-all-placements coverage are AS-specific adaptations.
 checking contextual judges against labeled cases and controlled perturbations.
 [Paired NLP evaluation guidance](https://aclanthology.org/P18-1128/) supports
 paired comparisons and cautions about dependent examples, small samples and
-multiple comparisons. Qualification, bulk-review implementation and test
-unsealing have not been performed or authorized by this draft.
+multiple comparisons. Actual qualification, bulk pilot grading and test
+unsealing have not been performed. The user authorized offline implementation
+and a concrete preview before any model calls.

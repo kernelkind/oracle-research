@@ -98,6 +98,13 @@ def spec_setup(path):
     source_path = resolve(dataset["path"], path.parent)
     cases, sources, preparation = inputs.prepare_file(dataset, source_path, prompt["text"], report)
     runner = dict(spec["runner"])
+    if "output_schema_path" in runner:
+        if "output_schema" in runner:
+            raise ValueError("choose output_schema or output_schema_path, not both")
+        schema_path = resolve(runner.pop("output_schema_path"), path.parent)
+        schema_bytes = schema_path.read_bytes()
+        runner["output_schema"] = json.loads(schema_bytes)
+        sources[str(schema_path)] = engine._sha256_bytes(schema_bytes)
     runner["runner_binary"] = str(
         engine._resolve_executable(
             runner.get("runner_binary", str(engine.DEFAULT_RUNNER)),
@@ -305,6 +312,10 @@ def prepare(args):
         if plan["dataset"]["adapter"] in {"bounded_parent_guides", "bounded_parent_comparisons"}:
             for name in ("parent_guide_measurement.py", "parent_guide_workflow.py",
                          "ancestor_cosine_probe.py"):
+                code = Path(__file__).with_name(name)
+                plan["code"][name] = engine._sha256_file(code)
+        if plan["dataset"]["adapter"] == "distillation_review":
+            for name in ("distillation_review.py", "distillation_run.py"):
                 code = Path(__file__).with_name(name)
                 plan["code"][name] = engine._sha256_file(code)
         plan["requests_at_prepare"] = (
@@ -702,6 +713,13 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
             max_rendered_input_tokens=max(token_counts, default=0))
     if result["adapter"] == "masks":
         result["posts"] = len({c["evidence"]["note_id"] for c in cases})
+    if result["adapter"] == "distillation_review":
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        result["qualification"] = distillation_review.qualification(
+            cases, plan["preparation"]["qualification_case_ids"])
     if generation_costs:
         result["generation_usage"] = generation_usage(
             config, manifest, selected, records, latest, files, reconciled_costs)
@@ -1185,9 +1203,35 @@ def compact(result, *, prepared=False):
         )
 
 
+def score_review(args):
+    """Score an explicitly supplied report without creating a model receipt."""
+    try:
+        from . import distillation_review
+    except ImportError:
+        import distillation_review
+    plan, _, _ = load(args.experiment)
+    if plan["dataset"]["adapter"] != "distillation_review":
+        raise ValueError("score-review requires a distillation_review experiment")
+    case = next((case for case in plan["cases"] if case["id"] == args.case), None)
+    if case is None:
+        raise ValueError("unknown review case")
+    raw = args.report.read_bytes()
+    result = distillation_review.score_saved_output(case, case["evidence"]["student_output_raw"], raw.decode())
+    return dict(schema_version=1, source_kind="supplied_report", inference_calls=0,
+                experiment=str(args.experiment.resolve()), case_id=case["id"],
+                input_sha256=case["input_sha256"], report_path=str(args.report.resolve()),
+                report_sha256=engine._sha256_bytes(raw),
+                scoring_code_sha256=engine._sha256_file(Path(distillation_review.__file__)), **result)
+
+
 def parser():
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    p = commands.add_parser('score-review', help='validate and score a supplied semantic review report; no inference')
+    p.add_argument('experiment', type=Path)
+    p.add_argument('--case', required=True)
+    p.add_argument('--report', type=Path, required=True)
+    p.add_argument('--output', type=Path)
     p = commands.add_parser('count-post-tokens', help='save complete original-post SSE token counts; no inference')
     p.add_argument('source', type=Path)
     p.add_argument('--tokenizer', type=Path, required=True)
@@ -1295,6 +1339,7 @@ def parser():
     )
     p.add_argument("experiment", type=Path)
     p.add_argument("--case")
+    p.add_argument("--prompt-only", action="store_true", help="print the exact rendered prompt; requires --case")
     p.add_argument("--only", action="append", metavar="CASE_ID",
                    help="limit cases and usage to these IDs (repeatable; read-only)")
     p.add_argument("--note", action="append", metavar="NOTE_ID",
@@ -1354,6 +1399,13 @@ def main(argv=None):
             else:
                 result = post_sampling.freeze(args.spec, args.destination, args.preview)
             print(json.dumps(result, indent=2))
+        elif args.command == "score-review":
+            result = score_review(args)
+            if args.output:
+                if args.output.exists():
+                    raise ValueError("score-review output already exists")
+                write(args.output, result)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
         elif args.command == "prepare":
             if args.from_experiment and args.baseline:
                 raise ValueError("--from already specifies the baseline")
@@ -1450,6 +1502,8 @@ def main(argv=None):
                                                args.base, args.combine_equivalent,
                                                args.inherit_equivalent_judgments), indent=2))
         elif args.command == "show":
+            if args.prompt_only and not args.case:
+                raise ValueError("--prompt-only requires --case")
             if (args.experiment / 'bounded-build.json').exists():
                 if any((args.case, args.only, args.note, args.generation_costs)):
                     raise ValueError('inspect individual cases in the child experiments')
@@ -1469,7 +1523,9 @@ def main(argv=None):
                 result = {"settings": result["settings"], **case,
                           **({"generation_usage": result["generation_usage"]}
                              if args.generation_costs else {})}
-            if args.json or args.case:
+            if args.prompt_only:
+                print(result["prompt"], end="")
+            elif args.json or args.case:
                 print(json.dumps(result, ensure_ascii=False, indent=2))
             else:
                 compact(result)

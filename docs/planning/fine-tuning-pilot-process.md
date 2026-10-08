@@ -372,7 +372,12 @@ examples, controlled valid/invalid changes and a full-size training hierarchy
 before bulk review. If GPT-6.1 Sol / xhigh cannot perform this reliably, rethink
 the approach. Drafting this specification does not authorize qualification calls,
 bulk reviews or test unsealing; reusable implementation and actual reliability
-remain unestablished.
+were still pending when the draft was recorded. The subsequent authorized
+offline implementation adds source-bound preparation, report validation,
+scoring and qualification checks through the shared experiment workflow.
+All 22 controls can be prepared without inference, and an authored Q17 report
+provides a concrete preview. Actual reviewer reliability remains unestablished;
+the user requested seeing the preview before model calls.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

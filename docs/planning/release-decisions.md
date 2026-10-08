@@ -822,9 +822,20 @@ Compare final validation versions primarily, retaining learning curves, failures
 speed/cost and paired uncertainty; freeze decisions before test unsealing.
 The user authorized drafting [DSRv1](../../sse_multivector/distillation-review-v1/README.md):
 review prompt, structured report and known-result qualification cases including
-a full-size hierarchy. DSRv1 remains a draft, with application implementation
-and actual qualification pending. This decision does not authorize model calls,
+a full-size hierarchy. DSRv1 remains a draft. At that checkpoint, application
+implementation and actual qualification were pending. This decision does not authorize model calls,
 pilot semantic grading, test unsealing, extra spending or a teacher audit.
+
+**DSRv1 offline implementation authorized October 7:** after receiving the draft,
+the user authorized preparation, report validation and scoring, requesting a
+concrete preview before any model calls. The shared experiment workflow now
+prepares the 22 source-bound qualification definitions, keeps expected findings
+outside the prompt, validates complete reports and calculates separate scores.
+It checks known qualification findings and consistent teacher groups across
+versions, including controlled changes to the large hierarchy. An authored Q17
+report demonstrates `9/9` correctness and `1/2` coverage when the Cumin branch
+copy is absent. This supplied fixture creates no model receipt or qualification
+evidence. Actual model qualification and bulk pilot grading have not run.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

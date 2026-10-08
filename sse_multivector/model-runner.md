@@ -437,6 +437,11 @@ The transport's credential rules apply. Optional `timeout_seconds`,
 `max_output_tokens` and `output_schema` are forwarded unchanged; schema property
 order is preserved. Subscription transport does not accept an output-token cap.
 
+Instead of embedding `runner.output_schema`, a spec may use
+`runner.output_schema_path` relative to the spec. Preparation loads and hashes
+that schema source, then freezes the same schema object into the runner config.
+Supplying both fields is rejected.
+
 Generic input data:
 
 ```json
@@ -853,6 +858,19 @@ request sizes and repeated post context remain unchanged.
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
+
+- `dataset.adapter: "distillation_review"`: source-bound
+  [DSRv1 qualification definitions](distillation-review-v1/qualification-source.json)
+  select complete frozen AS examples or a saved training control. Preparation
+  preserves the full task/post/teacher, applies specified candidate changes and
+  supplies all exact subject matches. Expected answers remain outside the prompt.
+  The report validator checks complete subject/link verdicts, teacher partitions,
+  fixed requirement flags and known references before calculating correctness
+  and coverage. `show --json` includes qualification checks after saved results.
+  `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
+  `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
+  offline, optionally saving it with `--output FILE`. It does not create a model
+  receipt or mark a case run. See the [DSRv1 preview](distillation-review-v1/README.md#offline-preparation-and-preview).
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
