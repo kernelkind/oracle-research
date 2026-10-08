@@ -21,8 +21,9 @@ was approved independently of the still-open release teacher selection.
 Semantic review happens outside the GPU rental. The agreed reviewer is
 GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
 drafts its prompt, report format and qualification cases. October 8 qualification
-has failed known semantic and cross-version checks; remaining stress calls
-continue. Bulk review has not run.
+completed with 28 complete reports and one interrupted report, failing known
+semantic and cross-version checks. Subsequent runs use the user-directed
+concurrency 8 with existing backoff. Bulk review has not run.
 Source preparation, report checks and scoring
 are implemented offline; DSRv1 includes a concrete preview before model calls.
 Its 29 cases include eight large training hierarchies selected by entry count

@@ -390,7 +390,10 @@ large reports, but qualification has failed: Q04 penalizes a trusted unchanged
 example, and Q21/Q22 change unrelated judgments across controlled variants.
 Q23's stream closes with an unfinished report near fifteen minutes; this is
 an ungraded transport failure, not evidence of a model output limit.
-Remaining stress calls continue with the same prompt, model and xhigh setting.
+All 29 cases were attempted once: 28 complete reports and one interrupted
+report. Seven of eight largest generations completed. The user subsequently
+directed concurrency 8 with existing exponential backoff; the original trial's
+concurrency 1 receipts remain unchanged.
 The [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence)
 records the findings. Bulk grading remains unqualified; process revisions and
 test unsealing require separate authorization.

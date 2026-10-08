@@ -871,7 +871,10 @@ production preparation and decoding functions:
   `show --json` includes qualification checks after saved results.
   The October 8 DSRv1 trial fails known semantic and cross-version checks despite
   complete large reports; one stream is interrupted near fifteen minutes and
-  remains ungraded. Remaining stress calls continue. See the
+  remains ungraded. All 29 cases were attempted once, with 28 complete reports;
+  seven of the eight largest generations completed. The maintained specification
+  uses user-directed concurrency 8 with existing backoff; the original frozen
+  trial used 1. See the
   [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
   `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report

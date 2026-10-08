@@ -1,7 +1,8 @@
 # DSRv1 — distillation semantic review specification
 
-Status: **draft; qualification failed**, October 8, 2026. Remaining largest-input
-requests are still running. Bulk pilot semantic review has not run.
+Status: **draft; qualification failed**, completed October 8, 2026. All 29 cases
+were attempted: 28 complete reports and one interrupted report. Bulk pilot
+semantic review has not run.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package specifies [DSRv1](prompt.md), its [report schema](response-schema.json),
@@ -97,7 +98,11 @@ score all three final adapters and all three baselines, keeping selection fixed.
 exact candidate changes and expected findings for all 29 cases. It contains
 definitions, not generated teacher or student batches.
 [qualification-spec.json](qualification-spec.json) pins DSRv1, its schema,
-GPT-6.1 Sol / xhigh, sequential calls and a one-hour overall request deadline.
+GPT-6.1 Sol / xhigh, concurrency **8** and a one-hour overall request deadline.
+The user directed concurrency 8 during the October 8 trial; the initial frozen
+experiment used concurrency 1 and had only its final request in flight when
+this setting changed. Its execution receipts remain unchanged. Subsequent
+preparations use 8 with the existing provider backoff and retry rules.
 That deadline is an allowance, not measured completion time or reliability.
 The provider schema uses OpenAI's supported structured-output subset. Duplicate
 teacher numbers, matches and compatible headings are rejected by the application
@@ -119,8 +124,9 @@ See [OpenAI's schema subset](https://developers.openai.com/api/docs/guides/struc
 The saved experiment is
 `target/distillation-review-v1/qualification-compatible-schema-20261008`.
 Its native receipts and `show --json` preserve complete inputs, generated reports,
-validation, scores, known expectations and cross-version checks. Qualification
-has **failed** while the remaining stress requests continue. This is evidence
+validation, scores, known expectations and cross-version checks. All 29 cases
+have one real generation attempt, with no reuse or retries: 28 complete reports
+and Q23's interrupted report. Qualification has **failed**. This is evidence
 about the current DSRv1 process with Sol / xhigh, not a teacher audit or approval
 to change the process or reviewer.
 
@@ -142,10 +148,6 @@ to change the process or reviewer.
   to Q20. Nevertheless, thirteen requirement flags and compatible-heading
   lists for twenty-four groups differ from Q20 after accounting for the deleted
   occurrence. It takes 899.1 seconds and fails the cross-version checks.
-- Q20 returns all 145 subject verdicts, 130 link verdicts and 66 groups in
-  875.1 seconds. Q24 returns all 137 subjects, 101 links and 72 groups in
-  869.6 seconds. These establish complete reports at those sizes, not correctness
-  of every unlabeled judgment.
 - **Q23, interrupted stream:** HTTP 200 is followed by a body transport error,
   `UND_ERR_SOCKET` / `other side closed`, after about 900 seconds. The saved
   46,108-byte report ends inside a coverage row and is ungraded. The local
@@ -153,10 +155,44 @@ to change the process or reviewer.
   Final token usage is unavailable, so receipt placeholders must not be treated
   as measured zero usage. The failed request is not retried.
 
+Seven of the eight unchanged largest generations return complete, structurally
+valid reports, including both the 145-entry maximum and the longest saved
+answer. The large cases and controlled variants retain these measured receipts:
+
+| Case | Subject / link verdicts | Teacher meaning groups | Seconds | Input tokens | Output tokens, including reasoning | Report UTF-8 bytes |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Q20 | 145 / 130 | 66 | 875.1 | 39,615 | 29,628 | 57,652 |
+| Q21 | 145 / 130 | 66 | 849.8 | 39,523 | 29,196 | 58,604 |
+| Q22 | 144 / 129 | 66 | 899.1 | 39,516 | 30,616 | 62,158 |
+| Q23 | Incomplete | — | 904.3 | Unavailable | Unavailable | 46,108, partial |
+| Q24 | 137 / 101 | 72 | 869.6 | 31,272 | 28,716 | 58,280 |
+| Q25 | 136 / 126 | 47 | 712.0 | 46,072 | 28,085 | 52,086 |
+| Q26 | 136 / 107 | 67 | 803.1 | 32,440 | 29,248 | 55,097 |
+| Q27 | 130 / 118 | 47 | 595.7 | 47,975 | 28,005 | 49,198 |
+| Q28 | 115 / 101 | 42 | 491.6 | 36,576 | 23,080 | 45,823 |
+| Q29 | 106 / 96 | 34 | 557.6 | 37,614 | 21,886 | 39,691 |
+
+Every receipt records requested `xhigh` and returned `gpt-6.1-sol`; Q23's model
+identity is retained in its stream metadata. Complete stress reports establish
+completion at those sizes, not correctness of every unlabeled judgment.
+Eighteen of the nineteen small known controls pass; Q04 is the exception.
+The saved workflow's observed usage is 592,639 input and 318,820 output tokens,
+including 137,164 reasoning tokens. Q23's unavailable usage is additional to
+those observed counts. The $4.373478 catalog estimate is not a subscription bill
+or measured quota; no paid API fallback was used.
+
+Inspect the preserved evidence without new calls:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show \
+  target/distillation-review-v1/qualification-compatible-schema-20261008 --json
+```
+
 The cross-version controls initially supply `teacher_meanings: null` to test
 classification consistency. Freezing accepted groups remains the agreed design,
 but the changed placement and link judgments also require resolution. The
-remaining largest-input calls assess completion; they cannot erase these known
+largest-input calls assess completion; they cannot erase these known
 failures or establish semantic accuracy without labels. Bulk review remains
 unqualified. Any process revision requires a separately approved next step.
 
@@ -340,8 +376,8 @@ python3 sse_multivector/experiment.py show \
 Q23–Q29 have no invented gold scores or semantic labels: they test completion
 and mechanical report consistency at observed size limits. The trusted worked
 examples and deliberate Q21/Q22 changes test known semantic behavior. A complete
-stress report alone does not establish semantic accuracy. Qualification requests
-started October 8. These saved teacher maxima do not bound future student outputs;
+stress report alone does not establish semantic accuracy. The October 8 trial
+completed with the failures recorded above. These saved teacher maxima do not bound future student outputs;
 larger collected answers require corresponding qualification before bulk review.
 
 ### Mechanical refusal cases
@@ -374,6 +410,6 @@ and complete-meaning-plus-all-placements coverage are AS-specific adaptations.
 checking contextual judges against labeled cases and controlled perturbations.
 [Paired NLP evaluation guidance](https://aclanthology.org/P18-1128/) supports
 paired comparisons and cautions about dependent examples, small samples and
-multiple comparisons. Qualification requests started October 8 after the user
-approved proceeding from the prepared preview; bulk pilot grading and test
+multiple comparisons. Qualification completed October 8 after the user
+approved proceeding from the prepared preview and failed the checks above. Bulk pilot grading and test
 unsealing have not been performed.

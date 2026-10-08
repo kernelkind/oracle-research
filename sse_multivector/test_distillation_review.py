@@ -351,11 +351,12 @@ class DistillationReviewTests(unittest.TestCase):
                 cases=[dict(id="Q17", reference="C8", changes=[dict(op="remove", numbers=["3.1"])],
                     expected=dict(scores=dict(correctness=[9, 9], coverage=[1, 2])))])
             (root / "source.json").write_text(json.dumps(source))
+            runner_settings = json.loads((ROOT / "distillation-review-v1/qualification-spec.json").read_text())["runner"]
+            runner_settings.update(runner_binary=str(runner),
+                output_schema_path=str(ROOT / "distillation-review-v1/response-schema.json"))
             spec = dict(schema_version=1, prompt=dict(id="DSRv1", path=str(ROOT / "distillation-review-v1/prompt.md")),
                 dataset=dict(adapter="distillation_review", path="source.json"),
-                runner=dict(runner_binary=str(runner), provider="openai-codex", model="gpt-6.1-sol",
-                    reasoning_effort="xhigh", concurrency=1, auth_file=None,
-                    output_schema_path=str(ROOT / "distillation-review-v1/response-schema.json")))
+                runner=runner_settings)
             (root / "spec.json").write_text(json.dumps(spec))
             def cli(*args):
                 result = subprocess.run([sys.executable, str(ROOT / "experiment.py"), *map(str, args)],
@@ -369,6 +370,7 @@ class DistillationReviewTests(unittest.TestCase):
             self.assertEqual(rendered, shown["prompt"])
             self.assertNotIn('"expected"', shown["prompt"])
             plan = json.loads((root / "prepared/experiment.json").read_text())["plan"]
+            self.assertEqual(plan["runner"]["concurrency"], 8)
             self.assertIn("distillation_review.py", plan["code"])
             # OpenAI's structured-output array constraints support min/maxItems,
             # not uniqueItems. The production validator checks uniqueness.

@@ -730,8 +730,9 @@ from the local workspace after retrieval, outside the GPU rental. The proposed
 teacher reviewer is an evaluation method, not another fine-tune. The
 [approved review structure](#semantic-review--approved-structure) uses one
 prompt with separate correctness and coverage scores. The October 7 DSRv1
-design fixes the method and GPT-6.1 Sol / xhigh reviewer; actual qualification
-remains pending. The shared offline preparation, report validation and scoring
+design fixes the method and GPT-6.1 Sol / xhigh reviewer; the October 8
+qualification trial fails known semantic and cross-version checks.
+The shared offline preparation, report validation and scoring
 implementation is now available with a concrete preview.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
@@ -1326,7 +1327,10 @@ retains application duplicate checks. Corrected requests produce complete large
 reports, but qualification fails known semantic and cross-version checks:
 Q04 penalizes a trusted unchanged example, and Q21/Q22 change unrelated judgments.
 Q23's stream ends with an unfinished, ungraded report near fifteen minutes;
-remaining stress calls continue. See the [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
+all 29 cases were attempted once, yielding 28 complete reports and one interrupted
+report. Seven of eight largest generations completed. Subsequent preparations
+use the user-directed concurrency 8 with existing backoff; the original trial
+retains its concurrency 1 receipts. See the [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
 Bulk grading remains unqualified; process revisions, teacher auditing and test
 unsealing are not authorized by this trial.
 
@@ -1908,8 +1912,9 @@ The user authorized fixing paths that can train without producing a valid
 comparison. Semantic correctness/coverage grading remains local and does not
 block GPU execution. The current method and selected DSRv1 reviewer are
 described under [Semantic review](#semantic-review--approved-structure);
-offline preparation/report validation/scoring are implemented, with actual
-qualification still pending.
+offline preparation/report validation/scoring are implemented. The October 8
+qualification trial fails known semantic and cross-version checks, so bulk
+semantic grading remains unqualified.
 
 - The shared data preparation accepts frozen three-way splits. Loading verifies
   target/teacher agreement, full instruction/source-note bindings, exact response
@@ -2618,8 +2623,10 @@ validation. Pilot notes and all selected-teacher labels are now frozen.
 The approved splits require **1,300 teacher subject calls**, now complete,
 with training labels shared across checkpoints. The approved comparison has
 **1,800 validation reviews plus 1,200 final reviews**. The selected reviewer is
-GPT-6.1 Sol / xhigh; DSRv1 is a draft, and actual qualification/token lengths
-are still required to estimate review capacity. The existing subscription route
+GPT-6.1 Sol / xhigh. DSRv1 remains a draft after failed semantic qualification;
+the stress trial records actual full-size lengths and timings. Representative
+measurement and a qualified process are needed before estimating bulk review
+capacity. The existing subscription route
 assumes zero incremental API cash; paid API work would be additional and requires
 separate admission/approval.
 

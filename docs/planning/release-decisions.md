@@ -900,9 +900,17 @@ large reports, but qualification failed: Q04 disagrees with a trusted unchanged
 worked example, and Q21/Q22 change unrelated requirement flags and placement
 judgments across variants; Q21 also changes an untouched link verdict.
 Q23 preserves a transport-interrupted, ungraded report near fifteen minutes.
-Remaining stress calls continue. See the [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence).
+All 29 cases were attempted once, yielding 28 complete reports and one interrupted
+report. Seven of the eight largest generations completed. See the [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence).
 Bulk grading, teacher auditing, test unsealing, process revisions and a different
 model remain outside this authorization.
+
+**DSRv1 concurrency directed October 8:** use **8**, with the existing provider
+exponential backoff. The initial qualification experiment was frozen at 1;
+only its final request remained in flight when the user directed the change.
+Preserve its original settings and receipts. The maintained specification uses
+8 for subsequent preparations; no repeated reviews are needed to change this
+execution setting.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
@@ -1483,7 +1491,9 @@ continuing checkpoints and coverage locally before recording the deletion review
 The shared three-way data package preserves 1,000 train / 100 validation / 200
 reserved final test notes. Local semantic grading need not be settled to collect
 GPU outputs; its rubric/reviewer were then open. The October 7 DSRv1 design
-above settles the reviewer and method, with qualification still pending. Final-test collection is now
+above settled the reviewer and method, with qualification then pending. The
+October 8 trial subsequently failed known semantic and cross-version checks.
+Final-test collection is now
 implemented locally (below). Actual hardware checks and new launch spending
 remain open. These safeguards cannot guarantee
 a clear performance difference between students.
