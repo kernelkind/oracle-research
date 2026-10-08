@@ -189,9 +189,92 @@ across two independent trials. Repeatability on these cases does not establish
 accuracy on actual distilled wording or qualify subject support, parent
 restrictions or branch coverage. The recommended next step is to prepare a
 more realistic matching preview from actual distilled wording, with independently
-verified expected matches fixed before Sol calls. Preparing that preview,
-additional trials, effort/batching experiments, full review adoption and
-final-test unsealing remain open.
+verified expected matches fixed before Sol calls. The user subsequently authorized
+offline preparation, documented below. Additional calls, effort/batching
+experiments, full review adoption and final-test unsealing remain open.
+
+## Actual distilled wording: offline preview (October 8)
+
+The authorized next step prepares saved validation wording with **DSMv1
+unchanged**, before further reviewer calls. The shared adapter now supports
+[matching-actual-source.json](matching-actual-source.json): a hash-bound prepared
+dataset manifest and references to individual saved `subjects.json` generations.
+It reads evaluation inputs and trusted teacher references, checks the saved note
+identity and complete generation prompt against the corresponding evaluation
+row, and reparses the untouched answer through production `subject_result`.
+Malformed/truncated answers and exact-string targets cannot enter this matching
+preview. Reserved test-generation paths are rejected before opening them;
+training/test input files are not opened. All source bytes used are protected.
+Model/checkpoint identity, selected hierarchy numbers, reasons and expectations
+remain outside the prompt. ASv6.100 is trusted without another audit.
+
+The preview uses Qwen, dense Gemma and MoE Gemma, each at baseline and the final
+1,000-note validation checkpoint. Intermediate checkpoints are outside this
+preview. Four selections per version were made before assigning expectations:
+
+- The lowest SHA-256 of `DSMv1-actual-preview-01`, model, stage, note ID and
+  subject, separated by NUL characters, among unique nonexact subjects in valid,
+  untruncated answers. This is a deterministic subject sample, not a uniform
+  sample of notes.
+- The nonexact subject with highest `difflib.SequenceMatcher` similarity to
+  any teacher wording (`autojunk=False`), with highest selection hash breaking
+  ties. Similarity selects a case; it does not determine its expected answer.
+- The largest distinct teacher catalog, then the longest selected subject,
+  then highest selection hash.
+- The longest selected subject, then highest selection hash.
+
+The 24 selection hits reduce to **22 distinct note/subject inputs**: Qwen's
+final largest-catalog and longest-subject selections coincide, and both Gemma
+baselines produce identical longest wording on the same note. First selection
+wins; duplicate hits are not extra cases. The set includes long actual
+paraphrases, omitted restrictions, added identities and combinations of facts.
+This deliberate mixture is a challenge preview, not a population accuracy
+sample or a comparison of models/checkpoints.
+
+Expectations were assessed from the complete catalog before reviewer calls:
+**eight assessed matches, twelve assessed nonmatches and two unresolved cases**.
+These are agent assessments, **not independently adjudicated gold**. Even
+agreement with every assessed answer cannot qualify the reviewer: native
+qualification remains pending and lists `unverified_expectations`. An unresolved
+case has no semantic pass/fail or false-match count; its null placeholder does
+not mean an expected nonmatch. The source format explicitly preserves that
+distinction. No adjudication policy or rubric change has been adopted.
+
+| Case | Actual wording and comparison | Offline expectation |
+| --- | --- | --- |
+| R06 | `Silver winner of Weekly Competition #51 with 12 videos and a 12-satoshi reward` versus the teacher's identical wording with a comma after `#51` | Assessed match, T08 |
+| R16 | `Self-custody` versus `Bitcoin self-custody`; all other corresponding teacher entries also specify Bitcoin | Assessed nonmatch: missing restriction |
+| R05 | `Fakery` with `Inauthenticity` and `Deception` in the teacher catalog | Unresolved complete-meaning boundary |
+| R19 | `Club symbols` versus `Clubs suit symbol` | Unresolved: whether the standalone wording preserves the suit restriction |
+
+The [specification](matching-actual-spec.json) pins Sol / xhigh,
+subscription transport and concurrency 8. Native preparation reports **zero
+calls, zero attempts and zero reused answers**; all 22 cases are unrun. Inputs
+total 19,624 `o200k_base` proxy tokens, with 364–1,282 per request and at most 46
+teacher wordings. These are offline text sizes, not actual usage/caching/cost.
+
+```sh
+python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-actual-20261008 --spec sse_multivector/distillation-review-v1/matching-actual-spec.json --repeat
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-20261008 --json
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-20261008 --case R06 --prompt-only
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-20261008 --case R05
+```
+
+The next step is to settle the unresolved meaning boundaries and independently
+verify the expected answers before calls. Do not hide ambiguous sampled cases
+by substituting easier ones or treat another Sol answer as gold. These inputs
+test matching only; subject support, parent restrictions and required coverage
+within every branch remain outside this preview. Reliability on actual outputs
+has not yet been measured.
+
+Verification: the new production-workflow tests first failed because saved
+generation sources were unsupported, and because unresolved expectations could
+not be represented separately. They now check untouched wording, source/input
+identity, changed hashes, truncation, test-path rejection before opening, and
+unresolved/unverified qualification behavior. The matching, review, shared
+experiment, selection and extraction regression suites pass. Re-reading the
+saved confirmation-repeat report still gives 16/16 passing controls; no new
+reviewer calls were needed for these checks.
 
 ## Reviewer and inputs
 

@@ -1,4 +1,4 @@
-"""Source-bound, matching-only controls for the shared experiment workflow.
+"""Source-bound matching controls and saved validation-wording previews.
 
 Gold judgments describe controlled edits, never another reviewer response.
 The catalog groups identical wording; required flags are outside this task.
@@ -16,6 +16,8 @@ except ImportError:
 
 
 def prepare_source(source, base, selected=None):
+    if isinstance(source, dict) and type(source.get("schema_version")) is int and source["schema_version"] == 2:
+        return _prepare_generations(source, base, selected)
     review._fields(source, {"schema_version", "review_source", "cases"}, "matching source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("expected matching source schema_version 1")
@@ -62,17 +64,6 @@ def prepare_source(source, base, selected=None):
     for definition in definitions:
         original_case = saved[definition["case"]]
         payload = json.loads(original_case["inputs"]["REVIEW_INPUT"])
-        catalog, by_subject, by_number, numbers = [], {}, {}, {}
-        for entry in payload["teacher"]:
-            subject = entry["subject"]
-            if subject not in by_subject:
-                identifier = f"T{len(catalog) + 1:02d}"
-                by_subject[subject] = identifier
-                catalog.append(dict(id=identifier, subject=subject))
-                numbers[identifier] = []
-            identifier = by_subject[subject]
-            by_number[entry["number"]] = identifier
-            numbers[identifier].append(entry["number"])
         students = {entry["number"]: entry["subject"] for entry in payload["student"]}
         if definition["student_number"] not in students:
             raise ValueError("unknown matching student number")
@@ -86,22 +77,137 @@ def prepare_source(source, base, selected=None):
                     or old not in subject or old == new):
                 raise ValueError("matching replacement does not change the selected wording")
             subject = subject.replace(old, new)
-        if not subject.strip():
-            raise ValueError("matching subject must be nonempty")
-        if subject in by_subject:
-            raise ValueError("exact match belongs to mechanical preselection, not a model control")
-        expected_number = definition["expected_teacher_number"]
-        if expected_number is not None and (not isinstance(expected_number, str) or expected_number not in by_number):
-            raise ValueError("unknown expected teacher number")
-        expected_id = None if expected_number is None else by_number[expected_number]
-        match_input = dict(teacher_subjects=catalog, student_subject=subject)
-        cases.append(dict(id=definition["id"],
-            inputs=dict(MATCH_INPUT=json.dumps(match_input, ensure_ascii=False)),
-            evidence=dict(note_id=original_case["evidence"]["note_id"],
-                reference=original_case["evidence"]["reference"], definition=definition,
-                partition=definition["partition"], expected_teacher_id=expected_id,
-                expected_reason=definition["expected_reason"], teacher_numbers=numbers,
-                teacher_entries=len(payload["teacher"]), distinct_teacher_subjects=len(catalog))))
+        cases.append(_matching_case(definition, payload["teacher"], subject,
+            dict(note_id=original_case["evidence"]["note_id"],
+                 reference=original_case["evidence"]["reference"], partition=definition["partition"])))
+    return cases, protected, dict(qualification_case_ids=[d["id"] for d in definitions])
+
+
+def _matching_case(definition, teacher, subject, evidence):
+    catalog, by_subject, by_number, numbers = [], {}, {}, {}
+    for entry in teacher:
+        wording = entry["subject"]
+        if wording not in by_subject:
+            identifier = f"T{len(catalog) + 1:02d}"
+            by_subject[wording] = identifier
+            catalog.append(dict(id=identifier, subject=wording))
+            numbers[identifier] = []
+        identifier = by_subject[wording]
+        by_number[entry["number"]] = identifier
+        numbers[identifier].append(entry["number"])
+    if not subject.strip():
+        raise ValueError("matching subject must be nonempty")
+    if subject in by_subject:
+        raise ValueError("exact match belongs to mechanical preselection, not a model control")
+    expected_number = definition["expected_teacher_number"]
+    if expected_number is not None and (not isinstance(expected_number, str) or expected_number not in by_number):
+        raise ValueError("unknown expected teacher number")
+    match_input = dict(teacher_subjects=catalog, student_subject=subject)
+    return dict(id=definition["id"],
+        inputs=dict(MATCH_INPUT=json.dumps(match_input, ensure_ascii=False)),
+        evidence=dict(evidence, definition=definition,
+            expected_teacher_id=None if expected_number is None else by_number[expected_number],
+            expected_reason=definition["expected_reason"], teacher_numbers=numbers,
+            teacher_entries=len(teacher), distinct_teacher_subjects=len(catalog)))
+
+
+def _prepare_generations(source, base, selected):
+    """Load validation outputs without opening reserved test generations.
+
+    Actual-wording expectations are agent assessments, not independently
+    adjudicated gold. Agreement with them cannot qualify the reviewer.
+    """
+    try:
+        from .distillation_run import subject_result
+    except ImportError:
+        from distillation_run import subject_result
+    review._fields(source, {"schema_version", "dataset_manifest", "cases"}, "saved matching source")
+    protected = {}
+    def read_bound(reference):
+        review._fields(reference, {"path", "sha256"}, "saved matching reference")
+        path = engine._resolve_path(reference["path"], "saved matching source", Path(base))
+        raw = path.read_bytes()
+        checksum = hashlib.sha256(raw).hexdigest()
+        if checksum != reference["sha256"]:
+            raise ValueError(f"saved matching source hash differs: {path}")
+        protected[str(path)] = checksum
+        return path, raw
+    def decode(raw):
+        return json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+    manifest_path, raw = read_bound(source["dataset_manifest"])
+    manifest = decode(raw)
+    if manifest["schema_version"] != 2 or manifest["tasks"] != {"subjects": "ASv6.100"}:
+        raise ValueError("saved matching requires an ASv6.100 subjects-only dataset")
+    splits = [manifest[name + "_note_ids"] for name in ("train", "evaluation", "test")]
+    all_ids = [identifier for split in splits for identifier in split]
+    if not splits[1] or len(set(all_ids)) != len(all_ids):
+        raise ValueError("invalid or overlapping saved matching splits")
+    rows = {}
+    for name in ("evaluation", "references"):
+        _, raw = read_bound(dict(path=str(manifest_path.parent / (name + ".jsonl")),
+                                sha256=manifest["outputs"][name + ".jsonl"]))
+        rows[name] = [decode(line) for line in raw.splitlines()]
+    if [row["note_id"] for row in rows["evaluation"]] != splits[1]:
+        raise ValueError("saved matching evaluation identities differ")
+    references = {row["note_id"]: row for row in rows["references"]}
+    if len(references) != len(rows["references"]):
+        raise ValueError("duplicate saved matching reference identity")
+    definitions = source["cases"]
+    if not isinstance(definitions, list) or not definitions:
+        raise ValueError("saved matching requires nonempty cases")
+    identifiers = []
+    for definition in definitions:
+        review._fields(definition, {"id", "generation", "student_number", "expected_teacher_number",
+            "expected_reason", "expectation_status", "selection"}, "saved matching case")
+        identifier = engine._expect_identifier(definition["id"], "matching case id")
+        if identifier in identifiers:
+            raise ValueError("duplicate matching case identity")
+        identifiers.append(identifier)
+        if (definition["expectation_status"] not in {"agent_assessed", "unresolved"}
+                or any(not isinstance(definition[field], str) or not definition[field].strip()
+                       for field in ("expected_reason", "selection"))):
+            raise ValueError("saved matching needs explicit expectation status and selection")
+        if definition["expectation_status"] == "unresolved" and definition["expected_teacher_number"] is not None:
+            raise ValueError("unresolved matching expectation cannot name a teacher")
+    if selected is not None and (len(selected) != len(set(selected)) or set(selected) - set(identifiers)):
+        raise ValueError("unknown or duplicate matching case selection")
+    definitions = [d for d in definitions if selected is None or d["id"] in selected]
+    cases = []
+    for definition in definitions:
+        generation = definition["generation"]
+        review._fields(generation, {"path", "sha256", "index", "note_id"}, "validation generation")
+        path = engine._resolve_path(generation["path"], "validation generation", Path(base))
+        index = generation["index"]
+        if (type(index) is not int or not 0 <= index < len(rows["evaluation"])
+                or generation["note_id"] != splits[1][index] or "test" in path.parts
+                or path.name != "subjects.json" or path.parent.name != f"note-{index:04}"):
+            raise ValueError("expected a saved validation generation")
+        _, raw = read_bound({key: generation[key] for key in ("path", "sha256")})
+        saved = decode(raw)
+        if saved["note_id"] != generation["note_id"]:
+            raise ValueError("saved validation identity differs")
+        if saved["messages"] != rows["evaluation"][index]["messages"]:
+            raise ValueError("saved validation input differs")
+        reference = references[generation["note_id"]]
+        messages = saved["messages"]
+        suffix = "\n\n<post>\n" + reference["text"] + "\n</post>"
+        if (reference["split"] != "evaluation" or len(messages) != 1 or messages[0]["role"] != "user"
+                or not messages[0]["content"].endswith(suffix)
+                or hashlib.sha256(messages[0]["content"][:-len(suffix)].encode()).hexdigest()
+                   != manifest["subject_instruction_sha256"]):
+            raise ValueError("saved validation prompt differs from instruction or note")
+        teacher = review.parse_subjects(json.dumps(dict(subjects=[
+            {key: row[key] for key in ("number", "context", "subject")} for row in reference["subjects"]])))
+        parsed = subject_result(saved["note_id"], saved["answer"])
+        if parsed["errors"]:
+            raise ValueError(parsed["errors"][0]["error"])
+        students = {row["number"]: row["subject"] for row in parsed["subjects"]}
+        if definition["student_number"] not in students:
+            raise ValueError("unknown matching student number")
+        cases.append(_matching_case(definition, teacher, students[definition["student_number"]],
+            dict(note_id=saved["note_id"], reference=source["dataset_manifest"],
+                 generation=generation, expectation_status=definition["expectation_status"],
+                 student_entries=len(parsed["subjects"]))))
     return cases, protected, dict(qualification_case_ids=[d["id"] for d in definitions])
 
 
@@ -115,6 +221,10 @@ def validate(case, raw):
     if identifier is not None and (not isinstance(identifier, str) or identifier not in {row["id"] for row in catalog}):
         raise ValueError("invalid or unknown matching teacher id")
     expected = case["evidence"]["expected_teacher_id"]
+    if case["evidence"].get("expectation_status") == "unresolved":
+        return dict(status="valid", output=raw, parsed=value,
+                    qualification=dict(passed=None, error=None,
+                                       expected_teacher_id=None, actual_teacher_id=identifier))
     error = (None if identifier == expected else "false_match" if expected is None
              else "missed_match" if identifier is None else "wrong_match")
     return dict(status="valid", output=raw, parsed=value,
@@ -126,11 +236,20 @@ def qualification(cases, all_case_ids):
     by_id = {case["id"]: case for case in cases}
     pending = [identifier for identifier in all_case_ids
                if identifier not in by_id or by_id[identifier]["status"] == "unrun"]
-    completed = [case for case in cases if case["status"] == "valid"]
+    completed = [case for case in cases if case["status"] == "valid"
+                 and case["qualification"]["passed"] is not None]
     failures = [case["id"] for case in cases if case["status"] not in {"valid", "unrun"}]
     errors = {name: [case["id"] for case in completed if case["qualification"]["error"] == name]
               for name in ("false_match", "missed_match", "wrong_match")}
     failed = bool(failures or any(errors.values()))
-    return dict(status="failed" if failed else "pending" if pending else "passed",
+    unverified = [case["id"] for case in cases if case["evidence"].get("expectation_status")
+                  in {"agent_assessed", "unresolved"}]
+    result = dict(status="failed" if failures else "pending" if unverified
+                  else "failed" if failed else "pending" if pending else "passed",
                 checked=len(completed), total=len(all_case_ids), pending=pending,
                 mechanical_failures=failures, errors=errors)
+    if unverified:
+        result["unverified_expectations"] = unverified
+        result["unresolved_expectations"] = [case["id"] for case in cases
+                                              if case["evidence"].get("expectation_status") == "unresolved"]
+    return result

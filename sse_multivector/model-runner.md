@@ -946,6 +946,27 @@ production preparation and decoding functions:
   bulk grading remain open. See the
   [DSMv1 repeat evidence](distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 
+  Matching source schema 2 instead binds a prepared ASv6.100 dataset manifest
+  (`dataset_manifest: {path, sha256}`) and saved validation generations. Each
+  case defines `id`, `generation: {path, sha256, index, note_id}`,
+  `student_number`, `expected_teacher_number`, `expected_reason`,
+  `expectation_status` and `selection`. The adapter checks the manifest's
+  evaluation split, reference/evaluation file hashes, saved note identity,
+  matching complete input messages and instruction/post binding. Production
+  `subject_result` rejects malformed/truncated outputs; the selected wording
+  is unchanged. Reserved test paths are rejected before opening them; no
+  training/test input files are opened. The same complete distinct-string
+  teacher catalog and mechanical exact-target exclusion apply.
+  `expectation_status` is `agent_assessed` or `unresolved`; this format cannot
+  assert independent gold verification. Native qualification lists unverified
+  expectations and remains pending even after agreement with every assessment.
+  For unresolved cases, null is a placeholder, not an expected nonmatch;
+  mechanically valid responses receive no semantic pass/fail or error count.
+  The user authorized the
+  [22-case actual-wording offline preview](distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8),
+  which makes zero calls. Independent verification and subsequent calls remain
+  open; DSMv1, Sol / xhigh and concurrency 8 are unchanged.
+
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
   It uses the `posts` adapter's `{POST}` inputs and optional case-ID `select`;

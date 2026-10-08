@@ -440,8 +440,17 @@ calls pass and preserve the original teacher IDs/null; only explanation wording
 changes in 15 reports. The [repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8)
 records measured usage. This supports repeatability on the controls, not
 accuracy on actual distilled wording or the other semantic review questions.
-More realistic matching tests, effort/batching comparisons, full review adoption
-and final-test unsealing remain subsequent decisions.
+The accepted next step prepares an offline matching preview from actual saved
+validation wording, with DSMv1 and settings unchanged. Baseline and final
+checkpoint selections across all three models yield 22 distinct inputs: eight
+agent-assessed matches, twelve agent-assessed nonmatches and two unresolved
+cases. These expectations are not independently verified gold. Native
+qualification remains pending, and unresolved placeholders are not nonmatches.
+Preparation made zero reviewer calls. See the
+[actual-wording preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8).
+Independent verification, resolving the meaning boundaries, additional calls,
+effort/batching comparisons, full review adoption and final-test unsealing remain
+subsequent decisions.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

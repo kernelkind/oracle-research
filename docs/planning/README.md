@@ -46,8 +46,12 @@ controls on their first attempt with Sol / xhigh and concurrency 8. The user
 then accepted the unchanged 16-control confirmation run, which also passes
 16/16 on first attempts. Both sets pass 32/32 distinct authored controls. A
 subsequently authorized independent confirmation repeat passes 16/16 with
-unchanged verdicts and no saved-answer reuse. Actual distilled-output reliability
-remains untested. DSMv1
+unchanged verdicts and no saved-answer reuse. The authorized
+[actual-wording offline preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8)
+prepares 22 distinct validation inputs with zero calls: eight assessed matches,
+twelve assessed nonmatches and two unresolved cases. Expected answers still
+need independent verification. Actual distilled-output reliability remains
+untested. DSMv1
 has not replaced the full review process. See the
 [repeat results](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 Freeze prep and pilot stages

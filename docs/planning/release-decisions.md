@@ -1033,6 +1033,23 @@ More realistic matching tests, effort/batching comparisons, full review adoption
 and final-test unsealing remain open. See the
 [DSMv1 repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 
+**Actual-wording matching preview authorized October 8:** the user accepted
+preparing an offline matching test from saved distilled wording, with expected
+answers established before further calls. The shared adapter binds evaluation
+inputs, trusted ASv6.100 references and untouched saved generations by hashes;
+it checks note/input identity and production parsing without opening reserved
+test generations. DSMv1, Sol / xhigh and concurrency 8 stay fixed. The preview
+selects sampled, lexically close and largest inputs from all three baselines
+and final validation checkpoints: 24 selection hits produce 22 distinct inputs.
+Eight expected matches and twelve expected nonmatches are agent assessments,
+not independently verified gold; two sampled phrases remain unresolved.
+Native qualification stays pending even if a reviewer agrees with all
+assessments, and unresolved placeholders cannot become negative gold labels.
+Preparation makes zero calls. Independent verification, resolving the meaning
+boundaries, further calls, rubric changes, optimization, full review adoption
+and test unsealing remain open. This is not an ASv6.100 audit. See the
+[actual-wording preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress
