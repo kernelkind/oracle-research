@@ -934,9 +934,12 @@ production preparation and decoding functions:
   xhigh and concurrency 8. All pass on their first attempt, without retries or
   reuse. Native usage reports 17,110 input tokens, zero cached input and 1,822
   output including 1,066 reasoning tokens. This controlled result does not
-  establish production reliability. Confirmation and independent repeats remain
-  unrun; adoption and bulk grading remain open. See the
-  [DSMv1 development evidence](distillation-review-v1/README.md#dsmv1-development-trial-october-8).
+  establish production reliability. The user then accepted running the unchanged
+  16-control confirmation set, which also passes 16/16 without failures, retries
+  or reuse. Native confirmation usage reports 16,592 input tokens, zero cached
+  input and 2,007 output including 1,217 reasoning tokens. Both sets pass 32/32
+  authored controls; independent repeats, adoption and bulk grading remain open.
+  See the [DSMv1 confirmation evidence](distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

@@ -1,6 +1,6 @@
 # Distillation semantic review — evidence and matching-only preview
 
-Status: **DSRv1 and DSRv2 qualification failed; DSMv1 development controls pass 16/16; confirmation is unrun**, October 8, 2026.
+Status: **DSRv1 and DSRv2 qualification failed; DSMv1 development and confirmation controls pass 32/32**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
@@ -125,11 +125,40 @@ python3 sse_multivector/experiment.py show target/distillation-review-v1/matchin
 ```
 
 This passes the initial controlled matching check, not production qualification
-or an estimate of accuracy on actual distilled outputs. The 16 separate-note
-confirmation controls remain pending with zero attempts. The recommended next
-step is to run them with the unchanged DSMv1 prompt and the same Sol / xhigh,
-concurrency 8 settings. Confirmation, independent repeats, effort/batching
-experiments, full review adoption and final-test unsealing remain open.
+or an estimate of accuracy on actual distilled outputs. The user subsequently
+accepted running the 16 separate-note confirmation controls with the unchanged
+DSMv1 prompt and the same Sol / xhigh, concurrency 8 settings; see below.
+
+## DSMv1 confirmation trial (October 8)
+
+The accepted next step ran `matching-confirmation-20261008` through the shared
+CLI. Its frozen prompt, teacher catalogs, edits and gold expectations were
+unchanged after the development trial. All 16 reports are complete and match
+the authored expectations: eight correct matches and eight correct nonmatches.
+There are no semantic or mechanical failures, retries or reused answers.
+The inspected reasons correctly preserve or reject the recipe restrictions,
+ingredient/purpose, capital-flow origin, monetary limit, renewed-versus-first
+ban, and age, including the long composite subject. Per-request elapsed time
+ranges from 3.50 to 6.95 seconds.
+
+Native usage reports 16,592 input tokens, zero cached input tokens and 2,007
+output tokens, including 1,217 reasoning tokens. All attempts have saved SDK
+usage. The catalog-price estimate is $0.053254, not a subscription invoice;
+provider-reported dollar charge is unavailable.
+
+```sh
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-20261008 --json
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-20261008 --case M13
+```
+
+Development and confirmation now pass 32/32 authored controls across separate
+source notes, without prompt tuning on confirmation outcomes. This supports
+the narrow matching approach on these controls; it does not establish an error
+rate on actual distilled outputs or qualify the full review process. The
+recommended next step is an independent repeat of the confirmation set with
+identical inputs/settings and saved-response reuse disabled, to check stability.
+Independent repeats, effort/batching comparisons, full review adoption and
+final-test unsealing remain open.
 
 ## Reviewer and inputs
 

@@ -1006,9 +1006,19 @@ semantic/mechanical failures, retries or reused answers. Native usage reports
 17,110 input tokens, zero cached input and 1,822 output tokens including 1,066
 reasoning tokens. This is an initial controlled matching check, not production
 qualification or a comparison against batching/lower effort. The 16 reserved
-confirmation controls and independent repeats remain unrun. Confirmation,
+confirmation controls and independent repeats were still unrun at that stage. Confirmation,
 optimization experiments, full review adoption and test unsealing remain open.
 See the [DSMv1 development evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-development-trial-october-8).
+
+**DSMv1 confirmation accepted October 8:** the user accepted the proposed
+16-control confirmation run with DSMv1 unchanged, Sol / xhigh and concurrency 8.
+All 16 match the authored expectations on their first attempt, with no failures,
+retries or reuse. Both sets therefore pass 32/32 controls on separate source
+notes. Native confirmation usage reports 16,592 input tokens, zero cached input
+and 2,007 output tokens including 1,217 reasoning tokens. This supports matching
+on the authored controls, not a production error rate or the full review process.
+Independent repeats, effort/batching experiments, adoption and test unsealing
+remain open. See the [DSMv1 confirmation evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

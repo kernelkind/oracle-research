@@ -430,9 +430,12 @@ the user authorized running the 16 development controls. All 16 pass on their
 first attempt: eight matches and eight nonmatches, with no failures, retries or
 reuse. This initial controlled result does not establish pilot-wide reliability.
 The [DSMv1 development evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-development-trial-october-8)
-records actual usage and findings. The 16 confirmation controls and independent
-repeats remain unrun; confirmation, effort/batching comparisons, full review
-adoption and final-test unsealing remain subsequent decisions.
+records actual usage and findings. The user then accepted running the reserved
+confirmation set with DSMv1 unchanged: all 16 pass on their first attempt,
+without failures, retries or reuse. Both sets pass 32/32 authored controls on
+separate source notes. See the [confirmation evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
+Independent repeats, effort/batching comparisons, full review adoption and
+final-test unsealing remain subsequent decisions.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a
