@@ -405,9 +405,13 @@ explicit and supplies the original Q20 receipt's same 66 groups / 44 required
 flags to Q20–Q22. These are provisional consistency inputs, not accepted pilot
 classifications. The shared adapter verifies the receipt and exact task, post
 and teacher binding; the existing all-placements scoring remains unchanged.
-All 29 preview cases are unrun, with Sol / xhigh and concurrency 8. DSRv1's failed
-trial is preserved. DSRv2 qualification and adoption, bulk review and test
-unsealing remain pending; offline preparation authorizes no new calls.
+DSRv1's failed trial is preserved. After receiving the preview and test sequence,
+the user authorized real DSRv2 qualification with Sol / xhigh and concurrency 8.
+Q04 passes `8/8` correctness and `2/2` coverage with both meanings required.
+The small set finishes with 17 passes, Q14's semantic regression (`6/10` instead
+of `8/10` correctness), and Q01's ungraded stream interruption. DSRv2 qualification
+has failed; the authorized large cases are running without retrying Q01.
+Adoption remains open; bulk review and test unsealing are not authorized.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

@@ -1,9 +1,9 @@
 # Distillation semantic review — DSRv1 evidence and DSRv2 draft
 
-Status: **DSRv1 qualification failed; DSRv2 prepared, untested**, October 8, 2026.
+Status: **DSRv1 and DSRv2 qualification failed; DSRv2 stress trial in progress**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
-DSRv2 has an offline preview and zero model calls. Bulk pilot semantic review
-has not run.
+DSRv2 passes Q04 but fails Q14; Q01's interrupted report is ungraded. The large
+cases are running. Bulk pilot semantic review has not run.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -199,7 +199,7 @@ but the changed placement and link judgments also require resolution. The
 largest-input calls assess completion; they cannot erase these known
 failures or establish semantic accuracy without labels. Bulk review remains
 unqualified. The user subsequently authorized the DSRv2 draft and offline
-preview below; model calls and adoption remain pending.
+preview below, then qualification calls. Adoption remains pending.
 
 ### DSRv2 draft and offline preview
 
@@ -238,9 +238,9 @@ definition pins the exact Q20 receipt. Preparation protects the saved experiment
 configuration, manifest and result ledger by hash, and rejects per-candidate
 overrides of these shared groups. It does not promote them to known gold.
 
-The frozen preview is
-`target/distillation-review-v1/qualification-v2-preview-final-20261008`: 29 unrun
-cases, zero attempts, zero reused answers, qualification pending. Q20–Q22's
+The original frozen preview is
+`target/distillation-review-v1/qualification-v2-preview-final-20261008`, initially
+29 unrun cases with zero attempts and zero reused answers. Q20–Q22's
 inputs intentionally differ from DSRv1 because groups are now supplied; their
 normal baseline comparison reports `input_mismatch`. Assess invariance among
 the new Q20–Q22 results rather than comparing aggregate scores across different
@@ -256,9 +256,63 @@ python3 sse_multivector/experiment.py show \
 ```
 
 Use `--case Q20`, `Q21` or `Q22` to inspect the complete stress inputs, including
-their fixed groups. Model calls, bulk review and test unsealing are not authorized
-by this preparation. The next proposed call is Q04 first, to establish whether
-the clarification resolves the small trusted failure before further stress calls.
+their fixed groups. Preparation itself authorizes no calls. The user subsequently
+authorized qualification in the order below; bulk review and test unsealing
+remain outside that authorization.
+
+### DSRv2 qualification, October 8
+
+After seeing the draft and testing sequence, the user authorized real Sol / xhigh
+qualification with concurrency 8 and existing provider backoff. Test Q04 first,
+then the other small known controls, then all eight large training hierarchies
+and Q21/Q22's controlled variants. Compare individual findings and reasons,
+including required flags, rather than accepting aggregate scores alone.
+Incomplete reviewer reports remain ungraded qualification failures. Preserve
+the failed DSRv1 trial and the provisional status of the 44 large-case flags.
+
+**Q04 passed:** `qualification-v2-url-check-20261008` records one real call,
+no retry or reuse, 63.1 seconds, correctness `8/8` and coverage `2/2`. All eight
+subject and four link verdicts are valid. Both Profile URLs and Event identifiers
+remain required and fully covered; Profile URLs no longer demands an extra
+occurrence beneath Identifiers. This resolves the observed disagreement on this
+control without marking a required meaning optional. The receipt records 10,709
+input and 1,987 output tokens, including 935 reasoning tokens.
+
+`target/distillation-review-v1/qualification-v2-small-controls-20261008` prepares
+Q01–Q19 with unchanged preview inputs. Its completed run preserves 18 new
+attempts and one exact Q04 reuse: 18 complete, mechanically valid reports and
+one interrupted report. **Seventeen controls pass, Q14 fails semantically,
+and Q01 remains ungraded.** No request is retried.
+
+- **Q14:** removing ` serving four people` from four cumin subjects correctly
+  loses complete-source coverage (`1/2`) and invalidates their two incoming
+  recipe links. The established control treats the shortened subjects as
+  supported generalizations, so correctness should be `8/10`. DSRv2 instead
+  marks all four shortened subjects incorrect for omitting the serving size,
+  producing `6/10`. DSRv1 passed this control. Preserve the known expectation;
+  this new result fails the agreed distinction between subject correctness,
+  link correctness and complete-source coverage.
+- **Q01:** HTTP 200 is followed by a body transport error,
+  `UND_ERR_SOCKET` / `other side closed`, after 365.2 seconds. The native receipt
+  preserves 21,883 UTF-8 bytes of partial review text. The one-hour local deadline
+  has not expired and no provider output-limit stop is recorded. This is an
+  ungraded interruption, not a semantic verdict. SDK zero usage placeholders
+  are not measured zero usage; final usage is unavailable. Do not retry it.
+
+Native `show --generation-costs --json` traces 19 original calls across the URL
+check and small-control experiment, counting Q04 once. Their observed usage is
+209,845 input and 53,919 output tokens, including 20,139 reasoning tokens;
+Q01's unavailable usage is additional. The transport is the existing subscription,
+not a new paid API bill.
+
+`target/distillation-review-v1/qualification-v2-large-cases-20261008` runs only
+Q20–Q29 at concurrency 8: eight unchanged largest hierarchies and Q21/Q22's
+controlled variants, with their fixed provisional groups. Using the supported
+case selection preserves the completed small controls and avoids resending the
+unknown-failure Q01 request. Qualification already fails the small controls;
+the remaining authorized calls test completion and cross-version consistency.
+Their outcomes and final adoption are not yet completed evidence. Inspect
+native results with `show --case ID --json`.
 
 Reproduce the DSRv2 preparation in a new destination, without inference:
 

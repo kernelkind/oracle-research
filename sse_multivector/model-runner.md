@@ -876,7 +876,7 @@ production preparation and decoding functions:
   uses user-directed concurrency 8 with existing backoff; the original frozen
   trial used 1. See the
   [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
-  The current specification prepares the untested
+  The current specification prepares
   [DSRv2 preview](distillation-review-v1/README.md#dsrv2-draft-and-offline-preview).
   A reference may supply `teacher_meanings_from` with `experiment`, `case_id`
   and `record_sha256`. Native report validation must yield a valid review of
@@ -887,6 +887,15 @@ production preparation and decoding functions:
   are not promoted to known gold. Q20–Q22 use provisional groups for consistency
   checks. Each report's prompt ID must match its rendered reviewer version.
   Preparing DSRv2 adds no inference or authorization for calls.
+  The user subsequently authorized DSRv2 qualification in small-control then
+  large-case order. Q04 passes `8/8` correctness and `2/2` coverage, with both
+  meanings required; its exact receipt is reused for the small set. Seventeen
+  controls pass, Q14 fails semantically, and Q01's HTTP 200 body stream closes
+  with an ungraded partial report after 365.2 seconds. Qualification has failed;
+  Q20–Q29 run separately at concurrency 8 without resending Q01. Native
+  `show --generation-costs` counts Q04's original call once and marks Q01's final
+  usage unavailable; SDK zero placeholders are not measured zero usage. See the
+  [DSRv2 qualification evidence](distillation-review-v1/README.md#dsrv2-qualification-october-8).
   `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
   offline, optionally saving it with `--output FILE`. It does not create a model

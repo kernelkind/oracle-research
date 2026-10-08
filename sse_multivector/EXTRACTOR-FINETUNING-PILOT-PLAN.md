@@ -1338,9 +1338,13 @@ The user subsequently authorized the [DSRv2 draft and offline preview](distillat
 before further calls. It explicitly treats ASv6.100's worked examples as
 authoritative, and Q20–Q22 reuse the original Q20 receipt's 66 groups / 44 required
 flags. These are provisional consistency inputs, not accepted pilot labels.
-Native receipt and exact task/post/teacher checks bind their source. All 29
-cases remain unrun with Sol / xhigh and concurrency 8; DSRv1 remains failed.
-Qualification, adoption, bulk grading and test unsealing remain pending.
+Native receipt and exact task/post/teacher checks bind their source. The user
+then authorized real DSRv2 qualification with Sol / xhigh and concurrency 8.
+Q04 passes `8/8` correctness and `2/2` coverage, retaining both required meanings.
+The small set finishes with 17 passes, Q14's semantic regression (`6/10` instead
+of `8/10` correctness), and Q01's ungraded stream interruption. Both DSR versions
+fail qualification; the authorized large cases are running without retrying
+Q01. Adoption remains open; bulk grading and test unsealing are not authorized.
 
 ### Required pilot measurements
 

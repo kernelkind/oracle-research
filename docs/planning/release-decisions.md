@@ -954,6 +954,26 @@ not calls, bulk grading, teacher auditing or test unsealing. The
 [DSRv2 preview](../../sse_multivector/distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
 shows the wording and inputs; qualification and adoption remain open.
 
+**DSRv2 qualification authorized October 8:** after receiving the testing
+sequence, the user directed proceeding with real Sol / xhigh calls. Check the
+trusted URL control first, then the remaining small known controls, then all
+eight large training hierarchies and Q21/Q22's controlled variants. Use
+concurrency 8 and existing provider backoff. Check individual findings and
+reasons, not only scores; incomplete reports remain ungraded failures.
+Q04's first call passes all eight subjects, four links and both required meanings,
+with `8/8` correctness and `2/2` coverage. The extra Identifiers placement is
+absent and both meanings remain required. The small set finishes with 17 passes,
+Q14's semantic regression and Q01's ungraded stream interruption. Q14 correctly
+finds lost coverage and two bad links but also marks four supported shortened
+subjects incorrect, yielding `6/10` correctness instead of `8/10`. Preserve the
+known expectation; DSRv2 qualification has failed. Q01's HTTP 200 body stream
+closes after 365.2 seconds with partial output and unavailable final usage; it
+is not retried. The remaining authorized large cases run at concurrency 8.
+This authorizes qualification, not bulk review, teacher auditing, test unsealing,
+new rubric revisions or model substitution. The 44 large-case requirement flags
+remain provisional consistency inputs. See the
+[DSRv2 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#dsrv2-qualification-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress
