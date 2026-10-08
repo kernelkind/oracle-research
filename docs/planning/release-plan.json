@@ -12,7 +12,7 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: a completed nine-note menu narrows note sets; semantic consistency and meaningful-group coverage remain unresolved.\nVector: a 213-note prototype improves access but has misleading branches and finding failures.\nNeither approach is accepted or selected."
+      "description": "Produce a useful 100-note hierarchy accepted in browsing review.\nPlanning follows the compare-prompt hierarchy builder; vector work is a parallel experiment, not a prerequisite.\nA new nine-note construction is underway. Semantic consistency and useful group browsing remain unvalidated.\nNo production method is adopted."
     },
     {
       "id": "03",

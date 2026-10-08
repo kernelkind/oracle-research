@@ -47,6 +47,15 @@ SHR fine-tuning remains conditional on validating an SHR-built hierarchy; no
 separate SHR pilot is approved here. Node sorting is deferred as nice-to-have.
 The release requirements and deadline remain unchanged.
 
+**Hierarchy planning focus — October 8:** the user expects results from the
+compare-prompt hierarchy builder, specifically. Center planning on that effort
+reaching a useful hierarchy and then a launch-sized build. Vector work remains
+a parallel experiment, not a prerequisite or an equally expected release path.
+This is a working expectation, not semantic acceptance, production adoption or
+authorization to stop or redirect another agent. Publication and Notedeck work
+are planned in parallel rather than used to pace hierarchy development; their
+required completion gates remain unchanged. No new schedule is fixed.
+
 **Task-summary convention approved October 1:** the graph is a planning view,
 not an experiment log. Every task description gives a brief outcome, current
 state and real blockers or start conditions. Keep model settings, experiment
@@ -69,13 +78,15 @@ existing hierarchy investigation. Record their progress separately; neither is
 selected or accepted.
 These are construction candidates, not new release tracks or additional tasks.
 
-The [current frontier construction](../../../oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/README.md#ninth-note-follow-up-construction-complete-prompt-contradictions-remain)
-completed nine notes. Its shaped browsing menu has six roots, at most five
-children per node and strictly narrowing distinct note sets; every note is
+The [compare-prompt hierarchy builder](../../../oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/README.md#resumed-hierarchy-iteration-fresh-construction-and-producer-diagnostics)
+previously completed nine notes. Its latest shaped browsing menu has six roots,
+at most six children per node and strictly narrowing distinct note sets; every note is
 reachable in one or two selections. The underlying construction graph does
 not meet those menu constraints. Semantic contradictions and full
-meaningful-group coverage remain unresolved. Further prompt diagnostics and
-a fresh construction run are underway; this is not 100-note acceptance.
+meaningful-group coverage remain unresolved. A fresh nine-note construction
+uses revised meaning generation and comparison wording. Root placement is
+complete; deeper placements are being tested. Improved selected controls do
+not establish whole-hierarchy consistency or 100-note acceptance.
 [Candidate-selection replay](../../../oracle-mvp-canonical-sse-scale-v1/sse_multivector/shr_single_pair/README.md)
 reduces comparisons on saved evidence but misses contradiction and uncertainty
 checks. No scalable construction policy is adopted.
@@ -203,7 +214,8 @@ open prompt/build choices and validation gates remain unchanged.
 
 **Current task 02 status (October 8):** user browsing acceptance remains open.
 Frontier-based and vector-space construction are both under investigation, with
-separate results recorded above. ASv6.100 is the approved subject baseline,
+separate results recorded above. Planning centers on the compare-prompt builder;
+vector results do not gate progress. ASv6.100 is the approved subject baseline,
 not proof of a correct global hierarchy. Relationship consistency and
 construction quality remain unresolved.
 The October 1 independent comparison favored the scalable subject-hierarchy

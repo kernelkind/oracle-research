@@ -395,11 +395,13 @@ track. Shared construction measurements can inform both where applicable.
 Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
-Task 02 tracks acceptance of a useful 100-note hierarchy, with frontier-based
-and vector-space construction tested in parallel. The frontier's completed
+Task 02 tracks acceptance of a useful 100-note hierarchy. Planning centers on
+the compare-prompt hierarchy builder; vector work remains a parallel experiment,
+not a prerequisite or an equally expected release path. The builder's completed
 nine-note menu has bounded choices and strictly narrowing note sets; semantic
-contradictions and meaningful-group coverage remain unresolved. The vector
-investigation has run model fits without qualifying transfer. Its latest
+contradictions and meaningful-group coverage remain unresolved. A fresh nine-note
+construction has completed root placement and is testing deeper placements.
+The vector investigation has run model fits without qualifying transfer. Its latest
 213-note browsing prototype covers all notes with at most six choices per
 step, but agent review finds misleading labels and missed requests. Neither
 trial passes user acceptance. Older builds remain historical evidence;
