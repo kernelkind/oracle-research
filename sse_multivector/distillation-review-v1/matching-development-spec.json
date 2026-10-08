@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "DSMv1",
+    "path": "matching-prompt.md"
+  },
+  "dataset": {
+    "adapter": "distillation_matching",
+    "path": "matching-source.json",
+    "select": [
+      "M01",
+      "M02",
+      "M03",
+      "M04",
+      "M05",
+      "M06",
+      "M07",
+      "M08",
+      "M17",
+      "M18",
+      "M21",
+      "M22",
+      "M23",
+      "M24",
+      "M29",
+      "M30"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "concurrency": 8,
+    "timeout_seconds": 3600,
+    "output_schema_path": "matching-response-schema.json"
+  }
+}

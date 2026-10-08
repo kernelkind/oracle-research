@@ -60,6 +60,20 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'distillation_matching':
+        try:
+            from . import distillation_matching
+        except ImportError:
+            import distillation_matching
+        cases, protected, preparation = distillation_matching.prepare_source(
+            source, path.parent, dataset.get('select'))
+        sources.update(protected)
+        rendered = prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template)
+        import tiktoken
+        encoding = tiktoken.get_encoding('o200k_base')
+        for case in rendered:
+            case['evidence']['input_tokens'] = len(encoding.encode(case['prompt'], disallowed_special=()))
+        return rendered, sources, preparation
     if dataset['adapter'] == 'distillation_review':
         try:
             from . import distillation_review
@@ -1231,6 +1245,12 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'distillation_matching':
+        try:
+            from . import distillation_matching
+        except ImportError:
+            import distillation_matching
+        return distillation_matching.validate(case, raw)
     if adapter == 'distillation_review':
         try:
             from . import distillation_review

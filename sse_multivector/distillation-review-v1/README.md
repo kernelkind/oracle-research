@@ -1,9 +1,10 @@
-# Distillation semantic review — DSRv1 evidence and DSRv2 draft
+# Distillation semantic review — evidence and matching-only preview
 
-Status: **DSRv1 and DSRv2 qualification failed; DSRv2 stress trial in progress**, October 8, 2026.
+Status: **DSRv1 and DSRv2 qualification failed; DSMv1 matching-only preview is offline and unrun**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
-DSRv2 passes Q04 but fails Q14; Q01's interrupted report is ungraded. The large
-cases are running. Bulk pilot semantic review has not run.
+DSRv2 produces 24 complete reports and five ungraded interruptions across its
+preserved subsets; it fails semantic and cross-version checks. Bulk pilot
+semantic review has not run.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -11,6 +12,84 @@ specifies their [report schema](response-schema.json) and qualification cases.
 Offline source preparation, report validation, scoring
 and qualification checks are implemented in the shared experiment workflow.
 The reviewer has not been qualified; bulk pilot grading is not implemented here.
+
+## Matching-only offline preview
+
+The October 8 approval authorizes drafting and offline preparation of
+[DSMv1](matching-prompt.md), before model calls. Each request contains one
+generated subject and the fixed list of distinct saved teacher wordings for
+that note. The task is to return the complete matching meaning's ID, or null,
+with a brief reason. This isolates semantic matching from subject support,
+parent restrictions and placement scoring. It does not replace the agreed
+whole review process or establish that this call shape is best.
+
+The `distillation_matching` adapter uses the existing hash-bound worked examples
+and saved training answers. It bypasses earlier reviewer-generated groups and
+required flags. Identical teacher strings share one opaque ID in first-occurrence
+order; original numbers stay in evidence. Every distinct teacher wording,
+including general headings and near matches, appears in the catalog. Matching
+does not decide which meanings are required. Nonidentical teacher wordings are
+not semantically regrouped here; these authored controls expect one unambiguous
+match or none. Resolving equivalent nonidentical reference wordings would be
+needed before using this as a production coverage procedure.
+
+`MATCH_INPUT` contains only `teacher_subjects: [{id, subject}, ...]` followed by
+one `student_subject`. The prompt excludes posts, ancestors, contexts, original
+numbers, checkpoint/model identity, control labels and expected answers. It
+requires the subject's own complete meaning: no filling gaps from other strings,
+pooling partial matches, or choosing the nearest topic. Exact student strings
+are excluded from model controls because code can preselect those matches.
+Full teacher wording remains authoritative; ASv6.100 is not re-audited.
+
+[matching-source.json](matching-source.json) defines 32 controls through source
+references and explicit edits, with gold IDs and reasons kept in evidence.
+There are 16 development controls and 16 confirmation controls, each with eight
+matches and eight nonmatches. Their source notes are disjoint. Both sets include
+worked examples and together cover all eight previously selected large training
+answers, including the largest 72-wording catalog and the longest saved answer.
+Edits test paraphrases, lost restrictions, quantities, polarity, attribution,
+purpose and long nested/composite subjects. Expectations come from the authored
+change, not a Sol response. These training references appeared in earlier
+whole-note trials; confirmation is reserved for this new matching prompt,
+not claimed as never-seen data for the entire investigation. Pilot final-test
+answers remain sealed.
+
+Prepare and inspect through the shared CLI in an environment providing
+`tiktoken==0.14.0`, also used by the existing bounded comparison workflow:
+
+```sh
+python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-development-20261008 --spec sse_multivector/distillation-review-v1/matching-development-spec.json --repeat
+python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-confirmation-20261008 --spec sse_multivector/distillation-review-v1/matching-confirmation-spec.json --repeat
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --case M01
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --case M01 --prompt-only
+```
+
+Both specifications pin Sol / xhigh, subscription transport and concurrency 8.
+`--repeat` prevents exact-response reuse from being mistaken for an independent
+sample; later repeats would use separate preparations. No inference is
+authorized by this preview. Native reports count false matches, missed matches
+and wrong IDs separately; malformed, incomplete and failed requests are ungraded
+mechanical failures. Native usage accounting will retain actual input, cached,
+output and reasoning tokens if calls are later authorized. Offline token counts
+are an `o200k_base` rendered-text proxy, not provider usage or a cost estimate.
+The fixed catalog precedes the varying target, but cache hits are not assumed.
+
+The October 8 native preparations contain 16 pending cases each, zero attempts
+and zero reused answers. Development inputs total 16,518 proxy tokens
+(439–1,849 per request); confirmation inputs total 16,000 (386–1,805).
+The maximum catalog has 72 teacher wordings. These are the actual narrowed
+inputs, not the full saved hierarchy's JSON size. Exact M01 uses the ten-item
+cable catalog and `Cable A, two metres long`, with expected `T04` outside the
+prompt. M05 uses the same catalog and `2 m cable A longer than 3 m cable B`,
+with expected null because it loses the reference comparison's negation.
+
+Passing 32 controlled examples would not establish pilot-wide accuracy or a
+production error rate. The proposed next step is to test development controls
+with Sol / xhigh, inspect false matches and misses, completion and actual usage,
+and repeat identical requests independently. Keep confirmation results out of
+prompt development; any revision after inspecting them needs fresh independent
+controls. Effort/batching comparisons and bulk grading remain subsequent
+decisions. DSMv1 has not been run or adopted.
 
 ## Reviewer and inputs
 

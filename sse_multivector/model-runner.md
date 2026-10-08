@@ -913,6 +913,25 @@ production preparation and decoding functions:
   sizes only; the output contains training references without posts or subjects.
   The ranking is offline and does not prepare requests or perform inference.
 
+- `dataset.adapter: "distillation_matching"`: the
+  [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)
+  loads a hash-bound `review_source` and selected authored controls. It reuses
+  saved teacher/student preparation while bypassing prior reviewer groups and
+  required flags. `MATCH_INPUT` includes a fixed distinct-string teacher catalog
+  and exactly one generated subject; expectations, original numbers and source
+  identities remain evidence. Exact-string targets are rejected as unnecessary
+  model work. Source notes cannot cross development/confirmation partitions.
+  Strict validation accepts only a known teacher ID or null and a nonblank
+  reason. A well-formed wrong judgment remains mechanically valid with a failed
+  qualification; native reports distinguish false matches, missed matches,
+  wrong matches, mechanical failures and pending requests. Preparation pins
+  the adapter code and source hashes. Native offline sizing uses `tiktoken`
+  (`o200k_base`, version 0.14.0); it is a text proxy, not measured billing.
+  Provider usage and cached/reasoning tokens use existing native accounting.
+  `prepare ... --repeat` excludes saved-response reuse for independent repeats;
+  `show ... --case ID --prompt-only` prints the exact input. The approved DSMv1
+  work is offline; qualification calls, adoption and bulk grading remain open.
+
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
   It uses the `posts` adapter's `{POST}` inputs and optional case-ID `select`;

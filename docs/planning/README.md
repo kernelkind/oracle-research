@@ -38,6 +38,10 @@ and both controlled variants, with four ungraded stream interruptions. Both
 variants change judgments about untouched links and placements despite fixed
 groups and required flags. DSRv2 qualification has failed; adoption remains
 open and bulk review has not run.
+The user next authorized a [matching-only offline preview](../../sse_multivector/distillation-review-v1/README.md#matching-only-offline-preview)
+before calls: one generated subject against its fixed teacher list, with
+authored expectations outside the prompt and separate-note confirmation
+controls. DSMv1 is unrun and has not replaced the full review process.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

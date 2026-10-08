@@ -314,10 +314,13 @@ def prepare(args):
                          "ancestor_cosine_probe.py"):
                 code = Path(__file__).with_name(name)
                 plan["code"][name] = engine._sha256_file(code)
-        if plan["dataset"]["adapter"] == "distillation_review":
+        if plan["dataset"]["adapter"] in {"distillation_review", "distillation_matching"}:
             for name in ("distillation_review.py", "distillation_run.py"):
                 code = Path(__file__).with_name(name)
                 plan["code"][name] = engine._sha256_file(code)
+        if plan["dataset"]["adapter"] == "distillation_matching":
+            code = Path(__file__).with_name("distillation_matching.py")
+            plan["code"][code.name] = engine._sha256_file(code)
         plan["requests_at_prepare"] = (
             request_preview(plan, manifest, plan["cases"])
             if not args.import_config
@@ -720,6 +723,20 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
             import distillation_review
         result["qualification"] = distillation_review.qualification(
             cases, plan["preparation"]["qualification_case_ids"])
+    if result["adapter"] == "distillation_matching":
+        try:
+            from . import distillation_matching
+        except ImportError:
+            import distillation_matching
+        result["qualification"] = distillation_matching.qualification(
+            cases, plan["preparation"]["qualification_case_ids"])
+        token_counts = [case["evidence"]["input_tokens"] for case in cases]
+        result["prepared_inputs"] = dict(tokenizer="o200k_base", calls=len(cases),
+            rendered_input_tokens=sum(token_counts),
+            min_rendered_input_tokens=min(token_counts, default=0),
+            max_rendered_input_tokens=max(token_counts, default=0),
+            max_teacher_subjects=max((case["evidence"]["distinct_teacher_subjects"]
+                                      for case in cases), default=0))
     if generation_costs:
         result["generation_usage"] = generation_usage(
             config, manifest, selected, records, latest, files, reconciled_costs)

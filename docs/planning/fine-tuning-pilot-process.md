@@ -418,6 +418,17 @@ cases are attempted once across the preserved subsets, yielding 24 complete
 reports and five ungraded interruptions. No failed request is retried.
 Adoption remains open; bulk review and test unsealing are not authorized.
 
+The October 8 matching discussion next authorizes an offline
+[DSMv1 preview](../../sse_multivector/distillation-review-v1/README.md#matching-only-offline-preview)
+before calls: one generated subject against its fixed teacher list, with exact
+matches handled mechanically and authored expectations outside the prompt.
+Separate-note development and confirmation controls include the largest saved
+training generations. This tests complete-meaning matching alone; it does not
+audit ASv6.100, accept provisional required flags, or replace the full review
+process. Sol / xhigh and concurrency 8 stay fixed. The draft is unrun; passing
+these controls would not establish pilot-wide reliability. Calls, effort/batching
+comparisons, adoption and final-test unsealing remain subsequent decisions.
+
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a
 required task receive both zeros; a correct empty answer passes. Missing or

@@ -413,7 +413,7 @@ def _changes(teacher, changes):
     return parse_subjects(json.dumps(dict(subjects=student)))
 
 
-def prepare_source(source, base, selected=None, load_report=None):
+def prepare_source(source, base, selected=None, load_report=None, *, include_teacher_meanings=True):
     """Read frozen worked examples or saved training controls into review cases."""
     _fields(source, {"schema_version", "task_prompt", "references", "cases"}, "review source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
@@ -488,7 +488,7 @@ def prepare_source(source, base, selected=None, load_report=None):
             else:
                 raise ValueError("unknown review reference format")
             frozen = None
-            if "required_meanings" in reference:
+            if include_teacher_meanings and "required_meanings" in reference:
                 by_subject = {}
                 for entry in teacher:
                     by_subject.setdefault(entry["subject"], []).append(entry["number"])
@@ -498,7 +498,7 @@ def prepare_source(source, base, selected=None, load_report=None):
                 frozen = [dict(teacher_numbers=numbers, required=frozenset(numbers) in required)
                           for numbers in by_subject.values()]
             known, frozen_source = frozen, None
-            if "teacher_meanings_from" in reference:
+            if include_teacher_meanings and "teacher_meanings_from" in reference:
                 if known is not None:
                     raise ValueError("saved teacher meanings cannot override known worked-example groups")
                 if load_report is None:
@@ -534,7 +534,8 @@ def prepare_source(source, base, selected=None, load_report=None):
         student = _changes(teacher, definition["changes"])
         payload = dict(post=post, teacher=teacher, student=student,
                        exact_matches=exact_matches(teacher, student),
-                       teacher_meanings=definition.get("teacher_meanings", frozen))
+                       teacher_meanings=definition.get("teacher_meanings", frozen)
+                           if include_teacher_meanings else None)
         cases.append(dict(id=identifier, inputs=dict(TASK_PROMPT=task_prompt,
             REVIEW_INPUT=json.dumps(payload, ensure_ascii=False)), evidence=dict(note_id=note_id,
             reference=key, definition=definition, expected=definition["expected"],

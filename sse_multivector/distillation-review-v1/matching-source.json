@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "review_source": {
+    "path": "qualification-source.json",
+    "sha256": "f7e06020951fd9af2cb13f9c4a2de428e20772b259ef3e52548436a5d6fc066b"
+  },
+  "cases": [
+    {
+      "id": "M01",
+      "case": "Q09",
+      "student_number": "1.1.1.1",
+      "replacements": [],
+      "expected_teacher_number": "1.1.1.1",
+      "expected_reason": "Cable A and its two-metre length are retained.",
+      "partition": "development"
+    },
+    {
+      "id": "M02",
+      "case": "Q06",
+      "student_number": "1.1.2.1",
+      "replacements": [
+        {
+          "old": "3 m cable B",
+          "new": "Cable B, three metres long"
+        }
+      ],
+      "expected_teacher_number": "1.1.2.1",
+      "expected_reason": "Cable B and its three-metre length are retained.",
+      "partition": "development"
+    },
+    {
+      "id": "M03",
+      "case": "Q06",
+      "student_number": "1.2.1",
+      "replacements": [
+        {
+          "old": "Pair consisting of",
+          "new": "Pair made up of"
+        }
+      ],
+      "expected_teacher_number": "1.2.1",
+      "expected_reason": "The same two cables and their lengths form the pair.",
+      "partition": "development"
+    },
+    {
+      "id": "M04",
+      "case": "Q06",
+      "student_number": "1.2.1.1",
+      "replacements": [
+        {
+          "old": "not longer than",
+          "new": "no longer than"
+        }
+      ],
+      "expected_teacher_number": "1.2.1.1",
+      "expected_reason": "No longer than preserves the non-strict length comparison.",
+      "partition": "development"
+    },
+    {
+      "id": "M05",
+      "case": "Q10",
+      "student_number": "1.2.1.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "Removing not reverses the length relationship.",
+      "partition": "development"
+    },
+    {
+      "id": "M06",
+      "case": "Q06",
+      "student_number": "1.1.1.1",
+      "replacements": [
+        {
+          "old": "2 m cable A",
+          "new": "Cable A"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Cable identity alone omits the two-metre restriction.",
+      "partition": "development"
+    },
+    {
+      "id": "M07",
+      "case": "Q06",
+      "student_number": "1.2.1",
+      "replacements": [
+        {
+          "old": "3 m cable B",
+          "new": "4 m cable B"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "The pair changes cable B from three to four metres.",
+      "partition": "development"
+    },
+    {
+      "id": "M08",
+      "case": "Q06",
+      "student_number": "1.2.1.1",
+      "replacements": [
+        {
+          "old": "not longer than",
+          "new": "not shorter than"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Not shorter than differs from not longer than.",
+      "partition": "development"
+    },
+    {
+      "id": "M09",
+      "case": "Q08",
+      "student_number": "1.1",
+      "replacements": [
+        {
+          "old": "four people",
+          "new": "4 people"
+        }
+      ],
+      "expected_teacher_number": "1.1",
+      "expected_reason": "Spelled and numeric four preserve the recipe serving quantity.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M10",
+      "case": "Q08",
+      "student_number": "3.1",
+      "replacements": [
+        {
+          "old": "Cumin to taste",
+          "new": "Cumin, in an amount adjusted to taste,"
+        }
+      ],
+      "expected_teacher_number": "3.1",
+      "expected_reason": "Amount adjusted to taste preserves the cumin quantity qualification.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M11",
+      "case": "Q08",
+      "student_number": "3.1",
+      "replacements": [
+        {
+          "old": "for seasoning food",
+          "new": "to season food"
+        }
+      ],
+      "expected_teacher_number": "3.1",
+      "expected_reason": "To season food preserves the seasoning purpose.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M12",
+      "case": "Q08",
+      "student_number": "1.1",
+      "replacements": [
+        {
+          "old": "Author's reliable",
+          "new": "The author's reliable"
+        }
+      ],
+      "expected_teacher_number": "1.1",
+      "expected_reason": "Adding the article preserves the author attribution and full recipe.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M13",
+      "case": "Q14",
+      "student_number": "3.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "The four-person restriction is absent from the subject itself.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M14",
+      "case": "Q15",
+      "student_number": "3.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "Painting walls changes the seasoning purpose.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M15",
+      "case": "Q08",
+      "student_number": "1.1",
+      "replacements": [
+        {
+          "old": "four people",
+          "new": "five people"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Five people changes the recipe serving quantity.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M16",
+      "case": "Q08",
+      "student_number": "3.1",
+      "replacements": [
+        {
+          "old": "Cumin",
+          "new": "Paprika"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Paprika changes the ingredient identity.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M17",
+      "case": "Q21",
+      "student_number": "1.1.1",
+      "replacements": [],
+      "expected_teacher_number": "1.1.1",
+      "expected_reason": "Among preserves the complete powerful-men claim and its audience contrast.",
+      "partition": "development"
+    },
+    {
+      "id": "M18",
+      "case": "Q20",
+      "student_number": "1.1.1",
+      "replacements": [
+        {
+          "old": "Agustín Carstens",
+          "new": "Elon Musk"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Substituting Elon Musk changes the identity of the Mexican BIS head.",
+      "partition": "development"
+    },
+    {
+      "id": "M19",
+      "case": "Q23",
+      "student_number": "1.1.3",
+      "replacements": [
+        {
+          "old": "diverting capital",
+          "new": "redirecting capital"
+        }
+      ],
+      "expected_teacher_number": "1.1.3",
+      "expected_reason": "Redirecting capital preserves diversion from existing stocks.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M20",
+      "case": "Q23",
+      "student_number": "1.1.3",
+      "replacements": [
+        {
+          "old": "existing stocks",
+          "new": "newly issued stocks"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Newly issued stocks changes the origin of diverted capital.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M21",
+      "case": "Q24",
+      "student_number": "1.1.5",
+      "replacements": [
+        {
+          "old": "kills two people",
+          "new": "kills 2 people"
+        }
+      ],
+      "expected_teacher_number": "1.1.5",
+      "expected_reason": "Numeric two preserves the date, deaths, location and reservist relationship.",
+      "partition": "development"
+    },
+    {
+      "id": "M22",
+      "case": "Q24",
+      "student_number": "1.1.5",
+      "replacements": [
+        {
+          "old": "kills two people",
+          "new": "kills three people"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Three changes the number of people killed.",
+      "partition": "development"
+    },
+    {
+      "id": "M23",
+      "case": "Q25",
+      "student_number": "1.2.1.1",
+      "replacements": [
+        {
+          "old": "Elon Musk and Sam Altman",
+          "new": "Sam Altman and Elon Musk"
+        }
+      ],
+      "expected_teacher_number": "1.2.1.1",
+      "expected_reason": "Reordering the two names preserves their joint court attendance.",
+      "partition": "development"
+    },
+    {
+      "id": "M24",
+      "case": "Q25",
+      "student_number": "1.2.1.1",
+      "replacements": [
+        {
+          "old": "attending Oakland federal court",
+          "new": "not attending Oakland federal court"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Negation changes joint attendance to nonattendance.",
+      "partition": "development"
+    },
+    {
+      "id": "M25",
+      "case": "Q26",
+      "student_number": "1.1.2",
+      "replacements": [
+        {
+          "old": "up to $1 million",
+          "new": "up to one million dollars"
+        }
+      ],
+      "expected_teacher_number": "1.1.2",
+      "expected_reason": "Written one million dollars preserves the monetary upper bound.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M26",
+      "case": "Q26",
+      "student_number": "1.1.2",
+      "replacements": [
+        {
+          "old": "up to $1 million",
+          "new": "up to $2 million"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Two million changes the upper bound for damages.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M27",
+      "case": "Q27",
+      "student_number": "1.2.2.1.1",
+      "replacements": [
+        {
+          "old": "released to mark YouTube’s renewed account ban",
+          "new": "released to mark the renewed banning of the group’s account by YouTube"
+        }
+      ],
+      "expected_teacher_number": "1.2.2.1.1",
+      "expected_reason": "The passive rewording preserves the release purpose, account ban and every remaining clause.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M28",
+      "case": "Q27",
+      "student_number": "1.2.2.1.1",
+      "replacements": [
+        {
+          "old": "YouTube’s renewed account ban",
+          "new": "YouTube’s first account ban"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "First account ban differs from the renewed account ban.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M29",
+      "case": "Q28",
+      "student_number": "1.1.3.3",
+      "replacements": [
+        {
+          "old": "prioritizes institutional profits over consumer benefits",
+          "new": "places institutional profits ahead of consumer benefits"
+        }
+      ],
+      "expected_teacher_number": "1.1.3.3",
+      "expected_reason": "Places ahead of preserves the prioritization claim and its attribution.",
+      "partition": "development"
+    },
+    {
+      "id": "M30",
+      "case": "Q28",
+      "student_number": "1.1.3.3",
+      "replacements": [
+        {
+          "old": "prioritizes institutional profits over consumer benefits",
+          "new": "prioritizes institutional profits below consumer benefits"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Placing institutional profits below consumer benefits reverses the prioritization.",
+      "partition": "development"
+    },
+    {
+      "id": "M31",
+      "case": "Q29",
+      "student_number": "1.1.2.1",
+      "replacements": [
+        {
+          "old": "73-year-old Felipe",
+          "new": "Felipe (aged 73)"
+        }
+      ],
+      "expected_teacher_number": "1.1.2.1",
+      "expected_reason": "Aged 73 preserves age and every restriction of the agreement to the dinner request.",
+      "partition": "confirmation"
+    },
+    {
+      "id": "M32",
+      "case": "Q29",
+      "student_number": "1.1.2.1",
+      "replacements": [
+        {
+          "old": "73-year-old Felipe",
+          "new": "74-year-old Felipe"
+        }
+      ],
+      "expected_teacher_number": null,
+      "expected_reason": "Age 74 changes the age of Felipe.",
+      "partition": "confirmation"
+    }
+  ]
+}

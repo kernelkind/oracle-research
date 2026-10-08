@@ -983,6 +983,21 @@ new rubric revisions or model substitution. The 44 large-case requirement flags
 remain provisional consistency inputs. See the
 [DSRv2 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#dsrv2-qualification-october-8).
 
+**Matching-only preview authorized October 8:** after discussion and research
+about reliability and scale, the user directed preparing a concrete preview
+before calls. Draft DSMv1 compares one generated subject's complete meaning
+against the same fixed teacher list for that note, returning an ID or none and
+a brief reason. Mechanical exact matches need no model judgment. Prepare known
+paraphrases and controlled near misses, including large training references;
+keep expectations outside the prompt and reserve separate-note confirmation
+controls from prompt tuning. ASv6.100 remains trusted. The source-bound adapter
+and native reports implement this offline preview, not a replacement bulk
+review process. Teacher required/optional flags are outside the matching task;
+earlier provisional Sol groups are not gold. Sol / xhigh and concurrency 8 stay
+fixed. Reliability, model calls, effort/batching experiments, adoption and
+pilot final-test unsealing remain subsequent decisions. See the
+[DSMv1 preview](../../sse_multivector/distillation-review-v1/README.md#matching-only-offline-preview).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress
