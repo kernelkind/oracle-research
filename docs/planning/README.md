@@ -283,6 +283,11 @@ instructions. The open-weight model is the nice-to-have model track, and
 operating the service is an optional demo. Task texts and statuses reflect
 that revision.
 
+The October 8 publication clarification leaves two distribution options:
+publish hierarchy events to a paid relay or put them in an online ZIP. Choose
+after reviewing hierarchy quality; Notedeck integration remains required with
+either route. No publication or spending is authorized by this planning choice.
+
 Task 03 covers validation at 200 / 300 / 500 notes and the ~1–2k-note user-review
 rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
 and its user browsing review. Completion of 03 does not accept the release

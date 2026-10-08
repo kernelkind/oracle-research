@@ -1,12 +1,17 @@
 # Paid relays for the flagship hierarchy
 
-Investigated and provisionally decided October 5, 2026.
+Investigated October 5, 2026; publication options clarified October 8.
 
-## Provisional decision
+## Provisional paid-relay candidate
 
-Use **`wss://cellar.nostr.wine` as the provisional paid relay** for publishing
-the flagship hierarchy once it is generated. The user prefers Cellar's metered
-payment model because our expected upload is larger than an average person's
+**`wss://cellar.nostr.wine` remains the provisional candidate if the paid-relay
+route is chosen.** On October 8 the user clarified that the hierarchy events
+could instead be published in an online ZIP, choosing based on hierarchy
+quality. Notedeck integration remains required either way; no distribution
+route is selected yet. See [release decisions](../../planning/release-decisions.md).
+
+The October 5 discussion preferred Cellar's metered payment model because our
+expected upload is larger than an average person's
 Nostr history. A price that grows with stored events is a better fit for this
 use than relying on a flat-price promise of unlimited storage.
 

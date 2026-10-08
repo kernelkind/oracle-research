@@ -110,7 +110,7 @@
       "track": "release",
       "title": "Launch public hierarchy",
       "status": "WAITING",
-      "description": "Publish the accepted snapshot, generation code and architecture, tested serving instructions, scalability roadmap and Notedeck fork branch by October 18.\nThe model release and hosted demo are optional."
+      "description": "Publish the accepted hierarchy events, generation code and architecture, tested serving instructions, scalability roadmap and Notedeck fork branch by October 18.\nChoose a paid relay or online event ZIP after reviewing hierarchy quality.\nThe model release and hosted demo remain optional."
     },
     {
       "id": "17",

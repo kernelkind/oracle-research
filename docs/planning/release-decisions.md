@@ -614,6 +614,12 @@ release**, the only must-deliver package:
 - A roadmap to scalability: the fine-tuning path for replacing the expensive
   teacher calls at larger corpus sizes.
 
+**Publication clarified October 8:** publish the final hierarchy's Nostr events
+either to a paid relay or in a ZIP posted online. The user will choose based on
+the hierarchy's quality; no route or quality threshold is settled. Notedeck
+integration remains required with either route. This changes distribution
+options, not the deadline, other deliverables or spending authorization.
+
 Two optional tiers accompany the release:
 
 - **The model track** (nice-to-have, not a bare necessity): the open-weight
@@ -3461,12 +3467,13 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 | **06 · Choose model through larger fine-tuning pilot** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
 | **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and any agreed additional outputs. |
 | **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated 2–5k snapshot and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
-| **16 · Launch public hierarchy** | Publish the release package: the snapshot, code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes its gate; a hosted demo is optional. |
+| **16 · Launch public hierarchy** | Publish the hierarchy events to a paid relay or as an online ZIP, alongside generation code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. Choose distribution after reviewing hierarchy quality. The model track publishes whenever it passes its gate; a hosted demo is optional. |
 
 Preparation can accompany development; final verification requires the actual
 release artifacts. Checking an internal training checkpoint alone does not
 establish that the intended public files and instructions work together.
-File formats, publishing locations and implementation methods remain open.
+The specific relay or ZIP-hosting location, event-file layout and publication
+implementation remain open. Notedeck integration is required with either route.
 Publishing the training dataset is not an additional release requirement.
 No dates, dependency arrows, model choices or spending approvals change.
 
@@ -3694,14 +3701,20 @@ target**, not a finalized commitment; from an October 18 launch that would
 extend through April 18, 2027. Operating duration, capacity and total cost remain
 open.
 
-**Paid hierarchy relay provisionally selected October 5:** use Cellar
-(`wss://cellar.nostr.wine`) for hierarchy events and original-post references;
-the relay need not retain the original posts. The user prefers its metered
-1-sat-per-event/year model for the expected larger-than-average upload.
+**Hierarchy publication options clarified October 8:** the final hierarchy
+events will go to a paid relay or into a ZIP posted online, with the choice
+informed by hierarchy quality. Notedeck integration remains required with either
+route; operating our own public service remains optional. No route is selected yet.
+
+Cellar (`wss://cellar.nostr.wine`) remains the provisional candidate for the
+paid-relay route, as discussed October 5. That discussion preferred its metered
+1-sat-per-event/year model for the expected larger-than-average upload; the
+relay need not retain original posts, only hierarchy events and references.
 [Paid-relay findings](../recommendation-engine/research/paid-hierarchy-relays.md)
 record policies, live limits, read checks and alternatives. Protocol kinds
 remain experimental; funded custom-kind writes and upload pacing still need
-verification. This provisional choice approves no spending or publication.
+verification if the paid-relay route is chosen. Neither route approves spending
+or publication execution.
 
 The $1,000 lifetime paid-resource cap still applies, including prior spending,
 Vast.ai training and snapshot GPU costs, hosting, storage, transfers and reruns.
@@ -3718,6 +3731,8 @@ No allocation or new spending is approved by this document.
   count; whether existing length and language filtering policies meet the
   release scope.
 - Concrete release-quality judgments, informed by the expanding hierarchy builds.
+- Paid-relay or online event-ZIP publication, informed by hierarchy quality;
+  the specific destination and publication procedure.
 - Teacher selection, the base model for the distilled model, both pilots' details and final training volume.
 - Teacher-output quality checks and treatment of unsuitable outputs.
 - Scale-measurement procedures, measured rates and counts, and the cosine cutoff.
