@@ -61,7 +61,7 @@
       "track": "shared",
       "title": "Choose notes for launch hierarchy",
       "status": "WAITING",
-      "description": "Freeze a launch corpus of 2,000–5,000 English kind-1 top-level posts, excluding replies and quote notes.\nSelect from the collected corpus after resource estimates; the final selection remains open."
+      "description": "Freeze the largest useful launch corpus feasible by October 18; 2,000–5,000 notes is a target, not a minimum.\nSelect English kind-1 top-level posts from the collected corpus, excluding replies and quote notes, after resource estimates. Final size remains open."
     },
     {
       "id": "10",
@@ -82,7 +82,7 @@
       "track": "release",
       "title": "Build launch hierarchy snapshot",
       "status": "WAITING",
-      "description": "Produce a fully automated 2–5k-note launch snapshot, with runnable code, architecture, serving instructions and a scalability/continual-update roadmap.\nAwaits validated construction, corpus selection, teachers and budget approval. Completion requires the user’s browsing acceptance; no manual repair."
+      "description": "Produce a fully automated launch snapshot, targeting 2–5k notes without a hard minimum, with runnable code, architecture, serving instructions and a scalability/continual-update roadmap.\nAwaits validated construction, corpus selection, teachers and budget approval. Completion requires the user’s browsing acceptance; no manual repair."
     },
     {
       "id": "13",
@@ -131,7 +131,7 @@
       "track": "shared",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Estimate teacher generation and chosen hierarchy-construction resources for the 2–5k-note release.\nAwaits construction measurements; include HDBSCAN only if selected. Keep optional model-track estimates separate so they do not block the release estimate."
+      "description": "Estimate teacher generation and chosen hierarchy-construction resources for the prospective launch corpus; 2–5k notes is a target, not a minimum.\nAwaits construction measurements; include HDBSCAN only if selected. Keep optional model-track estimates separate so they do not block the release estimate."
     },
     {
       "id": "21",

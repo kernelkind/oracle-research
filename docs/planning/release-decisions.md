@@ -615,9 +615,9 @@ original transcript quotations and frozen evidence remain unchanged.
 By October 18, 2026 — a date the user declared non-negotiable — release **the
 release**, the only must-deliver package:
 
-- A genuinely useful, fully automated hierarchy snapshot over a 2,000–5,000-note
-  corpus for discovering Nostr content, built without manual repair and judged by
-  the user's browsing review.
+- A genuinely useful, fully automated hierarchy snapshot for discovering Nostr
+  content, built without manual repair and judged by the user's browsing review.
+  The corpus-size target is 2,000–5,000 notes, not a minimum.
 - The full hierarchy-generation architecture and code.
 - Tested service code and instructions for serving the snapshot over the custom
   Nostr protocol locally. Operating public infrastructure is not required.
@@ -625,6 +625,12 @@ release**, the only must-deliver package:
   fork and verified against a locally served snapshot.
 - A roadmap to scalability: the fine-tuning path for replacing the expensive
   teacher calls at larger corpus sizes.
+
+**Corpus size revised October 8:** 2,000–5,000 notes is a target, not a hard
+minimum. Ship the largest hierarchy that is genuinely useful and passes the
+user's review within the remaining time. The October 18 deadline, quality,
+automation and other deliverables remain unchanged. The exact size remains
+open; this decision does not remove the existing validation milestones.
 
 **Publication clarified October 8:** publish the final hierarchy's Nostr events
 either to a paid relay or in a ZIP posted online. The user will choose based on
@@ -660,9 +666,10 @@ model is now an optional tier and operating infrastructure is no longer
 required at all.
 
 The corpus decision is a proof of concept: an actually good, fully automated
-hierarchy over 2–5k notes demonstrates a correct process at small scale, and
-the roadmap to scalability names fine-tuning models for the expensive steps as
-the credible next step toward larger corpora. The user's browsing review
+hierarchy demonstrates a correct process at small scale, targeting 2–5k notes
+without making that a minimum. The roadmap to scalability names fine-tuning
+models for the expensive steps as the credible next step toward larger corpora.
+The user's browsing review
 remains the acceptance bar. Teacher selection (17) stays on the release path
 because teachers label the release corpus. Node sorting (04 and 27) is deferred
 as nice-to-have work and is not a release or training prerequisite. Its mechanism
@@ -674,9 +681,9 @@ outputs on unseen notes (08), plus a hierarchy that passes the user's browsing
 review (11); “training ran” does not pass. The
 September 27 training-data readiness target belongs to the model track and no
 longer constrains the release. The validation ladder is kept and extended —
-200 / 300 / 500 as approved, then a ~1–2k-note review rung, then the 2–5k
-release build — because each rung gives diagnostic reference points when a
-larger build misbehaves, and the release build must not be an uninstrumented
+200 / 300 / 500 as approved, then a ~1–2k-note review rung, then the release
+build — because each rung gives diagnostic reference points when a larger build
+misbehaves, and the release build must not be an uninstrumented
 jump in scale. The dependency graph follows: the release build (12) now takes
 its inputs from the validated workflow (03), the validated launch-scale
 implementation (28), the frozen corpus (09) and the selected teachers (17).
@@ -696,11 +703,13 @@ Use the existing corpus as the starting point. Processing the whole candidate
 pool is not committed, and additional collection is not currently a prerequisite.
 Reconsider collection if a demonstrated coverage gap warrants it.
 
-**Release corpus (PoC, decided September 27, 2026):** the release snapshot
-covers 2,000–5,000 notes. The proof of concept demonstrates a correct
-automated process at small corpus size — an actually good hierarchy is the
+**Release corpus (PoC, revised October 8, 2026):** 2,000–5,000 notes is a
+target, not a hard minimum. Ship the largest genuinely useful hierarchy that
+passes the user's review by October 18, without relaxing quality or automation.
+The proof of concept demonstrates a correct automated process at small corpus
+size — an actually good hierarchy is the
 deliverable, not note count — and the roadmap to scalability covers larger
-corpora. The exact subset remains open within that band and is frozen by task 09.
+corpora. The exact size and subset remain open and are frozen by task 09.
 
 ### Data already available
 
@@ -746,13 +755,13 @@ checks.
 The 500-note / 5-topic build checks the combined pipeline and profiles build
 time and memory to find bottlenecks. All three increase subject coverage; none
 is merely a test of handling more notes. The ladder extends past 500: a
-~1–2k-note rung with full user review precedes the 2–5k release build (see the
+~1–2k-note rung with full user review precedes the release build (see the
 release-shape revision above), so the release build is never an uninstrumented
 jump in scale.
 
 **Task ownership clarified September 29:** task 03 covers the 200 / 300 / 500
 validation runs and the ~1–2k-note user-review rung. Task 12 alone owns the
-final teacher-labeled, fully automated 2–5k build and its user browsing review.
+final teacher-labeled, fully automated release build and its user browsing review.
 Completing 03 does not accept the final release snapshot; completing 12 requires
 the user's acceptance of that snapshot. The full ladder and existing dependency
 arrows are unchanged.
@@ -3493,7 +3502,7 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 | --- | --- |
 | **06 · Choose model through larger fine-tuning pilot** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
 | **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and any agreed additional outputs. |
-| **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated 2–5k snapshot and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
+| **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated snapshot, targeting 2–5k notes without a hard minimum, and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
 | **16 · Launch public hierarchy** | Publish the hierarchy events to a paid relay or as an online ZIP, alongside generation code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. Choose distribution after reviewing hierarchy quality. The model track publishes whenever it passes its gate; a hosted demo is optional. |
 
 Preparation can accompany development; final verification requires the actual
@@ -3540,8 +3549,9 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   procedure, hardware choice or spending is approved here.
 - **20 · Assess full hierarchy-build resources:** keep the required-release
   estimate separate from the optional model-track estimate. For the teacher-built
-  2–5k release, combine available teacher generation measurements from 17 with
-  stage measurements from 22 and observed subject/mask/node/pair counts from 03.
+  release, use 2–5k notes as a target rather than a minimum. Combine available
+  teacher generation measurements from 17 with stage measurements from 22 and
+  observed subject/mask/node/pair counts from 03.
   Include HDBSCAN requirements from 21 only if HDBSCAN is used. Estimate release
   time, memory and cost to inform corpus selection in 09 while preserving quality.
   Retain pilot/distilled-model generation measurements from 06 separately for
@@ -3555,8 +3565,10 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   Per-pair relationship cost alone does not establish total hierarchy-build cost.
 - **09 · Choose notes for launch hierarchy:** use the early measurements, agreed
   corpus scope and useful-coverage requirements to choose the intended corpus and
-  freeze its IDs. Corpus size is not fixed before feasibility is investigated;
-  the selected size still needs final validation.
+  freeze its IDs. Target 2–5k notes without a hard minimum; choose the largest
+  genuinely useful hierarchy that can pass review by October 18. Corpus size is
+  not fixed before feasibility is investigated; the selected size still needs
+  final validation.
 - **10 · Check distilled-model build time and cost:** establish whether the distilled model
   can generate the agreed outputs for the selected launch corpus, and the
   remaining pipeline can construct and order its full hierarchy, within the
@@ -3682,8 +3694,8 @@ gating every build. Node sorting (04 and 27) is now deferred as nice-to-have
 work. Land membership recovery (24) if HDBSCAN
 is used; 24 gates 03 only for HDBSCAN.
 Define the Nostr hierarchy protocol (13), now in progress and independent.
-Begin corpus selection inside
-the decided 2–5k band (09).
+Begin corpus selection toward
+the 2–5k target, not a required band (09).
 
 **Week 2 · October 5 – 11: validate the process; select the teachers.** Run
 the ladder with full user review at each rung: 200 (correctness across more
@@ -3754,8 +3766,8 @@ No allocation or new spending is approved by this document.
 
 ## Still open
 
-- Final corpus subset within the decided 2–5k release band and its processed
-  count; whether existing length and language filtering policies meet the
+- Final corpus size and subset, targeting 2–5k notes without a hard minimum;
+  whether existing length and language filtering policies meet the
   release scope.
 - Concrete release-quality judgments, informed by the expanding hierarchy builds.
 - Paid-relay or online event-ZIP publication, informed by hierarchy quality;

@@ -282,10 +282,15 @@ approvals, and open questions. Task readiness is not authorization to begin.
 
 The September 28 [release-shape revision](release-decisions.md#release-shape-revision--september-28-2026)
 re-cut the deliverables: the release is the only must-deliver package — a
-fully automated 2–5k-note snapshot with code and tested local serving
+fully automated snapshot with code and tested local serving
 instructions. The open-weight model is the nice-to-have model track, and
 operating the service is an optional demo. Task texts and statuses reflect
 that revision.
+
+The October 8 corpus-size revision makes 2–5k notes a target, not a hard minimum.
+Ship the largest genuinely useful hierarchy that passes the user's review by
+October 18, without relaxing quality or automation. Exact size remains open;
+the existing validation milestones are unchanged.
 
 The October 8 publication clarification leaves two distribution options:
 publish hierarchy events to a paid relay or put them in an online ZIP. Choose
@@ -293,7 +298,7 @@ after reviewing hierarchy quality; Notedeck integration remains required with
 either route. No publication or spending is authorized by this planning choice.
 
 Task 03 covers validation at 200 / 300 / 500 notes and the ~1–2k-note user-review
-rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
+rung. Task 12 alone owns the final teacher-labeled, fully automated release build
 and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
 Task 28 supplies the validated launch-scale implementation and is required to
