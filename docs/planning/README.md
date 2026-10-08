@@ -41,7 +41,11 @@ open and bulk review has not run.
 The user next authorized a [matching-only offline preview](../../sse_multivector/distillation-review-v1/README.md#matching-only-offline-preview)
 before calls: one generated subject against its fixed teacher list, with
 authored expectations outside the prompt and separate-note confirmation
-controls. DSMv1 is unrun and has not replaced the full review process.
+controls. The subsequent authorized DSMv1 development trial passes all 16
+controls on their first attempt with Sol / xhigh and concurrency 8. The 16
+confirmation controls remain unrun. This is initial matching evidence; DSMv1
+has not replaced the full review process. See the
+[development results](../../sse_multivector/distillation-review-v1/README.md#dsmv1-development-trial-october-8).
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

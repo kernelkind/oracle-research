@@ -929,8 +929,14 @@ production preparation and decoding functions:
   (`o200k_base`, version 0.14.0); it is a text proxy, not measured billing.
   Provider usage and cached/reasoning tokens use existing native accounting.
   `prepare ... --repeat` excludes saved-response reuse for independent repeats;
-  `show ... --case ID --prompt-only` prints the exact input. The approved DSMv1
-  work is offline; qualification calls, adoption and bulk grading remain open.
+  `show ... --case ID --prompt-only` prints the exact input. After the offline
+  preview, the user authorized the 16 DSMv1 development controls with Sol /
+  xhigh and concurrency 8. All pass on their first attempt, without retries or
+  reuse. Native usage reports 17,110 input tokens, zero cached input and 1,822
+  output including 1,066 reasoning tokens. This controlled result does not
+  establish production reliability. Confirmation and independent repeats remain
+  unrun; adoption and bulk grading remain open. See the
+  [DSMv1 development evidence](distillation-review-v1/README.md#dsmv1-development-trial-october-8).
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

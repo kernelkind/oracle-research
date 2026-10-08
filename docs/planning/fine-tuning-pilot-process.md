@@ -425,9 +425,14 @@ matches handled mechanically and authored expectations outside the prompt.
 Separate-note development and confirmation controls include the largest saved
 training generations. This tests complete-meaning matching alone; it does not
 audit ASv6.100, accept provisional required flags, or replace the full review
-process. Sol / xhigh and concurrency 8 stay fixed. The draft is unrun; passing
-these controls would not establish pilot-wide reliability. Calls, effort/batching
-comparisons, adoption and final-test unsealing remain subsequent decisions.
+process. Sol / xhigh and concurrency 8 stay fixed. After seeing the preview,
+the user authorized running the 16 development controls. All 16 pass on their
+first attempt: eight matches and eight nonmatches, with no failures, retries or
+reuse. This initial controlled result does not establish pilot-wide reliability.
+The [DSMv1 development evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-development-trial-october-8)
+records actual usage and findings. The 16 confirmation controls and independent
+repeats remain unrun; confirmation, effort/batching comparisons, full review
+adoption and final-test unsealing remain subsequent decisions.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

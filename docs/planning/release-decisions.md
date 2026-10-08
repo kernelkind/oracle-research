@@ -994,9 +994,21 @@ controls from prompt tuning. ASv6.100 remains trusted. The source-bound adapter
 and native reports implement this offline preview, not a replacement bulk
 review process. Teacher required/optional flags are outside the matching task;
 earlier provisional Sol groups are not gold. Sol / xhigh and concurrency 8 stay
-fixed. Reliability, model calls, effort/batching experiments, adoption and
+fixed. At this preview stage, reliability, model calls, effort/batching experiments, adoption and
 pilot final-test unsealing remain subsequent decisions. See the
 [DSMv1 preview](../../sse_multivector/distillation-review-v1/README.md#matching-only-offline-preview).
+
+**DSMv1 development trial authorized October 8:** after receiving the exact
+preview, the user directed running the 16 development controls with the same
+Sol / xhigh and concurrency 8 settings. All 16 complete reports match the
+authored expectations: eight correct matches, eight correct nonmatches, no
+semantic/mechanical failures, retries or reused answers. Native usage reports
+17,110 input tokens, zero cached input and 1,822 output tokens including 1,066
+reasoning tokens. This is an initial controlled matching check, not production
+qualification or a comparison against batching/lower effort. The 16 reserved
+confirmation controls and independent repeats remain unrun. Confirmation,
+optimization experiments, full review adoption and test unsealing remain open.
+See the [DSMv1 development evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-development-trial-october-8).
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

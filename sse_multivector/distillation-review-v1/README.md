@@ -1,6 +1,6 @@
 # Distillation semantic review — evidence and matching-only preview
 
-Status: **DSRv1 and DSRv2 qualification failed; DSMv1 matching-only preview is offline and unrun**, October 8, 2026.
+Status: **DSRv1 and DSRv2 qualification failed; DSMv1 development controls pass 16/16; confirmation is unrun**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
@@ -11,7 +11,7 @@ This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
 specifies their [report schema](response-schema.json) and qualification cases.
 Offline source preparation, report validation, scoring
 and qualification checks are implemented in the shared experiment workflow.
-The reviewer has not been qualified; bulk pilot grading is not implemented here.
+The full semantic reviewer has not been qualified; bulk pilot grading is not implemented here.
 
 ## Matching-only offline preview
 
@@ -66,16 +66,17 @@ python3 sse_multivector/experiment.py show target/distillation-review-v1/matchin
 
 Both specifications pin Sol / xhigh, subscription transport and concurrency 8.
 `--repeat` prevents exact-response reuse from being mistaken for an independent
-sample; later repeats would use separate preparations. No inference is
-authorized by this preview. Native reports count false matches, missed matches
+sample; later repeats would use separate preparations. Preparation alone does
+not authorize inference; the subsequent authorized development trial is below.
+Native reports count false matches, missed matches
 and wrong IDs separately; malformed, incomplete and failed requests are ungraded
 mechanical failures. Native usage accounting will retain actual input, cached,
-output and reasoning tokens if calls are later authorized. Offline token counts
+output and reasoning tokens. Offline token counts
 are an `o200k_base` rendered-text proxy, not provider usage or a cost estimate.
 The fixed catalog precedes the varying target, but cache hits are not assumed.
 
-The October 8 native preparations contain 16 pending cases each, zero attempts
-and zero reused answers. Development inputs total 16,518 proxy tokens
+At offline preparation, the two October 8 sets each had 16 pending cases, zero
+attempts and zero reused answers. Development inputs total 16,518 proxy tokens
 (439–1,849 per request); confirmation inputs total 16,000 (386–1,805).
 The maximum catalog has 72 teacher wordings. These are the actual narrowed
 inputs, not the full saved hierarchy's JSON size. Exact M01 uses the ten-item
@@ -84,12 +85,51 @@ prompt. M05 uses the same catalog and `2 m cable A longer than 3 m cable B`,
 with expected null because it loses the reference comparison's negation.
 
 Passing 32 controlled examples would not establish pilot-wide accuracy or a
-production error rate. The proposed next step is to test development controls
-with Sol / xhigh, inspect false matches and misses, completion and actual usage,
-and repeat identical requests independently. Keep confirmation results out of
+production error rate. Independent repeats have not been run. Keep confirmation results out of
 prompt development; any revision after inspecting them needs fresh independent
 controls. Effort/batching comparisons and bulk grading remain subsequent
-decisions. DSMv1 has not been run or adopted.
+decisions. DSMv1 has not been adopted for bulk review.
+
+## DSMv1 development trial (October 8)
+
+After seeing the exact prompt and expected-answer preview, the user authorized
+running the 16 development controls with Sol / xhigh and concurrency 8. The
+frozen DSMv1 prompt, source edits and gold expectations were unchanged. The
+shared CLI ran `matching-development-20261008` with an allowance of 32 attempts
+for the existing provider-only retry policy; actual execution used 16 first
+attempts, no retries and no response reuse.
+
+All 16 reports are complete, mechanically valid and correct against the authored
+expectations: all eight paraphrases match the correct ID and all eight near
+misses return null. There are no false matches, missed matches, wrong IDs or
+mechanical failures. Reasons were inspected individually: missing length,
+changed quantities, reversed polarity, substituted identity and changed
+prioritization remain decisive differences, including in the large catalogs.
+Recorded per-request elapsed time ranges from 3.84 to 9.62 seconds.
+
+Native usage reports 17,110 input tokens, zero cached input tokens and 1,822
+output tokens, including 1,066 reasoning tokens. All attempts have saved SDK
+usage. The catalog-price estimate is $0.05244; this subscription trial has no
+provider-reported dollar charge, so that estimate is not an invoice. Raw provider
+model/usage telemetry is present for 15 cases and reports Sol with zero cached
+tokens; M30 retains complete normalized SDK usage but only HTTP status in its
+raw response metadata. Requested model/effort and source-bound receipts remain
+recorded for every case. Do not infer cache savings or batch/effort comparisons
+from this trial.
+
+Inspect the saved findings and measured usage without new calls:
+
+```sh
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --json
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --case M06
+```
+
+This passes the initial controlled matching check, not production qualification
+or an estimate of accuracy on actual distilled outputs. The 16 separate-note
+confirmation controls remain pending with zero attempts. The recommended next
+step is to run them with the unchanged DSMv1 prompt and the same Sol / xhigh,
+concurrency 8 settings. Confirmation, independent repeats, effort/batching
+experiments, full review adoption and final-test unsealing remain open.
 
 ## Reviewer and inputs
 
@@ -98,8 +138,8 @@ subscription transport. The user selected this as the reviewer: if it cannot
 perform the review reliably, rethink the approach before bulk review. There is
 no model substitution or paid API fallback. The setting is supported by
 [official OpenAI documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol).
-The current qualification has completed real calls but failed known semantic
-and consistency checks; see the evidence below.
+DSRv1/DSRv2 whole-answer qualification completed real calls but failed known
+semantic and consistency checks; see the evidence below.
 
 Render the template through the existing `experiment_inputs.render` contract:
 
