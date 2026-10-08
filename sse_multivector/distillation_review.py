@@ -45,6 +45,90 @@ def exact_matches(teacher, student):
             for entry in teacher for number in by_subject.get(entry["subject"], [])]
 
 
+def rank_generations(manifest_path, top=5):
+    """Size all frozen pilot labels and select training extremes without inference.
+
+    Answer bytes measure canonical saved subject JSON, not transport formatting
+    or model tokens. Held-out notes contribute aggregate sizes only.
+    """
+    if type(top) is not int or top < 1:
+        raise ValueError("top must be a positive integer")
+    manifest_path = Path(manifest_path).resolve()
+    protected = {}
+    def read_bound(path, checksum=None):
+        raw = path.read_bytes()
+        actual = hashlib.sha256(raw).hexdigest()
+        if checksum is not None and actual != checksum:
+            raise ValueError(f"generation source hash differs: {path}")
+        protected[str(path)] = actual
+        return raw
+    def decode(raw):
+        return json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+    manifest = decode(read_bound(manifest_path))
+    if manifest["schema_version"] != 2 or set(manifest["tasks"]) != {"subjects"}:
+        raise ValueError("generation ranking requires a subjects-only pilot manifest")
+    splits = {name: manifest[key] for name, key in (
+        ("train", "train_note_ids"), ("evaluation", "evaluation_note_ids"), ("test", "test_note_ids"))}
+    if any(not isinstance(ids, list) or any(not isinstance(i, str) or not i for i in ids)
+           for ids in splits.values()):
+        raise ValueError("invalid frozen splits")
+    identifiers = [identifier for ids in splits.values() for identifier in ids]
+    if len(identifiers) != len(set(identifiers)):
+        raise ValueError("invalid or overlapping frozen splits")
+    assignments = {identifier: split for split, ids in splits.items() for identifier in ids}
+    references_path = manifest_path.parent / "references.jsonl"
+    training_path = manifest_path.parent / "train.jsonl"
+    references = [decode(line) for line in read_bound(references_path,
+        manifest["outputs"]["references.jsonl"]).splitlines()]
+    if (len(references) != len(assignments)
+            or {row["note_id"] for row in references} != set(assignments)):
+        raise ValueError("reference identities differ from frozen splits")
+    sizes, training_subjects = [], {}
+    for row in references:
+        identifier, split = row["note_id"], row["split"]
+        if assignments[identifier] != split:
+            raise ValueError("reference split differs from frozen split")
+        raw = json.dumps(dict(subjects=row["subjects"]), ensure_ascii=False)
+        subjects = parse_subjects(raw)
+        sizes.append(dict(note_id=identifier, split=split, entries=len(subjects),
+            edges=sum("." in entry["number"] for entry in subjects),
+            distinct_subjects=len({entry["subject"] for entry in subjects}),
+            answer_bytes=len(raw.encode("utf-8"))))
+        if split == "train":
+            training_subjects[identifier] = subjects
+    lines = {}
+    training_raw = read_bound(training_path, manifest["outputs"]["train.jsonl"])
+    for line, raw in enumerate(training_raw.splitlines(), 1):
+        row = decode(raw)
+        identifier = row["note_id"]
+        if identifier not in training_subjects or identifier in lines or row["task"] != "subjects":
+            raise ValueError("training identities differ from frozen split")
+        completion = row["completion"]
+        if (len(completion) != 1 or completion[0]["role"] != "assistant"
+                or parse_subjects(completion[0]["content"]) != training_subjects[identifier]):
+            raise ValueError("saved training teacher answer differs from frozen reference")
+        lines[identifier] = line
+    if set(lines) != set(training_subjects):
+        raise ValueError("training identities differ from frozen split")
+    eligible = [row for row in sizes if row["split"] == "train"]
+    rankings = {metric: sorted(eligible, key=lambda row: (-row[metric], row["note_id"]))[:top]
+                for metric in ("entries", "answer_bytes")}
+    selected = {}
+    for ranked in rankings.values():
+        for row in ranked:
+            identifier = row["note_id"]
+            selected.setdefault(identifier, dict(row, reference=dict(format="training_jsonl",
+                path=str(training_path), sha256=protected[str(training_path)],
+                line=lines[identifier], note_id=identifier)))
+    return dict(schema_version=1, inference_calls=0, sources=protected,
+        prompt_id=manifest["tasks"]["subjects"], eligible_split="train", top_per_metric=top,
+        answer_size="canonical_subject_json_utf8_bytes",
+        split_counts={name: len(ids) for name, ids in splits.items()},
+        maxima_all_notes={metric: max((row[metric] for row in sizes), default=0)
+                          for metric in ("entries", "edges", "distinct_subjects", "answer_bytes")},
+        rankings=rankings, selected=list(selected.values()))
+
+
 def _payload(case):
     value = json.loads(case["inputs"]["REVIEW_INPUT"],
                        object_pairs_hook=engine._position_decoder().unique_object)

@@ -871,6 +871,12 @@ production preparation and decoding functions:
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
   offline, optionally saving it with `--output FILE`. It does not create a model
   receipt or mark a case run. See the [DSRv1 preview](distillation-review-v1/README.md#offline-preparation-and-preview).
+  `rank-distillation-generations MANIFEST --top 5 --output FILE` checks a frozen
+  subjects-only pilot's prepared hashes and split identities, sizes every saved
+  hierarchy, and returns the union of the top five training answers by entry
+  count and canonical JSON UTF-8 bytes. Held-out labels contribute aggregate
+  sizes only; the output contains training references without posts or subjects.
+  The ranking is offline and does not prepare requests or perform inference.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

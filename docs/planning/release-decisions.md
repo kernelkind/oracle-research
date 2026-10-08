@@ -829,13 +829,25 @@ pilot semantic grading, test unsealing, extra spending or a teacher audit.
 **DSRv1 offline implementation authorized October 7:** after receiving the draft,
 the user authorized preparation, report validation and scoring, requesting a
 concrete preview before any model calls. The shared experiment workflow now
-prepares the 22 source-bound qualification definitions, keeps expected findings
+prepares source-bound qualification definitions, keeps expected findings
 outside the prompt, validates complete reports and calculates separate scores.
 It checks known qualification findings and consistent teacher groups across
 versions, including controlled changes to the large hierarchy. An authored Q17
 report demonstrates `9/9` correctness and `1/2` coverage when the Cumin branch
 copy is absent. This supplied fixture creates no model receipt or qualification
 evidence. Actual model qualification and bulk pilot grading have not run.
+
+**Largest-generation stress preparation authorized October 7:** the user
+requested the largest saved generations from the 1,300-note ASv6.100 data as
+stress tests. Offline sizing checks all labels and frozen split assignments.
+The union of the top five training answers by entry count and canonical JSON
+length contains eight notes, including the overall maxima of 145 entries and
+35,966 UTF-8 answer bytes. Q20 already covers one; Q23–Q29 add seven complete
+unchanged hierarchies, taking DSRv1 to 29 cases. Held-out labels contribute
+aggregate sizes only; no final-test content enters development inputs. The
+new cases test completion and mechanical consistency without invented gold
+scores; existing known-result controls test semantic behavior. Sol / xhigh
+capability remains untested, and the requested preview still precedes calls.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

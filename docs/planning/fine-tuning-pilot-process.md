@@ -368,15 +368,21 @@ Keep teacher meaning groups fixed across versions and average per-note scores eq
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
-examples, controlled valid/invalid changes and a full-size training hierarchy
+examples, controlled valid/invalid changes and full-size training hierarchies
 before bulk review. If GPT-6.1 Sol / xhigh cannot perform this reliably, rethink
 the approach. Drafting this specification does not authorize qualification calls,
 bulk reviews or test unsealing; reusable implementation and actual reliability
 were still pending when the draft was recorded. The subsequent authorized
 offline implementation adds source-bound preparation, report validation,
 scoring and qualification checks through the shared experiment workflow.
-All 22 controls can be prepared without inference, and an authored Q17 report
-provides a concrete preview. Actual reviewer reliability remains unestablished;
+All 29 cases can be prepared without inference, and an authored Q17 report
+provides a concrete preview. The user requested stress inputs from the largest
+saved ASv6.100 generations. Offline sizing of all 1,300 labels selects eight
+training notes: the union of the top five by entry count and canonical answer
+length. They include the overall maxima of 145 entries and 35,966 answer bytes;
+final-test labels contribute aggregate sizes only. Complete stress reports
+establish completion, while known-result controls test semantic behavior.
+Actual reviewer reliability remains unestablished;
 the user requested seeing the preview before model calls.
 
 Compare quality before/after training and across data sizes, with failures,

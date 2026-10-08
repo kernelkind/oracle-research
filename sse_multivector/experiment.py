@@ -1227,6 +1227,11 @@ def score_review(args):
 def parser():
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    p = commands.add_parser('rank-distillation-generations',
+                            help='rank frozen teacher generation sizes and select training extremes; no inference')
+    p.add_argument('manifest', type=Path)
+    p.add_argument('--top', type=int, default=5)
+    p.add_argument('--output', type=Path, required=True)
     p = commands.add_parser('score-review', help='validate and score a supplied semantic review report; no inference')
     p.add_argument('experiment', type=Path)
     p.add_argument('--case', required=True)
@@ -1399,6 +1404,16 @@ def main(argv=None):
             else:
                 result = post_sampling.freeze(args.spec, args.destination, args.preview)
             print(json.dumps(result, indent=2))
+        elif args.command == "rank-distillation-generations":
+            try:
+                from . import distillation_review
+            except ImportError:
+                import distillation_review
+            if args.output.exists():
+                raise ValueError("generation ranking output already exists")
+            result = distillation_review.rank_generations(args.manifest, args.top)
+            write(args.output, result)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
         elif args.command == "score-review":
             result = score_review(args)
             if args.output:

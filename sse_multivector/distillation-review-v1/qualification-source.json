@@ -29,6 +29,55 @@
       "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
       "line": 269,
       "note_id": "af8e33afa7157affe406b4d534f2fe7086109e353b290f19c67ae78b558702ac"
+    },
+    "L2": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 598,
+      "note_id": "fb8214f6a2a9c2e94e9ae0f2bb976cf428883cf9e8d50a316e32737fa1592a2c"
+    },
+    "L3": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 892,
+      "note_id": "166d3861065225570f3f08678bfc4a214564d8434c9baec9884d9bb159e01190"
+    },
+    "L4": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 75,
+      "note_id": "bc953a16d684baaf66478c46ced39c81e9c99a6d0d56d841978ddc9470f07d82"
+    },
+    "L5": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 487,
+      "note_id": "d8582d21dc81101e25370fc1fb4308c6d7f025c07b8f3d06703665c4c3cbebcc"
+    },
+    "L6": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 580,
+      "note_id": "9affd0a1eac954cd9af1047677c1538d4abaa82df7ad8cad7778a6a25d4f433a"
+    },
+    "L7": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 61,
+      "note_id": "e3a37b078774303a02e4fb1485fa96742d1bede7ab1d95d8b18ab0048362df6b"
+    },
+    "L8": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 205,
+      "note_id": "83ea7d4448a2c3d38e80839d989ca69d9383590e32aec44265f53ba7411e03a5"
     }
   },
   "cases": [
@@ -53,6 +102,13 @@
     {"id": "Q19", "reference": "C3", "changes": [{"op": "append", "entries": [{"number": "1", "context": "The URL host is birds.example.", "subject": "Birds"}]}], "expected": {"incorrect_subjects": ["1"], "invalid_relationship_children": [], "scores": {"correctness": [0, 1], "coverage": [1, 1]}}},
     {"id": "Q20", "reference": "L1", "changes": [], "expected": {"valid_subjects": ["1.1.1", "2.1.1"], "valid_relationship_children": ["1.1.1", "2.1.1"], "meanings": [{"teacher_number": "1.1.1", "required": true, "student_numbers": ["1.1.1", "2.1.1"]}]}},
     {"id": "Q21", "reference": "L1", "changes": [{"op": "replace", "numbers": ["1.1.1", "2.1.1"], "old": "as one of the world's most powerful men", "new": "among the world's most powerful men"}], "expected": {"valid_subjects": ["1.1.1", "2.1.1"], "valid_relationship_children": ["1.1.1", "2.1.1"], "meanings": [{"teacher_number": "1.1.1", "required": true, "student_numbers": ["1.1.1", "2.1.1"]}], "relative_to": "Q20"}},
-    {"id": "Q22", "reference": "L1", "changes": [{"op": "remove", "numbers": ["1.1.1"]}], "expected": {"valid_subjects": ["2.1.1"], "valid_relationship_children": ["2.1.1"], "meanings": [{"teacher_number": "1.1.1", "required": true, "student_numbers": ["2.1.1"], "missing_heading_numbers": ["1", "1.1"]}], "relative_to": "Q20"}}
+    {"id": "Q22", "reference": "L1", "changes": [{"op": "remove", "numbers": ["1.1.1"]}], "expected": {"valid_subjects": ["2.1.1"], "valid_relationship_children": ["2.1.1"], "meanings": [{"teacher_number": "1.1.1", "required": true, "student_numbers": ["2.1.1"], "missing_heading_numbers": ["1", "1.1"]}], "relative_to": "Q20"}},
+    {"id": "Q23", "reference": "L2", "changes": [], "expected": {}},
+    {"id": "Q24", "reference": "L3", "changes": [], "expected": {}},
+    {"id": "Q25", "reference": "L4", "changes": [], "expected": {}},
+    {"id": "Q26", "reference": "L5", "changes": [], "expected": {}},
+    {"id": "Q27", "reference": "L6", "changes": [], "expected": {}},
+    {"id": "Q28", "reference": "L7", "changes": [], "expected": {}},
+    {"id": "Q29", "reference": "L8", "changes": [], "expected": {}}
   ]
 }

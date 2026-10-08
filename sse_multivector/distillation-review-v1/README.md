@@ -92,7 +92,7 @@ score all three final adapters and all three baselines, keeping selection fixed.
 ## Offline preparation and preview
 
 [qualification-source.json](qualification-source.json) records the source hashes,
-exact candidate changes and expected findings for all 22 cases. It contains
+exact candidate changes and expected findings for all 29 cases. It contains
 definitions, not generated teacher or student batches.
 [qualification-spec.json](qualification-spec.json) pins DSRv1, its schema,
 GPT-6.1 Sol / xhigh, sequential calls and a one-hour overall request deadline.
@@ -103,7 +103,7 @@ Prepare through the supported workflow, without credentials or inference:
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py prepare \
-  target/distillation-review-v1/qualification-preview \
+  target/distillation-review-v1/stress-preview \
   --spec sse_multivector/distillation-review-v1/qualification-spec.json
 ```
 
@@ -113,7 +113,7 @@ full post, teacher, candidate and exact matches:
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py show \
-  target/distillation-review-v1/qualification-preview \
+  target/distillation-review-v1/stress-preview \
   --case Q17 --prompt-only
 ```
 
@@ -124,7 +124,7 @@ the frozen inputs:
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py score-review \
-  target/distillation-review-v1/qualification-preview --case Q17 \
+  target/distillation-review-v1/stress-preview --case Q17 \
   --report sse_multivector/distillation-review-v1/tests/fixtures/Q17-report.json
 ```
 
@@ -187,8 +187,8 @@ well as the totals, because compensating mistakes can produce the same score.
 
 ### Full-size qualification
 
-Use only the training split for the following three cases. A mechanically
-selected existing teacher answer has **145 entries, 130 immediate edges and
+Use only the training split for the following cases. The Q20–Q22 teacher answer
+has **145 entries, 130 immediate edges and
 66 distinct exact strings**, exceeding the previously observed 134-entry
 validation workload. This is a size measurement, not a semantic audit. Before
 execution, compare this size with all then-collected validation answers; larger
@@ -224,6 +224,63 @@ rather than assuming that exactly one aggregate point is lost. Unlabeled
 baseline findings are retained for inspection, not treated as qualification
 errors merely because they are negative. These controls do not establish
 accuracy for every unmodified judgment in a large answer.
+
+### Largest saved generations
+
+The October 7 stress selection sizes all **1,300 ASv6.100 teacher answers**,
+checks frozen split identities and prepared-file hashes, and checks that training
+completions match their saved references. Validation and final-test labels
+contribute aggregate sizes only; their posts and subjects are not displayed or
+prepared as development inputs.
+
+Select the union of the **top five training answers by entry count** and the
+**top five by canonical answer length**, breaking ties by note ID. Length means
+UTF-8 bytes of saved subject JSON, not tokens or original transport formatting.
+The union contains eight notes and includes both maxima across all 1,300:
+145 entries and 35,966 answer bytes. Q20 already covers one selected note;
+Q23–Q29 add the other seven without duplicate requests.
+
+| Case | Note ID prefix | Entries | Immediate edges | Distinct subject strings | Answer bytes |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Q20 | `af8e33af` | 145 | 130 | 66 | 32,021 |
+| Q23 | `fb8214f6` | 138 | 125 | 50 | 33,678 |
+| Q24 | `166d3861` | 137 | 101 | 72 | 25,845 |
+| Q25 | `bc953a16` | 136 | 126 | 47 | 27,874 |
+| Q26 | `d8582d21` | 136 | 107 | 68 | 25,886 |
+| Q27 | `9affd0a1` | 130 | 118 | 47 | 35,966 |
+| Q28 | `e3a37b07` | 115 | 101 | 42 | 29,426 |
+| Q29 | `83ea7d44` | 106 | 96 | 34 | 28,409 |
+
+Reproduce the offline ranking through the shared workflow:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py rank-distillation-generations \
+  target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json \
+  --top 5 --output target/distillation-review-v1/largest-generation-sizes.json
+```
+
+The saved ranking contains source hashes, size statistics and exact training
+references; it contains no posts or subject text. The maintained qualification
+definitions bind those references by hash, line and complete note ID. Preparation
+preserves full hierarchies and posts, with the unchanged answer as the candidate.
+The eight full DSRv1 rendered inputs range from **114,888 to 159,612 bytes**;
+the mechanical exact matches contain 417–898 pairs. All subject and immediate
+edge verdicts and a complete teacher-meaning partition are still required.
+Inspect Q27, which has the longest rendered input:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show \
+  target/distillation-review-v1/stress-preview --case Q27 --prompt-only
+```
+
+Q23–Q29 have no invented gold scores or semantic labels: they test completion
+and mechanical report consistency at observed size limits. The trusted worked
+examples and deliberate Q21/Q22 changes test known semantic behavior. A complete
+stress report alone does not establish semantic accuracy. No stress model calls
+have run. These saved teacher maxima also do not bound future student outputs;
+larger collected answers require corresponding qualification before bulk review.
 
 ### Mechanical refusal cases
 

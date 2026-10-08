@@ -51,6 +51,59 @@ def cumin_case():
 
 
 class DistillationReviewTests(unittest.TestCase):
+    def test_generation_ranking_checks_all_splits_and_selects_training_extremes(self):
+        from sse_multivector import distillation_review as review
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            # Different notes maximize hierarchy size and answer length. The
+            # largest held-out answers must never become development controls.
+            rows, train = [], []
+            for identifier, split, count, length in [
+                    ("a", "train", 3, 1), ("b", "train", 1, 500),
+                    ("c", "train", 3, 1), ("v", "evaluation", 8, 900),
+                    ("t", "test", 10, 1000)]:
+                subjects = [dict(number=str(i + 1), context="Saved post.", subject="x" * length)
+                            for i in range(count)]
+                rows.append(dict(note_id=identifier, split=split, subjects=subjects))
+                if split == "train":
+                    train.append(dict(note_id=identifier, task="subjects",
+                        completion=[dict(role="assistant", content=json.dumps(dict(subjects=subjects), ensure_ascii=False))]))
+            for name, data in (("references", rows), ("train", train)):
+                (root / (name + ".jsonl")).write_text("".join(json.dumps(row) + "\n" for row in data))
+            manifest = dict(schema_version=2, tasks=dict(subjects="ASv6.100"),
+                train_note_ids=["a", "b", "c"], evaluation_note_ids=["v"], test_note_ids=["t"],
+                outputs={name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+                         for name in ("references.jsonl", "train.jsonl")})
+            path = root / "manifest.json"
+            path.write_text(json.dumps(manifest))
+            ranked = review.rank_generations(path, top=1)
+            self.assertEqual(ranked["split_counts"], dict(train=3, evaluation=1, test=1))
+            self.assertEqual(ranked["maxima_all_notes"]["entries"], 10)
+            self.assertEqual([row["note_id"] for row in ranked["selected"]], ["a", "b"])
+            self.assertEqual(ranked["selected"][1]["reference"]["line"], 2)
+            self.assertEqual(ranked["inference_calls"], 0)
+            cli = subprocess.run([sys.executable, str(ROOT / "experiment.py"),
+                "rank-distillation-generations", path, "--top", "1", "--output", root / "ranked.json"],
+                capture_output=True, text=True, timeout=30)
+            self.assertEqual(cli.returncode, 0, cli.stdout + cli.stderr)
+            self.assertEqual(json.loads((root / "ranked.json").read_text()), ranked)
+            manifest["test_note_ids"].append("a")
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "overlapping"):
+                review.rank_generations(path)
+            manifest["test_note_ids"].pop()
+            # A saved generation differing from its frozen references is blocked.
+            train[0]["completion"][0]["content"] = '{"subjects":[]}'
+            (root / "train.jsonl").write_text("".join(json.dumps(row) + "\n" for row in train))
+            manifest["outputs"]["train.jsonl"] = hashlib.sha256((root / "train.jsonl").read_bytes()).hexdigest()
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "teacher.*differs"):
+                review.rank_generations(path)
+            manifest["outputs"]["train.jsonl"] = "0" * 64
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "hash differs"):
+                review.rank_generations(path)
+
     def validate(self, case, report):
         return inputs.validate(dict(adapter="distillation_review"), case, json.dumps(report), None)
 
@@ -249,6 +302,34 @@ class DistillationReviewTests(unittest.TestCase):
             path.write_text(json.dumps(definition))
             with self.assertRaisesRegex(ValueError, "source hash"):
                 inputs.prepare_file(dict(adapter="distillation_review"), path, "{TASK_PROMPT}\n{REVIEW_INPUT}")
+
+    def test_training_stress_control_keeps_the_complete_saved_hierarchy(self):
+        case, _ = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            training = root / "train.jsonl"
+            training.write_text(json.dumps(dict(note_id="large", task="subjects",
+                prompt=[dict(role="user", content=AS.read_text().rstrip()
+                    + "\n\n<post>\n" + payload["post"] + "\n</post>")],
+                completion=[dict(role="assistant", content=json.dumps(dict(subjects=payload["teacher"])))])) + "\n")
+            source = root / "source.json"
+            source.write_text(json.dumps(dict(schema_version=1,
+                task_prompt=dict(path=str(AS), sha256=hashlib.sha256(AS.read_bytes()).hexdigest()),
+                references={"L": dict(format="training_jsonl", path=str(training),
+                    sha256=hashlib.sha256(training.read_bytes()).hexdigest(), line=1, note_id="large")},
+                cases=[dict(id="Q23", reference="L", changes=[], expected={})])))
+            cases, hashes, _ = inputs.prepare_file(dict(adapter="distillation_review"), source,
+                (ROOT / "distillation-review-v1/prompt.md").read_text())
+            rendered = cases[0]
+            reviewed = json.loads(rendered["inputs"]["REVIEW_INPUT"])
+            self.assertEqual(reviewed["teacher"], payload["teacher"])
+            self.assertEqual(reviewed["student"], payload["teacher"])
+            self.assertEqual(reviewed["post"], payload["post"])
+            self.assertIsNone(reviewed["teacher_meanings"])
+            self.assertEqual(rendered["inputs"]["TASK_PROMPT"], AS.read_text())
+            self.assertEqual(rendered["evidence"]["expected"], {})
+            self.assertIn(str(training), hashes)
 
     def test_cli_prepares_and_scores_a_supplied_fixture_without_inference(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -1309,12 +1309,16 @@ derived headings need not match the teacher's tree. Model-output failures score
 zero; incomplete reviewer reports remain ungraded evaluation failures.
 
 [DSRv1](distillation-review-v1/README.md) drafts the prompt, report schema and
-qualification cases, including valid variants, deliberate errors and a
-145-entry training hierarchy. Review runs after retrieval, outside the rental,
+qualification cases, including valid variants, deliberate errors and eight
+large training hierarchies selected from the 1,300 saved ASv6.100 generations.
+The union of the top five by entry count and canonical answer length includes
+the overall maxima of 145 entries and 35,966 answer bytes. Held-out labels
+contribute aggregate sizes only; stress inputs use training notes.
+Review runs after retrieval, outside the rental,
 and is evaluation only. If the selected reviewer cannot perform it reliably,
 rethink the approach. The subsequent authorized offline implementation adds
 source-bound preparation, complete report validation, scoring and qualification
-checks in the shared workflow. All 22 controls are prepared without inference;
+checks in the shared workflow. All 29 cases are prepared without inference;
 an authored Q17 fixture demonstrates missing-branch scoring. The user requested
 this preview before calls. Actual qualification and pilot grading have not run;
 no teacher audit or test unsealing is authorized.

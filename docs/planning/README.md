@@ -18,6 +18,8 @@ GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README
 drafts its prompt, report format and qualification cases. Qualification and
 bulk semantic review have not run. Source preparation, report checks and scoring
 are implemented offline; DSRv1 includes a concrete preview before model calls.
+Its 29 cases include eight large training hierarchies selected by entry count
+and answer length from the 1,300 saved ASv6.100 generations.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
