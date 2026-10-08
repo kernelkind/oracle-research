@@ -434,8 +434,14 @@ records actual usage and findings. The user then accepted running the reserved
 confirmation set with DSMv1 unchanged: all 16 pass on their first attempt,
 without failures, retries or reuse. Both sets pass 32/32 authored controls on
 separate source notes. See the [confirmation evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
-Independent repeats, effort/batching comparisons, full review adoption and
-final-test unsealing remain subsequent decisions.
+The user subsequently authorized an independent repeat of the confirmation set
+with identical inputs/settings and saved-response reuse disabled. All 16 fresh
+calls pass and preserve the original teacher IDs/null; only explanation wording
+changes in 15 reports. The [repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8)
+records measured usage. This supports repeatability on the controls, not
+accuracy on actual distilled wording or the other semantic review questions.
+More realistic matching tests, effort/batching comparisons, full review adoption
+and final-test unsealing remain subsequent decisions.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

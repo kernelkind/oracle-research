@@ -44,10 +44,12 @@ authored expectations outside the prompt and separate-note confirmation
 controls. The subsequent authorized DSMv1 development trial passes all 16
 controls on their first attempt with Sol / xhigh and concurrency 8. The user
 then accepted the unchanged 16-control confirmation run, which also passes
-16/16 on first attempts. Both sets pass 32/32 authored controls; independent
-repeatability and actual distilled-output reliability remain untested. DSMv1
+16/16 on first attempts. Both sets pass 32/32 distinct authored controls. A
+subsequently authorized independent confirmation repeat passes 16/16 with
+unchanged verdicts and no saved-answer reuse. Actual distilled-output reliability
+remains untested. DSMv1
 has not replaced the full review process. See the
-[confirmation results](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
+[repeat results](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

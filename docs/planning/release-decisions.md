@@ -1017,8 +1017,21 @@ retries or reuse. Both sets therefore pass 32/32 controls on separate source
 notes. Native confirmation usage reports 16,592 input tokens, zero cached input
 and 2,007 output tokens including 1,217 reasoning tokens. This supports matching
 on the authored controls, not a production error rate or the full review process.
-Independent repeats, effort/batching experiments, adoption and test unsealing
-remain open. See the [DSMv1 confirmation evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
+At that stage, independent repeats, effort/batching experiments, adoption and
+test unsealing remained open. See the [DSMv1 confirmation evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
+
+**DSMv1 independent repeat authorized October 8:** the user explicitly directed
+repeating the confirmation calls to check whether fresh calls stay correct.
+Native preparation inherited all 16 identical inputs/settings and disabled
+saved-response reuse with `--repeat`. Sol / xhigh at concurrency 8 produces
+16/16 correct reports with unchanged teacher IDs/null; 15 explanations are
+reworded. There are no failures, retries or reused answers. Native usage reports
+16,592 input tokens, zero cached input and 2,121 output tokens including 1,353
+reasoning tokens. These repeat existing controls; they are not additional
+distinct examples or evidence of accuracy on actual distilled wording.
+More realistic matching tests, effort/batching comparisons, full review adoption
+and final-test unsealing remain open. See the
+[DSMv1 repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

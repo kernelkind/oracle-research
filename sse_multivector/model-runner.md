@@ -938,8 +938,13 @@ production preparation and decoding functions:
   16-control confirmation set, which also passes 16/16 without failures, retries
   or reuse. Native confirmation usage reports 16,592 input tokens, zero cached
   input and 2,007 output including 1,217 reasoning tokens. Both sets pass 32/32
-  authored controls; independent repeats, adoption and bulk grading remain open.
-  See the [DSMv1 confirmation evidence](distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
+  distinct authored controls. The authorized independent confirmation repeat
+  inherits identical inputs/settings with `--repeat` and passes all 16 fresh
+  calls with unchanged teacher IDs/null; 15 explanations are reworded. Native
+  repeat usage reports 16,592 input tokens, zero cached input and 2,121 output
+  including 1,353 reasoning tokens. More realistic matching tests, adoption and
+  bulk grading remain open. See the
+  [DSMv1 repeat evidence](distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

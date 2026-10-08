@@ -1,6 +1,6 @@
 # Distillation semantic review — evidence and matching-only preview
 
-Status: **DSRv1 and DSRv2 qualification failed; DSMv1 development and confirmation controls pass 32/32**, October 8, 2026.
+Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
@@ -85,7 +85,7 @@ prompt. M05 uses the same catalog and `2 m cable A longer than 3 m cable B`,
 with expected null because it loses the reference comparison's negation.
 
 Passing 32 controlled examples would not establish pilot-wide accuracy or a
-production error rate. Independent repeats have not been run. Keep confirmation results out of
+production error rate. Keep confirmation results out of
 prompt development; any revision after inspecting them needs fresh independent
 controls. Effort/batching comparisons and bulk grading remain subsequent
 decisions. DSMv1 has not been adopted for bulk review.
@@ -154,10 +154,43 @@ python3 sse_multivector/experiment.py show target/distillation-review-v1/matchin
 Development and confirmation now pass 32/32 authored controls across separate
 source notes, without prompt tuning on confirmation outcomes. This supports
 the narrow matching approach on these controls; it does not establish an error
-rate on actual distilled outputs or qualify the full review process. The
-recommended next step is an independent repeat of the confirmation set with
-identical inputs/settings and saved-response reuse disabled, to check stability.
-Independent repeats, effort/batching comparisons, full review adoption and
+rate on actual distilled outputs or qualify the full review process. The user
+subsequently authorized the proposed independent confirmation repeat; see below.
+
+## DSMv1 independent confirmation repeat (October 8)
+
+The user explicitly directed proceeding with the repeat to check whether fresh
+calls stay correct. The shared CLI prepared
+`matching-confirmation-repeat-01-20261008` from the first confirmation experiment
+with `--repeat`. Offline checks verified identical prompt, case inputs and
+expectations, source bindings, model/effort, schema and concurrency. All 16
+requests were new; the saved baseline stayed outside the model input.
+
+All 16 fresh reports are complete and correct, with the same teacher IDs/null
+as the first confirmation trial. There are no semantic/mechanical failures,
+retries or reused answers. Native text comparison marks 15 reports changed and
+one unchanged: the explanations were reworded, while all semantic verdicts
+stayed the same. Per-request elapsed time ranges from 4.43 to 8.45 seconds.
+
+Native usage reports 16,592 input tokens, zero cached input tokens and 2,121
+output tokens, including 1,353 reasoning tokens. Every attempt has saved SDK
+usage. The catalog-price estimate is $0.054394, not a subscription invoice;
+provider-reported dollar charge remains unavailable. This repeat measures
+another generation on identical requests; it is not 16 new distinct controls
+or an effort/batching comparison.
+
+```sh
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-repeat-01-20261008 --json
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-repeat-01-20261008 --case M13
+```
+
+The 32 distinct controls pass, and the 16 confirmation verdicts remain correct
+across two independent trials. Repeatability on these cases does not establish
+accuracy on actual distilled wording or qualify subject support, parent
+restrictions or branch coverage. The recommended next step is to prepare a
+more realistic matching preview from actual distilled wording, with independently
+verified expected matches fixed before Sol calls. Preparing that preview,
+additional trials, effort/batching experiments, full review adoption and
 final-test unsealing remain open.
 
 ## Reviewer and inputs
