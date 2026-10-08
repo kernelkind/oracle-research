@@ -19,6 +19,7 @@ import { OPENROUTER_MODELS } from '@earendil-works/pi-ai/providers/openrouter.mo
 import { stream as codexStream } from '@earendil-works/pi-ai/api/openai-codex-responses';
 import { stream as openrouterStream } from '@earendil-works/pi-ai/api/openai-completions';
 import { websocketRequest, websocketResponse } from './websocket.mjs';
+import { experimentAdmission } from './backoff.mjs';
 
 export const VERSION = 'oracle-model-runner/1';
 const PI_AI_VERSION = '0.85.1';
@@ -147,7 +148,8 @@ const mimoFlash = {
 
 async function identity() {
   const hash = createHash('sha256');
-  for (const path of ['model.mjs', 'websocket.mjs', 'package-lock.json', '../run-model.sh']) {
+  for (const path of ['model.mjs', 'websocket.mjs', 'backoff.mjs', '../provider_backoff.py',
+    '../extraction_pipeline.py', 'package-lock.json', '../run-model.sh']) {
     const bytes = await readFile(new URL(path, import.meta.url));
     hash.update(`${path}\0${bytes.length}\0`).update(bytes);
   }
@@ -323,7 +325,8 @@ function upstreamRequestSummary(body, redact) {
 function observeResponse(response, metadata, timing, elapsed, redact, captureDebug) {
   timing.headers_ms = elapsed();
   metadata.http_status = response.status;
-  for (const [header, key] of [['x-request-id', 'request_id'], ['retry-after', 'retry_after']]) {
+  for (const [header, key] of [['x-request-id', 'request_id'], ['retry-after', 'retry_after'],
+    ['x-agent-request-id', 'proxy_request_id']]) {
     const value = response.headers.get(header);
     if (value) metadata[key] = redact(value).slice(0, 1024);
   }
@@ -338,6 +341,9 @@ function observeResponse(response, metadata, timing, elapsed, redact, captureDeb
     if (!data.length) return;
     try {
       const event = JSON.parse(data.join('\n'));
+      if (['response.completed', 'response.failed', 'response.incomplete'].includes(event.type)) {
+        metadata.terminal_event = event.type;
+      }
       const now = elapsed();
       const gap = now - (timing.last_event_ms ?? timing.headers_ms);
       timing.max_event_gap_ms = Math.max(timing.max_event_gap_ms, gap);
@@ -505,7 +511,7 @@ async function executeDecisions(request, { apiKey, fetch, signal }) {
 }
 
 /** Invoke pi-ai once through an explicit credential and transport. No auth discovery or fallback. */
-export async function execute(request, { apiKey, fetch = globalThis.fetch, signal, offline = false } = {}) {
+async function executeModel(request, { apiKey, fetch = globalThis.fetch, signal, offline = false } = {}) {
   if (!nonempty(apiKey)) throw new Error('Explicit credentials are required for execution');
   if (request.model.api === 'systemone') return executeDecisions(request, { apiKey, fetch, signal });
   const provenance = await identity();
@@ -571,6 +577,26 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
     usage_note: 'pi-ai input excludes cacheRead/cacheWrite; output includes reasoning. SDK cost is a catalog estimate, not an invoice or subscription charge.',
     ...checkOutput(request, raw, result.stopReason),
   };
+}
+
+export async function execute(request, options = {}) {
+  const { apiKey, fetch = globalThis.fetch, signal, offline = false, experimentConcurrency } = options;
+  if (!nonempty(apiKey)) throw new Error('Explicit credentials are required for execution');
+  const admission = experimentConcurrency !== undefined && !offline
+    ? await experimentAdmission(request, { apiKey, fetch, signal, concurrency: experimentConcurrency }) : null;
+  let result;
+  try { result = await executeModel(request, options); }
+  catch (error) {
+    if (admission) await admission.finish({ provider: request.model.provider,
+      stop_reason: 'aborted', error: null,
+      response_metadata: { abort_reason: { name: 'LocalError' } } });
+    throw error;
+  }
+  if (admission) {
+    await admission.finish(result);
+    result.admission_wait_ms = admission.wait_ms;
+  }
+  return result;
 }
 
 /** Use actual SDK serializers with fabricated credentials and a transport that cannot send. */
@@ -696,7 +722,9 @@ async function main() {
   if (!values['pi-config']) return launchWithSelectedPi(input);
   const connection = await localPiConnection(request.model.provider);
   request.model = { ...request.model, baseUrl: connection.baseUrl };
-  const result = await execute(request, { apiKey: connection.apiKey });
+  const result = await execute(request, { apiKey: connection.apiKey,
+    ...(process.env.ORACLE_EXPERIMENT_CONCURRENCY === undefined ? {} : {
+      experimentConcurrency: Number(process.env.ORACLE_EXPERIMENT_CONCURRENCY) }) });
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   if (!result.valid) process.exitCode = 1;
 }

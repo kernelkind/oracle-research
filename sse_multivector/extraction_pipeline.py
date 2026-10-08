@@ -1959,6 +1959,48 @@ def _validate_model_result(
         raise RunnerError("model result output differs from its raw response")
 
 
+def _invoke_prompt_worker(config, argv, request, directory):
+    """Bound the active request, while allowing shared admission to wait first."""
+    marker = 'oracle-admission-' + os.urandom(16).hex()
+    environment = {**_runner_environment(), 'ORACLE_EXPERIMENT_CONCURRENCY': str(config.concurrency),
+                   'ORACLE_EXPERIMENT_PYTHON': sys.executable,
+                   'ORACLE_EXPERIMENT_ADMISSION_MARKER': marker}
+    waiting_line, admitted_line = (marker + ':waiting\n').encode(), (marker + ':admitted\n').encode()
+    deadline = time.monotonic() + config.timeout_seconds + 30
+    admitted = False
+    data = _ordered_json_bytes(request).decode('utf-8')
+    with subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          text=True, cwd=directory, env=environment) as child:
+        try:
+            while True:
+                try:
+                    stdout, stderr = child.communicate(input=data, timeout=0.25)
+                    break
+                except subprocess.TimeoutExpired as partial:
+                    data = None
+                    observed = partial.stderr or b''
+                    if admitted_line in observed and not admitted:
+                        admitted = True
+                        deadline = time.monotonic() + config.timeout_seconds + 30
+                    elif waiting_line in observed and not admitted:
+                        deadline = None
+                    if deadline is not None and time.monotonic() >= deadline:
+                        raise subprocess.TimeoutExpired(argv, config.timeout_seconds + 30)
+        finally:
+            if child.poll() is None:
+                # The native launcher forwards termination to its selected Pi
+                # child; keep the existing process-group interrupt behavior.
+                child.terminate()
+                try:
+                    child.communicate(timeout=5)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.communicate()
+    stderr = ''.join(line for line in stderr.splitlines(keepends=True)
+                     if line not in {waiting_line.decode(), admitted_line.decode()})
+    return subprocess.CompletedProcess(argv, child.returncode, stdout, stderr)
+
+
 def _invoke_model(
     config: Any, stage: Any, prompt: str, schema: object
 ) -> dict[str, Any]:
@@ -1993,16 +2035,14 @@ def _invoke_model(
         ] != manifest.get("runner_version"):
             raise RunnerError("model runner changed since the run manifest was created")
         with tempfile.TemporaryDirectory(prefix="model-call-") as temporary:
-            completed = subprocess.run(
-                argv,
-                input=_ordered_json_bytes(request).decode("utf-8"),
-                check=False,
-                capture_output=True,
-                text=True,
-                cwd=temporary,
-                env=_runner_environment(),
-                timeout=config.timeout_seconds + 30,
-            )
+            if isinstance(config, PromptRunnerConfig):
+                completed = _invoke_prompt_worker(config, argv, request, temporary)
+            else:
+                completed = subprocess.run(
+                    argv, input=_ordered_json_bytes(request).decode("utf-8"), check=False,
+                    capture_output=True, text=True, cwd=temporary, env=_runner_environment(),
+                    timeout=config.timeout_seconds + 30,
+                )
         stdout, stderr, exit_code = (
             completed.stdout,
             completed.stderr,
@@ -3302,6 +3342,11 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
     # precedence over any provider metadata that happened to arrive earlier.
     if metadata.get("abort_reason") or record.get("exit_code") in (None, 0):
         return "local"
+    proxy = metadata.get("proxy_status") or {}
+    if (metadata.get("terminal_event") == "response.completed"
+            or isinstance(proxy, dict) and (proxy.get("terminal_event") == "response.completed"
+                                            or proxy.get("state") == "complete")):
+        return "local"
     error = metadata.get("error") or {}
     code = error.get("code") if isinstance(error, dict) else None
     if code is None:
@@ -3312,6 +3357,27 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
         return "provider_fatal"
     if code in (408, 429, 500, 502, 503, 504):
         return "provider_transient"
+    if (isinstance(proxy, dict) and proxy.get("state") == "failed"
+            and proxy.get("request_context") == "active"
+            and proxy.get("terminal_event") != "response.completed"):
+        kind = proxy.get("read_error_kind")
+        if kind in ("unexpected_eof", "connection_reset", "connection_closed",
+                    "broken_pipe", "timeout", "network_error"):
+            return "provider_transient"
+        if (kind in ("http2_goaway", "http2_stream_error", "http2_connection_error")
+                and proxy.get("read_error_code") in (
+                    "no_error", "internal_error", "refused_stream", "cancel", "enhance_your_calm")):
+            return "provider_transient"
+    if result.get("provider") == "openai-codex" and result.get("stop_reason") == "error":
+        if (metadata.get("http_status") == 200 and code in (
+                "server_error", "server_is_overloaded", "rate_limit_exceeded", "usage_limit_reached")):
+            return "provider_transient"
+        close = metadata.get("websocket_close") or {}
+        transport = metadata.get("transport_error") or {}
+        if (code == 101 and isinstance(metadata.get("id"), str) and metadata["id"]
+                and isinstance(close, dict) and close.get("code") in (1006, 1011)
+                and isinstance(transport, dict) and transport.get("phase") == "body"):
+            return "provider_transient"
     # Codex can fail inside an HTTP-200 stream without a structured error code.
     # Recognize only its explicit processing-error retry message, not arbitrary
     # error prose, transport failures, or model-generated output.
@@ -3322,6 +3388,24 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
                                    "You can retry your request, or contact us")):
         return "provider_transient"
     return "unknown"
+
+
+def provider_cooldown_required(record: dict[str, Any]) -> bool:
+    """Transport breaks pause launches even when their cause cannot justify a retry."""
+    kind = prompt_failure_kind(record)
+    if kind == "provider_transient":
+        return True
+    if kind != "unknown":
+        return False
+    result = record.get("model_result") or {}
+    if not isinstance(result, dict):
+        return False
+    metadata = result.get("response_metadata") or {}
+    if not isinstance(metadata, dict):
+        return False
+    transport = metadata.get("transport_error") or {}
+    return (isinstance(transport, dict) and transport.get("phase") in ("headers", "body")
+            and result.get("stop_reason") in ("error", "aborted"))
 
 
 def _provider_retry_after_delay(record: dict[str, Any]) -> float | None:
@@ -3494,7 +3578,7 @@ def _execute_prompt_batch(
         if previous is not None and previous["status"] == "failed":
             kind = prompt_failure_kind(previous)
             now = time.monotonic()
-            if kind == "provider_transient":
+            if provider_cooldown_required(previous):
                 backoff(previous, now)
             delay = provider_retry_delay(previous)
             if delay is not None:
@@ -3552,7 +3636,7 @@ def _execute_prompt_batch(
                         raise
                     kind = prompt_failure_kind(record)
                     now = time.monotonic()
-                    if kind == "provider_transient" and not fatal:
+                    if provider_cooldown_required(record) and not fatal:
                         backoff(record, now)
                     delay = provider_retry_delay(record)
                     if delay is not None and not fatal:

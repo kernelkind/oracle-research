@@ -226,7 +226,10 @@ result.update(json.loads(os.environ.get("FAKE_RUNNER_RESULT_OVERRIDE", "{}")))
 failures = json.loads(os.environ.get("FAKE_RUNNER_FAILURES", "{}"))
 for text, failure in failures.items():
     if text in prompt:
-        attempts = sum(c["prompt"] == prompt for c in json.loads(Path(os.environ["FAKE_RUNNER_LOG"]).read_text()))
+        log = Path(os.environ["FAKE_RUNNER_LOG"])
+        with log.with_suffix(".lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_SH)
+            attempts = sum(c["prompt"] == prompt for c in json.loads(log.read_text()))
         if attempts <= failure.get("attempts", 100):
             result.update(valid=False, error=failure.get("error", "fixture failure"), stop_reason="error",
                           response_metadata=failure["metadata"])
