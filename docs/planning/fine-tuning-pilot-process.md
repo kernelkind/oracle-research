@@ -410,7 +410,12 @@ the user authorized real DSRv2 qualification with Sol / xhigh and concurrency 8.
 Q04 passes `8/8` correctness and `2/2` coverage with both meanings required.
 The small set finishes with 17 passes, Q14's semantic regression (`6/10` instead
 of `8/10` correctness), and Q01's ungraded stream interruption. DSRv2 qualification
-has failed; the authorized large cases are running without retrying Q01.
+has failed. At concurrency 8, four of eight unchanged large hierarchies and both
+controlled variants complete; four large streams are interrupted and ungraded.
+Both variants fail consistency: the untouched Money transfers link and
+compatible headings change despite the fixed groups / flags. All 29 distinct
+cases are attempted once across the preserved subsets, yielding 24 complete
+reports and five ungraded interruptions. No failed request is retried.
 Adoption remains open; bulk review and test unsealing are not authorized.
 
 Compare quality before/after training and across data sizes, with failures,

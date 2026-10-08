@@ -892,9 +892,15 @@ production preparation and decoding functions:
   meanings required; its exact receipt is reused for the small set. Seventeen
   controls pass, Q14 fails semantically, and Q01's HTTP 200 body stream closes
   with an ungraded partial report after 365.2 seconds. Qualification has failed;
-  Q20–Q29 run separately at concurrency 8 without resending Q01. Native
-  `show --generation-costs` counts Q04's original call once and marks Q01's final
-  usage unavailable; SDK zero placeholders are not measured zero usage. See the
+  Q20–Q29 finish separately at concurrency 8 without resending Q01: six complete
+  reports (four unchanged large cases and both variants) and four ungraded body
+  socket interruptions, without retries. Both variants preserve supplied groups
+  and required flags but fail cross-version consistency on untouched links and
+  compatible headings. Native `show --generation-costs` counts Q04's original
+  call once and marks all five interruptions' final usage unavailable in their
+  respective subset reports; SDK zero placeholders are not measured zero usage.
+  The large subset retains the full case catalogue, so small cases appear
+  pending there and must be inspected in their completed small subset. See the
   [DSRv2 qualification evidence](distillation-review-v1/README.md#dsrv2-qualification-october-8).
   `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report

@@ -1343,8 +1343,13 @@ then authorized real DSRv2 qualification with Sol / xhigh and concurrency 8.
 Q04 passes `8/8` correctness and `2/2` coverage, retaining both required meanings.
 The small set finishes with 17 passes, Q14's semantic regression (`6/10` instead
 of `8/10` correctness), and Q01's ungraded stream interruption. Both DSR versions
-fail qualification; the authorized large cases are running without retrying
-Q01. Adoption remains open; bulk grading and test unsealing are not authorized.
+fail qualification. The large trial at concurrency 8 completes four of eight
+unchanged hierarchies and both controlled variants; four large streams are
+interrupted and ungraded. Both variants fail consistency: the untouched Money
+transfers link and compatible headings change despite fixed groups / flags.
+All 29 distinct cases are attempted once across the preserved subsets, yielding
+24 complete reports and five ungraded interruptions, without retries. Adoption
+remains open; bulk grading and test unsealing are not authorized.
 
 ### Required pilot measurements
 

@@ -215,8 +215,8 @@ rules remain unchanged:
 
 [Prompt edits](prompt-edits.json) and the generated
 [revision provenance](prompt-v2.md.revision.json) bind the full-context revision
-to DSRv1. ASv6.100 is unchanged. This is an untested clarification, not evidence
-that the known placement failure is resolved.
+to DSRv1. ASv6.100 is unchanged. The clarification was untested at preparation;
+the completed qualification below passes Q04 but fails other controls.
 
 The existing 29 qualification cases remain. Q20–Q22 now receive the same
 66 teacher groups and 44 required flags from the original Q20 receipt. These
@@ -305,14 +305,66 @@ check and small-control experiment, counting Q04 once. Their observed usage is
 Q01's unavailable usage is additional. The transport is the existing subscription,
 not a new paid API bill.
 
-`target/distillation-review-v1/qualification-v2-large-cases-20261008` runs only
-Q20–Q29 at concurrency 8: eight unchanged largest hierarchies and Q21/Q22's
-controlled variants, with their fixed provisional groups. Using the supported
-case selection preserves the completed small controls and avoids resending the
-unknown-failure Q01 request. Qualification already fails the small controls;
-the remaining authorized calls test completion and cross-version consistency.
-Their outcomes and final adoption are not yet completed evidence. Inspect
-native results with `show --case ID --json`.
+`target/distillation-review-v1/qualification-v2-large-cases-20261008` completes
+Q20–Q29 at concurrency 8, with ten real attempts and no retries or reuse.
+Four of the eight unchanged largest hierarchies return complete reports, as do
+both controlled variants. Four other large requests are interrupted and remain
+ungraded. Supported case selection preserves the small controls without
+resending Q01. **Both Q21 and Q22 fail cross-version consistency**, despite
+passing their targeted Carstens checks and preserving all 66 supplied groups
+and 44 required flags.
+
+- **Q21, faithful rewording:** both changed Carstens subjects remain valid full
+  matches and their incoming links remain valid. The untouched Money transfers
+  link `4.2` → `4.2.1` changes from valid in Q20 to invalid in Q21. Its identical
+  child says every transfer becomes visible and traceable as a consequence of
+  Carstens's proposed central bank digital currencies. Q20 interprets that
+  restriction as money transfers; Q21 allows a counterexample involving data
+  transfers. The required transfer meaning also loses compatible headings `4`
+  (Financial transactions) and `4.2` (Money transfers). These are changes in
+  judgments about identical wording, independent of the Carstens rewording.
+- **Q22, remove only leaf `1.1.1`:** the surviving Carstens subject and link stay
+  valid. Sol detects the intended missing placements beneath `1` and `1.1`.
+  Nevertheless, the same untouched Money transfers link flips to invalid and
+  the transfer meaning loses the same compatible headings. Coverage stays
+  `10/44` in all three reports: the Carstens meaning was already uncovered
+  beneath other headings. Aggregate equality does not establish consistency.
+- **Q23, Q26, Q28 and Q29:** each HTTP 200 response ends with a body transport
+  error, `UND_ERR_SOCKET` / `other side closed`. Q23 and Q26 preserve partial
+  report text; Q28 and Q29 return no review text. No local one-hour deadline
+  expires and no provider output-limit stop is recorded. These are ungraded
+  interruptions, without final usage, and are not retried.
+
+| Case | Complete subject / link verdicts | Teacher meaning groups | Seconds | Report UTF-8 bytes |
+| --- | ---: | ---: | ---: | ---: |
+| Q20 | 145 / 130 | 66 | 695.4 | 60,070 |
+| Q21 | 145 / 130 | 66 | 733.8 | 59,654 |
+| Q22 | 144 / 129 | 66 | 643.6 | 58,636 |
+| Q23 | Incomplete | — | 758.3 | 49,256, partial |
+| Q24 | 137 / 101 | 72 | 461.5 | 51,715 |
+| Q25 | 136 / 126 | 47 | 730.0 | 54,382 |
+| Q26 | Incomplete | — | 758.4 | 35,703, partial |
+| Q27 | 130 / 118 | 47 | 678.1 | 52,742 |
+| Q28 | No review text | — | 296.4 | 0 |
+| Q29 | No review text | — | 114.2 | 0 |
+
+Every large receipt records requested `xhigh` and returned `gpt-6.1-sol`.
+Native `show --generation-costs --json` records ten original calls, six completed
+reports and four calls with unavailable usage. Observed counts are 177,085
+uncached input, 72,192 cached input and 159,114 output tokens, including 63,221
+reasoning tokens. The four interrupted calls' unavailable usage is additional;
+SDK zero placeholders are not measured zeros. This uses the existing subscription.
+
+Across the URL check, small controls and large cases, all 29 distinct cases
+were attempted once. Q04 is reused in the small set; it is not another draw.
+There are 24 complete reports and five ungraded interruptions. The native subset
+reports retain the original 29-case catalogue, so each lists cases outside its
+own selection as pending; inspect the two completed subsets separately.
+DSRv2 fails Q14 and both large consistency controls. Large-case completion
+does not establish accuracy of their unlabeled judgments or the provisional
+requirement flags. Bulk review remains unqualified; adoption remains open.
+Inspect preserved native evidence with `show --case ID --json`. No prompt,
+known expectation, scoring rule or teacher standard changes during this trial.
 
 Reproduce the DSRv2 preparation in a new destination, without inference:
 

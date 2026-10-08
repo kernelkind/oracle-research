@@ -949,8 +949,8 @@ are provisional consistency inputs, not accepted pilot classifications or gold
 subject/link verdicts. The shared preparation adapter verifies the saved receipt
 and exact task/post/teacher binding instead of copying generated artifacts by
 hand. All 29 cases are prepared with zero model calls, Sol / xhigh and concurrency
-8. DSRv1 remains failed; DSRv2 is untested. This authorizes offline preparation,
-not calls, bulk grading, teacher auditing or test unsealing. The
+8. At this stage, DSRv1 remains failed and DSRv2 is untested. This authorizes
+offline preparation, not calls, bulk grading, teacher auditing or test unsealing. The
 [DSRv2 preview](../../sse_multivector/distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
 shows the wording and inputs; qualification and adoption remain open.
 
@@ -968,7 +968,16 @@ finds lost coverage and two bad links but also marks four supported shortened
 subjects incorrect, yielding `6/10` correctness instead of `8/10`. Preserve the
 known expectation; DSRv2 qualification has failed. Q01's HTTP 200 body stream
 closes after 365.2 seconds with partial output and unavailable final usage; it
-is not retried. The remaining authorized large cases run at concurrency 8.
+is not retried. The large trial finishes at concurrency 8: four of eight
+unchanged hierarchies and both controlled variants return complete reports;
+Q23, Q26, Q28 and Q29 have ungraded body socket interruptions and are not
+retried. Q21 and Q22 preserve the 66 groups / 44 required flags and pass their
+targeted Carstens checks, but both change the untouched Money transfers link
+`4.2` → `4.2.1` from valid to invalid and remove compatible headings for its
+meaning. Both fail cross-version consistency. Across the three preserved
+qualification experiments, all 29 distinct cases are attempted once, producing
+24 complete reports and five ungraded interruptions; Q04's reuse is not a new
+sample. Adoption remains open and bulk review remains unqualified.
 This authorizes qualification, not bulk review, teacher auditing, test unsealing,
 new rubric revisions or model substitution. The 44 large-case requirement flags
 remain provisional consistency inputs. See the

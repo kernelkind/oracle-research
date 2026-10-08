@@ -33,8 +33,11 @@ worked-example authority is explicit, and Q20–Q22 share provisional fixed
 meaning groups. The user then authorized DSRv2 qualification: the trusted URL
 control passes `8/8` correctness and `2/2` coverage. The small set finishes with
 17 passes, Q14's semantic regression and Q01's ungraded stream interruption.
-DSRv2 qualification has failed; the authorized large-case trial is running at
-concurrency 8. Adoption remains open and bulk review has not run.
+The large trial at concurrency 8 completes four of eight unchanged hierarchies
+and both controlled variants, with four ungraded stream interruptions. Both
+variants change judgments about untouched links and placements despite fixed
+groups and required flags. DSRv2 qualification has failed; adoption remains
+open and bulk review has not run.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
