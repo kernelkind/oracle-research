@@ -876,6 +876,17 @@ production preparation and decoding functions:
   uses user-directed concurrency 8 with existing backoff; the original frozen
   trial used 1. See the
   [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
+  The current specification prepares the untested
+  [DSRv2 preview](distillation-review-v1/README.md#dsrv2-draft-and-offline-preview).
+  A reference may supply `teacher_meanings_from` with `experiment`, `case_id`
+  and `record_sha256`. Native report validation must yield a valid review of
+  the same task, post and teacher; preparation pins the receipt and protects its
+  experiment/configuration/manifest/ledger hashes. Only meaning groups and
+  requirement flags enter the candidate input; their receipt provenance remains
+  review evidence. Shared saved groups cannot be overridden by a candidate and
+  are not promoted to known gold. Q20–Q22 use provisional groups for consistency
+  checks. Each report's prompt ID must match its rendered reviewer version.
+  Preparing DSRv2 adds no inference or authorization for calls.
   `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
   offline, optionally saving it with `--output FILE`. It does not create a model

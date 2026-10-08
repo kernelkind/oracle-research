@@ -398,6 +398,17 @@ The [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/
 records the findings. Bulk grading remains unqualified; process revisions and
 test unsealing require separate authorization.
 
+The user subsequently authorized drafting and preparing
+[DSRv2](../../sse_multivector/distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
+before further model calls. It makes the authority of ASv6.100's worked examples
+explicit and supplies the original Q20 receipt's same 66 groups / 44 required
+flags to Q20–Q22. These are provisional consistency inputs, not accepted pilot
+classifications. The shared adapter verifies the receipt and exact task, post
+and teacher binding; the existing all-placements scoring remains unchanged.
+All 29 preview cases are unrun, with Sol / xhigh and concurrency 8. DSRv1's failed
+trial is preserved. DSRv2 qualification and adoption, bulk review and test
+unsealing remain pending; offline preparation authorizes no new calls.
+
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a
 required task receive both zeros; a correct empty answer passes. Missing or

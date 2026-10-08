@@ -1334,6 +1334,14 @@ retains its concurrency 1 receipts. See the [DSRv1 qualification evidence](disti
 Bulk grading remains unqualified; process revisions, teacher auditing and test
 unsealing are not authorized by this trial.
 
+The user subsequently authorized the [DSRv2 draft and offline preview](distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
+before further calls. It explicitly treats ASv6.100's worked examples as
+authoritative, and Q20–Q22 reuse the original Q20 receipt's 66 groups / 44 required
+flags. These are provisional consistency inputs, not accepted pilot labels.
+Native receipt and exact task/post/teacher checks bind their source. All 29
+cases remain unrun with Sol / xhigh and concurrency 8; DSRv1 remains failed.
+Qualification, adoption, bulk grading and test unsealing remain pending.
+
 ### Required pilot measurements
 
 | Measurement | Required evidence | Decision it informs |

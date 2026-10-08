@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "prompt": {"id": "DSRv1", "path": "prompt.md"},
+  "prompt": {"id": "DSRv2", "path": "prompt-v2.md"},
   "dataset": {"adapter": "distillation_review", "path": "qualification-source.json"},
   "runner": {
     "provider": "openai-codex",

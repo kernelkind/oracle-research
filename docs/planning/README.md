@@ -28,6 +28,10 @@ Source preparation, report checks and scoring
 are implemented offline; DSRv1 includes a concrete preview before model calls.
 Its 29 cases include eight large training hierarchies selected by entry count
 and answer length from the 1,300 saved ASv6.100 generations.
+The user subsequently authorized the [DSRv2 offline preview](../../sse_multivector/distillation-review-v1/README.md#dsrv2-draft-and-offline-preview):
+worked-example authority is explicit, and Q20–Q22 share provisional fixed
+meaning groups. DSRv2 is untested, with all 29 cases unrun; further calls and
+adoption remain pending.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

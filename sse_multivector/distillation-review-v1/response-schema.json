@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "DSRv1 semantic review report",
+  "title": "DSR semantic review report",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "prompt_id", "subjects", "relationships", "coverage"],
   "properties": {
     "schema_version": {"type": "integer", "enum": [1]},
-    "prompt_id": {"type": "string", "enum": ["DSRv1"]},
+    "prompt_id": {"type": "string", "enum": ["DSRv1", "DSRv2"]},
     "subjects": {
       "type": "array",
       "items": {

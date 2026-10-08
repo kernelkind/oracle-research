@@ -28,7 +28,12 @@
       "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
       "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
       "line": 269,
-      "note_id": "af8e33afa7157affe406b4d534f2fe7086109e353b290f19c67ae78b558702ac"
+      "note_id": "af8e33afa7157affe406b4d534f2fe7086109e353b290f19c67ae78b558702ac",
+      "teacher_meanings_from": {
+        "experiment": "../../target/distillation-review-v1/qualification-compatible-schema-20261008",
+        "case_id": "Q20",
+        "record_sha256": "7a9cd142b214a893a18a27db8dc68a2d9213ef79393ec9220026e4b3977e32e5"
+      }
     },
     "L2": {
       "format": "training_jsonl",

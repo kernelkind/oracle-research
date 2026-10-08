@@ -181,6 +181,17 @@ class DistillationReviewTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "fixed reference"):
             self.validate(case, report)
 
+    def test_report_version_must_match_the_rendered_reviewer(self):
+        case, report = cumin_case()
+        case["prompt"] = "DSRv2 — draft semantic reviewer\n" + case["inputs"]["REVIEW_INPUT"]
+        report["prompt_id"] = "DSRv2"
+        self.assertEqual(self.validate(case, report)["status"], "valid")
+        schema = json.loads((ROOT / "distillation-review-v1/response-schema.json").read_text())
+        self.assertIn(report["prompt_id"], schema["properties"]["prompt_id"]["enum"])
+        report["prompt_id"] = "DSRv1"
+        with self.assertRaisesRegex(ValueError, "expected review prompt_id DSRv2"):
+            self.validate(case, report)
+
     def test_output_failures_score_zero_while_reviewer_failures_are_ungraded(self):
         from sse_multivector import distillation_review as review
         case, report = cumin_case()
@@ -382,6 +393,99 @@ class DistillationReviewTests(unittest.TestCase):
             self.assertEqual(scored["scores"]["coverage"]["value"], 0.5)
             self.assertTrue(scored["qualification"]["passed"])
             self.assertFalse(log.exists())
+
+    def test_cli_reuses_source_bound_teacher_meanings_without_new_calls(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runner = root / "runner"
+            runner.write_text(FAKE_RUNNER.replace(
+                'if prompt.startswith("GENERIC PROMPT"):',
+                'if prompt.startswith(("GENERIC PROMPT", "DSRv")):'))
+            runner.chmod(0o755)
+            log = root / "calls.json"
+            _, fixture = cumin_case()
+            env = dict(os.environ, FAKE_RUNNER_LOG=str(log),
+                       FAKE_RUNNER_PROMPT_RESPONSE=json.dumps(fixture))
+            source = dict(schema_version=1,
+                task_prompt=dict(path=str(AS), sha256=hashlib.sha256(AS.read_bytes()).hexdigest()),
+                references={"C8": dict(format="as_example", index=8)},
+                cases=[dict(id="Q17", reference="C8", changes=[dict(op="remove", numbers=["3.1"])],
+                            expected={})])
+            (root / "source.json").write_text(json.dumps(source))
+            spec = dict(schema_version=1,
+                prompt=dict(id="DSRv1", path=str(ROOT / "distillation-review-v1/prompt.md")),
+                dataset=dict(adapter="distillation_review", path="source.json"),
+                runner=dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol",
+                            reasoning_effort="xhigh", concurrency=8, runner_binary=str(runner),
+                            output_schema_path=str(ROOT / "distillation-review-v1/response-schema.json")))
+            (root / "spec.json").write_text(json.dumps(spec))
+
+            def cli(*args, ok=True):
+                result = subprocess.run([sys.executable, str(ROOT / "experiment.py"), *map(str, args)],
+                    cwd=root, env=env, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode == 0, ok, result.stdout + result.stderr)
+                return result
+
+            cli("prepare", "baseline", "--spec", "spec.json")
+            cli("run", "baseline")
+            saved = json.loads(cli("show", "baseline", "--case", "Q17").stdout)
+            self.assertEqual(saved["status"], "valid")
+            reference = dict(experiment="baseline", case_id="Q17",
+                             record_sha256=saved["receipt"]["record_sha256"])
+            source["references"]["C8"]["teacher_meanings_from"] = reference
+            source["cases"].append(dict(id="Q18", reference="C8",
+                changes=[dict(op="remove", numbers=["4.1"])], expected={}))
+            (root / "source.json").write_text(json.dumps(source))
+            spec["prompt"] = dict(id="DSRv2", path=str(ROOT / "distillation-review-v1/prompt-v2.md"))
+            (root / "spec.json").write_text(json.dumps(spec))
+            cli("prepare", "candidate", "--spec", "spec.json")
+            shown = json.loads(cli("show", "candidate", "--json").stdout)
+            self.assertEqual(shown["prompt_id"], "DSRv2")
+            for case in shown["cases"]:
+                payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+                self.assertEqual(payload["teacher_meanings"], saved["teacher_meanings"])
+                self.assertNotIn("record_sha256", payload)
+                self.assertEqual(case["evidence"]["teacher_meanings_from"]["record_sha256"],
+                                 reference["record_sha256"])
+                self.assertIsNone(case["evidence"]["known_teacher_meanings"])
+            current = dict(fixture, prompt_id="DSRv2")
+            (root / "report.json").write_text(json.dumps(current))
+            scored = json.loads(cli("score-review", "candidate", "--case", "Q17",
+                                    "--report", "report.json").stdout)
+            self.assertEqual(scored["status"], "valid")
+            (root / "report.json").write_text(json.dumps(fixture))
+            mismatch = cli("score-review", "candidate", "--case", "Q17", "--report", "report.json", ok=False)
+            self.assertIn("expected review prompt_id DSRv2", mismatch.stderr)
+            plan = json.loads((root / "candidate/experiment.json").read_text())["plan"]
+            for name in ("experiment.json", "run/results.jsonl"):
+                path = root / "baseline" / name
+                self.assertEqual(plan["sources"][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+            # Preparation and inspection do not create another generation.
+            self.assertEqual(len(json.loads(log.read_text())), 1)
+
+            original = copy.deepcopy(source)
+            for name, mutate, message in (
+                    ("wrong-receipt", lambda s: s["references"]["C8"]["teacher_meanings_from"].update(
+                        record_sha256="0" * 64), "receipt"),
+                    ("wrong-case", lambda s: s["references"]["C8"]["teacher_meanings_from"].update(
+                        case_id="missing"), "case"),
+                    ("wrong-teacher", lambda s: s["references"]["C8"].update(index=7), "task, post or teacher"),
+                    ("override", lambda s: s["cases"][0].update(teacher_meanings=None), "override")):
+                with self.subTest(name=name):
+                    changed = copy.deepcopy(original)
+                    mutate(changed)
+                    (root / "source.json").write_text(json.dumps(changed))
+                    result = cli("prepare", name, "--spec", "spec.json", ok=False)
+                    self.assertIn(message, result.stderr)
+                    self.assertFalse((root / name).exists())
+            (root / "source.json").write_text(json.dumps(original))
+            ledger = root / "baseline/run/results.jsonl"
+            rows = [json.loads(line) for line in ledger.read_text().splitlines()]
+            rows[-1]["final_output_raw"] = "{}"
+            ledger.write_text("".join(json.dumps(row) + "\n" for row in rows))
+            result = cli("prepare", "changed-receipt", "--spec", "spec.json", ok=False)
+            self.assertIn("valid reviewer case", result.stderr)
+            self.assertEqual(len(json.loads(log.read_text())), 1)
 
 
 if __name__ == "__main__":

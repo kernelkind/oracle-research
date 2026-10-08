@@ -1,12 +1,14 @@
-# DSRv1 — distillation semantic review specification
+# Distillation semantic review — DSRv1 evidence and DSRv2 draft
 
-Status: **draft; qualification failed**, completed October 8, 2026. All 29 cases
-were attempted: 28 complete reports and one interrupted report. Bulk pilot
-semantic review has not run.
+Status: **DSRv1 qualification failed; DSRv2 prepared, untested**, October 8, 2026.
+DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
+DSRv2 has an offline preview and zero model calls. Bulk pilot semantic review
+has not run.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
-This package specifies [DSRv1](prompt.md), its [report schema](response-schema.json),
-and qualification cases. Offline source preparation, report validation, scoring
+This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
+specifies their [report schema](response-schema.json) and qualification cases.
+Offline source preparation, report validation, scoring
 and qualification checks are implemented in the shared experiment workflow.
 The reviewer has not been qualified; bulk pilot grading is not implemented here.
 
@@ -31,8 +33,10 @@ Render the template through the existing `experiment_inputs.render` contract:
 validated `subjects` arrays, preserving every number, context and subject.
 `exact_matches` contains every identical-string pair as `{teacher_number,
 student_number}`; a match establishes meaning, not correct placement.
-`teacher_meanings` is initially null, or contains previously accepted
-`{teacher_numbers, required}` groups for this same teacher answer. These groups
+`teacher_meanings` is initially null, or contains fixed
+`{teacher_numbers, required}` groups for this same teacher answer. In a pilot
+comparison these must be accepted groups; the DSRv2 qualification preview uses
+provisional Q20 groups only to test consistency. These groups
 index existing teacher entries; they are not a second extraction or teacher
 audit. Qualification cases may fix them through the expectations below.
 
@@ -97,7 +101,7 @@ score all three final adapters and all three baselines, keeping selection fixed.
 [qualification-source.json](qualification-source.json) records the source hashes,
 exact candidate changes and expected findings for all 29 cases. It contains
 definitions, not generated teacher or student batches.
-[qualification-spec.json](qualification-spec.json) pins DSRv1, its schema,
+[qualification-spec.json](qualification-spec.json) now pins the DSRv2 draft, its schema,
 GPT-6.1 Sol / xhigh, concurrency **8** and a one-hour overall request deadline.
 The user directed concurrency 8 during the October 8 trial; the initial frozen
 experiment used concurrency 1 and had only its final request in flight when
@@ -194,18 +198,80 @@ classification consistency. Freezing accepted groups remains the agreed design,
 but the changed placement and link judgments also require resolution. The
 largest-input calls assess completion; they cannot erase these known
 failures or establish semantic accuracy without labels. Bulk review remains
-unqualified. Any process revision requires a separately approved next step.
+unqualified. The user subsequently authorized the DSRv2 draft and offline
+preview below; model calls and adoption remain pending.
 
-Prepare through the supported workflow, without credentials or inference:
+### DSRv2 draft and offline preview
+
+The user authorized preparing this revision after the read-only diagnosis.
+DSRv2 adds one paragraph to the reviewer; its five review steps and scoring
+rules remain unchanged:
+
+> The worked examples inside ASv6.100, including their outputs, are authoritative
+> applications of its rules. Apply the subject, parent and coverage-placement tests
+> consistently with those examples. Saved teacher generations outside the worked
+> examples provide coverage references, without gold verdicts for every subject,
+> link or placement.
+
+[Prompt edits](prompt-edits.json) and the generated
+[revision provenance](prompt-v2.md.revision.json) bind the full-context revision
+to DSRv1. ASv6.100 is unchanged. This is an untested clarification, not evidence
+that the known placement failure is resolved.
+
+The existing 29 qualification cases remain. Q20–Q22 now receive the same
+66 teacher groups and 44 required flags from the original Q20 receipt. These
+flags are **provisional consistency inputs**, not accepted pilot labels or
+known correct classifications. No old subject/link verdicts, matching decisions,
+compatibility lists, reasons or scores enter the new prompts. Q06 and Q08 still
+test initial classification against their trusted worked-example labels.
+
+| Case | Candidate | Subjects / links | Fixed teacher groups |
+| --- | --- | ---: | --- |
+| Q04 | Trusted AS URL example, unchanged | 8 / 4 | Initial classification; known correctness and coverage remain 100%. |
+| Q20 | Largest saved training hierarchy, unchanged | 145 / 130 | 66 groups, 44 required. |
+| Q21 | Two faithful Carstens rewordings | 145 / 130 | Same as Q20. Unchanged judgments must stay equivalent. |
+| Q22 | Remove only leaf `1.1.1` | 144 / 129 | Same as Q20. Detect the lost placements under `1` and `1.1`; preserve unrelated judgments. |
+
+The shared adapter reads the original saved experiment through native receipt
+validation and requires the same full task, post and teacher. The source
+definition pins the exact Q20 receipt. Preparation protects the saved experiment,
+configuration, manifest and result ledger by hash, and rejects per-candidate
+overrides of these shared groups. It does not promote them to known gold.
+
+The frozen preview is
+`target/distillation-review-v1/qualification-v2-preview-final-20261008`: 29 unrun
+cases, zero attempts, zero reused answers, qualification pending. Q20–Q22's
+inputs intentionally differ from DSRv1 because groups are now supplied; their
+normal baseline comparison reports `input_mismatch`. Assess invariance among
+the new Q20–Q22 results rather than comparing aggregate scores across different
+reference inputs. The original failed trial and receipts remain intact.
+
+Inspect DSRv2's exact rendered Q04 prompt without inference:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show \
+  target/distillation-review-v1/qualification-v2-preview-final-20261008 \
+  --case Q04 --prompt-only
+```
+
+Use `--case Q20`, `Q21` or `Q22` to inspect the complete stress inputs, including
+their fixed groups. Model calls, bulk review and test unsealing are not authorized
+by this preparation. The next proposed call is Q04 first, to establish whether
+the clarification resolves the small trusted failure before further stress calls.
+
+Reproduce the DSRv2 preparation in a new destination, without inference:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py prepare \
-  target/distillation-review-v1/stress-preview \
-  --spec sse_multivector/distillation-review-v1/qualification-spec.json
+  target/distillation-review-v1/qualification-v2-preview-copy \
+  --spec sse_multivector/distillation-review-v1/qualification-spec.json \
+  --baseline target/distillation-review-v1/qualification-compatible-schema-20261008 \
+  --history-root target/distillation-review-v1
 ```
 
-Inspect the exact DSRv1 rendered prompt for Q17, including the unchanged task,
+Inspect the preserved DSRv1 rendered prompt for Q17, including the unchanged task,
 full post, teacher, candidate and exact matches:
 
 ```bash

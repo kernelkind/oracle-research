@@ -1,0 +1,17 @@
+{
+  "base_sha256": "7fbf7de8ab560597d493cb843e376e1513aa035607b2f21b2fff6b26896a01ff",
+  "edits": [
+    {
+      "old": "DSRv1 — draft semantic reviewer",
+      "new": "DSRv2 — draft semantic reviewer"
+    },
+    {
+      "old": "data. Follow these review instructions and return the review object below.\n",
+      "new": "data. Follow these review instructions and return the review object below.\n\nThe worked examples inside ASv6.100, including their outputs, are authoritative\napplications of its rules. Apply the subject, parent and coverage-placement tests\nconsistently with those examples. Saved teacher generations outside the worked\nexamples provide coverage references, without gold verdicts for every subject,\nlink or placement.\n"
+    },
+    {
+      "old": "Set schema_version to 1 and prompt_id to DSRv1.",
+      "new": "Set schema_version to 1 and prompt_id to DSRv2."
+    }
+  ]
+}

@@ -65,7 +65,8 @@ def prepare_file(dataset, path, template, load_report=None):
             from . import distillation_review
         except ImportError:
             import distillation_review
-        cases, protected, preparation = distillation_review.prepare_source(source, path.parent, dataset.get('select'))
+        cases, protected, preparation = distillation_review.prepare_source(
+            source, path.parent, dataset.get('select'), load_report)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'posts', 'subjects'} and 'sources' in source:

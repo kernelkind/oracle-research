@@ -930,6 +930,21 @@ Preserve its original settings and receipts. The maintained specification uses
 8 for subsequent preparations; no repeated reviews are needed to change this
 execution setting.
 
+**DSRv2 draft and preview authorized October 8:** after read-only diagnosis of
+the coverage failures, the user directed preparing the proposed wording and
+inputs before further model calls. [DSRv2](../../sse_multivector/distillation-review-v1/prompt-v2.md)
+clarifies that ASv6.100's worked examples are authoritative applications of its
+rules; the standard and five review steps remain unchanged. Q20–Q22 share the
+original Q20 receipt's 66 meaning groups and 44 required flags. Those groups
+are provisional consistency inputs, not accepted pilot classifications or gold
+subject/link verdicts. The shared preparation adapter verifies the saved receipt
+and exact task/post/teacher binding instead of copying generated artifacts by
+hand. All 29 cases are prepared with zero model calls, Sol / xhigh and concurrency
+8. DSRv1 remains failed; DSRv2 is untested. This authorizes offline preparation,
+not calls, bulk grading, teacher auditing or test unsealing. The
+[DSRv2 preview](../../sse_multivector/distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
+shows the wording and inputs; qualification and adoption remain open.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

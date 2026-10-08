@@ -176,8 +176,10 @@ def validate(case, raw):
     _fields(report, {"schema_version", "prompt_id", "subjects", "relationships", "coverage"}, "review report")
     if type(report["schema_version"]) is not int or report["schema_version"] != 1:
         raise ValueError("expected review schema_version 1")
-    if report["prompt_id"] != "DSRv1":
-        raise ValueError("expected review prompt_id DSRv1")
+    version = re.match(r"(DSRv[1-9][0-9]*(?:\.[0-9]+)?)\b", case.get("prompt", ""))
+    prompt_id = version[1] if version else "DSRv1"
+    if report["prompt_id"] != prompt_id:
+        raise ValueError(f"expected review prompt_id {prompt_id}")
     if any(not isinstance(report[key], list) for key in ("subjects", "relationships", "coverage")):
         raise ValueError("review verdicts and coverage must be arrays")
     student = {entry["number"]: entry for entry in payload["student"]}
@@ -411,21 +413,23 @@ def _changes(teacher, changes):
     return parse_subjects(json.dumps(dict(subjects=student)))
 
 
-def prepare_source(source, base, selected=None):
+def prepare_source(source, base, selected=None, load_report=None):
     """Read frozen worked examples or saved training controls into review cases."""
     _fields(source, {"schema_version", "task_prompt", "references", "cases"}, "review source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("expected review source schema_version 1")
-    protected, cache = {}, {}
-    def bound(reference):
-        path = engine._resolve_path(reference["path"], "review source", Path(base))
+    protected, cache, reports = {}, {}, {}
+    def read(path):
         if path not in cache:
             cache[path] = path.read_bytes()
-        raw = cache[path]
-        checksum = hashlib.sha256(raw).hexdigest()
+            protected[str(path)] = hashlib.sha256(cache[path]).hexdigest()
+        return cache[path]
+    def bound(reference):
+        path = engine._resolve_path(reference["path"], "review source", Path(base))
+        raw = read(path)
+        checksum = protected[str(path)]
         if checksum != reference["sha256"]:
             raise ValueError(f"review source hash differs: {path}")
-        protected[str(path)] = checksum
         return raw
     _fields(source["task_prompt"], {"path", "sha256"}, "task prompt reference")
     task_prompt = bound(source["task_prompt"]).decode()
@@ -446,7 +450,8 @@ def prepare_source(source, base, selected=None):
         if key not in references:
             reference = source["references"][key]
             if reference["format"] == "as_example":
-                _fields(reference, {"format", "index"} | ({"required_meanings"} & reference.keys()), "worked example reference")
+                _fields(reference, {"format", "index"}
+                        | ({"required_meanings", "teacher_meanings_from"} & reference.keys()), "worked example reference")
                 index = reference["index"]
                 if type(index) is not int or not 1 <= index <= len(examples):
                     raise ValueError("unknown worked example")
@@ -455,7 +460,8 @@ def prepare_source(source, base, selected=None):
                 teacher = parse_subjects(re.search(r"<output>\s*(.*?)\s*</output>", block, re.S)[1])
                 note_id = f"ASv6.100-example-{index}"
             elif reference["format"] == "training_jsonl":
-                _fields(reference, {"format", "path", "sha256", "line", "note_id"}, "training control reference")
+                _fields(reference, {"format", "path", "sha256", "line", "note_id"}
+                        | ({"teacher_meanings_from"} & reference.keys()), "training control reference")
                 if Path(reference["path"]).name != "train.jsonl":
                     raise ValueError("full-size qualification requires the training split")
                 raw = bound(reference)
@@ -491,8 +497,40 @@ def prepare_source(source, base, selected=None):
                     raise ValueError("known required groups differ from worked example")
                 frozen = [dict(teacher_numbers=numbers, required=frozenset(numbers) in required)
                           for numbers in by_subject.values()]
-            references[key] = post, teacher, note_id, frozen
-        post, teacher, note_id, frozen = references[key]
+            known, frozen_source = frozen, None
+            if "teacher_meanings_from" in reference:
+                if known is not None:
+                    raise ValueError("saved teacher meanings cannot override known worked-example groups")
+                if load_report is None:
+                    raise ValueError("teacher meaning reuse requires validated experiment reports")
+                previous = reference["teacher_meanings_from"]
+                _fields(previous, {"experiment", "case_id", "record_sha256"}, "teacher meaning reference")
+                directory = engine._resolve_path(previous["experiment"], "teacher meaning experiment", Path(base))
+                if directory not in reports:
+                    report = load_report(directory)
+                    if report["adapter"] != "distillation_review":
+                        raise ValueError("teacher meanings require a distillation review experiment")
+                    reports[directory] = {case["id"]: case for case in report["cases"]}
+                    envelope = json.loads(read(directory / "experiment.json"))
+                    read(Path(envelope["plan"]["run_directory"]) / "manifest.json")
+                    for name in envelope["plan"]["files"]:
+                        read(directory / name)
+                saved = reports[directory].get(previous["case_id"])
+                if saved is None or saved["status"] != "valid":
+                    raise ValueError("teacher meanings require a valid reviewer case")
+                if saved["receipt"]["record_sha256"] != previous["record_sha256"]:
+                    raise ValueError("teacher meaning receipt differs from the frozen reference")
+                saved_input = _payload(saved)
+                if (saved["inputs"]["TASK_PROMPT"] != task_prompt
+                        or saved_input["post"] != post or saved_input["teacher"] != teacher):
+                    raise ValueError("saved teacher meaning task, post or teacher differs")
+                frozen = validate(saved, saved["output"])["teacher_meanings"]
+                read(Path(saved["receipt"]["results_path"]))
+                frozen_source = {**previous, "experiment": str(directory)}
+            references[key] = post, teacher, note_id, frozen, known, frozen_source
+        post, teacher, note_id, frozen, known, frozen_source = references[key]
+        if frozen_source is not None and "teacher_meanings" in definition:
+            raise ValueError("candidate cannot override shared saved teacher meanings")
         student = _changes(teacher, definition["changes"])
         payload = dict(post=post, teacher=teacher, student=student,
                        exact_matches=exact_matches(teacher, student),
@@ -500,7 +538,8 @@ def prepare_source(source, base, selected=None):
         cases.append(dict(id=identifier, inputs=dict(TASK_PROMPT=task_prompt,
             REVIEW_INPUT=json.dumps(payload, ensure_ascii=False)), evidence=dict(note_id=note_id,
             reference=key, definition=definition, expected=definition["expected"],
-            known_teacher_meanings=frozen,
+            known_teacher_meanings=known,
+            **({"teacher_meanings_from": frozen_source} if frozen_source is not None else {}),
             teacher_entries=len(teacher), student_entries=len(student),
             student_edges=sum("." in entry["number"] for entry in student),
             student_output_raw=json.dumps(dict(subjects=student), ensure_ascii=False))))
