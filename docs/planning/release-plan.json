@@ -12,7 +12,7 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Highest priority: produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: relationship judgments remain inconsistent; construction reuse is being tested.\nVector: the ASv6.100 comparison is being prepared; training has not started.\nNeither approach is accepted or selected."
+      "description": "Produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: a completed nine-note menu narrows note sets; semantic consistency and meaningful-group coverage remain unresolved.\nVector: a 213-note prototype improves access but has misleading branches and finding failures.\nNeither approach is accepted or selected."
     },
     {
       "id": "03",
@@ -32,15 +32,15 @@
       "id": "05",
       "track": "model",
       "title": "Prepare pilot training data",
-      "status": "WAITING",
-      "description": "Prepare teacher subject hierarchies and separate evaluation sets for the subjects-only larger fine-tuning pilot.\nAll 1,300 ASv6.100 labels are collected and verified. The general teacher-selection prerequisite remains unchanged."
+      "status": "COMPLETE",
+      "description": "Prepare teacher subject hierarchies and separate evaluation sets for the subjects-only larger fine-tuning pilot.\nAll 1,300 ASv6.100 labels are collected and structurally verified. The pilot-label teacher was approved separately; release teacher selection remains open."
     },
     {
       "id": "06",
       "track": "model",
       "title": "Choose model through larger fine-tuning pilot",
-      "status": "WAITING",
-      "description": "Second priority: complete the SP pilot to inform all future fine-tuning decisions, comparing three trained models with their untuned baselines for quality, runtime and cost.\nSubjects-only pilot data is ready; GPU training has not started. Final checks and local semantic evaluation remain.\nConfirm weight-release permission before selection."
+      "status": "IN PROGRESS",
+      "description": "Compare three trained subject-generation models with their untuned baselines for quality, runtime and cost.\nAll three trained on 1,000 notes. Response collection continues; the semantic reviewer failed qualification.\nNo model is selected. Confirm weight-release permission before selection."
     },
     {
       "id": "07",
@@ -306,7 +306,8 @@
     {
       "source": "17",
       "target": "05",
-      "kind": "required"
+      "kind": "helpful",
+      "label": "pilot-label teacher approved separately; release selection remains open"
     },
     {
       "source": "17",

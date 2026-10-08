@@ -13,6 +13,11 @@ The larger pilot is subjects only, approved October 2: one teacher hierarchy
 per training note and no mask generation. Each checkpoint generates its own
 subject hierarchies on the same held-out validation notes. Thinking stays off
 throughout preparation, training, baselines, checkpoints and the final test.
+**Pilot status — October 8:** all three students completed training through
+1,000 notes. Qwen's response collection is complete; dense Gemma and Gemma MoE
+are still collecting evaluation responses. Pilot training data is complete;
+model selection is in progress, not accepted. The pilot-specific label teacher
+was approved independently of the still-open release teacher selection.
 Semantic review happens outside the GPU rental. The agreed reviewer is
 GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
 drafts its prompt, report format and qualification cases. October 8 qualification
@@ -337,9 +342,9 @@ node; task 27 implements and validates ordering using that definition. Both
 are paused as nice-to-have work, as directed October 5. Node sorting no longer
 blocks broader hierarchy validation, teacher selection or pilot training data.
 The 04 → 27 dependency remains within that optional effort; 27 → 03 is helpful,
-not required. The first priority is actually good hierarchies; the second is
-the SP pilot, which informs all future fine-tuning decisions. SHR fine-tuning
-still needs validation in a generated hierarchy.
+not required. The proposed ranking of hierarchy work and the SP pilot was
+explicitly clarified as tentative, not fixed. The pilot informs later
+fine-tuning; SHR fine-tuning still needs validation in a generated hierarchy.
 The October 2 finite audit froze the experimental PPv35-post-meaning-v1 method
 for a browsing build: full-post prominence against a fixed saved node
 meaning, multiplied by SP subject-plus-context relevance to the existing title;
@@ -385,11 +390,14 @@ Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
 Task 02 tracks acceptance of a useful 100-note hierarchy, with frontier-based
-and vector-space construction tested in parallel. Frontier relationship judgments
-remain inconsistent; construction reuse is being tested. The vector comparison
-now uses ASv6.100 subjects, with shared relationship labels and model preparation
-underway; fitting has not started. Older vector builds are historical evidence,
-not results for the new source. Their separate evidence is linked in
+and vector-space construction tested in parallel. The frontier's completed
+nine-note menu has bounded choices and strictly narrowing note sets; semantic
+contradictions and meaningful-group coverage remain unresolved. The vector
+investigation has run model fits without qualifying transfer. Its latest
+213-note browsing prototype covers all notes with at most six choices per
+step, but agent review finds misleading labels and missed requests. Neither
+trial passes user acceptance. Older builds remain historical evidence;
+the current results and limitations are linked in
 [the decision record](release-decisions.md). Neither construction approach is
 selected or accepted; release tracks and dependencies are unchanged.
 

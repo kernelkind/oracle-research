@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated October 5, 2026. This is the written record of the planning discussion.
+Updated October 8, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -38,12 +38,14 @@ timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
-**Current priorities — October 5:** first, generate actually good hierarchies;
-second, complete the SP distillation pilot to inform all future fine-tuning
-decisions. The two efforts can proceed in parallel. SHR fine-tuning remains
-conditional on validating an SHR-built hierarchy; it is not a current training
-commitment. Node sorting is deferred as nice-to-have work. The release
-requirements, deadline and task readiness remain unchanged.
+**Priority discussion — October 5:** the user proposed emphasizing useful
+hierarchies and the SP distillation pilot, then explicitly clarified that this
+was not a fixed ranking. Audit proposed priorities against the release goal
+rather than treating them as settled. The efforts can proceed in parallel;
+the SP pilot informs later fine-tuning but does not measure SHR performance.
+SHR fine-tuning remains conditional on validating an SHR-built hierarchy; no
+separate SHR pilot is approved here. Node sorting is deferred as nice-to-have.
+The release requirements and deadline remain unchanged.
 
 **Task-summary convention approved October 1:** the graph is a planning view,
 not an experiment log. Every task description gives a brief outcome, current
@@ -61,10 +63,41 @@ The Notedeck browser UI is approved and committed; task 15 is waiting for
 protocol agreement and service implementation before integration. Completion
 links, acceptance requirements and open implementation choices are unchanged.
 
-**Parallel hierarchy-construction candidates — status reconciled October 5:** frontier-based
-and vector-space approaches are both being tested within the existing hierarchy
-investigation. Record their progress separately; neither is selected or accepted.
+**Parallel hierarchy-construction candidates — status reconciled October 8:**
+Frontier-based and vector-space approaches are both being tested within the
+existing hierarchy investigation. Record their progress separately; neither is
+selected or accepted.
 These are construction candidates, not new release tracks or additional tasks.
+
+The [current frontier construction](../../../oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/README.md#ninth-note-follow-up-construction-complete-prompt-contradictions-remain)
+completed nine notes. Its shaped browsing menu has six roots, at most five
+children per node and strictly narrowing distinct note sets; every note is
+reachable in one or two selections. The underlying construction graph does
+not meet those menu constraints. Semantic contradictions and full
+meaningful-group coverage remain unresolved. Further prompt diagnostics and
+a fresh construction run are underway; this is not 100-note acceptance.
+[Candidate-selection replay](../../../oracle-mvp-canonical-sse-scale-v1/sse_multivector/shr_single_pair/README.md)
+reduces comparisons on saved evidence but misses contradiction and uncertainty
+checks. No scalable construction policy is adopted.
+
+The current trials test manageable choices, including roots, and strict
+narrowing of distinct recursive note sets at each downward step. The user also
+requires useful discovery of meaningful groups, not only short paths to
+individual notes. Six choices is a provisional trial bound, not an approved
+production implementation or proof of browsing quality.
+
+The [current vector investigation](../../../oracle-mvp-vector-hierarchy-planning-v1/sse_multivector/vector-hierarchy-experiments.md)
+has run relationship-model fits, without qualifying transfer or selecting a
+model. Its latest browsing prototype instead groups saved ASv6.100 subject
+vectors into a six-choice tree covering all 213 notes, with three selections
+to leaves. Agent finding review reports nine full matches, one partial match
+and two misses across twelve requests. It improves access to some previously
+hidden notes but makes some earlier routes harder; every root branch has
+misleading labels. These are agent assessments, not user acceptance, a
+controlled speed result or adoption of this construction method.
+
+Earlier construction evidence remains relevant but does not describe the
+current runs:
 
 The earlier [frontier-based 200-note candidate](../../../oracle-mvp-scalable-hierarchy-v12/sse_multivector/scalable-hierarchy-v1/README.md#sh5-200--actual-browsing-menu-construction-sprint)
 became cycle-free after joint review, without establishing browsing quality.
@@ -74,23 +107,20 @@ hierarchy-quality goal; broader placement and reverse-order execution were
 unfinished. Repeated ancestry checks consumed much of the allowance.
 
 [Equivalence-aware construction reuse](../../../oracle-mvp-shr-scope-transfer-v1/sse_multivector/equivalence-reuse-replay.md)
-is now implemented in its worktree. A bounded two-order test produced a useful
+was implemented in its worktree. A bounded two-order test produced a useful
 Piano branch but exposed contradictory Diet judgments and order-dependent
-retrieval. Mechanical savings are being checked against the saved construction;
-they do not establish semantic quality or complete-hierarchy scalability.
-The [single-pair relationship-prompt effort](../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/README.md)
-exhausted its earlier iteration allowance without meeting acceptance. A newly
-authorized comparison process is preparing simpler variants. No prompt or
-production construction method is selected by these results.
+retrieval. That evidence does not establish semantic quality or
+complete-hierarchy scalability. The earlier
+[single-pair relationship-prompt effort](../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/README.md)
+exhausted its iteration allowance without meeting acceptance. Neither result
+selects the current prompt or production construction method.
 
 The earlier [vector-space 100-note builds](../../../oracle-mvp-vector-hierarchy-v1/sse_multivector/vector-hierarchy-ten-hour-goal.md#result-and-review)
-remain unsatisfactory historical evidence. The [current vector comparison](../../../oracle-mvp-vector-hierarchy-planning-v1/sse_multivector/vector-hierarchy-experiments.md)
-uses ASv6.100 subjects; ASv6.48 is deprecated for new work in that investigation.
-Subject vectors are prepared for the 1,000 training and 100 validation posts;
-the 200 final-test posts remain reserved. Boxes, hyperbolic disks and a direct
-classifier are being prepared against shared relationship supervision.
-Relationship-label collection is underway; model fitting has not started.
-No masks or accepted complete browsing hierarchy are supplied by that preparation.
+remain unsatisfactory historical evidence. ASv6.48 is deprecated for new work
+in the current vector investigation. Its prepared subject vectors and later
+relationship-model fits are separate from the 213-note browsing prototype;
+neither establishes accepted complete-hierarchy quality. The pilot's 200
+final-test posts remain reserved for their agreed evaluation.
 
 The user designated [ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/README.md)
 as the current SOTA subject prompt and baseline for future comparisons on
@@ -98,11 +128,19 @@ October 4, following the [completed diverse-input assessment](../../sse_multivec
 Measured omissions, incorrect relationships and uncertainties remain; the
 designation is not production adoption or whole-hierarchy acceptance.
 The full prompt is separately frozen for the distillation pilot, whose 1,300
-teacher labels are collected and structurally verified. GPU pilot training has
-not started; runtime preparation, hardware checks and local semantic evaluation
-remain. The pilot-specific teacher decision does not select the release teachers.
-The useful 100-note hierarchy acceptance gate, tracks, dependencies, broader
-generation hold and production choices remain unchanged.
+teacher labels are collected and structurally verified. All three students
+have now completed training through 1,000 notes. Qwen's response collection
+is complete; dense Gemma and Gemma MoE are still collecting evaluation
+responses, according to the October 8 progress observation. The
+[DSRv1 reviewer](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence)
+failed qualification; bulk semantic review has not run and no student is
+selected. Output collection is not semantic acceptance. The
+[pilot process](fine-tuning-pilot-process.md) records the evaluation safeguards.
+Task 05 is complete and 06 is in progress. The October 4 pilot-specific teacher
+approval makes 17 → 05 helpful rather than required; release teacher selection
+and the full-training-data gates remain unchanged. The useful 100-note
+acceptance gate, release tracks, broader generation hold and production choices
+remain unchanged.
 
 **Broader-corpus generation hold — October 1:** the user is undertaking prompt
 stress-testing and has put generation of the additional notes on hold until that
@@ -163,7 +201,7 @@ the replacement posts or hierarchies is claimed. Corrected source preparation
 is saved; 300/400/500-note hierarchies have not been built. Generation holds,
 open prompt/build choices and validation gates remain unchanged.
 
-**Current task 02 status (October 5):** user browsing acceptance remains open.
+**Current task 02 status (October 8):** user browsing acceptance remains open.
 Frontier-based and vector-space construction are both under investigation, with
 separate results recorded above. ASv6.100 is the approved subject baseline,
 not proof of a correct global hierarchy. Relationship consistency and
@@ -480,12 +518,13 @@ still being developed; whether teachers or the distilled model need prominence
 or other additional outputs is undecided. Existing prominence experiments and
 frozen informal-pilot settings are unchanged; no production method is adopted.
 Both tasks are now paused as nice-to-have work. The user clarified that the
-deferral applies to node sorting, not just prominence. Establishing a useful
-automated hierarchy and completing the SP pilot take priority; that pilot
-informs all future fine-tuning decisions. SHR fine-tuning depends on validation
-in a generated hierarchy. Sorting no longer gates hierarchy validation, teacher
-selection, pilot training data or release. Retain 04 → 27 within the optional
-effort, change 27 → 03 to helpful, and remove 04 → 05 and 04 → 17. The saved
+deferral applies to node sorting, not just prominence. The proposed ordering
+of hierarchy work and the SP pilot was subsequently clarified as tentative,
+not a fixed ranking. The pilot informs later fine-tuning; SHR fine-tuning still
+depends on validation in a generated hierarchy. Sorting no longer gates hierarchy
+validation, teacher selection, pilot training data or release. Retain 04 → 27
+within the optional effort, change 27 → 03 to helpful, and remove 04 → 05 and
+04 → 17. The saved
 candidate and review evidence remain intact; when to resume sorting is open.
 The user labels GPT-6.1 Sol low as the provisional favorite for SP
 (subject generation), and GPT-6.1 Sol medium as the provisional favorite for
@@ -1832,8 +1871,10 @@ hierarchy and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
 advantage. The larger pilot's numeric recipe, full ASv6.100, splits and
 collection settings are frozen. Two-GPU launch spending is approved up to $285;
-actual hardware measurements and local semantic review remain pending. The informal subject/mask settings and $25 approval above
-apply only to the completed preliminary experiment.
+actual hardware measurements and local semantic review were pending at that
+checkpoint. Current training and evaluation status is recorded above. The
+informal subject/mask settings and $25 approval above apply only to the completed
+preliminary experiment.
 
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 already identifies Muse. A later [12-note diagnostic](../../sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
@@ -1844,8 +1885,11 @@ equivalence to Astra. Its subject-only cost is not a complete labeling estimate.
 Selecting the teachers and successfully completing the 500-note / 5-topic
 hierarchy validation are both prerequisites for starting full training-data
 generation (07). A finished but unsuccessful run does not clear this gate.
-For the larger pilot, the same teachers must write both the pilot training data
-(05) and the full training data (07), as the user directed on September 21, 2026.
+The September 21 direction to use the same teachers for pilot and full training
+data was subsequently narrowed by the October 4 subjects-only pilot approval:
+its label teacher is settled independently, without selecting release teachers.
+Pilot data (05) is complete; general teacher selection no longer gates it.
+The full training-data (07) teacher and successful-500-note requirements remain.
 The informal start above may reuse existing annotations before selection. Work that
 consumes no labels, such as 18's training-code preparation, may use any data and
 need not wait for the teacher selection.
