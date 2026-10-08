@@ -1320,8 +1320,10 @@ rethink the approach. The subsequent authorized offline implementation adds
 source-bound preparation, complete report validation, scoring and qualification
 checks in the shared workflow. All 29 cases are prepared without inference;
 an authored Q17 fixture demonstrates missing-branch scoring. The user requested
-this preview before calls. Actual qualification and pilot grading have not run;
-no teacher audit or test unsealing is authorized.
+this preview before calls, then authorized qualification on October 8. Initial
+HTTP 400 request rejections produced no reports; a corrected provider schema
+retains application duplicate checks. Qualification has not passed, and bulk
+pilot grading has not run; no teacher audit or test unsealing is authorized.
 
 ### Required pilot measurements
 

@@ -849,6 +849,16 @@ new cases test completion and mechanical consistency without invented gold
 scores; existing known-result controls test semantic behavior. Sol / xhigh
 capability remains untested, and the requested preview still precedes calls.
 
+**DSRv1 qualification authorized October 8:** after the prepared preview and
+largest-generation selection, the user directed proceeding with Sol / xhigh
+qualification on the 29-case set. The initial attempt preserved 29 HTTP 400
+rejection receipts and produced no review text. A separately frozen experiment
+removes unsupported `uniqueItems` from the provider schema while production
+validation still rejects duplicate references. DSRv1's rendered inputs, semantic
+method, model and reasoning effort are unchanged. This request repair is not a
+semantic reviewer failure. Qualification has not passed; bulk grading, teacher
+auditing, test unsealing and a different model remain outside this authorization.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

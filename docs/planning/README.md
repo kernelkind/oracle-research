@@ -15,8 +15,9 @@ subject hierarchies on the same held-out validation notes. Thinking stays off
 throughout preparation, training, baselines, checkpoints and the final test.
 Semantic review happens outside the GPU rental. The agreed reviewer is
 GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
-drafts its prompt, report format and qualification cases. Qualification and
-bulk semantic review have not run. Source preparation, report checks and scoring
+drafts its prompt, report format and qualification cases. Qualification requests
+started October 8; the reviewer has not passed, and bulk review has not run.
+Source preparation, report checks and scoring
 are implemented offline; DSRv1 includes a concrete preview before model calls.
 Its 29 cases include eight large training hierarchies selected by entry count
 and answer length from the 1,300 saved ASv6.100 generations.

@@ -866,7 +866,9 @@ production preparation and decoding functions:
   supplies all exact subject matches. Expected answers remain outside the prompt.
   The report validator checks complete subject/link verdicts, teacher partitions,
   fixed requirement flags and known references before calculating correctness
-  and coverage. `show --json` includes qualification checks after saved results.
+  and coverage. Duplicate coverage references are checked in application code;
+  the provider response schema omits unsupported `uniqueItems`.
+  `show --json` includes qualification checks after saved results.
   `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
   offline, optionally saving it with `--output FILE`. It does not create a model

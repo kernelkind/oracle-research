@@ -130,6 +130,11 @@ class DistillationReviewTests(unittest.TestCase):
         bad = copy.deepcopy(report); bad["coverage"][0]["student_numbers"] = []; changes.append(bad)
         bad = copy.deepcopy(report); bad["coverage"][0]["student_numbers"] = ["99"]; changes.append(bad)
         bad = copy.deepcopy(report); bad["coverage"][0]["compatible_heading_numbers"] = ["1"]; changes.append(bad)
+        for field in ("teacher_numbers", "student_numbers", "compatible_heading_numbers"):
+            bad = copy.deepcopy(report)
+            row = next(row for row in bad["coverage"] if row[field])
+            row[field].append(row[field][0])
+            changes.append(bad)
         for bad in changes:
             with self.subTest(report=bad), self.assertRaises(ValueError):
                 self.validate(case, bad)
@@ -365,6 +370,9 @@ class DistillationReviewTests(unittest.TestCase):
             self.assertNotIn('"expected"', shown["prompt"])
             plan = json.loads((root / "prepared/experiment.json").read_text())["plan"]
             self.assertIn("distillation_review.py", plan["code"])
+            # OpenAI's structured-output array constraints support min/maxItems,
+            # not uniqueItems. The production validator checks uniqueness.
+            self.assertNotIn('"uniqueItems"', json.dumps(plan["runner"]["output_schema"]))
             _, fixture = cumin_case()
             (root / "fixture.json").write_text(json.dumps(fixture))
             scored = json.loads(cli("score-review", "prepared", "--case", "Q17", "--report", "fixture.json"))

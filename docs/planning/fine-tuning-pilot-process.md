@@ -382,8 +382,11 @@ training notes: the union of the top five by entry count and canonical answer
 length. They include the overall maxima of 145 entries and 35,966 answer bytes;
 final-test labels contribute aggregate sizes only. Complete stress reports
 establish completion, while known-result controls test semantic behavior.
-Actual reviewer reliability remains unestablished;
-the user requested seeing the preview before model calls.
+Actual reviewer reliability remains unestablished. After seeing the preview,
+the user authorized qualification calls October 8. Initial requests were rejected
+with HTTP 400 and no generated reports; the request schema was corrected while
+retaining application duplicate checks. Qualification continues with the same
+prompt, model and xhigh setting; bulk grading and test unsealing remain separate.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

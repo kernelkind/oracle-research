@@ -1,7 +1,8 @@
 # DSRv1 — distillation semantic review specification
 
-Status: **draft**, prepared October 7, 2026; no qualification calls or pilot
-semantic reviews have run. The agreed process and selected reviewer are recorded
+Status: **draft**, prepared October 7, 2026; qualification requests started
+October 8. The reviewer has not passed qualification; bulk pilot semantic
+review has not run. The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package specifies [DSRv1](prompt.md), its [report schema](response-schema.json),
 and qualification cases. Offline source preparation, report validation, scoring
@@ -97,6 +98,19 @@ definitions, not generated teacher or student batches.
 [qualification-spec.json](qualification-spec.json) pins DSRv1, its schema,
 GPT-6.1 Sol / xhigh, sequential calls and a one-hour overall request deadline.
 That deadline is an allowance, not measured completion time or reliability.
+The provider schema uses OpenAI's supported structured-output subset. Duplicate
+teacher numbers, matches and compatible headings are rejected by the application
+validator, rather than the unsupported `uniqueItems` provider constraint.
+
+**October 8 request compatibility:** the initial `stress-preview` run preserved
+29 HTTP 400 rejection receipts with no generated review text. The request schema
+contained `uniqueItems`, outside the documented supported array constraints.
+Remove that keyword while retaining all duplicate checks in production code;
+the request-schema regression and duplicate-reference checks pass. A separately
+frozen experiment, `qualification-compatible-schema-20261008`, uses the same
+29 inputs, DSRv1 prompt, model and xhigh setting with the corrected schema. The
+old failed receipts remain intact. Qualification capability remains unresolved.
+See [OpenAI's schema subset](https://developers.openai.com/api/docs/guides/structured-outputs).
 
 Prepare through the supported workflow, without credentials or inference:
 
@@ -278,8 +292,8 @@ python3 sse_multivector/experiment.py show \
 Q23–Q29 have no invented gold scores or semantic labels: they test completion
 and mechanical report consistency at observed size limits. The trusted worked
 examples and deliberate Q21/Q22 changes test known semantic behavior. A complete
-stress report alone does not establish semantic accuracy. No stress model calls
-have run. These saved teacher maxima also do not bound future student outputs;
+stress report alone does not establish semantic accuracy. Qualification requests
+started October 8. These saved teacher maxima do not bound future student outputs;
 larger collected answers require corresponding qualification before bulk review.
 
 ### Mechanical refusal cases
@@ -312,6 +326,6 @@ and complete-meaning-plus-all-placements coverage are AS-specific adaptations.
 checking contextual judges against labeled cases and controlled perturbations.
 [Paired NLP evaluation guidance](https://aclanthology.org/P18-1128/) supports
 paired comparisons and cautions about dependent examples, small samples and
-multiple comparisons. Actual qualification, bulk pilot grading and test
-unsealing have not been performed. The user authorized offline implementation
-and a concrete preview before any model calls.
+multiple comparisons. Qualification requests started October 8 after the user
+approved proceeding from the prepared preview; bulk pilot grading and test
+unsealing have not been performed.
