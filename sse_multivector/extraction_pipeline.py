@@ -95,6 +95,10 @@ class RunnerError(Exception):
     """A user-actionable wrapper failure."""
 
 
+class ExperimentAdmissionUnavailable(RunnerError):
+    """Admission failed locally before a model request could be sent."""
+
+
 class NewJobLimitReached(Exception):
     """The caller-requested limit on newly spawned model jobs was reached."""
 
@@ -1966,6 +1970,7 @@ def _invoke_prompt_worker(config, argv, request, directory):
                    'ORACLE_EXPERIMENT_PYTHON': sys.executable,
                    'ORACLE_EXPERIMENT_ADMISSION_MARKER': marker}
     waiting_line, admitted_line = (marker + ':waiting\n').encode(), (marker + ':admitted\n').encode()
+    unavailable_line = marker + ':unavailable\n'
     deadline = time.monotonic() + config.timeout_seconds + 30
     admitted = False
     data = _ordered_json_bytes(request).decode('utf-8')
@@ -1996,6 +2001,9 @@ def _invoke_prompt_worker(config, argv, request, directory):
                 except subprocess.TimeoutExpired:
                     child.kill()
                     child.communicate()
+    if unavailable_line in stderr.splitlines(keepends=True):
+        raise ExperimentAdmissionUnavailable(
+            'Experiment admission unavailable; restore the local scope/status service and admission state before running')
     stderr = ''.join(line for line in stderr.splitlines(keepends=True)
                      if line not in {waiting_line.decode(), admitted_line.decode()})
     return subprocess.CompletedProcess(argv, child.returncode, stdout, stderr)
@@ -2055,6 +2063,10 @@ def _invoke_model(
         if result is None:
             raise RunnerError("model runner returned no result")
         _validate_model_result(config, stage, prompt, schema, identity, result)
+    except ExperimentAdmissionUnavailable:
+        # Stop scheduling without saving an unadmitted case as a provider failure.
+        # Its existing worker reservation remains conservatively consumed.
+        raise
     except (
         OSError,
         UnicodeError,

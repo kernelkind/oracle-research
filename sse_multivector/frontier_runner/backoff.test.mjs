@@ -8,6 +8,46 @@ import test from 'node:test';
 import { execute, prepare } from './model.mjs';
 import { experimentAdmission } from './backoff.mjs';
 
+test('unavailable or invalid scope discovery stops before model dispatch', async t => {
+  const home = await mkdtemp(join(tmpdir(), 'oracle-backoff-scopes-'));
+  const previous = process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY;
+  t.after(async () => {
+    if (previous === undefined) delete process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY;
+    else process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY = previous;
+    await rm(home, { recursive: true, force: true });
+  });
+  const apiKey = 'test.' + Buffer.from(JSON.stringify({
+    'https://api.openai.com/auth': { chatgpt_account_id: 'fixture-account' },
+  })).toString('base64url') + '.local';
+  const request = await prepare({ provider: 'openai-codex', model: 'gpt-6.1-sol',
+    reasoning: 'medium', prompt: 'answer', timeout_seconds: 1 });
+  request.model = { ...request.model, baseUrl: 'http://127.0.0.1:9876/fixture/pi' };
+  const valid = { schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' };
+  const cases = [
+    () => { throw new TypeError('local lookup unavailable'); },
+    () => new Response('', { status: 404 }),
+    () => new Response('', { status: 503 }),
+    () => new Response('{malformed'),
+    () => new Response(JSON.stringify({ ...valid, schema: 2 })),
+    () => new Response(JSON.stringify({ ...valid, account_scope: undefined })),
+    () => new Response(JSON.stringify({ ...valid, transport_scope: 'invalid scope' })),
+  ];
+  let posts = 0;
+  for (let index = 0; index < cases.length; index++) {
+    process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY = join(home, String(index));
+    await assert.rejects(execute(request, { apiKey, experimentConcurrency: 2,
+      fetch: async (url, init) => {
+        if (init.method === 'GET') {
+          assert.equal(new URL(url).pathname, '/request-status/scopes');
+          return cases[index]();
+        }
+        posts++;
+        throw new Error('fixture model request must not be admitted');
+      } }), /Experiment account\/transport scopes unavailable/);
+  }
+  assert.equal(posts, 0, 'failed discovery bypassed admission through fallback scopes');
+});
+
 test('status lookup rejects a mismatched reference or schema and ignores upgrade status', async t => {
   const home = await mkdtemp(join(tmpdir(), 'oracle-backoff-status-contract-'));
   const previous = process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY;
@@ -29,7 +69,7 @@ test('status lookup rejects a mismatched reference or schema and ignores upgrade
     const result = await execute(request, { apiKey, experimentConcurrency: 2,
       fetch: async (url, init) => {
         if (url.includes('/request-status/scopes?')) return new Response(JSON.stringify({
-          account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+          schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
         if (init.method === 'GET') return new Response(JSON.stringify({ schema: 1, request_id: reference,
           state: 'unknown', error_phase: 'body', request_context: 'active',
           read_error_kind: 'http2_goaway', read_error_code: 'enhance_your_calm', ...changes }));
@@ -46,7 +86,7 @@ test('status lookup rejects a mismatched reference or schema and ignores upgrade
   const admission = await experimentAdmission(request, { apiKey, concurrency: 2,
     fetch: async url => {
       if (url.includes('/request-status/scopes?')) return new Response(JSON.stringify({
-        account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+        schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
       statusReads++;
       return new Response(JSON.stringify({ schema: 1, request_id: reference, state: 'complete',
         http_status: 101, terminal_event: 'completed' }));
@@ -81,7 +121,7 @@ test('large transport diagnostics cannot overflow the shared failure report', as
   const result = await execute(request, { apiKey, experimentConcurrency: 2,
     fetch: async (_url, init) => {
       if (init.method === 'GET') return new Response(JSON.stringify({
-        account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+        schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
       throw large(2);
     } });
   assert.equal(result.valid, false);
@@ -112,7 +152,7 @@ test('experiment execution retrieves an upstream GOAWAY and shares admission bef
     request.resume();
     if (request.url.startsWith('/request-status/scopes?')) {
       response.setHeader('Content-Type', 'application/json');
-      response.end(JSON.stringify({ account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+      response.end(JSON.stringify({ schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
       return;
     }
     if (request.url === `/request-status/${reference}`) {
@@ -178,13 +218,16 @@ test('two native experiments share recovery and preserve the persistent attempt 
     { mode: 0o700 });
   const starts = [], statuses = new Map(), firstResponses = [];
   let closedAt = 0, firstRecoveryFinished = 0;
+  let scopesAvailable = true, scopeReads = 0;
   const frame = event => `data: ${JSON.stringify(event)}\n\n`;
   const server = createServer((request, response) => {
     assert.equal(request.headers.authorization, `Bearer ${key}`);
     request.resume();
     response.setHeader('Content-Type', 'application/json');
     if (request.url.startsWith('/request-status/scopes?')) {
-      response.end(JSON.stringify({ account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+      scopeReads++;
+      if (!scopesAvailable) { response.writeHead(503); response.end('{}'); return; }
+      response.end(JSON.stringify({ schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
       return;
     }
     if (request.url.startsWith('/request-status/')) {
@@ -273,4 +316,27 @@ test('two native experiments share recovery and preserve the persistent attempt 
   assert.equal(recovery.length, 1, 'separate experiments resumed concurrently before the first recovery succeeded');
   await cli(['run', experiments[0], '--max-new-attempts', '5', '--attempt-budget', budget]);
   assert.equal(starts.length, 8, 'resume ignored saved completion or the lifetime cap');
+  // Admission infrastructure failure stops the batch before later cases launch.
+  const unavailableCases = join(home, 'cases-unavailable.json');
+  const unavailableSpec = join(home, 'spec-unavailable.json');
+  const unavailableExperiment = join(home, 'unavailable');
+  const unavailableBudget = join(home, 'unavailable-budget.json');
+  await writeFile(unavailableCases, JSON.stringify({ cases: [0, 1, 2].map(i => ({
+    id: `unavailable-${i}`, inputs: { VALUE: `unavailable-${i}` } })) }));
+  const inherited = JSON.parse(await readFile(join(home, 'spec-one.json'), 'utf8'));
+  inherited.dataset.path = unavailableCases;
+  inherited.runner.concurrency = 1;
+  await writeFile(unavailableSpec, JSON.stringify(inherited));
+  await writeFile(unavailableBudget, JSON.stringify({ schema_version: 1, limit: 2, used: 0 }));
+  await cli(['prepare', unavailableExperiment, '--spec', unavailableSpec, '--history-root', home]);
+  scopesAvailable = false;
+  const readsBefore = scopeReads;
+  await cli(['run', unavailableExperiment, '--max-new-attempts', '2', '--attempt-budget', unavailableBudget], 1);
+  assert.equal(starts.length, 8, 'scope outage sent a model request');
+  assert.equal(scopeReads - readsBefore, 1, 'scope outage launched another untouched case');
+  const report = JSON.parse(await readFile(join(unavailableExperiment, 'report.json'), 'utf8'));
+  assert.equal(report.summary.unrun, 3, 'an unadmitted case was saved as a terminal provider failure');
+  assert.equal(report.summary.failed, 0);
+  // Keep the one existing conservative worker reservation; never refund/reset.
+  assert.equal(JSON.parse(await readFile(unavailableBudget, 'utf8')).used, 1);
 });

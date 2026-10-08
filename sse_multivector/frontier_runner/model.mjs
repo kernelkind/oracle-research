@@ -468,7 +468,8 @@ async function executeDecisions(request, { apiKey, fetch, signal }) {
   try {
     const response = await fetch(url, init);
     metadata.http_status = response.status;
-    for (const [header, key] of [['retry-after', 'retry_after'], ['x-request-id', 'request_id']]) {
+    for (const [header, key] of [['retry-after', 'retry_after'], ['x-request-id', 'request_id'],
+      ['x-agent-request-id', 'proxy_request_id']]) {
       if (response.headers.has(header)) metadata[key] = response.headers.get(header);
     }
     phase = 'body';

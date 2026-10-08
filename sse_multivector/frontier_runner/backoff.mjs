@@ -6,6 +6,12 @@ import { fileURLToPath } from 'node:url';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const helper = fileURLToPath(new URL('../provider_backoff.py', import.meta.url));
 
+function unavailable(message) {
+  const marker = process.env.ORACLE_EXPERIMENT_ADMISSION_MARKER;
+  if (marker) process.stderr.write(`${marker}:unavailable\n`);
+  return new Error(message);
+}
+
 function serviceRoute(request) {
   const url = new URL(request.model.baseUrl);
   if (url.protocol !== 'http:' || !['127.0.0.1', '[::1]'].includes(url.hostname)
@@ -16,7 +22,7 @@ function serviceRoute(request) {
   const openrouter = /^\/openrouter\/api\/v1\/?$/.test(url.pathname);
   if (!subscription && !openrouter) throw new Error('Invalid experiment credential service route');
   return { origin: url.origin, account: subscription?.[1] ?? 'openrouter',
-    client: subscription ? 'pi' : 'api', provider: request.model.provider };
+    client: subscription ? 'pi' : 'api' };
 }
 
 async function localJSON(fetch, url, apiKey, signal) {
@@ -139,17 +145,23 @@ export async function experimentAdmission(request, { apiKey, fetch, signal, conc
   let prepared = null;
   try { prepared = await localJSON(fetch, url.href, apiKey, signal); }
   catch { signal?.throwIfAborted(); }
-  const scope = (name, fallback) => {
-    const value = prepared?.[name];
-    return hash(`${route.origin}\0${typeof value === 'string' && /^[A-Za-z0-9_-]{8,128}$/.test(value) ? value : fallback}`);
-  };
-  const scopes = { account: scope('account_scope', `${route.provider}\0${route.account}`),
-    transport: scope('transport_scope', route.provider) };
+  if (prepared?.schema !== 1 || ['account_scope', 'transport_scope'].some(name =>
+    typeof prepared[name] !== 'string' || !/^[A-Za-z0-9_-]{8,128}$/.test(prepared[name]))) {
+    throw unavailable('Experiment account/transport scopes unavailable');
+  }
+  const scopes = { account: hash(`${route.origin}\0${prepared.account_scope}`),
+    transport: hash(`${route.origin}\0${prepared.transport_scope}`) };
   const marker = process.env.ORACLE_EXPERIMENT_ADMISSION_MARKER;
   if (marker) process.stderr.write(`${marker}:waiting\n`);
   const started = performance.now();
-  const admitted = await transact({ action: 'acquire', scopes, concurrency,
-    timeout_seconds: request.timeout_seconds, owner_pid: process.pid }, signal);
+  let admitted;
+  try {
+    admitted = await transact({ action: 'acquire', scopes, concurrency,
+      timeout_seconds: request.timeout_seconds, owner_pid: process.pid }, signal);
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    throw unavailable('Experiment admission state unavailable');
+  }
   if (marker) process.stderr.write(`${marker}:admitted\n`);
   return {
     wait_ms: Math.round(performance.now() - started),

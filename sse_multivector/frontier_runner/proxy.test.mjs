@@ -127,7 +127,7 @@ test('ordinary subscription commands observe headerless SSE through the selected
       assert.equal(request.headers.authorization, `Bearer ${key}`);
       scopeReads++;
       response.setHeader('Content-Type', 'application/json');
-      response.end(JSON.stringify({ account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+      response.end(JSON.stringify({ schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
       return;
     }
     requests.push({ url: request.url, authorization: request.headers.authorization });

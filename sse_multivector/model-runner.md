@@ -608,11 +608,16 @@ select a private state directory for an isolated local fixture.
 
 The worker's scope/status reads use the existing local capability and only the
 configured loopback credential service. They perform no upstream requests. A
-missing status leaves the cause unknown; a service without scope discovery uses
-hashed local route scopes until upgraded, which cannot unify different aliases
-for the same account. Request-status storage is independent of the usage-history
-retention limit. Proxy deployment and runner adoption are separate operations;
-existing frozen workers/receipts are not silently upgraded.
+missing post-request status leaves the cause unknown. Before dispatch, scope
+discovery requires schema 1 and both valid opaque account/transport identifiers.
+Unavailable or invalid discovery, or unavailable admission state, stops new
+scheduling without marking unsent cases as terminal provider failures. Existing
+worker reservations remain consumed; waits/errors do not refund/reset budgets.
+There is no route-identifier fallback that could bypass an opaque scope's wait.
+The scope endpoint is a prerequisite for adopting this native experiment worker.
+Request-status storage is independent of usage-history retention. Proxy deployment
+and runner adoption are separate operations; existing frozen workers/receipts are
+not silently upgraded.
 
 Provider authentication, credit/permission or endpoint errors (401, 402, 403,
 404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
