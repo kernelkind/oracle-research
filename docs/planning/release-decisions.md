@@ -835,7 +835,7 @@ It checks known qualification findings and consistent teacher groups across
 versions, including controlled changes to the large hierarchy. An authored Q17
 report demonstrates `9/9` correctness and `1/2` coverage when the Cumin branch
 copy is absent. This supplied fixture creates no model receipt or qualification
-evidence. Actual model qualification and bulk pilot grading have not run.
+evidence. At that checkpoint, actual qualification and bulk grading had not run.
 
 **Largest-generation stress preparation authorized October 7:** the user
 requested the largest saved generations from the 1,300-note ASv6.100 data as
@@ -846,8 +846,8 @@ length contains eight notes, including the overall maxima of 145 entries and
 unchanged hierarchies, taking DSRv1 to 29 cases. Held-out labels contribute
 aggregate sizes only; no final-test content enters development inputs. The
 new cases test completion and mechanical consistency without invented gold
-scores; existing known-result controls test semantic behavior. Sol / xhigh
-capability remains untested, and the requested preview still precedes calls.
+scores; existing known-result controls test semantic behavior. At that checkpoint,
+Sol / xhigh capability was untested and the requested preview still preceded calls.
 
 **DSRv1 qualification authorized October 8:** after the prepared preview and
 largest-generation selection, the user directed proceeding with Sol / xhigh
@@ -856,8 +856,14 @@ rejection receipts and produced no review text. A separately frozen experiment
 removes unsupported `uniqueItems` from the provider schema while production
 validation still rejects duplicate references. DSRv1's rendered inputs, semantic
 method, model and reasoning effort are unchanged. This request repair is not a
-semantic reviewer failure. Qualification has not passed; bulk grading, teacher
-auditing, test unsealing and a different model remain outside this authorization.
+semantic reviewer failure. Corrected requests subsequently generated complete
+large reports, but qualification failed: Q04 disagrees with a trusted unchanged
+worked example, and Q21/Q22 change unrelated requirement flags and placement
+judgments across variants; Q21 also changes an untouched link verdict.
+Q23 preserves a transport-interrupted, ungraded report near fifteen minutes.
+Remaining stress calls continue. See the [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence).
+Bulk grading, teacher auditing, test unsealing, process revisions and a different
+model remain outside this authorization.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

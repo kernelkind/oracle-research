@@ -1322,8 +1322,13 @@ checks in the shared workflow. All 29 cases are prepared without inference;
 an authored Q17 fixture demonstrates missing-branch scoring. The user requested
 this preview before calls, then authorized qualification on October 8. Initial
 HTTP 400 request rejections produced no reports; a corrected provider schema
-retains application duplicate checks. Qualification has not passed, and bulk
-pilot grading has not run; no teacher audit or test unsealing is authorized.
+retains application duplicate checks. Corrected requests produce complete large
+reports, but qualification fails known semantic and cross-version checks:
+Q04 penalizes a trusted unchanged example, and Q21/Q22 change unrelated judgments.
+Q23's stream ends with an unfinished, ungraded report near fifteen minutes;
+remaining stress calls continue. See the [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
+Bulk grading remains unqualified; process revisions, teacher auditing and test
+unsealing are not authorized by this trial.
 
 ### Required pilot measurements
 

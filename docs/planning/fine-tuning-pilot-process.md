@@ -382,11 +382,18 @@ training notes: the union of the top five by entry count and canonical answer
 length. They include the overall maxima of 145 entries and 35,966 answer bytes;
 final-test labels contribute aggregate sizes only. Complete stress reports
 establish completion, while known-result controls test semantic behavior.
-Actual reviewer reliability remains unestablished. After seeing the preview,
+After seeing the preview,
 the user authorized qualification calls October 8. Initial requests were rejected
 with HTTP 400 and no generated reports; the request schema was corrected while
-retaining application duplicate checks. Qualification continues with the same
-prompt, model and xhigh setting; bulk grading and test unsealing remain separate.
+retaining application duplicate checks. The corrected requests produce complete
+large reports, but qualification has failed: Q04 penalizes a trusted unchanged
+example, and Q21/Q22 change unrelated judgments across controlled variants.
+Q23's stream closes with an unfinished report near fifteen minutes; this is
+an ungraded transport failure, not evidence of a model output limit.
+Remaining stress calls continue with the same prompt, model and xhigh setting.
+The [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence)
+records the findings. Bulk grading remains unqualified; process revisions and
+test unsealing require separate authorization.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

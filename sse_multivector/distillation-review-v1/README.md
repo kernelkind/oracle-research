@@ -1,8 +1,8 @@
 # DSRv1 — distillation semantic review specification
 
-Status: **draft**, prepared October 7, 2026; qualification requests started
-October 8. The reviewer has not passed qualification; bulk pilot semantic
-review has not run. The agreed process and selected reviewer are recorded
+Status: **draft; qualification failed**, October 8, 2026. Remaining largest-input
+requests are still running. Bulk pilot semantic review has not run.
+The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package specifies [DSRv1](prompt.md), its [report schema](response-schema.json),
 and qualification cases. Offline source preparation, report validation, scoring
@@ -15,8 +15,9 @@ Use exactly `openai-codex` / `gpt-6.1-sol` / `xhigh` through the existing
 subscription transport. The user selected this as the reviewer: if it cannot
 perform the review reliably, rethink the approach before bulk review. There is
 no model substitution or paid API fallback. The setting is supported by
-[official OpenAI documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol);
-availability and task performance still require actual qualification.
+[official OpenAI documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol).
+The current qualification has completed real calls but failed known semantic
+and consistency checks; see the evidence below.
 
 Render the template through the existing `experiment_inputs.render` contract:
 
@@ -109,8 +110,55 @@ Remove that keyword while retaining all duplicate checks in production code;
 the request-schema regression and duplicate-reference checks pass. A separately
 frozen experiment, `qualification-compatible-schema-20261008`, uses the same
 29 inputs, DSRv1 prompt, model and xhigh setting with the corrected schema. The
-old failed receipts remain intact. Qualification capability remains unresolved.
+old failed receipts remain intact. The corrected requests generate reports;
+their semantic qualification result is recorded below.
 See [OpenAI's schema subset](https://developers.openai.com/api/docs/guides/structured-outputs).
+
+### October 8 qualification evidence
+
+The saved experiment is
+`target/distillation-review-v1/qualification-compatible-schema-20261008`.
+Its native receipts and `show --json` preserve complete inputs, generated reports,
+validation, scores, known expectations and cross-version checks. Qualification
+has **failed** while the remaining stress requests continue. This is evidence
+about the current DSRv1 process with Sol / xhigh, not a teacher audit or approval
+to change the process or reviewer.
+
+- **Q04, trusted unchanged worked example:** all eight subjects and four links
+  are valid, but coverage is `1/2` instead of the known `2/2`. The reviewer
+  requires another Profile URLs occurrence beneath Identifiers, producing a
+  missing-placement penalty on the trusted example. Preserve the disagreement
+  for resolution under the accepted ASv6.100 standard.
+- **Q21, faithful full-size rewording:** all 145 subjects, 130 links and 66
+  teacher groups are reported. The two changed strings remain full matches,
+  but thirteen untouched groups change from optional to required, moving the
+  coverage denominator from 44 to 57. Compatible headings change for fifteen
+  groups, including two with unchanged requirement flags. The untouched
+  `4.2` → `4.2.1` link also changes from valid to invalid. Q21 takes 849.8 seconds;
+  its targeted checks pass while the full cross-version checks fail.
+- **Q22, remove one duplicate leaf:** all 144 remaining subjects, 129 links
+  and 66 teacher groups are reported. The intended absent placements beneath
+  `1` and `1.1` are found; remaining subject and link verdicts stay equivalent
+  to Q20. Nevertheless, thirteen requirement flags and compatible-heading
+  lists for twenty-four groups differ from Q20 after accounting for the deleted
+  occurrence. It takes 899.1 seconds and fails the cross-version checks.
+- Q20 returns all 145 subject verdicts, 130 link verdicts and 66 groups in
+  875.1 seconds. Q24 returns all 137 subjects, 101 links and 72 groups in
+  869.6 seconds. These establish complete reports at those sizes, not correctness
+  of every unlabeled judgment.
+- **Q23, interrupted stream:** HTTP 200 is followed by a body transport error,
+  `UND_ERR_SOCKET` / `other side closed`, after about 900 seconds. The saved
+  46,108-byte report ends inside a coverage row and is ungraded. The local
+  one-hour deadline has not expired; no provider output-limit stop is recorded.
+  Final token usage is unavailable, so receipt placeholders must not be treated
+  as measured zero usage. The failed request is not retried.
+
+The cross-version controls initially supply `teacher_meanings: null` to test
+classification consistency. Freezing accepted groups remains the agreed design,
+but the changed placement and link judgments also require resolution. The
+remaining largest-input calls assess completion; they cannot erase these known
+failures or establish semantic accuracy without labels. Bulk review remains
+unqualified. Any process revision requires a separately approved next step.
 
 Prepare through the supported workflow, without credentials or inference:
 

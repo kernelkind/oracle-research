@@ -869,6 +869,10 @@ production preparation and decoding functions:
   and coverage. Duplicate coverage references are checked in application code;
   the provider response schema omits unsupported `uniqueItems`.
   `show --json` includes qualification checks after saved results.
+  The October 8 DSRv1 trial fails known semantic and cross-version checks despite
+  complete large reports; one stream is interrupted near fifteen minutes and
+  remains ungraded. Remaining stress calls continue. See the
+  [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
   `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
   `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
   offline, optionally saving it with `--output FILE`. It does not create a model
