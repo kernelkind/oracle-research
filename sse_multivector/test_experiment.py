@@ -1931,6 +1931,30 @@ class ExperimentTests(unittest.TestCase):
                     'provider': 'openai-codex', 'stop_reason': 'error',
                     'response_metadata': metadata}}), 'provider_transient')
 
+    def test_provider_terminal_failure_requires_its_own_retry_evidence(self):
+        from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_retry_delay
+        for state in ('failed', 'incomplete'):
+            record = {'exit_code': 1, 'attempt': 1, 'model_result': {
+                'provider': 'openai-codex', 'stop_reason': 'error',
+                'response_metadata': {'http_status': 200, 'transport_error': {'phase': 'body'},
+                    'proxy_status': {'state': state, 'terminal_event': state,
+                        'error_phase': 'body', 'request_context': 'active',
+                        'read_error_kind': 'http2_goaway', 'read_error_code': 'enhance_your_calm'}}}}
+            with self.subTest(state=state):
+                self.assertEqual(prompt_failure_kind(record), 'unknown')
+                self.assertIsNone(provider_retry_delay(record))
+                record['model_result']['response_metadata']['error'] = {'code': 'server_error'}
+                self.assertEqual(prompt_failure_kind(record), 'provider_transient')
+                self.assertEqual(provider_retry_delay(record), 2)
+
+        # A local output-length failure cannot gain a retry from an unrelated
+        # socket close even if status lookup has no terminal label.
+        record['model_result']['stop_reason'] = 'length'
+        record['model_result']['response_metadata'].pop('error', None)
+        record['model_result']['response_metadata']['proxy_status'].update(state='unknown', terminal_event=None)
+        self.assertEqual(prompt_failure_kind(record), 'unknown')
+        self.assertIsNone(provider_retry_delay(record))
+
     def test_completed_proxy_stream_has_no_cooldown_even_when_client_read_failed(self):
         from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_cooldown_required
         record = {'exit_code': 1, 'model_result': {'stop_reason': 'error',

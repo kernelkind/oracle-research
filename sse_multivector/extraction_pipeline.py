@@ -3369,10 +3369,12 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
         return "provider_fatal"
     if code in (408, 429, 500, 502, 503, 504):
         return "provider_transient"
-    if (isinstance(proxy, dict) and proxy.get("state") in ("unknown", "failed", "incomplete")
+    if (result.get("stop_reason") == "error"
+            and metadata.get("terminal_event") not in ("response.failed", "response.incomplete")
+            and isinstance(proxy, dict) and proxy.get("state") == "unknown"
             and proxy.get("request_context") == "active"
             and proxy.get("error_phase") in ("headers", "body")
-            and proxy.get("terminal_event") != "completed"):
+            and not proxy.get("terminal_event")):
         kind = proxy.get("read_error_kind")
         if kind in ("unexpected_eof", "connection_reset", "connection_closed",
                     "broken_pipe", "timeout", "network_error"):

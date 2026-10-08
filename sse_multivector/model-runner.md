@@ -562,6 +562,10 @@ temporary provider failure. Generic EOF cannot. Proxy terminal labels are
 `completed/failed/incomplete`; `completed` takes precedence over read errors.
 Canceled/deadline-exceeded proxy records do not turn local failures into cooldown.
 An HTTP 101 handshake status is not per-generation WebSocket terminal evidence.
+Failed/incomplete provider terminals need their own explicit temporary provider error;
+a later socket error cannot grant that case a retry. Confirmed interrupted
+transport retries require `state=unknown`, no terminal event and SDK stop reason
+`error`; output-length/validation failures retain their existing rules.
 Each case has at most two total
 attempts across resumes, with a two-second minimum delay. `Retry-After` is
 honored; invalid values or waits above 60 seconds leave the case unresolved
