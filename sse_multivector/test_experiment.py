@@ -1884,7 +1884,7 @@ class ExperimentTests(unittest.TestCase):
         waits, starts = self.execute_with_backoff_clock({'Tea': {
             'attempts': 1,
             'metadata': {'http_status': 200, 'proxy_status': {
-                'state': 'failed', 'read_error_kind': 'http2_goaway',
+                'state': 'unknown', 'error_phase': 'body', 'read_error_kind': 'http2_goaway',
                 'read_error_code': 'enhance_your_calm', 'request_context': 'active',
             }},
         }})
@@ -1894,6 +1894,29 @@ class ExperimentTests(unittest.TestCase):
                           'GENERIC PROMPT Coffee'])
         self.assertEqual([t for _, t in starts], [1000.0, 1002.0, 1002.0])
         self.assertEqual(self.show()['summary']['valid'], 2)
+
+    def test_proxy_status_contract_requires_active_upstream_error_evidence(self):
+        from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_cooldown_required
+        evidence = {'state': 'unknown', 'error_phase': 'body', 'request_context': 'active',
+                    'read_error_kind': 'http2_goaway', 'read_error_code': 'enhance_your_calm'}
+        cases = [
+            (evidence, 'provider_transient', True),
+            ({**evidence, 'terminal_event': 'completed'}, 'local', False),
+            ({**evidence, 'error_phase': None}, 'unknown', True),
+            ({**evidence, 'state': 'in_flight'}, 'unknown', True),
+            ({**evidence, 'read_error_kind': 'other', 'read_error_code': 'other'}, 'unknown', True),
+            ({**evidence, 'state': 'canceled', 'request_context': 'canceled',
+              'read_error_kind': 'context_canceled'}, 'unknown', False),
+            ({**evidence, 'state': 'deadline_exceeded', 'request_context': 'deadline_exceeded',
+              'read_error_kind': 'deadline_exceeded'}, 'unknown', False),
+        ]
+        for proxy, kind, cooldown in cases:
+            with self.subTest(proxy=proxy):
+                record = {'exit_code': 1, 'model_result': {'provider': 'openai-codex',
+                    'stop_reason': 'error', 'response_metadata': {
+                        'http_status': 200, 'transport_error': {'phase': 'body'}, 'proxy_status': proxy}}}
+                self.assertEqual(prompt_failure_kind(record), kind)
+                self.assertEqual(provider_cooldown_required(record), cooldown)
 
     def test_explicit_stream_failures_share_provider_classification(self):
         from sse_multivector.extraction_pipeline import prompt_failure_kind

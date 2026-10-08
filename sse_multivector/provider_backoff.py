@@ -170,7 +170,7 @@ class SharedProviderBackoff:
             'connection_closed', 'broken_pipe', 'network_error'} else 'account'
         completed = (not metadata.get('abort_reason') and
             (metadata.get('terminal_event') == 'response.completed'
-             or isinstance(proxy, dict) and (proxy.get('terminal_event') == 'response.completed'
+             or isinstance(proxy, dict) and (proxy.get('terminal_event') == 'completed'
                                              or proxy.get('state') == 'complete')
              or result.get('stop_reason') == 'stop'))
         with self._state() as (state, now):

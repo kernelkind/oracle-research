@@ -3344,7 +3344,7 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
         return "local"
     proxy = metadata.get("proxy_status") or {}
     if (metadata.get("terminal_event") == "response.completed"
-            or isinstance(proxy, dict) and (proxy.get("terminal_event") == "response.completed"
+            or isinstance(proxy, dict) and (proxy.get("terminal_event") == "completed"
                                             or proxy.get("state") == "complete")):
         return "local"
     error = metadata.get("error") or {}
@@ -3357,9 +3357,10 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
         return "provider_fatal"
     if code in (408, 429, 500, 502, 503, 504):
         return "provider_transient"
-    if (isinstance(proxy, dict) and proxy.get("state") == "failed"
+    if (isinstance(proxy, dict) and proxy.get("state") in ("unknown", "failed", "incomplete")
             and proxy.get("request_context") == "active"
-            and proxy.get("terminal_event") != "response.completed"):
+            and proxy.get("error_phase") in ("headers", "body")
+            and proxy.get("terminal_event") != "completed"):
         kind = proxy.get("read_error_kind")
         if kind in ("unexpected_eof", "connection_reset", "connection_closed",
                     "broken_pipe", "timeout", "network_error"):
@@ -3402,6 +3403,10 @@ def provider_cooldown_required(record: dict[str, Any]) -> bool:
         return False
     metadata = result.get("response_metadata") or {}
     if not isinstance(metadata, dict):
+        return False
+    proxy = metadata.get("proxy_status") or {}
+    if (isinstance(proxy, dict) and proxy.get("state") in ("canceled", "deadline_exceeded")
+            and proxy.get("request_context") in ("canceled", "deadline_exceeded")):
         return False
     transport = metadata.get("transport_error") or {}
     return (isinstance(transport, dict) and transport.get("phase") in ("headers", "body")

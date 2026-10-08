@@ -107,7 +107,7 @@ class SharedProviderBackoffTests(unittest.TestCase):
         gate.report(first['ticket'], failure())
         self.assertIn('ticket', other := self.claim(gate, scopes('two')))
         gate.report(other['ticket'], failure(200, proxy={
-            'state': 'failed', 'read_error_kind': 'http2_goaway',
+            'state': 'unknown', 'error_phase': 'body', 'read_error_kind': 'http2_goaway',
             'read_error_code': 'enhance_your_calm', 'request_context': 'active'}))
         self.assertNotIn('ticket', self.claim(gate, scopes('one')))
         self.assertNotIn('ticket', self.claim(gate, scopes('two')))

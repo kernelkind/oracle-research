@@ -555,6 +555,13 @@ recognized temporary HTTP/2 error qualifies even after HTTP 200. For example,
 transport interruptions pause launches without granting the failed case a retry.
 Cancellation or read errors after `response.completed` retain successful
 completion and do not start cooldown.
+The worker requires status schema 1 and a matching `request_id`. The proxy's
+`state=unknown` describes missing terminal completion/accounting; fixed active
+upstream error evidence with `error_phase=headers/body` can still establish a
+temporary provider failure. Generic EOF cannot. Proxy terminal labels are
+`completed/failed/incomplete`; `completed` takes precedence over read errors.
+Canceled/deadline-exceeded proxy records do not turn local failures into cooldown.
+An HTTP 101 handshake status is not per-generation WebSocket terminal evidence.
 Each case has at most two total
 attempts across resumes, with a two-second minimum delay. `Retry-After` is
 honored; invalid values or waits above 60 seconds leave the case unresolved

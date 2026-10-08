@@ -6,6 +6,58 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { execute, prepare } from './model.mjs';
+import { experimentAdmission } from './backoff.mjs';
+
+test('status lookup rejects a mismatched reference or schema and ignores upgrade status', async t => {
+  const home = await mkdtemp(join(tmpdir(), 'oracle-backoff-status-contract-'));
+  const previous = process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY;
+  t.after(async () => {
+    if (previous === undefined) delete process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY;
+    else process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY = previous;
+    await rm(home, { recursive: true, force: true });
+  });
+  const apiKey = 'test.' + Buffer.from(JSON.stringify({
+    'https://api.openai.com/auth': { chatgpt_account_id: 'fixture-account' },
+  })).toString('base64url') + '.local';
+  const request = await prepare({ provider: 'openai-codex', model: 'gpt-6.1-sol',
+    reasoning: 'medium', prompt: 'answer', timeout_seconds: 1 });
+  request.model = { ...request.model, baseUrl: 'http://127.0.0.1:9876/fixture/pi' };
+  const reference = 'proxy-reference-fixture';
+  for (const [name, changes] of [['wrong-schema', { schema: 2 }],
+    ['missing-schema', { schema: undefined }], ['wrong-reference', { request_id: 'other-reference' }]]) {
+    process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY = join(home, name);
+    const result = await execute(request, { apiKey, experimentConcurrency: 2,
+      fetch: async (url, init) => {
+        if (url.includes('/request-status/scopes?')) return new Response(JSON.stringify({
+          account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+        if (init.method === 'GET') return new Response(JSON.stringify({ schema: 1, request_id: reference,
+          state: 'unknown', error_phase: 'body', request_context: 'active',
+          read_error_kind: 'http2_goaway', read_error_code: 'enhance_your_calm', ...changes }));
+        return new Response(new ReadableStream({ start(controller) {
+          controller.enqueue(new TextEncoder().encode('data: {"type":"response.created","response":{"id":"resp-fixture","status":"in_progress"}}\n\n'));
+          setTimeout(() => controller.error(new TypeError('body interrupted')), 5);
+        } }), { status: 200, headers: { 'content-type': 'text/event-stream', 'x-agent-request-id': reference } });
+      } });
+    assert.equal(result.stop_reason, 'error');
+    assert.equal(result.response_metadata.proxy_status, undefined, name);
+  }
+  process.env.ORACLE_EXPERIMENT_BACKOFF_DIRECTORY = join(home, 'upgrade');
+  let statusReads = 0;
+  const admission = await experimentAdmission(request, { apiKey, concurrency: 2,
+    fetch: async url => {
+      if (url.includes('/request-status/scopes?')) return new Response(JSON.stringify({
+        account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+      statusReads++;
+      return new Response(JSON.stringify({ schema: 1, request_id: reference, state: 'complete',
+        http_status: 101, terminal_event: 'completed' }));
+    } });
+  const result = { provider: 'openai-codex', stop_reason: 'error', error: 'closed', response_metadata: {
+    http_status: 101, proxy_request_id: reference, id: 'resp-fixture',
+    transport_error: { phase: 'body' }, websocket_close: { code: 1011 } } };
+  await admission.finish(result);
+  assert.equal(statusReads, 0, 'upgrade status was treated as per-generation evidence');
+  assert.equal(result.response_metadata.proxy_status, undefined);
+});
 
 test('large transport diagnostics cannot overflow the shared failure report', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'oracle-backoff-large-error-'));
@@ -66,7 +118,8 @@ test('experiment execution retrieves an upstream GOAWAY and shares admission bef
     if (request.url === `/request-status/${reference}`) {
       lookups++;
       response.setHeader('Content-Type', 'application/json');
-      response.end(JSON.stringify({ state: 'failed', http_status: 200,
+      response.end(JSON.stringify({ schema: 1, request_id: reference, state: 'unknown',
+        error_phase: 'body', http_status: 200,
         read_error_kind: 'http2_goaway', read_error_code: 'enhance_your_calm',
         request_context: 'active', PRIVATE_FIELD: 'PRIVATE_SERVER_DATA' }));
       return;
@@ -145,7 +198,8 @@ test('two native experiments share recovery and preserve the persistent attempt 
     response.writeHead(200, { 'Content-Type': 'text/event-stream', 'X-Agent-Request-Id': reference });
     response.write(frame({ type: 'response.created', response: { id: `resp-${number}`, status: 'in_progress' } }));
     if (number < 2) {
-      statuses.set(reference, { state: 'failed', http_status: 200, read_error_kind: 'http2_goaway',
+      statuses.set(reference, { schema: 1, request_id: reference, state: 'unknown',
+        error_phase: 'body', http_status: 200, read_error_kind: 'http2_goaway',
         read_error_code: 'enhance_your_calm', request_context: 'active' });
       firstResponses.push(response);
       if (firstResponses.length === 2) setTimeout(() => {

@@ -83,10 +83,12 @@ const codes = new Set(['no_error', 'protocol_error', 'internal_error', 'flow_con
 function safeStatus(value) {
   if (!value) return null;
   const result = {};
-  for (const [key, allowed] of [['state', new Set(['in_flight', 'complete', 'failed', 'unknown'])],
+  for (const [key, allowed] of [['state', new Set(['in_flight', 'complete', 'failed', 'incomplete',
+    'canceled', 'deadline_exceeded', 'rejected', 'unknown'])],
     ['read_error_kind', kinds], ['read_error_code', codes],
     ['request_context', new Set(['active', 'canceled', 'deadline_exceeded', 'other'])],
-    ['terminal_event', new Set(['response.completed', 'response.failed', 'response.incomplete'])]]) {
+    ['error_phase', new Set(['headers', 'body'])],
+    ['terminal_event', new Set(['completed', 'failed', 'incomplete'])]]) {
     if (allowed.has(value[key])) result[key] = value[key];
   }
   if (Number.isInteger(value.http_status) && value.http_status >= 0 && value.http_status <= 599) {
@@ -155,12 +157,13 @@ export async function experimentAdmission(request, { apiKey, fetch, signal, conc
       const metadata = result.response_metadata;
       const reference = metadata.proxy_request_id;
       if (!metadata.abort_reason && metadata.terminal_event !== 'response.completed'
+          && metadata.http_status !== 101
           && result.stop_reason === 'error' && typeof reference === 'string'
           && /^[A-Za-z0-9_-]{8,128}$/.test(reference)) {
         try {
           const value = await localJSON(fetch,
             new URL(`/request-status/${reference}`, route.origin).href, apiKey, signal);
-          const safe = safeStatus(value);
+          const safe = value?.schema === 1 && value.request_id === reference ? safeStatus(value) : null;
           if (safe) metadata.proxy_status = safe;
         } catch { /* Missing evidence keeps the cause unknown; no upstream fallback. */ }
       }
