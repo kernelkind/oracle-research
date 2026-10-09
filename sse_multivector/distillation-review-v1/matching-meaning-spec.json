@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "DSMv2",
+    "path": "matching-prompt-v2.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "matching-meaning-source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "concurrency": 8,
+    "timeout_seconds": 3600,
+    "output_schema_path": "matching-response-schema.json"
+  }
+}

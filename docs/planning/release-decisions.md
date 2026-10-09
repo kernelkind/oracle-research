@@ -1138,6 +1138,26 @@ approve reviewer adoption, further calls, prompt changes, bulk review or test
 unsealing. See the
 [remaining trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8).
 
+**DSMv2 action/property controls authorized and completed October 8:** the user
+accepted testing clear examples of the distinction raised by R05. The shared
+CLI prepared and ran eight authored controls with the unchanged DSMv2 prompt,
+Sol / xhigh, subscription SSE and concurrency 8. Four faithful paraphrases
+match the intended action or property; four cases removing the complete match
+return null. All reports and reasons are valid, and native agent review records
+eight acceptances. Expectations were frozen before calls and withheld from the
+prompt. There are eight new attempts, no retries and no reused answers. Native
+usage is 3,333 input tokens, zero cached input and 1,023 output tokens, including
+689 reasoning tokens; the $0.016896 catalog estimate is not an invoice. The
+controls were authored after observing R05 and use explicit wording and one-
+or two-entry catalogs. They establish success on this narrow distinction, not
+the cause of R05's verdict, independent gold or production reliability.
+R05's expected null and uncertain review are preserved; ASv6.100 remains trusted.
+The generic adapter and native attributed reviews are sufficient for these
+authored controls; no runner code or prompt changes occurred. The 14 matching
+regression tests pass with the required cached tokenizer dependency. Further
+calls, prompt changes, bulk review and test unsealing remain separate decisions.
+See the [controls and evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

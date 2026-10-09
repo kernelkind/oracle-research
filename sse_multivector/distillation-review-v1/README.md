@@ -5,9 +5,10 @@ DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
 semantic review has not run. **DSMv2's latest actual-wording trial agrees with
-19/20 agent expectations**, with `Fakery`→`Inauthenticity` requiring adjudication.
+19/20 agent expectations**, with `Fakery`→`Inauthenticity` remaining disputed.
 Both cases in the preceding two-case trial agree. The full-set offline preview
-makes zero calls; broader qualification remains pending.
+makes zero calls. **DSMv2 also passes eight authored action/property controls**;
+these explicit, small-catalog examples do not resolve R05 or qualify the reviewer.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -515,13 +516,80 @@ this run and preserved in the separate completed two-case trial. No combined
 usage report or population accuracy is inferred from these separate trials.
 All 14 matching tests pass. Prompts, source expectations, earlier receipts and
 sealed final-test answers remain unchanged. Further calls, prompt revisions,
-bulk review and review adoption remain separate decisions. The next useful
-step is to adjudicate R05 before changing the reviewer or its criteria.
+bulk review and review adoption remain separate decisions. The subsequent
+action/property controls below test an explicit version of R05's distinction.
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 ../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/matching-post-remaining-20261008 --case R05
+```
+
+## DSMv2 action/property controls (October 8)
+
+The user authorized testing clear examples after the offline assessment of
+R05 favored retaining its expected nonmatch. [Merriam-Webster's fakery entry](https://www.merriam-webster.com/dictionary/fakery)
+names the practice or products of faking; [Oxford's inauthenticity entry](https://www.oxfordlearnersdictionaries.com/definition/english/inauthenticity)
+names a lack of authenticity. That assessment remains a judgment about the
+wordings, not an independently verified label or an audit of ASv6.100.
+
+[The eight authored controls](matching-meaning-source.json) express the
+action/property distinction explicitly in two domains. Each domain has a
+two-entry catalog with an action and a property, two faithful paraphrases,
+and two cases removing the complete match. Within each positive/negative
+pair, the post, student wording and remaining catalog entry are identical;
+only the matching entry is removed. The claims catalog reverses the action
+and property order used by the images catalog. No student wording is an exact
+catalog match. These controls were authored after observing R05's disagreement;
+they are focused diagnostics, not held-out confirmation or independent gold.
+
+| Case | Student wording | Expected and returned |
+| --- | --- | --- |
+| B01 | Creation of fake images | T01: Creating fake images |
+| B02 | Images not being genuine | T02: Images being fake |
+| B03 | Creation of fake images | null; only Images being fake remains |
+| B04 | Images not being genuine | null; only Creating fake images remains |
+| B05 | Fabrication of false claims | T02: Inventing false claims |
+| B06 | Claims being false | T01: The falsity of claims |
+| B07 | Fabrication of false claims | null; only The falsity of claims remains |
+| B08 | Claims being false | null; only Inventing false claims remains |
+
+The shared CLI prepared and ran [the spec](matching-meaning-spec.json) in
+`target/distillation-review-v1/matching-meaning-20261008/`, using unchanged
+**DSMv2 / Sol / xhigh / subscription SSE / concurrency 8**. The existing generic
+adapter freezes the authored inputs and expectations as separate evidence;
+it does not apply the source-bound matching adapter's qualification scoring.
+Before calls, the native preview confirmed all eight cases were unrun, the
+expected reasons were withheld and each positive/negative pair differed only
+by removing its complete match. The source SHA256 is
+`487681efa720687733db3d90d82dda5f378c85d7cb408cfa0ea660980f44b538`.
+Execution used `--max-new-attempts 16` under the existing provider-only retry
+policy. All eight reports are schema-valid and agree with the frozen
+expectations; each explanation addresses the action/property distinction.
+Native `review` records eight agent acceptances. There are eight new attempts,
+no retries and no reused answers. All returned IDs belong to their supplied
+catalogs and all reasons are nonblank.
+
+Native usage reports 3,333 input tokens, zero cached input tokens and 1,023
+output tokens, including 689 reasoning tokens. The $0.016896 catalog estimate
+is not a subscription invoice; provider-reported charges are unavailable.
+The 14 matching regression tests pass in the cached `tiktoken==0.14.0`
+environment; the initial plain-Python attempt lacked that dependency.
+
+This establishes that Sol preserves the distinction in these explicit controls.
+Their catalogs contain one or two entries, versus eighteen in R05, and their
+wording differs, so they do not isolate the cause of R05's match. Its saved
+uncertain review and expected null are preserved. DSMv2 is unchanged and
+broader qualification remains pending. A useful next step is a fresh repeat
+of R05 with identical inputs to check whether its disputed verdict is stable;
+that would test repeatability, not independently establish correctness.
+Further calls, prompt changes, bulk review and test unsealing require their own
+authorization.
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/matching-meaning-20261008 --case B03
 ```
 
 ## Reviewer and inputs

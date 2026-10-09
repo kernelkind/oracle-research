@@ -1091,8 +1091,16 @@ production preparation and decoding functions:
   catalog estimate is not an invoice; failed-attempt SDK zero fields do not
   establish actual upstream consumption. Qualification remains pending and
   all 14 matching tests pass. R16/R19 remain in the separate completed trial.
-  Contextual equivalence for R05 needs adjudication before changing the prompt;
-  broader reliability and additional calls remain open.
+  Contextual equivalence for R05 remains disputed. The subsequently authorized
+  [eight action/property controls](distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8)
+  use the existing generic adapter, unchanged DSMv2 / Sol / xhigh and concurrency
+  8. All four matches and four nonmatches agree with their frozen authored
+  expectations, with eight native agent acceptances, eight new attempts,
+  no retries and no reuse. Native usage reports 3,333 input tokens, zero cached
+  input and 1,023 output tokens, including 689 reasoning tokens; the $0.016896
+  catalog estimate is not an invoice. Their explicit wording and small catalogs
+  do not resolve R05 or independently qualify the reviewer. No code or prompt
+  changes occurred; further calls and broader review remain open.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

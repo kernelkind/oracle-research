@@ -493,6 +493,13 @@ agent-uncertain pending adjudication. There is one successful provider-overload
 retry and no response reuse. Prompts and expected labels are preserved;
 qualification remains pending. This does not select a revised prompt or
 authorize additional calls, bulk review or test unsealing.
+The subsequent authorized [eight action/property controls](../../sse_multivector/distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8)
+pass all four paraphrase matches and four nonmatches with unchanged DSMv2 /
+Sol / xhigh, concurrency 8. Their explanations preserve the explicit action
+versus property distinction. These small-catalog diagnostics were authored
+after R05's disagreement; they do not settle its short-wording equivalence,
+establish production reliability or change the prompt. R05's expected null
+and uncertain review remain preserved. Further calls remain a separate decision.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

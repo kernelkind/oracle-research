@@ -77,6 +77,10 @@ returns 20 valid reports: nineteen agree with the recorded expectations, while
 R05 matches `Fakery` to `Inauthenticity` despite expected null. Agent review marks
 that disagreement uncertain pending adjudication. One provider-overload retry
 succeeds; no answers are reused. Prompts and expectations are preserved.
+The authorized [eight action/property controls](../../sse_multivector/distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8)
+also pass with unchanged DSMv2 / Sol / xhigh and concurrency 8. Their explicit
+wording and smaller catalogs leave R05's disputed verdict and broader
+qualification unresolved.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
