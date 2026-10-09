@@ -408,14 +408,15 @@ The subsequently authorized [DSSv1 draft](../../sse_multivector/distillation-rev
 judges post support for one unmatched subject from the full post, returning
 Boolean `valid` and string `reason`. The proposed `Lengths` / `4 m cable A`
 controls and support inheritance await approval. Two initial support inputs
-from already-agreed cases are now prepared below, with no model calls. Pilot
+from already-agreed cases are prepared below and now initially tested. Pilot
 scoring is unchanged.
 The user then approved reusing ASv6.100's support rules unchanged instead of
 paraphrasing them. The revised DSSv1 wrapper adds only the narrow review task
 and output format around `ASV6_100_SUPPORT_RULES`, to be loaded verbatim from
 the original source during shared-workflow preparation. The adapter added below
 now supplies that variable. The user subsequently accepted the revised
-wrapper's exact wording after seeing it in full. DSSv1 remains untested;
+wrapper's exact wording after seeing it in full. DSSv1 now passes its two initial
+cases in the subsequently authorized trial below;
 controls, qualification and proposed support inheritance remain open. No
 inference or bulk adoption is authorized by accepting the instructions.
 
@@ -427,8 +428,8 @@ original source. The post and surrounding hierarchy are excluded under that
 rule. It returns Boolean `valid` and string `reason`, with a lost restriction
 and possible counterexample for invalid pairs. Post support and teacher
 agreement remain separate checks. The user subsequently approved the unchanged
-DSLv1 wording after seeing the full instructions. The draft remains untested;
-three initial inputs and a shared Boolean response schema are now prepared below.
+DSLv1 wording after seeing the full instructions. Its three initial inputs now
+pass in the subsequently authorized trial below, using the shared Boolean schema.
 Pilot scoring is unchanged. Wording approval does not qualify the reviewer or
 authorize new calls.
 
@@ -439,9 +440,9 @@ from approved DSMv2, changing only the version label and an interpretive block
 containing the original subject-wording paragraph. The trusted teacher reference,
 inputs, matching criteria, response contract, case expectations and saved
 evidence are unchanged. The user approved the exact DSMv3 wording after seeing
-the full instructions. The unchanged draft remains untested and qualification
-is pending. Two initial DSMv3 inputs are now prepared below; no accuracy/cost
-measurement is claimed, and wording approval authorizes no new calls.
+the full instructions. The unchanged draft now passes its two initial cases
+below; broader qualification is pending. Wording approval alone authorized no
+calls or accuracy/cost measurement.
 Previous results do not qualify DSMv3, and the disputed R05 match remains open.
 
 The user subsequently authorized preparing and showing
@@ -452,11 +453,18 @@ checks. The source-bound `distillation_verdict` adapter loads the original
 ASv6.100 rules verbatim, derives immediate parents from student numbering and
 keeps expected Boolean judgments outside model input. Shared schema/validation
 and qualification reporting are tested with an offline executable fixture.
-All requests remain unrun, with GPT-6.1 Sol / xhigh / subscription SSE and
+The original offline preparations remain unrun. The initial trial below uses
+separate native-prefix preparations with GPT-6.1 Sol / xhigh / subscription SSE and
 concurrency 8. The prompts, final scoring and sealed test data are unchanged.
 These controls isolate the three judgments; they do not establish reviewer
 reliability at scale. The exact seven inputs and expectations were then shown
-in conversation and accepted. An initial xhigh trial remains to be run; broader
+in conversation and accepted, then run after the user authorized the initial
+xhigh trial and prefix warming. Three warmups and seven verdicts completed
+without failure, retry or reuse; all seven verdicts and reasons pass the initial
+checks. Cached input and cache writes are zero throughout; these small inputs
+are below the documented caching minimum. See the
+[initial trial record](../../sse_multivector/distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9)
+for native receipts, actual usage, warmup overhead and latency. Broader
 controls, selected large training examples and fresh repeats remain necessary
 before bulk use. The user wants to compare lower reasoning levels later, after
 establishing xhigh reliability. Cases, expected judgments and prompts should

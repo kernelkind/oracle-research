@@ -1300,7 +1300,8 @@ The input remains the full post and one subject, and the output remains Boolean
 in the conversation, the user accepted its exact wording with “ok, seems
 reasonable”. This accepts the reuse decision and review instructions, not
 authored controls, reviewer qualification, support inheritance, inference or
-bulk adoption. DSSv1 remains an untested draft. ASv6.100, existing matching/review
+bulk adoption. DSSv1 was untested at wording approval; the later initial trial
+is recorded below. ASv6.100, existing matching/review
 prompts, schemas, scoring and saved evidence remain unchanged. See the
 [revised DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
 
@@ -1316,8 +1317,8 @@ agreement remain separate judgments. TC04's agreed invalid cable edge is shown
 as a human input example outside the instructions, not a model result or newly
 prepared qualification case. After the full DSLv1 instructions were displayed
 in the conversation, the user approved their wording with “ok lgtm”. The prompt
-is unchanged and remains an untested draft. This accepts the instructions,
-without qualifying the reviewer or authorizing new calls.
+was unchanged and untested at wording approval. The later initial trial is
+recorded below. This accepted the instructions without qualifying the reviewer or authorizing new calls.
 No link adapter, schema, experiment preparation, inference, scoring change or
 bulk adoption is authorized by drafting. Existing prompts and saved evidence
 remain unchanged. See the
@@ -1332,9 +1333,9 @@ reference and the task remains complete-meaning matching. Inputs, matching
 criteria, response contract, cases, expected labels and saved trials are
 unchanged. The full generation and hierarchy-placement instructions are
 excluded. After the full DSMv3 instructions were displayed in the conversation,
-the user approved their exact wording with “lgtm”. The prompt is unchanged and
-remains an untested draft; qualification is pending. This accepts the matching
-instructions without qualifying the reviewer or authorizing new calls. No
+the user approved their exact wording with “lgtm”. The prompt was unchanged
+and untested at wording approval; broader qualification is pending after the
+later initial trial below. This accepted the matching instructions without qualifying the reviewer or authorizing new calls. No
 DSMv3 experiment was prepared during drafting or approval recording. The
 subsequent preparation below adds inputs without model calls or accuracy/cost
 measurements.
@@ -1348,7 +1349,7 @@ pairs, the user accepted preparing and showing test inputs and expected
 judgments before calling models. Preparation reuses the already-accepted TC02
 paraphrase, TC03 reversed comparison and TC04 wrong-parent case. Native shared
 runner preparations contain two DSMv3 requests, two DSSv1 requests and three
-DSLv1 requests, all unrun with zero attempts and zero reused answers. The
+DSLv1 requests, initially unrun with zero attempts and zero reused answers. The
 `distillation_verdict` project adapter loads hash-bound saved cases, derives
 actual immediate parents from student numbering, extracts ASv6.100's rules
 verbatim and keeps expected answers outside prompts. Its Boolean expectations
@@ -1360,15 +1361,15 @@ pilot scoring. Production-path tests use only an offline executable fixture.
 
 The unchanged-answer and renumbering controls remain mechanical. The proposed
 `Lengths` / `4 m cable A` cases are not added. Prompts stay unchanged; all three
-current versions remain untested by models. Specifications preserve GPT-6.1 Sol
-/ xhigh, subscription SSE and concurrency 8. These seven development controls
+current versions were untested at preparation. The later initial trial below
+uses the same specifications, preserving GPT-6.1 Sol / xhigh, subscription SSE and concurrency 8. These seven development controls
 are an initial preview, not sufficient qualification: larger controls and fresh
 repeats remain necessary before bulk use. Support inheritance, structural
 allowances, teacher-edge comparison, final rubric adoption, bulk grading and
 final-test unsealing remain outside this preparation. R05 remains unresolved.
 The exact seven inputs and expectations were subsequently displayed in the
-conversation and the user accepted them. An initial xhigh trial remains to be
-run. See the
+conversation and the user accepted them. The subsequently authorized initial
+xhigh trial with prefix warming is recorded below. See the
 [prepared development inputs](../../sse_multivector/distillation-review-v1/README.md#first-three-check-development-inputs-october-9).
 
 **Later reasoning-level comparison requested October 9:** after accepting the
@@ -1380,6 +1381,38 @@ errors, latency and actual token usage, including cached tokens. This records
 the requested future comparison, not a lower-effort fallback or approval of
 specific experiment settings, new calls or bulk grading. No prompt, prepared
 input, model setting or saved result changes in recording this decision.
+
+**Initial three-check trial and prefix warming authorized October 9:** the user
+instructed proceeding with the accepted seven inputs and explicitly requested
+prefix warming. The shared runner prepared three native-prefix batches from
+the original offline preparations and one instructions-only warmup for each.
+Approved prompt bytes, inputs and expectations remain unchanged; warmup and
+batch share their prompt-specific stable key, model, effort and output schema.
+The route is subscription `openai-codex` / `gpt-6.1-sol` / `xhigh` / SSE, with
+batch concurrency 8 and the existing provider-only two-attempt limit. A shared
+persistent counter records 10/20 used: three warmups and seven verdicts, all
+first-attempt completions, with no reused answers or failures.
+
+DSMv3 passes 2/2 accepted expectations, DSSv1 2/2 and DSLv1 3/3. Native agent
+reviews accept all seven explanations, including TL02's preserved parent
+restrictions despite an unsupported comparison and TL03's missing restriction
+with a possible counterexample. These are actual initial model results and
+agent assessments, not fresh confirmation or user approval of reasons.
+All requests report zero cached tokens and zero cache writes. Verdict inputs
+are 355–733 tokens each, below the documented 1,024-visible-token cache minimum;
+this trial demonstrates no cache savings. Warmup overhead, per-experiment
+actual usage, request latency and API-equivalent estimates are preserved in the
+[trial record](../../sse_multivector/distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9). Catalog estimates are not subscription
+charges, and provider cash costs are unreported. No paid API fallback occurred.
+
+The seven small controls do not qualify bulk review. Broader controls, selected
+large training cases and fresh repeats remain necessary. Lower-effort comparison
+remains future work; support inheritance, structural allowances, teacher-edge
+comparison, scoring adoption, bulk grading and test unsealing remain undecided
+or unimplemented as before. R05 remains unresolved. The original offline
+preparations remain unrun; actual outputs and receipts are in separate ignored
+warmup/warmed experiment directories. No additional trial is launched by
+recording this result.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

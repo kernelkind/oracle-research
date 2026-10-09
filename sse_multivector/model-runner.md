@@ -1020,8 +1020,9 @@ production preparation and decoding functions:
   source. The adapter below now supplies this variable and prepares two initial
   support inputs. The user subsequently accepted the revised
   wrapper's exact wording after seeing the full DSSv1 instructions. The prompt
-  remains an untested draft; controls, qualification and proposed support
-  inheritance remain open. Accepting the instructions authorizes no new calls.
+  now passes its two initial cases below; broader controls, qualification and
+  proposed support inheritance remain open. Accepting the instructions
+  authorizes no new calls.
   The subsequently authorized
   [DSLv1 parent-child validity draft](distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9)
   defines a reusable prompt. `RELATIONSHIP_INPUT` contains one
@@ -1032,8 +1033,8 @@ production preparation and decoding functions:
   below now supplies these variables and prepares three initial link inputs
   using a shared Boolean response schema.
   The user approved its unchanged wording after seeing the full DSLv1
-  instructions. The draft remains untested and qualification is pending;
-  wording approval authorizes no new calls.
+  instructions. The draft now passes its three initial cases below; broader
+  qualification is pending; wording approval authorizes no new calls.
   The user then accepted adding ASv6.100's subject-wording guidance verbatim to
   matching. Native `revise` creates the
   [DSMv3 draft](distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9)
@@ -1042,9 +1043,9 @@ production preparation and decoding functions:
   matching criteria and the `teacher_id` / `reason` contract remain unchanged.
   The draft needs no new variables or adapter changes. Its quoted paragraph is
   verified against unchanged ASv6.100. The user approved its exact wording after
-  seeing the full DSMv3 instructions. The unchanged draft remains untested and
-  qualification is pending. Two initial DSMv3 inputs are now prepared; wording
-  approval authorizes no new calls, and earlier DSMv2 results do not qualify the
+  seeing the full DSMv3 instructions. The unchanged draft now passes its two
+  initial cases below; broader qualification is pending. Wording approval alone
+  authorized no calls, and earlier DSMv2 results do not qualify the
   revised prompt.
 
 - `dataset.adapter: "distillation_verdict"`: the
@@ -1063,11 +1064,17 @@ production preparation and decoding functions:
   Preparation binds the source bytes and project adapter code and performs no
   inference. Initial specifications produce two DSSv1 and three DSLv1 requests;
   a separate DSMv3 specification reuses the existing two matching selectors.
-  All seven are unrun with zero attempts/reuse, fixed GPT-6.1 Sol / xhigh /
+  The original offline preparations remain unrun; separate native-prefix
+  preparations execute the same seven inputs with fixed GPT-6.1 Sol / xhigh /
   subscription SSE and concurrency 8. The set is an initial development preview,
   not proof of reliability or adoption of pilot scoring. The exact seven inputs
-  and expected judgments were displayed and accepted; an initial xhigh trial
-  remains to be run, followed by broader qualification before bulk use. The user
+  and expected judgments were displayed and accepted, then run with three prefix
+  warmups after explicit authorization. All seven verdicts and reasons pass the
+  initial checks, with no failures, retries or reuse. Cache reads and writes are
+  zero; the small requests are below the documented caching minimum. See the
+  [initial trial record](distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9)
+  for native receipts, actual usage, warmup overhead and latency. Broader
+  qualification remains necessary before bulk use. The user
   wants to compare lower reasoning levels later, after establishing xhigh
   reliability. Hold prompts, cases and expected judgments fixed and measure
   semantic errors, latency and actual token usage, including cached tokens.

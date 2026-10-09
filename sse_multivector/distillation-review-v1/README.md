@@ -1,5 +1,11 @@
 # Distillation semantic review — evidence and matching-only preview
 
+Current three-check development result: **DSMv3 2/2, DSSv1 2/2 and DSLv1 3/3**
+agree with the accepted expectations. All seven reasons pass agent inspection.
+Three prefix warmups completed, with zero cache reads or writes throughout.
+See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
+These small controls do not qualify bulk review.
+
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
@@ -13,8 +19,8 @@ An identical-input fresh R05 repeat again returns T17; both saved calls make
 the disputed match with different explanations. Its expected null remains an
 agent assessment, and qualification remains pending.
 The [DSMv3 draft](#dsmv3-asv6100-wording-guidance-draft-october-9) adds one
-verbatim ASv6.100 paragraph to matching. Its wording is approved, but it remains
-untested; its first development inputs are prepared below, with no model calls.
+verbatim ASv6.100 paragraph to matching. Its wording is approved and its two
+initial development cases now pass below; broader qualification remains pending.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -157,11 +163,11 @@ without changing the candidate catalog, call count or batching policy. No token,
 cached-token, cost or accuracy measurement is claimed by drafting.
 
 The user approved the exact DSMv3 wording after the full instructions were
-displayed in the conversation on October 9. The unchanged prompt remains an
-untested draft; qualification is pending. Wording approval does not qualify the
-reviewer or authorize new calls. Two DSMv3 development inputs are now prepared;
-no calls have been made for DSMv3. Previous DSMv2 results do not qualify this new
-version. Existing controls, expected labels and saved trials are preserved;
+displayed in the conversation on October 9. The unchanged prompt now passes two
+initial development cases in the subsequently authorized
+[initial warmed trial](#initial-warmed-three-check-trial-october-9); broader
+qualification is pending. Wording approval alone did not authorize those calls.
+Previous DSMv2 results do not qualify this new version. Existing controls, expected labels and saved trials are preserved;
 R05's disputed match remains unresolved. The amendment does not change support
 or link judgments, final pilot scoring, bulk adoption or test sealing.
 
@@ -194,9 +200,9 @@ new calls.
 For the trusted cable post, `Lengths` passing and `4 m cable A` failing are
 proposed authored controls, not model verdicts or approved qualification cases.
 They are input examples for human review, not worked examples embedded in DSSv1.
-Two development inputs are now prepared; no model calls have been made for DSSv1.
-The accepted prompt remains an untested draft. The proposed inheritance of post
-support from correct complete teacher matches still needs process approval;
+Both development inputs now pass in the subsequently authorized
+[initial warmed trial](#initial-warmed-three-check-trial-october-9). The accepted
+prompt remains unqualified for bulk use. The proposed inheritance of post support from correct complete teacher matches still needs process approval;
 relying on semantic matches also requires qualifying the matcher. Existing
 matching/review prompts, scoring and saved trials remain unchanged. The
 subsequent development preparation below adds source preparation and schema
@@ -235,9 +241,11 @@ strings plus the fixed rule, without a whole hierarchy or all-pairs comparison.
 This is draft call sizing, not approval of bulk execution or an optimization.
 
 The user approved the exact DSLv1 wording after the full instructions were
-displayed in the conversation on October 9. The unchanged prompt remains an
-untested draft. Drafting and wording approval add no model calls, qualification
-result, support-inheritance decision or final rubric adoption. ASv6.100, DSMv2,
+displayed in the conversation on October 9. The unchanged prompt now passes its
+three initial cases in the subsequently authorized
+[initial warmed trial](#initial-warmed-three-check-trial-october-9). Drafting and
+wording approval alone added no model calls, qualification result,
+support-inheritance decision or final rubric adoption. ASv6.100, DSMv2,
 DSSv1, existing adapters, schemas, scores and saved trials are unchanged.
 
 ## First three-check development inputs (October 9)
@@ -297,21 +305,22 @@ concurrency 8 and the existing timeout. From this checkout, with the documented
   --spec sse_multivector/distillation-review-v1/teacher-relative-relationship-spec.json
 ```
 
-Native preparations have two matching, two support and three relationship cases,
-all unrun, with zero attempts and zero reused answers. Matching inputs total
+The original offline preparations contain two matching, two support and three
+relationship cases and remain unrun. Separate native-prefix preparations below
+execute the same seven inputs with no answer reuse. Matching inputs total
 1,371 `o200k_base` proxy tokens (683–688 each); these are offline rendered-text
 sizes, not provider usage or measured cost. Support repeats one complete post
 per selected subject; relationship input grows only with the two strings and
-fixed rule. No whole hierarchy or all-pairs comparison is added. Saved actual
-input/cached/output tokens and reasoning tokens remain unmeasured until calls
-are authorized. Source changes are covered by production-path preparation,
+fixed rule. No whole hierarchy or all-pairs comparison is added. Actual
+input/cached/output and reasoning tokens from the authorized initial trial are
+reported below. Source changes are covered by production-path preparation,
 validation and native CLI tests using an offline executable fixture.
 
 The exact seven inputs and expectations were displayed in conversation and the
-user accepted them. An initial xhigh trial remains to be run. A successful
-seven-case trial would still need broader controls, the selected large training
-examples and fresh repeats
-before bulk use. No support-inheritance policy, structural allowances,
+user accepted them, then authorized the initial xhigh trial with prefix warming.
+That trial passes all seven cases below; broader controls, the selected large
+training examples and fresh repeats remain necessary before bulk use. No
+support-inheritance policy, structural allowances,
 teacher-edge agreement implementation, final rubric, bulk grading or final-test
 unsealing is adopted by this preparation. R05 remains unresolved.
 
@@ -319,8 +328,83 @@ The user also requested a later comparison of lower reasoning levels. Establish
 reliability with GPT-6.1 Sol / xhigh first, then hold prompts, cases and expected
 judgments fixed while comparing semantic errors, latency and actual token usage,
 including cached tokens. This records future intent; no lower-effort settings,
-experiment preparation or new calls are added. All three current prompts remain
-untested by models.
+experiment preparation or new calls are added by that future-effort request.
+All three current prompts have only the initial development evidence below.
+
+## Initial warmed three-check trial (October 9)
+
+The user authorized running the seven accepted inputs and explicitly requested
+prefix warming. The shared `experiment-runner/bin/experiment-runner` prepared
+new immutable experiments from the original offline preparations, with the exact
+fixed beginning of each rendered prompt as its prefix. Approved prompt bytes,
+inputs and expectations are preserved. Three stable keys separate DSMv3, DSSv1
+and DSLv1; each instructions-only warmup inherits its batch's key, prefix,
+model, effort, schema and SSE settings. No warmup answer enters a verdict call.
+The settings remain subscription `openai-codex` / `gpt-6.1-sol` / `xhigh`, with
+batch concurrency 8. Seven available verdicts ran concurrently across the three
+batches after all warmups finished; this small set cannot saturate eight slots.
+
+All ten requests completed on their first attempt, with no reuse, interruption,
+mechanical failure or retry. The persistent shared counter records 10/20 used;
+the unused capacity was reserved for the existing provider-only retry allowance.
+Native qualification reporting passes 2/2 matching, 2/2 support and 3/3 links.
+Agent reviews, recorded with native `review --role agent`, additionally accept
+all seven reasons. These are agent assessments, not additional user approvals
+or independent repetitions.
+
+| Case | Actual verdict | Agent assessment of reason | Request latency |
+| --- | --- | --- | --- |
+| TM01 | `T04` | Preserves cable A and its two-metre length. | 5.75 s |
+| TM02 | `null` | Identifies the removed negation; no complete teacher comparison matches. | 6.02 s |
+| TS01 | `true` | Cites the post's explicit two-metre cable A. | 7.18 s |
+| TS02 | `false` | Cites the post's explicit “not longer” contradicted by the subject. | 5.56 s |
+| TL01 | `true` | Preserves the cable and two-metre parent restrictions. | 6.72 s |
+| TL02 | `true` | Retains both named cables and their lengths despite the unsupported added comparison. | 39.03 s |
+| TL03 | `false` | Identifies the lost two-metre restriction and gives a possible three-metre-cable post. | 6.29 s |
+
+The following values are copied from each native `report.json`; warmup overhead
+is shown separately and must be included in any later savings comparison.
+Output tokens already include reasoning tokens. The cost column is the runner's
+API-equivalent catalog estimate, **not a subscription charge**; all provider
+cash-cost fields are null. No paid API fallback was used.
+
+| Native experiment under `target/distillation-review-v1/` | Calls | Input | Cached input | Cache writes | Output | Reasoning | API-equivalent USD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `teacher-relative-matching-v3-warmup-20261009` | 1 | 509 | 0 | 0 | 221 | 182 | 0.003228 |
+| `teacher-relative-matching-v3-warmed-20261009` | 2 | 1,461 | 0 | 0 | 213 | 131 | 0.005052 |
+| `teacher-relative-support-warmup-20261009` | 1 | 669 | 0 | 0 | 182 | 150 | 0.003158 |
+| `teacher-relative-support-warmed-20261009` | 2 | 1,435 | 0 | 0 | 252 | 171 | 0.005390 |
+| `teacher-relative-relationship-warmup-20261009` | 1 | 333 | 0 | 0 | 329 | 292 | 0.003956 |
+| `teacher-relative-relationship-warmed-20261009` | 3 | 1,087 | 0 | 0 | 1,435 | 1,291 | 0.016524 |
+
+Every request reports zero cache reads and zero cache writes. This is consistent
+with the small inputs: verdict requests report only 355–733 input tokens each,
+and the shared prefixes are shorter still. Official OpenAI documentation gives
+GPT-5.6 and later a minimum cacheable prefix of 1,024 visible input tokens. See
+[Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching#summary-of-model-differences).
+The experiment verifies warmup execution and accounting, but demonstrates no
+cache savings. There is no cold comparison, and the approved prompts were not
+padded to force eligibility. Warmups took 10.06 s, 8.03 s and 15.09 s respectively.
+
+The original three offline preparations remain unused. Actual receipts, native
+reports, prefix files and the irreversible attempt counter remain ignored
+artifacts in the canonical checkout. Inspect a verdict with native `show`, for
+example:
+
+```sh
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/teacher-relative-relationship-warmed-20261009 \
+  --case TL02 --json
+```
+
+These seven small development controls establish only initial prompt behavior.
+Broader source-bound controls, selected large training cases and fresh repeats
+remain necessary to establish reliability; lower-effort comparison remains
+future work. No support-inheritance policy, structural allowance, teacher-edge
+implementation, numerical scoring, bulk grading or final-test unsealing is
+adopted. R05 remains unresolved. A later cache measurement should use naturally
+eligible shared prefixes and account for warmup overhead; no additional calls
+are authorized by this result.
 
 ## Matching-only offline preview
 
