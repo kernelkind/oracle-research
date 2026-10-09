@@ -14,7 +14,7 @@ the disputed match with different explanations. Its expected null remains an
 agent assessment, and qualification remains pending.
 The [DSMv3 draft](#dsmv3-asv6100-wording-guidance-draft-october-9) adds one
 verbatim ASv6.100 paragraph to matching. Its wording is approved, but it remains
-untested; no DSMv3 experiment or calls exist yet.
+untested; its first development inputs are prepared below, with no model calls.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -159,8 +159,8 @@ cached-token, cost or accuracy measurement is claimed by drafting.
 The user approved the exact DSMv3 wording after the full instructions were
 displayed in the conversation on October 9. The unchanged prompt remains an
 untested draft; qualification is pending. Wording approval does not qualify the
-reviewer or authorize new calls. No experiment has been prepared and no calls
-have been made for DSMv3. Previous DSMv2 results do not qualify this new
+reviewer or authorize new calls. Two DSMv3 development inputs are now prepared;
+no calls have been made for DSMv3. Previous DSMv2 results do not qualify this new
 version. Existing controls, expected labels and saved trials are preserved;
 R05's disputed match remains unresolved. The amendment does not change support
 or link judgments, final pilot scoring, bulk adoption or test sealing.
@@ -184,8 +184,8 @@ meanings without adding restrictions.” The contiguous excerpt includes the
 support rules and broader-heading allowance; it ends before parent-child,
 placement and output instructions or worked examples. Future shared-workflow
 preparation must load it from that original source, rather than a separately
-maintained copy. No adapter currently supplies the variable, and the draft has
-not been prepared or rendered as an experiment request. The user approved the
+maintained copy. The `distillation_verdict` adapter now supplies this variable
+from the source and prepares the development inputs below. The user approved the
 rule-reuse decision, then accepted the revised wrapper's exact wording after
 the full DSSv1 instructions were displayed in the conversation on October 9.
 This accepts the instructions without qualifying the reviewer or authorizing
@@ -194,12 +194,13 @@ new calls.
 For the trusted cable post, `Lengths` passing and `4 m cable A` failing are
 proposed authored controls, not model verdicts or approved qualification cases.
 They are input examples for human review, not worked examples embedded in DSSv1.
-No experiment has been prepared and no model calls have been made for DSSv1.
+Two development inputs are now prepared; no model calls have been made for DSSv1.
 The accepted prompt remains an untested draft. The proposed inheritance of post
 support from correct complete teacher matches still needs process approval;
 relying on semantic matches also requires qualifying the matcher. Existing
-matching/review prompts, schemas, adapters, scoring and saved trials are
-unchanged; only this unused support draft and its documentation are revised.
+matching/review prompts, scoring and saved trials remain unchanged. The
+subsequent development preparation below adds source preparation and schema
+validation without adopting support inheritance.
 
 ## DSLv1 parent-child validity prompt draft (October 9)
 
@@ -220,8 +221,10 @@ each parent-child pair” and ending with “The post's domain, `context` and ot
 entries cannot supply a missing heading restriction.” It excludes the preceding
 sentence about deriving broader headings and the following placement rules.
 Future shared-workflow preparation must load this contiguous text from the
-original source. No adapter currently supplies either DSLv1 variable, and no
-support/link experiment, schema or scoring change is added by this draft.
+original source. The `distillation_verdict` adapter now supplies both variables,
+deriving the immediate parent from the selected child's student number. A shared
+Boolean response schema validates support/link output mechanics. Pilot scoring
+is unchanged.
 
 The human example uses TC04's already-agreed invalid edge: `3 m cables` beneath
 `2 m cables`. Its expected `valid: false` is an authored illustration of that
@@ -236,6 +239,80 @@ displayed in the conversation on October 9. The unchanged prompt remains an
 untested draft. Drafting and wording approval add no model calls, qualification
 result, support-inheritance decision or final rubric adoption. ASv6.100, DSMv2,
 DSSv1, existing adapters, schemas, scores and saved trials are unchanged.
+
+## First three-check development inputs (October 9)
+
+The user authorized offline preparation and presentation of test inputs before
+model calls. These seven requests reuse TC02, TC03 and TC04's already-accepted
+judgments. They are a first development preview, not sufficient evidence to
+qualify the reviewer. The unchanged-answer and consistent-renumbering controls
+remain mechanical; no semantic calls are prepared for them. The proposed
+`Lengths` / `4 m cable A` controls are not included.
+
+The trusted source post is: “2 cables: cable A is 2 m long and cable B is 3 m
+long. A is not longer than B.” Matching receives that post, the full ten-wording
+teacher catalog, and one student subject. Support receives the post and one
+subject. Parent-child review receives only the two subject strings from the
+student, with their immediate relationship derived from student numbering.
+
+| Case | Prompt | Model input to judge | Expected verdict |
+| --- | --- | --- | --- |
+| TM01 | DSMv3 | `Cable A, two metres long` against the complete teacher list | `teacher_id: T04` (`2 m cable A`) |
+| TM02 | DSMv3 | `2 m cable A longer than 3 m cable B` against the same list | `teacher_id: null` |
+| TS01 | DSSv1 | Post + `Cable A, two metres long` | `valid: true` |
+| TS02 | DSSv1 | Post + `2 m cable A longer than 3 m cable B` | `valid: false` |
+| TL01 | DSLv1 | `2 m cables` → `Cable A, two metres long` | `valid: true` |
+| TL02 | DSLv1 | `Pair consisting of 2 m cable A and 3 m cable B` → `2 m cable A longer than 3 m cable B` | `valid: true` |
+| TL03 | DSLv1 | `2 m cables` → `3 m cables` | `valid: false` |
+
+TS02 and TL02 intentionally have different judgments: losing the comparison's
+negation breaks post support and teacher matching, but retains both cable
+descriptions required by the parent. TL03 isolates the wrong relationship;
+its subject strings remain trusted and individually supported.
+
+[Support selectors](teacher-relative-support-source.json) and
+[relationship selectors](teacher-relative-relationship-source.json) hash-bind
+the unchanged [agreed source cases](teacher-relative-source.json). The adapter
+loads their student wording and derives Boolean expectations from
+`incorrect_subjects` or `invalid_relationship_children`; selectors cannot
+rewrite subjects or override those expectations. Expected verdicts and reasons
+stay in evidence and never enter the prompt. ASv6.100's contiguous rule excerpts
+are loaded verbatim from its hash-bound original. The
+[Boolean response schema](boolean-response-schema.json) and mechanical validator
+require exactly Boolean `valid` and nonempty string `reason`, rejecting duplicate
+JSON keys. A wrong Boolean verdict remains a mechanically valid response and
+fails the prepared set's separate qualification comparison. That comparison
+does not validate the reason's semantic quality or adopt pilot scoring.
+
+Reusable specifications pin OpenAI Codex / GPT-6.1 Sol / xhigh, subscription SSE,
+concurrency 8 and the existing timeout. From this checkout, with the documented
+`tiktoken==0.14.0` environment:
+
+```sh
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/teacher-relative-matching-v3-20261009 \
+  --spec sse_multivector/distillation-review-v1/teacher-relative-matching-v3-spec.json
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/teacher-relative-support-20261009 \
+  --spec sse_multivector/distillation-review-v1/teacher-relative-support-spec.json
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/teacher-relative-relationship-20261009 \
+  --spec sse_multivector/distillation-review-v1/teacher-relative-relationship-spec.json
+```
+
+Native preparations have two matching, two support and three relationship cases,
+all unrun, with zero attempts and zero reused answers. Matching inputs total
+1,371 `o200k_base` proxy tokens (683–688 each); these are offline rendered-text
+sizes, not provider usage or measured cost. Support repeats one complete post
+per selected subject; relationship input grows only with the two strings and
+fixed rule. No whole hierarchy or all-pairs comparison is added. Saved actual
+input/cached/output tokens and reasoning tokens remain unmeasured until calls
+are authorized. Source changes are covered by production-path preparation,
+validation and native CLI tests using an offline executable fixture.
+
+The next step is to review these exact inputs and expectations in conversation
+before authorizing an initial trial. A successful seven-case trial would still
+need broader controls, the selected large training examples and fresh repeats
+before bulk use. No support-inheritance policy, structural allowances,
+teacher-edge agreement implementation, final rubric, bulk grading or final-test
+unsealing is adopted by this preparation. R05 remains unresolved.
 
 ## Matching-only offline preview
 

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "DSMv3", "path": "matching-prompt-v3.md"},
+  "dataset": {"adapter": "distillation_matching", "path": "teacher-relative-matching-source.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "concurrency": 8,
+    "timeout_seconds": 3600,
+    "transport": "sse",
+    "output_schema_path": "matching-response-schema.json"
+  }
+}

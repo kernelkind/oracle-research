@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "check": "relationship",
+  "review_source": {
+    "path": "teacher-relative-source.json",
+    "sha256": "670fcb387e12efb6c15ae45a257e90223e33f10963a2ec005b9c8ef437a51d20"
+  },
+  "cases": [
+    {
+      "id": "TL01", "case": "TC02", "student_number": "1.1.1.1",
+      "expected_reason": "Cable A, two metres long preserves the parent's cable type and two-metre length."
+    },
+    {
+      "id": "TL02", "case": "TC03", "student_number": "1.2.1.1",
+      "expected_reason": "The child retains the pair consisting of 2 m cable A and 3 m cable B, regardless of its comparison's polarity."
+    },
+    {
+      "id": "TL03", "case": "TC04", "student_number": "1.1.1.2",
+      "expected_reason": "The child loses the parent's two-metre restriction. A post saying only Cable B is 3 m long fits the child but not the parent."
+    }
+  ]
+}

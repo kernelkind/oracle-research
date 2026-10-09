@@ -1008,28 +1008,29 @@ production preparation and decoding functions:
   and parent-child validity remain separate judgments; the approval changes
   no prompt or schema, qualifies no reviewer and authorizes no new calls.
   The authorized [DSSv1 subject-support draft](distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
-  is a reusable prompt only: `SUPPORT_INPUT` contains the full post and one
+  defines subject support: `SUPPORT_INPUT` contains the full post and one
   `student_subject`; the decision is Boolean `valid` and string `reason`.
-  No support experiment, dataset adapter or response schema has been added.
-  The controls and proposed support inheritance await approval; no
-  experiment preparation, inference or scoring behavior changes occur here.
+  Its initial preparation is described below. The proposed `Lengths` / `4 m
+  cable A` controls and support inheritance remain unapproved; pilot scoring
+  and inference are unchanged.
   The user approved reusing ASv6.100's support rules unchanged. The revised
   DSSv1 wrapper uses `ASV6_100_SUPPORT_RULES` for the verbatim opening support
   text, ending after the sentence about deriving broader headings without
   adding restrictions. Future preparation must load that text from the original
-  source. No adapter currently supplies this variable, and no support request
-  has been prepared or rendered. The user subsequently accepted the revised
+  source. The adapter below now supplies this variable and prepares two initial
+  support inputs. The user subsequently accepted the revised
   wrapper's exact wording after seeing the full DSSv1 instructions. The prompt
   remains an untested draft; controls, qualification and proposed support
   inheritance remain open. Accepting the instructions authorizes no new calls.
   The subsequently authorized
   [DSLv1 parent-child validity draft](distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9)
-  adds only an unused reusable prompt. `RELATIONSHIP_INPUT` contains one
+  defines a reusable prompt. `RELATIONSHIP_INPUT` contains one
   `parent_subject` / `child_subject` pair; `ASV6_100_PARENT_CHILD_RULES` is the
   verbatim parent-check text from ASv6.100. The post, contexts and surrounding
   hierarchy are not inputs. Output is Boolean `valid` and string `reason`, with
-  a lost restriction and possible counterexample for an invalid pair. No adapter
-  supplies these variables yet, and no link schema or experiment is added.
+  a lost restriction and possible counterexample for an invalid pair. The adapter
+  below now supplies these variables and prepares three initial link inputs
+  using a shared Boolean response schema.
   The user approved its unchanged wording after seeing the full DSLv1
   instructions. The draft remains untested and qualification is pending;
   wording approval authorizes no new calls.
@@ -1042,9 +1043,31 @@ production preparation and decoding functions:
   The draft needs no new variables or adapter changes. Its quoted paragraph is
   verified against unchanged ASv6.100. The user approved its exact wording after
   seeing the full DSMv3 instructions. The unchanged draft remains untested and
-  qualification is pending. No DSMv3 experiment or calls are prepared; wording
+  qualification is pending. Two initial DSMv3 inputs are now prepared; wording
   approval authorizes no new calls, and earlier DSMv2 results do not qualify the
   revised prompt.
+
+- `dataset.adapter: "distillation_verdict"`: the
+  [first three-check development preparation](distillation-review-v1/README.md#first-three-check-development-inputs-october-9)
+  loads a hash-bound `review_source` and selected source case/student numbers.
+  `check: "support"` renders only the post and selected subject plus the verbatim
+  ASv6.100 support rules. `check: "relationship"` derives the student's actual
+  immediate parent from numbering and renders only those two subject strings
+  plus the verbatim parent-child rules. Selectors cannot rewrite subjects or
+  override expected Booleans: expectations come from the selected source case's
+  `incorrect_subjects` or `invalid_relationship_children`, outside model input.
+  The shared Boolean response schema and validator require exactly `valid` and
+  a nonempty `reason`, rejecting duplicate JSON keys. Incorrect verdicts are
+  mechanically valid responses, separately compared with authored expectations
+  by native qualification reporting; reason quality still needs review.
+  Preparation binds the source bytes and project adapter code and performs no
+  inference. Initial specifications produce two DSSv1 and three DSLv1 requests;
+  a separate DSMv3 specification reuses the existing two matching selectors.
+  All seven are unrun with zero attempts/reuse, fixed GPT-6.1 Sol / xhigh /
+  subscription SSE and concurrency 8. The set is an initial development preview,
+  not proof of reliability or adoption of pilot scoring. Review inputs and
+  expected judgments before an initial trial, then qualify more broadly before
+  bulk use.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

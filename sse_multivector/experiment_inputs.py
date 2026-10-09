@@ -60,6 +60,15 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'distillation_verdict':
+        try:
+            from . import distillation_verdict
+        except ImportError:
+            import distillation_verdict
+        cases, protected, preparation = distillation_verdict.prepare_source(
+            source, path.parent, dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_matching':
         try:
             from . import distillation_matching
@@ -1245,6 +1254,12 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'distillation_verdict':
+        try:
+            from . import distillation_verdict
+        except ImportError:
+            import distillation_verdict
+        return distillation_verdict.validate(case, raw)
     if adapter == 'distillation_matching':
         try:
             from . import distillation_matching

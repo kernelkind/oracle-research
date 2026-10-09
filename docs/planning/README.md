@@ -110,27 +110,37 @@ subject support and parent-child validity remain separate judgments.
 Qualification and new calls remain open.
 The user then authorized a [DSSv1 subject-support prompt draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
 for review in the conversation. It uses the full post and one unmatched subject;
-the prompt is untested and authored controls await approval. Existing
-matching/review behavior is unchanged and no support experiment is prepared.
+the prompt is untested and its proposed `Lengths` / `4 m cable A` controls await
+approval. The prepared initial controls below reuse already-agreed cases.
 The user approved reusing ASv6.100's support rules verbatim from the original
 source, with a small review task and return format. The revised DSSv1 wrapper
-uses `ASV6_100_SUPPORT_RULES`; no adapter yet supplies this variable. The user
-then accepted its exact wording after seeing the full wrapper. Qualification
+uses `ASV6_100_SUPPORT_RULES`, now supplied from the source by the adapter below.
+The user then accepted its exact wording after seeing the full wrapper. Qualification
 remains open, and no new model calls are authorized.
 The user then authorized a
 [DSLv1 parent-child validity draft](../../sse_multivector/distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9).
 It quotes ASv6.100's rule unchanged and judges one immediate pair using only
 the parent and child subject strings, returning Boolean `valid` and string
 `reason`. The user approved its unchanged wording after seeing the full prompt.
-This unused draft remains untested and qualification is pending; no link adapter,
-schema, experiment or model calls are added.
+This draft remains untested and qualification is pending. Initial link inputs
+and a shared Boolean response schema are now prepared below; no model calls
+have been made.
 The user then accepted adding ASv6.100's subject-wording guidance verbatim to
 matching. Native `revise` produces the
 [DSMv3 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9),
 keeping the inputs, matching criteria and response format unchanged. The user
 approved its exact wording after seeing the full prompt. The draft remains
-untested and qualification is pending; no DSMv3 experiment or calls exist, and
-earlier DSMv2 results do not qualify the new version.
+untested and qualification is pending; earlier DSMv2 results do not qualify it.
+The user subsequently authorized
+[first three-check development inputs](../../sse_multivector/distillation-review-v1/README.md#first-three-check-development-inputs-october-9)
+for presentation before calls: two DSMv3, two DSSv1 and three DSLv1 requests,
+all unrun. The reusable `distillation_verdict` adapter loads source-bound
+wording, ASv6.100 rule excerpts and agreed expectations, deriving immediate
+parents from student numbering and keeping expected answers outside prompts.
+The prompts and GPT-6.1 Sol / xhigh / SSE / concurrency 8 settings are unchanged.
+These seven initial controls do not qualify the reviewer; broader cases and
+fresh repeats remain necessary. No scoring adoption, bulk grading or final-test
+unsealing is authorized. Next, review the prepared inputs before an initial trial.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

@@ -475,13 +475,22 @@ def code_files(dataset):
              'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
-    if dataset['adapter'] in {'distillation_review', 'distillation_matching'}:
+    if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict'}:
         names += ['distillation_review.py', 'distillation_run.py']
     if dataset['adapter'] == 'distillation_matching':
         names += ['distillation_matching.py']
+    if dataset['adapter'] == 'distillation_verdict':
+        names += ['distillation_verdict.py']
     return {name: directory / name for name in names if (directory / name).exists()}
 
 def enrich_report(result, plan, cases):
+    if result["adapter"] == "distillation_verdict":
+        try:
+            from . import distillation_verdict
+        except ImportError:
+            import distillation_verdict
+        result["qualification"] = distillation_verdict.qualification(
+            cases, plan["preparation"]["qualification_case_ids"])
     if result["adapter"] == "distillation_review":
         try:
             from . import distillation_review

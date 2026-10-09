@@ -406,14 +406,15 @@ and final scoring remain open; R05 is not resolved by approving the wording.
 
 The subsequently authorized [DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
 judges post support for one unmatched subject from the full post, returning
-Boolean `valid` and string `reason`. The controls and proposed support
-inheritance from teacher matches await approval; no support experiment or
-model calls have been prepared. Existing review/scoring behavior is unchanged.
+Boolean `valid` and string `reason`. The proposed `Lengths` / `4 m cable A`
+controls and support inheritance await approval. Two initial support inputs
+from already-agreed cases are now prepared below, with no model calls. Pilot
+scoring is unchanged.
 The user then approved reusing ASv6.100's support rules unchanged instead of
 paraphrasing them. The revised DSSv1 wrapper adds only the narrow review task
 and output format around `ASV6_100_SUPPORT_RULES`, to be loaded verbatim from
-the original source during future shared-workflow preparation. No adapter
-currently supplies that variable. The user subsequently accepted the revised
+the original source during shared-workflow preparation. The adapter added below
+now supplies that variable. The user subsequently accepted the revised
 wrapper's exact wording after seeing it in full. DSSv1 remains untested;
 controls, qualification and proposed support inheritance remain open. No
 inference or bulk adoption is authorized by accepting the instructions.
@@ -426,9 +427,10 @@ original source. The post and surrounding hierarchy are excluded under that
 rule. It returns Boolean `valid` and string `reason`, with a lost restriction
 and possible counterexample for invalid pairs. Post support and teacher
 agreement remain separate checks. The user subsequently approved the unchanged
-DSLv1 wording after seeing the full instructions. The unused draft remains
-untested; no adapter, schema, prepared experiment, inference or scoring change
-is added. Wording approval does not qualify the reviewer or authorize new calls.
+DSLv1 wording after seeing the full instructions. The draft remains untested;
+three initial inputs and a shared Boolean response schema are now prepared below.
+Pilot scoring is unchanged. Wording approval does not qualify the reviewer or
+authorize new calls.
 
 The user then accepted adding ASv6.100's subject-wording guidance verbatim to
 complete-meaning matching before qualifying a new version. Native `revise`
@@ -438,9 +440,24 @@ containing the original subject-wording paragraph. The trusted teacher reference
 inputs, matching criteria, response contract, case expectations and saved
 evidence are unchanged. The user approved the exact DSMv3 wording after seeing
 the full instructions. The unchanged draft remains untested and qualification
-is pending. No DSMv3 experiment is prepared and no accuracy/cost measurement is
-claimed; wording approval authorizes no new calls.
+is pending. Two initial DSMv3 inputs are now prepared below; no accuracy/cost
+measurement is claimed, and wording approval authorizes no new calls.
 Previous results do not qualify DSMv3, and the disputed R05 match remains open.
+
+The user subsequently authorized preparing and showing
+[first three-check development inputs](../../sse_multivector/distillation-review-v1/README.md#first-three-check-development-inputs-october-9)
+before model calls. Seven native requests reuse the agreed cable judgments:
+two DSMv3 matching, two DSSv1 support and three DSLv1 immediate parent-child
+checks. The source-bound `distillation_verdict` adapter loads the original
+ASv6.100 rules verbatim, derives immediate parents from student numbering and
+keeps expected Boolean judgments outside model input. Shared schema/validation
+and qualification reporting are tested with an offline executable fixture.
+All requests remain unrun, with GPT-6.1 Sol / xhigh / subscription SSE and
+concurrency 8. The prompts, final scoring and sealed test data are unchanged.
+These controls isolate the three judgments; they do not establish reviewer
+reliability at scale. Next, review the inputs and expectations before an initial
+trial; broader controls, selected large training examples and fresh repeats
+remain necessary before bulk use.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

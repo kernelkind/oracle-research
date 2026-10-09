@@ -1293,7 +1293,8 @@ task and return format, instead of maintaining a paraphrased second rulebook. Th
 uses `ASV6_100_SUPPORT_RULES` for ASv6.100's verbatim opening support-rule text,
 ending after “Derive broader headings by generalizing source meanings without
 adding restrictions.” Future shared-workflow preparation must load this text
-from the original ASv6.100 source; no support adapter currently supplies it.
+from the original ASv6.100 source; the adapter added in the preparation below
+now supplies it.
 The input remains the full post and one subject, and the output remains Boolean
 `valid` and string `reason`. After the full revised DSSv1 wrapper was displayed
 in the conversation, the user accepted its exact wording with “ok, seems
@@ -1334,11 +1335,40 @@ excluded. After the full DSMv3 instructions were displayed in the conversation,
 the user approved their exact wording with “lgtm”. The prompt is unchanged and
 remains an untested draft; qualification is pending. This accepts the matching
 instructions without qualifying the reviewer or authorizing new calls. No
-DSMv3 experiment is prepared and no model calls or accuracy/cost measurements
-occur in drafting or approval recording.
+DSMv3 experiment was prepared during drafting or approval recording. The
+subsequent preparation below adds inputs without model calls or accuracy/cost
+measurements.
 DSMv2 evidence does not qualify DSMv3, and R05 remains disputed. Support/link
 judgments, scoring, bulk adoption and final-test sealing are unchanged. See the
 [DSMv3 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9).
+
+**First three-check development preparation authorized October 9:** after the
+user reconfirmed that DSLv1 judges the distilled model's immediate parent-child
+pairs, the user accepted preparing and showing test inputs and expected
+judgments before calling models. Preparation reuses the already-accepted TC02
+paraphrase, TC03 reversed comparison and TC04 wrong-parent case. Native shared
+runner preparations contain two DSMv3 requests, two DSSv1 requests and three
+DSLv1 requests, all unrun with zero attempts and zero reused answers. The
+`distillation_verdict` project adapter loads hash-bound saved cases, derives
+actual immediate parents from student numbering, extracts ASv6.100's rules
+verbatim and keeps expected answers outside prompts. Its Boolean expectations
+come from the existing agreed source judgments; selectors cannot rewrite
+wording or override those verdicts. The shared Boolean response schema and
+validator check output mechanics, with a separate comparison against the
+prepared expectations. They do not qualify the reason's semantics or adopt
+pilot scoring. Production-path tests use only an offline executable fixture.
+
+The unchanged-answer and renumbering controls remain mechanical. The proposed
+`Lengths` / `4 m cable A` cases are not added. Prompts stay unchanged; all three
+current versions remain untested by models. Specifications preserve GPT-6.1 Sol
+/ xhigh, subscription SSE and concurrency 8. These seven development controls
+are an initial preview, not sufficient qualification: larger controls and fresh
+repeats remain necessary before bulk use. Support inheritance, structural
+allowances, teacher-edge comparison, final rubric adoption, bulk grading and
+final-test unsealing remain outside this preparation. R05 remains unresolved.
+Next, present the exact inputs and expectations for review before a separately
+authorized initial trial. See the
+[prepared development inputs](../../sse_multivector/distillation-review-v1/README.md#first-three-check-development-inputs-october-9).
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
