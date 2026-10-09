@@ -194,10 +194,11 @@ is requested per actual immediate link; the input grows with the two subject
 strings plus the fixed rule, without a whole hierarchy or all-pairs comparison.
 This is draft call sizing, not approval of bulk execution or an optimization.
 
-DSLv1 is untested and its exact wording awaits review. Drafting adds no model
-calls, qualification result, support-inheritance decision or final rubric
-adoption. ASv6.100, DSMv2, DSSv1, existing adapters, schemas, scores and saved
-trials are unchanged.
+The user approved the exact DSLv1 wording after the full instructions were
+displayed in the conversation on October 9. The unchanged prompt remains an
+untested draft. Drafting and wording approval add no model calls, qualification
+result, support-inheritance decision or final rubric adoption. ASv6.100, DSMv2,
+DSSv1, existing adapters, schemas, scores and saved trials are unchanged.
 
 ## Matching-only offline preview
 

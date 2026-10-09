@@ -1313,7 +1313,10 @@ and string `reason`; an invalid reason names the lost restriction and gives a
 possible post fitting the child but not the parent. Post support and teacher
 agreement remain separate judgments. TC04's agreed invalid cable edge is shown
 as a human input example outside the instructions, not a model result or newly
-prepared qualification case. The draft is untested and awaits wording review.
+prepared qualification case. After the full DSLv1 instructions were displayed
+in the conversation, the user approved their wording with “ok lgtm”. The prompt
+is unchanged and remains an untested draft. This accepts the instructions,
+without qualifying the reviewer or authorizing new calls.
 No link adapter, schema, experiment preparation, inference, scoring change or
 bulk adoption is authorized by drafting. Existing prompts and saved evidence
 remain unchanged. See the

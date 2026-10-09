@@ -1030,7 +1030,9 @@ production preparation and decoding functions:
   hierarchy are not inputs. Output is Boolean `valid` and string `reason`, with
   a lost restriction and possible counterexample for an invalid pair. No adapter
   supplies these variables yet, and no link schema or experiment is added.
-  The draft awaits wording review and qualification; no new calls occur.
+  The user approved its unchanged wording after seeing the full DSLv1
+  instructions. The draft remains untested and qualification is pending;
+  wording approval authorizes no new calls.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

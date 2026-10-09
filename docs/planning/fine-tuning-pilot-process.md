@@ -425,8 +425,10 @@ subject strings; ASv6.100's parent-child rule is supplied verbatim from the
 original source. The post and surrounding hierarchy are excluded under that
 rule. It returns Boolean `valid` and string `reason`, with a lost restriction
 and possible counterexample for invalid pairs. Post support and teacher
-agreement remain separate checks. The unused draft awaits wording review;
-no adapter, schema, prepared experiment, inference or scoring change is added.
+agreement remain separate checks. The user subsequently approved the unchanged
+DSLv1 wording after seeing the full instructions. The unused draft remains
+untested; no adapter, schema, prepared experiment, inference or scoring change
+is added. Wording approval does not qualify the reviewer or authorize new calls.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
