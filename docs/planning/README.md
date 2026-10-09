@@ -112,6 +112,10 @@ The user then authorized a [DSSv1 subject-support prompt draft](../../sse_multiv
 for review in the conversation. It uses the full post and one unmatched subject;
 the prompt and authored controls are untested and await approval. Existing
 matching/review behavior is unchanged and no support experiment is prepared.
+The user approved reusing ASv6.100's support rules verbatim from the original
+source, with a small review task and return format. The revised DSSv1 wrapper
+uses `ASV6_100_SUPPORT_RULES`; no adapter yet supplies this variable. Its exact
+wording and qualification remain open, and no new model calls are authorized.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

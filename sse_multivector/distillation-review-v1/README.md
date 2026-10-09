@@ -138,6 +138,19 @@ fail. The input is one JSON object with `post` and `student_subject`, inserted
 at `SUPPORT_INPUT`. The output is exactly `valid` (Boolean) and `reason` (string).
 Teacher coverage and parent-child validity remain separate checks.
 
+The user approved reusing ASv6.100's authoritative rules unchanged rather than
+maintaining a paraphrased support rulebook. DSSv1 now adds a narrow review task
+and output format around `ASV6_100_SUPPORT_RULES`. This variable is the verbatim
+opening text of [ASv6.100](../subject-prompt-goal-v1/asv6.100/ASv6.100.md), from
+its first sentence through “Derive broader headings by generalizing source
+meanings without adding restrictions.” The contiguous excerpt includes the
+support rules and broader-heading allowance; it ends before parent-child,
+placement and output instructions or worked examples. Future shared-workflow
+preparation must load it from that original source, rather than a separately
+maintained copy. No adapter currently supplies the variable, and the draft has
+not been prepared or rendered as an experiment request. Approval covers this
+rule-reuse decision; the revised wrapper's exact wording remains for review.
+
 For the trusted cable post, `Lengths` passing and `4 m cable A` failing are
 proposed authored controls, not model verdicts or approved qualification cases.
 They are input examples for human review, not worked examples embedded in DSSv1.
@@ -145,7 +158,8 @@ No experiment has been prepared and no model calls have been made for DSSv1.
 The prompt is untested and awaits approval. The proposed inheritance of post
 support from correct complete teacher matches still needs process approval;
 relying on semantic matches also requires qualifying the matcher. Existing
-prompts, schemas, adapters, scoring and saved trials are unchanged.
+matching/review prompts, schemas, adapters, scoring and saved trials are
+unchanged; only this unused support draft and its documentation are revised.
 
 ## Matching-only offline preview
 

@@ -409,6 +409,13 @@ judges post support for one unmatched subject from the full post, returning
 Boolean `valid` and string `reason`. The prompt, controls and proposed support
 inheritance from teacher matches await approval; no support experiment or
 model calls have been prepared. Existing review/scoring behavior is unchanged.
+The user then approved reusing ASv6.100's support rules unchanged instead of
+paraphrasing them. The revised DSSv1 wrapper adds only the narrow review task
+and output format around `ASV6_100_SUPPORT_RULES`, to be loaded verbatim from
+the original source during future shared-workflow preparation. No adapter
+currently supplies that variable. The revised wording, controls, qualification
+and proposed support inheritance remain open; this decision authorizes no
+inference or bulk adoption.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
