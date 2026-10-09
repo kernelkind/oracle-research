@@ -90,6 +90,113 @@ class DistillationVerdictTests(unittest.TestCase):
         self.assertEqual(report["status"], "pending")
         self.assertEqual(report["unverified_expectations"], ["A01"])
 
+    def test_actual_support_accepts_authored_subject_and_preserves_source_evidence(self):
+        saved, generation = self.actual_source()
+        definition = self.source["cases"][0]
+        definition.update(student_subject="  Cable A, four mètres long  ", expected_valid=False,
+            expected_reason="The authored length differs from the original post.",
+            selection="Authored support contrast bound to the saved validation subject.")
+        cases, protected, preparation = self.prepare()
+        case = cases[0]
+        self.assertEqual(json.loads(case["inputs"]["SUPPORT_INPUT"]),
+            dict(post="Cable A is 2 m long.", student_subject=definition["student_subject"]))
+        task = generation["messages"][0]["content"].split("\n\n<post>\n")[0]
+        end = "Derive broader headings by generalizing source meanings without adding restrictions."
+        self.assertEqual(case["inputs"]["ASV6_100_SUPPORT_RULES"], task[:task.index(end) + len(end)])
+        self.assertEqual(case["evidence"]["original_student_subject"], "Cable A, two metres long")
+        self.assertEqual(case["evidence"]["student_subject"], definition["student_subject"])
+        self.assertEqual(case["evidence"]["student_number"], "1.1")
+        self.assertEqual(case["evidence"]["generation"], definition["generation"])
+        self.assertEqual(case["evidence"]["expected_reason"], definition["expected_reason"])
+        self.assertEqual(case["evidence"]["selection"], definition["selection"])
+        self.assertEqual(json.loads(saved.read_text()), generation)
+        self.assertEqual(protected[str(saved.resolve())], definition["generation"]["sha256"])
+        self.assertEqual(preparation["qualification_case_ids"], ["A01"])
+        for forbidden in ("Cable A, two metres long", "expected_valid", definition["expected_reason"],
+                          "agent_assessed", definition["selection"], "baseline", "note-a"):
+            self.assertNotIn(forbidden, case["prompt"])
+        from sse_multivector import distillation_verdict as verdict
+        for actual, passed in ((False, True), (True, False)):
+            result = inputs.validate(dict(adapter="distillation_verdict"), case,
+                json.dumps(dict(valid=actual, reason="The post gives two metres.")), None)
+            self.assertEqual(result["qualification"]["passed"], passed)
+            self.assertEqual(verdict.qualification([{**case, **result}], ["A01"])["status"], "pending")
+        definition.update(expected_valid=None, expectation_status="unresolved")
+        case = self.prepare()[0][0]
+        result = inputs.validate(dict(adapter="distillation_verdict"), case,
+            '{"valid":false,"reason":"The post gives two metres."}', None)
+        self.assertIsNone(result["qualification"]["passed"])
+        self.assertEqual(verdict.qualification([{**case, **result}], ["A01"])["unresolved_expectations"], ["A01"])
+
+    def test_authored_support_subject_requires_nonblank_string_and_support_source_v2(self):
+        authored_source = copy.deepcopy(self.source)
+        for subject in (None, "", " \n\t", 1, True, [], {}):
+            with self.subTest(subject=subject):
+                self.actual_source()
+                self.source["cases"][0]["student_subject"] = subject
+                with self.assertRaisesRegex(ValueError, "student subject"):
+                    self.prepare()
+        self.actual_source()
+        self.source["cases"][0]["student_subject_override"] = "Cable A, four metres long"
+        with self.assertRaisesRegex(ValueError, "saved verdict case fields"):
+            self.prepare()
+        self.actual_source("relationship")
+        self.source["cases"][0]["student_subject"] = "Cable A, four metres long"
+        with self.assertRaisesRegex(ValueError, "saved verdict case fields"):
+            self.prepare()
+        self.source = authored_source
+        self.source["cases"][0]["student_subject"] = "Cable A, four metres long"
+        with self.assertRaisesRegex(ValueError, "verdict control fields"):
+            self.prepare()
+
+    def test_authored_support_subject_keeps_generation_number_and_prompt_bindings(self):
+        saved, generation = self.actual_source()
+        self.source["cases"][0]["student_subject"] = "Cable A, four metres long"
+        original = copy.deepcopy(self.source)
+        for mutation, expected in (("hash", "source hash differs"), ("index", "validation generation"),
+                                  ("note", "validation generation"), ("number", "unknown verdict student number"),
+                                  ("identity", "identity differs"), ("test", "validation generation"),
+                                  ("messages", "input differs"), ("truncated", "output limit"),
+                                  ("post", "prompt differs"), ("instruction", "prompt differs")):
+            with self.subTest(mutation=mutation):
+                self.source = copy.deepcopy(original)
+                definition = self.source["cases"][0]
+                value = copy.deepcopy(generation)
+                if mutation == "hash":
+                    definition["generation"]["sha256"] = "0" * 64
+                elif mutation == "index":
+                    definition["generation"]["index"] = 1
+                elif mutation == "note":
+                    definition["generation"]["note_id"] = "other"
+                elif mutation == "number":
+                    definition["student_number"] = "99"
+                elif mutation == "identity":
+                    value["note_id"] = "other"
+                elif mutation == "test":
+                    definition["generation"]["path"] = str(self.path.parent / "test/note-0000/subjects.json")
+                elif mutation == "messages":
+                    value["messages"][0]["content"] += "Changed"
+                elif mutation == "truncated":
+                    value["answer"]["truncated"] = True
+                else:
+                    if mutation == "post":
+                        value["messages"][0]["content"] = value["messages"][0]["content"].replace("2 m long.", "4 m long.")
+                    else:
+                        value["messages"][0]["content"] = "Changed instructions\n" + value["messages"][0]["content"]
+                    evaluation = self.path.parent / "evaluation.jsonl"
+                    evaluation.write_text(json.dumps(dict(note_id="note-a", messages=value["messages"])) + "\n")
+                    manifest_path = self.path.parent / "manifest.json"
+                    manifest = json.loads(manifest_path.read_text())
+                    manifest["outputs"]["evaluation.jsonl"] = hashlib.sha256(evaluation.read_bytes()).hexdigest()
+                    manifest_path.write_text(json.dumps(manifest))
+                    self.source["dataset_manifest"]["sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+                saved.write_text(json.dumps(value))
+                if mutation != "hash":
+                    definition["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+                with self.assertRaisesRegex(ValueError, expected):
+                    self.prepare()
+                self.actual_source()
+
     def test_actual_relationship_uses_student_parent_and_unresolved_has_no_gold_label(self):
         self.actual_source("relationship")
         case = self.prepare()[0][0]
@@ -136,6 +243,10 @@ class DistillationVerdictTests(unittest.TestCase):
                    FAKE_RUNNER_PROMPT_RESPONSE='{"valid":true,"reason":"Fixture verdict."}')
         for check, prompt_id in (("support", "DSSv1"), ("relationship", "DSLv1")):
             self.actual_source(check)
+            if check == "support":
+                self.source["cases"][0].update(student_subject="Cable A, four metres long",
+                    expected_valid=False, expected_reason="The post gives two metres, not four.",
+                    selection="Authored contrast bound to the saved validation subject.")
             self.prepare()
             spec = dict(schema_version=1,
                 prompt=dict(id=prompt_id, path=str(PROMPTS / (check + "-prompt-v1.md"))),
@@ -151,13 +262,20 @@ class DistillationVerdictTests(unittest.TestCase):
             cli("prepare", check, "--spec", "spec.json")
             before = json.loads(cli("show", check, "--json"))
             self.assertEqual(before["summary"]["attempts"], 0)
+            self.assertFalse((root / "calls.json").exists())
+            if check == "support":
+                case = before["cases"][0]
+                self.assertEqual(json.loads(case["inputs"]["SUPPORT_INPUT"])["student_subject"],
+                                 "Cable A, four metres long")
+                self.assertEqual(case["evidence"]["original_student_subject"], "Cable A, two metres long")
+                self.assertEqual(case["evidence"]["student_subject"], "Cable A, four metres long")
             cli("run", check)
             after = json.loads(cli("show", check, "--json"))
             self.assertEqual(after["summary"]["valid"], 1)
             self.assertEqual(after["qualification"]["status"], "pending")
             self.assertEqual(after["qualification"]["unverified_expectations"], ["A01"])
-            self.assertEqual(after["qualification"]["incorrect_verdicts"],
-                             ["A01"] if check == "relationship" else [])
+            self.assertEqual(after["qualification"]["incorrect_verdicts"], ["A01"])
+            (root / "calls.json").unlink()
 
     def test_support_loads_verbatim_rules_one_subject_and_separate_expectations(self):
         cases, protected, preparation = self.prepare()

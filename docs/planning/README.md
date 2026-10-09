@@ -207,9 +207,12 @@ adoption.
 The user authorizes drafting a clarification for the repeated support exception
 error before further calls. [DSSv2](../../sse_multivector/distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
 adds one paragraph about retained claims and omitted exceptions, preserving the
-verbatim ASv6.100 rules and broader-subject allowance. It is untested; exact
-wording approval and a semantic trial remain open. The offline two-case preview
-makes no calls and changes no expectations or model settings.
+verbatim ASv6.100 rules and broader-subject allowance. The user subsequently
+approves the wording and [bounded support trial](../../sse_multivector/distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9):
+20 existing cases, three same-post variants and four fresh DSSv1 comparisons.
+One naturally eligible long-post prefix receives warming. The shared attempt
+limit is 56; model/settings and original expectations stay fixed. Results and
+reviewer qualification remain pending; the earlier preview stays unrun.
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

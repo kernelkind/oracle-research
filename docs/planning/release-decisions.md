@@ -1617,9 +1617,25 @@ ASv6.100 excerpt. It distinguishes dropping a limiting exception while retaining
 its claim from permitted broader subject naming. Native revision preserves the
 exact delta; the offline A08/A20 preview preserves inputs and settings and makes
 no calls. Draft integrity and agent agreement do not establish effectiveness.
-The user has not approved the exact new wording or a semantic trial. DSSv1
-remains the tested support version; DSMv3, DSLv1, existing expectations, teacher
-trust, qualification, bulk review, scoring and test sealing remain unchanged.
+The user subsequently approves the exact wording and bounded semantic trial
+below. DSMv3, DSLv1, existing expectations, teacher trust, qualification, bulk
+review, scoring and test sealing remain unchanged.
+
+**DSSv2 wording and bounded support trial approved October 9:** after reviewing
+the exact clarification, the user directs proceeding. The
+[bounded trial](../../sse_multivector/distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9)
+keeps all 20 original support expectations and adds three authored subjects on
+A20's exact original post: retain its exception, name the broader topic, and
+reverse its exception. A fresh DSSv1 comparison covers those variants and the
+original failure. Native source-bound support preparation gains only an optional
+subject variant, preserving saved generation/number/post/AS rules and keeping
+expectations in review evidence. Sol / xhigh / subscription SSE / concurrency 8
+stay fixed. The stage has 27 verdict calls, one eligible warmup and at most 56
+attempts including provider-only retries. Only the three long-post support cases
+receive a qualifying prefix; shorter groups are not warmed. Runner 1.2.1's
+post-response cost statistics do not change requests. Semantic results remain
+pending; this adopts no matching/link change, lower-effort trial, bulk grading,
+scoring or reserved-test access.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

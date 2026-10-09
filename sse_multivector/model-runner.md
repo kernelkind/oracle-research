@@ -1152,8 +1152,17 @@ production preparation and decoding functions:
   through native `revise`, adding one exception/claim-scope clarification after
   the unchanged ASv6.100 rules. Native offline preparation reuses A08/A20 from
   the confirmation with the same settings and output contract; it makes no
-  calls. DSSv2 remains proposed and untested, pending wording and semantic-trial
-  approval. DSSv1 and saved trials remain intact; no other reviewer changes.
+  calls. The user subsequently approves the wording and
+  [bounded support trial](distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9).
+  It keeps 20 actual cases and adds three subject variants on A20's source-bound
+  post, with a fresh four-case DSSv1 comparison. Schema-v2 support sources accept
+  an optional `student_subject`; native preparation preserves original bindings
+  and records both saved and authored wordings in evidence. Relationship sources
+  reject variants. The stage has 27 verdicts, one eligible native warmup and a
+  shared 56-attempt budget. Sol / xhigh / SSE / concurrency 8 remain fixed.
+  Only A07/A14/A21's 1,094-token proxy prefix qualifies; smaller groups are not
+  warmed. Runner 1.2.1 adds cost statistics without changing requests. Results
+  remain pending; all saved trials and other reviewers stay intact.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

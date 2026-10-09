@@ -1,10 +1,11 @@
 # Distillation semantic review — process and evidence
 
-[DSSv2](support-prompt-v2.md) is now a proposed, untested subject-support draft
-for wording review. It adds one clarification of claim scope and exceptions
-after the unchanged ASv6.100 excerpt. DSSv1 remains the tested support version;
-no new reviewer calls or semantic results are authorized by drafting DSSv2.
-See the [draft record](#dssv2-exception-clarification-draft-october-9).
+[DSSv2](support-prompt-v2.md)'s wording and a bounded support trial are now
+approved. The [trial](#dssv2-bounded-support-trial-october-9) freezes the 20 existing
+support cases and three same-post subject variants, with a fresh four-case DSSv1
+comparison. The authoritative ASv6.100 rules, Sol / xhigh / subscription SSE and
+concurrency 8 stay fixed. No result or broader reviewer qualification is implied
+by this authorization.
 
 Fresh confirmation result: **two of the four rejected decisions repeat; two
 change to the expected correct verdict**. All four previously accepted contrasts
@@ -1098,11 +1099,74 @@ inference. It cannot establish that the error is fixed or measure over-rejection
 the preview has no DSSv2 verdicts. These reused development cases cannot provide
 an independent accuracy estimate.
 
-The draft's exact wording and a subsequent bounded semantic trial remain open
-for user approval. Further calls should test exception-preserving wording and
-broader topic naming as well as A20 before broader use; those additional controls
-and calls are not prepared or adopted here. DSMv3, DSLv1, reviewer qualification,
+The user subsequently approves the wording and bounded trial below. The earlier
+offline preview stays unrun and intact. DSMv3, DSLv1, reviewer qualification,
 final scoring, bulk adoption and sealed test data retain their existing status.
+
+### DSSv2 bounded support trial (October 9)
+
+After seeing the exact proposed paragraph, the user directs proceeding with the
+bounded semantic test. DSSv2 is the approved wording for this test; its source
+is unchanged from the draft. The scope is the 20 existing actual-output support
+cases, three same-post controls, and a fresh DSSv1 comparison on the original
+failure plus those controls. ASv6.100 remains trusted and is loaded verbatim.
+Matching, parent-child review, lower-effort comparison, bulk grading, scoring
+and reserved-test access are outside this trial.
+
+The original support labels remain fixed at 17 true and three false; an
+independent pre-call agent audit finds no new disagreement. The
+[exception-control source](support-exception-controls-source.json) binds all four
+definitions to A20's original saved generation and student number. Only the
+authored `student_subject` varies; native preparation supplies the complete
+original post and authoritative AS rules. Its labels are agent assessments,
+not independently adjudicated gold:
+
+| Case | Subject | Expected | Use |
+| --- | --- | --- | --- |
+| C00 | Social-media likes not being love | false | Fresh DSSv1 baseline; DSSv2 uses identical A20 |
+| C01 | Social-media likes not being love, except on Nostr | true | Both versions |
+| C02 | Social-media likes | true | Both versions |
+| C03 | Social-media likes not being love, except outside Nostr | false | Both versions |
+
+Schema-v2 `distillation_verdict` support definitions now accept an optional
+nonempty `student_subject` variant. Original generation/number/source bindings
+are checked first; the saved wording and authored variant stay separate in
+review evidence. The variant changes only the supplied support subject, not
+the source post or saved hierarchy. Relationship sources reject this option.
+The [native spec](support-exception-controls-spec.json) reuses the Boolean/reason
+schema and existing source loader. Expectations remain outside model input.
+
+The new production-path tests first fail because the old adapter rejects the
+variant field; the 12 verdict tests then pass, including native CLI preparation,
+source/AS binding, malformed variants and separate expectations. The relevant
+workflow run contains 164 tests: 158 pass and six optional artifact/UI checks
+are skipped. Two matching tests initially lack the ignored training fixture in
+the worktree; linking the unchanged canonical fixture makes both reruns pass.
+Cached `uv` with `tiktoken==0.14.0` supplies the dependency missing from plain
+Python. An earlier unscoped runtime run is stopped; no runtime suite pass is
+claimed and no runtime dependency is installed.
+
+The four experiments are under
+`target/distillation-review-v1/support-scope-dssv2-trial-20261009/`:
+`actual-other` has 17 DSSv2 cases; `actual-note27` has the three DSSv2 long-post
+cases A07/A14/A21; `controls-v1` has C00–C03 with intentional fresh repetition;
+`controls-v2` has C01–C03. These are 27 verdict calls, with one eligible native
+warmup and a shared **56-attempt** budget allowing provider-only retries.
+Sol / xhigh / subscription SSE / concurrency 8 remain fixed; batches never
+exceed eight total initial in-flight calls.
+
+Only A07/A14/A21's naturally shared prefix qualifies for warming (1,094
+`o200k_base` proxy tokens). The A20/control prefix and other repeated posts are
+below 1,024; none are padded or warmed. Current runner 1.2.1 (`e4550ea`) adds
+post-response cost statistics, preserving request construction, retries, SDK
+pin and warming behavior. Fresh preparations record its identity; the earlier
+unrun DSSv2 preview is not resumed.
+
+This is development evidence for the new wording, including regression checks
+on previously used cases. Frozen labels and fresh responses can reveal failures
+and inconsistency; they cannot establish independent population accuracy or
+qualify the reviewer for bulk use. Semantic outcomes remain pending until calls
+complete and their reasons receive attributed agent review.
 
 ## Matching-only offline preview
 

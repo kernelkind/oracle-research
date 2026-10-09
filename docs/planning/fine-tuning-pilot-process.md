@@ -539,9 +539,12 @@ is adopted.
 The subsequently authorized [DSSv2 draft](../../sse_multivector/distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
 addresses the repeated support exception error with one claim-scope clarification
 after the intact ASv6.100 excerpt. The offline A08/A20 preview preserves cases
-and settings and makes no calls. Exact wording and semantic testing still need
-approval; the draft does not replace tested DSSv1, establish effectiveness or
-qualify the reviewer.
+and settings and makes no calls. The user subsequently approves the wording and
+[bounded support trial](../../sse_multivector/distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9)
+on 20 existing cases and three same-post variants, with four fresh DSSv1
+comparisons. Only the three long-post cases receive an eligible warmup; the
+shared 56-attempt limit includes provider retries. This authorization establishes
+no semantic result or broader reviewer qualification.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "check": "support",
+  "dataset_manifest": {
+    "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json",
+    "sha256": "ee734d39ec007fb832763b273e96f24c250c32f0ef79a018e8cc08ac0b941349"
+  },
+  "cases": [
+    {
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0006/subjects.json",
+        "sha256": "ea629cd242b36de589eb67b8f863669de3d229596e8048d67fdd01a78f08c2a9",
+        "index": 6,
+        "note_id": "c43bdaea04debcd5e01eac1d2369f38ed79075004ee7f8ce329f64d508c90086"
+      },
+      "student_number": "4.1",
+      "expectation_status": "agent_assessed",
+      "id": "C00",
+      "selection": "DSSv2 exception development control; same exact A20 post; frozen before reviewer calls",
+      "expected_valid": false,
+      "expected_reason": "Original A20 negative claim drops the explicit NOT ON NOSTR exception."
+    },
+    {
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0006/subjects.json",
+        "sha256": "ea629cd242b36de589eb67b8f863669de3d229596e8048d67fdd01a78f08c2a9",
+        "index": 6,
+        "note_id": "c43bdaea04debcd5e01eac1d2369f38ed79075004ee7f8ce329f64d508c90086"
+      },
+      "student_number": "4.1",
+      "expectation_status": "agent_assessed",
+      "id": "C01",
+      "selection": "DSSv2 exception development control; same exact A20 post; frozen before reviewer calls",
+      "expected_valid": true,
+      "expected_reason": "The negative claim retains the explicit Nostr exception.",
+      "student_subject": "Social-media likes not being love, except on Nostr"
+    },
+    {
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0006/subjects.json",
+        "sha256": "ea629cd242b36de589eb67b8f863669de3d229596e8048d67fdd01a78f08c2a9",
+        "index": 6,
+        "note_id": "c43bdaea04debcd5e01eac1d2369f38ed79075004ee7f8ce329f64d508c90086"
+      },
+      "student_number": "4.1",
+      "expectation_status": "agent_assessed",
+      "id": "C02",
+      "selection": "DSSv2 exception development control; same exact A20 post; frozen before reviewer calls",
+      "expected_valid": true,
+      "expected_reason": "Names the supported broader topic without asserting the scoped negative claim.",
+      "student_subject": "Social-media likes"
+    },
+    {
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0006/subjects.json",
+        "sha256": "ea629cd242b36de589eb67b8f863669de3d229596e8048d67fdd01a78f08c2a9",
+        "index": 6,
+        "note_id": "c43bdaea04debcd5e01eac1d2369f38ed79075004ee7f8ce329f64d508c90086"
+      },
+      "student_number": "4.1",
+      "expectation_status": "agent_assessed",
+      "id": "C03",
+      "selection": "DSSv2 exception development control; same exact A20 post; frozen before reviewer calls",
+      "expected_valid": false,
+      "expected_reason": "Reverses the source exception: the post exempts Nostr, not every other platform.",
+      "student_subject": "Social-media likes not being love, except outside Nostr"
+    }
+  ]
+}

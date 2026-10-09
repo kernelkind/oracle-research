@@ -87,7 +87,8 @@ def _verdict_case(check, definition, post, students, task, evidence, expected_va
         if task.count(end) != 1:
             raise ValueError("ASv6.100 support rule boundary differs")
         variables = dict(ASV6_100_SUPPORT_RULES=task[:task.index(end) + len(end)],
-            SUPPORT_INPUT=json.dumps(dict(post=post, student_subject=students[number]), ensure_ascii=False))
+            SUPPORT_INPUT=json.dumps(dict(post=post,
+                student_subject=definition.get("student_subject", students[number])), ensure_ascii=False))
     else:
         parent_number = number.rpartition(".")[0]
         if parent_number not in students:
@@ -114,8 +115,14 @@ def _prepare_generations(source, base, selected):
         raise ValueError("saved verdicts require nonempty cases")
     identifiers = []
     for definition in definitions:
-        review._fields(definition, {"id", "generation", "student_number", "expected_valid",
-            "expected_reason", "expectation_status", "selection"}, "saved verdict case")
+        fields = {"id", "generation", "student_number", "expected_valid",
+                  "expected_reason", "expectation_status", "selection"}
+        if check == "support" and isinstance(definition, dict) and "student_subject" in definition:
+            fields.add("student_subject")
+        review._fields(definition, fields, "saved verdict case")
+        if "student_subject" in definition and (not isinstance(definition["student_subject"], str)
+                                               or not definition["student_subject"].strip()):
+            raise ValueError("saved support student subject must be a nonblank string")
         identifier = engine._expect_identifier(definition["id"], "verdict case id")
         if identifier in identifiers:
             raise ValueError("duplicate verdict case identity")
@@ -145,6 +152,9 @@ def _prepare_generations(source, base, selected):
             generation=definition["generation"], student_number=definition["student_number"],
             student_entries=len(saved["student"]), expectation_status=definition["expectation_status"],
             selection=definition["selection"], expected_reason=definition["expected_reason"])
+        if "student_subject" in definition:
+            evidence.update(original_student_subject=students[definition["student_number"]],
+                            student_subject=definition["student_subject"])
         cases.append(_verdict_case(check, definition, saved["post"], students,
             saved["task_prompt"], evidence, definition["expected_valid"]))
     return cases, protected, dict(check=check, qualification_case_ids=[d["id"] for d in definitions])
