@@ -303,9 +303,20 @@ The prompt contains no case-specific examples or expected verdicts.
 The club case exposed why withholding all post context was too broad: R19's
 post is `welcome to underground…♣`, its teacher wording is `Clubs suit symbol`,
 and the actual generated wording is `Club symbols`. The post can identify the
-card-suit sense of "club" without importing a new fact. The final complete-meaning
-judgment remains ungraded; omitting the explicit word "suit" does not by itself
-establish a lost restriction.
+card-suit sense of "club" without importing a new fact.
+
+The authorized offline assessment now sets **R19's expected verdict to T06**,
+teacher number `4`, `Clubs suit symbol`. [Unicode](https://www.unicode.org/charts/PDF/U2600.pdf)
+identifies `♣` as the black club-suit symbol;
+[Merriam-Webster](https://www.merriam-webster.com/dictionary/club) also defines
+"clubs" as a card suit. Our assessment is that the post selects that meaning
+already present in `Club symbols`, so omitting "suit" loses no restriction.
+Here "symbols" is interpreted as a generic subject label rather than an added
+count. The saved teacher and generated context fields both identify `♣`;
+these fields support the offline assessment and are withheld from the reviewer.
+This is an agent-assessed match, not independently
+verified gold or a reviewer result. The context-free DSMv1 expectation remains
+unresolved.
 
 The shared adapter supplies `POST` as a JSON string when the prompt requests
 `{POST}`. It uses the already verified original post from either source format.
@@ -314,23 +325,28 @@ DSMv1 preparation and its frozen trials are preserved. Parent wording, generated
 explanations, source/model identities and expected answers remain outside DSMv2.
 The revision receipt records the exact delta from DSMv1.
 
-[matching-actual-v2-spec.json](matching-actual-v2-spec.json) prepares the same
-22 targets with Sol / xhigh and concurrency 8. The offline artifact is
-`target/distillation-review-v1/matching-actual-context-20261008/`.
+[matching-actual-v2-spec.json](matching-actual-v2-spec.json) now binds
+[matching-actual-v2-source.json](matching-actual-v2-source.json), keeping the
+post-dependent assessment separate from DSMv1's original definitions. It
+prepares the same 22 targets with Sol / xhigh and concurrency 8. The current
+offline artifact is `target/distillation-review-v1/matching-actual-club-02-20261008/`.
+All 22 prompts and settings are identical to the original DSMv2 preview;
+only R19's expected match, reason and assessment status change. The original
+post-containing preview remains frozen and preserved.
 Native reporting confirms **zero calls, attempts and reused answers**; all
 22 cases are unrun. Rendered inputs total 25,043 `o200k_base` proxy tokens,
 with 445–1,569 per request and at most 46 teacher wordings. These are text sizes,
-not measured usage, caching or cost. The inherited DSMv1 assessments remain
-unverified evidence, not newly adjudicated DSMv2 expectations. They need checking
-with the supplied posts before calls; R19 remains unresolved and qualification
-is pending.
+not measured usage, caching or cost. There are now nine assessed matches,
+thirteen assessed nonmatches and no unresolved placeholders. All 22 expectations
+remain unverified; qualification is pending. The other 21 inherited assessments
+still need checking with the supplied posts before calls.
 
 Inspect the exact draft club request without inference:
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py show \
-  target/distillation-review-v1/matching-actual-context-20261008 \
+  target/distillation-review-v1/matching-actual-club-02-20261008 \
   --case R19 --prompt-only
 ```
 
@@ -340,6 +356,10 @@ subject inputs, preserved source bindings and exclusion of expected answers.
 The matching, review, shared experiment, selection and extraction regression
 suites pass 244 tests. The saved DSMv1 confirmation repeat still reports 16/16
 passing controls.
+After the assessment-only update, all 14 matching tests pass. Native inspection
+confirms T06 as the expected R19 ID, all expectations still unverified and all
+22 cases unrun; it also confirms unchanged prompts/settings and preserves the
+DSMv1 source definitions.
 These mechanical checks do not establish semantic reliability. Expected-answer
 verification and checks of interpretation versus missing restrictions precede
 any proposed reviewer calls. Full review adoption and final-test unsealing

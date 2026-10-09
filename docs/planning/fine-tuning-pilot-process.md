@@ -461,8 +461,11 @@ restrictions to be supplied from the post. Draft
 implements this distinction and prepares the same 22 targets offline with
 zero calls. DSMv1's tested prompt remains preserved. Sol / xhigh, concurrency 8,
 complete-meaning matching and trusted ASv6.100 references remain unchanged.
-The prior assessments need checking with the supplied posts; the club case is
-still ungraded, all expectations remain unverified and qualification is pending.
+The authorized offline club assessment sets R19's expected match to T06 for
+DSMv2, with no lost restriction in the card-suit sense selected by the post's
+`♣`. A separate source definition preserves DSMv1's unresolved expectation.
+The other 21 assessments need checking with the supplied posts; all expectations
+remain unverified and qualification is pending. No reviewer result exists.
 This drafting and preparation does not establish reliability or authorize
 reviewer calls, bulk review or test unsealing.
 

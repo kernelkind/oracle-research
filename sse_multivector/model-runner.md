@@ -1027,7 +1027,11 @@ production preparation and decoding functions:
   the post may clarify wording already present, but cannot supply missing
   restrictions. `matching-actual-v2-spec.json` prepares the same 22 targets with
   zero calls and unchanged Sol / xhigh, concurrency 8 settings. Prior expectations
-  remain unverified and need checking with the supplied posts; R19 is ungraded.
+  remain unverified. The authorized offline club assessment expects T06 for
+  R19, recorded in `matching-actual-v2-source.json`; the other 21 expectations
+  still need checking with posts visible. A fresh offline preview retains all
+  identical DSMv2 prompts/settings, with zero calls and qualification pending.
+  The separate DSMv2 source preserves DSMv1's unresolved club expectation.
   DSMv1's trials are preserved. Additional calls and semantic reliability remain
   open.
 

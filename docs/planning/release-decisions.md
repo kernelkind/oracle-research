@@ -1068,6 +1068,19 @@ still ungraded. Semantic reliability, further calls, full review adoption and
 final-test unsealing remain open. See the
 [DSMv2 draft and preview](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
 
+**DSMv2 club expectation assessed October 8:** the user authorized settling
+the expected club verdict before reviewer calls. The offline agent assessment
+sets R19 to teacher T06 / original number `4`, `Clubs suit symbol`: the post's
+`♣` selects the card-suit sense of `Club symbols`, and the plural is a generic
+subject label rather than an added count. This records an assessment, not user
+acceptance of that verdict or independent gold verification. DSMv2's spec now
+binds a separate source definition; DSMv1's unresolved expectation stays intact.
+The fresh offline preview preserves all 22 prompts/settings and makes zero
+calls. There are nine assessed matches, thirteen assessed nonmatches and no
+unresolved placeholders, but all expectations remain unverified and qualification
+is pending. The other 21 inherited assessments still need checking with posts
+visible before calls. See the [club assessment](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

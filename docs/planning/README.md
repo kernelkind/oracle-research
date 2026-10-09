@@ -59,7 +59,9 @@ The user accepted adding the original post to clarify existing wording while
 forbidding it from supplying missing restrictions. The untested
 [DSMv2 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8)
 prepares the same 22 targets with zero reviewer calls. Prior expectations still
-need verification with the supplied posts; the club case remains ungraded.
+need verification with the supplied posts. The authorized offline club assessment
+sets R19's expected match to T06 for DSMv2; it is unverified and has no reviewer
+result. DSMv1's context-free expectation remains unresolved.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

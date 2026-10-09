@@ -6,7 +6,7 @@
   },
   "dataset": {
     "adapter": "distillation_matching",
-    "path": "matching-actual-source.json"
+    "path": "matching-actual-v2-source.json"
   },
   "runner": {
     "provider": "openai-codex",
