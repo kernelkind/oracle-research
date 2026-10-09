@@ -1078,6 +1078,21 @@ production preparation and decoding functions:
   All 14 matching tests pass. This completes the agent post recheck, not
   independent gold verification or reviewer qualification. Additional calls
   remain a separate decision.
+  The subsequently authorized
+  [remaining 20-case DSMv2 trial](distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8)
+  uses `../experiment-runner/bin/experiment-runner` with the same complete
+  prompts, inputs, evidence and runner settings. All 20 reports are valid;
+  nineteen agree with their expectations. R05 matches `Fakery` to T17,
+  `Inauthenticity`, instead of expected null. Native agent review records nineteen
+  acceptances and one uncertain R05 without changing the expected label.
+  There are 21 attempts, including one successful provider-overload retry of
+  R15, and no response reuse. Native usage is 24,122 input tokens, zero cached
+  input and 5,703 output tokens, including 4,598 reasoning tokens. The $0.105274
+  catalog estimate is not an invoice; failed-attempt SDK zero fields do not
+  establish actual upstream consumption. Qualification remains pending and
+  all 14 matching tests pass. R16/R19 remain in the separate completed trial.
+  Contextual equivalence for R05 needs adjudication before changing the prompt;
+  broader reliability and additional calls remain open.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

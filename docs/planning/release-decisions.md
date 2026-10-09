@@ -1120,6 +1120,24 @@ additional reviewer calls, bulk review and final-test unsealing remain separate
 decisions. See the
 [post-visible recheck](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-post-visible-expectations-october-8).
 
+**DSMv2 remaining trial authorized and completed October 8:** the user accepted
+running the other 20 cases through `experiment-runner/bin/experiment-runner`
+with unchanged Sol / xhigh, concurrency 8 settings. All 20 final reports are
+mechanically valid; nineteen agree with the pre-recorded expectations. R05
+matches `Fakery` to T17, `Inauthenticity`, instead of expected null. Native
+scoring flags a false match against that label; agent review marks it uncertain
+because contextual equivalence needs adjudication before attributing the
+disagreement to reviewer error. The other nineteen agent reviews accept the
+saved verdicts. Prompts, inputs, expected labels and assessment statuses are
+preserved. There are 21 attempts, including a successful provider-overload retry
+of R15, and zero reused answers. Native usage is 24,122 input tokens, zero
+cached input and 5,703 output tokens, including 4,598 reasoning tokens; the
+$0.105274 catalog estimate is not an invoice. Qualification remains pending;
+this does not independently verify the labels, establish repeat stability or
+approve reviewer adoption, further calls, prompt changes, bulk review or test
+unsealing. See the
+[remaining trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

@@ -4,9 +4,10 @@ Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct cont
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
-semantic review has not run. **DSMv2 is a draft tested on two actual-wording
-cases**, both agreeing with the prior agent assessments. Its offline full-set
-preview makes zero calls; broader qualification remains pending.
+semantic review has not run. **DSMv2's latest actual-wording trial agrees with
+19/20 agent expectations**, with `Fakery`→`Inauthenticity` requiring adjudication.
+Both cases in the preceding two-case trial agree. The full-set offline preview
+makes zero calls; broader qualification remains pending.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -466,8 +467,62 @@ model, effort, schema and concurrency are unchanged; the separate shared-runner
 migration in commit `3008f537` changed the recorded runner executable path.
 Input sizing remains 25,043 `o200k_base` proxy tokens, 445–1,569 per request,
 with at most 46 teacher wordings. Native qualification remains pending.
-All 14 matching tests pass. The two-case trial and other frozen previews remain
-preserved; no additional reviewer calls or final-test unsealing are authorized.
+All 14 matching tests pass. The user subsequently authorized the remaining
+20-case trial below. The two-case trial and other frozen previews remain preserved;
+bulk review and final-test unsealing remain separate decisions.
+
+## DSMv2 remaining 20-case trial (October 8)
+
+The user authorized running the remaining 20 cases through
+`../experiment-runner/bin/experiment-runner`, with unchanged Sol / xhigh,
+subscription transport and concurrency 8. The shared CLI prepared
+`target/distillation-review-v1/matching-post-remaining-20261008/` from the existing
+spec with the 20 selected IDs and `--repeat`, excluding the already tested R16
+and R19. All complete prompts, inputs, evidence and runner settings match the
+post-checked preview exactly. Expected answers and reasons were withheld.
+The run used `--max-new-attempts 40` for the existing provider-only retry policy.
+
+All 20 final reports are mechanically valid. Nineteen verdicts agree with their
+recorded expectations: all eight expected matches and eleven of the twelve
+expected nonmatches. The sole disagreement is **R05: `Fakery`→T17,
+`Inauthenticity`, versus expected null**. Native scoring records `false_match`
+for R05, with no missed matches or wrong matched IDs. These are agreements and
+disagreements with agent labels, not an independently measured accuracy rate.
+
+R05's response says both headings express the same general concept of being
+fake or not genuine. Our expectation distinguishes the practice or products
+of faking from a lack of authenticity. The response does not address that
+distinction. Both headings are general and the post mentions fake imagery and
+a fake societal paradigm, so their equivalence in this context needs adjudication.
+Native `review` records nineteen agent acceptances and one **uncertain** R05.
+The disagreement is preserved; no prompt or expected label is changed to make
+the results agree. It does not by itself establish that Sol cannot perform
+the matching task. ASv6.100 remains authoritative.
+
+There are 21 new attempts, including one successful retry of R15 after a
+structured `server_is_overloaded` / `service_unavailable_error` response.
+There are no reused answers or unresolved request failures. Native usage reports
+24,122 input tokens, zero cached input tokens and 5,703 output tokens, including
+4,598 reasoning tokens. The failed attempt's SDK usage fields are zero;
+these do not establish its actual upstream token consumption. The $0.105274
+catalog estimate is not a subscription invoice; provider-reported charges are
+unavailable. Final saved request elapsed times range from 5.18 to 104.77 seconds
+and include admission waits; they do not include R15's earlier failed attempt.
+
+Native qualification remains pending because all 20 selected expectations are
+unverified. Its source-wide pending list contains R16 and R19, excluded from
+this run and preserved in the separate completed two-case trial. No combined
+usage report or population accuracy is inferred from these separate trials.
+All 14 matching tests pass. Prompts, source expectations, earlier receipts and
+sealed final-test answers remain unchanged. Further calls, prompt revisions,
+bulk review and review adoption remain separate decisions. The next useful
+step is to adjudicate R05 before changing the reviewer or its criteria.
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/matching-post-remaining-20261008 --case R05
+```
 
 ## Reviewer and inputs
 

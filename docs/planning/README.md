@@ -71,6 +71,12 @@ reliability. The authorized
 retain all 20 expected verdicts and clarify their recorded reasons, with no new
 reviewer calls. All 22 expectations remain agent assessments requiring independent
 verification; broader qualification is pending.
+The subsequent authorized
+[20-case DSMv2 trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8)
+returns 20 valid reports: nineteen agree with the recorded expectations, while
+R05 matches `Fakery` to `Inauthenticity` despite expected null. Agent review marks
+that disagreement uncertain pending adjudication. One provider-overload retry
+succeeds; no answers are reused. Prompts and expectations are preserved.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

@@ -484,6 +484,15 @@ expected IDs and assessment statuses remain unchanged. A fresh full-set preview
 makes zero calls. This completes the post recheck, not independent gold
 verification or semantic qualification. Further reviewer calls remain a separate
 decision.
+The user then authorized the
+[remaining 20-case trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8)
+using the shared launcher and unchanged Sol / xhigh, concurrency 8 settings.
+All 20 final reports are valid; nineteen agree with the recorded expectations.
+R05 returns `Inauthenticity` for `Fakery` instead of expected null and is marked
+agent-uncertain pending adjudication. There is one successful provider-overload
+retry and no response reuse. Prompts and expected labels are preserved;
+qualification remains pending. This does not select a revised prompt or
+authorize additional calls, bulk review or test unsealing.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a
