@@ -103,6 +103,11 @@ The user then reviewed the cases in conversation and accepted the expected
 judgments for all six, including mechanical checks for consistent renumbering
 and the unchanged teacher answer. These approvals concern case expectations,
 not model qualification or a revised scoring rule.
+On October 9 the user approved the unchanged
+[DSMv2 instructions for complete-meaning matching](../../sse_multivector/distillation-review-v1/README.md#dsmv2-matching-instructions-approved-october-9).
+The decision format is one JSON object with `teacher_id` and `reason`;
+subject support and parent-child validity remain separate judgments.
+Qualification and new calls remain open.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

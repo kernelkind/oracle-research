@@ -1002,6 +1002,11 @@ production preparation and decoding functions:
   mechanically. These approvals add neither measured model
   verdicts nor a teacher-edge agreement implementation, and change no frozen
   source, prompt, scorer or saved trial.
+  The user approved the unchanged DSMv2 instructions on October 9 for
+  complete-meaning matching only. Its existing response contract is one JSON
+  object with `teacher_id` (a supplied ID or null) and `reason`. Subject support
+  and parent-child validity remain separate judgments; the approval changes
+  no prompt or schema, qualifies no reviewer and authorizes no new calls.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

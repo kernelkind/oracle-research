@@ -1255,6 +1255,23 @@ during this review; broader structural allowances and final rubric/adoption
 remain open. The [case table](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
 records each approval separately.
 
+**DSMv2 meaning-matching instructions approved October 9:** the user reviewed
+the exact DSMv2 instructions and prepared paraphrase request, confirmed that
+the prompt answers only complete-meaning matching, and approved the wording.
+Each request compares one generated subject with the complete distinct teacher
+wording list for that note. The post interprets wording without supplying
+restrictions missing from a subject. Return exactly one JSON object with
+`teacher_id` (a supplied ID or JSON `null`) and `reason` (a brief explanation).
+The existing return-format instruction was clarified in conversation; the
+prompt and response schema are unchanged. The cable JSON is the request's
+input, not a worked example in the instructions; the displayed T04/null
+expectations remain outside the reviewer prompt. Subject support and
+parent-child validity are separate judgments. This approves the instructions,
+not model qualification, numerical scoring, bulk adoption or new calls.
+The two prepared teacher-relative matching cases remain unrun, and R05's
+disputed match remains unresolved. See the
+[instruction approval](../../sse_multivector/distillation-review-v1/README.md#dsmv2-matching-instructions-approved-october-9).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

@@ -397,6 +397,13 @@ measured model verdicts or adoption of a revised scoring rule; no new calls,
 prompt changes or scorer changes occurred. See the
 [decision record](release-decisions.md).
 
+On October 9 the user approved the unchanged
+[DSMv2 meaning-matching instructions](../../sse_multivector/distillation-review-v1/README.md#dsmv2-matching-instructions-approved-october-9).
+One generated subject is compared with the complete distinct teacher list;
+the decision is one JSON object with `teacher_id` and `reason`. Subject support
+and parent-child validity remain separate judgments. Qualification, new calls
+and final scoring remain open; R05 is not resolved by approving the wording.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

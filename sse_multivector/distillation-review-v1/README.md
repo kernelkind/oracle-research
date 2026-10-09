@@ -112,6 +112,22 @@ Preparation authorizes no inference. Exact inputs and expected findings can be
 inspected without new reviews; prompts, implementation, full qualification,
 bulk grading and test unsealing remain separate work.
 
+## DSMv2 matching instructions approved (October 9)
+
+The user reviewed [DSMv2](matching-prompt-v2.md), confirmed its scope as
+complete-meaning matching, and approved the instructions. Each call receives
+one generated subject, the original post and all distinct teacher wordings.
+The shown cable JSON is the input being judged; expected T04/null results
+remain outside the prompt. It returns exactly one JSON object containing
+`teacher_id` (a supplied ID or JSON `null`) and `reason` (a brief explanation).
+That format is already specified by the unchanged prompt and
+[response schema](matching-response-schema.json).
+
+This is approval of the wording, not model qualification or bulk adoption.
+Subject support and parent-child validity remain separate judgments. No new
+calls or changes to case sources or scoring followed from this approval; both
+prepared teacher-relative requests remain unrun and R05 remains disputed.
+
 ## Matching-only offline preview
 
 The October 8 approval authorizes drafting and offline preparation of
