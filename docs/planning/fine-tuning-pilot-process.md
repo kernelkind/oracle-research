@@ -479,15 +479,22 @@ existing ranked training extremes: maximum entries, maximum distinct catalog,
 and longest answer. Unchanged DSMv3/DSSv1/DSLv1 preparations contain 6/6/4
 requests, all unrun, with authored judgments outside prompts. LC03’s matching,
 support and link expectations, LC04’s matching and support failures, and
-LC07’s invalid link are agreed; the other four variants remain proposed. The
-trusted teacher catalog and post stay complete; link inputs derive actual
-student parents. The accepted LC03 loses a three-day restriction while retaining
-post support; its teacher match and link fail. LC07 moves Dr. Abu Safiya beneath a parent that explicitly excludes him;
-its trusted exact subject strings need no matching or support calls. The
-accepted LC04 changes `rather than printing money` to `and printing money`,
-contradicting both teacher wording and the post. The remaining variants still
-need conversational review, with LC01’s `two` → `2` change next;
-preparation authorizes no new calls, qualification, grading or test unsealing.
+LC07’s invalid link have explicit user acceptance. The user delegated review
+of LC01, LC02, LC05 and LC06 to the agent; those expectation assessments are
+complete without changes to the authored labels. The trusted teacher catalog
+and post stay complete; link inputs derive actual student parents. The
+accepted LC03 loses a three-day restriction while retaining post support; its
+teacher match and link fail. LC07 moves Dr. Abu Safiya beneath a parent that
+explicitly excludes him; its trusted exact subject strings need no matching or
+support calls. The accepted LC04 changes `rather than printing money` to `and
+printing money`, contradicting both teacher wording and the post. In the
+delegated assessments, LC01 and LC05 preserve meaning; LC02’s changed count
+and LC06’s first-ban wording fail the relevant checks. The agent inspected
+complete native inputs, including actual selected parents; no material
+ambiguity remained. No further individual user review of these controls is
+required. The next proposed step is the bounded 16-request trial with
+unchanged Sol / xhigh / concurrency 8. Expectation review authorizes no new
+calls, qualification, grading or test unsealing.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

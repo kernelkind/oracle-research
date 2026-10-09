@@ -161,8 +161,13 @@ the parent-child link. LC07’s moved subtree has an invalid incoming link becau
 its new parent explicitly excludes Dr. Abu Safiya, whom the child names; both
 strings remain trusted teacher wording. LC04’s `rather than printing money` →
 `and printing money` change fails both complete teacher matching and post
-support. Four variants still await review, with LC01’s `two` → `2` change next.
-No new model calls are authorized.
+support. The user then delegated the four remaining expectation reviews to the
+agent. LC01’s numeric paraphrase and LC05’s long paraphrase retain meaning;
+LC02’s changed count and LC06’s first-ban wording fail the relevant checks.
+These are agent assessments, not additional individual user approvals or model
+results. Expectation review is complete; the next proposed step is the bounded
+16-request trial at unchanged Sol / xhigh / concurrency 8. No new model calls
+are authorized by this review.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

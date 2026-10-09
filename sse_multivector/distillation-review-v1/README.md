@@ -6,7 +6,10 @@ Three prefix warmups completed, with zero cache reads or writes throughout.
 See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
 These small controls do not qualify bulk review.
 The next [larger training-control preview](#larger-training-controls-prepared-october-9)
-contains 16 unrun inputs. LC03, LC04 and LC07 are agreed; four variants await review.
+contains 16 unrun inputs. The user accepted LC03, LC04 and LC07 expectations;
+the agent reviewed LC01, LC02, LC05 and LC06 after the user delegated the
+remaining review. All seven variants have completed expectation
+review; no model verdicts exist for these larger controls yet.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -412,14 +415,14 @@ are authorized by this result.
 
 After the initial seven-case trial, the user authorized preparing harder
 controlled changes from the largest ASv6.100 training answers and presenting
-them before further model calls. The teacher answers remain trusted. These
-are authored expectations, with **LC03, LC04 and LC07 agreed by the user** after
-presentation. The other four variants remain proposed; no model verdicts exist
-for this set. LC03 separates complete teacher meaning, post support and parent
-restriction preservation. LC07 invalidates the moved subtree’s incoming link
-while retaining exact trusted subject wording. LC04 changes an exclusion into
-a positive claim, failing matching and post support. LC01, changing `two` to
-`2`, is next for conversational review.
+them before further model calls. The teacher answers remain trusted. The user
+accepted LC03, LC04 and LC07 after presentation, then said they did not want to
+inspect every remaining case personally. The agent completed LC01, LC02, LC05
+and LC06 expectation review against the frozen inputs through native
+`show --case`. These are agent assessments under the agreed rules, separate
+from the three explicit user acceptances. All authored expectations stand;
+no model verdicts exist for this set. No further individual case presentation
+is required before proposing the bounded trial.
 
 The existing source-bound ranking selected eight training extremes from all
 1,300 answers. This preview uses three of them, spanning the maximum entry
@@ -443,13 +446,16 @@ pair; its subject strings remain exact trusted teacher wording.
 
 | Variant | Source / selected student number | Exact change | Matching expectation | Post-support expectation | Selected link expectation |
 | --- | --- | --- | --- | --- | --- |
-| LC01 | L3 / `1.1.5` | `kills two people` → `kills 2 people` | LM01: T07 | LS01: true | No link call |
-| LC02 | L3 / `1.1.5` | `kills two people` → `kills three people` | LM02: null | LS02: false | No link call |
+| LC01 (**agent reviewed**) | L3 / `1.1.5` | `kills two people` → `kills 2 people` | LM01: T07 | LS01: true | No link call |
+| LC02 (**agent reviewed**) | L3 / `1.1.5` | `kills two people` → `kills three people` | LM02: null | LS02: false | No link call |
 | LC03 (**agreed**) | L3 / `18.1.1.1` | Remove ` in three days` | LM03: null | LS03: true | LL01: false |
 | LC04 (**agreed**) | L1 / `2.3.1` | `rather than printing money` → `and printing money` | LM04: null | LS04: false | No link call |
-| LC05 | L6 / `1.2.2.1.1` | `released to mark YouTube’s renewed account ban` → `released to mark the renewed banning of the group’s account by YouTube` | LM05: T07 | LS05: true | LL02: true |
-| LC06 | L6 / `1.2.2.1.1` | `YouTube’s renewed account ban` → `YouTube’s first account ban` | LM06: null | LS06: false | LL03: false |
+| LC05 (**agent reviewed**) | L6 / `1.2.2.1.1` | `released to mark YouTube’s renewed account ban` → `released to mark the renewed banning of the group’s account by YouTube` | LM05: T07 | LS05: true | LL02: true |
+| LC06 (**agent reviewed**) | L6 / `1.2.2.1.1` | `YouTube’s renewed account ban` → `YouTube’s first account ban` | LM06: null | LS06: false | LL03: false |
 | LC07 (**agreed**) | L3 / `6.2.2.2` after move | Move subtree `6.2.1` beneath `6.2.2` as `6.2.2.2` | Exact teacher wording; no call | Trusted wording; no call | LL04: false |
+
+`Agreed` marks explicit user acceptance; `agent reviewed` marks delegated
+expectation assessment, not a model result or individual user approval.
 
 T07 is local to each teacher catalog: LM01 names the complete dated attacker
 headline; LM05 names the complete video description and its combined mocking
@@ -458,6 +464,31 @@ expectations are null after inspecting the complete catalog; no closest or
 partial match is accepted. Four wording edits reuse previously authored DSMv1
 controls (M21/M22/M27/M28). All three source notes have appeared in development
 before; this preview is not an independent confirmation partition.
+
+The agent’s remaining expectation assessments are:
+
+- **LC01:** `two` → `2` preserves the complete dated headline and the post’s
+  stated count. LM01 matches T07; LS01 passes. No link call is prepared.
+- **LC02:** `two` → `three` changes the count. The complete catalog has no
+  matching three-person headline, and the post says `Kills 2`. LM02 returns
+  null; LS02 fails. No link call is prepared.
+- **LC05:** the paraphrase retains Explosive Media as the account owner,
+  YouTube as the banning platform, the renewed ban, the video’s release purpose
+  and every unchanged description and mocking clause. The post states that
+  YouTube has `(again)` removed the group’s account and that the video marked
+  that occasion. LM05 matches T07; LS05 and LL02 pass. The actual immediate
+  child preserves every restriction in its supplied parent string.
+- **LC06:** `renewed` → `first` changes the ban for which the video was released.
+  No complete teacher entry matches; the post’s `(again)` contradicts that
+  change. The child also loses the parent’s renewed-ban restriction: a possible
+  post about the same video and mocking clauses released to mark a first-ever
+  ban fits the child while failing the parent. LM06 returns null; LS06 and LL03
+  fail.
+
+These assessments inspect the complete catalogs, posts and selected actual
+parent-child pairs supplied to the respective checks. They do not re-audit
+ASv6.100, add calls or change frozen labels, prompts or settings. No material
+ambiguity remains in these four controls.
 
 For LC03, the original teacher subject is:
 
@@ -563,10 +594,14 @@ that dependency was absent. No adapter or prompt implementation changes were
 needed. Ignore exceptions keep the seven reusable source/spec JSON files tracked,
 while generated experiments and the temporary training fixture stay ignored.
 
-The remaining four variants need review in the conversation before inference.
-Broader qualification, fresh repeats and later lower-effort comparison remain
-open. Support inheritance, structural allowances, teacher-edge implementation,
-final scoring, bulk grading and test unsealing are not adopted by preparing
+Expectation review is complete: three variants have explicit user acceptance
+and four have delegated agent assessments. The next proposed step is the
+bounded 16-request trial using unchanged GPT-6.1 Sol / xhigh and concurrency 8,
+with saved verdicts and reasons checked against these expectations. This
+review does not authorize inference. Broader qualification, fresh repeats and
+later lower-effort comparison remain open. Support inheritance, structural
+allowances, teacher-edge implementation, final scoring, bulk grading and test
+unsealing are not adopted by preparing
 these inputs. Existing cases, prompts, expected labels and saved trials remain
 unchanged; R05 remains unresolved.
 

@@ -1090,8 +1090,13 @@ production preparation and decoding functions:
   both strings remain trusted teacher wording, requiring no matching or support
   calls. The user also accepted LC04’s null match and failed post support:
   `and printing money` contradicts the teacher’s exclusion and the post’s
-  explicit negation. Four variants await review, with LC01’s `two` → `2` change
-  next. No inference follows from preparation or these approvals.
+  explicit negation. The user then delegated the remaining expectation review
+  to the agent. Native `show --case` inspection confirms the LC01/LC05
+  paraphrases and rejects the LC02 changed count and LC06 first-ban wording
+  in their respective prepared checks. These are agent assessments, separate
+  from user acceptance and future model results. Expectation review is complete;
+  the next proposed step is the unchanged 16-request Sol / xhigh trial at
+  concurrency 8. No inference follows from preparation or this review.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

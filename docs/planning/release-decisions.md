@@ -1441,9 +1441,11 @@ caching measurement is claimed. Four edits reuse previous authored matching
 controls; this is development evidence, not a fresh confirmation partition.
 The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9) preserves exact changes,
 expectations and native inspection/preparation commands. The user has accepted
-LC03, LC04 and LC07 as recorded below; the other four variants remain proposed.
-No new model calls are authorized. Thirty-six existing production preparation/validation
-tests pass with the documented tokenizer dependency; default Python initially lacked it.
+LC03, LC04 and LC07 as recorded below. The user then delegated remaining
+expectation review to the agent; LC01, LC02, LC05 and LC06 assessments are
+complete as recorded below. No new model calls are authorized by this review.
+Thirty-six existing production preparation/validation tests pass with the
+documented tokenizer dependency; default Python initially lacked it.
 No prompt, adapter, general teacher-edge check or scoring implementation changes
 are needed. Qualification, repeats and lower-effort comparison remain open;
 R05, support inheritance, structural allowances, bulk grading and final-test
@@ -1475,10 +1477,39 @@ rules of the game.` Changing `rather than` to `and` reverses the exclusion,
 so no complete teacher meaning matches (LM04: null). The added claim of printing
 money contradicts the post’s explicit negation, so post support fails
 (LS04: false). This accepts only those two expectations and adds no model calls.
-The preview includes no separate link call for LC04. Four variants remain
-proposed, with LC01’s `two` → `2` change next for conversational review. All 16
-inputs remain unrun. Frozen sources, prompts, settings and numerical scoring
-are unchanged.
+The preview includes no separate link call for LC04.
+
+**Remaining control review delegated October 9:** the user said, “i don't want
+to look at all of them myself”, after LC01 was presented. The agent reviews
+the remaining authored expectations under the already agreed semantic rules,
+without requiring individual user inspection of every case. This is delegation
+of expectation review, not explicit user acceptance of each remaining label
+or authorization for new model calls.
+
+**Agent expectation assessments completed October 9:** native `show --case`
+inspection covered complete catalogs and posts for LM01, LM02, LM05 and LM06;
+complete posts and student subjects for LS01, LS02, LS05 and LS06; and actual
+student pairs for LL02 and LL03:
+
+- LC01 preserves the complete headline with `two` → `2`: LM01 matches T07,
+  LS01 passes.
+- LC02 changes the count to three while the trusted teacher and post say two:
+  LM02 returns null, LS02 fails.
+- LC05 preserves the account owner, banning platform, renewed ban, release
+  purpose and every other clause under its paraphrase: LM05 matches T07,
+  LS05 and LL02 pass.
+- LC06 changes the renewed ban to a first ban: LM06 returns null, LS06 and
+  LL03 fail. The post says `(again)`; a first-ever ban also fails to retain
+  the actual parent’s renewed-ban restriction.
+
+No authored expectation changes or material ambiguities were found. These are
+agent assessments, separate from the three cases with explicit user acceptance
+and from future model verdicts. All seven variants have completed expectation
+review; no further individual user case review is pending. The next proposed
+step is the bounded 16-request trial at unchanged GPT-6.1 Sol / xhigh /
+concurrency 8, comparing saved verdicts and reasons with the frozen expectations.
+This review adds no inference authorization. All 16 inputs remain unrun. Frozen
+sources, prompts, settings and numerical scoring are unchanged.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
