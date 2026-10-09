@@ -1130,7 +1130,10 @@ production preparation and decoding functions:
   labels cannot pass overall qualification, and unresolved labels have no
   semantic pass/fail. Reserved-test paths and malformed/truncated generations
   are rejected before preparation. Original authored sources retain their
-  behavior; the new trial's expectations and requests are not yet frozen or run.
+  behavior. The new trial's selections and expectations are frozen for 20
+  distinct subjects from 16 previously unused validation notes: 60 verdict calls.
+  Matching A15 remains unresolved and unscored. Exact assessed preparation and
+  calls remain pending.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

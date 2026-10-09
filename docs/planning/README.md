@@ -187,7 +187,9 @@ The user subsequently approved a
 [broader actual-output trial](../../sse_multivector/distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
 at xhigh for all three checks. The source-bound loader now supports saved
 validation outputs for matching, support and actual student links. Expectation
-assessment and exact preparation precede calls; no new trial has run yet.
+assessment precedes calls. The frozen sample has 20 distinct subjects from
+16 previously unused validation notes, with 60 verdicts across all three checks.
+Matching A15 is unresolved and unscored; no new trial has run yet.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

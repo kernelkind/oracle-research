@@ -15,7 +15,8 @@ authored training controls; broader qualification and lower-effort comparison
 remain open.
 The user now authorizes a [broader actual-output trial](#actual-validation-preparation-approved-october-9)
 covering all three checks at xhigh. Source loading is implemented; the new
-sample's expectations and requests remain to be frozen before calls.
+sample's selections and expectations are frozen; native preparation and calls
+remain pending.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -800,9 +801,43 @@ cases even when verdicts agree, while still listing disagreements. An
 it is not an expected invalid subject or link. Existing authored-control
 sources and their qualification behavior remain supported unchanged.
 
-The broader sample's selection, independent expectation assessment and exact
-request preview precede reviewer calls. This prepares a bounded development
-trial, not bulk pilot scoring or a reviewer-qualification claim.
+The sample is frozen under seed `DS-three-check-actual-20261009`: one eligible
+subject from each of 18 model/checkpoint versions, plus one large-catalog subject
+from each final adapter. Candidate notes exclude the 15 notes in the earlier
+actual matching sample. Within each version, seeded hash order selects the first
+valid, untruncated answer with a nonexact subject and an actual immediate parent;
+seeded subject order chooses the subject. The large-catalog additions prioritize
+catalog size, then the longest eligible subject. This deliberately mixed sample
+is a development challenge set, not a population accuracy estimate or checkpoint
+ranking. Root-only, exact-match and malformed answers are outside this semantic
+sample; their mechanical failures are not repaired or hidden.
+
+The 21 selection hits span 16 previously unused validation notes. A17 (MoE
+checkpoint 400) has the same complete rendered inputs as A01 (Qwen baseline)
+for all three checks, including the actual parent. A01 serves both hits, leaving
+20 distinct cases per check: **60 verdict calls**. The three note-27 additions
+share the largest eligible unseen teacher catalog (42 distinct wordings).
+
+Reusable definitions: [matching source](actual-three-check-matching-source.json)
+and [DSMv3 spec](actual-three-check-matching-spec.json),
+[support source](actual-three-check-support-source.json) and
+[DSSv1 spec](actual-three-check-support-spec.json),
+[relationship source](actual-three-check-relationship-source.json) and
+[DSLv1 spec](actual-three-check-relationship-spec.json).
+All selections preserve saved wording and bind generation hashes. Expectations
+were assessed against each complete post, complete teacher catalog and actual
+parent before calls. Matching has five expected matches, 14 expected nulls and
+one unresolved case; support has 17 expected valid and three invalid subjects;
+relationships have 18 expected valid and two invalid links. Matching A15 remains
+unresolved: whether a match featuring late penalty drama has the complete meaning
+of the drama in that match. Its null placeholder is not an expected nonmatch.
+
+Native unassessed previews are preserved under
+`target/distillation-review-v1/actual-three-check-preview-20261009/`; they make
+zero calls. Independent agent inspection of the frozen expectations and caching
+eligibility precedes inference. This is a bounded development trial, not bulk
+pilot scoring or a reviewer-qualification claim. Exact assessed requests and
+eligible cache groups remain to be prepared; no actual reviewer call has run.
 
 ## Matching-only offline preview
 

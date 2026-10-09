@@ -76,6 +76,12 @@ __pycache__/
 !/sse_multivector/distillation-review-v1/large-training-support-spec.json
 !/sse_multivector/distillation-review-v1/large-training-relationship-source.json
 !/sse_multivector/distillation-review-v1/large-training-relationship-spec.json
+!/sse_multivector/distillation-review-v1/actual-three-check-matching-source.json
+!/sse_multivector/distillation-review-v1/actual-three-check-matching-spec.json
+!/sse_multivector/distillation-review-v1/actual-three-check-support-source.json
+!/sse_multivector/distillation-review-v1/actual-three-check-support-spec.json
+!/sse_multivector/distillation-review-v1/actual-three-check-relationship-source.json
+!/sse_multivector/distillation-review-v1/actual-three-check-relationship-spec.json
 
 # The batch runner writes these schema copies into its run directories.
 /sse_multivector/*-v[0-9]*/**/prompt-output-schema.json

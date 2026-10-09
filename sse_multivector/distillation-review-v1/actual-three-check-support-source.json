@@ -1,0 +1,290 @@
+{
+  "schema_version": 2,
+  "dataset_manifest": {
+    "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json",
+    "sha256": "ee734d39ec007fb832763b273e96f24c250c32f0ef79a018e8cc08ac0b941349"
+  },
+  "cases": [
+    {
+      "id": "A01",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/baseline/note-0059/subjects.json",
+        "sha256": "bb789da0a6c6957ce1b3954b506065ec8c7818e675dbd59743a6f8e1951bb2be",
+        "index": 59,
+        "note_id": "a88fff1a7b5647c650a9328fb3ab2f4ab7a4b7e9cf2db210caf42e8c19b49cb5"
+      },
+      "student_number": "1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The post names a decentralized world; generic plural naming adds no count.",
+      "expected_valid": true
+    },
+    {
+      "id": "A02",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-200/note-0045/subjects.json",
+        "sha256": "5fbb885fc8b0c30cc9a8ccdf3c742200161af6206a3d5590b2633300092abbf7",
+        "index": 45,
+        "note_id": "3fb615a0f69fc1c82a53f03c2fa8461821881c369f4424b7a80c16a74c6ccf73"
+      },
+      "student_number": "1.1.1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "Every expressed return, count, destination and medical-cause detail is supported.",
+      "expected_valid": true
+    },
+    {
+      "id": "A03",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-400/note-0099/subjects.json",
+        "sha256": "c7e5aca7623407f84b0a6ab1b5c1d37093441d7d8fd34e4cc1696d4dc3805c4e",
+        "index": 99,
+        "note_id": "77940b54e46ba83f802fa2aafe53cb673a54cf98d2fb63baf819c01921ac4d4e"
+      },
+      "student_number": "1.1.1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The two source sentences support the current hold and expected resumption in temporal sequence.",
+      "expected_valid": true
+    },
+    {
+      "id": "A04",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-600/note-0018/subjects.json",
+        "sha256": "f94eff17da40a947c1bdf59ef1c95dc3e9cd8a146db2d6ece52c9d899f2a14a1",
+        "index": 18,
+        "note_id": "4e134096d66014a95c2bd843e6edb217feea2bb6a45c7ef7f52249ed03a87a00"
+      },
+      "student_number": "1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The post explicitly reports the recent stacking of 2,799 sats at Harvest & Herd in Bitcoin context.",
+      "expected_valid": true
+    },
+    {
+      "id": "A05",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-800/note-0099/subjects.json",
+        "sha256": "db053f6156dc6632e5e1958bb07b29c699f6f6600185019078cd88475922336f",
+        "index": 99,
+        "note_id": "77940b54e46ba83f802fa2aafe53cb673a54cf98d2fb63baf819c01921ac4d4e"
+      },
+      "student_number": "1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The post explicitly names Miami International Airport.",
+      "expected_valid": true
+    },
+    {
+      "id": "A06",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-1000/note-0050/subjects.json",
+        "sha256": "597f280b9a6fa310c7108c8f8232d5b30742897512dba12781d8f895188b823d",
+        "index": 50,
+        "note_id": "05d899060b286e7a2185e187657958134e05ce4d535f8a65182abdb05b18266d"
+      },
+      "student_number": "1.1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The post uses Sure as an adverb, not a named person. The possessive Sure adds an unsupported actor.",
+      "expected_valid": false
+    },
+    {
+      "id": "A07",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-1000/note-0027/subjects.json",
+        "sha256": "b966e1969057c21302f9884094300d7ecf977630da720c4df215fd87c12ba602",
+        "index": 27,
+        "note_id": "bec5b5fa10694bd87a077000e111d756f3eae9e909d92139eef5bd4cec522f73"
+      },
+      "student_number": "9.1",
+      "selection": "largest_catalog; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The post states the collaboration and directly explains the directed-univalent Cat structure in those terms.",
+      "expected_valid": true
+    },
+    {
+      "id": "A08",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/baseline/note-0084/subjects.json",
+        "sha256": "e628f9421d822bb2b5cfa6f67b13086c49b0672a81eb23589c624a17c6dba0aa",
+        "index": 84,
+        "note_id": "bfe81adc3ad5e9f295b201ff1ce4a4b67d25892ac1af925b473485bb7d08f14a"
+      },
+      "student_number": "1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The source explicitly names the secret hot springs spot; this broader wording is supported.",
+      "expected_valid": true
+    },
+    {
+      "id": "A09",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-200/note-0046/subjects.json",
+        "sha256": "800483cf2d8fc54859144ea78589402a06fa2c8754eb5a5f34417465ee73a3a0",
+        "index": 46,
+        "note_id": "2f15561a49fad8e1bd254e65ff6d64be7eb8e4e23639fdd14c745d110a24dee5"
+      },
+      "student_number": "1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The source discusses fifteen-year-olds mental maturity for working and driving.",
+      "expected_valid": true
+    },
+    {
+      "id": "A10",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-400/note-0097/subjects.json",
+        "sha256": "5eae95bea065e3ee3ea029ab4da63d687a2bf2cfede706c1602343d8b60a215e",
+        "index": 97,
+        "note_id": "3028dd6899f231ad27597c48c2a91fb2856e453d258c15ff8c78015d5e047a03"
+      },
+      "student_number": "4.1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "Nice expresses approval and the following sentence states ownership without central corporate control for those same audience members.",
+      "expected_valid": true
+    },
+    {
+      "id": "A11",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-600/note-0010/subjects.json",
+        "sha256": "bebbd4350e8996aa067406ba9b86f05c5b3e8516f54d3569052aae231f1ec4d2",
+        "index": 10,
+        "note_id": "ce879f78d3be97213b1bd98b07877ba87e0bbe1e7c6dde9466a070cc3a53b2c1"
+      },
+      "student_number": "1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "Bitcoin context supports the blockchain interpretation of the stated block height.",
+      "expected_valid": true
+    },
+    {
+      "id": "A12",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-800/note-0001/subjects.json",
+        "sha256": "bee4afbfbfb50ac1f44c86743b31cca896bc509b42d4d9dba1709c1590ae99a1",
+        "index": 1,
+        "note_id": "a95629ee5d975ccdc6982748e3a33dc6a8aa60c273afeedf56063eac31b47f30"
+      },
+      "student_number": "7.1.2.2",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The quoted statements do not establish that David Marcus is responding to Merlin Capital; co-mention/order cannot establish that relationship.",
+      "expected_valid": false
+    },
+    {
+      "id": "A13",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-1000/note-0092/subjects.json",
+        "sha256": "e989324963f565e9d027814c1eba5a2508d0f3e92d687f97ed5e57c74044d74f",
+        "index": 92,
+        "note_id": "267473aa1b3d5cbc08fa2c078cd297df5b6def5782487735f76818fee448f415"
+      },
+      "student_number": "1.1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The title, 1982 organization sentence and original-article invitation jointly support the article about this establishment to assist the named library.",
+      "expected_valid": true
+    },
+    {
+      "id": "A14",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-1000/note-0027/subjects.json",
+        "sha256": "7d01f3ebc372b5656c077bf5de0c7845a4e6e24f563b50f4eeaf6e5eb4f3b064",
+        "index": 27,
+        "note_id": "bec5b5fa10694bd87a077000e111d756f3eae9e909d92139eef5bd4cec522f73"
+      },
+      "student_number": "6.1",
+      "selection": "largest_catalog; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The complete post states each Cat/type-theory/structure detail and the new preprint collaborators.",
+      "expected_valid": true
+    },
+    {
+      "id": "A15",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/baseline/note-0079/subjects.json",
+        "sha256": "e9b071c41e65ca7f25e14281712df5d6ecd4e3c5aa8cc807e729bfe9bafbc024",
+        "index": 79,
+        "note_id": "d69c521f34d40e18ffb4fdf3546a5e66e890eb8ede8a600d782ba4d23ed94117"
+      },
+      "student_number": "3.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The title explicitly identifies the teams, MLS match and late penalty drama.",
+      "expected_valid": true
+    },
+    {
+      "id": "A16",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-200/note-0048/subjects.json",
+        "sha256": "cd8139ae6a9c5ded775d13172dd9ded86cbcae542e799463e8b1b94cc2448074",
+        "index": 48,
+        "note_id": "ff269de4c19e07b2e1709f6f5669d0c66c6e86b444d06459c1880ca472964c74"
+      },
+      "student_number": "1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The issued departure delay at the named airport is explicitly stated.",
+      "expected_valid": true
+    },
+    {
+      "id": "A18",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-600/note-0046/subjects.json",
+        "sha256": "11aac6c543e4f42bffd632b919f72269a7f8aab8ae4e00db3c1afc478370e5f1",
+        "index": 46,
+        "note_id": "2f15561a49fad8e1bd254e65ff6d64be7eb8e4e23639fdd14c745d110a24dee5"
+      },
+      "student_number": "1.1.2",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The source explicitly states this age and mental-adulthood qualification for driving.",
+      "expected_valid": true
+    },
+    {
+      "id": "A19",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-800/note-0039/subjects.json",
+        "sha256": "0741580ad8e3d67c593a5de398d26a5a097918c743c3b508908204e50b0e7cfc",
+        "index": 39,
+        "note_id": "c33a6dcb91a8bf1d42ada3c96c1dcd8852406b2fc3180459e01db2620068d5c1"
+      },
+      "student_number": "1.1.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "The entire post is the GM greeting; the teacher interpretation is trusted.",
+      "expected_valid": true
+    },
+    {
+      "id": "A20",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0006/subjects.json",
+        "sha256": "ea629cd242b36de589eb67b8f863669de3d229596e8048d67fdd01a78f08c2a9",
+        "index": 6,
+        "note_id": "c43bdaea04debcd5e01eac1d2369f38ed79075004ee7f8ce329f64d508c90086"
+      },
+      "student_number": "4.1",
+      "selection": "sample; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "NOT ON NOSTR explicitly limits the likes-not-love statement; the unrestricted negative wording loses that exception.",
+      "expected_valid": false
+    },
+    {
+      "id": "A21",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0027/subjects.json",
+        "sha256": "093edd2843965cc0f85e693fd9392cb28ed1ab9897e1343868b6b9950ccbe60c",
+        "index": 27,
+        "note_id": "bec5b5fa10694bd87a077000e111d756f3eae9e909d92139eef5bd4cec522f73"
+      },
+      "student_number": "21.2",
+      "selection": "largest_catalog; seed DS-three-check-actual-20261009; unseen note; valid nonexact subject with actual immediate parent",
+      "expectation_status": "agent_assessed",
+      "expected_reason": "Every expressed proof, collaborator, approximate page count, setup, construction and essential-surjectivity detail is stated in the post.",
+      "expected_valid": true
+    }
+  ],
+  "check": "support"
+}

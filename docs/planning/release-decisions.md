@@ -1581,7 +1581,11 @@ The [actual validation preparation](../../sse_multivector/distillation-review-v1
 now supports source-bound saved outputs for all three checks through the shared
 workflow. Support uses the complete original post; relationships use the actual
 student parent. Agent expectations remain unverified and unresolved labels
-receive no semantic pass/fail. The broader sample is not yet run.
+receive no semantic pass/fail. Selection and expectations are frozen for 20
+distinct subjects across 16 previously unused validation notes, spanning all
+18 versions plus large-catalog additions. A duplicate shares all three checks;
+60 verdict calls remain to run. Matching A15 is unresolved and unscored. The
+sample is a bounded development challenge set, not population accuracy.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

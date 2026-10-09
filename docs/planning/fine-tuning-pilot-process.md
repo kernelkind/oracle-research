@@ -518,7 +518,9 @@ at xhigh for all three checks. Shared preparation now binds saved validation
 generations to the frozen post, teacher and task; support uses the post and
 relationships derive the actual student parent. Agent expectations remain
 unverified, and unresolved labels receive no semantic pass/fail. Freeze the
-sample and expectations before calls. The new trial has not run; prompts,
+sample and expectations before calls. These are now frozen for 20 distinct
+subjects from 16 previously unused validation notes; 60 verdict calls remain.
+Matching A15 is unresolved and unscored. The new trial has not run; prompts,
 scoring, lower-effort work and sealed test data retain their existing status.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
