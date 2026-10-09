@@ -1158,6 +1158,25 @@ regression tests pass with the required cached tokenizer dependency. Further
 calls, prompt changes, bulk review and test unsealing remain separate decisions.
 See the [controls and evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8).
 
+**DSMv2 R05 fresh repeat authorized and completed October 8:** the user accepted
+one fresh call with identical inputs/settings. The shared CLI prepared from the
+remaining 20-case trial with `--only R05 --repeat`, preserving the baseline and
+excluding response reuse. Preflight verifies identical complete prompts,
+inputs, evidence and settings: DSMv2 / Sol / xhigh, subscription SSE and
+concurrency 8. The repeat again returns T17, Inauthenticity, with a new
+explanation equating Fakery with general fakeness. Both saved calls make that
+match; neither reason addresses the expected practice/products versus property
+distinction. This is repeat evidence, not independent semantic adjudication or
+a general stability estimate. Native scoring still flags a false match against
+the agent-assessed expected null, and native agent review marks the repeat
+uncertain. One new attempt produces one valid report, without retry or reuse.
+Native usage is 859 input tokens, zero cached input and 339 output tokens,
+including 290 reasoning tokens; the $0.005108 catalog estimate is not an invoice.
+No code, prompt or expectation changed; the original receipt/review and
+ASv6.100's authority are preserved. Native receipt, baseline and input checks
+pass. Further calls, prompt revisions, bulk review and test unsealing remain
+separate decisions. See the [repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

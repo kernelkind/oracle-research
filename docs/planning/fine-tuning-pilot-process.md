@@ -500,6 +500,13 @@ versus property distinction. These small-catalog diagnostics were authored
 after R05's disagreement; they do not settle its short-wording equivalence,
 establish production reliability or change the prompt. R05's expected null
 and uncertain review remain preserved. Further calls remain a separate decision.
+The subsequently authorized [single-case fresh repeat](../../sse_multivector/distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8)
+inherits R05's identical prompt, inputs, evidence and settings with response
+reuse excluded. It again returns T17 with a different explanation, without
+retry. This reproduces the disputed verdict in two calls but does not settle
+its semantic correctness or independently qualify the reviewer. The repeat
+has an agent-uncertain review; expected null remains unchanged. Further calls,
+prompt revisions and bulk review remain separate decisions.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

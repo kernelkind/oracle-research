@@ -9,6 +9,9 @@ semantic review has not run. **DSMv2's latest actual-wording trial agrees with
 Both cases in the preceding two-case trial agree. The full-set offline preview
 makes zero calls. **DSMv2 also passes eight authored action/property controls**;
 these explicit, small-catalog examples do not resolve R05 or qualify the reviewer.
+An identical-input fresh R05 repeat again returns T17; both saved calls make
+the disputed match with different explanations. Its expected null remains an
+agent assessment, and qualification remains pending.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -580,9 +583,9 @@ This establishes that Sol preserves the distinction in these explicit controls.
 Their catalogs contain one or two entries, versus eighteen in R05, and their
 wording differs, so they do not isolate the cause of R05's match. Its saved
 uncertain review and expected null are preserved. DSMv2 is unchanged and
-broader qualification remains pending. A useful next step is a fresh repeat
-of R05 with identical inputs to check whether its disputed verdict is stable;
-that would test repeatability, not independently establish correctness.
+broader qualification remains pending. The fresh R05 repeat below checks
+whether its disputed verdict recurs with identical inputs. Its semantic
+correctness remains unverified.
 Further calls, prompt changes, bulk review and test unsealing require their own
 authorization.
 
@@ -590,6 +593,56 @@ authorization.
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 ../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/matching-meaning-20261008 --case B03
+```
+
+## DSMv2 R05 fresh repeat (October 8)
+
+The user authorized one fresh R05 call with identical inputs and settings.
+The shared CLI prepared
+`target/distillation-review-v1/matching-post-r05-repeat-20261008/` with
+`--from` the saved remaining 20-case trial, `--only R05` and `--repeat`.
+It inherits the original answer as its baseline and excludes response reuse.
+Before execution, native inspection verified identical complete prompts,
+inputs, evidence, input SHA256 and settings: **DSMv2 / Sol / xhigh /
+subscription SSE / concurrency 8**. Only one selected case can run concurrently.
+No expected reason is sent to the reviewer. Execution used
+`--max-new-attempts 2` under the existing provider-only retry policy.
+
+The repeat returns **T17, Inauthenticity**, matching the original teacher ID.
+Its new explanation is:
+
+> “Fakery” names the general concept of fakeness or inauthenticity, without adding a specific entity, time, or attribution.
+
+Both fresh calls equate Fakery with general fakeness; neither addresses the
+practice/products versus property distinction in the frozen expected reason.
+Native text comparison says `changed` because the explanations differ, while
+the teacher ID is identical. This reproduces the disputed match in two saved
+calls; it does not establish a general stability rate or independently settle
+the correct semantic label. Native scoring still records `false_match` against
+the agent-assessed expected null. Native `review` records **agent-uncertain**
+for the repeat. The original receipt and review, prompt and source expectation
+are preserved. ASv6.100 remains authoritative.
+
+There is one mechanically valid report from one new attempt, with no retry or
+reused answer. Native usage is 859 input tokens, zero cached input and 339
+output tokens, including 290 reasoning tokens. The $0.005108 catalog estimate
+is not a subscription invoice; provider-reported charges are unavailable.
+The source-wide qualification report remains pending: one checked case out of
+22 and one unverified expectation. Its other 21 pending cases are outside this
+single-case repeat; no combined usage or accuracy report is inferred.
+
+No code, reusable prompt or expectation changed. Verification checks the
+native receipt and baseline binding, byte-identical supplied strings/settings,
+withheld expected reason, distinct fresh receipt and current attributed review.
+A useful next step is to trace whether this disputed general-heading match
+can change the planned correctness or coverage scores, before deciding what
+must be resolved for adoption. That analysis, further calls, prompt revisions,
+bulk review and test unsealing remain separate authorizations.
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/matching-post-r05-repeat-20261008 --case R05
 ```
 
 ## Reviewer and inputs

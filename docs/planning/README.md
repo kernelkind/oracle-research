@@ -81,6 +81,10 @@ The authorized [eight action/property controls](../../sse_multivector/distillati
 also pass with unchanged DSMv2 / Sol / xhigh and concurrency 8. Their explicit
 wording and smaller catalogs leave R05's disputed verdict and broader
 qualification unresolved.
+The authorized [fresh R05 repeat](../../sse_multivector/distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8)
+again returns T17 with a different explanation and identical inputs/settings.
+Both saved calls make the disputed match; expected null and broader
+qualification remain unresolved.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

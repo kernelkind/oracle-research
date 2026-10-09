@@ -1101,6 +1101,17 @@ production preparation and decoding functions:
   catalog estimate is not an invoice. Their explicit wording and small catalogs
   do not resolve R05 or independently qualify the reviewer. No code or prompt
   changes occurred; further calls and broader review remain open.
+  The subsequently authorized [fresh R05 repeat](distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8)
+  uses `prepare --from ... --only R05 --repeat`, inheriting identical complete
+  prompts, inputs, evidence and settings while excluding response reuse. One
+  new attempt again returns T17 with a different explanation; native text
+  comparison says `changed`, but the teacher ID is identical. There is no retry
+  or reuse. Native usage is 859 input tokens, zero cached input and 339 output
+  tokens, including 290 reasoning tokens; the $0.005108 catalog estimate is not
+  an invoice. Native agent review marks the repeat uncertain; its expected null
+  remains an unverified assessment, so qualification remains pending. No code,
+  prompt or expected label changes occurred. This repeats a disputed verdict
+  without independently proving its correctness or a general stability rate.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
