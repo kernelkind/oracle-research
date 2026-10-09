@@ -1217,6 +1217,41 @@ this preparation; broader reviewer/rubric adoption and inference remain separate
 work. See the
 [case preview](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8).
 
+**Teacher-relative case judgments reviewed October 8:** the user accepted
+TC05 with “ok”, then explicitly agreed to TC04, TC03, TC02 and TC06 as each
+case was presented in conversation. Treat the trusted teacher as correct and
+keep teacher agreement, post support and immediate parent-child validity as
+separate findings:
+
+- **TC05, omitted heading:** removing `2 m cables` fails teacher agreement.
+  `2 m cable A` is a particular instance and does not reproduce the separate
+  general heading. The remaining subjects and their incoming links are valid.
+- **TC04, changed parent:** putting `3 m cables` under `2 m cables` fails
+  teacher agreement and parent-child validity. Every subject meaning remains
+  present and supported by the post.
+- **TC03, reversed comparison:** removing `not` from all four comparison
+  copies fails teacher agreement and post support. Their incoming links remain
+  valid because the comparison still preserves the parent descriptions of
+  the cables.
+- **TC02, equivalent wording:** `Cable A, two metres long` preserves
+  `2 m cable A`; teacher agreement, post support and parent-child validity
+  all pass.
+- **TC06, renumbering:** changing the complete number prefix from `1` to `9`
+  preserves wording and parent-child relationships; all three checks pass.
+  Check this case mechanically, without a semantic model call.
+
+TC01, returning the teacher answer unchanged, was subsequently presented with
+an expected all-pass result and a proposed mechanical check; user agreement
+is still pending. TC06 does not independently exercise arbitrary sibling
+reordering. These approvals concern the five authored case expectations, not
+model qualification, adoption of a final pilot rubric, or numerical scoring.
+The earlier required/optional scoring implementation, existing prompts,
+case-source expectations and saved trials remain unchanged. A general
+teacher-edge agreement check remains unimplemented. No model calls were made
+during this review; broader structural allowances and final rubric/adoption
+remain open. The [case table](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
+records each approval separately.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

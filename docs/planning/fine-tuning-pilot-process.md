@@ -385,6 +385,17 @@ only for whole-case inspection. This preview does not adopt a revised pilot
 rubric or change the scorer/prompts; structural allowances, adoption and new
 calls remain open.
 
+The user subsequently accepted the expected judgments for TC02–TC06 in
+conversation: equivalent wording passes all three checks; reversed negation
+fails teacher agreement and post support; a wrong parent fails teacher
+agreement and link validity; a missing general teacher heading fails teacher
+agreement while remaining subjects/links stay valid; consistent renumbering
+passes and should be checked mechanically. TC01, the unchanged-answer control,
+has been presented but awaits agreement. These authored expectations are not
+measured model verdicts or adoption of a revised scoring rule; no new calls,
+prompt changes or scorer changes occurred. See the
+[decision record](release-decisions.md).
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

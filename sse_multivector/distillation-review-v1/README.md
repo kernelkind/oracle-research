@@ -48,8 +48,11 @@ with exact inputs and expected judgments shown before new calls. The proposed
 comparison preserves teacher meanings and parent-child relationships, allowing
 equivalent wording, renumbering and sibling reordering. Missing headings and
 changed relationships are recorded as disagreements; structural allowances and
-the final pilot scoring rule remain open. This preparation does not adopt a
-replacement rubric or revise earlier decisions, prompts, scores or saved trials.
+the final pilot scoring rule remain open. The user subsequently reviewed the
+cases in conversation, accepting TC02–TC06; TC01 was presented last and awaits
+agreement. These approvals establish the expected findings below, not a
+replacement pilot rubric, model qualification or a change to existing prompts,
+scores or saved trials.
 
 [teacher-relative-source.json](teacher-relative-source.json) defines six
 variants of ASv6.100's trusted cable example, binding the unchanged task hash.
@@ -60,14 +63,20 @@ no required/optional labels or numerical scores. No pilot data or final-test
 answers are read. These worked-example controls appeared in earlier development;
 they are not fresh independent confirmation or evidence of pilot-wide accuracy.
 
-| Case | Student change | Expected finding |
-| --- | --- | --- |
-| TC01 | None. | All meanings and relationships preserved. |
-| TC02 | `2 m cable A` becomes `Cable A, two metres long`. | All complete meanings and relationships preserved. |
-| TC03 | Remove `not` from all four comparison copies. | No complete match for the original comparison; four unsupported subjects, with unchanged valid incoming links. |
-| TC04 | Move the complete `3 m cables` subtree beneath `2 m cables`. | All subject meanings preserved; new incoming link to `1.1.1.2` invalid. |
-| TC05 | Remove `2 m cables` and promote its subtree. | No match for that teacher heading; remaining subjects and incoming links valid. Record the missing heading and changed structure as teacher disagreements. |
-| TC06 | Renumber the complete root/subtree from `1` to `9`; the adapter orders entries by the new numbers. | All meanings and parent-child relationships preserved; numbering and listing order changes are acceptable. |
+| Case | Student change | Expected finding | User review |
+| --- | --- | --- | --- |
+| TC01 | None. | All meanings and relationships preserved. | Presented; agreement pending. |
+| TC02 | `2 m cable A` becomes `Cable A, two metres long`. | Teacher agreement, post support and parent-child validity all pass. | Agreed. |
+| TC03 | Remove `not` from all four comparison copies. | Teacher agreement and post support fail: no complete match for the original comparison and four unsupported subjects. Incoming links remain valid. | Agreed. |
+| TC04 | Move the complete `3 m cables` subtree beneath `2 m cables`. | Teacher agreement fails because the parent changed. All subject meanings remain present and supported; the new incoming link to `1.1.1.2` is invalid. | Agreed. |
+| TC05 | Remove `2 m cables` and promote its subtree. | Teacher agreement fails because the separate general heading is missing. Remaining subjects and incoming links are valid. | Accepted with “ok”. |
+| TC06 | Renumber the complete root/subtree from `1` to `9`; the adapter orders entries by the new numbers. | All meanings and parent-child relationships preserved; all three checks pass. Check this renumbering mechanically, without a semantic model call. | Agreed. |
+
+The review order was TC05, TC04, TC03, TC02, TC06, then TC01. These are user
+decisions about authored expectations, not measured model verdicts. The
+renumbering example does not independently test arbitrary sibling reordering.
+The unchanged-answer mechanical control remains proposed until TC01 is agreed.
+See the [decision record](../../docs/planning/release-decisions.md).
 
 TC05 preserves Q12's original transformation, not its existing acceptance as a
 full-coverage answer. A missing teacher match and an invalid returned subject

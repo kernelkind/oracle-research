@@ -997,6 +997,11 @@ production preparation and decoding functions:
   with unchanged DSMv2, post and complete teacher catalog. Exact targets require
   no model work. These preparations add no inference or independent-confirmation
   evidence; structural allowances and final rubric/adoption remain open.
+  The user subsequently accepted TC02–TC06's authored expected judgments;
+  TC01's unchanged-answer expectation awaits agreement. Consistent renumbering
+  should be checked mechanically. These approvals add neither measured model
+  verdicts nor a teacher-edge agreement implementation, and change no frozen
+  source, prompt, scorer or saved trial.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)
