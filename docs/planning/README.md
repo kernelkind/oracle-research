@@ -189,8 +189,12 @@ at xhigh for all three checks. The source-bound loader now supports saved
 validation outputs for matching, support and actual student links. Expectation
 assessment precedes calls. The frozen sample has 20 distinct subjects from
 16 previously unused validation notes, with 60 verdicts across all three checks.
-Matching A15 is unresolved and unscored; no new trial has run yet.
-Teacher answers remain trusted; this preparation adds no grading or test access.
+All 60 verdicts and two eligible warmups now complete on first attempts,
+without reuse or mechanical failure. Agreement with frozen agent expectations
+is matching 17/19 (A15 unscored), support 19/20 and links 17/20. Semantic
+disagreements remain and qualification stays pending; A19 was disputed before
+calls. Matching caching produces hits, support caching none. Teacher answers
+remain trusted; no bulk grading or test access is adopted.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

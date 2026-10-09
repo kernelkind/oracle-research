@@ -1132,8 +1132,13 @@ production preparation and decoding functions:
   are rejected before preparation. Original authored sources retain their
   behavior. The new trial's selections and expectations are frozen for 20
   distinct subjects from 16 previously unused validation notes: 60 verdict calls.
-  Matching A15 remains unresolved and unscored. Exact assessed preparation and
-  calls remain pending.
+  All 60 verdicts and two eligible warmups now complete on first attempts,
+  without reuse or mechanical failure. Agreement with frozen agent expectations
+  is matching 17/19 (A15 unscored), support 19/20 and links 17/20. Semantic
+  disagreements remain and qualification stays pending; A19 was disputed before
+  calls. Only note-27 matching/support groups receive explicit prefixes and
+  warmups (2,062/1,041 proxy tokens). Matching reports 5,760 cached-input tokens,
+  support zero. The record preserves per-experiment usage and warmup overhead.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

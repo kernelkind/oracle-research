@@ -1,6 +1,14 @@
-# Distillation semantic review — evidence and matching-only preview
+# Distillation semantic review — process and evidence
 
-Current three-check development result: **DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4**
+Actual-output development result: **DSMv3 17/19 assessed verdicts, DSSv1 19/20
+and DSLv1 17/20** agree with the frozen agent expectations in the
+[bounded validation trial](#actual-output-trial-results). Matching A15 remains
+unscored. All 60 verdicts and two eligible warmups complete on first attempts,
+without answer reuse or mechanical failures. Matching caching produces hits;
+support caching produces none. Semantic disagreements remain, so this does
+not qualify the reviewers for bulk pilot grading.
+
+Authored training-control result: **DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4**
 match expectations in both the [larger training trial](#larger-three-check-trial-october-9)
 and its [fresh repeat with eligible prefixes](#larger-three-check-repeat-with-eligible-prefixes-october-9).
 All 16 fresh reasons pass native agent review; every request completed on its
@@ -13,10 +21,9 @@ The [initial warmed trial](#initial-warmed-three-check-trial-october-9) remains
 separate small-control evidence. These are repeated judgments on the same
 authored training controls; broader qualification and lower-effort comparison
 remain open.
-The user now authorizes a [broader actual-output trial](#actual-validation-preparation-approved-october-9)
-covering all three checks at xhigh. Source loading is implemented; the new
-sample's selections and expectations are frozen; native preparation and calls
-remain pending.
+The approved [actual-output trial](#actual-validation-preparation-approved-october-9)
+now runs all three checks at xhigh through source-bound preparation. Its selection
+and agent expectations were frozen before calls and remain unchanged.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -833,11 +840,138 @@ unresolved: whether a match featuring late penalty drama has the complete meanin
 of the drama in that match. Its null placeholder is not an expected nonmatch.
 
 Native unassessed previews are preserved under
-`target/distillation-review-v1/actual-three-check-preview-20261009/`; they make
-zero calls. Independent agent inspection of the frozen expectations and caching
-eligibility precedes inference. This is a bounded development trial, not bulk
-pilot scoring or a reviewer-qualification claim. Exact assessed requests and
-eligible cache groups remain to be prepared; no actual reviewer call has run.
+`target/distillation-review-v1/actual-three-check-preview-20261009/`; those
+previews make zero calls. Assessed native inputs are prepared separately from
+the committed specs under `target/distillation-review-v1/actual-three-check-20261009/`.
+Independent agent inspection covers all 60 expected judgments before inference:
+58 of 59 assessed labels agree, with matching A19's abbreviation/gloss reading
+disputed and A15 still unresolved. These agents are not human gold adjudicators;
+their agreement does not provide independent accuracy certification. Final native
+case variables match the original previews exactly after duplicate removal;
+assessed evidence adds the frozen expectations outside the prompts.
+
+### Actual-output trial results
+
+Native qualification remains **pending**. Case-level agreement with frozen
+agent expectations is recorded below; it is not a population accuracy estimate.
+Matching A15 returns T04 but has `passed: null` and no error label. Matching
+A19's mismatch was disputed before calls and is not established reviewer error.
+No source expectation is changed after seeing reviewer answers.
+
+| Check | Agreement with assessed expectations | Native disagreement IDs |
+| --- | --- | --- |
+| DSMv3 matching | 17/19; A15 unscored | A01, A19 |
+| DSSv1 post support | 19/20 | A20 |
+| DSLv1 parent-child | 17/20 | A03, A06, A21 |
+
+Native attributed agent review records **53 accept, four reject and three
+uncertain**. These verdicts assess response reasoning, separately from native
+agreement with a frozen label. Matching has 17 accept / one reject / two uncertain;
+support has 19 accept / one reject; relationships have 17 accept / two reject /
+one uncertain. No user judgments are invented or recorded.
+
+The four rejected responses are:
+
+- **Matching A01:** `Decentralized worlds` returns null against T02
+  `Decentralized world`, treating generic noun plurality as a quantity
+  restriction. Neither wording states a count. The same prompt accepts the
+  generic singular/plural paraphrase in A18.
+- **Support A20:** accepts `Social-media likes not being love` despite the
+  post's `NOT ON NOSTR` exception. Its reason acknowledges the exception but
+  wrongly permits expanding a negative claim's scope as a broader heading.
+- **Relationship A03:** rejects a child about operations resuming after the
+  complete parent clause about currently held MIA-bound aircraft. Its café
+  counterexample still includes those aircraft and their full parent restrictions;
+  it adds a requirement that the operations themselves have the aircraft type.
+- **Relationship A21:** rejects a proof child explicitly including its setup
+  with directed univalence under `Proof setup`. The counterexample assumes setup
+  was already established, which does not remove the expressed setup subject.
+  The parent requires neither explaining nor performing that setup.
+
+Three response assessments remain uncertain: matching A19's abbreviation versus
+gloss; matching A15's match-versus-drama referent; and relationship A06's
+anticipated-versus-realized `eventual entry`. The A06 counterexample describes
+an opportunity never taken; whether it fails the parent depends on that reading.
+Its expected true label remains frozen rather than changed after the response.
+Independent agent inspection agrees that A03/A21's counterexamples fail to remove
+parent restrictions, while A06 needs adjudication. These four rejected reasons
+are agent-assessed errors, not an independently measured error rate.
+
+All 60 verdicts have mechanically valid, receipt-bound JSON. Both warmups also
+complete: **62/124 stage attempts used**, no retry, failure, interruption or
+answer reuse. Verdict settings remain Sol / xhigh / subscription SSE / concurrency
+8; native warmups use concurrency 1. Five verdict batches run sequentially,
+with concurrency 8 within each. Three-case groups naturally use three slots.
+The two full matching/support preparations are selection evidence only; execution
+uses disjoint subsets, not extra copies of their verdict calls.
+
+Caching eligibility is measured on the unchanged rendered text with
+`tiktoken 0.14.0 / o200k_base`, a proxy rather than provider billing. Prefixes
+end before the `student_subject` JSON value; no padding is added. Note-27 cases
+A07, A14 and A21 share each eligible prefix.
+
+| Shared prefix | Proxy tokens | Uses | Explicit key/prefix and warmup |
+| --- | ---: | ---: | --- |
+| Matching note 27: instructions, post and full teacher catalog | 2,062 | 3 | Yes |
+| Support note 27: rules and full post | 1,041 | 3 | Yes |
+| Other repeated matching groups | 763 / 836 | 2 each | No |
+| Other repeated support groups | 678 / 693 | 2 each | No |
+| Relationship instructions | 300 | 20 | No |
+
+Singleton prefixes receive no explicit caching or warmup. Each eligible native
+warmup completes before its group; it inherits exact prefix/key/model/schema
+settings and supplies no answer to verdicts. The matching group reports 5,760
+cached-input tokens; support reports zero despite the eligible proxy length.
+As in the earlier repeat, this native route uses a developer prefix and user
+suffix instead of a single user message. Request format therefore changes;
+these measurements do not isolate a causal cache saving.
+
+The table copies each native `report.json` usage without summing groups. Input
+means uncached input; cached input is separate. Output already includes reasoning.
+Reported cache-write tokens are zero in every experiment, with no missing usage
+or catalog estimate. Catalog costs are API-equivalent estimates, not subscription
+cash charges; provider cash-cost fields remain null. No paid fallback or ledger
+change occurs.
+
+| Native experiment | Attempts | Input | Cached input | Output | Reasoning | Catalog estimate USD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `warmup-matching-note27` | 1 | 2,103 | 0 | 228 | 192 | 0.006486 |
+| `matching-note27` | 3 | 728 | 5,760 | 1,078 | 880 | 0.012812 |
+| `matching-other` | 17 | 13,941 | 0 | 6,758 | 5,835 | 0.095462 |
+| `warmup-support-note27` | 1 | 1,079 | 0 | 246 | 217 | 0.004618 |
+| `support-note27` | 3 | 3,416 | 0 | 1,198 | 960 | 0.018812 |
+| `support-other` | 17 | 12,766 | 0 | 6,438 | 5,650 | 0.089912 |
+| `relationship` | 20 | 7,350 | 0 | 9,444 | 8,399 | 0.109140 |
+
+Warmups take 7.26 s and 9.33 s respectively. Per-case verdict elapsed times are
+8.36–11.94 s for matching note 27, 5.33–45.97 s for other matching,
+11.42–14.65 s for support note 27, 5.25–29.45 s for other support and
+6.19–67.19 s for relationships. These are individual native case latencies,
+not batch wall time or a speedup comparison.
+
+Inspect the preserved failures without new calls:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+uv run --no-project --with tiktoken==0.14.0 \
+  ../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/actual-three-check-20261009/matching-other \
+  --case A01
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/actual-three-check-20261009/support-other \
+  --case A20
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/actual-three-check-20261009/relationship \
+  --case A03
+```
+
+The trial exposes semantic disagreements despite complete execution. Bulk
+reviewer qualification, final scoring, reserved-test access and lower-effort
+comparison remain open. The recommended next step is a narrow fresh confirmation
+of the four rejected cases with unchanged prompts and paired valid contrasts,
+keeping ambiguous expectations separate. This would distinguish repeated failures
+from single-call errors before prompt changes or lower-effort work. It has not
+been prepared or run; further calls require approval.
 
 ## Matching-only offline preview
 
@@ -1102,12 +1236,11 @@ not independent gold verification. The fresh offline preparation above retains
 all 22 identical prompts/settings and changes only R05's expectation status
 and reason. The original preparation remains preserved; no reviewer was called.
 
-The next step is to settle the unresolved meaning boundaries and independently
-verify the expected answers before calls. Do not hide ambiguous sampled cases
-by substituting easier ones or treat another Sol answer as gold. These inputs
-test matching only; subject support, parent restrictions and required coverage
-within every branch remain outside this preview. Reliability on actual outputs
-has not yet been measured.
+These inputs test matching only; support, parent restrictions and required
+branch coverage are outside this preview. Later actual-wording trials below
+and the broader three-check trial above record agreement and disagreements
+with agent assessments. They do not independently verify the expected labels;
+overall qualification remains pending.
 
 Verification: the new production-workflow tests first failed because saved
 generation sources were unsupported, and because unresolved expectations could

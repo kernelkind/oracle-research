@@ -1583,9 +1583,14 @@ workflow. Support uses the complete original post; relationships use the actual
 student parent. Agent expectations remain unverified and unresolved labels
 receive no semantic pass/fail. Selection and expectations are frozen for 20
 distinct subjects across 16 previously unused validation notes, spanning all
-18 versions plus large-catalog additions. A duplicate shares all three checks;
-60 verdict calls remain to run. Matching A15 is unresolved and unscored. The
-sample is a bounded development challenge set, not population accuracy.
+18 versions plus large-catalog additions. A duplicate shares all three checks.
+The 60 verdicts and two eligible warmups now complete on first attempts,
+without reuse or mechanical failure. Agreement with frozen agent expectations
+is DSMv3 17/19 (A15 unscored), DSSv1 19/20 and DSLv1 17/20. Semantic disagreements
+remain; qualification stays pending. Matching A19 was disputed before calls.
+Matching caching reports hits; support caching reports none. The record keeps
+all warmup overhead and per-experiment usage. This is a bounded development
+challenge set, not population accuracy or authorization for bulk grading.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

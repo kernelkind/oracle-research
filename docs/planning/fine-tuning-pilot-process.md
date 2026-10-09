@@ -519,9 +519,13 @@ generations to the frozen post, teacher and task; support uses the post and
 relationships derive the actual student parent. Agent expectations remain
 unverified, and unresolved labels receive no semantic pass/fail. Freeze the
 sample and expectations before calls. These are now frozen for 20 distinct
-subjects from 16 previously unused validation notes; 60 verdict calls remain.
-Matching A15 is unresolved and unscored. The new trial has not run; prompts,
-scoring, lower-effort work and sealed test data retain their existing status.
+subjects from 16 previously unused validation notes. All 60 verdicts and two
+eligible warmups now complete on first attempts, without reuse or mechanical
+failure. Agreement with frozen agent expectations is matching 17/19 (A15
+unscored), support 19/20 and links 17/20. Semantic disagreements remain;
+qualification stays pending, and A19 was disputed before calls. Matching caching
+produces hits; support caching none. Prompts, scoring, lower-effort work and
+sealed test data retain their existing status.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
