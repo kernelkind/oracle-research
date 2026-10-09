@@ -239,6 +239,18 @@ does not resolve the failure; bulk qualification remains pending. Reconsidering
 this check using the trusted teacher hierarchy is recommended, without adopting
 a new method or authorizing another revision or calls.
 
+The user subsequently approves [mechanical decisions across all three checks](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9).
+Exact trusted teacher subjects settle matching and same-post support; exact
+ordered trusted teacher links settle parent-child validity. Record those results
+without model calls and keep all placements visible. Preparation supplies exact
+subject matches and excludes exact matching-model targets; request reuse exists.
+Native zero-attempt matching results and general support and
+relationship acceptance remain unimplemented.
+A21's parent is student-created and its child has no complete teacher match,
+so its agent-assessed expectation is not certified by the teacher. The repeated
+discrepancy does not conclusively establish reviewer error. Prompts, saved trials,
+scoring, qualification and sealed-test status retain their current state.
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

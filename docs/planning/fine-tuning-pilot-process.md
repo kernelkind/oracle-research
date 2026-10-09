@@ -355,16 +355,36 @@ counts; save observations locally without opening test content.
 ## 5. Score and compare — locally, after the rental
 
 Measure output reliability mechanically. The agreed semantic review uses
-**GPT-6.1 Sol / xhigh** through the existing subscription transport. One fresh
-review per note and model version sees the complete post, frozen ASv6.100,
-trusted teacher answer, candidate hierarchy and mechanical exact subject matches;
-model/checkpoint identities stay outside the prompt. Treat ASv6.100 as correct.
+**GPT-6.1 Sol / xhigh** through the existing subscription transport. Review
+findings for each note and model version refer to the complete post, frozen
+ASv6.100, trusted teacher answer, candidate hierarchy and mechanical exact
+subject matches. Model/checkpoint identities stay outside semantic requests.
+Treat ASv6.100 as correct.
 Explicit subject, immediate-link and coverage findings feed code-calculated
 **correctness** and **coverage** scores. Correctness counts entries with valid
 subjects and incoming links; coverage counts required teacher meanings preserved
 completely at every compatible returned heading occurrence. Optional broader
 headings are not mandatory; equivalent wording and valid extra headings are allowed.
 Keep teacher meaning groups fixed across versions and average per-note scores equally.
+
+**Mechanical decisions approved October 9:** all three checks use mechanical
+results wherever trusted inputs settle the question. An exact teacher subject
+match supplies meaning agreement and support for the same original post. An
+exact ordered pair copied from an actual trusted teacher link supplies local
+parent-child validity. Identical parent and child wording also retains every
+parent restriction. Record these results without model calls; matching both
+endpoints separately is insufficient to certify their relationship. No exact
+match leaves a semantic question, not an automatic rejection; a validated empty
+teacher catalog establishes no complete match. Record mechanical evidence and
+zero model attempts. Share identical saved review results with frozen source,
+prompt and runtime bindings while retaining every numbered placement; explicit
+fresh repeats remain fresh calls. Existing parsing and student/reviewer failure
+rules remain distinct. Exact-target matching and native
+request reuse exist; native zero-attempt matching results and general support and
+relationship acceptance remain to be implemented. See the [rule and implementation gaps](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9).
+This decision does not change prompts, scoring or qualification status or add
+model calls. A21 remains a discrepancy against an unadjudicated agent label:
+its new parent and nonmatching child do not reproduce a trusted teacher link.
 
 **Coverage-matching qualification scope agreed October 8:** target required
 complete teacher meanings; optional derived teacher headings are not mandatory

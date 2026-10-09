@@ -929,6 +929,22 @@ request sizes and repeated post context remain unchanged.
 
 ### Subject, title, mask and prominence preparation
 
+The user-approved [mechanical review rule](distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9)
+applies to DSM matching, DSS support and DSL relationships. Exact trusted teacher
+subjects establish meaning matches and same-post support; exact ordered pairs
+from actual trusted teacher links establish local validity. Identical parent and
+child wording also preserves every parent restriction. Record such findings
+without inference while keeping occurrence-specific coverage and placement.
+Exact matching controls already reject mechanical targets; native zero-attempt
+matching results, including empty catalogs, remain to be implemented. The shared
+runner already reuses identical requests unless an explicit fresh repeat is requested.
+The support/relationship adapters currently render selected pairs/subjects and
+do not implement general teacher-based acceptance. This intended routing is
+separate from current behavior and preserves historical qualification calls.
+Remaining non-exact questions still need semantic review; lack of a trusted
+match does not establish invalidity. No prompt, adapter or runner changes or
+new model calls accompany this documentation decision.
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 

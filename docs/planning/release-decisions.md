@@ -1685,6 +1685,38 @@ trusted teacher relationships is recommended; this adopts no revised method
 or structural policy and authorizes no further prompt/source repair,
 lower-effort trial, bulk grading, scoring or reserved-test access.
 
+**Mechanical decisions for every review prompt approved October 9:** the user
+directs using mechanical processing wherever possible across teacher matching,
+post support and parent-child validity. Given the trusted teacher answer, an
+exact student subject match supplies the complete-meaning match and same-post
+support without model calls. A validated empty teacher catalog establishes no
+match; a missing or invalid reference is a preparation failure. An exact ordered
+parent-child pair copied from an actual trusted teacher link supplies local
+validity without a relationship call;
+merely finding both subjects in the teacher catalog does not. Identical parent
+and child wording also retains every parent restriction, without establishing
+coverage or correct placement. No exact match does not mean invalid: remaining
+semantic questions still need review under the unchanged ASv6.100 criteria.
+Record mechanical origin, evidence and zero model attempts without a fabricated
+model receipt. Identical requests may share saved results with frozen source,
+prompt and runtime bindings, while every numbered occurrence remains visible
+for placement and coverage. Explicit fresh repeats remain fresh inference.
+Parsing, completeness, output
+failure rules and score arithmetic remain mechanical and unchanged.
+
+Current matching preparation supplies exact subject matches and rejects exact
+targets from model controls; native zero-attempt matching results remain to be
+implemented. The shared runner reuses identical requests. General support and
+relationship acceptance from trusted subjects/links remains unimplemented.
+This approves the design rule, not a prompt change, implementation, further
+inference, final scoring policy,
+bulk grading or test unsealing. The [process record](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9)
+distinguishes that rule from current behavior and preserves prior experiments.
+The preceding read-only investigation finds that A21's `Proof setup` parent is
+student-created and its child has complete-match null. Its true expectation is
+an unadjudicated agent assessment, not a trusted teacher relationship; repeated
+disagreement alone does not conclusively establish reviewer error or incapability.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

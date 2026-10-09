@@ -4,8 +4,15 @@
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
 with **24/25 assessed expectations**; interpretation-sensitive A12 is reported
 separately. Fresh unchanged DSLv1 also rejects A21, agreeing on 3/4 comparisons.
-The clarification has not resolved this failure; reviewer qualification stays
+The clarification has not resolved this disagreement; reviewer qualification stays
 pending. All 30 calls complete on first attempts without caching or warmup.
+
+The user approved [mechanical decisions for all three checks](#mechanical-decisions-for-all-three-checks-october-9).
+Matching model controls already exclude exact teacher subject strings. Native
+zero-attempt results and general mechanical acceptance for support and
+parent-child validity remain to be implemented. A21 adds a student parent absent
+from the teacher and has no complete child match; its expected true label remains an
+agent assessment, rather than a relationship certified by the teacher.
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
@@ -69,6 +76,63 @@ specifies their [report schema](response-schema.json) and qualification cases.
 Offline source preparation, report validation, scoring
 and qualification checks are implemented in the shared experiment workflow.
 The full semantic reviewer has not been qualified; bulk pilot grading is not implemented here.
+
+## Mechanical decisions for all three checks (October 9)
+
+The user directs using mechanical decisions whenever possible for every review
+prompt. Each check still needs a recorded result; a result established from
+trusted inputs does not require a model call. Apply this to matching, post
+support and parent-child validity, keeping the existing semantic criteria.
+
+| Check | Sufficient mechanical evidence | Result |
+| --- | --- | --- |
+| DSM complete-meaning matching | The student subject exactly equals a subject in the frozen teacher answer for the same note. | Record the teacher match without a matching call. |
+| DSM complete-meaning matching | The validated teacher catalog is empty. | Record no teacher match without a matching call. A missing or invalid reference is a preparation failure instead. |
+| DSS post support | The student subject exactly equals a trusted teacher subject for the same original post. | Record supported without a support call. |
+| DSL parent-child validity | The student pair has the exact ordered parent and child strings of an actual immediate link in the trusted teacher answer. | Record valid without a relationship call. |
+| DSL parent-child validity | Parent and child strings are identical. | Every parent restriction is retained; record this local pair as valid. This does not establish teacher agreement or correct placement. |
+
+Trust the teacher answer as directed; do not re-audit it to obtain these
+results. Finding the parent and child separately somewhere in the teacher
+catalog is insufficient: their ordered relationship must be established.
+Apart from a validated empty catalog, absence of an exact teacher subject or
+link leaves a semantic question, not a mechanical rejection.
+Substring overlap, shared keywords and broader or narrower wording are not
+complete-meaning matches. Paraphrase matching remains a semantic task; this
+decision does not make model-assessed equivalence a deterministic fact.
+
+Record the mechanical origin and supporting source reference, with zero model
+attempts; do not fabricate a model receipt. Identical rendered review requests
+may share a saved result with the same settings, schema and worker identity.
+Preserve the relevant post, task, reference and prompt bindings and every
+numbered occurrence for coverage and placement; reuse is not fresh reliability
+evidence. An explicitly requested fresh repeat must still make fresh calls.
+Output parsing, numbering, completeness and score arithmetic stay mechanical.
+Keep malformed student outputs and incomplete reviewer judgments under their
+existing distinct failure rules.
+
+Current code supplies exact subject matches and rejects exact targets selected
+as matching model controls; it does not produce a native zero-attempt result
+for those targets or empty catalogs. The shared runner reuses identical requests
+unless a fresh repeat is specified. The support/relationship adapters still
+render selected cases without general teacher-based mechanical acceptance. The
+agreed unchanged-answer and renumbering controls already require mechanical checks.
+Historical model receipts and qualification controls remain evidence of what
+was actually tested; this decision does not rewrite them.
+
+Implementation should index trusted subject strings and ordered pairs once
+per note, then look up student subjects and edges. Keep numbered placements
+separate from local verdict reuse and avoid a cross-product of duplicate
+occurrences. Supplying the full teacher hierarchy again for each edge is
+unnecessary. This addresses repeated work without assuming savings on changed
+student answers or establishing the reliability of remaining semantic calls.
+
+A21 cannot be accepted this way: the teacher has no `Proof setup` parent, and
+the child's complete-meaning match is null. Its frozen true expectation stays
+agent-assessed and unadjudicated. The repeated discrepancy is not conclusive
+evidence that Sol is wrong or incapable. No prompt, code, scoring policy, saved
+expectation or model call changes in this documentation update; implementation
+and further trials remain separate work.
 
 ## Coverage-matching qualification scope agreed October 8
 
