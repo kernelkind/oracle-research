@@ -140,7 +140,12 @@ parents from student numbering and keeping expected answers outside prompts.
 The prompts and GPT-6.1 Sol / xhigh / SSE / concurrency 8 settings are unchanged.
 These seven initial controls do not qualify the reviewer; broader cases and
 fresh repeats remain necessary. No scoring adoption, bulk grading or final-test
-unsealing is authorized. Next, review the prepared inputs before an initial trial.
+unsealing is authorized. The seven inputs and expected judgments were then shown
+in conversation and accepted; an initial xhigh trial remains to be run. The user
+wants to compare lower reasoning levels later, after establishing reliability
+with xhigh. Keep cases, expectations and prompts fixed for that comparison and
+measure semantic errors, latency and token usage, including cached tokens. No
+lower-effort settings or experiment calls are adopted by recording this intent.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

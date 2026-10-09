@@ -1366,9 +1366,20 @@ are an initial preview, not sufficient qualification: larger controls and fresh
 repeats remain necessary before bulk use. Support inheritance, structural
 allowances, teacher-edge comparison, final rubric adoption, bulk grading and
 final-test unsealing remain outside this preparation. R05 remains unresolved.
-Next, present the exact inputs and expectations for review before a separately
-authorized initial trial. See the
+The exact seven inputs and expectations were subsequently displayed in the
+conversation and the user accepted them. An initial xhigh trial remains to be
+run. See the
 [prepared development inputs](../../sse_multivector/distillation-review-v1/README.md#first-three-check-development-inputs-october-9).
+
+**Later reasoning-level comparison requested October 9:** after accepting the
+displayed cases, the user expressed wanting to test which lower reasoning level
+would suffice later. Establish reviewer reliability with GPT-6.1 Sol / xhigh
+first; the existing initial settings remain fixed. Later comparisons should
+hold the cases, expected judgments and prompts fixed and measure semantic
+errors, latency and actual token usage, including cached tokens. This records
+the requested future comparison, not a lower-effort fallback or approval of
+specific experiment settings, new calls or bulk grading. No prompt, prepared
+input, model setting or saved result changes in recording this decision.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

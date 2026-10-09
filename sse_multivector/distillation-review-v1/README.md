@@ -307,12 +307,20 @@ input/cached/output tokens and reasoning tokens remain unmeasured until calls
 are authorized. Source changes are covered by production-path preparation,
 validation and native CLI tests using an offline executable fixture.
 
-The next step is to review these exact inputs and expectations in conversation
-before authorizing an initial trial. A successful seven-case trial would still
-need broader controls, the selected large training examples and fresh repeats
+The exact seven inputs and expectations were displayed in conversation and the
+user accepted them. An initial xhigh trial remains to be run. A successful
+seven-case trial would still need broader controls, the selected large training
+examples and fresh repeats
 before bulk use. No support-inheritance policy, structural allowances,
 teacher-edge agreement implementation, final rubric, bulk grading or final-test
 unsealing is adopted by this preparation. R05 remains unresolved.
+
+The user also requested a later comparison of lower reasoning levels. Establish
+reliability with GPT-6.1 Sol / xhigh first, then hold prompts, cases and expected
+judgments fixed while comparing semantic errors, latency and actual token usage,
+including cached tokens. This records future intent; no lower-effort settings,
+experiment preparation or new calls are added. All three current prompts remain
+untested by models.
 
 ## Matching-only offline preview
 

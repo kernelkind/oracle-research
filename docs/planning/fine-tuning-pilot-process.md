@@ -455,9 +455,14 @@ and qualification reporting are tested with an offline executable fixture.
 All requests remain unrun, with GPT-6.1 Sol / xhigh / subscription SSE and
 concurrency 8. The prompts, final scoring and sealed test data are unchanged.
 These controls isolate the three judgments; they do not establish reviewer
-reliability at scale. Next, review the inputs and expectations before an initial
-trial; broader controls, selected large training examples and fresh repeats
-remain necessary before bulk use.
+reliability at scale. The exact seven inputs and expectations were then shown
+in conversation and accepted. An initial xhigh trial remains to be run; broader
+controls, selected large training examples and fresh repeats remain necessary
+before bulk use. The user wants to compare lower reasoning levels later, after
+establishing xhigh reliability. Cases, expected judgments and prompts should
+stay fixed while measuring semantic errors, latency and actual token usage,
+including cached tokens. Initial settings remain unchanged; recording that
+future intent adds no lower-effort experiment or model calls.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

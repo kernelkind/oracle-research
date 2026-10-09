@@ -1065,9 +1065,13 @@ production preparation and decoding functions:
   a separate DSMv3 specification reuses the existing two matching selectors.
   All seven are unrun with zero attempts/reuse, fixed GPT-6.1 Sol / xhigh /
   subscription SSE and concurrency 8. The set is an initial development preview,
-  not proof of reliability or adoption of pilot scoring. Review inputs and
-  expected judgments before an initial trial, then qualify more broadly before
-  bulk use.
+  not proof of reliability or adoption of pilot scoring. The exact seven inputs
+  and expected judgments were displayed and accepted; an initial xhigh trial
+  remains to be run, followed by broader qualification before bulk use. The user
+  wants to compare lower reasoning levels later, after establishing xhigh
+  reliability. Hold prompts, cases and expected judgments fixed and measure
+  semantic errors, latency and actual token usage, including cached tokens.
+  No lower-effort settings or model calls are adopted by recording that intent.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)
