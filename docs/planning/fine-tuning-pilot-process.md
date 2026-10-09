@@ -527,6 +527,15 @@ qualification stays pending, and A19 was disputed before calls. Matching caching
 produces hits; support caching none. Prompts, scoring, lower-effort work and
 sealed test data retain their existing status.
 
+The authorized [fresh confirmation](../../sse_multivector/distillation-review-v1/README.md#fresh-confirmation-of-four-rejected-cases-october-9)
+repeats four rejected cases and four accepted contrasts with unchanged prompts,
+inputs and Sol / xhigh settings. All eight complete on first attempts without
+reuse or warmup. Matching A01 and link A03 now agree; support A20 and link A21
+repeat errors. All contrasts stay accepted; native agent review records six
+accept and two reject. Qualification stays pending, with agent expectations
+unverified. No prompt change, lower-effort comparison, scoring or test unsealing
+is adopted.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

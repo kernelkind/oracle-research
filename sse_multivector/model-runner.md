@@ -1139,6 +1139,15 @@ production preparation and decoding functions:
   calls. Only note-27 matching/support groups receive explicit prefixes and
   warmups (2,062/1,041 proxy tokens). Matching reports 5,760 cached-input tokens,
   support zero. The record preserves per-experiment usage and warmup overhead.
+  The user subsequently authorizes the [fresh confirmation](distillation-review-v1/README.md#fresh-confirmation-of-four-rejected-cases-october-9)
+  of four rejected cases with four accepted contrasts. All eight repeat through
+  native `--from ... --repeat --only ...`, preserving prompts/inputs/expectations
+  and Sol / xhigh / SSE / concurrency 8. Matching A01 and link A03 now agree;
+  support A20 and link A21 repeat errors. All accepted contrasts stay accepted.
+  Eight first attempts complete without reuse or warmup; prefixes are below
+  1,024 tokens and cache reads/writes are zero. Exact request bodies, methods and
+  URLs match the baseline despite recorded runner 1.2.0 provenance. Native
+  agent review gives six accept and two reject; qualification remains pending.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

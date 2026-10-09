@@ -1,6 +1,13 @@
 # Distillation semantic review — process and evidence
 
-Actual-output development result: **DSMv3 17/19 assessed verdicts, DSSv1 19/20
+Fresh confirmation result: **two of the four rejected decisions repeat; two
+change to the expected correct verdict**. All four previously accepted contrasts
+stay accepted. The [unchanged-input repeat](#fresh-confirmation-of-four-rejected-cases-october-9)
+completes eight fresh first attempts, with no answer reuse or warmup. The current
+prompts show repeated errors and inconsistent decisions; qualification stays
+pending. Agent expectations remain separate from independently adjudicated gold.
+
+Initial actual-output development result: **DSMv3 17/19 assessed verdicts, DSSv1 19/20
 and DSLv1 17/20** agree with the frozen agent expectations in the
 [bounded validation trial](#actual-output-trial-results). Matching A15 remains
 unscored. All 60 verdicts and two eligible warmups complete on first attempts,
@@ -965,13 +972,82 @@ uv run --no-project --with tiktoken==0.14.0 \
   --case A03
 ```
 
-The trial exposes semantic disagreements despite complete execution. Bulk
-reviewer qualification, final scoring, reserved-test access and lower-effort
-comparison remain open. The recommended next step is a narrow fresh confirmation
-of the four rejected cases with unchanged prompts and paired valid contrasts,
-keeping ambiguous expectations separate. This would distinguish repeated failures
-from single-call errors before prompt changes or lower-effort work. It has not
-been prepared or run; further calls require approval.
+The trial exposes semantic disagreements despite complete execution. The user
+subsequently approves fresh confirmation of the four rejected cases with unchanged
+prompts; the repeat below includes four previously accepted contrasts. Ambiguous
+expectations remain separate. Bulk qualification, final scoring, reserved-test
+access and lower-effort comparison remain open.
+
+### Fresh confirmation of four rejected cases (October 9)
+
+The user explicitly authorizes proceeding with the proposed fresh confirmation.
+Native `prepare --from ... --repeat --only ...` preserves the exact saved
+DSMv3/DSSv1/DSLv1 prompts, original inputs, schemas, source hashes and frozen
+agent expectations. Sol / xhigh / subscription SSE / concurrency 8 remain fixed.
+The baseline responses stay outside model inputs. The three ambiguous cases
+from the initial trial are excluded, with their evidence and labels unchanged.
+
+Native experiments live under
+`target/distillation-review-v1/actual-error-confirmation-20261009/`:
+`matching` repeats A01/A18 from `matching-other`, `support` repeats A08/A20
+from `support-other`, and `relationship` repeats A03/A13/A16/A21 from the
+initial trial's relationship batch. These are eight repeated inputs, not new
+controls or an independent validation partition. The accepted contrasts test
+that permitted generalization and preserved restrictions remain accepted; their
+different inputs are not matched counterfactuals and cannot isolate a context or
+wording cause.
+
+| Rejected case | Expected | Initial verdict | Fresh verdict | Agent assessment |
+| --- | --- | --- | --- | --- |
+| DSMv3 A01: generic decentralized-world wording | T02 | null | T02 | Now correct; initial missed match does not recur |
+| DSSv1 A20: negative claim without Nostr exception | false | true | true | Error repeats |
+| DSLv1 A03: resumption with complete held-aircraft clause | true | false | true | Now correct; initial invalid-link verdict does not recur |
+| DSLv1 A21: proof explicitly including directed-univalence setup | true | false | false | Error repeats |
+
+All four contrasts preserve their accepted verdicts: matching A18 returns T05;
+support A08 returns true; relationships A13/A16 return true. Native case-level
+agreement is 2/2 matching, 1/2 support and 3/4 links. Attributed native agent
+reviews record six accept and two reject. The fresh A20 reason quotes
+`Likes aren’t love` but omits `NOT ON NOSTR`. The fresh A21 reason again
+requires presenting the setup, although `Proof setup` imposes no such requirement
+and the child explicitly names the setup. A13's sound preservation reasoning
+has a recorded imprecision: the child names an original article, rather than
+requiring the post itself to be that article.
+
+All eight calls are mechanically valid and receipt-bound, complete on first
+attempts, and have no response reuse, retries or interruptions. The persistent
+stage counter finishes at **8/16 attempts**. Three native batches run concurrently;
+their two/two/four case counts keep total initial in-flight calls at most eight.
+No request is truncated or repaired.
+
+The exact naturally shared prefixes are 469 matching, 635 support and 300
+relationship `o200k_base` proxy tokens (`tiktoken 0.14.0`). All are below 1,024;
+no explicit prefix, key or warmup is configured. Native cache-read and cache-write
+counts are zero. All recorded request bodies, URLs and methods match their
+baselines exactly. The shared runner is now 1.2.0 (`4718b19`); its code/worker
+identity change is preserved in provenance. Its unchanged uncached serializer,
+transport, pinned pi-ai 0.85.1 and retry classification preserve these requests;
+the new automatic warming path is inactive without a configured prefix.
+
+The following figures are copied separately from each native report; no total
+usage or measured savings is inferred. Output already includes reasoning.
+There is no missing usage or catalog estimate. Provider cash-cost fields remain
+null; catalog prices are API-equivalent estimates, not subscription charges.
+No paid fallback or budget-ledger change occurs.
+
+| Native experiment | Attempts | Input | Cached input | Output | Reasoning | Catalog estimate USD | Case latency s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `matching` | 2 | 1,495 | 0 | 1,046 | 948 | 0.013450 | 12.25–17.16 |
+| `support` | 2 | 1,436 | 0 | 1,075 | 996 | 0.013622 | 5.27–25.02 |
+| `relationship` | 4 | 1,537 | 0 | 3,505 | 3,260 | 0.038124 | 7.41–61.78 |
+
+Qualification remains **pending**, including unverified agent expectations and
+unselected cases from the original full sources. Two repeated failures and two
+corrected decisions do not establish a population error rate or qualify the
+reviewers. The recommended next step is to address the repeated exception
+preservation failure first, presenting a proposed reviewer change for approval
+before further calls. No prompt revision, lower-effort comparison, bulk scoring,
+structural policy or reserved-test access is adopted by this result.
 
 ## Matching-only offline preview
 

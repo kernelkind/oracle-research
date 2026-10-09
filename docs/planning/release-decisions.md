@@ -1592,6 +1592,22 @@ Matching caching reports hits; support caching reports none. The record keeps
 all warmup overhead and per-experiment usage. This is a bounded development
 challenge set, not population accuracy or authorization for bulk grading.
 
+**Fresh confirmation of rejected actual cases authorized and completed October 9:**
+the user directs proceeding with the unchanged-prompt confirmation. Four rejected
+cases and four previously accepted contrasts repeat at Sol / xhigh / subscription
+SSE / concurrency 8. All eight complete on first attempts with distinct fresh
+receipts, no reuse, retry or warmup. Matching A01 and link A03 now match their
+frozen expectations; support A20 and link A21 repeat their errors. All four
+accepted contrasts stay accepted. Native agent review records six accept and
+two reject; expectations remain unverified and qualification stays pending.
+Naturally shared prefixes are below 1,024 tokens; native cache reads/writes are
+zero. Request bodies, methods and URLs remain identical despite runner 1.2.0's
+recorded provenance update. The [confirmation record](../../sse_multivector/distillation-review-v1/README.md#fresh-confirmation-of-four-rejected-cases-october-9)
+preserves exact selections, reasons, native usage and latency. This shows repeated
+errors and inconsistent decisions on selected cases, not an overall accuracy
+estimate. Prompt changes, lower-effort work, bulk review and test access remain
+unadopted.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

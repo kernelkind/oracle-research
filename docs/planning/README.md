@@ -195,6 +195,15 @@ is matching 17/19 (A15 unscored), support 19/20 and links 17/20. Semantic
 disagreements remain and qualification stays pending; A19 was disputed before
 calls. Matching caching produces hits, support caching none. Teacher answers
 remain trusted; no bulk grading or test access is adopted.
+
+The approved [fresh confirmation](../../sse_multivector/distillation-review-v1/README.md#fresh-confirmation-of-four-rejected-cases-october-9)
+now repeats four rejected cases and four accepted contrasts with unchanged inputs,
+prompts and Sol / xhigh settings. All eight complete on first attempts without
+reuse or warming. Matching A01 and link A03 now agree; support A20 and link A21
+repeat errors. All accepted contrasts stay accepted. Qualification remains
+pending; this is repeated selected-case evidence, not overall accuracy or bulk
+adoption.
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
