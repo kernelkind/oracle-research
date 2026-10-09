@@ -512,6 +512,15 @@ per-experiment usage are recorded, without a causal cache-savings claim. This
 repeats the same authored training controls. Broader qualification and
 lower-effort comparison remain open; no bulk grading or test unsealing is adopted.
 
+The user subsequently approved a
+[broader actual-output trial](../../sse_multivector/distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
+at xhigh for all three checks. Shared preparation now binds saved validation
+generations to the frozen post, teacher and task; support uses the post and
+relationships derive the actual student parent. Agent expectations remain
+unverified, and unresolved labels receive no semantic pass/fail. Freeze the
+sample and expectations before calls. The new trial has not run; prompts,
+scoring, lower-effort work and sealed test data retain their existing status.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

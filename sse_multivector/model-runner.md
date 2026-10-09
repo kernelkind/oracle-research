@@ -1119,6 +1119,18 @@ production preparation and decoding functions:
   assigned elsewhere; all selected case-level qualifications pass. Sol / xhigh /
   SSE / concurrency 8 stay fixed. This repeats authored training controls;
   broader qualification and lower-effort comparison remain open.
+  The user subsequently approves the
+  [broader actual-output trial](distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
+  for all three checks at xhigh. `distillation_verdict` now also accepts
+  `schema_version: 2`, a hash-bound `dataset_manifest` and selected validation
+  `generation` references, with explicit `expected_valid`, `expectation_status`
+  and `selection` outside prompts. The shared saved-generation loader preserves
+  original wording and prompt/split/hash checks. Support receives the full post;
+  relationships derive the student's actual immediate parent. Agent-assessed
+  labels cannot pass overall qualification, and unresolved labels have no
+  semantic pass/fail. Reserved-test paths and malformed/truncated generations
+  are rejected before preparation. Original authored sources retain their
+  behavior; the new trial's expectations and requests are not yet frozen or run.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

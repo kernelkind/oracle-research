@@ -183,6 +183,11 @@ cache-effect comparison. The record preserves warmup overhead and native
 per-experiment usage. These repeat the same authored training controls;
 broader qualification and lower-effort comparison remain open. No bulk grading
 or final-test unsealing is adopted.
+The user subsequently approved a
+[broader actual-output trial](../../sse_multivector/distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
+at xhigh for all three checks. The source-bound loader now supports saved
+validation outputs for matching, support and actual student links. Expectation
+assessment and exact preparation precede calls; no new trial has run yet.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

@@ -13,6 +13,9 @@ The [initial warmed trial](#initial-warmed-three-check-trial-october-9) remains
 separate small-control evidence. These are repeated judgments on the same
 authored training controls; broader qualification and lower-effort comparison
 remain open.
+The user now authorizes a [broader actual-output trial](#actual-validation-preparation-approved-october-9)
+covering all three checks at xhigh. Source loading is implemented; the new
+sample's expectations and requests remain to be frozen before calls.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -767,6 +770,39 @@ controls. Broader qualification on real distilled answers and later lower-effort
 comparison remain open. No bulk grading, test unsealing, support inheritance,
 structural allowance, teacher-edge implementation or final scoring is adopted;
 R05 remains unresolved. Further calls require separate authorization.
+
+## Actual validation preparation approved (October 9)
+
+After the fresh training-control repeat, the user agreed to testing a broader
+sample of actual distilled outputs at xhigh and explicitly selected all three
+checks: teacher matching, post support and actual immediate parent-child
+validity. The existing DSMv3/DSSv1/DSLv1 prompts, trusted ASv6.100 reference and
+Sol / xhigh / subscription SSE / concurrency-8 settings stay fixed. Caching
+and warmups remain conditional on naturally eligible repeated prefixes.
+Reserved test outputs and lower-effort comparisons remain outside this trial.
+
+The existing matching loader already accepts saved validation answers.
+`distillation_verdict` now accepts a schema-version-2 source with a bound
+`dataset_manifest` and cases naming `generation`, `student_number`,
+`expected_valid`, `expected_reason`, `expectation_status` and `selection`.
+Matching, support and relationship preparation share the original source
+checks through `distillation_review.load_saved_generations`: frozen split,
+hash, note identity, complete original prompt and production answer parsing.
+Test generation paths are rejected before opening; malformed or truncated
+answers are rejected. Student wording is untouched. Support receives the full
+post and one subject; relationships derive the actual student parent and
+receive only the two strings. Verbatim ASv6.100 rules come from the bound task.
+
+Actual-output expectations are agent assessments, separate from independently
+adjudicated gold. Native qualification stays pending for `agent_assessed`
+cases even when verdicts agree, while still listing disagreements. An
+`unresolved` expectation has a null placeholder and no semantic pass/fail;
+it is not an expected invalid subject or link. Existing authored-control
+sources and their qualification behavior remain supported unchanged.
+
+The broader sample's selection, independent expectation assessment and exact
+request preview precede reviewer calls. This prepares a bounded development
+trial, not bulk pilot scoring or a reviewer-qualification claim.
 
 ## Matching-only offline preview
 

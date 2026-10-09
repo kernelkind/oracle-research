@@ -40,6 +40,125 @@ class DistillationVerdictTests(unittest.TestCase):
         return inputs.prepare_file(dataset, self.path,
                                    (PROMPTS / (name + "-prompt-v1.md")).read_text())
 
+    def actual_source(self, check="support"):
+        root = self.path.parent
+        task = (ROOT / "subject-prompt-goal-v1/asv6.100/ASv6.100.md").read_text()
+        post = "Cable A is 2 m long."
+        messages = [dict(role="user", content=task + "\n\n<post>\n" + post + "\n</post>")]
+        teacher = [dict(number="1", context="Cables.", subject="Cables"),
+                   dict(number="1.1", context="Cable A.", subject="2 m cable A")]
+        for name, rows in (("references", [dict(note_id="note-a", split="evaluation",
+                                                text=post, subjects=teacher)]),
+                           ("evaluation", [dict(note_id="note-a", messages=messages)])):
+            (root / (name + ".jsonl")).write_text("\n".join(json.dumps(r) for r in rows) + "\n")
+        def bound(path):
+            return dict(path=str(path), sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        manifest = dict(schema_version=2, tasks=dict(subjects="ASv6.100"),
+            train_note_ids=["train-a"], evaluation_note_ids=["note-a"], test_note_ids=["test-a"],
+            subject_instruction_sha256=hashlib.sha256(task.encode()).hexdigest(),
+            outputs={name: bound(root / name)["sha256"] for name in ("references.jsonl", "evaluation.jsonl")})
+        (root / "manifest.json").write_text(json.dumps(manifest))
+        student = [dict(number="1", context="Wrong parent.", subject="3 m cables"),
+                   dict(number="1.1", context="Length.", subject="Cable A, two metres long")]
+        generation = dict(note_id="note-a", messages=messages,
+            answer=dict(raw=json.dumps(dict(subjects=student)), tokens=50, truncated=False))
+        saved = root / "baseline/note-0000/subjects.json"
+        saved.parent.mkdir(parents=True, exist_ok=True)
+        saved.write_text(json.dumps(generation))
+        self.source = dict(schema_version=2, check=check, dataset_manifest=bound(root / "manifest.json"),
+            cases=[dict(id="A01", generation={**bound(saved), "index": 0, "note_id": "note-a"},
+                student_number="1.1", expected_valid=check == "support", expectation_status="agent_assessed",
+                expected_reason="Supported two-metre cable; the actual parent requires three metres.",
+                selection="Untouched saved validation output.")])
+        return saved, generation
+
+    def test_actual_support_is_bound_and_does_not_promote_agent_expectations_to_gold(self):
+        saved, _ = self.actual_source()
+        cases, protected, _ = self.prepare()
+        case = cases[0]
+        self.assertEqual(json.loads(case["inputs"]["SUPPORT_INPUT"]),
+                         dict(post="Cable A is 2 m long.", student_subject="Cable A, two metres long"))
+        self.assertIn(str(saved.resolve()), protected)
+        self.assertFalse(any(Path(p).name in {"train.jsonl", "test.jsonl"} for p in protected))
+        for forbidden in ("expected_valid", "expected_reason", "agent_assessed", "baseline", "note-a"):
+            self.assertNotIn(forbidden, case["prompt"])
+        result = inputs.validate(dict(adapter="distillation_verdict"), case,
+            '{"valid":true,"reason":"The post states the length."}', None)
+        from sse_multivector import distillation_verdict as verdict
+        report = verdict.qualification([{**case, **result}], ["A01"])
+        self.assertTrue(result["qualification"]["passed"])
+        self.assertEqual(report["status"], "pending")
+        self.assertEqual(report["unverified_expectations"], ["A01"])
+
+    def test_actual_relationship_uses_student_parent_and_unresolved_has_no_gold_label(self):
+        self.actual_source("relationship")
+        case = self.prepare()[0][0]
+        self.assertEqual(json.loads(case["inputs"]["RELATIONSHIP_INPUT"]),
+                         dict(parent_subject="3 m cables", child_subject="Cable A, two metres long"))
+        self.assertEqual(case["evidence"]["parent_number"], "1")
+        self.assertNotIn("Cable A is 2 m long.", case["prompt"])
+        self.source["cases"][0].update(expected_valid=None, expectation_status="unresolved")
+        case = self.prepare()[0][0]
+        result = inputs.validate(dict(adapter="distillation_verdict"), case,
+            '{"valid":false,"reason":"A two-metre cable need not be three metres."}', None)
+        from sse_multivector import distillation_verdict as verdict
+        report = verdict.qualification([{**case, **result}], ["A01"])
+        self.assertIsNone(result["qualification"]["passed"])
+        self.assertEqual(report["checked"], 0)
+        self.assertEqual(report["unresolved_expectations"], ["A01"])
+
+    def test_actual_validation_rejects_reserved_paths_and_changed_or_truncated_answers(self):
+        saved, generation = self.actual_source()
+        original = copy.deepcopy(self.source)
+        for mutation, expected in (("test", "validation generation"), ("messages", "input differs"),
+                                   ("truncated", "output limit")):
+            with self.subTest(mutation=mutation):
+                self.source = copy.deepcopy(original)
+                value = copy.deepcopy(generation)
+                if mutation == "test":
+                    self.source["cases"][0]["generation"]["path"] = str(self.path.parent / "test/note-0000/subjects.json")
+                elif mutation == "messages":
+                    value["messages"][0]["content"] += "Changed"
+                else:
+                    value["answer"]["truncated"] = True
+                saved.write_text(json.dumps(value))
+                self.source["cases"][0]["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+                with self.assertRaisesRegex(ValueError, expected):
+                    self.prepare()
+
+    def test_cli_handles_actual_outputs_and_keeps_assessment_status(self):
+        root = self.path.parent
+        runner = root / "fake-runner"
+        runner.write_text(FAKE_RUNNER.replace('if prompt.startswith("GENERIC PROMPT"):',
+                                             'if prompt.startswith(("DSSv1", "DSLv1")):'))
+        runner.chmod(0o755)
+        env = dict(os.environ, FAKE_RUNNER_LOG=str(root / "calls.json"),
+                   FAKE_RUNNER_PROMPT_RESPONSE='{"valid":true,"reason":"Fixture verdict."}')
+        for check, prompt_id in (("support", "DSSv1"), ("relationship", "DSLv1")):
+            self.actual_source(check)
+            self.prepare()
+            spec = dict(schema_version=1,
+                prompt=dict(id=prompt_id, path=str(PROMPTS / (check + "-prompt-v1.md"))),
+                dataset=dict(adapter="distillation_verdict", path=str(self.path)),
+                runner=dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol",
+                    reasoning_effort="xhigh", concurrency=8, runner_binary=str(runner)))
+            (root / "spec.json").write_text(json.dumps(spec))
+            def cli(*args):
+                result = subprocess.run([sys.executable, str(ROOT / "experiment.py"), *map(str, args)],
+                    env=env, cwd=root, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                return result.stdout
+            cli("prepare", check, "--spec", "spec.json")
+            before = json.loads(cli("show", check, "--json"))
+            self.assertEqual(before["summary"]["attempts"], 0)
+            cli("run", check)
+            after = json.loads(cli("show", check, "--json"))
+            self.assertEqual(after["summary"]["valid"], 1)
+            self.assertEqual(after["qualification"]["status"], "pending")
+            self.assertEqual(after["qualification"]["unverified_expectations"], ["A01"])
+            self.assertEqual(after["qualification"]["incorrect_verdicts"],
+                             ["A01"] if check == "relationship" else [])
+
     def test_support_loads_verbatim_rules_one_subject_and_separate_expectations(self):
         cases, protected, preparation = self.prepare()
         case = cases[0]

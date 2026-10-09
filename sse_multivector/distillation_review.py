@@ -24,6 +24,85 @@ def _fields(value, fields, label):
         raise ValueError(f"expected exact {label} fields: {', '.join(sorted(fields))}")
 
 
+def load_saved_generations(dataset_manifest, definitions, base):
+    """Bind selected validation answers to the frozen post, teacher and task.
+
+    Matching, support and relationship preparation share these checks. Reserved
+    test generation paths are rejected before opening them; answers are parsed
+    through the production subject-result contract without rewriting wording.
+    """
+    try:
+        from .distillation_run import subject_result
+    except ImportError:
+        from distillation_run import subject_result
+    protected = {}
+
+    def read_bound(reference):
+        _fields(reference, {"path", "sha256"}, "saved validation reference")
+        path = engine._resolve_path(reference["path"], "saved validation source", Path(base))
+        raw = path.read_bytes()
+        checksum = hashlib.sha256(raw).hexdigest()
+        if checksum != reference["sha256"]:
+            raise ValueError(f"saved validation source hash differs: {path}")
+        protected[str(path)] = checksum
+        return path, raw
+
+    def decode(raw):
+        return json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+
+    manifest_path, raw = read_bound(dataset_manifest)
+    manifest = decode(raw)
+    if manifest["schema_version"] != 2 or manifest["tasks"] != {"subjects": "ASv6.100"}:
+        raise ValueError("saved validation requires an ASv6.100 subjects-only dataset")
+    splits = [manifest[name + "_note_ids"] for name in ("train", "evaluation", "test")]
+    all_ids = [identifier for split in splits for identifier in split]
+    if not splits[1] or len(set(all_ids)) != len(all_ids):
+        raise ValueError("invalid or overlapping saved validation splits")
+    rows = {}
+    for name in ("evaluation", "references"):
+        _, raw = read_bound(dict(path=str(manifest_path.parent / (name + ".jsonl")),
+                                sha256=manifest["outputs"][name + ".jsonl"]))
+        rows[name] = [decode(line) for line in raw.splitlines()]
+    if [row["note_id"] for row in rows["evaluation"]] != splits[1]:
+        raise ValueError("saved validation evaluation identities differ")
+    references = {row["note_id"]: row for row in rows["references"]}
+    if len(references) != len(rows["references"]):
+        raise ValueError("duplicate saved validation reference identity")
+    loaded = []
+    for definition in definitions:
+        generation = definition["generation"]
+        _fields(generation, {"path", "sha256", "index", "note_id"}, "validation generation")
+        path = engine._resolve_path(generation["path"], "validation generation", Path(base))
+        index = generation["index"]
+        if (type(index) is not int or not 0 <= index < len(rows["evaluation"])
+                or generation["note_id"] != splits[1][index] or "test" in path.parts
+                or path.name != "subjects.json" or path.parent.name != f"note-{index:04}"):
+            raise ValueError("expected a saved validation generation")
+        _, raw = read_bound({key: generation[key] for key in ("path", "sha256")})
+        saved = decode(raw)
+        if saved["note_id"] != generation["note_id"]:
+            raise ValueError("saved validation identity differs")
+        if saved["messages"] != rows["evaluation"][index]["messages"]:
+            raise ValueError("saved validation input differs")
+        reference = references[generation["note_id"]]
+        messages = saved["messages"]
+        suffix = "\n\n<post>\n" + reference["text"] + "\n</post>"
+        if (reference["split"] != "evaluation" or len(messages) != 1 or messages[0]["role"] != "user"
+                or not messages[0]["content"].endswith(suffix)
+                or hashlib.sha256(messages[0]["content"][:-len(suffix)].encode()).hexdigest()
+                   != manifest["subject_instruction_sha256"]):
+            raise ValueError("saved validation prompt differs from instruction or note")
+        teacher = parse_subjects(json.dumps(dict(subjects=[
+            {key: row[key] for key in ("number", "context", "subject")} for row in reference["subjects"]])))
+        parsed = subject_result(saved["note_id"], saved["answer"])
+        if parsed["errors"]:
+            raise ValueError(parsed["errors"][0]["error"])
+        loaded.append(dict(definition=definition, post=reference["text"], teacher=teacher,
+            student=parsed["subjects"], note_id=saved["note_id"],
+            task_prompt=messages[0]["content"][:-len(suffix)]))
+    return loaded, protected
+
+
 def _numbers(value, known, label, *, nonempty=False):
     if (not isinstance(value, list) or (nonempty and not value)
             or any(not isinstance(number, str) or number not in known for number in value)

@@ -1569,6 +1569,20 @@ lower-effort comparison remain open. Further calls, bulk grading, final-test
 unsealing and the undecided scoring/structure policies are not adopted by this
 result.
 
+**Broader actual-output trial approved October 9:** after the fresh xhigh repeat,
+the user agreed to testing a broader sample of actual distilled outputs, then
+explicitly selected all three approved checks. The prompts remain DSMv3,
+DSSv1 and DSLv1 at Sol / xhigh / subscription SSE / concurrency 8. ASv6.100
+remains trusted. Freeze selection and expected judgments before reviewer
+calls; skip short-prefix warmups and mechanically duplicate work. This adds
+no lower-effort comparison, bulk scoring or reserved-test access.
+
+The [actual validation preparation](../../sse_multivector/distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
+now supports source-bound saved outputs for all three checks through the shared
+workflow. Support uses the complete original post; relationships use the actual
+student parent. Agent expectations remain unverified and unresolved labels
+receive no semantic pass/fail. The broader sample is not yet run.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress
