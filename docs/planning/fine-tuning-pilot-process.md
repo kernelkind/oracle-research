@@ -454,6 +454,18 @@ Independent verification, resolving the meaning boundaries, additional calls,
 effort/batching comparisons, full review adoption and final-test unsealing remain
 subsequent decisions.
 
+The user then accepted allowing the original post to clarify the sense of
+wording already present in either subject, while still forbidding missing
+restrictions to be supplied from the post. Draft
+[DSMv2](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8)
+implements this distinction and prepares the same 22 targets offline with
+zero calls. DSMv1's tested prompt remains preserved. Sol / xhigh, concurrency 8,
+complete-meaning matching and trusted ASv6.100 references remain unchanged.
+The prior assessments need checking with the supplied posts; the club case is
+still ungraded, all expectations remain unverified and qualification is pending.
+This drafting and preparation does not establish reliability or authorize
+reviewer calls, bulk review or test unsealing.
+
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a
 required task receive both zeros; a correct empty answer passes. Missing or

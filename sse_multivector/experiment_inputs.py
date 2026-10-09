@@ -66,7 +66,7 @@ def prepare_file(dataset, path, template, load_report=None):
         except ImportError:
             import distillation_matching
         cases, protected, preparation = distillation_matching.prepare_source(
-            source, path.parent, dataset.get('select'))
+            source, path.parent, dataset.get('select'), include_post='{POST}' in template)
         sources.update(protected)
         rendered = prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template)
         import tiktoken

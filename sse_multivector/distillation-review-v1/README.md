@@ -4,7 +4,8 @@ Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct cont
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
-semantic review has not run.
+semantic review has not run. **DSMv2 is an untested draft** allowing the original
+post to clarify wording; its offline preview makes zero reviewer calls.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -195,8 +196,8 @@ experiments, full review adoption and final-test unsealing remain open.
 
 ## Actual distilled wording: offline preview (October 8)
 
-The authorized next step prepares saved validation wording with **DSMv1
-unchanged**, before further reviewer calls. The shared adapter now supports
+The original actual-wording preview prepared saved validation wording with
+**DSMv1 unchanged**, before further reviewer calls. The shared adapter supports
 [matching-actual-source.json](matching-actual-source.json): a hash-bound prepared
 dataset manifest and references to individual saved `subjects.json` generations.
 It reads evaluation inputs and trusted teacher references, checks the saved note
@@ -238,7 +239,8 @@ agreement with every assessed answer cannot qualify the reviewer: native
 qualification remains pending and lists `unverified_expectations`. An unresolved
 case has no semantic pass/fail or false-match count; its null placeholder does
 not mean an expected nonmatch. The source format explicitly preserves that
-distinction. No adjudication policy or rubric change has been adopted.
+distinction. At this preview stage, no adjudication policy or rubric change had
+been adopted. The subsequent post-interpretation decision is recorded below.
 
 | Case | Actual wording and comparison | Offline expectation |
 | --- | --- | --- |
@@ -288,6 +290,60 @@ unresolved/unverified qualification behavior. The matching, review, shared
 experiment, selection and extraction regression suites pass. Re-reading the
 saved confirmation-repeat report still gives 16/16 passing controls; no new
 reviewer calls were needed for these checks.
+
+## DSMv2: post interpretation draft (October 8)
+
+The user accepted supplying the original post to clarify wording. Draft
+[DSMv2](matching-prompt-v2.md) lets the post distinguish meanings of words or
+phrases already present in either subject. It still forbids adding a restriction
+absent from the subject merely because it appears in the post. Complete-meaning
+matching, trusted ASv6.100 wording and the response schema remain unchanged.
+The prompt contains no case-specific examples or expected verdicts.
+
+The club case exposed why withholding all post context was too broad: R19's
+post is `welcome to underground…♣`, its teacher wording is `Clubs suit symbol`,
+and the actual generated wording is `Club symbols`. The post can identify the
+card-suit sense of "club" without importing a new fact. The final complete-meaning
+judgment remains ungraded; omitting the explicit word "suit" does not by itself
+establish a lost restriction.
+
+The shared adapter supplies `POST` as a JSON string when the prompt requests
+`{POST}`. It uses the already verified original post from either source format.
+`MATCH_INPUT` retains the identical one-subject / full-teacher-catalog input.
+DSMv1 preparation and its frozen trials are preserved. Parent wording, generated
+explanations, source/model identities and expected answers remain outside DSMv2.
+The revision receipt records the exact delta from DSMv1.
+
+[matching-actual-v2-spec.json](matching-actual-v2-spec.json) prepares the same
+22 targets with Sol / xhigh and concurrency 8. The offline artifact is
+`target/distillation-review-v1/matching-actual-context-20261008/`.
+Native reporting confirms **zero calls, attempts and reused answers**; all
+22 cases are unrun. Rendered inputs total 25,043 `o200k_base` proxy tokens,
+with 445–1,569 per request and at most 46 teacher wordings. These are text sizes,
+not measured usage, caching or cost. The inherited DSMv1 assessments remain
+unverified evidence, not newly adjudicated DSMv2 expectations. They need checking
+with the supplied posts before calls; R19 remains unresolved and qualification
+is pending.
+
+Inspect the exact draft club request without inference:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show \
+  target/distillation-review-v1/matching-actual-context-20261008 \
+  --case R19 --prompt-only
+```
+
+The new production-path test first failed because `POST` was unavailable. It
+checks both source formats, exact original-post content, unchanged catalog and
+subject inputs, preserved source bindings and exclusion of expected answers.
+The matching, review, shared experiment, selection and extraction regression
+suites pass 244 tests. The saved DSMv1 confirmation repeat still reports 16/16
+passing controls.
+These mechanical checks do not establish semantic reliability. Expected-answer
+verification and checks of interpretation versus missing restrictions precede
+any proposed reviewer calls. Full review adoption and final-test unsealing
+remain open.
 
 ## Reviewer and inputs
 

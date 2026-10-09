@@ -56,6 +56,7 @@ __pycache__/
 !/sse_multivector/distillation-review-v1/matching-confirmation-spec.json
 !/sse_multivector/distillation-review-v1/matching-actual-source.json
 !/sse_multivector/distillation-review-v1/matching-actual-spec.json
+!/sse_multivector/distillation-review-v1/matching-actual-v2-spec.json
 
 # The batch runner writes these schema copies into its run directories.
 /sse_multivector/*-v[0-9]*/**/prompt-output-schema.json

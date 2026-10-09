@@ -1056,6 +1056,18 @@ boundaries, further calls, rubric changes, optimization, full review adoption
 and test unsealing remain open. This is not an ASv6.100 audit. See the
 [actual-wording preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8).
 
+**Post interpretation accepted October 8:** the user accepted including the
+original post to interpret words or phrases already present in either subject.
+The post cannot supply restrictions absent from a subject. Draft DSMv2 implements
+this distinction through an optional `{POST}` template variable while preserving
+DSMv1's tested prompt and inputs. Complete-meaning matching and ASv6.100's authority
+remain unchanged. The new offline preview retains the same 22 targets and
+Sol / xhigh, concurrency 8 settings, with zero reviewer calls. Prior assessments
+remain unverified and need checking with the supplied posts; `Club symbols` is
+still ungraded. Semantic reliability, further calls, full review adoption and
+final-test unsealing remain open. See the
+[DSMv2 draft and preview](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

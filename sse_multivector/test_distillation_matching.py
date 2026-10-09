@@ -227,6 +227,28 @@ class DistillationMatchingTests(unittest.TestCase):
         self.assertEqual(report["status"], "pending")
         self.assertEqual(report["unverified_expectations"], ["R01"])
 
+    def test_post_is_available_only_when_the_template_requests_it(self):
+        for schema in (1, 2):
+            with self.subTest(schema=schema):
+                expected_post = "2 cables: cable A is 2 m long and cable B is 3 m long. A is not longer than B."
+                if schema == 2:
+                    self.actual_source()
+                    expected_post = "Two metres."
+                original, original_sources, _ = self.prepare()
+                cases, sources, _ = inputs.prepare_file(dict(adapter="distillation_matching"),
+                    self.path, "DSMv2\nOriginal post (a JSON string):\n{POST}\n{MATCH_INPUT}")
+                self.assertEqual(sources, original_sources)
+                for before, after in zip(original, cases, strict=True):
+                    self.assertEqual(set(before["inputs"]), {"MATCH_INPUT"})
+                    self.assertEqual(set(after["inputs"]), {"MATCH_INPUT", "POST"})
+                    self.assertEqual(after["inputs"]["MATCH_INPUT"], before["inputs"]["MATCH_INPUT"])
+                    self.assertEqual(json.loads(after["inputs"]["POST"]), expected_post)
+                    self.assertIn(after["inputs"]["POST"], after["prompt"])
+                    for forbidden in ("expected_teacher", "expected_reason", "expectation_status", "partition"):
+                        self.assertNotIn(forbidden, after["prompt"])
+                    self.assertEqual(after["evidence"]["expected_teacher_id"],
+                                     before["evidence"]["expected_teacher_id"])
+
     def test_actual_source_rejects_changed_inputs_and_incomplete_answers(self):
         saved, generation = self.actual_source()
         original = copy.deepcopy(self.source)

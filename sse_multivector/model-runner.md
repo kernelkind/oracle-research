@@ -967,6 +967,18 @@ production preparation and decoding functions:
   which makes zero calls. Independent verification and subsequent calls remain
   open; DSMv1, Sol / xhigh and concurrency 8 are unchanged.
 
+  Matching templates may now request `{POST}` to include the verified original
+  post as a JSON string, separately from unchanged `MATCH_INPUT`. Both source
+  formats support it; templates without `{POST}` retain their previous inputs.
+  The user accepted this for draft
+  [DSMv2](distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8):
+  the post may clarify wording already present, but cannot supply missing
+  restrictions. `matching-actual-v2-spec.json` prepares the same 22 targets with
+  zero calls and unchanged Sol / xhigh, concurrency 8 settings. Prior expectations
+  remain unverified and need checking with the supplied posts; R19 is ungraded.
+  DSMv1's trials are preserved. Additional calls and semantic reliability remain
+  open.
+
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
   It uses the `posts` adapter's `{POST}` inputs and optional case-ID `select`;
