@@ -1869,7 +1869,8 @@ class ExtractionPipelineTests(unittest.TestCase):
             "1",
         )
         self.assertEqual(0, resumed.returncode, resumed.stderr)
-        current_wrapper = hashlib.sha256(RUNNER.read_bytes()).hexdigest()
+        from sse_multivector import extraction_pipeline as engine
+        current_wrapper = hashlib.sha256(Path(engine.__file__).read_bytes()).hexdigest()
         upgrade = json.loads(
             (self.run_directory / "runner-upgrades.jsonl")
             .read_text(encoding="utf-8")

@@ -1,5 +1,20 @@
 # General model runner
 
+Execution and transport are owned by the separate
+[experiment-runner repository](../../experiment-runner/README.md) at
+`~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
+delegate to that package. Prompts, specs, adapters, hierarchy commands, viewers
+and experiment artifacts remain here. `experiment-runner.json` selects these
+project extensions; use the shared CLI from this checkout or pass
+`--project-root` explicitly. The old Python, shell and JavaScript entry points
+remain compatibility callers, rather than owning runner implementations.
+`EXPERIMENT_RUNNER_ROOT` selects an explicit source checkout when a version pin
+is needed. Frozen code/transport checks and old receipts remain enforced;
+existing worktrees and active runs are not rewritten automatically.
+For a new experiment inheriting an older worker, `prepare --from` accepts
+`--runner-binary` to select the shared launcher's path explicitly. Without that
+override it preserves the inherited worker, including custom workers.
+
 [run-model.sh](run-model.sh) sends one caller-supplied prompt through pi-ai.
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.
@@ -342,11 +357,14 @@ The launcher uses Node 24+ when available, otherwise Nix's `nodejs_24`.
 Install the pinned dependencies once:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/frontier_runner
+cd ~/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/frontier_runner
 nix shell nixpkgs#nodejs_24 --command npm ci --ignore-scripts --no-audit --no-fund
 ```
 
-The SDK is pinned to pi-ai 0.85.1 in [package-lock.json](frontier_runner/package-lock.json).
+The SDK is pinned to pi-ai 0.85.1 in the shared
+[package-lock.json](../../experiment-runner/experiment_runner/frontier_runner/package-lock.json).
+The standalone repository's Nix package includes the runtime and dependencies;
+system installation is managed separately through `/opt/nixos`.
 Undici 7.24.4 supplies a runner-owned dispatcher for both chat-streaming routes,
 with its body-idle timeout disabled. The runner passes it per request; it does
 not change Node's global dispatcher, model parameters, automatic retry policy,
@@ -429,7 +447,9 @@ instruction to run this model:
 }
 ```
 
-The optional `runner_binary` defaults to this repository's `run-model.sh`.
+The optional `runner_binary` defaults to the shared package's `run-model.sh`.
+This repository's launcher delegates there; explicit custom workers retain their
+existing contract.
 Use `provider: "openrouter"` and an explicitly chosen model for OpenRouter.
 Set `reasoning_effort: "on"` (CLI: `--reasoning-effort on`) to request thinking
 without selecting a graded effort. This uses the same transport setting above.

@@ -1,0 +1,506 @@
+"""Oracle input/view commands; execution is owned by experiment-runner."""
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+from datetime import datetime, timezone
+from . import experiment_inputs as inputs
+from experiment_runner import extraction_pipeline as engine
+from experiment_runner.experiment import read, write, report, load, locked
+
+def collect(directories, output, worker_config=None):
+    """Publish validated extraction inputs without inference or source writes."""
+    output = output.expanduser().resolve()
+    if output.exists():
+        raise ValueError("collection output already exists")
+    bundles, protected, provenance = [], {}, []
+    for directory in directories:
+        directory = directory.expanduser().resolve()
+        if output == directory or directory in output.parents:
+            raise ValueError("collection output must be outside saved experiments")
+        plan, _, _ = load(directory)
+        if "path" not in plan["dataset"]:
+            raise ValueError("collect requires source-bound preparation; import or prepare a new experiment")
+        result = report(directory)
+        if any(c["status"] not in {"valid", "empty"} or not c.get("receipt") for c in result["cases"]):
+            raise ValueError("collect requires complete valid saved answers")
+        plan = {**plan, "experiment": str(directory)}
+        bundles.append((plan, result))
+        for source, expected in plan["sources"].items():
+            if source in protected and protected[source] != expected:
+                raise ValueError(f"conflicting source hashes: {source}")
+            protected[source] = expected
+        protected[str(directory / "experiment.json")] = engine._sha256_file(directory / "experiment.json")
+        for name, expected in plan["files"].items():
+            protected[str(directory / name)] = expected
+        for case in result["cases"]:
+            path = case["receipt"]["results_path"]
+            if path not in protected:
+                protected[path] = engine._sha256_file(Path(path))
+        provenance.append(dict(experiment=str(directory), prompt_id=plan["prompt"]["id"],
+                               settings=result["settings"], sources=plan["sources"], cases=[dict(id=c["id"],
+                               receipt=c["receipt"], reused=c.get("reused", False)) for c in result["cases"]]))
+    adapters = {p["dataset"]["adapter"] for p, _ in bundles}
+    if adapters == {"subjects"}:
+        files = inputs.hierarchy_inputs.collect_subjects(bundles)
+    elif adapters <= {"masks", "grouped_masks"}:
+        files = inputs.hierarchy_inputs.collect_masks(bundles)
+    elif adapters == {"node_descriptions"}:
+        nodes = {}
+        for _, result in bundles:
+            for case in result["cases"]:
+                evidence = case["evidence"]
+                value = inputs.validate_node_description(case["parsed"],
+                    evidence["node_id"], evidence["node_title"])
+                if value["node_id"] in nodes:
+                    raise ValueError(f'duplicate collected node description: {value["node_id"]}')
+                nodes[value["node_id"]] = value
+        files = {"node-descriptions.json": dict(schema_version=1, nodes=list(nodes.values()))}
+    elif adapters == {"node_sorting"}:
+        nodes, judgments = {}, {}
+        for _, result in bundles:
+            for case in result['cases']:
+                evidence = case['evidence']
+                nid, note_id = evidence['node_id'], evidence['note_id']
+                value = inputs.validate_node_sorting(case['parsed'])
+                node = nodes.setdefault(nid, dict(node_id=nid, node_title=evidence['node_title'], posts=[]))
+                if node['node_title'] != evidence['node_title']:
+                    raise ValueError(f'conflicting sorting node title: {nid}')
+                key = (nid, note_id)
+                if key in judgments:
+                    prior, post = judgments[key]
+                    if prior['inputs'] != case['inputs'] or prior['parsed'] != value:
+                        raise ValueError(f'conflicting node/post sorting judgment: {nid}/{note_id}')
+                    if case['id'] not in post['case_ids']:
+                        post['case_ids'].append(case['id'])
+                else:
+                    post = dict(note_id=note_id, **value, case_ids=[case['id']])
+                    judgments[key] = (case, post)
+                    node['posts'].append(post)
+        for node in nodes.values():
+            node['posts'].sort(key=lambda p: (-p['sorting_score'], p['note_id']))
+            node['order'] = [post['note_id'] for post in node['posts']]
+        files = {'node-sorting.json': dict(schema_version=1,
+                  nodes=[nodes[nid] for nid in sorted(nodes)])}
+    else:
+        raise ValueError("collect supports subjects, masks, grouped_masks, node_descriptions and node_sorting experiments")
+    if worker_config is not None:
+        if not adapters <= {"masks", "grouped_masks"}:
+            raise ValueError("--worker-config requires mask experiments")
+        worker_config = worker_config.expanduser().resolve()
+        protected[str(worker_config)] = engine._sha256_file(worker_config)
+        settings = read(worker_config)
+    for path, expected in protected.items():
+        if engine._sha256_file(Path(path)) != expected:
+            raise ValueError(f"protected source changed: {path}")
+    files["provenance.json"] = dict(schema_version=1, sources=protected, experiments=provenance,
+                                    inference_calls=0)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".experiment-collect-", dir=output.parent) as temporary:
+        staged = Path(temporary)
+        for name, value in files.items():
+            write(staged / name, value)
+        if "worker-request.json" in files:
+            request = files["worker-request.json"]
+            request["proposal_sha256"] = engine._sha256_file(staged / "masked-posts.json")
+            write(staged / "worker-request.json", request)
+            try:
+                from .worker import _load_request, WorkerConfig
+            except ImportError:
+                from worker import _load_request, WorkerConfig
+            _load_request(staged / "worker-request.json")
+            if worker_config is not None:
+                files["worker-config.json"] = {**settings,
+                    "request_path": str(output / "worker-request.json"),
+                    "request_sha256": engine._sha256_file(staged / "worker-request.json"),
+                    "output_path": str(output / "worker-result")}
+                write(staged / "worker-config.json", files["worker-config.json"])
+                WorkerConfig.load(staged / "worker-config.json")
+        (staged / ".gitignore").write_text("*\n")
+        for path, expected in protected.items():
+            if engine._sha256_file(Path(path)) != expected:
+                raise ValueError(f"protected source changed: {path}")
+        output.mkdir()
+        for child in staged.iterdir():
+            child.rename(output / child.name)
+    return dict(output=str(output), files=sorted(files), inference_calls=0)
+
+
+def review(args):
+    directory = args.experiment.resolve()
+    if args.cosine_comparison and not args.ui:
+        raise ValueError("--cosine-comparison requires --ui")
+    if args.flagged_only and not args.ui:
+        raise ValueError("--flagged-only requires --ui")
+    if args.only and not args.ui:
+        raise ValueError("--only requires --ui")
+    if (args.view or args.node or args.ordering or args.check) and not args.ui:
+        raise ValueError("--view/--node/--ordering/--check require --ui")
+    if args.ordering and not args.cosine_comparison:
+        raise ValueError("--ordering requires --cosine-comparison")
+    with locked(directory):
+        result = report(directory)
+        if args.ui:
+            if any((args.case, args.role, args.verdict, args.comment)):
+                raise ValueError("--ui cannot record a CLI judgment")
+            plan, _, _ = load(directory)
+            prominence_view = args.view == "prominence" or plan["dataset"]["adapter"] == "prominence"
+            if (args.node or args.check) and not prominence_view:
+                raise ValueError("--node/--check require the prominence view")
+            if args.node:
+                available = {c.get("evidence", {}).get("node_id") for c in result["cases"]}
+                unknown = set(args.node) - available
+                if unknown:
+                    raise ValueError(f"unknown --node IDs: {', '.join(sorted(unknown))}")
+                result = {**result, "cases": [c for c in result["cases"]
+                          if c.get("evidence", {}).get("node_id") in args.node]}
+            selected = None
+            if args.flagged_only or args.only:
+                if not prominence_view and plan["dataset"]["adapter"] not in {"titles", "masks"}:
+                    raise ValueError("--flagged-only/--only support titles, masks and prominence")
+                requested = set(args.only or [])
+                unknown = requested - {c["id"] for c in result["cases"]}
+                if unknown:
+                    raise ValueError(f"unknown --only case IDs: {', '.join(sorted(unknown))}")
+                selected = [
+                    c["id"] for c in result["cases"]
+                    if (not requested or c["id"] in requested)
+                    and (not args.flagged_only or inputs.is_flagged(c))
+                ]
+                if not selected:
+                    print("No flagged cases. No model calls or review decisions changed.")
+                    return
+                if prominence_view or plan["dataset"]["adapter"] == "titles":
+                    result = {**result, "cases": [c for c in result["cases"] if c["id"] in selected]}
+            batch, excluded = inputs.review_batch(plan, result, view=args.view)
+            if args.cosine_comparison:
+                if not prominence_view:
+                    raise ValueError("--cosine-comparison requires prominence cases")
+                try:
+                    from .prominence_ranking import add_rankings
+                except ImportError:
+                    from prominence_ranking import add_rankings
+                batch = add_rankings(batch, result, read(args.cosine_comparison))
+                if args.ordering:
+                    if args.ordering not in {order["name"] for order in batch["orderings"]}:
+                        raise ValueError(f"unknown ordering: {args.ordering}")
+                    batch["orderings"].sort(key=lambda order: order["name"] != args.ordering)
+            if prominence_view:
+                # Comments are separate from approval sessions and model outputs.
+                batch_path = directory / ("ui-" + inputs.digest(batch)[:16] + ".json")
+                write(batch_path, batch)
+                binary = (
+                    args.ui_binary
+                    or Path(__file__).resolve().parents[1]
+                    / "target/release/model-output-review"
+                )
+                print(
+                    f"UI: {len(batch['notes'])} mask entries; c: comment. No model calls or implied decisions."
+                )
+                viewer_options = (["--check"] if args.check else
+                                  ["--comments", str(directory / "ui-comments.json")])
+                completed = subprocess.run(
+                    [str(binary), str(batch_path), *viewer_options],
+                    check=False,
+                )
+                if completed.returncode:
+                    raise ValueError(f"review UI exited with {completed.returncode}")
+                write(directory / "report.json", report(directory))
+                return
+            print(
+                f"UI: {len(selected) if selected is not None else len(batch['items'])} cases; "
+                f"{len(excluded)} not supported by this UI (still in show/report.json)."
+            )
+            for item in excluded:
+                print(f"  {item['id']}: {item['reason']}")
+            if not batch["items"]:
+                raise ValueError(
+                    "no compatible UI cases; use show --case and review --case"
+                )
+            # A content-addressed session cannot misapply old decisions to changed outputs.
+            name = "ui-" + inputs.digest(batch)[:16]
+            batch_path = directory / (name + ".json")
+            write(batch_path, batch)
+            ui_path = directory / "review-ui.json"
+            bindings = read(ui_path) if ui_path.exists() else []
+            session_name = name + "-session.json"
+            if not any(b["session_path"] == session_name for b in bindings):
+                included = {item["item_id"] for item in batch["items"]}
+                bindings.append(
+                    {
+                        "batch_path": batch_path.name,
+                        "batch_sha256": inputs.digest(batch),
+                        "session_path": session_name,
+                        "cases": {
+                            c["id"]: {
+                                "input_sha256": c["input_sha256"],
+                                "output_sha256": inputs.digest(c["output"]),
+                            }
+                            for c in result["cases"]
+                            if c["id"] in included
+                        },
+                    }
+                )
+                write(ui_path, bindings)
+            binary = (
+                args.ui_binary
+                or Path(__file__).resolve().parents[1]
+                / "target/release/sse-mask-review"
+            )
+            command = (
+                "review-titles"
+                if plan["dataset"]["adapter"] == "titles"
+                else "review-masks"
+            )
+            completed = subprocess.run(
+                [
+                    str(binary),
+                    command,
+                    str(batch_path),
+                    str(directory / (name + "-session.json")),
+                    *(["--only", ",".join(selected)]
+                      if selected is not None and plan["dataset"]["adapter"] == "masks" else []),
+                ],
+                check=False,
+            )
+            if completed.returncode:
+                raise ValueError(f"review UI exited with {completed.returncode}")
+            write(directory / "report.json", report(directory))
+            return
+        if not all((args.case, args.role, args.verdict, args.comment)):
+            raise ValueError(
+                "recording review requires --case, --role agent|user, --verdict and --comment"
+            )
+        case = next((c for c in result["cases"] if c["id"] == args.case), None)
+        if case is None:
+            raise ValueError("unknown case")
+        engine._append_json_line(
+            directory / "reviews.jsonl",
+            {
+                "case_id": args.case,
+                "role": args.role,
+                "verdict": args.verdict,
+                "comment": args.comment,
+                "time": datetime.now(timezone.utc).isoformat(),
+                "input_sha256": case["input_sha256"],
+                "output_sha256": inputs.digest(case["output"]),
+            },
+        )
+        write(directory / "report.json", report(directory))
+        print(f"Recorded {args.role} review for {args.case}. Model calls made: 0")
+
+
+def score_review(args):
+    """Score an explicitly supplied report without creating a model receipt."""
+    try:
+        from . import distillation_review
+    except ImportError:
+        import distillation_review
+    plan, _, _ = load(args.experiment)
+    if plan["dataset"]["adapter"] != "distillation_review":
+        raise ValueError("score-review requires a distillation_review experiment")
+    case = next((case for case in plan["cases"] if case["id"] == args.case), None)
+    if case is None:
+        raise ValueError("unknown review case")
+    raw = args.report.read_bytes()
+    result = distillation_review.score_saved_output(case, case["evidence"]["student_output_raw"], raw.decode())
+    return dict(schema_version=1, source_kind="supplied_report", inference_calls=0,
+                experiment=str(args.experiment.resolve()), case_id=case["id"],
+                input_sha256=case["input_sha256"], report_path=str(args.report.resolve()),
+                report_sha256=engine._sha256_bytes(raw),
+                scoring_code_sha256=engine._sha256_file(Path(distillation_review.__file__)), **result)
+
+
+def add_commands(commands):
+    p = commands.add_parser('rank-distillation-generations',
+                            help='rank frozen teacher generation sizes and select training extremes; no inference')
+    p.add_argument('manifest', type=Path)
+    p.add_argument('--top', type=int, default=5)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('score-review', help='validate and score a supplied semantic review report; no inference')
+    p.add_argument('experiment', type=Path)
+    p.add_argument('--case', required=True)
+    p.add_argument('--report', type=Path, required=True)
+    p.add_argument('--output', type=Path)
+    p = commands.add_parser('count-post-tokens', help='save complete original-post SSE token counts; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--tokenizer', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('review-post-sample', help='save source-bound agent English/form decisions; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--accept', default='')
+    p.add_argument('--reject', default='')
+    p.add_argument('--forms', action='append', default=[], metavar='FORM:ORDINALS')
+    p.add_argument('--reason', required=True)
+    p = commands.add_parser('freeze-post-sample', help='freeze original posts and three author-separated splits; no inference')
+    p.add_argument('destination', type=Path)
+    p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--preview', action='store_true', help='save pending English reviews without freezing a sample')
+    p = commands.add_parser('prepare-bounded-hierarchy',
+                            help='freeze a bounded multi-pass hierarchy build; no inference')
+    p.add_argument('destination', type=Path)
+    p.add_argument('--spec', type=Path, required=True)
+    p = commands.add_parser('measure-root-candidates',
+                            help='size root-candidate supplements on a saved build; no inference')
+    p.add_argument('build', type=Path)
+    p.add_argument('destination', type=Path)
+    p.add_argument('--pair', action='append', default=[], metavar='NODE_ID:NODE_ID',
+                   help='track this diagnostic comparison in the prepared candidate lists')
+    p = commands.add_parser('measure-parent-guides',
+                            help='size one draft parent-guide pass; no inference or new vectors')
+    p.add_argument('build', type=Path)
+    p.add_argument('destination', type=Path)
+    p.add_argument('--prompt', type=Path, required=True)
+    p.add_argument('--prompt-id', required=True)
+    p = commands.add_parser('prepare-parent-guide-vectors',
+                            help='prepare source-bound standalone guide-name SSE requests; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('destination', type=Path)
+    p = commands.add_parser("collect", help="collect valid saved SP/MP answers into reusable inputs; no inference")
+    p.add_argument("experiments", type=Path, nargs="+")
+    p.add_argument("--output", type=Path, required=True, help="fresh output directory outside saved experiments")
+    p.add_argument("--worker-config", type=Path, help="bind supplied SSE settings to collected masks; does not run SSE")
+    p = commands.add_parser('export-hierarchy', help='export saved subject-pair ancestor answers to a separate test view; no inference')
+    p.add_argument('experiment', type=Path)
+    p.add_argument('--base', type=Path, help='existing validated export referenced by these additional comparisons')
+    p.add_argument('--combine-equivalent', action='store_true',
+                   help='HG6 only: combine saved equivalences in --base; preserve links and flag changed HG7 inputs, without inference')
+    p.add_argument('--inherit-equivalent-judgments', action='store_true',
+                   help='with --combine-equivalent, inherit consistent saved judgments through the merges; no new model receipts')
+    p.add_argument('--source', type=Path, required=True, help='saved masked-posts.json and vector-map.json directory')
+    p.add_argument('--output', type=Path, required=True, help='fresh directory outside saved sources')
+    p = commands.add_parser('export-parent-guides',
+                            help='apply saved parent-guide judgments to a separate bounded-build snapshot; no inference')
+    p.add_argument('build', type=Path, help='saved bounded build with its frozen final hierarchy')
+    p.add_argument('output', type=Path, help='fresh directory outside saved sources')
+    p.add_argument('--comparisons', type=Path, nargs='+', required=True,
+                   help='complete source-bound BCPv5 experiments; include earlier supplementary trials')
+    p = commands.add_parser('compare-parent-policies',
+                            help='compare fixed-membership saved-parent rules in two new views; no inference')
+    p.add_argument('snapshot', type=Path, help='complete saved bounded hierarchy export')
+    p.add_argument('output', type=Path, help='fresh directory outside saved sources')
+
+
+def handle_command(args):
+    if args.command in {'count-post-tokens', 'review-post-sample', 'freeze-post-sample'}:
+        try:
+            from . import post_sampling
+        except ImportError:
+            import post_sampling
+        if args.command == 'count-post-tokens':
+            result = post_sampling.count_tokens(args.source, args.tokenizer, args.output)
+        elif args.command == 'review-post-sample':
+            result = post_sampling.review(args.source, args.output, args.accept, args.reject, args.forms, args.reason)
+        else:
+            result = post_sampling.freeze(args.spec, args.destination, args.preview)
+        print(json.dumps(result, indent=2))
+    elif args.command == 'rank-distillation-generations':
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        if args.output.exists():
+            raise ValueError('generation ranking output already exists')
+        result = distillation_review.rank_generations(args.manifest, args.top)
+        write(args.output, result)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'score-review':
+        result = score_review(args)
+        if args.output:
+            if args.output.exists():
+                raise ValueError('score-review output already exists')
+            write(args.output, result)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'prepare-bounded-hierarchy':
+        try:
+            from .bounded_hierarchy_build import prepare_build
+        except ImportError:
+            from bounded_hierarchy_build import prepare_build
+        print(json.dumps(prepare_build(args.spec, args.destination), indent=2))
+    elif args.command == 'measure-root-candidates':
+        try:
+            from .root_candidate_measurement import measure_build
+        except ImportError:
+            from root_candidate_measurement import measure_build
+        pairs = [tuple(pair.split(':')) for pair in args.pair]
+        if any((len(pair) != 2 for pair in pairs)):
+            raise ValueError('--pair requires NODE_ID:NODE_ID')
+        result = measure_build(args.build, args.destination, diagnostic_pairs=pairs)
+        fields = ('root_quota', 'minimum_existing_candidates', 'catalogue_mode', 'query_scope', 'status', 'reason', 'discovery_requests', 'maximum_verification_requests', 'maximum_first_attempt_requests', 'maximum_attempts_with_one_retry', 'maximum_rendered_input_tokens_first_attempt', 'within_remaining_budget_with_one_retry_each')
+        print(json.dumps({**{k: result[k] for k in ('measurement_id', 'inference_attempts', 'node_count', 'root_search', 'baseline', 'total_seconds', 'process_peak_rss_kib')}, 'measurement_report': str(args.destination.resolve() / 'report.json'), 'profiles': [{k: p[k] for k in fields if k in p} for p in result['profiles']]}, indent=2))
+    elif args.command == 'measure-parent-guides':
+        try:
+            from .parent_guide_measurement import measure_build
+        except ImportError:
+            from parent_guide_measurement import measure_build
+        result = measure_build(args.build, args.destination, prompt=args.prompt, prompt_id=args.prompt_id)
+        fields = ('measurement_id', 'inference_attempts', 'prompt_id', 'node_count', 'discovery_requests', 'rendered_input_tokens', 'maximum_parent_guides', 'maximum_unique_resolved_pairs', 'maximum_verification_requests', 'maximum_first_attempt_requests', 'maximum_attempts_with_one_retry', 'maximum_rendered_input_tokens_first_attempt', 'remaining_attempts', 'within_remaining_budget_with_one_retry_each', 'requires_new_versioned_pass_authorization')
+        print(json.dumps({**{k: result[k] for k in fields}, 'model_settings': {k: result['source_runner'][k] for k in ('provider', 'model', 'reasoning_effort')}, 'guaranteed_comparisons_per_request': result['comparison_capacity']['guaranteed_pairs_per_request'], 'measurement_report': str(args.destination.resolve() / 'report.json')}, indent=2))
+    elif args.command == 'prepare-parent-guide-vectors':
+        try:
+            from .parent_guide_vectors import prepare_vectors
+        except ImportError:
+            from parent_guide_vectors import prepare_vectors
+        print(json.dumps(prepare_vectors(args.source, args.destination, report), indent=2))
+    elif args.command == 'collect':
+        print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
+    elif args.command == 'export-parent-guides':
+        try:
+            from .parent_guide_export import export_parent_guides
+        except ImportError:
+            from parent_guide_export import export_parent_guides
+        print(json.dumps(export_parent_guides(args.build, args.comparisons, args.output), ensure_ascii=False))
+    elif args.command == 'compare-parent-policies':
+        try:
+            from .parent_guide_export import compare_parent_policies
+        except ImportError:
+            from parent_guide_export import compare_parent_policies
+        print(json.dumps(compare_parent_policies(args.snapshot, args.output), ensure_ascii=False))
+    elif args.command == 'export-hierarchy':
+        try:
+            from .subject_hierarchy import export_comparisons
+        except ImportError:
+            from subject_hierarchy import export_comparisons
+        print(json.dumps(export_comparisons(args.experiment, args.source, args.output, args.base, args.combine_equivalent, args.inherit_equivalent_judgments), indent=2))
+    else:
+        return NotImplemented
+    return 0
+
+def code_files(dataset):
+    directory = Path(__file__).parent
+    names = ['experiment_inputs.py', 'experiment_extension.py', 'grouped_masks.py',
+             'hierarchy_inputs.py', 'bounded_hierarchy_candidates.py',
+             'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
+    if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
+        names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
+    if dataset['adapter'] in {'distillation_review', 'distillation_matching'}:
+        names += ['distillation_review.py', 'distillation_run.py']
+    if dataset['adapter'] == 'distillation_matching':
+        names += ['distillation_matching.py']
+    return {name: directory / name for name in names if (directory / name).exists()}
+
+def enrich_report(result, plan, cases):
+    if result["adapter"] == "distillation_review":
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        result["qualification"] = distillation_review.qualification(
+            cases, plan["preparation"]["qualification_case_ids"])
+    if result["adapter"] == "distillation_matching":
+        try:
+            from . import distillation_matching
+        except ImportError:
+            import distillation_matching
+        result["qualification"] = distillation_matching.qualification(
+            cases, plan["preparation"]["qualification_case_ids"])
+        token_counts = [case["evidence"]["input_tokens"] for case in cases]
+        result["prepared_inputs"] = dict(tokenizer="o200k_base", calls=len(cases),
+            rendered_input_tokens=sum(token_counts),
+            min_rendered_input_tokens=min(token_counts, default=0),
+            max_rendered_input_tokens=max(token_counts, default=0),
+            max_teacher_subjects=max((case["evidence"]["distinct_teacher_subjects"]
+                                      for case in cases), default=0))
+    return result
