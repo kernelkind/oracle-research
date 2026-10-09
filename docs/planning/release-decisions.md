@@ -1730,6 +1730,22 @@ and leave agent-assessed expectations unverified. Complete prompt/config/source
 bindings remain intact. Verification uses production paths and local workers;
 this adds no real model calls, prompt changes, bulk scoring or test unsealing.
 
+**Complete validation workload preview subsequently authorized October 9:**
+the user's next `proceed` authorizes an offline count of all saved validation
+outputs. A reusable project command in the shared launcher verifies the frozen
+dataset, model provenance, sealed checkpoint metadata and production stage
+receipts, then applies the existing mechanical teacher index. The
+[native preview](../../sse_multivector/distillation-review-v1/README.md#complete-validation-workload-preview-october-9)
+contains 1,800 outputs in 18 versions, with 142 invalid answers kept separate.
+Mechanical rules settle 16,733 occurrences; 105,652 remaining occurrences contain
+36,310 distinct semantic input questions under fixed prompts/settings, before
+saved-answer reuse, warmups and retries. All per-note/version/model denominators
+remain visible. Only evaluation reference content is decoded after checking the
+mixed ledger's complete identity-header order; reserved files and checkpoint
+weights are not opened. The report binds sources and counting code. This does
+not prepare model requests, add inference, qualify reviewers, adjudicate A21,
+change scoring or unseal test data.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

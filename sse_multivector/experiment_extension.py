@@ -313,6 +313,11 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('preview-distillation-review',
+                            help='count complete saved validation review work; no inference')
+    p.add_argument('manifest', type=Path)
+    p.add_argument('--model-output', type=Path, action='append', required=True)
+    p.add_argument('--output', type=Path, required=True)
     p = commands.add_parser('rank-distillation-generations',
                             help='rank frozen teacher generation sizes and select training extremes; no inference')
     p.add_argument('manifest', type=Path)
@@ -384,7 +389,15 @@ def add_commands(commands):
 
 
 def handle_command(args):
-    if args.command in {'count-post-tokens', 'review-post-sample', 'freeze-post-sample'}:
+    if args.command == 'preview-distillation-review':
+        from . import distillation_review_preview
+        if args.output.exists():
+            raise ValueError('review preview output already exists')
+        result = distillation_review_preview.preview(args.manifest, args.model_output)
+        write(args.output, result)
+        print(json.dumps(dict(output=str(args.output), inference_calls=result['inference_calls'],
+                              totals=result['totals']), ensure_ascii=False, indent=2))
+    elif args.command in {'count-post-tokens', 'review-post-sample', 'freeze-post-sample'}:
         try:
             from . import post_sampling
         except ImportError:

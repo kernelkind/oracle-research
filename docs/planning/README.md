@@ -252,6 +252,16 @@ so its agent-assessed expectation is not certified by the teacher. The repeated
 discrepancy does not conclusively establish reviewer error. Prompts, saved trials,
 scoring, qualification and sealed-test status retain their current state.
 
+The subsequently authorized [complete validation workload preview](../../sse_multivector/distillation-review-v1/README.md#complete-validation-workload-preview-october-9)
+uses a reusable shared-launcher command with no model calls. Across 1,800 saved
+validation answers in 18 versions, 142 invalid answers remain separate failures.
+Mechanical rules settle 16,733 review occurrences; the 105,652 remaining
+occurrences contain 36,310 distinct semantic input questions under fixed prompts
+and settings, before saved-answer reuse, warmups and retries. The native report
+preserves all note/version/model denominators and source bindings. Only evaluation
+reference content is decoded; reserved files and checkpoint weights are not
+opened. Reviewer qualification, scoring and inference authorization remain open.
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

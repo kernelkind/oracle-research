@@ -13,6 +13,8 @@ subjects and actual ordered teacher links produce native zero-attempt results;
 remaining questions still use semantic calls. A21 adds a student parent absent
 from the teacher and has no complete child match; its expected true label remains an
 agent assessment, rather than a relationship certified by the teacher.
+The [complete validation workload preview](#complete-validation-workload-preview-october-9)
+now measures the mechanical savings and remaining distinct input questions offline.
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
@@ -50,8 +52,8 @@ The [initial warmed trial](#initial-warmed-three-check-trial-october-9) remains
 separate small-control evidence. These are repeated judgments on the same
 authored training controls; broader qualification and lower-effort comparison
 remain open.
-The approved [actual-output trial](#actual-validation-preparation-approved-october-9)
-now runs all three checks at xhigh through source-bound preparation. Its selection
+The completed [actual-output trial](#actual-validation-preparation-approved-october-9)
+tested all three checks at xhigh through source-bound preparation. Its selection
 and agent expectations were frozen before calls and remain unchanged.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
@@ -137,8 +139,9 @@ selected-case routing, not bulk pilot grading or new semantic qualification.
 The index is built once per bound reference and looks up trusted subject strings
 and ordered pairs, retaining actual numbered witnesses without a cross-product of
 duplicate occurrences. Model prompts remain complete for fresh repeats;
-mechanical evidence needs only the applicable witnesses. Savings on changed
-student answers and reliability of remaining semantic calls still require evidence.
+mechanical evidence needs only the applicable witnesses. The complete validation
+preview below measures savings on changed student answers; reliability of the
+remaining semantic calls still requires evidence.
 
 A21 cannot be accepted this way: the teacher has no `Proof setup` parent, and
 the child's complete-meaning match is null. Its frozen true expectation stays
@@ -146,6 +149,65 @@ agent-assessed and unadjudicated. The repeated discrepancy is not conclusive
 evidence that Sol is wrong or incapable. The routing implementation leaves this
 case for semantic review and preserves its saved expectations and judgments.
 Further trials remain separate work.
+
+## Complete validation workload preview (October 9)
+
+The user's subsequent `proceed` authorizes an offline preview of all saved
+validation outputs. The reusable `preview-distillation-review` project command
+runs through the shared launcher, verifies the frozen ASv6.100 dataset and
+saved stage receipts, and applies the same production teacher index used by
+DSM/DSS/DSL preparation. It creates no prompts, model calls or scores.
+
+The [native report](../../target/distillation-review-v1/work-preview-20261009/preview.json)
+contains **1,800 outputs across 18 versions**, with **142 invalid answers** kept
+separate from review work, **five valid empty answers**, **44,284 subject
+occurrences** and **33,817 immediate parent-child occurrences**.
+
+| Check | All occurrences | Mechanical | Remaining semantic occurrences | Distinct remaining inputs |
+| --- | ---: | ---: | ---: | ---: |
+| DSMv3 matching | 44,284 | 7,446 | 36,838 | 9,820 |
+| DSSv2 support | 44,284 | 7,446 | 36,838 | 9,820 |
+| DSLv2 relationships | 33,817 | 1,841 | 31,976 | 16,670 |
+
+Mechanical rules settle **16,733 occurrences**. Of the relationship results,
+1,187 reproduce actual ordered teacher links and 654 have identical parent and
+child wording. No nonexact subject or relationship is rejected mechanically.
+The **105,652 remaining occurrences** contain **36,310 distinct input questions**
+under one fixed prompt and settings per check. These are theoretical input
+groups, not prepared requests or a count of fresh executions: saved-answer reuse,
+prefix warmups and retries are outside this preview. Matching keys include the
+full post, complete ordered teacher catalog with stable IDs, and student wording;
+support keys include the full post and student wording; relationship keys include
+the ordered parent and child wording. Every numbered occurrence remains in the
+per-note, per-version and per-model accounting.
+
+The manifest and mixed reference ledger are hashed as opaque bytes. All reference
+identity headers are checked against train/evaluation/test order before decoding
+only evaluation row content. Reserved files and checkpoint weights are not
+opened. Model manifests, training plans and sealed checkpoint metadata establish
+version identity; production stage verification checks each raw answer against
+its saved batch receipt and parsed result. Missing, changed or mismatched sources
+abort the preview. Invalid model answers remain output failures; a valid empty
+answer requires no semantic call and does not establish coverage.
+
+Reproduce from the repository root using the collected pilot output directory:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+pilot_results=target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results
+../experiment-runner/bin/experiment-runner preview-distillation-review \
+  target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json \
+  --model-output "$pilot_results/qwen" \
+  --model-output "$pilot_results/gemma-dense" \
+  --model-output "$pilot_results/gemma-moe" \
+  --output target/distillation-review-v1/work-preview-20261009/reproduction.json
+```
+
+Model stages come from each sealed training plan rather than recursive file
+discovery. The command rejects duplicate model directories and existing report
+destinations. The ignored report binds source and counting-code hashes and saves
+all denominators. This workload result does not qualify the semantic reviewers,
+adjudicate A21, authorize inference or change final scoring.
 
 ## Coverage-matching qualification scope agreed October 8
 

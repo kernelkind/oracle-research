@@ -950,6 +950,21 @@ and matching call/token estimates exclude mechanical cases. No exact match leave
 a semantic question; conflicting expected labels remain visible and agent-assessed
 expectations remain unverified. These changes do not qualify reviewers or run bulk grading.
 
+`preview-distillation-review MANIFEST --model-output DIR [--model-output DIR ...]
+--output FILE` counts all saved validation stages offline without creating
+reviewer prompts or calls. It verifies frozen dataset bindings, model provenance,
+sealed checkpoint metadata and production stage receipts, then reuses the
+same teacher index to count mechanical and remaining semantic occurrences.
+Reports preserve invalid and valid-empty outputs separately and union identical
+semantic input groups across notes, versions and models. Matching groups include
+the full post, ordered stable-ID teacher catalog and student wording; support
+groups include post and wording; relationships use ordered parent/child strings.
+These are distinct input counts under fixed prompts/settings, not actual prepared
+request identities; saved-answer reuse, warmups and retries are not resolved.
+Only evaluation reference content is decoded after all mixed-ledger identity
+headers have been checked. Reserved files and checkpoint weights are not opened.
+See the [complete validation preview and command](distillation-review-v1/README.md#complete-validation-workload-preview-october-9).
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 

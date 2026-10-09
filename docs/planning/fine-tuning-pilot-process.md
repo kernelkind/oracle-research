@@ -389,6 +389,22 @@ implementation verification adds no real model calls. A21 remains a discrepancy
 against an unadjudicated agent label:
 its new parent and nonmatching child do not reproduce a trusted teacher link.
 
+**Complete validation workload preview subsequently authorized October 9:**
+the user's `proceed` authorizes counting all saved validation outputs offline
+through the shared launcher. The reusable command verifies frozen source and
+stage receipts and applies production mechanical rules without model calls.
+Across 18 versions and 1,800 outputs, 142 invalid answers remain separate failures.
+Matching and support each settle 7,446 of 44,284 occurrences mechanically,
+leaving 36,838 semantic occurrences and 9,820 distinct input questions per check.
+Relationships settle 1,841 of 33,817 occurrences, leaving 31,976 semantic
+occurrences and 16,670 distinct inputs. The total is 36,310 distinct remaining
+questions under fixed prompts/settings, before saved-answer reuse, warmups and
+retries. The [native report and method](../../sse_multivector/distillation-review-v1/README.md#complete-validation-workload-preview-october-9)
+retain per-note/version/model denominators. Mixed reference identity headers are
+checked before decoding only evaluation content; reserved files and checkpoint
+weights are not opened. This counts work without preparing reviewer requests,
+qualifying DSMv3/DSSv2/DSLv2, adjudicating A21 or changing scoring.
+
 **Coverage-matching qualification scope agreed October 8:** target required
 complete teacher meanings; optional derived teacher headings are not mandatory
 coverage targets. Still review every student heading and immediate parent-child
