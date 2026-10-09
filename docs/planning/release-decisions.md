@@ -1107,6 +1107,19 @@ pending. This does not establish repeat stability, general reliability or
 authorize the other 20 cases, bulk review or final-test unsealing. See the
 [two-case result](../../sse_multivector/distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8).
 
+**DSMv2 remaining post checks authorized and completed October 8:** the user
+accepted checking the other 20 expected verdicts against the subjects, complete
+teacher catalogs and visible original posts before additional reviewer calls.
+All 20 verdicts are retained: eight matches and twelve nonmatches. Only their
+recorded reasons change; all 22 complete prompts, inputs, expected IDs and
+assessment statuses are preserved. The full set remains nine assessed matches
+and thirteen assessed nonmatches. The fresh offline preview makes zero calls,
+attempts or reused answers. This is a recheck of known agent labels, not
+independent gold verification or a teacher audit. Qualification remains pending;
+additional reviewer calls, bulk review and final-test unsealing remain separate
+decisions. See the
+[post-visible recheck](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-post-visible-expectations-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

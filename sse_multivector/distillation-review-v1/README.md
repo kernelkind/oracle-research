@@ -344,7 +344,7 @@ The revision receipt records the exact delta from DSMv1.
 [matching-actual-v2-spec.json](matching-actual-v2-spec.json) now binds
 [matching-actual-v2-source.json](matching-actual-v2-source.json), keeping the
 post-dependent assessment separate from DSMv1's original definitions. It
-prepares the same 22 targets with Sol / xhigh and concurrency 8. The current
+prepares the same 22 targets with Sol / xhigh and concurrency 8. The assessment-stage
 offline artifact is `target/distillation-review-v1/matching-actual-custody-20261008/`.
 All 22 prompts and settings are identical to the original DSMv2 preview;
 R19's expected match, reason and assessment status change, and R16's reason is
@@ -354,8 +354,8 @@ Native reporting confirms **zero calls, attempts and reused answers**; all
 with 445–1,569 per request and at most 46 teacher wordings. These are text sizes,
 not measured usage, caching or cost. There are now nine assessed matches,
 thirteen assessed nonmatches and no unresolved placeholders. All 22 expectations
-remain unverified; qualification is pending. The other 20 inherited assessments
-still need checking with the supplied posts before calls.
+remain unverified; qualification is pending. At this stage the other 20 inherited
+assessments needed checking with the supplied posts; that check is completed below.
 
 Inspect the exact draft club request without inference:
 
@@ -381,9 +381,8 @@ preparation preserves all 22 prompts, expected IDs and assessment statuses,
 with zero calls and pending qualification. This does not test whether a model
 actually follows the post-interpretation restriction.
 These mechanical checks do not establish semantic reliability. The user next
-authorized the two assessed cases below; the other 20 expectations still need
-checking with their posts before full-set calls. Full review adoption and
-final-test unsealing remain open.
+authorized the two assessed cases below, then the remaining offline post checks.
+Full review adoption and final-test unsealing remain open.
 
 ## DSMv2 two-case post-interpretation trial (October 8)
 
@@ -423,6 +422,50 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py show \
   target/distillation-review-v1/matching-post-pair-20261008 --case R19
 ```
+
+## DSMv2 remaining post-visible expectations (October 8)
+
+The user authorized checking the remaining 20 expected verdicts with the posts
+visible, before further reviewer calls. Each subject was compared with its full
+fixed teacher catalog and original post using native `show --case` evidence.
+ASv6.100 remains authoritative; this does not audit the teacher answers.
+Because the prior labels were already known, this is an agent recheck, not
+independent gold adjudication.
+
+All 20 expected verdicts are retained: eight matches and twelve nonmatches.
+The eight matches are R02→T09, R03→T07, R06→T08, R09→T02, R13→T02, R14→T07,
+R17→T16 and R20→T08. They preserve meaning through generic singular/plural
+labels, punctuation changes, complete causal paraphrases or the same attributed
+claim. The post resolves existing wording without adding restrictions.
+
+The nonmatches are R01, R04, R05, R07, R08, R10, R11, R12, R15, R18, R21 and
+R22. Missing universal scope, quantities, purpose or causal relationships are
+not restored from the post. Added regime or identity restrictions are not
+erased, and several teacher entries cannot be pooled into a single match.
+R05 remains null: [fakery](https://www.merriam-webster.com/dictionary/fakery)
+names the practice or products of faking;
+[inauthenticity](https://www.merriam-webster.com/dictionary/inauthentic) names
+a lack of authenticity, while
+[deception](https://www.merriam-webster.com/dictionary/deception) includes
+other ways of misleading people. Our assessment is that the post does not make
+these related general subjects completely equivalent. These distinctions
+concern matching, not whether the generated subjects are supported by the post.
+
+Only the 20 `expected_reason` fields in the reusable DSMv2 source are updated.
+Expected IDs and assessment statuses stay unchanged, including R16 and R19.
+The full set still contains nine assessed matches, thirteen assessed nonmatches
+and no unresolved placeholders. All expectations remain unverified.
+
+The current offline preview is
+`target/distillation-review-v1/matching-actual-postchecked-20261008/`, prepared
+through the shared CLI with zero model calls, attempts or reused answers.
+All 22 complete prompts and inputs match the earlier preview exactly. Provider,
+model, effort, schema and concurrency are unchanged; the separate shared-runner
+migration in commit `3008f537` changed the recorded runner executable path.
+Input sizing remains 25,043 `o200k_base` proxy tokens, 445–1,569 per request,
+with at most 46 teacher wordings. Native qualification remains pending.
+All 14 matching tests pass. The two-case trial and other frozen previews remain
+preserved; no additional reviewer calls or final-test unsealing are authorized.
 
 ## Reviewer and inputs
 

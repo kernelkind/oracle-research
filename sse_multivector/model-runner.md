@@ -1048,8 +1048,7 @@ production preparation and decoding functions:
   restrictions. `matching-actual-v2-spec.json` prepares the same 22 targets with
   zero calls and unchanged Sol / xhigh, concurrency 8 settings. Prior expectations
   remain unverified. The authorized offline club assessment expects T06 for
-  R19, recorded in `matching-actual-v2-source.json`; the other 20 expectations
-  still need checking with posts visible. A fresh offline preview retains all
+  R19, recorded in `matching-actual-v2-source.json`. A fresh offline preview retains all
   identical DSMv2 prompts/settings, with zero calls and qualification pending.
   The separate DSMv2 source preserves DSMv1's unresolved club expectation.
   The authorized offline R16 check retains an expected null: Bitcoin is an
@@ -1068,7 +1067,16 @@ production preparation and decoding functions:
   invoice. Native agent reviews accept these saved verdicts; expectations remain
   unverified and qualification pending. All 14 matching tests pass. DSMv1's
   trials are preserved. Repeat stability and broader semantic reliability
-  remain open; the other 20 expectations need checking before full-set calls.
+  remain open. The authorized
+  [remaining post checks](distillation-review-v1/README.md#dsmv2-remaining-post-visible-expectations-october-8)
+  retain all 20 expected verdicts, updating only their recorded reasons. The
+  new offline preview `target/distillation-review-v1/matching-actual-postchecked-20261008/`
+  makes zero calls and preserves all 22 complete prompts, inputs, expected IDs
+  and assessment statuses. Provider/model/effort/schema/concurrency are unchanged;
+  the separate shared-runner migration changes the recorded executable path.
+  All 14 matching tests pass. This completes the agent post recheck, not
+  independent gold verification or reviewer qualification. Additional calls
+  remain a separate decision.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

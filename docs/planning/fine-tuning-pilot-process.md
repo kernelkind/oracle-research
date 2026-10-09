@@ -468,14 +468,22 @@ The authorized offline self-custody check retains R16's expected nonmatch:
 `Self-custody` omits the Bitcoin asset restriction even when the post identifies
 the guide as about Bitcoin. Its DSMv2 reason is clarified without changing the
 expected ID or assessment status. This matching judgment does not judge support
-for the general heading. The other 20 assessments need checking with the supplied
-posts; all expectations remain unverified and qualification is pending.
+for the general heading. All expectations remain unverified and qualification
+is pending.
 The user subsequently authorized the
 [two-case DSMv2 trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8).
 Two fresh Sol / xhigh calls return the expected T06 for R19 and null for R16,
 with valid reports, no retries and no response reuse. This shows the intended
 distinction in these calls; repeat stability and general reliability remain
 open. It does not authorize the other 20 calls, bulk review or test unsealing.
+The user then authorized the
+[remaining offline post checks](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-post-visible-expectations-october-8).
+All 20 expected verdicts are retained: eight matches and twelve nonmatches.
+Their recorded reasons now account for the visible posts; all complete inputs,
+expected IDs and assessment statuses remain unchanged. A fresh full-set preview
+makes zero calls. This completes the post recheck, not independent gold
+verification or semantic qualification. Further reviewer calls remain a separate
+decision.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

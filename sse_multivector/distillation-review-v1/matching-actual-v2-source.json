@@ -15,7 +15,7 @@
       },
       "student_number": "19.1",
       "expected_teacher_number": null,
-      "expected_reason": "The added new-regime restriction is absent from the otherwise similar miners entry.",
+      "expected_reason": "DSMv2's post identifies the new regime, but interpreting that phrase does not remove it. The student locates the miners' becoming voltage regulators in the new regime; T16 states the figurative regulator role and unique dynamic load shedding when AI inference spikes power prices without that regime qualification. No other single teacher entry preserves the full student wording. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/baseline: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -29,7 +29,7 @@
       },
       "student_number": "7",
       "expected_teacher_number": "4",
-      "expected_reason": "Singular day versus generic plural days names the same kind of nationally coordinated action; neither specifies a count.",
+      "expected_reason": "With the post visible, day and generic days still name the same kind of nationally coordinated action in T09; neither subject specifies a count. The post's first occurrence, protest count, date and states must not be imported into either short subject. Expected T09 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/baseline: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -43,7 +43,7 @@
       },
       "student_number": "11.1.1",
       "expected_teacher_number": "1.3.1",
-      "expected_reason": "Preserves AI inference, inelastic power demand, baseload transfer from price-sensitive industrial users, permanent energy-cost increase and its appearance as transitory inflation in every affected sector.",
+      "expected_reason": "The post clarifies inelastic demand as power demand already expressed through bidding away baseload power. T07 preserves AI inference, inelastic demand, baseload transfer from price-sensitive industrial users, the permanent energy-cost increase and its appearance as transitory inflation in every affected sector. The wording changes syntax without losing a restriction. Expected T07 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/baseline: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -57,7 +57,7 @@
       },
       "student_number": "15",
       "expected_teacher_number": null,
-      "expected_reason": "Adds a cryptocurrency associated with an emoji and a particular public-key user, beyond all saved trade and signal entries.",
+      "expected_reason": "The post clarifies the quoted trading signals, but the student also associates a cryptocurrency with the lobster emoji and identifies a particular public-key user. T05 contains the trade and combined signals without those additional identity relationships. No single teacher entry contains the full combination, and the post cannot add the identities to T05. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/baseline: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -71,7 +71,7 @@
       },
       "student_number": "7",
       "expected_teacher_number": null,
-      "expected_reason": "Fakery concerns making or presenting fakes. Deception also includes other misleading acts, while inauthenticity can exist without faking; neither is the same complete meaning under DSMv1. Accepted agent assessment of no match; independent verification remains open.",
+      "expected_reason": "With the post visible, Fakery still names the practice or products of faking. T11 Deception is broader, and T17 Inauthenticity names a lack of authenticity rather than that practice or its products. The post discusses fake imagery and a fake societal paradigm but does not make these general subjects completely equivalent. Expected null under DSMv2 remains an agent assessment; the prior DSMv1 assessment is preserved separately.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/evaluations/checkpoint-1000: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -85,7 +85,7 @@
       },
       "student_number": "1.1.1.2",
       "expected_teacher_number": "1.1.2.2",
-      "expected_reason": "Dropping the comma preserves the silver winner, competition 51, 12 videos and 12-satoshi reward.",
+      "expected_reason": "The post selects the competition-winner reading already expressed in both subjects. Removing the comma after Weekly Competition #51 preserves T08's silver winner, 12 videos and 12-satoshi reward. The post's profile identity is not added to either subject. Expected T08 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/evaluations/checkpoint-1000: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -99,7 +99,7 @@
       },
       "student_number": "1.1.2.1.2.1.1",
       "expected_teacher_number": null,
-      "expected_reason": "Adds the miners and AI-inference energy regime to the grid-flexibility statement. No single teacher entry contains that entire combination.",
+      "expected_reason": "The post clarifies the new energy regime, but the student still combines mining-difficulty grid flexibility with miners' regulator role, AI price spikes, baseload transfer from price-sensitive industrial users and permanently rising costs. T30 and T31 state the grid-flexibility claim without that entire combination; T16 and T07 state other parts. Pooling entries is disallowed. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "qwen/evaluations/checkpoint-1000: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -113,7 +113,7 @@
       },
       "student_number": "7.1",
       "expected_teacher_number": null,
-      "expected_reason": "Specifies the reader rather than generic people; the teacher reader entry separately requires who is winning today, which this wording lacks.",
+      "expected_reason": "The post's you identifies the reader already named by the student. T04 instead states competition between generic people and the weather, while T05 adds who is winning today, which the student does not express. Post interpretation cannot add the reader restriction to T04 or restore T05's missing winning-today question. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/baseline: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -127,7 +127,7 @@
       },
       "student_number": "2.1",
       "expected_teacher_number": "1.1",
-      "expected_reason": "Game show versus game-show changes punctuation, retaining the scenario and Monty Hall problem.",
+      "expected_reason": "With the Monty Hall post visible, game show and game-show name the same scenario. The hyphen change preserves T02's game-show scenario in the Monty Hall problem; neither short subject states the detailed doors, prizes or switching question. Expected T02 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/baseline: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -141,7 +141,7 @@
       },
       "student_number": "4.4.1",
       "expected_teacher_number": null,
-      "expected_reason": "Drops the universal every-sector scope of the closest permanent energy-cost shift entry.",
+      "expected_reason": "The post expressly says every sector. T06 also preserves that universal scope; the student only says sectors relying on industrial power pricing without every or an equivalent universal expression. Importing every from the post would supply a missing restriction. T07 additionally requires the causal power-transfer account. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/baseline: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -155,7 +155,7 @@
       },
       "student_number": "6.1",
       "expected_teacher_number": null,
-      "expected_reason": "Does not state practical information security or protecting people from unauthorized access to their data; adds explicit profile identities.",
+      "expected_reason": "The post identifies the article's practical information-security topic, but the student's key aspects wording does not express putting information security into practice or protecting people from unauthorized data access, as T09 does. It also specifies profile identities absent from T09. The post cannot supply the missing topic and purpose. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/baseline: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -169,7 +169,7 @@
       },
       "student_number": "3.1",
       "expected_teacher_number": null,
-      "expected_reason": "Only states the gold winner's 20 satoshis; the gold-winner teacher entry also requires 20 videos, while the general reward entry does not restrict to that winner.",
+      "expected_reason": "The post clarifies sats as satoshis and the gold medal as the gold winner, but the student only states that winner's 20-satoshi amount. T06 additionally requires 20 videos; T15's general rewards wording lacks the gold-winner, competition and amount restrictions. The post cannot restore the missing videos. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/evaluations/checkpoint-1000: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -183,7 +183,7 @@
       },
       "student_number": "1.1",
       "expected_teacher_number": "1.1",
-      "expected_reason": "Dropping the period after F retains the airport's complete name and JFK abbreviation.",
+      "expected_reason": "The post identifies the same fully named airport and JFK abbreviation in both subjects. Dropping the period after F does not change the identity or add the post's held-aircraft and resumption-time claims. Expected T02 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/evaluations/checkpoint-1000: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -197,7 +197,7 @@
       },
       "student_number": "1.2.1.1.1.1",
       "expected_teacher_number": "1.3.1",
-      "expected_reason": "Retains the entire causal statement: AI inference, inelastic demand bidding baseload away from price-sensitive industrial users, permanent costs and transitory inflation in every industrial-power-dependent sector.",
+      "expected_reason": "The post confirms that appearing as transitory inflation describes the appearance of the stated permanent cost shift, rather than replacing permanent with temporary. T07 and the student preserve AI inference, inelastic power demand, baseload transfer from price-sensitive industrial users, permanent energy costs and transitory-inflation appearance in every affected sector. Reordering cause and result loses no relationship. Expected T07 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/evaluations/checkpoint-1000: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -211,7 +211,7 @@
       },
       "student_number": "1.2.1.1.1",
       "expected_teacher_number": null,
-      "expected_reason": "Adds a job affiliation to an institution named in an incomplete body, and describes announcing the launch rather than simply the online launch.",
+      "expected_reason": "The visible post ends after the deputy-director affiliation's at, without naming the institution. The student nevertheless adds an affiliation to an institution named in the incomplete body and describes an online event announcing the launch. T04 names the online launch itself and does not include that affiliation. Post interpretation cannot remove those differences. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-dense/evaluations/checkpoint-1000: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -239,7 +239,7 @@
       },
       "student_number": "3",
       "expected_teacher_number": "8",
-      "expected_reason": "Singular plate versus generic plural plates denotes the same BitPLATES Domino product without an explicit quantity.",
+      "expected_reason": "With the post visible, singular plate and generic plural plates both name the BitPLATES Domino product in T16 without an explicit quantity. The post's every plate applies to provision of tamper-proof labels, a relationship absent from both short product subjects. Expected T16 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-moe/baseline: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -253,7 +253,7 @@
       },
       "student_number": "2.2.2.1.1",
       "expected_teacher_number": null,
-      "expected_reason": "Adds AI-inference causation to the short energy-cost statement, while dropping baseload transfer and price-sensitive industrial users from the full causal teacher entry.",
+      "expected_reason": "The post clarifies the causal wording, but the student adds AI inference's inelastic-demand causation to T06's cost-and-inflation claim. T07 expresses that causation with baseload transfer away from price-sensitive industrial users, which the student omits. The post cannot complete the missing causal relationship or pool these entries. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-moe/baseline: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -281,7 +281,7 @@
       },
       "student_number": "1.1.2",
       "expected_teacher_number": "1.1.1.2.1",
-      "expected_reason": "European Commission website versus European Commission's website preserves the attributed hacker claim, more-than-350GB quantity and data source; the actor-focused entry has a different head role.",
+      "expected_reason": "The post resolves European Commission website as the Commission's website, preserving T08's hacker-attributed claim, more-than-350GB quantity and data source. The student retains the claim rather than asserting the theft as established fact. T14 instead names the hacker, a different subject role. Expected T08 remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-moe/evaluations/checkpoint-1000: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -295,7 +295,7 @@
       },
       "student_number": "1.7.1.1",
       "expected_teacher_number": null,
-      "expected_reason": "Combines the load-shedding miners with a sustained-AI-demand energy regime; it omits the teacher miners' voltage-regulator role, and no one entry preserves the whole combination.",
+      "expected_reason": "The post identifies the new regime, but the student combines sustained AI-workload demand independent of economic cycles and a new price floor with the miners' unique dynamic load shedding. T16 also states the figurative voltage-regulator role, which the student omits; no single teacher entry expresses the student's whole combination. Pooling entries or restoring the missing role from the post is disallowed. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-moe/evaluations/checkpoint-1000: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
@@ -309,7 +309,7 @@
       },
       "student_number": "9.1",
       "expected_teacher_number": null,
-      "expected_reason": "Adds a video link and pools several Trump statements; no single teacher wording contains this full subject.",
+      "expected_reason": "The post lets this refer to Trump's current undertaking, but the student's subject is a video link accompanying a report that pools the Netanyahu compliance and praise statements, 99% claim, candidacy claim and later-travel speculation. No single teacher entry expresses that link and full statement combination. Interpreting references does not permit pooling. Expected null remains an agent assessment.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-moe/evaluations/checkpoint-1000: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     }
