@@ -1028,10 +1028,16 @@ production preparation and decoding functions:
   restrictions. `matching-actual-v2-spec.json` prepares the same 22 targets with
   zero calls and unchanged Sol / xhigh, concurrency 8 settings. Prior expectations
   remain unverified. The authorized offline club assessment expects T06 for
-  R19, recorded in `matching-actual-v2-source.json`; the other 21 expectations
+  R19, recorded in `matching-actual-v2-source.json`; the other 20 expectations
   still need checking with posts visible. A fresh offline preview retains all
   identical DSMv2 prompts/settings, with zero calls and qualification pending.
   The separate DSMv2 source preserves DSMv1's unresolved club expectation.
+  The authorized offline R16 check retains an expected null: Bitcoin is an
+  asset restriction missing from `Self-custody`. Only its DSMv2 reason changes;
+  all 22 prompts, expected IDs, assessment statuses and settings are preserved.
+  The fresh preparation still makes zero calls and keeps qualification pending.
+  This matching assessment does not judge subject support or establish actual
+  model adherence to the restriction.
   DSMv1's trials are preserved. Additional calls and semantic reliability remain
   open.
 

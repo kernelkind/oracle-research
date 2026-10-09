@@ -464,8 +464,13 @@ complete-meaning matching and trusted ASv6.100 references remain unchanged.
 The authorized offline club assessment sets R19's expected match to T06 for
 DSMv2, with no lost restriction in the card-suit sense selected by the post's
 `♣`. A separate source definition preserves DSMv1's unresolved expectation.
-The other 21 assessments need checking with the supplied posts; all expectations
-remain unverified and qualification is pending. No reviewer result exists.
+The authorized offline self-custody check retains R16's expected nonmatch:
+`Self-custody` omits the Bitcoin asset restriction even when the post identifies
+the guide as about Bitcoin. Its DSMv2 reason is clarified without changing the
+expected ID or assessment status. This matching judgment does not judge support
+for the general heading. The other 20 assessments need checking with the supplied
+posts; all expectations remain unverified and qualification is pending. No
+reviewer result exists, so actual adherence to the restriction remains untested.
 This drafting and preparation does not establish reliability or authorize
 reviewer calls, bulk review or test unsealing.
 

@@ -62,6 +62,9 @@ prepares the same 22 targets with zero reviewer calls. Prior expectations still
 need verification with the supplied posts. The authorized offline club assessment
 sets R19's expected match to T06 for DSMv2; it is unverified and has no reviewer
 result. DSMv1's context-free expectation remains unresolved.
+The subsequent offline self-custody check retains R16's expected nonmatch:
+Bitcoin remains a missing asset restriction. No reviewer has been called;
+neither assessment establishes that the model follows the rule.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

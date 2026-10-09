@@ -1081,6 +1081,18 @@ unresolved placeholders, but all expectations remain unverified and qualificatio
 is pending. The other 21 inherited assessments still need checking with posts
 visible before calls. See the [club assessment](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
 
+**DSMv2 self-custody expectation checked October 8:** the user accepted checking
+the missing Bitcoin restriction with the post visible. The offline agent
+assessment retains R16's expected null: `Self-custody` names the custody
+relationship but does not specify the Bitcoin asset in teacher T12. Its DSMv2
+reason is clarified; the verdict, assessment status, all 22 prompts and runner
+settings remain unchanged. A fresh offline preparation makes zero calls. This
+does not decide whether the general heading is supported or whether the note
+covers the teacher meaning elsewhere. Both R16 and R19 remain unverified agent
+assessments; actual reviewer adherence has not been tested. The other 20
+inherited assessments still need checking with posts visible before full-set
+calls. See the [DSMv2 assessments](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

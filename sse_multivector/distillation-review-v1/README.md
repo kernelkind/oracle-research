@@ -318,6 +318,21 @@ This is an agent-assessed match, not independently
 verified gold or a reviewer result. The context-free DSMv1 expectation remains
 unresolved.
 
+The authorized offline check of **R16 retains an expected null**. Its post
+begins `The Bitcoin Beginner Guide is live.` and describes progression to
+self-custody, while the generated subject is only `Self-custody`. Teacher T12,
+original number `3`, is `Bitcoin self-custody`. Bitcoin specifies the asset;
+self-custody specifies the custody relationship. The same relationship can
+apply to other assets: [Ethereum's account guide](https://ethereum.org/guides/how-to-create-an-ethereum-account/)
+also discusses self-custody for Ethereum wallets. Our assessment is that adding
+Bitcoin from the post would supply a missing restriction, rather than clarify
+the existing wording. Every other teacher custody entry also specifies Bitcoin
+or the particular guide, so none has the same complete meaning. This is a
+matching assessment; a general heading can still be supported by the post.
+Subject support, whole-note coverage and actual reviewer behavior remain
+unjudged. The verdict and assessment status are unchanged; only the recorded
+reason is clarified for DSMv2.
+
 The shared adapter supplies `POST` as a JSON string when the prompt requests
 `{POST}`. It uses the already verified original post from either source format.
 `MATCH_INPUT` retains the identical one-subject / full-teacher-catalog input.
@@ -329,16 +344,16 @@ The revision receipt records the exact delta from DSMv1.
 [matching-actual-v2-source.json](matching-actual-v2-source.json), keeping the
 post-dependent assessment separate from DSMv1's original definitions. It
 prepares the same 22 targets with Sol / xhigh and concurrency 8. The current
-offline artifact is `target/distillation-review-v1/matching-actual-club-02-20261008/`.
+offline artifact is `target/distillation-review-v1/matching-actual-custody-20261008/`.
 All 22 prompts and settings are identical to the original DSMv2 preview;
-only R19's expected match, reason and assessment status change. The original
-post-containing preview remains frozen and preserved.
+R19's expected match, reason and assessment status change, and R16's reason is
+clarified. The earlier previews remain frozen and preserved.
 Native reporting confirms **zero calls, attempts and reused answers**; all
 22 cases are unrun. Rendered inputs total 25,043 `o200k_base` proxy tokens,
 with 445–1,569 per request and at most 46 teacher wordings. These are text sizes,
 not measured usage, caching or cost. There are now nine assessed matches,
 thirteen assessed nonmatches and no unresolved placeholders. All 22 expectations
-remain unverified; qualification is pending. The other 21 inherited assessments
+remain unverified; qualification is pending. The other 20 inherited assessments
 still need checking with the supplied posts before calls.
 
 Inspect the exact draft club request without inference:
@@ -346,7 +361,7 @@ Inspect the exact draft club request without inference:
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/experiment.py show \
-  target/distillation-review-v1/matching-actual-club-02-20261008 \
+  target/distillation-review-v1/matching-actual-custody-20261008 \
   --case R19 --prompt-only
 ```
 
@@ -360,6 +375,10 @@ After the assessment-only update, all 14 matching tests pass. Native inspection
 confirms T06 as the expected R19 ID, all expectations still unverified and all
 22 cases unrun; it also confirms unchanged prompts/settings and preserves the
 DSMv1 source definitions.
+The subsequent R16 reason-only update also passes all 14 matching tests. Native
+preparation preserves all 22 prompts, expected IDs and assessment statuses,
+with zero calls and pending qualification. This does not test whether a model
+actually follows the post-interpretation restriction.
 These mechanical checks do not establish semantic reliability. Expected-answer
 verification and checks of interpretation versus missing restrictions precede
 any proposed reviewer calls. Full review adoption and final-test unsealing

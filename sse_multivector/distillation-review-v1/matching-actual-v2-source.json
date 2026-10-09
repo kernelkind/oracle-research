@@ -225,7 +225,7 @@
       },
       "student_number": "3",
       "expected_teacher_number": null,
-      "expected_reason": "Self-custody omits Bitcoin; every corresponding teacher custody entry specifies Bitcoin or a particular Bitcoin guide.",
+      "expected_reason": "DSMv2 supplies a post about the Bitcoin Beginner Guide. Self-custody names the custody relationship but does not specify the asset; the same relationship can hold for Ether. Matching T12, Bitcoin self-custody, would require importing Bitcoin from the post. Other custody entries add Bitcoin-guide restrictions too. Expected null remains an offline agent assessment; it is not a finding that the heading is unsupported or independently verified gold.",
       "expectation_status": "agent_assessed",
       "selection": "gemma-moe/baseline: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
