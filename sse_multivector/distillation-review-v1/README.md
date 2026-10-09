@@ -20,6 +20,26 @@ Offline source preparation, report validation, scoring
 and qualification checks are implemented in the shared experiment workflow.
 The full semantic reviewer has not been qualified; bulk pilot grading is not implemented here.
 
+## Coverage-matching qualification scope agreed October 8
+
+Qualify matching of **required complete teacher meanings**. Optional derived
+teacher headings are not mandatory coverage targets. Every student heading
+still needs a subject-support verdict, and every immediate parent-child link
+still needs a relationship verdict. Required meanings must occur at every
+compatible student heading occurrence, including general headings; excluding
+an optional teacher heading as a target does not exclude student headings from
+placement review. Complete-meaning matching criteria are unchanged.
+
+Establish required/optional flags from the trusted teacher answer and post,
+independently of candidate answers, and freeze them across versions of each
+note. Those flags and revised qualification cases remain to be established.
+The current `distillation_matching` adapter still bypasses required flags and
+supplies all distinct teacher strings. Existing prompts, expectations and trials
+are preserved; this scope decision neither changes them nor qualifies the
+reviewer. In particular, R05's requirement flags are not frozen and its expected
+null remains a disputed agent assessment. Further preparation, implementation,
+model calls, bulk review and test unsealing remain separate work.
+
 ## Matching-only offline preview
 
 The October 8 approval authorizes drafting and offline preparation of
@@ -634,9 +654,13 @@ single-case repeat; no combined usage or accuracy report is inferred.
 No code, reusable prompt or expectation changed. Verification checks the
 native receipt and baseline binding, byte-identical supplied strings/settings,
 withheld expected reason, distinct fresh receipt and current attributed review.
-A useful next step is to trace whether this disputed general-heading match
-can change the planned correctness or coverage scores, before deciding what
-must be resolved for adoption. That analysis, further calls, prompt revisions,
+The subsequent read-only score trace confirms that optional teacher groups are
+excluded from coverage and correctness depends on subject and incoming-link
+verdicts. The user then agreed to the
+[required-meaning qualification scope](#coverage-matching-qualification-scope-agreed-october-8).
+R05's requirement flags and semantic expectation remain unverified; the scope
+decision does not relabel this saved trial. Required/optional flags and revised
+qualification cases are the next prerequisite. Further calls, prompt revisions,
 bulk review and test unsealing remain separate authorizations.
 
 ```sh

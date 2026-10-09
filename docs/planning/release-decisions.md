@@ -1177,6 +1177,23 @@ ASv6.100's authority are preserved. Native receipt, baseline and input checks
 pass. Further calls, prompt revisions, bulk review and test unsealing remain
 separate decisions. See the [repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8).
 
+**Coverage-matching qualification scope agreed October 8:** following the
+read-only score trace, the user agreed to qualify matching of required complete
+teacher meanings. Optional derived teacher headings are not mandatory coverage
+targets. Every student heading still needs subject-support review, every
+immediate parent-child link needs review, and required meanings must occur at
+every compatible student heading occurrence, including general headings.
+Complete-meaning matching criteria are unchanged. Establish required/optional
+flags from the trusted teacher answer and post independently of candidates,
+and freeze them across versions of each note before preparing revised cases.
+The current adapter still supplies all distinct teacher strings and bypasses
+required flags; no code, prompt, expectation or saved trial changes are implied.
+R05's requirement flags remain unfrozen and its expected null remains a disputed
+agent assessment. Broader qualification and adoption remain open. Revised
+preparation, implementation, calls, bulk review and test unsealing remain
+separate work. See the
+[agreed scope](../../sse_multivector/distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

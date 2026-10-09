@@ -1113,6 +1113,18 @@ production preparation and decoding functions:
   prompt or expected label changes occurred. This repeats a disputed verdict
   without independently proving its correctness or a general stability rate.
 
+  The subsequent approved
+  [coverage-matching qualification scope](distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8)
+  targets required complete teacher meanings. Optional teacher headings are not
+  mandatory coverage targets; all student subject-support, immediate-link and
+  required compatible-placement checks remain. Required/optional flags must be
+  established independently of candidates and frozen across note versions
+  before preparing revised cases. The current adapter still supplies all
+  distinct teacher strings and bypasses required flags. This is an intended
+  qualification scope, not an implemented filter or a change to saved trials;
+  R05's expected null remains a disputed assessment. Broader qualification,
+  adoption and further calls remain open.
+
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
   It uses the `posts` adapter's `{POST}` inputs and optional case-ID `select`;

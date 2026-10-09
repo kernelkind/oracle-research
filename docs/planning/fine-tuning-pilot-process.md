@@ -366,6 +366,16 @@ completely at every compatible returned heading occurrence. Optional broader
 headings are not mandatory; equivalent wording and valid extra headings are allowed.
 Keep teacher meaning groups fixed across versions and average per-note scores equally.
 
+**Coverage-matching qualification scope agreed October 8:** target required
+complete teacher meanings; optional derived teacher headings are not mandatory
+coverage targets. Still review every student heading and immediate parent-child
+link, and every compatible occurrence for placement of required meanings,
+including general student headings. Establish required/optional flags from the
+trusted teacher answer and post independently of candidates, then freeze them
+across note versions. Those flags and revised cases remain to be established;
+the current matching adapter, prompts and saved trials are unchanged. See the
+[agreed scope](../../sse_multivector/distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8).
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

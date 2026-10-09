@@ -85,6 +85,13 @@ The authorized [fresh R05 repeat](../../sse_multivector/distillation-review-v1/R
 again returns T17 with a different explanation and identical inputs/settings.
 Both saved calls make the disputed match; expected null and broader
 qualification remain unresolved.
+The user subsequently agreed that
+[coverage-matching qualification targets required teacher meanings](../../sse_multivector/distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8).
+Every student heading, immediate link and required compatible placement still
+needs review. Required/optional flags must be established independently of
+candidates and frozen across note versions before preparing revised cases.
+The current adapter, prompts and saved trials remain unchanged; R05 is not
+relabelled and broader reviewer qualification remains open.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
