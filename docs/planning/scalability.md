@@ -1,8 +1,9 @@
 # Hierarchy-build scalability
 
-Updated September 20, 2026. This records the scalability discussion, not an
-approved implementation or benchmark plan. Release requirements, corpus scope,
-compute locations and budget remain in [release decisions](release-decisions.md).
+Updated October 9, 2026. This records scalability decisions and evidence.
+Implementation and spending require their own task authorization. Release
+requirements, corpus scope, compute locations and budget remain in
+[release decisions](release-decisions.md).
 
 ## User decisions and scope
 
@@ -241,3 +242,64 @@ larger trial; the tested path exceeds the resource limits; or the evidence is
 still insufficient. It must not declare million-note feasibility from small
 matching cases or synthetic stress tests. Whether the full build fits the
 deadline and budget remains a later decision using all pipeline stages.
+
+## Eight-candidate comparison replay: saved for later handoff
+
+On October 9 the user authorized replaying the eight-candidate comparison policy
+against a saved eight-note build, with no new model calls. After the result, the
+user said verbatim: **"OK we'll save this to give to the gen agent later"**.
+The result is retained for a later handoff; the generation agent has not been
+messaged and its active policy has not been changed by this task.
+
+The baseline is Bootstrap-v68 / Compare-v36, GPT-6.1 Sol medium, from
+`oracle-mvp-shr-pair-correctness-v1/target/hierarchy-selective-sprint-v1/eight-v68-selection-02`.
+The replay keeps its seventeen selected original entries, independently fixed
+meanings and placement order. The existing comparison-policy `limit` changes
+from sixteen to eight; text/SSE ranking, same-note/mapped-parent rules and complete
+eligible implication verification remain enabled. No constructor, prompt or
+runner code changed.
+
+| Whole-generation measure | Sixteen candidates | Eight candidates |
+|---|---:|---:|
+| Meaning requests | 17 | 17 |
+| Comparison requests | 113 | 91 |
+| Uncached input tokens | 254,575 | 211,641 |
+| Cache-read tokens | 1,664 | 1,664 |
+| Cache-write tokens | 0 | 0 |
+| Output tokens, including reasoning | 7,806 | 6,462 |
+| API-equivalent catalogue cost | $0.5873764 | $0.4880684 |
+
+Total API-equivalent cost falls **16.9%**; comparison requests fall **19.5%**.
+Costs include original generation of reused answers, not just replay execution.
+All saved usage is present. Reasoning is already included in output. The replay
+itself makes **zero provider attempts** and uses 108 exact saved answers.
+
+All seventeen before/after graph snapshots match exactly. The complete raw graph
+(fifteen canonical nodes), fixed meanings, supporting entries and shaped menu
+(twelve nodes) are identical. Native policy evaluation reports preserved quality,
+no changed placement decisions and zero structural violations. No omitted implied
+relationship requires an extra verification phase in this run; the guard remains
+enabled. This demonstrates preservation of this saved hierarchy, including its
+existing semantic qualifications, not independent semantic accuracy or reliability
+on future corpora. The baseline is the generation agent's v68 build, not the earlier
+fourteen-node Bootstrap-v14 / Compare-v19 menu reviewed in this scaling fork.
+
+Evidence stays under the retained selective-construction worktree:
+`oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/`.
+[Native evaluation](../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/evaluation-native.json),
+[placement checks](../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/placement-checks.json),
+[native usage](../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/usage-native.json)
+and `completed-replay.json` preserve the exact trial paths and receipts.
+The selective-construction worktree must remain while these artifacts, the review
+UI and their frozen absolute references are needed.
+
+For the later handoff: use a fresh comparison-policy definition with
+`schema_version: 1`, `limit: 8` and the existing saved `subject_probe`. Keep current
+approved prompts and complete guards; do not roll back to v68 solely to use this
+policy. Prepare a fresh trial rather than editing a frozen sixteen-candidate
+policy. This replay used the native constructor and shared experiment-runner CLI,
+with request history pinned to the baseline's original receipt references and an
+exhausted persistent budget to forbid new dispatch. If a proposed placement changes
+later comparison inputs, stop replay when no exact saved answer exists. Any new
+inference or active-policy adoption requires the relevant authorization; this
+saved result grants no additional calls, spending or permission to contact agents.
