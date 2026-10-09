@@ -376,6 +376,15 @@ across note versions. Those flags and revised cases remain to be established;
 the current matching adapter, prompts and saved trials are unchanged. See the
 [agreed scope](../../sse_multivector/distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8).
 
+The subsequently authorized
+[teacher-relative qualification case preview](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
+compares all teacher wordings in six controlled cable variants, without new
+requirement labels or scores. It includes the omitted-heading disagreement and
+two separate DSMv2 non-exact matching inputs. The legacy DSRv2 renderer is used
+only for whole-case inspection. This preview does not adopt a revised pilot
+rubric or change the scorer/prompts; structural allowances, adoption and new
+calls remain open.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

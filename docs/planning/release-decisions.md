@@ -1194,6 +1194,29 @@ preparation, implementation, calls, bulk review and test unsealing remain
 separate work. See the
 [agreed scope](../../sse_multivector/distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8).
 
+**Teacher-relative qualification case preparation authorized October 8:** after
+the user questioned the required/optional distinction and requested research,
+the assistant proposed comparing teacher meanings and parent-child relationships,
+allowing equivalent wording, renumbering and sibling reordering. Structural
+allowances and final pilot scoring remain open. The user authorized one worked
+example, then qualification-case preparation with exact inputs and expected
+judgments shown before calls. The new case source binds ASv6.100's unchanged
+cable example and contains six variants: unchanged, paraphrase, negation reversal,
+invalid parent, omitted heading and renumbering. Every case specifies complete
+matches for all ten teacher wordings and actual subject/link findings; no
+required/optional classification or new numerical scores are asserted. The
+omitted-heading case records a missing teacher meaning even though remaining
+subjects/links are valid, without changing Q12 or the existing optional-row
+scorer. The unchanged DSRv2 renderer is used solely for offline input inspection,
+not adopted for the proposed comparison. Two non-exact targets are separately
+prepared with unchanged DSMv2, the post and full ten-wording catalog. Both use
+Sol / xhigh, subscription SSE and concurrency 8; preparation makes no calls.
+These are previously seen worked-example development controls, not independent
+confirmation. No prompt, scorer, saved label or trial changes are authorized by
+this preparation; broader reviewer/rubric adoption and inference remain separate
+work. See the
+[case preview](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

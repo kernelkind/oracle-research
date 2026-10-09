@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "task_prompt": {
+    "path": "../subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+    "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+  },
+  "references": {"C6": {"format": "as_example", "index": 6}},
+  "cases": [
+    {
+      "id": "TC01", "reference": "C6", "changes": [],
+      "expected": {
+        "incorrect_subjects": [], "invalid_relationship_children": [],
+        "meanings": [
+          {"teacher_number": "1", "student_numbers": ["1"]},
+          {"teacher_number": "1.1", "student_numbers": ["1.1"]},
+          {"teacher_number": "1.1.1", "student_numbers": ["1.1.1"]},
+          {"teacher_number": "1.1.1.1", "student_numbers": ["1.1.1.1"]},
+          {"teacher_number": "1.1.2", "student_numbers": ["1.1.2"]},
+          {"teacher_number": "1.1.2.1", "student_numbers": ["1.1.2.1"]},
+          {"teacher_number": "1.1.3", "student_numbers": ["1.1.3"]},
+          {"teacher_number": "1.2", "student_numbers": ["1.2"]},
+          {"teacher_number": "1.2.1", "student_numbers": ["1.1.1.1.1", "1.1.2.1.1", "1.2.1"]},
+          {"teacher_number": "1.2.1.1", "student_numbers": ["1.1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"]}
+        ]
+      }
+    },
+    {
+      "id": "TC02", "reference": "C6",
+      "changes": [{"op": "replace", "numbers": ["1.1.1.1"], "old": "2 m cable A", "new": "Cable A, two metres long"}],
+      "expected": {
+        "incorrect_subjects": [], "invalid_relationship_children": [],
+        "meanings": [
+          {"teacher_number": "1", "student_numbers": ["1"]},
+          {"teacher_number": "1.1", "student_numbers": ["1.1"]},
+          {"teacher_number": "1.1.1", "student_numbers": ["1.1.1"]},
+          {"teacher_number": "1.1.1.1", "student_numbers": ["1.1.1.1"]},
+          {"teacher_number": "1.1.2", "student_numbers": ["1.1.2"]},
+          {"teacher_number": "1.1.2.1", "student_numbers": ["1.1.2.1"]},
+          {"teacher_number": "1.1.3", "student_numbers": ["1.1.3"]},
+          {"teacher_number": "1.2", "student_numbers": ["1.2"]},
+          {"teacher_number": "1.2.1", "student_numbers": ["1.1.1.1.1", "1.1.2.1.1", "1.2.1"]},
+          {"teacher_number": "1.2.1.1", "student_numbers": ["1.1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"]}
+        ]
+      }
+    },
+    {
+      "id": "TC03", "reference": "C6",
+      "changes": [{"op": "replace", "numbers": ["1.1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"], "old": "not longer than", "new": "longer than"}],
+      "expected": {
+        "incorrect_subjects": ["1.1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"],
+        "invalid_relationship_children": [],
+        "meanings": [
+          {"teacher_number": "1", "student_numbers": ["1"]},
+          {"teacher_number": "1.1", "student_numbers": ["1.1"]},
+          {"teacher_number": "1.1.1", "student_numbers": ["1.1.1"]},
+          {"teacher_number": "1.1.1.1", "student_numbers": ["1.1.1.1"]},
+          {"teacher_number": "1.1.2", "student_numbers": ["1.1.2"]},
+          {"teacher_number": "1.1.2.1", "student_numbers": ["1.1.2.1"]},
+          {"teacher_number": "1.1.3", "student_numbers": ["1.1.3"]},
+          {"teacher_number": "1.2", "student_numbers": ["1.2"]},
+          {"teacher_number": "1.2.1", "student_numbers": ["1.1.1.1.1", "1.1.2.1.1", "1.2.1"]},
+          {"teacher_number": "1.2.1.1", "student_numbers": []}
+        ]
+      }
+    },
+    {
+      "id": "TC04", "reference": "C6",
+      "changes": [{"op": "renumber", "from": "1.1.2", "to": "1.1.1.2"}],
+      "expected": {
+        "incorrect_subjects": [], "invalid_relationship_children": ["1.1.1.2"],
+        "meanings": [
+          {"teacher_number": "1", "student_numbers": ["1"]},
+          {"teacher_number": "1.1", "student_numbers": ["1.1"]},
+          {"teacher_number": "1.1.1", "student_numbers": ["1.1.1"]},
+          {"teacher_number": "1.1.1.1", "student_numbers": ["1.1.1.1"]},
+          {"teacher_number": "1.1.2", "student_numbers": ["1.1.1.2"]},
+          {"teacher_number": "1.1.2.1", "student_numbers": ["1.1.1.2.1"]},
+          {"teacher_number": "1.1.3", "student_numbers": ["1.1.3"]},
+          {"teacher_number": "1.2", "student_numbers": ["1.2"]},
+          {"teacher_number": "1.2.1", "student_numbers": ["1.1.1.1.1", "1.1.1.2.1.1", "1.2.1"]},
+          {"teacher_number": "1.2.1.1", "student_numbers": ["1.1.1.1.1.1", "1.1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"]}
+        ]
+      }
+    },
+    {
+      "id": "TC05", "reference": "C6",
+      "changes": [{"op": "remove", "numbers": ["1.1.1"]}, {"op": "renumber", "from": "1.1.1.1", "to": "1.1.1"}],
+      "expected": {
+        "incorrect_subjects": [], "invalid_relationship_children": [],
+        "meanings": [
+          {"teacher_number": "1", "student_numbers": ["1"]},
+          {"teacher_number": "1.1", "student_numbers": ["1.1"]},
+          {"teacher_number": "1.1.1", "student_numbers": []},
+          {"teacher_number": "1.1.1.1", "student_numbers": ["1.1.1"]},
+          {"teacher_number": "1.1.2", "student_numbers": ["1.1.2"]},
+          {"teacher_number": "1.1.2.1", "student_numbers": ["1.1.2.1"]},
+          {"teacher_number": "1.1.3", "student_numbers": ["1.1.3"]},
+          {"teacher_number": "1.2", "student_numbers": ["1.2"]},
+          {"teacher_number": "1.2.1", "student_numbers": ["1.1.1.1", "1.1.2.1.1", "1.2.1"]},
+          {"teacher_number": "1.2.1.1", "student_numbers": ["1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"]}
+        ]
+      }
+    },
+    {
+      "id": "TC06", "reference": "C6", "changes": [{"op": "renumber", "from": "1", "to": "9"}],
+      "expected": {
+        "incorrect_subjects": [], "invalid_relationship_children": [],
+        "meanings": [
+          {"teacher_number": "1", "student_numbers": ["9"]},
+          {"teacher_number": "1.1", "student_numbers": ["9.1"]},
+          {"teacher_number": "1.1.1", "student_numbers": ["9.1.1"]},
+          {"teacher_number": "1.1.1.1", "student_numbers": ["9.1.1.1"]},
+          {"teacher_number": "1.1.2", "student_numbers": ["9.1.2"]},
+          {"teacher_number": "1.1.2.1", "student_numbers": ["9.1.2.1"]},
+          {"teacher_number": "1.1.3", "student_numbers": ["9.1.3"]},
+          {"teacher_number": "1.2", "student_numbers": ["9.2"]},
+          {"teacher_number": "1.2.1", "student_numbers": ["9.1.1.1.1", "9.1.2.1.1", "9.2.1"]},
+          {"teacher_number": "1.2.1.1", "student_numbers": ["9.1.1.1.1.1", "9.1.2.1.1.1", "9.1.3.1", "9.2.1.1"]}
+        ]
+      }
+    }
+  ]
+}

@@ -40,6 +40,70 @@ reviewer. In particular, R05's requirement flags are not frozen and its expected
 null remains a disputed agent assessment. Further preparation, implementation,
 model calls, bulk review and test unsealing remain separate work.
 
+## Teacher-relative qualification case preview (October 8)
+
+After questioning the required/optional distinction, the user authorized a
+concrete teacher-relative example and then preparation of qualification cases,
+with exact inputs and expected judgments shown before new calls. The proposed
+comparison preserves teacher meanings and parent-child relationships, allowing
+equivalent wording, renumbering and sibling reordering. Missing headings and
+changed relationships are recorded as disagreements; structural allowances and
+the final pilot scoring rule remain open. This preparation does not adopt a
+replacement rubric or revise earlier decisions, prompts, scores or saved trials.
+
+[teacher-relative-source.json](teacher-relative-source.json) defines six
+variants of ASv6.100's trusted cable example, binding the unchanged task hash.
+Each case specifies matches for all ten distinct teacher wordings, including
+general headings and every repeated pair/comparison occurrence. Expectations
+are authored from controlled edits and remain outside the prompt. They contain
+no required/optional labels or numerical scores. No pilot data or final-test
+answers are read. These worked-example controls appeared in earlier development;
+they are not fresh independent confirmation or evidence of pilot-wide accuracy.
+
+| Case | Student change | Expected finding |
+| --- | --- | --- |
+| TC01 | None. | All meanings and relationships preserved. |
+| TC02 | `2 m cable A` becomes `Cable A, two metres long`. | All complete meanings and relationships preserved. |
+| TC03 | Remove `not` from all four comparison copies. | No complete match for the original comparison; four unsupported subjects, with unchanged valid incoming links. |
+| TC04 | Move the complete `3 m cables` subtree beneath `2 m cables`. | All subject meanings preserved; new incoming link to `1.1.1.2` invalid. |
+| TC05 | Remove `2 m cables` and promote its subtree. | No match for that teacher heading; remaining subjects and incoming links valid. Record the missing heading and changed structure as teacher disagreements. |
+| TC06 | Renumber the complete root/subtree from `1` to `9`; the adapter orders entries by the new numbers. | All meanings and parent-child relationships preserved; numbering and listing order changes are acceptable. |
+
+TC05 preserves Q12's original transformation, not its existing acceptance as a
+full-coverage answer. A missing teacher match and an invalid returned subject
+are separate findings. The current scorer still excludes optional rows; these
+new definitions do not make the omission an AS subject/link error or change
+that scorer. A general teacher-edge agreement check is not implemented here.
+
+[teacher-relative-preview-spec.json](teacher-relative-preview-spec.json) uses
+the **unchanged DSRv2 draft** solely to inspect the complete bound post,
+teacher/student arrays, exact matches and expectations through the existing
+adapter. `teacher_meanings` is null. This legacy rendering is not adoption of
+DSRv2, its call shape or its requirement-classification instructions for the
+proposed comparison. Further reviewer/rubric work must precede a full trial.
+
+The separate [matching source](teacher-relative-matching-source.json) binds
+that same case source by SHA256. Its [specification](teacher-relative-matching-spec.json)
+uses **unchanged DSMv2** for exactly two non-exact targets: TM01 selects TC02's
+paraphrase (expected T04), and TM02 selects TC03's changed comparison (expected
+null). Each request retains the original post and complete ten-wording teacher
+catalog. Exact targets stay out of model requests. These calls would test only
+meaning matching, not subject support, links or structural disagreement scoring.
+Both specifications retain Sol / xhigh, subscription SSE and concurrency 8.
+
+Use the shared CLI in an environment providing `tiktoken==0.14.0`:
+
+```sh
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/teacher-relative-preview-20261008 --spec sse_multivector/distillation-review-v1/teacher-relative-preview-spec.json --repeat
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/teacher-relative-matching-20261008 --spec sse_multivector/distillation-review-v1/teacher-relative-matching-spec.json --repeat
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/teacher-relative-preview-20261008 --case TC05 --json
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/teacher-relative-matching-20261008 --case TM01 --prompt-only
+```
+
+Preparation authorizes no inference. Exact inputs and expected findings can be
+inspected without new reviews; prompts, implementation, full qualification,
+bulk grading and test unsealing remain separate work.
+
 ## Matching-only offline preview
 
 The October 8 approval authorizes drafting and offline preparation of

@@ -92,6 +92,13 @@ needs review. Required/optional flags must be established independently of
 candidates and frozen across note versions before preparing revised cases.
 The current adapter, prompts and saved trials remain unchanged; R05 is not
 relabelled and broader reviewer qualification remains open.
+The user subsequently authorized a
+[teacher-relative qualification case preview](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
+before new calls. Six controlled cable variants specify complete matches for
+all ten teacher wordings, without requirement labels or new numerical scores.
+Two non-exact targets have separate DSMv2 preparations. The existing DSRv2
+renderer serves only to inspect whole-case inputs. Scorer/prompt changes,
+structural allowances, adoption and inference remain open.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

@@ -986,6 +986,18 @@ production preparation and decoding functions:
   sizes only; the output contains training references without posts or subjects.
   The ranking is offline and does not prepare requests or perform inference.
 
+  The authorized
+  [teacher-relative case preview](distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
+  reuses source-bound preparation for six cable variants. Each specifies all
+  ten teacher-meaning matches and actual subject/link findings, without required
+  flags or numerical scores. The unchanged DSRv2 renderer serves only to inspect
+  whole-case inputs; its legacy scorer is not revised or adopted for the proposed
+  comparison. A general teacher-edge agreement check remains unimplemented.
+  Two non-exact targets are separately prepared through `distillation_matching`
+  with unchanged DSMv2, post and complete teacher catalog. Exact targets require
+  no model work. These preparations add no inference or independent-confirmation
+  evidence; structural allowances and final rubric/adoption remain open.
+
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)
   loads a hash-bound `review_source` and selected authored controls. It reuses
