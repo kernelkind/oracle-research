@@ -1040,9 +1040,11 @@ production preparation and decoding functions:
   Only the version label and interpretive block change; `POST`, `MATCH_INPUT`,
   matching criteria and the `teacher_id` / `reason` contract remain unchanged.
   The draft needs no new variables or adapter changes. Its quoted paragraph is
-  verified against unchanged ASv6.100. No DSMv3 experiment or calls are prepared;
-  the exact wording is presented for review before qualification, and earlier
-  DSMv2 results do not qualify the revised prompt.
+  verified against unchanged ASv6.100. The user approved its exact wording after
+  seeing the full DSMv3 instructions. The unchanged draft remains untested and
+  qualification is pending. No DSMv3 experiment or calls are prepared; wording
+  approval authorizes no new calls, and earlier DSMv2 results do not qualify the
+  revised prompt.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

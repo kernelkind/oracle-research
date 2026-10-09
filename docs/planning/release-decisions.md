@@ -1330,9 +1330,12 @@ beginning “Make each `subject` concise”. The teacher answer remains the trus
 reference and the task remains complete-meaning matching. Inputs, matching
 criteria, response contract, cases, expected labels and saved trials are
 unchanged. The full generation and hierarchy-placement instructions are
-excluded. This approves the rule addition in principle; the exact revised draft
-is presented for review before qualification calls. No DSMv3 experiment is
-prepared and no model calls or accuracy/cost measurements occur in drafting.
+excluded. After the full DSMv3 instructions were displayed in the conversation,
+the user approved their exact wording with “lgtm”. The prompt is unchanged and
+remains an untested draft; qualification is pending. This accepts the matching
+instructions without qualifying the reviewer or authorizing new calls. No
+DSMv3 experiment is prepared and no model calls or accuracy/cost measurements
+occur in drafting or approval recording.
 DSMv2 evidence does not qualify DSMv3, and R05 remains disputed. Support/link
 judgments, scoring, bulk adoption and final-test sealing are unchanged. See the
 [DSMv3 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9).

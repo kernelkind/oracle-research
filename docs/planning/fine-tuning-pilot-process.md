@@ -436,8 +436,10 @@ creates [DSMv3](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv
 from approved DSMv2, changing only the version label and an interpretive block
 containing the original subject-wording paragraph. The trusted teacher reference,
 inputs, matching criteria, response contract, case expectations and saved
-evidence are unchanged. The exact draft is shown for review before calls;
-no DSMv3 experiment is prepared and no accuracy/cost measurement is claimed.
+evidence are unchanged. The user approved the exact DSMv3 wording after seeing
+the full instructions. The unchanged draft remains untested and qualification
+is pending. No DSMv3 experiment is prepared and no accuracy/cost measurement is
+claimed; wording approval authorizes no new calls.
 Previous results do not qualify DSMv3, and the disputed R05 match remains open.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,

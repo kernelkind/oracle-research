@@ -13,7 +13,8 @@ An identical-input fresh R05 repeat again returns T17; both saved calls make
 the disputed match with different explanations. Its expected null remains an
 agent assessment, and qualification remains pending.
 The [DSMv3 draft](#dsmv3-asv6100-wording-guidance-draft-october-9) adds one
-verbatim ASv6.100 paragraph to matching; no DSMv3 experiment or calls exist yet.
+verbatim ASv6.100 paragraph to matching. Its wording is approved, but it remains
+untested; no DSMv3 experiment or calls exist yet.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -155,9 +156,11 @@ maintained as a paraphrased standard. This adds fixed input text per comparison,
 without changing the candidate catalog, call count or batching policy. No token,
 cached-token, cost or accuracy measurement is claimed by drafting.
 
-The rule addition is approved in principle; the exact DSMv3 draft is presented
-for review before qualification calls. No experiment has been prepared and no
-calls have been made for DSMv3. Previous DSMv2 results do not qualify this new
+The user approved the exact DSMv3 wording after the full instructions were
+displayed in the conversation on October 9. The unchanged prompt remains an
+untested draft; qualification is pending. Wording approval does not qualify the
+reviewer or authorize new calls. No experiment has been prepared and no calls
+have been made for DSMv3. Previous DSMv2 results do not qualify this new
 version. Existing controls, expected labels and saved trials are preserved;
 R05's disputed match remains unresolved. The amendment does not change support
 or link judgments, final pilot scoring, bulk adoption or test sealing.

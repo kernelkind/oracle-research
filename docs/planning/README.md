@@ -127,9 +127,10 @@ schema, experiment or model calls are added.
 The user then accepted adding ASv6.100's subject-wording guidance verbatim to
 matching. Native `revise` produces the
 [DSMv3 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9),
-keeping the inputs, matching criteria and response format unchanged. The exact
-draft is presented for review before qualification; no DSMv3 experiment or
-calls exist, and earlier DSMv2 results do not qualify the new version.
+keeping the inputs, matching criteria and response format unchanged. The user
+approved its exact wording after seeing the full prompt. The draft remains
+untested and qualification is pending; no DSMv3 experiment or calls exist, and
+earlier DSMv2 results do not qualify the new version.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
