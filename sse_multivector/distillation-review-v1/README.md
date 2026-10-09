@@ -6,7 +6,7 @@ Three prefix warmups completed, with zero cache reads or writes throughout.
 See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
 These small controls do not qualify bulk review.
 The next [larger training-control preview](#larger-training-controls-prepared-october-9)
-contains 16 unrun inputs. LC03 is agreed; the other six variants await review.
+contains 16 unrun inputs. LC03 and LC07 are agreed; five variants await review.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -413,10 +413,12 @@ are authorized by this result.
 After the initial seven-case trial, the user authorized preparing harder
 controlled changes from the largest ASv6.100 training answers and presenting
 them before further model calls. The teacher answers remain trusted. These
-are authored expectations, with **LC03 agreed by the user** after presentation.
-The other six variants remain proposed; no model verdicts exist for this set.
-LC03 separates complete teacher meaning, post support and parent restriction
-preservation. LC07, the moved subtree, is next for conversational review.
+are authored expectations, with **LC03 and LC07 agreed by the user** after
+presentation. The other five variants remain proposed; no model verdicts exist
+for this set. LC03 separates complete teacher meaning, post support and parent
+restriction preservation. LC07 invalidates the moved subtree’s incoming link
+while retaining exact trusted subject wording. LC04, the monetary-rules wording
+change, is next for conversational review.
 
 The existing source-bound ranking selected eight training extremes from all
 1,300 answers. This preview uses three of them, spanning the maximum entry
@@ -446,7 +448,7 @@ pair; its subject strings remain exact trusted teacher wording.
 | LC04 | L1 / `2.3.1` | `rather than printing money` → `and printing money` | LM04: null | LS04: false | No link call |
 | LC05 | L6 / `1.2.2.1.1` | `released to mark YouTube’s renewed account ban` → `released to mark the renewed banning of the group’s account by YouTube` | LM05: T07 | LS05: true | LL02: true |
 | LC06 | L6 / `1.2.2.1.1` | `YouTube’s renewed account ban` → `YouTube’s first account ban` | LM06: null | LS06: false | LL03: false |
-| LC07 | L3 / `6.2.2.2` after move | Move subtree `6.2.1` beneath `6.2.2` as `6.2.2.2` | Exact teacher wording; no call | Trusted wording; no call | LL04: false |
+| LC07 (**agreed**) | L3 / `6.2.2.2` after move | Move subtree `6.2.1` beneath `6.2.2` as `6.2.2.2` | Exact teacher wording; no call | Trusted wording; no call | LL04: false |
 
 T07 is local to each teacher catalog: LM01 names the complete dated attacker
 headline; LM05 names the complete video description and its combined mocking
@@ -486,8 +488,12 @@ clauses released to mark a first-ever account ban. For LL04, the parent is
 `Health workers other than Dr. Abu Safiya abducted from Gaza`, while the child
 is `Dr. Abu Safiya, a health worker abducted from Gaza`. A post describing only
 Dr. Abu Safiya's abduction fits that child without supporting the excluded-person
-parent. LC07 changes the relationship while preserving all subject wordings.
-No general teacher-edge comparison or final scoring implementation is added.
+parent. The user accepted LL04: false with “ok” after seeing this actual student
+pair: the parent explicitly excludes the person named by the child. LC07
+changes the relationship while preserving all subject wordings, so matching
+and support calls remain unnecessary for those trusted exact strings. This
+approval adds no model calls, general teacher-edge comparison or final scoring
+implementation.
 
 The unchanged `distillation_matching` and `distillation_verdict` adapters prepare
 **six DSMv3, six DSSv1 and four DSLv1 inputs**, all unrun with zero attempts/reuse.
@@ -538,7 +544,7 @@ that dependency was absent. No adapter or prompt implementation changes were
 needed. Ignore exceptions keep the seven reusable source/spec JSON files tracked,
 while generated experiments and the temporary training fixture stay ignored.
 
-The remaining six variants need review in the conversation before inference.
+The remaining five variants need review in the conversation before inference.
 Broader qualification, fresh repeats and later lower-effort comparison remain
 open. Support inheritance, structural allowances, teacher-edge implementation,
 final scoring, bulk grading and test unsealing are not adopted by preparing

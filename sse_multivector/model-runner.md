@@ -1085,8 +1085,11 @@ production preparation and decoding functions:
   training extremes. Native preparation yields six matching, six support and
   four link requests, all unrun with zero attempts/reuse. Expectations remain
   outside prompts. The user accepted LC03’s null match, supported subject and
-  invalid link after presentation; the other six variants await review, with
-  the moved subtree next. No inference follows from preparation or this approval.
+  invalid link after presentation, then LC07’s invalid moved-subtree link. That
+  new parent explicitly excludes Dr. Abu Safiya, whom the unchanged child names;
+  both strings remain trusted teacher wording, requiring no matching or support
+  calls. Five variants await review, with LC04’s monetary-rules wording change
+  next. No inference follows from preparation or these approvals.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

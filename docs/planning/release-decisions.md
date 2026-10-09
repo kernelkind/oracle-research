@@ -1441,8 +1441,8 @@ caching measurement is claimed. Four edits reuse previous authored matching
 controls; this is development evidence, not a fresh confirmation partition.
 The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9) preserves exact changes,
 expectations and native inspection/preparation commands. The user has accepted
-LC03 as recorded below; the other six variants remain proposed. No new model
-calls are authorized. Thirty-six existing production preparation/validation
+LC03 and LC07 as recorded below; the other five variants remain proposed.
+No new model calls are authorized. Thirty-six existing production preparation/validation
 tests pass with the documented tokenizer dependency; default Python initially lacked it.
 No prompt, adapter, general teacher-edge check or scoring implementation changes
 are needed. Qualification, repeats and lower-effort comparison remain open;
@@ -1455,10 +1455,18 @@ student subject and unchanged immediate parent were presented, the user replied
 “ok”. Dropping `in three days` receives no complete teacher match (LM03: null),
 retains post support for the remaining expressed meaning (LS03: true), and
 invalidates the link because the child omits the parent’s three-day restriction
-(LL01: false). This accepts only this variant’s three expected judgments. The
-other six variants remain proposed; all 16 inputs remain unrun. Frozen sources,
-prompts, settings and numerical scoring are unchanged. The moved Dr. Abu Safiya
-subtree (LC07 / LL04) is next for conversational review, not already accepted.
+(LL01: false). This accepts only this variant’s three expected judgments.
+
+**LC07 judgment agreed October 9:** after the actual new student parent and
+unchanged child were presented, the user replied “ok”. The parent, `Health
+workers other than Dr. Abu Safiya abducted from Gaza`, explicitly excludes
+the person named by `Dr. Abu Safiya, a health worker abducted from Gaza`, so
+the link is invalid (LL04: false). Both strings remain exact trusted teacher
+wording; no matching or post-support calls are needed. This accepts the expected
+link judgment, not new model calls or a general teacher-edge implementation.
+Five variants remain proposed, with LC04’s monetary-rules wording change next
+for conversational review. All 16 inputs remain unrun. Frozen sources, prompts,
+settings and numerical scoring are unchanged.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
