@@ -1643,7 +1643,22 @@ to DSSv2. Cache reads/writes are zero; warmup adds $0.005884 in catalog
 API-equivalent cost. Qualification stays pending on agent-assessed expectations.
 This adopts no matching/link change, lower-effort trial, bulk grading, scoring
 or reserved-test access. Addressing the remaining repeated DSLv1 error is a
-recommendation, not authorization to draft or call a changed prompt.
+recommendation at this point; the subsequent drafting authorization follows.
+
+**DSLv2 parent-restriction clarification drafting authorized October 9:** the
+user directs proceeding with the recommendation to address repeated DSLv1 A21
+failure and show proposed wording before calls.
+[DSLv2](../../sse_multivector/distillation-review-v1/README.md#dslv2-parent-restriction-clarification-draft-october-9)
+adds one paragraph after the intact ASv6.100 rule: do not invent a presenting,
+explaining or performing requirement absent from the parent; a clause or
+modifier may preserve a restriction, but mere mention that drops or changes
+it is insufficient. The same Boolean/reason and invalid-counterexample contract
+remains. Native revision preserves the exact delta and hashes; no source,
+expectation or model setting changes, and no calls or experiment preparation
+occur. Independent wording assessment is not approval or evidence that the
+reviewer applies the clarification reliably. Wording approval and a bounded
+semantic test remain pending; qualification, other reviewers, scoring, bulk
+adoption and test sealing remain unchanged.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

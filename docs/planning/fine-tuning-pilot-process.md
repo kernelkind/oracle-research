@@ -552,8 +552,14 @@ these results do not isolate an improvement caused by DSSv2. No cached tokens
 are recorded; the sole warmup adds $0.005884 in catalog API-equivalent cost.
 Qualification remains pending on unverified agent expectations, and all other
 review checks, scoring and sealed test data retain their status. The remaining
-repeated DSLv1 error is the recommended next issue; no change or calls are
-authorized by that recommendation.
+repeated DSLv1 error is the recommended next issue. The user subsequently
+authorizes [DSLv2 drafting](../../sse_multivector/distillation-review-v1/README.md#dslv2-parent-restriction-clarification-draft-october-9)
+and showing the wording before calls. The untested clarification forbids an
+added presentation/action requirement absent from the parent and accepts a
+retained restriction in a clause or modifier while rejecting mere mention that
+drops its meaning. The AS rule, pair inputs, verdict/counterexample contract,
+labels and settings remain unchanged. No experiment is prepared or model called;
+wording approval, semantic testing and qualification remain pending.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

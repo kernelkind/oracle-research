@@ -1173,7 +1173,16 @@ production preparation and decoding functions:
   complete; cash charges are unavailable. Qualification remains pending on
   unverified expectations and IDs outside each selected subset. Both previews
   stay unrun; all saved trials and other reviewers stay intact. A clarification
-  for the remaining repeated parent-child error is recommended, not authorized.
+  for the remaining repeated parent-child error is recommended. The user then
+  authorizes [DSLv2 drafting](distillation-review-v1/README.md#dslv2-parent-restriction-clarification-draft-october-9),
+  with wording shown before calls. Native `revise` changes only the DSLv1 header
+  and adds one paragraph after the verbatim AS rule. It forbids invented
+  presentation/action requirements and allows preservation within clauses or
+  modifiers without accepting a mention that loses a restriction. Revision
+  hashes and template-variable checks pass; no source, adapter, output schema,
+  model setting, frozen expectation or prior experiment changes. No experiment
+  is prepared and no model is called. Wording approval and semantic testing
+  remain pending, without qualifying the reviewer for bulk use.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

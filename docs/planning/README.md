@@ -218,8 +218,13 @@ the warmup and no retries or reuse. Fresh DSSv1 also handles the original
 exception correctly after two identical-request failures, so the trial does
 not establish a DSSv2 improvement. There are no cache hits; the sole eligible
 warmup adds $0.005884 in catalog API-equivalent cost. Qualification remains
-pending; the earlier preview stays unrun. The remaining repeated parent-child
-error is the recommended next issue, without authorizing a change or calls.
+pending; the earlier preview stays unrun. The user subsequently authorizes
+[DSLv2 drafting](../../sse_multivector/distillation-review-v1/README.md#dslv2-parent-restriction-clarification-draft-october-9)
+for the repeated parent-child error. The untested paragraph forbids adding a
+presentation/action requirement absent from the parent and allows preservation
+in clauses or modifiers without accepting mere mention. The authoritative AS
+rule and verdict contract stay fixed. Wording is shown before calls; approval,
+semantic testing and reviewer qualification remain pending.
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

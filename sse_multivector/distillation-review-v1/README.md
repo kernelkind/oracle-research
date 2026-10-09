@@ -1,5 +1,10 @@
 # Distillation semantic review — process and evidence
 
+[DSLv2](relationship-prompt-v2.md) is an untested
+[draft clarification](#dslv2-parent-restriction-clarification-draft-october-9)
+for the repeated parent-child A21 error. The user authorizes drafting and showing
+the wording before calls. Wording approval and semantic testing remain pending.
+
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
 [bounded trial](#dssv2-bounded-support-trial-october-9). All 27 verdicts, including
@@ -1227,8 +1232,57 @@ their unselected IDs as pending. This result establishes neither independent
 population accuracy, repeat consistency for DSSv2 nor qualification for bulk
 use. Matching and parent-child status remain unchanged. The remaining repeated
 DSLv1 A21 error concerns adding a requirement to present the setup under
-`Proof setup`; a proposed clarification is the recommended next step, requiring
-approval before drafting or calls.
+`Proof setup`. The user subsequently directs proceeding with the draft below,
+for review before model calls.
+
+### DSLv2 parent-restriction clarification draft (October 9)
+
+The user authorizes the recommended clarification for the repeated DSLv1 A21
+error, with proposed wording shown before calls.
+[DSLv2](relationship-prompt-v2.md) changes only the version header and adds this
+paragraph after the unchanged authoritative ASv6.100 rule:
+
+```text
+Do not add a requirement to present, explain or perform the parent's subject
+unless the parent wording requires that action. A parent restriction may be
+preserved anywhere in the child's meaning, including a clause or modifier;
+a shared topic or mention that drops or changes a parent restriction is
+insufficient.
+```
+
+Both A21 failures reject a proof subject that includes “after the setup with
+directed univalence” beneath `Proof setup`. Their proposed counterexamples
+assume the setup was already established or not presented. The parent adds
+no presenting, explaining or performing action, so those changes do not remove
+an expressed parent restriction. The clarification addresses that added
+requirement and the retention of a restriction within a longer child's meaning.
+This selected development example explains the draft here; it is not included
+in the model instructions.
+
+The paragraph does not permit keyword overlap to substitute for retained
+meaning. An expressed action, purpose, modifier, negation or relationship still
+restricts the child. Two independent agents find no conflict with trusted
+ASv6.100; this is wording assessment, not a model result or user approval.
+The practical risk remains accepting a mention that drops the parent's actual
+meaning. Existing invalid controls for missing duration, renewed bans, excluded
+people and cable length remain relevant to later testing.
+
+Native `revise` records the exact full-context diff and hash-bound provenance in
+[the revision record](relationship-prompt-v2.md.revision.json). The two template
+variables, source-loaded verbatim rule, Boolean/reason contract and requirement
+for an invalid verdict's counterexample remain unchanged. No adapter, source,
+gold expectation, scoring rule, model setting or prior experiment is altered.
+Each eventual call still contains one immediate pair plus fixed instructions;
+this adds constant instruction text without new calls or hierarchy comparisons.
+The narrow wording follows [OpenAI's guidance on straightforward reasoning
+prompts](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+
+Revision hash/variable checks pass; no experiment is prepared and no model is
+called for this draft. Wording approval precedes a bounded semantic test of the
+repeated failure, accepted contrasts and invalid controls. Actual A06's
+anticipated-versus-realized ambiguity remains unresolved and its label stays
+frozen. Qualification, DSSv2/DSMv3 status, bulk grading, lower-effort comparison
+and sealed test data retain their existing status.
 
 ## Matching-only offline preview
 
