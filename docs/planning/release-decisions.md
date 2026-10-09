@@ -1405,8 +1405,9 @@ actual usage, request latency and API-equivalent estimates are preserved in the
 [trial record](../../sse_multivector/distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9). Catalog estimates are not subscription
 charges, and provider cash costs are unreported. No paid API fallback occurred.
 
-The seven small controls do not qualify bulk review. Broader controls, selected
-large training cases and fresh repeats remain necessary. Lower-effort comparison
+The seven small controls do not qualify bulk review. The larger training cases
+and fresh repeat below extend the evidence; broader qualification remains
+necessary. Lower-effort comparison
 remains future work; support inheritance, structural allowances, teacher-edge
 comparison, scoring adoption, bulk grading and test unsealing remain undecided
 or unimplemented as before. R05 remains unresolved. The original offline
@@ -1531,12 +1532,42 @@ Provider cash-cost fields remain null; there was no paid API fallback.
 
 This is one successful development trial on authored changes in three previously
 used training notes, not an independent confirmation partition or qualification
-for arbitrary distilled answers. A fresh `--repeat` trial with unchanged
-inputs, prompts, expectations and xhigh settings is the next proposed step to
-check call-to-call stability, without reuse of these answers. No repeat or
-lower-effort calls are authorized by this result. Broader qualification, R05,
+for arbitrary distilled answers. The separately authorized repeat below checks
+the same controls again with eligible shared prefixes. Broader qualification, R05,
 support inheritance, structural allowances, teacher-edge implementation, final
 scoring, bulk grading and final-test unsealing remain open or unadopted.
+
+**Fresh xhigh repeat with eligible caching authorized and completed October 9:**
+the user accepted the proposed fresh repeat, requested caching, then required
+skipping it when shared prefixes are too small. The same DSMv3/DSSv1/DSLv1
+prompts, complete source inputs and authored expectations are reused through
+native `prepare --from ... --repeat --only ...`; GPT-6.1 Sol, xhigh, subscription
+SSE and the concurrency-8 ceiling are fixed. Naturally shared reference
+prefixes are measured before calls, without padding. Only matching L3/L6
+(2,324/2,361 proxy tokens) and support L6 (1,073) receive explicit keys,
+prefixes and native warmups. Shorter shared prefixes and singleton cases do not.
+
+All 16 fresh case-level verdict checks pass and match the baseline decisions:
+6/6 matching, 6/6 support and 4/4 links. Every reason has separate native agent
+acceptance after inspection. The 16 verdicts and three warmups complete on
+first attempts, without failure or answer reuse; the stage budget finishes
+at 19/38 attempts. Matching L3/L6 report 6,528/4,480 cached input tokens.
+Support L6 reports none despite its eligible prefix; the reason is not established.
+Matching/support subset reports retain the original full expectation sets and
+remain pending for cases assigned elsewhere; each selected case passes.
+This is a repeat of the same authored training controls, not new controls or
+an independent confirmation partition.
+
+The [repeat record](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-repeat-with-eligible-prefixes-october-9)
+preserves prefix eligibility, all warmup overhead, per-experiment native usage,
+API-equivalent catalog estimates and latency. Provider cash-cost fields remain
+null; no paid fallback is used. The native prefix route changes seven verdicts
+from a single user message to developer-prefix/user-suffix messages, despite
+identical concatenated text. Agreement holds under that route; cost/latency
+differences do not isolate caching. Broader reviewer qualification and later
+lower-effort comparison remain open. Further calls, bulk grading, final-test
+unsealing and the undecided scoring/structure policies are not adopted by this
+result.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

@@ -464,10 +464,10 @@ without failure, retry or reuse; all seven verdicts and reasons pass the initial
 checks. Cached input and cache writes are zero throughout; these small inputs
 are below the documented caching minimum. See the
 [initial trial record](../../sse_multivector/distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9)
-for native receipts, actual usage, warmup overhead and latency. Broader
-controls, selected large training examples and fresh repeats remain necessary
-before bulk use. The user wants to compare lower reasoning levels later, after
-establishing xhigh reliability. Cases, expected judgments and prompts should
+for native receipts, actual usage, warmup overhead and latency. The larger
+training controls and fresh repeat below extend this evidence; broader
+qualification remains necessary before bulk use. The user wants to compare
+lower reasoning levels later, after establishing xhigh reliability. Cases, expected judgments and prompts should
 stay fixed while measuring semantic errors, latency and actual token usage,
 including cached tokens. Initial settings remain unchanged; recording that
 future intent adds no lower-effort experiment or model calls.
@@ -497,9 +497,20 @@ required. The user then authorized the
 at unchanged Sol / xhigh / concurrency 8. Native qualification passes 6/6
 matching, 6/6 support and 4/4 links, and all 16 reasons have native agent
 acceptances. Every request completed on its first attempt, with no reuse or
-reported cached tokens. A fresh unchanged xhigh repeat is the next proposed
-step; broader qualification and lower-effort comparison remain open. This
-result adds no repeat calls, grading or test unsealing.
+reported cached tokens. The user then authorized a
+[fresh xhigh repeat with eligible prefixes](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-repeat-with-eligible-prefixes-october-9),
+requiring sufficiently large shared prefixes before caching or warming.
+All 16 fresh verdicts agree with the expected and baseline judgments, with
+native agent acceptance of every reason. Exact naturally shared prefixes
+qualify for two matching groups and one support group; small prefixes and
+singleton cases receive no explicit caching or warmup. The two matching groups
+report 6,528 and 4,480 cached input tokens; support L6 reports none despite its
+eligible prefix. All 16 verdicts and three warmups complete on first attempts,
+without reuse. Prompts, inputs, labels and Sol / xhigh / concurrency 8 are fixed;
+the prefix route changes the role split for seven verdicts. Warmup overhead and
+per-experiment usage are recorded, without a causal cache-savings claim. This
+repeats the same authored training controls. Broader qualification and
+lower-effort comparison remain open; no bulk grading or test unsealing is adopted.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

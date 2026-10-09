@@ -137,9 +137,9 @@ The reusable `distillation_verdict` adapter loads source-bound
 wording, ASv6.100 rule excerpts and agreed expectations, deriving immediate
 parents from student numbering and keeping expected answers outside prompts.
 The prompts and GPT-6.1 Sol / xhigh / SSE / concurrency 8 settings are unchanged.
-These seven initial controls do not qualify the reviewer; broader cases and
-fresh repeats remain necessary. No scoring adoption, bulk grading or final-test
-unsealing is authorized. The seven inputs and expected judgments were then shown
+These seven initial controls do not qualify the reviewer; the larger cases and
+fresh repeat below extend the evidence. No scoring adoption, bulk grading or
+final-test unsealing is authorized. The seven inputs and expected judgments were then shown
 in conversation and accepted, then run with three prefix warmups after explicit
 authorization. **All seven verdicts and reasons pass** their initial checks,
 with no failures, retries or reuse. **Zero cache reads or writes** were reported;
@@ -169,9 +169,20 @@ LC02’s changed count and LC06’s first-ban wording fail the relevant checks.
 Those expectation assessments remain separate from individual user approvals
 and the subsequent model results. The user then authorized the 16-request
 trial at unchanged Sol / xhigh / concurrency 8. Every request completed on its
-first attempt, with no reuse or reported cached tokens. A fresh unchanged xhigh
-repeat is the next proposed step; this result adds no repeat or lower-effort
-authorization.
+first attempt, with no reuse or reported cached tokens. The user then authorized
+a [fresh xhigh repeat with eligible prefixes](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-repeat-with-eligible-prefixes-october-9),
+requiring caching and warmups to be skipped where prefixes are too small.
+All 16 fresh verdicts match their expectations and baseline verdicts; all 16
+reasons pass native agent review. Three naturally eligible shared prefixes
+receive warmups; shorter prefixes and singleton cases do not. Matching L3/L6
+report 6,528/4,480 cached input tokens; eligible support L6 reports zero.
+All 19 calls complete on first attempts, without reuse. Prompt text, source
+inputs, expectations and Sol / xhigh / concurrency 8 remain fixed; the native
+prefix route changes the role split for seven verdicts, preventing an isolated
+cache-effect comparison. The record preserves warmup overhead and native
+per-experiment usage. These repeat the same authored training controls;
+broader qualification and lower-effort comparison remain open. No bulk grading
+or final-test unsealing is adopted.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

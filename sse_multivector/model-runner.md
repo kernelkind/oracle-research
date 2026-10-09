@@ -1101,8 +1101,24 @@ production preparation and decoding functions:
   Batches ran sequentially; all requests completed on first attempts, with no
   retries or reuse. Reports record zero cached input/cache writes. These
   preparations have no explicit cache-affinity key or warmup; no warmed/cold
-  savings comparison is claimed. A fresh unchanged xhigh repeat is the next
-  proposed step, without new call authorization from this result.
+  savings comparison is claimed. The user then authorizes the
+  [fresh xhigh repeat with eligible prefixes](distillation-review-v1/README.md#larger-three-check-repeat-with-eligible-prefixes-october-9),
+  excluding caching/warmups for short prefixes. Native `prepare --from ...
+  --repeat --only ...` preserves the same 16 prompts, inputs and expectations
+  across six subsets. Exact shared prefixes include full reference context:
+  matching L3/L6 and support L6 qualify and receive one native warmup each;
+  shorter prefixes and singleton cases receive no explicit key or warmup.
+  All 16 verdicts match expectations and baseline decisions, with native agent
+  acceptance of their reasons. Every request completes on its first attempt,
+  with no reuse. Matching L3/L6 report 6,528/4,480 cached input tokens; support
+  L6 reports zero. Per-experiment native usage preserves all three warmups.
+  The seven prefix-configured verdicts use developer-prefix/user-suffix
+  messages, unlike the baseline's single user message; agreement holds under
+  this route, but no isolated cache-effect or aggregate savings claim is made.
+  Matching/support subset qualification reports remain pending for cases
+  assigned elsewhere; all selected case-level qualifications pass. Sol / xhigh /
+  SSE / concurrency 8 stay fixed. This repeats authored training controls;
+  broader qualification and lower-effort comparison remain open.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

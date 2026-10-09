@@ -1,14 +1,18 @@
 # Distillation semantic review — evidence and matching-only preview
 
 Current three-check development result: **DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4**
-match expectations in the [larger training trial](#larger-three-check-trial-october-9).
-All 16 reasons pass native agent review; all requests completed on first attempts,
-with no reuse or reported cache reads/writes. The user accepted LC03, LC04 and
-LC07 expectations and delegated LC01, LC02, LC05 and LC06 expectation review
-to the agent before authorizing this trial.
+match expectations in both the [larger training trial](#larger-three-check-trial-october-9)
+and its [fresh repeat with eligible prefixes](#larger-three-check-repeat-with-eligible-prefixes-october-9).
+All 16 fresh reasons pass native agent review; every request completed on its
+first attempt, with no answer reuse. The two large matching prefixes produce
+cache hits; the eligible support prefix produces none. Short shared prefixes
+and singleton cases receive no explicit caching or warmup. The user accepted
+LC03, LC04 and LC07 expectations and delegated LC01, LC02, LC05 and LC06
+expectation review to the agent before authorizing these trials.
 The [initial warmed trial](#initial-warmed-three-check-trial-october-9) remains
-separate small-control evidence. A fresh unchanged repeat is the next proposed
-step; broader qualification and lower-effort comparison remain open.
+separate small-control evidence. These are repeated judgments on the same
+authored training controls; broader qualification and lower-effort comparison
+remain open.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -323,8 +327,8 @@ validation and native CLI tests using an offline executable fixture.
 The exact seven inputs and expectations were displayed in conversation and the
 user accepted them, then authorized the initial xhigh trial with prefix warming.
 That trial passes all seven cases below; the larger training trial extends this
-evidence to 16 checks on three training extremes. Broader qualification and
-fresh repeats remain necessary before bulk use. No
+evidence to 16 checks on three training extremes, now repeated below. Broader
+qualification remains necessary before bulk use. No
 support-inheritance policy, structural allowances,
 teacher-edge agreement implementation, final rubric, bulk grading or final-test
 unsealing is adopted by this preparation. R05 remains unresolved.
@@ -405,13 +409,12 @@ example:
 
 These seven small development controls establish only initial prompt behavior.
 The larger training trial below adds source-bound controls on selected training
-extremes. Broader qualification and fresh repeats remain necessary to establish
-reliability; lower-effort comparison remains
-future work. No support-inheritance policy, structural allowance, teacher-edge
+extremes, with a subsequent fresh repeat using eligible shared prefixes.
+Broader qualification remains necessary to establish reliability; lower-effort
+comparison remains future work. No support-inheritance policy, structural allowance, teacher-edge
 implementation, numerical scoring, bulk grading or final-test unsealing is
-adopted. R05 remains unresolved. A later cache measurement should use naturally
-eligible shared prefixes and account for warmup overhead; no additional calls
-are authorized by this result.
+adopted. R05 remains unresolved. The subsequent authorized repeat measures
+naturally eligible shared prefixes and includes warmup overhead below.
 
 ## Larger training controls prepared (October 9)
 
@@ -599,8 +602,8 @@ while generated experiments and the temporary training fixture stay ignored.
 
 Expectation review was completed before calls: three variants have explicit
 user acceptance and four have delegated agent assessments. The subsequent
-authorized trial passes all 16 checks below. Broader qualification, fresh
-repeats and later lower-effort comparison remain open. Support inheritance,
+authorized trial and fresh repeat match all 16 expected verdicts below. Broader
+qualification and later lower-effort comparison remain open. Support inheritance,
 structural allowances, teacher-edge implementation, final scoring, bulk grading
 and test unsealing are not adopted by preparing these inputs. Existing cases, prompts, expected labels and saved trials remain
 unchanged; R05 remains unresolved.
@@ -661,13 +664,109 @@ ignored in the canonical checkout. Inspect exact saved evidence with:
 This is one successful development trial of authored changes on three previously
 used training notes, including the largest teacher catalogs and answers. It
 establishes behavior on these controls, not reliability on arbitrary distilled
-answers or an independent confirmation partition. The next proposed step is a
-fresh `--repeat` trial with the same prompts, inputs, expectations and xhigh
-settings to check call-to-call stability. It must not reuse the 16 saved answers.
-No repeat or lower-effort calls are authorized by this result; broader
-qualification remains open. No support inheritance, structural allowance,
+answers or an independent confirmation partition. The separately authorized
+fresh repeat below checks stability on the same controls and measures eligible
+prefix caching. Broader qualification and lower-effort comparison remain open.
+No support inheritance, structural allowance,
 teacher-edge implementation, final scoring, bulk grading or test unsealing is
 adopted. R05 remains unresolved.
+
+## Larger three-check repeat with eligible prefixes (October 9)
+
+The user authorized a fresh xhigh consistency repeat with caching, then required
+skipping caching and warmups for prefixes that are too small. Native
+`prepare --from ... --repeat --only ...` creates six subsets of the saved three-check trial. All
+16 rendered prompts, source inputs, input hashes and expected judgments remain
+identical to their baselines. GPT-6.1 Sol, xhigh, subscription SSE, schemas and
+the concurrency-8 ceiling remain fixed. The fixed shared reference text ends
+just before `student_subject`; the variable student wording follows it.
+
+Before calls, `tiktoken` 0.14.0 / `o200k_base` measures the naturally shared
+prefixes. These are rendered-text proxies, not provider token counts. Only
+prefixes meeting OpenAI's documented [1,024-token minimum](https://developers.openai.com/api/docs/guides/prompt-caching)
+with more than one use receive an explicit key, exact prefix and native warmup.
+No padding or additional examples are added. The all-case shared prefixes are
+only 469 matching, 635 support and 300 relationship proxy tokens.
+
+| Shared prefix | Proxy tokens | Verdict calls using it | Explicit caching and warmup |
+| --- | ---: | ---: | --- |
+| Matching L3: instructions, full post and complete teacher catalog | 2,324 | 3 | Yes |
+| Matching L6: instructions, full post and complete teacher catalog | 2,361 | 2 | Yes |
+| Support L6: instructions and full post | 1,073 | 2 | Yes |
+| Support L3: instructions and full post | 932 | 3 | No: below minimum |
+| Matching L1: instructions, full post and complete teacher catalog | 2,243 | 1 | No: no repeated use within this trial |
+| Support L1: instructions and full post | 943 | 1 | No: below minimum and used once |
+| Relationship: instructions | 300 | 4 | No: below minimum |
+
+Each qualifying group has one native `--cache-warmup` request, completed before
+its verdict batch. Warmup output never enters a review input. The other nine
+verdicts have no explicit key, prefix or warmup. Batches run sequentially, with
+one to four verdicts each; eight is the ceiling, not measured saturation.
+The persistent stage attempt budget allows 38 attempts for 16 verdicts and
+three warmups under the existing provider-only two-attempt limit. It finishes
+at **19/38**: every call completes on its first attempt, with no failure,
+interruption or answer reuse. No further caching probe is run.
+
+**All 16 fresh verdicts agree with their saved baseline verdicts and authored
+expectations: DSMv3 6/6, DSSv1 6/6, DSLv1 4/4.** Native `show --case` verifies
+each case-level qualification; all 16 reasons have current, hash-bound native
+agent acceptances. Matching/support subset reports retain their full original
+expectation sets, so each reports `pending` for cases assigned to other subsets;
+this is not a semantic failure or full reviewer qualification. The relationship
+report passes its complete four-case set. The decisive reasons remain correct:
+numeric and long paraphrases pass; changed counts, first-ban wording and
+printing-money claims fail their respective checks; removing the time
+restriction retains post support but loses teacher meaning and parent validity;
+the moved child violates its new parent's exclusion. Invalid links include
+possible-post counterexamples.
+
+The following values are copied from the nine native reports under
+`target/distillation-review-v1/large-repeat-caching-20261009/`. Native `input_tokens`
+is the uncached portion; cached input is reported separately. Output includes
+reasoning. API-equivalent catalog estimates are not subscription charges;
+provider cash-cost fields remain null and no paid fallback is used. Every
+report records zero cache-write tokens. Warmup overhead is preserved separately.
+
+| Native experiment | Calls | Uncached input | Cached input | Output | Reasoning | API-equivalent USD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `warmup-matching-l3` | 1 | 2,365 | 0 | 219 | 185 | 0.0069200 |
+| `matching-l3` | 3 | 681 | 6,528 | 324 | 187 | 0.0052548 |
+| `warmup-matching-l6` | 1 | 2,402 | 0 | 226 | 196 | 0.0070640 |
+| `matching-l6` | 2 | 489 | 4,480 | 364 | 233 | 0.0050660 |
+| `matching-rest` | 1 | 2,297 | 0 | 163 | 113 | 0.0062240 |
+| `warmup-support-l6` | 1 | 1,111 | 0 | 189 | 155 | 0.0041120 |
+| `support-l6` | 2 | 2,387 | 0 | 617 | 488 | 0.0109440 |
+| `support-rest` | 4 | 3,991 | 0 | 974 | 756 | 0.0177220 |
+| `relationship` | 4 | 1,655 | 0 | 1,315 | 1,030 | 0.0164600 |
+
+Matching L3 and L6 demonstrate actual cache reads. Support L6 is eligible by
+the proxy measure but returns no cache reads after its warmup; the reason is
+not established. Size eligibility does not guarantee a hit. Matching verdicts
+take 4.75–7.09 s, support 5.51–18.34 s and relationships 9.01–12.41 s.
+The three warmups take 9.30 s, 7.74 s and 8.44 s respectively.
+
+For the seven prefix-configured verdicts, the native runner puts the shared
+prefix in a developer message and the remaining student field in a user
+message. Concatenated prompt text is unchanged, but this role split differs
+from the original trial's single user message. The other nine retain the
+original format. This demonstrates agreement under the cached route; it does
+not isolate caching as the cause of cost or latency differences. No aggregate
+saving or independent-partition accuracy is claimed.
+
+Exact prefix files, the persistent attempt counter, receipts, responses and
+attributed reviews remain ignored in the canonical checkout. Inspect with:
+
+```sh
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/large-repeat-caching-20261009/matching-l3 \
+  --case LM01 --json
+```
+
+This is a second trial on the same 16 authored training checks, not 16 new
+controls. Broader qualification on real distilled answers and later lower-effort
+comparison remain open. No bulk grading, test unsealing, support inheritance,
+structural allowance, teacher-edge implementation or final scoring is adopted;
+R05 remains unresolved. Further calls require separate authorization.
 
 ## Matching-only offline preview
 
