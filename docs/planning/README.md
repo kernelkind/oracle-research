@@ -150,6 +150,15 @@ wants to compare lower reasoning levels later, after establishing reliability
 with xhigh. Keep cases, expectations and prompts fixed for that comparison and
 measure semantic errors, latency and token usage, including cached tokens. No
 lower-effort settings or experiment calls are adopted by recording this intent.
+The user then authorized a
+[larger training-control preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
+before further calls. It uses three existing training extremes and seven
+controlled student variants, preparing six DSMv3, six DSSv1 and four DSLv1
+inputs with unchanged prompts and model settings. All 16 remain unrun;
+expectations are proposed agent judgments awaiting conversational review.
+The first case drops a three-day restriction, separating lost complete teacher
+meaning from supported remaining wording and an invalid parent-child link.
+Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

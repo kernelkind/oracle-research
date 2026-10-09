@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "review_source": {
+    "path": "large-training-source.json",
+    "sha256": "42bfdeb6c89f1f2c454799b4cd35db6126e516c8f8094ceceb206c06f72f1537"
+  },
+  "cases": [
+    {
+      "id": "LM01",
+      "case": "LC01",
+      "student_number": "1.1.5",
+      "replacements": [],
+      "expected_teacher_number": "1.1.5",
+      "expected_reason": "Changing two to 2 preserves the complete dated headline, both people, Northern Israel and the preceding reservist event.",
+      "partition": "development"
+    },
+    {
+      "id": "LM02",
+      "case": "LC02",
+      "student_number": "1.1.5",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "Three people differs from the two people in the teacher and post; no complete teacher wording matches the altered headline.",
+      "partition": "development"
+    },
+    {
+      "id": "LM03",
+      "case": "LC03",
+      "student_number": "18.1.1.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "Dropping in three days loses the displacement time window; the dated United Nations headline no longer preserves its complete teacher meaning.",
+      "partition": "development"
+    },
+    {
+      "id": "LM04",
+      "case": "LC04",
+      "student_number": "2.3.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "The teacher says designing monetary rules rather than printing money. The student says designing monetary rules and printing money, changing the exclusion into a combination of both activities.",
+      "partition": "development"
+    },
+    {
+      "id": "LM05",
+      "case": "LC05",
+      "student_number": "1.2.2.1.1",
+      "replacements": [],
+      "expected_teacher_number": "1.2.2.1.1",
+      "expected_reason": "The passive wording preserves the renewed banning of the same account, the video release purpose and all remaining descriptions and mocking clauses.",
+      "partition": "development"
+    },
+    {
+      "id": "LM06",
+      "case": "LC06",
+      "student_number": "1.2.2.1.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "First account ban contradicts renewed account ban; the rest of the long composite does not restore the changed event restriction.",
+      "partition": "development"
+    }
+  ]
+}

@@ -1414,6 +1414,42 @@ preparations remain unrun; actual outputs and receipts are in separate ignored
 warmup/warmed experiment directories. No additional trial is launched by
 recording this result.
 
+**Larger training-control preparation authorized October 9:** after the initial
+seven-case pass, the user accepted preparing harder controlled student changes
+from the largest saved ASv6.100 training answers and presenting them before
+calling models. The teacher answers remain trusted. The preview selects the
+existing ranked maximum-entry note (145 entries), maximum-distinct-catalog note
+(72 wordings) and longest-answer note (35,966 bytes), with training identity,
+line and file hash verified against the saved ranking. No held-out post or
+subject becomes development input.
+
+Seven proposed variants cover numeric and long-composite paraphrases, changed
+quantity, a lost time restriction, removed negation, first versus renewed ban,
+and moving a trusted subject beneath a parent that excludes its named person.
+Unchanged adapters prepare six DSMv3, six DSSv1 and four DSLv1 requests. The
+teacher catalogs and original posts remain complete; selected link inputs derive
+actual immediate parents from student numbering. Exact trusted wording in the
+wrong-parent variant adds no matching/support calls. Expected decisions and
+reasons remain outside prompts. The loss of the three-day window deliberately
+proposes different results: no complete teacher match, supported remaining
+subject, invalid parent-child link.
+
+All 16 inputs are unrun, with zero attempts/reuse and fixed Sol / xhigh /
+subscription SSE / concurrency 8 settings. Matching preparation reports
+14,208 rendered proxy tokens total, 2,260–2,441 per request; no provider usage or
+caching measurement is claimed. Four edits reuse previous authored matching
+controls; this is development evidence, not a fresh confirmation partition.
+The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9) preserves exact changes,
+proposed expectations and native inspection/preparation commands. The user has
+authorized preparation, **not approved these new judgments or authorized their
+model calls**. Thirty-six existing production preparation/validation tests pass
+with the documented tokenizer dependency; default Python initially lacked it.
+No prompt, adapter, general teacher-edge check or scoring implementation changes
+are needed. Qualification, repeats and lower-effort comparison remain open;
+R05, support inheritance, structural allowances, bulk grading and final-test
+unsealing are unchanged or unresolved. The first case presented for discussion
+is the dropped time restriction.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

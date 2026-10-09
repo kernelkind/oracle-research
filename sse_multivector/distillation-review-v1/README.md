@@ -5,6 +5,8 @@ agree with the accepted expectations. All seven reasons pass agent inspection.
 Three prefix warmups completed, with zero cache reads or writes throughout.
 See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
 These small controls do not qualify bulk review.
+The next [larger training-control preview](#larger-training-controls-prepared-october-9)
+contains 16 unrun inputs and proposed judgments awaiting conversational review.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -405,6 +407,139 @@ implementation, numerical scoring, bulk grading or final-test unsealing is
 adopted. R05 remains unresolved. A later cache measurement should use naturally
 eligible shared prefixes and account for warmup overhead; no additional calls
 are authorized by this result.
+
+## Larger training controls prepared (October 9)
+
+After the initial seven-case trial, the user authorized preparing harder
+controlled changes from the largest ASv6.100 training answers and presenting
+them before further model calls. The teacher answers remain trusted. These
+are **proposed authored expectations**, not approved case judgments or measured
+model verdicts. The first case for discussion is LC03 below, which separates
+complete teacher meaning, post support and parent restriction preservation.
+
+The existing source-bound ranking selected eight training extremes from all
+1,300 answers. This preview uses three of them, spanning the maximum entry
+count, maximum distinct-wording catalog and longest saved answer. Their training
+identities, saved line numbers and file hash agree with that ranking. No held-out
+post or subject is used as development input.
+
+| Reference | Existing case / note prefix | Why selected | Entries | Distinct teacher wordings | Answer bytes |
+| --- | --- | --- | ---: | ---: | ---: |
+| L1 | Q20 / `af8e33af` | Most entries | 145 | 66 | 32,021 |
+| L3 | Q24 / `166d3861` | Largest distinct catalog | 137 | 72 | 25,845 |
+| L6 | Q27 / `9affd0a1` | Longest saved answer | 130 | 47 | 35,966 |
+
+[large-training-source.json](large-training-source.json) binds the original
+ASv6.100 prompt and complete saved training responses by SHA256, training line
+and note ID. It defines six exact wording edits and one subtree move. Each
+wording edit touches one selected leaf; the teacher catalog and post are loaded
+unchanged. LC07 moves the existing Dr. Abu Safiya subtree beneath the subject
+about other health workers. Student numbering derives that actual immediate
+pair; its subject strings remain exact trusted teacher wording.
+
+| Variant | Source / selected student number | Exact change | Matching expectation | Post-support expectation | Selected link expectation |
+| --- | --- | --- | --- | --- | --- |
+| LC01 | L3 / `1.1.5` | `kills two people` → `kills 2 people` | LM01: T07 | LS01: true | No link call |
+| LC02 | L3 / `1.1.5` | `kills two people` → `kills three people` | LM02: null | LS02: false | No link call |
+| LC03 | L3 / `18.1.1.1` | Remove ` in three days` | LM03: null | LS03: true | LL01: false |
+| LC04 | L1 / `2.3.1` | `rather than printing money` → `and printing money` | LM04: null | LS04: false | No link call |
+| LC05 | L6 / `1.2.2.1.1` | `released to mark YouTube’s renewed account ban` → `released to mark the renewed banning of the group’s account by YouTube` | LM05: T07 | LS05: true | LL02: true |
+| LC06 | L6 / `1.2.2.1.1` | `YouTube’s renewed account ban` → `YouTube’s first account ban` | LM06: null | LS06: false | LL03: false |
+| LC07 | L3 / `6.2.2.2` after move | Move subtree `6.2.1` beneath `6.2.2` as `6.2.2.2` | Exact teacher wording; no call | Trusted wording; no call | LL04: false |
+
+T07 is local to each teacher catalog: LM01 names the complete dated attacker
+headline; LM05 names the complete video description and its combined mocking
+clauses. Different notes do not share a global teacher ID. All other matching
+expectations are null after inspecting the complete catalog; no closest or
+partial match is accepted. Four wording edits reuse previously authored DSMv1
+controls (M21/M22/M27/M28). All three source notes have appeared in development
+before; this preview is not an independent confirmation partition.
+
+For LC03, the original teacher subject is:
+
+> December 29, 2025 headline: the United Nations reports that violence in Sudan displaced more than 10,000 people in three days
+
+The edited student subject is:
+
+> December 29, 2025 headline: the United Nations reports that violence in Sudan displaced more than 10,000 people
+
+Its unchanged immediate student parent is:
+
+> More than 10,000 people displaced by violence in Sudan in three days
+
+Proposed judgments: no complete teacher match because the time window is lost;
+post support passes because the remaining meaning is expressed by the post;
+the link fails because the child omits the parent's three-day restriction.
+A possible December 29 headline reporting that displacement over a month fits
+the child without supporting the parent. The full post is preserved in matching
+and support inputs. The parent-child prompt receives only these two strings.
+
+LC05/LC06 retain the full long composite about the Loser 2 video, its release
+purpose and all three mocking clauses. LL02 checks that the passive paraphrase
+preserves the complete parent; LL03 checks that a first ban cannot supply a
+renewed ban. Its possible counterexample describes the same video and mocking
+clauses released to mark a first-ever account ban. For LL04, the parent is
+`Health workers other than Dr. Abu Safiya abducted from Gaza`, while the child
+is `Dr. Abu Safiya, a health worker abducted from Gaza`. A post describing only
+Dr. Abu Safiya's abduction fits that child without supporting the excluded-person
+parent. LC07 changes the relationship while preserving all subject wordings.
+No general teacher-edge comparison or final scoring implementation is added.
+
+The unchanged `distillation_matching` and `distillation_verdict` adapters prepare
+**six DSMv3, six DSSv1 and four DSLv1 inputs**, all unrun with zero attempts/reuse.
+The source-bound selectors and specifications are:
+
+- [matching selectors](large-training-matching-source.json) and [spec](large-training-matching-spec.json);
+- [support selectors](large-training-support-source.json) and [spec](large-training-support-spec.json);
+- [relationship selectors](large-training-relationship-source.json) and [spec](large-training-relationship-spec.json).
+
+Expected verdicts and reasons remain outside prompts. DSMv3 receives the complete
+66/72/47-wording catalog, post and one changed student subject. DSSv1 receives
+the complete post and that same subject. DSLv1 receives one actual immediate
+student pair, with the unchanged authoritative rule. Generic incoming pairs
+for LC01/LC02 add no link calls in this preview; LC04 focuses on matching and
+post support. LC07 adds no semantic
+matching or support work for exact trusted strings.
+
+All specifications preserve `openai-codex` / `gpt-6.1-sol` / `xhigh`, subscription
+SSE, concurrency 8 and unchanged response schemas. Native matching sizing reports
+14,208 total rendered `o200k_base` proxy tokens, 2,260–2,441 per request, with at
+most 72 distinct teacher wordings. These are offline text sizes, not provider
+usage, latency, cache hits or measured costs. Preparation adds no warmup request
+or claim of caching benefit. No whole hierarchy or all-pairs model review is
+added: this preview has 16 verdict requests if subsequently authorized, before
+warmups or any permitted provider retries.
+
+Reproduce preparations in an environment providing `tiktoken==0.14.0`:
+
+```sh
+../experiment-runner/bin/experiment-runner prepare \
+  target/distillation-review-v1/large-training-matching-20261009 \
+  --spec sse_multivector/distillation-review-v1/large-training-matching-spec.json
+../experiment-runner/bin/experiment-runner prepare \
+  target/distillation-review-v1/large-training-support-20261009 \
+  --spec sse_multivector/distillation-review-v1/large-training-support-spec.json
+../experiment-runner/bin/experiment-runner prepare \
+  target/distillation-review-v1/large-training-relationship-20261009 \
+  --spec sse_multivector/distillation-review-v1/large-training-relationship-spec.json
+```
+
+Native `show --case LM03 --prompt-only` on the matching experiment displays the
+complete model input; `show --case LL01 --json` on the relationship experiment
+displays its exact pair and separate expected evidence. Prompt bytes, paired
+student wording, source hashes and actual parents are verified through the
+existing production preparation paths. The 36 relevant preparation/validation
+regressions pass with `tiktoken`; the default Python initially failed because
+that dependency was absent. No adapter or prompt implementation changes were
+needed. Ignore exceptions keep the seven reusable source/spec JSON files tracked,
+while generated experiments and the temporary training fixture stay ignored.
+
+The proposed judgments need review in the conversation before inference.
+Broader qualification, fresh repeats and later lower-effort comparison remain
+open. Support inheritance, structural allowances, teacher-edge implementation,
+final scoring, bulk grading and test unsealing are not adopted by preparing
+these inputs. Existing cases, prompts, expected labels and saved trials remain
+unchanged; R05 remains unresolved.
 
 ## Matching-only offline preview
 

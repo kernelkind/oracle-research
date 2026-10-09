@@ -472,6 +472,17 @@ stay fixed while measuring semantic errors, latency and actual token usage,
 including cached tokens. Initial settings remain unchanged; recording that
 future intent adds no lower-effort experiment or model calls.
 
+The user subsequently authorized preparing
+[larger training controls](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
+for presentation before new model calls. Seven controlled changes use three
+existing ranked training extremes: maximum entries, maximum distinct catalog,
+and longest answer. Unchanged DSMv3/DSSv1/DSLv1 preparations contain 6/6/4
+requests, all unrun, with proposed authored judgments outside prompts. The
+trusted teacher catalog and post stay complete; link inputs derive actual
+student parents. The first proposed case loses a three-day restriction while
+retaining post support. These expectations still need conversational review;
+preparation authorizes no new calls, qualification, grading or test unsealing.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies
