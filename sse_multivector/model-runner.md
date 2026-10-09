@@ -1007,6 +1007,12 @@ production preparation and decoding functions:
   object with `teacher_id` (a supplied ID or null) and `reason`. Subject support
   and parent-child validity remain separate judgments; the approval changes
   no prompt or schema, qualifies no reviewer and authorizes no new calls.
+  The authorized [DSSv1 subject-support draft](distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
+  is a reusable prompt only: `SUPPORT_INPUT` contains the full post and one
+  `student_subject`; the decision is Boolean `valid` and string `reason`.
+  No support experiment, dataset adapter or response schema has been added.
+  The prompt, controls and proposed support inheritance await approval; no
+  experiment preparation, inference or scoring behavior changes occur here.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

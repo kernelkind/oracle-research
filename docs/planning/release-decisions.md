@@ -1272,6 +1272,21 @@ The two prepared teacher-relative matching cases remain unrun, and R05's
 disputed match remains unresolved. See the
 [instruction approval](../../sse_multivector/distillation-review-v1/README.md#dsmv2-matching-instructions-approved-october-9).
 
+**DSSv1 subject-support prompt drafting authorized October 9:** the user
+accepted proceeding with a draft for review in the conversation. The proposed
+judgment checks whether the complete post supports every meaning actually
+expressed by one subject with no complete teacher match, including supported
+broader headings. DSSv1 applies the relevant ASv6.100 rules and returns exactly
+one JSON object with Boolean `valid` and string `reason`. Its input contains
+only the full post and one subject; it does not receive a teacher catalog or
+candidate hierarchy. The prompt and the proposed `Lengths` / `4 m cable A`
+controls await approval and qualification. Deriving post support from correct
+complete teacher matches remains a proposed process change; semantic matches
+also require a qualified matcher. No support experiment, adapter, schema,
+scorer change, inference or bulk adoption is authorized by drafting. Existing
+prompts and saved evidence are preserved. See the
+[DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

@@ -128,6 +128,25 @@ Subject support and parent-child validity remain separate judgments. No new
 calls or changes to case sources or scoring followed from this approval; both
 prepared teacher-relative requests remain unrun and R05 remains disputed.
 
+## DSSv1 subject-support prompt draft (October 9)
+
+The user authorized drafting [DSSv1](support-prompt-v1.md) for review in the
+conversation. It asks whether every meaning expressed by one unmatched subject
+is supported by the complete post, applying ASv6.100's subject-support rules.
+Supported broader headings can pass; one unsupported detail makes the subject
+fail. The input is one JSON object with `post` and `student_subject`, inserted
+at `SUPPORT_INPUT`. The output is exactly `valid` (Boolean) and `reason` (string).
+Teacher coverage and parent-child validity remain separate checks.
+
+For the trusted cable post, `Lengths` passing and `4 m cable A` failing are
+proposed authored controls, not model verdicts or approved qualification cases.
+They are input examples for human review, not worked examples embedded in DSSv1.
+No experiment has been prepared and no model calls have been made for DSSv1.
+The prompt is untested and awaits approval. The proposed inheritance of post
+support from correct complete teacher matches still needs process approval;
+relying on semantic matches also requires qualifying the matcher. Existing
+prompts, schemas, adapters, scoring and saved trials are unchanged.
+
 ## Matching-only offline preview
 
 The October 8 approval authorizes drafting and offline preparation of

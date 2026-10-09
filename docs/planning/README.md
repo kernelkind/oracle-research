@@ -108,6 +108,10 @@ On October 9 the user approved the unchanged
 The decision format is one JSON object with `teacher_id` and `reason`;
 subject support and parent-child validity remain separate judgments.
 Qualification and new calls remain open.
+The user then authorized a [DSSv1 subject-support prompt draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
+for review in the conversation. It uses the full post and one unmatched subject;
+the prompt and authored controls are untested and await approval. Existing
+matching/review behavior is unchanged and no support experiment is prepared.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

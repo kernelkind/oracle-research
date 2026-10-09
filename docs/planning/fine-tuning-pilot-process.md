@@ -404,6 +404,12 @@ the decision is one JSON object with `teacher_id` and `reason`. Subject support
 and parent-child validity remain separate judgments. Qualification, new calls
 and final scoring remain open; R05 is not resolved by approving the wording.
 
+The subsequently authorized [DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
+judges post support for one unmatched subject from the full post, returning
+Boolean `valid` and string `reason`. The prompt, controls and proposed support
+inheritance from teacher matches await approval; no support experiment or
+model calls have been prepared. Existing review/scoring behavior is unchanged.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies
