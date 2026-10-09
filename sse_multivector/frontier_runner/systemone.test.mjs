@@ -66,12 +66,14 @@ test('Jev errors preserve HTTP/retry metadata, redact secrets, and never retry',
   let calls = 0;
   const result = await execute(await prepare(config()), { apiKey: 'secret-value', fetch: async () => {
     calls++;
-    return Response.json({ error: { code: 429, message: 'secret-value busy' } }, { status: 429, headers: { 'retry-after': '3' } });
+    return Response.json({ error: { code: 429, message: 'secret-value busy' } }, { status: 429,
+      headers: { 'retry-after': '3', 'x-agent-request-id': 'proxy-systemone-fixture' } });
   } });
   assert.equal(calls, 1);
   assert.equal(result.valid, false);
   assert.equal(result.response_metadata.http_status, 429);
   assert.equal(result.response_metadata.retry_after, '3');
+  assert.equal(result.response_metadata.proxy_request_id, 'proxy-systemone-fixture');
   assert.equal(result.usage, null);
   assert.ok(!JSON.stringify(result).includes('secret-value'));
 });

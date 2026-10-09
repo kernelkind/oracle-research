@@ -1879,6 +1879,106 @@ class ExperimentTests(unittest.TestCase):
                 self.assertEqual(prompt_failure_kind(candidate), expected)
                 self.assertIsNone(provider_retry_delay(candidate))
 
+    def test_verified_upstream_goaway_retries_and_pauses_fresh_cases(self):
+        self.prepare()
+        waits, starts = self.execute_with_backoff_clock({'Tea': {
+            'attempts': 1,
+            'metadata': {'http_status': 200, 'proxy_status': {
+                'state': 'unknown', 'error_phase': 'body', 'read_error_kind': 'http2_goaway',
+                'read_error_code': 'enhance_your_calm', 'request_context': 'active',
+            }},
+        }})
+        self.assertEqual(waits, [2.0])
+        self.assertEqual([c['prompt'].splitlines()[0] for c in self.calls()],
+                         ['GENERIC PROMPT Tea {POST}', 'GENERIC PROMPT Tea {POST}',
+                          'GENERIC PROMPT Coffee'])
+        self.assertEqual([t for _, t in starts], [1000.0, 1002.0, 1002.0])
+        self.assertEqual(self.show()['summary']['valid'], 2)
+
+    def test_proxy_status_contract_requires_active_upstream_error_evidence(self):
+        from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_cooldown_required
+        evidence = {'state': 'unknown', 'error_phase': 'body', 'request_context': 'active',
+                    'read_error_kind': 'http2_goaway', 'read_error_code': 'enhance_your_calm'}
+        cases = [
+            (evidence, 'provider_transient', True),
+            ({**evidence, 'terminal_event': 'completed'}, 'local', False),
+            ({**evidence, 'error_phase': None}, 'unknown', True),
+            ({**evidence, 'state': 'in_flight'}, 'unknown', True),
+            ({**evidence, 'read_error_kind': 'other', 'read_error_code': 'other'}, 'unknown', True),
+            ({**evidence, 'state': 'canceled', 'request_context': 'canceled',
+              'read_error_kind': 'context_canceled'}, 'unknown', False),
+            ({**evidence, 'state': 'deadline_exceeded', 'request_context': 'deadline_exceeded',
+              'read_error_kind': 'deadline_exceeded'}, 'unknown', False),
+        ]
+        for proxy, kind, cooldown in cases:
+            with self.subTest(proxy=proxy):
+                record = {'exit_code': 1, 'model_result': {'provider': 'openai-codex',
+                    'stop_reason': 'error', 'response_metadata': {
+                        'http_status': 200, 'transport_error': {'phase': 'body'}, 'proxy_status': proxy}}}
+                self.assertEqual(prompt_failure_kind(record), kind)
+                self.assertEqual(provider_cooldown_required(record), cooldown)
+
+    def test_explicit_stream_failures_share_provider_classification(self):
+        from sse_multivector.extraction_pipeline import prompt_failure_kind
+        for metadata in [
+            {'http_status': 200, 'error': {'code': 'server_is_overloaded'}},
+            {'http_status': 200, 'error': {'code': 'rate_limit_exceeded'}},
+            {'http_status': 101, 'id': 'resp-fixture', 'websocket_close': {'code': 1011},
+             'transport_error': {'phase': 'body'}},
+        ]:
+            with self.subTest(metadata=metadata):
+                self.assertEqual(prompt_failure_kind({'exit_code': 1, 'model_result': {
+                    'provider': 'openai-codex', 'stop_reason': 'error',
+                    'response_metadata': metadata}}), 'provider_transient')
+
+    def test_provider_terminal_failure_requires_its_own_retry_evidence(self):
+        from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_retry_delay
+        for state in ('failed', 'incomplete'):
+            record = {'exit_code': 1, 'attempt': 1, 'model_result': {
+                'provider': 'openai-codex', 'stop_reason': 'error',
+                'response_metadata': {'http_status': 200, 'transport_error': {'phase': 'body'},
+                    'proxy_status': {'state': state, 'terminal_event': state,
+                        'error_phase': 'body', 'request_context': 'active',
+                        'read_error_kind': 'http2_goaway', 'read_error_code': 'enhance_your_calm'}}}}
+            with self.subTest(state=state):
+                self.assertEqual(prompt_failure_kind(record), 'unknown')
+                self.assertIsNone(provider_retry_delay(record))
+                record['model_result']['response_metadata']['error'] = {'code': 'server_error'}
+                self.assertEqual(prompt_failure_kind(record), 'provider_transient')
+                self.assertEqual(provider_retry_delay(record), 2)
+
+        # A local output-length failure cannot gain a retry from an unrelated
+        # socket close even if status lookup has no terminal label.
+        record['model_result']['stop_reason'] = 'length'
+        record['model_result']['response_metadata'].pop('error', None)
+        record['model_result']['response_metadata']['proxy_status'].update(state='unknown', terminal_event=None)
+        self.assertEqual(prompt_failure_kind(record), 'unknown')
+        self.assertIsNone(provider_retry_delay(record))
+
+    def test_completed_proxy_stream_has_no_cooldown_even_when_client_read_failed(self):
+        from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_cooldown_required
+        record = {'exit_code': 1, 'model_result': {'stop_reason': 'error',
+                  'response_metadata': {'http_status': 200, 'proxy_status': {
+                      'state': 'complete', 'read_error_kind': 'context_canceled',
+                      'request_context': 'canceled'}, 'transport_error': {'phase': 'body'}}}}
+        self.assertEqual(prompt_failure_kind(record), 'local')
+        self.assertFalse(provider_cooldown_required(record))
+
+    def test_unclassified_body_disconnect_pauses_without_retrying_case(self):
+        self.prepare()
+        waits, starts = self.execute_with_backoff_clock({'Tea': {
+            'attempts': 1,
+            'metadata': {'http_status': 200, 'transport_error': {
+                'phase': 'body', 'name': 'TypeError', 'message': 'terminated',
+                'cause': {'name': 'SocketError', 'code': 'UND_ERR_SOCKET'},
+            }},
+        }}, failed=True)
+        self.assertEqual(waits, [2.0])
+        self.assertEqual([t for _, t in starts], [1000.0, 1002.0])
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(self.show()['summary']['failed'], 1)
+        self.assertEqual(self.show()['summary']['valid'], 1)
+
     def test_provider_backoff_pauses_fresh_cases_before_retry(self):
         self.prepare()
         waits, starts = self.execute_with_backoff_clock({'Tea': {

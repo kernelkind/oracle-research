@@ -548,6 +548,24 @@ regardless of configured concurrency. Only an explicit temporary provider error
 beginning `Codex error: An error occurred while processing your request. You can
 retry your request, or contact us` also qualifies, only with provider
 `openai-codex` and stop reason `error`; arbitrary error prose does not.
+The native worker also retrieves a sanitized status for an interrupted proxied
+request using its local request reference. An active upstream socket failure or
+recognized temporary HTTP/2 error qualifies even after HTTP 200. For example,
+`http2_goaway / enhance_your_calm / active` is a provider failure. Unknown
+transport interruptions pause launches without granting the failed case a retry.
+Cancellation or read errors after `response.completed` retain successful
+completion and do not start cooldown.
+The worker requires status schema 1 and a matching `request_id`. The proxy's
+`state=unknown` describes missing terminal completion/accounting; fixed active
+upstream error evidence with `error_phase=headers/body` can still establish a
+temporary provider failure. Generic EOF cannot. Proxy terminal labels are
+`completed/failed/incomplete`; `completed` takes precedence over read errors.
+Canceled/deadline-exceeded proxy records do not turn local failures into cooldown.
+An HTTP 101 handshake status is not per-generation WebSocket terminal evidence.
+Failed/incomplete provider terminals need their own explicit temporary provider error;
+a later socket error cannot grant that case a retry. Confirmed interrupted
+transport retries require `state=unknown`, no terminal event and SDK stop reason
+`error`; output-length/validation failures retain their existing rules.
 Each case has at most two total
 attempts across resumes, with a two-second minimum delay. `Retry-After` is
 honored; invalid values or waits above 60 seconds leave the case unresolved
@@ -562,14 +580,48 @@ any longer valid `Retry-After` extends it, even above the internal 60-second cap
 and even when the failed case has no retry left. Fresh cases and eligible retries
 both wait. A new successful request sent after the wait resets the exponential
 delay; saved/reused answers and calls sent before the wait do not establish
-recovery. Local failures do not trigger provider backoff.
+recovery. Local cancellation, deadlines and validation failures do not trigger
+provider backoff.
 
 Once the shared wait expires, eligible retries run before untouched cases, ordered by
 retry deadline. Already-running calls are not interrupted. Resuming also applies
 the shared wait from saved transient failures, without changing retry eligibility
-or the two-total-attempts limit. The backoff is internal to one batch invocation,
-which uses one configured provider/credential route; it does not coordinate
-separate runner processes or ordinary Codex chats.
+or the two-total-attempts limit. The executor keeps this batch wait and retry
+ordering. Native experiment workers additionally share admission across processes
+on this host, after resolving the already-selected local Pi route. Account errors
+pause that account; connection-wide upstream errors pause experiment traffic
+sharing the upstream transport. Ordinary Codex chats do not enter this scheduler,
+but existing upstream infrastructure remains shared.
+
+After a shared cooldown, one queued request is admitted first. Successful requests
+increase the shared recovery limit through 2, 4, 8 and onward, bounded by the
+workers' configured concurrency. Full successful recovery clears the exponential
+delay. Requests admitted before the failure cannot establish recovery; additional
+failures from that group extend the current wait without doubling it. No extra
+model probes are sent. Each resend still consumes its normal attempt/spend
+reservation; waits do not refund or reset counters. Shared admission waits occur
+before the request deadline starts and are recorded as `admission_wait_ms`.
+
+`provider_backoff.py` uses private, bounded file state and file locks under
+`$XDG_CACHE_HOME/oracle-mvp/provider-backoff` (default `~/.cache`). Worker PID/start
+time and request leases release abandoned recovery slots; state belongs to the
+current host boot. Invalid state refuses admission. The native experiment
+executor enables this behavior internally; general `run-model.sh` callers retain
+their existing execution contract. `ORACLE_EXPERIMENT_BACKOFF_DIRECTORY` can
+select a private state directory for an isolated local fixture.
+
+The worker's scope/status reads use the existing local capability and only the
+configured loopback credential service. They perform no upstream requests. A
+missing post-request status leaves the cause unknown. Before dispatch, scope
+discovery requires schema 1 and both valid opaque account/transport identifiers.
+Unavailable or invalid discovery, or unavailable admission state, stops new
+scheduling without marking unsent cases as terminal provider failures. Existing
+worker reservations remain consumed; waits/errors do not refund/reset budgets.
+There is no route-identifier fallback that could bypass an opaque scope's wait.
+The scope endpoint is a prerequisite for adopting this native experiment worker.
+Request-status storage is independent of usage-history retention. Proxy deployment
+and runner adoption are separate operations; existing frozen workers/receipts are
+not silently upgraded.
 
 Provider authentication, credit/permission or endpoint errors (401, 402, 403,
 404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
