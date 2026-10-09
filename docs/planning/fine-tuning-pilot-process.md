@@ -559,7 +559,21 @@ added presentation/action requirement absent from the parent and accepts a
 retained restriction in a clause or modifier while rejecting mere mention that
 drops its meaning. The AS rule, pair inputs, verdict/counterexample contract,
 labels and settings remain unchanged. No experiment is prepared or model called;
-wording approval, semantic testing and qualification remain pending.
+wording approval, semantic testing and qualification remain pending at this
+drafting stage. The user subsequently approves the exact wording and
+[bounded parent-child trial](../../sse_multivector/distillation-review-v1/README.md#dslv2-bounded-parent-child-trial-october-9):
+19 original pairs, seven training controls and four fresh unchanged DSLv1
+comparisons, preserving model/settings/AS wording and source labels. A06 remains
+excluded; A12's interpretation issue is recorded before calls and separated
+from the 25 uncontested DSLv2 assessments without relabelling. Thirty verdicts
+share a 60-attempt limit. Prefixes are short, so no warming occurs. DSLv2 agrees
+with 24/25 assessed expectations; A12 is separately uncertain and A21 still
+fails. Fresh DSLv1 also fails A21, agreeing on 3/4 comparisons. All 30 first
+attempts complete without reuse or retries; native reviews give 27 accept, two
+reject and one uncertain. Training controls pass native qualification; broader
+qualification remains pending. The clarification does not resolve the failure
+at Sol/xhigh. Reconsidering the check against trusted teacher relationships is
+recommended; no new method is adopted and other checks/sealed data stay intact.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

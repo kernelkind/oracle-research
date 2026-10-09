@@ -1182,7 +1182,25 @@ production preparation and decoding functions:
   hashes and template-variable checks pass; no source, adapter, output schema,
   model setting, frozen expectation or prior experiment changes. No experiment
   is prepared and no model is called. Wording approval and semantic testing
-  remain pending, without qualifying the reviewer for bulk use.
+  remain pending at the drafting stage, without qualifying the reviewer for
+  bulk use. The user subsequently approves the wording and
+  [bounded DSLv2 trial](distillation-review-v1/README.md#dslv2-bounded-parent-child-trial-october-9).
+  Native `prepare --from ... --repeat` freezes 19 actual pairs, seven training
+  controls and four fresh DSLv1 comparisons with the same A02/A13/A16/A21 pairs.
+  A06 remains excluded; the pre-call A12 interpretation caution is kept separate
+  from assessed outcomes, without changing the label. All 30 verdicts retain
+  Sol / xhigh / SSE / concurrency 8 and share a 60-attempt counter. The current
+  worker is explicitly selected; no cache prefix, padding or warmup is used.
+  DSLv2 agrees with 24/25 assessed expectations; A12 remains separately uncertain
+  and A21 still fails. Fresh unchanged DSLv1 agrees on 3/4 comparisons, also
+  rejecting A21. All 30 requests complete on first attempts without reuse,
+  retry, truncation or warmup; the budget ends at 30/60. Native reviews give
+  27 accept, two reject and one uncertain. Source/settings/receipt checks pass.
+  No cached tokens or net savings occur. Usage/pricing are complete; provider
+  cash charges are unavailable. Training-control qualification passes; actual
+  and broader qualification remain pending. The clarification does not resolve
+  the observed failure. Reconsidering the check using trusted teacher
+  relationships is recommended, without adopting another prompt or method.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

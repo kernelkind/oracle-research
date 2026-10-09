@@ -1,9 +1,11 @@
 # Distillation semantic review — process and evidence
 
-[DSLv2](relationship-prompt-v2.md) is an untested
-[draft clarification](#dslv2-parent-restriction-clarification-draft-october-9)
-for the repeated parent-child A21 error. The user authorizes drafting and showing
-the wording before calls. Wording approval and semantic testing remain pending.
+[DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
+approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
+with **24/25 assessed expectations**; interpretation-sensitive A12 is reported
+separately. Fresh unchanged DSLv1 also rejects A21, agreeing on 3/4 comparisons.
+The clarification has not resolved this failure; reviewer qualification stays
+pending. All 30 calls complete on first attempts without caching or warmup.
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
@@ -1282,7 +1284,119 @@ called for this draft. Wording approval precedes a bounded semantic test of the
 repeated failure, accepted contrasts and invalid controls. Actual A06's
 anticipated-versus-realized ambiguity remains unresolved and its label stays
 frozen. Qualification, DSSv2/DSMv3 status, bulk grading, lower-effort comparison
-and sealed test data retain their existing status.
+and sealed test data retain their existing status. The user subsequently approves
+the displayed wording and bounded trial below.
+
+### DSLv2 bounded parent-child trial (October 9)
+
+After seeing the exact added instructions, the user directs proceeding with
+the bounded semantic test. DSLv2 remains byte-for-byte the shown draft. ASv6.100
+is trusted; support/matching prompts, sources, labels, scoring and sealed tests
+are unchanged. Sol / xhigh / subscription SSE / concurrency 8 stay fixed.
+
+The frozen scope is 19 original actual-output pairs, excluding already-ambiguous
+A06, and all seven existing training controls TL01–TL03/LL01–LL04. A fresh
+unchanged DSLv1 comparison uses the same A02/A13/A16/A21 pairs: one clear
+invalid pair, two accepted contrasts and the repeated failure. This is 30
+verdict calls, bounded by a shared 60-attempt counter allowing provider-only
+retries with at most two attempts per case. No prompt or case is truncated.
+
+The pre-call audit supports 18 actual labels and all seven training labels.
+It additionally identifies interpretation-sensitive A12: “with David Marcus's
+response” can naturally refer to the named warning, while the frozen false
+label treats its target as unspecified. A12 keeps its saved label and is called
+as separate evidence, outside the 25 uncontested DSLv2 assessments. This caution
+is recorded before responses; neither A12 nor A06 is relabelled. Actual-output
+expectations remain agent assessments, not independently adjudicated gold.
+
+Native `prepare --from ... --repeat` preserves each exact pair, authoritative
+rule, evidence and expectation, with the current runner 1.2.1 worker explicitly
+selected. Experiments are under
+`target/distillation-review-v1/parent-restriction-dslv2-trial-20261009/`:
+`actual`, `teacher-controls`, `large-controls`, and `baseline-v1-paired`.
+The initially inherited `baseline-v1` has A03 rather than intended A02 and stays
+unrun; the paired preparation uses explicit selectors. A legacy cached teacher
+plan rejects the revised prefix before preparation or inference; native
+preparation instead reuses the uncached saved plan with identical pairs. Its
+immediate baseline is unrun; earlier warmed results remain separate evidence.
+All natural prefixes are below the warming threshold; there is no padding,
+explicit prefix or warmup. Runtime/source binding checks precede calls.
+
+The completed trial agrees with **24/25 assessed DSLv2 expectations**: 17/18
+actual pairs excluding interpretation-sensitive A12, and all seven training
+controls. A12 returns false, agreeing with its frozen label, but receives an
+uncertain agent review and remains outside the assessed count. Native frozen-label
+agreement includes it and is 18/19 actual pairs. Fresh unchanged DSLv1 agrees
+with 3/4 paired expectations. Both versions still reject A21:
+
+| Pair | Expected | Fresh DSLv1 | DSLv2 |
+| --- | --- | --- | --- |
+| A02: return lacking departure preparation and Dragon | false | false | false |
+| A13: original article about the complete organization subject | true | true | true |
+| A16: departure delay for the named airport | true | true | true |
+| A21: proof after its directed-univalence setup | true | false | false |
+
+DSLv2's new A21 reason says the child describes a proof rather than a setup and
+that mentioning the preceding setup loses the parent's setup type. Its proposed
+post nevertheless includes the same assumed directed-univalence setup. Root
+and an independent agent reject this rationale under the approved clarification:
+a clause may retain the restriction, and changing the main subject does not
+demonstrate losing it. A03/A13/A16 provide accepted contrasts involving retained
+clauses or modifiers. The wider distinction between a topical noun heading and
+a main-referent type remains an interpretation question; neither this review
+nor the frozen agent expectation independently adjudicates it.
+
+Fresh DSLv1 again assumes setup without presenting it, repeating its earlier
+presentation requirement. Its three successes and A21 failure match DSLv2 on
+the identical paired inputs. The same original pair has now failed three fresh
+DSLv1 calls and this DSLv2 call. This is no observed correction or measured
+superiority from the clarification. All four invalid training controls retain
+sound counterexamples for the missing duration, changed renewed ban, excluded
+person and changed cable length.
+
+All 30 returned decisions and reasons have current native agent reviews:
+**27 accept, two reject, one uncertain**. Both rejects are A21, one per version;
+A12 is the uncertain case. Mechanical validation and source/settings/receipt
+checks pass. The persistent counter finishes at **30/60 attempts**; all calls
+complete on first attempts, without reuse, retry, truncation or warmup. Native
+review writes are refused while their experiment is active; the initially
+refused root write changes no review and is recorded successfully after the
+run closes. This is a workflow guard, not an inference failure.
+
+Native usage is copied per experiment; output already includes reasoning:
+
+| Experiment | Calls | Input tokens | Output tokens | Reasoning tokens | Catalog API-equivalent USD |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `actual` | 19 | 8,133 | 8,056 | 7,107 | 0.096826 |
+| `teacher-controls` | 3 | 1,243 | 1,815 | 1,681 | 0.020636 |
+| `large-controls` | 4 | 1,895 | 1,417 | 1,114 | 0.017960 |
+| `baseline-v1-paired` | 4 | 1,527 | 1,796 | 1,549 | 0.021014 |
+
+Native per-request cost distributions:
+
+| Experiment | Mean USD | Median USD | p95 USD |
+| --- | ---: | ---: | ---: |
+| `actual` | 0.005096105263157895 | 0.003098 | 0.021494 |
+| `teacher-controls` | 0.0068786666666666675 | 0.002224 | 0.016192 |
+| `large-controls` | 0.004490000000000001 | 0.004832 | 0.005312 |
+| `baseline-v1-paired` | 0.0052535 | 0.005231 | 0.007394 |
+
+Natural prefixes are 360 proxy tokens for each DSLv2 batch and 300 for DSLv1;
+even the largest complete prompt is 482. No prefix reaches 1,024, so explicit
+caching and warming are unused. Cache reads/writes and native net savings are
+zero. Usage/catalog pricing are complete, while provider-reported cash charges
+are unavailable. The subscription route has no paid API fallback; no monetary
+ledger change occurs. The superseded `baseline-v1` preparation remains unrun.
+
+The seven training controls pass native qualification; the actual and paired
+baseline batches remain pending with A21 mismatches, unverified actual
+expectations and unselected IDs. This reused development set cannot measure
+independent population accuracy or establish bulk reliability. The approved
+clarification has not resolved the observed failure at Sol/xhigh. The recommended
+next step is to revisit how parent-child review uses the trusted teacher
+hierarchy, including its already-correct examples of retained subject meanings.
+This recommends investigation, not another prompt revision or model trial;
+no new structural policy or review method is adopted here.
 
 ## Matching-only offline preview
 

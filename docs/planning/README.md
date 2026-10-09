@@ -224,7 +224,20 @@ for the repeated parent-child error. The untested paragraph forbids adding a
 presentation/action requirement absent from the parent and allows preservation
 in clauses or modifiers without accepting mere mention. The authoritative AS
 rule and verdict contract stay fixed. Wording is shown before calls; approval,
-semantic testing and reviewer qualification remain pending.
+semantic testing and reviewer qualification remain pending at this drafting
+stage. The user subsequently approves the exact wording and
+[bounded parent-child trial](../../sse_multivector/distillation-review-v1/README.md#dslv2-bounded-parent-child-trial-october-9):
+19 actual pairs, seven existing training controls and four fresh DSLv1
+comparisons. A06 remains excluded; A12's newly identified interpretation issue
+is recorded before calls and reported separately without relabelling it.
+Model/settings stay fixed, with 30 verdicts and a shared 60-attempt limit.
+No eligible prefix is warmed. DSLv2 agrees with 24/25 assessed expectations;
+A12 is separately uncertain and A21 still fails. Fresh DSLv1 also rejects A21,
+agreeing on 3/4 pairs. All 30 first attempts complete without reuse or retries;
+native reviews give 27 accept, two reject and one uncertain. The clarification
+does not resolve the failure; bulk qualification remains pending. Reconsidering
+this check using the trusted teacher hierarchy is recommended, without adopting
+a new method or authorizing another revision or calls.
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

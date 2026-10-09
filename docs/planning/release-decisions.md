@@ -1658,7 +1658,32 @@ expectation or model setting changes, and no calls or experiment preparation
 occur. Independent wording assessment is not approval or evidence that the
 reviewer applies the clarification reliably. Wording approval and a bounded
 semantic test remain pending; qualification, other reviewers, scoring, bulk
-adoption and test sealing remain unchanged.
+adoption and test sealing remain unchanged. The subsequent trial authorization
+follows.
+
+**DSLv2 wording and bounded parent-child trial approved October 9:** after
+reviewing the exact clarification, the user directs proceeding. The
+[trial](../../sse_multivector/distillation-review-v1/README.md#dslv2-bounded-parent-child-trial-october-9)
+uses 19 unchanged actual-output pairs excluding A06, seven existing training
+controls, and fresh unchanged DSLv1 on the same A02/A13/A16/A21 pairs. A12's
+response-target interpretation is flagged before calls, with its frozen false
+label preserved and its evidence outside the 25 uncontested DSLv2 assessments.
+Thirty verdicts share a 60-attempt budget; only provider failures may retry,
+at most once per case. Sol / xhigh / subscription SSE / concurrency 8 and
+authoritative AS wording stay fixed. Short prefixes receive no warming or
+padding. Native preparations and receipts preserve source/code identity;
+runner 1.2.1 is explicitly selected. The completed trial agrees with 24/25
+assessed DSLv2 expectations; A12 matches its frozen false label but remains
+uncertain and outside that count. A21 still returns false under both versions;
+fresh DSLv1 agrees on 3/4 comparisons. Native reviews give 27 accept, two reject
+and one uncertain. All 30 requests finish on first attempts without reuse,
+retry, truncation or warmup; source/settings/receipt checks pass. No cached tokens
+or net savings occur. Training-control qualification passes, while the actual
+batches and broader reviewer qualification remain pending. The clarification
+does not resolve this known failure at Sol/xhigh. Reconsidering the check using
+trusted teacher relationships is recommended; this adopts no revised method
+or structural policy and authorizes no further prompt/source repair,
+lower-effort trial, bulk grading, scoring or reserved-test access.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
