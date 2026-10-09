@@ -117,6 +117,12 @@ source, with a small review task and return format. The revised DSSv1 wrapper
 uses `ASV6_100_SUPPORT_RULES`; no adapter yet supplies this variable. The user
 then accepted its exact wording after seeing the full wrapper. Qualification
 remains open, and no new model calls are authorized.
+The user then authorized a
+[DSLv1 parent-child validity draft](../../sse_multivector/distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9).
+It quotes ASv6.100's rule unchanged and judges one immediate pair using only
+the parent and child subject strings, returning Boolean `valid` and string
+`reason`. This unused draft awaits wording review and qualification; no link
+adapter, schema, experiment or model calls are added.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

@@ -1303,6 +1303,22 @@ bulk adoption. DSSv1 remains an untested draft. ASv6.100, existing matching/revi
 prompts, schemas, scoring and saved evidence remain unchanged. See the
 [revised DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
 
+**DSLv1 parent-child validity prompt drafting authorized October 9:** the user
+accepted proceeding with the proposed next step of drafting the third judgment
+before qualification. The reusable draft quotes ASv6.100's parent-child rule
+verbatim through `ASV6_100_PARENT_CHILD_RULES`, with one immediate parent/child
+pair in `RELATIONSHIP_INPUT`. Only the two subject strings are supplied, as the
+rule judges their relationship across possible posts. Return Boolean `valid`
+and string `reason`; an invalid reason names the lost restriction and gives a
+possible post fitting the child but not the parent. Post support and teacher
+agreement remain separate judgments. TC04's agreed invalid cable edge is shown
+as a human input example outside the instructions, not a model result or newly
+prepared qualification case. The draft is untested and awaits wording review.
+No link adapter, schema, experiment preparation, inference, scoring change or
+bulk adoption is authorized by drafting. Existing prompts and saved evidence
+remain unchanged. See the
+[DSLv1 draft](../../sse_multivector/distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

@@ -1022,6 +1022,15 @@ production preparation and decoding functions:
   wrapper's exact wording after seeing the full DSSv1 instructions. The prompt
   remains an untested draft; controls, qualification and proposed support
   inheritance remain open. Accepting the instructions authorizes no new calls.
+  The subsequently authorized
+  [DSLv1 parent-child validity draft](distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9)
+  adds only an unused reusable prompt. `RELATIONSHIP_INPUT` contains one
+  `parent_subject` / `child_subject` pair; `ASV6_100_PARENT_CHILD_RULES` is the
+  verbatim parent-check text from ASv6.100. The post, contexts and surrounding
+  hierarchy are not inputs. Output is Boolean `valid` and string `reason`, with
+  a lost restriction and possible counterexample for an invalid pair. No adapter
+  supplies these variables yet, and no link schema or experiment is added.
+  The draft awaits wording review and qualification; no new calls occur.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

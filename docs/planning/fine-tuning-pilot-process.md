@@ -418,6 +418,16 @@ wrapper's exact wording after seeing it in full. DSSv1 remains untested;
 controls, qualification and proposed support inheritance remain open. No
 inference or bulk adoption is authorized by accepting the instructions.
 
+The user then authorized drafting
+[DSLv1 for parent-child validity](../../sse_multivector/distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9)
+before qualification. Its input is one actual immediate pair's parent and child
+subject strings; ASv6.100's parent-child rule is supplied verbatim from the
+original source. The post and surrounding hierarchy are excluded under that
+rule. It returns Boolean `valid` and string `reason`, with a lost restriction
+and possible counterexample for invalid pairs. Post support and teacher
+agreement remain separate checks. The unused draft awaits wording review;
+no adapter, schema, prepared experiment, inference or scoring change is added.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

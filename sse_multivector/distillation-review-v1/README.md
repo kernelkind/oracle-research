@@ -164,6 +164,41 @@ relying on semantic matches also requires qualifying the matcher. Existing
 matching/review prompts, schemas, adapters, scoring and saved trials are
 unchanged; only this unused support draft and its documentation are revised.
 
+## DSLv1 parent-child validity prompt draft (October 9)
+
+The user authorized drafting [DSLv1](relationship-prompt-v1.md) as the next
+step, for review in the conversation before model calls. Each request judges
+one actual immediate parent-child pair. `RELATIONSHIP_INPUT` contains only
+`parent_subject` and `child_subject`, both complete subject strings. The rule
+uses those strings across possible posts in any domain; the original post,
+contexts, ancestors, siblings and teacher catalog are not supplied. Post
+support and agreement with the teacher's relationships remain separate checks.
+The output is exactly Boolean `valid` and string `reason`. An invalid verdict's
+reason names the missing parent restriction and gives a possible post fitting
+the child but failing to fit the parent. The supplied pair stays unchanged.
+
+`ASV6_100_PARENT_CHILD_RULES` is the verbatim text in
+[ASv6.100](../subject-prompt-goal-v1/asv6.100/ASv6.100.md) starting with “Judge
+each parent-child pair” and ending with “The post's domain, `context` and other
+entries cannot supply a missing heading restriction.” It excludes the preceding
+sentence about deriving broader headings and the following placement rules.
+Future shared-workflow preparation must load this contiguous text from the
+original source. No adapter currently supplies either DSLv1 variable, and no
+support/link experiment, schema or scoring change is added by this draft.
+
+The human example uses TC04's already-agreed invalid edge: `3 m cables` beneath
+`2 m cables`. Its expected `valid: false` is an authored illustration of that
+accepted case judgment, not a model result or newly prepared qualification
+case. It remains outside the prompt instructions. At most one semantic verdict
+is requested per actual immediate link; the input grows with the two subject
+strings plus the fixed rule, without a whole hierarchy or all-pairs comparison.
+This is draft call sizing, not approval of bulk execution or an optimization.
+
+DSLv1 is untested and its exact wording awaits review. Drafting adds no model
+calls, qualification result, support-inheritance decision or final rubric
+adoption. ASv6.100, DSMv2, DSSv1, existing adapters, schemas, scores and saved
+trials are unchanged.
+
 ## Matching-only offline preview
 
 The October 8 approval authorizes drafting and offline preparation of
