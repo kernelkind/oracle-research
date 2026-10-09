@@ -155,9 +155,10 @@ The user then authorized a
 before further calls. It uses three existing training extremes and seven
 controlled student variants, preparing six DSMv3, six DSSv1 and four DSLv1
 inputs with unchanged prompts and model settings. All 16 remain unrun;
-expectations are proposed agent judgments awaiting conversational review.
-The first case drops a three-day restriction, separating lost complete teacher
-meaning from supported remaining wording and an invalid parent-child link.
+LC03’s three judgments are agreed after presentation: dropping the three-day
+restriction loses complete teacher meaning, retains post support and invalidates
+the parent-child link. The other six variants still await review; the moved
+Dr. Abu Safiya subtree is next. No new model calls are authorized.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

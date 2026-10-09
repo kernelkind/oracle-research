@@ -1440,15 +1440,25 @@ subscription SSE / concurrency 8 settings. Matching preparation reports
 caching measurement is claimed. Four edits reuse previous authored matching
 controls; this is development evidence, not a fresh confirmation partition.
 The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9) preserves exact changes,
-proposed expectations and native inspection/preparation commands. The user has
-authorized preparation, **not approved these new judgments or authorized their
-model calls**. Thirty-six existing production preparation/validation tests pass
-with the documented tokenizer dependency; default Python initially lacked it.
+expectations and native inspection/preparation commands. The user has accepted
+LC03 as recorded below; the other six variants remain proposed. No new model
+calls are authorized. Thirty-six existing production preparation/validation
+tests pass with the documented tokenizer dependency; default Python initially lacked it.
 No prompt, adapter, general teacher-edge check or scoring implementation changes
 are needed. Qualification, repeats and lower-effort comparison remain open;
 R05, support inheritance, structural allowances, bulk grading and final-test
 unsealing are unchanged or unresolved. The first case presented for discussion
 is the dropped time restriction.
+
+**LC03 judgments agreed October 9:** after the complete teacher subject, edited
+student subject and unchanged immediate parent were presented, the user replied
+“ok”. Dropping `in three days` receives no complete teacher match (LM03: null),
+retains post support for the remaining expressed meaning (LS03: true), and
+invalidates the link because the child omits the parent’s three-day restriction
+(LL01: false). This accepts only this variant’s three expected judgments. The
+other six variants remain proposed; all 16 inputs remain unrun. Frozen sources,
+prompts, settings and numerical scoring are unchanged. The moved Dr. Abu Safiya
+subtree (LC07 / LL04) is next for conversational review, not already accepted.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

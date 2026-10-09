@@ -477,10 +477,12 @@ The user subsequently authorized preparing
 for presentation before new model calls. Seven controlled changes use three
 existing ranked training extremes: maximum entries, maximum distinct catalog,
 and longest answer. Unchanged DSMv3/DSSv1/DSLv1 preparations contain 6/6/4
-requests, all unrun, with proposed authored judgments outside prompts. The
-trusted teacher catalog and post stay complete; link inputs derive actual
-student parents. The first proposed case loses a three-day restriction while
-retaining post support. These expectations still need conversational review;
+requests, all unrun, with authored judgments outside prompts. LC03’s matching,
+support and link expectations are agreed; the other six variants remain
+proposed. The trusted teacher catalog and post stay complete; link inputs derive actual
+student parents. The accepted LC03 loses a three-day restriction while
+retaining post support; its teacher match and link fail. The remaining variants
+still need conversational review, with the moved subtree next;
 preparation authorizes no new calls, qualification, grading or test unsealing.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,

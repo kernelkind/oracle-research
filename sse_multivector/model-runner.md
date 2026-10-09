@@ -1083,10 +1083,11 @@ production preparation and decoding functions:
   [larger training-control preview](distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
   reuses the same adapters and prompts for seven variants from three ranked
   training extremes. Native preparation yields six matching, six support and
-  four link requests, all unrun with zero attempts/reuse. Proposed expectations
-  remain outside prompts and await conversational review; no inference follows
-  from preparation. Training hashes/identities and actual student parents are
-  verified. The new source/spec files are reusable definitions; only generated
+  four link requests, all unrun with zero attempts/reuse. Expectations remain
+  outside prompts. The user accepted LC03’s null match, supported subject and
+  invalid link after presentation; the other six variants await review, with
+  the moved subtree next. No inference follows from preparation or this approval.
+  Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.
 

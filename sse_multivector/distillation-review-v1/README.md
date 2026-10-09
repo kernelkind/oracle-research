@@ -6,7 +6,7 @@ Three prefix warmups completed, with zero cache reads or writes throughout.
 See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
 These small controls do not qualify bulk review.
 The next [larger training-control preview](#larger-training-controls-prepared-october-9)
-contains 16 unrun inputs and proposed judgments awaiting conversational review.
+contains 16 unrun inputs. LC03 is agreed; the other six variants await review.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -413,9 +413,10 @@ are authorized by this result.
 After the initial seven-case trial, the user authorized preparing harder
 controlled changes from the largest ASv6.100 training answers and presenting
 them before further model calls. The teacher answers remain trusted. These
-are **proposed authored expectations**, not approved case judgments or measured
-model verdicts. The first case for discussion is LC03 below, which separates
-complete teacher meaning, post support and parent restriction preservation.
+are authored expectations, with **LC03 agreed by the user** after presentation.
+The other six variants remain proposed; no model verdicts exist for this set.
+LC03 separates complete teacher meaning, post support and parent restriction
+preservation. LC07, the moved subtree, is next for conversational review.
 
 The existing source-bound ranking selected eight training extremes from all
 1,300 answers. This preview uses three of them, spanning the maximum entry
@@ -441,7 +442,7 @@ pair; its subject strings remain exact trusted teacher wording.
 | --- | --- | --- | --- | --- | --- |
 | LC01 | L3 / `1.1.5` | `kills two people` → `kills 2 people` | LM01: T07 | LS01: true | No link call |
 | LC02 | L3 / `1.1.5` | `kills two people` → `kills three people` | LM02: null | LS02: false | No link call |
-| LC03 | L3 / `18.1.1.1` | Remove ` in three days` | LM03: null | LS03: true | LL01: false |
+| LC03 (**agreed**) | L3 / `18.1.1.1` | Remove ` in three days` | LM03: null | LS03: true | LL01: false |
 | LC04 | L1 / `2.3.1` | `rather than printing money` → `and printing money` | LM04: null | LS04: false | No link call |
 | LC05 | L6 / `1.2.2.1.1` | `released to mark YouTube’s renewed account ban` → `released to mark the renewed banning of the group’s account by YouTube` | LM05: T07 | LS05: true | LL02: true |
 | LC06 | L6 / `1.2.2.1.1` | `YouTube’s renewed account ban` → `YouTube’s first account ban` | LM06: null | LS06: false | LL03: false |
@@ -467,11 +468,14 @@ Its unchanged immediate student parent is:
 
 > More than 10,000 people displaced by violence in Sudan in three days
 
-Proposed judgments: no complete teacher match because the time window is lost;
+Agreed judgments: no complete teacher match because the time window is lost;
 post support passes because the remaining meaning is expressed by the post;
 the link fails because the child omits the parent's three-day restriction.
-A possible December 29 headline reporting that displacement over a month fits
-the child without supporting the parent. The full post is preserved in matching
+The user accepted these three judgments with “ok” after seeing the complete
+teacher subject, edited student subject and unchanged immediate parent. This
+approves LM03: null, LS03: true and LL01: false, not new model calls. A possible
+December 29 headline reporting that displacement over a month fits the child
+without supporting the parent. The full post is preserved in matching
 and support inputs. The parent-child prompt receives only these two strings.
 
 LC05/LC06 retain the full long composite about the Loser 2 video, its release
@@ -534,7 +538,7 @@ that dependency was absent. No adapter or prompt implementation changes were
 needed. Ignore exceptions keep the seven reusable source/spec JSON files tracked,
 while generated experiments and the temporary training fixture stay ignored.
 
-The proposed judgments need review in the conversation before inference.
+The remaining six variants need review in the conversation before inference.
 Broader qualification, fresh repeats and later lower-effort comparison remain
 open. Support inheritance, structural allowances, teacher-edge implementation,
 final scoring, bulk grading and test unsealing are not adopted by preparing
