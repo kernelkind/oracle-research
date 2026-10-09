@@ -543,8 +543,17 @@ and settings and makes no calls. The user subsequently approves the wording and
 [bounded support trial](../../sse_multivector/distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9)
 on 20 existing cases and three same-post variants, with four fresh DSSv1
 comparisons. Only the three long-post cases receive an eligible warmup; the
-shared 56-attempt limit includes provider retries. This authorization establishes
-no semantic result or broader reviewer qualification.
+shared 56-attempt limit includes provider retries. The completed trial matches
+20/20 actual DSSv2 labels and 3/3 DSSv2 controls; fresh DSSv1 matches 4/4.
+All 27 verdicts and reasons pass native agent review. All 28 requests, including
+warmup, finish on first attempts without reuse or retries. Fresh DSSv1 correctly
+rejects the original exception case after two identical-request failures;
+these results do not isolate an improvement caused by DSSv2. No cached tokens
+are recorded; the sole warmup adds $0.005884 in catalog API-equivalent cost.
+Qualification remains pending on unverified agent expectations, and all other
+review checks, scoring and sealed test data retain their status. The remaining
+repeated DSLv1 error is the recommended next issue; no change or calls are
+authorized by that recommendation.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

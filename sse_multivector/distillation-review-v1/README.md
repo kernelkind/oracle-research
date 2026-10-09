@@ -1,11 +1,12 @@
 # Distillation semantic review — process and evidence
 
-[DSSv2](support-prompt-v2.md)'s wording and a bounded support trial are now
-approved. The [trial](#dssv2-bounded-support-trial-october-9) freezes the 20 existing
-support cases and three same-post subject variants, with a fresh four-case DSSv1
-comparison. The authoritative ASv6.100 rules, Sol / xhigh / subscription SSE and
-concurrency 8 stay fixed. No result or broader reviewer qualification is implied
-by this authorization.
+[DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
+3/3 same-post controls** in the approved
+[bounded trial](#dssv2-bounded-support-trial-october-9). All 27 verdicts, including
+four fresh DSSv1 comparisons, pass attributed agent review of their decisions
+and reasons. Fresh DSSv1 also correctly rejects the original Nostr case after
+two earlier failures with identical request bodies, so this trial does not
+establish that DSSv2 caused an improvement. Qualification remains pending.
 
 Fresh confirmation result: **two of the four rejected decisions repeat; two
 change to the expected correct verdict**. All four previously accepted contrasts
@@ -1162,11 +1163,72 @@ post-response cost statistics, preserving request construction, retries, SDK
 pin and warming behavior. Fresh preparations record its identity; the earlier
 unrun DSSv2 preview is not resumed.
 
-This is development evidence for the new wording, including regression checks
-on previously used cases. Frozen labels and fresh responses can reveal failures
-and inconsistency; they cannot establish independent population accuracy or
-qualify the reviewer for bulk use. Semantic outcomes remain pending until calls
-complete and their reasons receive attributed agent review.
+All experiments complete: **DSSv2 matches 20/20 actual support labels and 3/3
+authored controls; fresh DSSv1 matches 4/4 controls.** All 27 decisions and their
+decisive reasons receive current native agent reviews: 27 accept, zero reject,
+zero uncertain. The same-post results are:
+
+| Subject | Expected | Fresh DSSv1 | DSSv2 |
+| --- | --- | --- | --- |
+| Social-media likes not being love | false | false (C00) | false (A20) |
+| Social-media likes not being love, except on Nostr | true | true | true |
+| Social-media likes | true | true | true |
+| Social-media likes not being love, except outside Nostr | false | false | false |
+
+DSSv2's A20 reason correctly says that the subject retains the likes-not-love
+claim while omitting its Nostr exception. The other reasons retain the exception,
+allow the broader topic without that claim, and reject the reversed exception.
+Previously accepted subjects remain accepted; A06/A12's unsupported actor and
+response relationship remain rejected.
+
+Fresh unchanged DSSv1 now also rejects A20/C00 correctly. Its request body,
+method and URL are identical to the two earlier incorrect A20 calls. This is
+further baseline inconsistency, not evidence that the clarification caused the
+successful result. Both versions pass these controls on this trial; there is
+no measured superiority between them.
+
+The stage finishes at **28/56 attempts**: 27 verdicts and one native warmup,
+all first attempts, without failure, retry, reuse or truncation. Frozen source
+hashes, settings, strict JSON and receipt bindings verify against runner 1.2.1.
+The earlier two-case preview and `note27-preview` remain unrun. Native usage is
+copied separately for each experiment; output already includes reasoning:
+
+| Experiment | Calls | Input tokens | Output tokens | Reasoning tokens | Catalog API-equivalent USD | Per-call seconds |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `actual-other` | 17 | 13,667 | 6,809 | 5,990 | 0.095424 | 4.522437–37.142527 |
+| `actual-note27`, including warmup | 4 | 4,705 | 1,973 | 1,718 | 0.029140 | 10.860161–17.142386 |
+| `controls-v1` | 4 | 2,875 | 2,906 | 2,712 | 0.034810 | 9.417157–54.902481 |
+| `controls-v2` | 3 | 2,317 | 772 | 626 | 0.012354 | 6.467486–9.169293 |
+
+Native per-request cost distributions, including warmup where present:
+
+| Experiment | Mean USD | Median USD | p95 USD |
+| --- | ---: | ---: | ---: |
+| `actual-other` | 0.005613176470588236 | 0.004106 | 0.015720 |
+| `actual-note27` | 0.007285 | 0.007292 | 0.008672 |
+| `controls-v1` | 0.0087025 | 0.004904 | 0.021754 |
+| `controls-v2` | 0.004118 | 0.004204 | 0.004210 |
+
+Cache reads and writes are zero in every experiment. Note27's sole eligible
+warmup uses 1,132 input, 362 output and 326 reasoning tokens; its catalog estimate
+is **$0.005884**, included in the note27 totals above, with latency 13.511795
+seconds. Native net cache savings are **−$0.005884 (−25.301%)**: zero comparison
+hits, solely warmup overhead. The native uncached-comparison counterfactual is
+$0.023256 versus the observed warmup-inclusive $0.029140. This holds observed
+comparison tokens fixed; it is not a separately executed cold comparison.
+Usage and catalog pricing are complete, but provider-reported cash charges are
+unavailable. The subscription route has no paid API fallback and this stage
+does not mutate the monetary ledger.
+
+This is development evidence on previously used cases and authored controls.
+Agent assessments are not independently adjudicated gold. Native qualification
+remains pending on unverified expectations; split actual batches also retain
+their unselected IDs as pending. This result establishes neither independent
+population accuracy, repeat consistency for DSSv2 nor qualification for bulk
+use. Matching and parent-child status remain unchanged. The remaining repeated
+DSLv1 A21 error concerns adding a requirement to present the setup under
+`Proof setup`; a proposed clarification is the recommended next step, requiring
+approval before drafting or calls.
 
 ## Matching-only offline preview
 

@@ -211,8 +211,15 @@ verbatim ASv6.100 rules and broader-subject allowance. The user subsequently
 approves the wording and [bounded support trial](../../sse_multivector/distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9):
 20 existing cases, three same-post variants and four fresh DSSv1 comparisons.
 One naturally eligible long-post prefix receives warming. The shared attempt
-limit is 56; model/settings and original expectations stay fixed. Results and
-reviewer qualification remain pending; the earlier preview stays unrun.
+limit is 56; model/settings and original expectations stay fixed. DSSv2 now
+matches 20/20 actual labels and 3/3 controls; fresh DSSv1 matches 4/4. All 27
+verdicts and reasons pass native agent review, with 28/56 attempts including
+the warmup and no retries or reuse. Fresh DSSv1 also handles the original
+exception correctly after two identical-request failures, so the trial does
+not establish a DSSv2 improvement. There are no cache hits; the sole eligible
+warmup adds $0.005884 in catalog API-equivalent cost. Qualification remains
+pending; the earlier preview stays unrun. The remaining repeated parent-child
+error is the recommended next issue, without authorizing a change or calls.
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

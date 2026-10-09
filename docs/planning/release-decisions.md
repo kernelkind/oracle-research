@@ -1612,8 +1612,8 @@ unadopted.
 fresh confirmation, the user directs proceeding with the recommendation to
 address the repeated support exception error and show a proposed change before
 further calls. [DSSv2](../../sse_multivector/distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
-is an untested draft, adding one claim-scope paragraph after the unchanged
-ASv6.100 excerpt. It distinguishes dropping a limiting exception while retaining
+was first prepared as an untested draft, adding one claim-scope paragraph after
+the unchanged ASv6.100 excerpt. It distinguishes dropping a limiting exception while retaining
 its claim from permitted broader subject naming. Native revision preserves the
 exact delta; the offline A08/A20 preview preserves inputs and settings and makes
 no calls. Draft integrity and agent agreement do not establish effectiveness.
@@ -1633,9 +1633,17 @@ expectations in review evidence. Sol / xhigh / subscription SSE / concurrency 8
 stay fixed. The stage has 27 verdict calls, one eligible warmup and at most 56
 attempts including provider-only retries. Only the three long-post support cases
 receive a qualifying prefix; shorter groups are not warmed. Runner 1.2.1's
-post-response cost statistics do not change requests. Semantic results remain
-pending; this adopts no matching/link change, lower-effort trial, bulk grading,
-scoring or reserved-test access.
+post-response cost statistics do not change requests. The completed trial
+matches 20/20 actual DSSv2 labels and 3/3 DSSv2 controls; fresh DSSv1 matches
+4/4 controls. All 27 verdicts and reasons pass attributed native agent review;
+all 28 requests, including warmup, finish on first attempts without reuse.
+Fresh DSSv1 correctly rejects the original exception case after two earlier
+identical-request failures, preventing causal attribution of an improvement
+to DSSv2. Cache reads/writes are zero; warmup adds $0.005884 in catalog
+API-equivalent cost. Qualification stays pending on agent-assessed expectations.
+This adopts no matching/link change, lower-effort trial, bulk grading, scoring
+or reserved-test access. Addressing the remaining repeated DSLv1 error is a
+recommendation, not authorization to draft or call a changed prompt.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

@@ -1148,7 +1148,7 @@ production preparation and decoding functions:
   1,024 tokens and cache reads/writes are zero. Exact request bodies, methods and
   URLs match the baseline despite recorded runner 1.2.0 provenance. Native
   agent review gives six accept and two reject; qualification remains pending.
-  The next authorized step drafts [DSSv2](distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
+  The next authorized step drafted [DSSv2](distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
   through native `revise`, adding one exception/claim-scope clarification after
   the unchanged ASv6.100 rules. Native offline preparation reuses A08/A20 from
   the confirmation with the same settings and output contract; it makes no
@@ -1161,8 +1161,19 @@ production preparation and decoding functions:
   reject variants. The stage has 27 verdicts, one eligible native warmup and a
   shared 56-attempt budget. Sol / xhigh / SSE / concurrency 8 remain fixed.
   Only A07/A14/A21's 1,094-token proxy prefix qualifies; smaller groups are not
-  warmed. Runner 1.2.1 adds cost statistics without changing requests. Results
-  remain pending; all saved trials and other reviewers stay intact.
+  warmed. Runner 1.2.1 adds cost statistics without changing requests. DSSv2
+  matches 20/20 actual labels and 3/3 controls; fresh DSSv1 matches 4/4 controls.
+  All 27 verdicts and reasons pass native agent review. All 28 requests,
+  including warmup, complete on first attempts; the persistent budget is 28/56,
+  with no retry, reuse, failure or truncation. Source/settings/receipt bindings
+  verify. Fresh DSSv1 now handles the original exception correctly despite two
+  identical-request failures, so the result does not isolate a DSSv2 improvement.
+  Native cache reads/writes are zero; note27's warmup adds $0.005884, giving
+  native net savings of −$0.005884 (−25.301%). Usage and catalog estimates are
+  complete; cash charges are unavailable. Qualification remains pending on
+  unverified expectations and IDs outside each selected subset. Both previews
+  stay unrun; all saved trials and other reviewers stay intact. A clarification
+  for the remaining repeated parent-child error is recommended, not authorized.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.
