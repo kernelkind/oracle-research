@@ -4,8 +4,9 @@ Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct cont
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
 DSRv2 produces 24 complete reports and five ungraded interruptions across its
 preserved subsets; it fails semantic and cross-version checks. Bulk pilot
-semantic review has not run. **DSMv2 is an untested draft** allowing the original
-post to clarify wording; its offline preview makes zero reviewer calls.
+semantic review has not run. **DSMv2 is a draft tested on two actual-wording
+cases**, both agreeing with the prior agent assessments. Its offline full-set
+preview makes zero calls; broader qualification remains pending.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -314,9 +315,9 @@ already present in `Club symbols`, so omitting "suit" loses no restriction.
 Here "symbols" is interpreted as a generic subject label rather than an added
 count. The saved teacher and generated context fields both identify `♣`;
 these fields support the offline assessment and are withheld from the reviewer.
-This is an agent-assessed match, not independently
-verified gold or a reviewer result. The context-free DSMv1 expectation remains
-unresolved.
+This remains an agent-assessed expectation, not independently verified gold.
+The subsequent two-case trial below agrees with it. The context-free DSMv1
+expectation remains unresolved.
 
 The authorized offline check of **R16 retains an expected null**. Its post
 begins `The Bitcoin Beginner Guide is live.` and describes progression to
@@ -329,9 +330,9 @@ Bitcoin from the post would supply a missing restriction, rather than clarify
 the existing wording. Every other teacher custody entry also specifies Bitcoin
 or the particular guide, so none has the same complete meaning. This is a
 matching assessment; a general heading can still be supported by the post.
-Subject support, whole-note coverage and actual reviewer behavior remain
-unjudged. The verdict and assessment status are unchanged; only the recorded
-reason is clarified for DSMv2.
+Subject support and whole-note coverage remain unjudged. The two-case trial
+below checks this one matching verdict. The expectation and assessment status
+are unchanged; only the recorded reason is clarified for DSMv2.
 
 The shared adapter supplies `POST` as a JSON string when the prompt requests
 `{POST}`. It uses the already verified original post from either source format.
@@ -379,10 +380,49 @@ The subsequent R16 reason-only update also passes all 14 matching tests. Native
 preparation preserves all 22 prompts, expected IDs and assessment statuses,
 with zero calls and pending qualification. This does not test whether a model
 actually follows the post-interpretation restriction.
-These mechanical checks do not establish semantic reliability. Expected-answer
-verification and checks of interpretation versus missing restrictions precede
-any proposed reviewer calls. Full review adoption and final-test unsealing
-remain open.
+These mechanical checks do not establish semantic reliability. The user next
+authorized the two assessed cases below; the other 20 expectations still need
+checking with their posts before full-set calls. Full review adoption and
+final-test unsealing remain open.
+
+## DSMv2 two-case post-interpretation trial (October 8)
+
+The user authorized testing whether Sol / xhigh distinguishes wording
+interpretation from supplying a missing restriction. The shared CLI prepared
+`target/distillation-review-v1/matching-post-pair-20261008/` from the existing
+DSMv2 spec with `--only R16 --only R19 --repeat`, then ran it with
+`--max-new-attempts 4` to allow the existing provider-only retry policy. Both
+complete prompts, inputs, evidence and runner settings match the assessed
+offline preview exactly. Concurrency remains 8; only two cases are selected.
+Expected answers and their reasons were not supplied to the model.
+
+Both fresh calls are mechanically valid and agree with the expectations:
+
+| Case | Reviewer verdict | Decisive reason |
+| --- | --- | --- |
+| R16: `Self-custody` | null | It lacks the Bitcoin restriction in T12, `Bitcoin self-custody`. |
+| R19: `Club symbols` | T06 | The post's `♣` selects the playing-card suit meaning of "club". |
+
+There are two first attempts, zero retries, zero reused answers and no
+mechanical or expected-verdict errors. Saved elapsed times are 6.21 seconds
+for R16 and 28.68 seconds for R19. Native usage reports 1,735 input tokens,
+zero cached input tokens and 1,129 output tokens, including 1,025 reasoning
+tokens. The $0.01476 catalog estimate is not a subscription invoice;
+provider-reported dollar charges are unavailable.
+
+Native `review` records agent acceptance of each saved verdict separately
+from user decisions. Neither expectation becomes independently verified gold.
+Native qualification remains pending, with both selected expectations
+unverified and the other 20 source cases pending. This trial shows the desired
+distinction in these two calls, not repeat stability or general reliability.
+The prompt, source expectations, DSMv1 trials and sealed final-test answers
+are preserved. All 14 matching tests pass.
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show \
+  target/distillation-review-v1/matching-post-pair-20261008 --case R19
+```
 
 ## Reviewer and inputs
 

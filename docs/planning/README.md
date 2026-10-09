@@ -56,15 +56,18 @@ untested. DSMv1
 has not replaced the full review process. See the
 [repeat results](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
 The user accepted adding the original post to clarify existing wording while
-forbidding it from supplying missing restrictions. The untested
+forbidding it from supplying missing restrictions. The
 [DSMv2 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8)
 prepares the same 22 targets with zero reviewer calls. Prior expectations still
 need verification with the supplied posts. The authorized offline club assessment
-sets R19's expected match to T06 for DSMv2; it is unverified and has no reviewer
-result. DSMv1's context-free expectation remains unresolved.
+sets R19's expected match to T06 for DSMv2; it remains unverified.
+DSMv1's context-free expectation remains unresolved.
 The subsequent offline self-custody check retains R16's expected nonmatch:
-Bitcoin remains a missing asset restriction. No reviewer has been called;
-neither assessment establishes that the model follows the rule.
+Bitcoin remains a missing asset restriction. The authorized
+[two-case DSMv2 trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8)
+now returns T06 for the club case and null for self-custody, agreeing with both
+expectations. These two fresh Sol / xhigh calls do not establish general
+reliability; the other 20 expectations need checking before full-set calls.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

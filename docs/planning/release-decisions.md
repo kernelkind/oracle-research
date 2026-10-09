@@ -1093,6 +1093,20 @@ assessments; actual reviewer adherence has not been tested. The other 20
 inherited assessments still need checking with posts visible before full-set
 calls. See the [DSMv2 assessments](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
 
+**DSMv2 two-case trial authorized and completed October 8:** the user accepted
+testing the club-symbol and self-custody cases with the unchanged DSMv2 prompt,
+Sol / xhigh and concurrency 8. Both fresh calls are mechanically valid and
+agree with the prior agent expectations: R19 returns T06 because the post's
+`♣` disambiguates "club"; R16 returns null because `Self-custody` omits Bitcoin.
+There are two first attempts, no retries and no response reuse. Native usage
+records 1,735 input tokens, zero cached input tokens and 1,129 output tokens,
+including 1,025 reasoning tokens. The catalog estimate is $0.01476, not an
+invoice. Agent reviews accept the saved verdicts without asserting independent
+gold verification or user acceptance of their semantics. Qualification remains
+pending. This does not establish repeat stability, general reliability or
+authorize the other 20 cases, bulk review or final-test unsealing. See the
+[two-case result](../../sse_multivector/distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

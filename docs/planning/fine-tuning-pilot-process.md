@@ -469,10 +469,13 @@ The authorized offline self-custody check retains R16's expected nonmatch:
 the guide as about Bitcoin. Its DSMv2 reason is clarified without changing the
 expected ID or assessment status. This matching judgment does not judge support
 for the general heading. The other 20 assessments need checking with the supplied
-posts; all expectations remain unverified and qualification is pending. No
-reviewer result exists, so actual adherence to the restriction remains untested.
-This drafting and preparation does not establish reliability or authorize
-reviewer calls, bulk review or test unsealing.
+posts; all expectations remain unverified and qualification is pending.
+The user subsequently authorized the
+[two-case DSMv2 trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8).
+Two fresh Sol / xhigh calls return the expected T06 for R19 and null for R16,
+with valid reports, no retries and no response reuse. This shows the intended
+distinction in these calls; repeat stability and general reliability remain
+open. It does not authorize the other 20 calls, bulk review or test unsealing.
 
 Compare quality before/after training and across data sizes, with failures,
 speed, and cost visible. Invalid/truncated output and an empty answer to a

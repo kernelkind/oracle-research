@@ -1036,10 +1036,19 @@ production preparation and decoding functions:
   asset restriction missing from `Self-custody`. Only its DSMv2 reason changes;
   all 22 prompts, expected IDs, assessment statuses and settings are preserved.
   The fresh preparation still makes zero calls and keeps qualification pending.
-  This matching assessment does not judge subject support or establish actual
-  model adherence to the restriction.
-  DSMv1's trials are preserved. Additional calls and semantic reliability remain
-  open.
+  This offline assessment alone does not judge subject support or establish
+  actual model adherence to the restriction. The user subsequently authorized
+  the [two-case DSMv2 trial](distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8),
+  prepared with `--only R16 --only R19 --repeat` and run through the shared CLI
+  with `--max-new-attempts 4`. Both complete prompts, inputs, evidence and runner
+  settings match the assessed preview. The two fresh calls return the expected
+  null for R16 and T06 for R19, with valid reports, zero retries and zero reuse.
+  Native usage is 1,735 input tokens, zero cached tokens and 1,129 output tokens,
+  including 1,025 reasoning tokens; the $0.01476 catalog estimate is not an
+  invoice. Native agent reviews accept these saved verdicts; expectations remain
+  unverified and qualification pending. All 14 matching tests pass. DSMv1's
+  trials are preserved. Repeat stability and broader semantic reliability
+  remain open; the other 20 expectations need checking before full-set calls.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
