@@ -11,6 +11,7 @@ import unittest
 
 from sse_multivector import experiment_inputs as inputs
 from sse_multivector import distillation_matching as matching
+from sse_multivector import experiment_extension as extension
 from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
 
 
@@ -86,7 +87,7 @@ class DistillationMatchingTests(unittest.TestCase):
             inputs.validate(dict(adapter="distillation_matching"), case,
                             '{"teacher_id":null,"teacher_id":"T04","reason":"Duplicate."}', None)
 
-    def test_source_binding_selection_and_exact_match_exclusion(self):
+    def test_source_binding_selection_and_exact_match_acceptance(self):
         self.assertEqual([c["id"] for c in self.prepare(["M02"])[0]], ["M02"])
         for selected in (["unknown"], ["M01", "M01"]):
             with self.assertRaises(ValueError):
@@ -99,8 +100,78 @@ class DistillationMatchingTests(unittest.TestCase):
         self.source = original
         self.source["cases"][0]["case"] = "Q06"
         self.write()
-        with self.assertRaisesRegex(ValueError, "exact match"):
-            self.prepare()
+        case = self.prepare()[0][0]
+        response = json.loads(case["mechanical"]["output"])
+        self.assertEqual(response["teacher_id"], "T04")
+        self.assertTrue(response["reason"].strip())
+        self.assertEqual(case["mechanical"]["evidence"],
+                         dict(rule="exact_teacher_subject", teacher_numbers=["1.1.1.1"]))
+
+    def test_exact_matching_preserves_every_grouped_teacher_occurrence(self):
+        definition = self.source["cases"][0]
+        definition.update(case="Q06", student_number="1.2.1.1", expected_teacher_number="1.2.1.1")
+        self.source["cases"] = [definition]
+        self.write()
+        case = self.prepare()[0][0]
+        response = json.loads(case["mechanical"]["output"])
+        self.assertEqual(response["teacher_id"], "T10")
+        self.assertEqual(case["mechanical"]["evidence"], dict(rule="exact_teacher_subject",
+            teacher_numbers=["1.1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"]))
+        self.assertTrue(self.validate(case, response)["qualification"]["passed"])
+        self.assertNotIn("mechanical", case["inputs"])
+
+    def test_report_separates_mechanical_results_from_model_checks_and_inputs(self):
+        self.source["cases"][0]["case"] = "Q06"
+        self.write()
+        exact, semantic = self.prepare()[0]
+        rows = [{**exact, **self.validate(exact, json.loads(exact["mechanical"]["output"])),
+                 "origin": "mechanical"},
+                {**semantic, **self.validate(semantic, dict(teacher_id=None, reason="Polarity differs."))}]
+        report = extension.enrich_report(dict(adapter="distillation_matching"),
+            dict(preparation=dict(qualification_case_ids=["M01", "M02"])), rows)
+        self.assertEqual(report["qualification"]["mechanical_cases"], ["M01"])
+        self.assertEqual(report["qualification"]["model_checked"], 1)
+        self.assertEqual(report["qualification"]["checked"], 2)
+        self.assertEqual(report["prepared_inputs"]["calls"], 1)
+        self.assertEqual(report["prepared_inputs"]["rendered_input_tokens"], semantic["evidence"]["input_tokens"])
+        contradictory = copy.deepcopy(rows[0])
+        contradictory["evidence"]["expected_teacher_id"] = None
+        contradictory.update(self.validate(contradictory, contradictory["parsed"]))
+        self.assertEqual(matching.qualification([contradictory], ["M01"])["errors"]["false_match"], ["M01"])
+
+    def test_valid_empty_teacher_catalog_is_a_mechanical_nonmatch(self):
+        self.actual_source()
+        reference = self.path.parent / "references.jsonl"
+        row = json.loads(reference.read_text())
+        row["subjects"] = []
+        reference.write_text(json.dumps(row) + "\n")
+        manifest_path = self.path.parent / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["outputs"]["references.jsonl"] = hashlib.sha256(reference.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest))
+        self.source["dataset_manifest"]["sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        self.source["cases"][0]["expected_teacher_number"] = None
+        self.write()
+        case = self.prepare()[0][0]
+        self.assertEqual(json.loads(case["inputs"]["MATCH_INPUT"])["teacher_subjects"], [])
+        response = json.loads(case["mechanical"]["output"])
+        self.assertIsNone(response["teacher_id"])
+        self.assertTrue(response["reason"].strip())
+        self.assertEqual(case["mechanical"]["evidence"],
+                         dict(rule="empty_teacher_catalog", teacher_numbers=[]))
+        self.assertTrue(self.validate(case, response)["qualification"]["passed"])
+
+    def test_nonexact_matching_remains_semantic_without_normalization_or_substrings(self):
+        self.source["cases"] = [self.source["cases"][0]]
+        definition = self.source["cases"][0]
+        definition["case"] = "Q06"
+        for wording in (" 2 m cable A", "2 m cable A ", "2 M cable A", "Cable A", "2 m cable A for sale"):
+            with self.subTest(wording=wording):
+                definition["replacements"] = [dict(old="2 m cable A", new=wording)]
+                self.write()
+                case = self.prepare()[0][0]
+                self.assertEqual(json.loads(case["inputs"]["MATCH_INPUT"])["student_subject"], wording)
+                self.assertNotIn("mechanical", case)
 
     def test_reference_notes_cannot_cross_control_partitions(self):
         self.source["cases"][1]["partition"] = "confirmation"

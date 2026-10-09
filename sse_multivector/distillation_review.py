@@ -116,6 +116,63 @@ def _reason(row):
         raise ValueError("review reasons must be nonblank strings")
 
 
+class _TeacherIndex:
+    """Index trusted wording and actual incoming links once per reference."""
+
+    def __init__(self, teacher):
+        self.catalog, self.by_subject, self.by_number, self.numbers = [], {}, {}, {}
+        subjects = {}
+        for entry in teacher:
+            wording, number = entry["subject"], entry["number"]
+            if wording not in self.by_subject:
+                identifier = f"T{len(self.catalog) + 1:02d}"
+                self.by_subject[wording] = identifier
+                self.catalog.append(dict(id=identifier, subject=wording))
+                self.numbers[identifier] = []
+            identifier = self.by_subject[wording]
+            self.by_number[number] = identifier
+            self.numbers[identifier].append(number)
+            subjects[number] = wording
+        self.relationships = {}
+        for number, child in subjects.items():
+            parent = number.rpartition(".")[0]
+            if parent:
+                pair = subjects[parent], child
+                self.relationships.setdefault(pair, []).append(dict(parent=parent, child=number))
+
+    @staticmethod
+    def _result(output, rule, **evidence):
+        return dict(output=json.dumps(output, ensure_ascii=False),
+                    evidence=dict(rule=rule, **evidence))
+
+    def matching(self, subject):
+        identifier = self.by_subject.get(subject)
+        if identifier is not None:
+            return self._result(dict(teacher_id=identifier, reason="Exact trusted teacher subject wording."),
+                                "exact_teacher_subject", teacher_numbers=self.numbers[identifier])
+        if not self.catalog:
+            return self._result(dict(teacher_id=None, reason="The validated teacher catalog is empty."),
+                                "empty_teacher_catalog", teacher_numbers=[])
+        return None
+
+    def support(self, subject):
+        identifier = self.by_subject.get(subject)
+        if identifier is None:
+            return None
+        return self._result(dict(valid=True, reason="Exact trusted teacher wording for the same post."),
+                            "exact_teacher_subject", teacher_numbers=self.numbers[identifier])
+
+    def relationship(self, parent, child):
+        witnesses = self.relationships.get((parent, child))
+        if witnesses:
+            return self._result(dict(valid=True, reason="Exact ordered trusted teacher parent-child pair."),
+                                "exact_teacher_relationship", teacher_relationships=witnesses)
+        if parent == child:
+            return self._result(dict(valid=True, reason="Identical wording retains every parent restriction."),
+                                "identical_subjects")
+        return None
+
+
 def exact_matches(teacher, student):
     by_subject = {}
     for entry in student:

@@ -7,10 +7,10 @@ separately. Fresh unchanged DSLv1 also rejects A21, agreeing on 3/4 comparisons.
 The clarification has not resolved this disagreement; reviewer qualification stays
 pending. All 30 calls complete on first attempts without caching or warmup.
 
-The user approved [mechanical decisions for all three checks](#mechanical-decisions-for-all-three-checks-october-9).
-Matching model controls already exclude exact teacher subject strings. Native
-zero-attempt results and general mechanical acceptance for support and
-parent-child validity remain to be implemented. A21 adds a student parent absent
+The approved [mechanical decisions for all three checks](#mechanical-decisions-for-all-three-checks-october-9)
+are implemented in source-bound preparation and the shared runner. Exact trusted
+subjects and actual ordered teacher links produce native zero-attempt results;
+remaining questions still use semantic calls. A21 adds a student parent absent
 from the teacher and has no complete child match; its expected true label remains an
 agent assessment, rather than a relationship certified by the teacher.
 
@@ -111,28 +111,41 @@ Output parsing, numbering, completeness and score arithmetic stay mechanical.
 Keep malformed student outputs and incomplete reviewer judgments under their
 existing distinct failure rules.
 
-Current code supplies exact subject matches and rejects exact targets selected
-as matching model controls; it does not produce a native zero-attempt result
-for those targets or empty catalogs. The shared runner reuses identical requests
-unless a fresh repeat is specified. The support/relationship adapters still
-render selected cases without general teacher-based mechanical acceptance. The
-agreed unchanged-answer and renumbering controls already require mechanical checks.
-Historical model receipts and qualification controls remain evidence of what
-was actually tested; this decision does not rewrite them.
+Source-bound matching and support/relationship preparation now indexes trusted
+wording and actual immediate links once per selected reference. Every selected
+student occurrence remains a separate case. Sufficient evidence adds a generic
+`mechanical: {output, evidence}` result; it never reads the expected label to
+choose that result. DSS checks the effective authored subject override when present.
 
-Implementation should index trusted subject strings and ordered pairs once
-per note, then look up student subjects and edges. Keep numbered placements
-separate from local verdict reuse and avoid a cross-product of duplicate
-occurrences. Supplying the full teacher hierarchy again for each edge is
-unnecessary. This addresses repeated work without assuming savings on changed
-student answers or establishing the reliability of remaining semantic calls.
+The shared runner validates mechanical output through the selected adapter,
+seals its evidence with the prepared inputs and exposes `origin: "mechanical"`,
+`mechanical_evidence`, `mechanical_sha256` and `attempts: 0` in native reports.
+Such cases require no model job, warmup, request-budget allowance, usage or
+receipt. Mixed runs send only residual semantic cases. Complete prompts and
+runtime bindings remain available, and `prepare ... --repeat` deliberately
+bypasses mechanical completion for fresh model qualification calls.
+
+Native qualification lists `mechanical_cases` and `model_checked` when mechanical
+results are present. `checked` includes all completed expectation comparisons;
+only model results contribute to `model_checked`. Mechanical success is not
+evidence of model accuracy. Matching input-call/token estimates exclude mechanical
+cases. Conflicting frozen expectations remain visible failures, and assessed or
+unresolved expectations remain unverified. Historical experiments without the
+new metadata retain their original model execution and receipts. This implements
+selected-case routing, not bulk pilot grading or new semantic qualification.
+
+The index is built once per bound reference and looks up trusted subject strings
+and ordered pairs, retaining actual numbered witnesses without a cross-product of
+duplicate occurrences. Model prompts remain complete for fresh repeats;
+mechanical evidence needs only the applicable witnesses. Savings on changed
+student answers and reliability of remaining semantic calls still require evidence.
 
 A21 cannot be accepted this way: the teacher has no `Proof setup` parent, and
 the child's complete-meaning match is null. Its frozen true expectation stays
 agent-assessed and unadjudicated. The repeated discrepancy is not conclusive
-evidence that Sol is wrong or incapable. No prompt, code, scoring policy, saved
-expectation or model call changes in this documentation update; implementation
-and further trials remain separate work.
+evidence that Sol is wrong or incapable. The routing implementation leaves this
+case for semantic review and preserves its saved expectations and judgments.
+Further trials remain separate work.
 
 ## Coverage-matching qualification scope agreed October 8
 

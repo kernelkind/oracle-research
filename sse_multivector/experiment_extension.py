@@ -505,8 +505,9 @@ def enrich_report(result, plan, cases):
             import distillation_matching
         result["qualification"] = distillation_matching.qualification(
             cases, plan["preparation"]["qualification_case_ids"])
-        token_counts = [case["evidence"]["input_tokens"] for case in cases]
-        result["prepared_inputs"] = dict(tokenizer="o200k_base", calls=len(cases),
+        token_counts = [case["evidence"]["input_tokens"] for case in cases
+                        if case.get("origin") != "mechanical"]
+        result["prepared_inputs"] = dict(tokenizer="o200k_base", calls=len(token_counts),
             rendered_input_tokens=sum(token_counts),
             min_rendered_input_tokens=min(token_counts, default=0),
             max_rendered_input_tokens=max(token_counts, default=0),

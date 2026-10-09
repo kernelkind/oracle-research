@@ -10,6 +10,7 @@ import tempfile
 import unittest
 
 from sse_multivector import experiment_inputs as inputs
+from sse_multivector import distillation_verdict as verdict
 from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
 
 
@@ -71,6 +72,98 @@ class DistillationVerdictTests(unittest.TestCase):
                 expected_reason="Supported two-metre cable; the actual parent requires three metres.",
                 selection="Untouched saved validation output.")])
         return saved, generation
+
+    def test_exact_same_post_teacher_subject_is_mechanical_with_all_occurrences(self):
+        self.source["cases"] = [dict(id="S01", case="TC01", student_number="1.2.1.1",
+            expected_reason="The unchanged trusted comparison.")]
+        case = self.prepare()[0][0]
+        response = json.loads(case["mechanical"]["output"])
+        self.assertIs(response["valid"], True)
+        self.assertTrue(response["reason"].strip())
+        self.assertEqual(case["mechanical"]["evidence"], dict(rule="exact_teacher_subject",
+            teacher_numbers=["1.1.1.1.1.1", "1.1.2.1.1.1", "1.1.3.1", "1.2.1.1"]))
+        self.assertNotIn("mechanical", case["inputs"])
+
+    def test_report_separates_mechanical_checks_and_preserves_label_conflicts(self):
+        self.source["cases"][0]["case"] = "TC01"
+        exact, semantic = self.prepare()[0]
+        rows = [{**exact, **verdict.validate(exact, exact["mechanical"]["output"]), "origin": "mechanical"},
+                {**semantic, **verdict.validate(semantic, json.dumps(dict(valid=False, reason="Negation reversed.")))}]
+        report = verdict.qualification(rows, ["S01", "S02"])
+        self.assertEqual(report["mechanical_cases"], ["S01"])
+        self.assertEqual(report["model_checked"], 1)
+        self.assertEqual(report["checked"], 2)
+        contradictory = copy.deepcopy(rows[0])
+        contradictory["evidence"]["expected_valid"] = False
+        contradictory.update(verdict.validate(contradictory, exact["mechanical"]["output"]))
+        conflict = verdict.qualification([contradictory], ["S01"])
+        self.assertEqual(conflict["status"], "failed")
+        self.assertEqual(conflict["incorrect_verdicts"], ["S01"])
+        self.assertEqual(conflict["model_checked"], 0)
+
+    def test_support_mechanical_check_uses_authored_subject_and_keeps_other_wording_semantic(self):
+        saved, generation = self.actual_source()
+        definition = self.source["cases"][0]
+        definition["student_subject"] = "2 m cable A"
+        case = self.prepare()[0][0]
+        self.assertIs(json.loads(case["mechanical"]["output"])["valid"], True)
+        self.assertEqual(case["mechanical"]["evidence"],
+                         dict(rule="exact_teacher_subject", teacher_numbers=["1.1"]))
+        self.assertEqual(case["evidence"]["original_student_subject"], "Cable A, two metres long")
+        students = json.loads(generation["answer"]["raw"])["subjects"]
+        students[1]["subject"] = "2 m cable A"
+        generation["answer"]["raw"] = json.dumps(dict(subjects=students))
+        saved.write_text(json.dumps(generation))
+        definition["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+        for wording in ("4 m cable A", "2 m cable A ", "Cable A", "2 m cable A for sale"):
+            with self.subTest(wording=wording):
+                definition["student_subject"] = wording
+                case = self.prepare()[0][0]
+                self.assertEqual(case["evidence"]["original_student_subject"], "2 m cable A")
+                self.assertEqual(json.loads(case["inputs"]["SUPPORT_INPUT"])["student_subject"], wording)
+                self.assertNotIn("mechanical", case)
+
+    def test_exact_teacher_relationship_is_mechanical_and_changed_edge_is_semantic(self):
+        self.source["check"] = "relationship"
+        self.source["cases"] = [
+            dict(id="L01", case="TC01", student_number="1.2.1.1", expected_reason="Unchanged trusted edge."),
+            dict(id="L02", case="TC04", student_number="1.1.1.2", expected_reason="Changed parent loses length.")]
+        exact, changed = self.prepare()[0]
+        self.assertIs(json.loads(exact["mechanical"]["output"])["valid"], True)
+        self.assertEqual(exact["mechanical"]["evidence"], dict(rule="exact_teacher_relationship",
+            teacher_relationships=[dict(parent="1.1.1.1.1", child="1.1.1.1.1.1"),
+                                  dict(parent="1.1.2.1.1", child="1.1.2.1.1.1"),
+                                  dict(parent="1.2.1", child="1.2.1.1")]))
+        self.assertEqual(json.loads(changed["inputs"]["RELATIONSHIP_INPUT"]),
+                         dict(parent_subject="2 m cables", child_subject="3 m cables"))
+        self.assertNotIn("mechanical", changed)
+
+    def test_identical_subject_relationship_is_mechanical_after_binding_and_parsing(self):
+        saved, generation = self.actual_source("relationship")
+        students = json.loads(generation["answer"]["raw"])["subjects"]
+        students[1]["subject"] = students[0]["subject"]
+        generation["answer"]["raw"] = json.dumps(dict(subjects=students))
+        saved.write_text(json.dumps(generation))
+        definition = self.source["cases"][0]
+        definition["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+        case = self.prepare()[0][0]
+        self.assertIs(json.loads(case["mechanical"]["output"])["valid"], True)
+        self.assertEqual(case["mechanical"]["evidence"]["rule"], "identical_subjects")
+        self.assertEqual(case["evidence"]["parent_number"], "1")
+        self.assertIs(case["evidence"]["expected_valid"], False)
+        definition["generation"]["sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "hash differs"):
+            self.prepare()
+        definition["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+        definition["student_number"] = "1"
+        with self.assertRaisesRegex(ValueError, "immediate parent"):
+            self.prepare()
+        definition["student_number"] = "1.1"
+        generation["answer"]["truncated"] = True
+        saved.write_text(json.dumps(generation))
+        definition["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError, "output limit"):
+            self.prepare()
 
     def test_actual_support_is_bound_and_does_not_promote_agent_expectations_to_gold(self):
         saved, _ = self.actual_source()

@@ -1173,7 +1173,7 @@ def prepare(dataset, source, template):
         cases = source["cases"]
         for case in cases:
             engine._expect_fields(
-                case, "case", {"id", "inputs"} | ({"evidence"} & case.keys())
+                case, "case", {"id", "inputs"} | ({"evidence", "mechanical"} & case.keys())
             )
         if len({c["id"] for c in cases}) != len(cases):
             raise ValueError("duplicate case identity")

@@ -379,11 +379,14 @@ teacher catalog establishes no complete match. Record mechanical evidence and
 zero model attempts. Share identical saved review results with frozen source,
 prompt and runtime bindings while retaining every numbered placement; explicit
 fresh repeats remain fresh calls. Existing parsing and student/reviewer failure
-rules remain distinct. Exact-target matching and native
-request reuse exist; native zero-attempt matching results and general support and
-relationship acceptance remain to be implemented. See the [rule and implementation gaps](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9).
-This decision does not change prompts, scoring or qualification status or add
-model calls. A21 remains a discrepancy against an unadjudicated agent label:
+rules remain distinct. The subsequently authorized implementation supplies
+source-bound selected-case routing and native zero-attempt results for all three
+checks. Mixed runs dispatch only remaining semantic cases; explicit fresh repeats
+bypass mechanical completion. Reports retain evidence and distinguish mechanical
+comparisons from model checks. See the [rules and implementation](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9).
+Prompts, scoring and semantic qualification status retain their existing state;
+implementation verification adds no real model calls. A21 remains a discrepancy
+against an unadjudicated agent label:
 its new parent and nonmatching child do not reproduce a trusted teacher link.
 
 **Coverage-matching qualification scope agreed October 8:** target required

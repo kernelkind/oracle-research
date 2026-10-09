@@ -1704,18 +1704,31 @@ for placement and coverage. Explicit fresh repeats remain fresh inference.
 Parsing, completeness, output
 failure rules and score arithmetic remain mechanical and unchanged.
 
-Current matching preparation supplies exact subject matches and rejects exact
-targets from model controls; native zero-attempt matching results remain to be
-implemented. The shared runner reuses identical requests. General support and
-relationship acceptance from trusted subjects/links remains unimplemented.
-This approves the design rule, not a prompt change, implementation, further
-inference, final scoring policy,
+At approval, matching preparation supplied exact subject matches and rejected
+exact targets from model controls; the shared runner reused identical requests,
+but native zero-attempt results and general support/relationship acceptance
+were unimplemented. The initial approval covered the design rule, not a prompt
+change, implementation, further inference, final scoring policy,
 bulk grading or test unsealing. The [process record](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9)
 distinguishes that rule from current behavior and preserves prior experiments.
 The preceding read-only investigation finds that A21's `Proof setup` parent is
 student-created and its child has complete-match null. Its true expectation is
 an unadjudicated agent assessment, not a trusted teacher relationship; repeated
 disagreement alone does not conclusively establish reviewer error or incapability.
+
+**Mechanical review routing implementation subsequently authorized October 9:**
+the user's `proceed` authorizes the selected-case adapters and shared runner
+implementation of the approved rules. A preparation-local teacher index retains
+every subject occurrence and actual ordered immediate-edge witness. Mechanical
+output is independent of expected labels and validated through the selected
+adapter. Native prepared/show results record mechanical origin, evidence, a sealed
+digest and zero model attempts, without fabricated receipts or usage. Mixed runs
+dispatch only semantic cases and charge no request budget or warmup for mechanical
+cases; explicit fresh repeats bypass mechanical completion. Qualification reports
+separate mechanical comparisons from model checks, preserve label disagreements
+and leave agent-assessed expectations unverified. Complete prompt/config/source
+bindings remain intact. Verification uses production paths and local workers;
+this adds no real model calls, prompt changes, bulk scoring or test unsealing.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

@@ -60,7 +60,7 @@ def prepare_source(source, base, selected=None, *, include_post=False):
                                                include_teacher_meanings=False)
     protected[str(path)] = checksum
     saved = {case["id"]: case for case in saved}
-    cases = []
+    cases, indexes = [], {}
     for definition in definitions:
         original_case = saved[definition["case"]]
         payload = json.loads(original_case["inputs"]["REVIEW_INPUT"])
@@ -77,7 +77,10 @@ def prepare_source(source, base, selected=None, *, include_post=False):
                     or old not in subject or old == new):
                 raise ValueError("matching replacement does not change the selected wording")
             subject = subject.replace(old, new)
-        cases.append(_matching_case(definition, payload["teacher"], subject,
+        reference_key = original_case["evidence"]["reference"]
+        if reference_key not in indexes:
+            indexes[reference_key] = review._TeacherIndex(payload["teacher"])
+        cases.append(_matching_case(definition, indexes[reference_key], subject,
             dict(note_id=original_case["evidence"]["note_id"],
                  reference=original_case["evidence"]["reference"], partition=definition["partition"]),
             post=payload["post"] if include_post else None))
@@ -85,34 +88,25 @@ def prepare_source(source, base, selected=None, *, include_post=False):
 
 
 def _matching_case(definition, teacher, subject, evidence, *, post=None):
-    catalog, by_subject, by_number, numbers = [], {}, {}, {}
-    for entry in teacher:
-        wording = entry["subject"]
-        if wording not in by_subject:
-            identifier = f"T{len(catalog) + 1:02d}"
-            by_subject[wording] = identifier
-            catalog.append(dict(id=identifier, subject=wording))
-            numbers[identifier] = []
-        identifier = by_subject[wording]
-        by_number[entry["number"]] = identifier
-        numbers[identifier].append(entry["number"])
     if not subject.strip():
         raise ValueError("matching subject must be nonempty")
-    if subject in by_subject:
-        raise ValueError("exact match belongs to mechanical preselection, not a model control")
     expected_number = definition["expected_teacher_number"]
-    if expected_number is not None and (not isinstance(expected_number, str) or expected_number not in by_number):
+    if expected_number is not None and (not isinstance(expected_number, str) or expected_number not in teacher.by_number):
         raise ValueError("unknown expected teacher number")
-    match_input = dict(teacher_subjects=catalog, student_subject=subject)
+    match_input = dict(teacher_subjects=teacher.catalog, student_subject=subject)
     variables = dict(MATCH_INPUT=json.dumps(match_input, ensure_ascii=False))
     if post is not None:
         variables["POST"] = json.dumps(post, ensure_ascii=False)
-    return dict(id=definition["id"],
+    case = dict(id=definition["id"],
         inputs=variables,
         evidence=dict(evidence, definition=definition,
-            expected_teacher_id=None if expected_number is None else by_number[expected_number],
-            expected_reason=definition["expected_reason"], teacher_numbers=numbers,
-            teacher_entries=len(teacher), distinct_teacher_subjects=len(catalog)))
+            expected_teacher_id=None if expected_number is None else teacher.by_number[expected_number],
+            expected_reason=definition["expected_reason"], teacher_numbers=teacher.numbers,
+            teacher_entries=len(teacher.by_number), distinct_teacher_subjects=len(teacher.catalog)))
+    mechanical = teacher.matching(subject)
+    if mechanical is not None:
+        case["mechanical"] = mechanical
+    return case
 
 
 def _prepare_generations(source, base, selected, *, include_post):
@@ -143,13 +137,15 @@ def _prepare_generations(source, base, selected, *, include_post):
         raise ValueError("unknown or duplicate matching case selection")
     definitions = [d for d in definitions if selected is None or d["id"] in selected]
     loaded, protected = review.load_saved_generations(source["dataset_manifest"], definitions, base)
-    cases = []
+    cases, indexes = [], {}
     for saved in loaded:
         definition = saved["definition"]
         students = {row["number"]: row["subject"] for row in saved["student"]}
         if definition["student_number"] not in students:
             raise ValueError("unknown matching student number")
-        cases.append(_matching_case(definition, saved["teacher"], students[definition["student_number"]],
+        if saved["note_id"] not in indexes:
+            indexes[saved["note_id"]] = review._TeacherIndex(saved["teacher"])
+        cases.append(_matching_case(definition, indexes[saved["note_id"]], students[definition["student_number"]],
             dict(note_id=saved["note_id"], reference=source["dataset_manifest"],
                  generation=definition["generation"], expectation_status=definition["expectation_status"],
                  student_entries=len(saved["student"])),
@@ -194,6 +190,10 @@ def qualification(cases, all_case_ids):
                   else "failed" if failed else "pending" if pending else "passed",
                 checked=len(completed), total=len(all_case_ids), pending=pending,
                 mechanical_failures=failures, errors=errors)
+    mechanical = [case["id"] for case in cases if case.get("origin") == "mechanical"]
+    if mechanical:
+        result.update(mechanical_cases=mechanical,
+                      model_checked=sum(case.get("origin") != "mechanical" for case in completed))
     if unverified:
         result["unverified_expectations"] = unverified
         result["unresolved_expectations"] = [case["id"] for case in cases

@@ -935,15 +935,20 @@ subjects establish meaning matches and same-post support; exact ordered pairs
 from actual trusted teacher links establish local validity. Identical parent and
 child wording also preserves every parent restriction. Record such findings
 without inference while keeping occurrence-specific coverage and placement.
-Exact matching controls already reject mechanical targets; native zero-attempt
-matching results, including empty catalogs, remain to be implemented. The shared
-runner already reuses identical requests unless an explicit fresh repeat is requested.
-The support/relationship adapters currently render selected pairs/subjects and
-do not implement general teacher-based acceptance. This intended routing is
-separate from current behavior and preserves historical qualification calls.
-Remaining non-exact questions still need semantic review; lack of a trusted
-match does not establish invalidity. No prompt, adapter or runner changes or
-new model calls accompany this documentation decision.
+Source-bound matching and support/relationship adapters now attach sufficient
+evidence as `mechanical: {output, evidence}`. The shared runner validates this
+output through the selected adapter and seals it with the source and prepared
+inputs. Native reports expose `origin: "mechanical"`, `mechanical_evidence`,
+`mechanical_sha256` and zero `attempts`, without a model receipt or usage.
+Mechanical cases are complete at preparation and require no dispatch job, warmup
+or request-budget allowance. Mixed runs dispatch only remaining semantic cases.
+`prepare ... --repeat` bypasses this completion and forces real model requests;
+the full prompt/config remain prepared. Normal saved-response reuse still applies
+to semantic cases. Old frozen experiments without mechanical metadata retain
+their recorded execution. Reports separate `mechanical_cases` from `model_checked`,
+and matching call/token estimates exclude mechanical cases. No exact match leaves
+a semantic question; conflicting expected labels remain visible and agent-assessed
+expectations remain unverified. These changes do not qualify reviewers or run bulk grading.
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
@@ -1227,8 +1232,9 @@ production preparation and decoding functions:
   saved teacher/student preparation while bypassing prior reviewer groups and
   required flags. `MATCH_INPUT` includes a fixed distinct-string teacher catalog
   and exactly one generated subject; expectations, original numbers and source
-  identities remain evidence. Exact-string targets are rejected as unnecessary
-  model work. Source notes cannot cross development/confirmation partitions.
+  identities remain evidence. Exact-string targets now receive a mechanical
+  result; the historical model controls below selected non-exact targets.
+  Source notes cannot cross development/confirmation partitions.
   Strict validation accepts only a known teacher ID or null and a nonblank
   reason. A well-formed wrong judgment remains mechanically valid with a failed
   qualification; native reports distinguish false matches, missed matches,
@@ -1264,7 +1270,7 @@ production preparation and decoding functions:
   `subject_result` rejects malformed/truncated outputs; the selected wording
   is unchanged. Reserved test paths are rejected before opening them; no
   training/test input files are opened. The same complete distinct-string
-  teacher catalog and mechanical exact-target exclusion apply.
+  teacher catalog and mechanical exact-target completion apply to new preparation.
   `expectation_status` is `agent_assessed` or `unresolved`; this format cannot
   assert independent gold verification. Native qualification lists unverified
   expectations and remains pending even after agreement with every assessment.

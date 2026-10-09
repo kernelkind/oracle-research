@@ -58,7 +58,7 @@ def prepare_source(source, base, selected=None):
         list(dict.fromkeys(d["case"] for d in definitions)), include_teacher_meanings=False)
     protected[str(path)] = checksum
     saved = {case["id"]: case for case in saved}
-    cases = []
+    cases, indexes = [], {}
     for definition in definitions:
         original_case = saved[definition["case"]]
         payload = json.loads(original_case["inputs"]["REVIEW_INPUT"])
@@ -75,20 +75,25 @@ def prepare_source(source, base, selected=None):
         engine._validate_string_array(invalid, "expected invalid subjects", allow_empty=True)
         if set(invalid) - set(students):
             raise ValueError("expected invalid subject is absent from the source case")
+        reference_key = original_case["evidence"]["reference"]
+        if reference_key not in indexes:
+            indexes[reference_key] = review._TeacherIndex(payload["teacher"])
         cases.append(_verdict_case(check, definition, payload["post"], students, task,
-                                   evidence, number not in invalid))
+                                   evidence, number not in invalid, indexes[reference_key]))
     return cases, protected, dict(check=check, qualification_case_ids=[d["id"] for d in definitions])
 
 
-def _verdict_case(check, definition, post, students, task, evidence, expected_valid):
+def _verdict_case(check, definition, post, students, task, evidence, expected_valid, teacher):
     number = definition["student_number"]
     if check == "support":
         end = "Derive broader headings by generalizing source meanings without adding restrictions."
         if task.count(end) != 1:
             raise ValueError("ASv6.100 support rule boundary differs")
+        subject = definition.get("student_subject", students[number])
         variables = dict(ASV6_100_SUPPORT_RULES=task[:task.index(end) + len(end)],
             SUPPORT_INPUT=json.dumps(dict(post=post,
-                student_subject=definition.get("student_subject", students[number])), ensure_ascii=False))
+                student_subject=subject), ensure_ascii=False))
+        mechanical = teacher.support(subject)
     else:
         parent_number = number.rpartition(".")[0]
         if parent_number not in students:
@@ -101,8 +106,12 @@ def _verdict_case(check, definition, post, students, task, evidence, expected_va
         variables = dict(ASV6_100_PARENT_CHILD_RULES=task[task.index(start):task.index(end) + len(end)],
             RELATIONSHIP_INPUT=json.dumps(dict(parent_subject=students[parent_number],
                 child_subject=students[number]), ensure_ascii=False))
+        mechanical = teacher.relationship(students[parent_number], students[number])
     evidence["expected_valid"] = expected_valid
-    return dict(id=definition["id"], inputs=variables, evidence=evidence)
+    case = dict(id=definition["id"], inputs=variables, evidence=evidence)
+    if mechanical is not None:
+        case["mechanical"] = mechanical
+    return case
 
 
 def _prepare_generations(source, base, selected):
@@ -142,7 +151,7 @@ def _prepare_generations(source, base, selected):
             raise ValueError("unknown or duplicate verdict case selection")
     definitions = [d for d in definitions if selected is None or d["id"] in selected]
     loaded, protected = review.load_saved_generations(source["dataset_manifest"], definitions, base)
-    cases = []
+    cases, indexes = [], {}
     for saved in loaded:
         definition = saved["definition"]
         students = {row["number"]: row["subject"] for row in saved["student"]}
@@ -155,8 +164,10 @@ def _prepare_generations(source, base, selected):
         if "student_subject" in definition:
             evidence.update(original_student_subject=students[definition["student_number"]],
                             student_subject=definition["student_subject"])
+        if saved["note_id"] not in indexes:
+            indexes[saved["note_id"]] = review._TeacherIndex(saved["teacher"])
         cases.append(_verdict_case(check, definition, saved["post"], students,
-            saved["task_prompt"], evidence, definition["expected_valid"]))
+            saved["task_prompt"], evidence, definition["expected_valid"], indexes[saved["note_id"]]))
     return cases, protected, dict(check=check, qualification_case_ids=[d["id"] for d in definitions])
 
 
@@ -189,6 +200,10 @@ def qualification(cases, all_case_ids):
                   else "failed" if incorrect else "pending" if pending else "passed",
                 checked=len(completed), total=len(all_case_ids), pending=pending,
                 mechanical_failures=failures, incorrect_verdicts=incorrect)
+    mechanical = [case["id"] for case in cases if case.get("origin") == "mechanical"]
+    if mechanical:
+        result.update(mechanical_cases=mechanical,
+                      model_checked=sum(case.get("origin") != "mechanical" for case in completed))
     if unverified:
         result["unverified_expectations"] = unverified
         result["unresolved_expectations"] = [case["id"] for case in cases
