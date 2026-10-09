@@ -5,8 +5,9 @@ Execution and transport are owned by the separate
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
 delegate to that package. Prompts, specs, adapters, hierarchy commands, viewers
 and experiment artifacts remain here. `experiment-runner.json` selects these
-project extensions; use the shared CLI from this checkout or pass
-`--project-root` explicitly. The old Python, shell and JavaScript entry points
+project extensions. Use `../experiment-runner/bin/experiment-runner` from this
+checkout, as selected by the user, or pass `--project-root` explicitly when
+calling that launcher elsewhere. The old Python, shell and JavaScript entry points
 remain compatibility callers, rather than owning runner implementations.
 `EXPERIMENT_RUNNER_ROOT` selects an explicit source checkout when a version pin
 is needed. Frozen code/transport checks and old receipts remain enforced;

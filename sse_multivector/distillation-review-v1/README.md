@@ -56,14 +56,16 @@ whole-note trials; confirmation is reserved for this new matching prompt,
 not claimed as never-seen data for the entire investigation. Pilot final-test
 answers remain sealed.
 
-Prepare and inspect through the shared CLI in an environment providing
-`tiktoken==0.14.0`, also used by the existing bounded comparison workflow:
+Prepare and inspect with `../experiment-runner/bin/experiment-runner` from
+this Oracle checkout. The examples below use the shared launcher selected
+by the user. Use an environment providing `tiktoken==0.14.0`, also used by
+the existing bounded comparison workflow:
 
 ```sh
-python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-development-20261008 --spec sse_multivector/distillation-review-v1/matching-development-spec.json --repeat
-python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-confirmation-20261008 --spec sse_multivector/distillation-review-v1/matching-confirmation-spec.json --repeat
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --case M01
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --case M01 --prompt-only
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/matching-development-20261008 --spec sse_multivector/distillation-review-v1/matching-development-spec.json --repeat
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/matching-confirmation-20261008 --spec sse_multivector/distillation-review-v1/matching-confirmation-spec.json --repeat
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-development-20261008 --case M01
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-development-20261008 --case M01 --prompt-only
 ```
 
 Both specifications pin Sol / xhigh, subscription transport and concurrency 8.
@@ -122,8 +124,8 @@ from this trial.
 Inspect the saved findings and measured usage without new calls:
 
 ```sh
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --json
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-development-20261008 --case M06
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-development-20261008 --json
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-development-20261008 --case M06
 ```
 
 This passes the initial controlled matching check, not production qualification
@@ -149,8 +151,8 @@ usage. The catalog-price estimate is $0.053254, not a subscription invoice;
 provider-reported dollar charge is unavailable.
 
 ```sh
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-20261008 --json
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-20261008 --case M13
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-confirmation-20261008 --json
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-confirmation-20261008 --case M13
 ```
 
 Development and confirmation now pass 32/32 authored controls across separate
@@ -182,8 +184,8 @@ another generation on identical requests; it is not 16 new distinct controls
 or an effort/batching comparison.
 
 ```sh
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-repeat-01-20261008 --json
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-confirmation-repeat-01-20261008 --case M13
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-confirmation-repeat-01-20261008 --json
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-confirmation-repeat-01-20261008 --case M13
 ```
 
 The 32 distinct controls pass, and the 16 confirmation verdicts remain correct
@@ -257,10 +259,10 @@ total 19,624 `o200k_base` proxy tokens, with 364–1,282 per request and at most
 teacher wordings. These are offline text sizes, not actual usage/caching/cost.
 
 ```sh
-python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-actual-fakery-20261008 --spec sse_multivector/distillation-review-v1/matching-actual-spec.json --repeat
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-fakery-20261008 --json
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-fakery-20261008 --case R06 --prompt-only
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-fakery-20261008 --case R05
+../experiment-runner/bin/experiment-runner prepare target/distillation-review-v1/matching-actual-fakery-20261008 --spec sse_multivector/distillation-review-v1/matching-actual-spec.json --repeat
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-actual-fakery-20261008 --json
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-actual-fakery-20261008 --case R06 --prompt-only
+../experiment-runner/bin/experiment-runner show target/distillation-review-v1/matching-actual-fakery-20261008 --case R05
 ```
 
 The initial preparation had twelve assessed nonmatches and two unresolved cases.
@@ -361,7 +363,7 @@ Inspect the exact draft club request without inference:
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py show \
+../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/matching-actual-custody-20261008 \
   --case R19 --prompt-only
 ```
@@ -419,7 +421,7 @@ are preserved. All 14 matching tests pass.
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py show \
+../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/matching-post-pair-20261008 --case R19
 ```
 
@@ -644,7 +646,7 @@ Inspect the preserved evidence without new calls:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py show \
+../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/qualification-compatible-schema-20261008 --json
 ```
 
@@ -705,7 +707,7 @@ Inspect DSRv2's exact rendered Q04 prompt without inference:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py show \
+../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/qualification-v2-preview-final-20261008 \
   --case Q04 --prompt-only
 ```
@@ -825,7 +827,7 @@ Reproduce the DSRv2 preparation in a new destination, without inference:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py prepare \
+../experiment-runner/bin/experiment-runner prepare \
   target/distillation-review-v1/qualification-v2-preview-copy \
   --spec sse_multivector/distillation-review-v1/qualification-spec.json \
   --baseline target/distillation-review-v1/qualification-compatible-schema-20261008 \
@@ -837,7 +839,7 @@ full post, teacher, candidate and exact matches:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py show \
+../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/stress-preview \
   --case Q17 --prompt-only
 ```
@@ -848,7 +850,7 @@ the frozen inputs:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py score-review \
+../experiment-runner/bin/experiment-runner score-review \
   target/distillation-review-v1/stress-preview --case Q17 \
   --report sse_multivector/distillation-review-v1/tests/fixtures/Q17-report.json
 ```
@@ -980,7 +982,7 @@ Reproduce the offline ranking through the shared workflow:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py rank-distillation-generations \
+../experiment-runner/bin/experiment-runner rank-distillation-generations \
   target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json \
   --top 5 --output target/distillation-review-v1/largest-generation-sizes.json
 ```
@@ -996,7 +998,7 @@ Inspect Q27, which has the longest rendered input:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/experiment.py show \
+../experiment-runner/bin/experiment-runner show \
   target/distillation-review-v1/stress-preview --case Q27 --prompt-only
 ```
 
