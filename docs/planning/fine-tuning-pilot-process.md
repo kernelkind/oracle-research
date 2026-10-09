@@ -443,8 +443,10 @@ accuracy on actual distilled wording or the other semantic review questions.
 The accepted next step prepares an offline matching preview from actual saved
 validation wording, with DSMv1 and settings unchanged. Baseline and final
 checkpoint selections across all three models yield 22 distinct inputs: eight
-agent-assessed matches, twelve agent-assessed nonmatches and two unresolved
-cases. These expectations are not independently verified gold. Native
+agent-assessed matches, thirteen agent-assessed nonmatches and one unresolved
+case. The user accepted the assessed nonmatch for `Fakery` under DSMv1's
+existing complete-meaning rule; `Club symbols` remains unresolved. Acceptance
+does not independently verify gold. Native
 qualification remains pending, and unresolved placeholders are not nonmatches.
 Preparation made zero reviewer calls. See the
 [actual-wording preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8).

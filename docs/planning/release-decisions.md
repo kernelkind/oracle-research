@@ -1041,8 +1041,14 @@ it checks note/input identity and production parsing without opening reserved
 test generations. DSMv1, Sol / xhigh and concurrency 8 stay fixed. The preview
 selects sampled, lexically close and largest inputs from all three baselines
 and final validation checkpoints: 24 selection hits produce 22 distinct inputs.
-Eight expected matches and twelve expected nonmatches are agent assessments,
-not independently verified gold; two sampled phrases remain unresolved.
+Eight expected matches and thirteen expected nonmatches are agent assessments,
+not independently verified gold; one sampled phrase remains unresolved.
+The initial preview had two unresolved phrases. The user subsequently accepted
+the assessed nonmatch for `Fakery` under DSMv1's existing complete-meaning rule:
+overlap with `Inauthenticity` or `Deception` is insufficient. Acceptance does
+not promote the assessment to independently verified gold; `Club symbols`
+remains unresolved. A fresh offline preparation preserves all input wording
+and settings while recording R05's updated expectation status and reason.
 Native qualification stays pending even if a reviewer agrees with all
 assessments, and unresolved placeholders cannot become negative gold labels.
 Preparation makes zero calls. Independent verification, resolving the meaning

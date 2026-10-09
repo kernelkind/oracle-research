@@ -49,7 +49,8 @@ subsequently authorized independent confirmation repeat passes 16/16 with
 unchanged verdicts and no saved-answer reuse. The authorized
 [actual-wording offline preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8)
 prepares 22 distinct validation inputs with zero calls: eight assessed matches,
-twelve assessed nonmatches and two unresolved cases. Expected answers still
+thirteen assessed nonmatches and one unresolved case after the accepted
+`Fakery` assessment. Expected answers still
 need independent verification. Actual distilled-output reliability remains
 untested. DSMv1
 has not replaced the full review process. See the

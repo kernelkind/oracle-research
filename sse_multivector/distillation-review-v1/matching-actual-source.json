@@ -71,8 +71,8 @@
       },
       "student_number": "7",
       "expected_teacher_number": null,
-      "expected_reason": "Fakery could denote inauthenticity or deceptive activity. Decide the complete-meaning boundary with Inauthenticity and Deception before assigning gold; null here is not a nonmatch label.",
-      "expectation_status": "unresolved",
+      "expected_reason": "Fakery concerns making or presenting fakes. Deception also includes other misleading acts, while inauthenticity can exist without faking; neither is the same complete meaning under DSMv1. Accepted agent assessment of no match; independent verification remains open.",
+      "expectation_status": "agent_assessed",
       "selection": "qwen/evaluations/checkpoint-1000: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
     },
     {

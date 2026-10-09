@@ -232,7 +232,7 @@ This deliberate mixture is a challenge preview, not a population accuracy
 sample or a comparison of models/checkpoints.
 
 Expectations were assessed from the complete catalog before reviewer calls:
-**eight assessed matches, twelve assessed nonmatches and two unresolved cases**.
+**eight assessed matches, thirteen assessed nonmatches and one unresolved case**.
 These are agent assessments, **not independently adjudicated gold**. Even
 agreement with every assessed answer cannot qualify the reviewer: native
 qualification remains pending and lists `unverified_expectations`. An unresolved
@@ -244,7 +244,7 @@ distinction. No adjudication policy or rubric change has been adopted.
 | --- | --- | --- |
 | R06 | `Silver winner of Weekly Competition #51 with 12 videos and a 12-satoshi reward` versus the teacher's identical wording with a comma after `#51` | Assessed match, T08 |
 | R16 | `Self-custody` versus `Bitcoin self-custody`; all other corresponding teacher entries also specify Bitcoin | Assessed nonmatch: missing restriction |
-| R05 | `Fakery` with `Inauthenticity` and `Deception` in the teacher catalog | Unresolved complete-meaning boundary |
+| R05 | `Fakery` with `Inauthenticity` and `Deception` in the teacher catalog | Accepted assessed nonmatch: overlap is insufficient for complete equivalence |
 | R19 | `Club symbols` versus `Clubs suit symbol` | Unresolved: whether the standalone wording preserves the suit restriction |
 
 The [specification](matching-actual-spec.json) pins Sol / xhigh,
@@ -254,11 +254,24 @@ total 19,624 `o200k_base` proxy tokens, with 364–1,282 per request and at most
 teacher wordings. These are offline text sizes, not actual usage/caching/cost.
 
 ```sh
-python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-actual-20261008 --spec sse_multivector/distillation-review-v1/matching-actual-spec.json --repeat
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-20261008 --json
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-20261008 --case R06 --prompt-only
-python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-20261008 --case R05
+python3 sse_multivector/experiment.py prepare target/distillation-review-v1/matching-actual-fakery-20261008 --spec sse_multivector/distillation-review-v1/matching-actual-spec.json --repeat
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-fakery-20261008 --json
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-fakery-20261008 --case R06 --prompt-only
+python3 sse_multivector/experiment.py show target/distillation-review-v1/matching-actual-fakery-20261008 --case R05
 ```
+
+The initial preparation had twelve assessed nonmatches and two unresolved cases.
+The user subsequently accepted the assessed nonmatch for R05, `Fakery`, under
+the existing DSMv1 rule. [Oxford](https://www.oxfordlearnersdictionaries.com/definition/english/fakery)
+describes fakery as making something that differs from what is claimed;
+[Cambridge's deception entry](https://dictionary.cambridge.org/dictionary/english/deception)
+also includes concealment, while its
+[inauthentic entry](https://dictionary.cambridge.org/us/dictionary/english/inauthentic)
+describes a lack of authenticity. The assessment is that their overlap does not
+preserve identical complete meaning. User acceptance records an assessment,
+not independent gold verification. The fresh offline preparation above retains
+all 22 identical prompts/settings and changes only R05's expectation status
+and reason. The original preparation remains preserved; no reviewer was called.
 
 The next step is to settle the unresolved meaning boundaries and independently
 verify the expected answers before calls. Do not hide ambiguous sampled cases
