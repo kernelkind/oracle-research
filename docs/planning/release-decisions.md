@@ -1322,6 +1322,21 @@ bulk adoption is authorized by drafting. Existing prompts and saved evidence
 remain unchanged. See the
 [DSLv1 draft](../../sse_multivector/distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9).
 
+**DSMv3 ASv6.100 wording amendment authorized October 9:** the user accepted
+adding the relevant subject-wording guidance verbatim before qualifying a new
+matching version. Native `revise` creates DSMv3 from approved DSMv2, changing
+only its version label and an interpretive block containing ASv6.100's paragraph
+beginning “Make each `subject` concise”. The teacher answer remains the trusted
+reference and the task remains complete-meaning matching. Inputs, matching
+criteria, response contract, cases, expected labels and saved trials are
+unchanged. The full generation and hierarchy-placement instructions are
+excluded. This approves the rule addition in principle; the exact revised draft
+is presented for review before qualification calls. No DSMv3 experiment is
+prepared and no model calls or accuracy/cost measurements occur in drafting.
+DSMv2 evidence does not qualify DSMv3, and R05 remains disputed. Support/link
+judgments, scoring, bulk adoption and final-test sealing are unchanged. See the
+[DSMv3 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

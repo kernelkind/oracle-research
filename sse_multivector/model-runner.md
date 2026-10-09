@@ -1033,6 +1033,16 @@ production preparation and decoding functions:
   The user approved its unchanged wording after seeing the full DSLv1
   instructions. The draft remains untested and qualification is pending;
   wording approval authorizes no new calls.
+  The user then accepted adding ASv6.100's subject-wording guidance verbatim to
+  matching. Native `revise` creates the
+  [DSMv3 draft](distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9)
+  with its [revision provenance](distillation-review-v1/matching-prompt-v3.md.revision.json).
+  Only the version label and interpretive block change; `POST`, `MATCH_INPUT`,
+  matching criteria and the `teacher_id` / `reason` contract remain unchanged.
+  The draft needs no new variables or adapter changes. Its quoted paragraph is
+  verified against unchanged ASv6.100. No DSMv3 experiment or calls are prepared;
+  the exact wording is presented for review before qualification, and earlier
+  DSMv2 results do not qualify the revised prompt.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

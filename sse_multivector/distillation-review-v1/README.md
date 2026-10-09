@@ -12,6 +12,8 @@ these explicit, small-catalog examples do not resolve R05 or qualify the reviewe
 An identical-input fresh R05 repeat again returns T17; both saved calls make
 the disputed match with different explanations. Its expected null remains an
 agent assessment, and qualification remains pending.
+The [DSMv3 draft](#dsmv3-asv6100-wording-guidance-draft-october-9) adds one
+verbatim ASv6.100 paragraph to matching; no DSMv3 experiment or calls exist yet.
 The agreed process and selected reviewer are recorded
 in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
 This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
@@ -127,6 +129,38 @@ This is approval of the wording, not model qualification or bulk adoption.
 Subject support and parent-child validity remain separate judgments. No new
 calls or changes to case sources or scoring followed from this approval; both
 prepared teacher-relative requests remain unrun and R05 remains disputed.
+
+## DSMv3 ASv6.100 wording guidance draft (October 9)
+
+The user accepted adding relevant ASv6.100 subject-wording guidance verbatim to
+the matching prompt before qualifying the revised version. The shared CLI's
+`revise` command produced [DSMv3](matching-prompt-v3.md) from approved DSMv2,
+with native [revision provenance](matching-prompt-v3.md.revision.json). Only the
+version label and one interpretive block change. The task still compares one
+student subject with the trusted teacher's complete distinct-wording list.
+`POST`, `MATCH_INPUT`, matching criteria and the existing `teacher_id` / `reason`
+response contract are unchanged. No adapter, schema or case-source edits are
+needed for this draft.
+
+The inserted paragraph comes directly from
+[ASv6.100](../subject-prompt-goal-v1/asv6.100/ASv6.100.md), beginning “Make each
+`subject` concise” and ending “complete source subjects retain those details in
+their own specific headings.” Its original bytes are preserved. The passage
+explains subject wording, comparison sides and broader headings. A short wrapper
+limits its role to interpreting entries for complete-meaning matching against
+the trusted teacher list. Other generation, numbering and placement instructions
+and worked examples are excluded. The original ASv6.100 file remains unchanged;
+the prompt's quoted block is verified against that fixed source rather than
+maintained as a paraphrased standard. This adds fixed input text per comparison,
+without changing the candidate catalog, call count or batching policy. No token,
+cached-token, cost or accuracy measurement is claimed by drafting.
+
+The rule addition is approved in principle; the exact DSMv3 draft is presented
+for review before qualification calls. No experiment has been prepared and no
+calls have been made for DSMv3. Previous DSMv2 results do not qualify this new
+version. Existing controls, expected labels and saved trials are preserved;
+R05's disputed match remains unresolved. The amendment does not change support
+or link judgments, final pilot scoring, bulk adoption or test sealing.
 
 ## DSSv1 subject-support prompt draft (October 9)
 

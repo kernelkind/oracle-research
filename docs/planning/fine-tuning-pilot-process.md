@@ -430,6 +430,16 @@ DSLv1 wording after seeing the full instructions. The unused draft remains
 untested; no adapter, schema, prepared experiment, inference or scoring change
 is added. Wording approval does not qualify the reviewer or authorize new calls.
 
+The user then accepted adding ASv6.100's subject-wording guidance verbatim to
+complete-meaning matching before qualifying a new version. Native `revise`
+creates [DSMv3](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9)
+from approved DSMv2, changing only the version label and an interpretive block
+containing the original subject-wording paragraph. The trusted teacher reference,
+inputs, matching criteria, response contract, case expectations and saved
+evidence are unchanged. The exact draft is shown for review before calls;
+no DSMv3 experiment is prepared and no accuracy/cost measurement is claimed.
+Previous results do not qualify DSMv3, and the disputed R05 match remains open.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies
