@@ -1218,7 +1218,7 @@ work. See the
 [case preview](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8).
 
 **Teacher-relative case judgments reviewed October 8:** the user accepted
-TC05 with “ok”, then explicitly agreed to TC04, TC03, TC02 and TC06 as each
+TC05 with “ok”, then explicitly agreed to TC04, TC03, TC02, TC06 and TC01 as each
 case was presented in conversation. Treat the trusted teacher as correct and
 keep teacher agreement, post support and immediate parent-child validity as
 separate findings:
@@ -1239,12 +1239,15 @@ separate findings:
 - **TC06, renumbering:** changing the complete number prefix from `1` to `9`
   preserves wording and parent-child relationships; all three checks pass.
   Check this case mechanically, without a semantic model call.
+- **TC01, unchanged answer:** returning the teacher's complete answer with
+  identical subjects, numbering and relationships passes all three checks by
+  definition because the teacher is trusted. Check this mechanically, without
+  a semantic model call.
 
-TC01, returning the teacher answer unchanged, was subsequently presented with
-an expected all-pass result and a proposed mechanical check; user agreement
-is still pending. TC06 does not independently exercise arbitrary sibling
-reordering. These approvals concern the five authored case expectations, not
-model qualification, adoption of a final pilot rubric, or numerical scoring.
+All six case judgments are agreed. TC06 does not independently exercise
+arbitrary sibling reordering. These approvals concern the six authored case
+expectations, not model qualification, adoption of a final pilot rubric, or
+numerical scoring.
 The earlier required/optional scoring implementation, existing prompts,
 case-source expectations and saved trials remain unchanged. A general
 teacher-edge agreement check remains unimplemented. No model calls were made

@@ -385,13 +385,14 @@ only for whole-case inspection. This preview does not adopt a revised pilot
 rubric or change the scorer/prompts; structural allowances, adoption and new
 calls remain open.
 
-The user subsequently accepted the expected judgments for TC02–TC06 in
+The user subsequently accepted the expected judgments for all six cases in
 conversation: equivalent wording passes all three checks; reversed negation
 fails teacher agreement and post support; a wrong parent fails teacher
 agreement and link validity; a missing general teacher heading fails teacher
 agreement while remaining subjects/links stay valid; consistent renumbering
-passes and should be checked mechanically. TC01, the unchanged-answer control,
-has been presented but awaits agreement. These authored expectations are not
+passes and should be checked mechanically. The unchanged-answer control passes
+all three checks by definition because the teacher is trusted, and should also
+be checked mechanically. These authored expectations are not
 measured model verdicts or adoption of a revised scoring rule; no new calls,
 prompt changes or scorer changes occurred. See the
 [decision record](release-decisions.md).

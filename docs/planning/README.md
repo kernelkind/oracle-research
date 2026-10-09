@@ -100,9 +100,9 @@ Two non-exact targets have separate DSMv2 preparations. The existing DSRv2
 renderer serves only to inspect whole-case inputs. Scorer/prompt changes,
 structural allowances, adoption and inference remain open.
 The user then reviewed the cases in conversation and accepted the expected
-judgments for TC02–TC06, including mechanical treatment of consistent
-renumbering. TC01, the unchanged-answer control, awaits agreement. These are
-case-expectation approvals, not model qualification or a revised scoring rule.
+judgments for all six, including mechanical checks for consistent renumbering
+and the unchanged teacher answer. These approvals concern case expectations,
+not model qualification or a revised scoring rule.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
