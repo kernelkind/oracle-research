@@ -1148,6 +1148,12 @@ production preparation and decoding functions:
   1,024 tokens and cache reads/writes are zero. Exact request bodies, methods and
   URLs match the baseline despite recorded runner 1.2.0 provenance. Native
   agent review gives six accept and two reject; qualification remains pending.
+  The next authorized step drafts [DSSv2](distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
+  through native `revise`, adding one exception/claim-scope clarification after
+  the unchanged ASv6.100 rules. Native offline preparation reuses A08/A20 from
+  the confirmation with the same settings and output contract; it makes no
+  calls. DSSv2 remains proposed and untested, pending wording and semantic-trial
+  approval. DSSv1 and saved trials remain intact; no other reviewer changes.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.

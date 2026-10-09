@@ -536,6 +536,13 @@ accept and two reject. Qualification stays pending, with agent expectations
 unverified. No prompt change, lower-effort comparison, scoring or test unsealing
 is adopted.
 
+The subsequently authorized [DSSv2 draft](../../sse_multivector/distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
+addresses the repeated support exception error with one claim-scope clarification
+after the intact ASv6.100 excerpt. The offline A08/A20 preview preserves cases
+and settings and makes no calls. Exact wording and semantic testing still need
+approval; the draft does not replace tested DSSv1, establish effectiveness or
+qualify the reviewer.
+
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted
 examples, controlled valid/invalid changes and full-size training hierarchies

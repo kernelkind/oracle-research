@@ -1,5 +1,11 @@
 # Distillation semantic review — process and evidence
 
+[DSSv2](support-prompt-v2.md) is now a proposed, untested subject-support draft
+for wording review. It adds one clarification of claim scope and exceptions
+after the unchanged ASv6.100 excerpt. DSSv1 remains the tested support version;
+no new reviewer calls or semantic results are authorized by drafting DSSv2.
+See the [draft record](#dssv2-exception-clarification-draft-october-9).
+
 Fresh confirmation result: **two of the four rejected decisions repeat; two
 change to the expected correct verdict**. All four previously accepted contrasts
 stay accepted. The [unchanged-input repeat](#fresh-confirmation-of-four-rejected-cases-october-9)
@@ -1044,10 +1050,59 @@ No paid fallback or budget-ledger change occurs.
 Qualification remains **pending**, including unverified agent expectations and
 unselected cases from the original full sources. Two repeated failures and two
 corrected decisions do not establish a population error rate or qualify the
-reviewers. The recommended next step is to address the repeated exception
-preservation failure first, presenting a proposed reviewer change for approval
-before further calls. No prompt revision, lower-effort comparison, bulk scoring,
-structural policy or reserved-test access is adopted by this result.
+reviewers. The user subsequently authorizes drafting the proposed exception
+clarification below for review before further calls. No lower-effort comparison,
+bulk scoring, structural policy or reserved-test access is adopted by this result.
+
+### DSSv2 exception clarification draft (October 9)
+
+The user directs proceeding with the recommendation to address the repeated
+support exception failure first and show a proposed prompt change before calls.
+[DSSv2](support-prompt-v2.md) changes DSSv1's version header and adds only this
+paragraph after the authoritative ASv6.100 excerpt:
+
+```text
+Apply qualifications from the complete post to any claim retained in
+student_subject. Omitting an exception or condition while keeping that claim
+is unsupported if it extends the claim beyond the cases the post supports.
+Broader subjects that omit the claim itself can still be supported.
+```
+
+Both A20 failures retain the negative claim while discarding its Nostr exception;
+the initial reason expressly treats this as permitted broader naming. The draft
+clarifies why that broader negative claim lacks support. It preserves ASv6.100's
+permission to name broader topics and actions without asserting that an event
+occurred or importing every detail of its particular instance. A08's omission
+of the hot-springs location and discovery time remains permissible under the
+frozen expectation. These examples explain the draft here; they are not included
+in the reviewer instructions.
+
+Two agents independently find the paragraph consistent with the existing
+ASv6.100 standard. This is an agent assessment of proposed wording, not a user
+approval of DSSv2 or evidence that the reviewer will apply it correctly. The
+known over-rejection risk is reading a topic, conditional or event heading as
+an assertion; the unchanged authoritative heading guidance still applies.
+The narrow clarification follows [OpenAI's guidance on straightforward reasoning
+prompts](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+
+Native `revise` preserves the complete diff and hash-bound provenance in
+[the revision record](support-prompt-v2.md.revision.json). The two template
+variables, verbatim AS rules, data handling and Boolean/reason output contract
+are unchanged. DSSv1 and every previous experiment stay intact. No teacher
+wording, source, expectation or model setting changes.
+
+The offline A08/A20 preview uses the saved confirmation's exact cases and
+settings under `target/distillation-review-v1/support-scope-dssv2-preview-20261009/`.
+Native preparation validates the new template and source bindings without
+inference. It cannot establish that the error is fixed or measure over-rejection;
+the preview has no DSSv2 verdicts. These reused development cases cannot provide
+an independent accuracy estimate.
+
+The draft's exact wording and a subsequent bounded semantic trial remain open
+for user approval. Further calls should test exception-preserving wording and
+broader topic naming as well as A20 before broader use; those additional controls
+and calls are not prepared or adopted here. DSMv3, DSLv1, reviewer qualification,
+final scoring, bulk adoption and sealed test data retain their existing status.
 
 ## Matching-only offline preview
 

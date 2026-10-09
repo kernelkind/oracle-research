@@ -1608,6 +1608,19 @@ errors and inconsistent decisions on selected cases, not an overall accuracy
 estimate. Prompt changes, lower-effort work, bulk review and test access remain
 unadopted.
 
+**Support exception clarification drafting authorized October 9:** after the
+fresh confirmation, the user directs proceeding with the recommendation to
+address the repeated support exception error and show a proposed change before
+further calls. [DSSv2](../../sse_multivector/distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
+is an untested draft, adding one claim-scope paragraph after the unchanged
+ASv6.100 excerpt. It distinguishes dropping a limiting exception while retaining
+its claim from permitted broader subject naming. Native revision preserves the
+exact delta; the offline A08/A20 preview preserves inputs and settings and makes
+no calls. Draft integrity and agent agreement do not establish effectiveness.
+The user has not approved the exact new wording or a semantic trial. DSSv1
+remains the tested support version; DSMv3, DSLv1, existing expectations, teacher
+trust, qualification, bulk review, scoring and test sealing remain unchanged.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress
