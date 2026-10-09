@@ -1011,15 +1011,17 @@ production preparation and decoding functions:
   is a reusable prompt only: `SUPPORT_INPUT` contains the full post and one
   `student_subject`; the decision is Boolean `valid` and string `reason`.
   No support experiment, dataset adapter or response schema has been added.
-  The prompt, controls and proposed support inheritance await approval; no
+  The controls and proposed support inheritance await approval; no
   experiment preparation, inference or scoring behavior changes occur here.
   The user approved reusing ASv6.100's support rules unchanged. The revised
   DSSv1 wrapper uses `ASV6_100_SUPPORT_RULES` for the verbatim opening support
   text, ending after the sentence about deriving broader headings without
   adding restrictions. Future preparation must load that text from the original
   source. No adapter currently supplies this variable, and no support request
-  has been prepared or rendered. The revised wrapper wording, controls,
-  qualification and proposed support inheritance remain open.
+  has been prepared or rendered. The user subsequently accepted the revised
+  wrapper's exact wording after seeing the full DSSv1 instructions. The prompt
+  remains an untested draft; controls, qualification and proposed support
+  inheritance remain open. Accepting the instructions authorizes no new calls.
 
 - `dataset.adapter: "distillation_matching"`: the
   [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)

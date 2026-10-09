@@ -148,14 +148,17 @@ support rules and broader-heading allowance; it ends before parent-child,
 placement and output instructions or worked examples. Future shared-workflow
 preparation must load it from that original source, rather than a separately
 maintained copy. No adapter currently supplies the variable, and the draft has
-not been prepared or rendered as an experiment request. Approval covers this
-rule-reuse decision; the revised wrapper's exact wording remains for review.
+not been prepared or rendered as an experiment request. The user approved the
+rule-reuse decision, then accepted the revised wrapper's exact wording after
+the full DSSv1 instructions were displayed in the conversation on October 9.
+This accepts the instructions without qualifying the reviewer or authorizing
+new calls.
 
 For the trusted cable post, `Lengths` passing and `4 m cable A` failing are
 proposed authored controls, not model verdicts or approved qualification cases.
 They are input examples for human review, not worked examples embedded in DSSv1.
 No experiment has been prepared and no model calls have been made for DSSv1.
-The prompt is untested and awaits approval. The proposed inheritance of post
+The accepted prompt remains an untested draft. The proposed inheritance of post
 support from correct complete teacher matches still needs process approval;
 relying on semantic matches also requires qualifying the matcher. Existing
 matching/review prompts, schemas, adapters, scoring and saved trials are

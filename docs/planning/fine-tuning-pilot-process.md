@@ -406,16 +406,17 @@ and final scoring remain open; R05 is not resolved by approving the wording.
 
 The subsequently authorized [DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
 judges post support for one unmatched subject from the full post, returning
-Boolean `valid` and string `reason`. The prompt, controls and proposed support
+Boolean `valid` and string `reason`. The controls and proposed support
 inheritance from teacher matches await approval; no support experiment or
 model calls have been prepared. Existing review/scoring behavior is unchanged.
 The user then approved reusing ASv6.100's support rules unchanged instead of
 paraphrasing them. The revised DSSv1 wrapper adds only the narrow review task
 and output format around `ASV6_100_SUPPORT_RULES`, to be loaded verbatim from
 the original source during future shared-workflow preparation. No adapter
-currently supplies that variable. The revised wording, controls, qualification
-and proposed support inheritance remain open; this decision authorizes no
-inference or bulk adoption.
+currently supplies that variable. The user subsequently accepted the revised
+wrapper's exact wording after seeing it in full. DSSv1 remains untested;
+controls, qualification and proposed support inheritance remain open. No
+inference or bulk adoption is authorized by accepting the instructions.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

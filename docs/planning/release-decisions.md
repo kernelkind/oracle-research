@@ -1279,25 +1279,27 @@ expressed by one subject with no complete teacher match, including supported
 broader headings. DSSv1 applies the relevant ASv6.100 rules and returns exactly
 one JSON object with Boolean `valid` and string `reason`. Its input contains
 only the full post and one subject; it does not receive a teacher catalog or
-candidate hierarchy. The prompt and the proposed `Lengths` / `4 m cable A`
-controls await approval and qualification. Deriving post support from correct
-complete teacher matches remains a proposed process change; semantic matches
-also require a qualified matcher. No support experiment, adapter, schema,
-scorer change, inference or bulk adoption is authorized by drafting. Existing
+candidate hierarchy. The revised wording is accepted below; the proposed
+`Lengths` / `4 m cable A` controls await approval and qualification. Deriving
+post support from correct complete teacher matches remains a proposed process
+change; semantic matches also require a qualified matcher. No support experiment,
+adapter, schema, scorer change, inference or bulk adoption is authorized by drafting. Existing
 prompts and saved evidence are preserved. See the
 [DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
 
-**DSSv1 authoritative-rule reuse approved October 9:** the user agreed to
-reuse ASv6.100's support rules unchanged, with a small review task and return
-format, instead of maintaining a paraphrased second rulebook. The revised draft
+**DSSv1 authoritative-rule reuse and review wording accepted October 9:**
+the user agreed to reuse ASv6.100's support rules unchanged, with a small review
+task and return format, instead of maintaining a paraphrased second rulebook. The revised draft
 uses `ASV6_100_SUPPORT_RULES` for ASv6.100's verbatim opening support-rule text,
 ending after “Derive broader headings by generalizing source meanings without
 adding restrictions.” Future shared-workflow preparation must load this text
 from the original ASv6.100 source; no support adapter currently supplies it.
 The input remains the full post and one subject, and the output remains Boolean
-`valid` and string `reason`. Approval covers the reuse decision, not the revised
-wrapper's exact wording, authored controls, reviewer qualification, support
-inheritance, inference or bulk adoption. ASv6.100, existing matching/review
+`valid` and string `reason`. After the full revised DSSv1 wrapper was displayed
+in the conversation, the user accepted its exact wording with “ok, seems
+reasonable”. This accepts the reuse decision and review instructions, not
+authored controls, reviewer qualification, support inheritance, inference or
+bulk adoption. DSSv1 remains an untested draft. ASv6.100, existing matching/review
 prompts, schemas, scoring and saved evidence remain unchanged. See the
 [revised DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
 
