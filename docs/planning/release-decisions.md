@@ -1441,7 +1441,7 @@ caching measurement is claimed. Four edits reuse previous authored matching
 controls; this is development evidence, not a fresh confirmation partition.
 The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9) preserves exact changes,
 expectations and native inspection/preparation commands. The user has accepted
-LC03 and LC07 as recorded below; the other five variants remain proposed.
+LC03, LC04 and LC07 as recorded below; the other four variants remain proposed.
 No new model calls are authorized. Thirty-six existing production preparation/validation
 tests pass with the documented tokenizer dependency; default Python initially lacked it.
 No prompt, adapter, general teacher-edge check or scoring implementation changes
@@ -1464,9 +1464,21 @@ the person named by `Dr. Abu Safiya, a health worker abducted from Gaza`, so
 the link is invalid (LL04: false). Both strings remain exact trusted teacher
 wording; no matching or post-support calls are needed. This accepts the expected
 link judgment, not new model calls or a general teacher-edge implementation.
-Five variants remain proposed, with LC04’s monetary-rules wording change next
-for conversational review. All 16 inputs remain unrun. Frozen sources, prompts,
-settings and numerical scoring are unchanged.
+
+**LC04 judgments agreed October 9:** after the complete teacher subject, edited
+student subject and original post excerpt were presented, the user replied
+“ok”. The teacher subject is `The Bank for International Settlements designing
+monetary rules rather than printing money`; the edited student subject is
+`The Bank for International Settlements designing monetary rules and printing
+money`. The original post states, `The BIS doesn’t print money; it designs the
+rules of the game.` Changing `rather than` to `and` reverses the exclusion,
+so no complete teacher meaning matches (LM04: null). The added claim of printing
+money contradicts the post’s explicit negation, so post support fails
+(LS04: false). This accepts only those two expectations and adds no model calls.
+The preview includes no separate link call for LC04. Four variants remain
+proposed, with LC01’s `two` → `2` change next for conversational review. All 16
+inputs remain unrun. Frozen sources, prompts, settings and numerical scoring
+are unchanged.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

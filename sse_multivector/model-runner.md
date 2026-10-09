@@ -1088,7 +1088,9 @@ production preparation and decoding functions:
   invalid link after presentation, then LC07’s invalid moved-subtree link. That
   new parent explicitly excludes Dr. Abu Safiya, whom the unchanged child names;
   both strings remain trusted teacher wording, requiring no matching or support
-  calls. Five variants await review, with LC04’s monetary-rules wording change
+  calls. The user also accepted LC04’s null match and failed post support:
+  `and printing money` contradicts the teacher’s exclusion and the post’s
+  explicit negation. Four variants await review, with LC01’s `two` → `2` change
   next. No inference follows from preparation or these approvals.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer

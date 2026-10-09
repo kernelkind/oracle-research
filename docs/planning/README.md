@@ -159,8 +159,10 @@ LC03’s three judgments are agreed after presentation: dropping the three-day
 restriction loses complete teacher meaning, retains post support and invalidates
 the parent-child link. LC07’s moved subtree has an invalid incoming link because
 its new parent explicitly excludes Dr. Abu Safiya, whom the child names; both
-strings remain trusted teacher wording. Five variants still await review, with
-LC04’s monetary-rules wording change next. No new model calls are authorized.
+strings remain trusted teacher wording. LC04’s `rather than printing money` →
+`and printing money` change fails both complete teacher matching and post
+support. Four variants still await review, with LC01’s `two` → `2` change next.
+No new model calls are authorized.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

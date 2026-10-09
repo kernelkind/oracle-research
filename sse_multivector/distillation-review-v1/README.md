@@ -6,7 +6,7 @@ Three prefix warmups completed, with zero cache reads or writes throughout.
 See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
 These small controls do not qualify bulk review.
 The next [larger training-control preview](#larger-training-controls-prepared-october-9)
-contains 16 unrun inputs. LC03 and LC07 are agreed; five variants await review.
+contains 16 unrun inputs. LC03, LC04 and LC07 are agreed; four variants await review.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -413,12 +413,13 @@ are authorized by this result.
 After the initial seven-case trial, the user authorized preparing harder
 controlled changes from the largest ASv6.100 training answers and presenting
 them before further model calls. The teacher answers remain trusted. These
-are authored expectations, with **LC03 and LC07 agreed by the user** after
-presentation. The other five variants remain proposed; no model verdicts exist
+are authored expectations, with **LC03, LC04 and LC07 agreed by the user** after
+presentation. The other four variants remain proposed; no model verdicts exist
 for this set. LC03 separates complete teacher meaning, post support and parent
 restriction preservation. LC07 invalidates the moved subtree’s incoming link
-while retaining exact trusted subject wording. LC04, the monetary-rules wording
-change, is next for conversational review.
+while retaining exact trusted subject wording. LC04 changes an exclusion into
+a positive claim, failing matching and post support. LC01, changing `two` to
+`2`, is next for conversational review.
 
 The existing source-bound ranking selected eight training extremes from all
 1,300 answers. This preview uses three of them, spanning the maximum entry
@@ -445,7 +446,7 @@ pair; its subject strings remain exact trusted teacher wording.
 | LC01 | L3 / `1.1.5` | `kills two people` → `kills 2 people` | LM01: T07 | LS01: true | No link call |
 | LC02 | L3 / `1.1.5` | `kills two people` → `kills three people` | LM02: null | LS02: false | No link call |
 | LC03 (**agreed**) | L3 / `18.1.1.1` | Remove ` in three days` | LM03: null | LS03: true | LL01: false |
-| LC04 | L1 / `2.3.1` | `rather than printing money` → `and printing money` | LM04: null | LS04: false | No link call |
+| LC04 (**agreed**) | L1 / `2.3.1` | `rather than printing money` → `and printing money` | LM04: null | LS04: false | No link call |
 | LC05 | L6 / `1.2.2.1.1` | `released to mark YouTube’s renewed account ban` → `released to mark the renewed banning of the group’s account by YouTube` | LM05: T07 | LS05: true | LL02: true |
 | LC06 | L6 / `1.2.2.1.1` | `YouTube’s renewed account ban` → `YouTube’s first account ban` | LM06: null | LS06: false | LL03: false |
 | LC07 (**agreed**) | L3 / `6.2.2.2` after move | Move subtree `6.2.1` beneath `6.2.2` as `6.2.2.2` | Exact teacher wording; no call | Trusted wording; no call | LL04: false |
@@ -479,6 +480,24 @@ approves LM03: null, LS03: true and LL01: false, not new model calls. A possible
 December 29 headline reporting that displacement over a month fits the child
 without supporting the parent. The full post is preserved in matching
 and support inputs. The parent-child prompt receives only these two strings.
+
+For LC04, the original teacher subject is:
+
+> The Bank for International Settlements designing monetary rules rather than printing money
+
+The edited student subject is:
+
+> The Bank for International Settlements designing monetary rules and printing money
+
+The original post states:
+
+> The BIS doesn’t print money; it designs the rules of the game.
+
+The user accepted both proposed judgments with “ok”: no complete teacher match
+(LM04: null), because `and` reverses the exclusion expressed by `rather than`;
+post support fails (LS04: false), because the added claim of printing money
+contradicts the post’s explicit negation. This accepts those two expectations
+and adds no model calls. This preview includes no separate link call for LC04.
 
 LC05/LC06 retain the full long composite about the Loser 2 video, its release
 purpose and all three mocking clauses. LL02 checks that the passive paraphrase
@@ -544,7 +563,7 @@ that dependency was absent. No adapter or prompt implementation changes were
 needed. Ignore exceptions keep the seven reusable source/spec JSON files tracked,
 while generated experiments and the temporary training fixture stay ignored.
 
-The remaining five variants need review in the conversation before inference.
+The remaining four variants need review in the conversation before inference.
 Broader qualification, fresh repeats and later lower-effort comparison remain
 open. Support inheritance, structural allowances, teacher-edge implementation,
 final scoring, bulk grading and test unsealing are not adopted by preparing
