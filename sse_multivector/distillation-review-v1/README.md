@@ -1,15 +1,14 @@
 # Distillation semantic review — evidence and matching-only preview
 
-Current three-check development result: **DSMv3 2/2, DSSv1 2/2 and DSLv1 3/3**
-agree with the accepted expectations. All seven reasons pass agent inspection.
-Three prefix warmups completed, with zero cache reads or writes throughout.
-See the [initial warmed trial](#initial-warmed-three-check-trial-october-9).
-These small controls do not qualify bulk review.
-The next [larger training-control preview](#larger-training-controls-prepared-october-9)
-contains 16 unrun inputs. The user accepted LC03, LC04 and LC07 expectations;
-the agent reviewed LC01, LC02, LC05 and LC06 after the user delegated the
-remaining review. All seven variants have completed expectation
-review; no model verdicts exist for these larger controls yet.
+Current three-check development result: **DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4**
+match expectations in the [larger training trial](#larger-three-check-trial-october-9).
+All 16 reasons pass native agent review; all requests completed on first attempts,
+with no reuse or reported cache reads/writes. The user accepted LC03, LC04 and
+LC07 expectations and delegated LC01, LC02, LC05 and LC06 expectation review
+to the agent before authorizing this trial.
+The [initial warmed trial](#initial-warmed-three-check-trial-october-9) remains
+separate small-control evidence. A fresh unchanged repeat is the next proposed
+step; broader qualification and lower-effort comparison remain open.
 
 Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
 DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
@@ -323,8 +322,9 @@ validation and native CLI tests using an offline executable fixture.
 
 The exact seven inputs and expectations were displayed in conversation and the
 user accepted them, then authorized the initial xhigh trial with prefix warming.
-That trial passes all seven cases below; broader controls, the selected large
-training examples and fresh repeats remain necessary before bulk use. No
+That trial passes all seven cases below; the larger training trial extends this
+evidence to 16 checks on three training extremes. Broader qualification and
+fresh repeats remain necessary before bulk use. No
 support-inheritance policy, structural allowances,
 teacher-edge agreement implementation, final rubric, bulk grading or final-test
 unsealing is adopted by this preparation. R05 remains unresolved.
@@ -334,7 +334,8 @@ reliability with GPT-6.1 Sol / xhigh first, then hold prompts, cases and expecte
 judgments fixed while comparing semantic errors, latency and actual token usage,
 including cached tokens. This records future intent; no lower-effort settings,
 experiment preparation or new calls are added by that future-effort request.
-All three current prompts have only the initial development evidence below.
+All three current prompts have initial and larger training development evidence
+below; broader qualification and independent repeats remain open.
 
 ## Initial warmed three-check trial (October 9)
 
@@ -403,8 +404,9 @@ example:
 ```
 
 These seven small development controls establish only initial prompt behavior.
-Broader source-bound controls, selected large training cases and fresh repeats
-remain necessary to establish reliability; lower-effort comparison remains
+The larger training trial below adds source-bound controls on selected training
+extremes. Broader qualification and fresh repeats remain necessary to establish
+reliability; lower-effort comparison remains
 future work. No support-inheritance policy, structural allowance, teacher-edge
 implementation, numerical scoring, bulk grading or final-test unsealing is
 adopted. R05 remains unresolved. A later cache measurement should use naturally
@@ -420,9 +422,9 @@ accepted LC03, LC04 and LC07 after presentation, then said they did not want to
 inspect every remaining case personally. The agent completed LC01, LC02, LC05
 and LC06 expectation review against the frozen inputs through native
 `show --case`. These are agent assessments under the agreed rules, separate
-from the three explicit user acceptances. All authored expectations stand;
-no model verdicts exist for this set. No further individual case presentation
-is required before proposing the bounded trial.
+from the three explicit user acceptances. All authored expectations stand.
+The user subsequently authorized the bounded trial; its completed model
+verdicts and reason assessments are recorded below.
 
 The existing source-bound ranking selected eight training extremes from all
 1,300 answers. This preview uses three of them, spanning the maximum entry
@@ -546,7 +548,8 @@ approval adds no model calls, general teacher-edge comparison or final scoring
 implementation.
 
 The unchanged `distillation_matching` and `distillation_verdict` adapters prepare
-**six DSMv3, six DSSv1 and four DSLv1 inputs**, all unrun with zero attempts/reuse.
+**six DSMv3, six DSSv1 and four DSLv1 inputs**, initially unrun with zero
+attempts/reuse. The same preparations now hold the completed trial below.
 The source-bound selectors and specifications are:
 
 - [matching selectors](large-training-matching-source.json) and [spec](large-training-matching-spec.json);
@@ -567,10 +570,10 @@ SSE, concurrency 8 and unchanged response schemas. Native matching sizing report
 most 72 distinct teacher wordings. These are offline text sizes, not provider
 usage, latency, cache hits or measured costs. Preparation adds no warmup request
 or claim of caching benefit. No whole hierarchy or all-pairs model review is
-added: this preview has 16 verdict requests if subsequently authorized, before
-warmups or any permitted provider retries.
+added: this set defines 16 verdict requests before warmups or any permitted
+provider retries. The authorized trial below used these exact preparations.
 
-Reproduce preparations in an environment providing `tiktoken==0.14.0`:
+Original preparation commands, using an environment with `tiktoken==0.14.0`:
 
 ```sh
 ../experiment-runner/bin/experiment-runner prepare \
@@ -594,16 +597,77 @@ that dependency was absent. No adapter or prompt implementation changes were
 needed. Ignore exceptions keep the seven reusable source/spec JSON files tracked,
 while generated experiments and the temporary training fixture stay ignored.
 
-Expectation review is complete: three variants have explicit user acceptance
-and four have delegated agent assessments. The next proposed step is the
-bounded 16-request trial using unchanged GPT-6.1 Sol / xhigh and concurrency 8,
-with saved verdicts and reasons checked against these expectations. This
-review does not authorize inference. Broader qualification, fresh repeats and
-later lower-effort comparison remain open. Support inheritance, structural
-allowances, teacher-edge implementation, final scoring, bulk grading and test
-unsealing are not adopted by preparing
-these inputs. Existing cases, prompts, expected labels and saved trials remain
+Expectation review was completed before calls: three variants have explicit
+user acceptance and four have delegated agent assessments. The subsequent
+authorized trial passes all 16 checks below. Broader qualification, fresh
+repeats and later lower-effort comparison remain open. Support inheritance,
+structural allowances, teacher-edge implementation, final scoring, bulk grading
+and test unsealing are not adopted by preparing these inputs. Existing cases, prompts, expected labels and saved trials remain
 unchanged; R05 remains unresolved.
+
+## Larger three-check trial (October 9)
+
+After expectation review was completed and the bounded 16-request trial was
+proposed, the user replied “proceed”. The shared stable launcher ran the three
+existing preparations without changing prompts, subjects, source bindings,
+labels or settings: `openai-codex` / `gpt-6.1-sol` / `xhigh`, subscription SSE,
+concurrency 8. Batches ran sequentially with six, six and four available cases;
+concurrency 8 was the configured ceiling, not eight occupied slots. Native
+`run --max-new-attempts` allowances were 12, 12 and 8 respectively, admitting
+only the existing provider-only retry policy. All 16 requests completed on
+first attempts, with no retry, failure, interruption or answer reuse.
+
+Native qualification reports pass **DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4**.
+Native `review --role agent` additionally records acceptance of all 16 reasons
+after case inspection. In particular, the lost three-day restriction receives
+no teacher match, retains post support, and fails the parent-child link. LL01’s
+counterexample explicitly keeps displacement below 10,000 in every three-day
+period while exceeding it over a month. The long paraphrase preserves meaning
+and parent restrictions; the first-ban change fails all three selected checks.
+The wrong-parent move fails the exclusion test. These reason assessments are
+separate from mechanical schema validation and prior user acceptances.
+
+| Native experiment under `target/distillation-review-v1/` | Verdicts matching expectations | Request latency |
+| --- | ---: | --- |
+| `large-training-matching-20261009` | 6/6 | 6.51–8.55 s |
+| `large-training-support-20261009` | 6/6 | 5.98–17.24 s |
+| `large-training-relationship-20261009` | 4/4 | 7.68–12.76 s |
+
+The following values are copied from each native report. Output already includes
+reasoning. Costs are the runner’s API-equivalent catalog estimates, not
+subscription charges; provider cash-cost fields remain null. No paid API
+fallback was used.
+
+| Native experiment | Calls | Input | Cached input | Cache writes | Output | Reasoning | API-equivalent USD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `large-training-matching-20261009` | 6 | 14,430 | 0 | 0 | 1,129 | 817 | 0.040150 |
+| `large-training-support-20261009` | 6 | 6,360 | 0 | 0 | 1,560 | 1,208 | 0.028320 |
+| `large-training-relationship-20261009` | 4 | 1,655 | 0 | 0 | 1,346 | 1,060 | 0.016770 |
+
+Every request reports zero cached input and cache-write tokens. These frozen
+larger preparations have no explicit cache-affinity key or prefix warmup; this
+trial neither demonstrates savings nor compares warmed and cold requests.
+The earlier instructions-only warmup trial remains separate evidence.
+
+Receipts, model outputs, native reports and attributed agent reviews stay
+ignored in the canonical checkout. Inspect exact saved evidence with:
+
+```sh
+../experiment-runner/bin/experiment-runner show \
+  target/distillation-review-v1/large-training-relationship-20261009 \
+  --case LL01 --json
+```
+
+This is one successful development trial of authored changes on three previously
+used training notes, including the largest teacher catalogs and answers. It
+establishes behavior on these controls, not reliability on arbitrary distilled
+answers or an independent confirmation partition. The next proposed step is a
+fresh `--repeat` trial with the same prompts, inputs, expectations and xhigh
+settings to check call-to-call stability. It must not reuse the 16 saved answers.
+No repeat or lower-effort calls are authorized by this result; broader
+qualification remains open. No support inheritance, structural allowance,
+teacher-edge implementation, final scoring, bulk grading or test unsealing is
+adopted. R05 remains unresolved.
 
 ## Matching-only offline preview
 

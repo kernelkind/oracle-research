@@ -1434,8 +1434,8 @@ reasons remain outside prompts. The loss of the three-day window deliberately
 proposes different results: no complete teacher match, supported remaining
 subject, invalid parent-child link.
 
-All 16 inputs are unrun, with zero attempts/reuse and fixed Sol / xhigh /
-subscription SSE / concurrency 8 settings. Matching preparation reports
+At preparation, all 16 inputs were unrun, with zero attempts/reuse and fixed
+Sol / xhigh / subscription SSE / concurrency 8 settings. Matching preparation reports
 14,208 rendered proxy tokens total, 2,260–2,441 per request; no provider usage or
 caching measurement is claimed. Four edits reuse previous authored matching
 controls; this is development evidence, not a fresh confirmation partition.
@@ -1443,9 +1443,9 @@ The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger
 expectations and native inspection/preparation commands. The user has accepted
 LC03, LC04 and LC07 as recorded below. The user then delegated remaining
 expectation review to the agent; LC01, LC02, LC05 and LC06 assessments are
-complete as recorded below. No new model calls are authorized by this review.
-Thirty-six existing production preparation/validation tests pass with the
-documented tokenizer dependency; default Python initially lacked it.
+complete as recorded below. The subsequent trial was separately authorized
+and completed as recorded below. Thirty-six existing production
+preparation/validation tests pass with the documented tokenizer dependency; default Python initially lacked it.
 No prompt, adapter, general teacher-edge check or scoring implementation changes
 are needed. Qualification, repeats and lower-effort comparison remain open;
 R05, support inheritance, structural allowances, bulk grading and final-test
@@ -1504,12 +1504,39 @@ student pairs for LL02 and LL03:
 
 No authored expectation changes or material ambiguities were found. These are
 agent assessments, separate from the three cases with explicit user acceptance
-and from future model verdicts. All seven variants have completed expectation
-review; no further individual user case review is pending. The next proposed
-step is the bounded 16-request trial at unchanged GPT-6.1 Sol / xhigh /
-concurrency 8, comparing saved verdicts and reasons with the frozen expectations.
-This review adds no inference authorization. All 16 inputs remain unrun. Frozen
-sources, prompts, settings and numerical scoring are unchanged.
+and from the subsequent model verdicts. All seven variants completed
+expectation review; no further individual user case review was pending.
+Expectation review itself added no inference authorization. All 16 inputs were
+unrun at that point; frozen sources, prompts, settings and numerical scoring
+were unchanged.
+
+**Larger three-check trial authorized and completed October 9:** after the agent
+reported expectation review complete and proposed the 16-call trial, the user
+replied “proceed”. The shared stable launcher ran the three existing frozen
+preparations at subscription `openai-codex` / `gpt-6.1-sol` / `xhigh`, concurrency
+8. Native qualification passes DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4. All 16 reasons
+have separate native agent acceptances after inspection, including explicit
+counterexamples for invalid links. Every request completed on its first
+attempt, with no retry, failure, interruption or answer reuse. The batches ran
+sequentially with six, six and four cases, so eight was the execution ceiling
+rather than occupied slots. No code, prompt, label, source or model-setting
+change was required.
+
+The [trial record](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-trial-october-9)
+preserves verdict/latency evidence, per-experiment native usage and API-equivalent
+catalog estimates. Requests took 5.98–17.24 seconds. Every receipt reports zero
+cached input and cache-write tokens; these preparations have no explicit
+cache-affinity key or prefix warmup, and no warmed/cold comparison is claimed.
+Provider cash-cost fields remain null; there was no paid API fallback.
+
+This is one successful development trial on authored changes in three previously
+used training notes, not an independent confirmation partition or qualification
+for arbitrary distilled answers. A fresh `--repeat` trial with unchanged
+inputs, prompts, expectations and xhigh settings is the next proposed step to
+check call-to-call stability, without reuse of these answers. No repeat or
+lower-effort calls are authorized by this result. Broader qualification, R05,
+support inheritance, structural allowances, teacher-edge implementation, final
+scoring, bulk grading and final-test unsealing remain open or unadopted.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

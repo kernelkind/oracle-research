@@ -151,10 +151,12 @@ with xhigh. Keep cases, expectations and prompts fixed for that comparison and
 measure semantic errors, latency and token usage, including cached tokens. No
 lower-effort settings or experiment calls are adopted by recording this intent.
 The user then authorized a
-[larger training-control preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
+[larger training-control preparation](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
 before further calls. It uses three existing training extremes and seven
 controlled student variants, preparing six DSMv3, six DSSv1 and four DSLv1
-inputs with unchanged prompts and model settings. All 16 remain unrun;
+inputs with unchanged prompts and model settings. The subsequent
+[larger trial](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-trial-october-9)
+passes all 16 expected verdicts and native agent reason reviews;
 LC03’s three judgments are agreed after presentation: dropping the three-day
 restriction loses complete teacher meaning, retains post support and invalidates
 the parent-child link. LC07’s moved subtree has an invalid incoming link because
@@ -164,10 +166,12 @@ strings remain trusted teacher wording. LC04’s `rather than printing money` �
 support. The user then delegated the four remaining expectation reviews to the
 agent. LC01’s numeric paraphrase and LC05’s long paraphrase retain meaning;
 LC02’s changed count and LC06’s first-ban wording fail the relevant checks.
-These are agent assessments, not additional individual user approvals or model
-results. Expectation review is complete; the next proposed step is the bounded
-16-request trial at unchanged Sol / xhigh / concurrency 8. No new model calls
-are authorized by this review.
+Those expectation assessments remain separate from individual user approvals
+and the subsequent model results. The user then authorized the 16-request
+trial at unchanged Sol / xhigh / concurrency 8. Every request completed on its
+first attempt, with no reuse or reported cached tokens. A fresh unchanged xhigh
+repeat is the next proposed step; this result adds no repeat or lower-effort
+authorization.
 Teacher answers remain trusted; this preparation adds no grading or test access.
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

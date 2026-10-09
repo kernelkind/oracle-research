@@ -477,8 +477,8 @@ The user subsequently authorized preparing
 for presentation before new model calls. Seven controlled changes use three
 existing ranked training extremes: maximum entries, maximum distinct catalog,
 and longest answer. Unchanged DSMv3/DSSv1/DSLv1 preparations contain 6/6/4
-requests, all unrun, with authored judgments outside prompts. LC03’s matching,
-support and link expectations, LC04’s matching and support failures, and
+requests, initially unrun, with authored judgments outside prompts. LC03’s
+matching, support and link expectations, LC04’s matching and support failures, and
 LC07’s invalid link have explicit user acceptance. The user delegated review
 of LC01, LC02, LC05 and LC06 to the agent; those expectation assessments are
 complete without changes to the authored labels. The trusted teacher catalog
@@ -492,9 +492,14 @@ delegated assessments, LC01 and LC05 preserve meaning; LC02’s changed count
 and LC06’s first-ban wording fail the relevant checks. The agent inspected
 complete native inputs, including actual selected parents; no material
 ambiguity remained. No further individual user review of these controls is
-required. The next proposed step is the bounded 16-request trial with
-unchanged Sol / xhigh / concurrency 8. Expectation review authorizes no new
-calls, qualification, grading or test unsealing.
+required. The user then authorized the
+[larger trial](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-trial-october-9)
+at unchanged Sol / xhigh / concurrency 8. Native qualification passes 6/6
+matching, 6/6 support and 4/4 links, and all 16 reasons have native agent
+acceptances. Every request completed on its first attempt, with no reuse or
+reported cached tokens. A fresh unchanged xhigh repeat is the next proposed
+step; broader qualification and lower-effort comparison remain open. This
+result adds no repeat calls, grading or test unsealing.
 
 [DSRv1](../../sse_multivector/distillation-review-v1/README.md) is the draft prompt,
 report schema and qualification specification. Qualification checks trusted

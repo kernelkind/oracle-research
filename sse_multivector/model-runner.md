@@ -1083,8 +1083,8 @@ production preparation and decoding functions:
   [larger training-control preview](distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
   reuses the same adapters and prompts for seven variants from three ranked
   training extremes. Native preparation yields six matching, six support and
-  four link requests, all unrun with zero attempts/reuse. Expectations remain
-  outside prompts. The user accepted LC03’s null match, supported subject and
+  four link requests, initially unrun with zero attempts/reuse. Expectations
+  remain outside prompts. The user accepted LC03’s null match, supported subject and
   invalid link after presentation, then LC07’s invalid moved-subtree link. That
   new parent explicitly excludes Dr. Abu Safiya, whom the unchanged child names;
   both strings remain trusted teacher wording, requiring no matching or support
@@ -1094,9 +1094,15 @@ production preparation and decoding functions:
   to the agent. Native `show --case` inspection confirms the LC01/LC05
   paraphrases and rejects the LC02 changed count and LC06 first-ban wording
   in their respective prepared checks. These are agent assessments, separate
-  from user acceptance and future model results. Expectation review is complete;
-  the next proposed step is the unchanged 16-request Sol / xhigh trial at
-  concurrency 8. No inference follows from preparation or this review.
+  from user acceptance and model results. After the user authorized execution,
+  the [larger trial](distillation-review-v1/README.md#larger-three-check-trial-october-9)
+  passes native qualification for all 16 checks and native agent review of all
+  reasons. Sol / xhigh / concurrency 8 and frozen inputs remain unchanged.
+  Batches ran sequentially; all requests completed on first attempts, with no
+  retries or reuse. Reports record zero cached input/cache writes. These
+  preparations have no explicit cache-affinity key or warmup; no warmed/cold
+  savings comparison is claimed. A fresh unchanged xhigh repeat is the next
+  proposed step, without new call authorization from this result.
   Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
   experiments and temporary training fixtures are ignored. No adapter, scorer
   or general teacher-edge implementation is added.
