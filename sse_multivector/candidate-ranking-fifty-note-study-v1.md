@@ -1,5 +1,8 @@
 # Candidate ranking on the historical fifty-note hierarchy
 
+For a shorter explanation of the selection process and cost calculation, see
+[Candidate selection: savings and how the method works](candidate-selection-savings-and-method-v1.md).
+
 **Historical research only.** The original ASv6.48 subjects and all derived
 meanings, vectors, comparisons and hierarchy data are deprecated. The approved
 baseline is ASv6.100. These results diagnose the requested saved construction;
