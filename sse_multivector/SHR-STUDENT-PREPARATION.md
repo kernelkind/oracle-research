@@ -18,9 +18,9 @@ sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence
 before narrowing that pilot; Compare prioritizes Qwen27, Kev27 and Ettin1B.
 These pilots use fixed development snapshots while prompt work continues.
-Final training still follows prompt freeze. The pilot's Bootstrap student output
-format has been asked separately and remains pending; teacher generation can
-preserve the full current response independently of that choice.
+Final training still follows prompt freeze. The user confirmed **meaning or null** for Bootstrap's pilot student output,
+encoded as a JSON object with the single `meaning` field. Teacher generation
+continues to preserve its full current response for review.
 
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
@@ -52,7 +52,7 @@ separate regression populations remain diagnostic evaluation, not fitting data.
 
 Native preparations are under
 `target/bootstrap-compare-student-v1/learning-pilot-v1/{bootstrap-train-teacher,bootstrap-evaluation-teacher}`.
-They bind approved **Bootstrap-v96**, GPT-6.1 Sol medium, the full teacher JSON
+They bind the authorized development snapshot **Bootstrap-v96**, GPT-6.1 Sol medium, the full teacher JSON
 schema and existing subscription SSE/backoff transport. The first runs are
 bounded to 96 and 24 attempts respectively, without a paid fallback. Teacher
 answers must receive source-bound meaning review before fitting: exact evidence
@@ -157,8 +157,28 @@ updating only the preparation-code binding. Qwen's first launch omitted the
 existing Python-header `CPATH`; its owned worker was stopped before measurement
 and the incomplete v1 artifact is preserved. The corrected launch reuses cached
 headers and kernels, without installation or teacher regeneration. Matched
-Qwen27 and Kev27 task results remain pending. Bootstrap's student format remains
-pending.
+Qwen27 and Kev27 task results remain pending. Bootstrap's pilot student target
+is the confirmed single `meaning` field, with null allowed.
+
+The encoder can also be tested with `input_format: "input_json"`: it takes the
+complete original `INPUT_JSON` from the hash-bound native collection, keeping
+every supplied case field, rather than repeating the teacher's constant
+instructions. This is a student-input experiment; the teacher prompt, meanings,
+labels and data roles are unchanged. On this branch-free panel, complete case
+JSON averages **520.11 TRAIN / 539.96 evaluation tokens**, versus
+**2,129.11 / 2,148.96** for the full teacher state, a **75.57% / 74.87%** reduction.
+These percentages do not estimate future large-branch savings or establish
+equivalent semantic quality. The ignored source-bound inventory is
+`target/bootstrap-compare-student-v1/compare-input-token-profile-v1.json`.
+
+The pinned input-only Ettin configuration is
+`distillation/compare-pilot-ettin1b-input-json-v1.json`. Four CPU tests and the
+native encoder integration pass; that integration fits and separately reloads
+both formats with the same targets and confirms the smaller input. The latter
+took 30.87 seconds while Qwen's pilot was active, so Qwen's eventual elapsed
+phase time is not an isolated throughput benchmark. `compare-targets-v4` is
+byte-identical to v3 and binds the new preparation code. The full input-only
+Ettin pilot is prepared but has not run.
 
 Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
 every support post, source entry, producer answer, reciprocal family and branch

@@ -84,6 +84,14 @@ Use the cached GB10 Python headers in `CPATH` for native FLA/Triton CUDA kernels
 the [verified environment](SHR-STUDENT-PREPARATION.md#isolated-gb10-environment) describes
 the existing unprivileged header layout. Native CUDA regressions cover all
 three training paths and reversed option order.
+For an encoder-only input comparison,
+[`compare-pilot-ettin1b-input-json-v1.json`](distillation/compare-pilot-ettin1b-input-json-v1.json)
+sets `input_format` to `input_json`. The fitter retrieves the complete original
+case JSON from the bound collection after checking the reviewed targets again;
+it removes only the constant teacher instructions from the student input.
+The default `full_state` preserves the original complete rendered prompt.
+Both formats retain the same targets, source roles and fresh-process checks.
+This option does not change a teacher prompt or establish semantic equivalence.
 This is the partial-task development pilot path, separate from SP training and
 from final model selection. It has no provider calls or hierarchy application.
 

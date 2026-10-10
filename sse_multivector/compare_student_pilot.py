@@ -130,11 +130,14 @@ def train(config_path, data_path, output, stage):
     config = read_json(config_path)
     fields = {'model', 'revision', 'max_length', 'epochs', 'batch_size', 'learning_rate',
               'seed', 'memory_budget_gib', 'reserve_gib'}
-    if (set(config) not in (fields, fields | {'local_model_config'})
+    if (fields - set(config) or set(config) - fields - {'local_model_config', 'input_format'}
             or not isinstance(config['model'], str) or not config['model']
             or not isinstance(config['revision'], str) or len(config['revision']) != 40
             or any(c not in '0123456789abcdef' for c in config['revision'])):
         raise ValueError('expected pinned Compare pilot configuration')
+    input_format = config.get('input_format', 'full_state')
+    if not isinstance(input_format, str) or input_format not in {'full_state', 'input_json'}:
+        raise ValueError('expected full_state or input_json student input')
     for name in ('max_length', 'batch_size'):
         if type(config[name]) is not int or config[name] <= 0:
             raise ValueError('expected positive pilot sizes')
@@ -148,6 +151,8 @@ def train(config_path, data_path, output, stage):
     native_path = native = None
     kind = 'encoder'
     if 'local_model_config' in config:
+        if input_format != 'full_state':
+            raise ValueError('input_json currently requires the encoder pilot')
         native_path = (config_path.parent / config['local_model_config']).resolve()
         native = read_json(native_path)
         kind = native.get('kind')
@@ -173,10 +178,12 @@ def train(config_path, data_path, output, stage):
     data = read_json(data_path/'data.json')
     if data['task'] != 'compare' or tuple(data['labels']) != LABELS:
         raise ValueError('Compare target definition differs')
-    expected = reviewed_targets(*(read_json(manifest['sources'][name]['path'])
-                                  for name in ('collection', 'provenance')))
+    collection = read_json(manifest['sources']['collection']['path'])
+    expected = reviewed_targets(collection, read_json(manifest['sources']['provenance']['path']))
     if digest(data) != digest(expected):
         raise ValueError('prepared targets differ from reviewed teacher collection')
+    source_inputs = {(case['experiment'], case['case_id']): case['inputs']['INPUT_JSON']
+                     for case in collection['cases']} if input_format == 'input_json' else None
     if stage == 'train' and output.exists():
         raise FileExistsError(output)
     from .distillation_benchmark import admit, available_memory
@@ -211,9 +218,11 @@ def train(config_path, data_path, output, stage):
     for role in ('train', 'evaluation'):
         encoded[role] = []
         for row in data[role]:
+            state = (source_inputs[(row['experiment'], row['case_id'])]
+                     if source_inputs is not None else row['state'])
             if kind == 'pointer':
                 question = native['question']
-                record = dict(state=row['state'], questions=[dict(instr=question['instructions'],
+                record = dict(state=state, questions=[dict(instr=question['instructions'],
                     options=[f'{key}: {question["criteria"][key]}' for key in keys], label=0)])
                 prepared = encode(tokenizer, record, max_state=config['max_length'],
                                   max_branch=config['max_length'], strict=True)
@@ -221,7 +230,7 @@ def train(config_path, data_path, output, stage):
                     position_ids=prepared['pos'], decide_idx=prepared['decide_idx'][0],
                     opt_idx=prepared['opt_idx'][0])
             elif kind == 'causal_lm':
-                prompt = choice_prompt(row['state'], native['question'], 'options')
+                prompt = choice_prompt(state, native['question'], 'options')
                 rendered = tokenizer.apply_chat_template([dict(role='user', content=prompt)],
                     add_generation_prompt=True, enable_thinking=False, tokenize=False) + native.get('answer_prefix', '')
                 ids = tokenizer(rendered, add_special_tokens=False, truncation=False)
@@ -229,7 +238,7 @@ def train(config_path, data_path, output, stage):
                        for code, token in zip(codes, candidate_ids)):
                     raise ValueError('option code tokenization changes at the answer boundary')
             else:
-                ids = tokenizer(row['state'], truncation=False, add_special_tokens=True)
+                ids = tokenizer(state, truncation=False, add_special_tokens=True)
             if len(ids['input_ids']) > config['max_length']:
                 raise ValueError('complete Compare input exceeds configured maximum; truncation is forbidden')
             encoded[role].append({key: value for key, value in ids.items() if key != 'token_type_ids'})
@@ -247,7 +256,7 @@ def train(config_path, data_path, output, stage):
         report = dict(schema_version=1, binding=binding, config=config, data=manifest,
             training_pid=os.getpid(), complete=False, training_finished=False, updates=0,
             training_examples_seen=0, supervised_class_decisions=0, checkpoints=[],
-            architecture=kind, method='full' if kind == 'encoder' else 'lora',
+            architecture=kind, method='full' if kind == 'encoder' else 'lora', input_format=input_format,
             workload='Relation-only Compare development learning; provisional teacher agreement, not semantic gold.',
             input_tokens={role: dict(examples=len(values), total=sum(len(v['input_ids']) for v in values),
                                     maximum=max(len(v['input_ids']) for v in values))
