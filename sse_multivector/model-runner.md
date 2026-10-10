@@ -1055,6 +1055,11 @@ required together; natural-prefix grouping and generated specs use that
 template. Matching, support, schemas, source assessments and mechanical rules
 are unchanged. Omitting the flags retains DSLv2. Compatible saved receipts
 remain reusable; do not use `--repeat` for a prompt update.
+`--relationship-runner-binary PATH` overrides only the relationship worker;
+other checks retain `--runner-binary` or the default. Worker identity remains
+part of semantic request identity. This allows unchanged completed checks to
+retain their original worker binding while a new relationship trial uses the
+current worker, without modifying receipts or relaxing reuse validation.
 Repeat
 `run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
 of stable source answer IDs; reports still contain all 60 answers, with
