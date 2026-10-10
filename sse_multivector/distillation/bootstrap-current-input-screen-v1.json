@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "purpose": "Eight input-selected development cases for published-checkpoint generation and complete-input execution; no gold labels or fitting.",
+  "prompt_id": "Hierarchy-bootstrap-v96",
+  "source_spec": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/hierarchy-bootstrap-v96-asv6.100-regressions-v1.spec.json",
+  "source_spec_sha256": "fe1057147bf19af8bfc661b49cc168f550d41114af7e51b654fd744b7d632776",
+  "source_collection_sha256": "dc8444b80301ba1cf6041d45c23c6f0bd4a98c04c5921a5af4c21fcf090456c8",
+  "selection_author": "agent",
+  "selection_reasons": [
+    "General ingredient versus required use",
+    "Food and cooking category boundaries",
+    "Named city and hashtag interpretation",
+    "Prepared dish and general food kind",
+    "Longest complete selected tree with an explicit personal/religious restriction"
+  ],
+  "cases": [
+    {
+      "id": "bootstrap-f6d7ecb82c7323b5030fcf83cf62f5444b03ce2afa30f49fc79adad1688db47c",
+      "input_sha256": "afceab1aa09dfa77261835e5128d723716529b2c2c97f5742c741dfd0a43516f",
+      "local": {
+        "note_id": "03313183e42615c765021814b8c6b3de61c7ff95f89e75f5cebe588c1bcb0f4a",
+        "number": "2"
+      },
+      "subject": "Rosemary"
+    },
+    {
+      "id": "bootstrap-2bcb1cc5c5f526a8022cd4d929fdd8774934565b5f29d2b2f30765c5466937ca",
+      "input_sha256": "1ab9c70c148e3cc4dcd7546cba9f28f6413152cd03673d5fccf83096bff28faf",
+      "local": {
+        "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+        "number": "1"
+      },
+      "subject": "Food"
+    },
+    {
+      "id": "bootstrap-08fa4fbc12d593658267ee4143c64665ceab7b3a1b6edea8bfd7296e22c094de",
+      "input_sha256": "17610e6382ec9c550ae2749e8119d0c2698ce1798ba34ab277e6f23fdcdfe0bc",
+      "local": {
+        "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+        "number": "5"
+      },
+      "subject": "Cooking"
+    },
+    {
+      "id": "bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5",
+      "input_sha256": "8a017a6939afe944ab3882e713bee1f3069cfe7c9e8f4b4044f94330d735ce6e",
+      "local": {
+        "note_id": "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+        "number": "5"
+      },
+      "subject": "Rome"
+    },
+    {
+      "id": "bootstrap-6340267dcae37dbe911ea6be25af10037824441ee6d36723faae6ce09ad78c95",
+      "input_sha256": "599ac9b0748dba77a2b2da46cdd78f2c062a2cf50362e6aadcb672573da96f20",
+      "local": {
+        "note_id": "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+        "number": "13"
+      },
+      "subject": "Coffeechain"
+    },
+    {
+      "id": "bootstrap-5fa9e10f69c1a8b95c57dcf3075945f32125aba19ba8255b3687222250cde203",
+      "input_sha256": "0767f35aafcf69fa519dbb3c94db52e2d3b687bf8ef4d4945b10dae381988140",
+      "local": {
+        "note_id": "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+        "number": "1.1"
+      },
+      "subject": "Risotto"
+    },
+    {
+      "id": "bootstrap-d14e09b333095d8a37e64380afcfc4648f893009093dfe713fd9c88030c234e7",
+      "input_sha256": "65e725b4e2bd50602e9283f1ffe317038d69cad0b3c1d4ce5b30f14037ccdb56",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1"
+      },
+      "subject": "Bread"
+    },
+    {
+      "id": "bootstrap-2673060d8c6f076f03f99fb7672643d0b3fa3e06cc1d0ee03f679ff63a7c580f",
+      "input_sha256": "9cc52f822faee038434524730eda8c88eaaa03c07bc73a39878236124db816f9",
+      "local": {
+        "note_id": "fa953ea6ea83b27b594cdd38c69e382902e32eca2d6b54a2ded07ee67ccceb71",
+        "number": "1.2.3.15"
+      },
+      "subject": "A healthy diet, among religious teachings and practices the author learned growing up in church and considers valuable"
+    }
+  ]
+}

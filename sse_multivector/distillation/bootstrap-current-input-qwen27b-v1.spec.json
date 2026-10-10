@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-bootstrap-v96",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/Hierarchy-bootstrap-v96.md"
+  },
+  "dataset": {
+    "adapter": "hierarchy_local_nodes",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/hierarchy-bootstrap-asv6.100-regressions-v1.json",
+    "select": [
+      "bootstrap-f6d7ecb82c7323b5030fcf83cf62f5444b03ce2afa30f49fc79adad1688db47c",
+      "bootstrap-2bcb1cc5c5f526a8022cd4d929fdd8774934565b5f29d2b2f30765c5466937ca",
+      "bootstrap-08fa4fbc12d593658267ee4143c64665ceab7b3a1b6edea8bfd7296e22c094de",
+      "bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5",
+      "bootstrap-6340267dcae37dbe911ea6be25af10037824441ee6d36723faae6ce09ad78c95",
+      "bootstrap-5fa9e10f69c1a8b95c57dcf3075945f32125aba19ba8255b3687222250cde203",
+      "bootstrap-d14e09b333095d8a37e64380afcfc4648f893009093dfe713fd9c88030c234e7",
+      "bootstrap-2673060d8c6f076f03f99fb7672643d0b3fa3e06cc1d0ee03f679ff63a7c580f"
+    ]
+  },
+  "runner": {
+    "provider": "local",
+    "auth_file": null,
+    "model": "Qwen/Qwen3.8-27B/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0/2ffa22cb43ae02142f2a3733fe2997b9a395a04e7bf907253b1eab088ac5ec3c",
+    "reasoning_effort": "off",
+    "concurrency": 1,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/sse_multivector/run-local-model.sh",
+    "transport": "http",
+    "timeout_seconds": 600,
+    "max_output_tokens": 2048,
+    "output_schema_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/Hierarchy-bootstrap-v79.output.schema.json"
+  }
+}
