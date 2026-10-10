@@ -82,8 +82,9 @@ uncertain throughout would leave the panel unresolved. Contradiction witnesses
 share inputs and history and are not independent accuracy observations.
 
 This panel supplements the existing 196-request ASv6.100 qualification panel and
-its branch fixtures. It does not replace them, modify their frozen cases, imply
-that Compare-v69 fails these new inputs, or establish that it repairs them.
+its branch fixtures. It does not replace them or modify their frozen cases.
+Selecting these witnesses alone establishes neither failure nor repair by
+Compare-v69; its actual new results are recorded below.
 
 ## Reproduction and status
 
@@ -91,9 +92,9 @@ The source resolves native receipts and historical trials in the retained
 `oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree. The current adapter,
 consistency scorer and experimental Compare-v69 are in the retained
 `oracle-mvp-compare-disambiguation-v1` worktree; execute from that checkout.
-Landing these definitions in main does not integrate or adopt the larger research
-constructor history. Those retained source and artifact dependencies remain
-necessary for reproduction.
+The definitions and unchanged experimental Compare-v69 template are also recorded
+in main. This does not integrate or adopt the larger research constructor history.
+Those retained source and artifact dependencies remain necessary for reproduction.
 
 Preparation uses the shared stable runner and makes no model calls:
 
@@ -178,3 +179,28 @@ Compare-v69 therefore remains experimental. The new panel exposes unresolved
 comparison mechanisms despite preserved positive controls. The next useful work
 is to isolate the remaining role-condition and kind/activity interpretation
 switches using these frozen inputs before editing either prompt.
+
+## Independent answer review
+
+Two independent agents reviewed disjoint portions covering all 102 answers.
+Their assessments are recorded through native `review --role agent`: **76 accept,
+20 reject and six uncertain**. These are qualified agent assessments, not new
+human labels or an accuracy estimate. Four rejects concern the reason alone
+(`isolated-020-reverse`, `isolated-021-reverse`, `isolated-023-forward` and
+`isolated-023-reverse`): their `neither` labels are defensible because meal use is
+not established, but their categorical activity/food exclusion is inconsistent
+with the information-topic comparison convention.
+
+The six uncertain assessments preserve two unresolved producer boundaries:
+Processed food's alteration condition and Eating's human/nourishment scope.
+Each has one original snapshot and two isolated orientations. A reversal can be
+a definite comparison inconsistency even when the preferred individual label is
+not settled. Duplicate inputs and overlapping chains remain explicit; rejected
+answers are not independent failure counts.
+
+After recording reviews, native `show --json` verified that all 102 input hashes,
+parsed outputs and producer receipts remained unchanged. The 85 relevant
+production-path tests for pair preparation, snapshots, consistency and settled
+relationships passed. Both dataset reviews also verified the original input
+mapping and reciprocal producer identities. No review required another model
+call, changed either prompt or altered the original hierarchy.
