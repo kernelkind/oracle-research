@@ -7,6 +7,7 @@ import argparse
 from collections import Counter
 from graphlib import TopologicalSorter, CycleError
 import hashlib
+import importlib
 import json
 from pathlib import Path
 
@@ -88,7 +89,24 @@ def checked_selection(frame, selection, study):
                                    mapped_parent=frame['step'].get('mapped_parent'))
 
 
-def evaluate_case(frame, selection, study, modules, *, history=None):
+def apply_review_hold(row, review):
+    """Carry an explicit saved review only when its whole answer set survives."""
+    if row['reason']:
+        return
+    available = set(row['queried']) | set(row['verification'])
+    missing = sorted(set(review['comparison_ids']) - available)
+    if missing:
+        row.update(unresolved=missing, same_graph=False)
+    else:
+        # The original review stopped placement before any further implied
+        # comparisons. Do not price or invent answers for those requests.
+        verification = {k: v for k, v in row['verification'].items() if k in review['comparison_ids']}
+        row.update(reason=review['reason'], same_graph=True, source_review_hold=True,
+                   unresolved=[], verification=verification,
+                   retained_cases=len(set(row['queried']) | set(verification)))
+
+
+def evaluate_case(frame, selection, study, modules, *, history=None, review=None):
     selected = checked_selection(frame, selection, study)
     unknown = sorted(set(selected) - frame['known'].keys())
     if unknown:
@@ -98,6 +116,8 @@ def evaluate_case(frame, selection, study, modules, *, history=None):
         observed = {}
     else:
         row = study.evaluate(frame, selected, len(selected), modules, history=history)
+        if review:
+            apply_review_hold(row, review)
         observed = {}
         if not row['reason'] and not row['unresolved']:
             values = {k: frame['known'][k]['parsed'] for k in
@@ -110,6 +130,8 @@ def evaluate_case(frame, selection, study, modules, *, history=None):
             observed = relationships(nodes, target, frame['ids'])
     row.update(assess(expectation(frame), row['reason'], row['unresolved'], observed),
                observed_relationships=observed)
+    if row.get('source_review_hold'):
+        row['outcome'] = 'source_review_hold'
     return row
 
 
@@ -118,36 +140,105 @@ def load_frames(paths):
         from . import candidate_ranking_study as study
     else:
         import candidate_ranking_study as study
-    state, frames, provenance, modules = study.read_frames(
-        paths['reference_project'], paths['trial'], paths['vectors'], paths['subject_probe'])
+    if paths.get('vectors'):
+        state, frames, provenance, modules = study.read_frames(
+            paths['reference_project'], paths['trial'], paths['vectors'], paths['subject_probe'])
+    else:
+        state, frames, provenance, modules = study.read_native_frames(paths['reference_project'], paths['trial'])
     return study, state, frames, provenance, modules
 
 
+def cost_reference(audit, state_sha256, baseline):
+    comparison = baseline['known_catalog_cost_estimate_usd']
+    if 'cost_by_kind' in audit:
+        if audit['state_sha256'] != state_sha256:
+            raise ValueError('cost audit uses a different hierarchy')
+        kinds = audit['cost_by_kind']
+        audited = sum(kinds[k]['known_catalog_cost_estimate_usd'] for k in ('comparison', 'verification'))
+        if abs(audited - comparison) > 1e-8:
+            raise ValueError('native accounting differs from frozen cost audit')
+        total = sum(v['known_catalog_cost_estimate_usd'] for v in kinds.values())
+        missing = sum(v['attempts_without_usage'] for v in kinds.values())
+    elif audit.get('summary_version') == 'experiment-usage-summary-v2':
+        total = audit['generation_usage']['known_catalog_cost_estimate_usd']
+        missing = audit['generation_usage']['attempts_without_usage']
+        if comparison > total + 1e-8:
+            raise ValueError('comparison subtotal exceeds original generation cost')
+    else:
+        raise ValueError('unsupported native cost reference')
+    return dict(overhead_usd=max(0.0, total-comparison), known_total_usd=total,
+                attempts_without_usage=missing)
+
+
+def validate_usage_reference(audit, frames):
+    """Validate the existing native generation accounting without inference."""
+    if 'cost_by_kind' in audit:
+        return {}
+    if audit.get('summary_version') != 'experiment-usage-summary-v2' or not audit['complete']:
+        raise ValueError('complete native usage summary required')
+    source = audit['source']
+    if digest(source['path']) != source['sha256']:
+        raise ValueError('native usage inventory changed')
+    inventory = {str(Path(p).resolve()) for group in read(source['path'])['groups'].values() for p in group}
+    phases = {str(Path(p['experiment']).resolve()) for f in frames for p in f['step']['comparison_phases']}
+    if phases - inventory:
+        raise ValueError('native usage inventory omits comparison phases')
+    usage = importlib.import_module('sse_multivector.experiment_usage_summary')
+    originals = {(Path(s['results_path']).resolve(), s['result_line']): s
+                 for s in audit['generation_usage']['sources']}
+    if len(originals) != len(audit['generation_usage']['sources']):
+        raise ValueError('native generation source repeats an attempt')
+    local = {key for key, s in originals.items() if not s['added_from_reuse']}
+    checked = usage._generation_usage(originals, local)
+    for key in ('input_tokens', 'cached_input_tokens', 'cache_write_tokens', 'output_tokens',
+                'reasoning_tokens', 'attempts_without_usage', 'attempts_without_cost_estimate', 'original_calls'):
+        if checked[key] != audit['generation_usage'][key]:
+            raise ValueError('native generation accounting differs: ' + key)
+    if abs(checked['known_catalog_cost_estimate_usd'] - audit['generation_usage']['known_catalog_cost_estimate_usd']) > 1e-8:
+        raise ValueError('native generation cost differs')
+    return {source['path']: source['sha256'], usage.__file__: digest(usage.__file__)}
+
+
 def freeze(args):
-    paths = {k: str(getattr(args, k).resolve()) for k in
+    paths = {k: None if getattr(args, k) is None else str(getattr(args, k).resolve()) for k in
              ('reference_project', 'trial', 'vectors', 'subject_probe', 'cost_audit')}
-    _, state, frames, provenance, _ = load_frames(paths)
+    study, state, frames, provenance, modules = load_frames(paths)
     audit = read(paths['cost_audit'])
-    if audit['state_sha256'] != provenance['state_sha256']:
-        raise ValueError('cost audit uses a different hierarchy')
+    usage_sources = validate_usage_reference(audit, frames)
+    baseline = study.comparison_costs(frames, {f['step']['index']: set(f['known']) for f in frames}, modules[0])
+    cost_reference(audit, provenance['state_sha256'], baseline)
     corpus = read(state['corpus'])
     selected_notes = {s['local']['note_id'] for s in state['steps']}
     versions = sorted({n['origin']['prompt_version'] for n in corpus['notes']
                        if n['note_id'] in selected_notes})
     if not versions or any(not v.startswith('ASv6.') or not v[5:].isdigit() for v in versions):
         raise ValueError('unknown subject provenance')
-    protected = dict(read(Path(paths['vectors']) / 'inputs.json')['protected_sha256'])
+    protected = dict(state['sources'])
+    protected.update(usage_sources)
+    vector_sources = []
+    if paths['vectors']:
+        protected.update(read(Path(paths['vectors']) / 'inputs.json')['protected_sha256'])
+        vector_sources = [str(Path(paths['vectors']) / 'inputs.json'),
+                          str(Path(paths['vectors']) / 'worker-result/worker-receipt.json')]
     protected.update(provenance['reference_code_sha256'])
-    for path in (provenance['source_state'], paths['cost_audit'],
-                 str(Path(paths['vectors']) / 'inputs.json'),
-                 str(Path(paths['vectors']) / 'worker-result/worker-receipt.json')):
+    for path in (provenance['source_state'], paths['cost_audit'], *vector_sources):
         protected[path] = digest(path)
-    suite = dict(schema_version=1, id=args.id, paths=paths, protected_sha256=protected,
+    reviews = {}
+    for frame in frames:
+        original = study.evaluate(frame, frame['pool'], len(frame['pool']), modules)
+        step = frame['step']
+        if step['status'] == 'held' and not original['reason']:
+            if step['reviewer'] != 'agent' or not step.get('reason') or not step.get('comment'):
+                raise ValueError('original hold lacks native or explicit review evidence')
+            reviews[str(step['index'])] = dict(reason=step['reason'], comment=step['comment'],
+                                             comparison_ids=list(frame['known']), attribution='agent')
+    suite = dict(schema_version=2, id=args.id, paths=paths, protected_sha256=protected,
         provenance=provenance, subject_versions=versions,
         data_status=('historical_deprecated' if any(int(v[5:]) < 100 for v in versions)
                      else 'requires_current_pipeline_qualification'),
         note_count=len(selected_notes), local_entry_count=len(state['steps']),
         case_count=len(frames), cases=[expectation(f) for f in frames],
+        source_review_holds=reviews,
         human_reviewed_cases=0, new_teacher_calls=0,
         interpretation='Historical preservation tests; not semantic gold or end-hierarchy acceptance.')
     write_once(args.output, suite)
@@ -171,7 +262,7 @@ def selections_from_report(path, profile, state_sha256, indices):
 
 def evaluate(args):
     suite = read(args.suite)
-    if suite.get('schema_version') != 1:
+    if suite.get('schema_version') not in (1, 2):
         raise ValueError('unsupported selection regression suite')
     for path, expected in suite['protected_sha256'].items():
         if digest(path) != expected:
@@ -185,10 +276,15 @@ def evaluate(args):
         selection_source = dict(path=str(args.selection_report.resolve()),
                                 sha256=digest(args.selection_report), profile=args.profile)
     else:
-        selected = {f['step']['index']: study.select_candidates(f['rows'], study.orders(f)[args.method],
+        if args.method != 'baseline' and any('scores' not in f for f in frames):
+            raise ValueError('this method needs auxiliary vectors; use baseline or a supplied selection report')
+        selected = {f['step']['index']: study.select_candidates(f['rows'],
+            f['pool'] if args.method == 'baseline' else study.orders(f)[args.method],
             limit=args.limit, mapped_parent=f['step'].get('mapped_parent')) for f in frames}
         selection_source = dict(method=args.method, limit=args.limit)
-    rows = [evaluate_case(f, selected[f['step']['index']], study, modules) for f in frames]
+    reviews = suite.get('source_review_holds', {})
+    rows = [evaluate_case(f, selected[f['step']['index']], study, modules,
+                         review=reviews.get(str(f['step']['index']))) for f in frames]
     # Single-case results always use their own original graph/history. The
     # sequential check instead removes skipped answers and stops at divergence.
     history, sequence = [], []
@@ -197,7 +293,8 @@ def evaluate(args):
         if step['index'] not in by_index:
             history.append(step)
             continue
-        row = evaluate_case(by_index[step['index']], selected[step['index']], study, modules, history=history)
+        row = evaluate_case(by_index[step['index']], selected[step['index']], study, modules,
+                            history=history, review=reviews.get(str(step['index'])))
         sequence.append(row)
         if not row['same_graph']:
             break
@@ -208,13 +305,9 @@ def evaluate(args):
         priced = study.comparison_costs(frames, {r['index']: set(r['queried']) | set(r['verification'])
                                                for r in rows}, modules[0])
     audit = read(suite['paths']['cost_audit'])
-    audited_comparison = sum(audit['cost_by_kind'][k]['known_catalog_cost_estimate_usd']
-                             for k in ('comparison', 'verification'))
-    if abs(audited_comparison - baseline['known_catalog_cost_estimate_usd']) > 1e-8:
-        raise ValueError('native accounting differs from frozen cost audit')
-    overhead = sum(v['known_catalog_cost_estimate_usd'] for k, v in audit['cost_by_kind'].items()
-                   if k not in ('comparison', 'verification'))
-    original = baseline['known_catalog_cost_estimate_usd'] + overhead
+    validate_usage_reference(audit, frames)
+    reference = cost_reference(audit, provenance['state_sha256'], baseline)
+    overhead, original = reference['overhead_usd'], reference['known_total_usd']
     candidate = None if priced is None else priced['known_catalog_cost_estimate_usd'] + overhead
     report = dict(schema_version=1, suite_id=suite['id'], suite_sha256=digest(args.suite),
         data_status=suite['data_status'], subject_versions=suite['subject_versions'],
@@ -227,7 +320,7 @@ def evaluate(args):
             retained_original_overhead_usd=overhead, baseline_known_total_usd=original,
             candidate_known_total_usd=candidate,
             reduction_percent=None if candidate is None else 100 * (1-candidate/original),
-            original_attempts_without_usage=sum(v['attempts_without_usage'] for v in audit['cost_by_kind'].values()),
+            original_attempts_without_usage=reference['attempts_without_usage'],
             complete_total_usd=None,
             interpretation='Conditional saved-token projection, not realized whole-build savings.'),
         limitations=['Old teacher answers are not human semantic gold.',
@@ -245,8 +338,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     prepare = commands.add_parser('freeze', help='Freeze native cases and historical expectations; no inference.')
-    for name in ('reference-project', 'trial', 'vectors', 'subject-probe', 'cost-audit'):
+    for name in ('reference-project', 'trial', 'cost-audit'):
         prepare.add_argument('--' + name, type=Path, required=True)
+    for name in ('vectors', 'subject-probe'):
+        prepare.add_argument('--' + name, type=Path)
     prepare.add_argument('--id', required=True)
     prepare.add_argument('--output', type=Path, required=True)
     run = commands.add_parser('evaluate', help='Evaluate a fixed selection against saved answers; no inference.')
@@ -259,6 +354,8 @@ def main():
     run.add_argument('--profile')
     run.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
+    if args.command == 'freeze' and bool(args.vectors) != bool(args.subject_probe):
+        parser.error('--vectors and --subject-probe must be supplied together')
     if args.command == 'evaluate' and (args.limit < 1 or (args.profile and not args.selection_report)):
         parser.error('positive limit required; --profile requires --selection-report')
     (freeze if args.command == 'freeze' else evaluate)(args)

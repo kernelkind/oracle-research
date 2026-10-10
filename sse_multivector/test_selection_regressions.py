@@ -106,6 +106,37 @@ class SelectionRegressions(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'mapped parent'):
             regression.checked_selection(frame, [], None)
 
+    def test_native_usage_reference_keeps_archived_work_and_unknown_failures(self):
+        audit = dict(summary_version='experiment-usage-summary-v2', generation_usage=dict(
+            known_catalog_cost_estimate_usd=7.3, attempts_without_usage=14))
+        result = regression.cost_reference(audit, 'state', dict(known_catalog_cost_estimate_usd=4.0))
+        self.assertAlmostEqual(result['overhead_usd'], 3.3)
+        self.assertEqual(result['attempts_without_usage'], 14)
+
+    def test_original_cost_reference_remains_supported(self):
+        audit = dict(state_sha256='state', cost_by_kind=dict(
+            comparison=dict(known_catalog_cost_estimate_usd=4.0, attempts_without_usage=3),
+            verification=dict(known_catalog_cost_estimate_usd=.5, attempts_without_usage=0),
+            meaning=dict(known_catalog_cost_estimate_usd=1.0, attempts_without_usage=4)))
+        result = regression.cost_reference(audit, 'state', dict(known_catalog_cost_estimate_usd=4.5))
+        self.assertEqual(result['overhead_usd'], 1.0)
+        self.assertEqual(result['attempts_without_usage'], 7)
+
+    def test_review_hold_requires_its_original_comparison_evidence(self):
+        row = dict(reason=None, unresolved=['Stockpots'], queried=['Food', 'Coffee'],
+                   verification={'Stockpots': 'local_contains_canonical'}, same_graph=False)
+        review = dict(reason='Incompatible food/drink interpretations', comparison_ids=['Food', 'Coffee'])
+        regression.apply_review_hold(row, review)
+        self.assertTrue(row['same_graph'])
+        self.assertTrue(row['source_review_hold'])
+        self.assertEqual(row['unresolved'], [])
+        self.assertEqual(row['verification'], {})
+        self.assertEqual(row['retained_cases'], 2)
+        row = dict(reason=None, unresolved=[], queried=['Food'], verification={}, same_graph=False)
+        regression.apply_review_hold(row, review)
+        self.assertEqual(row['unresolved'], ['Coffee'])
+        self.assertFalse(row['same_graph'])
+
 
 if __name__ == '__main__':
     unittest.main()

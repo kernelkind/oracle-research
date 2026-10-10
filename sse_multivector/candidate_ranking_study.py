@@ -118,11 +118,48 @@ def _reference(root):
         'canonical_selection_ranking', 'subject_matching_probe', 'ancestor_cosine_probe'))
 
 
-def read_frames(root, trial_path, vector_path, subject_probe):
-    w, t, p, ranking, subject_vectors, vector_reader = _reference(root)
+def read_native_frames(root, trial_path):
+    """Validate saved placement cases without requiring new search encodings."""
+    reference = _reference(root)
+    w, t, p = reference[:3]
     state_path = Path(trial_path).resolve() / 'state.json'
     state = w.read(state_path)
     t._check(state)
+    if state['status'] != 'complete':
+        raise ValueError('selection regression source construction must be complete')
+    corpus = {n['note_id']: n for n in w.read(state['corpus'])['notes']}
+    stages, frames = {}, []
+    for step in state['steps']:
+        record = state.get('comparison_policy_steps', {}).get(str(step['index']))
+        if record is None:
+            continue
+        stage_path = str(Path(step['comparison_phases'][0]['experiment']).parent.parent / 'state.json')
+        if stage_path not in stages:
+            stages[stage_path] = w.read(stage_path)
+        snapshot = dict(stages[stage_path], index=step['index'], nodes=step['before'],
+                        steps=state['steps'][:step['index']], experiment=step['experiment'], phase='comparison')
+        cases = p.checked_cases(snapshot)
+        if any(c['status'] != 'valid' for c in cases):
+            raise ValueError('ranking study requires complete native comparison receipts')
+        if [(c['id'], c['parsed']) for c in cases] != [(a['id'], a['output']) for a in step['answers']]:
+            raise ValueError('step answers differ from checked native receipts')
+        local = step['local']
+        entry = next(e for e in corpus[local['note_id']]['subjects'] if e['number'] == local['number'])
+        frames.append(dict(step=step, snapshot=snapshot, ids=[n['id'] for n in step['before']],
+            rows=step['before'], entry=entry, local_subject=entry['subject'],
+            eligible=record['plan']['binding']['eligible'], pool=record['plan']['queried'],
+            record=record, known={c['id']: c for c in cases}, note_id=local['note_id']))
+    return state, frames, dict(
+        study_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        reference_code_sha256={m.__file__: hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()
+                               for m in reference},
+        source_state=str(state_path), state_sha256=hashlib.sha256(state_path.read_bytes()).hexdigest(),
+        new_teacher_calls=0), (w, t, p)
+
+
+def read_frames(root, trial_path, vector_path, subject_probe):
+    state, native_frames, provenance, modules = read_native_frames(root, trial_path)
+    w, t, p, ranking, subject_vectors, vector_reader = _reference(root)
     vp = w.read(Path(vector_path) / 'inputs.json')
     for path, expected in vp['protected_sha256'].items():
         if hashlib.sha256(Path(path).read_bytes()).hexdigest() != expected:
@@ -152,28 +189,11 @@ def read_frames(root, trial_path, vector_path, subject_probe):
         pair = pair_by_id[vp['references'][key]]
         return unit_rows(values[tuple(pair['representations'][name])])
 
-    corpus = {n['note_id']: n for n in w.read(state['corpus'])['notes']}
-    stages, frames = {}, []
+    frames = []
     projection = np.random.default_rng(7021).normal(size=(receipt['dimensions'], 16))
     projection /= np.linalg.norm(projection, axis=0)
-    for step in state['steps']:
-        record = state.get('comparison_policy_steps', {}).get(str(step['index']))
-        if record is None:
-            continue
-        stage_path = str(Path(step['comparison_phases'][0]['experiment']).parent.parent / 'state.json')
-        if stage_path not in stages:
-            stages[stage_path] = w.read(stage_path)
-        snapshot = dict(stages[stage_path], index=step['index'], nodes=step['before'],
-                        steps=state['steps'][:step['index']], experiment=step['experiment'], phase='comparison')
-        cases = p.checked_cases(snapshot)
-        if any(c['status'] != 'valid' for c in cases):
-            raise ValueError('ranking study requires complete native comparison receipts')
-        if [(c['id'], c['parsed']) for c in cases] != [(a['id'], a['output']) for a in step['answers']]:
-            raise ValueError('step answers differ from checked native receipts')
-        nodes = step['before']
-        ids = [n['id'] for n in nodes]
-        local = step['local']
-        entry = next(e for e in corpus[local['note_id']]['subjects'] if e['number'] == local['number'])
+    for frame in native_frames:
+        step, record, nodes, ids, entry = (frame[k] for k in ('step', 'record', 'rows', 'ids', 'entry'))
         qh = header(entry['subject'])
         qm, qc, qcm = (representation('step:' + str(step['index']), name) for name in (
             'meaning', 'contextual_heading', 'contextual_meaning'))
@@ -216,17 +236,10 @@ def read_frames(root, trial_path, vector_path, subject_probe):
         interactions = np.column_stack([np.tile(qsmall, (len(ids), 1)), csmall,
                                        csmall-qsmall, csmall*qsmall])
         features = np.column_stack([*scalars, interactions])
-        known = {c['id']: c for c in cases}
-        frames.append(dict(step=step, snapshot=snapshot, ids=ids, rows=nodes, local_subject=entry['subject'],
-            eligible=eligible, pool=record['plan']['queried'], record=record, scores=scores,
-            features=features, known=known, note_id=local['note_id']))
-    return state, frames, dict(controls=controls, auxiliary_rows=receipt['row_count'],
-        study_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-        reference_code_sha256={m.__file__: hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()
-                               for m in (w, t, p, ranking, subject_vectors, vector_reader)},
+        frames.append(dict(frame, scores=scores, features=features))
+    return state, frames, dict(provenance, controls=controls, auxiliary_rows=receipt['row_count'],
         auxiliary_worker_receipt=str(Path(vector_path) / 'worker-result/worker-receipt.json'),
-        source_state=str(state_path), state_sha256=hashlib.sha256(state_path.read_bytes()).hexdigest(),
-        checkpoint_sha256=receipt['checkpoint_sha256'], new_teacher_calls=0), (w, t, p)
+        checkpoint_sha256=receipt['checkpoint_sha256']), modules
 
 
 def orders(frame, learned=None):

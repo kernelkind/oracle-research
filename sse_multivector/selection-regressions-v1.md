@@ -1,5 +1,9 @@
 # Repeatable candidate-selection tests
 
+The completed ASv6.100 build is now a separate [current-source suite](selection-regressions-v2.md),
+with another 120 placement cases. Use that suite for current-pipeline selection
+work; retain this one as clearly labeled historical evidence.
+
 **Prepared:** `selection-historical-fifty-v1`, 177 comparison-bearing placement
 cases across 50 notes. The source construction has 181 local entries; its initial
 bootstrap and three producer-review holds require no selection and remain fixed.
