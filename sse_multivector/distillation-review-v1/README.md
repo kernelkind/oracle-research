@@ -1,8 +1,8 @@
 # Distillation semantic review — process and evidence
 
-**Latest wording approval:** [DSLv3](relationship-prompt-v3.md) has user-approved
-wording and remains untested. Its [approval and scope](#dslv3-wording-approval-october-10)
-are recorded below; existing experiments remain bound to DSLv2.
+**Latest trial authorization:** [DSLv3](relationship-prompt-v3.md) has approved
+wording and an authorized [bounded paired trial](#dslv3-bounded-paired-trial-october-10).
+Results are pending; the existing lower-effort study remains bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2651,7 +2651,52 @@ change. The quoted ASv6.100 rule, input variables and JSON decision schema are
 unchanged. The approved template and native revision receipt retain their exact
 draft bytes. No new model calls were made. The recommended next step is a
 bounded trial of preserved meanings and genuinely missing restrictions; that
-trial needs separate authorization.
+trial needs separate authorization. The user subsequently authorized the trial
+described below.
+
+## DSLv3 bounded paired trial (October 10)
+
+The user authorized the recommended small balanced trial after approving the
+exact DSLv3 wording. This is a development diagnosis, not a restart of the
+frozen 60-answer study, bulk pilot grading or reviewer qualification.
+
+The pre-call panel contains **14 distinct pairs: seven expected true and seven
+expected false**. Expectations are fixed from existing source adjudications or
+authored controls, independently of the new responses:
+
+| Cases | Expected | Purpose |
+| --- | --- | --- |
+| J298ba814ec0df6d7e0036d44, Jbc4bf8cf7afb46274fadb9dc, Jec35975ad4b028c1faad637d | true | Recurring added action/main-subject requirements |
+| J540116c34ef70aa126d9eedb | true | Retained complete prediction meaning in an invitation |
+| J58b09889239b08f491ecea86, J216ed78ce8cf32a27e94f884 | false | Genuine missing parent restrictions |
+| J6dc0076faf785a446b5d25c4 | false | Activity goal does not retain required activity/timing |
+| TL01, TL02, LL02 | true | Complete length, comparison and passive-voice contrasts |
+| TL03, LL01, LL03, LL04 | false | Lost length, duration, renewed ban or exclusion |
+
+The three targeted failures come from two notes; J298/Jbc share a note, as do
+J58/J216. Those pairs are distinct inputs, not independent source contexts.
+The seven actual-data labels remain existing agent source assessments, not
+human-certified gold. Unresolved A06/A12/A21 interpretations are excluded.
+The native inherited expectations for J58/J216/J6dc remain true, whereas their
+current source adjudications establish false. Those old expectations remain
+untouched; native frozen-label qualification is not the trial's correctness
+measure. Agent reviews must state the source-adjudicated basis explicitly.
+
+Both arms request fresh native responses with **GPT-6.1 Sol / high / subscription
+SSE / concurrency 8**, holding each pair, quoted ASv6.100 rule, output schema,
+worker and remaining settings equal. Both use native `prepare --from --repeat`;
+DSLv2 stays unchanged and DSLv3 retains its approved bytes. This isolates wording
+from reasoning level and distinguishes fresh answers from reuse. The original
+saved study and its source judgments are preserved.
+
+There are **28 planned verdict calls**, bounded by 56 total attempts allowing
+only temporary-provider retries and at most two attempts per case. One review
+coordinator runs at a time. Natural short DSL prefixes receive no padding,
+explicit caching or warming. The subscription route has no paid API fallback.
+Native preparation and source/settings checks precede dispatch. Targeted
+corrections and control regressions are assessed separately, including whether
+each invalid rationale respects the complete child and an actual parent
+restriction. Results are pending.
 
 ## Actual distilled wording: offline preview (October 8)
 
