@@ -257,9 +257,22 @@ def orders(frame, learned=None):
     result['graph_hybrid'] = order(.5*scores['meaning'] + .25*scores['contextual_heading']
                                  + .25*scores['meaning_descendants'])
     result['heading_groups'] = frame['pool']
+    # Keep broad original roots untouched. Child comparisons retain lexical /
+    # ancestor nominations and add meaning matches without reading any answers.
+    result['root_baseline_meaning_union'] = (frame['pool'] if '.' not in str(frame['step']['local']['number'])
+        else list(dict.fromkeys(frame['pool'][:12] + result['meaning'][:8])))
     if learned is not None:
         result['learned'] = order(learned)
     return result
+
+
+def screen_profiles(methods, requested=None):
+    profiles = {f'{name}-{limit}': (name, limit) for name in methods for limit in (8, 12, 16)}
+    if requested is not None:
+        if len(requested) != len(set(requested)) or set(requested) - profiles.keys():
+            raise ValueError('screen profiles must be unique known method-limit names')
+        profiles = {key: profiles[key] for key in requested}
+    return profiles
 
 
 def evaluate(frame, order, limit, modules, *, heading_groups=False, history=None):
@@ -326,31 +339,46 @@ def exact_prefix(state, frames, profile, modules):
 
 def comparison_costs(frames, selected, workflow):
     """Use the native accounting function over receipt-validated original calls."""
-    ledgers, calls, seen = {}, [], set()
+    experiments, originals, warmups = {}, {}, {}
     for frame in frames:
         keys = selected[frame['step']['index']]
         for key in keys:
             case = frame['known'].get(key)
             if case is None:
                 raise ValueError('cannot price an unobserved verification request')
-            receipt = case['receipt']
-            path = Path(receipt['results_path']).resolve()
-            if path not in ledgers:
-                lines = path.read_bytes().splitlines(keepends=True)
-                records = [json.loads(line) for line in lines]
-                hashes = [hashlib.sha256(line).hexdigest() for line in lines]
-                ledgers[path] = (records, hashes)
-            records, hashes = ledgers[path]
-            if hashes.count(receipt['record_sha256']) != 1:
-                raise ValueError('receipt does not identify one exact native record')
-            end = hashes.index(receipt['record_sha256'])
-            job = records[end]['job_key']
-            for number, record in enumerate(records[:end+1]):
-                if record['job_key'] != job or (path, number) in seen:
-                    continue
-                seen.add((path, number))
-                calls.append((record, workflow.engine.provider_cost(record)))
-    return dict(actual_source_attempts=len(calls), **workflow.usage_summary(calls, strict=True))
+            expected = experiments.setdefault(case['experiment'], {})
+            if case['id'] in expected and expected[case['id']] != case['receipt']:
+                raise ValueError('comparison cost receipt differs across frames')
+            expected[case['id']] = case['receipt']
+    for directory, identifiers in experiments.items():
+        report = workflow.report(directory, only=sorted(identifiers), generation_costs=True,
+                                 include_request_preview=False)
+        if any(c['status'] != 'valid' or c['receipt'] != identifiers[c['id']] for c in report['cases']):
+            raise ValueError('comparison cost source is no longer valid')
+        for source in report['generation_usage']['sources']:
+            path = Path(source['results_path']).resolve()
+            if path not in warmups:
+                _, _, manifest = workflow.load(path.parent.parent)
+                warmups[path] = bool(manifest.get('cache_warmup'))
+            if warmups[path]:
+                continue  # Keep all original warmups in fixed overhead.
+            key = (path, source['result_line'])
+            if key in originals and originals[key]['result_sha256'] != source['result_sha256']:
+                raise ValueError('comparison original generation source changed')
+            originals[key] = source
+    ledgers, calls = {}, []
+    for (path, number), source in originals.items():
+        if path not in ledgers:
+            lines = path.read_bytes().splitlines(keepends=True)
+            records = [json.loads(line) for line in lines]
+            costs = workflow.engine.load_reconciled_costs(path.parent, records)
+            ledgers[path] = (lines, records, costs)
+        lines, records, costs = ledgers[path]
+        if not 1 <= number <= len(lines) or hashlib.sha256(lines[number-1]).hexdigest() != source['result_sha256']:
+            raise ValueError('comparison original generation source changed')
+        record = records[number-1]
+        calls.append((record, workflow.engine.provider_cost(record, costs)))
+    return dict(actual_source_attempts=len(originals), **workflow.usage_summary(calls, strict=True))
 
 
 def note_predictions(frames, development, columns=None):
@@ -569,43 +597,44 @@ def run_study(args):
                                                    args.vectors, args.subject_probe)
     split = note_split([step['local']['note_id'] for step in state['steps']])
     development, test = set(split['development']), set(split['test'])
-    model, predicted = note_predictions(frames, development)
+    columns = ([i for i in range(frames[0]['features'].shape[1]) if i not in (7, 8, 9, 10, 11)]
+               if args.feature_set == 'no-graph' else None)
+    model, predicted = note_predictions(frames, development, columns)
     methods = list(orders(frames[-1], predicted[frames[-1]['step']['index']]))
     outputs = {}
-    for name in methods:
-        for limit in (8, 12, 16):
-            profile = f'{name}-{limit}'
-            details = []
-            for frame in frames:
-                order = orders(frame, predicted[frame['step']['index']])[name]
-                details.append(evaluate(frame, order, limit, modules, heading_groups=name == 'heading_groups'))
-            totals = {}
-            for group, notes in (('development', development), ('test', test), ('all', development|test)):
-                rows = [r for r, f in zip(details, frames) if f['note_id'] in notes]
-                totals[group] = dict(steps=len(rows), same_graph=sum(r['same_graph'] for r in rows),
-                    different_graph=sum(not r['same_graph'] and not r['unresolved'] for r in rows),
-                    unresolved_steps=sum(bool(r['unresolved']) for r in rows),
-                    hidden_holds=sum(r['hidden_hold'] for r in rows),
-                    initial_cases=sum(len(r['queried']) for r in rows),
-                    verification_cases=sum(len(r['verification']) for r in rows),
-                    original_cases=sum(r['original_cases'] for r in rows),
-                    retained_cases=sum(r['retained_cases'] for r in rows),
-                    saved_positives=sum(r['saved_positives'] for r in rows),
-                    recovered_positives=sum(r['recovered_positives'] for r in rows))
-            outputs[profile] = dict(totals=totals, steps=details)
-            print(profile, json.dumps(totals['all']), flush=True)
+    for profile, (name, limit) in screen_profiles(methods, args.profile).items():
+        details = []
+        for frame in frames:
+            order = orders(frame, predicted[frame['step']['index']])[name]
+            details.append(evaluate(frame, order, limit, modules, heading_groups=name == 'heading_groups'))
+        totals = {}
+        for group, notes in (('development', development), ('test', test), ('all', development|test)):
+            rows = [r for r, f in zip(details, frames) if f['note_id'] in notes]
+            totals[group] = dict(steps=len(rows), same_graph=sum(r['same_graph'] for r in rows),
+                different_graph=sum(not r['same_graph'] and not r['unresolved'] for r in rows),
+                unresolved_steps=sum(bool(r['unresolved']) for r in rows),
+                hidden_holds=sum(r['hidden_hold'] for r in rows),
+                initial_cases=sum(len(r['queried']) for r in rows),
+                verification_cases=sum(len(r['verification']) for r in rows),
+                original_cases=sum(r['original_cases'] for r in rows),
+                retained_cases=sum(r['retained_cases'] for r in rows),
+                saved_positives=sum(r['saved_positives'] for r in rows),
+                recovered_positives=sum(r['recovered_positives'] for r in rows))
+        outputs[profile] = dict(totals=totals, steps=details)
+        print(profile, json.dumps(totals['all']), flush=True)
     winner = min(outputs, key=lambda key: (
         outputs[key]['totals']['development']['different_graph'] + outputs[key]['totals']['development']['unresolved_steps'],
         outputs[key]['totals']['development']['hidden_holds'],
         outputs[key]['totals']['development']['retained_cases'], key))
     provenance['study_sha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     report = dict(schema_version=1, provenance=provenance, split=split, profiles=outputs,
+                  feature_set=args.feature_set, fitted_feature_columns=columns,
                   fitted_model={k: v.tolist() if isinstance(v, np.ndarray) else v for k, v in model.items()},
                   learned_predictions={str(k): v.tolist() for k, v in predicted.items()},
                   selected_on_development=winner,
                   limitations=['Frozen original before-graphs; not new full hierarchies.',
                     'All rerankers use the original sixteen-candidate nomination pool, so unseen relationships remain unknown.',
-                    'Historical teacher labels are not human semantic gold.',
+                    'Saved teacher labels are not human semantic gold.',
                     'Later guarded snapshots use original prior query history, not reachable counterfactual histories.',
                     'Test notes are held out of model fitting and profile selection; this single exploratory corpus is not independent deployment proof.'])
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -625,6 +654,8 @@ def main():
     p.add_argument('--analyze', type=Path)
     p.add_argument('--cost-audit', type=Path)
     p.add_argument('--profile', action='append')
+    p.add_argument('--feature-set', choices=('full', 'no-graph'), default='full',
+                   help='Features for the learned scorer; no-graph repeats the existing semantic ablation.')
     p.add_argument('--extensions', action='store_true', help='Also screen dual-ranking and chronologically trained profiles offline.')
     p.add_argument('--ablations', action='store_true', help='Retrain without feature groups using the same note split.')
     p.add_argument('--online', action='store_true', help='Replay models trained only on previously retained judgments.')
