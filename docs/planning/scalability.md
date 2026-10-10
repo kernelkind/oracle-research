@@ -1,6 +1,6 @@
 # Hierarchy-build scalability
 
-Updated October 9, 2026. This records scalability decisions and evidence.
+Updated October 10, 2026. This records scalability decisions and evidence.
 Implementation and spending require their own task authorization. Release
 requirements, corpus scope, compute locations and budget remain in
 [release decisions](release-decisions.md).
@@ -303,3 +303,20 @@ exhausted persistent budget to forbid new dispatch. If a proposed placement chan
 later comparison inputs, stop replay when no exact saved answer exists. Any new
 inference or active-policy adoption requires the relevant authorization; this
 saved result grants no additional calls, spending or permission to contact agents.
+
+## Fresh ASv6.100 fifty-note construction
+
+The [fifty-note failure record](../../sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md)
+documents a completed fresh ASv6.100 build using Bootstrap-v96 and Compare-v48.
+All fifty notes are individually reachable and every displayed edge narrows the
+note set. The saved menu nevertheless exceeds K=6: seven roots, thirteen Food
+children and seven Food-preparation children. Unchanged meanings also produced
+incompatible comparison interpretations; guards and receipt-bound agent review
+held those placements. These outcomes do not establish semantic accuracy or
+production-scale feasibility.
+
+The report, exact evaluated prompts and two menu recipes are in main. The native
+constructor, receipts and target artifacts remain in the retained
+`oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree; the report gives the
+source commit and complete inspection command. This bounded documentation
+integration changes no generation policy, prompt or saved graph.
