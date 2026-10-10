@@ -45,6 +45,27 @@ writes `bootstrap.json` and source-bound `provenance.json`, retaining full answe
 null meanings and current/stale reviews. It checks verbatim source quotations
 and unresolved/null consistency without repairing or approving training targets.
 
+`python -m sse_multivector.bootstrap_student_pilot prepare --collection PATH
+--provenance PATH --output PATH` derives reviewed meaning-only targets from the
+native Bootstrap collection. It preserves null meanings, human review precedence,
+source identities and separated TRAIN development roles. The prepared student
+template adds an explicit single-field response contract to the complete teacher
+snapshot; full teacher responses remain review evidence. Reusable pinned fits are
+[`bootstrap-pilot-qwen27b-lora-v1.json`](distillation/bootstrap-pilot-qwen27b-lora-v1.json)
+and [`bootstrap-pilot-gemma26b-lora-v1.json`](distillation/bootstrap-pilot-gemma26b-lora-v1.json).
+
+Its `train --config PATH --data PATH --output PATH --stage train` rederives targets
+from the bound collection before loading weights, tokenizes complete inputs and
+supervises only the meaning JSON and native turn end. It uses the existing LoRA
+loader, including Gemma expert adaptation and frozen routers. `--stage verify`
+requires a fresh process and checks saved adapter hashes/weights and scores/loss.
+Configured epoch reports contain teacher-forced loss and measured cost; semantic
+quality requires separate generation evaluation through the native runner.
+The generated `student-prompt.txt` can be used with `generic` prepared-experiment
+input reuse, selecting the qualified evaluation IDs and the
+[`meaning-only response schema`](distillation/bootstrap-pilot-meaning-v1.output.schema.json).
+This preserves original inputs and evidence without copying teacher answers.
+
 `compare_student_inputs` accepts hash-bound `bootstrap` and `provenance` references
 to that collection, a pilot `role`, `seed`, `max_pairs` and `self_pairs`. It
 nominates bounded same-tree and cross-post questions from current accepted,

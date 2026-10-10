@@ -28,6 +28,64 @@ Published-checkpoint behavior can support a choice of starting weights; it
 cannot establish a ranking after an unperformed fine-tune. Synthetic execution
 checks establish capacity and checkpoint integrity, not learning quality.
 
+### Meaning-only Bootstrap learning preparation
+
+`bootstrap_student_pilot.py` derives **94 TRAIN / 21 evaluation** targets from
+all 120 preserved native Bootstrap answers: five unresolved reviews are excluded,
+and **6/1 null meanings** remain supervised examples. Current human decisions
+retain precedence. Native producer receipts, teacher prompt/input hashes, original
+TRAIN membership and note/author/post separation are checked before fitting.
+Changing a prepared target and resealing its file hash still fails: the fitter
+derives every target again from the bound collection before loading weights.
+
+The student uses the complete Bootstrap-v96 development instructions and inputs
+with an explicit final single-field response contract. The teacher definition
+and full teacher answers remain unchanged. `student-prompt.txt` is the exact
+prepared template for native generation evaluation; the student completion is
+only `{"meaning": STRING_OR_NULL}`. The template SHA-256 is
+`d507e9c3c880f8f41a2b7de84a5992fb2268a2404da4536ce879062696e476d6`;
+`bootstrap-targets-v1/data.json` is
+`2c783542eb2495192479a29572bd2d5d70ff664d02ba61d442984ba5760a1654`.
+Local and GB10 preparation produce identical target/template hashes. GB10
+preparation binds the immutable `bootstrap-meaning-pilot-runtime-v1` module.
+
+The pinned Qwen27/Gemma26 LoRA pilots use batch one, learning rate 2e-5, seed 17
+and checkpoints at epochs 1 and 4. Qwen adapts ordinary linear layers at rank
+16/alpha 32. Gemma also adapts both packed expert projections at rank 2/alpha 32,
+with routers frozen, using the previously verified loader. CUDA allocation
+budgets are 32/72 GiB, each with an eight-GiB system reserve; these are admission
+limits, not measured peaks. There is no input truncation. Only the completion
+and native turn end receive labels. Their preceding states are projected over
+the complete vocabulary; input positions never become supervised targets.
+
+Actual complete-token inventories on the reviewed data are:
+
+| Pinned student | TRAIN total / maximum | Evaluation total / maximum | TRAIN supervised tokens / maximum per example |
+| --- | ---: | ---: | ---: |
+| Qwen27 | 501,255 / 6,905 | 107,478 / 5,224 | 4,568 / 168 |
+| Gemma26 | 503,798 / 6,922 | 108,143 / 5,265 | 4,590 / 172 |
+
+Both fit their 13,312-token configured limits. The source-bound inventory is
+`target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
+The learning report separates optimizer time, loading, teacher-forced evaluation
+and checkpoint phase time. Fresh-process verification checks saved file hashes,
+exact adapter weights through the existing loader, and native scores/loss.
+Teacher-forced loss is a training diagnostic, not semantic meaning accuracy.
+Generated outputs still require native runner receipts and source-bound review
+of topic boundaries, factual state, null decisions and ancestor compatibility.
+Twenty-five focused CPU tests pass (three explicit CUDA tests skipped) against
+the bound runner snapshot. The native CUDA test exercises both causal NF4 and
+packed-expert NF4 adapters, agrees with complete masked causal loss in the real
+fit's baseline, fits only TRAIN targets, checks fresh-process reload, and loads
+the saved adapters through the generation worker. It passes in 47.97 seconds
+while Qwen Compare training is active. A preceding failure came from missing
+end-of-turn IDs in the tiny fixture; that fixture was corrected, with no model
+loader or inference repair. Original failure evidence is preserved.
+
+The native input-only reuse test confirms that selected evaluation cases retain
+complete teacher inputs/evidence with the single-field student schema and no
+copied teacher baseline.
+
 ### Development learning pilot preparation
 
 The native `bootstrap_student_inputs` adapter binds the existing selected VC15
@@ -86,8 +144,13 @@ It establishes candidate relationships before using accepted containment to
 prepare branch examples; it is not a production-branch benchmark or complete
 task coverage. Its **Compare-v48** teachers retain the original three-field
 meaning/relation/reason contract, with the local meaning checked for exact copy.
-The student remains relation-only. Native collection preserves every teacher
-answer and bound review; it does not apply relationships to a hierarchy. The
+The student remains relation-only. Compare-v75 subsequently landed on local main
+with separate containment questions and answers/justifications in its teacher
+output, and fixed meanings/branch placement as its task inputs. This C48 pilot
+retains its complete original inputs, including post/entry context; it is not a
+measurement of the newer input interface or its supervision. The five relation
+labels remain the same. Native collection preserves every teacher answer and
+bound review; it does not apply relationships to a hierarchy. The
 completed experiments are `learning-pilot-v1/compare-{train,evaluation}-teacher`.
 They returned **184/46 valid answers in 185/46 attempts**, without reused answers.
 One TRAIN reciprocal family disagrees about whether a listening-access link
@@ -157,8 +220,21 @@ updating only the preparation-code binding. Qwen's first launch omitted the
 existing Python-header `CPATH`; its owned worker was stopped before measurement
 and the incomplete v1 artifact is preserved. The corrected launch reuses cached
 headers and kernels, without installation or teacher regeneration. Matched
-Qwen27 and Kev27 task results remain pending. Bootstrap's pilot student target
-is the confirmed single `meaning` field, with null allowed.
+Qwen27's first epoch reaches **43/46 teacher agreement**, or **41/44** excluding
+identity controls, versus its published baseline of 38/46. It correctly directs
+**13/16 containment decisions** and preserves both identity controls and all
+28 neither targets. Its three disagreements are Activities versus the need for
+padel courts in both directions, plus Tea versus the London chai invitation;
+all three are predicted neither. The first epoch's phase including evaluation
+and checkpoint writing takes **2,203.80 seconds**, with **21.15 GiB** peak CUDA
+allocation. Small native tests overlapped this phase, so its time is not an
+isolated throughput measurement. Later epochs and fresh-process verification
+remain pending; this partial checkpoint is not a verified final result or model
+choice. Its copied report is `compare-pilot-qwen27b-epoch1-report-v2.json` under
+the same target root, SHA-256
+`8d0ae82cac1abee2237ec64cdb5cd50afd0119a2c3f618b74381d67cd1d98e36`.
+Kev27 task results remain pending. Bootstrap's pilot student target is the
+confirmed single `meaning` field, with null allowed.
 
 The encoder can also be tested with `input_format: "input_json"`: it takes the
 complete original `INPUT_JSON` from the hash-bound native collection, keeping

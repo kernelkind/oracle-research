@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "meaning": {"type": ["string", "null"], "minLength": 1}
+  },
+  "required": ["meaning"],
+  "additionalProperties": false
+}

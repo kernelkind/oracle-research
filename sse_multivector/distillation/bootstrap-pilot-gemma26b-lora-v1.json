@@ -1,0 +1,12 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "revision": "4d7ae4984b7db7de8f8457170b3f1a419ee76d52",
+  "quantization": "nf4",
+  "max_length": 13312,
+  "epochs": [1, 4],
+  "batch_size": 1,
+  "learning_rate": 0.00002,
+  "seed": 17,
+  "memory_budget_gib": 72,
+  "reserve_gib": 8
+}
