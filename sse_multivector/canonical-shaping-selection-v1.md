@@ -305,6 +305,108 @@ groups fixed and test local-parent retrieval using original local branch
 evidence of broader scope. This directly addresses the missing direction while
 preserving normal comparison traversal as the sole placement authority.
 
+## Complete-link clustering of sibling meanings
+
+Following the user's approval, `--clustering complete` tests a standard
+hierarchical clustering algorithm on the same full-meaning vectors. It uses
+SciPy's `linkage` with complete linkage and pairwise cosine distance
+`1 - cosine`. Each sibling begins alone. The distance between two groups is
+the greatest distance between any member of one and any member of the other;
+the algorithm merges the closest groups and updates those distances. Thus a
+merge considers every cross-group pair, rather than one starting sibling.
+See the [SciPy linkage definition](https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html).
+
+All siblings take part in the complete clustering. Retain its proper groups of
+two through six members for the existing unused-local search; the full sibling
+set and larger groups are excluded. Groups are nested or disjoint. There is no
+similarity threshold or prescribed number of final clusters. Canonical IDs are
+sorted before clustering to make repeated runs in the same runtime deterministic;
+the report records the SciPy and NumPy versions. A similarity tie can resolve
+differently in a different library version.
+
+This changes only group formation. The native inputs, full-meaning encodings,
+1,386 unused entries, local subject vectors, eligibility and parent-candidate
+score remain fixed. All groups shared with the earlier screen reproduce their
+ranked candidates exactly: five groups for C005, seven for C001 and three for
+roots. No comparison call, hierarchy edge, immutable meaning, menu or UI changes.
+
+| Target | Earlier meaning groups | Complete-link groups | Artifact |
+|---|---:|---:|---|
+| Food preparation C005 | 17 | 5 | `subgroups-complete-meanings-C005-v1.json` |
+| Food C001 | 58 | 9 | `subgroups-complete-meanings-C001-v1.json` |
+| Roots | 25 | 5 | `subgroups-complete-meanings-roots-v1.json` |
+
+The reports are under the retained worktree's
+`target/canonical-shaping-selection-v1`. All three preparations used **zero new
+encodings and zero model calls**. This is a reduction in candidate groups, not
+measured inference/API-cost savings or established hierarchy-quality improvement.
+
+Food preparation's seven siblings ultimately split into these two proper groups
+before their final all-seven merge. The pie heading is abbreviated below; the
+saved report retains its full original wording.
+
+```text
+Cluster: Cookware, Food smoking, Grilling, Cooking appliances
+  Nested group: Cookware, Food smoking, Grilling
+    Nested pair: Cookware, Food smoking
+
+Cluster: Bread preparation, Rosemary, Pie preparation
+  Nested pair: Bread preparation, Rosemary
+```
+
+| Group | Least member-pair cosine | First unused local candidate |
+|---|---:|---|
+| Bread preparation + Rosemary | 0.7623 | Soup |
+| Cookware + Food smoking | 0.6580 | Chicken meat |
+| Cookware + Food smoking + Grilling | 0.6155 | Outdoor grilling |
+| Bread preparation + Rosemary + Pie preparation | 0.5626 | Dry white wine as an ingredient in mushroom risotto with shrimp |
+| Cookware + Food smoking + Grilling + Cooking appliances | 0.4781 | Stove ignition |
+
+The algorithm replaces overlapping alternatives with nested groups, but has not
+established better parent retrieval. Bread preparation and Rosemary still cluster first;
+their exact meanings share the sourdough example. Narrow ingredient and activity
+entries still rank as possible parents of broader groups. These are agent-reviewed
+selection concerns, not newly established comparison outcomes. The root clustering
+also contains weaker groups, such as Coffee + Raves (0.3835) and a later
+Food + Gardening + Mental states + Jokes group whose weakest pair is 0.0639.
+Building a complete clustering eventually joins weak matches; retaining a formed
+group does not automatically make it worth a model traversal.
+
+The implementation uses SciPy's quadratic-time, quadratic-memory complete-link
+algorithm over the selected sibling set. Existing bounded research limits remain
+4,096 locals and 512 siblings. This does not introduce a corpus-wide all-pairs
+clustering step. Parent retrieval remains the same bounded dense cosine screen.
+
+Verification: the minimal seed-versus-whole-group test first failed because the
+new clustering option was absent. Twenty-one selector/receipt tests and sixty-six
+combined selector, traversal, construction, regression and auxiliary-vector tests
+pass. All three actual native preparations completed and their protected hashes
+match. The tested isolated runtime is Python 3.13.12, NumPy 2.5.2 and SciPy 1.18.1;
+SciPy is needed only for the opt-in complete-link screen. The previous source
+version is preserved at `bea0d94e` and ignored `selector-bea0d94e.py`, separately
+from new source-bound reports.
+
+Repeat with a NumPy/SciPy environment:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 sse_multivector/canonical_shaping_selection.py \
+  --reference-project ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1 \
+  --state ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json \
+  --menu ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-v2/state.json \
+  --parent C005 \
+  --method subgroups \
+  --clustering complete \
+  --sibling-meanings ../oracle-mvp-hierarchy-candidate-rankings-v1/target/candidate-ranking-as100-v1/meaning-vectors \
+  --output target/canonical-shaping-selection-v1/subgroups-complete-meanings-C005-repeat.json
+```
+
+Suggested next investigation, requiring approval: use the two main C005 groups
+to retrieve unused local ancestors above similar subjects. This targets broader
+entries with original branch evidence instead of sending the current narrow
+nominees through expensive traversal. Normal local-versus-canonical comparison
+remains the sole placement authority.
+
 When a new intermediate parent groups m existing siblings, replacing their
 direct choices with that parent can reduce the original group by m−1 choices.
 Measure the actual completed placement and menu, including any new overcrowded

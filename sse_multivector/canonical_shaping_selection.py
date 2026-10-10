@@ -74,15 +74,19 @@ def rank_candidates(rows, siblings, vectors, *, eligible=None):
 
 
 def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, limit=10,
-                  sibling_vectors=None):
-    """Propose overlapping nearest-neighbor groups and inspect possible parents.
+                  sibling_vectors=None, clustering='nearest'):
+    """Propose sibling groups and inspect possible parents.
 
     The score is the weakest member cosine minus the strongest outside cosine.
     It measures separation, not containment direction. All proposed members must
     be eligible, while all other siblings remain in the outside comparison.
     Optional ID-bound sibling vectors replace both clustering and candidate
     comparison representations; local subject vectors stay unchanged.
+    Complete-link merges use the weakest cross-group cosine and form nested
+    groups. Only proper groups of two through max_choices are retained.
     """
+    if clustering not in ('nearest', 'complete'):
+        raise ValueError('unknown sibling clustering method')
     if type(max_choices) is not int or not 2 <= max_choices <= 6:
         raise ValueError('bounded subgroup choice limit must be between two and six')
     if type(limit) is not int or not 1 <= limit <= 20:
@@ -99,11 +103,24 @@ def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, lim
         if allowed[key] - set(identifiers):
             raise ValueError('eligibility contains an unknown sibling')
     proposals = set()
-    for seed in range(len(siblings)):
-        neighbors = sorted((i for i in range(len(siblings)) if i != seed),
-                           key=lambda i: (-pairwise[seed, i], identifiers[i]))
-        for size in range(2, min(max_choices, len(siblings) - 1) + 1):
-            proposals.add(tuple(sorted([seed, *neighbors[:size - 1]])))
+    if clustering == 'complete':
+        from scipy.cluster.hierarchy import linkage
+        from scipy.spatial.distance import squareform
+        distances = 1 - np.clip(pairwise, -1, 1)
+        np.fill_diagonal(distances, 0)
+        merges = linkage(squareform(distances, checks=False), method='complete')
+        clusters = {i: (i,) for i in range(len(siblings))}
+        for index, (left, right, _, _) in enumerate(merges, start=len(siblings)):
+            group = tuple(sorted(clusters[int(left)] + clusters[int(right)]))
+            clusters[index] = group
+            if 2 <= len(group) <= max_choices and len(group) < len(siblings):
+                proposals.add(group)
+    else:
+        for seed in range(len(siblings)):
+            neighbors = sorted((i for i in range(len(siblings)) if i != seed),
+                               key=lambda i: (-pairwise[seed, i], identifiers[i]))
+            for size in range(2, min(max_choices, len(siblings) - 1) + 1):
+                proposals.add(tuple(sorted([seed, *neighbors[:size - 1]])))
     groups = []
     for group in sorted(proposals):
         members = [identifiers[i] for i in group]
@@ -128,6 +145,9 @@ def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, lim
             remaining_choices_if_grouped=remaining,
             within_choice_limit_if_grouped=remaining <= max_choices,
             ranked=ranked[:limit]))
+        if clustering == 'complete':
+            groups[-1]['minimum_pair_cosine'] = float(np.min([
+                pairwise[a, b] for i, a in enumerate(group) for b in group[i + 1:]]))
     return sorted(groups, key=lambda group: (len(group['members']), -group['coherence'],
                                              group['members']))
 
@@ -177,7 +197,7 @@ def load_sibling_meanings(directory, state_path, siblings, subject_receipt, vect
 
 
 def prepare(reference_project, state_path, menu_path, parent, output, *, method='second-best',
-            sibling_meanings=None):
+            sibling_meanings=None, clustering='nearest'):
     """Freeze a nomination against existing native state, menu and SSE receipts."""
     if __package__:
         from .candidate_ranking_study import _reference
@@ -192,6 +212,8 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
         raise ValueError('unknown shaping selection method')
     if sibling_meanings is not None and method != 'subgroups':
         raise ValueError('sibling meanings require the subgroup method')
+    if clustering not in ('nearest', 'complete') or (clustering != 'nearest' and method != 'subgroups'):
+        raise ValueError('complete-link clustering requires the subgroup method')
     state_bytes, menu_bytes = state_path.read_bytes(), menu_path.read_bytes()
     protected = {str(state_path): hashlib.sha256(state_bytes).hexdigest(),
                  str(menu_path): hashlib.sha256(menu_bytes).hexdigest()}
@@ -263,7 +285,8 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
         vectors[text] = saved[(digest, digest[:16])]
     ranked = rank_candidates(rows, siblings, vectors, eligible=eligible) if method == 'second-best' else []
     groups = rank_subgroups(rows, siblings, vectors, eligible=eligible,
-                           sibling_vectors=sibling_vectors) if method == 'subgroups' else None
+                           sibling_vectors=sibling_vectors,
+                           clustering=clustering) if method == 'subgroups' else None
     for path, expected in protected.items():
         if hashlib.sha256(Path(path).read_bytes()).hexdigest() != expected:
             raise ValueError('selection source changed: ' + path)
@@ -282,6 +305,12 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
             sibling_representation='standalone full explicit meaning', local_representation='standalone subject',
             method='nearest sibling meaning groups; weakest member minus strongest outside meaning cosine',
             meaning_vectors=str(Path(sibling_meanings).resolve()))
+    if clustering == 'complete':
+        import scipy
+        representation = 'meaning' if sibling_vectors is not None else 'subject'
+        report.update(clustering='complete',
+            clustering_runtime=dict(numpy=np.__version__, scipy=scipy.__version__),
+            method=f'complete-link sibling {representation} groups; weakest member minus strongest outside {representation} cosine')
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open('x') as stream:
         stream.write(json.dumps(report, indent=2, allow_nan=False) + '\n')
@@ -300,9 +329,12 @@ def main():
     parser.add_argument('--method', choices=('second-best', 'subgroups'), default='second-best')
     parser.add_argument('--sibling-meanings', type=Path,
                         help='saved auxiliary SSE directory; use full meanings for subgroup siblings')
+    parser.add_argument('--clustering', choices=('nearest', 'complete'), default='nearest',
+                        help='subgroup algorithm; complete uses SciPy complete-link cosine distances')
     args = parser.parse_args()
     print(json.dumps(prepare(args.reference_project, args.state, args.menu, args.parent, args.output,
-                             method=args.method, sibling_meanings=args.sibling_meanings)))
+                             method=args.method, sibling_meanings=args.sibling_meanings,
+                             clustering=args.clustering)))
 
 
 if __name__ == '__main__':

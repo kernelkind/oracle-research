@@ -12,6 +12,41 @@ from sse_multivector.canonical_shaping_selection import (
 
 
 class ShapingSelectionTests(unittest.TestCase):
+    def test_complete_link_considers_all_members_instead_of_seed_neighbors(self):
+        import math
+        siblings = [dict(id=f'C{i}', subject=f'S{i}') for i in range(4)]
+        # S1 and S2 each resemble S0, but lie on opposite sides of it.
+        vectors = {f'S{i}': [math.cos(math.radians(angle)), math.sin(math.radians(angle))]
+                   for i, angle in enumerate((0, 20, -30, -65))}
+        vectors['Candidate'] = [1, 0]
+        rows = [dict(note_id='a', number='1', subject='Candidate')]
+        nearest = rank_subgroups(rows, siblings, vectors)
+        complete = rank_subgroups(rows, siblings, vectors, clustering='complete')
+        self.assertIn(['C0', 'C1', 'C2'], [g['members'] for g in nearest])
+        self.assertEqual([g['members'] for g in complete], [['C0', 'C1'], ['C2', 'C3']])
+
+    def test_complete_link_is_nested_deterministic_and_respects_proper_group_limits(self):
+        import math
+        siblings = [dict(id=f'C{i}', subject=f'S{i}') for i in range(8)]
+        vectors = {f'S{i}': [math.cos(i / 10), math.sin(i / 10)] for i in range(8)}
+        vectors['Candidate'] = [1, 0]
+        rows = [dict(note_id='a', number='1', subject='Candidate')]
+        groups = rank_subgroups(rows, siblings, vectors, clustering='complete')
+        self.assertTrue(groups)
+        self.assertLessEqual(len(groups), len(siblings) - 2)
+        self.assertTrue(all(2 <= len(g['members']) <= 6 for g in groups))
+        sets = [set(g['members']) for g in groups]
+        self.assertTrue(all(not a & b or a <= b or b <= a
+                            for i, a in enumerate(sets) for b in sets[i + 1:]))
+        self.assertEqual(groups, rank_subgroups(rows[::-1], siblings[::-1], vectors,
+                                              clustering='complete'))
+        self.assertEqual(groups, rank_subgroups(rows, siblings, vectors,
+            clustering='complete', sibling_vectors={s['id']: vectors[s['subject']] for s in siblings}))
+
+    def test_unknown_clustering_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'clustering'):
+            rank_subgroups([], [], {}, clustering='unknown')
+
     def test_sibling_meanings_change_groups_and_candidates_without_changing_locals(self):
         siblings = [dict(id='C1', subject='A'), dict(id='C2', subject='B'),
                     dict(id='C3', subject='C')]
