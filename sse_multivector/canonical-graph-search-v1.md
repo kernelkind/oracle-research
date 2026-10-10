@@ -269,6 +269,32 @@ Further savings work needs to avoid unnecessary negative comparisons as well
 as duplicate batch warmups. This is a next-work suggestion, not authorization
 to change construction or dispatch more requests.
 
+### Deferred original-parent pruning
+
+On 2026-10-10 the user agreed that reusing the original parent's known
+relationships is worth preserving, but explicitly deferred it:
+
+> we should save it for later, when we can establish transitivity in the compare prompt reliably
+
+The proposed shortcut uses saved comparison answers involving the local node's
+mapped canonical parent, alongside the current traversal. For example, suppose
+Cooking contains the incoming Steaming vegetables node, Jokes contains Puns,
+and saved answers establish both Cooking versus Puns and Jokes versus Steaming
+vegetables as `neither`. Transitivity then rules out both possible containment
+directions between Steaming vegetables and Puns, allowing that comparison to be
+skipped. This is a hypothetical example, not a measured trial result.
+
+Cooking versus Puns being `neither` alone would rule out only Steaming
+vegetables containing Puns; it would not rule out the reverse or justify
+skipping every descendant of Puns. Missing graph edges are not saved negative
+answers. Reused judgments must concern the same fixed meanings.
+
+This remains unimplemented and untested. Revisit it only after reliable Compare
+transitivity has been established. No reliability threshold or follow-up test
+has been approved. Current selection behavior and prompt ownership are
+unchanged; this decision authorizes recording the idea, not implementing it or
+making model calls.
+
 ### Constructor fix and retained evidence
 
 During `graph-selection-09`, Morning coffee, original entry `5.1`, encountered
