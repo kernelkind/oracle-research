@@ -478,6 +478,36 @@ def add_commands(commands):
     p.add_argument('snapshot', type=Path, help='complete saved bounded hierarchy export')
     p.add_argument('output', type=Path, help='fresh directory outside saved sources')
 
+    p = commands.add_parser('prepare-canonical-selection-trial',
+                            help='select one unused original entry with native guarded comparisons; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--base-trial', type=Path, required=True)
+    p.add_argument('--spec', type=Path, required=True)
+    p = commands.add_parser('audit-canonical-trial', help='measure saved canonical note sets and browsing choices; no inference or graph changes')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--max-choices', type=int, default=6)
+    p.add_argument('--work-budget', type=int, default=200000)
+    p = commands.add_parser('measure-canonical-candidates', help='measure candidate selection against saved native comparisons; no inference or graph changes')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('evaluate-canonical-policy-trial', help='compare native frozen baseline and policy trials; no inference')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('export-canonical-viewer', help='export saved canonical nodes and original notes for review; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('shape-canonical-trial', help='select saved canonical nodes and witnessed containment edges; no inference')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--work-budget', type=int, default=200000)
+    p.add_argument('--max-choices', type=int, default=6)
+    p = commands.add_parser('measure-subject-vectors',
+                            help='measure saved subject-vector loading and normalization; no inference')
+    p.add_argument('--probe', type=Path, required=True)
+    p.add_argument('--compact', action='store_true')
+    p.add_argument('--output', type=Path, required=True)
+
 
 def handle_command(args):
     if args.command == 'continue-canonical-trial':
@@ -641,6 +671,62 @@ def handle_command(args):
         except ImportError:
             from parent_guide_vectors import prepare_vectors
         print(json.dumps(prepare_vectors(args.source, args.destination, report), indent=2))
+    elif args.command == 'prepare-canonical-selection-trial':
+        from .canonical_selective_trial import prepare_selection
+        result = prepare_selection(args.spec, args.base_trial, args.directory)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'measure-canonical-candidates':
+        try:
+            from .canonical_candidate_measurement import measure
+        except ImportError:
+            from canonical_candidate_measurement import measure
+        result = measure(args.source, args.output)
+        print(json.dumps({'output': str(args.output.resolve()),
+                          'inference_calls': result['inference_calls'],
+                          'baseline': {'totals': result['baseline']['totals']},
+                          'profiles': [{key: value for key, value in profile.items() if key != 'steps'}
+                                       for profile in result['profiles']]},
+                         ensure_ascii=False, indent=2))
+    elif args.command == 'evaluate-canonical-policy-trial':
+        from .canonical_policy_evaluation import evaluate_source
+        result = evaluate_source(args.source, args.output)
+        print(json.dumps({'output': str(args.output.resolve()), **{
+            key: result[key] for key in ('inference_calls', 'schedule', 'reductions', 'quality', 'warnings')
+        }}, ensure_ascii=False, indent=2))
+    elif args.command == 'audit-canonical-trial':
+        try:
+            from .canonical_hierarchy_audit import audit_trial
+        except ImportError:
+            from canonical_hierarchy_audit import audit_trial
+        result = audit_trial(args.directory, args.output, args.max_choices, args.work_budget)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'export-canonical-viewer':
+        try:
+            from .canonical_hierarchy_viewer import export_viewer
+        except ImportError:
+            from canonical_hierarchy_viewer import export_viewer
+        print(json.dumps(export_viewer(args.directory, args.output), ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'shape-canonical-trial':
+        try:
+            from .canonical_hierarchy_shape import shape_trial
+        except ImportError:
+            from canonical_hierarchy_shape import shape_trial
+        result = shape_trial(args.source, args.output, args.work_budget, args.max_choices)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'measure-subject-vectors':
+        try:
+            from .subject_matching_probe import measure_subject_vector_loading
+        except ImportError:
+            from subject_matching_probe import measure_subject_vector_loading
+        if args.output.exists():
+            raise ValueError('measurement output already exists')
+        result = measure_subject_vector_loading(args.probe, compact=args.compact)
+        write(args.output, result)
+        print(json.dumps(result, indent=2))
+
     elif args.command == 'collect':
         print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
     elif args.command == 'export-parent-guides':
@@ -671,6 +757,7 @@ def code_files(dataset):
              'hierarchy_inputs.py', 'bounded_hierarchy_candidates.py',
              'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
     names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py']
+    names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_selective_trial.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
     if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation'}:

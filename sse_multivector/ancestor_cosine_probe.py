@@ -57,14 +57,38 @@ def marked_post(text, byte_spans):
     return "".join(parts)
 
 
-def load_vectors(folder):
+def load_vectors(folder, *, compact=False):
+    """Load tuple rows by default, or read-only mapped float32 rows explicitly.
+
+    Compact rows retain their mapping and require the protected source file to
+    stay immutable while used. Hash verification streams the raw file; it does
+    not materialize a raw-byte copy or Python float tuples.
+    """
     receipt_path, raw_path = folder / "worker-receipt.json", folder / "raw-vectors.f32le"
-    receipt, raw = read(receipt_path), raw_path.read_bytes()
-    if hashlib.sha256(raw).hexdigest() != receipt["files"][raw_path.name]["sha256"]:
-        raise ValueError(f"vector hash mismatch: {folder}")
-    if len(raw) != receipt["row_count"] * receipt["dimensions"] * 4:
-        raise ValueError("vector shape mismatch")
-    vectors = struct.iter_unpack("<" + "f" * receipt["dimensions"], raw)
+    if compact:
+        import numpy as np
+
+        receipt = read(receipt_path)
+        before = raw_path.stat()
+        if _sha256_file(raw_path) != receipt["files"][raw_path.name]["sha256"]:
+            raise ValueError(f"vector hash mismatch: {folder}")
+        if before.st_size != receipt["row_count"] * receipt["dimensions"] * 4:
+            raise ValueError("vector shape mismatch")
+        shape = receipt["row_count"], receipt["dimensions"]
+        vectors = (np.memmap(raw_path, dtype='<f4', mode='r', shape=shape)
+                   if before.st_size else np.empty(shape, dtype='<f4'))
+        after = raw_path.stat()
+        stamp = lambda info: (info.st_dev, info.st_ino, info.st_size,
+                              info.st_mtime_ns, info.st_ctime_ns)
+        if stamp(before) != stamp(after):
+            raise ValueError('vector source changed during compact loading')
+    else:
+        receipt, raw = read(receipt_path), raw_path.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != receipt["files"][raw_path.name]["sha256"]:
+            raise ValueError(f"vector hash mismatch: {folder}")
+        if len(raw) != receipt["row_count"] * receipt["dimensions"] * 4:
+            raise ValueError("vector shape mismatch")
+        vectors = struct.iter_unpack("<" + "f" * receipt["dimensions"], raw)
     rows = {(r["note_id"], r["subject_id"]): v for r, v in zip(receipt["rows"], vectors, strict=True)}
     if len(rows) != receipt["row_count"]:
         raise ValueError("duplicate worker row identities")

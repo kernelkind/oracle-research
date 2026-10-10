@@ -865,6 +865,138 @@ target/infomap-review-build/debug/sse-subject-navigation \
 Do not enable display-collapse options. Append `--check` for noninteractive
 validation. No saved LG01 output is rewritten.
 
+### Canonical hierarchy construction
+
+The native canonical workflow is available through the shared launcher. Oracle
+owns input adapters, construction, comparison selection, menu shaping and
+inspection; the sibling experiment-runner continues to own execution, retries,
+caching and provider transport. No separate hierarchy execution engine is
+installed. Read command help from the canonical checkout:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+../experiment-runner/bin/experiment-runner prepare-canonical-trial --help
+../experiment-runner/bin/experiment-runner prepare-canonical-selection-trial --help
+../experiment-runner/bin/experiment-runner continue-canonical-trial --help
+```
+
+`prepare-canonical-trial` accepts a schema-2 source naming `corpus`, selected
+original `roots` (`note_id` and `number`), `bootstrap_spec`, `comparison_spec`
+and `independent_meanings: true`. Bootstrap-v96 uses
+`local_schema_version: 4`, which supplies the selected entry in its complete
+original root hierarchy together with the post. Start with one selected original
+root per note; `--base-trial` appends unused original roots to a completed raw
+construction, including additional roots from existing notes.
+`--history-root` freezes the directory searched for exact native answer reuse.
+Current data must originate from ASv6.100 or an explicitly approved later AS
+version. Pre-ASv6.100 inputs and downstream results remain deprecated.
+
+Each incoming local entry first receives an independently generated explicit
+meaning. Comparison then copies that meaning unchanged against canonical nodes
+whose meanings are already fixed. Supplied local posts and original hierarchy
+evidence remain separate from canonical graph evidence. Bootstrap-v96 and
+Compare-v48 are the exact evaluated versions linked from the
+[fresh fifty-note findings](shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md);
+this integration changes neither prompt nor treats its saved outcomes as gold.
+The adapters and construction guards validate the supplied output schema, meaning-copy contract,
+source hashes and receipts. Mechanical acceptance does not establish semantic
+accuracy; automatic continuation keeps its semantic review status explicit.
+
+`prepare-canonical-selection-trial` takes a completed raw schema-2 trial and a
+schema-2 selection definition with `max_choices`, `max_entries`,
+`local_candidate_limit`, `comparison_policy` and optional `history_root`.
+Coverage and individual-note isolation take priority; otherwise canonical topics
+rotate as discovery queries for unused original entries. This selects work,
+not semantic relationships. Deeper entries remain eligible even if their
+original parent was held or their original branch currently represents one
+note. Raw crowding does not imply the finished menu needs more construction.
+`max_entries` bounds processed original entries, not provider attempts.
+
+The comparison policy is a separate schema-1 definition with `limit` and
+optional `subject_probe`. Text and saved SSE nominate candidates; they never
+establish containment or equivalence. The mapped original parent is included
+when eligible. The local meaning and before graph stay fixed through both the
+initial shortlist and every required verification of omitted relationships
+that a positive placement would imply. Equivalence checks both directions.
+Contradiction or uncertainty holds the entry without applying the proposal.
+Invalid receipts refuse application; incomplete verification stays pending.
+Untested unrelated relationships
+remain unknown. Existing same-note exclusions, mapped-parent exception,
+cycle checks and settled-relationship guards continue to apply.
+
+Prepared phases run with the shared launcher's `run` command. Advance a reviewed
+phase with `advance-canonical-trial`; `--concurrency` affects subsequent prepared
+experiments. `continue-canonical-trial` provides bounded automatic continuation:
+`--max-nodes` freezes the incoming-entry range, `--max-new-attempts` is a
+persistent stage cap including retries, and `--attempt-budget` names an existing
+shared counter. Resume with identical limits; never reset spent counters.
+An unrun verification remains pending when a cap is reached. Inference still
+requires the task's existing authorization and budget admission.
+
+Use these offline commands after construction:
+
+| Command | Purpose |
+|---|---|
+| `audit-canonical-trial` | Check recursive distinct-note sets, coverage, note access, strict narrowing and sibling choices, with a finite work budget. |
+| `shape-canonical-trial` | Retain selected saved nodes and witnessed ancestry, preserving meanings and supports in a fresh finished menu. |
+| `export-canonical-viewer` | Export the saved menu and full original notes for the existing hierarchy review UI, only when requested. |
+| `measure-canonical-candidates` | Evaluate comparison selection against validated saved construction snapshots. |
+| `evaluate-canonical-policy-trial` | Compare bound native trials, generation usage and actual finished menus without repairing the candidate. |
+
+Shaping can bypass redundant intermediates through witnessed transitive
+ancestry. Omission is not a negative relationship or an equivalence merge.
+Count a node's own supporting notes and recursive descendants, deduplicating
+note IDs. The approved finished-menu requirements are all notes reachable,
+strictly smaller note sets on every downward edge, at most six roots/children,
+and no known valid improvement that reduces browsing decisions while preserving
+those constraints. The constructor does not solve menu optimization
+automatically. A structural audit is neither semantic certification nor proof
+of optimality. Keep finished menus out of subsequent raw-trial preparation.
+
+Candidate ranking is a bounded scan of at most 4,096 local rows and 64 ancestor
+headings. Comparison selection allows at most 512 eligible canonical nodes;
+the policy evaluator bounds canonical states to 512 nodes/steps.
+These are experimental limits, not evidence of release-scale feasibility.
+Saved heading vectors must cover the nominated headings exactly; missing or
+changed vectors fail rather than silently selecting a different policy.
+`subject_matching_probe prepare --subjects` prepares receipt-bound standalone
+heading vectors from a native subjects-only collection with `--worker-config`;
+it requires no masks or deprecated vectors. `measure-subject-vectors` measures
+saved loading/normalization, including optional read-only compact mappings,
+without inference or overwriting reports.
+
+Saved raw trials bind comparison-policy source paths as well as source bytes.
+Running a frozen raw trial from a different project checkout can therefore
+refuse with `canonical comparison policy changed`, even when the copied code
+is identical. Keep the original checkout and bindings; do not rewrite saved
+state or bypass validation. New trials prepared on `main` bind its own paths.
+The saved shaped menu can be audited independently without moving the raw
+construction checkpoint.
+
+Integration verification covered 504 distinct test cases: 498 passed across
+the initial suites and targeted reruns; six existing UI/artifact checks were
+unavailable. The 29 initial failures were all confirmed 30-second fixture
+timeouts during multi-phase continuation and passed with its 120-second test
+deadline. No production guard was relaxed. The integrated launcher reproduced
+the saved ASv6.100 fifty-note menu audit: 70 nodes, 74 strictly narrowing edges
+and the same three sibling-limit violations. No teacher calls were made.
+
+### Native generation accounting
+
+`summarize-experiments --spec SOURCE --output REPORT` verifies named saved
+experiment groups and writes a fresh native report without inference. It
+deduplicates original generation receipts across reused experiments, separates
+fresh execution from original generation, and classifies cache warmups from
+their original receipt-bound manifests. Warmups contribute to generation cost
+without becoming comparison requests. Retries and failed attempts still count;
+missing costs retain an unknown total and a known subtotal. An optional existing
+attempt counter is checked under lock without refunds or resets.
+
+The report uses `experiment-usage-summary-v3`. This corrects the earlier
+cross-experiment warmup/comparison classification while retaining original cost
+totals and exact reuse identity. Catalogue/API-equivalent cost is not a provider
+invoice; do not treat reused generations as free or count reasoning twice.
+
 ### Collect subjects, masks and node descriptions into reusable inputs
 
 `collect` is offline. It validates saved answers and receipts through the same
