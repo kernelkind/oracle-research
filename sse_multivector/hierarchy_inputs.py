@@ -2,12 +2,181 @@
 import hashlib
 import json
 import re
+from copy import deepcopy
 from pathlib import Path
 
 try:
     from . import extraction_pipeline as engine
+    from . import corpus_inputs
 except ImportError:
     import extraction_pipeline as engine
+    import corpus_inputs
+
+
+def validate_collection(directory, *, load_plan=None, load_report=None, active=(), cache=None):
+    """Rebuild a native SP/MP collection from its complete validated receipts.
+
+    Return ``(files, protected_sha256, reference)``. ``files`` contains only the
+    canonical collection documents, not worker runtime settings. ``reference``
+    names the native provenance.json and its byte hash. Callbacks read a frozen
+    plan dict and a native report respectively; defaults use experiment.load /
+    report. This read-only path does not replay any later hierarchy placements.
+    MP sources must be direct documents; indirect corpus references fail closed.
+    """
+    if load_plan is None or load_report is None:
+        try:
+            from . import experiment
+        except ImportError:
+            import experiment
+        load_plan = load_plan or (lambda path: experiment.load(path)[0])
+        load_report = load_report or experiment.report
+    directory = Path(directory).resolve()
+    if directory in active:
+        raise ValueError("native collection reference cycle")
+    cache = {} if cache is None else cache
+    key = "native_collection", directory
+    canonical_names = {"subjects.json", "masked-posts.json", "vector-map.json", "worker-request.json"}
+    if key in cache:
+        files, protected, reference = cache[key]
+        if {name for name in canonical_names if (directory / name).exists()} != set(files):
+            raise ValueError("canonical collection files differ")
+        for path, expected in protected.items():
+            if engine._sha256_file(Path(path)) != expected:
+                raise ValueError(f"protected collection source changed: {path}")
+        return deepcopy(files), dict(protected), dict(reference)
+    protected = {}
+
+    def protect(path, expected=None):
+        path = Path(path).resolve()
+        if str(path) in protected:
+            if expected is not None and protected[str(path)] != expected:
+                raise ValueError(f"protected collection source changed: {path}")
+            return protected[str(path)]
+        measured = engine._sha256_file(path)
+        if expected is not None and measured != expected:
+            raise ValueError(f"protected collection source changed: {path}")
+        protected[str(path)] = measured
+        return measured
+
+    provenance_path = directory / "provenance.json"
+    reference = dict(path=str(provenance_path), sha256=protect(provenance_path))
+    provenance = engine._load_json(provenance_path, "native collection provenance")
+    if (type(provenance.get("schema_version")) is not int or provenance["schema_version"] != 1
+            or not isinstance(provenance.get("sources"), dict)
+            or not isinstance(provenance.get("experiments"), list)
+            or not provenance["experiments"] or type(provenance.get("inference_calls")) is not int
+            or provenance["inference_calls"] != 0
+            or any(not isinstance(value, str) or re.fullmatch(r"[0-9a-f]{64}", value) is None
+                   for value in provenance["sources"].values())):
+        raise ValueError("expected native collection provenance schema_version 1")
+    for path, expected in provenance["sources"].items():
+        protect(path, expected)
+    bundles, adapters, seen = [], set(), set()
+    receipt_files = engine.ReceiptFiles()
+    for recorded in provenance["experiments"]:
+        experiment_dir = Path(recorded["experiment"]).resolve()
+        if experiment_dir in seen:
+            raise ValueError("duplicate native collection experiment")
+        seen.add(experiment_dir)
+        protect(experiment_dir / "experiment.json")
+        plan = load_plan(experiment_dir)
+        adapter = plan["dataset"]["adapter"]
+        if adapter not in {"subjects", "masks", "grouped_masks"} or "path" not in plan["dataset"]:
+            raise ValueError("native collection requires source-bound SP/MP experiments")
+        for path, expected in plan["sources"].items():
+            protect(path, expected)
+        for name, expected in plan["files"].items():
+            protect(experiment_dir / name, expected)
+        run_directory = Path(plan["run_directory"]).resolve()
+        protect(run_directory / "manifest.json")
+        for path in (run_directory / "runner-upgrades.jsonl", experiment_dir / "code-upgrades.jsonl",
+                     experiment_dir / "execution-settings.jsonl"):
+            if path.exists():
+                protect(path)
+        if adapter in {"masks", "grouped_masks"}:
+            source = Path(plan["dataset"]["path"]).resolve()
+            source_value = engine._load_json(source, "mask subjects source")
+            if "sources" in source_value:
+                raise ValueError("native MP corpus-reference sources are unsupported")
+            native_origins = any(note.get("origin", {}).get("receipt")
+                                 for note in source_value.get("notes", []))
+            if native_origins and source.name != "subjects.json":
+                raise ValueError("receipt-bearing SP source requires native subjects.json collection")
+            if source.name == "subjects.json":
+                if (source.parent / "provenance.json").exists() or native_origins:
+                    upstream, upstream_protected, _ = validate_collection(source.parent,
+                        load_plan=load_plan, load_report=load_report,
+                        active=(*active, directory), cache=cache)
+                    if set(upstream) != {"subjects.json"}:
+                        raise ValueError("mask source must be a native subjects collection")
+                    for path, expected in upstream_protected.items():
+                        protect(path, expected)
+        result = load_report(experiment_dir)
+        if (result.get("experiment") != str(experiment_dir) or result.get("adapter") != adapter
+                or result.get("prompt_id") != plan["prompt"]["id"]
+                or any(result.get("settings", {}).get(k) != v for k, v in plan["runner"].items())):
+            raise ValueError("native collection report identity differs")
+        cases = result["cases"]
+        if ([case["id"] for case in cases] != [case["id"] for case in plan["cases"]]
+                or any(case["status"] not in {"valid", "empty"} or not case.get("receipt")
+                       for case in cases)):
+            raise ValueError("native collection requires complete valid receipt-bearing cases")
+        for frozen, case in zip(plan["cases"], cases, strict=True):
+            if any(case.get(k) != frozen.get(k) for k in ("inputs", "evidence")):
+                raise ValueError("native collection case differs from frozen source")
+            receipt = case["receipt"]
+            ledger = Path(receipt["results_path"]).resolve()
+            protect(ledger)
+            # Native report validates each selected record. Pin its reuse source
+            # too, so replay cannot later read changed original native receipts.
+            records_key = "collection_receipts", ledger
+            if records_key not in cache:
+                cache[records_key] = {engine._sha256_bytes(engine._canonical_json_bytes(record)): record.get("reused_from")
+                    for record in (json.loads(line) for line in receipt_files.lines(ledger))}
+            if receipt["record_sha256"] not in cache[records_key]:
+                raise ValueError("native collection receipt record is missing")
+            reuse = cache[records_key][receipt["record_sha256"]]
+            if reuse is not None:
+                original = Path(reuse["results_path"]).resolve()
+                protect(original)
+                protect(original.parent / "manifest.json")
+                original_manifest = receipt_files.json(original.parent / "manifest.json")
+                config_path = Path(original_manifest["config_path"])
+                if config_path.exists():
+                    protect(config_path)
+                execution_path = config_path.parent / "execution-settings.jsonl"
+                if execution_path.exists():
+                    protect(execution_path)
+                upgrade_path = original.parent / "runner-upgrades.jsonl"
+                if upgrade_path.exists():
+                    protect(upgrade_path)
+        measured = dict(experiment=str(experiment_dir), prompt_id=plan["prompt"]["id"],
+            settings=result["settings"], sources=plan["sources"], cases=[dict(id=case["id"],
+            receipt=case["receipt"], reused=case.get("reused", False)) for case in cases])
+        if measured != recorded:
+            raise ValueError("native collection provenance differs from saved receipts")
+        bundles.append(({**plan, "experiment": str(experiment_dir)}, result))
+        adapters.add(adapter)
+    if adapters == {"subjects"}:
+        files = collect_subjects(bundles)
+    elif adapters <= {"masks", "grouped_masks"}:
+        files = collect_masks(bundles)
+        if "worker-request.json" in files:
+            files["worker-request.json"]["proposal_sha256"] = engine._sha256_file(directory / "masked-posts.json")
+    else:
+        raise ValueError("native collection cannot mix SP and MP experiments")
+    if {name for name in canonical_names if (directory / name).exists()} != set(files):
+        raise ValueError("canonical collection files differ")
+    for name, expected in files.items():
+        path = directory / name
+        protect(path)
+        if engine._load_json(path, "canonical collection file") != expected:
+            raise ValueError(f"canonical collection file differs from native receipts: {name}")
+    for path, expected in protected.items():
+        if engine._sha256_file(Path(path)) != expected:
+            raise ValueError(f"protected collection source changed: {path}")
+    cache[key] = deepcopy(files), dict(protected), dict(reference)
+    return files, protected, reference
 
 
 def validate_subjects(value):
@@ -40,14 +209,37 @@ def origin(plan, case):
 
 def source_posts(plan, cache):
     path = Path(plan["dataset"]["path"])
-    expected = plan["sources"].get(str(path))
-    if path not in cache:
-        raw = path.read_bytes()
-        cache[path] = hashlib.sha256(raw).hexdigest(), {
-            n["note_id"]: n for n in json.loads(raw)["notes"]}
-    measured, notes = cache[path]
-    if measured != expected:
-        raise ValueError(f"protected source changed: {path}")
+    key = ("posts", path)
+    if key in cache:
+        protected, notes = cache[key]
+        for source_path, measured in protected.items():
+            if measured != plan["sources"].get(str(source_path)):
+                raise ValueError(f"protected source changed: {source_path}")
+        return notes
+    protected = {}
+
+    def read_bytes(source_path):
+        raw = source_path.read_bytes()
+        measured = hashlib.sha256(raw).hexdigest()
+        if measured != plan["sources"].get(str(source_path)):
+            raise ValueError(f"protected source changed: {source_path}")
+        protected[source_path] = measured
+        return raw
+
+    def read(source_path):
+        json_key = "post_source_json", source_path
+        if json_key not in cache:
+            value = json.loads(read_bytes(source_path))
+            cache[json_key] = protected[source_path], value
+        measured, value = cache[json_key]
+        if measured != plan["sources"].get(str(source_path)):
+            raise ValueError(f"protected source changed: {source_path}")
+        protected[source_path] = measured
+        return value
+
+    source = corpus_inputs.load(read(path), path.parent, read, read_bytes=read_bytes)
+    notes = {n["note_id"]: n for n in source["notes"]}
+    cache[key] = protected, notes
     return notes
 
 
