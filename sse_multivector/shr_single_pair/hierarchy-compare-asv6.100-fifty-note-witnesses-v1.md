@@ -472,6 +472,37 @@ missed ancestor check above.
 
 ### Verification and next decision
 
+Inspection identified a diagnostic defect shared by all three reversal
+families: the forward `canonical_contains_local` question tests a positive
+connection rather than a concrete possible exclusion from the parent's fixed
+scope. The user specifically asked whether Butter's questions were supposed
+to seek counterexamples and requested preserving this finding.
+
+Exact saved questions:
+
+- `isolated-014-forward`: "Does butter's fixed meaning establish a role in
+  food preparation, rather than merely identifying a finished food?" This
+  checks that one role fits, without testing Butter's other admitted uses.
+- `isolated-024-forward`: "Is making bread with a sourdough starter, including
+  its fermentation process, covered by food preparation?" This checks generic
+  preparation rather than Food's required human-nourishment scope.
+- `isolated-025-forward`: "Does Food cover consuming food by mouth and
+  swallowing it, including eating gamey meat and enjoying or disliking it?"
+  This repeats the positive consumption connection without probing Eating's
+  scope outside Food's required human-nourishment conditions.
+
+V75 already requires a concrete question that could reveal information admitted
+by the proposed child and excluded by the proposed parent. It does not require
+negative grammatical wording: "Does the parent cover [a concrete admitted
+child case]?" can be a valid counterexample test. The defect is substituting
+positive association or a matching role for that test. These are additional
+diagnostic defects within the already-rejected outputs, not three additional
+independent failures. An independent read-only reviewer confirmed the 024/025
+question defect. The preferred individual labels remain qualified agent
+assessments; this inspection adds no human semantic gold and does not prove
+which prompt wording caused the failures. Prompt, inputs and saved outputs
+remain unchanged.
+
 Every case has exactly one current native agent review. After review, all 102
 input strings/hashes, raw outputs, parsed values and receipt references remained
 unchanged; the experiment envelope, manifest and result-record bytes also remain
