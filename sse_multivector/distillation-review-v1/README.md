@@ -6,10 +6,13 @@ then run broader regression checks on the fixed **ten notes** once that set
 passes. The agreed **50 random plus ten challenge answers** remain the very
 final validation. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
-running unchanged DSLv4 at Sol/xhigh with **concurrency 16**. Independent agent
-audits cover fresh verdicts and complete evidence records as they arrive.
+finished generating with unchanged DSLv4 at Sol/xhigh and **concurrency 16**.
+Its raw native report is preserved before formal audit reviews. Definition and
+counterexample defects found in its explanations motivate the untested
+[DSLv5 draft](#dslv5-definition-and-counterexample-draft-october-10);
+semantic qualification remains pending.
 
-**Latest DSLv4 result:** **22/22 resolved Boolean expectations and complete
+**Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
 [broader trial within the frozen 60](#dslv4-broader-trial-preparation-october-10).
 Two pre-call interpretation questions remain unresolved and outside correctness
@@ -3548,11 +3551,53 @@ The source-bound case IDs and intended checks are:
 | `M01-checkpoint-800-N0015:compatibility:023:1.2` | false | Breasts lacks the daughter relationship; do not add a human-only parent restriction |
 | `M01-checkpoint-800-N0015:compatibility:017:3` | false | MILFs need not preserve anatomical subject matter; avoid an unconditional motherhood definition |
 
-The current ten-note run continues with its frozen settings. Its remaining
-cases have already been exposed through auditing, so call them broader
+The ten-note run has finished generation with its frozen settings and retains a
+raw native report before formal audit reviews. Its cases have already been
+exposed through auditing, so call further checks on them broader
 regression checks, not unseen generalization. Small-panel success cannot
 establish population accuracy. Disclose development exposure in the final
 60-answer report; the separate pilot test notes remain sealed.
+
+## DSLv5 definition and counterexample draft (October 10)
+
+The user authorizes presenting a targeted parent-child prompt revision before
+candidate model calls. [DSLv5](relationship-prompt-v5.md) is an **untested draft**
+against the last approved DSLv4 wording. It adds a required-versus-permitted
+meaning distinction to every evidence claim, including incidental child
+definitions. A usual instance, association or literal expansion is not proof
+of a universal restriction when the complete wording permits an ordinary
+meaning without it. This addresses categorical motherhood, close-kinship and
+human-only claims observed in current output records without case-specific
+examples or a different validity criterion.
+
+The existing negative counterexample must visibly satisfy the complete child,
+including qualifications and relationships as expressed, while failing an
+expressed parent restriction. Extra facts selecting one permitted child meaning
+in that counterexample are not automatically restrictions of every child
+instance. The full parent restriction record, occurrence/timing safeguards,
+ASv6.100 passage, input variables and exact `valid`/`reason` JSON contract are
+unchanged. Named-reference identity, attributed junk, inclusive-list scope and
+family-membership interpretation remain open; this draft does not adjudicate
+them or change legacy frozen labels.
+
+The shared `revise` command creates the draft and its hash-bound revision
+receipt from unchanged DSLv4. Native `prepare --from` with
+`--prompt`/`--prompt-id`, without `--repeat`, prepares
+`relationship-dslv5-preview-current-runner` from the existing 14-case relationship
+reference: 14 distinct unchanged complete inputs, 14 valid saved baseline
+results, 14 new requests and **zero candidate attempts**. Sol/xhigh,
+subscription SSE and the exact response schema are inherited. The complete
+fixed instructions including the AS passage have 694 estimated `o200k_base`
+tokens, below the 1,024-token warming threshold; no prefix warmup is prepared.
+
+The shared runner changed during preparation. A second unrun preview binds its
+current source; the first preview remains preserved. The inherited concurrency
+field is still 16, but current dispatch uses the runner's automatic shared
+30-request queue. This is an implementation change, not approval to change the
+user's requested concurrency; the 14-case panel itself permits at most 14
+simultaneous comparisons. The draft is presented before inference. Model calls,
+prompt adoption and lower-effort trials have not occurred for DSLv5; the
+original frozen study and pilot test access remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 

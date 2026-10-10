@@ -282,10 +282,15 @@ The current approved [prompt-development process](../../sse_multivector/distilla
 starts each changed prompt on 12–16 distinct complete review inputs, including
 known failures, correct controls and earlier regressions. Once those pass, check
 further cases and the fixed ten-note workflow; reserve the original 50 random
-plus ten challenge answers for very final validation. The current DSLv4 ten-note
-run continues unchanged. Sol/xhigh, subscription SSE and concurrency 16 remain
-fixed; lower-effort testing remains paused. Native small preparations retain
-inputs, receipts, schemas and baseline outputs without full evaluation rebuilds.
+plus ten challenge answers for very final validation. The DSLv4 ten-note run
+has finished generation unchanged; its raw native report precedes audit reviews.
+The [DSLv5 definition and counterexample revision](../../sse_multivector/distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
+is an untested draft with a prepared 14-case preview and zero candidate calls.
+Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
+paused. The completed ten-note run retains its frozen concurrency of 16; the
+current shared runner uses automatic queue admission for future dispatch.
+Native small preparations retain inputs, receipts, schemas and baseline
+outputs without full evaluation rebuilds.
 Audit decisions and explanations; small-panel success does not qualify broad
 accuracy, and previously audited cases are regression rather than unseen data.
 
