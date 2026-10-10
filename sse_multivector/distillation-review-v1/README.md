@@ -2249,7 +2249,8 @@ The distinct DSLv2 pool combines
 the latter two roles with six overlapping prompts: 4/119 losses (3.36 points).
 High has not cleared the conservative two-point margin and has role-level
 concerns.
-Lower-effort screening continues; no reasoning level has qualified. The
+At this checkpoint lower-effort screening continued; no reasoning level had
+qualified. The
 [revised source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-high-source-assessment-revision-2.json)
 preserves each exact-prompt truth and original evidence. Its SHA-256 is
 `939820622a81cdc8b792ef8e0c433aa4734384c176e574fede21a4d02b139a39`.
@@ -2422,8 +2423,8 @@ The [recorded selection](../../target/distillation-review-v1/final-trial-2026100
 selects **medium for the frozen 10-answer investigation**, with **405 distinct
 questions**. Low will not expand. Medium's borderline five-answer result and
 relationship losses require further source assessment; this is investigation,
-not qualification. High remains available if medium degrades significantly or
-shows a new recurring failure. The selection SHA-256 is
+not qualification. High was retained as the fallback if medium degraded
+significantly or showed a new recurring failure. The selection SHA-256 is
 `a4f97ec416736b44bb6b020035386877dfe726d3089f2bfc12399482648edb08`.
 The five added source answers followed the frozen order and preserved prior
 chosen outputs and receipts. Their shared prefixes were below the warming
@@ -2514,15 +2515,112 @@ selects **high on the same frozen 10 answers and 405 questions**, with dispatch
 authorized. Its SHA-256 is
 `5271afdc5abbdcd1654ae8d09a5a6652524265497abac881a9102233e6239534`.
 The high ten-answer investigation started at **13:18:53 UTC on October 10**
-and is running under one native coordinator. The five added answers retain the
-prior high-screen outputs and receipts, use concurrency 8 and need no new
-warmups. Complete the high pipeline and exact missing-panel bridge, then assess
-all new source disagreements before any 20-answer expansion. Medium remains
-unexpanded, and no 20-answer expansion has started. No effort is qualified or
-established as the minimum. Prompts,
+under one native coordinator. Its five added answers retained prior high-screen
+outputs and receipts, used concurrency 8 and needed no new warmups. The pipeline,
+exact missing-panel bridge and source assessments are complete, with the
+[result and subsequent selection recorded below](#ten-answer-high-result-and-xhigh-selection-october-10).
+Medium remains unexpanded. No effort is qualified or established as the minimum.
+Prompts,
 frozen data, references, mechanical rules, concurrency 8, provider-only
 two-attempt retries and natural-prefix eligibility
 remain unchanged. Bulk grading and reserved-test access remain unapproved.
+
+## Ten-answer high result and xhigh selection (October 10)
+
+Sol/high has completed the same frozen ten-answer, **405-question** comparison:
+**392 decisions agree with xhigh**, with 13 discordances and no missing or
+conflicting panel decisions. Current source adjudication gives **H=8, G=1,
+A=4**, bounding relative correctness loss by **3–11 of 405 decisions**, or
+**0.74–2.72 percentage points**. The net loss excluding unresolved truths is
+**7/405 = 1.73 points**, within the accepted two-point margin. The prior 297
+chosen outputs and original receipts are unchanged; the added 108 questions
+contribute H=2, G=1, A=2. The provisional 246 matching/support chosen outputs,
+normalized decisions and original receipts match the final results exactly;
+alias identities are unchanged.
+
+| Role | N | H | G | A | Loss in percentage points |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Matching | 123 | 0 | 0 | 2 | −1.63 to 1.63 |
+| Post support | 123 | 3 | 0 | 2 | 0.81–4.07 |
+| Actual student parent-child pairs | 81 | 1 | 0 | 0 | 1.23 |
+| Teacher/student compatibility | 84 | 4 | 1 | 0 | 3.57 |
+
+The relationship roles share six exact inputs, all agreeing with xhigh, and
+count each once overall. The
+[high ten-answer source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-high-source-assessment.json)
+has SHA-256
+`c25f849db66336abac527d0b07bf4d15f67fe8a91d5a7cf8d82643edbcc6788b`.
+The four unresolved cases remain unresolved, including J73 revision 2 and the
+two new support-boundary cases; original judgments and review histories remain
+preserved. These are agent source assessments and truth-uncertainty bounds,
+not human-certified gold, confidence intervals or population guarantees.
+
+The [high recurring-failure audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-high-restriction-pattern-audit.json)
+has SHA-256
+`920cccd6d98ab6c29084053f4f25f5544ddb404312e2228f09959c3186acd724`.
+Three accepted harmful prompts repeat the same explicit added requirement:
+high requires an invitation itself to be a claim on R01, and requires the
+current AI wave to be the main subject on R21, despite its complete meaning
+surviving as a temporal reference. The actual reasons add the same main-subject
+or action requirement absent from the parent wording. Compatibility alone spans
+both distinct notes; actual student parent-child failures **for this mechanism**
+remain on R01 only. The two R01 prompts come from one note. High fixes
+the separate R01 prediction case, but retains the two-note Claims/current-wave
+failure; frozen xhigh is correct on all three accepted cases.
+
+The [independent high gate audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-high-effort-gate-audit.json)
+has SHA-256
+`7b8b1882f99e2752cabbc172c58d63be4fe452c6476f3baa5e1029d8ecd0e825`.
+The borderline numerical range alone would prompt expansion, not confident
+rejection. The independently verified recurring mechanism triggers the existing
+interim step-up rule. Support and compatibility losses required investigation
+and the frozen higher-effort comparison; they add no per-role acceptance margin.
+
+The [direct high-versus-medium source comparison](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-high-versus-medium-direct-source-comparison.json)
+has SHA-256
+`f5d8be78d1a94be88ba1fc278571c1bc8c0df50d14eb1e406478181861812df1`.
+On the same 405 questions, 394 decisions agree. Relative to medium, high has
+H=4, G=5, A=2, giving a loss range of **−0.74 to +0.25 points**. This does not
+qualify either effort or establish a population advantage.
+
+The high extension pipeline had **181 fresh successes**, followed by a strict
+bridge of **16 first-attempt successes**, with no new failures or warmups.
+The separate observed wall times were **19 min 39 s** and **38 s**. The
+[high execution and reconciliation seal](../../target/distillation-review-v1/final-trial-20261009/evaluation-high/stage-10-complete-execution.md)
+verifies the retained outputs/receipts and both launch snapshots' JSONL byte
+prefixes. Native coordinators are drained; cumulative pipeline accounting
+includes the earlier screen and is not extension-only cost.
+
+For the same 405 chosen successes, the API-equivalent catalog estimate is
+**$1.10529 at high**, **43.57% below xhigh's $1.9585544** and **31.02% above
+medium's $0.8435832**. All three contain 312,530 total observed input tokens;
+high caches **21.50%**, versus 25.93% at xhigh and 22.48% at medium. High output
+is 59.13% lower and reasoning 69.13% lower than xhigh; output includes reasoning.
+The added 108 chosen successes cost $0.268014 by the same catalog. The
+[high fixed405 receipt cost audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-high-fixed-panel-cost-analysis.json)
+has SHA-256
+`7ed983698227f901fe58f931e8a0e5eaf85f1dffb0e457efd5ec542efa86d929`.
+All paid high comparison attempts retain 407 successes, including two duplicate
+successes beyond the chosen 405, and three older failures without usage.
+Their known catalog subtotal is $1.111332; complete paid cost remains unknown.
+The two unchanged shared warmups cost $0.007556 separately; reuse aliases add
+no paid attempt and actual provider charges remain unknown. Chosen model-worker
+durations sum to 2,927.825 s, 36.93% below xhigh, which is not elapsed wall time.
+History, cache availability and adaptive branches prevent a causal effort-only
+cost or runtime conclusion.
+
+The [sealed next-effort decision](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-high-effort-selection-decision.json)
+has SHA-256
+`23f032958d3035545667f3ecef325f7fa5dc7491585c3a8aecea23b4a539eb8b`.
+It retains the **already-complete frozen Sol/xhigh baseline of 60 answers and
+1,735 questions**, requiring no new model calls. Low stopped at five answers;
+medium and high stopped at ten. **No lower effort qualified, and no lower-effort
+20/40/60 expansion is authorized by this decision.** Early stopping does not
+prove that any lower effort would exceed two points of loss on the full 60 or
+in deployment. The requested lower-than-xhigh outcome remains **unachieved**;
+this checkpoint is not goal completion or reviewer qualification. Prompts,
+source data, mechanics, controls and the stopping rule remain unchanged. Bulk
+pilot grading and reserved-test access remain unapproved.
 
 ## Actual distilled wording: offline preview (October 8)
 

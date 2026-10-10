@@ -340,18 +340,29 @@ catalog estimate is 57.8% lower than xhigh's. See the
 Low's completed screen finds H=10, G=1, A=3 over the same 297 questions,
 with a 2.02–4.04 percentage-point loss range and a specific added-action error
 across two notes. Low will not expand. Medium was selected for the frozen
-10-answer, 405-question investigation; high remains available if medium
-degrades. No effort has qualified. See the
+10-answer, 405-question investigation, with high as its fallback. No effort
+has qualified. See the
 [low results and selection](../../sse_multivector/distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
 
 Medium's 10-answer investigation is complete on 405 fixed questions, retaining
 the prior 297 choices. Source adjudication finds H=11, G=3, A=4 and a
 0.99–2.96 percentage-point loss range. The same added main-occurrence/action
-requirement now recurs in compatibility across two notes. High on the same
-10 answers is running under the step-up rule; no 20-answer expansion has started.
+requirement recurs in compatibility across two notes. This triggered high on
+the same 10 answers under the step-up rule.
 The borderline numerical range alone does not establish rejection. No effort
 has qualified. See the
 [medium ten-answer record](../../sse_multivector/distillation-review-v1/README.md#ten-answer-medium-investigation-october-10).
+
+High's completed 405-question comparison finds H=8, G=1, A=4 and a
+0.74–2.72 percentage-point loss range. Its 1.73-point net loss is within the
+two-point margin; the same explicit added main-subject/action requirement
+across R01 and R21 triggers the existing step-up rule. Retain the already
+complete, frozen xhigh baseline of 60 answers and 1,735 questions. No lower
+effort qualified, and no lower-effort 20/40/60 stage will dispatch under this
+decision. Early stopping does not establish loss above two points on the full
+60 or in deployment. The requested lower reasoning outcome remains unachieved;
+bulk pilot grading remains unapproved. See the
+[high result and xhigh selection](../../sse_multivector/distillation-review-v1/README.md#ten-answer-high-result-and-xhigh-selection-october-10).
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

@@ -1084,7 +1084,7 @@ for the frozen 10-answer investigation with 405 distinct panel questions;
 dispatch added five source answers while retaining previous outputs and receipts.
 The added shared prefixes needed no new warmups. Concurrency 8,
 provider-only two-attempt retries and the approved review rules remain fixed.
-No effort has qualified; high remains available if medium degrades. Low's
+No effort has qualified; high was retained as that investigation's fallback. Low's
 fixed chosen-response catalog estimate is 62.54% lower than xhigh's, but its
 complete paid cost remains unknown because a recovered failure lacks usage.
 See the [low evidence and selection](distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
@@ -1096,12 +1096,31 @@ main-occurrence/action requirement recurs in compatibility across two notes;
 this independently verified recurrence triggers selection of high on the same
 frozen 10 answers under the approved step-up rule. The numerical range alone
 is borderline; role losses trigger investigation, not new acceptance margins.
-The high ten-answer investigation is running; no 20-answer expansion has
-started. No effort is qualified or established as the minimum. The medium
+The high ten-answer investigation followed this step-up decision. No effort
+is qualified or established as the minimum. The medium
 extension took 18 min 40 s plus a separate 48 s bridge, with no new warmups.
 Its fixed chosen-response catalog estimate is 56.93% lower than xhigh's;
 complete paid cost and actual provider charges remain unknown. See the
 [ten-answer medium evidence](distillation-review-v1/README.md#ten-answer-medium-investigation-october-10).
+
+The high ten-answer comparison is now complete on the same 405 questions:
+392 agreements, H=8, G=1, A=4 and a 0.74–2.72-point loss range. The numerical
+range alone is borderline, with a 1.73-point net loss within the two-point
+margin. The verified added main-subject/action requirement still recurs across
+R01 and R21, triggering the existing step-up rule. Retain the already-complete
+frozen xhigh baseline of 60 answers and 1,735 questions; no new native calls or
+lower-effort 20/40/60 dispatch is authorized. The new high pipeline had 181
+successful requests and a separate 16-request first-attempt bridge, with no
+new failures or warmups; wall times were 19 min 39 s and 38 s respectively.
+Prior 297 choices and provisional 246 matching/support results retain their
+original receipts. High's chosen405 API-equivalent estimate is $1.10529,
+43.57% below xhigh and 31.02% above medium; complete paid cost remains unknown
+because three prior failures lack usage. No lower effort qualified, and the
+requested lower reasoning outcome remains unachieved. Early stopping does not
+prove loss above two points on the full 60 or in deployment. Reviewer
+qualification remains open; bulk grading and reserved-test access remain
+unapproved. See the
+[high result and xhigh selection](distillation-review-v1/README.md#ten-answer-high-result-and-xhigh-selection-october-10).
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
