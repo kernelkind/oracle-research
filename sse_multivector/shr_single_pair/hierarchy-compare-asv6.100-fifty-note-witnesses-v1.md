@@ -280,3 +280,27 @@ V72 is preserved as the first draft. The final audit found one remaining
 correction without overwriting v72. Both retain native revision recipes and
 receipts pinned to v71. These drafts remain in the research worktree awaiting
 review and adoption; no improvement in model reliability is claimed.
+
+## Compare-v74: shared node data and no original evidence
+
+The user approved a draft simplification after v73: both compared nodes have
+`subject` and a fixed `meaning`. [Compare-v74](Hierarchy-compare-v74.md) removes
+`local.entry`, `local.post`, original local ancestors and `canonical.entries`.
+The canonical node retains its ID, immediate parent IDs and recursive canonical
+ancestor/descendant records describing its existing placement. The local node
+is outside that hierarchy.
+
+The draft removes original hierarchy definitions and source-evidence conflict
+checks. Comparison uses fixed meanings, their unresolved ambiguities and the
+supplied canonical branches. Subjects cannot add restrictions or settle an
+ambiguous meaning. Source validation remains outside this comparison contract;
+original producer evidence and native receipts are preserved.
+
+Native revision metadata is pinned to exact v73 bytes. The counterexample
+diagnostics, five-field output and canonical implication checks remain
+unchanged. Independent read-only review and mechanical reconstruction checks
+were completed without teacher calls. This is an unrun, unadopted prompt draft
+in the research worktree: the existing input adapters, runtime output schema,
+Bootstrap prompts and hierarchy artifacts were not changed. Qualification must
+first project saved regression inputs to this new contract through the shared
+native workflow while retaining their producer provenance outside model input.
