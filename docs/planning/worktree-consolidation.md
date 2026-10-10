@@ -17,9 +17,18 @@ The user subsequently requested landing the completed
 That record, its exact Bootstrap-v96 / Compare-v48 prompt files and its two menu
 recipes are integrated separately from the research constructor history.
 The `oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree remains because
-its native receipts, target artifacts and unmerged constructor are still needed
+its native receipts, target artifacts and unmerged selection/shaping extensions are still needed
 to inspect and reproduce the evidence. The branch snapshot below records the
 earlier mapping, rather than the status of this later bounded landing.
+
+The canonical construction foundation (`canonical_trial`, continuation and
+local-node input adapters) and opt-in
+[graph-search selection](../../sse_multivector/canonical-graph-search-v1.md)
+are also integrated. The branch-table statements about their absence describe
+the earlier inventory. Remaining selective, ranking, audit and viewer extensions
+are separate integration work. The graph-search task worktree remains because
+its completed native trials bind to its exact source paths; their receipts and
+ignored artifacts must remain reproducible.
 
 ## Main additions to assess
 
