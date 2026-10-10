@@ -1,13 +1,13 @@
 # Distillation semantic review — process and evidence
 
-**Latest trial result:** [DSLv3](relationship-prompt-v3.md) agrees with **11/14**
+**Latest trial result:** [DSLv3](relationship-prompt-v3.md) agrees with **14/14**
 fixed expectations, versus fresh DSLv2's **12/14**, in the
-[bounded paired trial](#dslv3-bounded-paired-trial-october-10) at high effort.
-Both pass all seven authored controls, but DSLv3 rejects three valid invitation
-relationships. The clarification has not established reliable improvement;
-the existing lower-effort study remains bound to DSLv2. The user authorized
-[fresh xhigh confirmation](#dslv3-paired-xhigh-confirmation-october-10) on the
-same fixed panel; those results are pending.
+[paired xhigh confirmation](#dslv3-paired-xhigh-confirmation-october-10).
+All decisions and reasons pass attributed agent review for DSLv3. At high,
+DSLv3 scored 11/14, rejecting three valid invitation relationships that this
+xhigh trial accepts. Both versions pass all seven authored controls at both
+efforts. This selected development panel does not qualify a minimum reasoning
+level; the existing lower-effort study remains bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2794,9 +2794,73 @@ decisive reasons receive attributed agent reviews against the fixed expectations
 Native artifacts are retained under
 `target/distillation-review-v1/parent-restriction-dslv3-xhigh-confirmation-20261010/`,
 with `baseline-v2` and `candidate-v3` arms and `actual`, `teacher-controls` and
-`large-controls` groups. Results are pending. This bounded development repeat
+`large-controls` groups. This bounded development repeat
 does not qualify a reviewer, select a minimum reasoning level or resume bulk
 pilot grading.
+
+### Completed xhigh result
+
+All **28 fresh calls** completed successfully on first attempts through the
+shared `experiment-runner` launcher, with no failures, answer reuse, warmups or
+cache hits. The unchanged natural instruction prefixes are approximately 355
+tokens for DSLv2 and 440 for DSLv3, below the runner's 1,024-token warming
+threshold. Explicit caching was omitted. No paid fallback or caller output
+cap was used. The new confirmation counter was initialized through native
+`PersistentAttemptBudget.initialize(56)` at the artifact root and ended at
+**28/56**; the separate existing high counter remains **996/22,968**.
+There was no pre-existing global xhigh counter to repurpose.
+
+| Prompt / effort | Actual source assessments | Authored controls | Total |
+| --- | --- | --- | --- |
+| DSLv2 / high, prior fresh arm | 5/7 | 7/7 | **12/14** |
+| DSLv2 / xhigh, new fresh arm | 5/7 | 7/7 | **12/14** |
+| DSLv3 / high, prior fresh arm | 4/7 | 7/7 | **11/14** |
+| DSLv3 / xhigh, new fresh arm | 7/7 | 7/7 | **14/14** |
+
+| Actual pair | Expected | DSLv2 / xhigh | DSLv3 / xhigh |
+| --- | --- | --- | --- |
+| J298 — sats claim in an invitation | true | true | true |
+| Jbc — prize claim in an invitation | true | true | true |
+| Jec — current AI wave as a temporal reference | true | false | true |
+| J540 — prediction activity in an invitation | true | true | true |
+| J58 — tagged content without required motherhood | false | false | false |
+| J216 — MILFs without required motherhood | false | true | false |
+| J6dc — numeric activity goal without required practice | false | false | false |
+
+Fresh DSLv3/xhigh corrects Jec and J216 relative to fresh DSLv2/xhigh, with no
+regressions on this panel. DSLv2/xhigh retains the temporal-reference and generic
+MILFs mistakes seen in its fresh high arm; all 14 Booleans are unchanged between
+those two DSLv2 runs. Within DSLv3, xhigh accepts the three invitation cases
+rejected at high, and the other 11 decisions are unchanged. Those three gains
+share R01 and do not add three independent source contexts. The targeted
+J298/Jbc/Jec subset scores 2/3 for DSLv2/xhigh and 3/3 for DSLv3/xhigh.
+
+Independent agent review accepts every DSLv3/xhigh decision and decisive reason.
+The positive invitation reasons preserve the activity without requiring it to
+have occurred; Jec retains the complete AI wave as the temporal reference.
+The J6dc negative uses delayed XP credit after practice stops: the complete
+goal and numeric status survive, while the parent's explicit “while” timing
+does not. The other actual negatives retain complete tagged-content or broader
+MILF counterexamples without motherhood. Both arms preserve all three positive
+authored controls and reject all four negative controls with sound reasons.
+
+All 28 responses have native attributed agent reviews: **26 accepted and two
+rejected**. Source assessment, native inherited qualification and human approval
+remain separate. Frozen plans, approved prompt bytes, exact input/evidence
+bindings, original receipts, source assessments and earlier high results were
+verified unchanged. All six native report summaries reconcile to first-attempt
+successes. Each ignored experiment directory retains native `terminal-show.json`
+and `reviewed-show.json`, including the exact reasons and receipts.
+
+This is one fresh response per arm and pair on a deliberately selected panel.
+The observed differences do not isolate wording from fresh-call variability or
+establish deployment accuracy. **DSLv3/xhigh has a clean bounded result; reliable
+extrapolation and a lower-than-xhigh level remain unestablished.** This trial
+does not reopen the frozen lower-effort study or authorize new inference.
+
+The recommended next step is one fresh DSLv3/xhigh repeat on the same 14 pairs
+to check consistency before considering a separately authorized restart of the
+lower-reasoning comparison with the clarification. That repeat has not been started.
 
 ## Actual distilled wording: offline preview (October 8)
 
