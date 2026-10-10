@@ -70,6 +70,7 @@ class DistillationBenchmarkTests(unittest.TestCase):
 class BenchmarkGPUIntegrationTests(unittest.TestCase):
     def test_causal_output_suffix_trains_and_reloads_native_nf4_adapters(self):
         import torch
+        from unittest.mock import patch
         from transformers import Qwen2Config, Qwen2ForCausalLM
         self.assertTrue(torch.cuda.is_available())
         with tempfile.TemporaryDirectory() as temporary:
@@ -85,7 +86,18 @@ class BenchmarkGPUIntegrationTests(unittest.TestCase):
                 'supervised_output_tokens': 8}
             path = root/'config.json'
             write_json(path, config)
-            trained = distillation_benchmark.run(path, root/'benchmark', stage='train')
+            projections, loaded = [], []
+            native_loader = distillation_benchmark.subject_training_model
+            def capture_model(*args, **kwargs):
+                native = native_loader(*args, **kwargs)
+                native.get_output_embeddings().register_forward_hook(
+                    lambda module, args, output: projections.append(output.shape[-2]))
+                loaded.append(native)
+                return native
+            with patch.object(distillation_benchmark, 'subject_training_model', side_effect=capture_model):
+                trained = distillation_benchmark.run(path, root/'benchmark', stage='train')
+            self.assertEqual(projections[:2], [8, 8],
+                             'unsupervised prefix positions need no vocabulary projection')
             self.assertTrue(trained['checkpoint_saved'])
             self.assertEqual(trained['training'][0]['supervised_tokens_per_example'], 8)
             self.assertIn('causal', trained['workload'])
@@ -93,6 +105,18 @@ class BenchmarkGPUIntegrationTests(unittest.TestCase):
             # token loss than a five-label classifier. Catch the old readout
             # being timed while merely reporting a different workload.
             self.assertGreater(trained['training'][0]['losses'][0], 4.6)
+            # The smaller projection must preserve the complete native masked
+            # causal loss, including the first output token's preceding state.
+            native = loaded[0].eval()
+            ids = torch.arange(20, 52, device='cuda').unsqueeze(0)
+            labels = ids.clone()
+            labels[:, :-8] = -100
+            with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                full = native(input_ids=ids, labels=labels).loss
+                selected = native(input_ids=ids, labels=labels,
+                                  logits_to_keep=torch.arange(23, 31, device='cuda'),
+                                  shift_labels=labels[:, -8:]).loss
+            torch.testing.assert_close(selected, full, rtol=1e-4, atol=1e-4)
             verified = distillation_benchmark.run(path, root/'benchmark', stage='verify')
             self.assertTrue(verified['complete'])
             self.assertTrue(verified['reload_matches'])

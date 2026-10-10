@@ -204,7 +204,8 @@ The causal test checks the large native vocabulary loss, so relabeling a
 five-class timing report would fail it. The 14 benchmark/local-worker tests
 pass with three explicitly gated GPU skips on Anvil; the two GPU tests ran
 separately on GB10. The preceding main synchronization also passed 150
-project tests with eight optional skips.
+project tests with eight optional skips; the subsequent relevant suite passed
+152 tests with nine optional skips.
 
 The pinned Qwen27 and Gemma12 configs prepare 8,192- and 13,312-token complete
 sequences with 2,048 supervised output tokens, batch one, rank-16/alpha-32
@@ -212,9 +213,29 @@ all-linear adapters and gradient checkpointing. The longer shape exceeds
 the observed maximum Bootstrap input plus its output allowance. They use
 64/48 GiB allocation budgets and an eight-GiB system reserve respectively;
 96 GiB is not a hardware requirement. Real-model timing and fresh-process
-verification are separate pending measurements. The retained five-vocabulary-ID
+verification are separate measurements. The retained five-vocabulary-ID
 inference checks test checkpoint integrity, not Bootstrap generation quality
 or throughput. Generative API behavior was measured separately above.
+
+The first Qwen attempt trained at 8,192 tokens (37.26 seconds/update median,
+45.73 GiB peak allocation) but failed at 13,312 tokens under its configured
+64 GiB allocation budget. It published no checkpoint or verification result.
+Its failure, original code/configuration bindings and log remain preserved in
+`target/bootstrap-compare-student-v1/capacity-sft-v1`. The sequential Gemma job
+did not start after that failure. This is not evidence that the GB10 needs a
+larger memory budget: the original native loss projected all input positions
+over the vocabulary even though only the final 2,048 tokens were supervised.
+
+The benchmark now projects the preceding hidden states that predict those
+2,048 targets and passes their aligned labels to the native causal loss. The
+full backbone input and full output vocabulary remain unchanged. A real NF4
+integration test first observed the unwanted 32-position projection and failed
+its expected eight-position assertion. After the change, it passes both that
+assertion and numerical agreement with the complete native masked loss; the
+existing five-label checkpoint test passes too. These two GB10 tests ran
+against the exact new staged source. A separately bound v2 capacity run uses
+the same model revisions, shapes and memory budgets; it does not overwrite or
+resume the failed v1 evidence. Its large-model results are pending.
 
 ### Selection and final-training readiness
 

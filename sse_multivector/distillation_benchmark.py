@@ -246,8 +246,14 @@ def run(config_path, output, *, stage='all'):
                     if suffix:
                         labels = inputs['input_ids'].clone()
                         labels[:, :-suffix] = -100
+                        # Each target is predicted by its preceding state. Keep
+                        # the complete backbone input, projecting only those
+                        # states over the vocabulary; native loss must not
+                        # shift the already aligned output targets again.
+                        positions = torch.arange(length-suffix-1, length-1, device='cuda')
                         with torch.autocast('cuda', dtype=torch.bfloat16):
-                            loss = model(**inputs, labels=labels).loss
+                            loss = model(**inputs, labels=labels, logits_to_keep=positions,
+                                         shift_labels=labels[:, -suffix:]).loss
                     else:
                         labels = (torch.arange(config["train_batch_size"], device="cuda") + step) % 5
                         loss = torch.nn.functional.cross_entropy(logits(inputs).float(), labels)

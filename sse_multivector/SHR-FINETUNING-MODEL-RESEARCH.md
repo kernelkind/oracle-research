@@ -123,6 +123,16 @@ save, fresh-process reload and inference. Final student choice should explain
 which current cases distinguish the candidates and which claims remain
 predictions about fine-tuning.
 
+The current causal benchmark now supervises a 2,048-token output suffix over
+the full vocabulary. Its first Qwen27 attempt passed 8,192 total tokens but
+failed at 13,312 under a 64 GiB allocation budget. Inspection identified
+unnecessary vocabulary projection over unsupervised input positions. A tested
+projection of only the required preceding states preserves the native masked
+loss; a separately source-bound run is measuring both dense candidates with
+that change. The failed evidence remains preserved. This is training-capacity
+preparation, not task fitting or proof of a quality ranking. See
+[the objective and verification evidence](SHR-STUDENT-PREPARATION.md#causal-training-capacity-preparation).
+
 The first ASv6.100 / Bootstrap-v96 generation screen now completes all eight
 selected inputs on the two cached dense references. Qwen has six strict-JSON
 valid responses and Gemma has none because it fences every response. Gemma
