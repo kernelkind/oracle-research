@@ -39,7 +39,7 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         worker = self.root / "fake-runner"
         text = (PROJECT.parent / "experiment-runner/tests/fixtures/fake-runner.py").read_text()
         text = text.replace('if prompt.startswith("GENERIC PROMPT"):',
-                            'if prompt.startswith(("DSMv3", "DSSv2", "DSLv2")):')
+                            'if prompt.startswith(("DSMv3", "DSSv2", "DSLv2", "DSLv4")):')
         text = text.replace('if stage == "prompt":',
             'if stage == "prompt":\n'
             '    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"] = json.dumps('
@@ -87,6 +87,91 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertTrue(all(row['settings']['reasoning_effort'] == 'high' for row in report['experiments']))
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / 'calls.json').exists())
+
+    def test_native_cli_binds_relationship_prompt_override_without_changing_other_checks(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        frozen = selected.read_bytes()
+        baseline = self.root / "default"
+        evaluation.prepare(selected, baseline, runner_binary=self.worker())
+        destination = self.root / "dslv4"
+        prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v4.md"
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", destination, "--runner-binary", self.worker(),
+            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4")
+        original = evaluation.report(baseline)
+        changed = evaluation.report(destination)
+        for old, new in zip(original["experiments"], changed["experiments"]):
+            check = new["cases"][0]["evidence"]["check"]
+            self.assertEqual(new["prompt_id"], "DSLv4" if check == "relationship" else old["prompt_id"])
+            self.assertEqual(new["settings"], old["settings"])
+            self.assertEqual([(c["id"], c["inputs"], c["evidence"], c.get("origin")) for c in new["cases"]],
+                             [(c["id"], c["inputs"], c["evidence"], c.get("origin")) for c in old["cases"]])
+            if check == "relationship":
+                self.assertTrue(all(c["prompt"].startswith("DSLv4") for c in new["cases"]))
+            else:
+                self.assertEqual([c["prompt"] for c in new["cases"]], [c["prompt"] for c in old["cases"]])
+        self.assertEqual(evaluation._DEFINITIONS["relationship"][0], "DSLv2")
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_relationship_override_reuses_other_checks_and_runs_only_selected_answer(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        notes = [dict(note_id="validation-" + letter, post="Cable " + letter + ".",
+            teacher=subjects(("1", "Cable " + letter)), answer=answer(subjects(
+                ("1", "Cable " + letter), ("1.1", "Detail " + letter), ("2", "Other " + letter))))
+            for letter in ("A", "B")]
+        selected = self.selection(notes, random_count=2)
+        frozen = selected.read_bytes()
+        answers = json.loads(frozen)["random"]["answers"]
+        context = self.root / "assessment"
+        for row in answers:
+            assessment.record(selected, row["id"], context,
+                teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+                reason="Independent complete fixture source meaning.")
+        worker = self.worker()
+        baseline, changed = self.root / "default", self.root / "dslv4"
+        evaluation.prepare(selected, baseline, runner_binary=worker, history_root=self.root,
+                           assessment_directory=context)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            evaluation.run(baseline)
+        snapshots = {path: path.read_bytes() for path in baseline.rglob("*") if path.is_file()}
+        calls = (self.root / "calls.json").read_bytes()
+        prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v4.md"
+        self.native("prepare-distillation-review-evaluation", selected, "--output", changed,
+            "--runner-binary", worker, "--history-root", self.root, "--assessments", context,
+            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4")
+        identifier = answers[0]["id"]
+        self.native("run-distillation-review-evaluation", changed, "--answer-id", identifier,
+                    "--max-new-attempts", 0)
+        joined = evaluation.report(changed)
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+        first = joined["random"]["answers"][0]
+        self.assertTrue(all(case["status"] == "valid" for check in ("matching", "support")
+                            for case in first["checks"][check]))
+        self.assertEqual(sum(case["status"] == "unrun" for case in first["checks"]["relationship"]), 3)
+        self.native("run-distillation-review-evaluation", changed, "--answer-id", identifier,
+                    "--max-new-attempts", 3)
+        complete = evaluation.report(changed)
+        self.assertEqual([row["status"] for row in complete["random"]["answers"]], ["complete", "pending"])
+        self.assertEqual(len(json.loads((self.root / "calls.json").read_bytes())) - len(json.loads(calls)), 2)
+        self.assertTrue(all(case["status"] == "unrun" for cases in complete["random"]["answers"][1]["checks"].values()
+                            for case in cases if case.get("origin") != "mechanical"))
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertEqual({path: path.read_bytes() for path in snapshots}, snapshots)
+
+    def test_relationship_override_requires_both_flags_before_creating_output(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v4.md"
+        for index, options in enumerate((dict(relationship_prompt=prompt),
+                                        dict(relationship_prompt_id="DSLv4"))):
+            destination = self.root / ("invalid-override-" + str(index))
+            with self.assertRaisesRegex(ValueError, "must be supplied together"):
+                evaluation.prepare(selected, destination, **options)
+            self.assertFalse(destination.exists())
+        self.assertFalse((self.root / "calls.json").exists())
 
     def test_reasoning_trials_bind_new_identities_and_preserve_baseline_artifacts(self):
         from sse_multivector import distillation_review_evaluation as evaluation
