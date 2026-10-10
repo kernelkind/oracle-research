@@ -2218,6 +2218,40 @@ and [source-diagnosis queue](../../target/distillation-review-v1/final-trial-202
 The frozen compact snapshot SHA-256 is
 `004f0beaeba8043041056289286704607ee131f6a5de417588fa86f11cdc585e`.
 
+## Initial high-effort screen (October 10)
+
+The fixed five-answer screen at Sol/high is complete: **289 of 297 decisions
+agree with the frozen xhigh baseline**, with eight discordances and zero missing
+or conflicting panel decisions. Agreement is not correctness. Independent
+source-first review of the discordances is continuing before an expansion
+decision. Medium and low are the remaining small screens under the approved
+study; no reasoning level has qualified.
+
+The high production pipeline took **1 h 6 min 42 s**, with 718 successful
+comparison attempts, three transient failures recovered on the second attempt,
+two eligible-prefix warmups and 1,869 saved-answer reuse rows. Its known catalog
+subtotal is **$1.717396**; missing failed-attempt usage prevents a complete cost.
+The separate fixed-panel supplement took **1 min 48 s**, with 48 successful
+calls and a catalog estimate of **$0.163702**. These are API-equivalent catalog
+estimates, not subscription charges. Dependency processing and verdict-dependent
+branching also affect wall time; these observations do not isolate reasoning
+effort's effect on cost or runtime.
+
+All 60 original source-only diagnostic judgments have been saved. Those initial
+votes are not gold: independent review and concrete counterexamples can revise
+them. Final exact-prompt adjudications are separate artifacts, preserve every
+original, and can be reused across efforts. Unresolved differences contribute
+the conservative accuracy bound; they are never forced into a verdict. A source
+review has confirmed both a high-only error and an xhigh-only error, so student
+scores and raw agreement cannot substitute for this process.
+
+The [high screen seal](../../target/distillation-review-v1/final-trial-20261009/evaluation-high/stage-5-complete-execution.md)
+binds the separate pipeline, supplement and final paired reports. The paired
+report SHA-256 is
+`006553bc45f5a5915967931666cecc4b399f9d5205740f94fe95def3e761dd6f`.
+Prompts, mechanical rules, frozen references, concurrency 8 and natural-prefix
+caching remain fixed. Correctness qualification and bulk adoption remain open.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with

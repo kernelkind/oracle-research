@@ -321,6 +321,12 @@ Independent source-only diagnosis is continuing; this is completion evidence,
 not reviewer qualification. See the
 [baseline freeze](../../sse_multivector/distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).
 
+The initial high-effort screen is complete: 289/297 fixed-panel decisions agree
+with xhigh; eight differences require source adjudication. All 60 original
+source-only diagnostic judgments are saved, with final truths kept separately.
+Medium is running; low screening and correctness qualification are pending. See
+the [high screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10).
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

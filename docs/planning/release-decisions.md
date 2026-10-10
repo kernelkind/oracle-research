@@ -1877,6 +1877,15 @@ contradictions is continuing; reviewer qualification remains open. The
 keeps pipeline work and supplemental panel calls separate. This checkpoint
 adds no change to the approved prompts, semantics, mechanical rules or scope.
 
+**October 10 lower-effort checkpoint:** the initial high screen has 297 complete
+paired decisions, of which 289 agree with the frozen xhigh baseline. Source
+adjudication of eight differences is continuing; no effort has qualified.
+All 60 original source-only diagnostic judgments are preserved separately from
+final exact-prompt adjudications. Medium is running and the low small screen is
+pending under the existing authorization. The [screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10)
+keeps adaptive pipeline expenses and supplemental panel calls separate. This is
+an execution checkpoint; it changes no scoring rule, prompt or approval scope.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

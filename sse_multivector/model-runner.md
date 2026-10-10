@@ -1061,6 +1061,12 @@ panel calls have separate reports and accounting. Source-only diagnosis of
 the contradictions is continuing, and qualification remains open. See the
 [October 10 baseline evidence](distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).
 
+The first high-effort screen has all 297 fixed paired decisions, with 289
+agreements and eight discordances. Independent source adjudication is pending;
+agreement does not qualify correctness. Its pipeline and missing-panel
+supplement have separate native receipts, timing and cost records in the
+[high screen evidence](distillation-review-v1/README.md#initial-high-effort-screen-october-10).
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 
