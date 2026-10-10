@@ -113,10 +113,17 @@ it eligible for Bootstrap research even though it is not cached. Neither the
 existing Qwen/Gemma text extraction nor NF4 loading has been verified for this
 checkpoint. Cache availability determines experiment cost, not suitability.
 The official Transformers example uses `MistralCommonBackend` and documents
-`FineGrainedFP8Config(dequantize=True)` for BF16 loading. Read-only inspection
-finds the tokenizer implementation in GB10's installed Transformers but no
-`mistral_common` dependency. That is a preparation dependency, not evidence
-against the model. No environment change or weight download was made for it.
+`FineGrainedFP8Config(dequantize=True)` for BF16 loading. The pinned checkpoint
+`29439f81c2be264d8d393273f99e7db9c0961120` is now cached on GB10, with
+`mistral-common==1.12.0` and its tokenizer dependencies in an isolated owned
+target directory rather than changes to the existing venv. The native tokenizer
+works. A production loader test now verifies both native/published text-weight
+names and scaled FP8 weights against original logits. Preserving the outer
+checkpoint's quantization metadata is essential: otherwise extracting its text
+config silently casts FP8 tensors without their scales. That initial load made
+no task requests; it remains preserved separately. The corrected BF16 native
+Bootstrap screen is running. Native NF4 conversion and task-specific adaptation
+remain unverified; no quality result is claimed from loader preparation.
 
 Other sparse independent foundations remain credible secondary candidates.
 NVIDIA's [Nemotron 3 Nano 30B-A3B card](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16)

@@ -32,6 +32,78 @@ class LocalWeightTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('RUN_LOCAL_WEIGHT_TESTS') == '1', 'native weight integration environment')
 class LocalWeightIntegrationTests(unittest.TestCase):
+    def test_ministral_loads_complete_text_weights_without_vision_modules(self):
+        import torch
+        from transformers import (Mistral3Config, Ministral3Config,
+                                  Mistral3ForConditionalGeneration)
+        text = Ministral3Config(vocab_size=256, hidden_size=32, intermediate_size=64,
+            num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=1,
+            head_dim=16, max_position_embeddings=128,
+            rope_parameters={'rope_type': 'yarn', 'rope_theta': 10000., 'factor': 1.,
+                             'original_max_position_embeddings': 128,
+                             'llama_4_scaling_beta': 0.1})
+        config = Mistral3Config(text_config=text, tie_word_embeddings=False, vision_config={
+            'hidden_size': 32, 'intermediate_size': 64, 'num_hidden_layers': 1,
+            'num_attention_heads': 2, 'head_dim': 16, 'image_size': 16, 'patch_size': 8})
+        original = Mistral3ForConditionalGeneration(config).eval()
+        tokens = torch.arange(16, 32).unsqueeze(0)
+        with torch.inference_mode():
+            expected = original(input_ids=tokens).logits
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)
+            published = {}
+            for key, value in original.state_dict().items():
+                if key.startswith('model.language_model.'):
+                    key = key.replace('model.language_model.', 'language_model.model.', 1)
+                elif key == 'lm_head.weight':
+                    key = 'language_model.lm_head.weight'
+                elif key.startswith('model.'):
+                    key = key[len('model.'):]
+                published[key] = value
+            for name, weights in [('native', original.state_dict()), ('published', published)]:
+                with self.subTest(layout=name):
+                    checkpoint = path/name
+                    original.save_pretrained(checkpoint, state_dict=weights)
+                    actual = distillation_run.load_model({'model': str(checkpoint), 'revision': 'a'*40,
+                        'device': 'cpu', 'quantization': 'none', 'max_length': 32,
+                        'efficient_attention': True}).eval()
+                    self.assertEqual(actual.config.model_type, 'ministral3')
+                    self.assertFalse(any('vision' in key or 'projector' in key
+                                         for key, _ in actual.named_parameters()))
+                    with torch.inference_mode():
+                        observed = actual(input_ids=tokens).logits
+                    torch.testing.assert_close(observed, expected, rtol=1e-5, atol=1e-5)
+            # Published Ministral matrices carry FP8 scales in the outer config.
+            # A mere dtype cast silently loses those scales when extracting text.
+            weights, dequantized = dict(published), dict(original.state_dict())
+            for key, value in published.items():
+                if key.startswith('language_model.model.layers.') and key.endswith('.weight') and value.ndim == 2:
+                    quantized = (value / 0.125).to(torch.float8_e4m3fn)
+                    weights[key] = quantized
+                    weights[key[:-len('.weight')] + '.weight_scale_inv'] = torch.tensor(0.125)
+                    weights[key[:-len('.weight')] + '.activation_scale'] = torch.tensor(1.)
+                    native_key = key.replace('language_model.model.', 'model.language_model.', 1)
+                    dequantized[native_key] = quantized.float() * 0.125
+            checkpoint = path/'published-fp8'
+            original.save_pretrained(checkpoint, state_dict=weights)
+            saved = json.loads((checkpoint/'config.json').read_text())
+            saved['quantization_config'] = {'quant_method': 'fp8', 'dequantize': False,
+                'activation_scheme': 'static', 'weight_block_size': None,
+                'modules_to_not_convert': ['model.vision_tower', 'model.multi_modal_projector', 'lm_head']}
+            (checkpoint/'config.json').write_text(json.dumps(saved))
+            actual = distillation_run.load_model({'model': str(checkpoint), 'revision': 'a'*40,
+                'device': 'cpu', 'quantization': 'none', 'max_length': 32,
+                'efficient_attention': True}).eval()
+            for key, value in dequantized.items():
+                if key.startswith('model.language_model.'):
+                    key = key.replace('model.language_model.', 'model.', 1)
+                    torch.testing.assert_close(actual.state_dict()[key], value, rtol=0, atol=0)
+            original.load_state_dict(dequantized)
+            with torch.inference_mode():
+                expected = original(input_ids=tokens).logits
+                observed = actual(input_ids=tokens).logits
+            torch.testing.assert_close(observed, expected, rtol=1e-5, atol=1e-5)
+
     def test_full_pointer_loads_saved_backbone_and_head_and_trains_reloadable_lora(self):
         import sys
         import torch

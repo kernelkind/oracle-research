@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "registry": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-vector-hierarchy-v1/target/subject-collection-vectors-v1/VC15-asv6.100-subject-vectors-v1/inputs.json",
+    "sha256": "85d97e6b36493f3726b7869e9b98ab6905bf629c05ca1f2f68332345fa95d696"
+  },
+  "manifest": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-vector-hierarchy-v1/target/subject-collection-vectors-v1/VC15-asv6.100-subject-vectors-v1/manifest.json",
+    "sha256": "c2c34d54fe77cb3a6bfe2efdb84e53a5cd89d26fa12983c2534daf714ee83d2d"
+  },
+  "split_manifest": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json",
+    "sha256": "ee734d39ec007fb832763b273e96f24c250c32f0ef79a018e8cc08ac0b941349"
+  },
+  "posts": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+    "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+    "format": "subject_train_jsonl"
+  },
+  "seed": "BOOTSTRAP-COMPARE-DEVELOPMENT-PILOT-v1",
+  "train_notes": 32,
+  "evaluation_notes": 8,
+  "entries_per_note": 3,
+  "role": "train"
+}

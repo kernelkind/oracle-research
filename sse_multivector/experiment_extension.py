@@ -681,6 +681,8 @@ def code_files(dataset):
              'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
     if dataset['adapter'] == 'subject_pairs':
         names += ['subject_pair_candidates.py']
+    if dataset['adapter'] == 'bootstrap_student_inputs':
+        names += ['bootstrap_student_inputs.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
     if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation'}:

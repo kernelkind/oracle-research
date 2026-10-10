@@ -17,6 +17,12 @@ diagnostic evidence. This does not change either teacher prompt or select a
 student. Bootstrap's final target format, training volume and recipes remain
 open. Current subject-derived qualification
 inputs require ASv6.100; pre-ASv6.100 results remain historical evidence.
+The user then authorized small reviewed development training sets, GB10 pilot
+fine-tunes against fixed development snapshots, and comparison of learning,
+remaining errors and cost. Broaden Bootstrap candidate screens before narrowing
+its pilot. These temporary pilots do not freeze the prompts or establish final
+training volume, settings or student choices. Their source-bound data roles and
+qualification requirements are recorded in the owned preparation document.
 The separate SP model decision, release gates, schedule and spending approvals
 are unchanged. See the
 [owned model investigation](../../../oracle-mvp-shr-student-prep-v1/sse_multivector/SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).

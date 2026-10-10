@@ -60,6 +60,11 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'bootstrap_student_inputs':
+        from . import bootstrap_student_inputs
+        cases, protected, preparation = bootstrap_student_inputs.prepare(source, path.parent)
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'generic' and 'prepared_experiment' in source:
         engine._expect_fields(source, 'prepared input source', {'prepared_experiment'})
         reference = source['prepared_experiment']

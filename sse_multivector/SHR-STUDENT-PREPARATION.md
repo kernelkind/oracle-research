@@ -13,11 +13,75 @@ model; diagnostic reasons are not required from that student. Model choices,
 Bootstrap's final target format, training volume and settings remain open.
 Work continues in the existing owned worktree.
 
+The user subsequently authorized preparing small reviewed development training
+sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
+remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence
+before narrowing that pilot; Compare prioritizes Qwen27, Kev27 and Ettin1B.
+These pilots use fixed development snapshots while prompt work continues.
+Final training still follows prompt freeze. The pilot's Bootstrap student output
+format has been asked separately and remains pending; teacher generation can
+preserve the full current response independently of that choice.
+
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 Published-checkpoint behavior can support a choice of starting weights; it
 cannot establish a ranking after an unperformed fine-tune. Synthetic execution
 checks establish capacity and checkpoint integrity, not learning quality.
+
+### Development learning pilot preparation
+
+The native `bootstrap_student_inputs` adapter binds the existing selected VC15
+SP registry, its manifest, ASv6.100 split metadata and the existing **TRAIN-only**
+`prepared/train.jsonl`. Its SHA-256 is
+`f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681`,
+verified against the frozen manifest. It checks every first-field note identity
+before decoding any prompt, requires exactly the frozen 1,000 TRAIN identities,
+verifies the original ASv6.100 instruction framing and post hashes, and uses
+only original post text. Saved SP completions never become Bootstrap targets.
+No combined 1,300-note post/teacher file or reserved test record is opened.
+
+Temporary pilot defaults select **32 training notes / 8 evaluation notes**,
+three original entries per note: **96 / 24 complete Bootstrap inputs**. Each
+note has a distinct author and normalized text; both roles retain their original
+TRAIN membership. The selection uses a fixed seed, retains complete original
+selected-root trees, and includes a root, deepest entry and intermediate entry
+when available. These are pilot data roles, not a changed 1,000/100/200 split or
+an approved final training volume. The original 100 validation posts and 200
+reserved final-test posts do not enter this preparation or gradients. The
+separate regression populations remain diagnostic evaluation, not fitting data.
+
+Native preparations are under
+`target/bootstrap-compare-student-v1/learning-pilot-v1/{bootstrap-train-teacher,bootstrap-evaluation-teacher}`.
+They bind approved **Bootstrap-v96**, GPT-6.1 Sol medium, the full teacher JSON
+schema and existing subscription SSE/backoff transport. The first runs are
+bounded to 96 and 24 attempts respectively, without a paid fallback. Teacher
+answers must receive source-bound meaning review before fitting: exact evidence
+quotes, factual state, chosen topic boundaries, null handling and compatibility
+with independently generated selected ancestor meanings. A teacher answer or
+agent accept does not establish human gold. Preserve rejected/unresolved cases;
+never repair them into silent training targets.
+
+Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
+every support post, source entry, producer answer, reciprocal family and branch
+variant in the same pilot role. Nominate bounded same-tree, sibling, equal-heading,
+cross-post overlap and unrelated controls; none supplies a relation label. Only
+reviewed Compare teacher decisions may supply relation-only targets. Include
+all five labels and real supplied ancestor/descendant consequences before
+claiming task coverage; the existing 196 isolated inputs lack that branch
+coverage. Never infer a negative from an absent SP edge or force a quota by
+relabeling a case. This corpus has not yet been produced or qualified.
+
+Learning comparison must preserve the same qualified source examples, target
+definitions and evaluation roles across candidates. Save the initial checkpoint
+answers and successive training checkpoints from each continuous pilot; report
+actual examples, supervised tokens, update counts and elapsed time. Judge held-out
+meaning faithfulness for Bootstrap and per-label errors for Compare, plus
+reciprocal and branch consistency as diagnostics. Rotate Compare options during
+learning/evaluation for decision readouts, retaining exact semantic labels. A
+random Ettin classification head needs fitting before it can compete. A faster
+loss decrease, teacher agreement or reciprocal agreement alone cannot select a
+student. Verify saved weights in a fresh process and measure complete inference
+cost. No task-specific fit or final model choice has occurred yet.
 
 ### Current input evidence
 

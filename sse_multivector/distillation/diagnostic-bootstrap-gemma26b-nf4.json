@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "kind": "causal_lm",
+  "quantization": "nf4",
+  "max_input_tokens": 16384,
+  "max_new_tokens": 2048,
+  "memory_budget_gib": 72,
+  "reserve_gib": 8,
+  "model": "google/gemma-4-26B-A4B-it",
+  "revision": "4d7ae4984b7db7de8f8457170b3f1a419ee76d52"
+}

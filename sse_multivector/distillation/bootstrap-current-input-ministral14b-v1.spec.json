@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-bootstrap-v96",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/Hierarchy-bootstrap-v96.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/bootstrap-compare-student-v1/bootstrap-expanded-inputs-v1.json"
+  },
+  "runner": {
+    "provider": "local",
+    "auth_file": null,
+    "model": "mistralai/Ministral-3-14B-Instruct-2512/29439f81c2be264d8d393273f99e7db9c0961120/381165628f10b5598151d07b3e00547f9eb13767c494ef877b00f2f43901bc33",
+    "reasoning_effort": "off",
+    "concurrency": 1,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/sse_multivector/run-local-model.sh",
+    "transport": "http",
+    "timeout_seconds": 600,
+    "max_output_tokens": 2048,
+    "output_schema_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/Hierarchy-bootstrap-v79.output.schema.json"
+  }
+}

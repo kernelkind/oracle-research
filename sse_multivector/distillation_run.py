@@ -650,10 +650,21 @@ def load_model(config, adapter=None):
     if config["device"] == "cuda" and architecture.model_type in ("qwen3_5", "qwen3_5_text"):
         # Fail on a broken CUDA dependency instead of silently using a slow fallback.
         from fla.ops.gated_delta_rule import chunk_gated_delta_rule, fused_recurrent_gated_delta_rule
-    if architecture.model_type in ("gemma4", "gemma4_unified", "qwen3_5"):
+    if architecture.model_type in ("gemma4", "gemma4_unified", "qwen3_5", "mistral3"):
         options["config"] = architecture.get_text_config()
         if architecture.model_type in ("gemma4", "gemma4_unified"):
             options["key_mapping"] = {r"^model\.language_model\.": "model."}
+        if architecture.model_type == "mistral3":
+            options["key_mapping"] = {r"^model\.language_model\.": "model.",
+                                      r"^language_model\.": ""}
+            if getattr(architecture, "quantization_config", {}).get("quant_method") == "fp8":
+                if config["quantization"] != "none":
+                    raise ValueError("FP8 Ministral weights require the BF16 dequantization path")
+                from transformers import FineGrainedFP8Config
+                # Retain the checkpoint's quantization metadata so Transformers
+                # applies saved scales instead of treating FP8 tensors as fresh weights.
+                options["config"].quantization_config = dict(architecture.quantization_config)
+                options["quantization_config"] = FineGrainedFP8Config(dequantize=True)
     if config["quantization"] == "nf4":
         options.update(device_map={"": config["device"]}, quantization_config=BitsAndBytesConfig(
             load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,

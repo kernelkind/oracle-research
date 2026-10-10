@@ -26,6 +26,20 @@ supplies its own response schema; this supports relation-only Compare student
 screens without altering the teachers' meaning/relation/reason validator.
 Mechanical-answer cases are refused rather than imported as input-only cases.
 
+For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
+`registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
+`train_notes`, `evaluation_notes`, `entries_per_note` and `role` (`train` or
+`evaluation`). Post format `subject_train_jsonl` reads the existing frozen
+subjects-only TRAIN file: identity headers are checked before prompt decoding,
+the original instruction/post framing and post hashes are verified, and SP
+completions are ignored. Ordinary TRAIN-only `posts` collections also work.
+Preparation chooses distinct authors/texts inside original TRAIN membership,
+preserves complete selected-root hierarchies and source identities, and supplies
+no Bootstrap targets. The reusable examples are
+[`distillation/bootstrap-pilot-train-inputs-v1.json`](distillation/bootstrap-pilot-train-inputs-v1.json)
+and its separate evaluation-role selection. Only subsequent `run` sends teacher
+requests; reviewed targets and model fitting remain separate stages.
+
 [run-model.sh](run-model.sh) sends one caller-supplied prompt through pi-ai.
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.
