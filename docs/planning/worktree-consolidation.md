@@ -30,6 +30,12 @@ without adopting every inherited prototype or historical prompt revision.
 The retained original research branch still preserves that older history;
 its unmerged commit count does not mean the current runtime is absent from main.
 
+The opt-in [graph-search selection](../../sse_multivector/canonical-graph-search-v1.md)
+and bounded shaping selection from main also remain available; this integration
+does not change the evaluated generation policy. The graph-search task worktree
+remains because completed native trials bind to its exact source paths and
+ignored artifacts.
+
 ## Main additions to assess
 
 | Branches or family | High-level addition |

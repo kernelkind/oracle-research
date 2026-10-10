@@ -322,9 +322,12 @@ def add_commands(commands):
                    help='append new-note roots to a completed raw trial; preserve its history')
     p.add_argument('--history-root', type=Path,
                    help='freeze the native exact-answer search directory for all trial steps')
+    p.add_argument('--graph-search', action='store_true', help='traverse canonical roots and children using comparison answers')
     p = commands.add_parser('fork-canonical-trial', help='preserve an unfinished raw trial and prepare its current step in a fresh directory; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--graph-search', action='store_true', help='use graph traversal in this separate trial')
+    p.add_argument('--at-step', type=int, help='restart from the graph before this saved step; preserve the source')
     p = commands.add_parser('prepare-canonical-child-trial', help='freeze all immediate unprocessed local children for comparison; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--base-trial', type=Path, required=True)
@@ -332,6 +335,7 @@ def add_commands(commands):
                    help='select children only from these existing notes for this stage (repeatable)')
     p.add_argument('--comparison-policy', type=Path,
                    help='opt-in bounded shortlist and complete eligible implication verification')
+    p.add_argument('--graph-search', action='store_true', help='traverse canonical roots and children using comparison answers')
     p = commands.add_parser('advance-canonical-trial', help='review/apply one completed local root and prepare the next; optional --run-next performs inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--meaning-case', required=True)
@@ -526,12 +530,13 @@ def handle_command(args):
             from canonical_trial import prepare_trial, fork_trial, prepare_child_trial, advance_trial
         if args.command == 'prepare-canonical-trial':
             result = prepare_trial(args.spec, args.directory, base_trial=args.base_trial,
-                                   comparison_policy=args.comparison_policy, history_root=args.history_root)
+                                   comparison_policy=args.comparison_policy, history_root=args.history_root,
+                                   graph_search=args.graph_search)
         elif args.command == 'fork-canonical-trial':
-            result = fork_trial(args.directory, args.output)
+            result = fork_trial(args.directory, args.output, graph_search=args.graph_search, at_step=args.at_step)
         elif args.command == 'prepare-canonical-child-trial':
             result = prepare_child_trial(args.base_trial, args.directory, note_ids=args.note_ids,
-                                         comparison_policy=args.comparison_policy)
+                                         comparison_policy=args.comparison_policy, graph_search=args.graph_search)
         else:
             result = advance_trial(args.directory, args.meaning_case, args.comment, args.hold, args.concurrency,
                                    run_next=args.run_next, max_new_attempts=args.max_new_attempts,
@@ -756,7 +761,7 @@ def code_files(dataset):
     names = ['experiment_inputs.py', 'experiment_extension.py', 'grouped_masks.py',
              'hierarchy_inputs.py', 'bounded_hierarchy_candidates.py',
              'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
-    names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py']
+    names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py', 'canonical_graph_policy.py', 'canonical_graph_search.py']
     names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_selective_trial.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
