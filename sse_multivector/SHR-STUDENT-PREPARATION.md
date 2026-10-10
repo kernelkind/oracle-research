@@ -65,6 +65,18 @@ Actual complete-token inventories on the reviewed data are:
 | Qwen27 | 501,255 / 6,905 | 107,478 / 5,224 | 4,568 / 168 |
 | Gemma26 | 503,798 / 6,922 | 108,143 / 5,265 | 4,590 / 172 |
 
+The GB10 sequence is queued behind completion and fresh-process verification of
+the active Qwen27 Compare fit. It then fits/verifies Bootstrap Qwen27, Bootstrap
+Gemma26, input-only Ettin Compare, and Kev27 Compare, in that order. No queued
+Bootstrap model has started at this checkpoint. The verified queue shell is PID
+1529676 (coordinator 1529675), with its source-bound local receipt at
+`target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
+`target/student-learning-queue-v1.log`. Each job has a distinct preserved output
+and stops the sequence on error; there is no overwrite or automatic retry.
+Full-model jobs run sequentially. Generated-meaning evaluation and semantic
+review follow the saved checkpoints; the queue itself performs only fits and
+fresh-process integrity checks.
+
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
 The learning report separates optimizer time, loading, teacher-forced evaluation
