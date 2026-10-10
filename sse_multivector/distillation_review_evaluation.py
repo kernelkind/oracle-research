@@ -131,12 +131,19 @@ def validate(case, raw):
 
 
 def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None,
-            reasoning_effort=None):
+            reasoning_effort=None, relationship_prompt=None, relationship_prompt_id=None):
     """Freeze native check groups; preparation never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
     if reasoning_effort is not None and reasoning_effort not in ("xhigh", "high", "medium", "low"):
         raise ValueError("reasoning_effort must be xhigh, high, medium or low")
+    if (relationship_prompt is None) != (relationship_prompt_id is None):
+        raise ValueError("--relationship-prompt and --relationship-prompt-id must be supplied together")
+    definitions = dict(_DEFINITIONS)
+    if relationship_prompt is not None:
+        identifier = engine._expect_identifier(relationship_prompt_id, "relationship prompt ID")
+        path = Path(relationship_prompt).expanduser().resolve()
+        definitions["relationship"] = (identifier, str(path), *_DEFINITIONS["relationship"][2:])
     selection_path = Path(selection_path).expanduser().resolve()
     output = Path(output).expanduser().resolve()
     if output.exists():
@@ -148,7 +155,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     assessments = _assessments(assessment_directory, bundle)
     directory = Path(__file__).parent / "distillation-review-v1"
     groups = []
-    for check, (identifier, filename, schema, payload, field) in _DEFINITIONS.items():
+    for check, (identifier, filename, schema, payload, field) in definitions.items():
         template = (directory / filename).read_text()
         ordinary, prefixes = [], {}
         for case in _cases(bundle, check, assessments):
@@ -175,7 +182,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     experiments = []
     for group in groups:
         check = group["check"]
-        identifier, filename, schema = _DEFINITIONS[check][:3]
+        identifier, filename, schema = definitions[check][:3]
         source = output / "sources" / (group["name"] + ".json")
         experiment.write(source, dict(schema_version=1, selection=reference, check=check,
                                       assessment_directory=assessment_directory))

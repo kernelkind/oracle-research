@@ -1226,7 +1226,14 @@ concurrency, retries and eligible prefix policy stay fixed. See the
 [reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
 `prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
 freezes an override in the native request settings without changing the source
-selection. Without the flag, the selection's effort is retained. Repeat
+selection. Without the flag, the selection's effort is retained.
+`--relationship-prompt PATH --relationship-prompt-id ID` binds an alternate
+relationship template during the same native preparation. Both flags are
+required together; natural-prefix grouping and generated specs use that
+template. Matching, support, schemas, source assessments and mechanical rules
+are unchanged. Omitting the flags retains DSLv2. Compatible saved receipts
+remain reusable; do not use `--repeat` for a prompt update.
+Repeat
 `run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
 of stable source answer IDs; reports still contain all 60 answers, with
 unselected answers pending. Unknown or duplicate IDs fail before dispatch.

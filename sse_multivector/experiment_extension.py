@@ -437,6 +437,8 @@ def add_commands(commands):
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
     p.add_argument('--reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'))
+    p.add_argument('--relationship-prompt', type=Path, help='bind this relationship prompt; requires --relationship-prompt-id')
+    p.add_argument('--relationship-prompt-id', help='version ID for --relationship-prompt; other checks retain their defaults')
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path)
@@ -560,7 +562,8 @@ def handle_command(args):
         if args.command == 'prepare-distillation-review-evaluation':
             result = evaluation.prepare(args.selection, args.output, runner_binary=args.runner_binary,
                 history_root=args.history_root, assessment_directory=args.assessments,
-                reasoning_effort=args.reasoning_effort)
+                reasoning_effort=args.reasoning_effort, relationship_prompt=args.relationship_prompt,
+                relationship_prompt_id=args.relationship_prompt_id)
         elif args.command == 'run-distillation-review-evaluation':
             result = evaluation.run(args.evaluation, max_new_attempts=args.max_new_attempts,
                 attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason,
