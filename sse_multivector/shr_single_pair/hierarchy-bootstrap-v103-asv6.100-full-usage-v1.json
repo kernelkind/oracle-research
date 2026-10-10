@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "bootstrap_v103_current_as_full": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/bootstrap-v103-full-v1"
+    ]
+  }
+}
