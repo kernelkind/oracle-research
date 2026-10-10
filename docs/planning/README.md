@@ -317,6 +317,8 @@ and the
 The October 10 xhigh pipeline checkpoint has 43 complete scores, 13 ungraded
 reviewer contradictions and four invalid student outputs. All 1,735 fixed-panel
 xhigh decisions are verified and frozen before lower-effort inference.
+The read-only mechanical audit verified 1,351 positive proofs and 20,376 skip
+dependencies without violations in the checked records.
 Independent source-only diagnosis is continuing; this is completion evidence,
 not reviewer qualification. See the
 [baseline freeze](../../sse_multivector/distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).

@@ -2210,6 +2210,22 @@ conflicting normalized responses. This completeness does not qualify xhigh's
 absolute accuracy or resolve the 13 scoring contradictions. Lower efforts
 compare against these exact chosen receipts.
 
+The separate read-only
+[mechanical proof audit](../../target/distillation-review-v1/final-trial-20261009/analysis/baseline-mechanical-proof-audit.json)
+found no violations in the checked records: **1,351 positive proofs and 20,376
+skip dependencies** retain the required source bindings, equality or ordered
+teacher-path evidence, and recorded dependency states. It also checked **573
+full-match compatibility guards**; 140 false occurrences preserve the 13
+ungraded answers. The 43 complete, 13 inconsistent and four invalid answer
+counts remain unchanged. These checks do not adjudicate semantic model
+decisions or audit the trusted teacher semantics.
+
+The audit found 148 skips with recorded reused-positive witnesses. The sealed
+final snapshot does not establish historical zero-budget join counts, timing
+or pre-stopping transitions. No inference, replay, source fix or rubric change
+was made. The audit SHA-256 is
+`cf40e810c7730aecb6aa4b6eb295dbb0a4d1a32e15e3394d3cd12c84a5086785`.
+
 Evidence lives in ignored trial artifacts: the
 [pipeline report](../../target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/baseline-xhigh-report.json),
 [post-bridge report](../../target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/baseline-xhigh-post-bridge-report.json),
