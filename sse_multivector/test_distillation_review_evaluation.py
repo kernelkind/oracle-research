@@ -115,6 +115,29 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 
+    def test_native_cli_prepares_concurrency_override_without_changing_selection(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        frozen = selected.read_bytes()
+        destination = self.root / "concurrency-16"
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", destination, "--runner-binary", self.worker(), "--concurrency", 16)
+        report = evaluation.report(destination)
+        self.assertTrue(all(row["settings"]["concurrency"] == 16 for row in report["experiments"]))
+        self.assertTrue(all(row["settings"]["reasoning_effort"] == "xhigh" for row in report["experiments"]))
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_concurrency_override_rejects_invalid_values_before_creating_output(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        for index, value in enumerate((0, -1, True, 1.5, "16")):
+            destination = self.root / ("invalid-concurrency-" + str(index))
+            with self.assertRaisesRegex(ValueError, "concurrency must be a positive integer"):
+                evaluation.prepare(selected, destination, concurrency=value)
+            self.assertFalse(destination.exists())
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_relationship_override_reuses_other_checks_and_runs_only_selected_answer(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         from sse_multivector import distillation_review_assessment as assessment
@@ -139,9 +162,13 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         snapshots = {path: path.read_bytes() for path in baseline.rglob("*") if path.is_file()}
         calls = (self.root / "calls.json").read_bytes()
         prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v4.md"
+        relationship_worker = self.root / "relationship-runner"
+        relationship_worker.write_text(worker.read_text() + "\n# A separately bound relationship worker.\n")
+        relationship_worker.chmod(0o755)
         self.native("prepare-distillation-review-evaluation", selected, "--output", changed,
             "--runner-binary", worker, "--history-root", self.root, "--assessments", context,
-            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4")
+            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4", "--concurrency", 16,
+            "--relationship-runner-binary", relationship_worker)
         identifier = answers[0]["id"]
         self.native("run-distillation-review-evaluation", changed, "--answer-id", identifier,
                     "--max-new-attempts", 0)
@@ -155,6 +182,11 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
                     "--max-new-attempts", 3)
         complete = evaluation.report(changed)
         self.assertEqual([row["status"] for row in complete["random"]["answers"]], ["complete", "pending"])
+        for native in complete["experiments"]:
+            plan = json.loads((Path(native["experiment"]) / "experiment.json").read_text())["plan"]
+            check = native["cases"][0]["evidence"]["check"]
+            expected_worker = relationship_worker if check == "relationship" else worker
+            self.assertEqual(plan["runner"]["runner_binary"], str(expected_worker))
         self.assertEqual(len(json.loads((self.root / "calls.json").read_bytes())) - len(json.loads(calls)), 2)
         self.assertTrue(all(case["status"] == "unrun" for cases in complete["random"]["answers"][1]["checks"].values()
                             for case in cases if case.get("origin") != "mechanical"))
