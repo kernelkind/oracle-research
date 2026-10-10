@@ -1163,7 +1163,6 @@ class ExperimentTests(unittest.TestCase):
                     "provider": "openai-codex",
                     "model": "fixture/model",
                     "reasoning_effort": "low",
-                    "concurrency": 1,
                 },
             },
         )

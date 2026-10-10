@@ -1456,7 +1456,12 @@ The approved prompt-development loop uses 12–16 distinct complete review input
 for the changed check, then further regression cases and the fixed ten-note
 workflow after that set passes. The full 60 remains very final validation.
 Lower-effort testing remains paused during DSLv4 development; the current
-ten-note xhigh run continues unchanged at concurrency 16. See the
+ten-note xhigh run has finished generation unchanged at concurrency 16, with
+its raw native report preserved before audit reviews. The
+[DSLv5 revision](distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
+is an untested draft with a prepared 14-case preview and zero candidate calls.
+The current shared runner uses automatic queue admission; inherited concurrency
+fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
 Prepare a small plan with `prepare --from OLD --only CASE_ID` before iterating;
 `run --only` filters dispatch but retains the large group's full report.

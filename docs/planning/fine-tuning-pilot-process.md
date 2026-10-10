@@ -373,9 +373,14 @@ correct positive and negative decisions, and earlier regressions. Establish
 source-assessed decisions and evidence before candidate calls. Check further
 cases and the fixed ten-note workflow after that development set passes; the
 original 50 random plus ten challenge answers remain the very final validation.
-The current ten-note DSLv4 run continues unchanged. Sol/xhigh, subscription SSE,
-concurrency 16, trusted ASv6.100, mechanical rules and schemas remain fixed;
-lower-effort testing remains paused. Native selected preparations shrink the
+The ten-note DSLv4 run has finished generation unchanged and preserves its raw
+report before formal audit reviews. [DSLv5](../../sse_multivector/distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
+is an untested definition/counterexample draft with a prepared 14-case preview
+and zero candidate calls. Sol/xhigh, subscription SSE, trusted ASv6.100,
+mechanical rules and schemas remain fixed. The completed ten-note run retains
+its frozen concurrency of 16; the current shared runner uses automatic queue
+admission for future dispatch. Lower-effort testing remains paused. Native
+selected preparations shrink the
 case plan and subsequent reports while retaining full production inputs and
 baseline receipts. Audit explanations as well as decisions; keep ambiguities
 explicit and disclose development exposure. This is separate from the sealed

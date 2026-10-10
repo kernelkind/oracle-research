@@ -4,8 +4,9 @@ This is an additional **Compare development panel**, not a Bootstrap test or a
 new hierarchy. The user authorized adding the failures identified in the
 [fresh fifty-note findings](hierarchy-as100-fifty-note-findings-v1.md) to the
 Compare regression set. The original construction used unchanged Bootstrap-v96
-and Compare-v48; Compare-v69 remains a tested experimental candidate, not an
-adopted production prompt.
+and Compare-v48. Compare-v69 and the newer approved-for-qualification
+Compare-v75 have completed experimental trials; neither is adopted for
+production. The v75 results and remaining failures are recorded below.
 
 ## Frozen selection
 
@@ -86,15 +87,17 @@ its branch fixtures. It does not replace them or modify their frozen cases.
 Selecting these witnesses alone establishes neither failure nor repair by
 Compare-v69; its actual new results are recorded below.
 
-## Reproduction and status
+## V69 reproduction and status
 
 The source resolves native receipts and historical trials in the retained
-`oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree. The current adapter,
-consistency scorer and experimental Compare-v69 are in the retained
-`oracle-mvp-compare-disambiguation-v1` worktree; execute from that checkout.
+`oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree. The recorded v69
+preparation and execution used the adapter, consistency scorer and experimental
+prompt in the retained `oracle-mvp-compare-disambiguation-v1` worktree.
 The definitions and unchanged experimental Compare-v69 template are also recorded
 in main. This does not integrate or adopt the larger research constructor history.
-Those retained source and artifact dependencies remain necessary for reproduction.
+Those retained source and artifact dependencies remain necessary for reproducing
+the v69 trial. Current native fixed-meaning qualification support is on main;
+the separate v75 worktree and saved trial are documented below.
 
 Preparation uses the shared stable runner and makes no model calls:
 
@@ -175,10 +178,10 @@ supplied descendant conflict. The six provisional positive controls and two
 snapshot label is not automatically an error against the older provisional
 `uncertain` expectation.
 
-Compare-v69 therefore remains experimental. The new panel exposes unresolved
-comparison mechanisms despite preserved positive controls. The next useful work
-is to isolate the remaining role-condition and kind/activity interpretation
-switches using these frozen inputs before editing either prompt.
+Compare-v69 remains experimental. This panel exposed unresolved comparison
+mechanisms despite preserved positive controls. Its role-condition and
+kind/activity interpretation switches motivated the subsequent diagnostic
+drafts and v75 qualification below.
 
 ## Independent answer review
 
@@ -278,8 +281,9 @@ No runner, adapter, Bootstrap prompt or hierarchy changed.
 V72 is preserved as the first draft. The final audit found one remaining
 "label" alias and several node/scope wording mismatches; v73 records their
 correction without overwriting v72. Both retain native revision recipes and
-receipts pinned to v71. These drafts remain in the research worktree awaiting
-review and adoption; no improvement in model reliability is claimed.
+receipts pinned to v71. V73 supplies the exact baseline for v74; these
+intermediate drafts were not executed. No improvement in model reliability
+is claimed.
 
 ## Compare-v74: shared node data and no original evidence
 
@@ -299,8 +303,8 @@ original producer evidence and native receipts are preserved.
 Native revision metadata is pinned to exact v73 bytes. The counterexample
 diagnostics, five-field output and canonical implication checks remain
 unchanged. Independent read-only review and mechanical reconstruction checks
-were completed without teacher calls. This is an unrun, unadopted prompt draft
-in the research worktree: the existing input adapters, runtime output schema,
+were completed without teacher calls. At this checkpoint v74 was an unrun,
+unadopted draft: the existing input adapters, runtime output schema,
 Bootstrap prompts and hierarchy artifacts were not changed. Qualification must
 first project saved regression inputs to this new contract through the shared
 native workflow while retaining their producer provenance outside model input.
@@ -326,9 +330,9 @@ Independent read-only review found the answer-level ambiguity requirement during
 consolidation; it was retained in the global ambiguity instruction before native
 revision. Exact recipe reconstruction, native receipt hashes, input placeholder,
 diagnostic field names and preserved semantic obligations were checked without
-teacher calls. This remains an unrun, unadopted prompt draft in the research
-worktree. No runtime schema, input adapter, Bootstrap prompt or hierarchy was
-changed, and no reliability improvement is claimed.
+teacher calls. At this checkpoint v75 was an unrun, unadopted draft. Runtime
+qualification was subsequently authorized and completed below; the prompt
+itself remains unchanged and no reliability improvement is claimed.
 
 ## Approved v75 qualification: native preparation
 
@@ -358,3 +362,162 @@ made no teacher calls. The 200-test software run had six skips and one missing
 No software test invoked the teacher. Model execution and semantic review are
 recorded separately below. This is qualification of a candidate, not production
 adoption or a claim of improvement over v69's different input/output contract.
+
+## Completed v75 qualification
+
+The shared runner completed `target/compare-v75-fifty-note-witnesses-v1/trial-v1`
+in the retained `oracle-mvp-compare-v75-qualification-v1` worktree. The approved
+v75 template stayed byte-for-byte unchanged, SHA-256
+`5dc208575aaa202397d5f0af725155c83c4085fe2ba8d15fe3e7827d1ace90d4`.
+All selected and recursive canonical meanings are the original frozen
+Bootstrap-v96 outputs from ASv6.100 subjects. No Bootstrap generation, additional
+cases, hierarchy construction or prompt revision was performed.
+
+Native execution recorded **102 valid outputs, zero terminal failures and zero
+unrun cases**. There were **103 actual attempts**: 100 successful fresh case
+requests, two unsuccessful requests retried through native provider-only retry,
+and one cache warmup. Two duplicate requests reused exact answers, not fresh
+draws. The shared 20,000-attempt counter was preserved; this run's own bound was
+205 new attempts. Other agents use the counter, so its global delta is not this
+experiment's usage.
+
+The first failed request (`isolated-005-forward`) recorded transport termination;
+the second (`isolated-018-reverse`) recorded an upstream HTTP 503 without a
+recognized cause. Both native retries succeeded. Neither failed attempt has
+usable usage, so native accounting reports **$0.567912 known API-equivalent
+subtotal**, with the complete total unknown. Subscription incremental cash is
+zero. There are 94 observed comparison cache hits; missing failed-request usage
+prevents a complete cache-hit percentage or net-savings estimate. No manual
+token or cost aggregation replaces the native report.
+
+### Consistency and semantic review
+
+All 35 registered reciprocal witnesses are settled, representing **34 unique
+request pairs**. Native reversal checking identifies **three distinct
+conflicts**: isolated 014 (Butter/Food preparation), 024 (sourdough preparation/
+Food), and 025 (Eating/Food). The 008/033 duplicate is consistent and remains
+explicitly reported. No within-orientation transitivity, cycle or equivalence
+conflict is detected among the supplied isolated comparisons. No response
+declares equivalence, so equivalence substitution is not substantively exercised
+by this draw. Missing comparisons remain unknown. The report's overall
+`complete: false` is due to the 32 snapshots excluded from the isolated scorer,
+not unfinished execution.
+
+Two independent reviewers assessed disjoint sets covering every output, using
+only v75's model-visible fixed meanings, canonical branches and diagnostics.
+Every counterexample was assessed for admission by the proposed child's whole
+meaning and exclusion by the proposed parent's meaning; positive conclusions
+were assessed for whole-scope coverage and recursive canonical consequences.
+Native `review --role agent` records contain **76 accept, 17 reject and nine
+uncertain** verdicts. These are agent assessments of responses, including
+diagnostics, not human gold or an accuracy estimate. Rejected responses can
+share an underlying pair or retain a defensible final label.
+
+Concrete Compare failures are:
+
+- **One fitting alternative replaces whole-scope coverage.** Butter says
+  "used as a food, spread or cooking ingredient." `isolated-014-forward` accepts
+  full coverage under Food preparation because one ingredient role fits. Its
+  reversed answer correctly finds direct eating outside preparation.
+  `snapshot-014-c005` repeats the same coverage error.
+- **Parent conditions disappear in positive answers.** Pie/bagel preparation
+  acquires an unstated meal role (`snapshot-020-c020`, `snapshot-021-c020`, both
+  isolated 020 orientations). Sourdough preparation and Eating acquire Food's
+  human-nourishment condition (`snapshot-024-c001`, `snapshot-025-c001`, isolated
+  024/025 forward); reversed answers supply counterexamples outside that condition.
+- **Endpoint coverage changes when branches appear.** `snapshot-009-c001`
+  excludes cultivation from the consumption-based Food topic, whereas both
+  isolated 009 answers recognize it as information about the same covered food.
+  Branch evidence may prevent a final placement, but does not change endpoint
+  meanings or their coverage answers.
+- **Physical-kind exclusion substitutes for information-topic exclusion.**
+  `snapshot-004-c005`, `isolated-004-forward`, both isolated 011 orientations and
+  `isolated-021-forward` reject preparation because the activity is not itself
+  the edible material or finished dish. That alone is not a counterexample
+  under v75's information-topic convention. A human-use or meal-use boundary
+  may independently justify the same `neither` label; the faulty diagnostic does
+  not certify a wrong label.
+- **A required canonical ancestor check is skipped.** In `snapshot-022-c068`,
+  Bread can cover bagel-making information at the endpoints, but ancestor C020
+  Food dishes requires meal service/consumption. The reason asserts that bagels
+  are eaten as part of a meal without that condition in the local meaning.
+  The endpoint answers can remain settled while the incompatible branch
+  requires an `uncertain` relation.
+
+The nine uncertain reviews preserve three unresolved boundary families, each
+represented by a snapshot and both isolated orientations: Coffee's intended
+consumer, Processed food's alteration boundary, and the particular author's
+coffee purpose. In isolated 016, manufactured flour retained outside meal
+service is a credible witness against Food dishes covering all Processed food.
+The opposite raw-fruit witness does not settle whether combining or arranging
+otherwise unchanged fruits counts as alteration through preparation. A settled
+preferred label is not supplied by this review. Nor may a hypothetical purpose
+be asserted as a fact about the particular author's coffee. The generic Coffee
+008/033 definition is a different scope, not a repeated draw of that case.
+
+A third read-only reviewer independently overlapped seven hard outputs:
+Butter's two directions, Processed food/Food dishes' two directions, and
+snapshots 004, 012 and 022. That reviewer likewise rejected Butter's one-role
+coverage, the physical-type diagnostic and the meal-ancestor approval; accepted
+the narrower Bread/preparation information relationship; and preserved the
+raw-fruit boundary qualification. These overlapping assessments are not extra
+case trials or additional independent error counts.
+
+The positive fatigue/sleepiness and explicit-dinner controls remain supported
+on semantic review. The two model `uncertain` relations, snapshots 019 and 023,
+identify canonical descendant conflicts; their selected endpoint coverage
+answers remain settled. This demonstrates that branch uncertainty can be
+reported without rewriting the endpoint meanings, but does not excuse the
+missed ancestor check above.
+
+### Verification and next decision
+
+Every case has exactly one current native agent review. After review, all 102
+input strings/hashes, raw outputs, parsed values and receipt references remained
+unchanged; the experiment envelope, manifest and result-record bytes also remain
+unchanged. A final native inspection is saved as
+`target/compare-v75-fifty-note-witnesses-v1/trial-v1-reviewed.json` alongside the
+experiment's own `report.json` and attributed review records. The combined
+62-test production-path preparation, diagnostic-validation and consistency
+suite passed with `tiktoken` supplied. Native support and prompts were landed
+in local main through `28386633` and `4d5628fb`; no push was made.
+
+During final integration the shared runner released 1.6.0, rejecting per-run
+concurrency in new specifications and sharing 30 requests internally. The
+existing common offline test fixture still declared `concurrency: 1`, so the
+first final rerun failed before adapter preparation. Removing that single
+obsolete fixture field made all **69 unique production-path checks pass**:
+42 node-pair, seven additional snapshot, nine fixed-meaning and 11 consistency
+tests. No production scheduling code was changed. The real c32 experiment was
+prepared and completed before that shared release landed; its historical v1
+specification, settings and receipts remain unchanged. The c32 execution record
+does not imply that concurrency remains configurable in the new runner.
+
+**V75 is tested but not qualified for production adoption.** The historical
+v69 run had nine distinct reversals versus three in this v75 draw. This is not
+a matched causal comparison: prompt wording, visible input and output contract
+changed together, and neither arm was repeated. The equal count of accepted
+responses in the two qualified agent reviews likewise does not establish
+accuracy parity or improvement.
+
+The most useful next proposed experiment targets the positive-coverage shortcut
+with a controlled question/justification revision: fitting one role must not
+stand in for every alternative satisfying the parent's conditions. Keep the
+information-topic positive controls and canonical ancestor counterexample as
+contrasts, so correcting overacceptance does not reproduce blanket activity/
+material rejection. This is a hypothesis and a proposed next task, not an
+authorized edit, repeat, broader trial or claim about which wording caused the
+observed errors. Producer-boundary qualifications remain separate.
+
+Read-only inspection of the exact Butter witness:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v1
+../experiment-runner/bin/experiment-runner --project-root . show \
+  target/compare-v75-fifty-note-witnesses-v1/trial-v1 \
+  --case isolated-014-forward
+```
+
+The qualification and older disambiguation worktrees remain necessary because
+native source/producer references and receipts bind their artifact paths. They
+are retained for reproduction; no new construction or execution is implied.
