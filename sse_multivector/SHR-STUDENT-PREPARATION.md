@@ -262,9 +262,17 @@ and batch-one/eight inference at 3,072 and 7,168 tokens, within its actual
 7,999-position limit. It preserves the successful earlier 32 GiB allocation
 budget, eight-GiB reserve and optimization settings. This is five-label random
 supervision, not relation fitting or selection of the encoder.
-Its source-bound staging is `target/bootstrap-compare-student-v1/capacity-compare-v1`;
-execution follows the dense jobs sequentially. The longer shape checks cost
-headroom; no current ASv6.100 fixture demonstrates a branch of that length.
+Its source-bound staging is `target/bootstrap-compare-student-v1/capacity-compare-v1`.
+The sequential GB10 run completed full training of 1,031,272,709 parameters,
+save and numerical reload verification in separate PIDs 1346528/1347103.
+Median update times after warmup are **1.44/3.54 seconds** at 3,072/7,168
+tokens, four measured updates each, with **19.27 GiB** peak allocation.
+Five inference repetitions give batch-one medians **0.263/0.775 seconds**
+and batch-eight medians **1.927/6.010 seconds** at those shapes. The report
+SHA-256 is `7ad1c514a46dd823481929f85e30433edbaaca7107946cc36647e92e59f87aa8`.
+The longer shape checks cost headroom; no current ASv6.100 fixture demonstrates
+a branch of that length, and the random five-way head supplies no semantic
+quality estimate.
 
 ### Selection and final-training readiness
 

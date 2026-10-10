@@ -173,8 +173,13 @@ the full vocabulary. Its first Qwen27 attempt passed 8,192 total tokens but
 failed at 13,312 under a 64 GiB allocation budget. Inspection identified
 unnecessary vocabulary projection over unsupervised input positions. A tested
 projection of only the required preceding states preserves the native masked
-loss; a separately source-bound run is measuring both dense candidates with
-that change. The failed evidence remains preserved. This is training-capacity
+loss; a separately source-bound run now verifies both dense candidates with
+that change. Qwen/Gemma complete 13,312-token updates in 59.82/67.76 seconds
+with 31.90/20.00 GiB peak allocation and pass fresh-process adapter reload.
+Ettin full training also verifies at 3,072/7,168 tokens, taking 1.44/3.54 seconds
+per update with 19.27 GiB peak allocation. These are different objectives and
+short synthetic samples, not a common task-quality comparison.
+The failed evidence remains preserved. This is training-capacity
 preparation, not task fitting or proof of a quality ranking. See
 [the objective and verification evidence](SHR-STUDENT-PREPARATION.md#causal-training-capacity-preparation).
 
