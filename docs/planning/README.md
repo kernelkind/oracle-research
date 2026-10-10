@@ -6,8 +6,8 @@ discussion, including corpus scope, validation, Vast.ai compute and rented hosti
 read-only investigation, the low-memory HDBSCAN discussion and unapproved next steps.
 
 [Worktree cleanup and retained branches](worktree-consolidation.md) records the
-October 10 cleanup, branch additions still to assess, shared history and recovery
-references. Broad consolidation remains deferred.
+October 10 cleanup, a dated snapshot of branch additions, shared history and
+recovery references.
 
 [Fine-tuning pilot process](fine-tuning-pilot-process.md) describes the experiment:
 shared data, untuned baselines, three continuing student training runs with

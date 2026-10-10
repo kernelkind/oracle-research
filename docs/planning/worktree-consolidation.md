@@ -1,6 +1,8 @@
 # Worktree cleanup and retained branches
 
-Recorded October 10, 2026. The cleanup and branch review are closed out. Broad consolidation is deferred: retain unmerged branches and assess relevant work when it is needed. This record does not authorize further code integration or discarding unmerged work.
+Recorded October 10, 2026. The cleanup task is closed out. It preserved unmerged branches without integrating their histories as a group.
+
+This dated inventory does not change task authorization or the workspace `AGENTS.md` workflow. Coherent, reviewed and verified work from authorized tasks must still land in `main`, including maintained documentation and its required dependencies. When a task branch contains unrelated history, isolate the completed work and its dependencies for integration.
 
 ## Cleanup outcome
 
