@@ -2020,11 +2020,27 @@ the reserved test stays sealed.
 
 Production-path tests first reproduced unnecessary dispatch and frozen-selection
 accounting failures. The integrated review suites now pass 112 tests; selected
-runner dispatch and verified reuse pass 67 Python and 74 Node tests with local workers. Tests cover
+runner dispatch and verified reuse pass 67 Python and 74 Node tests with local
+workers. Tests cover
 positive and negative witness termination, required self guards, actual/placement
 aliases, shared budgets and resume, eligible caching, zero-allowance reuse, frozen
 byte preservation and the original exhaustive scorer. These checks establish
 mechanical behavior, not semantic reviewer accuracy.
+
+**Native confirmation, October 9:** prepared a separate schema-2
+[`evaluation-mechanical`](../../target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/evaluation.json)
+from the original 50 random and 10 challenge answers, frozen assessments and
+previous history root. The stable runner joined verified saved answers with
+`--max-new-attempts 0`. Its
+[`receipt-only-report.json`](../../target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/receipt-only-report.json)
+confirms 3,565 distinct new DSL inputs remain, versus 9,664 at the original
+pause: 6,099 fewer, or 63.1%, before further stopping and retries. Matching and
+support have no remaining requests. There are 19,968 explicitly skipped DSL
+occurrences; these are numbered rows, not distinct calls. New model attempts,
+tokens and warmups are zero. Existing reviewer contradictions and the C01
+expectation conflict remain visible; this receipt join does not qualify semantic
+accuracy. The original selection, assessment seal, paused native receipts and
+bound source files are unchanged. The actual trial remains paused.
 
 ## Actual distilled wording: offline preview (October 8)
 
