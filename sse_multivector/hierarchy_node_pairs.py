@@ -35,7 +35,13 @@ def _local_collection(source, *, base, read, load_report):
     fields = {'schema_version', 'sources', 'review'}
     if 'experiments' in source:
         fields.add('experiments')
+    if 'local_schema_version' in source:
+        fields.add('local_schema_version')
     _fields(source, 'local node collection', fields)
+    local_schema_version = source.get('local_schema_version')
+    if 'local_schema_version' in source and (type(local_schema_version) is not int
+                                             or local_schema_version != 4):
+        raise ValueError('collection local_schema_version must be 4')
     if not isinstance(source['review'], dict) or 'expected' in source['review']:
         raise ValueError('collection review must be an object without expected targets')
     if not isinstance(source['sources'], list) or not source['sources']:
@@ -43,6 +49,7 @@ def _local_collection(source, *, base, read, load_report):
     if 'experiments' in source and not isinstance(source['experiments'], list):
         raise ValueError('collection experiments must be an array')
     cases, by_input, identities = [], {}, set()
+    regenerated_by_entry = {}
 
     def reference(ref, kind):
         _fields(ref, 'collection ' + kind,
@@ -65,6 +72,50 @@ def _local_collection(source, *, base, read, load_report):
         return [row for row in rows if row['id'] in ref['select']]
 
     def add(payload, evidence, witness):
+        if local_schema_version == 4:
+            witness = {**witness, 'inputs': witness.get('inputs', {
+                'INPUT_JSON': json.dumps(payload, ensure_ascii=False)})}
+            node = {'id': 'selected', 'local': evidence['local'], 'review': {}}
+            for name in ('subject_override', 'post_override'):
+                if name in evidence:
+                    node[name] = evidence[name]['replacement']
+            if 'context_overrides' in evidence:
+                node['context_overrides'] = {
+                    number: change['replacement']
+                    for number, change in evidence['context_overrides'].items()}
+            definition = {'schema_version': 4, 'corpus': evidence['corpus'], 'nodes': [node]}
+            key = engine._canonical_json_bytes(definition)
+            if key not in regenerated_by_entry:
+                regenerated, _ = create_source(definition, base=base, read=read, local_only=True)
+                regenerated_by_entry[key] = (
+                    json.loads(regenerated[0]['inputs']['INPUT_JSON']),
+                    {name: regenerated[0]['evidence'][name]
+                     for name in ('subject_override', 'context_overrides', 'post_override')
+                     if name in regenerated[0]['evidence']})
+            current, regenerated_overrides = regenerated_by_entry[key]
+            original, local = payload['local'], current['local']
+            hierarchy = local['hierarchy']
+            numbered = {entry['number']: entry for entry in hierarchy['entries']}
+            number = hierarchy['selected']
+            selected = {key: numbered[number][key] for key in ('subject', 'context')}
+            parts = number.split('.')
+            ancestors = [{key: numbered['.'.join(parts[:depth])][key]
+                          for key in ('subject', 'context')}
+                         for depth in range(1, len(parts))]
+            expected_entry = {**selected, 'ancestors': ancestors}
+            if (original['post'] != local['post']
+                    or ('entry' in original and (
+                        not isinstance(original['entry'], dict)
+                        or set(original['entry']) not in (
+                            {'subject', 'context'}, {'subject', 'context', 'ancestors'})
+                        or original['entry'] != {
+                            key: expected_entry[key] for key in original['entry']}))
+                    or ('hierarchy' in original and original['hierarchy'] != hierarchy)
+                    or {name: evidence[name]
+                        for name in ('subject_override', 'context_overrides', 'post_override')
+                        if name in evidence} != regenerated_overrides):
+                raise ValueError('collection schema-4 regeneration does not match original local input')
+            payload = current
         raw = engine._canonical_json_bytes(payload)
         signature = hashlib.sha256(raw).hexdigest()
         if signature not in by_input:
@@ -116,6 +167,69 @@ def _local_collection(source, *, base, read, load_report):
                    'historical_witnesses': sum(len(case['evidence']['review']['historical_witnesses'])
                                                for case in cases),
                    'application_allowed': False}
+
+
+def create_meaning_diagnostic_source(source, *, base, read, load_report):
+    """Copy a receipt-bound meaning, optionally with its exact original evidence."""
+    _fields(source, 'meaning diagnostic source', {'schema_version', 'corpus', 'nodes'})
+    if type(source['schema_version']) is not int or source['schema_version'] != 1:
+        raise ValueError('unsupported meaning diagnostic schema_version')
+    if not isinstance(source['nodes'], list) or not source['nodes']:
+        raise ValueError('meaning diagnostics require nonempty nodes')
+    corpus = engine._resolve_path(source['corpus'], 'meaning diagnostic corpus', Path(base))
+    cases, seen, saved_cases = [], set(), {}
+    version = 'hierarchy-meaning-diagnostics-v1'
+    for node in source['nodes']:
+        _fields(node, 'meaning diagnostic node', {'id', 'producer', 'include_source', 'review'})
+        identifier = engine._expect_identifier(node['id'], 'meaning diagnostic ID')
+        if identifier in seen:
+            raise ValueError('duplicate meaning diagnostic ID')
+        seen.add(identifier)
+        if type(node['include_source']) is not bool:
+            raise ValueError('meaning diagnostic include_source must be boolean')
+        if not isinstance(node['review'], dict):
+            raise ValueError('meaning diagnostic review must be an object')
+        producer = node['producer']
+        _fields(producer, 'meaning diagnostic producer', {'experiment', 'case', 'record_sha256'})
+        expected = producer['record_sha256']
+        if not isinstance(expected, str) or not re.fullmatch(r'[0-9a-f]{64}', expected):
+            raise ValueError('meaning diagnostic record_sha256 must be a SHA-256 digest')
+        directory = engine._resolve_path(producer['experiment'], 'meaning experiment', Path(base))
+        case_id = engine._expect_identifier(producer['case'], 'meaning case')
+        if load_report is None:
+            raise ValueError('meaning diagnostics require validated experiment reports')
+        if directory not in saved_cases:
+            report = load_report(directory)
+            if report['adapter'] != 'hierarchy_local_nodes':
+                raise ValueError('meaning diagnostics require a hierarchy_local_nodes experiment')
+            saved_cases[directory] = {case['id']: case for case in report['cases']}
+        saved = saved_cases[directory].get(case_id)
+        if saved is None or saved['status'] != 'valid' or not saved.get('receipt'):
+            raise ValueError('meaning diagnostics require a valid saved meaning case')
+        if saved['receipt']['record_sha256'] != expected:
+            raise ValueError('meaning diagnostic producer receipt does not match record_sha256')
+        meaning = saved['parsed']['meaning']
+        if not isinstance(meaning, str) or not meaning.strip():
+            raise ValueError('meaning diagnostic saved meaning must be nonempty text')
+        regenerated, _ = create_source(
+            {'schema_version': 4, 'corpus': str(corpus), 'nodes': [
+                {'id': identifier, 'local': saved['evidence']['local'], 'review': {}}]},
+            base=base, read=read, local_only=True)
+        original = json.loads(saved['inputs']['INPUT_JSON'])
+        if original != json.loads(regenerated[0]['inputs']['INPUT_JSON']):
+            raise ValueError('meaning diagnostic producer does not match original schema-4 local input')
+        payload = {'meaning': meaning}
+        if node['include_source']:
+            payload['local'] = original['local']
+        cases.append({'id': identifier,
+                      'inputs': {'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
+                      'evidence': {'version': version, 'corpus': str(corpus),
+                                   'local': saved['evidence']['local'],
+                                   'include_source': node['include_source'],
+                                   'producer': {'experiment': str(directory), 'case': case_id,
+                                                'receipt': saved['receipt']},
+                                   'review': node['review'], 'application_allowed': False}})
+    return cases, {'version': version, 'cases': len(cases), 'application_allowed': False}
 
 
 def create_source(source, *, base, read, local_only=False, load_report=None):
@@ -203,6 +317,8 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
             fields = {'id', 'local', 'review'}
             if isinstance(node, dict) and 'subject_override' in node:
                 fields.add('subject_override')
+            if isinstance(node, dict) and source['schema_version'] == 4:
+                fields.update(name for name in ('context_overrides', 'post_override') if name in node)
             _fields(node, 'local node', fields)
             identifier = engine._expect_identifier(node['id'], 'local node ID')
             if identifier in seen:
@@ -218,13 +334,43 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
                                                  'replacement': replacement}}
                 local = {**local, 'subject': replacement}
             post = engine._expect_string(notes[node['local']['note_id']]['text'], 'local post')
+            if 'post_override' in node:
+                replacement = engine._expect_string(node['post_override'], 'post_override')
+                if not replacement.strip():
+                    raise ValueError('post_override must be nonempty text')
+                override['post_override'] = {'original': post, 'replacement': replacement}
+                post = replacement
             if not isinstance(node['review'], dict):
                 raise ValueError('local node review must be an object')
             payload = {'local': {'entry': local, 'post': post}}
             if source['schema_version'] == 3:
                 payload['local']['entry'] = {k: local[k] for k in ('subject', 'context')}
             if include_hierarchy:
-                payload['local']['hierarchy'] = hierarchy(node['local'], local)
+                number = node['local']['number']
+                root = number.split('.')[0]
+                numbered = indexed[node['local']['note_id']]
+                numbers = sorted((n for n in numbered if n.split('.')[0] == root),
+                                 key=lambda n: tuple(int(part) for part in n.split('.')))
+                if any('.' in n and n.rsplit('.', 1)[0] not in numbered for n in numbers):
+                    raise ValueError('missing original local hierarchy parent')
+                contexts = node.get('context_overrides', {})
+                if not isinstance(contexts, dict):
+                    raise ValueError('context_overrides must be an object')
+                changes = {}
+                for n, replacement in contexts.items():
+                    if not isinstance(n, str) or n not in numbered or n.split('.')[0] != root:
+                        raise ValueError('context_overrides requires original entry numbers in the selected root tree')
+                    replacement = engine._expect_string(replacement, 'context_overrides replacement')
+                    if not replacement.strip():
+                        raise ValueError('context_overrides replacement must be nonempty text')
+                    changes[n] = {'original': numbered[n]['context'], 'replacement': replacement}
+                if changes:
+                    override['context_overrides'] = changes
+                payload['local']['hierarchy'] = {'selected': number, 'entries': [
+                    {'number': n, **({k: local[k] for k in ('subject', 'context')}
+                                    if n == number else numbered[n]),
+                     **({'context': contexts[n]} if n in contexts else {})}
+                    for n in numbers]}
             if source['schema_version'] == 4:
                 del payload['local']['entry']
             cases.append({'id': identifier,

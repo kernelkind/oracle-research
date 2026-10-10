@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v99": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v99-kind-features-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v99-kind-features-v1/controls"
+    ],
+    "v100": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v100-chosen-boundaries-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v100-chosen-boundaries-v1/controls"
+    ],
+    "v101_first": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v101-selected-topic-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v101-selected-topic-v1/controls"
+    ],
+    "v101_repeat": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v101-selected-topic-repeat-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v101-selected-topic-repeat-v1/controls"
+    ],
+    "v102_first": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v102-activity-boundaries-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v102-activity-boundaries-v1/controls"
+    ],
+    "v103_first": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v103-process-resolution-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v103-process-resolution-v1/controls"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v99_rocket_branches": ["../../target/bootstrap-asv6.100-regression-refresh-v1/v99-kind-features-v1/rocket"],
+    "v99_process_state_controls": ["../../target/bootstrap-asv6.100-regression-refresh-v1/v99-kind-features-v1/controls"]
+  }
+}

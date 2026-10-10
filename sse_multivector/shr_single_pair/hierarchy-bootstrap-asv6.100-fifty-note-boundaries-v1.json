@@ -1,0 +1,72 @@
+{
+  "schema_version": 4,
+  "corpus": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "fifty-cooking-root",
+      "local": {
+        "note_id": "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+        "number": "2"
+      },
+      "review": {
+        "purpose": "Check whether the final category meaning settles the defining cooking process and required versus optional heat. Either supported boundary choice is admissible; listing methods alone is not a membership decision.",
+        "baseline_experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/root-meanings",
+        "baseline_case": "R02",
+        "baseline_receipt_sha256": "5812ceffd0f912fdbe031a6a14bc21aabdfacb5bf90392fab738fbcbef20ec78",
+        "baseline_status": "Bootstrap-v96 agent-held scope qualification, not human semantic gold."
+      }
+    },
+    {
+      "id": "fifty-cooking-event",
+      "local": {
+        "note_id": "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+        "number": "2.1"
+      },
+      "review": {
+        "purpose": "Define the particular cooking event's action directly, preserve its supported identity and time, and check its whole meaning against the independently generated Cooking ancestor. Do not invent a particular heating technique or treat repeating cooking as a process definition.",
+        "baseline_experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-meanings-v1",
+        "baseline_case": "U01",
+        "baseline_receipt_sha256": "c7b894c6fb972d91bf8d12b0bbccd1c55a9d7800a487a8168916e155f6a83a64",
+        "baseline_status": "Bootstrap-v96 agent-held process-definition omission, not negative comparison gold."
+      }
+    },
+    {
+      "id": "fifty-amusement-root",
+      "local": {
+        "note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+        "number": "4"
+      },
+      "review": {
+        "purpose": "Establish the general Amusement category independently, preserving abstraction beyond the post's one reaction, for a fixed-meaning ancestor check of the selected coffee-shop episode."
+      }
+    },
+    {
+      "id": "fifty-coffee-rave-amusement",
+      "local": {
+        "note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+        "number": "4.1"
+      },
+      "review": {
+        "purpose": "Resolve hashtag framing versus commercial coffee-chain affiliation without inventing facts from #coffeechain. Preserve the author's amusement, the rave and coffee-shop identity; check the independently generated Amusement ancestor. The linked video's unseen content is not evidence.",
+        "baseline_experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-meanings-v1",
+        "baseline_case": "I01",
+        "baseline_receipt_sha256": "77e97bcb170bb73afc36fe6ff3c8eac9aba0301c5c7190dae136a7a81f9944ca",
+        "baseline_status": "Bootstrap-v96 unresolved identity/scope qualification; commercial affiliation is not established."
+      }
+    },
+    {
+      "id": "fifty-food-dishes",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "review": {
+        "purpose": "Check kind-level meal role versus a required occurred serving/eating episode. Preserve the Food dishes identity and make any chosen prepared/served/eaten state boundary explicit. Ordered dishes and preparation information are useful contrasts, not predetermined positive or negative labels.",
+        "baseline_experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "baseline_case": "bootstrap",
+        "baseline_receipt_sha256": "3621fead61af08b3b80cabf5d5158271e1f87815b08990ce34e21c3669720018",
+        "baseline_status": "Bootstrap-v96 state-boundary qualification, not a demonstrated false definition or human semantic gold."
+      }
+    }
+  ]
+}

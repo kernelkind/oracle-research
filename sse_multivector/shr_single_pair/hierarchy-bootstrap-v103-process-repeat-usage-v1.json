@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v103_repeat": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v103-process-resolution-repeat-v1/rocket",
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v103-process-resolution-repeat-v1/controls"
+    ]
+  }
+}

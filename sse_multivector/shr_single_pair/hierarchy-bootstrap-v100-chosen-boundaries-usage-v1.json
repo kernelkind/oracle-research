@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v100_rocket_branches": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v100-chosen-boundaries-v1/rocket"
+    ],
+    "v100_process_state_controls": [
+      "../../target/bootstrap-asv6.100-regression-refresh-v1/v100-chosen-boundaries-v1/controls"
+    ]
+  }
+}

@@ -971,6 +971,557 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_node_pairs'}, case,
                          json.dumps(valid), None)['parsed'], valid)
 
+    def meaning_diagnostic_source(self, answer=None, run=True, schema_version=4):
+        local = self.local_source()
+        local['schema_version'] = schema_version
+        self.write('producer-source.json', local)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['path'] = 'producer-source.json'
+        self.write('producer-spec.json', spec)
+        self.cli('prepare', 'producer', '--spec', 'producer-spec.json')
+        if run:
+            self.cli('run', 'producer', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(
+                {'meaning': 'Vegetables intended to be cooked.\nExact second clause.'}
+                if answer is None else answer)})
+        case = self.show('producer')['cases'][0]
+        reference = {'experiment': 'producer', 'case': 'one',
+                     'record_sha256': case.get('receipt', {}).get('record_sha256', '0' * 64)}
+        source = {'schema_version': 1, 'corpus': 'notes.json', 'nodes': [
+            {'id': 'meaning-only', 'producer': reference, 'include_source': False,
+             'review': {'expected': 'REVIEW ONLY'}},
+            {'id': 'with-source', 'producer': reference, 'include_source': True,
+             'review': {'expected': 'REVIEW ONLY'}}]}
+        self.write('source.json', source)
+        spec['dataset'] = {'adapter': 'hierarchy_meaning_diagnostics', 'path': 'source.json'}
+        spec['runner']['output_schema'] = {'type': 'object', 'properties': {
+            'requires_consumption': {'type': 'boolean'}},
+            'required': ['requires_consumption'], 'additionalProperties': False}
+        self.write('spec.json', spec)
+        return source
+
+
+    def test_meaning_diagnostic_copies_exact_meaning_and_optional_original_source(self):
+        source = self.meaning_diagnostic_source()
+        producer = self.show('producer')['cases'][0]
+        original = json.loads(producer['inputs']['INPUT_JSON'])['local']
+        self.prepare()
+        cases = self.show()['cases']
+        meaning = producer['parsed']['meaning']
+        self.assertEqual(json.loads(cases[0]['inputs']['INPUT_JSON']), {'meaning': meaning})
+        self.assertEqual(json.loads(cases[1]['inputs']['INPUT_JSON']),
+                         {'meaning': meaning, 'local': original})
+        for case in cases:
+            self.assertNotIn('REVIEW ONLY', case['prompt'])
+            self.assertFalse(case['evidence']['application_allowed'])
+            self.assertEqual(case['evidence']['producer']['receipt'], producer['receipt'])
+            self.assertEqual(case['evidence']['review'], source['nodes'][0]['review'])
+        self.assertEqual(len(self.calls()), 1)
+
+
+    def test_meaning_diagnostic_freezes_producer_sources_and_reuses_exact_answers(self):
+        self.meaning_diagnostic_source()
+        self.prepare()
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        producer_plan = json.loads((self.root / 'producer/experiment.json').read_text())['plan']
+        for path in (self.root / 'producer/experiment.json', self.root / 'producer/runner-config.json',
+                     Path(producer_plan['run_directory']) / 'manifest.json',
+                     Path(producer_plan['run_directory']) / 'results.jsonl',
+                     self.root / 'producer-source.json', self.root / 'notes.json'):
+            self.assertEqual(plan['sources'][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                 '{"requires_consumption": false}'})
+        report = self.show()
+        self.assertEqual(report['adapter'], 'hierarchy_meaning_diagnostics')
+        self.assertEqual(report['summary']['valid'], 2)
+        self.assertTrue(all(case['parsed'] == {'requires_consumption': False}
+                            for case in report['cases']))
+        self.prepare('E2')
+        self.cli('run', 'E2')
+        self.assertTrue(all(case['reused'] for case in self.show('E2')['cases']))
+        self.assertEqual(len(self.calls()), 3)
+
+
+    def test_meaning_diagnostic_rejects_receipt_mismatch_and_missing_case(self):
+        source = self.meaning_diagnostic_source()
+        for index, change in enumerate(({'record_sha256': '0' * 64}, {'case': 'absent'})):
+            candidate = json.loads(json.dumps(source))
+            candidate['nodes'][0]['producer'].update(change)
+            self.write('source.json', candidate)
+            result = self.cli('prepare', f'bad-receipt-{index}', '--spec', self.spec, ok=False)
+            self.assertIn('receipt' if index == 0 else 'valid saved meaning', result.stderr)
+            self.assertFalse((self.root / f'bad-receipt-{index}').exists())
+
+
+    def test_meaning_diagnostic_rejects_null_producer(self):
+        self.meaning_diagnostic_source(answer={'meaning': None})
+        result = self.cli('prepare', 'bad-null', '--spec', self.spec, ok=False)
+        self.assertIn('nonempty text', result.stderr)
+        self.assertFalse((self.root / 'bad-null').exists())
+
+
+    def test_meaning_diagnostic_rejects_unrun_producer(self):
+        self.meaning_diagnostic_source(run=False)
+        result = self.cli('prepare', 'bad-unrun', '--spec', self.spec, ok=False)
+        self.assertIn('valid saved meaning', result.stderr)
+        self.assertFalse((self.root / 'bad-unrun').exists())
+
+
+    def test_meaning_diagnostic_rejects_invalid_producer(self):
+        self.meaning_diagnostic_source(run=False)
+        self.cli('run', 'producer', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                       '{"meaning": 42}'}, ok=False)
+        result = self.cli('prepare', 'bad-invalid', '--spec', self.spec, ok=False)
+        self.assertIn('valid saved meaning', result.stderr)
+        self.assertFalse((self.root / 'bad-invalid').exists())
+
+
+    def test_meaning_diagnostic_requires_schema_four_original_source(self):
+        self.meaning_diagnostic_source(schema_version=1)
+        result = self.cli('prepare', 'legacy', '--spec', self.spec, ok=False)
+        self.assertIn('original schema-4 local input', result.stderr)
+        self.assertFalse((self.root / 'legacy').exists())
+
+
+    def test_meaning_diagnostic_checks_full_post_and_every_root_tree_entry(self):
+        source = self.meaning_diagnostic_source()
+        original = json.loads((self.root / 'notes.json').read_text())
+        source['corpus'] = 'current-notes.json'
+        for index, field in enumerate(('post', 'subject', 'context', 'ancestor', 'descendant')):
+            with self.subTest(field=field):
+                changed = json.loads(json.dumps(original))
+                if field == 'post':
+                    changed['notes'][0]['text'] += ' changed'
+                else:
+                    row = changed['notes'][0]['subjects'][
+                        0 if field == 'ancestor' else 2 if field == 'descendant' else 1]
+                    row['subject' if field == 'subject' else 'context'] += ' changed'
+                self.write('current-notes.json', changed)
+                self.write('source.json', source)
+                result = self.cli('prepare', f'bad-local-{index}', '--spec', self.spec, ok=False)
+                self.assertIn('original schema-4 local input', result.stderr)
+                self.assertFalse((self.root / f'bad-local-{index}').exists())
+
+
+    def test_meaning_diagnostic_source_and_producer_reference_are_strict(self):
+        source = self.meaning_diagnostic_source()
+        variants = [None, {**source, 'schema_version': True}, {**source, 'nodes': []}]
+        for field, value in (('include_source', 1), ('review', None), ('producer', None),
+                             ('producer', {**source['nodes'][0]['producer'], 'extra': True}),
+                             ('producer', {**source['nodes'][0]['producer'], 'record_sha256': 'bad'})):
+            candidate = json.loads(json.dumps(source))
+            candidate['nodes'][0][field] = value
+            variants.append(candidate)
+        variants.append({**source, 'nodes': source['nodes'] * 2})
+        for index, candidate in enumerate(variants):
+            with self.subTest(index=index):
+                self.write('source.json', candidate)
+                self.cli('prepare', f'bad-definition-{index}', '--spec', self.spec, ok=False)
+                self.assertFalse((self.root / f'bad-definition-{index}').exists())
+
+
+    def test_meaning_diagnostic_supports_schema_four_collection_producers(self):
+        self.meaning_diagnostic_source(run=False)
+        self.write('collection.json', {'schema_version': 2, 'local_schema_version': 4,
+                                     'sources': [{'path': 'producer-source.json'}], 'review': {}})
+        spec = json.loads((self.root / 'producer-spec.json').read_text())
+        spec['dataset']['path'] = 'collection.json'
+        self.write('collection-spec.json', spec)
+        self.cli('prepare', 'collection', '--spec', 'collection-spec.json')
+        self.cli('run', 'collection', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                         '{"meaning":"Exact collection meaning"}'})
+        produced = self.show('collection')['cases'][0]
+        source = json.loads((self.root / 'source.json').read_text())
+        for node in source['nodes']:
+            node['producer'] = {'experiment': 'collection', 'case': produced['id'],
+                                'record_sha256': produced['receipt']['record_sha256']}
+        self.write('source.json', source)
+        self.prepare()
+        self.assertEqual(json.loads(self.show()['cases'][0]['inputs']['INPUT_JSON']),
+                         {'meaning': 'Exact collection meaning'})
+
+
+    def test_meaning_diagnostic_binds_reused_producer_to_its_native_receipt(self):
+        source = self.meaning_diagnostic_source()
+        self.cli('prepare', 'producer-reuse', '--from', 'producer')
+        self.cli('run', 'producer-reuse')
+        produced = self.show('producer-reuse')['cases'][0]
+        self.assertTrue(produced['reused'])
+        for node in source['nodes']:
+            node['producer'] = {'experiment': 'producer-reuse', 'case': produced['id'],
+                                'record_sha256': produced['receipt']['record_sha256']}
+        self.write('source.json', source)
+        self.prepare()
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        self.assertIn(produced['receipt']['results_path'], plan['sources'])
+        self.assertEqual(self.show()['cases'][0]['evidence']['producer']['receipt'],
+                         produced['receipt'])
+        self.assertEqual(len(self.calls()), 1)
+
+
+    def test_meaning_diagnostic_rejects_wrong_producer_adapter(self):
+        self.meaning_diagnostic_source()
+        diagnostic_source = json.loads((self.root / 'source.json').read_text())
+        diagnostic_spec = json.loads(self.spec.read_text())
+        self.write('comparison-source.json', self.source())
+        comparison_spec = json.loads(self.spec.read_text())
+        comparison_spec['dataset']['path'] = 'comparison-source.json'
+        self.write('comparison-spec.json', comparison_spec)
+        self.cli('prepare', 'comparison', '--spec', 'comparison-spec.json')
+        self.cli('run', 'comparison', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps({
+            'meaning': 'Comparison meaning', 'relation': 'neither', 'reason': 'Fixture'})})
+        produced = self.show('comparison')['cases'][0]
+        for node in diagnostic_source['nodes']:
+            node['producer'] = {'experiment': 'comparison', 'case': produced['id'],
+                                'record_sha256': produced['receipt']['record_sha256']}
+        self.write('source.json', diagnostic_source)
+        self.write('spec.json', diagnostic_spec)
+        result = self.cli('prepare', 'bad-adapter', '--spec', self.spec, ok=False)
+        self.assertIn('hierarchy_local_nodes experiment', result.stderr)
+        self.assertFalse((self.root / 'bad-adapter').exists())
+
+
+    def test_meaning_diagnostic_rejects_changed_producer_receipt(self):
+        self.meaning_diagnostic_source()
+        path = self.root / 'producer/run/results.jsonl'
+        record = json.loads(path.read_text())
+        record['final_output_raw'] = '{"meaning":"Forged meaning"}'
+        path.write_text(json.dumps(record) + '\n')
+        self.cli('prepare', 'forged-diagnostic', '--spec', self.spec, ok=False)
+        self.assertFalse((self.root / 'forged-diagnostic').exists())
+
+
+    def test_saved_controlled_meanings_are_rejected_as_original_node_pair_evidence(self):
+        for index, control in enumerate(({'context_overrides': {'1.1': 'Served with a meal'}},
+                                         {'post_override': 'Synthetic meal post'})):
+            with self.subTest(control=control):
+                local = self.local_source()
+                local['schema_version'] = 4
+                local['nodes'][0].update(control)
+                name = f'controlled-bootstrap-{index}'
+                self.write(name + '-source.json', local)
+                spec = json.loads(self.spec.read_text())
+                spec['dataset']['path'] = name + '-source.json'
+                self.write(name + '-spec.json', spec)
+                self.cli('prepare', name, '--spec', name + '-spec.json')
+                self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                         '{"meaning":"Served vegetable food"}'})
+                source = self.source()
+                source['pairs'][0]['local_meaning_from'] = {'experiment': name, 'case': 'one'}
+                self.write('source.json', source)
+                result = self.cli('prepare', f'controlled-mismatch-{index}', '--spec', self.spec,
+                                  ok=False)
+                self.assertIn('saved local meaning evidence does not match original local input',
+                              result.stderr)
+                self.assertFalse((self.root / f'controlled-mismatch-{index}').exists())
+
+
+    def test_schema4_context_controls_change_only_named_contexts(self):
+        source = self.local_source()
+        source['schema_version'] = 4
+        self.write('source.json', source)
+        self.prepare('baseline')
+        baseline = self.show('baseline')['cases'][0]
+        self.write('source.json', {**source, 'nodes': [
+            {**source['nodes'][0], 'context_overrides': {}}]})
+        self.prepare('empty-control')
+        empty = self.show('empty-control')['cases'][0]
+        for field in ('id', 'inputs', 'input_sha256', 'evidence'):
+            self.assertEqual(empty[field], baseline[field])
+        original_node = json.loads(json.dumps(source['nodes'][0]))
+        source['nodes'][0]['id'] = 'controlled'
+        source['nodes'][0]['context_overrides'] = {
+            '1': 'Meal preparation', '1.1': 'Cooked vegetables served with a meal',
+            '1.1.1': 'Vegetables already served'}
+        source['nodes'].append(original_node)
+        self.write('source.json', source)
+        corpus = (self.root / 'notes.json').read_bytes()
+        self.prepare()
+        cases = self.show()['cases']
+        changed = json.loads(cases[0]['inputs']['INPUT_JSON'])
+        original = json.loads(cases[1]['inputs']['INPUT_JSON'])
+        self.assertEqual(changed['local']['hierarchy']['entries'][1]['context'],
+                         'Cooked vegetables served with a meal')
+        for row, context in zip(changed['local']['hierarchy']['entries'],
+                                ('Local root context', 'Local entry context', 'Excluded')):
+            row['context'] = context
+        self.assertEqual(changed, original)
+        self.assertEqual(cases[0]['id'], 'controlled')
+        self.assertEqual(cases[1]['id'], baseline['id'])
+        self.assertEqual(cases[1]['inputs'], baseline['inputs'])
+        self.assertEqual(cases[1]['input_sha256'], baseline['input_sha256'])
+        self.assertEqual(cases[1]['evidence'], baseline['evidence'])
+        self.assertEqual(cases[0]['evidence']['context_overrides'], {
+            '1': {'original': 'Local root context', 'replacement': 'Meal preparation'},
+            '1.1': {'original': 'Local entry context',
+                    'replacement': 'Cooked vegetables served with a meal'},
+            '1.1.1': {'original': 'Excluded', 'replacement': 'Vegetables already served'}})
+        self.assertNotIn('context_overrides', cases[1]['evidence'])
+        self.assertEqual((self.root / 'notes.json').read_bytes(), corpus)
+        self.assertEqual(self.calls(), [])
+
+
+    def test_schema4_post_control_supplies_native_diagnostic_quote_validation(self):
+        source = self.local_source()
+        source['schema_version'] = 4
+        source['nodes'][0]['post_override'] = 'SYNTHETIC POST: vegetables were served with supper.'
+        source['nodes'][0]['context_overrides'] = {'1.1': 'FULL LOCAL POST'}
+        self.write('source.json', source)
+        self.prepare()
+        case = self.show()['cases'][0]
+        local = json.loads(case['inputs']['INPUT_JSON'])['local']
+        self.assertEqual(local['post'], source['nodes'][0]['post_override'])
+        self.assertEqual(case['evidence']['post_override'], {
+            'original': 'FULL LOCAL POST {INPUT_JSON}',
+            'replacement': source['nodes'][0]['post_override']})
+        self.assertNotIn('post_override', case['inputs']['INPUT_JSON'])
+        self.assertNotIn('REVIEW ONLY', case['inputs']['INPUT_JSON'])
+        schema = json.loads((Path(__file__).with_name('shr_single_pair') /
+                             'Hierarchy-bootstrap-v71.output.schema.json').read_text())
+        answer = {'meaning': 'Vegetables served as food', 'evidence': [
+            {'quote': 'vegetables were served with supper', 'supports': 'Served food',
+             'inference': None}]}
+        self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                         json.dumps(answer), schema)['parsed'], answer)
+        answer['evidence'][0]['quote'] = 'FULL LOCAL POST'
+        with self.assertRaisesRegex(ValueError, 'exact contiguous excerpt of the local post'):
+            experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                       json.dumps(answer), schema)
+        self.assertEqual(self.calls(), [])
+
+
+    def test_schema4_context_and_post_controls_reject_invalid_inputs(self):
+        source = self.local_source()
+        source['schema_version'] = 4
+        corpus = json.loads((self.root / 'notes.json').read_text())
+        corpus['notes'][0]['subjects'].append(
+            {'number': '2', 'subject': 'Another root', 'context': 'Outside selected tree'})
+        self.write('notes.json', corpus)
+        invalid = [('context_overrides', value) for value in (
+            None, [], 'not an object', {'9': 'Unknown'}, {'2': 'Off-tree'},
+            {'1.01': 'Not an original number'}, {'1.1': None}, {'1.1': True},
+            {'1.1': 7}, {'1.1': []}, {'1.1': ''}, {'1.1': ' '})]
+        invalid.extend(('post_override', value) for value in (None, True, 7, [], {}, '', ' '))
+        for index, (field, value) in enumerate(invalid):
+            with self.subTest(field=field, value=value):
+                candidate = json.loads(json.dumps(source))
+                candidate['nodes'][0][field] = value
+                self.write('source.json', candidate)
+                result = self.cli('prepare', f'invalid-control-{index}', '--spec', self.spec,
+                                  ok=False)
+                self.assertIn(field, result.stderr)
+                self.assertFalse((self.root / f'invalid-control-{index}').exists())
+        self.assertEqual(self.calls(), [])
+
+
+    def test_context_and_post_controls_require_schema4_standalone_local_nodes(self):
+        for field, value in (('context_overrides', {'1.1': 'Replacement context'}),
+                             ('post_override', 'Synthetic post')):
+            for version in (1, 3):
+                with self.subTest(field=field, version=version, adapter='hierarchy_local_nodes'):
+                    source = self.local_source()
+                    source['schema_version'] = version
+                    source['nodes'][0][field] = value
+                    self.write('source.json', source)
+                    result = self.cli('prepare', f'bad-local-{field}-{version}', '--spec', self.spec,
+                                      ok=False)
+                    self.assertIn(f'local node.{field}', result.stderr)
+            for version in (1, 2):
+                with self.subTest(field=field, version=version, adapter='hierarchy_node_pairs'):
+                    source = self.source()
+                    source['schema_version'] = version
+                    source['pairs'][0][field] = value
+                    self.write('source.json', source)
+                    result = self.cli('prepare', f'bad-pair-{field}-{version}', '--spec', self.spec,
+                                      ok=False)
+                    self.assertIn(field, result.stderr)
+        self.assertEqual(self.calls(), [])
+
+
+    def test_local_collection_schema4_regenerates_and_deduplicates_source_bound_inputs(self):
+        original = self.local_source()
+        self.write('legacy-source.json', original)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['path'] = 'legacy-source.json'
+        self.write('legacy-spec.json', spec)
+        self.cli('prepare', 'legacy', '--spec', 'legacy-spec.json')
+        self.cli('run', 'legacy', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                     '{"meaning":"HISTORICAL MEANING"}'})
+        legacy = self.show('legacy')['cases'][0]
+        self.write('tree-source.json', {**original, 'schema_version': 4})
+        overridden = json.loads(json.dumps(original))
+        overridden['nodes'][0]['subject_override'] = 'Cooking vegetables'
+        self.write('override-source.json', overridden)
+        self.write('source.json', {'schema_version': 2, 'local_schema_version': 4,
+            'sources': [{'path': 'legacy-source.json'}, {'path': 'tree-source.json'},
+                        {'path': 'override-source.json'}],
+            'experiments': [{'path': 'legacy'}], 'review': {}})
+        before = self.calls()
+        self.prepare('collection')
+        cases = self.show('collection')['cases']
+        self.assertEqual(len(cases), 2)
+        locals_ = [json.loads(row['inputs']['INPUT_JSON'])['local'] for row in cases]
+        for local in locals_:
+            self.assertEqual(set(local), {'post', 'hierarchy'})
+            self.assertEqual(local['post'], 'FULL LOCAL POST {INPUT_JSON}')
+            self.assertEqual(local['hierarchy']['selected'], '1.1')
+            self.assertEqual(local['hierarchy']['entries'][0],
+                             {'number': '1', 'subject': 'Food', 'context': 'Local root context'})
+            self.assertEqual(local['hierarchy']['entries'][1]['context'], 'Local entry context')
+            self.assertEqual(local['hierarchy']['entries'][2]['subject'], 'LOCAL DESCENDANT')
+        self.assertEqual([local['hierarchy']['entries'][1]['subject'] for local in locals_],
+                         ['Vegetables', 'Cooking vegetables'])
+        witnesses = cases[0]['evidence']['review']['historical_witnesses']
+        self.assertEqual(len(witnesses), 3)
+        self.assertEqual(witnesses[0]['inputs'], legacy['inputs'])
+        self.assertEqual(witnesses[2]['inputs'], legacy['inputs'])
+        self.assertEqual(witnesses[2]['parsed'], {'meaning': 'HISTORICAL MEANING'})
+        self.assertNotIn('HISTORICAL MEANING', cases[0]['prompt'])
+        self.assertEqual(cases[1]['evidence']['subject_override']['replacement'],
+                         'Cooking vegetables')
+        plan = json.loads((self.root / 'collection/experiment.json').read_text())['plan']
+        self.assertEqual(plan['sources'][str(self.root / 'notes.json')],
+                         hashlib.sha256((self.root / 'notes.json').read_bytes()).hexdigest())
+        self.assertEqual(self.calls(), before)
+
+
+    def test_local_collection_schema4_rejects_changed_original_evidence(self):
+        from sse_multivector import hierarchy_node_pairs
+
+        self.local_source()
+        self.prepare('legacy')
+        report = self.show('legacy')
+        original = json.loads(report['cases'][0]['inputs']['INPUT_JSON'])
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'source.json'}],
+                      'experiments': [{'path': 'legacy'}], 'review': {}}
+        for changed in (
+                {'post': 'A different post'},
+                {'entry': {**original['local']['entry'], 'subject': 'A different subject'}},
+                {'entry': {**original['local']['entry'], 'context': 'A different context'}},
+                {'entry': {**original['local']['entry'], 'ancestors': [
+                    {'subject': 'Food', 'context': 'A different ancestor context'}]}},
+                {'entry': {**original['local']['entry'], 'unknown': 'Malformed field'}},
+                {'hierarchy': {'selected': '1.1', 'entries': []}}):
+            with self.subTest(changed=changed):
+                witness = json.loads(json.dumps(report))
+                witness['cases'][0]['inputs']['INPUT_JSON'] = json.dumps(
+                    {'local': {**original['local'], **changed}})
+                with self.assertRaisesRegex(ValueError, 'does not match original local input'):
+                    hierarchy_node_pairs.create_source(
+                        collection, base=self.root,
+                        read=lambda path: json.loads(Path(path).read_text()),
+                        local_only=True, load_report=lambda path: witness)
+        self.assertEqual(self.calls(), [])
+
+
+    def test_local_collection_preserves_and_reconstructs_schema4_controls(self):
+        source = self.local_source()
+        source['schema_version'] = 4
+        source['nodes'][0].update({
+            'subject_override': 'Served vegetables',
+            'context_overrides': {'1': 'Meal preparation', '1.1': 'Vegetables served as food'},
+            'post_override': 'SYNTHETIC POST: vegetables were served with supper.'})
+        self.write('controlled-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['path'] = 'controlled-source.json'
+        self.write('controlled-spec.json', spec)
+        self.cli('prepare', 'controlled', '--spec', 'controlled-spec.json')
+        original = self.show('controlled')['cases'][0]
+        for name, target in (('preserved', {}), ('reconstructed', {'local_schema_version': 4})):
+            self.write('source.json', {'schema_version': 2, **target,
+                'sources': [{'path': 'controlled-source.json'}],
+                'experiments': [{'path': 'controlled'}], 'review': {}})
+            self.prepare(name)
+            cases = self.show(name)['cases']
+            self.assertEqual(len(cases), 1)
+            self.assertEqual(cases[0]['inputs'], original['inputs'])
+            for field in ('subject_override', 'context_overrides', 'post_override'):
+                self.assertEqual(cases[0]['evidence'][field], original['evidence'][field])
+            witnesses = cases[0]['evidence']['review']['historical_witnesses']
+            self.assertEqual(len(witnesses), 2)
+            self.assertEqual(witnesses[1]['inputs'], original['inputs'])
+            self.assertNotIn('historical_witnesses', cases[0]['inputs']['INPUT_JSON'])
+        self.assertEqual(self.show('preserved')['cases'][0]['id'],
+                         self.show('reconstructed')['cases'][0]['id'])
+        self.assertEqual(self.calls(), [])
+
+
+    def test_local_collection_schema4_rejects_changed_control_evidence(self):
+        from sse_multivector import hierarchy_node_pairs
+
+        source = self.local_source()
+        source['schema_version'] = 4
+        source['nodes'][0].update({
+            'context_overrides': {'1.1': 'Vegetables served as food'},
+            'post_override': 'Synthetic meal post'})
+        self.write('controlled-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['path'] = 'controlled-source.json'
+        self.write('controlled-spec.json', spec)
+        self.cli('prepare', 'controlled', '--spec', 'controlled-spec.json')
+        report = self.show('controlled')
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+            'sources': [{'path': 'controlled-source.json'}],
+            'experiments': [{'path': 'controlled'}], 'review': {}}
+        for field, key in (('context_overrides', 'original'), ('context_overrides', 'replacement'),
+                           ('post_override', 'original'), ('post_override', 'replacement')):
+            with self.subTest(field=field, key=key):
+                witness = json.loads(json.dumps(report))
+                change = witness['cases'][0]['evidence'][field]
+                if field == 'context_overrides':
+                    change = change['1.1']
+                change[key] = 'Changed control evidence'
+                with self.assertRaisesRegex(ValueError, 'does not match original local input'):
+                    hierarchy_node_pairs.create_source(
+                        collection, base=self.root,
+                        read=lambda path: json.loads(Path(path).read_text()),
+                        local_only=True, load_report=lambda path: witness)
+        witness = json.loads(json.dumps(report))
+        witness['cases'][0]['evidence']['context_overrides'] = {}
+        with self.assertRaisesRegex(ValueError, 'does not match original local input'):
+            hierarchy_node_pairs.create_source(
+                collection, base=self.root,
+                read=lambda path: json.loads(Path(path).read_text()),
+                local_only=True, load_report=lambda path: witness)
+        self.assertEqual(self.calls(), [])
+
+
+    def test_local_collection_schema4_resolves_each_original_entry_once(self):
+        from sse_multivector import hierarchy_node_pairs
+
+        source = self.local_source()
+        source['nodes'].extend([{**source['nodes'][0], 'id': f'duplicate-{i}'} for i in range(3)])
+        self.write('source.json', source)
+        reads = []
+
+        def read(path):
+            reads.append(Path(path))
+            return json.loads(Path(path).read_text())
+
+        cases, summary = hierarchy_node_pairs.create_source(
+            {'schema_version': 2, 'local_schema_version': 4,
+             'sources': [{'path': 'source.json'}], 'review': {}},
+            base=self.root, read=read, local_only=True)
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(summary['historical_witnesses'], 4)
+        self.assertEqual(reads.count(self.root / 'notes.json'), 2)
+        self.assertEqual(self.calls(), [])
+
+
+    def test_local_collection_schema4_rejects_invalid_target_schema(self):
+        original = self.local_source()
+        self.write('legacy-source.json', original)
+        for index, version in enumerate((None, True, 1, 3, 4.0, '4')):
+            with self.subTest(version=version):
+                self.write('source.json', {'schema_version': 2,
+                    'local_schema_version': version,
+                    'sources': [{'path': 'legacy-source.json'}], 'review': {}})
+                result = self.cli('prepare', f'bad-target-{index}', '--spec', self.spec, ok=False)
+                self.assertIn('collection local_schema_version must be 4', result.stderr)
+        self.assertEqual(self.calls(), [])
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
