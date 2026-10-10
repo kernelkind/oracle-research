@@ -1,10 +1,22 @@
 # October 18 release decisions
 
-Updated October 8, 2026. This is the written record of the planning discussion.
+Updated October 10, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
 are recorded below; other weekly targets and exact dates remain proposals.
+
+**Distillation preparation — October 10:** the user approved identifying one
+student model for Bootstrap and one for Compare while both prompts remain
+under development, so their eventual final fine-tunes can each run as one
+planned campaign after freeze. Investigate model suitability and verify the
+training paths before that handoff. The work is distillation preparation,
+not prompt or hierarchy development. Neither student, final target format,
+training volume nor recipe is selected. Current subject-derived qualification
+inputs require ASv6.100; pre-ASv6.100 results remain historical evidence.
+The separate SP model decision, release gates, schedule and spending approvals
+are unchanged. See the
+[owned model investigation](../../../oracle-mvp-shr-student-prep-v1/sse_multivector/SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 
 The user approved a read-only focused task graph backed by
 [`release-plan.json`](release-plan.json). Agents maintain its task text, status

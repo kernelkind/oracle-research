@@ -1,4 +1,100 @@
-# SHR student model research
+# Bootstrap and Compare student model research
+
+## Bootstrap and Compare selection
+
+Updated October 10, 2026. The authorized goal is one student choice per prompt
+and verified training readiness before freeze, followed by one planned final
+fine-tune per prompt. **Neither model is selected.** Both prompts are still
+being developed. Earlier SHR results below inform candidate priorities but
+are not measurements of the new tasks. See
+[current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+
+Bootstrap consumes a selected ASv6.100 subject, its complete original selected
+root tree and full post, then generates a standalone meaning. Its present
+four-field API also carries ambiguities, resolutions and quoted evidence.
+It needs a generative model; a classification-only Kev or Ettin checkpoint
+cannot supply this contract. Compare consumes already fixed meanings and a
+canonical branch, then decides one of five relations. That permits a cheaper
+decision readout if the final interface allows it. The present Compare API
+also copies the local meaning and requires a nonempty diagnostic reason.
+Do not fabricate a reason or silently weaken validation to fit a model.
+
+The useful distinction is the actual supervised output and complete input,
+not the old SHR/SP model ranking. A common foundation with two adapters is
+possible; different foundations are equally possible. Neither is an approved
+architecture. Complete per-call and whole-build cost matter: a cheap decision
+head still processes the supplied branch, and small active parameter counts
+do not guarantee fast GB10 training.
+
+| Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
+| --- | --- | --- | --- |
+| Qwen3.8-27B | First dense generative reference: cached, instruction-tuned, native long context; existing NF4/LoRA path passes save/reload | Strong common-foundation reference, including direct option scoring | Current task behavior, multi-token generation training cost and complete-input training capacity |
+| Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
+| Gemma 4 26B-A4B-it | Add to the research shortlist for generative quality with fewer active parameters | Potentially useful for many repeated decisions | GB10 measurements and exact expert/attention adaptation scope; published active count is not a measured speed |
+| Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized decision candidate on the Qwen3.8 foundation | Complete current branch lengths, readout/interface agreement and transfer to fixed-meaning comparisons |
+| Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
+| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Conditional inexpensive fixed-task classifier | Task-specific learning evidence; an untrained five-way head cannot be ranked using published-checkpoint answers |
+
+This is a research shortlist, not authorization for seven training campaigns.
+Nimble and Decider remain recorded SHR alternatives but have no demonstrated
+advantage warranting first priority on the new tasks. Gemma 4 31B is a potential
+larger independent quality reference if 12B/26B leave an unresolved semantic
+gap; it is not automatically selected from the separate SP pilot.
+
+The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
+describes a post-trained dense 27B hybrid-attention model, native 262,144-token
+context and an explicit non-thinking mode. These properties support investigating
+controlled meaning generation and one-pass decisions; they do not demonstrate
+Bootstrap faithfulness or set containment accuracy.
+The [Qwen3.6 card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B)
+specifies 35B total / 3B active parameters and native 262,144-token context.
+Its smaller active workload is a reason to measure it locally, not an inference
+that it trains like a dense 3B model.
+
+Google's [Gemma 4 card](https://huggingface.co/google/gemma-4-12B-it)
+specifies 256K context for 12B, 26B-A4B and 31B. Its MoE has 25.2B total and
+3.8B active parameters; 12B uses a dense unified decoder. Google reports stronger
+general reasoning results for 26B/31B than 12B, but these results involve their
+own benchmark protocols and are not tests of our task or non-thinking readout.
+For MoE fine-tuning, inspect which expert tensors receive adapters before
+comparing an attention-only adaptation with dense all-linear LoRA.
+
+The current [Kev-9B card](https://github.com/jaredpalmer/kev/blob/main/docs/model-cards/kev-9b.md)
+reports an 8,192-token validated context despite serving longer states. The
+16K contract bucket fails its predefined tolerance. This makes complete branch
+length an actual eligibility question for the compact model. The
+[Kev-27B card](https://github.com/jaredpalmer/kev/blob/main/docs/model-cards/kev-27b.md)
+reports validated context through 65,536 tokens under its contract test and
+describes full-backbone fine-tuning of the post-trained Qwen3.8 release.
+Neither result establishes behavior on hierarchy meanings or after our NF4
+quantization. The models' own source-dependent calibrated temperatures should
+not set hierarchy thresholds without task-specific validation.
+
+An October 10 read-only Hub revision/file-hash check finds that the locally
+measured Kev-9B revision `db029f08b290afd9fee4aa4bbcd9ae48602d1eb0` and
+Kev-27B revision `af0e6d551bdc2cc724f3e9d7a8bee1cd4fb8f7bf` still equal
+their respective Hub `main` revisions; no weights changed. Model cards' shorter
+release references are not substitutes for these exact tested identities.
+No duplicate upgrade benchmark is needed.
+
+The [paired encoder/decoder research](https://arxiv.org/abs/2507.11412)
+controls pretraining data and compute and reports architecture-specific
+advantages on classification versus generation. This supports considering
+Ettin for Compare rather than Bootstrap. It does not establish that a compact
+encoder can learn our abstraction boundaries from the eventual corpus, and
+ordinary NLI labels cannot be mapped directly to the five relations.
+
+Existing GB10 causal-LM timing probes optimize five vocabulary IDs at one
+position. They support Compare-style readout readiness, not Bootstrap's
+multi-token generation cost. Current native ASv6.100 Bootstrap inputs already
+exceed the old 2,048-token measurements. Before freezing a recipe, measure the
+actual input/output lengths and training objective, then verify gradients,
+save, fresh-process reload and inference. Final student choice should explain
+which current cases distinguish the candidates and which claims remain
+predictions about fine-tuning.
+
+## Earlier SHR research and measurements
 
 Research dates: October 5–6, 2026. **Recommendations for evaluation, not an
 approved model choice or SHR training plan.** The initial literature phase
@@ -7,10 +103,10 @@ v26/v79 comparisons are recorded in [student preparation](SHR-STUDENT-PREPARATIO
 Those synthetic optimization checks do not train an SHR student. No paid
 resources were used.
 
-## Recommendation
+## SHR comparison findings
 
 **Keep a larger quality reference in matched SHR training.** Qwen3.8-27B and
-Kev-27B are strongest on the current v79 panel; the standard LM is at least
+Kev-27B are strongest on the recorded v79 panel; the standard LM is at least
 as competitive as the pointer checkpoint. Kev-9B remains a useful compact
 comparison alongside its actual Qwen3.5-9B-Base control, and Ettin-1B is the
 cheap training arm. Gemma 4 12B-it retains the independent-foundation role:
