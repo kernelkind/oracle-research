@@ -13,6 +13,9 @@ counterexample defects found in its explanations motivate the completed
 Its 14 fresh Sol/xhigh verdicts agree with the prepared targets; complete
 records receive **nine accepts, two rejects and three uncertainties** from both
 agent audits. The development set does not pass; qualification remains pending.
+The next [DSLv6 scope revision](#dslv6-scope-draft-october-10) is drafted for
+presentation with the same 14-case native preview and zero candidate calls.
+Its exact wording and trial remain pending approval.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3650,9 +3653,40 @@ Native usage is **10,666 input tokens, zero cached input, 21,320 output tokens
 (including 18,343 reasoning tokens)**. All 14 attempts have usage. The saved
 catalog API-equivalent estimate is **$0.234532**; it is not subscription billing.
 No warming or cache savings occurred. The persistent allowance records 14 of
-28 attempts used. Keep development on small cases: address unsupported universal
-definitions and unresolved reference/list interpretation before proposing a
-broader regression trial.
+28 attempts used. The next authorized step drafts a focused scope revision for
+presentation before inference. Reference/list interpretation remains unresolved;
+the development set must pass before proposing a broader regression trial.
+
+## DSLv6 scope draft (October 10)
+
+The user authorized drafting a focused revision after the DSLv5 trial; exact
+[DSLv6](relationship-prompt-v6.md) wording and its trial remain pending approval.
+Against approved DSLv5, only the version title and required-versus-permitted
+paragraph change. The paragraph now explicitly forbids adding a type, domain
+or qualifier when paraphrasing a restriction or relating restrictions unless
+the complete wording requires it. This targets both observed human-only
+additions: the Incest definition and the "same people" relationship in the
+sexually-attractive-mothers record. Necessary implied meanings remain allowed;
+the change includes no case-specific examples and has not been tested.
+
+The ASv6.100 passage, full parent record, occurrence/timing safeguards,
+counterexample requirements, template variables and `valid`/`reason` JSON
+contract remain unchanged. Named-reference identity and inclusive-list scope
+remain open; the draft neither settles those questions nor changes frozen
+targets or prior reviews. Production still defaults to DSLv2. Prompt adoption,
+qualification and lower-effort testing remain pending.
+
+Native `revise` creates the hash-bound receipt. Native `prepare --from` the
+completed DSLv5 experiment, with `--prompt`/`--prompt-id` and the current shared
+worker but without `--repeat`, creates `relationship-dslv6-preview`: **14
+distinct unchanged complete inputs, 14 unchanged valid saved DSLv5 baselines,
+14 new requests and zero candidate attempts**. Sol/xhigh, subscription SSE,
+schema, source evidence and mechanical rules stay fixed. All 45 code bindings
+and 268 source bindings match at preparation. The complete fixed instructions
+including AS contain 707 estimated `o200k_base` tokens, below the 1,024-token
+threshold; no prefix warming is prepared. The inherited concurrency field is
+16; current dispatch uses automatic shared queue admission. No new model calls
+are authorized until the exact draft has been presented and approved.
 
 ## Actual distilled wording: offline preview (October 8)
 

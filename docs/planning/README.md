@@ -290,6 +290,9 @@ agree with prepared targets; two named-reference Boolean interpretations remain
 unresolved. Complete records receive nine accepts, two rejects and three
 uncertainties in both agent audits. The development set does not pass;
 reviewer qualification and prompt adoption remain pending.
+The next [DSLv6 scope draft](../../sse_multivector/distillation-review-v1/README.md#dslv6-scope-draft-october-10)
+targets added qualifiers while preserving the AS rule and schema. Its same-input
+14-case native preview makes zero calls; wording and trial approval are pending.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
 paused. The completed ten-note run retains its frozen concurrency of 16; the
 current shared runner uses automatic queue admission for future dispatch.
