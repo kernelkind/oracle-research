@@ -1,0 +1,126 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "M01",
+      "local": {
+        "note_id": "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+        "number": "1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M02",
+      "local": {
+        "note_id": "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+        "number": "5"
+      },
+      "review": {}
+    },
+    {
+      "id": "M03",
+      "local": {
+        "note_id": "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M04",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M05",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M06",
+      "local": {
+        "note_id": "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M07",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1.3"
+      },
+      "review": {}
+    },
+    {
+      "id": "M08",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "3.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M09",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M10",
+      "local": {
+        "note_id": "d8c979a95c694844c8852080c11945744aadfffc54b5ceda47243ab80a247f85",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M11",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M12",
+      "local": {
+        "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+        "number": "2.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M13",
+      "local": {
+        "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+        "number": "5.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M14",
+      "local": {
+        "note_id": "76e19c3e48e6b8fe12972fb23296b50c2c2fd24ed81e8d2cdaf0a4ebdee3037f",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "M15",
+      "local": {
+        "note_id": "862486d8ab23753c39aa9484b1beb52b51e59369f91eb037f2898c5ed9b1f75e",
+        "number": "5.1"
+      },
+      "review": {}
+    }
+  ]
+}

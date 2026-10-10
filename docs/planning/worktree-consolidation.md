@@ -17,18 +17,24 @@ The user subsequently requested landing the completed
 That record, its exact Bootstrap-v96 / Compare-v48 prompt files and its two menu
 recipes are integrated separately from the research constructor history.
 The `oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree remains because
-its native receipts, target artifacts and unmerged selection/shaping extensions are still needed
+its native receipts, target artifacts and frozen source paths are still needed
 to inspect and reproduce the evidence. The branch snapshot below records the
 earlier mapping, rather than the status of this later bounded landing.
 
-The canonical construction foundation (`canonical_trial`, continuation and
-local-node input adapters) and opt-in
-[graph-search selection](../../sse_multivector/canonical-graph-search-v1.md)
-are also integrated. The branch-table statements about their absence describe
-the earlier inventory. Remaining selective, ranking, audit and viewer extensions
-are separate integration work. The graph-search task worktree remains because
-its completed native trials bind to its exact source paths; their receipts and
-ignored artifacts must remain reproducible.
+The subsequent authorized runtime integration lands canonical construction,
+continuation, selective discovery, guarded comparison selection, audit, shaping,
+viewer export, saved-policy evaluation and native usage accounting in coherent
+tested chunks. Execution remains in the shared experiment runner, and main's
+newer adapters remain supported. This integrates the current canonical workflow
+without adopting every inherited prototype or historical prompt revision.
+The retained original research branch still preserves that older history;
+its unmerged commit count does not mean the current runtime is absent from main.
+
+The opt-in [graph-search selection](../../sse_multivector/canonical-graph-search-v1.md)
+and bounded shaping selection from main also remain available; this integration
+does not change the evaluated generation policy. The graph-search task worktree
+remains because completed native trials bind to its exact source paths and
+ignored artifacts.
 
 ## Main additions to assess
 

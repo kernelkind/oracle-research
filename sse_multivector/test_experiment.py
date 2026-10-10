@@ -1130,13 +1130,16 @@ class ExperimentTests(unittest.TestCase):
         return path
 
     def cli(self, *args, ok=True, env=None):
+        # A bounded continuation executes multiple prepared experiment phases.
+        # Keep its test deadline separate from a single CLI operation.
+        timeout = 120 if args and args[0] == "continue-canonical-trial" else 30
         result = subprocess.run(
             [sys.executable, str(CLI), *map(str, args)],
             cwd=self.root,
             env={**os.environ, "FAKE_RUNNER_LOG": str(self.log), **(env or {})},
             text=True,
             capture_output=True,
-            timeout=30,
+            timeout=timeout,
         )
         if ok:
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)

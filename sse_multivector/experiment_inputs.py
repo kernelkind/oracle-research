@@ -15,11 +15,13 @@ try:
     from . import extraction_pipeline as engine
     from . import grouped_masks
     from . import hierarchy_inputs
+    from . import corpus_inputs
     from .prepare_category_title_inputs import prepare as prepare_titles
 except ImportError:
     import extraction_pipeline as engine
     import grouped_masks
     import hierarchy_inputs
+    import corpus_inputs
     from prepare_category_title_inputs import prepare as prepare_titles
 
 
@@ -53,10 +55,13 @@ def prepare_file(dataset, path, template, load_report=None):
     path = Path(path).resolve()
     sources = {}
 
-    def read(source_path):
+    def read_bytes(source_path):
         raw = source_path.read_bytes()
         sources[str(source_path)] = hashlib.sha256(raw).hexdigest()
-        return json.loads(raw)
+        return raw
+
+    def read(source_path):
+        return json.loads(read_bytes(source_path))
 
     source = read(path)
     preparation = None
@@ -139,43 +144,7 @@ def prepare_file(dataset, path, template, load_report=None):
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'posts', 'subjects'} and 'sources' in source:
-        engine._expect_fields(source, 'post sources', {'schema_version', 'sources'})
-        if type(source['schema_version']) is not int or source['schema_version'] != 1:
-            raise ValueError('expected post sources schema_version 1')
-        if not isinstance(source['sources'], list) or not source['sources']:
-            raise ValueError('post sources require a nonempty sources array')
-        notes, paths = [], set()
-        for reference in source['sources']:
-            engine._expect_fields(reference, 'post source', {'path', 'format'}
-                                  | ({'select'} & reference.keys()))
-            source_path = engine._resolve_path(reference['path'], 'post source', path.parent)
-            if source_path in paths:
-                raise ValueError('duplicate post source path')
-            paths.add(source_path)
-            selected = reference.get('select')
-            if selected is not None:
-                engine._validate_string_array(selected, 'post source selection', allow_empty=False)
-                if len(set(selected)) != len(selected):
-                    raise ValueError('duplicate post source selection')
-            if reference['format'] == 'posts':
-                supplied = read(source_path)
-            elif reference['format'] == 'jsonl':
-                raw = source_path.read_bytes()
-                sources[str(source_path)] = hashlib.sha256(raw).hexdigest()
-                supplied = dict(schema_version=1, notes=[])
-                for row_number, line in enumerate(raw.splitlines(), 1):
-                    if not line.strip():
-                        continue
-                    row = json.loads(line)
-                    if not isinstance(row, dict):
-                        raise ValueError('post JSONL row must be an object')
-                    supplied['notes'].append(dict(note_id=row['note_id'], text=row['content'],
-                        origin=dict(source_path=str(source_path), source_row=row_number,
-                                    **{k: row[k] for k in ('pubkey', 'split') if k in row})))
-            else:
-                raise ValueError('post source format must be posts or jsonl')
-            notes.extend(case['evidence'] for case in prepare_posts(supplied, selected))
-        source = dict(schema_version=1, notes=notes)
+        source = corpus_inputs.load(source, path.parent, read, read_bytes=read_bytes)
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         try:
             from . import parent_guide_workflow as guides
