@@ -1,5 +1,9 @@
 # Candidate-selection tests from the completed ASv6.100 build
 
+Current selection results and corrected original-call accounting are recorded in
+[the ASv6.100 selection study](candidate-ranking-as100-study-v1.md). The frozen
+cases and expected outcomes are unchanged.
+
 **Prepared:** `selection-as100-fifty-v2`, 120 placement cases from the completed
 50-note ASv6.100 / Bootstrap-v96 / Compare-v48 construction. These are added
 alongside the [177 historical ASv6.48 cases](selection-regressions-v1.md), which
