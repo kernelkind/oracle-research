@@ -25,7 +25,7 @@ training volume, settings or student choices. Their source-bound data roles and
 qualification requirements are recorded in the owned preparation document.
 The separate SP model decision, release gates, schedule and spending approvals
 are unchanged. See the
-[owned model investigation](../../../oracle-mvp-shr-student-prep-v1/sse_multivector/SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
+[model investigation](../../sse_multivector/SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 
 The user approved a read-only focused task graph backed by
 [`release-plan.json`](release-plan.json). Agents maintain its task text, status

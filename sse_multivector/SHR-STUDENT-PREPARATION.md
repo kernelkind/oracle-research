@@ -290,8 +290,11 @@ gradients, changed adapters and exact saved/reloaded scores. All eleven benchmar
 admission/native integration tests pass. The full 8,192/13,312-token, 2,048-target-
 token rerun now completes optimization and saves **78,059,520 trainable adapter
 parameters**. Measured updates are **27.30 / 49.80 seconds**, with **54.21 / 57.65
-GiB** peak CUDA allocation. Fresh-process checkpoint verification remains pending;
-these synthetic suffix measurements do not establish task learning.
+GiB** peak CUDA allocation. Fresh-process verification passes: saved adapter
+weights and probe scores match, and both lengths complete finite inference.
+Training and verification PIDs are 1445286 and 1482840. The source-bound report is
+`target/bootstrap-compare-student-v1/bootstrap-gemma26-capacity-v2-report.json`.
+These synthetic suffix measurements do not establish task learning.
 
 The separate Compare selection freezes 13 pairs / 26 native reciprocal inputs:
 three complete source triangles, a greetings-equivalence candidate, activity
