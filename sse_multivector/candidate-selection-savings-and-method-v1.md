@@ -140,6 +140,7 @@ also need bounded indexed retrieval rather than an exhaustive per-query scan.
 - [Full study, alternative rankings and transfer failures](candidate-ranking-fifty-note-study-v1.md).
 - [Source-bound auxiliary vector preparation](canonical_ranking_vectors.py).
 - [Scoring, strict replay and native receipt accounting](candidate_ranking_study.py).
+- [Repeatable selection cases and historical expectations](selection-regressions-v1.md).
 - Frozen result: `target/candidate-ranking-study-v1/final-verification-v3.json` in
   `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-candidate-rankings-v1`.
 
