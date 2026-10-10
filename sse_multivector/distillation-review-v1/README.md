@@ -3501,10 +3501,12 @@ development set passes. The original 50 random plus ten challenge answers
 remain the very final whole-process validation. Cases come from the agreed ten
 notes; repeated placements and near-identical anatomy comparisons do not create
 additional kinds of test. Every call retains its complete production input.
-Sol/xhigh, subscription SSE, concurrency 16, ASv6.100, schemas, mechanical rules,
-provider-only retries and eligible-prefix caching remain unchanged. Lower-effort
-testing remains paused, and exact future prompt revisions require presentation
-before calls.
+Sol/xhigh, subscription SSE, ASv6.100, schemas, mechanical rules, provider-only
+retries and eligible-prefix caching remain unchanged. The user requested
+concurrency 16; current shared-runner dispatch uses automatic queue admission,
+as recorded with the [DSLv5 preview](#dslv5-definition-and-counterexample-draft-october-10).
+Lower-effort testing remains paused, and exact future prompt revisions require
+presentation before calls.
 
 Include observed failures, sound positive and negative decisions, and earlier
 regressions. Establish the expected decision and necessary evidence from the
