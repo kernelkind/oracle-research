@@ -10,6 +10,9 @@ absent from the parent `Claims`. All other verdicts remain correct, including
 all seven authored controls. This repeats a DSLv3/high failure at xhigh;
 consistent behavior remains unestablished and lower-effort testing stays paused.
 The existing lower-effort study remains bound to DSLv2.
+The [DSLv4 evidence record draft](#dslv4-evidence-record-draft-october-10) is now
+prepared for user review. It requires parent restrictions and child evidence
+in `reason`; wording approval and semantic testing remain pending.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2942,6 +2945,55 @@ testing paused: the parent-child reviewer still adds an unsupported performance
 requirement on a previously correct input. Resolve that inconsistency before
 restarting the reasoning-level comparison; another prompt revision, new calls
 or changes to the frozen 60-answer study are separate work.
+
+## DSLv4 evidence record draft (October 10)
+
+The user authorized drafting the proposed record of restrictions and evidence for
+review before any model calls. [DSLv4](relationship-prompt-v4.md) is **draft
+wording, unapproved and untested**. Native offline `revise` generated it from
+the last approved DSLv3 bytes, with a
+[revision receipt](relationship-prompt-v4.md.revision.json). The version title
+and response instructions change; the quoted ASv6.100 rule, existing semantic
+clarification, input variables and decision criteria remain unchanged.
+
+The existing `valid: bool` and nonempty `reason: string` contract is retained.
+The draft requires `reason` to record each parent restriction, its parent wording
+and meaning, and the child wording that preserves it or what is missing or
+changed. It includes relationships between restrictions rather than treating
+isolated word matches as preservation. An inferred occurrence, performance or
+timing requirement must be justified from the parent's meaning. A rejection
+must name the failed parent restriction and give a counterexample fitting every
+qualification of the complete child.
+
+This is required visible evidence, not just a change to JSON key order. The
+existing schema/order remains unchanged; neither JSON formatting nor the
+validator can establish accurate restriction extraction, complete evidence or
+the correctness of an inferred requirement. The reviewer could still invent the
+same requirement for an actual claim. Semantic improvement remains a hypothesis
+to test.
+
+The draft retains **one complete pair per call** and adds no model stage, subject
+batch, full hierarchy or extra source context. The fixed instructions grow by a
+constant amount; brief evidence entries scale with the supplied parent
+restrictions and child wording. Each actual restriction still needs evidence;
+there is no truncation rule or output cap substituting for completeness.
+The fuller evidence can increase output tokens and latency; a future trial must
+measure those alongside semantic correctness before expansion.
+
+An offline native preview uses the existing TL01 control solely to check
+rendering and unchanged input/schema bindings: **one unrun case, zero attempts**.
+It is not an instructional
+example in the reusable prompt or semantic qualification. The draft artifacts
+are ignored under
+`target/distillation-review-v1/relationship-dslv4-draft-20261010/`.
+No model calls, new labels, source reassessments, approved-prompt changes or
+lower-effort expansion are part of this drafting step.
+
+Next is review of the displayed DSLv4 wording. A prospective comparison with
+unchanged DSLv3 at xhigh, including existing contrasts and fresh independently
+assessed validation cases, would require approval after that review. The prior
+14 pairs remain development evidence rather than unseen qualification cases;
+the frozen 60-answer study and two-point margin remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 
