@@ -334,9 +334,15 @@ See the [high screen record](../../sse_multivector/distillation-review-v1/README
 Medium's same 297-question screen is complete: 285 decisions agree with xhigh,
 and source adjudication finds H=8, G=2, A=2, with a 1.35–2.69 percentage-point
 loss range and concerns in both relationship roles. Its fixed chosen-response
-catalog estimate is 57.8% lower than xhigh's. Low is running; no effort has
-qualified and no 10-answer expansion has started. See the
+catalog estimate is 57.8% lower than xhigh's. See the
 [medium screen record](../../sse_multivector/distillation-review-v1/README.md#initial-medium-effort-screen-october-10).
+
+Low's completed screen finds H=10, G=1, A=3 over the same 297 questions,
+with a 2.02–4.04 percentage-point loss range and a specific added-action error
+across two notes. Low will not expand. Medium is selected for the frozen
+10-answer, 405-question investigation; high remains available if medium
+degrades. No effort has qualified. See the
+[low results and selection](../../sse_multivector/distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

@@ -2344,9 +2344,93 @@ The [high/medium gate audit](../../target/distillation-review-v1/final-trial-202
 records the role concerns and found no specific recurring failure across two
 distinct notes in this screen. Its SHA-256 is
 `1953c597a39601a48cce8dd418f4a1e9ecedfe14215d2a9ccd0b8eea051d1714`.
-This is an investigation record, not promotion authorization. Low's initial
-screen is running; no effort has qualified and no 10-answer expansion has
-started. The approved study controls and full xhigh freeze remain unchanged.
+This is an investigation record, not promotion authorization. The completed
+low screen and selected next investigation follow below. The approved study
+controls and full xhigh freeze remain unchanged.
+
+## Initial low-effort screen and next-stage selection (October 10)
+
+The same fixed five-answer screen at Sol/low is complete: **283 of 297
+decisions agree with the frozen xhigh baseline**, with 14 discordances and no
+missing or conflicting panel decisions. All 14 differences have final source
+assessments: **H=10, G=1, A=3**. The correctness-loss range is **6–12 of 297
+decisions**, or **2.02–4.04 percentage points**. Even the optimistic endpoint
+exceeds the agreed two-point margin. Role results are:
+
+| Role | N | H | G | A | Loss in percentage points |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Matching | 89 | 0 | 1 | 1 | −2.25 to 0 |
+| Post support | 89 | 1 | 0 | 0 | 1.12 |
+| Actual student parent-child pairs | 61 | 6 | 0 | 1 | 8.20–11.48 |
+| Teacher/student compatibility | 64 | 5 | 0 | 1 | 6.25–9.38 |
+
+The relationship roles share six exact prompts, including two harmful
+differences; each counts once overall. Their distinct combined pool contains
+119 decisions, with H=9, G=0, A=2 and a 5.88–9.24-point loss range. The
+[low source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-low-source-assessment.json)
+has SHA-256
+`7e3d7964ce5e2f089ae1a16f9c3065f4671653448d65c7bd6ebaf74d44be407e`.
+These bounds retain unresolved source truth; they are not confidence intervals
+or population guarantees. Initial reference votes are not gold.
+
+J73's latest revision and J804/J001 remain unresolved. The
+[provisional-to-final reconciliation](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-low-provisional-final-reconciliation.json)
+verifies all 178 matching/support chosen decisions and receipt sets against
+the final panel, allowing Jd806's accepted source correction to count as G.
+Original judgments, receipts and reconciliation flags remain preserved;
+the separate proof closes the final-receipt requirement. Its SHA-256 is
+`9e3d619650a853a6fc766cc44ee689d8983c1028afb501cd3eff2331b6f5043f`.
+
+The [specific failure audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-low-restriction-pattern-audit.json)
+finds low adding a requirement that a post be, present or perform the parent
+subject, although the child preserves that meaning in a clause or instruction
+object. Three distinct harmful prompts establish this error across **R01 and
+R02**, two distinct notes. Repeated paths within R02 and two prompts within
+R01 do not add independent notes. Medium and high also fail some R01 cases,
+but preserve the R02 pair; this specific two-note recurrence is established
+for low. The audit SHA-256 is
+`c1d778efb639806716cd48f25053c88d3a70813ed9bfbcfc6f941ae6dfb21ee8`.
+The [final independent three-effort audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-effort-selection-audit.json)
+checks every current disagreement, revision and role count; its SHA-256 is
+`aa661fd7351f2281ea5bf527d0c3d28a4847cbf5f9ea4bc36ecc4f5bc230ec83`.
+
+The low pipeline took **58 min 43 s**, with 714 successful comparison attempts,
+one transient failure recovered on the second attempt, two eligible-prefix
+warmups and 1,866 saved-answer reuse rows. The separate panel bridge took
+**64 s**, with 49 fresh successful calls and no failures, reuse or warmups.
+Its [execution seal](../../target/distillation-review-v1/final-trial-20261009/evaluation-low/stage-5-complete-execution.md)
+preserves separate reports. The five pipeline answers yield two complete
+scores and three ungraded `inconsistent_verdicts`; none is pending or invalid.
+
+For the identical 297 frozen chosen responses, the API-equivalent catalog
+estimate falls from **$1.4758404 at xhigh to $0.552834 at low**, or **62.54%
+lower**. Total observed input is 243,833 tokens at both efforts; cached input
+is 33.23% at xhigh and 30.71% at low. Output falls 81.84% and reasoning falls
+94.95%; output already includes reasoning. The
+[low fixed-panel cost analysis](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-low-fixed-panel-cost-analysis.json)
+has SHA-256
+`349da31c2e160225fa4a37d6db2964937c56492b418942c6cd5693d8d6cacd56`.
+The recovered low failure is within this panel and lacks usage, so complete
+costs for all paid attempts remain unknown. Two shared warmups cost $0.007096
+separately; reuse aliases add no paid attempt. These estimates are not actual
+provider charges. Summed chosen model-worker durations fall 66.54%; that sum
+is not wall time. Historical cache availability and adaptive branch counts
+differ, so these observations do not isolate reasoning effort's cost or runtime
+effect.
+
+The [recorded selection](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-effort-selection-decision.json)
+selects **medium for the frozen 10-answer investigation**, with **405 distinct
+questions**. Low will not expand. Medium's borderline five-answer result and
+relationship losses require further source assessment; this is investigation,
+not qualification. High remains available if medium degrades significantly or
+shows a new recurring failure. The selection SHA-256 is
+`a4f97ec416736b44bb6b020035386877dfe726d3089f2bfc12399482648edb08`.
+The next five source answers follow the frozen order and preserve prior chosen
+outputs and receipts. Their added shared prefixes are below the warming
+threshold, so no new warmups are planned. One native coordinator, concurrency 8,
+provider-only two-attempt retries, prompts and mechanical rules remain fixed.
+No effort has qualified, and bulk grading and reserved-test access remain
+unapproved. This checkpoint changes no prompt, rubric or release policy.
 
 ## Actual distilled wording: offline preview (October 8)
 

@@ -1895,11 +1895,21 @@ A=2, giving a 1.35–2.69 percentage-point loss range, the same overall range as
 high. Both relationship roles have larger losses. These bounds describe truth
 uncertainty, not statistical confidence or population reliability. The fixed
 chosen-response catalog estimate is 57.8% lower than xhigh's; shared warmups
-and adaptive pipeline expenses remain separate. Low is running; no effort
-has qualified and no 10-answer expansion has started. The
+and adaptive pipeline expenses remain separate. The
 [medium screen record](../../sse_multivector/distillation-review-v1/README.md#initial-medium-effort-screen-october-10)
 preserves the source assessment, cost comparison and role investigation.
 Prompts, frozen references, mechanical rules and approval scope remain unchanged.
+
+**October 10 low screen and next investigation:** all 297 paired questions are
+complete, with 283 agreements and source-adjudicated H=10, G=1, A=3. The
+2.02–4.04 percentage-point loss range and an independently checked specific
+failure across two notes rule out expanding low. Medium is selected for the
+frozen 10-answer investigation with 405 distinct questions; high remains
+available if medium degrades. No effort has qualified. This implements the
+approved study, with unchanged prompts, rules and controls; it adds no release
+policy or population guarantee. The
+[low results and selection record](../../sse_multivector/distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10)
+preserves the exact source assessments, original receipts and separate costs.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

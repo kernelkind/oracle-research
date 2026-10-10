@@ -1074,9 +1074,20 @@ The medium screen is complete on the same 297 questions: 285 agreements,
 1.35–2.69 percentage points, with larger losses in both relationship roles.
 The fixed chosen-response catalog estimate is 57.8% lower than xhigh's;
 shared warmups and adaptive pipeline costs remain separate, and missing
-failed-attempt usage leaves broader costs unknown. Low is running; no effort
-has qualified and no 10-answer expansion has started. See the
+failed-attempt usage leaves broader costs unknown. See the
 [medium screen evidence](distillation-review-v1/README.md#initial-medium-effort-screen-october-10).
+
+Low's same 297-question screen is complete: 283 agreements and H=10, G=1,
+A=3 give a 2.02–4.04 percentage-point loss range. A specific added-action
+failure recurs across two notes, so low will not expand. Medium is selected
+for the frozen 10-answer investigation with 405 distinct panel questions;
+dispatch adds five source answers while retaining previous outputs and receipts.
+The added shared prefixes are too short for new warmups. Concurrency 8,
+provider-only two-attempt retries and the approved review rules remain fixed.
+No effort has qualified; high remains available if medium degrades. Low's
+fixed chosen-response catalog estimate is 62.54% lower than xhigh's, but its
+complete paid cost remains unknown because a recovered failure lacks usage.
+See the [low evidence and selection](distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
