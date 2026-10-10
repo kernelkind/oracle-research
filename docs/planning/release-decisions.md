@@ -1855,6 +1855,19 @@ remain open, and reserved test data stays sealed. The
 [implementation record](../../sse_multivector/distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9)
 retains measured savings and their conditional limits.
 
+**Reasoning-level study approved October 9:** after accepting the mechanical
+changes, the user authorizes finishing the same 60-answer trial at Sol/xhigh.
+After completion, screen lower reasoning levels on a small subset, then expand
+the lowest promising effort until all 60 answers are reviewed at that level.
+If correctness degrades significantly, stop that effort and step back up one
+level. The user explicitly accepts up to **2 percentage points** of correctness
+loss versus xhigh. Compare reviewer judgments against source evidence; student
+scores and xhigh agreement alone do not establish reviewer accuracy. Prompts,
+data, mechanical rules, concurrency 8 and eligible natural-prefix caching stay
+fixed. Preserve frozen references and original receipts. Bulk pilot grading and
+reserved-test access remain unapproved. See the
+[study record](../../sse_multivector/distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

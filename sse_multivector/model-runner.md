@@ -1003,7 +1003,7 @@ existing scores and compare them with frozen expectations, keeping unanswered or
 ambiguous work visible. Use `--output FILE` on the show command to retain the full
 report; terminal output contains its summary and usage.
 
-The current trial has completed DSMv3/DSSv2 while DSLv2 is paused at the user's
+The original trial completed DSMv3/DSSv2 before DSLv2 was paused at the user's
 request to investigate scalability. Raw
 semantic agreements are 569/591 and 585/600 resolved distinct inputs; unresolved
 inputs and mechanical decisions are reported separately. Thirty-seven native
@@ -1032,7 +1032,17 @@ with the same selection/assessment and prior history root preserves receipts.
 `run-distillation-review-evaluation --max-new-attempts 0` joins verified saved
 results with no new inference. See the
 [additional mechanical rules and conditional workload counts](distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9).
-The trial remains paused; this implementation does not qualify the reviewers.
+The user subsequently authorizes finishing the separate mechanical evaluation
+at xhigh, then screening high/medium/low on a small paired subset and expanding
+the lowest promising level to all 60 answers. The accepted correctness loss is
+at most 2 percentage points versus xhigh; significant degradation requires
+stepping back up a level. Reviewer accuracy compares semantic decisions against
+source evidence and assessed references, with mechanical decisions and copied
+occurrences excluded. Xhigh agreement and student score similarity alone do not
+qualify an effort. Native request identity includes effort, so saved xhigh
+outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
+concurrency, retries and eligible prefix policy stay fixed. See the
+[reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:

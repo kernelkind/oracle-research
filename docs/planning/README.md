@@ -305,7 +305,13 @@ contradiction checks and explicit skipped evidence. Complete scores do not imply
 complete diagnostics or reviewer qualification. The measured conditional workload
 is 5,201 distinct requests rather than 11,764, before future stopping, warmups and
 retries; this is not a runtime or accuracy estimate. Original selections, sealed
-references and receipts remain intact, and the trial remains paused. See the
+references and receipts remain intact. The user now authorizes completing xhigh,
+then a small lower-effort comparison and nested expansion to all 60 answers.
+The accepted correctness loss is at most 2 percentage points versus xhigh; step
+back up a level if performance degrades. Reviewer decisions need source evidence,
+not merely matching student scores or agreement with xhigh. See the
+[reasoning-level study](../../sse_multivector/distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9)
+and the
 [implemented rules](../../sse_multivector/distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9).
 
 Freeze prep and pilot stages

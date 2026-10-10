@@ -19,8 +19,9 @@ The [offline token and runtime estimate](#validation-review-token-and-runtime-es
 projects about 15.34 hours for those questions at eight continuously occupied
 slots, using 59 selected fresh saved verdicts. It excludes coverage-placement
 comparisons and is not a complete-evaluation runtime estimate. The complete-answer
-trial is paused at the user's request to investigate scalability; qualification
-remains pending.
+trial has resumed at xhigh after the approved mechanical changes; qualification
+remains pending. The subsequent lower-effort study is recorded in
+[reasoning-level comparison](#reasoning-level-comparison-approved-october-9).
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
@@ -2015,8 +2016,8 @@ proof validation, including labels newly contradicted by ancestor proofs. New
 schema-2 answer assessments validate the expanded proofs before freezing.
 `run-distillation-review-evaluation --max-new-attempts 0` joins verified saved
 receipts with no new model attempts; a later positive allowance is required for
-new inference. The trial remains paused, bulk qualification remains open and
-the reserved test stays sealed.
+new inference. At that checkpoint the trial remained paused; bulk qualification
+remained open and the reserved test stayed sealed.
 
 Production-path tests first reproduced unnecessary dispatch and frozen-selection
 accounting failures. The integrated review suites now pass 112 tests; selected
@@ -2040,7 +2041,45 @@ occurrences; these are numbered rows, not distinct calls. New model attempts,
 tokens and warmups are zero. Existing reviewer contradictions and the C01
 expectation conflict remain visible; this receipt join does not qualify semantic
 accuracy. The original selection, assessment seal, paused native receipts and
-bound source files are unchanged. The actual trial remains paused.
+bound source files are unchanged. At the receipt-only checkpoint the actual
+trial remained paused; the next approval resumes it.
+
+## Reasoning-level comparison approved (October 9)
+
+The user authorizes completing the same 50 random and 10 challenge answers at
+`gpt-6.1-sol/xhigh`, then testing lower reasoning levels on a small subset and
+expanding the lowest promising level until all 60 answers are complete. If
+performance degrades significantly during expansion, stop that level, step up
+one level and continue. The user explicitly accepts at most **2 percentage
+points of correctness loss versus xhigh**. This replaces the earlier pause;
+bulk pilot grading and reserved-test access remain unapproved.
+The final choice is one reasoning level used for all three checks.
+
+Compare reviewer decisions against source evidence and assessed references.
+The student `correctness` score is a different quantity. Exact mechanical
+decisions and repeated occurrences cannot inflate the semantic accuracy
+denominator. Report matching, support, actual edges and compatibility separately,
+with random and challenge cohorts distinguished. Xhigh is a comparison baseline,
+not an independent gold reference: investigate substantive disagreements using
+the trusted teacher, original post and approved rules. Existing frozen labels,
+unresolved judgments and known reference contradictions remain intact.
+
+The implementation will screen high, medium and low on the same prespecified
+small subset, then expand through nested subsets to all 60. Adaptive stopping
+can change which DSL inputs each effort executes; a fixed paired diagnostic pool
+and targeted native checks of differing inputs must accompany pipeline results.
+An unpaired agreement percentage is insufficient to select an effort. Small
+screens identify candidates; they do not establish the final loss bound.
+
+Keep the model, prompt versions, post/teacher/student wording, semantic rules,
+concurrency 8, provider-only retries and natural-prefix caching policy fixed.
+Request identity includes reasoning effort, so xhigh answers cannot substitute
+for lower-effort inference. Report actual cached tokens, warmups, reasoning
+tokens and runtime separately. OpenAI documents
+[model-dependent effort support](https://developers.openai.com/api/docs/guides/reasoning)
+and recommends
+[task-specific comparisons with typical and difficult examples](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
+Source preparations and study choices freeze before lower-effort calls.
 
 ## Actual distilled wording: offline preview (October 8)
 
