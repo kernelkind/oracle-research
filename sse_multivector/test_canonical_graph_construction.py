@@ -151,6 +151,20 @@ class CanonicalGraphConstructionTests(unittest.TestCase):
         self.assertIn('mapped canonical parent', state['steps'][-1]['reason'])
         self.assertEqual(state['nodes'], self.before)
 
+    def test_uncertain_root_holds_child_before_unvisited_mapped_parent(self):
+        self.setup_graph(with_child=True)
+        start = len(self.calls())
+        self.cli('prepare-canonical-child-trial', 'search', '--base-trial', 'trial',
+                 '--note-id', 'n2', '--graph-search')
+        self.finish({'C001': 'uncertain', 'C003': 'neither'})
+        state = self.state('search')
+        self.assertEqual(state['status'], 'complete')
+        self.assertEqual(state['steps'][-1]['status'], 'held')
+        self.assertEqual(state['steps'][-1]['reason'], 'uncertain meaning or relationship')
+        self.assertEqual(state['nodes'], self.before)
+        self.assertEqual([p['canonical']['id'] for p in self.queries(start)], ['C001', 'C003'])
+        self.assertFalse(state['steps'][-1]['graph_search']['complete'])
+
 
 if __name__ == '__main__':
     unittest.main()
