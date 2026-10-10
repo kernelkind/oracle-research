@@ -112,7 +112,8 @@ class CompareStudentPilotTests(unittest.TestCase):
             kind='causal_lm', readout='options', quantization='nf4', max_input_tokens=256,
             memory_budget_gib=8, reserve_gib=8, question=dict(instructions='Compare fixed meanings.',
                 criteria={label: label for label in LABELS}, output_field='relation')))
-        for settings in (config, dict(config, local_model_config='native.json')):
+        for settings in (config, dict(config, local_model_config='native.json'),
+                         dict(config, input_format='input_json')):
             with self.subTest(native='local_model_config' in settings):
                 self.write('fit-config.json', settings)
                 result = subprocess.run([sys.executable, '-m', 'sse_multivector.compare_student_pilot',
@@ -246,25 +247,30 @@ class CompareStudentPilotGPUIntegrationTests(unittest.TestCase):
                 bos_token_id=2, eos_token_id=2, cls_token_id=2, sep_token_id=2))
             model.save_pretrained(root/'base')
             self.targets(root)
-            config = dict(model=str(root/'base'), revision='a'*40, max_length=256,
-                epochs=[1, 2], batch_size=1, learning_rate=.001, seed=17,
-                memory_budget_gib=8, reserve_gib=8)
-            write_json(root/'config.json', config)
-            command = [sys.executable, '-m', 'sse_multivector.compare_student_pilot', 'train',
-                '--config', str(root/'config.json'), '--data', str(root/'data'), '--output', str(root/'fit')]
-            for stage in ('train', 'verify'):
-                result = subprocess.run(command+['--stage', stage], text=True, capture_output=True)
-                self.assertEqual(result.returncode, 0, result.stderr)
-            report = json.loads((root/'fit/report.json').read_text())
-            self.assertTrue(report['complete'])
-            self.assertNotEqual(report['training_pid'], report['verification_pid'])
-            self.assertEqual(report['updates'], 2)
-            self.assertEqual(report['training_examples_seen'], 2)
-            self.assertEqual([c['epoch'] for c in report['checkpoints']], [1, 2])
-            self.assertTrue(all(c['reload_matches'] for c in report['checkpoints']))
-            for checkpoint in report['checkpoints']:
-                self.assertEqual(checkpoint['evaluation']['cases'], 1)
-                self.assertEqual(checkpoint['evaluation']['decisions'][0]['case_id'], 'evaluation-fixture')
+            token_totals = {}
+            for input_format in ('full_state', 'input_json'):
+                config = dict(model=str(root/'base'), revision='a'*40, max_length=256,
+                    epochs=[1, 2], batch_size=1, learning_rate=.001, seed=17,
+                    memory_budget_gib=8, reserve_gib=8, input_format=input_format)
+                write_json(root/'config.json', config)
+                command = [sys.executable, '-m', 'sse_multivector.compare_student_pilot', 'train',
+                    '--config', str(root/'config.json'), '--data', str(root/'data'), '--output', str(root/('fit-'+input_format))]
+                for stage in ('train', 'verify'):
+                    result = subprocess.run(command+['--stage', stage], text=True, capture_output=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                report = json.loads((root/('fit-'+input_format)/'report.json').read_text())
+                self.assertTrue(report['complete'])
+                self.assertEqual(report['input_format'], input_format)
+                token_totals[input_format] = report['input_tokens']['train']['total']
+                self.assertNotEqual(report['training_pid'], report['verification_pid'])
+                self.assertEqual(report['updates'], 2)
+                self.assertEqual(report['training_examples_seen'], 2)
+                self.assertEqual([c['epoch'] for c in report['checkpoints']], [1, 2])
+                self.assertTrue(all(c['reload_matches'] for c in report['checkpoints']))
+                for checkpoint in report['checkpoints']:
+                    self.assertEqual(checkpoint['evaluation']['cases'], 1)
+                    self.assertEqual(checkpoint['evaluation']['decisions'][0]['case_id'], 'evaluation-fixture')
+            self.assertLess(token_totals['input_json'], token_totals['full_state'])
 
 
 if __name__ == '__main__':
