@@ -227,6 +227,84 @@ python3 sse_multivector/canonical_shaping_selection.py \
   --output target/canonical-shaping-selection-v1/subgroups-C005-repeat.json
 ```
 
+## Using siblings' explicit meanings
+
+The user requested repeating the screen with SSE encodings of the siblings'
+explicit meanings. The opt-in `--sibling-meanings DIRECTORY` uses the saved
+auxiliary `meaning` representation: encode the immutable meaning alone and pool
+its entire text. These are auxiliary SSE encodings, not MP masks. Each vector is
+bound to its canonical ID and exact heading/meaning, so identically titled nodes
+can retain distinct representations. Preparation verifies the native state,
+whole-meaning byte spans, request/receipt hashes, checkpoint, model and dimensions.
+
+Only the siblings' representation changes. Both their pairwise clustering and
+their cosine against unused local title vectors now use the explicit meaning.
+The 1,386 local entries, subject vectors, eligibility, score, group sizes and
+ordering stay unchanged. Their explicit meanings have not been generated.
+There is no automatic nomination or graph modification.
+
+The existing ASv6.100 auxiliary vectors cover every node of this exact native
+state. All three preparations therefore needed **zero encodings and zero model
+calls**. Reports under `target/canonical-shaping-selection-v1` bind to the
+updated implementation and existing auxiliary sources separately from earlier
+title-only reports:
+
+| Target | Title groups | Meaning groups | Identical member sets | Meaning report |
+|---|---:|---:|---:|---|
+| Food preparation C005 | 18 | 17 | 7 | `subgroups-meanings-C005-v1.json` |
+| Food C001 | 52 | 58 | 7 | `subgroups-meanings-C001-v1.json` |
+| Roots | 25 | 25 | 15 | `subgroups-meanings-roots-v1.json` |
+
+The full meanings produce substantially different neighbors:
+
+- Food preparation's nearest pair changes from **Cookware + Cooking appliances**
+  (title cosine 0.8707) to **Bread preparation + Rosemary** (meaning cosine
+  0.7623). The cookware/appliance meaning cosine is 0.5230, and that pair is no
+  longer proposed as a two-member group. Both Bread preparation and Rosemary's
+  meanings explicitly mention sourdough bread; that shared detail is a plausible
+  explanation for their attraction, not a proven causal isolation.
+- **Food smoking + Grilling** remains a pair, with meaning cosine 0.6224.
+  Its first unused candidate changes from **BBQ chicken pizza** to **Outdoor
+  grilling**. This nomination still establishes no broader-parent direction.
+- The existing **Cookware + Grilling + Cooking appliances** group remains, but
+  its first unused candidate changes from **Cooking** to **Desks**, with weakest
+  member cosine only 0.0705. Its positive separation of 0.0405 illustrates why
+  separation alone is insufficient evidence of useful affinity.
+- The nearest root pair changes from **Coffee + Slush drinks** to **Food +
+  Gardening** (meaning cosine 0.7222). Food's meaning includes sourcing and
+  cultivation; Gardening's includes food production and produce storage.
+  Those overlapping aspects supply similarity without establishing containment.
+
+Thus the experiment establishes sensitivity to the full supplied meaning, but
+does **not** establish better parent selection or better hierarchy quality.
+It also uses an asymmetric representation: local titles against canonical
+meanings. No comparison outcome or shaping success is inferred from these
+rankings. The previous title-only default remains unchanged.
+
+Eighteen selector/receipt tests and sixty-two combined selector, traversal,
+construction, regression and auxiliary-vector tests pass. The new behavior test
+first failed because sibling-vector replacement was unsupported. Native
+preparation completed for all three targets and protected source hashes match.
+
+Repeat this controlled screen, with saved vectors and no inference:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 sse_multivector/canonical_shaping_selection.py \
+  --reference-project ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1 \
+  --state ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json \
+  --menu ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-v2/state.json \
+  --parent C005 \
+  --method subgroups \
+  --sibling-meanings ../oracle-mvp-hierarchy-candidate-rankings-v1/target/candidate-ranking-as100-v1/meaning-vectors \
+  --output target/canonical-shaping-selection-v1/subgroups-meanings-C005-repeat.json
+```
+
+Suggested next investigation, requiring approval: keep these meaning-based
+groups fixed and test local-parent retrieval using original local branch
+evidence of broader scope. This directly addresses the missing direction while
+preserving normal comparison traversal as the sole placement authority.
+
 When a new intermediate parent groups m existing siblings, replacing their
 direct choices with that parent can reduce the original group by m−1 choices.
 Measure the actual completed placement and menu, including any new overcrowded

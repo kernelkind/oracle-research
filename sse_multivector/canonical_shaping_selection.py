@@ -1,7 +1,7 @@
 """Nominate local entries that resemble several overcrowded canonical siblings.
 
 Similarity selects the next local entry; normal graph traversal owns placement.
-This bounded research selector reuses saved subject vectors and makes no calls.
+This bounded research selector reuses saved SSE vectors and makes no calls.
 """
 import argparse
 import hashlib
@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 
-def _scores(rows, siblings, vectors):
+def _scores(rows, siblings, vectors, *, sibling_vectors=None):
     identifiers = [row['id'] for row in siblings]
     keys = [(row['note_id'], row['number']) for row in rows]
     if len(set(identifiers)) != len(identifiers) or len(set(keys)) != len(keys):
@@ -20,12 +20,18 @@ def _scores(rows, siblings, vectors):
         raise ValueError('bounded shaping selection requires at most 4096 locals and 512 siblings')
     if not rows or not siblings:
         return identifiers, keys, {}, None
-    headings = list(dict.fromkeys(row['subject'] for row in [*rows, *siblings]))
+    headings = list(dict.fromkeys(row['subject'] for row in
+                                 (rows if sibling_vectors is not None else [*rows, *siblings])))
     if any(not isinstance(text, str) or not text.strip() for text in headings):
         raise ValueError('subject headings must be nonempty text')
     if any(text not in vectors for text in headings):
         raise ValueError('missing saved subject vector')
-    matrix = np.asarray([vectors[text] for text in headings], dtype=np.float64)
+    values = [vectors[text] for text in headings]
+    if sibling_vectors is not None:
+        if set(sibling_vectors) != set(identifiers):
+            raise ValueError('sibling vectors must cover exactly the supplied canonical IDs')
+        values += [sibling_vectors[identifier] for identifier in identifiers]
+    matrix = np.asarray(values, dtype=np.float64)
     if matrix.ndim != 2 or not matrix.shape[1] or not np.isfinite(matrix).all():
         raise ValueError('finite equal-dimension subject vectors required')
     norms = np.linalg.norm(matrix, axis=1)
@@ -34,10 +40,11 @@ def _scores(rows, siblings, vectors):
     matrix /= norms[:, None]
     indices = {text: i for i, text in enumerate(headings)}
     local_headings = list(dict.fromkeys(row['subject'] for row in rows))
-    sibling_vectors = matrix[[indices[row['subject']] for row in siblings]]
-    similarities = matrix[[indices[text] for text in local_headings]] @ sibling_vectors.T
+    sibling_matrix = (matrix[len(headings):] if sibling_vectors is not None else
+                      matrix[[indices[row['subject']] for row in siblings]])
+    similarities = matrix[[indices[text] for text in local_headings]] @ sibling_matrix.T
     scores = {text: similarities[i] for i, text in enumerate(local_headings)}
-    return identifiers, keys, scores, sibling_vectors
+    return identifiers, keys, scores, sibling_matrix
 
 
 def rank_candidates(rows, siblings, vectors, *, eligible=None):
@@ -66,19 +73,23 @@ def rank_candidates(rows, siblings, vectors, *, eligible=None):
                   -(row['score'] or 0), row['local']['note_id'], row['local']['number']))
 
 
-def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, limit=10):
+def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, limit=10,
+                  sibling_vectors=None):
     """Propose overlapping nearest-neighbor groups and inspect possible parents.
 
     The score is the weakest member cosine minus the strongest outside cosine.
     It measures separation, not containment direction. All proposed members must
     be eligible, while all other siblings remain in the outside comparison.
+    Optional ID-bound sibling vectors replace both clustering and candidate
+    comparison representations; local subject vectors stay unchanged.
     """
     if type(max_choices) is not int or not 2 <= max_choices <= 6:
         raise ValueError('bounded subgroup choice limit must be between two and six')
     if type(limit) is not int or not 1 <= limit <= 20:
         raise ValueError('subgroup candidate limit must be between one and twenty')
     siblings = sorted(siblings, key=lambda row: row['id'])
-    identifiers, keys, scores, sibling_vectors = _scores(rows, siblings, vectors)
+    identifiers, keys, scores, sibling_vectors = _scores(
+        rows, siblings, vectors, sibling_vectors=sibling_vectors)
     if not rows or len(siblings) < 3:
         return []
     pairwise = sibling_vectors @ sibling_vectors.T
@@ -121,19 +132,66 @@ def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, lim
                                              group['members']))
 
 
-def prepare(reference_project, state_path, menu_path, parent, output, *, method='second-best'):
+def load_sibling_meanings(directory, state_path, siblings, subject_receipt, vector_reader):
+    """Load standalone whole-meaning encodings bound to the exact native nodes."""
+    directory = Path(directory).resolve()
+    plan_path, request_path = directory / 'inputs.json', directory / 'worker-request.json'
+    plan = json.loads(plan_path.read_bytes())
+    if Path(plan['state']).resolve() != Path(state_path).resolve():
+        raise ValueError('meaning-vector plan uses a different native state')
+    protected = dict(plan['protected_sha256'])
+    for path in (plan_path, request_path, directory / 'worker-result/worker-receipt.json',
+                 directory / 'worker-result/raw-vectors.f32le'):
+        protected[str(path)] = hashlib.sha256(path.read_bytes()).hexdigest()
+    for path, expected in protected.items():
+        if hashlib.sha256(Path(path).read_bytes()).hexdigest() != expected:
+            raise ValueError('meaning-vector source changed: ' + path)
+    vectors, receipt = vector_reader.load_vectors(directory / 'worker-result', compact=True)
+    if (receipt['proposal_sha256'] != protected[str(plan_path)]
+            or receipt['request_sha256'] != protected[str(request_path)]):
+        raise ValueError('meaning vectors differ from their saved plan or request')
+    for field in ('checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model', 'dimensions'):
+        if receipt[field] != subject_receipt[field]:
+            raise ValueError('meaning-vector SSE identity differs: ' + field)
+    request = json.loads(request_path.read_bytes())
+    if request['proposal_sha256'] != receipt['proposal_sha256']:
+        raise ValueError('meaning-vector request proposal differs')
+    notes = {note['note_id']: note for note in request['notes']}
+    pairs = {pair['id']: pair for pair in plan['pairs']}
+    result = {}
+    for node in siblings:
+        pair = pairs[plan['references']['node:' + node['id']]]
+        if any(pair[field] != node[field] for field in ('subject', 'meaning')):
+            raise ValueError('saved sibling heading or meaning differs: ' + node['id'])
+        text = node['meaning']
+        digest = hashlib.sha256(text.encode()).hexdigest()
+        subject_id = hashlib.sha256((digest + f':0:{len(text.encode())}').encode()).hexdigest()[:16]
+        key = (digest, subject_id)
+        note = notes.get(digest)
+        if (tuple(pair['representations']['meaning']) != key or note is None
+                or note['text'] != text or dict(subject_id=subject_id,
+                    byte_spans=[[0, len(text.encode())]]) not in note['subjects']):
+            raise ValueError('sibling encoding is not its standalone full meaning: ' + node['id'])
+        result[node['id']] = vectors[key]
+    return result, protected
+
+
+def prepare(reference_project, state_path, menu_path, parent, output, *, method='second-best',
+            sibling_meanings=None):
     """Freeze a nomination against existing native state, menu and SSE receipts."""
     if __package__:
         from .candidate_ranking_study import _reference
     else:
         from candidate_ranking_study import _reference
-    workflow, trial, _, _, subject_vectors, _ = _reference(reference_project)
+    workflow, trial, _, _, subject_vectors, vector_reader = _reference(reference_project)
     state_path, menu_path, output = (Path(path).resolve() for path in
                                       (state_path, menu_path, output))
     if output.exists():
         raise FileExistsError(output)
     if method not in ('second-best', 'subgroups'):
         raise ValueError('unknown shaping selection method')
+    if sibling_meanings is not None and method != 'subgroups':
+        raise ValueError('sibling meanings require the subgroup method')
     state_bytes, menu_bytes = state_path.read_bytes(), menu_path.read_bytes()
     protected = {str(state_path): hashlib.sha256(state_bytes).hexdigest(),
                  str(menu_path): hashlib.sha256(menu_bytes).hexdigest()}
@@ -190,13 +248,22 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
         protected[path] = expected
     own_source = Path(__file__).resolve()
     protected[str(own_source)] = hashlib.sha256(own_source.read_bytes()).hexdigest()
-    texts = {row['subject'] for row in [*rows, *siblings]}
+    sibling_vectors = None
+    if sibling_meanings is not None:
+        sibling_vectors, meaning_sources = load_sibling_meanings(
+            sibling_meanings, state_path, siblings, receipt, vector_reader)
+        for path, expected in meaning_sources.items():
+            if path in protected and protected[path] != expected:
+                raise ValueError('conflicting meaning-vector source: ' + path)
+            protected[path] = expected
+    texts = {row['subject'] for row in (rows if sibling_vectors is not None else [*rows, *siblings])}
     vectors = {}
     for text in texts:
         digest = hashlib.sha256(text.encode()).hexdigest()
         vectors[text] = saved[(digest, digest[:16])]
     ranked = rank_candidates(rows, siblings, vectors, eligible=eligible) if method == 'second-best' else []
-    groups = rank_subgroups(rows, siblings, vectors, eligible=eligible) if method == 'subgroups' else None
+    groups = rank_subgroups(rows, siblings, vectors, eligible=eligible,
+                           sibling_vectors=sibling_vectors) if method == 'subgroups' else None
     for path, expected in protected.items():
         if hashlib.sha256(Path(path).read_bytes()).hexdigest() != expected:
             raise ValueError('selection source changed: ' + path)
@@ -210,6 +277,11 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
     if groups is not None:
         report.update(groups=groups, sibling_subjects={node['id']: node['subject'] for node in siblings},
                       interpretation='Offline subgroup candidates only; no parent direction or automatic selection is established.')
+    if sibling_vectors is not None:
+        report.update(sibling_meanings={node['id']: node['meaning'] for node in siblings},
+            sibling_representation='standalone full explicit meaning', local_representation='standalone subject',
+            method='nearest sibling meaning groups; weakest member minus strongest outside meaning cosine',
+            meaning_vectors=str(Path(sibling_meanings).resolve()))
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open('x') as stream:
         stream.write(json.dumps(report, indent=2, allow_nan=False) + '\n')
@@ -226,9 +298,11 @@ def main():
     parser.add_argument('--parent', help='canonical parent ID; omit to consider roots')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--method', choices=('second-best', 'subgroups'), default='second-best')
+    parser.add_argument('--sibling-meanings', type=Path,
+                        help='saved auxiliary SSE directory; use full meanings for subgroup siblings')
     args = parser.parse_args()
     print(json.dumps(prepare(args.reference_project, args.state, args.menu, args.parent, args.output,
-                             method=args.method)))
+                             method=args.method, sibling_meanings=args.sibling_meanings)))
 
 
 if __name__ == '__main__':

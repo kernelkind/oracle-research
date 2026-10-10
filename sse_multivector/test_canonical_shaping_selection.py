@@ -1,10 +1,52 @@
 """Local nominations for overcrowded groups; relationships stay with traversal."""
 import unittest
+import hashlib
+import json
+from pathlib import Path
+import struct
+import tempfile
 
-from sse_multivector.canonical_shaping_selection import rank_candidates, rank_subgroups
+from sse_multivector import ancestor_cosine_probe
+from sse_multivector.canonical_shaping_selection import (
+    load_sibling_meanings, rank_candidates, rank_subgroups)
 
 
 class ShapingSelectionTests(unittest.TestCase):
+    def test_sibling_meanings_change_groups_and_candidates_without_changing_locals(self):
+        siblings = [dict(id='C1', subject='A'), dict(id='C2', subject='B'),
+                    dict(id='C3', subject='C')]
+        rows = [dict(note_id='a', number='1', subject='AB'),
+                dict(note_id='b', number='1', subject='AC')]
+        vectors = {'A': [1, 0, 0], 'B': [1, .1, 0], 'C': [0, 1, 0],
+                   'AB': [1, 0, 0], 'AC': [0, 0, 1]}
+        baseline = rank_subgroups(rows, siblings, vectors)
+        changed = rank_subgroups(rows, siblings, vectors, sibling_vectors={
+            'C1': [0, 0, 1], 'C2': [1, 0, 0], 'C3': [0, .1, 1]})
+        self.assertEqual(baseline[0]['members'], ['C1', 'C2'])
+        self.assertEqual(changed[0]['members'], ['C1', 'C3'])
+        self.assertEqual(changed[0]['ranked'][0]['subject'], 'AC')
+        self.assertEqual(rank_subgroups(rows, siblings, vectors), baseline)
+
+    def test_sibling_vectors_distinguish_same_heading_with_different_meanings(self):
+        siblings = [dict(id='C1', subject='Meals'), dict(id='C2', subject='Meals'),
+                    dict(id='C3', subject='Other')]
+        rows = [dict(note_id='a', number='1', subject='Candidate')]
+        groups = rank_subgroups(rows, siblings, {'Candidate': [1, 0]},
+                               sibling_vectors={'C1': [1, 0], 'C2': [0, 1], 'C3': [1, .1]})
+        self.assertEqual(groups[0]['members'], ['C1', 'C3'])
+
+    def test_sibling_vectors_must_cover_exact_nodes_and_share_valid_dimensions(self):
+        siblings = [dict(id='C1', subject='A'), dict(id='C2', subject='B'),
+                    dict(id='C3', subject='C')]
+        rows = [dict(note_id='a', number='1', subject='Candidate')]
+        good = {'C1': [1, 0], 'C2': [0, 1], 'C3': [1, 1]}
+        invalid = [{k: v for k, v in good.items() if k != 'C1'},
+                   dict(good, C4=[1, 0]), dict(good, C1=[0, 0]),
+                   dict(good, C1=[float('nan'), 0]), dict(good, C1=[1])]
+        for values in invalid:
+            with self.subTest(values=values), self.assertRaises(ValueError):
+                rank_subgroups(rows, siblings, {'Candidate': [1, 0]}, sibling_vectors=values)
+
     def test_empty_candidates_or_siblings_keep_the_original_empty_result(self):
         row = dict(note_id='a', number='1', subject='Food')
         self.assertEqual(rank_candidates([row], [], {}), [])
@@ -131,6 +173,73 @@ class ShapingSelectionTests(unittest.TestCase):
         original = copy.deepcopy((locals, siblings, vectors))
         rank_candidates(locals, siblings, vectors)
         self.assertEqual((locals, siblings, vectors), original)
+
+
+class SiblingMeaningLoadingTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.state = self.root / 'state.json'
+        self.state.write_text('original state')
+        self.siblings = [dict(id='C1', subject='Meals', meaning='Occasions of eating food.'),
+                         dict(id='C2', subject='Meals', meaning='Food eaten together.')]
+        pairs, notes, rows = [], [], []
+        for node in self.siblings:
+            text = node['meaning']
+            digest = hashlib.sha256(text.encode()).hexdigest()
+            sid = hashlib.sha256((digest + f':0:{len(text.encode())}').encode()).hexdigest()[:16]
+            pair_id = hashlib.sha256((node['subject'] + '\0' + text).encode()).hexdigest()
+            pairs.append(dict(id=pair_id, subject=node['subject'], meaning=text,
+                              representations=dict(meaning=[digest, sid])))
+            notes.append(dict(note_id=digest, text=text, subjects=[
+                dict(subject_id=sid, byte_spans=[[0, len(text.encode())]])]))
+            rows.append(dict(note_id=digest, subject_id=sid))
+        self.plan = dict(state=str(self.state), pairs=pairs,
+            references={'node:' + n['id']: p['id'] for n, p in zip(self.siblings, pairs)},
+            protected_sha256={str(self.state): hashlib.sha256(self.state.read_bytes()).hexdigest()})
+        self.identity = dict(checkpoint_sha256='checkpoint', base_model_artifact_tree_sha256='model',
+                             model='same SSE model', dimensions=2)
+        (self.root / 'worker-result').mkdir()
+        self.save('inputs.json', self.plan)
+        self.save('worker-request.json', dict(schema_version=1, notes=notes,
+            proposal_sha256=hashlib.sha256((self.root / 'inputs.json').read_bytes()).hexdigest()))
+        raw = self.root / 'worker-result/raw-vectors.f32le'
+        raw.write_bytes(struct.pack('<ffff', 1, 0, 0, 1))
+        self.receipt = dict(self.identity, rows=rows, row_count=2,
+            proposal_sha256=hashlib.sha256((self.root / 'inputs.json').read_bytes()).hexdigest(),
+            request_sha256=hashlib.sha256((self.root / 'worker-request.json').read_bytes()).hexdigest(),
+            files={raw.name: dict(sha256=hashlib.sha256(raw.read_bytes()).hexdigest())})
+        self.save('worker-result/worker-receipt.json', self.receipt)
+
+    def save(self, name, value):
+        (self.root / name).write_text(json.dumps(value))
+
+    def load(self, siblings=None, identity=None):
+        return load_sibling_meanings(self.root, self.state,
+            self.siblings if siblings is None else siblings,
+            self.identity if identity is None else identity, ancestor_cosine_probe)
+
+    def test_real_receipt_reader_binds_distinct_meanings_and_preserves_sources(self):
+        vectors, protected = self.load()
+        self.assertEqual(list(vectors['C1']), [1, 0])
+        self.assertEqual(list(vectors['C2']), [0, 1])
+        self.assertEqual(len(protected), 5)
+        self.assertFalse(vectors['C1'].flags.writeable)
+
+    def test_changed_state_meaning_checkpoint_or_binding_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'meaning differs'):
+            self.load([dict(self.siblings[0], meaning='Changed.'), self.siblings[1]])
+        with self.assertRaisesRegex(ValueError, 'identity differs'):
+            self.load(identity=dict(self.identity, checkpoint_sha256='different'))
+        self.save('inputs.json', dict(self.plan, changed=True))
+        with self.assertRaisesRegex(ValueError, 'saved plan or request'):
+            self.load()
+
+    def test_changed_protected_source_is_rejected(self):
+        self.state.write_text('changed state')
+        with self.assertRaisesRegex(ValueError, 'source changed'):
+            self.load()
 
 
 if __name__ == '__main__':
