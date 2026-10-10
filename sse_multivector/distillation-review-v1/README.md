@@ -10,9 +10,11 @@ absent from the parent `Claims`. All other verdicts remain correct, including
 all seven authored controls. This repeats a DSLv3/high failure at xhigh;
 consistent behavior remains unestablished and lower-effort testing stays paused.
 The existing lower-effort study remains bound to DSLv2.
-The [DSLv4 evidence record draft](#dslv4-evidence-record-draft-october-10) is now
-prepared for user review. It requires parent restrictions and child evidence
-in `reason`; wording approval and semantic testing remain pending.
+The user has approved testing the [DSLv4 evidence record
+draft](#dslv4-evidence-record-draft-october-10) as a diagnostic variant.
+The [paired diagnostic trial](#dslv4-paired-diagnostic-trial-october-10) keeps
+the same 14 fixed pairs and compares fresh DSLv3 and DSLv4 calls at xhigh.
+Production adoption and semantic qualification remain pending.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2948,9 +2950,11 @@ or changes to the frozen 60-answer study are separate work.
 
 ## DSLv4 evidence record draft (October 10)
 
-The user authorized drafting the proposed record of restrictions and evidence for
-review before any model calls. [DSLv4](relationship-prompt-v4.md) is **draft
-wording, unapproved and untested**. Native offline `revise` generated it from
+The user first authorized drafting the proposed record of restrictions and
+evidence for review before any model calls, then approved testing it as a
+diagnostic variant. [DSLv4](relationship-prompt-v4.md) remains **a draft for
+diagnostic testing, not an approved production reviewer**. Native offline
+`revise` generated it from
 the last approved DSLv3 bytes, with a
 [revision receipt](relationship-prompt-v4.md.revision.json). The version title
 and response instructions change; the quoted ASv6.100 rule, existing semantic
@@ -2987,13 +2991,56 @@ example in the reusable prompt or semantic qualification. The draft artifacts
 are ignored under
 `target/distillation-review-v1/relationship-dslv4-draft-20261010/`.
 No model calls, new labels, source reassessments, approved-prompt changes or
-lower-effort expansion are part of this drafting step.
+lower-effort expansion were part of that drafting step.
 
-Next is review of the displayed DSLv4 wording. A prospective comparison with
-unchanged DSLv3 at xhigh, including existing contrasts and fresh independently
-assessed validation cases, would require approval after that review. The prior
-14 pairs remain development evidence rather than unseen qualification cases;
-the frozen 60-answer study and two-point margin remain unchanged.
+The subsequent approval covers the bounded diagnostic trial below, not
+production adoption or new validation-case selection. The prior 14 pairs remain
+development evidence rather than unseen qualification cases; the frozen
+60-answer study and two-point margin remain unchanged.
+
+## DSLv4 paired diagnostic trial (October 10)
+
+The user approved testing the visible evidence record as a diagnostic variant
+before deciding what belongs in the final review prompt. Native offline
+`prepare --from --repeat` inherits the completed DSLv3 consistency repeat's
+three groups: seven actual pairs, three teacher controls and four large controls.
+Both arms use those same **14 fixed pairs**, seven expected true and seven false.
+Fresh unchanged **DSLv3** is the contemporaneous comparison; fresh **DSLv4**
+requests each parent restriction, its meaning and corresponding child evidence.
+Both arms retain the quoted ASv6.100 rule, complete inputs/evidence, existing
+`valid: bool` / `reason: string` schema and fixed source assessments.
+
+Settings remain **GPT-6.1 Sol / xhigh / subscription SSE / concurrency 8**,
+with the same worker, timeout and uncapped output. A separate native persistent
+counter allows **28 intended calls and at most 56 attempts**; only temporary
+provider errors permit a second attempt. One native coordinator runs at a time.
+Explicit repeats prevent saved-answer reuse. No paid fallback, prompt padding,
+semantic retry, changed labels or lower-effort expansion is authorized.
+The native tokenizer counts the complete shared instructions and AS rule as
+**440 tokens for DSLv3 and 589 for DSLv4**, below the 1,024-token minimum;
+explicit prefix caching and warming are therefore disabled for both arms.
+
+Native prepared artifacts are ignored under
+`target/distillation-review-v1/parent-restriction-dslv4-diagnostic-20261010/`,
+with `baseline-v3` and `diagnostic-v4` arms, each containing `actual`,
+`teacher-controls` and `large-controls`. Prompt source paths bind to canonical
+committed files; offline `show` checks report **28 unrun cases, zero attempts**.
+
+Assess the verdict and the decisive explanation separately against the fixed
+source assessments, not the three incorrect inherited native positive labels.
+In particular, inspect whether the diagnostic records introduce an actual
+claim/prediction or main-subject requirement, lose a real action/timing
+restriction, or use a counterexample that drops a child qualification. Record
+attributed agent reviews while preserving the response and input bytes.
+Inspect native token and latency reports to measure the cost of fuller evidence.
+
+These cases are development evidence and their expectations are agent
+assessments rather than human-certified gold. J298/Jbc/J540 still share one
+source note. Requesting a record changes the task and may change its answer;
+the explanation is evidence to inspect, not proof of the model's internal
+reasoning or a validated repair. Even a clean result cannot establish accuracy
+on unseen notes, fresh-call consistency or a minimum reasoning level. The
+approved reviewer, frozen 60-answer study and two-point margin remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 
