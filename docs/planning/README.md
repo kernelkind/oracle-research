@@ -853,12 +853,15 @@ task-specific coordinates are stored in the plan.
 
 The graph initially focuses on task 02. Choose another task or click a
 node to refocus. Show zero to three steps in either or both directions, or
-show all tasks. A `+N other links` label means the node has arrows not drawn in
-the current view. The right panel always lists the selected task's direct links,
-including those outside the view. Solid arrows mean prerequisites for finishing;
-dashed arrows mean helpful inputs. Start conditions remain in task descriptions
-because task links do not encode them separately. No user choice
-or approval is inferred from a task's status.
+show all tasks permitted by the filters. "Hide completed" removes completed
+tasks and their arrows from the graph and from step expansion. A completed task
+selected explicitly remains visible so it can still be inspected. A
+`+N other links` label means the node has arrows not drawn in the current view.
+The right panel always lists the selected task's direct links, including
+completed tasks hidden from the graph. Solid arrows mean prerequisites for
+finishing; dashed arrows mean helpful inputs. Start conditions remain in task
+descriptions because task links do not encode them separately.
+No user choice or approval is inferred from a task's status.
 
 The browser uses local copies of Cytoscape.js 3.34.3 and ELK.js 0.12.0;
 no external service or build step is needed. The bundles come from their

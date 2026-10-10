@@ -23,7 +23,7 @@
     #focus-task { min-width: 265px; }
     button { cursor: pointer; }
     button:hover, select:hover { background: #33465c; }
-    button:disabled { opacity: .45; cursor: default; }
+    button:disabled { display: none; }
     button:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid #a9d1ff; outline-offset: 2px; }
     .checkbox { display: flex; align-items: center; gap: 6px; padding: 8px 0; font-size: 13px; }
     .checkbox input { accent-color: #a9d1ff; }
@@ -93,8 +93,9 @@
           <option value="after">What it unlocks</option>
         </select>
       </label>
+      <label class="checkbox"><input id="hide-completed" type="checkbox"> Hide completed</label>
       <label class="checkbox"><input id="show-inputs" type="checkbox" checked> Show helpful inputs</label>
-      <button id="show-all" type="button">Show all tasks</button>
+      <button id="show-all" type="button">All matching tasks</button>
       <button id="focus-selected" type="button">Focus selected task</button>
       <button id="go-back" type="button" disabled>Previous task</button>
     </div>
