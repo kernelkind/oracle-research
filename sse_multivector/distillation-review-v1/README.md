@@ -1,15 +1,15 @@
 # Distillation semantic review — process and evidence
 
-**Latest trial result:** [DSLv3](relationship-prompt-v3.md) agrees with **14/14**
-fixed expectations, versus fresh DSLv2's **12/14**, in the
+**Latest trial result:** [DSLv3](relationship-prompt-v3.md) agrees with **13/14**
+fixed expectations in the
+[fresh xhigh consistency repeat](#dslv3-xhigh-consistency-repeat-october-10),
+versus **14/14** in the prior
 [paired xhigh confirmation](#dslv3-paired-xhigh-confirmation-october-10).
-All decisions and reasons pass attributed agent review for DSLv3. At high,
-DSLv3 scored 11/14, rejecting three valid invitation relationships that this
-xhigh trial accepts. Both versions pass all seven authored controls at both
-efforts. This selected development panel does not qualify a minimum reasoning
-level; the existing lower-effort study remains bound to DSLv2.
-The user authorized a [fresh DSLv3/xhigh consistency repeat](#dslv3-xhigh-consistency-repeat-october-10)
-on those same 14 pairs; its results are pending.
+J298 changes from true to false by requiring an actual claim, a restriction
+absent from the parent `Claims`. All other verdicts remain correct, including
+all seven authored controls. This repeats a DSLv3/high failure at xhigh;
+consistent behavior remains unestablished and lower-effort testing stays paused.
+The existing lower-effort study remains bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2891,9 +2891,57 @@ the cases or revising the prompt after seeing responses.
 
 Native artifacts are retained under
 `target/distillation-review-v1/parent-restriction-dslv3-xhigh-repeat-20261010/`,
-in `actual`, `teacher-controls` and `large-controls` groups. Results are pending.
-This bounded consistency check does not establish extrapolation, qualify a
-minimum reasoning level or resume the frozen 60-answer study.
+in `actual`, `teacher-controls` and `large-controls` groups.
+
+All **14 fresh calls** completed successfully on first attempts through the
+shared launcher, with no provider failures, answer reuse, warmups or cache hits.
+The repeat counter ended at **14/28**; the prior confirmation's **28/56** and
+high's **996/22,968** remain unchanged. Dispatch stopped after the three prepared
+groups. The incorrect semantic verdict was retained without another call.
+
+| DSLv3 / xhigh | Actual source assessments | Authored controls | Total |
+| --- | --- | --- | --- |
+| Prior fresh confirmation | 7/7 | 7/7 | **14/14** |
+| Fresh consistency repeat | 6/7 | 7/7 | **13/14** |
+
+J298 is the only Boolean change: **true to false**. Its unchanged input is:
+
+```text
+Parent: Claims
+Child: Invitation to claim 10,000 sats up for grabs in the pot rolling over to the next Mempool Madness game round after no winner in the round associated with block #953079
+```
+
+The repeat rejects this pair because an invitation can fit even if no claim has
+been made. That counterexample retains the complete child but fails only a
+requirement for an actual claim absent from `Claims`. It contradicts the approved
+instruction against adding a performance requirement and repeats the decisive
+DSLv3/high error. The prior DSLv3/xhigh call correctly states that the parent
+does not require a claim already made. In this repeat, Jbc and J540 also correctly
+accept invitations without requiring an existing claim or prediction. Those
+three cases still share R01; their disagreement is not evidence from three
+independent notes.
+
+The other six actual decisions and reasons remain sound: Jec preserves the
+current AI wave as a temporal reference; J58 and J216 retain full counterexamples
+without motherhood; J6dc preserves the complete numeric goal while delayed XP
+credit fails the parent's explicit practice timing. All seven authored controls
+retain their expected verdicts and decisive restrictions.
+
+Independent agent audits accept those 13 decisions and reasons and reject J298.
+All 14 responses now have native attributed agent reviews: **13 accepted, one
+rejected**, with no uncertain or user reviews. Each group retains exact native
+`terminal-show.json` and `reviewed-show.json` reports. Original response and
+receipt bytes, prepared inputs/evidence, prompt and schema, source assessments,
+earlier high/xhigh evidence and prior counters were verified unchanged;
+current reviews bind to the original input and output digests. Native inherited
+qualification labels remain unchanged and are not the correctness basis.
+
+This repeat **fails the fresh-call consistency check**. It neither establishes
+population accuracy nor qualifies a minimum reasoning level. Keep lower-effort
+testing paused: the parent-child reviewer still adds an unsupported performance
+requirement on a previously correct input. Resolve that inconsistency before
+restarting the reasoning-level comparison; another prompt revision, new calls
+or changes to the frozen 60-answer study are separate work.
 
 ## Actual distilled wording: offline preview (October 8)
 
