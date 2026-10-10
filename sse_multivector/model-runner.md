@@ -1054,6 +1054,13 @@ diagnostic inputs can additionally run through native `run --only CASE_ID` in
 the prepared check group; this supplements the paired comparison without
 changing the evaluation's stopping rules or frozen source labels.
 
+The completed xhigh pipeline yields 43 complete scores, 13 ungraded reviewer
+contradictions and four invalid student outputs. Its fixed comparison baseline
+contains 1,735 verified decisions frozen before lower calls; supplementary
+panel calls have separate reports and accounting. Source-only diagnosis of
+the contradictions is continuing, and qualification remains open. See the
+[October 10 baseline evidence](distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 

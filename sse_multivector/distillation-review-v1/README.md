@@ -19,8 +19,10 @@ The [offline token and runtime estimate](#validation-review-token-and-runtime-es
 projects about 15.34 hours for those questions at eight continuously occupied
 slots, using 59 selected fresh saved verdicts. It excludes coverage-placement
 comparisons and is not a complete-evaluation runtime estimate. The complete-answer
-trial has resumed at xhigh after the approved mechanical changes; qualification
-remains pending. The subsequent lower-effort study is recorded in
+trial has finished at xhigh after the approved mechanical changes: 43 answers
+have complete scores, 13 remain ungraded because reviewer decisions conflict,
+and four have invalid student outputs. All 1,735 comparison-panel decisions are
+verified and frozen; reviewer qualification remains pending. The lower-effort study is recorded in
 [reasoning-level comparison](#reasoning-level-comparison-approved-october-9).
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
@@ -2172,6 +2174,49 @@ discusses bootstrap representativeness and dependent observations; this
 selected, partly deliberate panel does not justify a population guarantee.
 Composition sensitivity also cannot measure fresh-call variability or remove
 the optimism from selecting the lowest promising effort across repeated stages.
+
+### Xhigh completion and baseline freeze (October 10)
+
+The resumed native pipeline finished with **43 complete scores, 13
+`inconsistent_verdicts` answers and four invalid student outputs** across the
+same 60 selected answers. All requested native judgments have validated
+receipts; a validated JSON response does not establish semantic correctness.
+The score guard refuses to grade an answer when matching accepts a required
+teacher meaning but its DSL compatibility judgment rejects the same teacher
+wording/student wording pair. These 13 answers contain 140 conflicting
+occurrences, deduplicated to 30 matching prompts and 30 relationship prompts.
+Independent source-only diagnosis is in progress. Existing references, prompts
+and the guard remain unchanged.
+
+Finishing the mechanical pipeline made 3,250 fresh successful attempts for
+3,242 distinct request identities and 24 transient provider failures, all
+recovered by the native second attempt. Eight alias/retry identities have
+duplicate successful receipts with agreeing normalized verdicts; preserve
+their paid attempts. The 6,963 saved-answer reuse rows are neither fresh calls
+nor prompt-cache hits. The recorded coordinator birth and terminal observation
+span **4 h 7 min 51 s**. These counts describe the completion phase, excluding
+the earlier calls behind saved-answer reuse.
+
+The completed pipeline still lacked 187 exact prompts required by the fixed
+full comparison panel because its scoring rules had skipped them. Native
+history supplied 25 verified answers; the supplementary dispatch made 162
+fresh successful calls and recovered one transient failure on its second
+attempt. Its coordinator birth and terminal observation span **8 min 32 s**.
+Keep this diagnostic work separate from production pipeline work.
+
+At **2026-10-10 08:15:24 UTC**, before any lower-effort inference, offline
+validation froze **all 1,735 chosen xhigh decisions**, with zero missing or
+conflicting normalized responses. This completeness does not qualify xhigh's
+absolute accuracy or resolve the 13 scoring contradictions. Lower efforts
+compare against these exact chosen receipts.
+
+Evidence lives in ignored trial artifacts: the
+[pipeline report](../../target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/baseline-xhigh-report.json),
+[post-bridge report](../../target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/baseline-xhigh-post-bridge-report.json),
+[freeze seal](../../target/distillation-review-v1/final-trial-20261009/analysis/baseline-freeze-complete.json)
+and [source-diagnosis queue](../../target/distillation-review-v1/final-trial-20261009/analysis/baseline-source-adjudication-queue.json).
+The frozen compact snapshot SHA-256 is
+`004f0beaeba8043041056289286704607ee131f6a5de417588fa86f11cdc585e`.
 
 ## Actual distilled wording: offline preview (October 8)
 

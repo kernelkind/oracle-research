@@ -314,6 +314,13 @@ not merely matching student scores or agreement with xhigh. See the
 and the
 [implemented rules](../../sse_multivector/distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9).
 
+The October 10 xhigh pipeline checkpoint has 43 complete scores, 13 ungraded
+reviewer contradictions and four invalid student outputs. All 1,735 fixed-panel
+xhigh decisions are verified and frozen before lower-effort inference.
+Independent source-only diagnosis is continuing; this is completion evidence,
+not reviewer qualification. See the
+[baseline freeze](../../sse_multivector/distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

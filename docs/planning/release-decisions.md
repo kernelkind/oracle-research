@@ -1868,6 +1868,15 @@ fixed. Preserve frozen references and original receipts. Bulk pilot grading and
 reserved-test access remain unapproved. See the
 [study record](../../sse_multivector/distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
 
+**October 10 execution checkpoint:** the same60 xhigh pipeline has finished.
+It yields 43 complete scores, 13 ungraded reviewer contradictions and four
+invalid student outputs. All 1,735 fixed-panel xhigh decisions are verified
+and frozen before lower-effort calls. Independent source-only diagnosis of the
+contradictions is continuing; reviewer qualification remains open. The
+[completion evidence](../../sse_multivector/distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10)
+keeps pipeline work and supplemental panel calls separate. This checkpoint
+adds no change to the approved prompts, semantics, mechanical rules or scope.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress
