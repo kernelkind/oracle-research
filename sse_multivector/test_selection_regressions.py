@@ -4,11 +4,53 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import subprocess
+import sys
 
 from sse_multivector import selection_regressions as regression
 
 
 class SelectionRegressions(unittest.TestCase):
+    def test_graph_method_is_exposed_by_the_production_cli(self):
+        result = subprocess.run([sys.executable, regression.__file__, 'evaluate', '--help'],
+                                capture_output=True, text=True, check=True)
+        self.assertIn('graph-search', result.stdout)
+
+    def test_graph_selection_reuses_only_answers_it_reaches(self):
+        frame = dict(rows=[dict(id='Parent', parents=[]), dict(id='Child', parents=['Parent'])],
+            eligible=['Parent', 'Child'], step={},
+            known={'Parent': dict(parsed=dict(relation='local_contains_canonical')),
+                   'Child': dict(parsed=dict(relation='uncertain'))})
+        result = regression.graph_selection(frame)
+        self.assertTrue(result['complete'])
+        self.assertEqual(result['queried'], ['Parent'])
+        self.assertEqual(result['inferred'], {'Child': 'local_contains_canonical'})
+
+    def test_graph_selection_records_missing_roots_as_pending(self):
+        frame = dict(rows=[dict(id='Food', parents=[]), dict(id='Mental states', parents=[])],
+            eligible=['Food', 'Mental states'], step={},
+            known={'Food': dict(parsed=dict(relation='neither'))})
+        result = regression.graph_selection(frame)
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['queried'], ['Food'])
+        self.assertEqual(result['pending'], ['Mental states'])
+
+    def test_pending_graph_comparison_cannot_be_applied_or_priced_as_complete(self):
+        from sse_multivector import candidate_ranking_study as study
+        frame = dict(rows=[dict(id='Food', parents=[]), dict(id='Mental states', parents=[])],
+            eligible=['Food', 'Mental states'], ids=['Food', 'Mental states'],
+            local_subject='Hope that breakfast will energize the author',
+            step=dict(index=108, local=dict(note_id='note', number='6.1'),
+                      selected_meaning='Hope of feeling energized.', status='held'),
+            known={'Food': dict(parsed=dict(relation='neither'))})
+        row = regression.evaluate_case(frame, ['Food'], study, (None, None, None),
+                                       pending=['Mental states'])
+        self.assertEqual(row['outcome'], 'unresolved')
+        self.assertEqual(row['local_subject'], frame['local_subject'])
+        self.assertEqual(row['unresolved'], ['Mental states'])
+        self.assertFalse(row['same_graph'])
+        self.assertEqual(row['observed_relationships'], {})
+
     def test_meals_preserves_food_without_a_direct_food_comparison(self):
         original = [dict(id='Food', parents=[]), dict(id='Meals', parents=['Food']),
                     dict(id='Breakfast', parents=['Food', 'Meals'])]
