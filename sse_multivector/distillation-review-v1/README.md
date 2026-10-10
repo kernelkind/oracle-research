@@ -1,8 +1,11 @@
 # Distillation semantic review — process and evidence
 
-**Latest trial authorization:** [DSLv3](relationship-prompt-v3.md) has approved
-wording and an authorized [bounded paired trial](#dslv3-bounded-paired-trial-october-10).
-Results are pending; the existing lower-effort study remains bound to DSLv2.
+**Latest trial result:** [DSLv3](relationship-prompt-v3.md) agrees with **11/14**
+fixed expectations, versus fresh DSLv2's **12/14**, in the
+[bounded paired trial](#dslv3-bounded-paired-trial-october-10) at high effort.
+Both pass all seven authored controls, but DSLv3 rejects three valid invitation
+relationships. The clarification has not established reliable improvement;
+the existing lower-effort study remains bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2632,8 +2635,8 @@ After the high-effort screen repeated an added main-subject/action requirement,
 the user authorized drafting a clarification for review before new model calls.
 After reviewing the displayed wording and confirming that DSLv3 includes the
 ASv6.100 parent-child section verbatim, the user approved the wording.
-[DSLv3](relationship-prompt-v3.md) has **approved wording, untested behavior**.
-This approval does not authorize model
+[DSLv3](relationship-prompt-v3.md) had **approved wording, untested behavior**
+at that checkpoint. Wording approval did not authorize model
 calls or change existing experiments, mechanical rules, source judgments or
 the accepted two-point comparison margin. The lower-reasoning goal remains open.
 
@@ -2649,10 +2652,8 @@ approved DSLv2 template, with a [native revision receipt](relationship-prompt-v3
 Only the version header, clarification paragraph and counterexample wording
 change. The quoted ASv6.100 rule, input variables and JSON decision schema are
 unchanged. The approved template and native revision receipt retain their exact
-draft bytes. No new model calls were made. The recommended next step is a
-bounded trial of preserved meanings and genuinely missing restrictions; that
-trial needs separate authorization. The user subsequently authorized the trial
-described below.
+draft bytes. The draft and wording-approval steps made no model calls. The user
+subsequently authorized the bounded trial described below.
 
 ## DSLv3 bounded paired trial (October 10)
 
@@ -2696,7 +2697,68 @@ explicit caching or warming. The subscription route has no paid API fallback.
 Native preparation and source/settings checks precede dispatch. Targeted
 corrections and control regressions are assessed separately, including whether
 each invalid rationale respects the complete child and an actual parent
-restriction. Results are pending.
+restriction.
+
+### Completed result
+
+All **28 fresh calls** completed successfully on their first attempts through
+`experiment-runner/bin/experiment-runner`. There were no provider retries,
+reused answers, warmups or cache hits. The naturally expanded DSLv3 instruction
+prefix is approximately 440 tokens, below the runner's 1,024-token warming threshold;
+explicit prefix caching and warming were omitted. The shared high-effort attempt
+counter increased from 968 to 996 of 22,968. Original prompts, source
+adjudications, input bindings and frozen study results remain unchanged.
+
+| Arm | Actual source assessments | Authored controls | Total |
+| --- | --- | --- | --- |
+| Fresh DSLv2 / high | 5/7 | 7/7 | **12/14** |
+| Fresh DSLv3 / high | 4/7 | 7/7 | **11/14** |
+
+| Actual pair | Expected | Fresh DSLv2 | Fresh DSLv3 |
+| --- | --- | --- | --- |
+| J298 — sats claim in an invitation | true | true | false |
+| Jbc — prize claim in an invitation | true | true | false |
+| Jec — current AI wave as a temporal reference | true | false | true |
+| J540 — prediction activity in an invitation | true | true | false |
+| J58 — tagged content without required motherhood | false | false | false |
+| J216 — MILFs without required motherhood | false | true | false |
+| J6dc — numeric activity goal without required practice | false | false | false |
+
+DSLv3 corrects Jec and J216 relative to fresh DSLv2, but regresses on J298, Jbc
+and J540. The three regressions share the same R01 note. Their reasons add a
+requirement that a claim or prediction actually occur, although that restriction
+is absent from the parent wording. The complete activity meaning is retained
+in the invitation. This is the same added-action failure the clarification was
+intended to prevent. The targeted J298/Jbc/Jec subset scores 2/3 for fresh DSLv2
+and 1/3 for DSLv3.
+
+Both arms preserve all three positive authored controls and reject all four
+negative authored controls, with sound reasons. DSLv3 also rejects all three
+actual negative pairs, so this panel shows no permissiveness regression.
+Independent agent review agrees with the above assessments of all seven actual
+pairs in both arms; a separate agent verified the controls and native receipts.
+All 28 responses have native attributed agent reviews: 23 accepted and five
+rejected. These are response assessments against the fixed source expectations,
+not human certification or the inherited native qualification labels.
+
+Fresh DSLv2 already accepts J298/Jbc after their earlier high-effort failures.
+That variation cannot be credited to DSLv3. This small selected development panel,
+with repeated source contexts and one fresh response per arm, does not estimate
+deployment accuracy or isolate any particular sentence's effect. **The trial
+does not establish reliable improvement at high, and neither arm qualifies a
+lower reasoning level or bulk grading.** Existing 60-answer results remain frozen
+and lower-effort expansion remains paused; no further calls are part of this trial.
+
+Native plans, first-attempt receipts, reasons and reviews are retained under
+`target/distillation-review-v1/parent-restriction-dslv3-trial-20261010/`, with
+separate `baseline-v2` and `candidate-v3` arms and `actual`, `teacher-controls`
+and `large-controls` groups. Each group includes the native `terminal-show.json`
+and `reviewed-show.json`; plans preserve the exact approved template bytes.
+
+The recommended next step is a fresh paired confirmation on this fixed panel
+with GPT-6.1 Sol / xhigh before another prompt revision or lower-effort expansion.
+It would check the clarification at the highest approved reasoning level;
+that additional inference has not been started or authorized by this trial.
 
 ## Actual distilled wording: offline preview (October 8)
 
