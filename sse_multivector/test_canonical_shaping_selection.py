@@ -12,6 +12,56 @@ from sse_multivector.canonical_shaping_selection import (
 
 
 class ShapingSelectionTests(unittest.TestCase):
+    def test_local_ancestors_supply_direction_and_preserve_original_branch_evidence(self):
+        siblings = [dict(id='C1', subject='Cookware'), dict(id='C2', subject='Appliances'),
+                    dict(id='C3', subject='Other')]
+        entries = [dict(note_id='a', number='1', subject='Equipment', context='Tools.'),
+                   dict(note_id='a', number='1.1', subject='Pans', context='Cooking vessels.'),
+                   dict(note_id='a', number='1.2', subject='Stoves', context='Cooking devices.'),
+                   dict(note_id='b', number='1', subject='Crockpots', context='A pot.')]
+        candidates = [entries[0], entries[-1]]
+        vectors = {'Cookware': [1, 0, 0], 'Appliances': [0, 1, 0], 'Other': [0, 0, 1],
+                   'Equipment': [0, 0, 1], 'Pans': [1, 0, 0], 'Stoves': [0, 1, 0],
+                   'Crockpots': [1, 1, 0]}
+        groups = rank_subgroups(candidates, siblings, vectors, local_entries=entries)
+        group = next(g for g in groups if g['members'] == ['C1', 'C2'])
+        self.assertEqual([r['subject'] for r in group['ranked']], ['Equipment'])
+        candidate = group['ranked'][0]
+        self.assertEqual(candidate['score'], 1)
+        self.assertEqual(candidate['descendant_matches'][0]['path'], entries[:2])
+        self.assertEqual(candidate['descendant_matches'][1]['path'], [entries[0], entries[2]])
+        self.assertNotIn('relation', candidate)
+        self.assertEqual(groups, rank_subgroups(candidates[::-1], siblings[::-1], vectors,
+                                               local_entries=entries[::-1]))
+
+    def test_local_ancestor_scores_include_outside_matches_and_do_not_cross_notes(self):
+        siblings = [dict(id='C1', subject='A'), dict(id='C2', subject='B'),
+                    dict(id='C3', subject='Outside')]
+        entries = [dict(note_id=note, number=number, subject=subject, context=subject)
+                   for note, number, subject in [
+                       ('a', '1', 'Parent'), ('a', '1.1', 'Both'), ('a', '1.2', 'Outside'),
+                       ('b', '1', 'Parent'), ('b', '1.1', 'Both')]]
+        vectors = {'A': [1, 0], 'B': [1, 0], 'Both': [1, 0],
+                   'Outside': [0, 1], 'Parent': [1, 1]}
+        groups = rank_subgroups([entries[0], entries[3]], siblings, vectors,
+            local_entries=entries, eligible={('a', '1'): ['C1', 'C2'], ('b', '1'): ['C1', 'C2']})
+        group = next(g for g in groups if g['members'] == ['C1', 'C2'])
+        self.assertEqual([r['local']['note_id'] for r in group['ranked']], ['b', 'a'])
+        self.assertEqual([r['score'] for r in group['ranked']], [1, 0])
+        self.assertEqual(group['ranked'][1]['outside_descendant_match']['path'], [entries[0], entries[2]])
+
+    def test_local_ancestor_search_rejects_changed_candidates_and_incomplete_branches(self):
+        siblings = [dict(id=f'C{i}', subject='S') for i in range(3)]
+        entries = [dict(note_id='a', number='1', subject='Parent'),
+                   dict(note_id='a', number='1.1', subject='Child')]
+        vectors = {'S': [1, 0], 'Parent': [1, 1], 'Child': [1, 0]}
+        with self.assertRaisesRegex(ValueError, 'candidate differs'):
+            rank_subgroups([dict(entries[0], subject='Child')], siblings, vectors,
+                           local_entries=entries)
+        with self.assertRaisesRegex(ValueError, 'incomplete original local branch'):
+            rank_subgroups([entries[0]], siblings, vectors,
+                           local_entries=[entries[0], dict(entries[1], number='1.1.1')])
+
     def test_complete_link_considers_all_members_instead_of_seed_neighbors(self):
         import math
         siblings = [dict(id=f'C{i}', subject=f'S{i}') for i in range(4)]
