@@ -60,6 +60,18 @@ class CanonicalTrialTests(unittest.TestCase):
     def state(self):
         return json.loads((self.root / 'trial/state.json').read_text())
 
+    def test_note_limit_uses_first_distinct_notes_and_preserves_their_root_order(self):
+        self.setup_trial(schema_version=2, independent_meanings=True, extra_root=True)
+        before = (self.root / 'trial.json').read_bytes()
+        self.cli('prepare-canonical-trial', 'limited', '--spec', 'trial.json', '--note-limit', '2')
+        state = json.loads((self.root / 'limited/state.json').read_text())
+        self.assertEqual(state['roots'], [
+            {'note_id': 'n1', 'number': '1'},
+            {'note_id': 'n2', 'number': '2'},
+            {'note_id': 'n2', 'number': '3'}])
+        self.assertEqual((self.root / 'trial.json').read_bytes(), before)
+        self.assertEqual(len(fixtures.ExperimentTests.calls(self)), 0)
+
     def answer(self, value):
         self.cli('run', self.state()['experiment'],
                  env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})

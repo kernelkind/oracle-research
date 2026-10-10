@@ -241,7 +241,7 @@ def summary(state):
             {'phase': state['phase']} if state.get('independent_meanings') else {})
 
 
-def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None, history_root=None, graph_search=False):
+def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None, history_root=None, graph_search=False, note_limit=None):
     spec_path, directory = Path(spec_path).resolve(), Path(directory).resolve()
     cfg = workflow.read(spec_path)
     required = {'schema_version', 'corpus', 'bootstrap_spec', 'comparison_spec'}
@@ -283,6 +283,14 @@ def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None,
             roots.extend({'note_id': note_id, 'number': s['number']} for s in selected)
     if not roots:
         raise ValueError('no local roots')
+    if note_limit is not None:
+        if type(note_limit) is not int or note_limit < 1:
+            raise ValueError('note_limit must be positive')
+        selected_notes = list(dict.fromkeys(row['note_id'] for row in roots))
+        if note_limit > len(selected_notes):
+            raise ValueError('note_limit exceeds the available selected notes')
+        selected_notes = set(selected_notes[:note_limit])
+        roots = [row for row in roots if row['note_id'] in selected_notes]
     sources = {str(spec_path): _hash(spec_path), str(corpus): _hash(corpus)}
     state = {'schema_version': cfg['schema_version'], 'corpus': str(corpus), 'roots': roots,
              'index': 0, 'nodes': [], 'steps': [], 'sources': sources,

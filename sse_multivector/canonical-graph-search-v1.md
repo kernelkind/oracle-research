@@ -101,6 +101,15 @@ receipts are checked again before application. Existing eligibility, mapped-pare
 uncertainty and placement checks remain in place. Positive graph inferences are
 recorded separately from actual model answers; they do not create receipts.
 
+`prepare-canonical-trial --note-limit N` takes the first N distinct notes in
+the source definition's order, retaining their original root order. It does
+not alter the source corpus or choose topics by hand.
+`prepare-canonical-selection-trial --graph-search` uses the existing automatic
+local-entry nomination and then graph traversal. Subsequent selection trials
+inherit graph traversal rather than restoring the nomination configuration's
+canonical shortlist. The shortlist still supplies saved subject vectors for
+the common local-entry selection rules.
+
 `fork-canonical-trial --at-step INDEX --graph-search` starts before one saved
 construction step, retaining the original history and independent meaning. It
 preserves the source trial, records its state hash and replaces its active
@@ -142,3 +151,39 @@ and `target/graph-search-pruning-control-v1/` in that worktree. The shared attem
 counter admits three actual requests; two were used. No additional construction
 was dispatched. These are integration checks; full-build cost and hierarchy
 quality still need a matched construction trial.
+
+## Matched eight-note trial
+
+The user approved experimental Bootstrap-v98 and Compare-v69 in both methods,
+with current ASv6.100 inputs and automated selection. The
+[source definition](shr_single_pair/hierarchy-graph-search-eight-b98-c69-roots-v1.json)
+preserves the existing fifty-note root definition; native `--note-limit 8`
+selects its first eight distinct notes. Bootstrap-v98 is read unchanged from
+its owner's retained worktree. The
+[bootstrap spec](shr_single_pair/hierarchy-graph-search-b98-bootstrap-v1.spec.json)
+and [comparison spec](shr_single_pair/hierarchy-graph-search-c69-compare-v1.spec.json)
+freeze GPT-6.1 Sol medium, SSE, prefix caching and concurrency four.
+
+Both arms start empty, establish meanings independently of placement and use
+exact native reuse under the same history root. The baseline uses guarded16;
+the candidate uses graph traversal. Their common
+[local-entry selection definition](shr_single_pair/hierarchy-graph-search-eight-selection-v1.json)
+uses the existing schema-2 nomination rules without expected destinations or
+memberships. Its finite screen processes at most 32 entries per arm, including
+the eight initial roots. An entry cap or inventory exhaustion does not prove
+finished-hierarchy quality.
+
+The trial evaluates the untouched automatic graphs: reachability, strict
+note-set narrowing, six-choice limits, note routes and meaningful group
+membership. The existing finished-menu command needs selected node IDs and
+does not automatically optimize menus; no hand-picked menu repairs will be
+introduced into this comparison. Structural failures remain failures. Token
+and API-equivalent cost accounting must include all token types, retries,
+warmups and the original generation behind exact reuse. Lower fresh execution
+cost from reuse alone is not a selection-policy saving.
+
+Preparation artifacts are ignored under
+`target/graph-search-eight-b98-c69-v1/`. At this checkpoint no model calls have
+been made for this trial. The two production CLI tests failed on the absent
+options before implementation; all 109 related construction, selection,
+graph-search and continuation tests pass.
