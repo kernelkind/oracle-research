@@ -7,6 +7,7 @@
   const trackSelect = document.getElementById('track');
   const depthSelect = document.getElementById('depth');
   const directionSelect = document.getElementById('direction');
+  const completedCheckbox = document.getElementById('hide-completed');
   const inputsCheckbox = document.getElementById('show-inputs');
   const backButton = document.getElementById('go-back');
   const showAllButton = document.getElementById('show-all');
@@ -113,7 +114,8 @@
 
   function visibleTaskIds() {
     if (!focusId) return new Set();
-    const available = id => matchesTrack(tasks.get(id));
+    const available = id => matchesTrack(tasks.get(id)) &&
+      (!completedCheckbox.checked || tasks.get(id).statusKey !== 'complete' || id === focusId);
     if (allMode) return new Set([...tasks.keys()].filter(available));
     const visible = new Set([focusId]);
     let frontier = new Set([focusId]);
@@ -160,6 +162,9 @@
       const annotations = [link.label];
       if (!matchesTrack(relatedTask)) {
         annotations.push(`${trackLabels[relatedTask.track]} · outside this view`);
+      }
+      if (relatedTask.statusKey === 'complete') {
+        annotations.push(completedCheckbox.checked ? 'Completed · hidden from graph' : 'Completed');
       }
       if (annotations.some(Boolean)) {
         const label = document.createElement('small');
@@ -236,8 +241,10 @@
       graph.edges().forEach(edge => edge.toggleClass('hidden', !visibleLinks.has(edge.id())));
     });
     const hiddenLinks = links.length - visibleLinks.size;
+    const completedHidden = completedCheckbox.checked ? [...tasks.values()].filter(task =>
+      task.statusKey === 'complete' && !visible.has(task.id)).length : 0;
     const viewLabel = trackSelect.value === 'both' ? 'Both tracks' : trackLabels[trackSelect.value];
-    const summary = `${viewLabel} · Showing ${visible.size} of ${tasks.size} tasks · ${hiddenLinks} other links hidden.`;
+    const summary = `${viewLabel} · Showing ${visible.size} of ${tasks.size} tasks · ${hiddenLinks} other links hidden${completedCheckbox.checked ? ` · ${completedHidden} completed tasks hidden` : ''}.`;
     statusElement.textContent = `${summary} Arranging layout…`;
     taskSelect.value = focusId;
     depthSelect.disabled = allMode;
@@ -388,6 +395,7 @@
       taskSelect.addEventListener('change', () => chooseFocus(taskSelect.value));
       depthSelect.addEventListener('change', () => { allMode = false; render(); });
       directionSelect.addEventListener('change', () => { allMode = false; render(); });
+      completedCheckbox.addEventListener('change', render);
       inputsCheckbox.addEventListener('change', render);
       showAllButton.addEventListener('click', () => { allMode = true; render(); });
       focusButton.addEventListener('click', () => { allMode = false; render(); });

@@ -218,8 +218,9 @@ bounded graph expansion; exhaustive descendant rescoring at every query is not
 the proposed scalable implementation. Training and encoding costs also need
 measurement before claiming end-to-end latency savings.
 
-The most useful next experiment is the semantic learned scorer on an independent
-current-ASv6.100 saved construction, with its model frozen before that evaluation.
+The most useful next experiment is to train this semantic ranking method on
+approved current-ASv6.100 saved comparisons, then freeze it before evaluating
+an independent current-data construction. Do not deploy the historical weights.
 Measure candidate recovery, settled-negative preservation, full guarded replay
 and all-in cost together. Do not lower the production cap or replace teacher
 judgments based on this historical result alone.
