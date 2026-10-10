@@ -2147,6 +2147,18 @@ contribute most of the panel. Clear recurring failures require stepping up;
 small screens and borderline losses justify further investigation or
 expansion, never a final qualification claim.
 
+For composition sensitivity, group answers by source teacher context, join
+contexts sharing an exact panel prompt, and delete each whole connected
+component in turn. Recompute loss and truth bounds on the remaining distinct
+prompts; report their range and largest change, without calling it a confidence
+interval. The full panel has 51 valid source contexts and 50 such components.
+Four invalid student answers remain pipeline cases, not semantic accuracy
+successes. [Paired NLP evaluation guidance](https://aclanthology.org/P18-1128.pdf)
+discusses bootstrap representativeness and dependent observations; this
+selected, partly deliberate panel does not justify a population guarantee.
+Composition sensitivity also cannot measure fresh-call variability or remove
+the optimism from selecting the lowest promising effort across repeated stages.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with
