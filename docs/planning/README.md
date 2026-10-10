@@ -322,7 +322,9 @@ not reviewer qualification. See the
 [baseline freeze](../../sse_multivector/distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).
 
 The initial high-effort screen is complete: 289/297 fixed-panel decisions agree
-with xhigh; eight differences require source adjudication. All 60 original
+with xhigh. Source adjudication bounds its correctness loss at 1.35–2.02
+percentage points, with larger losses in support and teacher/student
+compatibility; high has not cleared the initial screen. All 60 original
 source-only diagnostic judgments are saved, with final truths kept separately.
 Medium is running; low screening and correctness qualification are pending. See
 the [high screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10).

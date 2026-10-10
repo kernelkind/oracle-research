@@ -2222,10 +2222,21 @@ The frozen compact snapshot SHA-256 is
 
 The fixed five-answer screen at Sol/high is complete: **289 of 297 decisions
 agree with the frozen xhigh baseline**, with eight discordances and zero missing
-or conflicting panel decisions. Agreement is not correctness. Independent
-source-first review of the discordances is continuing before an expansion
-decision. Medium and low are the remaining small screens under the approved
-study; no reasoning level has qualified.
+or conflicting panel decisions. Agreement is not correctness. Completed
+source-first adjudication finds **six high-only errors, one xhigh-only error,
+and one unresolved difference**. Overall correctness loss is bounded by
+**1.35–2.02 percentage points**. Support loses 2/89 decisions (2.25 points),
+teacher/student compatibility loses 3/64 (4.69 points), and actual student
+parent-child pairs lose 1/61 (1.64 points). The distinct DSLv2 pool combines
+the latter two roles with six overlapping prompts: 4/119 losses (3.36 points).
+High has not cleared the conservative two-point margin and has role-level
+concerns.
+Medium and low remain the small screens before choosing an effort to expand;
+no reasoning level has qualified. The
+[source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-high-source-assessment.json)
+preserves each exact-prompt truth and original evidence. Its bounds express
+truth uncertainty, not statistical confidence or reliability beyond these
+five deliberately selected source contexts.
 
 The high production pipeline took **1 h 6 min 42 s**, with 718 successful
 comparison attempts, three transient failures recovered on the second attempt,
