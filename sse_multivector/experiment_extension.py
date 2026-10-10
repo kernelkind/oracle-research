@@ -353,6 +353,9 @@ def add_commands(commands):
                    help='persistent total cap for this continuation, including retries')
     p.add_argument('--attempt-budget', type=Path, required=True,
                    help='existing shared attempt counter; never initialized or reset')
+    p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
+    p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
     p = commands.add_parser('prepare-distillation-review-trial', help='freeze a complete-answer validation trial; no inference')
     p.add_argument('manifest', type=Path)
     p.add_argument('--model-output', type=Path, action='append', required=True)
@@ -507,7 +510,15 @@ def handle_command(args):
         batch = result.get('next_review')
         return int(batch is not None and any(batch['summary'][s]
                    for s in ('malformed', 'invalid_receipt', 'failed', 'unrun')))
-    if args.command == 'prepare-distillation-review-trial':
+    if args.command == 'summarize-experiments':
+        from .experiment_usage_summary import summarize_experiments, compact_summary
+        output = args.output.expanduser().resolve()
+        if output.exists():
+            raise ValueError('experiment summary output already exists')
+        result = summarize_experiments(args.spec, load_report=report)
+        write(output, result)
+        print(json.dumps(compact_summary(result, output), ensure_ascii=False, indent=2))
+    elif args.command == 'prepare-distillation-review-trial':
         from . import distillation_review_trial
         result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
             random_count=args.random_count, hard_count=args.hard_count, seed=args.seed)
