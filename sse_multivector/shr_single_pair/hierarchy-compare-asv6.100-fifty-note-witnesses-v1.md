@@ -482,6 +482,17 @@ experiment's own `report.json` and attributed review records. The combined
 suite passed with `tiktoken` supplied. Native support and prompts were landed
 in local main through `28386633` and `4d5628fb`; no push was made.
 
+During final integration the shared runner released 1.6.0, rejecting per-run
+concurrency in new specifications and sharing 30 requests internally. The
+existing common offline test fixture still declared `concurrency: 1`, so the
+first final rerun failed before adapter preparation. Removing that single
+obsolete fixture field made all **69 unique production-path checks pass**:
+42 node-pair, seven additional snapshot, nine fixed-meaning and 11 consistency
+tests. No production scheduling code was changed. The real c32 experiment was
+prepared and completed before that shared release landed; its historical v1
+specification, settings and receipts remain unchanged. The c32 execution record
+does not imply that concurrency remains configurable in the new runner.
+
 **V75 is tested but not qualified for production adoption.** The historical
 v69 run had nine distinct reversals versus three in this v75 draw. This is not
 a matched causal comparison: prompt wording, visible input and output contract
