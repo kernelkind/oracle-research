@@ -16,8 +16,11 @@ It needs a generative model; a classification-only Kev or Ettin checkpoint
 cannot supply this contract. Compare consumes already fixed meanings and a
 canonical branch, then decides one of five relations. The user confirmed a
 **relation-only distilled Compare output**, making decision models eligible.
-The present teacher API also copies the local meaning and requires a nonempty
-diagnostic reason; it remains unchanged. Student decision screens must use
+The frozen Compare-v48 development pilot's teacher API copies the local meaning
+and gives a diagnostic reason. Compare-v75 on local main additionally returns
+two containment questions and their answers/justifications; its five relation
+labels are unchanged. These evolving teacher diagnostics do not alter the user's
+relation-only student decision. Student decision screens must use
 their explicit output contract rather than fabricate a reason or weaken the
 teacher validator. Bootstrap's pilot student returns only `meaning` (string or
 null); the full teacher answer remains review evidence. The final distilled
@@ -67,8 +70,18 @@ allocation. Correct containment direction is only 12/16; all 28 `neither`
 targets and two identity controls pass. This demonstrates useful task learning,
 not complete qualification: the eight evaluation posts supply no `uncertain`
 labels, non-identity equivalence or canonical branches. Matched Qwen27/Kev27
-native decision fits are now supported and tested, but their task results remain
-pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+native decision fits are supported and tested. Qwen's first epoch reaches
+43/46 agreement (13/16 containment decisions) in a 36.73-minute phase, versus
+38/46 before adaptation. Later epochs and fresh-process verification remain
+pending, and the partial timing includes small overlapping native tests.
+Kev27 task results remain pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+
+Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
+evaluation targets, including null meanings, with only the confirmed `meaning`
+field supervised. Complete inputs fit both verified local training paths;
+full teacher answers remain semantic review evidence. Teacher-forced loss and
+checkpoint verification alone cannot rank generated meaning fidelity. See the
+[meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
 The full case JSON alone averages 540 evaluation tokens versus 2,149 with the
 teacher instructions, with every supplied case field retained. A tested encoder

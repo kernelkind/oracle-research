@@ -1,0 +1,12 @@
+{
+  "model": "Qwen/Qwen3.8-27B",
+  "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "quantization": "nf4",
+  "max_length": 13312,
+  "epochs": [1, 4],
+  "batch_size": 1,
+  "learning_rate": 0.00002,
+  "seed": 17,
+  "memory_budget_gib": 32,
+  "reserve_gib": 8
+}
