@@ -344,6 +344,7 @@ def add_commands(commands):
     p.add_argument('--assessments', type=Path)
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
+    p.add_argument('--reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'))
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path)
@@ -352,6 +353,7 @@ def add_commands(commands):
     p.add_argument('--max-new-attempts', type=int)
     p.add_argument('--attempt-budget', type=Path)
     p.add_argument('--runner-upgrade-reason')
+    p.add_argument('--answer-id', action='append', help='run only this frozen answer ID; repeat for a nested subset')
     p = commands.add_parser('preview-distillation-review',
                             help='count complete saved validation review work; no inference')
     p.add_argument('manifest', type=Path)
@@ -465,10 +467,12 @@ def handle_command(args):
         from . import distillation_review_evaluation as evaluation
         if args.command == 'prepare-distillation-review-evaluation':
             result = evaluation.prepare(args.selection, args.output, runner_binary=args.runner_binary,
-                history_root=args.history_root, assessment_directory=args.assessments)
+                history_root=args.history_root, assessment_directory=args.assessments,
+                reasoning_effort=args.reasoning_effort)
         elif args.command == 'run-distillation-review-evaluation':
             result = evaluation.run(args.evaluation, max_new_attempts=args.max_new_attempts,
-                attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason)
+                attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason,
+                answer_ids=args.answer_id)
         else:
             result = evaluation.report(args.evaluation)
             if args.output:

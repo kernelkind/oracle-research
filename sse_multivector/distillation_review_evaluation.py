@@ -130,10 +130,13 @@ def validate(case, raw):
             else verdict.validate(case, raw))
 
 
-def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None):
+def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None,
+            reasoning_effort=None):
     """Freeze native check groups; preparation never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
+    if reasoning_effort is not None and reasoning_effort not in ("xhigh", "high", "medium", "low"):
+        raise ValueError("reasoning_effort must be xhigh, high, medium or low")
     selection_path = Path(selection_path).expanduser().resolve()
     output = Path(output).expanduser().resolve()
     if output.exists():
@@ -178,6 +181,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
                                       assessment_directory=assessment_directory))
         runner = {key: bundle["settings"][key] for key in (
             "provider", "model", "reasoning_effort", "transport", "concurrency")}
+        if reasoning_effort is not None:
+            runner["reasoning_effort"] = reasoning_effort
         runner["auth_file"] = None
         runner["timeout_seconds"] = 3600
         runner["output_schema_path"] = str(directory / schema)
@@ -455,11 +460,13 @@ def _apply_stopping(answer, checks, context):
                     dict(check="matching", answer_id=answer["id"])])
 
 
-def _relationship_wave(current):
+def _relationship_wave(current, answer_ids=None):
     """Check independent edges and self guards, plus one witness per meaning."""
     wanted, pending = set(), []
     for cohort in ("random", "challenge"):
         for answer in current[cohort]["answers"]:
+            if answer_ids is not None and answer["id"] not in answer_ids:
+                continue
             groups = {}
             matching_rows = answer["checks"]["matching"]
             matching_by_number = {row["evidence"]["student_number"]: row for row in matching_rows}
@@ -560,19 +567,31 @@ def _score(answer, checks, context, *, partial=False):
     return review.validate(case, json.dumps(assembled, ensure_ascii=False))
 
 
-def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgrade_reason=None):
-    """Execute native checks under one allowance, stopping settled score work."""
+def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgrade_reason=None,
+        answer_ids=None):
+    """Execute selected answers under one allowance; retain the full report."""
     from experiment_runner import experiment
     if max_new_attempts is not None and (type(max_new_attempts) is not int or max_new_attempts < 0):
         raise ValueError("max_new_attempts must be nonnegative")
     initial = report(output)
+    if answer_ids is not None:
+        if not isinstance(answer_ids, list) or any(not isinstance(identifier, str) or not identifier.strip()
+                                                  for identifier in answer_ids):
+            raise ValueError("answer_ids must be an array of nonempty strings")
+        known = {answer["id"] for cohort in ("random", "challenge") for answer in initial[cohort]["answers"]}
+        if len(answer_ids) != len(set(answer_ids)) or set(answer_ids) - known:
+            raise ValueError("unknown or duplicate answer_ids")
+        answer_ids = set(answer_ids)
+        if not answer_ids:
+            return initial
     frozen = experiment.read(Path(output).resolve() / "evaluation.json")
     remaining = max_new_attempts
     def dispatch(entry, *, only=None, warm_cache=True, allowance=None):
         nonlocal remaining
         directory = Path(entry["experiment"])
         before = entry["summary"]["attempts"]
-        selection = {} if frozen["schema_version"] == 1 else dict(only=only, warm_cache=warm_cache)
+        selection = ({} if frozen["schema_version"] == 1 and answer_ids is None
+                     else dict(only=only, warm_cache=warm_cache))
         try:
             after = experiment.run(directory, remaining if allowance is None else allowance, runner_upgrade_reason,
                 attempt_budget_path=Path(attempt_budget_path) if attempt_budget_path is not None else None,
@@ -588,12 +607,16 @@ def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgra
         return after
     for entry in initial["experiments"]:
         if frozen["schema_version"] == 1 or entry["cases"][0]["evidence"]["check"] != "relationship":
-            dispatch(entry)
+            only = None if answer_ids is None else [row["id"] for row in entry["cases"]
+                if row["evidence"]["answer_id"] in answer_ids]
+            if only is None or only:
+                dispatch(entry, only=only)
     current = report(output)
     if frozen["schema_version"] == 1:
         return current
     if any(row["status"] != "valid" for cohort in ("random", "challenge")
-           for answer in current[cohort]["answers"] for check in ("matching", "support")
+           for answer in current[cohort]["answers"] if answer_ids is None or answer["id"] in answer_ids
+           for check in ("matching", "support")
            for row in answer["checks"][check]):
         return current
     # A cached positive witness may occur after a fresh question in case order.
@@ -604,7 +627,9 @@ def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgra
         if entry["cases"][0]["evidence"]["check"] != "relationship":
             continue
         plan, _, manifest = experiment.load(Path(entry["experiment"]))
-        reusable = experiment.request_preview(plan, manifest, entry["cases"],
+        candidates = [row for row in entry["cases"]
+                      if answer_ids is None or row["evidence"]["answer_id"] in answer_ids]
+        reusable = experiment.request_preview(plan, manifest, candidates,
             include_reusable_case_ids=True)["reusable_case_ids"]
         if reusable:
             dispatch(entry, only=reusable, warm_cache=False, allowance=0)
@@ -615,7 +640,7 @@ def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgra
         return current
     warmed = set()
     while True:
-        selected = _relationship_wave(current)
+        selected = _relationship_wave(current, answer_ids)
         if not selected:
             return current
         before = {(row["id"], row["status"], row.get("attempts", 0))

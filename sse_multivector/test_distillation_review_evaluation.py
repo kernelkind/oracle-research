@@ -28,10 +28,10 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         fixture.root = self.root
         return fixture.fixture(notes, name=name)
 
-    def selection(self, notes=None, *, name="fixture"):
+    def selection(self, notes=None, *, name="fixture", random_count=1):
         from sse_multivector.distillation_review_trial import prepare_trial
         manifest, outputs = self.fixture(notes, name=name)
-        result = prepare_trial(manifest, outputs, self.root / ("selection-" + name), random_count=1, hard_count=0,
+        result = prepare_trial(manifest, outputs, self.root / ("selection-" + name), random_count=random_count, hard_count=0,
                                seed="native-evaluation-fixture")
         return Path(result["selection_path"])
 
@@ -75,6 +75,147 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertTrue(all(case["evidence"]["expectation_status"] == "unresolved"
                             for rows in cases.values() for case in rows))
         self.assertFalse((self.root / "calls.json").exists())
+
+    def test_native_cli_prepares_a_reasoning_override_without_changing_selection(self):
+        selected = self.selection()
+        frozen = selected.read_bytes()
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", self.root / "high", "--runner-binary", self.worker(),
+            "--reasoning-effort", "high")
+        from sse_multivector import distillation_review_evaluation as evaluation
+        report = evaluation.report(self.root / "high")
+        self.assertTrue(all(row['settings']['reasoning_effort'] == 'high' for row in report['experiments']))
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / 'calls.json').exists())
+
+    def test_reasoning_trials_bind_new_identities_and_preserve_baseline_artifacts(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        teacher = subjects(("1", "Cable A"))
+        selected = self.selection([dict(note_id="validation-a", post="Cable A.", teacher=teacher,
+            answer=answer(subjects(("1", "Different wording"))))])
+        worker = self.worker()
+        frozen = selected.read_bytes()
+        baseline = self.root / "xhigh"
+        evaluation.prepare(selected, baseline, runner_binary=worker, history_root=self.root)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            first = evaluation.run(baseline)
+            snapshots = {path: path.read_bytes() for path in baseline.rglob("*") if path.is_file()}
+            for effort in ("high", "medium", "low"):
+                destination = self.root / effort
+                prepared = evaluation.prepare(selected, destination, runner_binary=worker,
+                    history_root=self.root, reasoning_effort=effort)
+                self.assertEqual(prepared["summary"]["requests"]["totals"]["new"], 2)
+                report = evaluation.run(destination)
+                self.assertTrue(all(row["settings"]["reasoning_effort"] == effort for row in report["experiments"]))
+                for native, original in zip(report["experiments"], first["experiments"]):
+                    self.assertEqual(native["prompt_id"], original["prompt_id"])
+                    self.assertEqual([(case["input_sha256"], case["prompt"]) for case in native["cases"]],
+                                     [(case["input_sha256"], case["prompt"]) for case in original["cases"]])
+                    for setting in ("provider", "model", "transport", "concurrency", "timeout_seconds", "output_schema"):
+                        self.assertEqual(native["settings"][setting], original["settings"][setting])
+                self.assertEqual(report["generation_usage"]["original_calls"], 2)
+        self.assertEqual(len(json.loads((self.root / "calls.json").read_text())), 8)
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertEqual({path: path.read_bytes() for path in snapshots}, snapshots)
+        self.assertEqual(evaluation.report(baseline)["generation_usage"]["original_calls"], 2)
+        with self.assertRaisesRegex(ValueError, "reasoning_effort"):
+            evaluation.prepare(selected, self.root / "invalid-effort", reasoning_effort="invalid")
+        self.assertFalse((self.root / "invalid-effort").exists())
+
+    def test_native_answer_subset_then_nested_expansion_retains_full_report(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        notes = [dict(note_id="validation-" + letter, post="Cable " + letter + ". " + "word " * 1100,
+            teacher=subjects(("1", "Cable " + letter)), answer=answer(subjects(
+                ("1", "Heading " + letter + " broad" * 1100), ("1.1", "Detail " + letter), ("2", "Cable " + letter))))
+            for letter in ("A", "B")]
+        selected = self.selection(notes, random_count=2)
+        bundle = json.loads(selected.read_text())
+        answers = bundle["random"]["answers"]
+        self.assertEqual(len({row["note_id"] for row in answers}), 2)
+        context = self.root / "assessment"
+        for row in answers:
+            assessment.record(selected, row["id"], context,
+                teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+                reason="Independent complete fixture source meaning.")
+        destination = self.root / "evaluation"
+        evaluation.prepare(selected, destination, runner_binary=self.worker(), assessment_directory=context)
+        self.native("run-distillation-review-evaluation", destination, "--answer-id", answers[0]["id"])
+        first = evaluation.report(destination)
+        first_answer, unselected = first["random"]["answers"]
+        self.assertEqual(first_answer["status"], "complete")
+        self.assertIn("scores", first_answer)
+        self.assertEqual(unselected["status"], "pending")
+        self.assertNotIn("scores", unselected)
+        self.assertTrue(all(row["status"] == "unrun" for rows in unselected["checks"].values()
+                            for row in rows if row.get("origin") != "mechanical"))
+        self.assertEqual(sum(native.get("cache_warmup", {}).get("attempts", 0)
+                             for native in first["experiments"]), 3)
+        for native in first["experiments"]:
+            if all(row["evidence"]["answer_id"] == answers[1]["id"] for row in native["cases"]):
+                self.assertEqual(native.get("cache_warmup", {}).get("attempts", 0), 0)
+        calls_before = len(json.loads((self.root / "calls.json").read_text()))
+        first_receipts = [row.get("receipt") for rows in first_answer["checks"].values() for row in rows]
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            complete = evaluation.run(destination, answer_ids=[row["id"] for row in answers])
+        self.assertEqual([row["status"] for row in complete["random"]["answers"]], ["complete", "complete"])
+        self.assertEqual(sum(native.get("cache_warmup", {}).get("attempts", 0)
+                             for native in complete["experiments"]), 6)
+        self.assertEqual(len(json.loads((self.root / "calls.json").read_text())), calls_before * 2)
+        self.assertEqual([row.get("receipt") for rows in complete["random"]["answers"][0]["checks"].values()
+                          for row in rows], first_receipts)
+        for native in first["experiments"]:
+            if not any(row["evidence"]["answer_id"] == answers[0]["id"] and row.get("origin") != "mechanical"
+                       for row in native["cases"]):
+                continue
+            settings = Path(native["experiment"]) / "execution-settings.jsonl"
+            if not settings.exists():
+                continue
+            entries = [json.loads(line) for line in settings.read_text().splitlines()]
+            for entry in entries[:1]:
+                ids = entry["only"]
+                self.assertTrue(all(identifier.startswith(answers[0]["id"] + ":") for identifier in ids))
+
+    def test_answer_subset_validation_and_empty_selection_dispatch_nothing(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        destination = self.root / "evaluation"
+        evaluation.prepare(self.selection(), destination, runner_binary=self.worker())
+        identifier = evaluation.report(destination)["random"]["answers"][0]["id"]
+        for invalid in (["missing"], [identifier, identifier], "not-an-array"):
+            with self.assertRaisesRegex(ValueError, "answer_ids"):
+                evaluation.run(destination, answer_ids=invalid)
+        empty = evaluation.run(destination, answer_ids=[])
+        self.assertEqual(empty["random"]["answers"][0]["status"], "pending")
+        self.assertEqual(empty["generation_usage"]["original_calls"], 0)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_zero_allowance_reuses_only_selected_answer_in_every_check(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        notes = [dict(note_id="validation-" + letter, post="Cable " + letter + ".",
+            teacher=subjects(("1", "Cable " + letter)), answer=answer(subjects(
+                ("1", "Cable " + letter), ("2", "Other " + letter)))) for letter in ("A", "B")]
+        selected = self.selection(notes, random_count=2)
+        answers = json.loads(selected.read_text())["random"]["answers"]
+        context = self.root / "assessment"
+        for row in answers:
+            assessment.record(selected, row["id"], context,
+                teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+                reason="Independent complete fixture source meaning.")
+        worker = self.worker()
+        first, second = self.root / "first", self.root / "second"
+        evaluation.prepare(selected, first, runner_binary=worker, history_root=self.root,
+                           assessment_directory=context)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            evaluation.run(first)
+            calls = (self.root / "calls.json").read_bytes()
+            evaluation.prepare(selected, second, runner_binary=worker, history_root=self.root,
+                               assessment_directory=context)
+            report = evaluation.run(second, max_new_attempts=0, answer_ids=[answers[0]["id"]])
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+        self.assertEqual([row["status"] for row in report["random"]["answers"]], ["complete", "pending"])
+        self.assertTrue(all(row["status"] == "unrun" for rows in report["random"]["answers"][1]["checks"].values()
+                            for row in rows if row.get("origin") != "mechanical"))
 
     def test_preparation_summary_counts_native_distinct_requests_and_remaining_work(self):
         from sse_multivector import distillation_review_evaluation as evaluation
