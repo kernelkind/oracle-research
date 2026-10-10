@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "meaning": {"type": ["string", "null"]},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "quote": {"type": "string", "minLength": 1},
+          "supports": {"type": "string", "minLength": 1},
+          "inference": {"type": ["string", "null"]}
+        },
+        "required": ["quote", "supports", "inference"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["meaning", "evidence"],
+  "additionalProperties": false
+}

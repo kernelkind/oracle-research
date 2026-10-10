@@ -28,6 +28,56 @@ MANIFEST = "bounded-build.json"
 POLICY_VERSION = "bounded-hierarchy-v1"
 
 
+def _is_attempt_allowance_error(message):
+    """Recognize only the runner's exact aggregate attempt-limit diagnostic."""
+    diagnostic = message.split("; partial results:", 1)[0]
+    prefix = "unresolved prompt cases: "
+    return (diagnostic.startswith(prefix)
+            and all(part == "new-attempt allowance exhausted"
+                    for part in diagnostic[len(prefix):].split(", ")))
+
+
+def _is_case_failure_error(message, report):
+    """Accept only exact runner diagnostics for receipt-backed case failures.
+
+    Match complete error strings: a case's own error can contain commas.
+    Unknown causes are not retried; they need not prevent independent queries.
+    Fatal provider and preflight errors remain build-wide stops.
+    """
+    if any(case['status'] not in ('valid', 'failed') for case in report['cases']):
+        return False
+    failed = [case for case in report['cases'] if case['status'] == 'failed']
+    if not failed or any(not case.get('receipt') or case.get('failure_kind') == 'provider_fatal'
+                         or not isinstance(case.get('error'), str) for case in failed):
+        return False
+    expected = {case.get('job_id', case['id']): case['error'] for case in failed}
+    if len(expected) != len(failed):
+        return False
+    suffix = f"; partial results: {Path(report['experiment']) / 'report.json'}"
+    diagnostic = message.removesuffix(suffix)
+    prefix = 'unresolved prompt cases: '
+    if not diagnostic.startswith(prefix):
+        return False
+    offset = len(prefix)
+    while offset < len(diagnostic):
+        end = diagnostic.find(': ', offset)
+        identifier = diagnostic[offset:end] if end >= 0 else ''
+        error = expected.pop(identifier, None)
+        if error is None:
+            return False
+        part = f'{identifier}: {error}'
+        if not diagnostic.startswith(part, offset):
+            return False
+        offset += len(part)
+        if offset != len(diagnostic):
+            if not diagnostic.startswith(', ', offset):
+                return False
+            offset += 2
+            if offset == len(diagnostic):
+                return False
+    return not expected
+
+
 def _atomic(path, value):
     engine._atomic_write(Path(path), engine._canonical_json_bytes(value))
 

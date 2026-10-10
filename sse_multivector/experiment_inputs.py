@@ -60,6 +60,46 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes'}:
+        try:
+            from . import hierarchy_node_pairs as node_pairs
+        except ImportError:
+            import hierarchy_node_pairs as node_pairs
+        reports = {}
+
+        def saved_report(directory):
+            directory = Path(directory).resolve()
+            if load_report is None:
+                raise ValueError('local_meaning_from requires validated experiment reports')
+            if directory not in reports:
+                envelope = read(directory / 'experiment.json')
+                plan = envelope['plan']
+                protected = {**plan['sources'], **{
+                    str(directory / name): expected for name, expected in plan['files'].items()}}
+                for name in ('reviews.jsonl', 'execution-settings.jsonl'):
+                    path = directory / name
+                    if path.exists():
+                        protected[str(path)] = engine._sha256_file(path)
+                result = load_report(directory)
+                manifest = Path(plan['run_directory']) / 'manifest.json'
+                protected[str(manifest)] = engine._sha256_file(manifest)
+                for case in result['cases']:
+                    if case.get('receipt'):
+                        receipt = Path(case['receipt']['results_path'])
+                        protected[str(receipt)] = engine._sha256_file(receipt)
+                for file, expected in protected.items():
+                    if engine._sha256_file(Path(file)) != expected:
+                        raise ValueError('saved meaning source changed: ' + file)
+                    if file in sources and sources[file] != expected:
+                        raise ValueError('conflicting saved meaning source hash: ' + file)
+                    sources[file] = expected
+                reports[directory] = result
+            return reports[directory]
+
+        cases, preparation = node_pairs.create_source(
+            source, base=path.parent, read=read, load_report=saved_report,
+            local_only=dataset['adapter'] == 'hierarchy_local_nodes')
+        return prepare({**dataset, 'adapter': 'generic'}, {'cases': cases}, template), sources, preparation
     if dataset['adapter'] == 'distillation_verdict':
         try:
             from . import distillation_verdict
@@ -1260,6 +1300,20 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter in {'hierarchy_node_pairs', 'hierarchy_local_nodes'}:
+        try:
+            from . import hierarchy_node_pairs as node_pairs
+        except ImportError:
+            import hierarchy_node_pairs as node_pairs
+        if adapter == 'hierarchy_local_nodes':
+            post = json.loads(case['inputs']['INPUT_JSON'])['local']['post']
+            properties = schema.get('properties', {}) if isinstance(schema, dict) else {}
+            diagnostic = 'evidence' in properties
+            ambiguity_diagnostics = bool({'ambiguities', 'resolutions'} & properties.keys())
+            result['parsed'] = node_pairs.validate_meaning(
+                raw, post=post, diagnostic=diagnostic, ambiguity_diagnostics=ambiguity_diagnostics)
+        else:
+            result['parsed'] = node_pairs.validate(raw)
     if adapter == 'distillation_verdict':
         try:
             from . import distillation_verdict
