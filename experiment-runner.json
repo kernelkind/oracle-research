@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "inputs": "sse_multivector.experiment_inputs",
+  "extension": "sse_multivector.experiment_extension"
+}

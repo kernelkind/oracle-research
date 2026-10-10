@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "review_source": {
+    "path": "teacher-relative-source.json",
+    "sha256": "670fcb387e12efb6c15ae45a257e90223e33f10963a2ec005b9c8ef437a51d20"
+  },
+  "cases": [
+    {
+      "id": "TM01",
+      "case": "TC02",
+      "student_number": "1.1.1.1",
+      "replacements": [],
+      "expected_teacher_number": "1.1.1.1",
+      "expected_reason": "Cable A and its two-metre length are retained by the authored paraphrase.",
+      "partition": "development"
+    },
+    {
+      "id": "TM02",
+      "case": "TC03",
+      "student_number": "1.2.1.1",
+      "replacements": [],
+      "expected_teacher_number": null,
+      "expected_reason": "The authored change removes not and reverses the comparison; no complete teacher meaning matches.",
+      "partition": "development"
+    }
+  ]
+}

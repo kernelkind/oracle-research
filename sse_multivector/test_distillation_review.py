@@ -1,0 +1,624 @@
+"""Offline checks through the shared experiment preparation and validation paths."""
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import tempfile
+import unittest
+
+from sse_multivector import experiment_inputs as inputs
+from sse_multivector.distillation_run import parse_subjects
+from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
+
+
+ROOT = Path(__file__).resolve().parent
+AS = ROOT / "subject-prompt-goal-v1/asv6.100/ASv6.100.md"
+
+
+def cumin_case():
+    example = re.findall(r"<example>(.*?)</example>", AS.read_text(), re.S)[7]
+    teacher = parse_subjects(re.search(r"<output>(.*?)</output>", example, re.S)[1])
+    student = [entry for entry in teacher if entry["number"] != "3.1"]
+    groups = {}
+    for entry in teacher:
+        groups.setdefault(entry["subject"], []).append(entry["number"])
+    report = dict(schema_version=1, prompt_id="DSRv1",
+                  subjects=[dict(number=e["number"], valid=True, reason="Supported by the post.")
+                            for e in student],
+                  relationships=[dict(parent=e["number"].rpartition(".")[0], child=e["number"],
+                                      valid=True, reason="The child preserves the parent restrictions.")
+                                 for e in student if "." in e["number"]], coverage=[])
+    for subject, numbers in groups.items():
+        required = "1.1" in numbers or "1.1.1" in numbers
+        compatible = []
+        if "1.1" in numbers:
+            compatible = ["1", "1.1", "2", "2.1"]
+        elif "1.1.1" in numbers:
+            compatible = [e["number"] for e in student]
+        report["coverage"].append(dict(teacher_numbers=numbers, required=required,
+            student_numbers=[e["number"] for e in student if e["subject"] == subject],
+            compatible_heading_numbers=compatible, reason="Required complete source or optional broader heading."))
+    payload = dict(post=re.search(r"<post>\s*(.*?)\s*</post>", example, re.S)[1],
+                   teacher=teacher, student=student, teacher_meanings=None,
+                   exact_matches=[dict(teacher_number=t["number"], student_number=s["number"])
+                                  for t in teacher for s in student if t["subject"] == s["subject"]])
+    return dict(id="Q17", inputs=dict(TASK_PROMPT=AS.read_text(),
+                                      REVIEW_INPUT=json.dumps(payload))), report
+
+
+class DistillationReviewTests(unittest.TestCase):
+    def test_generation_ranking_checks_all_splits_and_selects_training_extremes(self):
+        from sse_multivector import distillation_review as review
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            # Different notes maximize hierarchy size and answer length. The
+            # largest held-out answers must never become development controls.
+            rows, train = [], []
+            for identifier, split, count, length in [
+                    ("a", "train", 3, 1), ("b", "train", 1, 500),
+                    ("c", "train", 3, 1), ("v", "evaluation", 8, 900),
+                    ("t", "test", 10, 1000)]:
+                subjects = [dict(number=str(i + 1), context="Saved post.", subject="x" * length)
+                            for i in range(count)]
+                rows.append(dict(note_id=identifier, split=split, subjects=subjects))
+                if split == "train":
+                    train.append(dict(note_id=identifier, task="subjects",
+                        completion=[dict(role="assistant", content=json.dumps(dict(subjects=subjects), ensure_ascii=False))]))
+            for name, data in (("references", rows), ("train", train)):
+                (root / (name + ".jsonl")).write_text("".join(json.dumps(row) + "\n" for row in data))
+            manifest = dict(schema_version=2, tasks=dict(subjects="ASv6.100"),
+                train_note_ids=["a", "b", "c"], evaluation_note_ids=["v"], test_note_ids=["t"],
+                outputs={name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+                         for name in ("references.jsonl", "train.jsonl")})
+            path = root / "manifest.json"
+            path.write_text(json.dumps(manifest))
+            ranked = review.rank_generations(path, top=1)
+            self.assertEqual(ranked["split_counts"], dict(train=3, evaluation=1, test=1))
+            self.assertEqual(ranked["maxima_all_notes"]["entries"], 10)
+            self.assertEqual([row["note_id"] for row in ranked["selected"]], ["a", "b"])
+            self.assertEqual(ranked["selected"][1]["reference"]["line"], 2)
+            self.assertEqual(ranked["inference_calls"], 0)
+            cli = subprocess.run([sys.executable, str(ROOT / "experiment.py"),
+                "rank-distillation-generations", path, "--top", "1", "--output", root / "ranked.json"],
+                capture_output=True, text=True, timeout=30)
+            self.assertEqual(cli.returncode, 0, cli.stdout + cli.stderr)
+            self.assertEqual(json.loads((root / "ranked.json").read_text()), ranked)
+            manifest["test_note_ids"].append("a")
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "overlapping"):
+                review.rank_generations(path)
+            manifest["test_note_ids"].pop()
+            # A saved generation differing from its frozen references is blocked.
+            train[0]["completion"][0]["content"] = '{"subjects":[]}'
+            (root / "train.jsonl").write_text("".join(json.dumps(row) + "\n" for row in train))
+            manifest["outputs"]["train.jsonl"] = hashlib.sha256((root / "train.jsonl").read_bytes()).hexdigest()
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "teacher.*differs"):
+                review.rank_generations(path)
+            manifest["outputs"]["train.jsonl"] = "0" * 64
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "hash differs"):
+                review.rank_generations(path)
+
+    def validate(self, case, report):
+        return inputs.validate(dict(adapter="distillation_review"), case, json.dumps(report), None)
+
+    def test_missing_branch_scores_coverage_separately_from_correctness(self):
+        case, report = cumin_case()
+        result = inputs.validate(dict(adapter="distillation_review"), case, json.dumps(report), None)
+        self.assertIn("scores", result)
+        self.assertEqual(result["scores"]["correctness"], dict(numerator=9, denominator=9, value=1.0))
+        self.assertEqual(result["scores"]["coverage"], dict(numerator=1, denominator=2, value=0.5))
+        missing = [row for row in result["findings"]["coverage"] if not row["covered"]]
+        self.assertEqual(len(missing), 1)
+        self.assertEqual(missing[0]["missing_heading_numbers"], ["3"])
+
+    def test_partial_scoring_preserves_exhaustive_scores_without_inventing_verdicts(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        subjects = {row["number"]: row["valid"] for row in report["subjects"]}
+        edges = {row["child"]: row["valid"] for row in report["relationships"]}
+        coverage = [dict(teacher_numbers=row["teacher_numbers"], required=row["required"],
+            student_numbers=row["student_numbers"], compatibility={
+                e["number"]: e["number"] in row["compatible_heading_numbers"]
+                for e in payload["student"]} if row["required"] else {})
+            for row in report["coverage"]]
+        complete = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(complete["scores"], self.validate(case, report)["scores"])
+        # The complete cumin meaning lacks a copy under heading 3. Its true
+        # compatibility fixes failed coverage, so other uncovered checks can be
+        # skipped while every matching-self guard remains explicit.
+        cumin = next(row for row in coverage if "3.1" in row["teacher_numbers"])
+        cumin["compatibility"] = {number: True for number in ["3"] + cumin["student_numbers"]}
+        subjects["1.1.1"] = False
+        edges["1.1.1"] = None
+        partial = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(partial["status"], "valid")
+        self.assertEqual(partial["scores"]["correctness"]["numerator"], 8)
+        self.assertEqual(partial["scores"]["coverage"], complete["scores"]["coverage"])
+        self.assertIn("1.1.1", partial["skipped"]["relationships"])
+        self.assertNotIn(dict(parent="1.1", child="1.1.1"), partial["findings"]["invalid_relationships"])
+        self.assertFalse(partial["diagnostics_complete"])
+
+    def test_partial_coverage_needs_no_compatibility_when_no_match_exists(self):
+        from sse_multivector import distillation_review as review
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Post.")
+        payload = dict(post="Cable A is 2 m long.", teacher=[entry("1", "2 m cable A")],
+            student=[entry("1", "Cables")], exact_matches=[],
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)])
+        result = review.score_partial(payload, subjects={"1": True}, relationships={},
+            coverage=[dict(teacher_numbers=["1"], required=True, student_numbers=[], compatibility={})])
+        self.assertEqual(result["status"], "valid")
+        self.assertEqual(result["scores"]["coverage"], dict(numerator=0, denominator=1, value=0))
+        self.assertFalse(result["diagnostics_complete"])
+        self.assertEqual(result["findings"]["coverage"][0]["missing_heading_numbers"], [])
+
+    def test_partial_matching_self_guard_stays_required_after_coverage_failure(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        subjects = {row["number"]: True for row in report["subjects"]}
+        edges = {row["child"]: True for row in report["relationships"]}
+        coverage = [dict(teacher_numbers=row["teacher_numbers"], required=row["required"],
+            student_numbers=row["student_numbers"], compatibility={number: True
+                for number in row["compatible_heading_numbers"]}) for row in report["coverage"]]
+        cumin = next(row for row in coverage if "3.1" in row["teacher_numbers"])
+        del cumin["compatibility"]["1.1.1"]
+        result = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(result["status"], "pending")
+        self.assertNotIn("coverage", result.get("scores", {}))
+        cumin["compatibility"]["1.1.1"] = False
+        result = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(result["status"], "inconsistent_verdicts")
+        self.assertNotIn("scores", result)
+
+    def test_partial_unknown_relevant_checks_stay_pending(self):
+        from sse_multivector import distillation_review as review
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Post.")
+        payload = dict(post="Cable A is 2 m long.", teacher=[entry("1", "2 m cable A")],
+            student=[entry("1", "Cables"), entry("1.1", "2 m cable A"), entry("2", "Length")],
+            exact_matches=[dict(teacher_number="1", student_number="1.1")],
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)])
+        row = dict(teacher_numbers=["1"], required=True, student_numbers=["1.1"],
+                   compatibility={"1.1": True})
+        result = review.score_partial(payload, subjects={"1": True, "1.1": True, "2": True},
+            relationships={"1.1": None}, coverage=[row])
+        self.assertEqual(result["status"], "pending")
+        row["compatibility"]["2"] = False
+        result = review.score_partial(payload, subjects={"1": True, "1.1": True, "2": True},
+            relationships={"1.1": True}, coverage=[row])
+        self.assertEqual(result["status"], "valid")
+        self.assertEqual(result["scores"]["coverage"]["value"], 1)
+        self.assertIn("1", result["skipped"]["compatibility"][0]["heading_numbers"])
+
+    def test_partial_scoring_keeps_support_and_reference_validation_strict(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        subjects = {row["number"]: row["valid"] for row in report["subjects"]}
+        edges = {row["child"]: row["valid"] for row in report["relationships"]}
+        coverage = [dict(teacher_numbers=row["teacher_numbers"], required=row["required"],
+            student_numbers=row["student_numbers"], compatibility={number: True
+                for number in row["compatible_heading_numbers"]}) for row in report["coverage"]]
+        bad_subjects = dict(subjects); del bad_subjects["1"]
+        self.assertEqual(review.score_partial(payload, subjects=bad_subjects,
+            relationships=edges, coverage=coverage)["status"], "pending")
+        bad_subjects["1"] = "true"
+        with self.assertRaisesRegex(ValueError, "subject"):
+            review.score_partial(payload, subjects=bad_subjects, relationships=edges, coverage=coverage)
+        bad_coverage = copy.deepcopy(coverage)
+        next(row for row in bad_coverage if "3.1" in row["teacher_numbers"])["student_numbers"] = []
+        with self.assertRaisesRegex(ValueError, "mechanical exact match"):
+            review.score_partial(payload, subjects=subjects, relationships=edges, coverage=bad_coverage)
+
+    def test_partial_correctness_does_not_propagate_an_unsupported_parent(self):
+        from sse_multivector import distillation_review as review
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Post.")
+        payload = dict(post="Post.", teacher=[],
+            student=[entry("1", "Unsupported parent"), entry("1.1", "Supported child")],
+            exact_matches=[], teacher_meanings=[])
+        result = review.score_partial(payload, subjects={"1": False, "1.1": True},
+            relationships={"1.1": None}, coverage=[])
+        self.assertEqual(result["status"], "pending")
+        self.assertEqual(result["pending"]["relationships"], ["1.1"])
+        self.assertEqual(result["skipped"]["relationships"], [])
+        result = review.score_partial(payload, subjects={"1": False, "1.1": True},
+            relationships={"1.1": True}, coverage=[])
+        self.assertEqual(result["scores"]["correctness"], dict(numerator=1, denominator=2, value=0.5))
+        # A false own incoming edge determines this entry's contribution, but
+        # omitted support remains an incomplete support assessment.
+        result = review.score_partial(payload, subjects={"1": True},
+            relationships={"1.1": False}, coverage=[])
+        self.assertEqual(result["status"], "pending")
+        self.assertEqual(result["scores"]["correctness"], dict(numerator=1, denominator=2, value=0.5))
+
+    def test_partial_empty_answers_retain_exhaustive_score_conventions(self):
+        from sse_multivector import distillation_review as review
+        teacher = [dict(number="1", subject="Cable A", context="Post.")]
+        payload = dict(post="Post.", teacher=teacher, student=[], exact_matches=[],
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)])
+        result = review.score_partial(payload, subjects={}, relationships={}, coverage=[dict(
+            teacher_numbers=["1"], required=True, student_numbers=[], compatibility={})])
+        self.assertEqual([row["value"] for row in result["scores"].values()], [0, 0])
+        payload.update(teacher=[], teacher_meanings=[])
+        result = review.score_partial(payload, subjects={}, relationships={}, coverage=[])
+        self.assertEqual([row["value"] for row in result["scores"].values()], [1, 1])
+
+    def test_incomplete_invented_and_contradictory_reports_remain_ungraded(self):
+        case, report = cumin_case()
+        changes = []
+        bad = copy.deepcopy(report); bad["subjects"].pop(); changes.append(bad)
+        bad = copy.deepcopy(report); bad["relationships"].pop(); changes.append(bad)
+        bad = copy.deepcopy(report); bad["relationships"][0]["parent"] = "4"; changes.append(bad)
+        bad = copy.deepcopy(report); bad["subjects"].append(bad["subjects"][0]); changes.append(bad)
+        bad = copy.deepcopy(report); bad["subjects"][0]["reason"] = " "; changes.append(bad)
+        bad = copy.deepcopy(report); bad["subjects"][0]["valid"] = "true"; changes.append(bad)
+        bad = copy.deepcopy(report); bad["coverage"].pop(); changes.append(bad)
+        bad = copy.deepcopy(report); bad["coverage"][0]["student_numbers"] = []; changes.append(bad)
+        bad = copy.deepcopy(report); bad["coverage"][0]["student_numbers"] = ["99"]; changes.append(bad)
+        bad = copy.deepcopy(report); bad["coverage"][0]["compatible_heading_numbers"] = ["1"]; changes.append(bad)
+        for field in ("teacher_numbers", "student_numbers", "compatible_heading_numbers"):
+            bad = copy.deepcopy(report)
+            row = next(row for row in bad["coverage"] if row[field])
+            row[field].append(row[field][0])
+            changes.append(bad)
+        for bad in changes:
+            with self.subTest(report=bad), self.assertRaises(ValueError):
+                self.validate(case, bad)
+        for raw in ('{"schema_version":1,"schema_version":1}', json.dumps(report)[:-1]):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                inputs.validate(dict(adapter="distillation_review"), case, raw, None)
+
+    def test_a_bad_subject_and_incoming_link_count_as_one_bad_entry(self):
+        case, report = cumin_case()
+        next(row for row in report["subjects"] if row["number"] == "1.1.1")["valid"] = False
+        next(row for row in report["relationships"] if row["child"] == "1.1.1")["valid"] = False
+        result = self.validate(case, report)
+        self.assertEqual(result["scores"]["correctness"], dict(numerator=8, denominator=9, value=8 / 9))
+        self.assertEqual(len(result["findings"]["incorrect_subjects"]), 1)
+        self.assertEqual(len(result["findings"]["invalid_relationships"]), 1)
+
+    def test_number_prefix_is_not_ancestry_and_an_equal_heading_covers_itself(self):
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Cable A is 2 m long.")
+        teacher = [entry("1", "2 m cable A")]
+        student = [entry("1", "Cables"), entry("1.1", "2 m cables"), entry("1.10", "2 m cable A")]
+        payload = dict(post="Cable A is 2 m long.", teacher=teacher, student=student,
+                       exact_matches=[dict(teacher_number="1", student_number="1.10")], teacher_meanings=None)
+        case = dict(inputs=dict(REVIEW_INPUT=json.dumps(payload)))
+        report = dict(schema_version=1, prompt_id="DSRv1",
+            subjects=[dict(number=e["number"], valid=True, reason="Supported.") for e in student],
+            relationships=[dict(parent="1", child=number, valid=True, reason="Preserves restrictions.")
+                           for number in ("1.1", "1.10")],
+            coverage=[dict(teacher_numbers=["1"], required=True, student_numbers=["1.10"],
+                           compatible_heading_numbers=["1", "1.1", "1.10"], reason="Complete source.")])
+        result = self.validate(case, report)
+        self.assertEqual(result["findings"]["coverage"][0]["missing_heading_numbers"], ["1.1"])
+        report["coverage"][0]["compatible_heading_numbers"].remove("1.1")
+        self.assertEqual(self.validate(case, report)["scores"]["coverage"]["value"], 1)
+
+    def test_frozen_teacher_groups_cannot_change_between_versions(self):
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        payload["teacher_meanings"] = [{key: row[key] for key in ("teacher_numbers", "required")}
+                                       for row in report["coverage"]]
+        case["inputs"]["REVIEW_INPUT"] = json.dumps(payload)
+        self.validate(case, report)
+        row = next(row for row in report["coverage"] if row["required"])
+        row.update(required=False, compatible_heading_numbers=[])
+        with self.assertRaisesRegex(ValueError, "fixed reference"):
+            self.validate(case, report)
+
+    def test_report_version_must_match_the_rendered_reviewer(self):
+        case, report = cumin_case()
+        case["prompt"] = "DSRv2 — draft semantic reviewer\n" + case["inputs"]["REVIEW_INPUT"]
+        report["prompt_id"] = "DSRv2"
+        self.assertEqual(self.validate(case, report)["status"], "valid")
+        schema = json.loads((ROOT / "distillation-review-v1/response-schema.json").read_text())
+        self.assertIn(report["prompt_id"], schema["properties"]["prompt_id"]["enum"])
+        report["prompt_id"] = "DSRv1"
+        with self.assertRaisesRegex(ValueError, "expected review prompt_id DSRv2"):
+            self.validate(case, report)
+
+    def test_output_failures_score_zero_while_reviewer_failures_are_ungraded(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        raw = json.dumps(dict(subjects=json.loads(case["inputs"]["REVIEW_INPUT"])["student"]))
+        for output, truncated in ((raw[:-1], False), (raw, True),
+                ('{"subjects":[{"number":"1.0","context":"x","subject":"x"}]}', False)):
+            with self.subTest(output=output, truncated=truncated):
+                result = review.score_saved_output(case, output, truncated=truncated)
+                self.assertEqual(result["status"], "output_failure")
+                self.assertEqual([score["value"] for score in result["scores"].values()], [0, 0])
+        for reviewer in (None, "{", json.dumps({**report, "subjects": []})):
+            with self.subTest(reviewer=reviewer), self.assertRaises(ValueError):
+                review.score_saved_output(case, raw, reviewer)
+        with self.assertRaisesRegex(ValueError, "frozen review input"):
+            review.score_saved_output(case, '{"subjects":[]}', json.dumps(report))
+
+    def test_saved_outputs_use_the_existing_subject_parser_contract(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        raw = json.dumps(dict(subjects=json.loads(case["inputs"]["REVIEW_INPUT"])["student"]))
+        result = review.score_saved_output(case, "```json\n" + raw + "\n```", json.dumps(report))
+        self.assertEqual(result["status"], "valid")
+        duplicate = '{"subjects": [], "subjects": []}'
+        self.assertEqual(review.score_saved_output(case, duplicate)["status"], "output_failure")
+        with self.assertRaisesRegex(ValueError, "missing"):
+            review.score_saved_output(case, None)
+
+    def test_empty_output_conventions_and_wrong_verdicts_are_visible(self):
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        payload.update(student=[], exact_matches=[])
+        case["inputs"]["REVIEW_INPUT"] = json.dumps(payload)
+        report.update(subjects=[], relationships=[])
+        for row in report["coverage"]:
+            row.update(student_numbers=[], compatible_heading_numbers=[])
+        self.assertEqual([score["value"] for score in self.validate(case, report)["scores"].values()], [0, 0])
+        payload.update(teacher=[], teacher_meanings=[])
+        case["inputs"]["REVIEW_INPUT"] = json.dumps(payload)
+        report["coverage"] = []
+        self.assertEqual([score["value"] for score in self.validate(case, report)["scores"].values()], [1, 1])
+        case, report = cumin_case()
+        case["evidence"] = dict(expected=dict(scores=dict(correctness=[1, 1], coverage=[1, 1])))
+        result = self.validate(case, report)
+        self.assertEqual(result["status"], "valid")
+        self.assertFalse(result["qualification"]["passed"])
+        self.assertIn("coverage", result["qualification"]["differences"][0])
+
+    def test_qualification_catalog_prepares_all_worked_example_variants(self):
+        cases, _, _ = inputs.prepare_file(dict(adapter="distillation_review",
+            select=[f"Q{i:02}" for i in range(1, 20)]), ROOT / "distillation-review-v1/qualification-source.json",
+            (ROOT / "distillation-review-v1/prompt.md").read_text())
+        self.assertEqual(len(cases), 19)
+        by_id = {case["id"]: json.loads(case["inputs"]["REVIEW_INPUT"]) for case in cases}
+        self.assertIsNone(by_id["Q06"]["teacher_meanings"])
+        self.assertIsNone(by_id["Q08"]["teacher_meanings"])
+        self.assertEqual([len(by_id[key]["student"]) for key in ("Q12", "Q13", "Q16", "Q18", "Q19")],
+                         [14, 15, 12, 0, 1])
+        moved = next(entry for entry in by_id["Q13"]["student"] if entry["number"] == "1.1.1.2")
+        self.assertEqual(moved["subject"], "3 m cables")
+        q17 = next(case for case in cases if case["id"] == "Q17")
+        _, report = cumin_case()
+        self.assertTrue(self.validate(q17, report)["qualification"]["passed"])
+
+    def test_initial_teacher_classification_is_checked_without_giving_away_labels(self):
+        cases, _, _ = inputs.prepare_file(dict(adapter="distillation_review", select=["Q08"]),
+            ROOT / "distillation-review-v1/qualification-source.json",
+            (ROOT / "distillation-review-v1/prompt.md").read_text())
+        case = cases[0]
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        self.assertIsNone(payload["teacher_meanings"])
+        report = json.loads((ROOT / "distillation-review-v1/tests/fixtures/Q17-report.json").read_text())
+        report["subjects"].append(dict(number="3.1", valid=True, reason="Complete supported cumin source."))
+        report["relationships"].append(dict(parent="3", child="3.1", valid=True, reason="Explicitly names cumin."))
+        cumin = next(row for row in report["coverage"] if "3.1" in row["teacher_numbers"])
+        cumin["student_numbers"].append("3.1")
+        cumin["compatible_heading_numbers"].append("3.1")
+        self.assertTrue(self.validate(case, report)["qualification"]["passed"])
+        for row in report["coverage"]:
+            row.update(required=False, compatible_heading_numbers=[])
+        # Both aggregate scores still equal one. The wrong classifications must fail.
+        result = self.validate(case, report)
+        self.assertEqual(result["scores"]["coverage"]["value"], 1)
+        self.assertFalse(result["qualification"]["passed"])
+        self.assertTrue(any("known control" in reason for reason in result["qualification"]["differences"]))
+
+    def test_qualification_requires_all_cases_and_preserves_relative_judgments(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        case.update(id="baseline", evidence=dict(expected={}))
+        baseline = dict(case, **self.validate(case, report))
+        changed = copy.deepcopy(baseline)
+        changed.update(id="changed")
+        changed["evidence"] = dict(expected=dict(relative_to="baseline"),
+                                  definition=dict(changes=[dict(op="replace", numbers=["1.1.1"],
+                                                               old="to taste", new="according to taste")]))
+        self.assertEqual(review.qualification([baseline], ["baseline", "changed"])["status"], "pending")
+        self.assertEqual(review.qualification([baseline, changed], ["baseline", "changed"])["status"], "passed")
+        changed["parsed"]["subjects"][0]["valid"] = False
+        result = review.qualification([baseline, changed], ["baseline", "changed"])
+        self.assertEqual(result["status"], "failed")
+        self.assertIn("beyond", result["differences"][0])
+
+    def test_preparation_uses_bound_sources_and_keeps_expectations_outside_the_prompt(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "source.json"
+            path.write_text(json.dumps(dict(schema_version=1,
+                task_prompt=dict(path=str(AS), sha256=hashlib.sha256(AS.read_bytes()).hexdigest()),
+                references={"C8": dict(format="as_example", index=8,
+                    required_meanings=[["1.1", "2.1"], ["1.1.1", "2.1.1", "3.1", "4.1"]])},
+                cases=[dict(id="Q17", reference="C8", changes=[dict(op="remove", numbers=["3.1"])],
+                    expected=dict(scores=dict(correctness=[9, 9], coverage=[1, 2])))])))
+            cases, sources, _ = inputs.prepare_file(dict(adapter="distillation_review"), path,
+                                                     "{TASK_PROMPT}\n{REVIEW_INPUT}")
+            case = cases[0]
+            payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+            self.assertEqual(len(payload["teacher"]), 10)
+            self.assertEqual(len(payload["student"]), 9)
+            self.assertNotIn("expected", payload)
+            self.assertIn("expected", case["evidence"])
+            self.assertEqual(sources[str(AS)], hashlib.sha256(AS.read_bytes()).hexdigest())
+            self.assertEqual(case["inputs"]["TASK_PROMPT"], AS.read_text())
+            definition = json.loads(path.read_text())
+            definition["task_prompt"]["sha256"] = "0" * 64
+            path.write_text(json.dumps(definition))
+            with self.assertRaisesRegex(ValueError, "source hash"):
+                inputs.prepare_file(dict(adapter="distillation_review"), path, "{TASK_PROMPT}\n{REVIEW_INPUT}")
+
+    def test_training_stress_control_keeps_the_complete_saved_hierarchy(self):
+        case, _ = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            training = root / "train.jsonl"
+            training.write_text(json.dumps(dict(note_id="large", task="subjects",
+                prompt=[dict(role="user", content=AS.read_text().rstrip()
+                    + "\n\n<post>\n" + payload["post"] + "\n</post>")],
+                completion=[dict(role="assistant", content=json.dumps(dict(subjects=payload["teacher"])))])) + "\n")
+            source = root / "source.json"
+            source.write_text(json.dumps(dict(schema_version=1,
+                task_prompt=dict(path=str(AS), sha256=hashlib.sha256(AS.read_bytes()).hexdigest()),
+                references={"L": dict(format="training_jsonl", path=str(training),
+                    sha256=hashlib.sha256(training.read_bytes()).hexdigest(), line=1, note_id="large")},
+                cases=[dict(id="Q23", reference="L", changes=[], expected={})])))
+            cases, hashes, _ = inputs.prepare_file(dict(adapter="distillation_review"), source,
+                (ROOT / "distillation-review-v1/prompt.md").read_text())
+            rendered = cases[0]
+            reviewed = json.loads(rendered["inputs"]["REVIEW_INPUT"])
+            self.assertEqual(reviewed["teacher"], payload["teacher"])
+            self.assertEqual(reviewed["student"], payload["teacher"])
+            self.assertEqual(reviewed["post"], payload["post"])
+            self.assertIsNone(reviewed["teacher_meanings"])
+            self.assertEqual(rendered["inputs"]["TASK_PROMPT"], AS.read_text())
+            self.assertEqual(rendered["evidence"]["expected"], {})
+            self.assertIn(str(training), hashes)
+
+    def test_cli_prepares_and_scores_a_supplied_fixture_without_inference(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runner = root / "runner"
+            runner.write_text(FAKE_RUNNER)
+            runner.chmod(0o755)
+            log = root / "calls.json"
+            env = dict(os.environ, FAKE_RUNNER_LOG=str(log))
+            source = dict(schema_version=1,
+                task_prompt=dict(path=str(AS), sha256=hashlib.sha256(AS.read_bytes()).hexdigest()),
+                references={"C8": dict(format="as_example", index=8,
+                    required_meanings=[["1.1", "2.1"], ["1.1.1", "2.1.1", "3.1", "4.1"]])},
+                cases=[dict(id="Q17", reference="C8", changes=[dict(op="remove", numbers=["3.1"])],
+                    expected=dict(scores=dict(correctness=[9, 9], coverage=[1, 2])))])
+            (root / "source.json").write_text(json.dumps(source))
+            runner_settings = json.loads((ROOT / "distillation-review-v1/qualification-spec.json").read_text())["runner"]
+            runner_settings.update(runner_binary=str(runner),
+                output_schema_path=str(ROOT / "distillation-review-v1/response-schema.json"))
+            spec = dict(schema_version=1, prompt=dict(id="DSRv1", path=str(ROOT / "distillation-review-v1/prompt.md")),
+                dataset=dict(adapter="distillation_review", path="source.json"),
+                runner=runner_settings)
+            (root / "spec.json").write_text(json.dumps(spec))
+            def cli(*args):
+                result = subprocess.run([sys.executable, str(ROOT / "experiment.py"), *map(str, args)],
+                    cwd=root, env=env, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                return result.stdout
+            cli("prepare", "prepared", "--spec", "spec.json")
+            shown = json.loads(cli("show", "prepared", "--case", "Q17"))
+            self.assertEqual(shown["status"], "unrun")
+            rendered = cli("show", "prepared", "--case", "Q17", "--prompt-only")
+            self.assertEqual(rendered, shown["prompt"])
+            self.assertNotIn('"expected"', shown["prompt"])
+            plan = json.loads((root / "prepared/experiment.json").read_text())["plan"]
+            self.assertEqual(plan["runner"]["concurrency"], 8)
+            self.assertIn("distillation_review.py", plan["code"])
+            # OpenAI's structured-output array constraints support min/maxItems,
+            # not uniqueItems. The production validator checks uniqueness.
+            self.assertNotIn('"uniqueItems"', json.dumps(plan["runner"]["output_schema"]))
+            _, fixture = cumin_case()
+            (root / "fixture.json").write_text(json.dumps(fixture))
+            scored = json.loads(cli("score-review", "prepared", "--case", "Q17", "--report", "fixture.json"))
+            self.assertEqual(scored["source_kind"], "supplied_report")
+            self.assertEqual(scored["scores"]["coverage"]["value"], 0.5)
+            self.assertTrue(scored["qualification"]["passed"])
+            self.assertFalse(log.exists())
+
+    def test_cli_reuses_source_bound_teacher_meanings_without_new_calls(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runner = root / "runner"
+            runner.write_text(FAKE_RUNNER.replace(
+                'if prompt.startswith("GENERIC PROMPT"):',
+                'if prompt.startswith(("GENERIC PROMPT", "DSRv")):'))
+            runner.chmod(0o755)
+            log = root / "calls.json"
+            _, fixture = cumin_case()
+            env = dict(os.environ, FAKE_RUNNER_LOG=str(log),
+                       FAKE_RUNNER_PROMPT_RESPONSE=json.dumps(fixture))
+            source = dict(schema_version=1,
+                task_prompt=dict(path=str(AS), sha256=hashlib.sha256(AS.read_bytes()).hexdigest()),
+                references={"C8": dict(format="as_example", index=8)},
+                cases=[dict(id="Q17", reference="C8", changes=[dict(op="remove", numbers=["3.1"])],
+                            expected={})])
+            (root / "source.json").write_text(json.dumps(source))
+            spec = dict(schema_version=1,
+                prompt=dict(id="DSRv1", path=str(ROOT / "distillation-review-v1/prompt.md")),
+                dataset=dict(adapter="distillation_review", path="source.json"),
+                runner=dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol",
+                            reasoning_effort="xhigh", concurrency=8, runner_binary=str(runner),
+                            output_schema_path=str(ROOT / "distillation-review-v1/response-schema.json")))
+            (root / "spec.json").write_text(json.dumps(spec))
+
+            def cli(*args, ok=True):
+                result = subprocess.run([sys.executable, str(ROOT / "experiment.py"), *map(str, args)],
+                    cwd=root, env=env, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode == 0, ok, result.stdout + result.stderr)
+                return result
+
+            cli("prepare", "baseline", "--spec", "spec.json")
+            cli("run", "baseline")
+            saved = json.loads(cli("show", "baseline", "--case", "Q17").stdout)
+            self.assertEqual(saved["status"], "valid")
+            reference = dict(experiment="baseline", case_id="Q17",
+                             record_sha256=saved["receipt"]["record_sha256"])
+            source["references"]["C8"]["teacher_meanings_from"] = reference
+            source["cases"].append(dict(id="Q18", reference="C8",
+                changes=[dict(op="remove", numbers=["4.1"])], expected={}))
+            (root / "source.json").write_text(json.dumps(source))
+            spec["prompt"] = dict(id="DSRv2", path=str(ROOT / "distillation-review-v1/prompt-v2.md"))
+            (root / "spec.json").write_text(json.dumps(spec))
+            cli("prepare", "candidate", "--spec", "spec.json")
+            shown = json.loads(cli("show", "candidate", "--json").stdout)
+            self.assertEqual(shown["prompt_id"], "DSRv2")
+            for case in shown["cases"]:
+                payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+                self.assertEqual(payload["teacher_meanings"], saved["teacher_meanings"])
+                self.assertNotIn("record_sha256", payload)
+                self.assertEqual(case["evidence"]["teacher_meanings_from"]["record_sha256"],
+                                 reference["record_sha256"])
+                self.assertIsNone(case["evidence"]["known_teacher_meanings"])
+            current = dict(fixture, prompt_id="DSRv2")
+            (root / "report.json").write_text(json.dumps(current))
+            scored = json.loads(cli("score-review", "candidate", "--case", "Q17",
+                                    "--report", "report.json").stdout)
+            self.assertEqual(scored["status"], "valid")
+            (root / "report.json").write_text(json.dumps(fixture))
+            mismatch = cli("score-review", "candidate", "--case", "Q17", "--report", "report.json", ok=False)
+            self.assertIn("expected review prompt_id DSRv2", mismatch.stderr)
+            plan = json.loads((root / "candidate/experiment.json").read_text())["plan"]
+            for name in ("experiment.json", "run/results.jsonl"):
+                path = root / "baseline" / name
+                self.assertEqual(plan["sources"][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+            # Preparation and inspection do not create another generation.
+            self.assertEqual(len(json.loads(log.read_text())), 1)
+
+            original = copy.deepcopy(source)
+            for name, mutate, message in (
+                    ("wrong-receipt", lambda s: s["references"]["C8"]["teacher_meanings_from"].update(
+                        record_sha256="0" * 64), "receipt"),
+                    ("wrong-case", lambda s: s["references"]["C8"]["teacher_meanings_from"].update(
+                        case_id="missing"), "case"),
+                    ("wrong-teacher", lambda s: s["references"]["C8"].update(index=7), "task, post or teacher"),
+                    ("override", lambda s: s["cases"][0].update(teacher_meanings=None), "override")):
+                with self.subTest(name=name):
+                    changed = copy.deepcopy(original)
+                    mutate(changed)
+                    (root / "source.json").write_text(json.dumps(changed))
+                    result = cli("prepare", name, "--spec", "spec.json", ok=False)
+                    self.assertIn(message, result.stderr)
+                    self.assertFalse((root / name).exists())
+            (root / "source.json").write_text(json.dumps(original))
+            ledger = root / "baseline/run/results.jsonl"
+            rows = [json.loads(line) for line in ledger.read_text().splitlines()]
+            rows[-1]["final_output_raw"] = "{}"
+            ledger.write_text("".join(json.dumps(row) + "\n" for row in rows))
+            result = cli("prepare", "changed-receipt", "--spec", "spec.json", ok=False)
+            self.assertIn("valid reviewer case", result.stderr)
+            self.assertEqual(len(json.loads(log.read_text())), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

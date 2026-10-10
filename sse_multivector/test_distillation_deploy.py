@@ -13,6 +13,372 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_missing_or_corrupt_download_cache_blocks_every_candidate(self):
+        import hashlib
+        from gte.full_build_package import write_manifest
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'fixture/cached', 'revision': 'a'*40, 'device': 'cpu'})
+            package = root / 'inputs'
+            deploy.prepare([config], package, through='preflight')
+            payload = b'complete weights'
+            write_json(package / 'model-cache.json', {'version': 1, 'reserve_bytes': 0, 'models': [{
+                'model': 'fixture/cached', 'revision': 'a'*40, 'files': [{
+                    'path': 'model.safetensors', 'size': len(payload),
+                    'sha256': hashlib.sha256(payload).hexdigest()}]}]})
+            job = read_json(package / 'job.json')
+            job['cache_manifest'] = 'model-cache.json'
+            write_json(package / 'job.json', job)
+            write_manifest(package, package / 'manifest.json', 'distillation-inputs')
+            cached = root / ('cache/hub/models--fixture--cached/snapshots/'+'a'*40+'/model.safetensors')
+            for state in ('missing', 'corrupt'):
+                if state == 'corrupt':
+                    cached.parent.mkdir(parents=True)
+                    cached.write_bytes(b'wrong weights!!!')
+                with patch.dict(os.environ, {'HF_HOME': str(root / 'cache')}), \
+                        patch.object(deploy, 'run_process', return_value=subprocess.CompletedProcess([], 0)) as child:
+                    with self.assertRaisesRegex(ValueError, 'cache verification failed'):
+                        deploy.execute(package, root / state)
+                    child.assert_not_called()
+                    self.assertEqual(read_json(root / state / 'deployment.json')['state'], 'failed')
+            cached.write_bytes(payload)
+            with patch.dict(os.environ, {'HF_HOME': str(root / 'cache')}), \
+                    patch.object(deploy, 'run_process', return_value=subprocess.CompletedProcess([], 0)) as child:
+                self.assertEqual(deploy.execute(package, root / 'valid')['state'], 'complete')
+                self.assertEqual(child.call_args.kwargs['env']['HF_HUB_OFFLINE'], '1')
+                self.assertEqual(child.call_args.kwargs['env']['TRANSFORMERS_OFFLINE'], '1')
+            wrong = read_json(package / 'model-cache.json')
+            wrong['models'][0]['revision'] = 'b'*40
+            write_json(root / 'wrong-cache.json', wrong)
+            with self.assertRaisesRegex(ValueError, 'models or revisions differ'):
+                deploy.prepare([config], root / 'wrong', cache_manifest=root / 'wrong-cache.json')
+
+    def test_supervisor_identifies_the_lock_descriptor_inherited_by_the_controller(self):
+        from vast import runner
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            context = runner.Context(root, root / 'contract.json', root / 'ledger.json', {})
+            attempt = context.path('work/full-build-attempts/001')
+            attempt.mkdir(parents=True)
+            (attempt / 'controller.pid').write_text('42\n')
+            (attempt / 'full-build.started').write_text('started\n')
+            preparation = context.path('preparation-attempts/001/preparation.exit')
+            preparation.parent.mkdir(parents=True)
+            preparation.write_text('0\n')
+            def child(*args, **kwargs):
+                fd, = kwargs['pass_fds']
+                self.assertEqual(kwargs['env']['ORACLE_RUN_WORKER_LOCK_FD'], str(fd))
+                self.assertEqual(os.fstat(fd).st_ino, (root / 'work/full-build.lock').stat().st_ino)
+                return type('Process', (), {'wait': lambda self: 0})()
+            with runner.file_lock(root / 'work/full-build-start.lock', blocking=False) as lock, \
+                    patch.object(runner.subprocess, 'Popen', side_effect=child):
+                result = runner.remote_supervise(context, '001', os.dup(lock.fileno()))
+            self.assertEqual(result['exit_status'], 0)
+
+    def test_controller_crash_keeps_live_child_unsealed_until_it_finishes(self):
+        import ctypes
+        import signal
+        import time
+        from vast import runner
+        libc = ctypes.CDLL(None, use_errno=True)
+        previous = ctypes.c_int()
+        self.assertEqual(libc.prctl(37, ctypes.byref(previous), 0, 0, 0), 0)
+        self.assertEqual(libc.prctl(36, 1, 0, 0, 0), 0)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = {'artifact_kind': 'vast-command-operation', 'workload': {'work_seconds': None}}
+            context = runner.Context(root, root / 'contract.json', root / 'ledger.json', config)
+            attempt = context.path('work/full-build-attempts/001')
+            attempt.mkdir(parents=True)
+            context.path('preparation-attempts').mkdir()
+            context.path('preparation-attempts/preparation.exit').write_text('0\n')
+            child = '''import os,time
+from pathlib import Path
+from vast import runner
+root=Path(%r)
+runner.atomic_bytes(root/'child.pid',f'{os.getpid()}\\n'.encode())
+while not (root/'finish').exists():
+    runner.atomic_json(root/'work/heartbeat.json',{'updated':time.time_ns()},replace=True)
+    time.sleep(.02)
+''' % str(root)
+            parent = '''import os,sys
+from pathlib import Path
+from vast import runner
+from sse_multivector.distillation_deploy import run_process
+root=Path(%r)
+with runner.file_lock(root/'work/full-build.lock',blocking=False) as lock:
+    os.environ['ORACLE_RUN_WORKER_LOCK_FD']=str(lock.fileno())
+    runner.atomic_bytes(root/'work/full-build-attempts/001/controller.pid',f'{os.getpid()}\\n'.encode())
+    runner.atomic_bytes(root/'work/full-build-attempts/001/full-build.started',b'started\\n')
+    run_process([sys.executable,'-B','-c',%r],None)
+''' % (str(root), child)
+            process = subprocess.Popen([sys.executable, '-B', '-c', parent],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            pid = None
+            try:
+                deadline = time.monotonic() + 10
+                while not (root / 'child.pid').exists() and process.poll() is None:
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(.01)
+                pid = int((root / 'child.pid').read_text())
+                process.kill()
+                process.communicate(timeout=5)
+                # A surviving child also protects against a terminal exit receipt
+                # published by the supervisor after the controller's death.
+                for terminal in (False, True):
+                    if terminal:
+                        runner.atomic_bytes(attempt / 'full-build.exit', b'137\n')
+                    self.assertEqual(runner.remote_attempt_status(context, '001')['state'], 'running')
+                    with self.assertRaisesRegex(runner.OperationError, 'lock'):
+                        runner.remote_seal(context, '001')
+                    self.assertFalse(context.path('work/retrieval-manifest.json').exists())
+                (root / 'finish').touch()
+                os.waitpid(pid, 0)
+                pid = None
+                self.assertEqual(runner.remote_attempt_status(context, '001')['state'], 'terminal')
+                sealed = runner.remote_seal(context, '001')
+                self.assertTrue(sealed['terminal'])
+                record = next(r for r in sealed['work_files'] if r['path'] == 'heartbeat.json')
+                self.assertEqual(runner.sha256_file(root / 'work/heartbeat.json'), record['sha256'])
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.communicate(timeout=5)
+                if pid is not None:
+                    try:
+                        os.killpg(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    os.waitpid(pid, 0)
+                libc.prctl(36, previous.value, 0, 0, 0)
+
+    def test_tokenizer_preflight_needs_no_cuda_but_gpu_work_requires_two_devices(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            paths = []
+            for name in ('first', 'second'):
+                path = root / (name + '.json')
+                write_json(path, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                                 'model': 'org/model', 'revision': 'a'*40, 'device': 'cuda'})
+                paths.append(path)
+            for mode, count in [('preflight', 0), ('baseline', 1)]:
+                package = root / mode
+                deploy.prepare(paths, package, through=mode, gpu_assignments={'first': 0, 'second': 1})
+                torch = SimpleNamespace(cuda=SimpleNamespace(device_count=lambda: count))
+                with patch.dict(os.environ, {}, clear=True), patch.dict(sys.modules, {'torch': torch}), \
+                        patch.object(deploy, 'run_process', return_value=subprocess.CompletedProcess([], 0)) as child:
+                    if mode == 'preflight':
+                        self.assertEqual(deploy.execute(package, root / 'preflight-results')['state'], 'complete')
+                        self.assertEqual(child.call_count, 2)
+                    else:
+                        with self.assertRaisesRegex(ValueError, 'visible CUDA devices'):
+                            deploy.execute(package, root / 'baseline-results')
+                        child.assert_not_called()
+
+    def test_parallel_failure_preserves_the_other_active_candidate_and_blocks_queued_work(self):
+        import threading
+        import time
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            assignments = {'first': 0, 'second': 1, 'third': 0}
+            paths = []
+            for name in assignments:
+                path = root / (name + '.json')
+                write_json(path, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                                 'model': 'org/model', 'revision': 'a'*40, 'device': 'cpu'})
+                paths.append(path)
+            package, output = root / 'package', root / 'results'
+            deploy.prepare(paths, package, through='preflight', gpu_assignments=assignments)
+            started, calls = threading.Barrier(2), []
+            def child(command, **kwargs):
+                name = Path(command[3]).stem
+                calls.append(name)
+                started.wait(timeout=5)
+                if name == 'first':
+                    (output / 'first-evidence').write_text('preserved failed work')
+                    return type('Result', (), {'returncode': 7})()
+                deadline = time.monotonic() + 5
+                while 'failures' not in read_json(output / 'deployment.json'):
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(.01)
+                (output / 'second-evidence').write_text('active candidate finished')
+                return type('Result', (), {'returncode': 0})()
+            with patch.dict(os.environ, {}, clear=True), patch.object(deploy, 'run_process', side_effect=child):
+                with self.assertRaisesRegex(RuntimeError, 'first failed with exit code 7'):
+                    deploy.execute(package, output)
+            self.assertEqual(set(calls), {'first', 'second'})
+            self.assertTrue((output / 'first-evidence').is_file())
+            self.assertTrue((output / 'second-evidence').is_file())
+            self.assertEqual(read_json(output / 'deployment.json')['active_runs'], {})
+
+    def test_two_gpu_children_follow_explicit_stop_and_continue_after_interrupt(self):
+        import json
+        import signal
+        import time
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            paths = []
+            for name in ('first', 'second'):
+                path = root / (name + '.json')
+                write_json(path, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                                 'model': 'org/model', 'revision': 'a'*40, 'device': 'cpu'})
+                paths.append(path)
+            package = root / 'package'
+            deploy.prepare(paths, package, through='preflight', gpu_assignments={'first': 0, 'second': 1})
+            for operation, signum, pause in [('stop', signal.SIGTERM, 60), ('interrupt', signal.SIGINT, .7)]:
+                with self.subTest(operation=operation):
+                    output = root / operation
+                    script = f'''import sys
+from pathlib import Path
+from sse_multivector import distillation_deploy as deploy
+real = deploy.run_process
+def child(command, timeout, **kwargs):
+    name = Path(command[3]).stem
+    ready = Path({str(output)!r}) / (name + '-ready.json')
+    done = Path({str(output)!r}) / (name + '-done')
+    code = ('import json,os,sys,time; from pathlib import Path; '
+            'Path(sys.argv[1]).write_text(json.dumps({{"pid":os.getpid(),"gpu":os.environ.get("CUDA_VISIBLE_DEVICES")}})); '
+            'time.sleep(float(sys.argv[3])); Path(sys.argv[2]).touch()')
+    return real([sys.executable, '-B', '-c', code, str(ready), str(done), '{pause}'], timeout, **kwargs)
+deploy.run_process = child
+deploy.execute(Path({str(package)!r}), Path({str(output)!r}))
+'''
+                    env = {k: v for k, v in os.environ.items() if k != 'CUDA_VISIBLE_DEVICES'}
+                    process = subprocess.Popen([sys.executable, '-B', '-c', script], env=env,
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+                    pids = []
+                    try:
+                        deadline = time.monotonic() + 10
+                        while time.monotonic() < deadline and process.poll() is None:
+                            if all((output / (name + '-ready.json')).exists() for name in ('first', 'second')):
+                                break
+                            time.sleep(.01)
+                        records = [json.loads((output / (name + '-ready.json')).read_text()) for name in ('first', 'second')]
+                        pids = [r['pid'] for r in records]
+                        self.assertEqual([r['gpu'] for r in records], ['0', '1'])
+                        process.send_signal(signum)
+                        stdout, stderr = process.communicate(timeout=10)
+                        state = read_json(output / 'deployment.json')
+                        self.assertEqual(state['active_runs'], {})
+                        if operation == 'stop':
+                            self.assertNotEqual(process.returncode, 0)
+                            self.assertEqual(state['state'], 'failed')
+                            self.assertFalse(any((output / (name + '-done')).exists() for name in ('first', 'second')))
+                        else:
+                            self.assertEqual(process.returncode, 0, stderr.decode())
+                            self.assertEqual(state['state'], 'complete')
+                            self.assertTrue(all((output / (name + '-done')).exists() for name in ('first', 'second')))
+                            self.assertIn(b'unbounded job continues', stderr)
+                        for pid in pids:
+                            with self.assertRaises(ProcessLookupError):
+                                os.kill(pid, 0)
+                    finally:
+                        if process.poll() is None:
+                            os.killpg(process.pid, signal.SIGKILL)
+                            process.wait()
+                        for path in output.glob('*-ready.json'):
+                            try:
+                                os.killpg(json.loads(path.read_text())['pid'], signal.SIGKILL)
+                            except ProcessLookupError:
+                                pass
+
+    def test_gpu_assignment_validation_and_inherited_mask_fail_before_starting(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            paths = []
+            for name in ('first', 'second'):
+                path = root / (name + '.json')
+                write_json(path, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                                 'model': 'org/model', 'revision': 'a'*40, 'device': 'cpu'})
+                paths.append(path)
+            for index, assignments in enumerate(({}, {'first': 0}, {'first': 0, 'other': 1},
+                    {'first': True, 'second': 0}, {'first': -1, 'second': 0}, {'first': 0, 'second': 2})):
+                with self.subTest(assignments=assignments), self.assertRaisesRegex(ValueError, 'GPU assignments'):
+                    deploy.prepare(paths, root / f'invalid-{index}', through='preflight', gpu_assignments=assignments)
+                self.assertFalse((root / f'invalid-{index}').exists())
+            package, output = root / 'package', root / 'results'
+            deploy.prepare(paths, package, through='preflight', gpu_assignments={'first': 0, 'second': 1})
+            with patch.dict(os.environ, {'CUDA_VISIBLE_DEVICES': 'GPU-A'}), \
+                    patch.object(deploy, 'run_process') as child:
+                with self.assertRaisesRegex(ValueError, 'inherited CUDA_VISIBLE_DEVICES'):
+                    deploy.execute(package, output)
+                child.assert_not_called()
+            self.assertEqual(read_json(output / 'deployment.json')['state'], 'failed')
+
+    def test_gpu_assignments_run_two_lanes_with_global_baseline_gate(self):
+        import threading
+        from sse_multivector import distillation_data
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            data = root / 'subjects'
+            manifest = distillation_data.prepare(root / 'source.json', root / 'annotations.json',
+                root / 'subjects.txt', None, 'AS-test', None, 2, 'pilot', data, tasks=('subjects',))
+            configs, preparations = [], []
+            assignments = {'first': 1, 'second': 0, 'third': 1}
+            for name in assignments:
+                config, prep = root / (name + '.json'), root / 'prep' / (name + '.json')
+                recipe = {'data': str(data), 'model': 'org/model', 'revision': 'a'*40,
+                          'device': 'cpu', 'training_milestones': [2, 4], 'evaluation_tasks': ['subjects'],
+                          'max_new_tokens': {'subjects': 8}}
+                write_json(config, recipe)
+                write_json(prep, {**recipe, 'training_milestones': [1, 2], 'preparation': {
+                    'train_note_ids': manifest['train_note_ids'][:2],
+                    'evaluation_note_ids': manifest['evaluation_note_ids'][:1],
+                    'max_new_tokens': 4, 'cache_fill_tokens': 16}})
+                configs.append(config)
+                preparations.append(prep)
+            package, output = root / 'package', root / 'results'
+            deploy.prepare(configs, package, preparation_configs=preparations, gpu_assignments=assignments)
+            self.assertEqual(deploy.verify_package(package)['gpu_assignments'], assignments)
+            lock, active, calls, prepared, baselines = threading.Lock(), set(), [], set(), set()
+            rendezvous = {mode: threading.Barrier(2) for mode in ('preparation', 'baseline', 'report')}
+            def child(command, **kwargs):
+                name, mode = Path(command[3]).stem, command[-1]
+                gpu = kwargs['env']['CUDA_VISIBLE_DEVICES']
+                with lock:
+                    self.assertNotIn(gpu, active)
+                    active.add(gpu)
+                    calls.append((name, mode, gpu))
+                    if mode == 'baseline':
+                        self.assertEqual(prepared, set(assignments))
+                    elif mode == 'report':
+                        self.assertEqual(baselines, set(assignments))
+                    live = read_json(output / 'deployment.json')['active_runs']
+                    self.assertEqual(live[name]['gpu'], assignments[name])
+                if name != 'third':
+                    rendezvous[mode].wait(timeout=5)
+                with lock:
+                    active.remove(gpu)
+                return type('Result', (), {'returncode': 0})()
+            def verify(directory, *args):
+                with lock:
+                    if directory.parent.name == 'preparation':
+                        prepared.add(directory.name)
+                return {'status': 'complete'}
+            def baseline(directory, *args):
+                with lock:
+                    baselines.add(directory.parent.name)
+                return {'notes': 2}
+            with patch.dict(os.environ, {'CUDA_VISIBLE_DEVICES': 'GPU-A,GPU-B'}), \
+                    patch.object(deploy, 'run_process', side_effect=child), \
+                    patch.object(deploy, 'verify_subject_run', side_effect=verify), \
+                    patch.object(deploy, 'subject_stage_summary', side_effect=baseline):
+                self.assertEqual(deploy.execute(package, output)['state'], 'complete')
+            self.assertEqual(len(calls), 9)
+            for name, mode, gpu in calls:
+                self.assertEqual(gpu, 'GPU-A' if assignments[name] == 0 else 'GPU-B')
+            self.assertEqual(read_json(output / 'deployment.json')['active_runs'], {})
+            self.assertEqual(set(read_json(output / 'baselines-integrity.json')), set(assignments))
+
     def test_live_status_reports_validation_failures_without_exposing_test_results(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -221,7 +587,121 @@ class PackageTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
 class SharedSSHTests(unittest.TestCase):
-    def test_prep_continues_into_fresh_pilot_and_verifies_retrieved_results(self):
+    @unittest.skipUnless(os.environ.get('DISTILLATION_CACHE_STAGE') == 'download', 'requires the cache handoff rehearsal')
+    def test_download_models_on_volume_and_retrieve_evidence(self):
+        import hashlib
+        import socket
+        from gte.full_build_package import write_manifest
+        from sse_multivector.test_distillation_cache import fixture_hub
+        source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
+        model = Path(read_json(source / 'config.json')['model'])
+        files = {str(p.relative_to(model)): p.read_bytes() for p in model.rglob('*') if p.is_file()}
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'cache-handoff'
+        inputs = root / 'download-inputs'
+        inputs.mkdir(parents=True)
+        write_json(inputs / 'model-cache.json', {'version': 1, 'reserve_bytes': 0, 'models': [{
+            'model': 'fixture/cached', 'revision': 'a'*40, 'files': [
+                {'path': n, 'size': len(p), 'sha256': hashlib.sha256(p).hexdigest()} for n, p in files.items()]}]})
+        write_json(inputs / 'job.json', {'cache_manifest': 'model-cache.json',
+            'timeout_seconds': None, 'code': deploy.code_hashes()})
+        write_manifest(inputs, inputs / 'manifest.json', 'distillation-model-cache')
+        with socket.create_connection(('target', 22)) as connection:
+            address = connection.getsockname()[0]
+        with fixture_hub(files, '0.0.0.0') as (port, requests):
+            result = self.run_package(inputs, root / 'download-operation', local_volume=True,
+                download_only=True, environment={'HF_ENDPOINT': f'http://{address}:{port}', 'HF_HUB_DISABLE_XET': '1'})
+        receipt = read_json(result / 'volume.json')
+        self.assertTrue(receipt['write_read_verified'])
+        self.assertEqual(receipt['volume_identity']['id'], 881)
+        self.assertEqual(receipt['volume_identity']['machine_id'], 12)
+        report = read_json(result / 'verification.json')
+        self.assertEqual(len(report['files']), len(files))
+        self.assertTrue(all(r['verified'] for r in report['files']))
+        self.assertFalse(any('model.safetensors' in p['path'] for p in read_json(
+            root / 'download-operation/launch/retrieval-verification.json')['work_files']))
+        self.assertTrue(all(auth is None for method, p, auth in requests))
+        from sse_multivector import distillation_cache
+        self.assertTrue(distillation_cache.review_completion(inputs, root / 'download-operation')['complete'])
+        missing = result / 'verification.json'
+        saved = missing.read_bytes()
+        report['files'].pop()
+        write_json(missing, report)
+        with self.assertRaises(Exception):
+            distillation_cache.review_completion(inputs, root / 'download-operation')
+        missing.write_bytes(saved)
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_CACHE_STAGE') == 'pilot', 'requires the cache handoff rehearsal')
+    def test_cached_models_survive_replacement_and_run_two_worker_prep_and_pilot_offline(self):
+        from sse_multivector.distillation_run import load_data
+        cache_root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'cache-handoff'
+        old = cache_root / 'download-operation'
+        write_json(old / 'launch/destruction-confirmation.json', {'instance_id': 'offline-fixture',
+            'absent_from_complete_inventory': True, 'absence_observations': 2})
+        root = self.fixture_package('cached-pilot', {'model': 'fixture/cached', 'revision': 'a'*40,
+            'training_milestones': [1, 2, 3, 4], 'batch_size': 1, 'gradient_accumulation_steps': 8,
+            'evaluation_tasks': ['subjects'], 'subject_batching': {
+                'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}}, seconds=None, test_notes=True)
+        paths, preparations = [], []
+        for name in ('first', 'second'):
+            path = root / (name+'.json')
+            config = read_json(path)
+            data = load_data(config['data'])
+            prep = root / 'prep-configs' / (name+'.json')
+            write_json(prep, {**config, 'training_milestones': [2, 4], 'preparation': {
+                'max_new_tokens': 4, 'cache_fill_tokens': 16,
+                'train_note_ids': data['manifest']['train_note_ids'],
+                'evaluation_note_ids': data['manifest']['evaluation_note_ids']}})
+            paths.append(path)
+            preparations.append(prep)
+        package = root / 'cached-inputs'
+        deploy.prepare(paths, package, preparation_configs=preparations,
+            gpu_assignments={'first': 0, 'second': 1},
+            cache_manifest=cache_root / 'download-inputs/model-cache.json')
+        result = self.run_package(package, root / 'operation', local_volume=True,
+            recover_from=old, reuse_work=False,
+            environment={'HF_ENDPOINT': 'http://127.0.0.1:1'})
+        self.assertEqual(read_json(result / 'cache-verification.json')['state'], 'complete')
+        self.assertEqual(deploy.verify_results(package, result)['status'], 'complete')
+        self.assertTrue(deploy.review_completion(package, root / 'operation')['complete'])
+        for name in ('first', 'second'):
+            self.assertEqual(read_json(result / name / 'report.json')['training']['examples'], 4)
+            self.assertEqual(read_json(result / 'preparation' / name / 'report.json')['training']['updates'], 2)
+        receipt = read_json(root / 'operation/launch/volume-prepared.json')['remote_receipt']
+        self.assertTrue(receipt['recovered'])
+        write_json(cache_root / 'handoff-checks.json', {'download_retrieved_before_replacement': True,
+            'old_download_work_archived': True, 'cache_verified_offline': True,
+            'two_worker_prep_and_fresh_pilot_complete': True, 'volume_receipt': receipt})
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_VOLUME_STAGE') == 'seed', 'requires the volume replacement rehearsal')
+    def test_seed_volume_before_container_replacement(self):
+        root = self.fixture_package('volume-replacement', {'training_milestones': [1, 2, 3, 4],
+            'batch_size': 1, 'gradient_accumulation_steps': 8, 'evaluation_tasks': ['subjects'],
+            'subject_batching': {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}}, seconds=None, test_notes=True)
+        self.run_package(root / 'inputs', root / 'original', local_volume=True)
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_VOLUME_STAGE') == 'recover', 'requires the volume replacement rehearsal')
+    def test_recover_volume_after_container_replacement(self):
+        from sse_multivector.distillation_run import file_hashes
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'volume-replacement'
+        old = root / 'original'
+        write_json(old / 'launch/destruction-confirmation.json', {'instance_id': 'offline-fixture',
+            'absent_from_complete_inventory': True, 'absence_observations': 2})
+        before = file_hashes(old / 'result/work/results')
+        result = self.run_package(root / 'inputs', root / 'replacement', local_volume=True, recover_from=old)
+        after = file_hashes(result)
+        for path, digest in before.items():
+            if path.endswith('.log'):
+                self.assertTrue((result / path).read_bytes().startswith((old / 'result/work/results' / path).read_bytes()))
+            elif path != 'deployment.json':
+                self.assertEqual(after[path], digest, path)
+        receipt = read_json(root / 'replacement/launch/volume-prepared.json')['remote_receipt']
+        self.assertTrue(receipt['recovered'])
+        write_json(root / 'replacement-checks.json', {'unchanged_files': before,
+            'receipt': receipt, 'checkpoint_and_answers_reused': True})
+
+    def test_two_gpu_prep_continues_into_fresh_pilot_and_verifies_retrieved_results(self):
         from sse_multivector.distillation_run import load_data
         root = self.fixture_package('prep-then-pilot', {
             'training_milestones': [1, 2, 3, 4], 'batch_size': 1, 'gradient_accumulation_steps': 8,
@@ -241,11 +721,14 @@ class SharedSSHTests(unittest.TestCase):
                 'evaluation_note_ids': data['manifest']['evaluation_note_ids']}})
             preparations.append(prep)
         package = root / 'combined-inputs'
-        deploy.prepare(paths, package, preparation_configs=preparations)
-        result = self.run_package(package, root / 'operation')
+        deploy.prepare(paths, package, preparation_configs=preparations,
+                       gpu_assignments={'first': 0, 'second': 1})
+        result = self.run_package(package, root / 'operation', copy_while_running=True)
         checked = deploy.verify_results(package, result)
         self.assertEqual(checked['status'], 'complete')
         self.assertEqual(set(checked['candidates']), {'first', 'second'})
+        self.assertEqual(read_json(result / 'deployment.json')['gpu_assignments'], {'first': 0, 'second': 1})
+        self.assertEqual(read_json(result / 'deployment.json')['active_runs'], {})
         reviewed = deploy.review_completion(package, root / 'operation')
         self.assertTrue(reviewed['complete'])
         self.assertEqual(reviewed['instance_id'], 'offline-fixture')
@@ -367,7 +850,9 @@ class SharedSSHTests(unittest.TestCase):
         write_json(root / 'transfer-checks.json', {'groups': groups, 'response_before_checkpoint': True,
                                                 'checkpoint_sha256': sha256(weights), 'subject_sha256': sha256(subject)})
 
-    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False, continue_after_checkpoint=False):
+    def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False,
+                    continue_after_checkpoint=False, local_volume=False, recover_from=None,
+                    download_only=False, environment=None, reuse_work=True):
         import argparse
         import importlib.util
         import shutil
@@ -376,14 +861,31 @@ class SharedSSHTests(unittest.TestCase):
         import package as packager
         import runner
         from sse_multivector.test_distillation_vast import quote
-        from sse_multivector.distillation_vast import make_spec
+        from sse_multivector.distillation_vast import make_spec, make_cache_spec
         ledger = root.parent / (root.name + '-ledger.json')
         write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
             'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
         settings, offer = quote()
-        if deploy.verify_package(inputs)['timeout_seconds'] is None:
+        if download_only:
+            from sse_multivector.distillation_cache import verify_package
+            job = verify_package(inputs)
+        else:
+            job = deploy.verify_package(inputs)
+        gpu_count = max(job.get('gpu_assignments', {}).values(), default=0) + 1
+        settings['offer_equals']['num_gpus'] = offer['num_gpus'] = gpu_count
+        if local_volume:
+            settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+        if recover_from is not None:
+            settings['recover_from'] = str(recover_from)
+            settings['label'] += '-replacement'
+            if not reuse_work:
+                settings.update(reuse_work=False,
+                    recovery_reason='Verified model downloads hand off to fresh two-GPU prep and pilot')
+        if job['timeout_seconds'] is None:
             settings['worker_timeout_seconds'] = None
-        spec = make_spec(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
+        builder = make_cache_spec if download_only else make_spec
+        spec = builder(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
+        spec['environment'].update(environment or {})
         if copy_while_running:
             spec['progressive_copy'] = {'poll_seconds': 1, 'bytes_per_second': 1024 * 1024, 'timeout_seconds': 120}
         config = packager.freeze(spec, root, ledger)
@@ -405,11 +907,14 @@ class SharedSSHTests(unittest.TestCase):
         shutil.copyfile(config, root / 'launch/operation-contract.json')
         remote = '/workspace/oracle-full-build'
         module.verify_local_ssh(context)
+        if local_volume:
+            module.ensure_remote_volume(context, key, endpoint, root / 'launch', 'offline-fixture')
         module.tar_upload_directory(context, key, endpoint, root / 'transport', remote + '/transport')
         module.tar_upload_directory(context, key, endpoint, root / 'launch', remote + '/launch')
         # Each independent test uses a fresh operation on the same SSH target.
-        module.completed_process([*module.ssh_arguments(context, key, endpoint),
-            'rm -rf /workspace/oracle-full-build/work /workspace/oracle-full-build/package /workspace/oracle-full-build/preparation-attempts'])
+        if not local_volume:
+            module.completed_process([*module.ssh_arguments(context, key, endpoint),
+                'rm -rf /workspace/oracle-full-build/work /workspace/oracle-full-build/package /workspace/oracle-full-build/preparation-attempts'])
         def call(operation, *args):
             return module.remote_json(context, key, endpoint, operation, *args)
         self.assertTrue(call('_remote-verify-transfer')['verified'])
@@ -417,10 +922,16 @@ class SharedSSHTests(unittest.TestCase):
         while not call('_remote-prepare').get('prepared'):
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.2)
-        started = call('_remote-worker', '--attempt', '001')
-        module.atomic_json(root / 'launch/worker-invocations/001.json',
-                           {'attempt_id': '001', 'instance_id': 'offline-fixture'})
-        module.publish_worker_acknowledgement(context, 'offline-fixture', '001', started)
+        if recover_from is not None:
+            with patch.object(module, 'record_pre_worker_cost'):
+                attempt_id = module.ensure_worker_started(context, 'offline-fixture', key, endpoint)
+            self.assertEqual(attempt_id, '002' if reuse_work else '001')
+        else:
+            attempt_id = '001'
+            started = call('_remote-worker', '--attempt', attempt_id)
+            module.atomic_json(root / f'launch/worker-invocations/{attempt_id}.json',
+                               {'attempt_id': attempt_id, 'instance_id': 'offline-fixture'})
+            module.publish_worker_acknowledgement(context, 'offline-fixture', attempt_id, started)
         copier = module.start_progressive_copy(context, key, endpoint) if copy_while_running else None
         if copier is not None:
             self.addCleanup(lambda: copier.terminate() if copier.poll() is None else None)
@@ -428,9 +939,9 @@ class SharedSSHTests(unittest.TestCase):
         interruption_requested = False
         if stop:
             time.sleep(2)
-            call('_remote-stop', '--attempt', '001')
+            call('_remote-stop', '--attempt', attempt_id)
         while True:
-            state = call('_remote-status', '--attempt', '001')
+            state = call('_remote-status', '--attempt', attempt_id)
             if continue_after_checkpoint and not interruption_requested:
                 checkpoints = state.get('progress', {}).get('candidates', {}).get('first', {}).get('checkpoints', [])
                 if checkpoints:
@@ -438,10 +949,18 @@ class SharedSSHTests(unittest.TestCase):
                          'Interrupt the offline SSH rehearsal after its first saved checkpoint')
                     interruption_requested = True
             if copier is not None and state['state'] == 'running':
-                local = root / 'result.next/work/results/first'
-                notes = list(local.glob('baseline/note-*/complete.json'))
-                checkpoints = list(local.glob('checkpoints/checkpoint-*/complete.json'))
-                if notes and checkpoints and copied_before_terminal is None:
+                local = root / 'result.next/work/results'
+                names = [Path(path).stem for path in job['runs']] if job.get('gpu_assignments') else ['first']
+                # The paired toy run can finish its main updates faster than
+                # a complete SSH copy. Its prep checkpoints are already frozen
+                # while baselines run; verify early copies from both workers.
+                checkpoint_root = local / 'preparation' if job.get('preparation_runs') else local
+                note_groups = [list((local / name).glob('baseline/note-*/complete.json')) for name in names]
+                checkpoint_groups = [list((checkpoint_root / name).glob('checkpoints/checkpoint-*/complete.json'))
+                                     for name in names]
+                notes = [path for group in note_groups for path in group]
+                checkpoints = [path for group in checkpoint_groups for path in group]
+                if all(note_groups) and all(checkpoint_groups) and copied_before_terminal is None:
                     from sse_multivector.distillation_run import verify_saved
                     self.assertTrue(all(verify_saved(p.parent) for p in notes + checkpoints))
                     copied_before_terminal = {str(p.relative_to(root / 'result.next')): p.stat().st_mtime_ns for p in notes + checkpoints}
@@ -451,7 +970,7 @@ class SharedSSHTests(unittest.TestCase):
             self.assertLess(time.monotonic(), deadline)
             time.sleep(.1 if continue_after_checkpoint else .5)
         (root / 'result.next').mkdir(exist_ok=True)
-        module.ensure_retrieved(context, 'offline-fixture', key, endpoint, '001')
+        module.ensure_retrieved(context, 'offline-fixture', key, endpoint, attempt_id)
         if continue_after_checkpoint:
             self.assertTrue(interruption_requested, state)
             self.assertNotEqual(state['exit_status'], 0)
@@ -496,18 +1015,19 @@ class SharedSSHTests(unittest.TestCase):
             module.completed_process([*module.ssh_arguments(context, key, endpoint),
                 'test -f /workspace/oracle-full-build/work/results/first/baseline/note-0000/subjects.json'])
         if expected == 0:
-            self.assertEqual(state['exit_status'], 0, (root / 'result.next/work/full-build-attempts/001/full-build.log').read_text())
-            self.assertTrue(module.publish_verified_result(context, '001'))
+            self.assertEqual(state['exit_status'], 0, (root / f'result.next/work/full-build-attempts/{attempt_id}/full-build.log').read_text())
+            self.assertTrue(module.publish_verified_result(context, attempt_id))
             results = root / 'result/work/results'
-            self.assertEqual(read_json(results / 'deployment.json')['state'], 'complete')
+            self.assertEqual(read_json(results / ('verification.json' if download_only else 'deployment.json'))['state'], 'complete')
             # A new SSH call cannot start a second execution after completion.
-            self.assertEqual(call('_remote-worker', '--attempt', '001')['exit_status'], 0)
+            self.assertEqual(call('_remote-worker', '--attempt', attempt_id)['exit_status'], 0)
         else:
             self.assertNotEqual(state['exit_status'], 0)
             results = root / 'result.next/work/results'
         return results
 
-    def fixture_package(self, name, changes=None, seconds=180, through='report', test_notes=False):
+    def fixture_package(self, name, changes=None, seconds=180, through='report', test_notes=False,
+                        gpu_assignments=None):
         root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / name
         root.mkdir(parents=True)
         config = read_json(Path(os.environ['DISTILLATION_TEST_OUTPUT']) / 'config.json')
@@ -531,7 +1051,7 @@ class SharedSSHTests(unittest.TestCase):
             path = root / (candidate + '.json')
             write_json(path, config)
             paths.append(path)
-        deploy.prepare(paths, root / 'inputs', seconds, through=through)
+        deploy.prepare(paths, root / 'inputs', seconds, through=through, gpu_assignments=gpu_assignments)
         return root
 
     def test_two_candidates_train_and_retrieve_through_shared_ssh(self):
@@ -578,7 +1098,8 @@ class SharedSSHTests(unittest.TestCase):
                   'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4}
         root = self.fixture_package('continued-subject-pilot', {'training_milestones': [1, 2, 3, 4],
             'batch_size': 1, 'gradient_accumulation_steps': 8,
-            'evaluation_tasks': ['subjects'], 'subject_batching': policy}, seconds=None, test_notes=True)
+            'evaluation_tasks': ['subjects'], 'subject_batching': policy}, seconds=None, test_notes=True,
+            gpu_assignments={'first': 0, 'second': 1})
         result = self.run_package(root / 'inputs', root / 'operation', continue_after_checkpoint=True)
         from sse_multivector.distillation_run import verify_saved
         for name in ('first', 'second'):

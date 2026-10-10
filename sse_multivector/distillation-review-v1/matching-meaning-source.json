@@ -1,0 +1,108 @@
+{
+  "cases": [
+    {
+      "id": "B01",
+      "inputs": {
+        "POST": "\"Photographers created fake images. Those images were not genuine.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T01\", \"subject\": \"Creating fake images\"}, {\"id\": \"T02\", \"subject\": \"Images being fake\"}], \"student_subject\": \"Creation of fake images\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": "T01",
+        "expected_reason": "Creation of fake images retains the act of creating and the fake images. T02 names a property of images rather than the act.",
+        "control": "images: action paraphrase with both meanings available"
+      }
+    },
+    {
+      "id": "B02",
+      "inputs": {
+        "POST": "\"Photographers created fake images. Those images were not genuine.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T01\", \"subject\": \"Creating fake images\"}, {\"id\": \"T02\", \"subject\": \"Images being fake\"}], \"student_subject\": \"Images not being genuine\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": "T02",
+        "expected_reason": "Not being genuine paraphrases being fake. The subject does not express the creating action in T01.",
+        "control": "images: property paraphrase with both meanings available"
+      }
+    },
+    {
+      "id": "B03",
+      "inputs": {
+        "POST": "\"Photographers created fake images. Those images were not genuine.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T02\", \"subject\": \"Images being fake\"}], \"student_subject\": \"Creation of fake images\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": null,
+        "expected_reason": "The action match from B01 is removed. A property of the resulting images omits the student's creating action; the post cannot add that action to T02.",
+        "control": "images: same action wording with its complete match removed"
+      }
+    },
+    {
+      "id": "B04",
+      "inputs": {
+        "POST": "\"Photographers created fake images. Those images were not genuine.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T01\", \"subject\": \"Creating fake images\"}], \"student_subject\": \"Images not being genuine\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": null,
+        "expected_reason": "The property match from B02 is removed. The student does not express T01's creating action; the post cannot supply it.",
+        "control": "images: same property wording with its complete match removed"
+      }
+    },
+    {
+      "id": "B05",
+      "inputs": {
+        "POST": "\"The speaker invented false claims. Those claims were false.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T01\", \"subject\": \"The falsity of claims\"}, {\"id\": \"T02\", \"subject\": \"Inventing false claims\"}], \"student_subject\": \"Fabrication of false claims\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": "T02",
+        "expected_reason": "Fabrication of false claims paraphrases inventing false claims. T01 names the claims' false quality rather than their invention.",
+        "control": "claims: action paraphrase with both meanings available; action is second"
+      }
+    },
+    {
+      "id": "B06",
+      "inputs": {
+        "POST": "\"The speaker invented false claims. Those claims were false.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T01\", \"subject\": \"The falsity of claims\"}, {\"id\": \"T02\", \"subject\": \"Inventing false claims\"}], \"student_subject\": \"Claims being false\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": "T01",
+        "expected_reason": "Claims being false paraphrases the falsity of claims. The subject does not express the invention action in T02.",
+        "control": "claims: property paraphrase with both meanings available; property is first"
+      }
+    },
+    {
+      "id": "B07",
+      "inputs": {
+        "POST": "\"The speaker invented false claims. Those claims were false.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T01\", \"subject\": \"The falsity of claims\"}], \"student_subject\": \"Fabrication of false claims\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": null,
+        "expected_reason": "The action match from B05 is removed. Falsity of claims does not retain the student's fabrication action; the post cannot add it to T01.",
+        "control": "claims: same action wording with its complete match removed"
+      }
+    },
+    {
+      "id": "B08",
+      "inputs": {
+        "POST": "\"The speaker invented false claims. Those claims were false.\"",
+        "MATCH_INPUT": "{\"teacher_subjects\": [{\"id\": \"T02\", \"subject\": \"Inventing false claims\"}], \"student_subject\": \"Claims being false\"}"
+      },
+      "evidence": {
+        "expectation_status": "authored_control",
+        "expected_teacher_id": null,
+        "expected_reason": "The property match from B06 is removed. Claims being false does not express T02's invention action; the post cannot supply it.",
+        "control": "claims: same property wording with its complete match removed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "check": "support",
+  "review_source": {
+    "path": "large-training-source.json",
+    "sha256": "42bfdeb6c89f1f2c454799b4cd35db6126e516c8f8094ceceb206c06f72f1537"
+  },
+  "cases": [
+    {
+      "id": "LS01",
+      "case": "LC01",
+      "student_number": "1.1.5",
+      "expected_reason": "The original headline says Kills 2; changing two to 2 preserves that supported quantity and every other clause."
+    },
+    {
+      "id": "LS02",
+      "case": "LC02",
+      "student_number": "1.1.5",
+      "expected_reason": "The original headline says Kills 2, not three."
+    },
+    {
+      "id": "LS03",
+      "case": "LC03",
+      "student_number": "18.1.1.1",
+      "expected_reason": "The post supports the remaining dated United Nations displacement headline; removing the time window adds no unsupported restriction, although it loses complete teacher meaning."
+    },
+    {
+      "id": "LS04",
+      "case": "LC04",
+      "student_number": "2.3.1",
+      "expected_reason": "The post explicitly says the BIS doesn’t print money and designs the rules of the game. The student adds printing money, which contradicts that expressed negation."
+    },
+    {
+      "id": "LS05",
+      "case": "LC05",
+      "student_number": "1.2.2.1.1",
+      "expected_reason": "The post says the video marked the occasion of the renewed account removal; the paraphrase retains that purpose and all other expressed details."
+    },
+    {
+      "id": "LS06",
+      "case": "LC06",
+      "student_number": "1.2.2.1.1",
+      "expected_reason": "The post says YouTube has again removed the account; first account ban is not supported."
+    }
+  ]
+}

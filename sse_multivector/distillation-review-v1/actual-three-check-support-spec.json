@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "DSSv1",
+    "path": "support-prompt-v1.md"
+  },
+  "dataset": {
+    "adapter": "distillation_verdict",
+    "path": "actual-three-check-support-source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "transport": "sse",
+    "concurrency": 8,
+    "timeout_seconds": 3600,
+    "output_schema_path": "boolean-response-schema.json"
+  }
+}

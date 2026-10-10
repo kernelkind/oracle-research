@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "prompt_id": "DSRv1",
+  "subjects": [
+    {"number": "1", "valid": true, "reason": "The post explicitly describes a recipe."},
+    {"number": "1.1", "valid": true, "reason": "The recipe is the author's reliable lentil soup recipe serving four people."},
+    {"number": "1.1.1", "valid": true, "reason": "The complete cumin subject preserves amount, purpose and recipe restrictions."},
+    {"number": "2", "valid": true, "reason": "The post describes a lentil soup recipe."},
+    {"number": "2.1", "valid": true, "reason": "This preserves the complete recipe subject."},
+    {"number": "2.1.1", "valid": true, "reason": "This preserves the complete recipe-bound cumin subject."},
+    {"number": "3", "valid": true, "reason": "The post explicitly mentions cumin."},
+    {"number": "4", "valid": true, "reason": "The post specifies seasoning food."},
+    {"number": "4.1", "valid": true, "reason": "This preserves the complete recipe-bound cumin subject."}
+  ],
+  "relationships": [
+    {"parent": "1", "child": "1.1", "valid": true, "reason": "The child describes a recipe."},
+    {"parent": "1.1", "child": "1.1.1", "valid": true, "reason": "The child retains author, reliability, lentil soup and four servings."},
+    {"parent": "2", "child": "2.1", "valid": true, "reason": "The child describes a lentil soup recipe."},
+    {"parent": "2.1", "child": "2.1.1", "valid": true, "reason": "The child retains all complete recipe restrictions."},
+    {"parent": "4", "child": "4.1", "valid": true, "reason": "The child explicitly specifies seasoning food."}
+  ],
+  "coverage": [
+    {"teacher_numbers": ["1"], "required": false, "student_numbers": ["1"], "compatible_heading_numbers": [], "reason": "Recipes is an optional broader heading."},
+    {"teacher_numbers": ["1.1", "2.1"], "required": true, "student_numbers": ["1.1", "2.1"], "compatible_heading_numbers": ["1", "1.1", "2", "2.1"], "reason": "The complete recipe meaning is preserved in both recipe branches."},
+    {"teacher_numbers": ["1.1.1", "2.1.1", "3.1", "4.1"], "required": true, "student_numbers": ["1.1.1", "2.1.1", "4.1"], "compatible_heading_numbers": ["1", "1.1", "1.1.1", "2", "2.1", "2.1.1", "3", "4", "4.1"], "reason": "The complete cumin meaning survives elsewhere, but its copy beneath Cumin at 3 is missing."},
+    {"teacher_numbers": ["2"], "required": false, "student_numbers": ["2"], "compatible_heading_numbers": [], "reason": "Lentil soup recipes is an optional broader heading."},
+    {"teacher_numbers": ["3"], "required": false, "student_numbers": ["3"], "compatible_heading_numbers": [], "reason": "Cumin is an optional broader heading."},
+    {"teacher_numbers": ["4"], "required": false, "student_numbers": ["4"], "compatible_heading_numbers": [], "reason": "Food seasoning is an optional broader heading."}
+  ]
+}

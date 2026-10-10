@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "task_prompt": {
+    "path": "../subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+    "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+  },
+  "references": {
+    "L1": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 269,
+      "note_id": "af8e33afa7157affe406b4d534f2fe7086109e353b290f19c67ae78b558702ac"
+    },
+    "L3": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 892,
+      "note_id": "166d3861065225570f3f08678bfc4a214564d8434c9baec9884d9bb159e01190"
+    },
+    "L6": {
+      "format": "training_jsonl",
+      "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl",
+      "sha256": "f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681",
+      "line": 580,
+      "note_id": "9affd0a1eac954cd9af1047677c1538d4abaa82df7ad8cad7778a6a25d4f433a"
+    }
+  },
+  "cases": [
+    {
+      "id": "LC01",
+      "reference": "L3",
+      "changes": [
+        {
+          "op": "replace",
+          "numbers": [
+            "1.1.5"
+          ],
+          "old": "kills two people",
+          "new": "kills 2 people"
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [],
+        "invalid_relationship_children": []
+      }
+    },
+    {
+      "id": "LC02",
+      "reference": "L3",
+      "changes": [
+        {
+          "op": "replace",
+          "numbers": [
+            "1.1.5"
+          ],
+          "old": "kills two people",
+          "new": "kills three people"
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [
+          "1.1.5"
+        ],
+        "invalid_relationship_children": []
+      }
+    },
+    {
+      "id": "LC03",
+      "reference": "L3",
+      "changes": [
+        {
+          "op": "replace",
+          "numbers": [
+            "18.1.1.1"
+          ],
+          "old": " in three days",
+          "new": ""
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [],
+        "invalid_relationship_children": [
+          "18.1.1.1"
+        ]
+      }
+    },
+    {
+      "id": "LC04",
+      "reference": "L1",
+      "changes": [
+        {
+          "op": "replace",
+          "numbers": [
+            "2.3.1"
+          ],
+          "old": "rather than printing money",
+          "new": "and printing money"
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [
+          "2.3.1"
+        ],
+        "invalid_relationship_children": [
+          "2.3.1"
+        ]
+      }
+    },
+    {
+      "id": "LC05",
+      "reference": "L6",
+      "changes": [
+        {
+          "op": "replace",
+          "numbers": [
+            "1.2.2.1.1"
+          ],
+          "old": "released to mark YouTube’s renewed account ban",
+          "new": "released to mark the renewed banning of the group’s account by YouTube"
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [],
+        "invalid_relationship_children": []
+      }
+    },
+    {
+      "id": "LC06",
+      "reference": "L6",
+      "changes": [
+        {
+          "op": "replace",
+          "numbers": [
+            "1.2.2.1.1"
+          ],
+          "old": "YouTube’s renewed account ban",
+          "new": "YouTube’s first account ban"
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [
+          "1.2.2.1.1"
+        ],
+        "invalid_relationship_children": [
+          "1.2.2.1.1"
+        ]
+      }
+    },
+    {
+      "id": "LC07",
+      "reference": "L3",
+      "changes": [
+        {
+          "op": "renumber",
+          "from": "6.2.1",
+          "to": "6.2.2.2"
+        }
+      ],
+      "expected": {
+        "incorrect_subjects": [],
+        "invalid_relationship_children": [
+          "6.2.2.2"
+        ]
+      }
+    }
+  ]
+}

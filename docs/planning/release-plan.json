@@ -12,7 +12,7 @@
       "track": "shared",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Highest priority: produce a useful 100-note hierarchy accepted in browsing review.\nFrontier: relationship judgments remain inconsistent; construction reuse is being tested.\nVector: the ASv6.100 comparison is being prepared; training has not started.\nNeither approach is accepted or selected."
+      "description": "Produce a useful 100-note hierarchy accepted in browsing review.\nPlanning follows the compare-prompt hierarchy builder; vector work is a parallel experiment, not a prerequisite.\nA new nine-note construction is underway. Semantic consistency and useful group browsing remain unvalidated.\nNo production method is adopted."
     },
     {
       "id": "03",
@@ -32,15 +32,15 @@
       "id": "05",
       "track": "model",
       "title": "Prepare pilot training data",
-      "status": "WAITING",
-      "description": "Prepare teacher subject hierarchies and separate evaluation sets for the subjects-only larger fine-tuning pilot.\nAll 1,300 ASv6.100 labels are collected and verified. The general teacher-selection prerequisite remains unchanged."
+      "status": "COMPLETE",
+      "description": "Prepare teacher subject hierarchies and separate evaluation sets for the subjects-only larger fine-tuning pilot.\nAll 1,300 ASv6.100 labels are collected and structurally verified. The pilot-label teacher was approved separately; release teacher selection remains open."
     },
     {
       "id": "06",
       "track": "model",
       "title": "Choose model through larger fine-tuning pilot",
-      "status": "WAITING",
-      "description": "Second priority: complete the SP pilot to inform all future fine-tuning decisions, comparing three trained models with their untuned baselines for quality, runtime and cost.\nSubjects-only pilot data is ready; GPU training has not started. Final checks and local semantic evaluation remain.\nConfirm weight-release permission before selection."
+      "status": "IN PROGRESS",
+      "description": "Compare three trained subject-generation models with their untuned baselines for quality, runtime and cost.\nAll three trained on 1,000 notes. Response collection continues; the semantic reviewer failed qualification.\nNo model is selected. Confirm weight-release permission before selection."
     },
     {
       "id": "07",
@@ -61,7 +61,7 @@
       "track": "shared",
       "title": "Choose notes for launch hierarchy",
       "status": "WAITING",
-      "description": "Freeze a launch corpus of 2,000–5,000 English kind-1 top-level posts, excluding replies and quote notes.\nSelect from the collected corpus after resource estimates; the final selection remains open."
+      "description": "Freeze the largest useful launch corpus feasible by October 18; 2,000–5,000 notes is a target, not a minimum.\nSelect English kind-1 top-level posts from the collected corpus, excluding replies and quote notes, after resource estimates. Final size remains open."
     },
     {
       "id": "10",
@@ -82,7 +82,7 @@
       "track": "release",
       "title": "Build launch hierarchy snapshot",
       "status": "WAITING",
-      "description": "Produce a fully automated 2–5k-note launch snapshot, with runnable code, architecture, serving instructions and a scalability/continual-update roadmap.\nAwaits validated construction, corpus selection, teachers and budget approval. Completion requires the user’s browsing acceptance; no manual repair."
+      "description": "Produce a fully automated launch snapshot, targeting 2–5k notes without a hard minimum, with runnable code, architecture, serving instructions and a scalability/continual-update roadmap.\nAwaits validated construction, corpus selection, teachers and budget approval. Completion requires the user’s browsing acceptance; no manual repair."
     },
     {
       "id": "13",
@@ -110,7 +110,7 @@
       "track": "release",
       "title": "Launch public hierarchy",
       "status": "WAITING",
-      "description": "Publish the accepted snapshot, generation code and architecture, tested serving instructions, scalability roadmap and Notedeck fork branch by October 18.\nThe model release and hosted demo are optional."
+      "description": "Publish the accepted hierarchy events, generation code and architecture, tested serving instructions, scalability roadmap and Notedeck fork branch by October 18.\nChoose a paid relay or online event ZIP after reviewing hierarchy quality.\nThe model release and hosted demo remain optional."
     },
     {
       "id": "17",
@@ -131,7 +131,7 @@
       "track": "shared",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Estimate teacher generation and chosen hierarchy-construction resources for the 2–5k-note release.\nAwaits construction measurements; include HDBSCAN only if selected. Keep optional model-track estimates separate so they do not block the release estimate."
+      "description": "Estimate teacher generation and chosen hierarchy-construction resources for the prospective launch corpus; 2–5k notes is a target, not a minimum.\nAwaits construction measurements; include HDBSCAN only if selected. Keep optional model-track estimates separate so they do not block the release estimate."
     },
     {
       "id": "21",
@@ -306,7 +306,8 @@
     {
       "source": "17",
       "target": "05",
-      "kind": "required"
+      "kind": "helpful",
+      "label": "pilot-label teacher approved separately; release selection remains open"
     },
     {
       "source": "17",

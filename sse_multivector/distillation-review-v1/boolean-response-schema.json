@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "valid": {"type": "boolean"},
+    "reason": {"type": "string", "minLength": 1}
+  },
+  "required": ["valid", "reason"]
+}

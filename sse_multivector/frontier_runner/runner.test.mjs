@@ -6,6 +6,15 @@ import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { prepare, preview, execute } from './runner.mjs';
 
+test('comparison CLI help preserves spending approval without requiring provider caps', () => {
+  const result = spawnSync(process.execPath, [new URL('runner.mjs', import.meta.url).pathname, '--help'],
+    { encoding: 'utf8', env: {} });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /approved maximum spend/);
+  assert.match(result.stdout, /budget-ledger\.json/);
+  assert.match(result.stdout, /Provider-enforced spending caps are not required/);
+});
+
 const root = new URL('../', import.meta.url);
 const post = 'I bake bread. nostr:npub1' + 'q'.repeat(30) + '\nhttps://example.com/\n';
 const subjectPrompt = await readFile(new URL('subject-prompt-goal-v1/asv6.23/ASv6.23.md', root), 'utf8');

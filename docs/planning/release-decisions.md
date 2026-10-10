@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated October 5, 2026. This is the written record of the planning discussion.
+Updated October 8, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -38,12 +38,23 @@ timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
-**Current priorities — October 5:** first, generate actually good hierarchies;
-second, complete the SP distillation pilot to inform all future fine-tuning
-decisions. The two efforts can proceed in parallel. SHR fine-tuning remains
-conditional on validating an SHR-built hierarchy; it is not a current training
-commitment. Node sorting is deferred as nice-to-have work. The release
-requirements, deadline and task readiness remain unchanged.
+**Priority discussion — October 5:** the user proposed emphasizing useful
+hierarchies and the SP distillation pilot, then explicitly clarified that this
+was not a fixed ranking. Audit proposed priorities against the release goal
+rather than treating them as settled. The efforts can proceed in parallel;
+the SP pilot informs later fine-tuning but does not measure SHR performance.
+SHR fine-tuning remains conditional on validating an SHR-built hierarchy; no
+separate SHR pilot is approved here. Node sorting is deferred as nice-to-have.
+The release requirements and deadline remain unchanged.
+
+**Hierarchy planning focus — October 8:** the user expects results from the
+compare-prompt hierarchy builder, specifically. Center planning on that effort
+reaching a useful hierarchy and then a launch-sized build. Vector work remains
+a parallel experiment, not a prerequisite or an equally expected release path.
+This is a working expectation, not semantic acceptance, production adoption or
+authorization to stop or redirect another agent. Publication and Notedeck work
+are planned in parallel rather than used to pace hierarchy development; their
+required completion gates remain unchanged. No new schedule is fixed.
 
 **Task-summary convention approved October 1:** the graph is a planning view,
 not an experiment log. Every task description gives a brief outcome, current
@@ -61,10 +72,43 @@ The Notedeck browser UI is approved and committed; task 15 is waiting for
 protocol agreement and service implementation before integration. Completion
 links, acceptance requirements and open implementation choices are unchanged.
 
-**Parallel hierarchy-construction candidates — status reconciled October 5:** frontier-based
-and vector-space approaches are both being tested within the existing hierarchy
-investigation. Record their progress separately; neither is selected or accepted.
+**Parallel hierarchy-construction candidates — status reconciled October 8:**
+Frontier-based and vector-space approaches are both being tested within the
+existing hierarchy investigation. Record their progress separately; neither is
+selected or accepted.
 These are construction candidates, not new release tracks or additional tasks.
+
+The [compare-prompt hierarchy builder](../../../oracle-mvp-shr-pair-correctness-v1/sse_multivector/shr_single_pair/README.md#resumed-hierarchy-iteration-fresh-construction-and-producer-diagnostics)
+previously completed nine notes. Its latest shaped browsing menu has six roots,
+at most six children per node and strictly narrowing distinct note sets; every note is
+reachable in one or two selections. The underlying construction graph does
+not meet those menu constraints. Semantic contradictions and full
+meaningful-group coverage remain unresolved. A fresh nine-note construction
+uses revised meaning generation and comparison wording. Root placement is
+complete; deeper placements are being tested. Improved selected controls do
+not establish whole-hierarchy consistency or 100-note acceptance.
+[Candidate-selection replay](../../../oracle-mvp-canonical-sse-scale-v1/sse_multivector/shr_single_pair/README.md)
+reduces comparisons on saved evidence but misses contradiction and uncertainty
+checks. No scalable construction policy is adopted.
+
+The current trials test manageable choices, including roots, and strict
+narrowing of distinct recursive note sets at each downward step. The user also
+requires useful discovery of meaningful groups, not only short paths to
+individual notes. Six choices is a provisional trial bound, not an approved
+production implementation or proof of browsing quality.
+
+The [current vector investigation](../../../oracle-mvp-vector-hierarchy-planning-v1/sse_multivector/vector-hierarchy-experiments.md)
+has run relationship-model fits, without qualifying transfer or selecting a
+model. Its latest browsing prototype instead groups saved ASv6.100 subject
+vectors into a six-choice tree covering all 213 notes, with three selections
+to leaves. Agent finding review reports nine full matches, one partial match
+and two misses across twelve requests. It improves access to some previously
+hidden notes but makes some earlier routes harder; every root branch has
+misleading labels. These are agent assessments, not user acceptance, a
+controlled speed result or adoption of this construction method.
+
+Earlier construction evidence remains relevant but does not describe the
+current runs:
 
 The earlier [frontier-based 200-note candidate](../../../oracle-mvp-scalable-hierarchy-v12/sse_multivector/scalable-hierarchy-v1/README.md#sh5-200--actual-browsing-menu-construction-sprint)
 became cycle-free after joint review, without establishing browsing quality.
@@ -74,23 +118,20 @@ hierarchy-quality goal; broader placement and reverse-order execution were
 unfinished. Repeated ancestry checks consumed much of the allowance.
 
 [Equivalence-aware construction reuse](../../../oracle-mvp-shr-scope-transfer-v1/sse_multivector/equivalence-reuse-replay.md)
-is now implemented in its worktree. A bounded two-order test produced a useful
+was implemented in its worktree. A bounded two-order test produced a useful
 Piano branch but exposed contradictory Diet judgments and order-dependent
-retrieval. Mechanical savings are being checked against the saved construction;
-they do not establish semantic quality or complete-hierarchy scalability.
-The [single-pair relationship-prompt effort](../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/README.md)
-exhausted its earlier iteration allowance without meeting acceptance. A newly
-authorized comparison process is preparing simpler variants. No prompt or
-production construction method is selected by these results.
+retrieval. That evidence does not establish semantic quality or
+complete-hierarchy scalability. The earlier
+[single-pair relationship-prompt effort](../../../oracle-mvp-shr-single-pair-v1/sse_multivector/shr_single_pair/README.md)
+exhausted its iteration allowance without meeting acceptance. Neither result
+selects the current prompt or production construction method.
 
 The earlier [vector-space 100-note builds](../../../oracle-mvp-vector-hierarchy-v1/sse_multivector/vector-hierarchy-ten-hour-goal.md#result-and-review)
-remain unsatisfactory historical evidence. The [current vector comparison](../../../oracle-mvp-vector-hierarchy-planning-v1/sse_multivector/vector-hierarchy-experiments.md)
-uses ASv6.100 subjects; ASv6.48 is deprecated for new work in that investigation.
-Subject vectors are prepared for the 1,000 training and 100 validation posts;
-the 200 final-test posts remain reserved. Boxes, hyperbolic disks and a direct
-classifier are being prepared against shared relationship supervision.
-Relationship-label collection is underway; model fitting has not started.
-No masks or accepted complete browsing hierarchy are supplied by that preparation.
+remain unsatisfactory historical evidence. ASv6.48 is deprecated for new work
+in the current vector investigation. Its prepared subject vectors and later
+relationship-model fits are separate from the 213-note browsing prototype;
+neither establishes accepted complete-hierarchy quality. The pilot's 200
+final-test posts remain reserved for their agreed evaluation.
 
 The user designated [ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/README.md)
 as the current SOTA subject prompt and baseline for future comparisons on
@@ -98,11 +139,19 @@ October 4, following the [completed diverse-input assessment](../../sse_multivec
 Measured omissions, incorrect relationships and uncertainties remain; the
 designation is not production adoption or whole-hierarchy acceptance.
 The full prompt is separately frozen for the distillation pilot, whose 1,300
-teacher labels are collected and structurally verified. GPU pilot training has
-not started; runtime preparation, hardware checks and local semantic evaluation
-remain. The pilot-specific teacher decision does not select the release teachers.
-The useful 100-note hierarchy acceptance gate, tracks, dependencies, broader
-generation hold and production choices remain unchanged.
+teacher labels are collected and structurally verified. All three students
+have now completed training through 1,000 notes. Qwen's response collection
+is complete; dense Gemma and Gemma MoE are still collecting evaluation
+responses, according to the October 8 progress observation. The
+[DSRv1 reviewer](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence)
+failed qualification; bulk semantic review has not run and no student is
+selected. Output collection is not semantic acceptance. The
+[pilot process](fine-tuning-pilot-process.md) records the evaluation safeguards.
+Task 05 is complete and 06 is in progress. The October 4 pilot-specific teacher
+approval makes 17 → 05 helpful rather than required; release teacher selection
+and the full-training-data gates remain unchanged. The useful 100-note
+acceptance gate, release tracks, broader generation hold and production choices
+remain unchanged.
 
 **Broader-corpus generation hold — October 1:** the user is undertaking prompt
 stress-testing and has put generation of the additional notes on hold until that
@@ -163,9 +212,10 @@ the replacement posts or hierarchies is claimed. Corrected source preparation
 is saved; 300/400/500-note hierarchies have not been built. Generation holds,
 open prompt/build choices and validation gates remain unchanged.
 
-**Current task 02 status (October 5):** user browsing acceptance remains open.
+**Current task 02 status (October 8):** user browsing acceptance remains open.
 Frontier-based and vector-space construction are both under investigation, with
-separate results recorded above. ASv6.100 is the approved subject baseline,
+separate results recorded above. Planning centers on the compare-prompt builder;
+vector results do not gate progress. ASv6.100 is the approved subject baseline,
 not proof of a correct global hierarchy. Relationship consistency and
 construction quality remain unresolved.
 The October 1 independent comparison favored the scalable subject-hierarchy
@@ -480,12 +530,13 @@ still being developed; whether teachers or the distilled model need prominence
 or other additional outputs is undecided. Existing prominence experiments and
 frozen informal-pilot settings are unchanged; no production method is adopted.
 Both tasks are now paused as nice-to-have work. The user clarified that the
-deferral applies to node sorting, not just prominence. Establishing a useful
-automated hierarchy and completing the SP pilot take priority; that pilot
-informs all future fine-tuning decisions. SHR fine-tuning depends on validation
-in a generated hierarchy. Sorting no longer gates hierarchy validation, teacher
-selection, pilot training data or release. Retain 04 → 27 within the optional
-effort, change 27 → 03 to helpful, and remove 04 → 05 and 04 → 17. The saved
+deferral applies to node sorting, not just prominence. The proposed ordering
+of hierarchy work and the SP pilot was subsequently clarified as tentative,
+not a fixed ranking. The pilot informs later fine-tuning; SHR fine-tuning still
+depends on validation in a generated hierarchy. Sorting no longer gates hierarchy
+validation, teacher selection, pilot training data or release. Retain 04 → 27
+within the optional effort, change 27 → 03 to helpful, and remove 04 → 05 and
+04 → 17. The saved
 candidate and review evidence remain intact; when to resume sorting is open.
 The user labels GPT-6.1 Sol low as the provisional favorite for SP
 (subject generation), and GPT-6.1 Sol medium as the provisional favorite for
@@ -564,9 +615,9 @@ original transcript quotations and frozen evidence remain unchanged.
 By October 18, 2026 — a date the user declared non-negotiable — release **the
 release**, the only must-deliver package:
 
-- A genuinely useful, fully automated hierarchy snapshot over a 2,000–5,000-note
-  corpus for discovering Nostr content, built without manual repair and judged by
-  the user's browsing review.
+- A genuinely useful, fully automated hierarchy snapshot for discovering Nostr
+  content, built without manual repair and judged by the user's browsing review.
+  The corpus-size target is 2,000–5,000 notes, not a minimum.
 - The full hierarchy-generation architecture and code.
 - Tested service code and instructions for serving the snapshot over the custom
   Nostr protocol locally. Operating public infrastructure is not required.
@@ -574,6 +625,18 @@ release**, the only must-deliver package:
   fork and verified against a locally served snapshot.
 - A roadmap to scalability: the fine-tuning path for replacing the expensive
   teacher calls at larger corpus sizes.
+
+**Corpus size revised October 8:** 2,000–5,000 notes is a target, not a hard
+minimum. Ship the largest hierarchy that is genuinely useful and passes the
+user's review within the remaining time. The October 18 deadline, quality,
+automation and other deliverables remain unchanged. The exact size remains
+open; this decision does not remove the existing validation milestones.
+
+**Publication clarified October 8:** publish the final hierarchy's Nostr events
+either to a paid relay or in a ZIP posted online. The user will choose based on
+the hierarchy's quality; no route or quality threshold is settled. Notedeck
+integration remains required with either route. This changes distribution
+options, not the deadline, other deliverables or spending authorization.
 
 Two optional tiers accompany the release:
 
@@ -603,9 +666,10 @@ model is now an optional tier and operating infrastructure is no longer
 required at all.
 
 The corpus decision is a proof of concept: an actually good, fully automated
-hierarchy over 2–5k notes demonstrates a correct process at small scale, and
-the roadmap to scalability names fine-tuning models for the expensive steps as
-the credible next step toward larger corpora. The user's browsing review
+hierarchy demonstrates a correct process at small scale, targeting 2–5k notes
+without making that a minimum. The roadmap to scalability names fine-tuning
+models for the expensive steps as the credible next step toward larger corpora.
+The user's browsing review
 remains the acceptance bar. Teacher selection (17) stays on the release path
 because teachers label the release corpus. Node sorting (04 and 27) is deferred
 as nice-to-have work and is not a release or training prerequisite. Its mechanism
@@ -617,9 +681,9 @@ outputs on unseen notes (08), plus a hierarchy that passes the user's browsing
 review (11); “training ran” does not pass. The
 September 27 training-data readiness target belongs to the model track and no
 longer constrains the release. The validation ladder is kept and extended —
-200 / 300 / 500 as approved, then a ~1–2k-note review rung, then the 2–5k
-release build — because each rung gives diagnostic reference points when a
-larger build misbehaves, and the release build must not be an uninstrumented
+200 / 300 / 500 as approved, then a ~1–2k-note review rung, then the release
+build — because each rung gives diagnostic reference points when a larger build
+misbehaves, and the release build must not be an uninstrumented
 jump in scale. The dependency graph follows: the release build (12) now takes
 its inputs from the validated workflow (03), the validated launch-scale
 implementation (28), the frozen corpus (09) and the selected teachers (17).
@@ -639,11 +703,13 @@ Use the existing corpus as the starting point. Processing the whole candidate
 pool is not committed, and additional collection is not currently a prerequisite.
 Reconsider collection if a demonstrated coverage gap warrants it.
 
-**Release corpus (PoC, decided September 27, 2026):** the release snapshot
-covers 2,000–5,000 notes. The proof of concept demonstrates a correct
-automated process at small corpus size — an actually good hierarchy is the
+**Release corpus (PoC, revised October 8, 2026):** 2,000–5,000 notes is a
+target, not a hard minimum. Ship the largest genuinely useful hierarchy that
+passes the user's review by October 18, without relaxing quality or automation.
+The proof of concept demonstrates a correct automated process at small corpus
+size — an actually good hierarchy is the
 deliverable, not note count — and the roadmap to scalability covers larger
-corpora. The exact subset remains open within that band and is frozen by task 09.
+corpora. The exact size and subset remain open and are frozen by task 09.
 
 ### Data already available
 
@@ -689,13 +755,13 @@ checks.
 The 500-note / 5-topic build checks the combined pipeline and profiles build
 time and memory to find bottlenecks. All three increase subject coverage; none
 is merely a test of handling more notes. The ladder extends past 500: a
-~1–2k-note rung with full user review precedes the 2–5k release build (see the
+~1–2k-note rung with full user review precedes the release build (see the
 release-shape revision above), so the release build is never an uninstrumented
 jump in scale.
 
 **Task ownership clarified September 29:** task 03 covers the 200 / 300 / 500
 validation runs and the ~1–2k-note user-review rung. Task 12 alone owns the
-final teacher-labeled, fully automated 2–5k build and its user browsing review.
+final teacher-labeled, fully automated release build and its user browsing review.
 Completing 03 does not accept the final release snapshot; completing 12 requires
 the user's acceptance of that snapshot. The full ladder and existing dependency
 arrows are unchanged.
@@ -721,21 +787,25 @@ evaluation note. Keep the three students, one complete 1,000-note pass,
 evaluation/resume lifecycle. Thinking stays off throughout the pilot, as
 subsequently approved below. Eight examples
 per update give **125 updates per student, 25 per block**. The proposed 100
-validation and 200 final test notes and spending remain open. The GPU choice
-is recorded below.
+validation and 200 final test counts were subsequently approved, along with the
+$285 combined rental budget below. The GPU choice is recorded below.
 This pilot supplies subject evidence for model selection; it cannot establish
 mask quality or downstream mask/SSE hierarchy quality. The completed combined
 preliminary experiment and the eventual release task retain their own scope.
 
-**October 2 GPU choice confirmed by the user:** use one **96GB RTX PRO 6000**
-for preparation and the larger pilot. The subsequently approved paired flow
-continues on the same rental when prep passes. Keep the complete student model
-on that GPU; run the three students sequentially. Prior NVLink alternatives are
-research evidence, not the selected execution configuration. The subjects-only
-scope, one continuing pass, approved training recipe and dynamic evaluation
-batching remain unchanged. Numeric batching budgets, generation limits, the
-specific card edition/power setting and rental offer, maximum charge and launch
-remain open. This hardware choice does not authorize a paid commitment.
+**October 5 two-GPU execution approved:** implement and test concurrent execution
+locally. Keep each complete student on one **96GB RTX PRO 6000**: GPU 0 runs
+Gemma dense; GPU 1 runs Qwen followed by Gemma MoE. The paired prep→pilot flow
+uses the same rental, with all three prep results and all three baselines verified
+before any main training. Preserve the subjects-only scope, one continuing pass,
+training recipe, dynamic per-GPU batching and 1,000/100/200 splits. GPU assignment
+is frozen in the package; independent subprocesses receive separate CUDA device
+bindings. A failed candidate blocks queued work while other active work finishes
+and is preserved. Explicit stopping reaches both workers. No automatic timeout,
+budget kill or deletion. The user subsequently approved private image publication
+and **up to $285** for the combined two-GPU prep→pilot rental. Select compatible
+96GB/600 W RTX PRO 6000 Server cards within the frozen $3.10/hour ceiling. Actual
+GPU fit/timing and local semantic grading remain pending.
 
 **October 2 dynamic subject evaluation batching approved:** before each batch,
 tokenize waiting notes and choose their count from a frozen per-GPU memory
@@ -795,13 +865,1086 @@ version sees the full note, task prompt, subjects and hierarchy. It
 returns separate **correctness** and **coverage** scores with evidence for each.
 Correctness assesses returned subjects and relationships; coverage
 assesses missing required subjects or information. Output reliability is
-checked mechanically. The scoring scale, rubric, reviewer model, reliability
-checks, and model selection rule remain design choices. The primary comparison's
+checked mechanically. At that point, the scoring scale, rubric, reviewer model,
+reliability checks and model selection rule remained design choices. The primary comparison's
 checkpoint is fixed by the October 5 decision below. The user deferred
 review-prompt and grading details while the overall pilot pipeline is designed.
 The walkthrough also keeps remaining data choices, remaining output format details,
 remaining training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
+
+**Semantic review method agreed October 7:** assume the audited ASv6.100 standard
+is correct and use existing teacher answers as the coverage reference. The user
+selected **GPT-6.1 Sol / xhigh**: if it cannot review reliably, rethink the
+approach before bulk review. Review one answer in a fresh context with the full
+post/task/reference, mechanical exact matches and no model/checkpoint identity.
+Record explicit subject and incoming-link verdicts, full-meaning matches and all
+required compatible placements. Code calculates separate correctness and
+coverage fractions, averaging notes equally. Optional derived headings are not
+mandatory; different valid wording and hierarchy are allowed. Invalid/truncated
+outputs and empty answers to required tasks receive zeros; correct empty answers
+pass. Missing or incomplete reviewer judgments remain ungraded evaluation failures.
+Compare final validation versions primarily, retaining learning curves, failures,
+speed/cost and paired uncertainty; freeze decisions before test unsealing.
+The user authorized drafting [DSRv1](../../sse_multivector/distillation-review-v1/README.md):
+review prompt, structured report and known-result qualification cases including
+a full-size hierarchy. DSRv1 remains a draft. At that checkpoint, application
+implementation and actual qualification were pending. This decision does not authorize model calls,
+pilot semantic grading, test unsealing, extra spending or a teacher audit.
+
+**DSRv1 offline implementation authorized October 7:** after receiving the draft,
+the user authorized preparation, report validation and scoring, requesting a
+concrete preview before any model calls. The shared experiment workflow now
+prepares source-bound qualification definitions, keeps expected findings
+outside the prompt, validates complete reports and calculates separate scores.
+It checks known qualification findings and consistent teacher groups across
+versions, including controlled changes to the large hierarchy. An authored Q17
+report demonstrates `9/9` correctness and `1/2` coverage when the Cumin branch
+copy is absent. This supplied fixture creates no model receipt or qualification
+evidence. At that checkpoint, actual qualification and bulk grading had not run.
+
+**Largest-generation stress preparation authorized October 7:** the user
+requested the largest saved generations from the 1,300-note ASv6.100 data as
+stress tests. Offline sizing checks all labels and frozen split assignments.
+The union of the top five training answers by entry count and canonical JSON
+length contains eight notes, including the overall maxima of 145 entries and
+35,966 UTF-8 answer bytes. Q20 already covers one; Q23–Q29 add seven complete
+unchanged hierarchies, taking DSRv1 to 29 cases. Held-out labels contribute
+aggregate sizes only; no final-test content enters development inputs. The
+new cases test completion and mechanical consistency without invented gold
+scores; existing known-result controls test semantic behavior. At that checkpoint,
+Sol / xhigh capability was untested and the requested preview still preceded calls.
+
+**DSRv1 qualification authorized October 8:** after the prepared preview and
+largest-generation selection, the user directed proceeding with Sol / xhigh
+qualification on the 29-case set. The initial attempt preserved 29 HTTP 400
+rejection receipts and produced no review text. A separately frozen experiment
+removes unsupported `uniqueItems` from the provider schema while production
+validation still rejects duplicate references. DSRv1's rendered inputs, semantic
+method, model and reasoning effort are unchanged. This request repair is not a
+semantic reviewer failure. Corrected requests subsequently generated complete
+large reports, but qualification failed: Q04 disagrees with a trusted unchanged
+worked example, and Q21/Q22 change unrelated requirement flags and placement
+judgments across variants; Q21 also changes an untouched link verdict.
+Q23 preserves a transport-interrupted, ungraded report near fifteen minutes.
+All 29 cases were attempted once, yielding 28 complete reports and one interrupted
+report. Seven of the eight largest generations completed. See the [DSRv1 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#october-8-qualification-evidence).
+Bulk grading, teacher auditing, test unsealing, process revisions and a different
+model remain outside this authorization.
+
+**DSRv1 concurrency directed October 8:** use **8**, with the existing provider
+exponential backoff. The initial qualification experiment was frozen at 1;
+only its final request remained in flight when the user directed the change.
+Preserve its original settings and receipts. The maintained specification uses
+8 for subsequent preparations; no repeated reviews are needed to change this
+execution setting.
+
+**DSRv2 draft and preview authorized October 8:** after read-only diagnosis of
+the coverage failures, the user directed preparing the proposed wording and
+inputs before further model calls. [DSRv2](../../sse_multivector/distillation-review-v1/prompt-v2.md)
+clarifies that ASv6.100's worked examples are authoritative applications of its
+rules; the standard and five review steps remain unchanged. Q20–Q22 share the
+original Q20 receipt's 66 meaning groups and 44 required flags. Those groups
+are provisional consistency inputs, not accepted pilot classifications or gold
+subject/link verdicts. The shared preparation adapter verifies the saved receipt
+and exact task/post/teacher binding instead of copying generated artifacts by
+hand. All 29 cases are prepared with zero model calls, Sol / xhigh and concurrency
+8. At this stage, DSRv1 remains failed and DSRv2 is untested. This authorizes
+offline preparation, not calls, bulk grading, teacher auditing or test unsealing. The
+[DSRv2 preview](../../sse_multivector/distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
+shows the wording and inputs; qualification and adoption remain open.
+
+**DSRv2 qualification authorized October 8:** after receiving the testing
+sequence, the user directed proceeding with real Sol / xhigh calls. Check the
+trusted URL control first, then the remaining small known controls, then all
+eight large training hierarchies and Q21/Q22's controlled variants. Use
+concurrency 8 and existing provider backoff. Check individual findings and
+reasons, not only scores; incomplete reports remain ungraded failures.
+Q04's first call passes all eight subjects, four links and both required meanings,
+with `8/8` correctness and `2/2` coverage. The extra Identifiers placement is
+absent and both meanings remain required. The small set finishes with 17 passes,
+Q14's semantic regression and Q01's ungraded stream interruption. Q14 correctly
+finds lost coverage and two bad links but also marks four supported shortened
+subjects incorrect, yielding `6/10` correctness instead of `8/10`. Preserve the
+known expectation; DSRv2 qualification has failed. Q01's HTTP 200 body stream
+closes after 365.2 seconds with partial output and unavailable final usage; it
+is not retried. The large trial finishes at concurrency 8: four of eight
+unchanged hierarchies and both controlled variants return complete reports;
+Q23, Q26, Q28 and Q29 have ungraded body socket interruptions and are not
+retried. Q21 and Q22 preserve the 66 groups / 44 required flags and pass their
+targeted Carstens checks, but both change the untouched Money transfers link
+`4.2` → `4.2.1` from valid to invalid and remove compatible headings for its
+meaning. Both fail cross-version consistency. Across the three preserved
+qualification experiments, all 29 distinct cases are attempted once, producing
+24 complete reports and five ungraded interruptions; Q04's reuse is not a new
+sample. Adoption remains open and bulk review remains unqualified.
+This authorizes qualification, not bulk review, teacher auditing, test unsealing,
+new rubric revisions or model substitution. The 44 large-case requirement flags
+remain provisional consistency inputs. See the
+[DSRv2 qualification evidence](../../sse_multivector/distillation-review-v1/README.md#dsrv2-qualification-october-8).
+
+**Matching-only preview authorized October 8:** after discussion and research
+about reliability and scale, the user directed preparing a concrete preview
+before calls. Draft DSMv1 compares one generated subject's complete meaning
+against the same fixed teacher list for that note, returning an ID or none and
+a brief reason. Mechanical exact matches need no model judgment. Prepare known
+paraphrases and controlled near misses, including large training references;
+keep expectations outside the prompt and reserve separate-note confirmation
+controls from prompt tuning. ASv6.100 remains trusted. The source-bound adapter
+and native reports implement this offline preview, not a replacement bulk
+review process. Teacher required/optional flags are outside the matching task;
+earlier provisional Sol groups are not gold. Sol / xhigh and concurrency 8 stay
+fixed. At this preview stage, reliability, model calls, effort/batching experiments, adoption and
+pilot final-test unsealing remain subsequent decisions. See the
+[DSMv1 preview](../../sse_multivector/distillation-review-v1/README.md#matching-only-offline-preview).
+
+**DSMv1 development trial authorized October 8:** after receiving the exact
+preview, the user directed running the 16 development controls with the same
+Sol / xhigh and concurrency 8 settings. All 16 complete reports match the
+authored expectations: eight correct matches, eight correct nonmatches, no
+semantic/mechanical failures, retries or reused answers. Native usage reports
+17,110 input tokens, zero cached input and 1,822 output tokens including 1,066
+reasoning tokens. This is an initial controlled matching check, not production
+qualification or a comparison against batching/lower effort. The 16 reserved
+confirmation controls and independent repeats were still unrun at that stage. Confirmation,
+optimization experiments, full review adoption and test unsealing remain open.
+See the [DSMv1 development evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-development-trial-october-8).
+
+**DSMv1 confirmation accepted October 8:** the user accepted the proposed
+16-control confirmation run with DSMv1 unchanged, Sol / xhigh and concurrency 8.
+All 16 match the authored expectations on their first attempt, with no failures,
+retries or reuse. Both sets therefore pass 32/32 controls on separate source
+notes. Native confirmation usage reports 16,592 input tokens, zero cached input
+and 2,007 output tokens including 1,217 reasoning tokens. This supports matching
+on the authored controls, not a production error rate or the full review process.
+At that stage, independent repeats, effort/batching experiments, adoption and
+test unsealing remained open. See the [DSMv1 confirmation evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-confirmation-trial-october-8).
+
+**DSMv1 independent repeat authorized October 8:** the user explicitly directed
+repeating the confirmation calls to check whether fresh calls stay correct.
+Native preparation inherited all 16 identical inputs/settings and disabled
+saved-response reuse with `--repeat`. Sol / xhigh at concurrency 8 produces
+16/16 correct reports with unchanged teacher IDs/null; 15 explanations are
+reworded. There are no failures, retries or reused answers. Native usage reports
+16,592 input tokens, zero cached input and 2,121 output tokens including 1,353
+reasoning tokens. These repeat existing controls; they are not additional
+distinct examples or evidence of accuracy on actual distilled wording.
+More realistic matching tests, effort/batching comparisons, full review adoption
+and final-test unsealing remain open. See the
+[DSMv1 repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
+
+**Actual-wording matching preview authorized October 8:** the user accepted
+preparing an offline matching test from saved distilled wording, with expected
+answers established before further calls. The shared adapter binds evaluation
+inputs, trusted ASv6.100 references and untouched saved generations by hashes;
+it checks note/input identity and production parsing without opening reserved
+test generations. DSMv1, Sol / xhigh and concurrency 8 stay fixed. The preview
+selects sampled, lexically close and largest inputs from all three baselines
+and final validation checkpoints: 24 selection hits produce 22 distinct inputs.
+Eight expected matches and thirteen expected nonmatches are agent assessments,
+not independently verified gold; one sampled phrase remains unresolved.
+The initial preview had two unresolved phrases. The user subsequently accepted
+the assessed nonmatch for `Fakery` under DSMv1's existing complete-meaning rule:
+overlap with `Inauthenticity` or `Deception` is insufficient. Acceptance does
+not promote the assessment to independently verified gold; `Club symbols`
+remains unresolved. A fresh offline preparation preserves all input wording
+and settings while recording R05's updated expectation status and reason.
+Native qualification stays pending even if a reviewer agrees with all
+assessments, and unresolved placeholders cannot become negative gold labels.
+Preparation makes zero calls. Independent verification, resolving the meaning
+boundaries, further calls, rubric changes, optimization, full review adoption
+and test unsealing remain open. This is not an ASv6.100 audit. See the
+[actual-wording preview](../../sse_multivector/distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8).
+
+**Post interpretation accepted October 8:** the user accepted including the
+original post to interpret words or phrases already present in either subject.
+The post cannot supply restrictions absent from a subject. Draft DSMv2 implements
+this distinction through an optional `{POST}` template variable while preserving
+DSMv1's tested prompt and inputs. Complete-meaning matching and ASv6.100's authority
+remain unchanged. The new offline preview retains the same 22 targets and
+Sol / xhigh, concurrency 8 settings, with zero reviewer calls. Prior assessments
+remain unverified and need checking with the supplied posts; `Club symbols` is
+still ungraded. Semantic reliability, further calls, full review adoption and
+final-test unsealing remain open. See the
+[DSMv2 draft and preview](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
+
+**DSMv2 club expectation assessed October 8:** the user authorized settling
+the expected club verdict before reviewer calls. The offline agent assessment
+sets R19 to teacher T06 / original number `4`, `Clubs suit symbol`: the post's
+`♣` selects the card-suit sense of `Club symbols`, and the plural is a generic
+subject label rather than an added count. This records an assessment, not user
+acceptance of that verdict or independent gold verification. DSMv2's spec now
+binds a separate source definition; DSMv1's unresolved expectation stays intact.
+The fresh offline preview preserves all 22 prompts/settings and makes zero
+calls. There are nine assessed matches, thirteen assessed nonmatches and no
+unresolved placeholders, but all expectations remain unverified and qualification
+is pending. The other 21 inherited assessments still need checking with posts
+visible before calls. See the [club assessment](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
+
+**DSMv2 self-custody expectation checked October 8:** the user accepted checking
+the missing Bitcoin restriction with the post visible. The offline agent
+assessment retains R16's expected null: `Self-custody` names the custody
+relationship but does not specify the Bitcoin asset in teacher T12. Its DSMv2
+reason is clarified; the verdict, assessment status, all 22 prompts and runner
+settings remain unchanged. A fresh offline preparation makes zero calls. This
+does not decide whether the general heading is supported or whether the note
+covers the teacher meaning elsewhere. Both R16 and R19 remain unverified agent
+assessments; actual reviewer adherence has not been tested. The other 20
+inherited assessments still need checking with posts visible before full-set
+calls. See the [DSMv2 assessments](../../sse_multivector/distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8).
+
+**DSMv2 two-case trial authorized and completed October 8:** the user accepted
+testing the club-symbol and self-custody cases with the unchanged DSMv2 prompt,
+Sol / xhigh and concurrency 8. Both fresh calls are mechanically valid and
+agree with the prior agent expectations: R19 returns T06 because the post's
+`♣` disambiguates "club"; R16 returns null because `Self-custody` omits Bitcoin.
+There are two first attempts, no retries and no response reuse. Native usage
+records 1,735 input tokens, zero cached input tokens and 1,129 output tokens,
+including 1,025 reasoning tokens. The catalog estimate is $0.01476, not an
+invoice. Agent reviews accept the saved verdicts without asserting independent
+gold verification or user acceptance of their semantics. Qualification remains
+pending. This does not establish repeat stability, general reliability or
+authorize the other 20 cases, bulk review or final-test unsealing. See the
+[two-case result](../../sse_multivector/distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8).
+
+**DSMv2 remaining post checks authorized and completed October 8:** the user
+accepted checking the other 20 expected verdicts against the subjects, complete
+teacher catalogs and visible original posts before additional reviewer calls.
+All 20 verdicts are retained: eight matches and twelve nonmatches. Only their
+recorded reasons change; all 22 complete prompts, inputs, expected IDs and
+assessment statuses are preserved. The full set remains nine assessed matches
+and thirteen assessed nonmatches. The fresh offline preview makes zero calls,
+attempts or reused answers. This is a recheck of known agent labels, not
+independent gold verification or a teacher audit. Qualification remains pending;
+additional reviewer calls, bulk review and final-test unsealing remain separate
+decisions. See the
+[post-visible recheck](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-post-visible-expectations-october-8).
+
+**DSMv2 remaining trial authorized and completed October 8:** the user accepted
+running the other 20 cases through `experiment-runner/bin/experiment-runner`
+with unchanged Sol / xhigh, concurrency 8 settings. All 20 final reports are
+mechanically valid; nineteen agree with the pre-recorded expectations. R05
+matches `Fakery` to T17, `Inauthenticity`, instead of expected null. Native
+scoring flags a false match against that label; agent review marks it uncertain
+because contextual equivalence needs adjudication before attributing the
+disagreement to reviewer error. The other nineteen agent reviews accept the
+saved verdicts. Prompts, inputs, expected labels and assessment statuses are
+preserved. There are 21 attempts, including a successful provider-overload retry
+of R15, and zero reused answers. Native usage is 24,122 input tokens, zero
+cached input and 5,703 output tokens, including 4,598 reasoning tokens; the
+$0.105274 catalog estimate is not an invoice. Qualification remains pending;
+this does not independently verify the labels, establish repeat stability or
+approve reviewer adoption, further calls, prompt changes, bulk review or test
+unsealing. See the
+[remaining trial](../../sse_multivector/distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8).
+
+**DSMv2 action/property controls authorized and completed October 8:** the user
+accepted testing clear examples of the distinction raised by R05. The shared
+CLI prepared and ran eight authored controls with the unchanged DSMv2 prompt,
+Sol / xhigh, subscription SSE and concurrency 8. Four faithful paraphrases
+match the intended action or property; four cases removing the complete match
+return null. All reports and reasons are valid, and native agent review records
+eight acceptances. Expectations were frozen before calls and withheld from the
+prompt. There are eight new attempts, no retries and no reused answers. Native
+usage is 3,333 input tokens, zero cached input and 1,023 output tokens, including
+689 reasoning tokens; the $0.016896 catalog estimate is not an invoice. The
+controls were authored after observing R05 and use explicit wording and one-
+or two-entry catalogs. They establish success on this narrow distinction, not
+the cause of R05's verdict, independent gold or production reliability.
+R05's expected null and uncertain review are preserved; ASv6.100 remains trusted.
+The generic adapter and native attributed reviews are sufficient for these
+authored controls; no runner code or prompt changes occurred. The 14 matching
+regression tests pass with the required cached tokenizer dependency. Further
+calls, prompt changes, bulk review and test unsealing remain separate decisions.
+See the [controls and evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8).
+
+**DSMv2 R05 fresh repeat authorized and completed October 8:** the user accepted
+one fresh call with identical inputs/settings. The shared CLI prepared from the
+remaining 20-case trial with `--only R05 --repeat`, preserving the baseline and
+excluding response reuse. Preflight verifies identical complete prompts,
+inputs, evidence and settings: DSMv2 / Sol / xhigh, subscription SSE and
+concurrency 8. The repeat again returns T17, Inauthenticity, with a new
+explanation equating Fakery with general fakeness. Both saved calls make that
+match; neither reason addresses the expected practice/products versus property
+distinction. This is repeat evidence, not independent semantic adjudication or
+a general stability estimate. Native scoring still flags a false match against
+the agent-assessed expected null, and native agent review marks the repeat
+uncertain. One new attempt produces one valid report, without retry or reuse.
+Native usage is 859 input tokens, zero cached input and 339 output tokens,
+including 290 reasoning tokens; the $0.005108 catalog estimate is not an invoice.
+No code, prompt or expectation changed; the original receipt/review and
+ASv6.100's authority are preserved. Native receipt, baseline and input checks
+pass. Further calls, prompt revisions, bulk review and test unsealing remain
+separate decisions. See the [repeat evidence](../../sse_multivector/distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8).
+
+**Coverage-matching qualification scope agreed October 8:** following the
+read-only score trace, the user agreed to qualify matching of required complete
+teacher meanings. Optional derived teacher headings are not mandatory coverage
+targets. Every student heading still needs subject-support review, every
+immediate parent-child link needs review, and required meanings must occur at
+every compatible student heading occurrence, including general headings.
+Complete-meaning matching criteria are unchanged. Establish required/optional
+flags from the trusted teacher answer and post independently of candidates,
+and freeze them across versions of each note before preparing revised cases.
+The current adapter still supplies all distinct teacher strings and bypasses
+required flags; no code, prompt, expectation or saved trial changes are implied.
+R05's requirement flags remain unfrozen and its expected null remains a disputed
+agent assessment. Broader qualification and adoption remain open. Revised
+preparation, implementation, calls, bulk review and test unsealing remain
+separate work. See the
+[agreed scope](../../sse_multivector/distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8).
+
+**Teacher-relative qualification case preparation authorized October 8:** after
+the user questioned the required/optional distinction and requested research,
+the assistant proposed comparing teacher meanings and parent-child relationships,
+allowing equivalent wording, renumbering and sibling reordering. Structural
+allowances and final pilot scoring remain open. The user authorized one worked
+example, then qualification-case preparation with exact inputs and expected
+judgments shown before calls. The new case source binds ASv6.100's unchanged
+cable example and contains six variants: unchanged, paraphrase, negation reversal,
+invalid parent, omitted heading and renumbering. Every case specifies complete
+matches for all ten teacher wordings and actual subject/link findings; no
+required/optional classification or new numerical scores are asserted. The
+omitted-heading case records a missing teacher meaning even though remaining
+subjects/links are valid, without changing Q12 or the existing optional-row
+scorer. The unchanged DSRv2 renderer is used solely for offline input inspection,
+not adopted for the proposed comparison. Two non-exact targets are separately
+prepared with unchanged DSMv2, the post and full ten-wording catalog. Both use
+Sol / xhigh, subscription SSE and concurrency 8; preparation makes no calls.
+These are previously seen worked-example development controls, not independent
+confirmation. No prompt, scorer, saved label or trial changes are authorized by
+this preparation; broader reviewer/rubric adoption and inference remain separate
+work. See the
+[case preview](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8).
+
+**Teacher-relative case judgments reviewed October 8:** the user accepted
+TC05 with “ok”, then explicitly agreed to TC04, TC03, TC02, TC06 and TC01 as each
+case was presented in conversation. Treat the trusted teacher as correct and
+keep teacher agreement, post support and immediate parent-child validity as
+separate findings:
+
+- **TC05, omitted heading:** removing `2 m cables` fails teacher agreement.
+  `2 m cable A` is a particular instance and does not reproduce the separate
+  general heading. The remaining subjects and their incoming links are valid.
+- **TC04, changed parent:** putting `3 m cables` under `2 m cables` fails
+  teacher agreement and parent-child validity. Every subject meaning remains
+  present and supported by the post.
+- **TC03, reversed comparison:** removing `not` from all four comparison
+  copies fails teacher agreement and post support. Their incoming links remain
+  valid because the comparison still preserves the parent descriptions of
+  the cables.
+- **TC02, equivalent wording:** `Cable A, two metres long` preserves
+  `2 m cable A`; teacher agreement, post support and parent-child validity
+  all pass.
+- **TC06, renumbering:** changing the complete number prefix from `1` to `9`
+  preserves wording and parent-child relationships; all three checks pass.
+  Check this case mechanically, without a semantic model call.
+- **TC01, unchanged answer:** returning the teacher's complete answer with
+  identical subjects, numbering and relationships passes all three checks by
+  definition because the teacher is trusted. Check this mechanically, without
+  a semantic model call.
+
+All six case judgments are agreed. TC06 does not independently exercise
+arbitrary sibling reordering. These approvals concern the six authored case
+expectations, not model qualification, adoption of a final pilot rubric, or
+numerical scoring.
+The earlier required/optional scoring implementation, existing prompts,
+case-source expectations and saved trials remain unchanged. A general
+teacher-edge agreement check remains unimplemented. No model calls were made
+during this review; broader structural allowances and final rubric/adoption
+remain open. The [case table](../../sse_multivector/distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
+records each approval separately.
+
+**DSMv2 meaning-matching instructions approved October 9:** the user reviewed
+the exact DSMv2 instructions and prepared paraphrase request, confirmed that
+the prompt answers only complete-meaning matching, and approved the wording.
+Each request compares one generated subject with the complete distinct teacher
+wording list for that note. The post interprets wording without supplying
+restrictions missing from a subject. Return exactly one JSON object with
+`teacher_id` (a supplied ID or JSON `null`) and `reason` (a brief explanation).
+The existing return-format instruction was clarified in conversation; the
+prompt and response schema are unchanged. The cable JSON is the request's
+input, not a worked example in the instructions; the displayed T04/null
+expectations remain outside the reviewer prompt. Subject support and
+parent-child validity are separate judgments. This approves the instructions,
+not model qualification, numerical scoring, bulk adoption or new calls.
+The two prepared teacher-relative matching cases remain unrun, and R05's
+disputed match remains unresolved. See the
+[instruction approval](../../sse_multivector/distillation-review-v1/README.md#dsmv2-matching-instructions-approved-october-9).
+
+**DSSv1 subject-support prompt drafting authorized October 9:** the user
+accepted proceeding with a draft for review in the conversation. The proposed
+judgment checks whether the complete post supports every meaning actually
+expressed by one subject with no complete teacher match, including supported
+broader headings. DSSv1 applies the relevant ASv6.100 rules and returns exactly
+one JSON object with Boolean `valid` and string `reason`. Its input contains
+only the full post and one subject; it does not receive a teacher catalog or
+candidate hierarchy. The revised wording is accepted below; the proposed
+`Lengths` / `4 m cable A` controls await approval and qualification. Deriving
+post support from correct complete teacher matches remains a proposed process
+change; semantic matches also require a qualified matcher. No support experiment,
+adapter, schema, scorer change, inference or bulk adoption is authorized by drafting. Existing
+prompts and saved evidence are preserved. See the
+[DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
+
+**DSSv1 authoritative-rule reuse and review wording accepted October 9:**
+the user agreed to reuse ASv6.100's support rules unchanged, with a small review
+task and return format, instead of maintaining a paraphrased second rulebook. The revised draft
+uses `ASV6_100_SUPPORT_RULES` for ASv6.100's verbatim opening support-rule text,
+ending after “Derive broader headings by generalizing source meanings without
+adding restrictions.” Future shared-workflow preparation must load this text
+from the original ASv6.100 source; the adapter added in the preparation below
+now supplies it.
+The input remains the full post and one subject, and the output remains Boolean
+`valid` and string `reason`. After the full revised DSSv1 wrapper was displayed
+in the conversation, the user accepted its exact wording with “ok, seems
+reasonable”. This accepts the reuse decision and review instructions, not
+authored controls, reviewer qualification, support inheritance, inference or
+bulk adoption. DSSv1 was untested at wording approval; the later initial trial
+is recorded below. ASv6.100, existing matching/review
+prompts, schemas, scoring and saved evidence remain unchanged. See the
+[revised DSSv1 draft](../../sse_multivector/distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9).
+
+**DSLv1 parent-child validity prompt drafting authorized October 9:** the user
+accepted proceeding with the proposed next step of drafting the third judgment
+before qualification. The reusable draft quotes ASv6.100's parent-child rule
+verbatim through `ASV6_100_PARENT_CHILD_RULES`, with one immediate parent/child
+pair in `RELATIONSHIP_INPUT`. Only the two subject strings are supplied, as the
+rule judges their relationship across possible posts. Return Boolean `valid`
+and string `reason`; an invalid reason names the lost restriction and gives a
+possible post fitting the child but not the parent. Post support and teacher
+agreement remain separate judgments. TC04's agreed invalid cable edge is shown
+as a human input example outside the instructions, not a model result or newly
+prepared qualification case. After the full DSLv1 instructions were displayed
+in the conversation, the user approved their wording with “ok lgtm”. The prompt
+was unchanged and untested at wording approval. The later initial trial is
+recorded below. This accepted the instructions without qualifying the reviewer or authorizing new calls.
+No link adapter, schema, experiment preparation, inference, scoring change or
+bulk adoption is authorized by drafting. Existing prompts and saved evidence
+remain unchanged. See the
+[DSLv1 draft](../../sse_multivector/distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9).
+
+**DSMv3 ASv6.100 wording amendment authorized October 9:** the user accepted
+adding the relevant subject-wording guidance verbatim before qualifying a new
+matching version. Native `revise` creates DSMv3 from approved DSMv2, changing
+only its version label and an interpretive block containing ASv6.100's paragraph
+beginning “Make each `subject` concise”. The teacher answer remains the trusted
+reference and the task remains complete-meaning matching. Inputs, matching
+criteria, response contract, cases, expected labels and saved trials are
+unchanged. The full generation and hierarchy-placement instructions are
+excluded. After the full DSMv3 instructions were displayed in the conversation,
+the user approved their exact wording with “lgtm”. The prompt was unchanged
+and untested at wording approval; broader qualification is pending after the
+later initial trial below. This accepted the matching instructions without qualifying the reviewer or authorizing new calls. No
+DSMv3 experiment was prepared during drafting or approval recording. The
+subsequent preparation below adds inputs without model calls or accuracy/cost
+measurements.
+DSMv2 evidence does not qualify DSMv3, and R05 remains disputed. Support/link
+judgments, scoring, bulk adoption and final-test sealing are unchanged. See the
+[DSMv3 draft](../../sse_multivector/distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9).
+
+**First three-check development preparation authorized October 9:** after the
+user reconfirmed that DSLv1 judges the distilled model's immediate parent-child
+pairs, the user accepted preparing and showing test inputs and expected
+judgments before calling models. Preparation reuses the already-accepted TC02
+paraphrase, TC03 reversed comparison and TC04 wrong-parent case. Native shared
+runner preparations contain two DSMv3 requests, two DSSv1 requests and three
+DSLv1 requests, initially unrun with zero attempts and zero reused answers. The
+`distillation_verdict` project adapter loads hash-bound saved cases, derives
+actual immediate parents from student numbering, extracts ASv6.100's rules
+verbatim and keeps expected answers outside prompts. Its Boolean expectations
+come from the existing agreed source judgments; selectors cannot rewrite
+wording or override those verdicts. The shared Boolean response schema and
+validator check output mechanics, with a separate comparison against the
+prepared expectations. They do not qualify the reason's semantics or adopt
+pilot scoring. Production-path tests use only an offline executable fixture.
+
+The unchanged-answer and renumbering controls remain mechanical. The proposed
+`Lengths` / `4 m cable A` cases are not added. Prompts stay unchanged; all three
+current versions were untested at preparation. The later initial trial below
+uses the same specifications, preserving GPT-6.1 Sol / xhigh, subscription SSE and concurrency 8. These seven development controls
+are an initial preview, not sufficient qualification: larger controls and fresh
+repeats remain necessary before bulk use. Support inheritance, structural
+allowances, teacher-edge comparison, final rubric adoption, bulk grading and
+final-test unsealing remain outside this preparation. R05 remains unresolved.
+The exact seven inputs and expectations were subsequently displayed in the
+conversation and the user accepted them. The subsequently authorized initial
+xhigh trial with prefix warming is recorded below. See the
+[prepared development inputs](../../sse_multivector/distillation-review-v1/README.md#first-three-check-development-inputs-october-9).
+
+**Later reasoning-level comparison requested October 9:** after accepting the
+displayed cases, the user expressed wanting to test which lower reasoning level
+would suffice later. Establish reviewer reliability with GPT-6.1 Sol / xhigh
+first; the existing initial settings remain fixed. Later comparisons should
+hold the cases, expected judgments and prompts fixed and measure semantic
+errors, latency and actual token usage, including cached tokens. This records
+the requested future comparison, not a lower-effort fallback or approval of
+specific experiment settings, new calls or bulk grading. No prompt, prepared
+input, model setting or saved result changes in recording this decision.
+
+**Initial three-check trial and prefix warming authorized October 9:** the user
+instructed proceeding with the accepted seven inputs and explicitly requested
+prefix warming. The shared runner prepared three native-prefix batches from
+the original offline preparations and one instructions-only warmup for each.
+Approved prompt bytes, inputs and expectations remain unchanged; warmup and
+batch share their prompt-specific stable key, model, effort and output schema.
+The route is subscription `openai-codex` / `gpt-6.1-sol` / `xhigh` / SSE, with
+batch concurrency 8 and the existing provider-only two-attempt limit. A shared
+persistent counter records 10/20 used: three warmups and seven verdicts, all
+first-attempt completions, with no reused answers or failures.
+
+DSMv3 passes 2/2 accepted expectations, DSSv1 2/2 and DSLv1 3/3. Native agent
+reviews accept all seven explanations, including TL02's preserved parent
+restrictions despite an unsupported comparison and TL03's missing restriction
+with a possible counterexample. These are actual initial model results and
+agent assessments, not fresh confirmation or user approval of reasons.
+All requests report zero cached tokens and zero cache writes. Verdict inputs
+are 355–733 tokens each, below the documented 1,024-visible-token cache minimum;
+this trial demonstrates no cache savings. Warmup overhead, per-experiment
+actual usage, request latency and API-equivalent estimates are preserved in the
+[trial record](../../sse_multivector/distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9). Catalog estimates are not subscription
+charges, and provider cash costs are unreported. No paid API fallback occurred.
+
+The seven small controls do not qualify bulk review. The larger training cases
+and fresh repeat below extend the evidence; broader qualification remains
+necessary. Lower-effort comparison
+remains future work; support inheritance, structural allowances, teacher-edge
+comparison, scoring adoption, bulk grading and test unsealing remain undecided
+or unimplemented as before. R05 remains unresolved. The original offline
+preparations remain unrun; actual outputs and receipts are in separate ignored
+warmup/warmed experiment directories. No additional trial is launched by
+recording this result.
+
+**Larger training-control preparation authorized October 9:** after the initial
+seven-case pass, the user accepted preparing harder controlled student changes
+from the largest saved ASv6.100 training answers and presenting them before
+calling models. The teacher answers remain trusted. The preview selects the
+existing ranked maximum-entry note (145 entries), maximum-distinct-catalog note
+(72 wordings) and longest-answer note (35,966 bytes), with training identity,
+line and file hash verified against the saved ranking. No held-out post or
+subject becomes development input.
+
+Seven proposed variants cover numeric and long-composite paraphrases, changed
+quantity, a lost time restriction, removed negation, first versus renewed ban,
+and moving a trusted subject beneath a parent that excludes its named person.
+Unchanged adapters prepare six DSMv3, six DSSv1 and four DSLv1 requests. The
+teacher catalogs and original posts remain complete; selected link inputs derive
+actual immediate parents from student numbering. Exact trusted wording in the
+wrong-parent variant adds no matching/support calls. Expected decisions and
+reasons remain outside prompts. The loss of the three-day window deliberately
+proposes different results: no complete teacher match, supported remaining
+subject, invalid parent-child link.
+
+At preparation, all 16 inputs were unrun, with zero attempts/reuse and fixed
+Sol / xhigh / subscription SSE / concurrency 8 settings. Matching preparation reports
+14,208 rendered proxy tokens total, 2,260–2,441 per request; no provider usage or
+caching measurement is claimed. Four edits reuse previous authored matching
+controls; this is development evidence, not a fresh confirmation partition.
+The [case preview](../../sse_multivector/distillation-review-v1/README.md#larger-training-controls-prepared-october-9) preserves exact changes,
+expectations and native inspection/preparation commands. The user has accepted
+LC03, LC04 and LC07 as recorded below. The user then delegated remaining
+expectation review to the agent; LC01, LC02, LC05 and LC06 assessments are
+complete as recorded below. The subsequent trial was separately authorized
+and completed as recorded below. Thirty-six existing production
+preparation/validation tests pass with the documented tokenizer dependency; default Python initially lacked it.
+No prompt, adapter, general teacher-edge check or scoring implementation changes
+are needed. Qualification, repeats and lower-effort comparison remain open;
+R05, support inheritance, structural allowances, bulk grading and final-test
+unsealing are unchanged or unresolved. The first case presented for discussion
+is the dropped time restriction.
+
+**LC03 judgments agreed October 9:** after the complete teacher subject, edited
+student subject and unchanged immediate parent were presented, the user replied
+“ok”. Dropping `in three days` receives no complete teacher match (LM03: null),
+retains post support for the remaining expressed meaning (LS03: true), and
+invalidates the link because the child omits the parent’s three-day restriction
+(LL01: false). This accepts only this variant’s three expected judgments.
+
+**LC07 judgment agreed October 9:** after the actual new student parent and
+unchanged child were presented, the user replied “ok”. The parent, `Health
+workers other than Dr. Abu Safiya abducted from Gaza`, explicitly excludes
+the person named by `Dr. Abu Safiya, a health worker abducted from Gaza`, so
+the link is invalid (LL04: false). Both strings remain exact trusted teacher
+wording; no matching or post-support calls are needed. This accepts the expected
+link judgment, not new model calls or a general teacher-edge implementation.
+
+**LC04 judgments agreed October 9:** after the complete teacher subject, edited
+student subject and original post excerpt were presented, the user replied
+“ok”. The teacher subject is `The Bank for International Settlements designing
+monetary rules rather than printing money`; the edited student subject is
+`The Bank for International Settlements designing monetary rules and printing
+money`. The original post states, `The BIS doesn’t print money; it designs the
+rules of the game.` Changing `rather than` to `and` reverses the exclusion,
+so no complete teacher meaning matches (LM04: null). The added claim of printing
+money contradicts the post’s explicit negation, so post support fails
+(LS04: false). This accepts only those two expectations and adds no model calls.
+The preview includes no separate link call for LC04.
+
+**Remaining control review delegated October 9:** the user said, “i don't want
+to look at all of them myself”, after LC01 was presented. The agent reviews
+the remaining authored expectations under the already agreed semantic rules,
+without requiring individual user inspection of every case. This is delegation
+of expectation review, not explicit user acceptance of each remaining label
+or authorization for new model calls.
+
+**Agent expectation assessments completed October 9:** native `show --case`
+inspection covered complete catalogs and posts for LM01, LM02, LM05 and LM06;
+complete posts and student subjects for LS01, LS02, LS05 and LS06; and actual
+student pairs for LL02 and LL03:
+
+- LC01 preserves the complete headline with `two` → `2`: LM01 matches T07,
+  LS01 passes.
+- LC02 changes the count to three while the trusted teacher and post say two:
+  LM02 returns null, LS02 fails.
+- LC05 preserves the account owner, banning platform, renewed ban, release
+  purpose and every other clause under its paraphrase: LM05 matches T07,
+  LS05 and LL02 pass.
+- LC06 changes the renewed ban to a first ban: LM06 returns null, LS06 and
+  LL03 fail. The post says `(again)`; a first-ever ban also fails to retain
+  the actual parent’s renewed-ban restriction.
+
+No authored expectation changes or material ambiguities were found. These are
+agent assessments, separate from the three cases with explicit user acceptance
+and from the subsequent model verdicts. All seven variants completed
+expectation review; no further individual user case review was pending.
+Expectation review itself added no inference authorization. All 16 inputs were
+unrun at that point; frozen sources, prompts, settings and numerical scoring
+were unchanged.
+
+**Larger three-check trial authorized and completed October 9:** after the agent
+reported expectation review complete and proposed the 16-call trial, the user
+replied “proceed”. The shared stable launcher ran the three existing frozen
+preparations at subscription `openai-codex` / `gpt-6.1-sol` / `xhigh`, concurrency
+8. Native qualification passes DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4. All 16 reasons
+have separate native agent acceptances after inspection, including explicit
+counterexamples for invalid links. Every request completed on its first
+attempt, with no retry, failure, interruption or answer reuse. The batches ran
+sequentially with six, six and four cases, so eight was the execution ceiling
+rather than occupied slots. No code, prompt, label, source or model-setting
+change was required.
+
+The [trial record](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-trial-october-9)
+preserves verdict/latency evidence, per-experiment native usage and API-equivalent
+catalog estimates. Requests took 5.98–17.24 seconds. Every receipt reports zero
+cached input and cache-write tokens; these preparations have no explicit
+cache-affinity key or prefix warmup, and no warmed/cold comparison is claimed.
+Provider cash-cost fields remain null; there was no paid API fallback.
+
+This is one successful development trial on authored changes in three previously
+used training notes, not an independent confirmation partition or qualification
+for arbitrary distilled answers. The separately authorized repeat below checks
+the same controls again with eligible shared prefixes. Broader qualification, R05,
+support inheritance, structural allowances, teacher-edge implementation, final
+scoring, bulk grading and final-test unsealing remain open or unadopted.
+
+**Fresh xhigh repeat with eligible caching authorized and completed October 9:**
+the user accepted the proposed fresh repeat, requested caching, then required
+skipping it when shared prefixes are too small. The same DSMv3/DSSv1/DSLv1
+prompts, complete source inputs and authored expectations are reused through
+native `prepare --from ... --repeat --only ...`; GPT-6.1 Sol, xhigh, subscription
+SSE and the concurrency-8 ceiling are fixed. Naturally shared reference
+prefixes are measured before calls, without padding. Only matching L3/L6
+(2,324/2,361 proxy tokens) and support L6 (1,073) receive explicit keys,
+prefixes and native warmups. Shorter shared prefixes and singleton cases do not.
+
+All 16 fresh case-level verdict checks pass and match the baseline decisions:
+6/6 matching, 6/6 support and 4/4 links. Every reason has separate native agent
+acceptance after inspection. The 16 verdicts and three warmups complete on
+first attempts, without failure or answer reuse; the stage budget finishes
+at 19/38 attempts. Matching L3/L6 report 6,528/4,480 cached input tokens.
+Support L6 reports none despite its eligible prefix; the reason is not established.
+Matching/support subset reports retain the original full expectation sets and
+remain pending for cases assigned elsewhere; each selected case passes.
+This is a repeat of the same authored training controls, not new controls or
+an independent confirmation partition.
+
+The [repeat record](../../sse_multivector/distillation-review-v1/README.md#larger-three-check-repeat-with-eligible-prefixes-october-9)
+preserves prefix eligibility, all warmup overhead, per-experiment native usage,
+API-equivalent catalog estimates and latency. Provider cash-cost fields remain
+null; no paid fallback is used. The native prefix route changes seven verdicts
+from a single user message to developer-prefix/user-suffix messages, despite
+identical concatenated text. Agreement holds under that route; cost/latency
+differences do not isolate caching. Broader reviewer qualification and later
+lower-effort comparison remain open. Further calls, bulk grading, final-test
+unsealing and the undecided scoring/structure policies are not adopted by this
+result.
+
+**Broader actual-output trial approved October 9:** after the fresh xhigh repeat,
+the user agreed to testing a broader sample of actual distilled outputs, then
+explicitly selected all three approved checks. The prompts remain DSMv3,
+DSSv1 and DSLv1 at Sol / xhigh / subscription SSE / concurrency 8. ASv6.100
+remains trusted. Freeze selection and expected judgments before reviewer
+calls; skip short-prefix warmups and mechanically duplicate work. This adds
+no lower-effort comparison, bulk scoring or reserved-test access.
+
+The [actual validation preparation](../../sse_multivector/distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
+now supports source-bound saved outputs for all three checks through the shared
+workflow. Support uses the complete original post; relationships use the actual
+student parent. Agent expectations remain unverified and unresolved labels
+receive no semantic pass/fail. Selection and expectations are frozen for 20
+distinct subjects across 16 previously unused validation notes, spanning all
+18 versions plus large-catalog additions. A duplicate shares all three checks.
+The 60 verdicts and two eligible warmups now complete on first attempts,
+without reuse or mechanical failure. Agreement with frozen agent expectations
+is DSMv3 17/19 (A15 unscored), DSSv1 19/20 and DSLv1 17/20. Semantic disagreements
+remain; qualification stays pending. Matching A19 was disputed before calls.
+Matching caching reports hits; support caching reports none. The record keeps
+all warmup overhead and per-experiment usage. This is a bounded development
+challenge set, not population accuracy or authorization for bulk grading.
+
+**Fresh confirmation of rejected actual cases authorized and completed October 9:**
+the user directs proceeding with the unchanged-prompt confirmation. Four rejected
+cases and four previously accepted contrasts repeat at Sol / xhigh / subscription
+SSE / concurrency 8. All eight complete on first attempts with distinct fresh
+receipts, no reuse, retry or warmup. Matching A01 and link A03 now match their
+frozen expectations; support A20 and link A21 repeat their errors. All four
+accepted contrasts stay accepted. Native agent review records six accept and
+two reject; expectations remain unverified and qualification stays pending.
+Naturally shared prefixes are below 1,024 tokens; native cache reads/writes are
+zero. Request bodies, methods and URLs remain identical despite runner 1.2.0's
+recorded provenance update. The [confirmation record](../../sse_multivector/distillation-review-v1/README.md#fresh-confirmation-of-four-rejected-cases-october-9)
+preserves exact selections, reasons, native usage and latency. This shows repeated
+errors and inconsistent decisions on selected cases, not an overall accuracy
+estimate. Prompt changes, lower-effort work, bulk review and test access remain
+unadopted.
+
+**Support exception clarification drafting authorized October 9:** after the
+fresh confirmation, the user directs proceeding with the recommendation to
+address the repeated support exception error and show a proposed change before
+further calls. [DSSv2](../../sse_multivector/distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
+was first prepared as an untested draft, adding one claim-scope paragraph after
+the unchanged ASv6.100 excerpt. It distinguishes dropping a limiting exception while retaining
+its claim from permitted broader subject naming. Native revision preserves the
+exact delta; the offline A08/A20 preview preserves inputs and settings and makes
+no calls. Draft integrity and agent agreement do not establish effectiveness.
+The user subsequently approves the exact wording and bounded semantic trial
+below. DSMv3, DSLv1, existing expectations, teacher trust, qualification, bulk
+review, scoring and test sealing remain unchanged.
+
+**DSSv2 wording and bounded support trial approved October 9:** after reviewing
+the exact clarification, the user directs proceeding. The
+[bounded trial](../../sse_multivector/distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9)
+keeps all 20 original support expectations and adds three authored subjects on
+A20's exact original post: retain its exception, name the broader topic, and
+reverse its exception. A fresh DSSv1 comparison covers those variants and the
+original failure. Native source-bound support preparation gains only an optional
+subject variant, preserving saved generation/number/post/AS rules and keeping
+expectations in review evidence. Sol / xhigh / subscription SSE / concurrency 8
+stay fixed. The stage has 27 verdict calls, one eligible warmup and at most 56
+attempts including provider-only retries. Only the three long-post support cases
+receive a qualifying prefix; shorter groups are not warmed. Runner 1.2.1's
+post-response cost statistics do not change requests. The completed trial
+matches 20/20 actual DSSv2 labels and 3/3 DSSv2 controls; fresh DSSv1 matches
+4/4 controls. All 27 verdicts and reasons pass attributed native agent review;
+all 28 requests, including warmup, finish on first attempts without reuse.
+Fresh DSSv1 correctly rejects the original exception case after two earlier
+identical-request failures, preventing causal attribution of an improvement
+to DSSv2. Cache reads/writes are zero; warmup adds $0.005884 in catalog
+API-equivalent cost. Qualification stays pending on agent-assessed expectations.
+This adopts no matching/link change, lower-effort trial, bulk grading, scoring
+or reserved-test access. Addressing the remaining repeated DSLv1 error is a
+recommendation at this point; the subsequent drafting authorization follows.
+
+**DSLv2 parent-restriction clarification drafting authorized October 9:** the
+user directs proceeding with the recommendation to address repeated DSLv1 A21
+failure and show proposed wording before calls.
+[DSLv2](../../sse_multivector/distillation-review-v1/README.md#dslv2-parent-restriction-clarification-draft-october-9)
+adds one paragraph after the intact ASv6.100 rule: do not invent a presenting,
+explaining or performing requirement absent from the parent; a clause or
+modifier may preserve a restriction, but mere mention that drops or changes
+it is insufficient. The same Boolean/reason and invalid-counterexample contract
+remains. Native revision preserves the exact delta and hashes; no source,
+expectation or model setting changes, and no calls or experiment preparation
+occur. Independent wording assessment is not approval or evidence that the
+reviewer applies the clarification reliably. Wording approval and a bounded
+semantic test remain pending; qualification, other reviewers, scoring, bulk
+adoption and test sealing remain unchanged. The subsequent trial authorization
+follows.
+
+**DSLv2 wording and bounded parent-child trial approved October 9:** after
+reviewing the exact clarification, the user directs proceeding. The
+[trial](../../sse_multivector/distillation-review-v1/README.md#dslv2-bounded-parent-child-trial-october-9)
+uses 19 unchanged actual-output pairs excluding A06, seven existing training
+controls, and fresh unchanged DSLv1 on the same A02/A13/A16/A21 pairs. A12's
+response-target interpretation is flagged before calls, with its frozen false
+label preserved and its evidence outside the 25 uncontested DSLv2 assessments.
+Thirty verdicts share a 60-attempt budget; only provider failures may retry,
+at most once per case. Sol / xhigh / subscription SSE / concurrency 8 and
+authoritative AS wording stay fixed. Short prefixes receive no warming or
+padding. Native preparations and receipts preserve source/code identity;
+runner 1.2.1 is explicitly selected. The completed trial agrees with 24/25
+assessed DSLv2 expectations; A12 matches its frozen false label but remains
+uncertain and outside that count. A21 still returns false under both versions;
+fresh DSLv1 agrees on 3/4 comparisons. Native reviews give 27 accept, two reject
+and one uncertain. All 30 requests finish on first attempts without reuse,
+retry, truncation or warmup; source/settings/receipt checks pass. No cached tokens
+or net savings occur. Training-control qualification passes, while the actual
+batches and broader reviewer qualification remain pending. The clarification
+does not resolve this known failure at Sol/xhigh. Reconsidering the check using
+trusted teacher relationships is recommended; this adopts no revised method
+or structural policy and authorizes no further prompt/source repair,
+lower-effort trial, bulk grading, scoring or reserved-test access.
+
+**Mechanical decisions for every review prompt approved October 9:** the user
+directs using mechanical processing wherever possible across teacher matching,
+post support and parent-child validity. Given the trusted teacher answer, an
+exact student subject match supplies the complete-meaning match and same-post
+support without model calls. A validated empty teacher catalog establishes no
+match; a missing or invalid reference is a preparation failure. An exact ordered
+parent-child pair copied from an actual trusted teacher link supplies local
+validity without a relationship call;
+merely finding both subjects in the teacher catalog does not. Identical parent
+and child wording also retains every parent restriction, without establishing
+coverage or correct placement. No exact match does not mean invalid: remaining
+semantic questions still need review under the unchanged ASv6.100 criteria.
+Record mechanical origin, evidence and zero model attempts without a fabricated
+model receipt. Identical requests may share saved results with frozen source,
+prompt and runtime bindings, while every numbered occurrence remains visible
+for placement and coverage. Explicit fresh repeats remain fresh inference.
+Parsing, completeness, output
+failure rules and score arithmetic remain mechanical and unchanged.
+
+At approval, matching preparation supplied exact subject matches and rejected
+exact targets from model controls; the shared runner reused identical requests,
+but native zero-attempt results and general support/relationship acceptance
+were unimplemented. The initial approval covered the design rule, not a prompt
+change, implementation, further inference, final scoring policy,
+bulk grading or test unsealing. The [process record](../../sse_multivector/distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9)
+distinguishes that rule from current behavior and preserves prior experiments.
+The preceding read-only investigation finds that A21's `Proof setup` parent is
+student-created and its child has complete-match null. Its true expectation is
+an unadjudicated agent assessment, not a trusted teacher relationship; repeated
+disagreement alone does not conclusively establish reviewer error or incapability.
+
+**Mechanical review routing implementation subsequently authorized October 9:**
+the user's `proceed` authorizes the selected-case adapters and shared runner
+implementation of the approved rules. A preparation-local teacher index retains
+every subject occurrence and actual ordered immediate-edge witness. Mechanical
+output is independent of expected labels and validated through the selected
+adapter. Native prepared/show results record mechanical origin, evidence, a sealed
+digest and zero model attempts, without fabricated receipts or usage. Mixed runs
+dispatch only semantic cases and charge no request budget or warmup for mechanical
+cases; explicit fresh repeats bypass mechanical completion. Qualification reports
+separate mechanical comparisons from model checks, preserve label disagreements
+and leave agent-assessed expectations unverified. Complete prompt/config/source
+bindings remain intact. Verification uses production paths and local workers;
+this adds no real model calls, prompt changes, bulk scoring or test unsealing.
+
+**Complete validation workload preview subsequently authorized October 9:**
+the user's next `proceed` authorizes an offline count of all saved validation
+outputs. A reusable project command in the shared launcher verifies the frozen
+dataset, model provenance, sealed checkpoint metadata and production stage
+receipts, then applies the existing mechanical teacher index. The
+[native preview](../../sse_multivector/distillation-review-v1/README.md#complete-validation-workload-preview-october-9)
+contains 1,800 outputs in 18 versions, with 142 invalid answers kept separate.
+Mechanical rules settle 16,733 occurrences; 105,652 remaining occurrences contain
+36,310 distinct semantic input questions under fixed prompts/settings, before
+saved-answer reuse, warmups and retries. All per-note/version/model denominators
+remain visible. Only evaluation reference content is decoded after checking the
+mixed ledger's complete identity-header order; reserved files and checkpoint
+weights are not opened. The report binds sources and counting code. This does
+not prepare model requests, add inference, qualify reviewers, adjudicate A21,
+change scoring or unseal test data.
+
+**Validation review token and runtime estimate subsequently authorized October 9:**
+the user authorizes an offline estimate of the remaining work, with zero new
+model calls. The existing preview command gains `--estimate` and repeated
+`--timing-experiment` inputs, requiring `tiktoken` only for estimation. The
+[native estimate](../../sse_multivector/distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9)
+binds the unchanged DSMv3/DSSv2/DSLv2 templates and verified fresh Sol / xhigh
+receipts. The 36,310 distinct questions contain 24.195 million rendered input-text
+tokens, versus 79.399 million across remaining occurrences, excluding provider
+instructions, framing and output-schema overhead. Twenty matching, twenty support
+and nineteen relationship verdicts project 15.050 million output tokens,
+including reasoning once, and 15.34 service hours at eight continuously occupied
+slots. The 10.86-hour median and 24.94-hour p90 scenarios are not confidence
+bounds. These selected samples include disputed verdicts and mixed prefix-role
+formats; configured concurrency does not establish measured slot occupancy or
+batch wall time. Warmups, throttling, retries and review work are additional.
+
+Current automatic template prefixes are 468/112/71 proxy tokens for matching,
+support and relationships, all below the 1,024-token threshold. Separate natural
+prefix analysis finds 19 matching and two support groups, with no eligible
+relationship group: 21 hypothetical warmups contain 25,410 input-text tokens;
+at most 4,757,034 proxy tokens could be cache reads, or 4,731,624 after a cold
+first use. Hits are not guaranteed; the earlier eligible support sample had none.
+Warmup output and request overhead are additional and not projected. This records
+opportunities without adopting a cache mode or optimization. Prompts, mechanical
+criteria, scoring, reviewer qualification, A21 and test sealing retain their
+existing state; the estimate authorizes no inference.
+
+**Complete-answer reviewer trial authorized October 9:** the user approves
+running 50 randomized validation answers and 10 deliberately difficult answers
+through the actual review workflow, including mechanical routing, reuse,
+semantic checks and score assembly. Preserve DSMv3/DSSv2/DSLv2, trusted
+ASv6.100, GPT-6.1 Sol / xhigh / subscription SSE and concurrency 8. Reuse the
+previous manual eligible natural-prefix/key caching and native warmups; do not
+enable automatic template-prefix caching or warm ineligible/single-use prefixes.
+The pilot's reserved test remains sealed.
+
+The frozen sample covers all 18 versions with seeded quotas of two or three
+answers, preferring previously unused note identities. It contains 50 distinct
+previously unused notes, including four truncated answers. The ten challenges
+have distinct note identities and cycle teacher catalog size, nonexact composite
+wording, student depth and same-note answer variation. Challenge results remain
+separate from the randomized cohort; neither selection is a simple uniform
+sample of all 1,800 outputs. Source hashes and selection policy are retained.
+
+Candidate-independent teacher meaning groups and required flags are recorded
+before answer assessments. Freeze independent agent-assessed expectations before
+reviewer calls; they are not adjudicated gold. Preserve unresolved labels and
+mechanical contradictions explicitly. Coverage uses the existing required-meaning
+and every-compatible-heading rule, with unchanged DSLv2 comparing a candidate
+heading as parent against the complete teacher meaning as child. Every numbered
+occurrence is retained. The earlier primitive-check estimate excludes those
+additional compatibility comparisons. New native project commands prepare,
+inspect, assess, freeze, run and report the complete-answer trial through the
+shared experiment runner. Reviewer extrapolation, lower reasoning effort and
+bulk review adoption depend on the resulting evidence. See the
+[trial record](../../sse_multivector/distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9).
+
+**Completed-check evidence, trial paused:** sealed references precede all
+calls; all 958 mechanical proofs have been independently verified.
+Matching and support finish with 569/591 and 585/600 resolved distinct semantic
+agreements, excluding 24 and 15 unresolved inputs. Independent audits identify
+four clear reviewer errors in each, preserving raw labels and separately
+recording reference mistakes/ambiguities in 37 native agent reviews. Relationship
+auditing has found two disjoint inconsistency families and explicit scoring
+blockers. Matching caches 42.14% of comparison input; support has no reported
+hits. A successfully retried transport interruption has unknown usage, so full
+cost remains unknown. The user pauses the relationship phase to investigate
+scalability; final qualification remains pending. The earlier runtime estimate
+excludes compatibility: this trial adds 9,678 coverage requests to 2,086 primitive
+checks. Saved matching decisions leave 278 of 513 required-meaning/answer groups
+without a full match; their coverage fails regardless of placement. Omitting
+only that work would save 5,764 requests across the whole selected workload,
+conditional on the saved DSM decisions. At the pause, no execution or exhaustive-report contract had
+changed; all completed receipts are preserved and workers have exited. See the
+trial record for the paused native counts and investigation boundaries;
+this evidence approves no prompt revision, lower effort, bulk grading or test
+unsealing.
+
+**Additional mechanical review implementation approved October 9:** the user
+directs doing all sensible mechanical work. Exact endpoints of any numbered
+trusted teacher ancestor path supply a positive DSL result with the original
+path witness. Matching/support still require exact teacher wording or semantic
+review; a model-confirmed match does not prove either other check. Missing exact
+teacher placements do not certify negative relationships when an equivalent
+paraphrase might represent the meaning.
+
+New schema-2 evaluation preparations omit score-irrelevant questions after
+completed matching/support: compatibility for required meanings with no full
+match, compatibility of proper ancestors already containing a full match,
+remaining placements after a compatible uncovered witness, and incoming edges
+of unsupported subjects. Retain all matching-self compatibility checks and
+already completed verdicts; contradictions block scores. These rules preserve
+the score law conditional on the decisions used, without asserting those
+semantic decisions are correct. Skipped rows carry status/rule/dependencies,
+no invented Boolean and no qualification pass. Complete scores may have
+incomplete diagnostics and reviewer qualification.
+
+The shared runner supports selected frozen dispatch and suppression of repeated
+warmups within one logical invocation; prompts, Sol/xhigh, concurrency 8,
+natural-prefix eligibility, native reuse, budgets and provider-only retries
+remain fixed. Schema-1 selections verify their original accounting; new
+selections include path proofs. Prepare a separate evaluation against the same
+selection/assessment and history; no original frozen input or receipt is
+rewritten. A zero new-attempt allowance joins verified saved results without
+inference. The trial remains paused, reviewer qualification and bulk adoption
+remain open, and reserved test data stays sealed. The
+[implementation record](../../sse_multivector/distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9)
+retains measured savings and their conditional limits.
+
+**Reasoning-level study approved October 9:** after accepting the mechanical
+changes, the user authorizes finishing the same 60-answer trial at Sol/xhigh.
+After completion, screen lower reasoning levels on a small subset, then expand
+the lowest promising effort until all 60 answers are reviewed at that level.
+If correctness degrades significantly, stop that effort and step back up one
+level. The user explicitly accepts up to **2 percentage points** of correctness
+loss versus xhigh. Compare reviewer judgments against source evidence; student
+scores and xhigh agreement alone do not establish reviewer accuracy. Prompts,
+data, mechanical rules, concurrency 8 and eligible natural-prefix caching stay
+fixed. Preserve frozen references and original receipts. Bulk pilot grading and
+reserved-test access remain unapproved. See the
+[study record](../../sse_multivector/distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
+
+**October 10 execution checkpoint:** the same60 xhigh pipeline has finished.
+It yields 43 complete scores, 13 ungraded reviewer contradictions and four
+invalid student outputs. All 1,735 fixed-panel xhigh decisions are verified
+and frozen before lower-effort calls. Independent source-only diagnosis of the
+contradictions is continuing; reviewer qualification remains open. The
+[completion evidence](../../sse_multivector/distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10)
+keeps pipeline work and supplemental panel calls separate. This checkpoint
+adds no change to the approved prompts, semantics, mechanical rules or scope.
+
+**October 10 lower-effort checkpoint:** the initial high screen has 297 complete
+paired decisions, of which 289 agree with the frozen xhigh baseline. Source
+adjudication now finds six high-only errors and two unresolved differences
+(H=6, G=0, A=2): a 1.35–2.69 percentage-point overall loss bound, with larger
+losses in support and teacher/student compatibility. High has not cleared this
+small screen. This bound covers truth uncertainty, not statistical confidence.
+No effort has qualified.
+All 60 original source-only diagnostic judgments are preserved separately from
+final exact-prompt adjudications. The [screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10)
+keeps adaptive pipeline expenses and supplemental panel calls separate. This is
+an execution checkpoint; it changes no scoring rule, prompt or approval scope.
+
+**October 10 medium checkpoint:** the same 297-question screen is complete,
+with 285 agreements and 12 discordances. Source adjudication finds H=8, G=2,
+A=2, giving a 1.35–2.69 percentage-point loss range, the same overall range as
+high. Both relationship roles have larger losses. These bounds describe truth
+uncertainty, not statistical confidence or population reliability. The fixed
+chosen-response catalog estimate is 57.8% lower than xhigh's; shared warmups
+and adaptive pipeline expenses remain separate. The
+[medium screen record](../../sse_multivector/distillation-review-v1/README.md#initial-medium-effort-screen-october-10)
+preserves the source assessment, cost comparison and role investigation.
+Prompts, frozen references, mechanical rules and approval scope remain unchanged.
+
+**October 10 low screen and next investigation:** all 297 paired questions are
+complete, with 283 agreements and source-adjudicated H=10, G=1, A=3. The
+2.02–4.04 percentage-point loss range and an independently checked specific
+failure across two notes rule out expanding low. Medium was selected for the
+frozen 10-answer investigation with 405 distinct questions, with high as its
+fallback. No effort has qualified. This implements the
+approved study, with unchanged prompts, rules and controls; it adds no release
+policy or population guarantee. The
+[low results and selection record](../../sse_multivector/distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10)
+preserves the exact source assessments, original receipts and separate costs.
+
+**October 10 ten-answer medium checkpoint:** the fixed 405-question comparison
+is complete, retaining all prior 297 chosen answers and receipts. Source
+adjudication finds H=11, G=3, A=4 and a 0.99–2.96 percentage-point loss range.
+A specific added main-occurrence/action requirement recurs in compatibility
+across R01 and R21; actual student parent-child failures for this mechanism
+remain on R01 only. This triggered high on the same frozen 10 answers under
+the existing step-up rule.
+The numerical range alone is borderline; the verified recurring mechanism
+requires stepping up. Role losses trigger investigation, without adding
+per-role numerical acceptance thresholds.
+No medium 20-answer expansion or qualification is established. The
+[ten-answer record](../../sse_multivector/distillation-review-v1/README.md#ten-answer-medium-investigation-october-10)
+preserves source uncertainty, the specific failure audit and separate costs.
+
+**October 10 high result and xhigh selection:** high's same 405-question
+comparison is complete: 392 agreements, H=8, G=1, A=4 and a 0.74–2.72
+percentage-point loss range. The net loss is 7/405, or 1.73 points, within the
+accepted two-point margin; the numerical range alone would prompt expansion.
+The same explicit added main-subject/action requirement recurs across R01 and
+R21, independently triggering the approved step-up rule. Compatibility alone
+spans both notes; actual student parent-child failures for this mechanism
+remain on R01 only. Role losses require investigation, without new per-role
+acceptance thresholds.
+
+The sealed decision retains the already-complete frozen Sol/xhigh baseline
+of 60 answers and 1,735 questions, requiring no new calls. Low stopped at five
+answers; medium and high stopped at ten. None qualified, and no lower-effort
+20/40/60 expansion is authorized. Stopping early does not establish that a
+lower effort would lose more than two points on the full 60 or in deployment.
+The requested lower-than-xhigh result remains unachieved; this is not goal
+completion or reviewer qualification. Prompts, data, rules and controls remain
+unchanged; bulk pilot grading and reserved-test access remain unapproved. The
+[final checkpoint and decision evidence](../../sse_multivector/distillation-review-v1/README.md#ten-answer-high-result-and-xhigh-selection-october-10)
+preserve unresolved truths, source assessments and separate receipt costs.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
@@ -831,8 +1974,8 @@ labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
-Block membership, seed value, remaining model settings and validation/test
-counts remain open. Loss was subsequently approved below. This corrects the
+Block membership, seed 17, model settings and the 100/200 validation/test
+counts are now frozen by the subsequent approvals. Loss was subsequently approved below. This corrects the
 intended design. The subjects-only continuation is now implemented locally;
 execution and fit on the selected GPU still need preparation evidence.
 No rental, model calls, or spending is authorized by this correction.
@@ -1064,7 +2207,7 @@ its head dimension differs by attention layer, and the batch-memory calculation
 incorrectly read the global configuration. MoE never started. Retrieval and
 independent rehashing account for all 125 work files and six startup files.
 
-The preliminary preparation cost was $1.56. This attempt left required Gemma work incomplete; the repaired run below completed it. No automatic timeout or
+The preparation cost was initially estimated at $1.56 and later updated to $1.620. The final preparation cost was $1.620. This attempt left required Gemma work incomplete; the repaired run below completed it. No automatic timeout or
 deletion occurred. Budget overruns must trigger a direct chat update, never an
 automatic stop. Ask questions directly in chat; do not use question tools.
 
@@ -1090,7 +2233,7 @@ repair scope; no fixed time cutoff was approved.
 
 **GPU preparation completed October 3:** Qwen's verified earlier checks were reused; Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject responses, native maximum-output cache checks and restored training on 96GB/600 W hardware at $1.4153/hour including storage. All 210 work files and six startup files
 were retrieved and independently rehashed.  This rental lasted 65.5 minutes.
-Preliminary preparation costs were $1.639 for this run and $1.620 for the earlier failed preparation: $3.259 combined. 
+The two preparation runs cost $1.756 and $1.620, $3.376 combined.  
 
 Direct SSH copying was slow; the verified provider proxy route completed retrieval using
 the unchanged native transfer code. Small sealed responses and measurements were copied
@@ -1124,6 +2267,13 @@ requires the actual user-approved reason and records that exception. For prep,
 record the standing approval and the concrete failure/repair assessment using
 `--incomplete-stop-approval`. Original frozen inputs and defect evidence remain
 intact when additional work is needed.
+
+**Autonomous pilot recovery approved October 5:** diagnose and fix errors
+without asking the user to approve the repair, including necessary code or recipe
+corrections. Preserve original frozen inputs and failure evidence, record each
+change and interruption, restore verified saved state, and rerun comparisons
+affected by changed conditions. This authorizes repairs; the approved spending
+and complete-data requirements before stopping/deletion remain in force.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
@@ -1188,7 +2338,7 @@ frozen-input verification passed. Qwen preflight and weight download completed. 
 then wrote an unexpected Python cache file into the frozen transport. The supervisor rejected the changed file set, stopped the workload and verified retrieval. No baseline output or training
 completed, and no GPU failure was reported. The cache is preserved outside
 transport; its original manifest verifies, including after a bytecode-disabled
-local import. Preliminary charges were $0.338.
+local import. Preliminary charges were $0.338. The final cost of the failed run was $0.395.
 The manual-deletion policy is implemented and regression-tested locally. On
 September 29, the rebuilt image and `package-v9` passed all 24 local VM tests,
 including real SSH training/retrieval and all three candidate preflights. The
@@ -1250,7 +2400,7 @@ transfer fees gives **36–40 hours / $51–58** at the prep's historical $1.415
 an illustrative $1.60/hour gives $58–65. Brief generation plus a single long-cache
 decode step is a projection, not measured full-output throughput. No full-pilot
 spending is authorized. This former winner-only calculation does not price the
-approved six-version final test or the frozen ASv6.100 inputs. Preparation's preliminary total was $3.26.
+approved six-version final test or the frozen ASv6.100 inputs. The earlier preparation cost $3.376 combined.
 
 **Subject prompt frozen for the pilot (October 4):** the user selected the full
 [ASv6.100](../../sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md),
@@ -1297,7 +2447,8 @@ generation is authorized. All 16 writing forms occur in the full sample. Known
 exposure checks cover 716 saved source files, with zero holdout conflicts;
 original texts/authors match and full-post SSE lengths range from 2 to 505 tokens.
 Validation contains no CREATIVE-form notes in this natural draw; final test has six.
-The review rubric, context/memory settings and the rental remain open. The
+The review rubric, context/memory settings and rental were open at that point.
+The semantic method and DSRv1 reviewer decision are recorded above. The
 final-test collection arrangement was subsequently settled on October 5 below.
 
 **Pilot label generation complete October 5:** the initial WebSocket run at 32 concurrency saved 39 valid answers and 99 failed handshakes, with zero frames/bytes for those failures; failed handshakes reported HTTP 403. Its 138 attempts and
@@ -1373,7 +2524,10 @@ against the native path before its first update. Recheck all required responses,
 continuing checkpoints and coverage locally before recording the deletion review.
 The shared three-way data package preserves 1,000 train / 100 validation / 200
 reserved final test notes. Local semantic grading need not be settled to collect
-GPU outputs; its rubric/reviewer remain open. Final-test collection is now
+GPU outputs; its rubric/reviewer were then open. The October 7 DSRv1 design
+above settled the reviewer and method, with qualification then pending. The
+October 8 trial subsequently failed known semantic and cross-version checks.
+Final-test collection is now
 implemented locally (below). Actual hardware checks and new launch spending
 remain open. These safeguards cannot guarantee
 a clear performance difference between students.
@@ -1400,7 +2554,8 @@ evaluation copy, save separate test files bound to the run/checkpoint, and
 require both complete test stages before completion review. Automatic reports
 expose only test counts/locations; semantic grading and opening test content
 remain separate local work after validation/model selection. Actual ASv6.100
-GPU fit/throughput, launch duration and maximum spending remain open.
+GPU fit/throughput and launch duration remain unmeasured; the combined rental
+was subsequently approved up to $285 below.
 The shared SSH rehearsal passed after correcting one error-message assertion;
 all three native tokenizers also passed the actual train/validation/test preflight.
 The technical plan records evidence and limits. No rental or publication occurred.
@@ -1416,8 +2571,9 @@ early for background transfer. Retry failed copiers at most three times, with
 exhausted failures visible and no worker stop. Freeze the detailed status command
 and save mechanical progress plus GPU utilization/memory and disk observations
 locally, excluding reserved-test content and failure counts. The training recipe
-and frozen data are unchanged; actual ASv6.100 CUDA checks, image publication and
-spending remain open. The technical plan records local recovery verification.
+and frozen data are unchanged; actual ASv6.100 CUDA checks remain for the rental.
+Image publication and $285 spending were subsequently approved below. The
+technical plan records local recovery verification.
 
 **Paired package frozen and priced October 5:** the user approved preparing the
 combined prep→pilot inputs and updating the estimate. The shared packager froze
@@ -1429,24 +2585,340 @@ the longest example after gradient accumulation with restored Adam state. Fresh
 main adapters retain eight examples per update and 125 updates per student.
 The 300 GB storage draft allows 200 GB inbound / 60 GB outbound, covering the
 approximately 27.25 GB checkpoint payload and a possible second retrieval copy.
-A compatible current 600 W quote is $1.44/hour including storage. Conditional
-arithmetic gives prep $1.50–3 and combined prep/pilot 78–127 hours / $114–184;
-a quadratic training sensitivity gives 151 hours / $219. These assumptions use
+The two-GPU update supersedes the single-card launch package and estimate.
+A saved pair of 96GB/600 W RTX PRO 6000 Server cards costs $2.99/hour including
+storage. Conditional scheduling gives 40–66 hours / $122–197; a quadratic
+training sensitivity gives 80 hours / $239. These assumptions use
 actual native token lengths and older GPU timings, with teacher answer lengths
 as generation proxies; they are not measured ASv6.100 throughput or guarantees.
-The financial draft is not approval. Image publication, GPU checks, maximum
-spending and local semantic grading remain open. No rental or publication occurred.
-The technical plan records hashes, quote evidence and the calculation.
+The user approved private image publication and a **$285 combined rental budget**.
+The tested image is published and verified private: read-only pulling succeeds,
+anonymous manifest access returns HTTP 401, and all runtime/file hashes match
+the tested VM.  Actual GPU
+checks and local semantic grading remain pending. The October 5 preparation used two-GPU hardware at $2.9889/hour including storage. Qwen prep passed; dense Gemma failed the
+88 GiB cache-memory guard without CUDA OOM, and Gemma MoE failed native/fused
+adapter-gradient agreement before its first update. The prep gate blocked every
+main baseline and training run. All 86 available files (4.35 GB), available checkpoints and failure logs were retrieved and independently rehashed under the standing prep-only substantial-repair authorization. 
+Preliminary charges were **$1.974**. Repairs were completed
+locally before the new frozen version below. Failed checks now preserve numerical
+evidence before rejecting work. The short Gemma reference promotes projected
+logits to FP32 before softcapping, matching Liger 0.8.4's correctness reference;
+CUDA tolerances and training computation are unchanged. Dense inference reserves
+12 GiB scratch rather than 4 GiB under the same 88 GiB budget, before either
+baseline or trained generation. Prep checks both validation and reserved-test
+input shapes with synthetic continuations, without generating or semantically
+reviewing reserved answers. The original frozen artifacts remain unchanged.
+Local reproductions, 94 VM tests and six native tokenizer preflights pass; one
+VM tokenizer test is skipped and covered by those separate preflights. Actual
+GPU checks remain required. Singleton dense generation updates the conditional
+timing to 53–83 hours, with a 93-hour sensitivity case; projected replacement
+costs are $159–248 / $279 at the saved $2.99/hour quote. Including the earlier
+preliminary bill, those scenarios fit the original $285 total. Current server-card
+throughput and student answer lengths remain unmeasured.
+
+The corrected VM export is published privately as
+`sha256:c376ec124faabd71c018e52044faf9ee6bbc4b02b6d7a48bf90f1cbfa8f806e5`.
+Its filesystem layers, runtime settings and all 15 source hashes match the VM;
+Docker export normalizes empty metadata defaults without changing execution.
+Read-only pulling succeeds and anonymous access returns HTTP 401. The replacement configuration remained within the original $285 experiment maximum.  The replacement two-GPU configuration cost **$2.9889/hour** including 300 GB storage. Container DNS failed before
+SSH, inputs or worker startup; one reboot did not resolve it. Necessary startup logs and direct/proxy probes were saved and hashed under the standing prep-only policy.  Its preliminary cost was **$0.76**; the two failed attempts cost **$2.74**, within the original $285 experiment maximum.  Both attempts failed. Exclude machine 146170 from replacement searches. A different
+compatible host now quotes $2.9389/hour. The frozen
+recipe/image/package are unchanged. There is no automatic time/budget stop or
+deletion.       A proposed $280 replacement projects
+99,013 cents, leaving 987 cents beneath the lifetime cap; this does not add to
+the original $285 pilot approval. The selected configuration has two 96GB/600 W server cards at $2.9389/hour including 300 GB storage. The verified
+private image, package, 15 runtime source hashes and model recipe are unchanged.
+Native frozen preparation passed without a paid action. The proposed experiment maximum was **$280**.  This remains within the original $285 experiment maximum, not a new allocation.
+Evidence is `target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`. The preparation used two-GPU hardware at **$2.9389/hour** including 300 GB storage. Startup and GPU prep were
+observed; live exfiltration, unchanged prep/complete-baseline gates
+and complete-data explicit deletion rules govern this run. No automatic stop or
+deletion is enabled. The local $1 setup gate rejected worker admission: $0.314536 rental estimate plus the full $0.755209 planned transfer allowance exceeded $1. SSH, transfer and remote preparation had
+succeeded. A production-path reproduction confirmed that refusal. Under standing autonomous repair authorization, a separate local Context with a $5 startup admission allowance started worker attempt 001; calling worker start again returned the same attempt. The original
+Context/contract/transport, remote code, prompts and model recipe were not
+modified; their hashes were verified again. Failed admission/old supervisor
+receipts are archived under `launch/startup-recovery/001/`, with the effective
+local configuration and repair result. The original frozen supervisor and
+observer were restarted. Future launch settings use a $5 setup allowance. No main baseline or training preceded the
+repair; there is no comparison change to rerun.
+
+**October 6 verified prep closure:** Qwen passed. Dense completed both optimizer
+updates, adapter reload/merge, brief generation and singleton cache checks, but
+its **88.43 GiB** reserved training peak was wrongly compared with the **88 GiB
+inference batch budget**. No CUDA OOM occurred. Earlier prep already recorded
+training reservations above 88 GiB; this inference setting is not a training
+acceptance limit. The local fix removes that check without changing training
+computation or inference memory checks. A production-path regression first
+failed on that cutoff, then both targeted checks passed. The published base
+image with a local source mount passed 73 tests; 12 VM-only checks were skipped.
+The new fix is not yet published or newly validated in the deployment VM.
+Gemma MoE still failed native CUDA gradient agreement before its first update;
+its finite gradient evidence records six failing elements out of 360,448,
+maximum absolute error 0.015625 and relative L2 error 0.035727. Tolerances remain
+unchanged; the cause is unresolved. The prep gate blocked all main baselines
+and training. All **95 work + 6 startup files / 5,849,177,916 bytes** were independently rehashed; available checkpoint/response seals and complete Qwen prep were verified under the standing prep-only substantial-repair instruction.  Preliminary charges were **$2.543**.
+ The three failed attempts cost $5.29 within the original $285 experiment maximum; no remote edit was made.
+Integrity evidence is the launch directory’s `closure-evidence.json` and `operation/observations/full-pre-deletion-integrity-review.json`. MoE CUDA confirmation remains open; the subsequent local
+repair and rebuilt runtime are recorded below.
+
+**October 6 local MoE reference repair:** reproduce a false gradient rejection
+with real BF16 Gemma MoE/PEFT and an emulation of Liger’s unavailable CUDA loss.
+Liger caches the mean-loss hidden-state gradient during forward, then scales it
+by the note’s weight during backward. The old native reference scaled CE before
+LM-head backward, introducing different BF16 rounding. The short reference now
+applies the weight at the same hidden-state boundary; training computation,
+teacher-token weighting and atol=0.005 / rtol=0.05 stay unchanged. The new
+production-path regression first fails on adapter agreement, then passes with
+zero gradient difference and still rejects deliberately corrupted gradients.
+The local workflow suite passes 89 tests, with 12 deployment-VM-only checks
+skipped. The full original CUDA failure is not yet replayed; confirmation on
+hardware remains required; the rebuilt runtime is recorded below. Evidence is
+`target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
+
+**Persistent recovery storage approved:** retain model downloads and compatible
+saved work on a separately rented local volume across failed-container
+replacement. On October 6, choose a cheaper compatible Bulgarian host with a
+volume for the next attempt; paying the Texas premium solely for additional
+spare GPUs is not approved. Check current GPU and volume offers before launch.
+A reliability score is uptime evidence, not proof of future free GPUs;
+the volume attaches only on its physical machine.
+**One-GPU download stage approved October 6:** use that host's cheaper one-card
+rental to verify attachment and download all three students at their frozen
+revisions onto the actual persistent volume. Verify required weights, tokenizer
+and configuration files; retrieve completion evidence before deleting the
+container. Retain the volume. The two-card rental then reattaches it, verifies
+the cache without network downloads, and runs the full concurrent GPU prep
+before any pilot work. This changes setup scheduling; models, inputs, recipe
+and the existing combined spending limit stay fixed.
+**Main rental layout reconfirmed October 6:** after comparing two separate
+one-card rentals, retain one main rental with two GPUs following the approved
+one-card download stage. The modest projected savings do not justify changing
+the locally tested storage and shared prep/baseline checks. This decision
+keeps the existing models, inputs, recipe, spending and deletion requirements;
+fresh offer availability and actual CUDA fit/throughput remain open. Comparison
+evidence: `target/distillation-pilot-v1/separate-rentals-comparison-20261006/`.
+**Download handoff implemented and VM-tested October 6:** pin 42 required files
+at the same revisions, totaling 169.81 GB, with size/content checksums and 32 GiB
+reserved for saved work. Retrieve and locally review download, file and volume
+evidence before deletion. The VM destroys the download container, retains its
+volume, then completes offline prep and fresh pilot execution with two workers.
+Missing/corrupt cache files block every worker; incomplete retrieved evidence
+blocks completion review. Host regressions pass 181 checks (16 VM-only skips);
+the rebuilt VM passes 109 checks, with the four checks executed
+separately and one optional native-tokenizer check skipped. All six
+configurations and data are unchanged. Evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/`. The rebuilt image
+is now published at the immutable digest in `publication/publication-receipt.json`;
+its filesystem/configuration match the VM, read-only pull succeeds, and anonymous
+manifest access returns HTTP 401. Actual Vast attachment and full MoE CUDA
+confirmation remain pending. A $2 volume reservation covers 24 hours of storage
+for the approved download stage. The download configuration used 300 GB storage at $0.0833/hour. The quoted download-only rate was $1.4278/hour including storage. Its create request was definitively rejected with HTTP 400;
+complete controller inventory probes confirm no instance and zero GPU charge.
+ The old helper discarded the provider message, so the underlying
+rejection reason is unknown. A production CLI regression first reproduced the
+missing message; the helper now saves a bounded message after redacting registry
+and API credentials. All nine pinned CLI checks and 68 controller checks pass;
+the updated VM rehearsal passed before another creation request (109 passed
+checks, with the unchanged native-tokenizer check using prior evidence). The
+existing generalization guard was stale after approved volume recovery/child-lock
+changes; its exact non-volume preparation-flow assertion is retained. All 81
+generalization checks now pass; no controller behavior changed. No model,
+prompt, data or training recipe changes. Evidence:
+`target/distillation-pilot-v1/create-diagnostics-20261006/`.
+The rebuilt private runtime is
+`docker.io/kernelkind/oracle-mvp@sha256:da81c955532264e216653d0b742cecfc93fb63c99595a4fc8960f5ddeff2b642`.
+Registry config/rootfs match the imported VM; both frozen packages verify inside
+the image, read-only pull succeeds and anonymous access returns HTTP 401.   Combined rate
+$1.4278/hour is below standing $1.60 approval. This retry has not started GPU execution.
+Evidence: `target/distillation-pilot-v1/download-launch-20261006-v2/`.
+The retry also received HTTP 400 before allocation; its captured reason is an
+invalid `volume_info.mount_path` of `/workspace/oracle-full-build`. Completed
+controller reconciliation and independent complete inventories confirm no GPU,
+zero charge and an unattached volume.  The [official creation API guide](https://docs.vast.ai/api-reference/creating-instances-with-api#attaching-volumes)
+uses `/workspace`; the launcher and mount checks now use that parent, retaining
+all experiment/cache paths beneath it. Cache receipts name their logical
+`volume_root` accurately. Both pinned CLI mount assertions failed first; the
+receipt regression also failed first. Nine CLI, 149 controller/generalization,
+four cache and 13 workload-spec checks pass. The initial VM rehearsal caught the
+old mount assertion; the corrected full rehearsal subsequently passed. All six
+configs,
+data and required model files remain byte-identical; no recipe change or pilot
+training. Evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
+The final VM rehearsal passes 109 checks and stops cleanly, including the actual
+parent mount, replacement and offline two-worker handoff. Both packages verify
+inside the imported image. Its private registry digest is
+`docker.io/kernelkind/oracle-mvp@sha256:633c684c0b64d064df34e8de9de64c07bc0b764423073a2c7a25aa561bd57a4b`;
+VM layers/effective configuration/source hashes match, read-only pull succeeds
+and anonymous manifest access is HTTP 401.   Combined rate is $1.4278/hour. The download stage completed. Actual mounting, provider attachment and write/read receipts agreed. All 42 pinned
+files (169,808,998,964 bytes) are checksum verified; download took 768.797
+seconds. All 12 work and six preparation files were retrieved and verified locally, and production completion review passed.  No baseline or training.
+Preliminary download-stage cost was $0.455.   
+The original $285 approval is unchanged.
+Cold private-image loading outlasted the controller readiness window. Original
+failure/watcher evidence is preserved under `startup-recovery/001`; a guarded
+retry of the unchanged controller on the same bound instance completed setup
+without another create request or remote edits. The future command controller
+now returns `instance_starting` after a readiness window and automatically
+retries on the same instance; fatal identity errors still fail. The production
+CLI regression failed first, then passed; 176 local tests succeed with three
+VM-only skips. All six configs, data and model file requirements are byte
+identical; only `vast/runner.py` changes in runtime hashes. The first updated
+VM passed every runtime check but ran out of its 64GB disk during image export.
+Five duplicate archives were checksum matched to preserved host copies before
+removal, freeing 15.65GB. The standard rehearsal then completed: 109 checks
+pass, four volume/cache checks rerun their earlier skips, the unchanged optional
+candidate-tokenizer check remains skipped, and the VM stops cleanly. Export
+SHA256 is `133a80cbd02c58d678f990c206321b958fbc1f9b0225ac0e1fee358488638d41`.
+The rebuilt private image is
+`docker.io/kernelkind/oracle-mvp@sha256:b99b4e9f23211bada17f37a5c73c8e26b1fde3bc66a1403783aee2d774567d1a`.
+VM layers/effective configuration/source hashes and both frozen packages match;
+read-only pull succeeds and anonymous manifest access is HTTP 401. Actual
+concurrent CUDA prep remains a gate before every main baseline/training run.
+
+No pilot baseline or training had started. Evidence:
+`target/distillation-pilot-v1/download-launch-20261006-v3/` and
+`target/distillation-pilot-v1/startup-retry-20261006/`.
+
+**Deleted-rental accounting approved October 6:** the user rejected holding full
+run budgets after confirmed deletion. For Vast command rentals, replace that
+hold immediately with the bounded unbooked charge: elapsed time from reservation
+through verified deletion at the approved maximum hourly rate, plus the full
+approved transfer allowance, floored by posted exact-instance invoices. Round
+time and cents upward; subtract all previously booked charges from the hold.
+Keep final invoice confirmation and later adjustments without making their
+24½-hour observation delay a gate for a new rental. Active rentals/volumes keep
+their reservations; the lifetime $1,000 cap and original $285 experiment total
+remain. Apply this policy in the local ledger.
+The four pilot/preparation attempts had a bounded combined cost of $8.52. The four attempts' latest posted charges totaled $5.813.   
+The production budget check rejects admission before this adjustment and passes
+after it. Both exposure and admission checks pass; original records are intact.
+
+
+  The replacement configuration used two 96GB/600W cards at $2.8139/hour plus $0.0833/hour for a 300GB volume. Hardware checks and volume capacity pass.
+ A proposed $3 download allowance
+leaves $256.48 for main GPU work inside the original $285 including failures.
+ No automatic deletion or time/budget cutoff. The unchanged
+tested private runtime and one-GPU download → two-GPU prep/pilot flow apply;
+all cache checks and global prep/baseline gates remain required. Evidence:
+`target/distillation-pilot-v1/host-switch-20261006/`.
+The download cache held all **42 files / 169.8 GB**, checksum verified. The download completed successfully; local completeness review verified the retrieved evidence.
+Its preliminary bill is $1.22, with 28 cents retained under the $1.50 bound.
+The two-GPU run passed cache attachment and offline verification. Qwen and
+Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
+**No pilot baseline or training started.** All **97 work files / 5.85 GB** and six preparation files were retrieved and independently rehashed. Preliminary charges were **$1.445**.
+ The one-GPU diagnostic completed both cases without training updates. All **20 files / 3.17 MB**, including all four saved head-state/gradient pairs, were retrieved, independently rehashed and opened.  The preliminary diagnostic cost was **$0.21**.
+ Head relative L2 error is **0.294–0.321%** with identical inputs;
+296 of 156,119,040 adapter-gradient elements fail pointwise tolerance after
+backpropagation. Disabling reduced-precision reductions improves head agreement
+but does not resolve the deep comparison. A locally tested reference correction
+checks head gradients separately, then compares native/fused adapter gradients
+using the identical incoming head gradient. It adds a relative L2 check using
+the existing rtol, so absolute tolerance cannot hide corrupted tiny gradients.
+Both new production-path regressions failed before repair and pass afterward;
+all five fused-loss tests pass. Full VM validation now passes: 10 candidate,
+46 workflow, 48 deployment, four cache and four explicit replacement/handoff
+checks; all four deployment skips are covered separately. Candidate tokenizer
+preflight uses verified offline metadata. Caching reuses passed stages; the exact
+VM export and refreshed package are published privately and verified, at image
+digest `afa90bc64233b227da5db36f1336d7395138d9528bfb8c0d3a7dadc5f7256bad`.
+All three actual CUDA loss/head/adapter-gradient checks now pass, with zero
+backbone-gradient differences using the verified identical head gradient.
+The preparation passed Qwen and dense Gemma full prep. MoE stopped on its
+seven-note native generation-cache probe: **88.080 GiB reserved versus 88 GiB
+budget**, without OOM. **No pilot baseline or training started.** All **116 work files / 6.82 GB**, six preparation files, five sealed checkpoints and the three gradient-check reports were retrieved, independently rehashed and reviewed.  Preliminary charges were **$1.361**.  The corrected two-GPU configuration cost **$2.8139/hour**. Only MoE inference workspace changes **4 → 12 GiB**, consistently
+in prep and pilot; total inference budget stays 88 GiB and the widest predicted
+batch falls **seven → five**. Exact image, code, prompts, data, models and
+training recipe are unchanged. Package verification and native preparation pass.
+The replacement passed all three full CUDA preps and started baselines in the same run. The widest real cache probes reserve **76.28 GiB Qwen
+(seven notes), 77.07 GiB dense Gemma (one), and 76.80 GiB MoE (five)**, all below
+88 GiB. Loss/gradient checks, merge/generation, long-input updates and saved
+continuation checks pass for every student. No pilot training starts until
+all three baselines pass. Observe continuously and progressively retrieve
+frozen responses/checkpoints. Archive all verified prior work and retain the
+model cache. No automatic stop or deletion. Evidence:
+`target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
+
+**Baseline integrity, October 7 00:07 UTC:** Qwen and dense Gemma's 100-note
+validation baselines are retrieved and verified locally: hashes, full inputs,
+raw/parsed answers and batch receipts agree. Qwen's 13 and Gemma's two invalid
+answers remain counted. Both 200-note test collections are underway and sealed.
+MoE is queued; no main training has started. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
+
+**Qwen and dense Gemma baselines complete, October 7 05:36 UTC:** each
+student has 100 validation and 200 reserved test responses verified locally by
+the production checks. Full prompts, raw/parsed answers, batch receipts and
+checksums agree. Reserved test content and quality remain unreviewed. MoE is
+starting its baseline; no main training has started. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-reserved-baseline-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-reserved-baseline-integrity.json`.
+
+**All baselines verified, October 7 08:23 UTC:** each student has 100 validation
+and 200 reserved test responses retrieved and checked locally by the production
+validators. Prompts, raw/parsed answers, batch receipts and hashes agree; all invalid
+answers remain counted. Reserved test semantics remain unreviewed. The pipeline
+advanced to Qwen and dense Gemma training concurrently; MoE follows Qwen. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-validation-baseline-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-reserved-baseline-integrity.json`.
+
+**Training progress verified, October 7 13:58 UTC:** Qwen has completed
+400 distinct notes in 50 continuing updates; dense Gemma has completed 200 notes
+in 25 updates. All three saved checkpoints, including adapter and optimizer/RNG
+state, are local and passed hashes, exact note coverage and counter checks.
+Qwen's two training blocks took 34.9 and 33.2 minutes; dense Gemma's first took
+92.9 minutes. Both Qwen validation sets are fully retrieved and verified against
+the same 100 inputs and batch plan as baseline. Each has 2 parsing failures,
+versus 13 untuned; the two failures at 400 notes hit the output limit. Generation
+took 121.4 and 143.1 minutes, versus 128.1 untuned. Semantic correctness/coverage
+remain ungraded. Qwen continued training toward 600 notes; dense Gemma is
+validating after 200 and MoE remains queued. Reserved test semantics remain
+unreviewed. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-400-integrity.json`,
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-checkpoint-200-integrity.json`,
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-validation-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-400-validation-integrity.json`.
+
+
+Preliminary backup storage charges were **$0.884**.   
+
+The launcher now mounts the selected volume, retains model downloads and
+verifies saved work before replacement. It preserves work paths and worker
+attempts while archiving the previous launch receipts. Reuse requires identical
+image/data/recipe, verified local retrieval and confirmed prior deletion. An
+explicit runtime repair may retain downloads while archiving all previous work
+and starting a fresh comparison; its reason is frozen. A controller-crash
+regression keeps the worker lock in live training children, blocking sealing
+and reentry until writers exit. Host regressions pass 137 checks, with 16
+VM/optional-SDK skips; the pinned SDK payload test passes. The rebuilt VM passes
+101 checks: actual container replacement preserves 242 saved data files, logs
+retain their original prefixes, and the model cache remains readable offline.
+The exported image matches the frozen package; all six configurations/data are
+unchanged. One optional native-tokenizer check remains covered by the prior
+unchanged-input preflights. Full MoE CUDA replay and new private publication
+remain pending. No volume or replacement is rented.
+The actual Vast volume attachment remains untested; startup checks the mount
+before setup or training. Recovery across container replacement is verified
+in the VM.
+The two-GPU VM passed 91 tests, with one optional native-tokenizer check skipped;
+149 shared-controller regressions passed. Real concurrent CPU workers verified
+prep→pilot, early copies from both workers, checkpoint continuation and complete
+retrieval/review. All six native configurations/data are unchanged from their
+passed preflights. The tested export and runtime hashes match the new frozen
+package. This is automation evidence; server-card CUDA execution/fit/speed remain
+open. The technical plan records hashes, quote evidence and the calculation.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its subjects,
 hierarchy and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
-advantage. The larger pilot's remaining training settings, remaining output
-format details, sorting-related output requirements and spending amounts remain open. The
-informal subject/mask settings and $25 approval above apply only to the current
-short experiment.
+advantage. The larger pilot's numeric recipe, full ASv6.100, splits and
+collection settings are frozen. Two-GPU launch spending is approved up to $285;
+actual hardware measurements and local semantic review were pending at that
+checkpoint. Current training and evaluation status is recorded above. The
+informal subject/mask settings and $25 approval above apply only to the completed
+preliminary experiment.
 
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 already identifies Muse. A later [12-note diagnostic](../../sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
@@ -1457,8 +2929,11 @@ equivalence to Astra. Its subject-only cost is not a complete labeling estimate.
 Selecting the teachers and successfully completing the 500-note / 5-topic
 hierarchy validation are both prerequisites for starting full training-data
 generation (07). A finished but unsuccessful run does not clear this gate.
-For the larger pilot, the same teachers must write both the pilot training data
-(05) and the full training data (07), as the user directed on September 21, 2026.
+The September 21 direction to use the same teachers for pilot and full training
+data was subsequently narrowed by the October 4 subjects-only pilot approval:
+its label teacher is settled independently, without selecting release teachers.
+Pilot data (05) is complete; general teacher selection no longer gates it.
+The full training-data (07) teacher and successful-500-note requirements remain.
 The informal start above may reuse existing annotations before selection. Work that
 consumes no labels, such as 18's training-code preparation, may use any data and
 need not wait for the teacher selection.
@@ -3019,13 +4494,14 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 | --- | --- |
 | **06 · Choose model through larger fine-tuning pilot** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
 | **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and any agreed additional outputs. |
-| **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated 2–5k snapshot and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
-| **16 · Launch public hierarchy** | Publish the release package: the snapshot, code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes its gate; a hosted demo is optional. |
+| **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated snapshot, targeting 2–5k notes without a hard minimum, and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
+| **16 · Launch public hierarchy** | Publish the hierarchy events to a paid relay or as an online ZIP, alongside generation code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. Choose distribution after reviewing hierarchy quality. The model track publishes whenever it passes its gate; a hosted demo is optional. |
 
 Preparation can accompany development; final verification requires the actual
 release artifacts. Checking an internal training checkpoint alone does not
 establish that the intended public files and instructions work together.
-File formats, publishing locations and implementation methods remain open.
+The specific relay or ZIP-hosting location, event-file layout and publication
+implementation remain open. Notedeck integration is required with either route.
 Publishing the training dataset is not an additional release requirement.
 No dates, dependency arrows, model choices or spending approvals change.
 
@@ -3065,8 +4541,9 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   procedure, hardware choice or spending is approved here.
 - **20 · Assess full hierarchy-build resources:** keep the required-release
   estimate separate from the optional model-track estimate. For the teacher-built
-  2–5k release, combine available teacher generation measurements from 17 with
-  stage measurements from 22 and observed subject/mask/node/pair counts from 03.
+  release, use 2–5k notes as a target rather than a minimum. Combine available
+  teacher generation measurements from 17 with stage measurements from 22 and
+  observed subject/mask/node/pair counts from 03.
   Include HDBSCAN requirements from 21 only if HDBSCAN is used. Estimate release
   time, memory and cost to inform corpus selection in 09 while preserving quality.
   Retain pilot/distilled-model generation measurements from 06 separately for
@@ -3080,8 +4557,10 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   Per-pair relationship cost alone does not establish total hierarchy-build cost.
 - **09 · Choose notes for launch hierarchy:** use the early measurements, agreed
   corpus scope and useful-coverage requirements to choose the intended corpus and
-  freeze its IDs. Corpus size is not fixed before feasibility is investigated;
-  the selected size still needs final validation.
+  freeze its IDs. Target 2–5k notes without a hard minimum; choose the largest
+  genuinely useful hierarchy that can pass review by October 18. Corpus size is
+  not fixed before feasibility is investigated; the selected size still needs
+  final validation.
 - **10 · Check distilled-model build time and cost:** establish whether the distilled model
   can generate the agreed outputs for the selected launch corpus, and the
   remaining pipeline can construct and order its full hierarchy, within the
@@ -3109,6 +4588,22 @@ review are tracked in 29; larger-pilot model selection is tracked in 06.
 Setup completion does not verify the newer larger-pilot worker or configuration,
 select a model, prove all full-size candidates work or complete the model track.
 Further larger-run preparation remains within 06.
+
+**October 6 VM verification decision:** the existing local launcher defaults to
+automatic reuse of successful stages with matching source, test, dependency and
+input hashes and intact saved evidence. An agent may choose `--full` to rerun
+every check while retaining Docker build caching. Changed or uncertain
+dependencies force checks; there is no forced stale-evidence mode. Successful
+retrieved stages survive export failures, and identical complete results can be
+verified without starting the VM. Implementation and initial verification used
+a separate worktree and VM directory. **Cutover approved October 6:** integrate
+into `main` and transfer matching verified evidence into the existing VM
+directory. The unchanged parent invocation verifies in 2.22 seconds; all
+53 host regressions pass. Future launches need an image and frozen packages
+built from the updated Dockerfile; existing publication evidence is preserved.
+This changes local rehearsal, with the pilot recipe and hardware decisions
+unchanged. Full-size CUDA fit remains the GPU preparation gate. Operational
+details are in the technical plan's **Local VM workflow** section.
 
 Final training-example formatting and output-quality evaluation remain within
 **06 · Choose model through larger fine-tuning pilot**. Its completion needs the
@@ -3191,8 +4686,8 @@ gating every build. Node sorting (04 and 27) is now deferred as nice-to-have
 work. Land membership recovery (24) if HDBSCAN
 is used; 24 gates 03 only for HDBSCAN.
 Define the Nostr hierarchy protocol (13), now in progress and independent.
-Begin corpus selection inside
-the decided 2–5k band (09).
+Begin corpus selection toward
+the 2–5k target, not a required band (09).
 
 **Week 2 · October 5 – 11: validate the process; select the teachers.** Run
 the ladder with full user review at each rung: 200 (correctness across more
@@ -3237,14 +4732,20 @@ target**, not a finalized commitment; from an October 18 launch that would
 extend through April 18, 2027. Operating duration, capacity and total cost remain
 open.
 
-**Paid hierarchy relay provisionally selected October 5:** use Cellar
-(`wss://cellar.nostr.wine`) for hierarchy events and original-post references;
-the relay need not retain the original posts. The user prefers its metered
-1-sat-per-event/year model for the expected larger-than-average upload.
+**Hierarchy publication options clarified October 8:** the final hierarchy
+events will go to a paid relay or into a ZIP posted online, with the choice
+informed by hierarchy quality. Notedeck integration remains required with either
+route; operating our own public service remains optional. No route is selected yet.
+
+Cellar (`wss://cellar.nostr.wine`) remains the provisional candidate for the
+paid-relay route, as discussed October 5. That discussion preferred its metered
+1-sat-per-event/year model for the expected larger-than-average upload; the
+relay need not retain original posts, only hierarchy events and references.
 [Paid-relay findings](../recommendation-engine/research/paid-hierarchy-relays.md)
 record policies, live limits, read checks and alternatives. Protocol kinds
 remain experimental; funded custom-kind writes and upload pacing still need
-verification. This provisional choice approves no spending or publication.
+verification if the paid-relay route is chosen. Neither route approves spending
+or publication execution.
 
 The $1,000 lifetime paid-resource cap still applies, including prior spending,
 Vast.ai training and snapshot GPU costs, hosting, storage, transfers and reruns.
@@ -3257,10 +4758,12 @@ No allocation or new spending is approved by this document.
 
 ## Still open
 
-- Final corpus subset within the decided 2–5k release band and its processed
-  count; whether existing length and language filtering policies meet the
+- Final corpus size and subset, targeting 2–5k notes without a hard minimum;
+  whether existing length and language filtering policies meet the
   release scope.
 - Concrete release-quality judgments, informed by the expanding hierarchy builds.
+- Paid-relay or online event-ZIP publication, informed by hierarchy quality;
+  the specific destination and publication procedure.
 - Teacher selection, the base model for the distilled model, both pilots' details and final training volume.
 - Teacher-output quality checks and treatment of unsuitable outputs.
 - Scale-measurement procedures, measured rates and counts, and the cosine cutoff.

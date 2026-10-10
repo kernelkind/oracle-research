@@ -15,7 +15,7 @@ from pathlib import Path
 def vast_create_arguments(
     offer_id: str, image: str, label: str, docker_pat: str, *,
     disk_gb: int = 200, entrypoint: str | None = None, environment: str | None = None,
-    onstart: str | None = None,
+    onstart: str | None = None, local_volume_id: int | None = None,
 ) -> list[str]:
     if not offer_id.isdecimal() or int(offer_id) <= 0:
         raise ValueError("offer ID must be a positive integer")
@@ -29,6 +29,8 @@ def vast_create_arguments(
         raise ValueError("onstart must be a string without NUL characters")
     if onstart and entrypoint is not None:
         raise ValueError("onstart requires Vast-managed SSH, not an entrypoint override")
+    if local_volume_id is not None and (type(local_volume_id) is not int or local_volume_id <= 0):
+        raise ValueError("local volume ID must be a positive integer")
     arguments = [
         "vastai",
         "create",
@@ -47,6 +49,8 @@ def vast_create_arguments(
         "--retry",
         "1",
     ]
+    if local_volume_id is not None:
+        arguments += ["--link-volume", str(local_volume_id), "--mount-path", "/workspace"]
     if entrypoint is None:
         position = arguments.index("--cancel-unavail")
         arguments[position:position] = ["--ssh", "--direct"]
@@ -73,8 +77,10 @@ def write_attempt_marker(path: Path) -> None:
         os.close(directory)
 
 
-def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[str, object]:
-    """Classify the one Vast create call without persisting provider messages."""
+def classify_create_capture(
+    stdout: str, stderr: str, exit_code: int, *, secrets: tuple[str, ...] = ()
+) -> dict[str, object]:
+    """Classify one create call and retain a bounded, credential-redacted reason."""
 
     def json_object(value: str) -> dict[str, object] | None:
         try:
@@ -82,6 +88,15 @@ def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[st
         except (json.JSONDecodeError, TypeError):
             return None
         return document if isinstance(document, dict) else None
+
+    def message(document: dict[str, object] | None) -> dict[str, str]:
+        value = None if document is None else document.get("msg")
+        if not isinstance(value, str):
+            return {}
+        for secret in sorted(set(secrets), key=len, reverse=True):
+            if secret:
+                value = value.replace(secret, "[REDACTED]")
+        return {"msg": value[:1000]}
 
     response = json_object(stdout.strip())
     if response is not None and response.get("success") is True:
@@ -110,6 +125,7 @@ def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[st
             "schema_version": 1,
             "outcome": "definitive_rejection",
             "success": False,
+            **message(response),
         }
 
     provider_error = next(
@@ -132,12 +148,14 @@ def classify_create_capture(stdout: str, stderr: str, exit_code: int) -> dict[st
             "outcome": "definitive_rejection",
             "success": False,
             "status_code": status_code,
+            **message(provider_error),
         }
     return {
         "schema_version": 1,
         "outcome": "ambiguous",
         "success": False,
         "exit_code": exit_code,
+        **message(provider_error),
     }
 
 
@@ -171,15 +189,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--entrypoint")
     parser.add_argument("--environment")
     parser.add_argument("--onstart-cmd")
+    parser.add_argument("--local-volume-id", type=int)
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     docker_pat = sys.stdin.read().strip()
+    secrets = tuple(value for value in (docker_pat, os.environ.get("VAST_API_KEY")) if value)
     arguments = vast_create_arguments(args.offer_id, args.image, args.label, docker_pat,
         disk_gb=args.disk_gb, entrypoint=args.entrypoint, environment=args.environment,
-        onstart=args.onstart_cmd)
+        onstart=args.onstart_cmd, local_volume_id=args.local_volume_id)
     del docker_pat
     from vastai.cli.main import main as vast_main
 
@@ -199,7 +219,8 @@ def main() -> int:
         sys.argv = ["vastai"]
         del arguments
 
-    outcome = classify_create_capture(stdout.getvalue(), stderr.getvalue(), exit_code)
+    outcome = classify_create_capture(stdout.getvalue(), stderr.getvalue(), exit_code, secrets=secrets)
+    del secrets
     write_create_outcome(args.outcome, outcome)
     if outcome["outcome"] == "success":
         print(json.dumps(outcome, sort_keys=True))

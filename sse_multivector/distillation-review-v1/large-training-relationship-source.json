@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "check": "relationship",
+  "review_source": {
+    "path": "large-training-source.json",
+    "sha256": "42bfdeb6c89f1f2c454799b4cd35db6126e516c8f8094ceceb206c06f72f1537"
+  },
+  "cases": [
+    {
+      "id": "LL01",
+      "case": "LC03",
+      "student_number": "18.1.1.1",
+      "expected_reason": "The parent requires displacement in three days; the child omits that window. A December 29 headline reporting the same United Nations displacement over a month fits the child but not the parent."
+    },
+    {
+      "id": "LL02",
+      "case": "LC05",
+      "student_number": "1.2.2.1.1",
+      "expected_reason": "The child preserves the complete parent video description, renewed ban and release purpose, and mocking of Donald Trump’s endless lies under the passive paraphrase."
+    },
+    {
+      "id": "LL03",
+      "case": "LC06",
+      "student_number": "1.2.2.1.1",
+      "expected_reason": "First account ban does not retain the parent’s renewed account-ban restriction. A post describing the same video and mocking on the first-ever account ban fits the child but not the parent."
+    },
+    {
+      "id": "LL04",
+      "case": "LC07",
+      "student_number": "6.2.2.2",
+      "expected_reason": "The parent excludes Dr. Abu Safiya, while the child identifies him. A post describing only Dr. Abu Safiya as a health worker abducted from Gaza fits the child but not the parent about other health workers."
+    }
+  ]
+}

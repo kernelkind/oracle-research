@@ -1,0 +1,317 @@
+{
+  "schema_version": 2,
+  "dataset_manifest": {
+    "path": "../../target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json",
+    "sha256": "ee734d39ec007fb832763b273e96f24c250c32f0ef79a018e8cc08ac0b941349"
+  },
+  "cases": [
+    {
+      "id": "R01",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/baseline/note-0020/subjects.json",
+        "sha256": "ddb1f88d549f0b10a9f4e826355f5ce536f6ff59c7a084263d878edcb6e26f78",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "19.1",
+      "expected_teacher_number": null,
+      "expected_reason": "DSMv2's post identifies the new regime, but interpreting that phrase does not remove it. The student locates the miners' becoming voltage regulators in the new regime; T16 states the figurative regulator role and unique dynamic load shedding when AI inference spikes power prices without that regime qualification. No other single teacher entry preserves the full student wording. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/baseline: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R02",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/baseline/note-0026/subjects.json",
+        "sha256": "0be68f64a65663c0af1e2df6d72b70259afd3a6d3185f7ec84da6afc24c4ba06",
+        "index": 26,
+        "note_id": "cd2668e07d0ef1360709a0caa6c9bf8b4162804f5cec01328332242abe8a674d"
+      },
+      "student_number": "7",
+      "expected_teacher_number": "4",
+      "expected_reason": "With the post visible, day and generic days still name the same kind of nationally coordinated action in T09; neither subject specifies a count. The post's first occurrence, protest count, date and states must not be imported into either short subject. Expected T09 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/baseline: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R03",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/baseline/note-0020/subjects.json",
+        "sha256": "ddb1f88d549f0b10a9f4e826355f5ce536f6ff59c7a084263d878edcb6e26f78",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "11.1.1",
+      "expected_teacher_number": "1.3.1",
+      "expected_reason": "The post clarifies inelastic demand as power demand already expressed through bidding away baseload power. T07 preserves AI inference, inelastic demand, baseload transfer from price-sensitive industrial users, the permanent energy-cost increase and its appearance as transitory inflation in every affected sector. The wording changes syntax without losing a restriction. Expected T07 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/baseline: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R04",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/baseline/note-0078/subjects.json",
+        "sha256": "15f906797e6310dd49939d8ded56116222442446712a8d5c021f0f30888871b8",
+        "index": 78,
+        "note_id": "497fbc5aac02d5c3615de971bc59795b213e5cab6cc366ebf5521e564c520fd7"
+      },
+      "student_number": "15",
+      "expected_teacher_number": null,
+      "expected_reason": "The post clarifies the quoted trading signals, but the student also associates a cryptocurrency with the lobster emoji and identifies a particular public-key user. T05 contains the trade and combined signals without those additional identity relationships. No single teacher entry contains the full combination, and the post cannot add the identities to T05. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/baseline: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R05",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-1000/note-0074/subjects.json",
+        "sha256": "51e7760108cc3ff4dca713fb494544a67fb8b149788aaea6bbb35f6067e5b5d3",
+        "index": 74,
+        "note_id": "30d91219d9e1607b627c6e128ffc98f97df1013f7f6a75574b35428ffa0c872d"
+      },
+      "student_number": "7",
+      "expected_teacher_number": null,
+      "expected_reason": "With the post visible, Fakery still names the practice or products of faking. T11 Deception is broader, and T17 Inauthenticity names a lack of authenticity rather than that practice or its products. The post discusses fake imagery and a fake societal paradigm but does not make these general subjects completely equivalent. Expected null under DSMv2 remains an agent assessment; the prior DSMv1 assessment is preserved separately.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/evaluations/checkpoint-1000: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R06",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-1000/note-0030/subjects.json",
+        "sha256": "2db63e3b2dae4dc479202924f2cfccbcc230d266ac8861738497ae2f4bc86a18",
+        "index": 30,
+        "note_id": "0000060d1910576bc17976a982314c2a6124f17d482fc440c5d7b2de85487e45"
+      },
+      "student_number": "1.1.1.2",
+      "expected_teacher_number": "1.1.2.2",
+      "expected_reason": "The post selects the competition-winner reading already expressed in both subjects. Removing the comma after Weekly Competition #51 preserves T08's silver winner, 12 videos and 12-satoshi reward. The post's profile identity is not added to either subject. Expected T08 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/evaluations/checkpoint-1000: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R07",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/qwen/evaluations/checkpoint-1000/note-0020/subjects.json",
+        "sha256": "b26d2936f050fcce79c0b5c6375d4bf09e1df604536aeb4833f91357fca868d5",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "1.1.2.1.2.1.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post clarifies the new energy regime, but the student still combines mining-difficulty grid flexibility with miners' regulator role, AI price spikes, baseload transfer from price-sensitive industrial users and permanently rising costs. T30 and T31 state the grid-flexibility claim without that entire combination; T16 and T07 state other parts. Pooling entries is disallowed. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "qwen/evaluations/checkpoint-1000: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R08",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/baseline/note-0093/subjects.json",
+        "sha256": "6f5fbbd6c737da1a5801a0b82f96ea65eacc4d1f5e652c6a30323e0940a52460",
+        "index": 93,
+        "note_id": "58b88ca639ddcf1f557d8934c5b776d130d37daa4102e56696194f8a56bb1077"
+      },
+      "student_number": "7.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post's you identifies the reader already named by the student. T04 instead states competition between generic people and the weather, while T05 adds who is winning today, which the student does not express. Post interpretation cannot add the reader restriction to T04 or restore T05's missing winning-today question. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/baseline: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R09",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/baseline/note-0085/subjects.json",
+        "sha256": "fe8f7ca79bb2a84565f8b7fe056604070d27a37197df395ca855dd9f76ccb99b",
+        "index": 85,
+        "note_id": "9f651bb29baaf6acaff3e18fa01d1c3766e23ec680bd4d6cc9918a32a6775fc9"
+      },
+      "student_number": "2.1",
+      "expected_teacher_number": "1.1",
+      "expected_reason": "With the Monty Hall post visible, game show and game-show name the same scenario. The hyphen change preserves T02's game-show scenario in the Monty Hall problem; neither short subject states the detailed doors, prizes or switching question. Expected T02 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/baseline: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R10",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/baseline/note-0020/subjects.json",
+        "sha256": "8461c93aaf55e3ddb956b4584dc8f152f30906fe553a81c0c7624bba95762692",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "4.4.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post expressly says every sector. T06 also preserves that universal scope; the student only says sectors relying on industrial power pricing without every or an equivalent universal expression. Importing every from the post would supply a missing restriction. T07 additionally requires the causal power-transfer account. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/baseline: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R11",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/baseline/note-0016/subjects.json",
+        "sha256": "9c1e51dd3712daa6341013dc592c058aae160580b29f627e36aaa76a501c1116",
+        "index": 16,
+        "note_id": "1dfafc408501ec90b4a1fcc8f5b10698969bd55d58a3c923ef3695e62c8dfe33"
+      },
+      "student_number": "6.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post identifies the article's practical information-security topic, but the student's key aspects wording does not express putting information security into practice or protecting people from unauthorized data access, as T09 does. It also specifies profile identities absent from T09. The post cannot supply the missing topic and purpose. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/baseline: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R12",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-1000/note-0030/subjects.json",
+        "sha256": "1ec3f7aa8644b03b2e805ffebd05286a3b33414f29ac6aae4cf50310e47ed9dd",
+        "index": 30,
+        "note_id": "0000060d1910576bc17976a982314c2a6124f17d482fc440c5d7b2de85487e45"
+      },
+      "student_number": "3.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post clarifies sats as satoshis and the gold medal as the gold winner, but the student only states that winner's 20-satoshi amount. T06 additionally requires 20 videos; T15's general rewards wording lacks the gold-winner, competition and amount restrictions. The post cannot restore the missing videos. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/evaluations/checkpoint-1000: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R13",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-1000/note-0038/subjects.json",
+        "sha256": "1d5cfee24bcfd8c73941993f74b42c44c71e06d9bd27c98d2f7ae0f9d31a1302",
+        "index": 38,
+        "note_id": "ff1f2e7f9e88a70b6f2993644b13886172a3823d99c2a532472d82680cf776c7"
+      },
+      "student_number": "1.1",
+      "expected_teacher_number": "1.1",
+      "expected_reason": "The post identifies the same fully named airport and JFK abbreviation in both subjects. Dropping the period after F does not change the identity or add the post's held-aircraft and resumption-time claims. Expected T02 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/evaluations/checkpoint-1000: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R14",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-1000/note-0020/subjects.json",
+        "sha256": "2fcd9e0294dfe5e3bf726f6099c4fdd4e2e3b51435e5e0374ffcef0b93f51988",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "1.2.1.1.1.1",
+      "expected_teacher_number": "1.3.1",
+      "expected_reason": "The post confirms that appearing as transitory inflation describes the appearance of the stated permanent cost shift, rather than replacing permanent with temporary. T07 and the student preserve AI inference, inelastic power demand, baseload transfer from price-sensitive industrial users, permanent energy costs and transitory-inflation appearance in every affected sector. Reordering cause and result loses no relationship. Expected T07 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/evaluations/checkpoint-1000: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R15",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-dense/evaluations/checkpoint-1000/note-0081/subjects.json",
+        "sha256": "507600ff7da51ee57726153ab25d52ed282507193f8505c173a4b0393d1e2420",
+        "index": 81,
+        "note_id": "77ede3c51e3df154b67405b11b622cc2d1b1439b0d7ee2da7b08f7316abca3c5"
+      },
+      "student_number": "1.2.1.1.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The visible post ends after the deputy-director affiliation's at, without naming the institution. The student nevertheless adds an affiliation to an institution named in the incomplete body and describes an online event announcing the launch. T04 names the online launch itself and does not include that affiliation. Post interpretation cannot remove those differences. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-dense/evaluations/checkpoint-1000: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R16",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/baseline/note-0028/subjects.json",
+        "sha256": "e828d68df1877eb9748b393f6a2f6907fd16d4523a4028dd3e2b5c19f0ef8079",
+        "index": 28,
+        "note_id": "bb9b840292067dc87b7c8ada4bf54b98c355d8b42d590dc255b103478cbe828d"
+      },
+      "student_number": "3",
+      "expected_teacher_number": null,
+      "expected_reason": "DSMv2 supplies a post about the Bitcoin Beginner Guide. Self-custody names the custody relationship but does not specify the asset; the same relationship can hold for Ether. Matching T12, Bitcoin self-custody, would require importing Bitcoin from the post. Other custody entries add Bitcoin-guide restrictions too. Expected null remains an offline agent assessment; it is not a finding that the heading is unsupported or independently verified gold.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/baseline: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R17",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/baseline/note-0088/subjects.json",
+        "sha256": "25ba305f12799c1647613f33cdeb09e4ac0f2376624fab2f2b0d0299ea43e36a",
+        "index": 88,
+        "note_id": "211d2d7b6459bb4ee81b4b1ae6c0875e0c59eda068ac61d31f8231954436a0c5"
+      },
+      "student_number": "3",
+      "expected_teacher_number": "8",
+      "expected_reason": "With the post visible, singular plate and generic plural plates both name the BitPLATES Domino product in T16 without an explicit quantity. The post's every plate applies to provision of tamper-proof labels, a relationship absent from both short product subjects. Expected T16 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/baseline: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R18",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/baseline/note-0020/subjects.json",
+        "sha256": "57d2ec262e760e10230949923341080a392302fe0b7c465c58e3cd20c3e110dc",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "2.2.2.1.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post clarifies the causal wording, but the student adds AI inference's inelastic-demand causation to T06's cost-and-inflation claim. T07 expresses that causation with baseload transfer away from price-sensitive industrial users, which the student omits. The post cannot complete the missing causal relationship or pool these entries. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/baseline: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R19",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0062/subjects.json",
+        "sha256": "35e385a044f083d60bdb406d9ce0aeb4ca53bf2d27ff0725a1ba47b24744a0fd",
+        "index": 62,
+        "note_id": "7d2aff69262da5b3f60668109d3e302c3ae4ae078c1ebdcbce35df2b404826a3"
+      },
+      "student_number": "3",
+      "expected_teacher_number": "4",
+      "expected_reason": "DSMv2 supplies the original post, which ends in ♣. This selects the card-suit sense already expressed by club in Club symbols. Both wordings name the clubs-suit symbol; symbols is a generic subject label, not an added count. Omitting suit loses no restriction in this context. Offline agent assessment, not independently verified gold; does not apply to the context-free DSMv1 case.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/evaluations/checkpoint-1000: sample; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R20",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0035/subjects.json",
+        "sha256": "586955c89c83d785cb0baf5236fd640350b08eec1341f8b2755d38381f86e21a",
+        "index": 35,
+        "note_id": "e9e5acc1848aaab54782517c18b13de8233025fd032969742e537cc5c377468c"
+      },
+      "student_number": "1.1.2",
+      "expected_teacher_number": "1.1.1.2.1",
+      "expected_reason": "The post resolves European Commission website as the Commission's website, preserving T08's hacker-attributed claim, more-than-350GB quantity and data source. The student retains the claim rather than asserting the theft as established fact. T14 instead names the hacker, a different subject role. Expected T08 remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/evaluations/checkpoint-1000: lexically_closest; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R21",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0020/subjects.json",
+        "sha256": "f9c1d969659a78444261d4d6858858e33238510bafc54a13fa38e2b8668ba6ab",
+        "index": 20,
+        "note_id": "84cfcca3d7b567fd7d05e0efc561c87f29834d6b1e2dad599db4920761e25e19"
+      },
+      "student_number": "1.7.1.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post identifies the new regime, but the student combines sustained AI-workload demand independent of economic cycles and a new price floor with the miners' unique dynamic load shedding. T16 also states the figurative voltage-regulator role, which the student omits; no single teacher entry expresses the student's whole combination. Pooling entries or restoring the missing role from the post is disallowed. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/evaluations/checkpoint-1000: large_catalog; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    },
+    {
+      "id": "R22",
+      "generation": {
+        "path": "../../target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results/gemma-moe/evaluations/checkpoint-1000/note-0037/subjects.json",
+        "sha256": "1c96c97a8e84cdd439f05dec075e5e132eb439fded52dae4701a3935f62bbaa4",
+        "index": 37,
+        "note_id": "86af0ce2aaefde7deccba01b88c5b8bb46e8e39068a58f3a32d89defc45ae716"
+      },
+      "student_number": "9.1",
+      "expected_teacher_number": null,
+      "expected_reason": "The post lets this refer to Trump's current undertaking, but the student's subject is a video link accompanying a report that pools the Netanyahu compliance and praise statements, 99% claim, candidacy claim and later-travel speculation. No single teacher entry expresses that link and full statement combination. Interpreting references does not permit pooling. Expected null remains an agent assessment.",
+      "expectation_status": "agent_assessed",
+      "selection": "gemma-moe/evaluations/checkpoint-1000: longest_subject; seed DSMv1-actual-preview-01; identical note/subject inputs retained only once"
+    }
+  ]
+}

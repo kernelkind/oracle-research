@@ -1,5 +1,6 @@
 """Freeze distillation inputs and execute them as a shared Vast command workload."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from decimal import Decimal, InvalidOperation
 import json
 import os
@@ -9,6 +10,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import threading
 import time
 
 from gte.full_build_package import write_manifest, verify_manifest
@@ -19,6 +21,7 @@ from sse_multivector.distillation_run import (load_data, read_json, sha256, writ
 CODE_ROOT = Path(__file__).resolve().parents[1]
 CODE_FILES = (
     "sse_multivector/distillation_deploy.py", "sse_multivector/distillation_run.py",
+    "sse_multivector/distillation_cache.py",
     "sse_multivector/distillation_data.py", "sse_multivector/extraction_pipeline.py",
     "sse_multivector/mask_positions.py", "sse_multivector/distillation/requirements.lock",
     "sse_multivector/distillation/requirements-gpu.lock",
@@ -77,13 +80,27 @@ def code_hashes():
     return {name: sha256(CODE_ROOT / name) for name in CODE_FILES}
 
 
-def prepare(config_paths, output, timeout_seconds=None, through="report", preparation_configs=None):
+def validate_gpu_assignments(assignments, names):
+    if (not isinstance(assignments, dict) or set(assignments) != set(names)
+            or any(type(gpu) is not int or gpu < 0 for gpu in assignments.values())
+            or set(assignments.values()) != set(range(len(set(assignments.values()))))
+            or not assignments):
+        raise ValueError("GPU assignments must cover every candidate with consecutive indices starting at zero")
+
+
+def prepare(config_paths, output, timeout_seconds=None, through="report", preparation_configs=None,
+            gpu_assignments=None, cache_manifest=None):
     """Copy only explicit inputs; no source code, credentials or host config."""
     if (timeout_seconds is not None and (type(timeout_seconds) is not int or timeout_seconds <= 0)
             or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation")):
         raise ValueError("runs and a positive timeout or no timeout are required")
     output = Path(output).resolve()
+    if gpu_assignments is not None:
+        validate_gpu_assignments(gpu_assignments, [Path(path).stem for path in config_paths])
     configurations = list(map(read_json, config_paths))
+    if cache_manifest is not None:
+        from sse_multivector.distillation_cache import bind
+        bind(read_json(cache_manifest), configurations)
     pilots = [c for c in configurations if "training_milestones" in c and "preparation" not in c]
     if pilots:
         shared = [{k: v for k, v in c.items() if k not in
@@ -150,6 +167,11 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
                "code": code_hashes()}
         if preparation_configs:
             job["preparation_runs"] = runs[len(config_paths):]
+        if gpu_assignments is not None:
+            job["gpu_assignments"] = gpu_assignments
+        if cache_manifest is not None:
+            shutil.copyfile(cache_manifest, staging / "model-cache.json")
+            job["cache_manifest"] = "model-cache.json"
         write_json(staging / "job.json", job)
         write_manifest(staging, staging / "manifest.json", "distillation-inputs")
         staging.rename(output)
@@ -165,6 +187,14 @@ def verify_package(package):
     job = read_json(package / "job.json")
     if job["code"] != code_hashes():
         raise ValueError("container code or dependencies differ from the prepared package")
+    if "gpu_assignments" in job:
+        validate_gpu_assignments(job["gpu_assignments"], [Path(path).stem for path in job["runs"]])
+    if "cache_manifest" in job:
+        from sse_multivector.distillation_cache import bind
+        if job["cache_manifest"] != "model-cache.json":
+            raise ValueError("invalid cache manifest path")
+        bind(read_json(package / job["cache_manifest"]),
+             [read_json(package / r) for r in job["runs"] + job.get("preparation_runs", [])])
     return job
 
 
@@ -172,14 +202,29 @@ class StopRequested(RuntimeError):
     """An explicit controller stop, checked by the shared operator first."""
 
 
-def run_process(command, timeout, **kwargs):
+def run_process(command, timeout, *, stop_event=None, **kwargs):
     """Wait without an automatic kill when the frozen timeout is disabled."""
+    worker_fd = os.environ.get("ORACLE_RUN_WORKER_LOCK_FD")
+    if worker_fd is not None:
+        descriptor = int(worker_fd)
+        if descriptor < 3:
+            raise ValueError("invalid inherited worker lock descriptor")
+        os.fstat(descriptor)
+        kwargs["pass_fds"] = tuple(set(kwargs.get("pass_fds", ())) | {descriptor})
     with subprocess.Popen(command, start_new_session=True, **kwargs) as process:
+        deadline = time.monotonic() + timeout if timeout is not None else None
         try:
             while True:
                 try:
-                    process.wait(timeout=timeout)
+                    if stop_event is not None and stop_event.is_set():
+                        raise StopRequested("stopped by controller")
+                    remaining = max(0, deadline - time.monotonic()) if deadline is not None else None
+                    interval = min(remaining, .2) if remaining is not None else .2
+                    process.wait(timeout=interval if stop_event is not None else remaining)
                     break
+                except subprocess.TimeoutExpired:
+                    if deadline is not None and time.monotonic() >= deadline:
+                        raise
                 except KeyboardInterrupt:
                     if timeout is not None:
                         raise
@@ -202,11 +247,33 @@ def execute(package, output):
     if deadline is not None and os.environ.get("ORACLE_RUN_DEADLINE_UTC"):
         deadline = min(deadline, datetime.fromisoformat(os.environ["ORACLE_RUN_DEADLINE_UTC"].replace("Z", "+00:00")).timestamp())
     state = {"state": "running", "package_sha256": sha256(package / "manifest.json"), "deadline": deadline}
+    assignments = job.get("gpu_assignments", {})
+    visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+    lock, stop_event = threading.Lock(), threading.Event()
+    state.update(gpu_assignments=assignments, active_runs={})
     write_json(output / "deployment.json", state)
     def stop(signum, frame):
+        stop_event.set()
         raise StopRequested("stopped by controller")
+    def interrupt(signum, frame):
+        print("operator interrupted; unbounded job continues", file=sys.stderr, flush=True)
     previous = signal.signal(signal.SIGTERM, stop)
+    previous_interrupt = signal.signal(signal.SIGINT, interrupt) if deadline is None else None
     try:
+        if "cache_manifest" in job:
+            from sse_multivector.distillation_cache import verify
+            verify(package / job["cache_manifest"], output / "cache-verification.json")
+        if assignments and visible is not None and (len(visible.split(",")) <= max(assignments.values())
+                or any(not value.strip() for value in visible.split(","))):
+            raise ValueError("GPU assignments exceed the inherited CUDA_VISIBLE_DEVICES")
+        bindings = {gpu: visible.split(",")[gpu].strip() if visible is not None else str(gpu)
+                    for gpu in set(assignments.values())}
+        if assignments and job["through"] != "preflight" and any(
+                read_json(package / r).get("device") == "cuda" for r in job["runs"]):
+            import torch
+            if torch.cuda.device_count() <= max(assignments.values()):
+                raise ValueError("GPU assignments exceed the visible CUDA devices")
+
         def candidate(relative):
             name = Path(relative).stem
             config = read_json(package / relative)
@@ -226,20 +293,73 @@ def execute(package, output):
             root.mkdir(parents=True, exist_ok=True)
             config_path = root / "configs" / (name + ".json")
             write_json(config_path, config)
-            state.update(stage=mode, candidate=name, preparation=preparing)
-            write_json(output / "deployment.json", state)
-            with (root / (name + ".log")).open("a") as log:
-                result = run_process([sys.executable, "-m", "sse_multivector.distillation_run",
-                    str(config_path), "--output", str(root / name), "--through", mode],
-                    cwd=CODE_ROOT, stdout=log, stderr=subprocess.STDOUT,
-                    env={**os.environ, "PYTHONPATH": str(CODE_ROOT)}, timeout=remaining)
-            if result.returncode:
-                raise RuntimeError(f"run {name} failed with exit code {result.returncode}; see {name}.log")
-            return root / name, config
+            env = {**os.environ, "PYTHONPATH": str(CODE_ROOT)}
+            if "cache_manifest" in job:
+                env.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
+                           HF_HUB_DISABLE_IMPLICIT_TOKEN="1")
+            gpu = assignments.get(name)
+            if gpu is not None:
+                env["CUDA_VISIBLE_DEVICES"] = bindings[gpu]
+            with lock:
+                state.update(stage=mode, preparation=preparing)
+                if not assignments:
+                    state["candidate"] = name
+                state["active_runs"][name] = {"stage": mode, "preparation": preparing, "gpu": gpu,
+                                              "cuda_visible_devices": env.get("CUDA_VISIBLE_DEVICES")}
+                write_json(output / "deployment.json", state)
+            try:
+                with (root / (name + ".log")).open("a") as log:
+                    result = run_process([sys.executable, "-m", "sse_multivector.distillation_run",
+                        str(config_path), "--output", str(root / name), "--through", mode],
+                        cwd=CODE_ROOT, stdout=log, stderr=subprocess.STDOUT, env=env, timeout=remaining,
+                        stop_event=stop_event if assignments else None)
+                if result.returncode:
+                    raise RuntimeError(f"run {name} failed with exit code {result.returncode}; see {name}.log")
+                return root / name, config
+            finally:
+                with lock:
+                    state["active_runs"].pop(name)
+                    write_json(output / "deployment.json", state)
 
-        for relative in job.get("preparation_runs", []):
-            directory, config = invoke(relative, "preparation", preparing=True)
-            verify_subject_run(directory, load_data(config["data"]), config, "preparation")
+        def run_stage(relatives, mode, preparing=False, verify=None):
+            def complete(relative):
+                directory, config = invoke(relative, mode, preparing)
+                if verify is not None:
+                    verify(directory, config)
+            if not assignments:
+                for relative in relatives:
+                    complete(relative)
+                return
+            lanes, failed = {}, threading.Event()
+            for relative in relatives:
+                lanes.setdefault(assignments[Path(relative).stem], []).append(relative)
+            def lane(runs):
+                for relative in runs:
+                    if failed.is_set() or stop_event.is_set():
+                        return
+                    try:
+                        complete(relative)
+                    except BaseException as error:
+                        failed.set()
+                        with lock:
+                            state.setdefault("failures", {})[Path(relative).stem] = str(error)
+                            write_json(output / "deployment.json", state)
+                        raise
+            if lanes:
+                errors = []
+                with ThreadPoolExecutor(max_workers=len(lanes)) as pool:
+                    futures = [pool.submit(lane, runs) for runs in lanes.values()]
+                    for future in as_completed(futures):
+                        try:
+                            future.result()
+                        except BaseException as error:
+                            errors.append(error)
+                if errors:
+                    raise errors[0]
+
+        run_stage(job.get("preparation_runs", []), "preparation", preparing=True,
+                  verify=lambda directory, config: verify_subject_run(
+                      directory, load_data(config["data"]), config, "preparation"))
 
         pilots = [r for r in job["runs"] if "training_milestones" in read_json(package / r)
                   and "preparation" not in read_json(package / r)]
@@ -247,19 +367,21 @@ def execute(package, output):
             raise ValueError("subject pilot candidates cannot be mixed with legacy runs")
         if pilots and job["through"] in ("baseline", "train", "report"):
             baselines = {}
-            for relative in pilots:
-                directory, config = invoke(relative, "baseline")
+            def verify_baseline(directory, config):
                 data = load_data(config["data"])
-                baselines[directory.name] = subject_stage_summary(directory / "baseline", data)
+                summary = subject_stage_summary(directory / "baseline", data)
                 if "test" in data:
-                    baselines[directory.name]["test"] = subject_test_summary(directory, data, config)
+                    summary["test"] = subject_test_summary(directory, data, config)
+                with lock:
+                    baselines[directory.name] = summary
+            run_stage(pilots, "baseline", verify=verify_baseline)
             write_json(output / "baselines-integrity.json", baselines)
         if job["through"] != "baseline" or not pilots:
-            for relative in job["runs"]:
-                directory, config = invoke(relative, job["through"])
+            def verify_run(directory, config):
                 if "training_milestones" in config and job["through"] in ("report", "preparation"):
                     data = load_data(config["data"])
                     verify_subject_run(directory, data, config, job["through"])
+            run_stage(job["runs"], job["through"], verify=verify_run)
         if pilots and job["through"] == "report":
             write_json(output / "integrity.json", verify_results(package, output))
         state["state"] = "complete"
@@ -271,6 +393,8 @@ def execute(package, output):
         state["finished"] = time.time()
         write_json(output / "deployment.json", state)
         signal.signal(signal.SIGTERM, previous)
+        if previous_interrupt is not None:
+            signal.signal(signal.SIGINT, previous_interrupt)
 
 
 def status(output):
@@ -379,6 +503,10 @@ def main():
     prepare_parser.add_argument("--config", type=Path, action="append", required=True)
     prepare_parser.add_argument("--preparation-config", type=Path, action="append",
                                 help="paired prep recipe; verified prep continues into fresh pilot runs")
+    prepare_parser.add_argument("--gpu-assignments", type=Path,
+                                help="JSON mapping each candidate name to its exclusive GPU index")
+    prepare_parser.add_argument("--cache-manifest", type=Path,
+                                help="required model files, verified offline before any GPU work")
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--timeout-seconds", type=int,
                                 help="optional execution deadline; omitted means no automatic stop")
@@ -402,7 +530,9 @@ def main():
         result = status(args.output)
     elif args.operation == "prepare":
         result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through,
-                                             args.preparation_config)}
+                                             args.preparation_config,
+                                             read_json(args.gpu_assignments) if args.gpu_assignments else None,
+                                             args.cache_manifest)}
     elif args.operation == "check-offer":
         offers = read_json(args.offers)
         if isinstance(offers, dict):

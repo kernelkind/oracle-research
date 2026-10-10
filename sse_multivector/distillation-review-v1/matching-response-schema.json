@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "teacher_id": {"type": ["string", "null"]},
+    "reason": {"type": "string"}
+  },
+  "required": ["teacher_id", "reason"]
+}

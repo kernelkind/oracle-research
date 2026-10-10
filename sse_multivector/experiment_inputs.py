@@ -60,6 +60,44 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'distillation_verdict':
+        try:
+            from . import distillation_verdict
+        except ImportError:
+            import distillation_verdict
+        cases, protected, preparation = distillation_verdict.prepare_source(
+            source, path.parent, dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
+    if dataset['adapter'] == 'distillation_matching':
+        try:
+            from . import distillation_matching
+        except ImportError:
+            import distillation_matching
+        cases, protected, preparation = distillation_matching.prepare_source(
+            source, path.parent, dataset.get('select'), include_post='{POST}' in template)
+        sources.update(protected)
+        rendered = prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template)
+        import tiktoken
+        encoding = tiktoken.get_encoding('o200k_base')
+        for case in rendered:
+            case['evidence']['input_tokens'] = len(encoding.encode(case['prompt'], disallowed_special=()))
+        return rendered, sources, preparation
+    if dataset['adapter'] == 'distillation_review_evaluation':
+        from . import distillation_review_evaluation
+        cases, protected, preparation = distillation_review_evaluation.prepare_source(
+            source, path.parent, dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
+    if dataset['adapter'] == 'distillation_review':
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        cases, protected, preparation = distillation_review.prepare_source(
+            source, path.parent, dataset.get('select'), load_report)
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'posts', 'subjects'} and 'sources' in source:
         engine._expect_fields(source, 'post sources', {'schema_version', 'sources'})
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
@@ -1148,7 +1186,7 @@ def prepare(dataset, source, template):
         cases = source["cases"]
         for case in cases:
             engine._expect_fields(
-                case, "case", {"id", "inputs"} | ({"evidence"} & case.keys())
+                case, "case", {"id", "inputs"} | ({"evidence", "mechanical"} & case.keys())
             )
         if len({c["id"] for c in cases}) != len(cases):
             raise ValueError("duplicate case identity")
@@ -1229,6 +1267,27 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'distillation_verdict':
+        try:
+            from . import distillation_verdict
+        except ImportError:
+            import distillation_verdict
+        return distillation_verdict.validate(case, raw)
+    if adapter == 'distillation_matching':
+        try:
+            from . import distillation_matching
+        except ImportError:
+            import distillation_matching
+        return distillation_matching.validate(case, raw)
+    if adapter == 'distillation_review_evaluation':
+        from . import distillation_review_evaluation
+        return distillation_review_evaluation.validate(case, raw)
+    if adapter == 'distillation_review':
+        try:
+            from . import distillation_review
+        except ImportError:
+            import distillation_review
+        return distillation_review.validate(case, raw)
     if adapter == 'node_sorting':
         result['parsed'] = validate_node_sorting(json.loads(
             raw, object_pairs_hook=engine._position_decoder().unique_object))

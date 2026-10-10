@@ -12,8 +12,9 @@ subject discovery and hierarchy only. One teacher hierarchy per training note
 yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
 mask labeling, training or generation belongs to this pilot. The combined
 preliminary experiment remains historical evidence; the eventual mask-based
-release task below has its separate scope. One 96GB RTX PRO 6000 is selected;
-the specific offer and spending remain open. Thinking stays off throughout
+release task below has its separate scope. Two 96GB RTX PRO 6000 cards are
+approved for the combined rental up to $285; actual GPU fit and speed remain
+pending. Thinking stays off throughout
 preparation, training and evaluation, approved October 2.
 
 **Primary comparison approved October 5:** compare all three final 1,000-note
@@ -24,7 +25,7 @@ to show learning progress; earlier checkpoints are retained diagnostics.
 Final-test collection and completeness checks are implemented locally; automatic
 reports exclude test answers and semantic scores. The full ASv6.100 workload is
 packaged and conditionally priced (October 5 section below); hardware checks
-and launch spending remain open.
+remain pending; the combined rental is approved up to $285.
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
@@ -63,15 +64,15 @@ All 125 available work files and six startup files were reverified. Qwen complet
 dense has only its first checkpoint, and MoE did not start. The local per-layer
 dimension fix is committed; its rebuilt VM passed all 56 tests. Reuse was
 approved, then cancelled by the deletion instruction before implementation.
-This attempt left the Gemma checks incomplete; the repaired run below completed them.
-The preliminary resource charge was $1.56.
+This attempt left the Gemma checks incomplete; the repaired run below completed
+them. The final resource cost was $1.620.
 **GPU preparation completed October 3:** Qwen's verified earlier checks are reused;
 Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject
 responses, native maximum-output cache checks and restored training on the preparation run
 (96GB/600 W, $1.4153/hour including storage). All 210 work files and six startup files
 were retrieved and independently rehashed. The local response review ran at 21:04 UTC,
 full completeness review passed at 21:17:21 UTC. This rental lasted 65.5 minutes.
-The preliminary preparation costs were $1.639 and $1.620 ($3.259 combined).
+The final preparation costs were $1.756 and $1.620 ($3.376 combined).
 
 Direct SSH copying was slow; the verified provider proxy route completed retrieval using
 the unchanged native transfer code. Small sealed responses and measurements were copied
@@ -406,6 +407,46 @@ a source snapshot, serial/build logs and a result directory. Use a new
 `--directory` for a clean-machine test; reusing it retains the stopped VM disk
 and Docker cache. The launcher collects results and stops the VM on exit.
 
+Verification now defaults to **cached** mode. It automatically reuses successful
+candidate, workflow and deployment stages when their source/test/dependency
+hashes match and every saved evidence file verifies. A controller-only edit
+reruns deployment checks while retaining model checks. Model, runtime or
+unclassified dependency changes invalidate the dependent checks. Optional
+preflight inputs are snapshotted and hashed; changed inputs rerun deployment.
+When the VM boots, reuse also requires the exact installed Docker `runtime`
+image ID, including system and Python dependencies.
+
+Use **`--full`** to force every check to run; Docker build caching remains active.
+Agents may choose either mode, but cannot override evidence validation. A new
+`--directory` still provides a clean-machine check. Legacy attempts without the
+new stage receipts cannot supply cached test evidence.
+
+Stages are sealed only after their commands and cleanup succeed. An export or
+collection failure can therefore reuse any intact, retrieved successful stages
+on the next invocation. Partial exports are removed; failed stages rerun.
+An unchanged complete attempt verifies locally and returns its existing result
+without booting QEMU.
+
+Each new attempt records executed/reused stages and timings in
+`verification.json`. Stage logs and hashed receipts live under
+`results/stages/{candidates,workflow,deployment}/`; `complete.json` identifies
+the workflow report and hashes the final archive and image metadata. These
+checks establish the local workflow; full-size CUDA fit still needs GPU prep.
+
+**October 6 verification:** 53 host checks and 109 VM checks passed, with five
+expected VM skips (four exercised in their separate volume phases, one requiring
+an optional tokenizer package). The cold full rehearsal took 14.5 minutes;
+an unchanged cached invocation took 2.24 seconds. With the local archive
+temporarily withheld and preserved, a real export retry reused all three stages
+and completed in 99.6 seconds. Both VM attempts stopped and their results verified.
+
+**October 6 cutover:** integrated into `main`. The matching verified attempt
+is copied to `target/distillation-vm-clean-deployment/`; the normal cached
+invocation verifies in 2.22 seconds and all 53 host regressions pass there.
+The Dockerfile now names its dependency-only `runtime` stage. Future
+launch images and packages must use this updated Dockerfile; earlier frozen
+inputs and private publication evidence remain intact.
+
 The container's CUDA/PyTorch base is pinned by digest, and Python dependencies
 are version/hash locked. The same container runs CPU validation locally and
 can later run on a GPU. Tests run with networking disabled, using a generated
@@ -674,7 +715,8 @@ masks and reference agreement. Token overlap uses whitespace-delimited source
 words (any selected part includes that word), with one-to-one matching and
 micro averaging over unique nonempty selections per note. Exact matching uses
 selected non-whitespace source characters. These mechanical measurements do
-not establish semantic correctness or approval; the semantic-review rubric remains open.
+not establish semantic correctness or approval. The current DSRv1 review design
+is described under [Semantic review](#semantic-review--approved-structure).
 
 The subjects-only worker checks baseline response accounting before training
 and checkpoint response accounting before advancing. Invalid/truncated model
@@ -687,8 +729,11 @@ records the larger pilot's response requirements. Semantic review of saved resul
 from the local workspace after retrieval, outside the GPU rental. The proposed
 teacher reviewer is an evaluation method, not another fine-tune. The
 [approved review structure](#semantic-review--approved-structure) uses one
-prompt with separate correctness and coverage scores; its rubric, reviewer
-model, and use in model selection remain open for design discussion.
+prompt with separate correctness and coverage scores. The October 7 DSRv1
+design fixes the method and GPT-6.1 Sol / xhigh reviewer; the October 8
+qualification trial fails known semantic and cross-version checks.
+The shared offline preparation, report validation and scoring
+implementation is now available with a concrete preview.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
@@ -979,10 +1024,12 @@ also needs checks for biases such as rewarding verbosity, documented in
 
 ### GPU preparation cases and checks — draft
 
-**GPU choice confirmed October 2:** use one **96GB RTX PRO 6000** for
-preparation and the larger pilot, holding each complete student model on that
-GPU and running the three students sequentially. The specific card edition/power
-setting, rental offer, preparation scope/cases and maximum charge remain open.
+**Two-GPU execution approved October 5:** keep each complete student on one
+**96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
+All preparation results and baselines are verified before training. Matched prep
+cases and numeric settings are frozen. Private publication and up to $285 are
+approved for a compatible two-card 96GB/600 W RTX PRO 6000 Server rental within
+the $3.10/hour ceiling; actual GPU fit/throughput remains pending.
 Use the same pinned models and approved subject-only adapter recipe as the
 pilot. Prepare locally and rehearse production paths in the VM before booking.
 The worker now supports subjects-only preparation/training, expert adapters,
@@ -996,7 +1043,8 @@ minimum cycle to project a pilot duration/cost range; separate cold setup from
 repeated work. Keep parser/recovery testing and automation rehearsal local.
 Compare qualifying 96GB offers by expected total charge, including startup,
 storage and transfers. After checks, finish verified retrieval and explicit
-deletion promptly. Exact scope and maximum spending approval remain open.
+deletion promptly when prep is separate. The current matched prep scope is
+frozen and the combined prep→pilot rental is approved up to $285.
 
 Use existing notes; preparation is not blocked by the future 1,000-note dataset.
 Historical N18 (long diary), N00 (soda bread) and N15 (short gianduja/store note)
@@ -1172,8 +1220,8 @@ do not establish their optimality for this task. Physical batching must retain
 the approved eight examples total per update. Physical groups may vary with
 memory while preserving update membership, example order and the update-level
 supervised-token denominator. One model replica can accumulate eight one-example
-groups on the selected single 96GB RTX PRO 6000. Generation limits, numeric
-batching budgets and remaining runtime choices stay open; merged BF16
+groups on its assigned 96GB RTX PRO 6000. Generation limits and numeric
+batching budgets are frozen in the candidate configurations; merged BF16
 checkpoint evaluation/resume was approved October 2. All preparation,
 training and evaluation use thinking off.
 Exact memory fit of the expanded MoE configuration must be checked during
@@ -1213,8 +1261,9 @@ Separate GPU preparation must measure that overhead and merge peak memory, and
 verify continuation across the full transition. The subjects-only worker now
 retains every milestone checkpoint and restores its full unmerged state after
 evaluating a disposable merged copy. Legacy two-task configurations retain
-their unmerged endpoint evaluation and two rolling checkpoints. Additional recovery-checkpoint cadence,
-generation limits, numeric batching budgets and spending remain open.
+their unmerged endpoint evaluation and two rolling checkpoints. Additional
+recovery-checkpoint cadence remains open. Generation limits and numeric
+batching budgets are frozen; the combined rental is approved up to $285.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -1240,21 +1289,67 @@ restoration; legacy configurations retain the replacement sampler.
 There are **three main continuing fine-tunes**, each with five approved
 milestone checkpoints, alongside untuned baselines, setup checks and any
 separately justified confirmation work. The 1,000-note comparison is included.
-The selected single 96GB RTX PRO 6000 runs the students sequentially, with each
-later milestone continuing from its preceding checkpoint. Validation/test
-counts and spending remain open.
+Two 96GB RTX PRO 6000 cards run independent students concurrently: Gemma dense
+on one, Qwen then Gemma MoE on the other. Each later milestone continues its
+preceding checkpoint. The 100 validation / 200 final test counts and up to $285
+for the combined rental are approved.
 
 ## Evaluation and decisions
 
 ### Semantic review — approved structure
 
-One review prompt per note and model version receives the full note, task
-prompt, and that version's subjects and hierarchy. It returns separate
-**correctness** and **coverage** scores with evidence for each. Correctness
-assesses returned content; coverage assesses missing required content.
-Output reliability is checked mechanically. Review runs after retrieval,
-outside the rental, and is evaluation only. The scoring scale, rubric, reviewer
-model, reliability checks, and score aggregation remain open.
+The October 7 agreed method uses **GPT-6.1 Sol / xhigh** through the existing
+subscription route. A fresh review receives the full post, frozen ASv6.100,
+trusted teacher answer, one candidate hierarchy and mechanical exact subject
+matches, with model/checkpoint identities withheld. Treat ASv6.100 as correct.
+Explicit subject, immediate-link and coverage findings feed code-calculated
+**correctness** and **coverage** fractions, averaged equally across notes.
+An entry needs a valid subject and incoming link; a required source meaning
+needs complete own-string preservation and every compatible placement. Optional
+derived headings need not match the teacher's tree. Model-output failures score
+zero; incomplete reviewer reports remain ungraded evaluation failures.
+
+[DSRv1](distillation-review-v1/README.md) drafts the prompt, report schema and
+qualification cases, including valid variants, deliberate errors and eight
+large training hierarchies selected from the 1,300 saved ASv6.100 generations.
+The union of the top five by entry count and canonical answer length includes
+the overall maxima of 145 entries and 35,966 answer bytes. Held-out labels
+contribute aggregate sizes only; stress inputs use training notes.
+Review runs after retrieval, outside the rental,
+and is evaluation only. If the selected reviewer cannot perform it reliably,
+rethink the approach. The subsequent authorized offline implementation adds
+source-bound preparation, complete report validation, scoring and qualification
+checks in the shared workflow. All 29 cases are prepared without inference;
+an authored Q17 fixture demonstrates missing-branch scoring. The user requested
+this preview before calls, then authorized qualification on October 8. Initial
+HTTP 400 request rejections produced no reports; a corrected provider schema
+retains application duplicate checks. Corrected requests produce complete large
+reports, but qualification fails known semantic and cross-version checks:
+Q04 penalizes a trusted unchanged example, and Q21/Q22 change unrelated judgments.
+Q23's stream ends with an unfinished, ungraded report near fifteen minutes;
+all 29 cases were attempted once, yielding 28 complete reports and one interrupted
+report. Seven of eight largest generations completed. Subsequent preparations
+use the user-directed concurrency 8 with existing backoff; the original trial
+retains its concurrency 1 receipts. See the [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
+Bulk grading remains unqualified; process revisions, teacher auditing and test
+unsealing are not authorized by this trial.
+
+The user subsequently authorized the [DSRv2 draft and offline preview](distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
+before further calls. It explicitly treats ASv6.100's worked examples as
+authoritative, and Q20–Q22 reuse the original Q20 receipt's 66 groups / 44 required
+flags. These are provisional consistency inputs, not accepted pilot labels.
+Native receipt and exact task/post/teacher checks bind their source. The user
+then authorized real DSRv2 qualification with Sol / xhigh and concurrency 8.
+Q04 passes `8/8` correctness and `2/2` coverage, retaining both required meanings.
+The small set finishes with 17 passes, Q14's semantic regression (`6/10` instead
+of `8/10` correctness), and Q01's ungraded stream interruption. Both DSR versions
+fail qualification. The large trial at concurrency 8 completes four of eight
+unchanged hierarchies and both controlled variants; four large streams are
+interrupted and ungraded. Both variants fail consistency: the untouched Money
+transfers link and compatible headings change despite fixed groups / flags.
+All 29 distinct cases are attempted once across the preserved subsets, yielding
+24 complete reports and five ungraded interruptions, without retries. Adoption
+remains open; bulk grading and test unsealing are not authorized.
 
 ### Required pilot measurements
 
@@ -1481,6 +1576,13 @@ available data, then delete the rental promptly. This is standing user approval
 to stop incomplete prep work; completing all prep checks is not required. Do not
 hold paid hardware idle for substantial new development or renewed permission.
 Judge repair scope rather than imposing a fixed time cutoff.
+
+**Autonomous pilot recovery approved October 5:** diagnose and fix errors
+without requesting approval for the repair, including necessary code or recipe
+corrections. Preserve original frozen inputs and failure evidence, record every
+change and interruption, restore verified saved state, and rerun comparisons
+affected by changed conditions. The approved spending and complete-data
+requirements before stopping/deletion still apply.
 
 **Full pilot stopping rule:** retain the job and rental while
 necessary data is missing. Add missing work; if stopping is preferable, obtain
@@ -1825,7 +1927,11 @@ not establish 96GB fit or a revised price/duration.
 
 The user authorized fixing paths that can train without producing a valid
 comparison. Semantic correctness/coverage grading remains local and does not
-block GPU execution; its rubric and reviewer remain open.
+block GPU execution. The current method and selected DSRv1 reviewer are
+described under [Semantic review](#semantic-review--approved-structure);
+offline preparation/report validation/scoring are implemented. The October 8
+qualification trial fails known semantic and cross-version checks, so bulk
+semantic grading remains unqualified.
 
 - The shared data preparation accepts frozen three-way splits. Loading verifies
   target/teacher agreement, full instruction/source-note bindings, exact response
@@ -1973,73 +2079,470 @@ Evidence: `target/distillation-pilot-v1/final-integrity-audit-20261005/` and
 `target/distillation-pilot-v1/final-integrity-fixes-20261005/`.
 Real ASv6.100 CUDA numerical agreement, long-example fit, cache allowances and
 timing remain the next hardware checks. The paired input package and revised
-transfer draft are now frozen below; image publication and spending approval
-remain open. These controls cannot guarantee recovery of unexfiltrated work after
+transfer draft are frozen below; private image publication and a $285 combined
+rental budget are approved. These controls cannot guarantee recovery of unexfiltrated work after
 sudden host/storage loss.
 
-### Frozen paired package and conditional cost — October 5
+### Frozen two-GPU package and conditional cost — October 5
+
+The approved local update assigns Gemma dense to GPU 0 and Qwen followed by
+Gemma MoE to GPU 1. Each subprocess holds one complete model and receives its
+own `CUDA_VISIBLE_DEVICES` binding. The shared controller runs one process per
+card, preserves inherited device masks, and records active candidates and their
+GPU assignments. All three prep verifications finish before baselines; all three
+complete validation/test baselines finish before any main training.
+A failure blocks queued work while other active work finishes and is preserved.
+An explicit stop reaches both child process groups. Hardware observations identify
+each GPU by index/UUID with separate utilization and memory metrics; single-GPU
+GTE observation behavior is retained.
 
 The shared `distillation_deploy prepare` workflow froze the combined package at
-`target/distillation-pilot-v1/combined-asv6.100-20261005-v2/package/`, with manifest
-SHA-256 `1a61f7d0d8cd948b7aaaa3383e4915c8d015472f0e557ae4f45e594ce6b328c4`.
-It preserves the approved three candidates, full ASv6.100, the 1,000/100/200
-splits and training recipe. All six native-tokenizer pilot/prep preflights passed.
-The three main training plans match exactly: each note appears once, with 125
-updates and the five approved validation milestones. No timeout is configured.
+`target/distillation-pilot-v1/two-gpu-implementation-20261005/package/`, with manifest
+SHA-256 `26d9727104c40cde72707a59ce08d3c04f7847724768a45401f4c91cd93ca764`.
+The reusable assignment file is `sse_multivector/distillation/subject-gpu-assignments.json`.
+All six pilot/prep configurations and datasets are byte-identical to the passed
+October 5 native preflights. Token encoding/training code is unchanged. Each main
+plan uses every note once, with 125 updates and the five approved milestones.
+Only deployment, Vast workload validation and shared hardware observation changed.
+No timeout is configured; the old single-card package remains frozen evidence.
 
 Matched prep selects three existing training notes: two median-length examples
 and the longest complete example for every candidate. Its first partial update
 initializes Adam state on one example. Restore that checkpoint, then accumulate
 gradients on another example before training on the longest example in the
-second partial update. This tests its activations alongside restored optimizer
-state and already-accumulated gradients. These adapters are discarded before the
-fresh main runs, which retain eight examples per update. Brief generation uses
-one validation note per candidate with a 64-token limit. Production preparation independently
-checks full native caches covering all validation/test batch shapes, and actual
-CUDA fused-loss/adapter-gradient agreement. No reserved test note is used in prep.
-Actual fit and speed remain unmeasured.
+second partial update. These adapters are discarded before the fresh main runs,
+which retain eight examples per update. Brief generation uses one validation
+note per candidate with a 64-token limit. Production preparation independently
+checks full native caches covering validation/test batch shapes and actual
+CUDA fused-loss/adapter-gradient agreement. Reserved test inputs contribute only
+native lengths and synthetic cache shapes; prep never trains on, generates, or
+semantically reviews their answers.
+Actual concurrent hardware fit and speed remain unmeasured.
 
-All runtime hashes match the tested VM export from the final integrity audit.
-The image archive SHA-256 is
-`1557f799bbb4b1aa37293bf8a32e5ce62519ff4d5e7f27bc7264feaa0d8e3ed6`;
-this is an archive hash, not a registry digest. The new image is not published.
+The rebuilt VM passed **91 tests**, with **one optional native-tokenizer check
+skipped** because no tokenizer package was supplied. The unchanged six native
+preflights are bound by exact config/data hashes. **149 shared-controller** and
+**30 host package/data** tests also passed. The CPU VM does not emulate GPU
+kernels. Its real concurrent workers verified checkpoint restoration, continuation,
+progressive copies from both candidates, all required raw/parsed/test responses,
+and complete local retrieval/review; missing or changed data blocks review.
+The first rehearsal exposed a timing assumption in its test: the tiny main run
+finished before a main checkpoint copy, although both baselines and prep
+checkpoints had already copied. The corrected test verifies those early seals
+from both workers and all main checkpoints at final retrieval. No transfer
+runtime repair was needed. The complete rehearsal then passed.
 
-The current read-only quote, offer **49942717**, provides the selected one
-96GB/600 W RTX PRO 6000 WS for **$1.4444/hour including 300 GB storage**.
-The input/checkpoint payload projection is **169.72 GB models + 27.25 GB
-checkpoints**; 300 GB leaves about 103 GB before image, responses and logs.
-The draft allows **200 GB inbound / 60 GB outbound**, about **$0.76** at this
-quote's transfer rates. Outbound covers two copies of the checkpoint payload
-plus output/metadata overhead. Transfers overlap compute; quoted hourly storage
-is not added again. Prices can change; no offer was reserved. See
-[Vast pricing](https://docs.vast.ai/guides/instances/pricing).
+All 15 frozen runtime source/config hashes match the stopped VM snapshot at
+`target/distillation-vm-clean-deployment/attempt-1791242606321467393/`.
+The exported image archive SHA-256 is
+`b9ffbcecb8c47cc35364a1970f23899dcb7fd258765926e4b44ab511ff3c0b69`;
+this is an archive hash, not a registry digest. The tested image is published as
+`docker.io/kernelkind/oracle-mvp@sha256:58dd4c3c256b13724f5fb79b59373e4b43fca2c8cba0cb1439c25c36d061ea64`.
+Loaded filesystem/runtime configuration and all 15 source hashes match the VM;
+read-only pulling succeeds and anonymous manifest access returns HTTP 401.
 
-| Arithmetic scenario | Training hours | Validation hours | Test hours | Combined hours, with headroom | Cost at current quote |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Linear training scaling, old decode latency | 13.87 | 28.77 | 19.13 | 78.46 | $114 |
-| Linear training scaling, cache-length-scaled decode | 13.87 | 51.51 | 34.29 | 127.09 | $184 |
-| Quadratic training sensitivity, cache-length-scaled decode | 33.34 | 51.51 | 34.29 | 151.43 | $219 |
+The refreshed read-only quote, a compatible offer, supplies two **96GB/600 W RTX PRO 6000
+Server** cards for **$2.9889/hour including 300 GB storage**. It has about
+387 GB host RAM, 32 effective CPU cores, driver 580.173.02 and reliability 0.9966.
+The model/checkpoint projection remains **169.72 GB + 27.25 GB**; 300 GB leaves
+about 103 GB before image, responses and logs. Allow **200 GB inbound / 60 GB
+outbound**, about **$0.77** at the saved transfer rates. No offer is reserved.
+The server cards' throughput has not been measured; the calculation conditionally
+uses the old 600 W workstation measurements. Shared CPU/disk contention is also
+unmeasured. Preserve the same batches and recipe on each GPU.
 
-These are conditional arithmetic scenarios, not confidence intervals, upper
-bounds or measured ASv6.100 throughput. Training extrapolates the old two-update
-timings using actual native sequence totals. Generation uses the actual batch
-layouts and each batch's longest teacher answer as a proxy; student answer
-lengths are unknown. New efficient attention and fused loss can change speed.
-Count all **1,800 validation + 1,200 test** responses once, with no training
-restarts, masks, thinking evaluation or separate winner rental. A shared 1–2 hour
-lifecycle allowance includes downloads, small prep, loads/save/merge/restore and
-final retrieval. Apply 25% headroom once to the combined hours, then add transfer
-fees once. At $1.60/hour, the same scenarios are approximately $126/$204/$243.
-Prep alone has a **0.5–1.5 hour / $1.50–3** planning allowance at the current
-quote, already included in combined lifecycle; do not add it again.
+| Arithmetic scenario | One-GPU hours | Two-GPU hours, with headroom | Conditional cost at two-card quote |
+| --- | ---: | ---: | ---: |
+| Linear training scaling, old decode latency | 78.46 | 40.43 | $122 |
+| Linear training scaling, cache-length-scaled decode | 127.09 | 65.71 | $197 |
+| Quadratic training sensitivity, cache-length-scaled decode | 151.43 | 79.60 | $239 |
 
-Evidence and calculation: `target/distillation-pilot-v1/combined-asv6.100-20261005-v2/`
-contains `freeze-verification.json`, `native-preflight.json`, `offers.json`,
-`cost-estimate.json` and the read-only `calculate.py`. The launch settings remain
-a financial draft without an `approved_maximum_usd`; no reservation, rental or
-publication was performed. No automatic timeout, budget kill or deletion is
-enabled. Publication and maximum spending approval precede a launch; GPU prep
-must validate execution/fit, and its measured timings should revise the estimate.
+These are scheduling scenarios, not measured ASv6.100 throughput, confidence
+intervals or runtime bounds. Compute each model's baseline and trained stages;
+for each stage use the longer of dense Gemma versus Qwen plus Gemma MoE, keeping
+the global baseline gate. Add shared lifecycle time once and 25% headroom once,
+then transfer fees once. Generation uses each batch's longest teacher answer
+as a proxy; actual student lengths and new-kernel speed are unknown. Count all
+**1,800 validation + 1,200 test** responses once. No training restarts, duplicated
+responses, masks, thinking evaluation or separate winner rental are added.
+Prep alone is projected at **0.5–1.5 hours / $2.30–5.30**, already included in
+combined lifecycle. Current two-card scenarios give about **1.9×** speedup.
+
+Evidence: `target/distillation-pilot-v1/two-gpu-review-20261005/` contains saved
+quotes and `schedule-comparison.json`; `two-gpu-implementation-20261005/` contains
+the frozen package, `freeze-verification.json`, test logs and a copied cost report.
+The user approved **$285** for private publication and the combined rental.
+The frozen plan allows **90 hours at up to $3.10/hour**, plus **$2.60** transfer
+allowance: $281.60 in planning quantities, within the approval. The 90 hours and
+cost thresholds are review parameters, not automatic stop/deletion limits.
+The recorded rental rate was $2.9889/hour. Qwen prep completed both updates and its
+maximum-output native-cache check. Dense Gemma saved checkpoint 1 and a brief
+response, then exceeded the frozen 88 GiB reserved-memory guard without CUDA
+OOM. Gemma MoE failed fused/native adapter-gradient agreement before its first
+update. Neither failed check persisted its numerical diagnostic, so repairs
+must preserve these measurements before rejecting work. The global prep gate
+blocked every main baseline and training run. All 80 work and six startup files
+(4,346,589,909 bytes), available checkpoints and failure logs were retrieved
+and independently rehashed.
+The preliminary resource charge was **$1.974**. Repairs were completed
+locally and the original image/
+input/operation are preserved.
+
+**Local recovery — October 6:** before rejecting a cache peak, write its full
+measurement and admitted batch plan. `training-loss-check.json` now preserves
+failed losses and parameter-specific gradient differences, including maximum
+absolute error, failing-element counts and relative L2 error. The short Gemma
+native reference promotes projected logits to FP32 before softcapping, matching
+[Liger 0.8.4 TorchLMHeadCE](https://github.com/linkedin/Liger-Kernel/blob/v0.8.4/test/transformers/test_fused_linear_cross_entropy.py).
+The native head, weights, gradients, RNG and forward are restored after the
+check. CUDA `atol=.005` / `rtol=.05` are unchanged; the training loss/kernel and
+evaluation computation are unchanged. BF16 CPU reproductions verify the
+reference correction and still reject deliberately corrupted loss/gradients.
+This does not prove the full MoE CUDA check now passes.
+
+Dense inference now reserves **12 GiB workspace**, keeping the **88 GiB** budget
+and full output allowance. With the measured resident/cache shapes and a
+9,442-token prompt, this admits one note per batch. Qwen/MoE retain 4 GiB.
+The same candidate policy governs baseline and every trained collection.
+Preparation covers both validation and reserved-test input lengths using native
+caches with synthetic continuation tokens; only validation notes receive brief
+prep responses. Freeze new paired configs/image rather than editing the failed
+operation. All teacher data, update membership, optimization and saved original
+evidence are retained. **94 VM tests pass** (one native tokenizer test skipped
+and covered separately), all **six native tokenizer preflights pass**, and the
+host settings test confirms dense singleton admission through the real planner.
+The VM integration exercises continuing updates, saved adapter reload, parallel
+prep/baseline gates, live copying and verified retrieval. Actual GPU checks remain
+required before main training.
+
+`two-gpu-recovery-20261006/revised-cost-estimate.json` prices dense singleton
+generation using the nearest old measured batch-two decode latency, without
+assuming a singleton speedup. Qwen/MoE, update counts and response counts are
+unchanged. Conditional replacement scenarios become **53.11 / 82.61 / 93.07 hours**
+and **$159.51 / $247.69 / $278.94** at the saved $2.9889/hour quote. Including the
+failed prep’s recorded provisional $1.98 gives **$161.49 / $249.67 / $280.92**.
+They retain teacher-answer-length proxies, old workstation kernel timings, the
+global baseline gate and 25% headroom once; they do not measure current throughput
+or bound runtime. The replacement experiment allowance is at most **$281**. Review planning
+uses 89 hours at the $3.10/hour ceiling plus transfer quantities; this creates
+no automatic stop or deletion.
+
+The corrected VM export is published and verified private at
+`sha256:c376ec124faabd71c018e52044faf9ee6bbc4b02b6d7a48bf90f1cbfa8f806e5`.
+The exported archive is `a198d81a029af0449137ba81d7744607a5e7fbc79960ce5144bb63cfde940efd`;
+all filesystem layers, runtime defaults and 15 source hashes match the passed VM.
+Docker export normalizes empty metadata fields; execution settings are identical.
+Read-only pulling succeeds and anonymous manifest access returns HTTP 401.
+New frozen package manifest:
+`8e7018275fa7cbdc3f05231d6c676ae5049daf9e8f30e5bb378e07038f19f50a`.
+The recorded rental rate was $2.9889/hour including 300 GB storage. Container
+DNS failed before SSH, inputs or worker startup. One provider reboot did not
+repair it. All necessary available startup logs and direct/proxy diagnostics
+were saved and independently hashed. No experiment data was produced. The preliminary resource charge was **$0.76**; the two failed attempts had a rounded preliminary cost total of **$2.74**. The next search excludes machine 146170. A different
+compatible offer quotes $2.9389/hour including 300 GB
+storage for two 96GB/600 W server cards. Native frozen preparation passed.
+The recorded rental rate was $2.9389/hour including 300 GB storage. Startup/
+GPU prep were observed. The verified image, package, all 15 runtime
+source hashes and recipe are unchanged. Continuous observation, live copying and complete-data
+deletion rules apply. New launch evidence is
+`target/distillation-pilot-v1/launch-20261006-two-gpu-r2/`.
+At 02:15:54 UTC, a local $1 setup gate refused worker admission after successful
+SSH, transfer and remote preparation: estimated rental $0.314536 plus the whole
+planned $0.755209 transfer allowance exceeded $1. A production-path reproduction
+confirmed the refusal. A recorded local Context with $5 startup allowance started attempt 001. A second call returned the same attempt. No remote code, original
+Context/contract/transport, data, prompts or model recipe was changed; hashes
+were verified again. The original frozen supervisor/observer were restarted.
+Failure evidence, old supervisor receipts, effective local configuration and
+repair verification are in `operation/launch/startup-recovery/001/`. Future
+launch settings use $5 startup allowance. Main baselines/training had not
+started; no comparison was changed.
+
+**Verified closure, October 6:** Qwen prep completed. Dense completed both
+updates, saved checkpoints, verified reload/merge, brief generation and cache
+checks. Its **94,948,556,800-byte / 88.43-GiB** training reservation exceeded the
+**88-GiB inference budget**, despite fitting the GPU without CUDA OOM. Applying
+that inference allowance to completed training was incorrect. The local fix
+removes the training rejection only; measured training peaks remain recorded,
+and inference batching/cache limits stay enforced. The production-path test
+first reproduced the rejection and then passed; the cache-rejection test also
+passed. Local exact-image tests with the source mounted read-only passed
+**73 tests**, with **12 deployment-VM checks skipped**. This source fix is not
+yet published or newly VM/CUDA validated.
+MoE failed native/fused gradient agreement before its first optimizer update.
+The actual CUDA measurement is saved: loss 2.59095550 versus 2.59095573; six of
+360,448 finite adapter-gradient elements failed the existing atol=0.005 /
+rtol=0.05 check, maximum absolute error 0.015625, relative L2 error 0.035727.
+The cause is unresolved; no tolerance or training recipe was changed. No main
+baseline, validation, final-test collection or pilot training started.
+All **95 work and 6 startup files / 5,849,177,916 bytes** were retrieved and
+independently rehashed before deletion. Four available checkpoints and their
+response/cache seals, complete Qwen prep and both failures were inspected.
+The preliminary resource charge was **$2.543**. The rounded preliminary failed-attempt cost total was **$5.29**. No replacement rental
+or remote code edit was made.
+Evidence: `launch-20261006-two-gpu-r2/closure-evidence.json`, the operation’s
+`observations/full-pre-deletion-integrity-review.json`,
+`observations/training-memory-guard-local-repair.json`, and
+`observations/preliminary-billing/summary.json`. MoE CUDA confirmation remains
+required before main pilot work; the subsequent local repair and rebuilt runtime
+are recorded below.
+
+**Subsequent local MoE reference repair — October 6:** Liger’s mean loss
+computes and rounds the hidden-state gradient during forward, then multiplies
+it by the note’s scalar weight during backward. The native reference instead
+multiplied CE before LM-head backward. This changes BF16 rounding even when
+losses agree. A real tiny BF16 Gemma MoE/PEFT reproduction, emulating only the
+unavailable CUDA loss, fails the old production check. Matching scalar
+application after native LM-head backward makes every adapter gradient equal
+in that reproduction. Keep the actual training forward, token normalization,
+optimizer and numerical tolerances unchanged. Restore the temporary head and
+tensor hooks, gradients, RNG and forward on success/failure. The report records
+`reference_gradient_scaling: after_lm_head`. Corrupted gradients still fail.
+The regression runs locally with PyTorch 2.12.1 CPU, Transformers 5.17.0, PEFT
+0.21.0 and Liger 0.8.4; it is not a replay of the full original CUDA model.
+The full local suite passes 89 tests, with 12 deployment-VM-only checks skipped.
+Confirm the full CUDA check before main pilot work; the rebuilt/frozen runtime
+is recorded below. Evidence:
+`target/distillation-pilot-v1/moe-gradient-repair-20261006/`.
+
+**Persistent-volume recovery approved:** retain model downloads plus compatible
+saved work on a local volume across container replacement. The volume stays
+on its physical machine and does not reserve GPUs. The launcher mounts the
+frozen volume ID at the same
+operation path and sets `HF_HOME` to its persistent model cache. Replacement
+freezing verifies the previous local retrieval and deletion, identical volume,
+image, workload and input manifest. Remote preparation rechecks all saved work,
+archives old launch/transport/preparation receipts, preserves worker attempts
+and resumes with the next attempt ID. For a repaired runtime, freeze
+`reuse_work: false` with a `recovery_reason`: archive the entire previous work
+tree, retain the model cache and start fresh under the new image/configuration.
+The previous retrieval and deletion are still required. Interrupted setup
+can be redelivered.
+The controller passes its worker-lock descriptor through each candidate; abrupt
+controller death cannot seal changing files or admit another worker. A CPU
+heartbeat regression first reproduced the orphan/sealing defect and now passes.
+Host regressions pass 137 checks (16 VM/optional-SDK skips); all eight pinned
+SDK checks pass. The exact rebuilt VM passes 101 checks, including independent
+container replacement: all 242 saved data files are unchanged, logs preserve
+their prefixes, both students retain four updates, and a real HF cache lookup
+succeeds offline. The two volume tests run separately after their ordinary-suite
+skips; one optional native-tokenizer check remains covered by prior unchanged
+input preflights. The exported image verifies the new frozen package; all six
+configurations and data are byte-identical to the previous package. Evidence:
+`target/distillation-pilot-v1/downstream-recovery-20261006/`, including
+`package-v2/` and `freeze-verification-v2.json`; VM/export evidence:
+`target/distillation-vm-clean-deployment/attempt-1791260449813548697/`.
+Import into the local Docker version normalizes absent/default configuration
+fields; all 16 filesystem layers and the effective runtime configuration match
+the passed VM. Both image IDs and that normalization are saved in the verification
+record. Full MoE CUDA replay and new private publication remain pending; no
+volume or new rental exists.
+**Host choice approved October 6:** use a cheaper compatible Bulgarian host with
+a local volume for the next attempt, keeping the two-card configuration and
+existing spending limits. The read-only candidate is the host, quoted at
+$2.7611/hour for two GPUs, 30 GB container storage and a 300 GB volume, before
+transfer charges. Recheck the actual offers before creation; this is not a
+reservation. Do not pay the Texas premium solely for additional spare GPUs.
+Actual provider attachment remains untested. Startup checks the mount before
+setup or training; the VM replacement verifies the recovery logic separately.
+**Main rental layout reconfirmed October 6:** keep one rental with two GPUs
+after the one-card download stage. Separate rentals project about $9–14 saved
+at the selected host's saved prices, or $19–26 against fresh alternative offers,
+with similar completion time. These savings do not justify changing the tested
+storage and shared prep/baseline checks. Estimates include storage and 25%
+headroom; prior charges, transfers and extra split-specific setup are excluded.
+No new host is selected or reserved by this comparison. Evidence:
+`target/distillation-pilot-v1/separate-rentals-comparison-20261006/comparison.json`.
+**One-GPU download stage approved October 6:** use a one-card offer on the same
+machine and the actual 300 GB volume to verify attachment and cache all three
+frozen model revisions. The 42 required files total 169.81 GB, including weight
+shards listed in the index and tokenizer/configuration/chat-template files.
+Check free space for missing downloads, a temporary shard and 32 GiB for saved work.
+Verify all required weight shards,
+tokenizer/configuration files and completion receipts, retrieving evidence
+locally before explicit container deletion. Retain the volume and reattach it
+to the two-card rental. Verify cache completeness with networking disabled for
+model access, then run the full concurrent GPU preparation before baselines or
+training. The one-card stage downloads only; it does not replace concurrent
+hardware checks. The observed one-card quote is $1.3444/hour plus $0.0833/hour
+for the 300 GB volume, before transfers. Count downloads once, include the
+additional startup and retained-volume charges, and keep all paid stages within
+the existing combined approval.
+This stage is implemented and VM-tested, with no paid execution yet. It saves
+the download log, file sizes/checksums and a volume receipt recording the
+machine, mount path, free space and write/read check. Local `verify-results`
+checks every required file and transfer integrity before completion review.
+The VM rehearsal retrieves those receipts, destroys the download container,
+reattaches its volume and completes prep and fresh pilot execution with two
+workers. The Hub endpoint is unreachable and model access stays offline.
+Missing/corrupt cache files block every worker before prep. Host regressions
+pass 181 checks (16 VM-only skips); the VM passes 109 checks. Four skipped checks
+are exercised separately; only the optional native-tokenizer check remains
+skipped. The new download/pilot packages match the exported runtime; all six
+configurations and data are byte-identical to the previous package. Evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/`.
+The rebuilt image is published and verified private at
+`docker.io/kernelkind/oracle-mvp@sha256:d85666da177a3a3459059e0f5409db689d29e0b4e6b6d9cdb64fc1668770f0b7`.
+All filesystem layers/configuration match the VM; the rental credential pulls
+it and anonymous manifest access returns HTTP 401. Actual Vast attachment and
+full MoE CUDA confirmation remain pending.
+The recorded resource rate was $0.0833/hour. The separate $5 download GPU create request was
+rejected with HTTP 400. The discarded provider message leaves the rejection reason
+unknown. The helper now preserves bounded credential-redacted reasons; nine
+pinned CLI tests and 68 controller checks pass. Updated VM rehearsal passed
+before another creation request. Model/recipe/data are unchanged. The three-hour
+download allowance remains for planning/review only; no automatic stop/deletion.
+The retry captured its HTTP 400 cause: invalid volume mount path, before GPU
+allocation. The fix mounts
+`/workspace` and keeps the experiment/cache paths beneath it. Nine CLI, 149
+controller/generalization, four cache and 13 workload-spec checks pass. Updated
+VM rehearsal passed all 109 checks, including parent mounting and offline
+handoff; the private immutable publication matches it and native prepare passes.
+The recorded resource rate was $1.4278/hour. The preparation run completed
+the download stage: all 42 pinned files (169,808,998,964 bytes) are checksum
+verified on the actual volume in 768.797 seconds. Parent mounting, selected
+volume identity and write/read checks pass. All 12 work and six preparation
+files were retrieved and verified; production completion review passed.
+The preliminary resource charge was $0.455.
+Slow cold image startup exceeded the readiness window; preserved original
+evidence and a guarded unchanged-controller retry recovered the same instance,
+without a second create or remote edits. Future command startup remains pending
+and retries after each bounded readiness window. The CLI regression failed
+first and now passes; 176 local tests succeed (three VM-only skips). Rebuilt
+packages preserve all six configs, data and model file requirements byte for
+byte, changing only the controller runtime hash. Updated VM rehearsal and
+private publication pass. The first export filled the 64GB VM disk after all
+checks passed; five verified duplicate archives were removed from the VM while
+preserving their host copies. The standard rerun passes 109 checks, separately
+covers four earlier volume/cache skips, exports the verified image and stops
+cleanly. The unchanged optional candidate-tokenizer check is not rerun.
+Current main runtime/package evidence is under
+`target/distillation-pilot-v1/startup-retry-20261006/`. Its private digest is
+`docker.io/kernelkind/oracle-mvp@sha256:b99b4e9f23211bada17f37a5c73c8e26b1fde3bc66a1403783aee2d774567d1a`;
+VM layers/runtime/source and both packages match, read-only pull succeeds and
+anonymous manifest access is HTTP 401. Actual concurrent CUDA prep remains
+before main baseline/training.
+No pilot baseline or training yet.
+
+Bound remaining
+exposure using elapsed time from the earlier reservation timestamp through
+deleted-at at the approved maximum hourly rate plus the entire approved transfer
+allowance, rounding upward and flooring at posted exact-instance charges. Book
+only increases above prior bookings and hold only the unbooked difference.
+Final invoices still need their delayed complete-snapshot confirmation; later
+settlement subtracts every prior booking and releases only the remaining hold.
+No frozen image/package or training recipe changes are needed. Active resource
+reservations, the $1,000 lifetime cap and original $285 total remain in force.
+The four closed attempts had a conservative cost bound of $8.52. The two production-path budget
+and exposure checks failed before correction and pass afterward. Evidence:
+`target/distillation-pilot-v1/deleted-rental-budget-20261006/`.
+
+**Host switch and retained backup, approved October 6:** the host has
+only one rentable GPU. The available compatible pair on the host costs
+$2.8139/hour plus $0.0833/hour for 300GB persistent storage. All storage, transfers and failed attempts remain inside $285. Use the existing
+tested single-GPU cache-download/retrieval/deletion stage, then the new volume
+and unchanged two-GPU package for concurrent CUDA prep and pilot. No source,
+model, prompt, data or recipe changes. No automatic deletion/cutoff. Evidence:
+`target/distillation-pilot-v1/host-switch-20261006/`.
+The model-cache volume on the host holds all **42 files / 169.8 GB**,
+checksum verified. The download stage completed successfully; local completeness review was performed.
+The preliminary resource charge was $1.22.
+The two-GPU preparation passed cache attachment and offline verification. Qwen and
+Gemma dense passed full CUDA prep; Gemma MoE still failed gradient agreement.
+**No pilot baseline or training started.** All **97 work files / 5.85 GB** and
+six preparation files were retrieved and independently rehashed.
+The preliminary resource charge was **$1.445**. The one-GPU diagnostic completed both cases
+without training updates. All **20 files / 3.17 MB**, including all four saved
+head-state/gradient pairs, were retrieved, independently rehashed and opened.
+The preliminary resource charge was **$0.21**. Head relative L2 error is **0.294–0.321%** with identical inputs;
+296 of 156,119,040 adapter-gradient elements fail pointwise tolerance after
+backpropagation. Disabling reduced-precision reductions improves head agreement
+but does not resolve the deep comparison. A locally tested reference correction
+checks head gradients separately, then compares native/fused adapter gradients
+using the identical incoming head gradient. It adds a relative L2 check using
+the existing rtol, so absolute tolerance cannot hide corrupted tiny gradients.
+Both new production-path regressions failed before repair and pass afterward;
+all five fused-loss tests pass. Full VM validation now passes: 10 candidate,
+46 workflow, 48 deployment, four cache and four explicit replacement/handoff
+checks; all four deployment skips are covered separately. Candidate tokenizer
+preflight uses verified offline metadata. Caching reuses passed stages; the exact
+VM export and refreshed package are published privately and verified, at image
+digest `afa90bc64233b227da5db36f1336d7395138d9528bfb8c0d3a7dadc5f7256bad`.
+All three actual CUDA loss/head/adapter-gradient checks now pass, with zero
+backbone-gradient differences using the verified identical head gradient.
+The preparation run passed Qwen and dense Gemma full prep. MoE stopped on its
+seven-note native generation-cache probe: **88.080 GiB reserved versus 88 GiB
+budget**, without OOM. **No pilot baseline or training started.** All **116 work
+files / 6.82 GB**, six preparation files, five sealed checkpoints and the three
+gradient-check reports were retrieved, independently rehashed and reviewed.
+The preliminary resource charge was **$1.361**.
+The recorded resource rate was $2.8139/hour. Only MoE inference workspace changes **4 → 12 GiB**, consistently
+in prep and pilot; total inference budget stays 88 GiB and the widest predicted
+batch falls **seven → five**. Exact image, code, prompts, data, models and
+training recipe are unchanged. Package verification and native preparation pass.
+The replacement run passed all three full CUDA preps and started baselines
+on the same rental. The widest real cache probes reserve **76.28 GiB Qwen
+(seven notes), 77.07 GiB dense Gemma (one), and 76.80 GiB MoE (five)**, all below
+88 GiB. Loss/gradient checks, merge/generation, long-input updates and saved
+continuation checks pass for every student. No pilot training starts until
+all three baselines pass. Observe continuously and progressively retrieve
+frozen responses/checkpoints. Archive all verified prior work and retain the
+model cache. No automatic stop or deletion. Evidence:
+`target/distillation-pilot-v1/main-pilot-loss-boundary-20261006/` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/`.
+
+**Baseline integrity, October 7 00:07 UTC:** Qwen and dense Gemma's 100-note
+validation baselines are retrieved and verified locally: hashes, full inputs,
+raw/parsed answers and batch receipts agree. Qwen's 13 and Gemma's two invalid
+answers remain counted. Both 200-note test collections are underway and sealed.
+MoE is queued; no main training has started. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-validation-baseline-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-validation-baseline-integrity.json`.
+
+**Qwen and dense Gemma baselines complete, October 7 05:36 UTC:** each
+student has 100 validation and 200 reserved test responses verified locally by
+the production checks. Full prompts, raw/parsed answers, batch receipts and
+checksums agree. Reserved test content and quality remain unreviewed. MoE is
+starting its baseline; no main training has started. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-reserved-baseline-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-reserved-baseline-integrity.json`.
+
+**All baselines verified, October 7 08:23 UTC:** each student has 100 validation
+and 200 reserved test responses retrieved and checked locally by the production
+validators. Prompts, raw/parsed answers, batch receipts and hashes agree; all invalid
+answers remain counted. Reserved test semantics remain unreviewed. The pipeline
+advanced to Qwen and dense Gemma training concurrently; MoE follows Qwen. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-validation-baseline-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-moe-reserved-baseline-integrity.json`.
+
+**Training progress verified, October 7 13:58 UTC:** Qwen has completed
+400 distinct notes in 50 continuing updates; dense Gemma has completed 200 notes
+in 25 updates. All three saved checkpoints, including adapter and optimizer/RNG
+state, are local and passed hashes, exact note coverage and counter checks.
+Qwen's two training blocks took 34.9 and 33.2 minutes; dense Gemma's first took
+92.9 minutes. Both Qwen validation sets are fully retrieved and verified against
+the same 100 inputs and batch plan as baseline. Each has 2 parsing failures,
+versus 13 untuned; the two failures at 400 notes hit the output limit. Generation
+took 121.4 and 143.1 minutes, versus 128.1 untuned. Semantic correctness/coverage
+remain ungraded. Qwen continued training toward 600 notes; dense Gemma is
+validating after 200 and MoE remains queued. Reserved test semantics remain
+unreviewed. Receipts:
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-400-integrity.json`,
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/gemma-dense-checkpoint-200-integrity.json`,
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-200-validation-integrity.json` and
+`target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/observations/qwen-checkpoint-400-validation-integrity.json`.
+
+The preliminary backup storage charge was **$0.884**. The storage rate was **$0.0833/hour**, or **$2/day**.
+Evidence: `target/distillation-pilot-v1/backup-volume-removal-20261007/`.
+
+Current evidence: `target/distillation-pilot-v1/workspace-volume-20261006/`.
+Previous publication evidence:
+`target/distillation-pilot-v1/model-cache-stage-20261006/publication/publication-receipt.json`.
+No automatic time/budget stop or deletion. Previous failure evidence is under
+`target/distillation-pilot-v1/launch-20261006-two-gpu-recovery/`.
+Launch evidence is under `target/distillation-pilot-v1/launch-20261005-two-gpu/`.
+Actual execution and fit passed CUDA preparation October 6. Pilot throughput
+is being measured. Observation continues through complete local retrieval/review and explicit
+deletion. No automatic time/budget kill or deletion.
 
 ### Historical conditional subjects-only batched cost reference — October 3
 
@@ -2136,8 +2639,11 @@ validation. Pilot notes and all selected-teacher labels are now frozen.
 
 The approved splits require **1,300 teacher subject calls**, now complete,
 with training labels shared across checkpoints. The approved comparison has
-**1,800 validation reviews plus 1,200 final reviews**. Reviewer selection, the
-review prompt and actual token lengths are required to price reviews. The existing subscription route
+**1,800 validation reviews plus 1,200 final reviews**. The selected reviewer is
+GPT-6.1 Sol / xhigh. DSRv1 remains a draft after failed semantic qualification;
+the stress trial records actual full-size lengths and timings. Representative
+measurement and a qualified process are needed before estimating bulk review
+capacity. The existing subscription route
 assumes zero incremental API cash; paid API work would be additional and requires
 separate admission/approval.
 
@@ -2201,14 +2707,14 @@ schedule.
 There are three student training paths, each with dependent
 200/400/600/800/1,000-note stages. The earlier nine-independent-training-job
 packing does not apply.
-The selected pilot runs the three students sequentially on one 96GB RTX PRO
-6000. Each complete model stays on that GPU. Preserve the same per-response
+The selected pilot uses two 96GB RTX PRO 6000 cards, with a complete model on
+each: Gemma dense on GPU 0, Qwen then Gemma MoE on GPU 1. Preserve the same per-response
 generation settings and complete call accounting; dynamic batching controls
 how many independent notes that GPU evaluates together.
 
 Teacher labeling and local semantic review/selection add elapsed time outside
 the rental. The historical price comparison does not reserve a specific offer
-or authorize spending. Prepare and test the selected single-GPU launch
+or authorize spending. Prepare and test the selected two-GPU launch
 configuration locally before renting.
 
 Offer evidence is saved in `target/distillation-pilot-v1/cost-estimate-20261001/`;
@@ -2344,10 +2850,9 @@ utilization, VRAM, power draw and power limit from September 29 at 17:46 UTC
 through September 30 at 02:56 UTC. Four sampling gaps exceeded two minutes;
 the longest was about 6.7 minutes. Maximum sampled VRAM use was 96,581 MiB.
 
-The preliminary resource charge was **$13.392**. Evidence is
-`observations/preliminary-charge-summary.json` and its native invoice snapshot. Including
-the earlier failed rental's $0.338, posted charges total **$13.73** across both
-rentals; unposted charges remain unresolved. The next steps are completing the
+The final resource cost was **$13.392**. Evidence is
+`observations/preliminary-charge-summary.json` and its native invoice snapshot.
+The earlier failed rental's final resource cost was $0.395, bringing the combined final cost to **$13.787**. The next steps are completing the
 Gemma baseline mask generation and semantic review before candidate selection.
 The old frozen launch retains its
 original code. Candidate recipes and Vast limits are unchanged. The prior
@@ -2380,7 +2885,8 @@ out restored the original frozen transport hashes and file set. A local
 cache files. All future inspection of frozen Python modules must disable
 bytecode writes before import. This verification is local and incurred no rental.
 
-The preliminary resource charge was **$0.338**. The supervisor has exited.
+The preliminary resource charge was **$0.338**.
+The final resource cost was **$0.395**. The supervisor has exited.
 Following this failure, the user explicitly requested removal of automatic
 deletion. The current shared command runner preserves instances on completion,
 errors, expiry and interruption; only an explicit `stop` command deletes them.

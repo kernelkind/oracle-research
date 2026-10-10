@@ -1,5 +1,21 @@
 # General model runner
 
+Execution and transport are owned by the separate
+[experiment-runner repository](../../experiment-runner/README.md) at
+`~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
+delegate to that package. Prompts, specs, adapters, hierarchy commands, viewers
+and experiment artifacts remain here. `experiment-runner.json` selects these
+project extensions. Use `../experiment-runner/bin/experiment-runner` from this
+checkout, as selected by the user, or pass `--project-root` explicitly when
+calling that launcher elsewhere. The old Python, shell and JavaScript entry points
+remain compatibility callers, rather than owning runner implementations.
+`EXPERIMENT_RUNNER_ROOT` selects an explicit source checkout when a version pin
+is needed. Frozen code/transport checks and old receipts remain enforced;
+existing worktrees and active runs are not rewritten automatically.
+For a new experiment inheriting an older worker, `prepare --from` accepts
+`--runner-binary` to select the shared launcher's path explicitly. Without that
+override it preserves the inherited worker, including custom workers.
+
 [run-model.sh](run-model.sh) sends one caller-supplied prompt through pi-ai.
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.
@@ -422,11 +438,14 @@ The launcher uses Node 24+ when available, otherwise Nix's `nodejs_24`.
 Install the pinned dependencies once:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/frontier_runner
+cd ~/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/frontier_runner
 nix shell nixpkgs#nodejs_24 --command npm ci --ignore-scripts --no-audit --no-fund
 ```
 
-The SDK is pinned to pi-ai 0.85.1 in [package-lock.json](frontier_runner/package-lock.json).
+The SDK is pinned to pi-ai 0.85.1 in the shared
+[package-lock.json](../../experiment-runner/experiment_runner/frontier_runner/package-lock.json).
+The standalone repository's Nix package includes the runtime and dependencies;
+system installation is managed separately through `/opt/nixos`.
 Undici 7.24.4 supplies a runner-owned dispatcher for both chat-streaming routes,
 with its body-idle timeout disabled. The runner passes it per request; it does
 not change Node's global dispatcher, model parameters, automatic retry policy,
@@ -589,13 +608,20 @@ instruction to run this model:
 }
 ```
 
-The optional `runner_binary` defaults to this repository's `run-model.sh`.
+The optional `runner_binary` defaults to the shared package's `run-model.sh`.
+This repository's launcher delegates there; explicit custom workers retain their
+existing contract.
 Use `provider: "openrouter"` and an explicitly chosen model for OpenRouter.
 Set `reasoning_effort: "on"` (CLI: `--reasoning-effort on`) to request thinking
 without selecting a graded effort. This uses the same transport setting above.
 The transport's credential rules apply. Optional `timeout_seconds`,
 `max_output_tokens` and `output_schema` are forwarded unchanged; schema property
 order is preserved. Subscription transport does not accept an output-token cap.
+
+Instead of embedding `runner.output_schema`, a spec may use
+`runner.output_schema_path` relative to the spec. Preparation loads and hashes
+that schema source, then freezes the same schema object into the runner config.
+Supplying both fields is rejected.
 
 Generic input data:
 
@@ -703,6 +729,24 @@ regardless of configured concurrency. Only an explicit temporary provider error
 beginning `Codex error: An error occurred while processing your request. You can
 retry your request, or contact us` also qualifies, only with provider
 `openai-codex` and stop reason `error`; arbitrary error prose does not.
+The native worker also retrieves a sanitized status for an interrupted proxied
+request using its local request reference. An active upstream socket failure or
+recognized temporary HTTP/2 error qualifies even after HTTP 200. For example,
+`http2_goaway / enhance_your_calm / active` is a provider failure. Unknown
+transport interruptions pause launches without granting the failed case a retry.
+Cancellation or read errors after `response.completed` retain successful
+completion and do not start cooldown.
+The worker requires status schema 1 and a matching `request_id`. The proxy's
+`state=unknown` describes missing terminal completion/accounting; fixed active
+upstream error evidence with `error_phase=headers/body` can still establish a
+temporary provider failure. Generic EOF cannot. Proxy terminal labels are
+`completed/failed/incomplete`; `completed` takes precedence over read errors.
+Canceled/deadline-exceeded proxy records do not turn local failures into cooldown.
+An HTTP 101 handshake status is not per-generation WebSocket terminal evidence.
+Failed/incomplete provider terminals need their own explicit temporary provider error;
+a later socket error cannot grant that case a retry. Confirmed interrupted
+transport retries require `state=unknown`, no terminal event and SDK stop reason
+`error`; output-length/validation failures retain their existing rules.
 Each case has at most two total
 attempts across resumes, with a two-second minimum delay. `Retry-After` is
 honored; invalid values or waits above 60 seconds leave the case unresolved
@@ -717,14 +761,48 @@ any longer valid `Retry-After` extends it, even above the internal 60-second cap
 and even when the failed case has no retry left. Fresh cases and eligible retries
 both wait. A new successful request sent after the wait resets the exponential
 delay; saved/reused answers and calls sent before the wait do not establish
-recovery. Local failures do not trigger provider backoff.
+recovery. Local cancellation, deadlines and validation failures do not trigger
+provider backoff.
 
 Once the shared wait expires, eligible retries run before untouched cases, ordered by
 retry deadline. Already-running calls are not interrupted. Resuming also applies
 the shared wait from saved transient failures, without changing retry eligibility
-or the two-total-attempts limit. The backoff is internal to one batch invocation,
-which uses one configured provider/credential route; it does not coordinate
-separate runner processes or ordinary Codex chats.
+or the two-total-attempts limit. The executor keeps this batch wait and retry
+ordering. Native experiment workers additionally share admission across processes
+on this host, after resolving the already-selected local Pi route. Account errors
+pause that account; connection-wide upstream errors pause experiment traffic
+sharing the upstream transport. Ordinary Codex chats do not enter this scheduler,
+but existing upstream infrastructure remains shared.
+
+After a shared cooldown, one queued request is admitted first. Successful requests
+increase the shared recovery limit through 2, 4, 8 and onward, bounded by the
+workers' configured concurrency. Full successful recovery clears the exponential
+delay. Requests admitted before the failure cannot establish recovery; additional
+failures from that group extend the current wait without doubling it. No extra
+model probes are sent. Each resend still consumes its normal attempt/spend
+reservation; waits do not refund or reset counters. Shared admission waits occur
+before the request deadline starts and are recorded as `admission_wait_ms`.
+
+`provider_backoff.py` uses private, bounded file state and file locks under
+`$XDG_CACHE_HOME/oracle-mvp/provider-backoff` (default `~/.cache`). Worker PID/start
+time and request leases release abandoned recovery slots; state belongs to the
+current host boot. Invalid state refuses admission. The native experiment
+executor enables this behavior internally; general `run-model.sh` callers retain
+their existing execution contract. `ORACLE_EXPERIMENT_BACKOFF_DIRECTORY` can
+select a private state directory for an isolated local fixture.
+
+The worker's scope/status reads use the existing local capability and only the
+configured loopback credential service. They perform no upstream requests. A
+missing post-request status leaves the cause unknown. Before dispatch, scope
+discovery requires schema 1 and both valid opaque account/transport identifiers.
+Unavailable or invalid discovery, or unavailable admission state, stops new
+scheduling without marking unsent cases as terminal provider failures. Existing
+worker reservations remain consumed; waits/errors do not refund/reset budgets.
+There is no route-identifier fallback that could bypass an opaque scope's wait.
+The scope endpoint is a prerequisite for adopting this native experiment worker.
+Request-status storage is independent of usage-history retention. Proxy deployment
+and runner adoption are separate operations; existing frozen workers/receipts are
+not silently upgraded.
 
 Provider authentication, credit/permission or endpoint errors (401, 402, 403,
 404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
@@ -1022,8 +1100,614 @@ request sizes and repeated post context remain unchanged.
 
 ### Subject, title, mask and prominence preparation
 
+The user-approved [mechanical review rule](distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9)
+applies to DSM matching, DSS support and DSL relationships. Exact trusted teacher
+subjects establish meaning matches and same-post support; exact ordered pairs
+from actual trusted teacher links or numbered ancestor paths establish local validity. Identical parent and
+child wording also preserves every parent restriction. Record such findings
+without inference while keeping occurrence-specific coverage and placement.
+Source-bound matching and support/relationship adapters now attach sufficient
+evidence as `mechanical: {output, evidence}`. The shared runner validates this
+output through the selected adapter and seals it with the source and prepared
+inputs. Native reports expose `origin: "mechanical"`, `mechanical_evidence`,
+`mechanical_sha256` and zero `attempts`, without a model receipt or usage.
+Mechanical cases are complete at preparation and require no dispatch job, warmup
+or request-budget allowance. Mixed runs dispatch only remaining semantic cases.
+`prepare ... --repeat` bypasses this completion and forces real model requests;
+the full prompt/config remain prepared. Normal saved-response reuse still applies
+to semantic cases. Old frozen experiments without mechanical metadata retain
+their recorded execution. Reports separate `mechanical_cases` from `model_checked`,
+and matching call/token estimates exclude mechanical cases. No exact match leaves
+a semantic question; conflicting expected labels remain visible and agent-assessed
+expectations remain unverified. These changes do not qualify reviewers or run bulk grading.
+
+`preview-distillation-review MANIFEST --model-output DIR [--model-output DIR ...]
+--output FILE` counts all saved validation stages offline without creating
+reviewer prompts or calls. It verifies frozen dataset bindings, model provenance,
+sealed checkpoint metadata and production stage receipts, then reuses the
+same teacher index to count mechanical and remaining semantic occurrences.
+Reports preserve invalid and valid-empty outputs separately and union identical
+semantic input groups across notes, versions and models. Matching groups include
+the full post, ordered stable-ID teacher catalog and student wording; support
+groups include post and wording; relationships use ordered parent/child strings.
+These are distinct input counts under fixed prompts/settings, not actual prepared
+request identities; saved-answer reuse, warmups and retries are not resolved.
+Only evaluation reference content is decoded after all mixed-ledger identity
+headers have been checked. Reserved files and checkpoint weights are not opened.
+See the [complete validation preview and command](distillation-review-v1/README.md#complete-validation-workload-preview-october-9).
+
+Add `--estimate` to count `o200k_base` rendered input-text tokens for the distinct
+questions and all remaining occurrences; this requires `tiktoken` in the command's
+Python runtime. Repeated `--timing-experiment EXPERIMENT` arguments add output-token
+and runtime projections from verified fresh receipts with the same complete
+approved template and Sol / xhigh settings. Warmup receipts are excluded from
+verdict statistics; failures, retries and reused answers cannot enter the sample.
+Output already includes reasoning. Reports retain cache-hit and prefix-role
+strata, source bindings and sample sizes. Service work divided by eight occupied
+slots is a projection, not measured batch wall time; median/p90 scenarios are
+not confidence bounds. Input-text sizes exclude provider instructions, message
+framing and schema overhead. Current automatic prefixes are below threshold;
+separate natural-prefix opportunities do not select a cache mode or guarantee
+hits. See the [current estimate and complete Nix command](distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9).
+
+The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
+adds native project commands: `prepare-distillation-review-trial`,
+`show-distillation-review-trial`, `assess-distillation-review`,
+`freeze-distillation-review-assessments`, `prepare-distillation-review-evaluation`,
+`run-distillation-review-evaluation` and `show-distillation-review-evaluation`.
+The `distillation_review_evaluation` adapter retains complete saved validation
+answers and all numbered occurrences, routes trusted exact results mechanically,
+and delegates requests, reuse, warmups, retry handling and receipts to the shared
+runner. Compatible-heading comparisons reuse unchanged DSLv2; required flags and
+meaning groups come from a source-bound candidate-independent assessment.
+Expectation files freeze before calls and remain agent-assessed rather than gold.
+Only repeated natural prefixes meeting the existing eligibility threshold are
+warmed, using explicit prefix/key configuration. Sequential native groups each
+use concurrency 8 and share a new-attempt allowance. New schema-2 evaluations
+stop questions that cannot change the score: absent full matches, placements
+already containing a match, a known compatible uncovered placement, and incoming
+edges of unsupported subjects. Matching-self compatibility guards remain
+required. The runner selects frozen case IDs with `only`; the evaluator warms
+each eligible prefix at most once per invocation/group across adaptive waves.
+Native reports assemble the
+existing scores and compare them with frozen expectations, keeping unanswered or
+ambiguous work visible. Use `--output FILE` on the show command to retain the full
+report; terminal output contains its summary and usage.
+
+The original trial completed DSMv3/DSSv2 before DSLv2 was paused at the user's
+request to investigate scalability. Raw
+semantic agreements are 569/591 and 585/600 resolved distinct inputs; unresolved
+inputs and mechanical decisions are reported separately. Thirty-seven native
+`review --role agent` entries record independent disagreement audits without
+changing frozen labels. Four clear errors remain in each completed check, and
+relationship inconsistencies can leave whole-answer scores pending. Matching
+reports 42.14% cached comparison input; support reports none. One transport
+attempt was retried successfully but has unknown usage: native accounting keeps
+complete cost unknown and counts original receipt lines, warmups and reuse
+separately. See the trial record for the completed-check evidence and remaining
+relationship work. The coordinator drained already-submitted workers and exited;
+no worker remains. The original paused native report counts 2,115 original receipts,
+including nine warmups, four usage-unknown recovered failures and two extra
+successful relationship dispatches for identical inputs. There are 870 distinct
+successful relationship inputs: 808 fully joined, 62 further reusable inputs and
+9,664 requiring new model work. Coverage adds 9,678 requests to the selected
+trial's 2,086 primitive checks and was excluded from the older runtime estimate.
+The original frozen evaluation remains exhaustive and unchanged. The user
+subsequently authorizes all sensible mechanical work. New evaluations expose
+explicit skipped rows and dependency evidence, without assigning missing
+Booleans or claiming those checks qualified. The unchanged score law can settle
+scores before all diagnostic judgments are present; contradictions remain
+blocking. Original schema-1 selection counts verify under their original rules,
+while new selections include ancestor proofs. Preparing a separate evaluation
+with the same selection/assessment and prior history root preserves receipts.
+`run-distillation-review-evaluation --max-new-attempts 0` joins verified saved
+results with no new inference. See the
+[additional mechanical rules and conditional workload counts](distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9).
+The user subsequently authorizes finishing the separate mechanical evaluation
+at xhigh, then screening high/medium/low on a small paired subset and expanding
+the lowest promising level to all 60 answers. The accepted correctness loss is
+at most 2 percentage points versus xhigh; significant degradation requires
+stepping back up a level. Reviewer accuracy compares semantic decisions against
+source evidence and assessed references, with mechanical decisions and copied
+occurrences excluded. Xhigh agreement and student score similarity alone do not
+qualify an effort. Native request identity includes effort, so saved xhigh
+outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
+concurrency, retries and eligible prefix policy stay fixed. See the
+[reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
+`prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
+freezes an override in the native request settings without changing the source
+selection. Without the flag, the selection's effort is retained. Repeat
+`run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
+of stable source answer IDs; reports still contain all 60 answers, with
+unselected answers pending. Unknown or duplicate IDs fail before dispatch.
+Omitting `--answer-id` retains the complete-answer workflow. Distinct fixed
+diagnostic inputs can additionally run through native `run --only CASE_ID` in
+the prepared check group; this supplements the paired comparison without
+changing the evaluation's stopping rules or frozen source labels.
+
+The completed xhigh pipeline yields 43 complete scores, 13 ungraded reviewer
+contradictions and four invalid student outputs. Its fixed comparison baseline
+contains 1,735 verified decisions frozen before lower calls; supplementary
+panel calls have separate reports and accounting. Source-only diagnosis of
+the contradictions is continuing, and qualification remains open. See the
+[October 10 baseline evidence](distillation-review-v1/README.md#xhigh-completion-and-baseline-freeze-october-10).
+
+The first high-effort screen has all 297 fixed paired decisions, with 289
+agreements and eight discordances. Revised source adjudication finds H=6, G=0,
+A=2, bounding correctness loss at 1.35–2.69 percentage points with larger
+role-level losses; high has not cleared the screen. Agreement does not qualify
+correctness. Its pipeline and missing-panel supplement have separate native receipts, timing
+and cost records in the
+[high screen evidence](distillation-review-v1/README.md#initial-high-effort-screen-october-10).
+
+The medium screen is complete on the same 297 questions: 285 agreements,
+12 discordances, and source-adjudicated H=8, G=2, A=2. Its loss range is
+1.35–2.69 percentage points, with larger losses in both relationship roles.
+The fixed chosen-response catalog estimate is 57.8% lower than xhigh's;
+shared warmups and adaptive pipeline costs remain separate, and missing
+failed-attempt usage leaves broader costs unknown. See the
+[medium screen evidence](distillation-review-v1/README.md#initial-medium-effort-screen-october-10).
+
+Low's same 297-question screen is complete: 283 agreements and H=10, G=1,
+A=3 give a 2.02–4.04 percentage-point loss range. A specific added-action
+failure recurs across two notes, so low will not expand. Medium was selected
+for the frozen 10-answer investigation with 405 distinct panel questions;
+dispatch added five source answers while retaining previous outputs and receipts.
+The added shared prefixes needed no new warmups. Concurrency 8,
+provider-only two-attempt retries and the approved review rules remain fixed.
+No effort has qualified; high was retained as that investigation's fallback. Low's
+fixed chosen-response catalog estimate is 62.54% lower than xhigh's, but its
+complete paid cost remains unknown because a recovered failure lacks usage.
+See the [low evidence and selection](distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
+
+The medium ten-answer comparison is complete on all 405 fixed questions:
+387 agreements and source-adjudicated H=11, G=3, A=4 give a 0.99–2.96-point
+loss range. Prior 297 outputs and receipts are unchanged. A specific added
+main-occurrence/action requirement recurs in compatibility across two notes;
+this independently verified recurrence triggers selection of high on the same
+frozen 10 answers under the approved step-up rule. The numerical range alone
+is borderline; role losses trigger investigation, not new acceptance margins.
+The high ten-answer investigation followed this step-up decision. No effort
+is qualified or established as the minimum. The medium
+extension took 18 min 40 s plus a separate 48 s bridge, with no new warmups.
+Its fixed chosen-response catalog estimate is 56.93% lower than xhigh's;
+complete paid cost and actual provider charges remain unknown. See the
+[ten-answer medium evidence](distillation-review-v1/README.md#ten-answer-medium-investigation-october-10).
+
+The high ten-answer comparison is now complete on the same 405 questions:
+392 agreements, H=8, G=1, A=4 and a 0.74–2.72-point loss range. The numerical
+range alone is borderline, with a 1.73-point net loss within the two-point
+margin. The verified added main-subject/action requirement still recurs across
+R01 and R21, triggering the existing step-up rule. Retain the already-complete
+frozen xhigh baseline of 60 answers and 1,735 questions; no new native calls or
+lower-effort 20/40/60 dispatch is authorized. The new high pipeline had 181
+successful requests and a separate 16-request first-attempt bridge, with no
+new failures or warmups; wall times were 19 min 39 s and 38 s respectively.
+Prior 297 choices and provisional 246 matching/support results retain their
+original receipts. High's chosen405 API-equivalent estimate is $1.10529,
+43.57% below xhigh and 31.02% above medium; complete paid cost remains unknown
+because three prior failures lack usage. No lower effort qualified, and the
+requested lower reasoning outcome remains unachieved. Early stopping does not
+prove loss above two points on the full 60 or in deployment. Reviewer
+qualification remains open; bulk grading and reserved-test access remain
+unapproved. See the
+[high result and xhigh selection](distillation-review-v1/README.md#ten-answer-high-result-and-xhigh-selection-october-10).
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
+
+- `dataset.adapter: "distillation_review"`: source-bound
+  [DSRv1 qualification definitions](distillation-review-v1/qualification-source.json)
+  select complete frozen AS examples or a saved training control. Preparation
+  preserves the full task/post/teacher, applies specified candidate changes and
+  supplies all exact subject matches. Expected answers remain outside the prompt.
+  The report validator checks complete subject/link verdicts, teacher partitions,
+  fixed requirement flags and known references before calculating correctness
+  and coverage. Duplicate coverage references are checked in application code;
+  the provider response schema omits unsupported `uniqueItems`.
+  `show --json` includes qualification checks after saved results.
+  The October 8 DSRv1 trial fails known semantic and cross-version checks despite
+  complete large reports; one stream is interrupted near fifteen minutes and
+  remains ungraded. All 29 cases were attempted once, with 28 complete reports;
+  seven of the eight largest generations completed. The maintained specification
+  uses user-directed concurrency 8 with existing backoff; the original frozen
+  trial used 1. See the
+  [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
+  The current specification prepares
+  [DSRv2 preview](distillation-review-v1/README.md#dsrv2-draft-and-offline-preview).
+  A reference may supply `teacher_meanings_from` with `experiment`, `case_id`
+  and `record_sha256`. Native report validation must yield a valid review of
+  the same task, post and teacher; preparation pins the receipt and protects its
+  experiment/configuration/manifest/ledger hashes. Only meaning groups and
+  requirement flags enter the candidate input; their receipt provenance remains
+  review evidence. Shared saved groups cannot be overridden by a candidate and
+  are not promoted to known gold. Q20–Q22 use provisional groups for consistency
+  checks. Each report's prompt ID must match its rendered reviewer version.
+  Preparing DSRv2 adds no inference or authorization for calls.
+  The user subsequently authorized DSRv2 qualification in small-control then
+  large-case order. Q04 passes `8/8` correctness and `2/2` coverage, with both
+  meanings required; its exact receipt is reused for the small set. Seventeen
+  controls pass, Q14 fails semantically, and Q01's HTTP 200 body stream closes
+  with an ungraded partial report after 365.2 seconds. Qualification has failed;
+  Q20–Q29 finish separately at concurrency 8 without resending Q01: six complete
+  reports (four unchanged large cases and both variants) and four ungraded body
+  socket interruptions, without retries. Both variants preserve supplied groups
+  and required flags but fail cross-version consistency on untouched links and
+  compatible headings. Native `show --generation-costs` counts Q04's original
+  call once and marks all five interruptions' final usage unavailable in their
+  respective subset reports; SDK zero placeholders are not measured zero usage.
+  The large subset retains the full case catalogue, so small cases appear
+  pending there and must be inspected in their completed small subset. See the
+  [DSRv2 qualification evidence](distillation-review-v1/README.md#dsrv2-qualification-october-8).
+  `show EXPERIMENT --case CASE --prompt-only` prints the exact rendered prompt.
+  `score-review EXPERIMENT --case CASE --report FILE` scores a supplied report
+  offline, optionally saving it with `--output FILE`. It does not create a model
+  receipt or mark a case run. See the [DSRv1 preview](distillation-review-v1/README.md#offline-preparation-and-preview).
+  `rank-distillation-generations MANIFEST --top 5 --output FILE` checks a frozen
+  subjects-only pilot's prepared hashes and split identities, sizes every saved
+  hierarchy, and returns the union of the top five training answers by entry
+  count and canonical JSON UTF-8 bytes. Held-out labels contribute aggregate
+  sizes only; the output contains training references without posts or subjects.
+  The ranking is offline and does not prepare requests or perform inference.
+
+  The authorized
+  [teacher-relative case preview](distillation-review-v1/README.md#teacher-relative-qualification-case-preview-october-8)
+  reuses source-bound preparation for six cable variants. Each specifies all
+  ten teacher-meaning matches and actual subject/link findings, without required
+  flags or numerical scores. The unchanged DSRv2 renderer serves only to inspect
+  whole-case inputs; its legacy scorer is not revised or adopted for the proposed
+  comparison. A general teacher-edge agreement check remains unimplemented.
+  Two non-exact targets are separately prepared through `distillation_matching`
+  with unchanged DSMv2, post and complete teacher catalog. Exact targets require
+  no model work. These preparations add no inference or independent-confirmation
+  evidence; structural allowances and final rubric/adoption remain open.
+  The user subsequently accepted all six authored expected judgments.
+  Consistent renumbering and the unchanged teacher answer should be checked
+  mechanically. These approvals add neither measured model
+  verdicts nor a teacher-edge agreement implementation, and change no frozen
+  source, prompt, scorer or saved trial.
+  The user approved the unchanged DSMv2 instructions on October 9 for
+  complete-meaning matching only. Its existing response contract is one JSON
+  object with `teacher_id` (a supplied ID or null) and `reason`. Subject support
+  and parent-child validity remain separate judgments; the approval changes
+  no prompt or schema, qualifies no reviewer and authorizes no new calls.
+  The authorized [DSSv1 subject-support draft](distillation-review-v1/README.md#dssv1-subject-support-prompt-draft-october-9)
+  defines subject support: `SUPPORT_INPUT` contains the full post and one
+  `student_subject`; the decision is Boolean `valid` and string `reason`.
+  Its initial preparation is described below. The proposed `Lengths` / `4 m
+  cable A` controls and support inheritance remain unapproved; pilot scoring
+  and inference are unchanged.
+  The user approved reusing ASv6.100's support rules unchanged. The revised
+  DSSv1 wrapper uses `ASV6_100_SUPPORT_RULES` for the verbatim opening support
+  text, ending after the sentence about deriving broader headings without
+  adding restrictions. Future preparation must load that text from the original
+  source. The adapter below now supplies this variable and prepares two initial
+  support inputs. The user subsequently accepted the revised
+  wrapper's exact wording after seeing the full DSSv1 instructions. The prompt
+  now passes its two initial cases below; broader controls, qualification and
+  proposed support inheritance remain open. Accepting the instructions
+  authorizes no new calls.
+  The subsequently authorized
+  [DSLv1 parent-child validity draft](distillation-review-v1/README.md#dslv1-parent-child-validity-prompt-draft-october-9)
+  defines a reusable prompt. `RELATIONSHIP_INPUT` contains one
+  `parent_subject` / `child_subject` pair; `ASV6_100_PARENT_CHILD_RULES` is the
+  verbatim parent-check text from ASv6.100. The post, contexts and surrounding
+  hierarchy are not inputs. Output is Boolean `valid` and string `reason`, with
+  a lost restriction and possible counterexample for an invalid pair. The adapter
+  below now supplies these variables and prepares three initial link inputs
+  using a shared Boolean response schema.
+  The user approved its unchanged wording after seeing the full DSLv1
+  instructions. The draft now passes its three initial cases below; broader
+  qualification is pending; wording approval authorizes no new calls.
+  The user then accepted adding ASv6.100's subject-wording guidance verbatim to
+  matching. Native `revise` creates the
+  [DSMv3 draft](distillation-review-v1/README.md#dsmv3-asv6100-wording-guidance-draft-october-9)
+  with its [revision provenance](distillation-review-v1/matching-prompt-v3.md.revision.json).
+  Only the version label and interpretive block change; `POST`, `MATCH_INPUT`,
+  matching criteria and the `teacher_id` / `reason` contract remain unchanged.
+  The draft needs no new variables or adapter changes. Its quoted paragraph is
+  verified against unchanged ASv6.100. The user approved its exact wording after
+  seeing the full DSMv3 instructions. The unchanged draft now passes its two
+  initial cases below; broader qualification is pending. Wording approval alone
+  authorized no calls, and earlier DSMv2 results do not qualify the
+  revised prompt.
+
+- `dataset.adapter: "distillation_verdict"`: the
+  [first three-check development preparation](distillation-review-v1/README.md#first-three-check-development-inputs-october-9)
+  loads a hash-bound `review_source` and selected source case/student numbers.
+  `check: "support"` renders only the post and selected subject plus the verbatim
+  ASv6.100 support rules. `check: "relationship"` derives the student's actual
+  immediate parent from numbering and renders only those two subject strings
+  plus the verbatim parent-child rules. Selectors cannot rewrite subjects or
+  override expected Booleans: expectations come from the selected source case's
+  `incorrect_subjects` or `invalid_relationship_children`, outside model input.
+  The shared Boolean response schema and validator require exactly `valid` and
+  a nonempty `reason`, rejecting duplicate JSON keys. Incorrect verdicts are
+  mechanically valid responses, separately compared with authored expectations
+  by native qualification reporting; reason quality still needs review.
+  Preparation binds the source bytes and project adapter code and performs no
+  inference. Initial specifications produce two DSSv1 and three DSLv1 requests;
+  a separate DSMv3 specification reuses the existing two matching selectors.
+  The original offline preparations remain unrun; separate native-prefix
+  preparations execute the same seven inputs with fixed GPT-6.1 Sol / xhigh /
+  subscription SSE and concurrency 8. The set is an initial development preview,
+  not proof of reliability or adoption of pilot scoring. The exact seven inputs
+  and expected judgments were displayed and accepted, then run with three prefix
+  warmups after explicit authorization. All seven verdicts and reasons pass the
+  initial checks, with no failures, retries or reuse. Cache reads and writes are
+  zero; the small requests are below the documented caching minimum. See the
+  [initial trial record](distillation-review-v1/README.md#initial-warmed-three-check-trial-october-9)
+  for native receipts, actual usage, warmup overhead and latency. Broader
+  qualification remains necessary before bulk use. The user
+  wants to compare lower reasoning levels later, after establishing xhigh
+  reliability. Hold prompts, cases and expected judgments fixed and measure
+  semantic errors, latency and actual token usage, including cached tokens.
+  No lower-effort settings or model calls are adopted by recording that intent.
+  The subsequently authorized
+  [larger training-control preview](distillation-review-v1/README.md#larger-training-controls-prepared-october-9)
+  reuses the same adapters and prompts for seven variants from three ranked
+  training extremes. Native preparation yields six matching, six support and
+  four link requests, initially unrun with zero attempts/reuse. Expectations
+  remain outside prompts. The user accepted LC03’s null match, supported subject and
+  invalid link after presentation, then LC07’s invalid moved-subtree link. That
+  new parent explicitly excludes Dr. Abu Safiya, whom the unchanged child names;
+  both strings remain trusted teacher wording, requiring no matching or support
+  calls. The user also accepted LC04’s null match and failed post support:
+  `and printing money` contradicts the teacher’s exclusion and the post’s
+  explicit negation. The user then delegated the remaining expectation review
+  to the agent. Native `show --case` inspection confirms the LC01/LC05
+  paraphrases and rejects the LC02 changed count and LC06 first-ban wording
+  in their respective prepared checks. These are agent assessments, separate
+  from user acceptance and model results. After the user authorized execution,
+  the [larger trial](distillation-review-v1/README.md#larger-three-check-trial-october-9)
+  passes native qualification for all 16 checks and native agent review of all
+  reasons. Sol / xhigh / concurrency 8 and frozen inputs remain unchanged.
+  Batches ran sequentially; all requests completed on first attempts, with no
+  retries or reuse. Reports record zero cached input/cache writes. These
+  preparations have no explicit cache-affinity key or warmup; no warmed/cold
+  savings comparison is claimed. The user then authorizes the
+  [fresh xhigh repeat with eligible prefixes](distillation-review-v1/README.md#larger-three-check-repeat-with-eligible-prefixes-october-9),
+  excluding caching/warmups for short prefixes. Native `prepare --from ...
+  --repeat --only ...` preserves the same 16 prompts, inputs and expectations
+  across six subsets. Exact shared prefixes include full reference context:
+  matching L3/L6 and support L6 qualify and receive one native warmup each;
+  shorter prefixes and singleton cases receive no explicit key or warmup.
+  All 16 verdicts match expectations and baseline decisions, with native agent
+  acceptance of their reasons. Every request completes on its first attempt,
+  with no reuse. Matching L3/L6 report 6,528/4,480 cached input tokens; support
+  L6 reports zero. Per-experiment native usage preserves all three warmups.
+  The seven prefix-configured verdicts use developer-prefix/user-suffix
+  messages, unlike the baseline's single user message; agreement holds under
+  this route, but no isolated cache-effect or aggregate savings claim is made.
+  Matching/support subset qualification reports remain pending for cases
+  assigned elsewhere; all selected case-level qualifications pass. Sol / xhigh /
+  SSE / concurrency 8 stay fixed. This repeats authored training controls;
+  broader qualification and lower-effort comparison remain open.
+  The user subsequently approves the
+  [broader actual-output trial](distillation-review-v1/README.md#actual-validation-preparation-approved-october-9)
+  for all three checks at xhigh. `distillation_verdict` now also accepts
+  `schema_version: 2`, a hash-bound `dataset_manifest` and selected validation
+  `generation` references, with explicit `expected_valid`, `expectation_status`
+  and `selection` outside prompts. The shared saved-generation loader preserves
+  original wording and prompt/split/hash checks. Support receives the full post;
+  relationships derive the student's actual immediate parent. Agent-assessed
+  labels cannot pass overall qualification, and unresolved labels have no
+  semantic pass/fail. Reserved-test paths and malformed/truncated generations
+  are rejected before preparation. Original authored sources retain their
+  behavior. The new trial's selections and expectations are frozen for 20
+  distinct subjects from 16 previously unused validation notes: 60 verdict calls.
+  All 60 verdicts and two eligible warmups now complete on first attempts,
+  without reuse or mechanical failure. Agreement with frozen agent expectations
+  is matching 17/19 (A15 unscored), support 19/20 and links 17/20. Semantic
+  disagreements remain and qualification stays pending; A19 was disputed before
+  calls. Only note-27 matching/support groups receive explicit prefixes and
+  warmups (2,062/1,041 proxy tokens). Matching reports 5,760 cached-input tokens,
+  support zero. The record preserves per-experiment usage and warmup overhead.
+  The user subsequently authorizes the [fresh confirmation](distillation-review-v1/README.md#fresh-confirmation-of-four-rejected-cases-october-9)
+  of four rejected cases with four accepted contrasts. All eight repeat through
+  native `--from ... --repeat --only ...`, preserving prompts/inputs/expectations
+  and Sol / xhigh / SSE / concurrency 8. Matching A01 and link A03 now agree;
+  support A20 and link A21 repeat errors. All accepted contrasts stay accepted.
+  Eight first attempts complete without reuse or warmup; prefixes are below
+  1,024 tokens and cache reads/writes are zero. Exact request bodies, methods and
+  URLs match the baseline despite recorded runner 1.2.0 provenance. Native
+  agent review gives six accept and two reject; qualification remains pending.
+  The next authorized step drafted [DSSv2](distillation-review-v1/README.md#dssv2-exception-clarification-draft-october-9)
+  through native `revise`, adding one exception/claim-scope clarification after
+  the unchanged ASv6.100 rules. Native offline preparation reuses A08/A20 from
+  the confirmation with the same settings and output contract; it makes no
+  calls. The user subsequently approves the wording and
+  [bounded support trial](distillation-review-v1/README.md#dssv2-bounded-support-trial-october-9).
+  It keeps 20 actual cases and adds three subject variants on A20's source-bound
+  post, with a fresh four-case DSSv1 comparison. Schema-v2 support sources accept
+  an optional `student_subject`; native preparation preserves original bindings
+  and records both saved and authored wordings in evidence. Relationship sources
+  reject variants. The stage has 27 verdicts, one eligible native warmup and a
+  shared 56-attempt budget. Sol / xhigh / SSE / concurrency 8 remain fixed.
+  Only A07/A14/A21's 1,094-token proxy prefix qualifies; smaller groups are not
+  warmed. Runner 1.2.1 adds cost statistics without changing requests. DSSv2
+  matches 20/20 actual labels and 3/3 controls; fresh DSSv1 matches 4/4 controls.
+  All 27 verdicts and reasons pass native agent review. All 28 requests,
+  including warmup, complete on first attempts; the persistent budget is 28/56,
+  with no retry, reuse, failure or truncation. Source/settings/receipt bindings
+  verify. Fresh DSSv1 now handles the original exception correctly despite two
+  identical-request failures, so the result does not isolate a DSSv2 improvement.
+  Native cache reads/writes are zero; note27's warmup adds $0.005884, giving
+  native net savings of −$0.005884 (−25.301%). Usage and catalog estimates are
+  complete; cash charges are unavailable. Qualification remains pending on
+  unverified expectations and IDs outside each selected subset. Both previews
+  stay unrun; all saved trials and other reviewers stay intact. A clarification
+  for the remaining repeated parent-child error is recommended. The user then
+  authorizes [DSLv2 drafting](distillation-review-v1/README.md#dslv2-parent-restriction-clarification-draft-october-9),
+  with wording shown before calls. Native `revise` changes only the DSLv1 header
+  and adds one paragraph after the verbatim AS rule. It forbids invented
+  presentation/action requirements and allows preservation within clauses or
+  modifiers without accepting a mention that loses a restriction. Revision
+  hashes and template-variable checks pass; no source, adapter, output schema,
+  model setting, frozen expectation or prior experiment changes. No experiment
+  is prepared and no model is called. Wording approval and semantic testing
+  remain pending at the drafting stage, without qualifying the reviewer for
+  bulk use. The user subsequently approves the wording and
+  [bounded DSLv2 trial](distillation-review-v1/README.md#dslv2-bounded-parent-child-trial-october-9).
+  Native `prepare --from ... --repeat` freezes 19 actual pairs, seven training
+  controls and four fresh DSLv1 comparisons with the same A02/A13/A16/A21 pairs.
+  A06 remains excluded; the pre-call A12 interpretation caution is kept separate
+  from assessed outcomes, without changing the label. All 30 verdicts retain
+  Sol / xhigh / SSE / concurrency 8 and share a 60-attempt counter. The current
+  worker is explicitly selected; no cache prefix, padding or warmup is used.
+  DSLv2 agrees with 24/25 assessed expectations; A12 remains separately uncertain
+  and A21 still fails. Fresh unchanged DSLv1 agrees on 3/4 comparisons, also
+  rejecting A21. All 30 requests complete on first attempts without reuse,
+  retry, truncation or warmup; the budget ends at 30/60. Native reviews give
+  27 accept, two reject and one uncertain. Source/settings/receipt checks pass.
+  No cached tokens or net savings occur. Usage/pricing are complete; provider
+  cash charges are unavailable. Training-control qualification passes; actual
+  and broader qualification remain pending. The clarification does not resolve
+  the observed failure. Reconsidering the check using trusted teacher
+  relationships is recommended, without adopting another prompt or method.
+  Training hashes/identities and actual student parents are verified. The new source/spec files are reusable definitions; only generated
+  experiments and temporary training fixtures are ignored. No adapter, scorer
+  or general teacher-edge implementation is added.
+
+- `dataset.adapter: "distillation_matching"`: the
+  [DSMv1 matching-only preview](distillation-review-v1/README.md#matching-only-offline-preview)
+  loads a hash-bound `review_source` and selected authored controls. It reuses
+  saved teacher/student preparation while bypassing prior reviewer groups and
+  required flags. `MATCH_INPUT` includes a fixed distinct-string teacher catalog
+  and exactly one generated subject; expectations, original numbers and source
+  identities remain evidence. Exact-string targets now receive a mechanical
+  result; the historical model controls below selected non-exact targets.
+  Source notes cannot cross development/confirmation partitions.
+  Strict validation accepts only a known teacher ID or null and a nonblank
+  reason. A well-formed wrong judgment remains mechanically valid with a failed
+  qualification; native reports distinguish false matches, missed matches,
+  wrong matches, mechanical failures and pending requests. Preparation pins
+  the adapter code and source hashes. Native offline sizing uses `tiktoken`
+  (`o200k_base`, version 0.14.0); it is a text proxy, not measured billing.
+  Provider usage and cached/reasoning tokens use existing native accounting.
+  `prepare ... --repeat` excludes saved-response reuse for independent repeats;
+  `show ... --case ID --prompt-only` prints the exact input. After the offline
+  preview, the user authorized the 16 DSMv1 development controls with Sol /
+  xhigh and concurrency 8. All pass on their first attempt, without retries or
+  reuse. Native usage reports 17,110 input tokens, zero cached input and 1,822
+  output including 1,066 reasoning tokens. This controlled result does not
+  establish production reliability. The user then accepted running the unchanged
+  16-control confirmation set, which also passes 16/16 without failures, retries
+  or reuse. Native confirmation usage reports 16,592 input tokens, zero cached
+  input and 2,007 output including 1,217 reasoning tokens. Both sets pass 32/32
+  distinct authored controls. The authorized independent confirmation repeat
+  inherits identical inputs/settings with `--repeat` and passes all 16 fresh
+  calls with unchanged teacher IDs/null; 15 explanations are reworded. Native
+  repeat usage reports 16,592 input tokens, zero cached input and 2,121 output
+  including 1,353 reasoning tokens. More realistic matching tests, adoption and
+  bulk grading remain open. See the
+  [DSMv1 repeat evidence](distillation-review-v1/README.md#dsmv1-independent-confirmation-repeat-october-8).
+
+  Matching source schema 2 instead binds a prepared ASv6.100 dataset manifest
+  (`dataset_manifest: {path, sha256}`) and saved validation generations. Each
+  case defines `id`, `generation: {path, sha256, index, note_id}`,
+  `student_number`, `expected_teacher_number`, `expected_reason`,
+  `expectation_status` and `selection`. The adapter checks the manifest's
+  evaluation split, reference/evaluation file hashes, saved note identity,
+  matching complete input messages and instruction/post binding. Production
+  `subject_result` rejects malformed/truncated outputs; the selected wording
+  is unchanged. Reserved test paths are rejected before opening them; no
+  training/test input files are opened. The same complete distinct-string
+  teacher catalog and mechanical exact-target completion apply to new preparation.
+  `expectation_status` is `agent_assessed` or `unresolved`; this format cannot
+  assert independent gold verification. Native qualification lists unverified
+  expectations and remains pending even after agreement with every assessment.
+  For unresolved cases, null is a placeholder, not an expected nonmatch;
+  mechanically valid responses receive no semantic pass/fail or error count.
+  The user authorized the
+  [22-case actual-wording offline preview](distillation-review-v1/README.md#actual-distilled-wording-offline-preview-october-8),
+  which makes zero calls. Independent verification and subsequent calls remain
+  open; DSMv1, Sol / xhigh and concurrency 8 are unchanged.
+
+  Matching templates may now request `{POST}` to include the verified original
+  post as a JSON string, separately from unchanged `MATCH_INPUT`. Both source
+  formats support it; templates without `{POST}` retain their previous inputs.
+  The user accepted this for draft
+  [DSMv2](distillation-review-v1/README.md#dsmv2-post-interpretation-draft-october-8):
+  the post may clarify wording already present, but cannot supply missing
+  restrictions. `matching-actual-v2-spec.json` prepares the same 22 targets with
+  zero calls and unchanged Sol / xhigh, concurrency 8 settings. Prior expectations
+  remain unverified. The authorized offline club assessment expects T06 for
+  R19, recorded in `matching-actual-v2-source.json`. A fresh offline preview retains all
+  identical DSMv2 prompts/settings, with zero calls and qualification pending.
+  The separate DSMv2 source preserves DSMv1's unresolved club expectation.
+  The authorized offline R16 check retains an expected null: Bitcoin is an
+  asset restriction missing from `Self-custody`. Only its DSMv2 reason changes;
+  all 22 prompts, expected IDs, assessment statuses and settings are preserved.
+  The fresh preparation still makes zero calls and keeps qualification pending.
+  This offline assessment alone does not judge subject support or establish
+  actual model adherence to the restriction. The user subsequently authorized
+  the [two-case DSMv2 trial](distillation-review-v1/README.md#dsmv2-two-case-post-interpretation-trial-october-8),
+  prepared with `--only R16 --only R19 --repeat` and run through the shared CLI
+  with `--max-new-attempts 4`. Both complete prompts, inputs, evidence and runner
+  settings match the assessed preview. The two fresh calls return the expected
+  null for R16 and T06 for R19, with valid reports, zero retries and zero reuse.
+  Native usage is 1,735 input tokens, zero cached tokens and 1,129 output tokens,
+  including 1,025 reasoning tokens; the $0.01476 catalog estimate is not an
+  invoice. Native agent reviews accept these saved verdicts; expectations remain
+  unverified and qualification pending. All 14 matching tests pass. DSMv1's
+  trials are preserved. Repeat stability and broader semantic reliability
+  remain open. The authorized
+  [remaining post checks](distillation-review-v1/README.md#dsmv2-remaining-post-visible-expectations-october-8)
+  retain all 20 expected verdicts, updating only their recorded reasons. The
+  new offline preview `target/distillation-review-v1/matching-actual-postchecked-20261008/`
+  makes zero calls and preserves all 22 complete prompts, inputs, expected IDs
+  and assessment statuses. Provider/model/effort/schema/concurrency are unchanged;
+  the separate shared-runner migration changes the recorded executable path.
+  All 14 matching tests pass. This completes the agent post recheck, not
+  independent gold verification or reviewer qualification. Additional calls
+  remain a separate decision.
+  The subsequently authorized
+  [remaining 20-case DSMv2 trial](distillation-review-v1/README.md#dsmv2-remaining-20-case-trial-october-8)
+  uses `../experiment-runner/bin/experiment-runner` with the same complete
+  prompts, inputs, evidence and runner settings. All 20 reports are valid;
+  nineteen agree with their expectations. R05 matches `Fakery` to T17,
+  `Inauthenticity`, instead of expected null. Native agent review records nineteen
+  acceptances and one uncertain R05 without changing the expected label.
+  There are 21 attempts, including one successful provider-overload retry of
+  R15, and no response reuse. Native usage is 24,122 input tokens, zero cached
+  input and 5,703 output tokens, including 4,598 reasoning tokens. The $0.105274
+  catalog estimate is not an invoice; failed-attempt SDK zero fields do not
+  establish actual upstream consumption. Qualification remains pending and
+  all 14 matching tests pass. R16/R19 remain in the separate completed trial.
+  Contextual equivalence for R05 remains disputed. The subsequently authorized
+  [eight action/property controls](distillation-review-v1/README.md#dsmv2-actionproperty-controls-october-8)
+  use the existing generic adapter, unchanged DSMv2 / Sol / xhigh and concurrency
+  8. All four matches and four nonmatches agree with their frozen authored
+  expectations, with eight native agent acceptances, eight new attempts,
+  no retries and no reuse. Native usage reports 3,333 input tokens, zero cached
+  input and 1,023 output tokens, including 689 reasoning tokens; the $0.016896
+  catalog estimate is not an invoice. Their explicit wording and small catalogs
+  do not resolve R05 or independently qualify the reviewer. No code or prompt
+  changes occurred; further calls and broader review remain open.
+  The subsequently authorized [fresh R05 repeat](distillation-review-v1/README.md#dsmv2-r05-fresh-repeat-october-8)
+  uses `prepare --from ... --only R05 --repeat`, inheriting identical complete
+  prompts, inputs, evidence and settings while excluding response reuse. One
+  new attempt again returns T17 with a different explanation; native text
+  comparison says `changed`, but the teacher ID is identical. There is no retry
+  or reuse. Native usage is 859 input tokens, zero cached input and 339 output
+  tokens, including 290 reasoning tokens; the $0.005108 catalog estimate is not
+  an invoice. Native agent review marks the repeat uncertain; its expected null
+  remains an unverified assessment, so qualification remains pending. No code,
+  prompt or expected label changes occurred. This repeats a disputed verdict
+  without independently proving its correctness or a general stability rate.
+
+  The subsequent approved
+  [coverage-matching qualification scope](distillation-review-v1/README.md#coverage-matching-qualification-scope-agreed-october-8)
+  targets required complete teacher meanings. Optional teacher headings are not
+  mandatory coverage targets; all student subject-support, immediate-link and
+  required compatible-placement checks remain. Required/optional flags must be
+  established independently of candidates and frozen across note versions
+  before preparing revised cases. The current adapter still supplies all
+  distinct teacher strings and bypasses required flags. This is an intended
+  qualification scope, not an implemented filter or a change to saved trials;
+  R05's expected null remains a disputed assessment. Broader qualification,
+  adoption and further calls remain open.
 
 - `dataset.adapter: "subjects"`: `path` points to
   `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.

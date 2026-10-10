@@ -121,7 +121,15 @@ test('ordinary subscription commands observe headerless SSE through the selected
     `require('node:fs').appendFileSync(${JSON.stringify(calls)},'launch\\n');\n` +
     `process.execve(a[3],a.slice(3),{...process.env,PI_CODING_AGENT_DIR:${JSON.stringify(home)}});\n`, { mode: 0o700 });
   const requests = [];
+  let scopeReads = 0;
   const server = createServer((request, response) => {
+    if (request.url.startsWith('/request-status/scopes?')) {
+      assert.equal(request.headers.authorization, `Bearer ${key}`);
+      scopeReads++;
+      response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ schema: 1, account_scope: 'account-fixture', transport_scope: 'transport-fixture' }));
+      return;
+    }
     requests.push({ url: request.url, authorization: request.headers.authorization });
     request.resume();
     const text = '["bread"]';
@@ -191,7 +199,8 @@ test('ordinary subscription commands observe headerless SSE through the selected
   }));
   async function runExperiment(args) {
     const child = spawn('python3', ['-B', new URL('../experiment.py', import.meta.url).pathname, ...args], {
-      env: { ...process.env, PATH: `${home}:${process.env.PATH}`, PI_CODING_AGENT_DIR: join(home, 'not-selected-yet') },
+      env: { ...process.env, PATH: `${home}:${process.env.PATH}`, PI_CODING_AGENT_DIR: join(home, 'not-selected-yet'),
+        ORACLE_EXPERIMENT_BACKOFF_DIRECTORY: join(home, 'backoff') },
       stdio: ['ignore', 'pipe', 'pipe'], timeout: 15000,
     });
     let stdout = '', stderr = '';
@@ -211,6 +220,7 @@ test('ordinary subscription commands observe headerless SSE through the selected
   assert.equal(report.summary.failed, 0);
   assert.equal(report.summary.unrun, 0);
   assert.equal(requests.length, 4);
+  assert.equal(scopeReads, 2, 'prepared scope reads became model calls');
   assert.ok(requests.every(request => request.url === '/selected/pi/codex/responses' && request.authorization === `Bearer ${key}`));
   assert.equal(await readFile(calls, 'utf8'), 'launch\nlaunch\nlaunch\nlaunch\n');
   await assert.rejects(readFile(unexpected), { code: 'ENOENT' });

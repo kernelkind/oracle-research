@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "check": "support",
+  "review_source": {
+    "path": "teacher-relative-source.json",
+    "sha256": "670fcb387e12efb6c15ae45a257e90223e33f10963a2ec005b9c8ef437a51d20"
+  },
+  "cases": [
+    {
+      "id": "TS01", "case": "TC02", "student_number": "1.1.1.1",
+      "expected_reason": "The post states that cable A is 2 m long; the paraphrase preserves that meaning."
+    },
+    {
+      "id": "TS02", "case": "TC03", "student_number": "1.2.1.1",
+      "expected_reason": "The post says A is not longer than B; the subject removes not and reverses the comparison."
+    }
+  ]
+}

@@ -76,6 +76,196 @@ class GPUPackageTests(unittest.TestCase):
 
 
 class FusedLossTests(unittest.TestCase):
+    def test_bfloat16_mean_loss_reference_matches_fused_gradient_scaling_order(self):
+        subprocess.run([sys.executable, "-B", "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_bfloat16_mean_loss_scaling()"],
+            check=True, timeout=120)
+
+    def test_bfloat16_loss_check_does_not_amplify_accepted_head_rounding(self):
+        subprocess.run([sys.executable, "-B", "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_bfloat16_mean_loss_scaling(rounded_head=True)"],
+            check=True, timeout=120)
+
+    def test_bfloat16_loss_check_rejects_wrong_small_gradients(self):
+        subprocess.run([sys.executable, "-B", "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_bfloat16_mean_loss_scaling(small_gradient=True)"],
+            check=True, timeout=120)
+
+    def check_bfloat16_mean_loss_scaling(self, rounded_head=False, small_gradient=False):
+        """Real MoE/PEFT backward with only the unavailable CUDA loss emulated."""
+        import torch
+        from transformers import Gemma4TextConfig, Gemma4ForCausalLM
+        from sse_multivector.test_distillation_run import TinyWorkflowTests
+        TinyWorkflowTests.setUpClass()
+        try:
+            fixture = TinyWorkflowTests
+            runner.load_gpu_packages({"device": "cuda"})
+            torch.manual_seed(17)
+            base = Gemma4ForCausalLM(Gemma4TextConfig(
+                vocab_size=len(fixture.tokenizer), hidden_size=64, intermediate_size=128,
+                num_hidden_layers=2, num_attention_heads=4, num_key_value_heads=1,
+                head_dim=16, layer_types=["sliding_attention", "full_attention"],
+                sliding_window=64, hidden_size_per_layer_input=0, final_logit_softcapping=30.,
+                enable_moe_block=True, num_experts=4, top_k_experts=2,
+                moe_intermediate_size=64)).to(torch.bfloat16)
+            base.set_attn_implementation("sdpa")
+            with torch.no_grad():
+                base.lm_head.weight.mul_(.001 if small_gradient else 100.)
+            config = {**fixture.config, "fused_linear_cross_entropy": True,
+                      "gradient_checkpointing": True, "lora_target_modules":
+                      ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]}
+            with patch.object(runner, "load_model", return_value=base):
+                model = runner.subject_training_model(config)
+            if rounded_head:
+                # B starts at zero, so scaling A preserves the exact forward
+                # while exposing cancellation in the adapter's BF16 backward.
+                with torch.no_grad():
+                    for name, parameter in model.named_parameters():
+                        if "lora_A" in name:
+                            parameter.mul_(10000.)
+            rows = [runner.encode_example(fixture.tokenizer,
+                {"prompt": [{"role": "user", "content": question}],
+                 "completion": [{"role": "assistant", "content": answer}]}, 512)
+                for question, answer in (("Tea tastes good.", "Tea"), ("Tea", "Tea is a drink."))]
+
+            class FusedMean(torch.autograd.Function):
+                @staticmethod
+                def forward(ctx, hidden, weight, labels, cap, gradient_scale):
+                    # Liger's mean reduction caches d(hidden) during forward,
+                    # then multiplies that rounded gradient by grad_output.
+                    with torch.enable_grad():
+                        detached = hidden.detach().requires_grad_(True)
+                        logits = torch.nn.functional.linear(detached, weight).float()
+                        logits = (logits / cap).tanh() * cap
+                        loss = torch.nn.functional.cross_entropy(
+                            logits[:, :-1].reshape(-1, logits.shape[-1]), labels[:, 1:].reshape(-1),
+                            ignore_index=-100)
+                        gradient, = torch.autograd.grad(loss, detached)
+                    if rounded_head:
+                        gradient = torch.where(gradient != 0, torch.nextafter(
+                            gradient, torch.full_like(gradient, float("inf"))), gradient)
+                    ctx.save_for_backward(gradient)
+                    ctx.gradient_scale = gradient_scale
+                    return loss.detach()
+
+                @staticmethod
+                def backward(ctx, upstream):
+                    gradient, = ctx.saved_tensors
+                    return (gradient.float() * upstream * ctx.gradient_scale).to(gradient.dtype), None, None, None, None
+
+            def kernel(hidden_states, lm_head_weight, labels, **kwargs):
+                return FusedMean.apply(hidden_states, lm_head_weight, labels,
+                    kwargs["final_logit_softcapping"], gradient_scale)
+
+            gradient_scale = 1.
+            before = runner.training_random_state()
+            forward = base.forward
+            weights = {name: p.detach().clone() for name, p in model.named_parameters()}
+            with patch("liger_kernel.transformers.model.gemma4.LigerForCausalLMLoss", side_effect=kernel):
+                check = runner.verify_training_loss(model, rows, config)
+                self.assertEqual(check["status"], "complete")
+                self.assertEqual([m["token_weight"] for m in check["measurements"]], [.25, .75])
+                self.assertTrue(all(m["maximum_gradient_error"] == 0 for m in check["measurements"]))
+                self.assertEqual((check["atol"], check["rtol"]), (.005, .05))
+                if rounded_head:
+                    self.assertTrue(all(0 < m["output_head_gradient"]["relative_l2_error"] < .05
+                                        for m in check["measurements"]))
+                gradient_scale = 1.25
+                with self.assertRaisesRegex(ValueError, "gradient differs"):
+                    runner.verify_training_loss(model, rows, config)
+            self.assertIs(base.forward, forward)
+            self.assertFalse(base.model._forward_hooks)
+            self.assertFalse(base.lm_head._forward_hooks)
+            self.assertFalse(base.lm_head._forward_pre_hooks)
+            self.assertTrue(all(p.grad is None for p in model.parameters()))
+            for name, p in model.named_parameters():
+                torch.testing.assert_close(p, weights[name], rtol=0, atol=0)
+            torch.testing.assert_close(before["torch"], runner.training_random_state()["torch"], rtol=0, atol=0)
+        finally:
+            TinyWorkflowTests.tearDownClass()
+
+    def test_bfloat16_gemma_loss_reference_uses_fp32_softcap_and_saves_failures(self):
+        subprocess.run([sys.executable, "-B", "-c", "from sse_multivector.test_distillation_candidates import "
+            "FusedLossTests; FusedLossTests().check_bfloat16_gemma_loss_reference()"],
+            check=True, timeout=120)
+
+    def check_bfloat16_gemma_loss_reference(self):
+        import torch
+        from transformers import Gemma4TextConfig, Gemma4ForCausalLM
+        from sse_multivector import test_distillation_run as fixtures
+        fixtures.TinyWorkflowTests.setUpClass()
+        try:
+            fixture = fixtures.TinyWorkflowTests
+            with patch.object(sys, "path", list(sys.path)):
+                runner.load_gpu_packages({"device": "cuda"})
+                for moe in (False, True):
+                    with self.subTest(moe=moe):
+                        torch.manual_seed(17)
+                        base = Gemma4ForCausalLM(Gemma4TextConfig(
+                            vocab_size=len(fixture.tokenizer), hidden_size=32, intermediate_size=64,
+                            num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=1,
+                            head_dim=16, layer_types=["sliding_attention", "full_attention"],
+                            sliding_window=64, hidden_size_per_layer_input=0,
+                            final_logit_softcapping=30., enable_moe_block=moe,
+                            num_experts=4 if moe else None, top_k_experts=2 if moe else None,
+                            moe_intermediate_size=32 if moe else None)).to(torch.bfloat16)
+                        base.set_attn_implementation("sdpa")
+                        with torch.no_grad():
+                            base.lm_head.weight.mul_(100.)
+                        config = {**fixture.config, "fused_linear_cross_entropy": True,
+                                  "gradient_checkpointing": True, "lora_target_modules":
+                                  ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]}
+                        with patch.object(runner, "load_model", return_value=base):
+                            model = runner.subject_training_model(config)
+                        rows = [runner.encode_example(fixture.tokenizer,
+                            {"prompt": [{"role": "user", "content": "Tea tastes good."}],
+                             "completion": [{"role": "assistant", "content": "Tea"}]}, 512)]
+                        # Upstream Liger 0.8.4 TorchLMHeadCE upcasts the projection
+                        # before softcapping. This emulates that precision on CPU;
+                        # the actual Triton kernel remains a paid-prep check.
+                        def reference_kernel(hidden_states, lm_head_weight, labels, **kwargs):
+                            logits = torch.nn.functional.linear(hidden_states, lm_head_weight).float()
+                            cap = kwargs["final_logit_softcapping"]
+                            logits = (logits / cap).tanh() * cap
+                            return torch.nn.functional.cross_entropy(
+                                logits[:, :-1].reshape(-1, logits.shape[-1]), labels[:, 1:].reshape(-1),
+                                ignore_index=-100)
+                        kernel = "liger_kernel.transformers.model.gemma4.LigerForCausalLMLoss"
+                        before = runner.training_random_state()
+                        forward = base.forward
+                        with patch(kernel, side_effect=reference_kernel):
+                            check = runner.verify_training_loss(model, rows, config)
+                        self.assertEqual(check["reference_softcap_dtype"], "float32")
+                        self.assertEqual((check["atol"], check["rtol"]), (.005, .05))
+                        self.assertIs(base.forward, forward)
+                        self.assertFalse(base.lm_head._forward_hooks)
+                        self.assertTrue(all(p.grad is None for p in model.parameters()))
+                        torch.testing.assert_close(before["torch"], runner.training_random_state()["torch"], rtol=0, atol=0)
+                        with tempfile.TemporaryDirectory() as temporary:
+                            diagnostic = Path(temporary) / "training-loss-check.json"
+                            with patch(kernel, side_effect=lambda *a, **kw: reference_kernel(*a, **kw) * 0):
+                                with self.assertRaisesRegex(ValueError, "training loss agreement"):
+                                    runner.verify_training_loss(model, rows, config, measurements_path=diagnostic)
+                            saved = runner.read_json(diagnostic)
+                            self.assertEqual(saved["status"], "failed")
+                            self.assertIn("error", saved)
+                            self.assertTrue(saved["measurements"])
+                            self.assertFalse(base.lm_head._forward_hooks)
+                            self.assertTrue(all(p.grad is None for p in model.parameters()))
+                            def wrong_gradient(*args, **kwargs):
+                                loss = reference_kernel(*args, **kwargs)
+                                return loss.detach() + (loss-loss.detach()) * 0
+                            with patch(kernel, side_effect=wrong_gradient):
+                                with self.assertRaisesRegex(ValueError, "gradient differs"):
+                                    runner.verify_training_loss(model, rows, config, measurements_path=diagnostic)
+                            failure = runner.read_json(diagnostic)["measurements"][0]["gradient_failure"]
+                            self.assertTrue(failure["finite"])
+                            self.assertGreater(failure["failing_elements"], 0)
+                            self.assertGreater(failure["maximum_absolute_error"], 0)
+                            self.assertAlmostEqual(failure["relative_l2_error"], 1.)
+        finally:
+            fixtures.TinyWorkflowTests.tearDownClass()
+
     def test_training_forward_matches_native_loss_and_adapter_gradients(self):
         # GPU-package imports cache FLA modules. Keep that state out of the CPU
         # regression interpreter even after its search path has been restored.

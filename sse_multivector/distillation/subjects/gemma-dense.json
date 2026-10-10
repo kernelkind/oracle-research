@@ -39,7 +39,7 @@
   "fused_linear_cross_entropy": true,
   "subject_batching": {
     "budget_bytes": 94489280512,
-    "workspace_bytes": 4294967296,
+    "workspace_bytes": 12884901888,
     "prefill_bytes_per_token": 262144,
     "attention_matrix_count": 0
   }
