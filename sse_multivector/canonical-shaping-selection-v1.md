@@ -41,11 +41,72 @@ selects this original local root and the original producer/comparison specs.
 It assigns no canonical destination. The trial must enable graph search;
 the older sixteen-node shortlist is not a substitute.
 
-**Status: nomination prepared; live traversal not run.** Forty-six relevant
-selection, traversal, regression and vector-preparation tests passed. Actual
-choice reduction, inference usage, API-equivalent cost and hierarchy-quality
-preservation remain unmeasured. No production generation policy or other
-agent's saved hierarchy changed, and no UI was updated.
+**Status: live traversal completed; the proposed menu does not improve shape.**
+The independently generated Bootstrap-v96 meaning was frozen before normal
+Compare-v48 graph traversal. No destination or positive answer was prescribed.
+The original ninety-nine-node graph was copied into a separate trial; its
+existing headings, meanings and supporting entries remain unchanged.
+
+Traversal added Cooking as C125 below Food preparation C005 and above all seven
+of C005's retained menu children. All ninety-seven eligible canonical nodes were
+settled: ninety-two direct comparisons and five relationships inferred through
+the native traversal's transitivity rules. The two same-note exclusions were
+preserved. The older shortlist policy was used only to prepare an unexecuted
+seed before the native graph-search fork; no shortlist comparison was run.
+
+The [measured menu definition](shr_single_pair/hierarchy-shaping-food-preparation-menu-v1.json)
+preserves every original menu heading, meaning, support and branch outside this
+one insertion. The native shape and audit commands report:
+
+| Measure | Original menu | Cooking inserted |
+|---|---:|---:|
+| Food preparation choices | 7 | 1 |
+| Cooking choices | absent | 7 |
+| Nodes / edges | 70 / 74 | 71 / 75 |
+| Equal-note-set edges | 0 | 1 |
+| Structural violations | 3 | 4 |
+| Reachable and individually isolated notes | 50 | 50 |
+| Mean shortest selections to an individual note | 2.68 | 2.86 |
+| Maximum shortest selections | 4 | 5 |
+
+Nine individual notes require one additional selection. C005 and C125 each
+represent eleven distinct notes in the proposed menu, so their edge does not
+narrow the note set. The original C005 menu represented ten notes; adding the
+incoming Cooking support brings N011 into this branch. The seven-root and
+thirteen-child Food violations remain. Thus the nomination produced valid
+model-judged containment but merely relocated overcrowding and added depth.
+This menu is not adopted, and the other agent's saved hierarchy is untouched.
+No UI was updated.
+
+The [native usage source](shr_single_pair/hierarchy-shaping-food-preparation-usage-v1.json)
+accounts for one meaning request, ninety-two comparison requests and four cache
+warmups: **ninety-seven actual attempts**, with no reuse, failure, retry or
+missing usage. GPT-6.1 Sol medium ran at runtime concurrency four. Saved usage
+is 152,309 uncached input tokens, 69,248 cached input tokens, zero reported cache
+write tokens and 12,396 output tokens. The 1,500 reasoning tokens are already
+included in output. Complete catalogue/API-equivalent cost is **$0.4355028**;
+subscription incremental cash cost is zero, not an API invoice. The native
+summary reconciles all ninety-seven attempts with the persistent trial counter.
+There is no matched baseline cost experiment and no selection-savings claim.
+
+Retained ignored evidence under `target/canonical-shaping-selection-v1` in the
+task worktree includes the frozen nomination `food-preparation-v1.json`, native
+trial `cooking-traversal-v1`, proposed menu and audit `cooking-menu-v1`, and
+receipt-validated accounting `usage-v1.json`. The worktree remains necessary
+because saved source and receipt paths bind to it.
+
+The second-highest cosine criterion detects resemblance to multiple siblings,
+but does not distinguish grouping two to six siblings from grouping all seven.
+For this target, a useful new intermediate parent must reduce the old choices,
+keep its own choices within six, and preserve strict note-set narrowing and
+useful route lengths. **Suggested next investigation, not implemented:** rank
+unused locals for grouping a proper subset of the overcrowded siblings. This
+single trial does not establish general selection accuracy or rejection of SSE.
+
+Verification at this checkpoint: eighty-four selector, graph-search,
+construction, selection-regression, vector, native audit/shape and native usage
+tests passed. The live native audit and usage commands also completed, with the
+counter reconciled and generated evidence ignored.
 
 When a new intermediate parent groups m existing siblings, replacing their
 direct choices with that parent can reduce the original group by m−1 choices.
