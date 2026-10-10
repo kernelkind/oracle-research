@@ -255,3 +255,28 @@ scope. Original posts, subjects and canonical branch checks remain in this
 bounded revision. The counterexample diagnostics and five-field output are
 unchanged. No input adapter, runner, Bootstrap prompt or hierarchy was changed;
 no teacher calls were made and this version is not adopted.
+
+## Compare-v72–v73: terminology audit drafts
+
+The user requested consistent naming throughout the comparison prompt.
+[Compare-v73](Hierarchy-compare-v73.md) is the final unrun terminology draft
+against v71. `subject` names a topic; the fixed `meaning` describes the
+information covered; that information is the node's scope. The comparison
+outcome consistently uses `relation`. Local ancestors and canonical branches
+are distinguished explicitly, and proposed parent/child roles refer to nodes,
+not meaning strings. Equivalence compares covered information rather than
+requiring identical wording.
+
+The audit removes the duplicate meaning definition, replaces heading and
+definition aliases, and clarifies node containment in the canonical
+consequences. Existing restrictions, uncertainty rules, diagnostics, field
+names, relation values and context-free input remain in place. Independent
+read-only review informed the terminology fixes. Exact native recipe/receipt
+reconstruction, placeholder and output-field checks require no teacher calls.
+No runner, adapter, Bootstrap prompt or hierarchy changed.
+
+V72 is preserved as the first draft. The final audit found one remaining
+"label" alias and several node/scope wording mismatches; v73 records their
+correction without overwriting v72. Both retain native revision recipes and
+receipts pinned to v71. These drafts remain in the research worktree awaiting
+review and adoption; no improvement in model reliability is claimed.
