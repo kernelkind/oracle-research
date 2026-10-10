@@ -379,10 +379,12 @@ has completed its approved 14-case Sol/xhigh development trial: all Booleans
 agree with prepared targets, with two named-reference interpretations unresolved.
 Complete records receive nine accepts, two rejects and three uncertainties in
 both agent audits. The set does not pass; qualification and adoption remain pending.
-The next [DSLv6 scope draft](../../sse_multivector/distillation-review-v1/README.md#dslv6-scope-draft-october-10)
-targets added qualifiers without changing the AS rule or schema. Its 14-case
-native preview preserves DSLv5 inputs and baselines and makes zero calls;
-exact wording and trial approval are pending.
+The approved [DSLv6 scope trial](../../sse_multivector/distillation-review-v1/README.md#dslv6-scope-draft-october-10)
+has completed 14 fresh first attempts. All Booleans retain the DSLv5 decisions;
+two named-reference interpretations remain uncertain. Complete records receive
+ten accepts, one reject and three uncertainties in both audits; the mothers/MILFs
+record still adds human-only scope. The set does not pass; qualification and
+adoption remain pending. The AS rule and schema stay fixed.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
 mechanical rules and schemas remain fixed. The completed ten-note run retains
 its frozen concurrency of 16; the current shared runner uses automatic queue

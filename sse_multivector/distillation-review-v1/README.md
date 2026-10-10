@@ -13,9 +13,12 @@ counterexample defects found in its explanations motivate the completed
 Its 14 fresh Sol/xhigh verdicts agree with the prepared targets; complete
 records receive **nine accepts, two rejects and three uncertainties** from both
 agent audits. The development set does not pass; qualification remains pending.
-The next [DSLv6 scope revision](#dslv6-scope-draft-october-10) is drafted for
-presentation with the same 14-case native preview and zero candidate calls.
-Its exact wording and trial remain pending approval.
+The approved [DSLv6 scope revision](#dslv6-scope-draft-october-10) has completed
+its same-input 14-case Sol/xhigh trial. All Booleans retain the DSLv5 decisions;
+12 are resolved and two named-reference decisions remain uncertain. Complete
+records receive **ten accepts, one reject and three uncertainties** from both
+agent audits. The mothers/MILFs record still adds human-only parent scope;
+the development set does not pass. Adoption and qualification remain pending.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3659,15 +3662,16 @@ the development set must pass before proposing a broader regression trial.
 
 ## DSLv6 scope draft (October 10)
 
-The user authorized drafting a focused revision after the DSLv5 trial; exact
-[DSLv6](relationship-prompt-v6.md) wording and its trial remain pending approval.
+The user approved the exact [DSLv6](relationship-prompt-v6.md) wording after
+full-file presentation and authorized its same-input 14-case Sol/xhigh trial.
 Against approved DSLv5, only the version title and required-versus-permitted
 paragraph change. The paragraph now explicitly forbids adding a type, domain
 or qualifier when paraphrasing a restriction or relating restrictions unless
 the complete wording requires it. This targets both observed human-only
 additions: the Incest definition and the "same people" relationship in the
-sexually-attractive-mothers record. Necessary implied meanings remain allowed;
-the change includes no case-specific examples and has not been tested.
+sexually-attractive-mothers record. Necessary implied meanings remain allowed.
+The change includes no case-specific examples. Its trial and both independent
+agent audits are complete; the set **does not pass complete-output review**.
 
 The ASv6.100 passage, full parent record, occurrence/timing safeguards,
 counterexample requirements, template variables and `valid`/`reason` JSON
@@ -3685,8 +3689,61 @@ schema, source evidence and mechanical rules stay fixed. All 45 code bindings
 and 268 source bindings match at preparation. The complete fixed instructions
 including AS contain 707 estimated `o200k_base` tokens, below the 1,024-token
 threshold; no prefix warming is prepared. The inherited concurrency field is
-16; current dispatch uses automatic shared queue admission. No new model calls
-are authorized until the exact draft has been presented and approved.
+16; current dispatch uses automatic shared queue admission.
+
+Unrelated adapter changes landed on `main` after the preview. Following task
+synchronization, native preparation creates `relationship-dslv6-preview-current-runner`
+against current code; its prompt, dataset, complete inputs, evidence, runner
+settings and all saved DSLv5 baselines are identical to the original preview.
+The original remains unrun. Native `run` uses a persistent 28-attempt allowance:
+14 initial semantic calls plus provider-only retries, at most two attempts per
+case. Initial queue admission is temporarily limited by provider recovery and
+increases automatically; no calls are restarted. Two independent agents audit
+fresh decisions and complete explanations as they arrive.
+
+All **14 distinct fresh outputs** are receipt/schema-valid and complete on the
+first attempt: seven true, seven false, zero reuse, zero retries and zero
+warmups. All Booleans retain the saved DSLv5 decisions and agree with the
+source-assessed targets. Independent audits resolve 12 Boolean judgments and
+retain the same two named-reference uncertainties; target agreement does not
+establish correctness for those interpretations. Complete records receive
+**ten accepts, one reject and three uncertainties** in both audits.
+
+| Exact case | Boolean assessment | Complete evidence assessment |
+| --- | --- | --- |
+| `M01-checkpoint-800-N0015:compatibility:017:1.1.1` | False is sound | Reject: the record still says the parent requires the same "people" to be mothers and sexually attractive, adding human-only scope |
+| `M01-checkpoint-800-N0015:compatibility:017:3` | False is independently sound | Uncertain: the record asserts whole bodies or parts and that both need not appear, settling the open inclusive-list contract |
+| `M01-checkpoint-800-N0015:compatibility:018:1.1` | Uncertain despite false target agreement | Uncertain: the counterexample retains the tag/title/source and content qualifications but assigns an unverified adult-sibling plot to the fixed named work |
+| `M03-checkpoint-800-N0032:compatibility:003:4` | Uncertain despite false target agreement | Uncertain: the counterexample assigns unverified refund-on-no-winner rules to the fixed named game/round |
+
+Incest/Sisters now passes complete-record review: the gloss is scoped to the
+ordinary familial sense, the sibling reading is permitted rather than
+universal, and no human-only or universal-prohibition parent claim remains.
+The sexually-attractive-mothers/MILFs explanation still adds "people" when
+connecting the parent restrictions and again when describing the failed
+requirement. Its nonmaternal-MILF witness and false verdict remain sound.
+The seven positive controls, complete XP timing counterexample and Daughters
+record remain accepted. No clear Boolean error or new regression is established.
+Comparison uses saved DSLv5 answers, so one changed explanation does not
+establish a causal prompt improvement. Agent assessments are not independent
+human gold, and this exposed set does not establish unseen-note accuracy.
+
+The terminal raw native report is preserved before formal reviews. Root records
+the reconciled assessments through native `review`; inputs, source evidence,
+outputs, receipts, baselines and legacy frozen labels remain unchanged.
+Native usage is **10,848 input tokens, zero cached input, 22,335 output tokens
+(including 19,320 reasoning tokens)**. All 14 attempts have usage. The saved
+catalog API-equivalent estimate is **$0.245046**; it is not subscription billing.
+No warming or cache savings occur. The persistent allowance records 14 of 28
+attempts used. Production adoption, qualification and lower-effort testing
+remain pending; no broader regression or final-60 run is started.
+
+The recommended next step is a controlled scope diagnostic with unchanged
+DSLv6: establish whether the repeated human-only paraphrase causes wrong
+verdicts while checking preservation of motherhood, attractiveness and their
+same-bearer relationship. Synthetic diagnostic results must remain separate
+from natural-case accuracy. This recommendation is not a prepared or authorized
+trial and cannot settle the open named-reference/list contracts.
 
 ## Actual distilled wording: offline preview (October 8)
 

@@ -1469,9 +1469,12 @@ has completed its approved 14-case Sol/xhigh development trial: all Booleans
 agree with prepared targets, with two named-reference interpretations unresolved.
 Full records receive nine accepts, two rejects and three uncertainties in both
 agent audits; the set does not pass. Qualification and adoption remain pending.
-The next [DSLv6 scope draft](distillation-review-v1/README.md#dslv6-scope-draft-october-10)
-preserves the rule and schema and prepares the same 14 inputs against saved
-DSLv5 baselines with zero calls. Exact wording and trial approval are pending.
+The approved [DSLv6 scope trial](distillation-review-v1/README.md#dslv6-scope-draft-october-10)
+has completed 14 fresh first attempts against saved DSLv5 baselines. All
+Booleans retain those decisions; two named-reference interpretations remain
+uncertain. Both audits give complete records ten accepts, one reject and three
+uncertainties: the mothers/MILFs record still adds human-only scope. The set
+does not pass; the rule and schema stay fixed and qualification remains pending.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
