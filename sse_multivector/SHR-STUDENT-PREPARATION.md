@@ -77,6 +77,19 @@ Full-model jobs run sequentially. Generated-meaning evaluation and semantic
 review follow the saved checkpoints; the queue itself performs only fits and
 fresh-process integrity checks.
 
+Both published-checkpoint generation baselines are prepared, with no inference,
+under `target/bootstrap-compare-student-v1/bootstrap-meaning-generation-evaluation-v1`.
+Native `generic` preparation selects the same 21 qualified evaluation IDs from
+the preserved teacher input plan. Complete rendered prompts and evidence match
+the fitting data exactly; no teacher answer is copied as a baseline. Both use
+the single-field meaning/null schema, greedy generation, a 512-token response
+allowance and one local request at a time. The separate immutable generation
+runtime inherits the fit's source snapshot and the exact stable launcher and
+local worker scripts; existing running snapshots are untouched. Native
+generation and semantic review remain pending until the GPU fitting sequence
+finishes. Epoch checkpoint plans will additionally bind their actual saved
+adapter hashes after verification.
+
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
 The learning report separates optimizer time, loading, teacher-forced evaluation
