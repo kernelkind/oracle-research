@@ -1,22 +1,22 @@
 # Distillation semantic review — process and evidence
 
-**Latest diagnostic result:** fresh [DSLv3](relationship-prompt-v3.md) and
-draft [DSLv4](relationship-prompt-v4.md) each agree with **14/14** fixed
-expectations in the
-[paired xhigh diagnostic trial](#dslv4-paired-diagnostic-trial-october-10).
-DSLv4 supplies **13/14 complete evidence records**: LL03's correct rejection
-has a counterexample that merely portrays a loss where the child requires
-mocking it. All 28 responses have attributed agent reviews: 27 accepted and
-that explanation rejected. Fresh DSLv3 also correctly accepts J298, after
-rejecting it in the earlier
-[13/14 consistency repeat](#dslv3-xhigh-consistency-repeat-october-10).
-This comparison does not demonstrate a correctness improvement or settle
-fresh-call consistency. DSLv4 remains a diagnostic draft; production adoption
-and semantic qualification remain pending. Lower-effort testing stays paused,
-and the existing study remains bound to DSLv2.
-The user has approved a fresh unchanged
-[DSLv4 xhigh consistency repeat](#dslv4-xhigh-consistency-repeat-october-10)
-on the same 14 pairs; preparation is complete and dispatch is pending.
+**Latest repeat result:** unchanged [DSLv4](relationship-prompt-v4.md) agrees
+with **14/14** fixed expectations and supplies **14/14 complete evidence
+records** in the
+[fresh xhigh consistency repeat](#dslv4-xhigh-consistency-repeat-october-10).
+All 14 responses pass attributed agent review of their decisions and evidence;
+all calls complete on first attempts, with no reuse, warming or cache hits.
+LL03's earlier counterexample omitted mocking a loss; the fresh response retains
+all three mockery targets. The prior rejection remains preserved.
+
+In the preceding [paired diagnostic trial](#dslv4-paired-diagnostic-trial-october-10),
+DSLv3 and DSLv4 both agreed with 14/14 Boolean expectations, while DSLv4's
+complete records passed 13/14. Both fresh DSLv4 rounds retain the same Boolean
+decisions. This is consistency evidence on the same development pairs, not
+unseen-data qualification or a demonstrated correctness improvement. DSLv4
+remains a diagnostic draft; production adoption and broader qualification remain
+pending. Lower-effort testing stays paused, and the frozen 60-answer study
+remains unchanged and bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -3123,10 +3123,10 @@ These observations cannot support a full-evaluation runtime projection.
 This diagnostic trial exposes an inspectable missing relationship in LL03,
 but **does not demonstrate improved Boolean correctness**: unchanged DSLv3 also
 returns 14/14. The earlier identical-input J298 inconsistency remains evidence
-against assuming reliable fresh calls. DSLv4 has neither a clean complete-output
-pass nor unseen-data qualification. A fresh unchanged DSLv4 consistency check
-and broader validation remain necessary before adopting it or restarting the
-lower-effort study; neither starts as part of this bounded trial.
+against assuming reliable fresh calls. DSLv4 did not pass the complete-output
+check in this diagnostic trial and had no unseen-data qualification. The user
+subsequently approved the unchanged repeat below. Production adoption and
+lower-effort expansion are not part of that approval.
 
 ## DSLv4 xhigh consistency repeat (October 10)
 
@@ -3163,6 +3163,62 @@ the new counter is **0/28**. The prior diagnostic counter remains **30/56**.
 This tests fresh-call consistency on development pairs; it cannot establish
 accuracy on unseen notes. Production adoption, broader qualification and
 lower-effort testing remain pending; the frozen 60-answer study is unchanged.
+
+All **14 fresh calls** completed successfully on first attempts through the
+shared launcher. The new counter ended at **14/28**, with no provider failures,
+semantic retries, answer reuse, warmups or observed cached tokens. All attempts
+saved usage; the prior diagnostic counter remains **30/56**.
+
+| DSLv4 / xhigh | Boolean agreement | Accepted complete evidence records |
+| --- | --- | --- |
+| Prior diagnostic trial | **14/14** | **13/14** |
+| Fresh unchanged repeat | **14/14** | **14/14** |
+
+Independent agent audits accept all seven actual responses, three teacher
+controls and four large controls. The generic Claims and Predictions parents
+remain preserved by the invitations; the current AI wave remains a temporal
+reference. J6dc retains a complete goal/progress counterexample without the
+parent's practice timing, and both motherhood rejections retain every child
+qualification. The cable and larger controls preserve the fixed expectations
+and complete joint relationships.
+
+LL03 correctly rejects the first-ban wording again. Its new counterexample
+explicitly says the video mocks **all three** child targets, including the loss,
+and retains its identity, modifiers, acclaim and release to mark the first ban.
+The hypothetical framing constructs the possible scenario: within it, the video
+is expressly hailed and released, rather than merely awaiting hoped-for acclaim
+or a proposed release. The ASv6.100 rule allows possible posts in any domain;
+the supplied subjects do not add a requirement for independently verified
+real-world events. Both audits therefore accept this complete counterexample.
+The previous incomplete response and its rejected review remain unchanged;
+this fresh result does not establish that the omission has been repaired.
+
+All 14 responses have current native attributed agent reviews: **14 accepted**,
+with no rejected, uncertain or user reviews. Each group retains exact native
+`terminal-show.json` and `reviewed-show.json` reports. Native receipt, schema,
+input/output review digests, frozen code and prompt-source bindings verify.
+The 170 protected prior artifact/prompt/pending-placement files remain
+byte-for-byte unchanged. The inherited native labels remain unchanged and are
+not the correctness basis.
+
+These are separate native group reports. Output includes reasoning tokens;
+catalog estimates are reference estimates, not subscription charges. No paid
+fallback was used.
+
+| Group | Attempts | Input tokens | Output tokens | Reasoning tokens | Catalog estimate, USD |
+| --- | --- | --- | --- | --- | --- |
+| Actual | 7 | 4,661 | 12,889 | 11,504 | 0.138212 |
+| Teacher controls | 3 | 1,945 | 3,048 | 2,643 | 0.034370 |
+| Large controls | 4 | 2,831 | 5,446 | 4,233 | 0.060122 |
+
+This repeat **passes the consistency check on this fixed development panel**:
+every Boolean agrees with the prior DSLv4 response and its fixed source
+assessment, and every fresh evidence record is complete. Repeated calls on the
+same 14 pairs add no independent source contexts; J298/Jbc/J540 still share one
+note. The initial evidence defect remains observed, and these agent assessments
+are not human-certified gold. Broader validation on new diverse pairs remains
+necessary before production adoption or restarting the lower-effort study.
+It is the recommended next step, not additional work authorized by this repeat.
 
 ## Actual distilled wording: offline preview (October 8)
 
