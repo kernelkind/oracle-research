@@ -1,20 +1,19 @@
 # Distillation semantic review — process and evidence
 
-**Latest trial result:** [DSLv3](relationship-prompt-v3.md) agrees with **13/14**
-fixed expectations in the
-[fresh xhigh consistency repeat](#dslv3-xhigh-consistency-repeat-october-10),
-versus **14/14** in the prior
-[paired xhigh confirmation](#dslv3-paired-xhigh-confirmation-october-10).
-J298 changes from true to false by requiring an actual claim, a restriction
-absent from the parent `Claims`. All other verdicts remain correct, including
-all seven authored controls. This repeats a DSLv3/high failure at xhigh;
-consistent behavior remains unestablished and lower-effort testing stays paused.
-The existing lower-effort study remains bound to DSLv2.
-The user has approved testing the [DSLv4 evidence record
-draft](#dslv4-evidence-record-draft-october-10) as a diagnostic variant.
-The [paired diagnostic trial](#dslv4-paired-diagnostic-trial-october-10) keeps
-the same 14 fixed pairs and compares fresh DSLv3 and DSLv4 calls at xhigh.
-Production adoption and semantic qualification remain pending.
+**Latest diagnostic result:** fresh [DSLv3](relationship-prompt-v3.md) and
+draft [DSLv4](relationship-prompt-v4.md) each agree with **14/14** fixed
+expectations in the
+[paired xhigh diagnostic trial](#dslv4-paired-diagnostic-trial-october-10).
+DSLv4 supplies **13/14 complete evidence records**: LL03's correct rejection
+has a counterexample that merely portrays a loss where the child requires
+mocking it. All 28 responses have attributed agent reviews: 27 accepted and
+that explanation rejected. Fresh DSLv3 also correctly accepts J298, after
+rejecting it in the earlier
+[13/14 consistency repeat](#dslv3-xhigh-consistency-repeat-october-10).
+This comparison does not demonstrate a correctness improvement or settle
+fresh-call consistency. DSLv4 remains a diagnostic draft; production adoption
+and semantic qualification remain pending. Lower-effort testing stays paused,
+and the existing study remains bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2981,8 +2980,8 @@ batch, full hierarchy or extra source context. The fixed instructions grow by a
 constant amount; brief evidence entries scale with the supplied parent
 restrictions and child wording. Each actual restriction still needs evidence;
 there is no truncation rule or output cap substituting for completeness.
-The fuller evidence can increase output tokens and latency; a future trial must
-measure those alongside semantic correctness before expansion.
+The fuller evidence can increase output tokens and latency; the paired trial
+below measures those alongside semantic correctness before expansion.
 
 An offline native preview uses the existing TL01 control solely to check
 rendering and unchanged input/schema bindings: **one unrun case, zero attempts**.
@@ -3024,7 +3023,8 @@ Native prepared artifacts are ignored under
 `target/distillation-review-v1/parent-restriction-dslv4-diagnostic-20261010/`,
 with `baseline-v3` and `diagnostic-v4` arms, each containing `actual`,
 `teacher-controls` and `large-controls`. Prompt source paths bind to canonical
-committed files; offline `show` checks report **28 unrun cases, zero attempts**.
+committed files; before dispatch, offline `show` checks reported **28 unrun
+cases, zero attempts**.
 
 Assess the verdict and the decisive explanation separately against the fixed
 source assessments, not the three incorrect inherited native positive labels.
@@ -3041,6 +3041,89 @@ the explanation is evidence to inspect, not proof of the model's internal
 reasoning or a validated repair. Even a clean result cannot establish accuracy
 on unseen notes, fresh-call consistency or a minimum reasoning level. The
 approved reviewer, frozen 60-answer study and two-point margin remain unchanged.
+
+All **28 fresh answers** completed through the shared launcher. The native
+counter ended at **30/56**: two temporary provider failures each used the
+permitted second attempt. There were no semantic retries, reused answers,
+warmups or observed cached tokens. Neither failed attempt saved usage; complete
+cost and usage for those attempts remain unknown. The earlier experiments and
+their counters were verified unchanged.
+
+Both arms bind the same current runner code at `e27660d`, the same project
+adapter code, settings, inputs, evidence and schema. Since the preceding DSLv3
+repeat, runner changes added local-worker support and response metadata
+reporting; subscription SSE transport and backoff code were unchanged. The
+two current arms therefore share one code snapshot, while the older repeat
+remains historical evidence rather than a contemporaneous comparison.
+
+| Fresh prompt / xhigh | Actual source assessments | Authored controls | Total Boolean agreement | Accepted decisions and reasons |
+| --- | --- | --- | --- | --- |
+| DSLv3 | 7/7 | 7/7 | **14/14** | **14/14** |
+| DSLv4 diagnostic | 7/7 | 7/7 | **14/14** | **13/14** |
+
+Both prompts correctly accept J298/Jbc/J540 without inventing an already
+performed claim or prediction, preserve Jec's temporal reference to the current
+AI wave, and reject J6dc's missing practice timing and J216/J58's missing
+motherhood restriction. Both retain the cable controls' complete types, lengths
+and two-member relationship, and correctly distinguish displacement timing,
+renewed versus first bans, and an explicit exclusion in the larger controls.
+
+Independent agent audits accept all 14 DSLv3 decisions and decisive reasons.
+DSLv4's parent restriction records are complete, including the joint
+relationships and justification of actual release and practice timing.
+Thirteen complete responses pass; **LL03's explanation fails**. Its invalid
+pair changes the video's release purpose from marking a renewed YouTube ban to
+marking a first ban. The false verdict correctly detects that restriction, but
+its counterexample says:
+
+```text
+The video mocks Donald Trump’s endless lies, portrays his loss to Iran in his and Israel’s illegal war, and mocks his alleged guilt ...
+```
+
+The supplied child requires the video to **mock the loss**, as well as the other
+two targets. Portraying the loss does not preserve that relationship. The
+counterexample therefore does not establish that its possible post fits the
+complete child. This is an evidence-completeness failure, not a Boolean error;
+the response, prompt and fixed expectations remain unchanged.
+
+All 28 responses now have current native attributed agent reviews: **27
+accepted, one rejected**, with no uncertain or user reviews. Each group retains
+exact native `terminal-show.json` and `reviewed-show.json` reports. The inherited
+native positive labels for J6dc/J216/J58 remain unchanged; fixed source
+assessments and attributed semantic reviews are the correctness basis.
+
+The following values are the separate native group reports, not a reconstructed
+combined cost. Output tokens include reasoning tokens. Catalog estimates are
+reference estimates, not subscription charges; no paid fallback was used.
+
+| Arm / group | Attempts | Input tokens | Output tokens | Reasoning tokens | Catalog estimate, USD |
+| --- | --- | --- | --- | --- | --- |
+| DSLv3 actual | 7 | 3,618 | 10,219 | 9,783 | 0.109426 |
+| DSLv4 actual | 8 | 4,661 | 10,385 | 8,965 | Unknown; known portion 0.113172 |
+| DSLv3 teacher controls | 3 | 1,498 | 1,572 | 1,415 | 0.018716 |
+| DSLv4 teacher controls | 3 | 1,945 | 2,674 | 2,313 | 0.030630 |
+| DSLv3 large controls | 5 | 2,235 | 1,655 | 1,338 | Unknown; known portion 0.021020 |
+| DSLv4 large controls | 4 | 2,831 | 4,261 | 3,146 | 0.048272 |
+
+The actual DSLv4 and large-control DSLv3 groups each have one attempt without
+usage. Their token figures cover only attempts with saved usage. Native complete
+cost, mean, median and p95 estimates for those groups remain unknown; missing
+usage must not be counted as zero. All six groups report zero observed cached
+tokens and zero warmup requests.
+
+Latency varies substantially in both directions: native TL01–TL03 elapsed
+times are 164–194 seconds for DSLv3 and 12–55 seconds for DSLv4, while J540 takes
+111 seconds for DSLv3 and 332 for DSLv4. Fuller visible records and longer fixed
+instructions do not establish a consistent runtime effect in this small panel.
+These observations cannot support a full-evaluation runtime projection.
+
+This diagnostic trial exposes an inspectable missing relationship in LL03,
+but **does not demonstrate improved Boolean correctness**: unchanged DSLv3 also
+returns 14/14. The earlier identical-input J298 inconsistency remains evidence
+against assuming reliable fresh calls. DSLv4 has neither a clean complete-output
+pass nor unseen-data qualification. A fresh unchanged DSLv4 consistency check
+and broader validation remain necessary before adopting it or restarting the
+lower-effort study; neither starts as part of this bounded trial.
 
 ## Actual distilled wording: offline preview (October 8)
 
