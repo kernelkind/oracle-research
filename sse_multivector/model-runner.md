@@ -1423,9 +1423,21 @@ qualify an effort. Native request identity includes effort, so saved xhigh
 outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
 concurrency, retries and eligible prefix policy stay fixed. See the
 [reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
-The later development limit is ten notes per iteration, with the full 60 reserved
-for very final validation. Lower-effort testing remains paused during DSLv4
-development; the current ten-note xhigh run uses concurrency 16.
+The approved prompt-development loop uses 12–16 distinct complete review inputs
+for the changed check, then further regression cases and the fixed ten-note
+workflow after that set passes. The full 60 remains very final validation.
+Lower-effort testing remains paused during DSLv4 development; the current
+ten-note xhigh run continues unchanged at concurrency 16. See the
+[case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
+Prepare a small plan with `prepare --from OLD --only CASE_ID` before iterating;
+`run --only` filters dispatch but retains the large group's full report.
+The initial subset preparation still reports OLD once. Future candidate revisions
+inherit the small plan, complete inputs, schema and source bindings, select the
+current shared worker, and use `--prompt`/`--prompt-id` without `--repeat`.
+Only intentional fresh trials of unchanged instructions use `--repeat`.
+Inspect cache eligibility again when instructions change; preserve eligible
+natural prefixes and do not pad or warm short ones. Audit decisions and reasons
+against separate source assessments, not legacy qualification labels alone.
 `prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
 freezes an override in the native request settings without changing the source
 selection. Without the flag, the selection's effort is retained.
@@ -1447,10 +1459,10 @@ Repeat
 `run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
 of stable source answer IDs; reports still contain all 60 answers, with
 unselected answers pending. Unknown or duplicate IDs fail before dispatch.
-Omitting `--answer-id` retains the complete-answer workflow. Distinct fixed
-diagnostic inputs can additionally run through native `run --only CASE_ID` in
-the prepared check group; this supplements the paired comparison without
-changing the evaluation's stopping rules or frozen source labels.
+Omitting `--answer-id` retains the complete-answer workflow. For fixed diagnostic
+inputs, prefer a small native preparation as above; selecting dispatch inside a
+large group does not shrink its report. A diagnostic subset supplements the
+complete workflow without changing stopping rules or frozen source labels.
 
 The completed xhigh pipeline yields 43 complete scores, 13 ungraded reviewer
 contradictions and four invalid student outputs. Its fixed comparison baseline

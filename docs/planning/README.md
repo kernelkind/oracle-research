@@ -278,6 +278,17 @@ automatic template prefixes are ineligible; natural-prefix opportunities are
 reported without changing cache policy or promising hits. Qualification and A21
 remain open.
 
+The current approved [prompt-development process](../../sse_multivector/distillation-review-v1/README.md#case-level-prompt-development-approved-october-10)
+starts each changed prompt on 12–16 distinct complete review inputs, including
+known failures, correct controls and earlier regressions. Once those pass, check
+further cases and the fixed ten-note workflow; reserve the original 50 random
+plus ten challenge answers for very final validation. The current DSLv4 ten-note
+run continues unchanged. Sol/xhigh, subscription SSE and concurrency 16 remain
+fixed; lower-effort testing remains paused. Native small preparations retain
+inputs, receipts, schemas and baseline outputs without full evaluation rebuilds.
+Audit decisions and explanations; small-panel success does not qualify broad
+accuracy, and previously audited cases are regression rather than unseen data.
+
 The user authorizes the [complete-answer reviewer trial](../../sse_multivector/distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9):
 50 randomized validation answers across all 18 versions and ten deliberately
 difficult answers, using the actual mechanical and semantic workflow, score
