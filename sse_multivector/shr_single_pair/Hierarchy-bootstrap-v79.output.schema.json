@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1}
+        },
+        "required": ["id", "question"],
+        "additionalProperties": false
+      }
+    },
+    "resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ambiguity_id": {"type": "string", "minLength": 1},
+          "answer": {"type": ["string", "null"], "minLength": 1},
+          "justification": {"type": "string", "minLength": 1}
+        },
+        "required": ["ambiguity_id", "answer", "justification"],
+        "additionalProperties": false
+      }
+    },
+    "meaning": {"type": ["string", "null"], "minLength": 1},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "quote": {"type": "string", "minLength": 1},
+          "supports": {"type": "string", "minLength": 1},
+          "inference": {"type": ["string", "null"], "minLength": 1}
+        },
+        "required": ["quote", "supports", "inference"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["ambiguities", "resolutions", "meaning", "evidence"],
+  "additionalProperties": false
+}

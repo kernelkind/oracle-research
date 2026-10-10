@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "meaning": [
+      "../../target/canonical-shaping-selection-v1/cooking-traversal-v1/step-124/meaning/experiment"
+    ],
+    "traversal": [
+      "../../target/canonical-shaping-selection-v1/cooking-traversal-v1/step-124/graph-search-000/experiment",
+      "../../target/canonical-shaping-selection-v1/cooking-traversal-v1/step-124/graph-search-001/experiment",
+      "../../target/canonical-shaping-selection-v1/cooking-traversal-v1/step-124/graph-search-002/experiment"
+    ]
+  },
+  "attempt_budget": {
+    "path": "../../target/canonical-shaping-selection-v1/attempt-budget.json",
+    "groups": [
+      "meaning",
+      "traversal"
+    ]
+  }
+}

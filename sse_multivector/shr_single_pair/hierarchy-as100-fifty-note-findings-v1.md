@@ -11,8 +11,10 @@ The saved build is in
 `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1`,
 at source commit `7f0a54b9e2fc9dcd47e62b7da0ac901056087904`. The constructor,
 receipts and ignored target artifacts remain in that research checkout.
-This writeup, the evaluated prompt files and the two menu recipes are integrated
-separately into main; they do not install the research constructor there.
+The writeup, evaluated prompt files and two menu recipes were integrated first;
+the canonical constructor, continuation, selection, audit and shaping workflow
+are now also integrated into main. The run's original source and receipt
+bindings remain in the research checkout.
 
 The prompt SHA-256 bindings are:
 
@@ -417,9 +419,10 @@ All 34 maintained AS100 JSON sources parsed, all 252 original-entry pointers
 were checked against the native collection, and all
 Bootstrap prefetch specifications preserve identical prompt/schema/runner
 settings. The writeup and its prompt/menu dependencies are integrated into main.
-The research worktree remains because it contains the native artifacts and the
-still-unmerged constructor history. Both menu recipes retain their original
-relative
+The research worktree remains because native artifacts and frozen source paths
+still reference it. Current canonical runtime components are integrated into
+main separately from the branch's inherited research history. Both menu recipes
+retain their original relative
 artifact bindings. Reproduction requires the original recipes and saved graph
 in the research checkout; copying a recipe into main does not copy its graph.
 

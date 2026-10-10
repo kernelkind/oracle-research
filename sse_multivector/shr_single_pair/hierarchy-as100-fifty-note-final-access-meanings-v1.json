@@ -1,0 +1,54 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "Q01",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "Q02",
+      "local": {
+        "note_id": "89cdcfbbebaf021b74ddd2a16ceaf592f674487657268e4c8c52c80f70ff2d8c",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "Q03",
+      "local": {
+        "note_id": "89cdcfbbebaf021b74ddd2a16ceaf592f674487657268e4c8c52c80f70ff2d8c",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "Q04",
+      "local": {
+        "note_id": "37f44e1fec8dc1d2bbb5f7594d387e151bc348c380311e0e8c98e5200893ffdd",
+        "number": "1.1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "Q05",
+      "local": {
+        "note_id": "37f44e1fec8dc1d2bbb5f7594d387e151bc348c380311e0e8c98e5200893ffdd",
+        "number": "1.1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "Q06",
+      "local": {
+        "note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+        "number": "3"
+      },
+      "review": {}
+    }
+  ]
+}

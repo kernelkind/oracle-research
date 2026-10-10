@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "bootstrap_spec": "hierarchy-as100-fifty-note-b96-bootstrap-v1.spec.json",
+  "comparison_spec": "hierarchy-as100-fifty-note-c48-compare-v1.spec.json",
+  "independent_meanings": true,
+  "local_schema_version": 4,
+  "roots": [
+    {
+      "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+      "number": "3"
+    },
+    {
+      "note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+      "number": "3"
+    }
+  ]
+}

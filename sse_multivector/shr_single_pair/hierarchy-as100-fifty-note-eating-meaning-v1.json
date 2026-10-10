@@ -1,0 +1,14 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "E01",
+      "local": {
+        "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+        "number": "3"
+      },
+      "review": {}
+    }
+  ]
+}

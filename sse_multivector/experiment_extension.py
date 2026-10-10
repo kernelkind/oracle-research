@@ -413,6 +413,53 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('prepare-canonical-trial', help='prepare a roots-only canonical trial; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--comparison-policy', type=Path,
+                   help='bounded shortlist and complete eligible implication verification')
+    p.add_argument('--base-trial', type=Path,
+                   help='append new-note roots to a completed raw trial; preserve its history')
+    p.add_argument('--history-root', type=Path,
+                   help='freeze the native exact-answer search directory for all trial steps')
+    p.add_argument('--graph-search', action='store_true', help='traverse canonical roots and children using comparison answers')
+    p = commands.add_parser('fork-canonical-trial', help='preserve an unfinished raw trial and prepare its current step in a fresh directory; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--graph-search', action='store_true', help='use graph traversal in this separate trial')
+    p.add_argument('--at-step', type=int, help='restart from the graph before this saved step; preserve the source')
+    p = commands.add_parser('prepare-canonical-child-trial', help='freeze all immediate unprocessed local children for comparison; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--base-trial', type=Path, required=True)
+    p.add_argument('--note-id', action='append', dest='note_ids',
+                   help='select children only from these existing notes for this stage (repeatable)')
+    p.add_argument('--comparison-policy', type=Path,
+                   help='opt-in bounded shortlist and complete eligible implication verification')
+    p.add_argument('--graph-search', action='store_true', help='traverse canonical roots and children using comparison answers')
+    p = commands.add_parser('advance-canonical-trial', help='review/apply one completed local root and prepare the next; optional --run-next performs inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--meaning-case', required=True)
+    p.add_argument('--comment', required=True)
+    p.add_argument('--hold')
+    p.add_argument('--concurrency', type=int, help='set concurrency for subsequent trial experiments')
+    p.add_argument('--run-next', action='store_true',
+                   help='immediately run the next prepared batch and return its answers for review; requires inference authorization')
+    p.add_argument('--max-new-attempts', type=int,
+                   help='required with --run-next; cap newly sent attempts including provider retries')
+    p.add_argument('--attempt-budget', type=Path,
+                   help='shared native attempt counter for --run-next')
+    p = commands.add_parser('continue-canonical-trial',
+                            help='bounded automatic application; semantic review remains pending')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--max-nodes', type=int, required=True,
+                   help='freeze a finite incoming node range across resumes')
+    p.add_argument('--max-new-attempts', type=int, required=True,
+                   help='persistent total cap for this continuation, including retries')
+    p.add_argument('--attempt-budget', type=Path, required=True,
+                   help='existing shared attempt counter; never initialized or reset')
+    p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
+    p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
     p = commands.add_parser('prepare-distillation-review-trial', help='freeze a complete-answer validation trial; no inference')
     p.add_argument('manifest', type=Path)
     p.add_argument('--model-output', type=Path, action='append', required=True)
@@ -535,9 +582,78 @@ def add_commands(commands):
     p.add_argument('snapshot', type=Path, help='complete saved bounded hierarchy export')
     p.add_argument('output', type=Path, help='fresh directory outside saved sources')
 
+    p = commands.add_parser('prepare-canonical-selection-trial',
+                            help='select one unused original entry with native guarded comparisons; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--base-trial', type=Path, required=True)
+    p.add_argument('--spec', type=Path, required=True)
+    p = commands.add_parser('audit-canonical-trial', help='measure saved canonical note sets and browsing choices; no inference or graph changes')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--max-choices', type=int, default=6)
+    p.add_argument('--work-budget', type=int, default=200000)
+    p = commands.add_parser('measure-canonical-candidates', help='measure candidate selection against saved native comparisons; no inference or graph changes')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('evaluate-canonical-policy-trial', help='compare native frozen baseline and policy trials; no inference')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('export-canonical-viewer', help='export saved canonical nodes and original notes for review; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('shape-canonical-trial', help='select saved canonical nodes and witnessed containment edges; no inference')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--work-budget', type=int, default=200000)
+    p.add_argument('--max-choices', type=int, default=6)
+    p = commands.add_parser('measure-subject-vectors',
+                            help='measure saved subject-vector loading and normalization; no inference')
+    p.add_argument('--probe', type=Path, required=True)
+    p.add_argument('--compact', action='store_true')
+    p.add_argument('--output', type=Path, required=True)
+
 
 def handle_command(args):
-    if args.command == 'prepare-distillation-review-trial':
+    if args.command == 'continue-canonical-trial':
+        try:
+            from .canonical_continuation import continue_trial
+        except ImportError:
+            from canonical_continuation import continue_trial
+        result = continue_trial(args.directory, args.max_nodes,
+                                args.max_new_attempts, args.attempt_budget)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return int(result['status'] not in ('complete', 'node_limit'))
+    elif args.command in {'prepare-canonical-trial', 'fork-canonical-trial', 'prepare-canonical-child-trial', 'advance-canonical-trial'}:
+        try:
+            from .canonical_trial import prepare_trial, fork_trial, prepare_child_trial, advance_trial
+        except ImportError:
+            from canonical_trial import prepare_trial, fork_trial, prepare_child_trial, advance_trial
+        if args.command == 'prepare-canonical-trial':
+            result = prepare_trial(args.spec, args.directory, base_trial=args.base_trial,
+                                   comparison_policy=args.comparison_policy, history_root=args.history_root,
+                                   graph_search=args.graph_search)
+        elif args.command == 'fork-canonical-trial':
+            result = fork_trial(args.directory, args.output, graph_search=args.graph_search, at_step=args.at_step)
+        elif args.command == 'prepare-canonical-child-trial':
+            result = prepare_child_trial(args.base_trial, args.directory, note_ids=args.note_ids,
+                                         comparison_policy=args.comparison_policy, graph_search=args.graph_search)
+        else:
+            result = advance_trial(args.directory, args.meaning_case, args.comment, args.hold, args.concurrency,
+                                   run_next=args.run_next, max_new_attempts=args.max_new_attempts,
+                                   attempt_budget_path=args.attempt_budget)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        batch = result.get('next_review')
+        return int(batch is not None and any(batch['summary'][s]
+                   for s in ('malformed', 'invalid_receipt', 'failed', 'unrun')))
+    if args.command == 'summarize-experiments':
+        from .experiment_usage_summary import summarize_experiments, compact_summary
+        output = args.output.expanduser().resolve()
+        if output.exists():
+            raise ValueError('experiment summary output already exists')
+        result = summarize_experiments(args.spec, load_report=report)
+        write(output, result)
+        print(json.dumps(compact_summary(result, output), ensure_ascii=False, indent=2))
+    elif args.command == 'prepare-distillation-review-trial':
         from . import distillation_review_trial
         result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
             random_count=args.random_count, hard_count=args.hard_count, seed=args.seed)
@@ -660,6 +776,62 @@ def handle_command(args):
         except ImportError:
             from parent_guide_vectors import prepare_vectors
         print(json.dumps(prepare_vectors(args.source, args.destination, report), indent=2))
+    elif args.command == 'prepare-canonical-selection-trial':
+        from .canonical_selective_trial import prepare_selection
+        result = prepare_selection(args.spec, args.base_trial, args.directory)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'measure-canonical-candidates':
+        try:
+            from .canonical_candidate_measurement import measure
+        except ImportError:
+            from canonical_candidate_measurement import measure
+        result = measure(args.source, args.output)
+        print(json.dumps({'output': str(args.output.resolve()),
+                          'inference_calls': result['inference_calls'],
+                          'baseline': {'totals': result['baseline']['totals']},
+                          'profiles': [{key: value for key, value in profile.items() if key != 'steps'}
+                                       for profile in result['profiles']]},
+                         ensure_ascii=False, indent=2))
+    elif args.command == 'evaluate-canonical-policy-trial':
+        from .canonical_policy_evaluation import evaluate_source
+        result = evaluate_source(args.source, args.output)
+        print(json.dumps({'output': str(args.output.resolve()), **{
+            key: result[key] for key in ('inference_calls', 'schedule', 'reductions', 'quality', 'warnings')
+        }}, ensure_ascii=False, indent=2))
+    elif args.command == 'audit-canonical-trial':
+        try:
+            from .canonical_hierarchy_audit import audit_trial
+        except ImportError:
+            from canonical_hierarchy_audit import audit_trial
+        result = audit_trial(args.directory, args.output, args.max_choices, args.work_budget)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'export-canonical-viewer':
+        try:
+            from .canonical_hierarchy_viewer import export_viewer
+        except ImportError:
+            from canonical_hierarchy_viewer import export_viewer
+        print(json.dumps(export_viewer(args.directory, args.output), ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'shape-canonical-trial':
+        try:
+            from .canonical_hierarchy_shape import shape_trial
+        except ImportError:
+            from canonical_hierarchy_shape import shape_trial
+        result = shape_trial(args.source, args.output, args.work_budget, args.max_choices)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'measure-subject-vectors':
+        try:
+            from .subject_matching_probe import measure_subject_vector_loading
+        except ImportError:
+            from subject_matching_probe import measure_subject_vector_loading
+        if args.output.exists():
+            raise ValueError('measurement output already exists')
+        result = measure_subject_vector_loading(args.probe, compact=args.compact)
+        write(args.output, result)
+        print(json.dumps(result, indent=2))
+
     elif args.command == 'collect':
         print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
     elif args.command == 'export-parent-guides':
@@ -696,6 +868,8 @@ def code_files(dataset):
         names += ['bootstrap_student_inputs.py']
     if dataset['adapter'] == 'compare_student_inputs':
         names += ['bootstrap_student_inputs.py', 'compare_student_inputs.py']
+    names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py', 'canonical_graph_policy.py', 'canonical_graph_search.py']
+    names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_selective_trial.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
     if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation'}:

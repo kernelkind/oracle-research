@@ -1,0 +1,94 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "J01",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "J02",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "J03",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "J04",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "J05",
+      "local": {
+        "note_id": "37f44e1fec8dc1d2bbb5f7594d387e151bc348c380311e0e8c98e5200893ffdd",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "J06",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "3.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "J07",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "J08",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "J09",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.3"
+      },
+      "review": {}
+    },
+    {
+      "id": "J10",
+      "local": {
+        "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "J11",
+      "local": {
+        "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+        "number": "1.2"
+      },
+      "review": {}
+    }
+  ]
+}

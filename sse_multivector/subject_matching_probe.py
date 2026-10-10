@@ -13,7 +13,9 @@ import json
 import math
 from pathlib import Path
 import platform
+import resource
 import sys
+import time
 
 from sse_multivector.ancestor_cosine_probe import cosine, load_vectors
 from sse_multivector.subject_order_probe import build_inputs, post_ids, read, reachable, save
@@ -23,8 +25,10 @@ from sse_multivector.subject_hierarchy import browser_spec
 TIE_TOLERANCE = 1e-12  # Numerical ties only; not a semantic acceptance margin.
 
 
-def load_subject_vectors(probe):
-    """Read original worker batches, retaining their receipts instead of synthesizing one."""
+def load_subject_vectors(probe, *, compact=False):
+    """Read original batches and receipts, optionally retaining mapped row views."""
+    if compact:
+        import numpy as np
     vectors, receipts, protected, visited, active = {}, [], {}, set(), set()
 
     def visit(folder):
@@ -37,10 +41,16 @@ def load_subject_vectors(probe):
         path = folder / 'inputs.json'
         data = read(path)
         protected[str(path)] = _sha256_file(path)
+        if data.get('source_kind') == 'native_collected_subjects_v1':
+            for source, expected in data['protected_sha256'].items():
+                if _sha256_file(Path(source)) != expected:
+                    raise ValueError('protected subject-vector source changed: ' + source)
+                protected[source] = expected
         for prior in data.get('reused_probes', []):
             visit(prior)
         if data.get('new_encodings', 1):
-            batch, receipt = load_vectors(folder / 'worker-result')
+            batch, receipt = (load_vectors(folder / 'worker-result', compact=True) if compact
+                              else load_vectors(folder / 'worker-result'))
             if receipt['proposal_sha256'] != protected[str(path)]:
                 raise ValueError('subject vectors do not match the saved SP inputs')
             request = folder / 'worker-request.json'
@@ -70,9 +80,18 @@ def load_subject_vectors(probe):
                     if receipt.get(key) != receipts[0].get(key):
                         raise ValueError(f'SSE identity mismatch between subject batches: {key}')
             receipts.append(receipt)
+            if data.get('source_kind') == 'native_collected_subjects_v1':
+                for key, expected in data['worker_identity'].items():
+                    if receipt.get(key) != expected:
+                        raise ValueError('subject-vector worker identity differs: ' + key)
+                if receipt.get('runtime', {}).get('worker_sha256') != data['worker_sha256']:
+                    raise ValueError('subject-vector worker runtime differs')
             for key, vector in batch.items():
-                if key in vectors and vectors[key] != vector:
-                    raise ValueError('conflicting saved vectors for the same subject')
+                if key in vectors:
+                    same = (np.array_equal(vectors[key], vector) if compact
+                            else vectors[key] == vector)
+                    if not same:
+                        raise ValueError('conflicting saved vectors for the same subject')
                 vectors[key] = vector
         active.remove(folder)
         visited.add(folder)
@@ -83,8 +102,69 @@ def load_subject_vectors(probe):
     return vectors, receipts[0], protected
 
 
-def prepare(source, output, *, posts=None, reuse_probe=None, protected=()):
+def measure_subject_vector_loading(probe, *, compact=False):
+    """Measure actual saved loading and production normalization; write nothing.
+
+    Run each mode in a fresh process. This excludes ANN construction and teacher
+    work; compact mappings require immutable protected sources while in use.
+    """
+    from sse_multivector import ancestor_cosine_probe, bounded_hierarchy_candidates
+
+    def memory(peak=False):
+        status = Path('/proc/self/status')
+        if status.exists():
+            field = 'VmHWM:' if peak else 'VmRSS:'
+            return int(next(line.split()[1] for line in status.read_text().splitlines()
+                            if line.startswith(field)))
+        value = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        return value / 1024 if sys.platform == 'darwin' else value
+
+    probe = Path(probe).resolve()
+    before = memory()
+    started = time.perf_counter()
+    vectors, receipt, protected = load_subject_vectors(probe, compact=compact)
+    loading_seconds = time.perf_counter() - started
+    after_loading = memory()
+    inputs = read(probe / 'inputs.json')
+    hierarchy = dict(groups=[[i] for i in range(len(inputs['subjects']))])
+    normalization_started = time.perf_counter()
+    data = bounded_hierarchy_candidates._SubjectVectors(inputs, hierarchy, vectors)
+    normalization_seconds = time.perf_counter() - normalization_started
+    normalized_hash = hashlib.sha256(data.vectors).hexdigest()
+    sources_hash = hashlib.sha256(json.dumps(protected, sort_keys=True).encode()).hexdigest()
+    raw_bytes = sum(Path(path).stat().st_size for path in protected
+                    if Path(path).name == 'raw-vectors.f32le')
+    row_bytes = (sum(row.nbytes for row in vectors.values()) if compact else
+                 sum(sys.getsizeof(row) + len(row) * sys.getsizeof(0.0)
+                     for row in vectors.values()))
+    files = [Path(__file__), Path(ancestor_cosine_probe.__file__),
+             Path(bounded_hierarchy_candidates.__file__)]
+    return dict(schema_version=1, measurement_id='SUBJECT-VECTOR-LOAD-v1',
+        inference_calls=0, probe=str(probe), compact=compact,
+        vector_storage='readonly_memmap_float32' if compact else 'python_float_tuple',
+        original_entries=len(inputs['subjects']), loaded_vectors=len(vectors),
+        normalized_wordings=len(data.words), dimensions=data.vectors.shape[1],
+        raw_vector_bytes=raw_bytes, row_value_bytes=row_bytes,
+        row_value_bytes_description='logical float32 row bytes' if compact
+            else 'Python tuple plus float object bytes; excludes map identities',
+        normalized_vector_bytes=data.vectors.nbytes,
+        normalized_vectors_sha256=normalized_hash,
+        word_order_sha256=hashlib.sha256(json.dumps(data.words).encode()).hexdigest(),
+        protected_source_count=len(protected), protected_sources_sha256=sources_hash,
+        loading_seconds=loading_seconds, normalization_seconds=normalization_seconds,
+        total_seconds=time.perf_counter() - started,
+        rss_before_loading_kib=before, rss_after_loading_kib=after_loading,
+        rss_after_normalization_kib=memory(), process_peak_rss_kib=memory(peak=True),
+        process_peak_rss_source='/proc/self/status VmHWM'
+            if Path('/proc/self/status').exists() else 'getrusage ru_maxrss',
+        python=sys.version.split()[0],
+        implementation_sha256={p.name: _sha256_file(p) for p in files})
+
+
+def prepare(source, output, *, posts=None, reuse_probe=None, protected=(), subject_vectors_only=False):
     """Prepare all SP entries, requesting only standalone subject vectors not already saved."""
+    if type(subject_vectors_only) is not bool:
+        raise ValueError('subject_vectors_only must be a boolean')
     source, output = Path(source).resolve(), Path(output).resolve()
     if output.exists():
         raise FileExistsError(output)
@@ -96,15 +176,19 @@ def prepare(source, output, *, posts=None, reuse_probe=None, protected=()):
             raise ValueError('cannot identify every corpus post from the saved vector map')
         posts = sorted(identifiers)
     inputs, request = build_inputs(corpus, mappings, posts)
-    hashes = {str(path.resolve()): _sha256_file(path) for path in [
-        source / 'masked-posts.json', source / 'vector-map.json', source / 'worker-config.json',
-        source / 'worker-result/worker-receipt.json', source / 'worker-result/raw-vectors.f32le',
-        *map(Path, protected)]}
+    sources = [source / 'masked-posts.json', source / 'vector-map.json', source / 'worker-config.json']
+    if not subject_vectors_only:
+        sources += [source / 'worker-result/worker-receipt.json', source / 'worker-result/raw-vectors.f32le']
+    hashes = {str(path.resolve()): _sha256_file(path) for path in [*sources, *map(Path, protected)]}
     reused, reusable = [], {}
     if reuse_probe is not None:
         reusable, receipt, prior_hashes = load_subject_vectors(reuse_probe)
-        original = read(source / 'worker-result/worker-receipt.json')
-        for key in ('checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model', 'runtime'):
+        original = read(source / ('worker-config.json' if subject_vectors_only
+                                  else 'worker-result/worker-receipt.json'))
+        identity_fields = ('checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model')
+        if not subject_vectors_only:
+            identity_fields += ('runtime',)
+        for key in identity_fields:
             if receipt[key] != original[key]:
                 raise ValueError(f'SSE identity mismatch: {key}')
         hashes.update(prior_hashes)
@@ -115,6 +199,10 @@ def prepare(source, output, *, posts=None, reuse_probe=None, protected=()):
     new_count = len(request['notes'])
     inputs.update(experiment_id='SMv2', protected_sha256=hashes, reused_probes=reused,
                   new_encodings=new_count, encoding='standalone-subject-full-text')
+    if subject_vectors_only:
+        # Source mask IDs still bind exact fragments; no mask vector values or
+        # successful mask encoding are claimed or required by this preparation.
+        inputs['mask_vector_policy'] = 'not_required_for_subject_vectors_v1'
     output.mkdir(parents=True, exist_ok=False)
     save(output / 'inputs.json', inputs)
     if new_count:
@@ -128,7 +216,79 @@ def prepare(source, output, *, posts=None, reuse_probe=None, protected=()):
         save(output / 'worker-config.json', config)
     return dict(posts=len(inputs['posts']), subjects=len(inputs['subjects']), unique_encodings=total,
                 reused_encodings=total - new_count, new_encodings=new_count,
+                mask_vector_policy=inputs.get('mask_vector_policy', 'required_legacy_matching_v1'),
                 empty_masks=sum(not s['byte_spans'] for s in inputs['subjects']))
+
+
+def prepare_collected_subjects(subjects, output, *, worker_config):
+    """Bind fresh standalone heading requests to a native subjects collection.
+
+    No masks or prior vectors are read. Exact heading strings share encodings;
+    every original local entry and its ancestry remain separate input records.
+    The worker's model/settings are reused, while request and output paths are
+    replaced with this preparation's fresh, source-bound paths.
+    """
+    from . import hierarchy_inputs
+    from .worker import WorkerConfig
+
+    subjects, output, worker_config = map(lambda p: Path(p).resolve(),
+                                         (subjects, output, worker_config))
+    if output.exists():
+        raise FileExistsError(output)
+    if subjects.name != 'subjects.json':
+        raise ValueError('collected subject vectors require native subjects.json')
+    files, protected, reference = hierarchy_inputs.validate_collection(subjects.parent)
+    if set(files) != {'subjects.json'}:
+        raise ValueError('collected subject vectors require a subjects-only collection')
+    config = read(worker_config)
+    WorkerConfig.load(worker_config)
+    for path in (worker_config, Path(__file__).resolve(),
+                 Path(hierarchy_inputs.__file__).resolve(), Path(_load_request.__code__.co_filename).resolve()):
+        protected[str(path)] = _sha256_file(path)
+    inputs = dict(posts=[], subjects=[], edges=[])
+    encodings = {}
+    for note in files['subjects.json']['notes']:
+        label = note['origin']['case_id']
+        inputs['posts'].append(dict(note_short_id=label, note_id=note['note_id'], text=note['text']))
+        numbers = {}
+        for entry in note['subjects']:
+            text = entry['subject']
+            digest = hashlib.sha256(text.encode('utf-8')).hexdigest()
+            encodings.setdefault(text, dict(note_id=digest, text=text,
+                subjects=[dict(subject_id=digest[:16], byte_spans=[[0, len(text.encode('utf-8'))]])]))
+            numbers[entry['number']] = len(inputs['subjects'])
+            inputs['subjects'].append(dict(entry, index=len(inputs['subjects']),
+                note_id=note['note_id'], note_short_id=label, encoding_id=digest[:16]))
+        for number, index in numbers.items():
+            if '.' in number:
+                inputs['edges'].append([numbers[number.rsplit('.', 1)[0]], index])
+    if not encodings:
+        raise ValueError('collected subject vectors require at least one heading')
+    if len(inputs['subjects']) > 4096:
+        raise ValueError('collected subject vector preparation supports at most 4096 entries')
+    identity = {key: config[key] for key in ('checkpoint_sha256', 'base_model_artifact_tree_sha256',
+                                           'model', 'device', 'note_batch_size')}
+    identity['dimensions'] = config['model']['dimensions']
+    inputs.update(source_kind='native_collected_subjects_v1', native_collection=reference,
+                  protected_sha256=protected, reused_probes=[], new_encodings=len(encodings),
+                  encoding='standalone-subject-full-text', worker_identity=identity,
+                  worker_sha256=_sha256_file(Path(_load_request.__code__.co_filename)))
+    for source, expected in protected.items():
+        if _sha256_file(Path(source)) != expected:
+            raise ValueError('protected subject-vector source changed: ' + source)
+    output.mkdir(parents=True, exist_ok=False)
+    save(output / 'inputs.json', inputs)
+    save(output / 'worker-request.json', dict(schema_version=1,
+        proposal_sha256=_sha256_file(output / 'inputs.json'), notes=list(encodings.values())))
+    _load_request(output / 'worker-request.json')
+    config.update(request_path=str(output / 'worker-request.json'),
+                  request_sha256=_sha256_file(output / 'worker-request.json'),
+                  output_path=str(output / 'worker-result'))
+    save(output / 'worker-config.json', config)
+    WorkerConfig.load(output / 'worker-config.json')
+    return dict(posts=len(inputs['posts']), subjects=len(inputs['subjects']),
+                unique_encodings=len(encodings), reused_encodings=0, new_encodings=len(encodings),
+                inference_calls=0, source_kind=inputs['source_kind'])
 
 
 def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90, mask_cutoff=.80):
@@ -359,14 +519,31 @@ def run(source, probe, output, *, subject_cutoff=.90, mask_cutoff=.80):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     if len(sys.argv) > 1 and sys.argv[1] == 'prepare':
-        parser.add_argument('--source', type=Path, required=True)
+        source = parser.add_mutually_exclusive_group(required=True)
+        source.add_argument('--source', type=Path)
+        source.add_argument('--subjects', type=Path,
+                            help='native subjects.json collection; no masks or old vectors')
+        parser.add_argument('--worker-config', type=Path,
+                            help='pinned CPU SSE settings for a fresh collected-subject preparation')
         parser.add_argument('--output', type=Path, required=True)
         parser.add_argument('--posts', nargs='+')
         parser.add_argument('--reuse-probe', type=Path)
+        parser.add_argument('--subject-vectors-only', action='store_true',
+                            help='preserve source masks without requiring unused mask-vector encoding')
         parser.add_argument('--protect', type=Path, nargs='*', default=[])
         args = parser.parse_args(sys.argv[2:])
+        if args.subjects is not None:
+            if (args.worker_config is None or args.posts is not None or args.reuse_probe is not None
+                    or args.subject_vectors_only or args.protect):
+                parser.error('--subjects requires --worker-config and does not accept legacy mask/reuse options')
+            print(json.dumps(prepare_collected_subjects(args.subjects, args.output,
+                                                       worker_config=args.worker_config), indent=2))
+            return
+        if args.worker_config is not None:
+            parser.error('--worker-config requires --subjects')
         print(json.dumps(prepare(args.source, args.output, posts=args.posts,
-                                 reuse_probe=args.reuse_probe, protected=args.protect), indent=2))
+                                 reuse_probe=args.reuse_probe, protected=args.protect,
+                                 subject_vectors_only=args.subject_vectors_only), indent=2))
         return
     for name in ("source", "probe", "output"):
         parser.add_argument("--" + name, type=Path, required=True)

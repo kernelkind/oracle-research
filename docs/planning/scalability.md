@@ -315,8 +315,13 @@ incompatible comparison interpretations; guards and receipt-bound agent review
 held those placements. These outcomes do not establish semantic accuracy or
 production-scale feasibility.
 
-The report, exact evaluated prompts and two menu recipes are in main. The native
-constructor, receipts and target artifacts remain in the retained
-`oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree; the report gives the
-source commit and complete inspection command. This bounded documentation
-integration changes no generation policy, prompt or saved graph.
+The report, exact evaluated prompts, two menu recipes and canonical runtime are
+in main. Construction, selective entry discovery, guarded comparison selection,
+continuation, shaping, structural audit and native accounting use the shared
+runner. The integration preserves the existing policies and prompts; it does
+not resolve the saved semantic conflicts or the six-choice limitation.
+See the [native workflow](../../sse_multivector/model-runner.md#canonical-hierarchy-construction).
+Receipts and target artifacts remain in the retained
+`oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree because their frozen
+source paths still reference it. The report gives the original source commit
+and complete inspection command.

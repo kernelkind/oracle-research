@@ -59,6 +59,44 @@ class HierarchyInputTests(unittest.TestCase):
         self.assertNotIn("Tea is named twice", cases[1]["prompt"])
         self.assertEqual(self.calls(), calls)
 
+    def test_collect_subjects_from_selected_jsonl_and_posts_sources_preserves_metadata(self):
+        entries = [dict(number="1", context="The post names tea.", subject="Tea")]
+        authored = dict(note_id="authored", text="Tea in a cup.", pubkey="saved-author",
+                        created_at=123, origin=dict(prompt_id="H1", source="authored"))
+        self.write("authored.json", dict(schema_version=1, notes=[authored]))
+        corpus = self.root / "corpus.jsonl"
+        corpus.write_text("\n".join(json.dumps(row) for row in [
+            dict(note_id="real-one", content="Tea warms me.", pubkey="author", split="test",
+                 created_at=456, origin=dict(prompt_id="source-metadata-only")),
+            dict(note_id="real-two", content="Unselected post", pubkey="other", split="train")]) + "\n")
+        self.write("sources.json", dict(schema_version=1, sources=[
+            dict(path="corpus.jsonl", format="jsonl", select=["real-one"]),
+            dict(path="authored.json", format="posts")]))
+        spec = json.loads(self.spec.read_text())
+        spec["dataset"] = dict(adapter="subjects", path="sources.json")
+        self.write("spec.json", spec)
+        self.prepare("SP")
+        self.cli("run", "SP", env={"FAKE_RUNNER_PROMPT_RESPONSE": json.dumps(dict(subjects=entries))})
+        calls = self.calls()
+        self.cli("collect", "SP", "--output", "subjects")
+        notes = json.loads((self.root / "subjects/subjects.json").read_text())["notes"]
+        self.assertEqual([note["note_id"] for note in notes], ["real-one", "authored"])
+        self.assertEqual(notes[0]["origin"]["source_origin"], dict(
+            source_path=str(corpus), source_row=1, pubkey="author", split="test",
+            source_origin=dict(prompt_id="source-metadata-only")))
+        self.assertEqual(notes[0]["created_at"], 456)
+        self.assertEqual(notes[1]["pubkey"], authored["pubkey"])
+        self.assertEqual(notes[1]["created_at"], authored["created_at"])
+        self.assertEqual(notes[1]["origin"]["source_origin"], authored["origin"])
+        self.assertEqual([note["subjects"] for note in notes], [entries, entries])
+        from sse_multivector import hierarchy_inputs
+        files, protected, _ = hierarchy_inputs.validate_collection(self.root / "subjects")
+        self.assertEqual(files["subjects.json"]["notes"], notes)
+        for name in ("sources.json", "corpus.jsonl", "authored.json"):
+            path = self.root / name
+            self.assertEqual(protected[str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.assertEqual(self.calls(), calls)
+
     def test_subject_preparation_accepts_200_complete_posts_without_calls(self):
         notes = [dict(note_id=f"{i:064x}", text=f"Original post {i}", area="food" if i < 100 else "music")
                  for i in range(200)]
@@ -258,6 +296,192 @@ class HierarchyInputTests(unittest.TestCase):
         self.assertEqual(json.loads(path.read_text()), config)
         self.assertFalse(bound.output_path.exists())
         self.assertEqual(self.calls(), calls)
+
+    def test_validate_collection_replays_native_subject_receipts_without_inference(self):
+        from sse_multivector import experiment, hierarchy_inputs
+        self.subjects()
+        self.cli("collect", "SP", "--output", "subjects")
+        calls = self.calls()
+        directory = self.root / "subjects"
+        files, protected, reference = hierarchy_inputs.validate_collection(directory,
+            load_plan=lambda path: experiment.load(path)[0], load_report=experiment.report)
+        self.assertEqual(files, {"subjects.json": json.loads((directory / "subjects.json").read_text())})
+        self.assertEqual(reference, dict(path=str(directory / "provenance.json"),
+            sha256=hashlib.sha256((directory / "provenance.json").read_bytes()).hexdigest()))
+        for path in (directory / "subjects.json", directory / "provenance.json",
+                     self.root / "SP/experiment.json", self.root / "SP/run/manifest.json",
+                     self.root / "SP/run/results.jsonl", self.root / "posts.json",
+                     self.root / "SP/execution-settings.jsonl"):
+            self.assertEqual(protected[str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.assertEqual(self.calls(), calls)
+
+    def test_validate_collection_rejects_subjects_not_supported_by_native_receipts(self):
+        from sse_multivector import hierarchy_inputs
+        self.subjects()
+        self.cli("collect", "SP", "--output", "subjects")
+        path = self.root / "subjects/subjects.json"
+        source = json.loads(path.read_text())
+        source["notes"][0]["subjects"][0]["context"] = "Rewritten after inference."
+        path.write_text(json.dumps(source))
+        with self.assertRaisesRegex(ValueError, "canonical.*differs"):
+            hierarchy_inputs.validate_collection(path.parent)
+
+    def collected_grouped_masks(self):
+        self.subjects(notes=[dict(note_id="a" * 64, text="é Tea Tea", pubkey="source-author")])
+        self.cli("collect", "SP", "--output", "subjects")
+        # Prepared source definitions are immutable; MP uses separate files.
+        mask_prompt = self.root / "mask-prompt.txt"
+        mask_prompt.write_text("GENERIC PROMPT {POST}\n{INDEXED_POST}\n{SUBJECTS}")
+        spec = json.loads(self.spec.read_text())
+        spec["prompt"] = dict(id="MP1", path=str(mask_prompt))
+        spec["dataset"] = dict(adapter="grouped_masks", path="subjects/subjects.json")
+        self.spec = self.write("mask-spec.json", spec)
+        self.prepare("MP")
+        self.cli("run", "MP", env={"FAKE_RUNNER_PROMPT_RESPONSE": json.dumps(dict(results=[
+            dict(id="S1", meaning="Drink", expressible=False, evidence="No broad wording.", mask=[]),
+            dict(id="S2", **self.mask_response([[2, 2], [3, 3]]))]))})
+        self.cli("collect", "MP", "--output", "sse")
+        return self.root / "sse"
+
+    def test_validate_mask_collection_reconstructs_all_fields_and_upstream_subjects(self):
+        from sse_multivector import hierarchy_inputs
+        directory = self.collected_grouped_masks()
+        calls = self.calls()
+        files, protected, _ = hierarchy_inputs.validate_collection(directory)
+        self.assertEqual(set(files), {"masked-posts.json", "vector-map.json", "worker-request.json"})
+        for name, value in files.items():
+            self.assertEqual(value, json.loads((directory / name).read_text()))
+        post = files["masked-posts.json"]["notes"][0]
+        self.assertEqual(post["pubkey"], "source-author")
+        self.assertEqual(post["subjects"][0]["byte_spans"], [])
+        self.assertEqual(post["subjects"][1]["fragments"], ["Tea", "Tea"])
+        self.assertIn("receipt", post["origin"])
+        self.assertIn("receipt", post["subjects"][1]["origin"])
+        self.assertIn(str(self.root / "subjects/provenance.json"), protected)
+        self.assertIn(str(self.root / "SP/run/results.jsonl"), protected)
+        self.assertEqual(self.calls(), calls)
+
+    def test_validate_mask_collection_rejects_resealed_upstream_subjects(self):
+        from sse_multivector import hierarchy_inputs, experiment_inputs
+        directory = self.collected_grouped_masks()
+        source_path = self.root / "subjects/subjects.json"
+        source = json.loads(source_path.read_text())
+        source["notes"][0]["subjects"][0]["context"] = "Not the saved SP answer."
+        source_path.write_text(json.dumps(source))
+        changed_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
+        # Even if both downstream declarations are resealed to the changed
+        # source, native upstream SP receipts must still prove every field.
+        experiment_path = self.root / "MP/experiment.json"
+        envelope = json.loads(experiment_path.read_text())
+        envelope["plan"]["sources"][str(source_path)] = changed_hash
+        envelope["sha256"] = experiment_inputs.digest(envelope["plan"])
+        experiment_path.write_text(json.dumps(envelope))
+        provenance_path = directory / "provenance.json"
+        provenance = json.loads(provenance_path.read_text())
+        provenance["sources"][str(source_path)] = changed_hash
+        provenance["sources"][str(experiment_path)] = hashlib.sha256(experiment_path.read_bytes()).hexdigest()
+        provenance["experiments"][0]["sources"][str(source_path)] = changed_hash
+        provenance_path.write_text(json.dumps(provenance))
+        with self.assertRaisesRegex(ValueError, "canonical.*differs"):
+            hierarchy_inputs.validate_collection(directory)
+
+    def test_validate_collection_rejects_incomplete_or_wrong_identity_reports(self):
+        from copy import deepcopy
+        from sse_multivector import hierarchy_inputs, experiment
+        self.subjects()
+        self.cli("collect", "SP", "--output", "subjects")
+        result = experiment.report(self.root / "SP")
+        for field, value in (("experiment", "other"), ("adapter", "generic"),
+                             ("prompt_id", "other"), ("cases", [])):
+            with self.subTest(field=field):
+                changed = deepcopy(result)
+                changed[field] = value
+                with self.assertRaisesRegex(ValueError, "identity differs|complete valid"):
+                    hierarchy_inputs.validate_collection(self.root / "subjects",
+                        load_report=lambda path: changed)
+        changed = deepcopy(result)
+        changed["cases"][0].pop("receipt")
+        with self.assertRaisesRegex(ValueError, "complete valid"):
+            hierarchy_inputs.validate_collection(self.root / "subjects", load_report=lambda path: changed)
+
+    def test_validate_collection_rechecks_cached_files_and_protects_reuse_sources(self):
+        from sse_multivector import hierarchy_inputs
+        self.subjects()
+        self.cli("prepare", "reuse", "--from", "SP")
+        self.cli("run", "reuse")
+        self.cli("collect", "reuse", "--output", "subjects")
+        cache = {}
+        files, protected, _ = hierarchy_inputs.validate_collection(self.root / "subjects", cache=cache)
+        self.assertTrue(files["subjects.json"]["notes"][0]["origin"]["reused"])
+        self.assertIn(str(self.root / "SP/run/results.jsonl"), protected)
+        self.assertIn(str(self.root / "SP/run/manifest.json"), protected)
+        path = self.root / "subjects/subjects.json"
+        path.write_bytes(path.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "protected collection source changed"):
+            hierarchy_inputs.validate_collection(path.parent, cache=cache)
+
+    def test_validate_collection_rejects_null_hashes_and_new_cached_canonical_files(self):
+        from sse_multivector import hierarchy_inputs
+        self.subjects()
+        self.cli("collect", "SP", "--output", "subjects")
+        directory = self.root / "subjects"
+        cache = {}
+        hierarchy_inputs.validate_collection(directory, cache=cache)
+        extra = directory / "worker-request.json"
+        extra.write_text("{}")
+        with self.assertRaisesRegex(ValueError, "canonical.*differ"):
+            hierarchy_inputs.validate_collection(directory, cache=cache)
+        extra.unlink()
+        provenance_path = directory / "provenance.json"
+        provenance = json.loads(provenance_path.read_text())
+        provenance["sources"][str(self.root / "posts.json")] = None
+        provenance_path.write_text(json.dumps(provenance))
+        with self.assertRaisesRegex(ValueError, "provenance|hash"):
+            hierarchy_inputs.validate_collection(directory)
+
+    def test_validate_collection_hashes_shared_native_ledgers_once_then_rechecks(self):
+        from unittest.mock import patch
+        from sse_multivector import hierarchy_inputs, extraction_pipeline as engine
+        self.subjects(notes=[dict(note_id=char * 64, text="Tea") for char in "abc"])
+        self.cli("collect", "SP", "--output", "subjects")
+        ledger = self.root / "SP/run/results.jsonl"
+        original, hashes = engine._sha256_file, []
+        def measured(path):
+            if path == ledger:
+                hashes.append(path)
+            return original(path)
+        with patch.object(engine, "_sha256_file", side_effect=measured):
+            hierarchy_inputs.validate_collection(self.root / "subjects")
+        self.assertLessEqual(len(hashes), 2, "full shared ledger rehashed once per case")
+
+    def test_validate_collection_rejects_renamed_receipt_bearing_subject_sources(self):
+        from sse_multivector import hierarchy_inputs
+        self.collected_grouped_masks()
+        self.write("renamed.json", json.loads((self.root / "subjects/subjects.json").read_text()))
+        spec = json.loads(self.spec.read_text())
+        spec["dataset"]["path"] = "renamed.json"
+        self.spec = self.write("renamed-spec.json", spec)
+        self.prepare("renamed-MP")
+        self.cli("run", "renamed-MP", env={"FAKE_RUNNER_PROMPT_RESPONSE": json.dumps(dict(results=[
+            dict(id="S1", meaning="Drink", expressible=False, evidence="No broad wording.", mask=[]),
+            dict(id="S2", **self.mask_response([[2, 2], [3, 3]]))]))})
+        self.cli("collect", "renamed-MP", "--output", "renamed-collection")
+        with self.assertRaisesRegex(ValueError, "receipt-bearing.*subjects.json"):
+            hierarchy_inputs.validate_collection(self.root / "renamed-collection")
+
+    def test_validate_collection_fails_closed_for_unreplayed_native_corpus_references(self):
+        from sse_multivector import hierarchy_inputs, experiment_inputs
+        self.collected_grouped_masks()
+        wrapper = self.write("corpus.json", dict(schema_version=1, sources=["subjects/subjects.json"]))
+        path = self.root / "MP/experiment.json"
+        envelope = json.loads(path.read_text())
+        envelope["plan"]["dataset"]["path"] = str(wrapper)
+        envelope["plan"]["sources"][str(wrapper)] = hashlib.sha256(wrapper.read_bytes()).hexdigest()
+        envelope["sha256"] = experiment_inputs.digest(envelope["plan"])
+        path.write_text(json.dumps(envelope))
+        self.cli("collect", "MP", "--output", "corpus-collection")
+        with self.assertRaisesRegex(ValueError, "corpus-reference.*unsupported"):
+            hierarchy_inputs.validate_collection(self.root / "corpus-collection")
 
 
 if __name__ == "__main__":

@@ -4,10 +4,10 @@ The user approved replacing global shortlist selection with graph traversal,
 trusting the comparison model's returned labels. Selection owns which local–
 canonical comparisons to request; prompt development belongs to its own effort.
 
-[The selector](canonical_graph_search.py) and its saved-comparison evaluator are
-implemented. The active hierarchy constructor has **not** adopted this method.
-Its existing sixteen-candidate policy remains unchanged. This work makes no
-model requests and does not modify prompts or saved canonical meanings.
+[The selector](canonical_graph_search.py), its saved-comparison evaluator and
+opt-in native constructor integration are implemented. `--graph-search` selects
+this method in a separate raw trial; it does not change another agent's active
+generation trial. Prompts and fixed meanings retain their existing contracts.
 
 ## Traversal
 
@@ -90,3 +90,55 @@ env LD_LIBRARY_PATH=/nix/store/1xw5xccqqh1xw3mvd70hyil6x418wxcm-gcc-14.3.0-lib/l
   --method graph-search \
   --output target/graph-search-as100-v1/graph-search-repeat.json
 ```
+
+## Native construction
+
+The constructor accepts `--graph-search` on `prepare-canonical-trial`,
+`prepare-canonical-child-trial` and `fork-canonical-trial`. Each frontier gets a
+separate native experiment. All frontiers use the same graph, original local
+evidence and independently fixed local meaning. Completed phase sources and
+receipts are checked again before application. Existing eligibility, mapped-parent,
+uncertainty and placement checks remain in place. Positive graph inferences are
+recorded separately from actual model answers; they do not create receipts.
+
+`fork-canonical-trial --at-step INDEX --graph-search` starts before one saved
+construction step, retaining the original history and independent meaning. It
+preserves the source trial, records its state hash and replaces its active
+shortlist configuration only in the new trial. Exact native requests are reused
+through the inherited history root. The default preparation mode is unchanged.
+
+For example, this prepares the saved Food dishes placement without inference:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+../experiment-runner/bin/experiment-runner fork-canonical-trial \
+  ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1 \
+  --output target/graph-search-placement-new \
+  --at-step 19 --graph-search
+```
+
+Native GPT-6.1 Sol medium qualification used two saved ASv6.100 placements:
+
+- **Food dishes, entry 19:** four frontiers; sixteen exact answer reuses and
+  one new Stockpots comparison. The answer was `neither`; the resulting graph
+  exactly matches the original placement. Two provider attempts, including one
+  automatic prefix warmup, cost **$0.0066468 API-equivalent** in total. No failures
+  or retries occurred. All token types are included by the native usage report.
+- **Food preparation, entry 8:** two frontiers; six exact answer reuses, zero
+  provider attempts. Equivalence with C005 supplies the existing descendant
+  relationship to C008 without another comparison. The resulting graph exactly
+  matches the original seven-comparison placement. This demonstrates one
+  comparison avoided, not a measured whole-hierarchy API-cost reduction.
+
+Five native CLI tests cover pruning, multiple rounds/resumption, exact reuse,
+source tampering and an explicitly required mapped parent that was already
+inferable. Sixty-five relevant tests pass. The first behavior test failed on
+the absent CLI option before implementation. An initial full test run also had
+a fixture setup timeout under concurrent machine load; the rerun passed.
+
+Ignored native artifacts and their frozen task-code references remain in
+`../oracle-mvp-canonical-graph-construction-v1/target/graph-search-placement-v1/`
+and `target/graph-search-pruning-control-v1/` in that worktree. The shared attempt
+counter admits three actual requests; two were used. No additional construction
+was dispatched. These are integration checks; full-build cost and hierarchy
+quality still need a matched construction trial.

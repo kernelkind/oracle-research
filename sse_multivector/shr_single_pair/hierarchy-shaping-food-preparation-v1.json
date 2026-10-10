@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "corpus": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "bootstrap_spec": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-b96-bootstrap-v1.spec.json",
+  "comparison_spec": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-c48-compare-v1.spec.json",
+  "independent_meanings": true,
+  "local_schema_version": 4,
+  "roots": [
+    {
+      "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+      "number": "4"
+    }
+  ]
+}

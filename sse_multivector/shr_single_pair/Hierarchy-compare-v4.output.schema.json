@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "meaning": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "relation": {
+      "type": "string",
+      "enum": [
+        "equivalent",
+        "local_contains_canonical",
+        "canonical_contains_local",
+        "neither",
+        "uncertain"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "meaning",
+    "relation",
+    "reason"
+  ],
+  "additionalProperties": false
+}
