@@ -45,6 +45,25 @@ advantage warranting first priority on the new tasks. Gemma 4 31B is a potential
 larger independent quality reference if 12B/26B leave an unresolved semantic
 gap; it is not automatically selected from the separate SP pilot.
 
+The expanded same-eight-input Bootstrap screen supplies evidence for Gemma26
+and Ministral14: both fail the full response format through Markdown fences.
+Gemma26 retains broad Food/Bread and the healthy-diet restrictions better than
+Ministral's instance narrowing and invented Coffeechain interpretation, but it
+also narrows Rosemary and underspecifies Risotto. Median native request
+execution is **21.85 / 83.13 seconds**, with **50.13 / 28.17 GiB** peak CUDA
+allocation respectively. These observations justify retaining Gemma26 for a
+learning pilot; they do not rank adapted models. See the
+[source-bound screens](SHR-STUDENT-PREPARATION.md#current-input-evidence).
+
+Reviewed Compare preparation yields **180 TRAIN / 46 separate evaluation**
+relation targets after excluding two unresolved reciprocal families. A native
+full-weight encoder fit and fresh-process checkpoint verification pass with a
+tiny model. This path is prepared for Ettin1B, whose untrained head cannot supply
+a meaningful published-checkpoint comparison. The data contains no `uncertain`
+labels or canonical branches, and evaluation equivalence is entirely identity
+controls. A fit can show initial learning but cannot establish full-task
+superiority or select a final student.
+
 The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
 describes a post-trained dense 27B hybrid-attention model, native 262,144-token
 context and an explicit non-thinking mode. These properties support investigating
@@ -67,7 +86,14 @@ The current production `subject_training_model` already targets both packed
 expert projections in every Gemma 4 MoE layer, checks complete coverage and
 uses rank-two expert adapters alongside its configured module adapters. That
 reduces preparation work for this candidate; it is not a GB10 measurement or
-proof of Bootstrap/Compare learning. The same explicit coverage is not
+proof of Bootstrap/Compare learning. A native MoE regression now verifies actual
+expert ranks, finite expert gradients and save/reload. It also reproduces and
+fixes the all-linear router inclusion by explicitly excluding router projections,
+as required by this loader's existing frozen-router contract. The initial full
+Gemma26 capacity attempt stopped before optimization on that check. The corrected
+run adapts 78.06M parameters at 8,192/13,312 tokens in 27.30/49.80 seconds per
+update, with 54.21/57.65 GiB peak CUDA allocation; fresh-process reload is pending.
+This improves its execution evidence, not its measured task quality. The same explicit coverage is not
 implemented for the sparse Qwen candidate. PEFT's
 [LoRA documentation](https://huggingface.co/docs/peft/v0.21.0/package_reference/lora#targeting-nnparameter-directly)
 explains why experts stored as parameters need `target_parameters` rather than
@@ -109,9 +135,9 @@ describes a 13.5B language backbone, 256K context, instruction specialization
 and JSON output. The published Instruct weights are FP8 and use the
 Mistral-common tokenizer; the separate Reasoning checkpoint's reasoning scores
 must not be attributed to this release. Its compact generative contract makes
-it eligible for Bootstrap research even though it is not cached. Neither the
-existing Qwen/Gemma text extraction nor NF4 loading has been verified for this
-checkpoint. Cache availability determines experiment cost, not suitability.
+it eligible for Bootstrap research. Its text-weight extraction and native FP8
+dequantization are now verified; direct NF4 conversion is unsupported by the
+current loader. Cache availability determines experiment cost, not suitability.
 The official Transformers example uses `MistralCommonBackend` and documents
 `FineGrainedFP8Config(dequantize=True)` for BF16 loading. The pinned checkpoint
 `29439f81c2be264d8d393273f99e7db9c0961120` is now cached on GB10, with

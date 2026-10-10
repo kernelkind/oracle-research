@@ -833,6 +833,7 @@ def subject_training_model(config, checkpoint=None):
         model = get_peft_model(model, LoraConfig(task_type="CAUSAL_LM",
             target_modules=config["lora_target_modules"], r=config["lora_rank"],
             lora_alpha=config["lora_alpha"], lora_dropout=0., bias="none", lora_bias=False,
+            exclude_modules=r".*\.router\..*" if experts else None,
             init_lora_weights=True, target_parameters=experts or None,
             rank_pattern={re.escape(name): 2 for name in experts},
             alpha_pattern={re.escape(name): 32 for name in experts}))

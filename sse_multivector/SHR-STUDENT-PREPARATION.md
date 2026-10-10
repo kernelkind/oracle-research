@@ -88,8 +88,33 @@ task coverage. Its **Compare-v48** teachers retain the original three-field
 meaning/relation/reason contract, with the local meaning checked for exact copy.
 The student remains relation-only. Native collection preserves every teacher
 answer and bound review; it does not apply relationships to a hierarchy. The
-prepared experiments are `learning-pilot-v1/compare-{train,evaluation}-teacher`;
-no task-specific fit has run.
+completed experiments are `learning-pilot-v1/compare-{train,evaluation}-teacher`.
+They returned **184/46 valid answers in 185/46 attempts**, without reused answers.
+One TRAIN reciprocal family disagrees about whether a listening-access link
+falls within podcast production/publication. Another family's claimed strict
+scope difference between a financial valuation and its utility contrast remains
+unclear. Native agent reviews provisionally accept **180 TRAIN / 46 evaluation**
+decisions and leave those four TRAIN directions unresolved. Neither direction
+of an unresolved family becomes a fit target; no decision is silently relabeled.
+The collection is `learning-pilot-v1/compare-answers-v1`.
+
+The relation-only pilot preparation in `compare_student_pilot.py` preserves full
+rendered teacher inputs and source identities while supplying only the reviewed
+relation as the target. It checks native producer receipts, input/prompt hashes,
+human review precedence, complete reciprocal families and separated notes,
+authors and post text. Before fitting, it derives the targets again from the
+bound collection; changing a target and its artifact hash does not qualify it.
+The usable TRAIN labels are **10 equivalent, 26 local-contains, 26 canonical-
+contains and 118 neither**; evaluation has **2/8/8/28**. Neither role contains
+`uncertain`; evaluation equivalence is entirely same-entry controls. All branches
+remain empty. This is useful partial-task learning evidence, not sufficient
+coverage for choosing the final Compare student.
+
+The first supported fit is a full-weight Ettin1B encoder with a five-way head,
+using every TRAIN example in each epoch, separate evaluation, checkpoints at
+epochs 1 and 4, and fresh-process saved-score verification. Its native tiny-model
+integration passed; a real Ettin fit has not run yet. Qwen27 and Kev27 task fits
+remain subsequent work. Bootstrap's student format remains pending.
 
 Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
 every support post, source entry, producer answer, reciprocal family and branch
@@ -239,6 +264,34 @@ Neither checkpoint is selected or task-fine-tuned. Request times include
 different output lengths; CUDA allocation is not total unified-memory use or
 training cost. The measured local loading times are about 6m16 for Qwen and
 2m48 for Gemma, separate from per-request timing.
+
+The expanded published-checkpoint screen uses those same eight frozen inputs
+and exact hashes. Ministral3-14B Instruct, with native FP8 scales dequantized to
+BF16, finishes eight calls at **83.13 seconds median / 28.17 GiB peak CUDA**.
+Gemma4-26B-A4B-it, with NF4 linear modules and BF16 packed experts, finishes at
+**21.85 seconds / 50.13 GiB**. Both fail all eight strict full-response contracts
+through Markdown fences; no outputs are repaired or retried. Native agent
+reviews preserve the original failures and separate raw-meaning observations.
+
+Ministral narrows Rosemary, Bread and Risotto to instances, invents Coffeechain
+identity and cites nonverbatim evidence. Gemma26 preserves broad Food and Bread,
+Rome's city identity and the healthy-diet restrictions, but narrows Rosemary,
+underspecifies Risotto as merely a type of rice dish, and returns an unexplained
+Coffeechain null. Neither result predicts learning after fine-tuning. Artifacts
+are `bootstrap-current-input-ministral14b-v2` and
+`bootstrap-current-input-gemma26b-v3` under the same target root.
+
+Gemma26's first native capacity run stopped before optimization: the production
+`all-linear` LoRA setting included router projections while the loader requires
+a frozen router. The loader now excludes those projections for Gemma expert
+adaptation. A native two-layer MoE regression checks frozen routing, both expert
+projections in every layer, actual rank-two/alpha-32 wrappers, finite expert
+gradients, changed adapters and exact saved/reloaded scores. All eleven benchmark
+admission/native integration tests pass. The full 8,192/13,312-token, 2,048-target-
+token rerun now completes optimization and saves **78,059,520 trainable adapter
+parameters**. Measured updates are **27.30 / 49.80 seconds**, with **54.21 / 57.65
+GiB** peak CUDA allocation. Fresh-process checkpoint verification remains pending;
+these synthetic suffix measurements do not establish task learning.
 
 The separate Compare selection freezes 13 pairs / 26 native reciprocal inputs:
 three complete source triangles, a greetings-equivalence candidate, activity

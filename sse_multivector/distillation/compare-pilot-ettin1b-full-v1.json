@@ -1,0 +1,11 @@
+{
+  "model": "jhu-clsp/ettin-encoder-1b",
+  "revision": "befd76be43d08b89ff9957012f3ff29d0842780b",
+  "max_length": 7168,
+  "epochs": [1, 4],
+  "batch_size": 4,
+  "learning_rate": 0.00002,
+  "seed": 17,
+  "memory_budget_gib": 32,
+  "reserve_gib": 8
+}

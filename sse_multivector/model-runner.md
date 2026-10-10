@@ -57,6 +57,25 @@ provisional `compare.json` answers with receipts and reviews; relation-only
 student targets and branch examples require separate qualification. See
 [`distillation/compare-pilot-train-inputs-v1.json`](distillation/compare-pilot-train-inputs-v1.json).
 
+`python -m sse_multivector.compare_student_pilot prepare --collection PATH
+--provenance PATH --output PATH` prepares relation-only development targets from
+that native collection. Current human decisions take precedence. An unresolved,
+incomplete or contradictory reciprocal family is excluded together; meanings and
+teacher decisions are never rewritten. It preserves complete rendered inputs,
+TRAIN/evaluation roles and original support identities, and reports missing
+class/branch coverage explicitly. Neither agent review nor this preparation
+establishes human gold or final supervision.
+
+The same module's `train --config PATH --data PATH --output PATH --stage train`
+fits a full-weight encoder using only the prepared TRAIN role. It first derives
+the targets again from the hash-bound teacher collection, forbids input truncation,
+saves configured epoch checkpoints and evaluates separately. `--stage verify`
+requires a fresh process and checks saved hashes and classification scores.
+The current pinned configuration is
+[`distillation/compare-pilot-ettin1b-full-v1.json`](distillation/compare-pilot-ettin1b-full-v1.json).
+This is the partial-task development pilot path, separate from SP training and
+from final model selection. It has no provider calls or hierarchy application.
+
 [run-model.sh](run-model.sh) sends one caller-supplied prompt through pi-ai.
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.

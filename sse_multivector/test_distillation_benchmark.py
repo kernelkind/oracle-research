@@ -68,6 +68,59 @@ class DistillationBenchmarkTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("RUN_BENCHMARK_GPU_TESTS") == "1", "explicit CUDA integration run")
 class BenchmarkGPUIntegrationTests(unittest.TestCase):
+    def test_gemma_moe_adapts_all_experts_with_frozen_router_and_reloads(self):
+        import torch
+        from peft.tuners.lora.layer import ParamWrapper
+        from transformers import Gemma4TextConfig, Gemma4ForCausalLM
+        from sse_multivector import distillation_run
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = Gemma4TextConfig(vocab_size=2048, hidden_size=64, intermediate_size=128,
+                num_hidden_layers=2, num_attention_heads=4, num_key_value_heads=2,
+                head_dim=16, layer_types=['sliding_attention', 'full_attention'],
+                sliding_window=32, max_position_embeddings=128, hidden_size_per_layer_input=0,
+                enable_moe_block=True, num_experts=4, top_k_experts=2, moe_intermediate_size=32)
+            Gemma4ForCausalLM(config).save_pretrained(root/'base')
+            training = dict(model=str(root/'base'), revision='a'*40, device='cuda',
+                quantization='nf4', max_length=64, efficient_attention=True,
+                lora_target_modules='all-linear', lora_rank=16, lora_alpha=32,
+                gradient_checkpointing=True)
+            model = distillation_run.subject_training_model(training)
+            router = [p for n, p in model.named_parameters() if '.router.' in n]
+            self.assertTrue(router)
+            self.assertFalse(any(p.requires_grad for p in router))
+            self.assertFalse(any('.router.' in n and 'lora_' in n for n, _ in model.named_parameters()))
+            targets = model.peft_config['default'].target_parameters
+            self.assertEqual(len(targets), 4)
+            for suffix in ('.experts.gate_up_proj', '.experts.down_proj'):
+                self.assertEqual(sum(n.endswith(suffix) for n in targets), 2)
+            wrappers = [m for m in model.modules() if isinstance(m, ParamWrapper)]
+            self.assertEqual(len(wrappers), 4)
+            self.assertTrue(all(m.r['default'] == 2 and m.lora_alpha['default'] == 32 for m in wrappers))
+            trainable = [(n, p) for n, p in model.named_parameters() if p.requires_grad]
+            self.assertTrue(all('lora_' in n and p.dtype == torch.float32 for n, p in trainable))
+            before = {n: p.detach().clone() for n, p in trainable}
+            tokens = torch.arange(5, 21, device='cuda').unsqueeze(0)
+            optimizer = torch.optim.AdamW([p for _, p in trainable], lr=1e-3)
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                loss = model(input_ids=tokens, labels=tokens).loss
+            loss.backward()
+            self.assertTrue(torch.isfinite(loss))
+            self.assertTrue(all(torch.isfinite(m.lora_B['default'].weight.grad).all()
+                                and m.lora_B['default'].weight.grad.norm() > 0 for m in wrappers))
+            optimizer.step()
+            self.assertTrue(any(not torch.equal(before[n], p) for n, p in trainable))
+            model.eval()
+            with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                expected = model(input_ids=tokens).logits.cpu()
+            model.save_pretrained(root/'adapter')
+            del optimizer, model, trainable, router, wrappers
+            torch.cuda.empty_cache()
+            reloaded = distillation_run.subject_training_model(training, root/'adapter').eval()
+            with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                observed = reloaded(input_ids=tokens).logits.cpu()
+            torch.testing.assert_close(observed, expected, rtol=1e-4, atol=1e-4)
+
     def test_causal_output_suffix_trains_and_reloads_native_nf4_adapters(self):
         import torch
         from unittest.mock import patch
