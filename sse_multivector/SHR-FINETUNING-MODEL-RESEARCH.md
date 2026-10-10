@@ -28,15 +28,16 @@ do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
 | --- | --- | --- | --- |
-| Qwen3.8-27B | First dense generative reference: cached, instruction-tuned, native long context; existing NF4/LoRA path passes save/reload | Strong common-foundation reference, including direct option scoring | Current task behavior, multi-token generation training cost and complete-input training capacity |
+| Qwen3.8-27B | First dense generative reference: instruction-tuned, native long context; current screen and full-vocabulary suffix training measured locally | Strong common-foundation reference, including direct option scoring | Scope/state errors, current large-model reload check and production branch coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Add to the research shortlist for generative quality with fewer active parameters | Potentially useful for many repeated decisions | GB10 measurements and exact expert/attention adaptation scope; published active count is not a measured speed |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
 | Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized decision candidate on the Qwen3.8 foundation | Complete current branch lengths, readout/interface agreement and transfer to fixed-meaning comparisons |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
 | Ettin-1B encoder | Cannot generate a Bootstrap meaning | Conditional inexpensive fixed-task classifier | Task-specific learning evidence; an untrained five-way head cannot be ranked using published-checkpoint answers |
+| Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
 
-This is a research shortlist, not authorization for seven training campaigns.
+This is a research shortlist, not authorization for every listed training campaign.
 Nimble and Decider remain recorded SHR alternatives but have no demonstrated
 advantage warranting first priority on the new tasks. Gemma 4 31B is a potential
 larger independent quality reference if 12B/26B leave an unresolved semantic
@@ -73,11 +74,53 @@ overhead. Compare the actual saved/reloaded inference path when assessing cost.
 
 Read-only inspection of GB10's installed Transformers 5.17.0 finds another
 constraint: its bitsandbytes conversion replaces linear/Conv1D modules, while
-Gemma's expert projections are packed three-dimensional parameters. This path
-does not quantize those expert tensors. A configuration labeled NF4 therefore
+Gemma's and sparse Qwen's expert projections are packed three-dimensional
+parameters. This path does not quantize those expert tensors. A configuration labeled NF4 therefore
 does not imply four-bit storage for the entire sparse model. Include their
 resident storage and adapter execution in admission and cost measurements;
 do not extrapolate the dense models' measured allocation from active counts.
+
+The [pinned Gemma configuration](https://huggingface.co/google/gemma-4-26B-A4B-it/blob/4d7ae4984b7db7de8f8457170b3f1a419ee76d52/config.json),
+[pinned Qwen configuration](https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/config.json)
+and installed expert tensor definitions make that
+storage difference concrete:
+
+| Sparse candidate | Routed expert matrix parameters | BF16 matrix storage alone |
+| --- | ---: | ---: |
+| Gemma 4 26B-A4B-it | 22,837,985,280 | 42.54 GiB |
+| Qwen3.6-35B-A3B | 32,212,254,720 | 60.00 GiB |
+
+The arithmetic is `layers × experts × 3 × hidden_size × moe_intermediate_size`,
+covering packed gate/up and down matrices. It excludes embeddings, shared
+experts, attention, adapters, activations and allocator reservation; it is not a
+measured total or training requirement. Immutable config identities and hashes
+are saved in `target/bootstrap-compare-student-v1/sparse-model-source-audit-v1`.
+The [vLLM maintainers' Gemma recipe](https://github.com/vllm-project/recipes/blob/main/Google/Gemma4.md#26b-moe-int8-per-channel-quantization)
+also reports quality loss when four-bit quantizing the small expert dimensions
+and recommends an int8 serving path. That evidence concerns their serving
+implementation, not our measured NF4 path with BF16 experts; it is a reason to
+qualify precision explicitly, not to discard the model.
+
+An independent dense alternative deserves consideration too. Mistral's
+[Ministral 3 14B Instruct card](https://huggingface.co/mistralai/Ministral-3-14B-Instruct-2512)
+describes a 13.5B language backbone, 256K context, instruction specialization
+and JSON output. The published Instruct weights are FP8 and use the
+Mistral-common tokenizer; the separate Reasoning checkpoint's reasoning scores
+must not be attributed to this release. Its compact generative contract makes
+it eligible for Bootstrap research even though it is not cached. Neither the
+existing Qwen/Gemma text extraction nor NF4 loading has been verified for this
+checkpoint. Cache availability determines experiment cost, not suitability.
+
+Other sparse independent foundations remain credible secondary candidates.
+NVIDIA's [Nemotron 3 Nano 30B-A3B card](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16)
+provides an explicit non-thinking mode and DGX Spark serving guidance. Its
+hybrid Mamba/MoE architecture and published custom-code loading instructions
+need a pinned training/checkpoint path beyond our verified candidates. Z.ai's
+[GLM-4.7-Flash card](https://huggingface.co/zai-org/GLM-4.7-Flash)
+describes a 30B-A3B model, but its advertised reasoning benchmarks use output
+budgets far beyond this screen's non-thinking 2,048 tokens. Those scores do not
+establish faster or more faithful Bootstrap outputs. Neither model is rejected
+on task quality; neither has a current local task measurement.
 
 The current [Kev-9B card](https://github.com/jaredpalmer/kev/blob/main/docs/model-cards/kev-9b.md)
 reports an 8,192-token validated context despite serving longer states. The

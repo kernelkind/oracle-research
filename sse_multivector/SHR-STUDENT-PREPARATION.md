@@ -237,6 +237,17 @@ against the exact new staged source. A separately bound v2 capacity run uses
 the same model revisions, shapes and memory budgets; it does not overwrite or
 resume the failed v1 evidence. Its large-model results are pending.
 
+The conditional Ettin Compare path also needs longer execution checks: the
+current complete encoder inputs reach 2,241 tokens, beyond its older measured
+2,048 shape. A pinned synthetic configuration prepares full-weight training
+and batch-one/eight inference at 3,072 and 7,168 tokens, within its actual
+7,999-position limit. It preserves the successful earlier 32 GiB allocation
+budget, eight-GiB reserve and optimization settings. This is five-label random
+supervision, not relation fitting or acceptance of a classifier interface.
+Its source-bound staging is `target/bootstrap-compare-student-v1/capacity-compare-v1`;
+execution follows the dense jobs sequentially. The longer shape checks cost
+headroom; no current ASv6.100 fixture demonstrates a branch of that length.
+
 ### Selection and final-training readiness
 
 Freeze each candidate screen's input hashes, prompt revision, model revision,
