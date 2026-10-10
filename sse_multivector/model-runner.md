@@ -932,7 +932,7 @@ request sizes and repeated post context remain unchanged.
 The user-approved [mechanical review rule](distillation-review-v1/README.md#mechanical-decisions-for-all-three-checks-october-9)
 applies to DSM matching, DSS support and DSL relationships. Exact trusted teacher
 subjects establish meaning matches and same-post support; exact ordered pairs
-from actual trusted teacher links establish local validity. Identical parent and
+from actual trusted teacher links or numbered ancestor paths establish local validity. Identical parent and
 child wording also preserves every parent restriction. Record such findings
 without inference while keeping occurrence-specific coverage and placement.
 Source-bound matching and support/relationship adapters now attach sufficient
@@ -992,7 +992,13 @@ meaning groups come from a source-bound candidate-independent assessment.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups each
-use concurrency 8 and share a new-attempt allowance. Native reports assemble the
+use concurrency 8 and share a new-attempt allowance. New schema-2 evaluations
+stop questions that cannot change the score: absent full matches, placements
+already containing a match, a known compatible uncovered placement, and incoming
+edges of unsupported subjects. Matching-self compatibility guards remain
+required. The runner selects frozen case IDs with `only`; the evaluator warms
+each eligible prefix at most once per invocation/group across adaptive waves.
+Native reports assemble the
 existing scores and compare them with frozen expectations, keeping unanswered or
 ambiguous work visible. Use `--output FILE` on the show command to retain the full
 report; terminal output contains its summary and usage.
@@ -1009,13 +1015,24 @@ attempt was retried successfully but has unknown usage: native accounting keeps
 complete cost unknown and counts original receipt lines, warmups and reuse
 separately. See the trial record for the completed-check evidence and remaining
 relationship work. The coordinator drained already-submitted workers and exited;
-no worker remains. The paused native report counts 2,115 original receipts,
+no worker remains. The original paused native report counts 2,115 original receipts,
 including nine warmups, four usage-unknown recovered failures and two extra
 successful relationship dispatches for identical inputs. There are 870 distinct
 successful relationship inputs: 808 fully joined, 62 further reusable inputs and
 9,664 requiring new model work. Coverage adds 9,678 requests to the selected
 trial's 2,086 primitive checks and was excluded from the older runtime estimate.
-No execution or exhaustive-report contract has changed during the investigation.
+The original frozen evaluation remains exhaustive and unchanged. The user
+subsequently authorizes all sensible mechanical work. New evaluations expose
+explicit skipped rows and dependency evidence, without assigning missing
+Booleans or claiming those checks qualified. The unchanged score law can settle
+scores before all diagnostic judgments are present; contradictions remain
+blocking. Original schema-1 selection counts verify under their original rules,
+while new selections include ancestor proofs. Preparing a separate evaluation
+with the same selection/assessment and prior history root preserves receipts.
+`run-distillation-review-evaluation --max-new-attempts 0` joins verified saved
+results with no new inference. See the
+[additional mechanical rules and conditional workload counts](distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9).
+The trial remains paused; this implementation does not qualify the reviewers.
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:

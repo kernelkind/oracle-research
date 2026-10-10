@@ -1818,11 +1818,42 @@ excludes compatibility: this trial adds 9,678 coverage requests to 2,086 primiti
 checks. Saved matching decisions leave 278 of 513 required-meaning/answer groups
 without a full match; their coverage fails regardless of placement. Omitting
 only that work would save 5,764 requests across the whole selected workload,
-conditional on the saved DSM decisions. No execution or exhaustive-report contract has
+conditional on the saved DSM decisions. At the pause, no execution or exhaustive-report contract had
 changed; all completed receipts are preserved and workers have exited. See the
 trial record for the paused native counts and investigation boundaries;
 this evidence approves no prompt revision, lower effort, bulk grading or test
 unsealing.
+
+**Additional mechanical review implementation approved October 9:** the user
+directs doing all sensible mechanical work. Exact endpoints of any numbered
+trusted teacher ancestor path supply a positive DSL result with the original
+path witness. Matching/support still require exact teacher wording or semantic
+review; a model-confirmed match does not prove either other check. Missing exact
+teacher placements do not certify negative relationships when an equivalent
+paraphrase might represent the meaning.
+
+New schema-2 evaluation preparations omit score-irrelevant questions after
+completed matching/support: compatibility for required meanings with no full
+match, compatibility of proper ancestors already containing a full match,
+remaining placements after a compatible uncovered witness, and incoming edges
+of unsupported subjects. Retain all matching-self compatibility checks and
+already completed verdicts; contradictions block scores. These rules preserve
+the score law conditional on the decisions used, without asserting those
+semantic decisions are correct. Skipped rows carry status/rule/dependencies,
+no invented Boolean and no qualification pass. Complete scores may have
+incomplete diagnostics and reviewer qualification.
+
+The shared runner supports selected frozen dispatch and suppression of repeated
+warmups within one logical invocation; prompts, Sol/xhigh, concurrency 8,
+natural-prefix eligibility, native reuse, budgets and provider-only retries
+remain fixed. Schema-1 selections verify their original accounting; new
+selections include path proofs. Prepare a separate evaluation against the same
+selection/assessment and history; no original frozen input or receipt is
+rewritten. A zero new-attempt allowance joins verified saved results without
+inference. The trial remains paused, reviewer qualification and bulk adoption
+remain open, and reserved test data stays sealed. The
+[implementation record](../../sse_multivector/distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9)
+retains measured savings and their conditional limits.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

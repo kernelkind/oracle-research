@@ -133,6 +133,7 @@ class _TeacherIndex:
             self.by_number[number] = identifier
             self.numbers[identifier].append(number)
             subjects[number] = wording
+        self.subjects = subjects
         self.relationships = {}
         for number, child in subjects.items():
             parent = number.rpartition(".")[0]
@@ -162,7 +163,7 @@ class _TeacherIndex:
         return self._result(dict(valid=True, reason="Exact trusted teacher wording for the same post."),
                             "exact_teacher_subject", teacher_numbers=self.numbers[identifier])
 
-    def relationship(self, parent, child):
+    def relationship(self, parent, child, *, allow_ancestor_paths=True):
         witnesses = self.relationships.get((parent, child))
         if witnesses:
             return self._result(dict(valid=True, reason="Exact ordered trusted teacher parent-child pair."),
@@ -170,6 +171,21 @@ class _TeacherIndex:
         if parent == child:
             return self._result(dict(valid=True, reason="Identical wording retains every parent restriction."),
                                 "identical_subjects")
+        if not allow_ancestor_paths:
+            return None
+        identifier = self.by_subject.get(child)
+        if parent not in self.by_subject or identifier is None:
+            return None
+        for number in self.numbers[identifier]:
+            path = [number]
+            ancestor = number.rpartition(".")[0]
+            while ancestor:
+                path.append(ancestor)
+                if self.subjects[ancestor] == parent:
+                    return self._result(
+                        dict(valid=True, reason="An exact trusted teacher path retains every ancestor restriction."),
+                        "exact_teacher_relationship_path", teacher_paths=[list(reversed(path))])
+                ancestor = ancestor.rpartition(".")[0]
         return None
 
 
@@ -268,6 +284,10 @@ def rank_generations(manifest_path, top=5):
 def _payload(case):
     value = json.loads(case["inputs"]["REVIEW_INPUT"],
                        object_pairs_hook=engine._position_decoder().unique_object)
+    return _validate_payload(value)
+
+
+def _validate_payload(value):
     _fields(value, {"post", "teacher", "student", "exact_matches", "teacher_meanings"}, "review input")
     if not isinstance(value["post"], str):
         raise ValueError("post must be a string")
@@ -303,6 +323,131 @@ def _groups(rows, teacher):
 def _ratio(numerator, denominator, empty):
     return dict(numerator=numerator, denominator=denominator,
                 value=numerator / denominator if denominator else float(empty))
+
+
+def _matched_headings(matches):
+    headings = set()
+    for number in matches:
+        parts = number.split(".")
+        headings.update(".".join(parts[:depth]) for depth in range(1, len(parts) + 1))
+    return headings
+
+
+def _score_fractions(subjects, relationships, coverage):
+    correct = []
+    for number, supported in subjects.items():
+        incoming = relationships.get(number) if "." in number else True
+        correct.append(False if supported is False or incoming is False else
+                       True if supported is True and incoming is True else None)
+    scores = {}
+    if all(value is not None for value in correct):
+        scores["correctness"] = _ratio(sum(correct), len(subjects), not coverage)
+    if all(row["covered"] is not None for row in coverage):
+        scores["coverage"] = _ratio(sum(row["covered"] for row in coverage), len(coverage), True)
+    return scores
+
+
+def _coverage_groups(payload, coverage):
+    groups = _groups(coverage, payload["teacher"])
+    frozen = payload["teacher_meanings"]
+    if frozen is not None:
+        if not isinstance(frozen, list):
+            raise ValueError("teacher_meanings must be null or an array")
+        for row in frozen:
+            _fields(row, {"teacher_numbers", "required"}, "frozen teacher meaning")
+        if _groups(frozen, payload["teacher"]) != groups:
+            raise ValueError("teacher meaning groups or required flags differ from the fixed reference")
+    row_for_number = {number: row for row in coverage for number in row["teacher_numbers"]}
+    for match in payload["exact_matches"]:
+        if match["student_number"] not in row_for_number[match["teacher_number"]]["student_numbers"]:
+            raise ValueError("omitted mechanical exact match")
+    matched = set()
+    for row in coverage:
+        numbers = set(row["student_numbers"])
+        if matched & numbers:
+            raise ValueError("student entry matched to different teacher meanings")
+        matched.update(numbers)
+    return groups
+
+
+def score_partial(payload, *, subjects, relationships, coverage):
+    """Score known checks without assigning verdicts to omitted checks.
+
+    Matching must be complete before constructing student_numbers. None or an
+    omitted compatibility key means unknown; it never means incompatible.
+    Full-match compatibility guards remain necessary even after coverage fails.
+    The caller retains each native check's skipped status and evidence.
+    """
+    payload = _validate_payload(payload)
+    student = {row["number"]: row for row in payload["student"]}
+    children = {number for number in student if "." in number}
+    if (not isinstance(subjects, dict) or set(subjects) - student.keys()
+            or any(value is not None and type(value) is not bool for value in subjects.values())):
+        raise ValueError("invalid subject verdicts")
+    if (not isinstance(relationships, dict) or set(relationships) != children
+            or any(value is not None and type(value) is not bool for value in relationships.values())):
+        raise ValueError("invalid or omitted immediate relationship verdicts")
+    if not isinstance(coverage, list):
+        raise ValueError("coverage must be an array")
+    for row in coverage:
+        _fields(row, {"teacher_numbers", "required", "student_numbers", "compatibility"}, "partial coverage row")
+        _numbers(row["student_numbers"], student, "student match numbers")
+        known = row["compatibility"]
+        if (not isinstance(known, dict) or set(known) - student.keys()
+                or any(value is not None and type(value) is not bool for value in known.values())):
+            raise ValueError("invalid compatibility verdicts")
+        if row["required"] is False and known:
+            raise ValueError("optional meanings must have empty compatibility verdicts")
+    _coverage_groups(payload, coverage)
+    support = {number: subjects.get(number) for number in student}
+    skipped = dict(relationships=[], compatibility=[])
+    pending = dict(subjects=[number for number, valid in support.items() if valid is None],
+                   relationships=[], compatibility=[])
+    findings = dict(incorrect_subjects=[number for number, valid in support.items() if valid is False],
+        invalid_relationships=[dict(parent=number.rpartition(".")[0], child=number)
+                               for number, valid in relationships.items() if valid is False], coverage=[])
+    for child, valid in relationships.items():
+        if valid is None:
+            (skipped if support[child] is False else pending)["relationships"].append(child)
+    guards_pending = False
+    diagnostics_complete = not pending["subjects"] and all(valid is not None for valid in relationships.values())
+    for row in coverage:
+        if not row["required"]:
+            continue
+        matches, known = row["student_numbers"], row["compatibility"]
+        matched_headings = _matched_headings(matches)
+        if any(known.get(number) is False for number in matches):
+            return dict(status="inconsistent_verdicts",
+                        error="full matches of required meanings must also be compatible headings")
+        guards = {number for number in matches if known.get(number) is None}
+        missing = [number for number in student if known.get(number) is True and number not in matched_headings]
+        unknown = [number for number in student if known.get(number) is None]
+        relevant = {number for number in unknown if number not in matched_headings}
+        covered = False if not matches or missing else None if relevant else True
+        needed = guards | (relevant if covered is None else set())
+        guards_pending |= bool(guards)
+        numbers = dict(teacher_numbers=row["teacher_numbers"])
+        if needed:
+            pending["compatibility"].append(dict(numbers,
+                heading_numbers=[number for number in student if number in needed]))
+        omitted = [number for number in unknown if number not in needed]
+        if omitted:
+            skipped["compatibility"].append(dict(numbers, heading_numbers=omitted))
+        diagnostics_complete &= not unknown
+        findings["coverage"].append(dict(numbers, covered=covered,
+            matched_student_numbers=matches, missing_heading_numbers=missing,
+            pending_heading_numbers=[number for number in student if number in needed],
+            diagnostics_complete=not unknown))
+    scores = _score_fractions(support, relationships, findings["coverage"])
+    if guards_pending:
+        scores.pop("coverage", None)
+    complete = not any(pending.values()) and set(scores) == {"correctness", "coverage"}
+    result = dict(status="valid" if complete else "pending", findings=findings,
+                  skipped=skipped, pending=pending, diagnostics_complete=diagnostics_complete,
+                  teacher_meanings=[{key: row[key] for key in ("teacher_numbers", "required")} for row in coverage])
+    if scores:
+        result["scores"] = scores
+    return result
 
 
 def validate(case, raw):
@@ -351,40 +496,18 @@ def validate(case, raw):
             raise ValueError("optional meanings must have empty compatibility lists")
         if row["required"] is True and not matches <= headings:
             raise ValueError("full matches of required meanings must also be compatible headings")
-    groups = _groups(report["coverage"], payload["teacher"])
-    frozen = payload["teacher_meanings"]
-    if frozen is not None:
-        if not isinstance(frozen, list):
-            raise ValueError("teacher_meanings must be null or an array")
-        for row in frozen:
-            _fields(row, {"teacher_numbers", "required"}, "frozen teacher meaning")
-        if _groups(frozen, payload["teacher"]) != groups:
-            raise ValueError("teacher meaning groups or required flags differ from the fixed reference")
-    row_for_number = {number: row for row in report["coverage"] for number in row["teacher_numbers"]}
-    for match in payload["exact_matches"]:
-        if match["student_number"] not in row_for_number[match["teacher_number"]]["student_numbers"]:
-            raise ValueError("omitted mechanical exact match")
-    # One candidate entry cannot represent two distinct complete teacher meanings.
-    matched = set()
-    for row in report["coverage"]:
-        numbers = set(row["student_numbers"])
-        if matched & numbers:
-            raise ValueError("student entry matched to different teacher meanings")
-        matched.update(numbers)
+    groups = _coverage_groups(payload, report["coverage"])
     coverage = []
     for row in report["coverage"]:
         if not row["required"]:
             continue
         matches = row["student_numbers"]
+        matched_headings = _matched_headings(matches)
         missing = [heading for heading in row["compatible_heading_numbers"]
-                   if not any(number == heading or number.startswith(heading + ".") for number in matches)]
+                   if heading not in matched_headings]
         coverage.append(dict(teacher_numbers=row["teacher_numbers"], covered=bool(matches) and not missing,
                              matched_student_numbers=matches, missing_heading_numbers=missing))
-    correct = sum(valid and ("." not in number or edges[number.rpartition(".")[0], number])
-                  for number, valid in subjects.items())
-    required = len(coverage)
-    scores = dict(correctness=_ratio(correct, len(student), not required),
-                  coverage=_ratio(sum(row["covered"] for row in coverage), required, True))
+    scores = _score_fractions(subjects, {child: valid for (_, child), valid in edges.items()}, coverage)
     findings = dict(incorrect_subjects=[number for number, valid in subjects.items() if not valid],
                     invalid_relationships=[dict(parent=parent, child=child)
                                            for (parent, child), valid in edges.items() if not valid],

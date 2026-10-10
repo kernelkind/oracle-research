@@ -138,12 +138,13 @@ def _answer(candidate, cohort, sources, *, pattern=None):
     return result
 
 
-def _cohort(selected, candidates):
+def _cohort(selected, candidates, *, allow_ancestor_paths=True):
     by_id = {c["id"]: c for c in candidates}
     work = preview._Workload()
     for answer in selected:
         candidate = by_id[answer["id"]]
-        work.include(preview._note_workload(candidate["row"], candidate["teacher_index"]))
+        work.include(preview._note_workload(candidate["row"], candidate["teacher_index"],
+                                           allow_ancestor_paths=allow_ancestor_paths))
     counts = Counter(answer["version_key"] for answer in selected)
     work.counts["versions"] = len(counts)
     return dict(answers=selected, totals=work.summary(), versions=dict(sorted(counts.items())),
@@ -171,7 +172,7 @@ def prepare_trial(manifest_path, model_outputs, output, *, random_count=50, hard
     random_rows = [_answer(c, "random", sources) for c in random_answers]
     challenge_rows = [_answer(c, "challenge", sources, pattern=p) for c, p in challenge_answers]
     preview._read(Path(__file__).resolve(), sources)
-    report = dict(schema_version=1, inference_calls=0, dataset=verified["dataset"],
+    report = dict(schema_version=2, inference_calls=0, dataset=verified["dataset"],
         model_outputs=[dict(output=m["output"], model=m["model"], revision=m["revision"])
                        for m in verified["models"]], sources=sources, settings=SETTINGS,
         population=verified["totals"], selection_policy=dict(seed=seed, random_count=random_count,
@@ -199,7 +200,8 @@ def load_trial(path):
     if seal != {path.name: run.sha256(path)}:
         raise ValueError("trial selection hash differs")
     report = run.read_json(path)
-    if report["schema_version"] != 1 or report["inference_calls"] != 0 or report["settings"] != SETTINGS:
+    if (type(report["schema_version"]) is not int or report["schema_version"] not in (1, 2)
+            or report["inference_calls"] != 0 or report["settings"] != SETTINGS):
         raise ValueError("trial selection schema or reviewer settings differ")
     if "test" in Path(report["dataset"]["path"]).parts:
         raise ValueError("reserved test paths cannot be loaded as a trial")
@@ -292,7 +294,9 @@ def load_trial(path):
             expected = _answer(candidate, cohort, sources, pattern=row.get("selection_pattern"))
             if row != expected:
                 raise ValueError("trial selected evidence differs from source")
-        if report[cohort] != _cohort(rows, candidates):
+        # Frozen v1 counts preceded trusted ancestor-path routing. Recompute
+        # their original accounting while preserving all source checks.
+        if report[cohort] != _cohort(rows, candidates, allow_ancestor_paths=report["schema_version"] >= 2):
             raise ValueError("trial cohort accounting differs")
     quotas = report["selection_policy"]["version_quotas"]
     if any(report["random"]["versions"].get(version, 0) != count for version, count in quotas.items()):

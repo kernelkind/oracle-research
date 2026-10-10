@@ -298,8 +298,15 @@ native audit attribution and unknown-usage accounting. Bulk adoption remains ope
 The earlier runtime estimate excludes coverage-placement comparisons. They add
 9,678 requests to this trial's 2,086 primitive checks. Read-only investigation
 finds 5,764 potentially unnecessary requests for teacher meanings with no full
-student match, conditional on the saved matching decisions; changing the
-exhaustive report/qualification contract remains unapproved.
+student match, conditional on the saved matching decisions. The user subsequently
+directs doing all sensible mechanical work. New preparations accept exact
+trusted ancestor paths and stop score-irrelevant questions, retaining matching-self
+contradiction checks and explicit skipped evidence. Complete scores do not imply
+complete diagnostics or reviewer qualification. The measured conditional workload
+is 5,201 distinct requests rather than 11,764, before future stopping, warmups and
+retries; this is not a runtime or accuracy estimate. Original selections, sealed
+references and receipts remain intact, and the trial remains paused. See the
+[implemented rules](../../sse_multivector/distillation-review-v1/README.md#additional-mechanical-review-work-approved-october-9).
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

@@ -99,6 +99,54 @@ class DistillationReviewTrialTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "source hash"):
             load_trial(path)
 
+    def test_loader_preserves_legacy_frozen_ancestor_accounting(self):
+        from sse_multivector.distillation_review_trial import prepare_trial, load_trial
+        teacher = fixtures.subjects(("1", "Cables"), ("1.1", "Cable A"), ("1.1.1", "2 m cable A"))
+        student = fixtures.subjects(("1", "Cables"), ("1.1", "2 m cable A"))
+        manifest, models = self.fixture([dict(note_id="validation-a", post="Cable A is 2 m long.",
+            teacher=teacher, answer=answer(student))])
+        prepared = prepare_trial(manifest, models, self.root / "trial", random_count=1, hard_count=0)
+        path = Path(prepared["selection_path"])
+        legacy = run.read_json(path)
+        legacy["schema_version"] = 1
+        legacy["random"]["totals"]["checks"]["relationship"] = dict(
+            occurrences=1, mechanical=0, semantic=1, distinct_semantic_inputs=1, mechanical_rules={})
+        legacy["population"]["checks"]["relationship"] = dict(
+            occurrences=6, mechanical=0, semantic=6, distinct_semantic_inputs=1, mechanical_rules={})
+        run.write_json(path, legacy)
+        seal = path.parent / "selection.complete.json"
+        run.write_json(seal, {path.name: run.sha256(path)})
+        frozen_bytes, frozen_seal, sources = path.read_bytes(), seal.read_bytes(), dict(legacy["sources"])
+        loaded = load_trial(path)
+        self.assertEqual(loaded, legacy)
+        self.assertEqual((path.read_bytes(), seal.read_bytes()), (frozen_bytes, frozen_seal))
+        self.assertTrue(all(run.sha256(filename) == checksum for filename, checksum in sources.items()))
+        legacy["random"]["totals"]["checks"]["relationship"]["semantic"] = 0
+        run.write_json(path, legacy)
+        run.write_json(seal, {path.name: run.sha256(path)})
+        with self.assertRaisesRegex(ValueError, "cohort accounting"):
+            load_trial(path)
+
+    def test_new_selection_records_and_checks_ancestor_accounting(self):
+        from sse_multivector.distillation_review_trial import prepare_trial, load_trial
+        teacher = fixtures.subjects(("1", "Cables"), ("1.1", "Cable A"), ("1.1.1", "2 m cable A"))
+        student = fixtures.subjects(("1", "Cables"), ("1.1", "2 m cable A"))
+        manifest, models = self.fixture([dict(note_id="validation-a", post="Cable A is 2 m long.",
+            teacher=teacher, answer=answer(student))])
+        prepared = prepare_trial(manifest, models, self.root / "trial", random_count=1, hard_count=0)
+        self.assertEqual(prepared["schema_version"], 2)
+        self.assertEqual(prepared["random"]["totals"]["checks"]["relationship"], dict(
+            occurrences=1, mechanical=1, semantic=0, distinct_semantic_inputs=0,
+            mechanical_rules={"exact_teacher_relationship_path": 1}))
+        path = Path(prepared["selection_path"])
+        current = run.read_json(path)
+        self.assertEqual(load_trial(path), current)
+        current["random"]["totals"]["checks"]["relationship"]["mechanical"] = 0
+        run.write_json(path, current)
+        run.write_json(path.parent / "selection.complete.json", {path.name: run.sha256(path)})
+        with self.assertRaisesRegex(ValueError, "cohort accounting"):
+            load_trial(path)
+
     def test_bad_unselected_stage_aborts_before_publishing_selection(self):
         from sse_multivector.distillation_review_trial import prepare_trial
         manifest, models = self.fixture(self.notes(2))

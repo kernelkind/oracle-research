@@ -117,6 +117,138 @@ class DistillationReviewTests(unittest.TestCase):
         self.assertEqual(len(missing), 1)
         self.assertEqual(missing[0]["missing_heading_numbers"], ["3"])
 
+    def test_partial_scoring_preserves_exhaustive_scores_without_inventing_verdicts(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        subjects = {row["number"]: row["valid"] for row in report["subjects"]}
+        edges = {row["child"]: row["valid"] for row in report["relationships"]}
+        coverage = [dict(teacher_numbers=row["teacher_numbers"], required=row["required"],
+            student_numbers=row["student_numbers"], compatibility={
+                e["number"]: e["number"] in row["compatible_heading_numbers"]
+                for e in payload["student"]} if row["required"] else {})
+            for row in report["coverage"]]
+        complete = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(complete["scores"], self.validate(case, report)["scores"])
+        # The complete cumin meaning lacks a copy under heading 3. Its true
+        # compatibility fixes failed coverage, so other uncovered checks can be
+        # skipped while every matching-self guard remains explicit.
+        cumin = next(row for row in coverage if "3.1" in row["teacher_numbers"])
+        cumin["compatibility"] = {number: True for number in ["3"] + cumin["student_numbers"]}
+        subjects["1.1.1"] = False
+        edges["1.1.1"] = None
+        partial = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(partial["status"], "valid")
+        self.assertEqual(partial["scores"]["correctness"]["numerator"], 8)
+        self.assertEqual(partial["scores"]["coverage"], complete["scores"]["coverage"])
+        self.assertIn("1.1.1", partial["skipped"]["relationships"])
+        self.assertNotIn(dict(parent="1.1", child="1.1.1"), partial["findings"]["invalid_relationships"])
+        self.assertFalse(partial["diagnostics_complete"])
+
+    def test_partial_coverage_needs_no_compatibility_when_no_match_exists(self):
+        from sse_multivector import distillation_review as review
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Post.")
+        payload = dict(post="Cable A is 2 m long.", teacher=[entry("1", "2 m cable A")],
+            student=[entry("1", "Cables")], exact_matches=[],
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)])
+        result = review.score_partial(payload, subjects={"1": True}, relationships={},
+            coverage=[dict(teacher_numbers=["1"], required=True, student_numbers=[], compatibility={})])
+        self.assertEqual(result["status"], "valid")
+        self.assertEqual(result["scores"]["coverage"], dict(numerator=0, denominator=1, value=0))
+        self.assertFalse(result["diagnostics_complete"])
+        self.assertEqual(result["findings"]["coverage"][0]["missing_heading_numbers"], [])
+
+    def test_partial_matching_self_guard_stays_required_after_coverage_failure(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        subjects = {row["number"]: True for row in report["subjects"]}
+        edges = {row["child"]: True for row in report["relationships"]}
+        coverage = [dict(teacher_numbers=row["teacher_numbers"], required=row["required"],
+            student_numbers=row["student_numbers"], compatibility={number: True
+                for number in row["compatible_heading_numbers"]}) for row in report["coverage"]]
+        cumin = next(row for row in coverage if "3.1" in row["teacher_numbers"])
+        del cumin["compatibility"]["1.1.1"]
+        result = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(result["status"], "pending")
+        self.assertNotIn("coverage", result.get("scores", {}))
+        cumin["compatibility"]["1.1.1"] = False
+        result = review.score_partial(payload, subjects=subjects, relationships=edges, coverage=coverage)
+        self.assertEqual(result["status"], "inconsistent_verdicts")
+        self.assertNotIn("scores", result)
+
+    def test_partial_unknown_relevant_checks_stay_pending(self):
+        from sse_multivector import distillation_review as review
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Post.")
+        payload = dict(post="Cable A is 2 m long.", teacher=[entry("1", "2 m cable A")],
+            student=[entry("1", "Cables"), entry("1.1", "2 m cable A"), entry("2", "Length")],
+            exact_matches=[dict(teacher_number="1", student_number="1.1")],
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)])
+        row = dict(teacher_numbers=["1"], required=True, student_numbers=["1.1"],
+                   compatibility={"1.1": True})
+        result = review.score_partial(payload, subjects={"1": True, "1.1": True, "2": True},
+            relationships={"1.1": None}, coverage=[row])
+        self.assertEqual(result["status"], "pending")
+        row["compatibility"]["2"] = False
+        result = review.score_partial(payload, subjects={"1": True, "1.1": True, "2": True},
+            relationships={"1.1": True}, coverage=[row])
+        self.assertEqual(result["status"], "valid")
+        self.assertEqual(result["scores"]["coverage"]["value"], 1)
+        self.assertIn("1", result["skipped"]["compatibility"][0]["heading_numbers"])
+
+    def test_partial_scoring_keeps_support_and_reference_validation_strict(self):
+        from sse_multivector import distillation_review as review
+        case, report = cumin_case()
+        payload = json.loads(case["inputs"]["REVIEW_INPUT"])
+        subjects = {row["number"]: row["valid"] for row in report["subjects"]}
+        edges = {row["child"]: row["valid"] for row in report["relationships"]}
+        coverage = [dict(teacher_numbers=row["teacher_numbers"], required=row["required"],
+            student_numbers=row["student_numbers"], compatibility={number: True
+                for number in row["compatible_heading_numbers"]}) for row in report["coverage"]]
+        bad_subjects = dict(subjects); del bad_subjects["1"]
+        self.assertEqual(review.score_partial(payload, subjects=bad_subjects,
+            relationships=edges, coverage=coverage)["status"], "pending")
+        bad_subjects["1"] = "true"
+        with self.assertRaisesRegex(ValueError, "subject"):
+            review.score_partial(payload, subjects=bad_subjects, relationships=edges, coverage=coverage)
+        bad_coverage = copy.deepcopy(coverage)
+        next(row for row in bad_coverage if "3.1" in row["teacher_numbers"])["student_numbers"] = []
+        with self.assertRaisesRegex(ValueError, "mechanical exact match"):
+            review.score_partial(payload, subjects=subjects, relationships=edges, coverage=bad_coverage)
+
+    def test_partial_correctness_does_not_propagate_an_unsupported_parent(self):
+        from sse_multivector import distillation_review as review
+        entry = lambda number, subject: dict(number=number, subject=subject, context="Post.")
+        payload = dict(post="Post.", teacher=[],
+            student=[entry("1", "Unsupported parent"), entry("1.1", "Supported child")],
+            exact_matches=[], teacher_meanings=[])
+        result = review.score_partial(payload, subjects={"1": False, "1.1": True},
+            relationships={"1.1": None}, coverage=[])
+        self.assertEqual(result["status"], "pending")
+        self.assertEqual(result["pending"]["relationships"], ["1.1"])
+        self.assertEqual(result["skipped"]["relationships"], [])
+        result = review.score_partial(payload, subjects={"1": False, "1.1": True},
+            relationships={"1.1": True}, coverage=[])
+        self.assertEqual(result["scores"]["correctness"], dict(numerator=1, denominator=2, value=0.5))
+        # A false own incoming edge determines this entry's contribution, but
+        # omitted support remains an incomplete support assessment.
+        result = review.score_partial(payload, subjects={"1": True},
+            relationships={"1.1": False}, coverage=[])
+        self.assertEqual(result["status"], "pending")
+        self.assertEqual(result["scores"]["correctness"], dict(numerator=1, denominator=2, value=0.5))
+
+    def test_partial_empty_answers_retain_exhaustive_score_conventions(self):
+        from sse_multivector import distillation_review as review
+        teacher = [dict(number="1", subject="Cable A", context="Post.")]
+        payload = dict(post="Post.", teacher=teacher, student=[], exact_matches=[],
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)])
+        result = review.score_partial(payload, subjects={}, relationships={}, coverage=[dict(
+            teacher_numbers=["1"], required=True, student_numbers=[], compatibility={})])
+        self.assertEqual([row["value"] for row in result["scores"].values()], [0, 0])
+        payload.update(teacher=[], teacher_meanings=[])
+        result = review.score_partial(payload, subjects={}, relationships={}, coverage=[])
+        self.assertEqual([row["value"] for row in result["scores"].values()], [1, 1])
+
     def test_incomplete_invented_and_contradictory_reports_remain_ungraded(self):
         case, report = cumin_case()
         changes = []

@@ -41,13 +41,14 @@ class DistillationVerdictTests(unittest.TestCase):
         return inputs.prepare_file(dataset, self.path,
                                    (PROMPTS / (name + "-prompt-v1.md")).read_text())
 
-    def actual_source(self, check="support"):
+    def actual_source(self, check="support", *, teacher=None):
         root = self.path.parent
         task = (ROOT / "subject-prompt-goal-v1/asv6.100/ASv6.100.md").read_text()
         post = "Cable A is 2 m long."
         messages = [dict(role="user", content=task + "\n\n<post>\n" + post + "\n</post>")]
-        teacher = [dict(number="1", context="Cables.", subject="Cables"),
-                   dict(number="1.1", context="Cable A.", subject="2 m cable A")]
+        if teacher is None:
+            teacher = [dict(number="1", context="Cables.", subject="Cables"),
+                       dict(number="1.1", context="Cable A.", subject="2 m cable A")]
         for name, rows in (("references", [dict(note_id="note-a", split="evaluation",
                                                 text=post, subjects=teacher)]),
                            ("evaluation", [dict(note_id="note-a", messages=messages)])):
@@ -137,6 +138,49 @@ class DistillationVerdictTests(unittest.TestCase):
         self.assertEqual(json.loads(changed["inputs"]["RELATIONSHIP_INPUT"]),
                          dict(parent_subject="2 m cables", child_subject="3 m cables"))
         self.assertNotIn("mechanical", changed)
+
+    def test_teacher_ancestor_relationship_is_mechanical_after_skipping_heading(self):
+        self.source["check"] = "relationship"
+        self.source["cases"] = [dict(id="L01", case="TC05", student_number="1.1.1",
+            expected_reason="Skipping a trusted intermediate heading retains its ancestor restrictions.")]
+        case = self.prepare()[0][0]
+        self.assertIn("mechanical", case)
+        self.assertIs(json.loads(case["mechanical"]["output"])["valid"], True)
+        self.assertEqual(case["mechanical"]["evidence"], dict(rule="exact_teacher_relationship_path",
+            teacher_paths=[["1.1", "1.1.1", "1.1.1.1"]]))
+        self.assertTrue(verdict.validate(case, case["mechanical"]["output"])["qualification"]["passed"])
+
+    def test_teacher_ancestor_witness_uses_the_matching_numbered_occurrence(self):
+        teacher = [dict(number=number, context="Trusted cable heading.", subject=subject)
+            for number, subject in [("1", "Cable A"), ("1.1", "2 m cable A"),
+                                    ("2", "Lengths"), ("2.1", "Cable lengths"),
+                                    ("2.1.1", "2 m cable A")]]
+        pairs = [("Lengths", "2 m cable A", True),
+                 ("2 m cable A", "Lengths", False),
+                 ("Cable A", "Cable lengths", False),
+                 ("lengths", "2 m cable A", False),
+                 ("Lengths", "3 m cable A", False)]
+        for parent, child, proved in pairs:
+            with self.subTest(parent=parent, child=child):
+                saved, generation = self.actual_source("relationship", teacher=teacher)
+                students = json.loads(generation["answer"]["raw"])["subjects"]
+                students[0]["subject"], students[1]["subject"] = parent, child
+                generation["answer"]["raw"] = json.dumps(dict(subjects=students))
+                saved.write_text(json.dumps(generation))
+                self.source["cases"][0]["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+                case = self.prepare()[0][0]
+                if not proved:
+                    self.assertNotIn("mechanical", case)
+                    continue
+                self.assertEqual(case["mechanical"]["evidence"], dict(rule="exact_teacher_relationship_path",
+                    teacher_paths=[["2", "2.1", "2.1.1"]]))
+                result = verdict.validate(case, case["mechanical"]["output"])
+                self.assertIs(result["parsed"]["valid"], True)
+                self.assertIs(case["evidence"]["expected_valid"], False)
+                self.assertFalse(result["qualification"]["passed"])
+                report = verdict.qualification([{**case, **result, "origin": "mechanical"}], ["A01"])
+                self.assertEqual(report["incorrect_verdicts"], ["A01"])
+                self.assertEqual(report["model_checked"], 0)
 
     def test_identical_subject_relationship_is_mechanical_after_binding_and_parsing(self):
         saved, generation = self.actual_source("relationship")

@@ -117,7 +117,7 @@ class _Workload:
             for name, counts in self.checks.items()})
 
 
-def _note_workload(row, teacher):
+def _note_workload(row, teacher, *, allow_ancestor_paths=True):
     index, catalog_key, post_key = teacher[:3]
     work = _Workload()
     work.counts["outputs"] = 1
@@ -135,7 +135,8 @@ def _note_workload(row, teacher):
         if parent_number:
             parent = students[parent_number]
             work.counts["relationship_occurrences"] += 1
-            work.check("relationship", index.relationship(parent, subject), (parent, subject))
+            work.check("relationship", index.relationship(parent, subject,
+                       allow_ancestor_paths=allow_ancestor_paths), (parent, subject))
     return work
 
 

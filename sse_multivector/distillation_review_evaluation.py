@@ -201,7 +201,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
             prefix_cached=group["prefix"] is not None))
     if _assessments(assessment_directory, bundle)["sources"] != assessments["sources"]:
         raise ValueError("review assessments changed while preparing")
-    frozen = dict(schema_version=1, selection=reference, assessment_directory=assessment_directory,
+    frozen = dict(schema_version=2, selection=reference, assessment_directory=assessment_directory,
                   assessment_sources=assessments["sources"],
                   experiments=experiments, inference_calls=0)
     experiment.write(output / "evaluation.json", frozen)
@@ -215,6 +215,8 @@ def report(output):
     project.configure(Path(__file__).resolve().parents[1])
     output = Path(output).expanduser().resolve()
     frozen = experiment.read(output / "evaluation.json")
+    if type(frozen["schema_version"]) is not int or frozen["schema_version"] not in {1, 2}:
+        raise ValueError("unknown review evaluation schema_version")
     if experiment.read(output / "evaluation.complete.json") != {
             "evaluation.json": engine._sha256_file(output / "evaluation.json")}:
         raise ValueError("review evaluation preparation changed")
@@ -245,9 +247,12 @@ def report(output):
             checks = {check: [case for (name, _), case in cases.items()
                               if name == check and case["evidence"]["answer_id"] == answer["id"]]
                       for check in _DEFINITIONS}
+            context = assessments["contexts"].get(answer["id"])
+            if frozen["schema_version"] >= 2:
+                _apply_stopping(answer, checks, context)
             all_cases = [case for rows in checks.values() for case in rows]
-            complete = all(case["status"] == "valid" for case in all_cases)
-            failed = any(case["status"] not in {"valid", "unrun"} for case in all_cases)
+            complete = all(case["status"] in {"valid", "skipped"} for case in all_cases)
+            failed = any(case["status"] not in {"valid", "skipped", "unrun"} for case in all_cases)
             findings = dict(
                 incorrect_subjects=[case["evidence"]["student_number"] for case in checks["support"]
                                     if case["status"] == "valid" and not case["parsed"]["valid"]],
@@ -259,7 +264,6 @@ def report(output):
             result = dict(answer, status="invalid_output" if answer["errors"] else "complete" if complete else "failed" if failed else "pending",
                 checks=checks, findings=findings, coverage=dict(status="pending",
                     reason="Independent teacher meaning groups, required flags and compatible-heading checks are needed."))
-            context = assessments["contexts"].get(answer["id"])
             if answer["errors"]:
                 failure = review.score_saved_output({}, answer["raw_answer"]["raw"],
                     truncated=answer["raw_answer"]["truncated"])
@@ -268,14 +272,25 @@ def report(output):
                     coverage=dict(status="output_failure", reason=failure["error"]))
             elif complete and context is not None:
                 try:
-                    scored = _score(answer, checks, context)
+                    scored = _score(answer, checks, context, partial=frozen["schema_version"] >= 2)
                 except ValueError as error:
                     result["coverage"] = dict(status="pending", reason=str(error))
                     result["status"] = "inconsistent_verdicts"
                 else:
-                    result.update(scores=scored["scores"], assembled_review=scored["parsed"],
-                        scoring_basis="Assembled from the separate verified native checks; no additional model call or receipt.",
-                        coverage=dict(status="complete", findings=scored["findings"]["coverage"]))
+                    if scored["status"] != "valid":
+                        result["status"] = scored["status"]
+                        result["coverage"] = dict(status="pending",
+                            reason=scored.get("error", scored.get("reason", "Undetermined score.")))
+                        result["score_evidence"] = scored
+                        scored = None
+                    if scored is not None:
+                        result.update(scores=scored["scores"],
+                            scoring_basis="Assembled from the separate verified native checks; no additional model call or receipt.",
+                            coverage=dict(status="complete", findings=scored["findings"]["coverage"]))
+                        if "parsed" in scored:
+                            result["assembled_review"] = scored["parsed"]
+                        else:
+                            result["score_evidence"] = scored
             if not answer["errors"] and context is not None:
                 gold = _expected_checks(checks)
                 if gold is not None:
@@ -297,7 +312,9 @@ def report(output):
         score_mismatches=sum(bool(row["qualification"]["score_differences"]) for row in value["answers"]),
         checks={check: _check_summary([case for row in value["answers"] for case in row["checks"][check]])
                 for check in _DEFINITIONS}) for cohort, value in cohorts.items()}
-    summary["requests"] = _request_summary(experiments)
+    skipped = {(check, case["id"]) for value in cohorts.values() for answer in value["answers"]
+               for check, rows in answer["checks"].items() for case in rows if case["status"] == "skipped"}
+    summary["requests"] = _request_summary(experiments, skipped)
     return dict(schema_version=1, output=str(output), selection=frozen["selection"], sources=sources,
                 experiments=experiments, usage=usage, generation_usage=generation_usage, summary=summary, **cohorts)
 
@@ -313,22 +330,23 @@ def _expected_checks(checks):
             parsed = dict(reason=evidence["expected_reason"])
             parsed["teacher_id" if check == "matching" else "valid"] = evidence[
                 "expected_teacher_id" if check == "matching" else "expected_valid"]
-            gold[check].append(dict(row, parsed=parsed))
+            gold[check].append(dict(row, status="valid", parsed=parsed))
     return gold
 
 
 def _qualification(answer, rows):
     incorrect = [row["id"] for row in rows if row.get("qualification", {}).get("passed") is False]
     unresolved = [row["id"] for row in rows if row["evidence"]["expectation_status"] == "unresolved"]
+    skipped = [row["id"] for row in rows if row["status"] == "skipped"]
     differences = {}
     if "scores" in answer and "expected_scores" in answer:
         differences = {metric: dict(actual=value["value"], expected=answer["expected_scores"][metric]["value"])
             for metric, value in answer["scores"].items() if value["value"] != answer["expected_scores"][metric]["value"]}
     return dict(basis="agent_assessed" if not answer["errors"] else "saved_output_failure",
         status="failed" if incorrect or differences or answer["status"] in {"failed", "inconsistent_verdicts"}
-               else "pending" if unresolved or "scores" not in answer or "expected_scores" not in answer else "passed",
+               else "pending" if unresolved or skipped or "scores" not in answer or "expected_scores" not in answer else "passed",
         checked=sum(type(row.get("qualification", {}).get("passed")) is bool for row in rows),
-        incorrect_cases=incorrect, unresolved=unresolved, score_differences=differences)
+        incorrect_cases=incorrect, unresolved=unresolved, skipped_cases=skipped, score_differences=differences)
 
 
 def _check_summary(rows):
@@ -339,7 +357,8 @@ def _check_summary(rows):
         checked=sum(type(row.get("qualification", {}).get("passed")) is bool for row in rows),
         incorrect_cases=[row["id"] for row in rows if row.get("qualification", {}).get("passed") is False],
         unresolved=sum(row["evidence"]["expectation_status"] == "unresolved" for row in rows),
-        pending=sum(row["status"] == "unrun" for row in rows))
+        pending=sum(row["status"] == "unrun" for row in rows),
+        skipped=sum(row["status"] == "skipped" for row in rows))
     roles = sorted({row["evidence"].get("role", row["evidence"]["check"]) for row in rows})
     result["roles"] = {role: dict(occurrences=len(selected), mechanical=sum(row.get("origin") == "mechanical" for row in selected),
         semantic=sum(row.get("origin") != "mechanical" for row in selected),
@@ -350,7 +369,7 @@ def _check_summary(rows):
     return result
 
 
-def _request_summary(experiments):
+def _request_summary(experiments, skipped=frozenset()):
     """Count the runner's exact identities, including its verified reuse lookup."""
     from experiment_runner import experiment
     states = {check: dict(distinct=set(), remaining=set(), reusable=0, new=0, warmups_remaining=0)
@@ -364,6 +383,8 @@ def _request_summary(experiments):
             check = row["evidence"]["check"]
             key = engine._prompt_request_key(manifest, row["prompt"])
             states[check]["distinct"].add(key)
+            if (check, row["id"]) in skipped:
+                continue
             if row["status"] == "unrun" and key not in states[check]["remaining"]:
                 representatives.setdefault(key, row)
         for key, row in representatives.items():
@@ -381,8 +402,91 @@ def _request_summary(experiments):
                    for field in ("distinct", "remaining")},
                 **{field: sum(state[field] for state in states.values())
                    for field in ("reusable", "new", "warmups_remaining")}},
-        basis="Native request identity and verified saved-answer lookup at inspection time; excludes retries. "
+        basis="Distinct counts retain frozen semantic inputs; remaining counts exclude explicitly skipped occurrences. "
+              "Native request identity and verified saved-answer lookup at inspection time; excludes retries. "
               "One warmup per eligible group with new work on the next run, when its allowance permits.")
+
+
+def _skip_case(case, rule, depends_on):
+    # Keep already paid-for decisions and their qualification evidence visible.
+    if case["status"] != "unrun":
+        return
+    case.update(status="skipped", skip_evidence=dict(rule=rule, depends_on=depends_on),
+                qualification=dict(passed=None, reason="No semantic verdict: the score is already determined."))
+
+
+def _apply_stopping(answer, checks, context):
+    """Omit score-irrelevant questions without inventing semantic verdicts."""
+    support = {row["evidence"]["student_number"]: row for row in checks["support"]}
+    for row in checks["relationship"]:
+        if row["evidence"]["role"] != "actual_relationship":
+            continue
+        child = support[row["evidence"]["student_number"]]
+        if child["status"] == "valid" and not child["parsed"]["valid"]:
+            _skip_case(row, "unsupported_child", [child["id"]])
+    if context is None or any(row["status"] != "valid" for row in checks["matching"]):
+        return
+    teacher = review._TeacherIndex(answer["teacher"])
+    matching_rows = {row["evidence"]["student_number"]: row for row in checks["matching"]}
+    by_group = {}
+    for row in checks["relationship"]:
+        if row["evidence"]["role"] == "compatibility":
+            by_group.setdefault(tuple(row["evidence"]["teacher_numbers"]), []).append(row)
+    for group in context:
+        if not group["required"]:
+            continue
+        identifiers = {teacher.by_number[number] for number in group["teacher_numbers"]}
+        matches = {number for number, row in matching_rows.items() if row["parsed"]["teacher_id"] in identifiers}
+        rows = by_group.get(tuple(group["teacher_numbers"]), [])
+        covered = review._matched_headings(matches)
+        witness = next((row for row in rows if row["status"] == "valid" and row["parsed"]["valid"]
+                        and row["evidence"]["heading_number"] not in covered), None)
+        for row in rows:
+            heading = row["evidence"]["heading_number"]
+            # A positive DSM match must also receive a positive DSL self check.
+            if heading in matches:
+                continue
+            if not matches:
+                _skip_case(row, "no_full_match", [dict(check="matching", answer_id=answer["id"])])
+            elif heading in covered:
+                _skip_case(row, "match_beneath_heading", [dict(check="matching", answer_id=answer["id"])])
+            elif witness is not None:
+                _skip_case(row, "uncovered_compatible_heading", [witness["id"],
+                    dict(check="matching", answer_id=answer["id"])])
+
+
+def _relationship_wave(current, *, reuse_only=False):
+    """Check independent edges and self guards, plus one witness per meaning."""
+    wanted, pending = set(), []
+    for cohort in ("random", "challenge"):
+        for answer in current[cohort]["answers"]:
+            groups = {}
+            matching_rows = answer["checks"]["matching"]
+            matching_by_number = {row["evidence"]["student_number"]: row for row in matching_rows}
+            teacher = review._TeacherIndex(answer["teacher"])
+            group_identifiers = {}
+            for row in answer["checks"]["relationship"]:
+                if row["status"] == "valid":
+                    continue
+                pending.append(row)
+                if row["status"] == "skipped":
+                    continue
+                if row["evidence"]["role"] == "actual_relationship":
+                    wanted.add(row["input_sha256"])
+                    continue
+                group = tuple(row["evidence"]["teacher_numbers"])
+                if group not in group_identifiers:
+                    group_identifiers[group] = {teacher.by_number[number] for number in group}
+                identifiers = group_identifiers[group]
+                heading = row["evidence"]["heading_number"]
+                own_match = matching_by_number[heading]
+                if own_match["status"] == "valid" and own_match["parsed"]["teacher_id"] in identifiers:
+                    wanted.add(row["input_sha256"])
+                else:
+                    groups.setdefault(group, row)
+            wanted.update(row["input_sha256"] for row in groups.values())
+    # Dispatch all needed numbered aliases together; native reuse owns receipts.
+    return {row["id"] for row in pending if reuse_only or row["input_sha256"] in wanted}
 
 
 def _usage(experiments, sources):
@@ -422,17 +526,30 @@ def _usage(experiments, sources):
     return experiment.usage_summary(local_calls, warmup_calls=local_warmups), generation
 
 
-def _score(answer, checks, context):
+def _score(answer, checks, context, *, partial=False):
     teacher = review._TeacherIndex(answer["teacher"])
     matches = {row["evidence"]["student_number"]: row["parsed"]["teacher_id"] for row in checks["matching"]}
+    compatibility = {}
+    for row in checks["relationship"]:
+        if row["evidence"]["role"] == "compatibility":
+            compatibility.setdefault(tuple(row["evidence"]["teacher_numbers"]), {})[
+                row["evidence"]["heading_number"]] = row["parsed"]["valid"] if row["status"] == "valid" else None
     coverage = []
     for group in context:
         teacher_ids = {teacher.by_number[number] for number in group["teacher_numbers"]}
-        headings = [row["evidence"]["heading_number"] for row in checks["relationship"]
-            if row["evidence"]["role"] == "compatibility"
-            and row["evidence"]["teacher_numbers"] == group["teacher_numbers"] and row["parsed"]["valid"]]
+        headings = [number for number, valid in compatibility.get(tuple(group["teacher_numbers"]), {}).items() if valid is True]
         coverage.append(dict(group, student_numbers=[number for number, identifier in matches.items() if identifier in teacher_ids],
             compatible_heading_numbers=headings, reason="Complete DSM matches and unchanged DSL compatibility judgments."))
+    if partial:
+        return review.score_partial(dict(post=answer["post"], teacher=answer["teacher"], student=answer["student"],
+            exact_matches=review.exact_matches(answer["teacher"], answer["student"]), teacher_meanings=context),
+            subjects={row["evidence"]["student_number"]: row["parsed"]["valid"]
+                      for row in checks["support"] if row["status"] == "valid"},
+            relationships={row["evidence"]["student_number"]: row["parsed"]["valid"] if row["status"] == "valid" else None
+                for row in checks["relationship"] if row["evidence"]["role"] == "actual_relationship"},
+            coverage=[dict(teacher_numbers=group["teacher_numbers"], required=group["required"],
+                student_numbers=group["student_numbers"],
+                compatibility=compatibility.get(tuple(group["teacher_numbers"]), {})) for group in coverage])
     assembled = dict(schema_version=1, prompt_id="DSRv2",
         subjects=[dict(number=row["evidence"]["student_number"], **row["parsed"]) for row in checks["support"]],
         relationships=[dict(parent=row["evidence"]["parent_number"], child=row["evidence"]["student_number"], **row["parsed"])
@@ -444,19 +561,22 @@ def _score(answer, checks, context):
 
 
 def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgrade_reason=None):
-    """Execute native groups sequentially under one shared attempt allowance."""
+    """Execute native checks under one allowance, stopping settled score work."""
     from experiment_runner import experiment
-    if max_new_attempts is not None and (type(max_new_attempts) is not int or max_new_attempts < 1):
-        raise ValueError("max_new_attempts must be positive")
+    if max_new_attempts is not None and (type(max_new_attempts) is not int or max_new_attempts < 0):
+        raise ValueError("max_new_attempts must be nonnegative")
     initial = report(output)
+    frozen = experiment.read(Path(output).resolve() / "evaluation.json")
     remaining = max_new_attempts
-    for entry in initial["experiments"]:
+    def dispatch(entry, *, only=None, warm_cache=True):
+        nonlocal remaining
         directory = Path(entry["experiment"])
         before = entry["summary"]["attempts"]
+        selection = {} if frozen["schema_version"] == 1 else dict(only=only, warm_cache=warm_cache)
         try:
             after = experiment.run(directory, remaining, runner_upgrade_reason,
                 attempt_budget_path=Path(attempt_budget_path) if attempt_budget_path is not None else None,
-                include_request_preview=False)
+                include_request_preview=False, **selection)
         except engine.RunnerError as error:
             message = str(error.__cause__ or error)
             prefix = "unresolved prompt cases: "
@@ -465,4 +585,35 @@ def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgra
             after = experiment.report(directory, include_request_preview=False)
         if remaining is not None:
             remaining -= after["summary"]["attempts"] - before
-    return report(output)
+        return after
+    for entry in initial["experiments"]:
+        if frozen["schema_version"] == 1 or entry["cases"][0]["evidence"]["check"] != "relationship":
+            dispatch(entry)
+    current = report(output)
+    if frozen["schema_version"] == 1:
+        return current
+    if any(row["status"] != "valid" for cohort in ("random", "challenge")
+           for answer in current[cohort]["answers"] for check in ("matching", "support")
+           for row in answer["checks"][check]):
+        return current
+    warmed = set()
+    while True:
+        selected = _relationship_wave(current, reuse_only=max_new_attempts == 0)
+        if not selected:
+            return current
+        before = {(row["id"], row["status"], row.get("attempts", 0))
+            for cohort in ("random", "challenge") for answer in current[cohort]["answers"]
+            for row in answer["checks"]["relationship"]}
+        for entry in current["experiments"]:
+            if entry["cases"][0]["evidence"]["check"] != "relationship":
+                continue
+            only = [row["id"] for row in entry["cases"] if row["id"] in selected]
+            if only:
+                dispatch(entry, only=only, warm_cache=entry["experiment"] not in warmed)
+                warmed.add(entry["experiment"])
+        current = report(output)
+        after = {(row["id"], row["status"], row.get("attempts", 0))
+            for cohort in ("random", "challenge") for answer in current[cohort]["answers"]
+            for row in answer["checks"]["relationship"]}
+        if before == after:
+            return current

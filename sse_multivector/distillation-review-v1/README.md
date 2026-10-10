@@ -98,6 +98,7 @@ support and parent-child validity, keeping the existing semantic criteria.
 | DSM complete-meaning matching | The validated teacher catalog is empty. | Record no teacher match without a matching call. A missing or invalid reference is a preparation failure instead. |
 | DSS post support | The student subject exactly equals a trusted teacher subject for the same original post. | Record supported without a support call. |
 | DSL parent-child validity | The student pair has the exact ordered parent and child strings of an actual immediate link in the trusted teacher answer. | Record valid without a relationship call. |
+| DSL parent-child validity | The exact parent and child strings are endpoints of a numbered ancestor path in the trusted teacher answer. | Record valid with the complete teacher path as evidence; restrictions are retained through every hop. |
 | DSL parent-child validity | Parent and child strings are identical. | Every parent restriction is retained; record this local pair as valid. This does not establish teacher agreement or correct placement. |
 
 Trust the teacher answer as directed; do not re-audit it to obtain these
@@ -120,7 +121,9 @@ Keep malformed student outputs and incomplete reviewer judgments under their
 existing distinct failure rules.
 
 Source-bound matching and support/relationship preparation now indexes trusted
-wording and actual immediate links once per selected reference. Every selected
+wording and actual immediate links once per selected reference. Ancestor proofs
+walk original numbered paths when queried, without storing a quadratic closure.
+Every selected
 student occurrence remains a separate case. Sufficient evidence adds a generic
 `mechanical: {output, evidence}` result; it never reads the expected label to
 choose that result. DSS checks the effective authored subject override when present.
@@ -1827,13 +1830,16 @@ explicit unresolved matching labels remain outside error denominators.
 
 The complete workflow retains every subject and actual immediate edge. Exact
 trusted subject wording settles matching and post support; exact trusted ordered
-pairs or identical parent/child wording settle local validity. The remaining
+pairs, numbered ancestor paths or identical parent/child wording settle local validity. The remaining
 questions use native requests and typed responses. Coverage additionally compares
-each required teacher meaning, as child, with every candidate heading, as parent,
+each required teacher meaning, as child, with candidate headings, as parent,
 using **unchanged DSLv2**. Identical requests share native results, while all
 numbered placements remain visible. The existing scorer checks full matches
 beneath every compatible occurrence, gives invalid outputs zero scores, and
-keeps incomplete or inconsistent reviews pending. The earlier 36,310-question
+keeps incomplete or inconsistent reviews pending. New evaluations apply the
+[approved stopping rules](#additional-mechanical-review-work-approved-october-9)
+instead of requiring every score-irrelevant placement verdict. The original
+frozen evaluation retains its exhaustive contract. The earlier 36,310-question
 estimate counted primitive checks and excludes these compatibility comparisons.
 
 Caching follows the earlier trial's manual natural-prefix/key approach. Native
@@ -1930,7 +1936,7 @@ input is 1,306,730 uncached plus 288,768 cached tokens (18.10% cached), with
 753,026 output tokens including 637,606 reasoning tokens. The known catalog
 estimate is $10.1725968; complete cost remains unknown.
 
-The current 60-answer plan needs 2,086 distinct primitive requests, plus 9,678
+The original frozen 60-answer plan needs 2,086 distinct primitive requests, plus 9,678
 additional coverage-placement requests: 11,764 total. Required teacher meanings
 are compared against every returned subject, before mechanical settlement and
 identical-request reuse. Those additional requests account for 82.27% of the
@@ -1943,8 +1949,75 @@ compatibility work would reduce the entire selected workload by 5,764 distinct
 requests, retaining uses needed for actual edges: 11,764 to 6,000. This is a
 conditional whole-workload count, not outstanding work saved or proof that DSM
 is correct. Current exhaustive compatibility diagnostics and reviewer
-qualification also depend on those judgments; no execution/report contract has
-been changed. The trial remains paused pending agreement on the approach.
+qualification also depend on those judgments. The subsequent approval and
+implementation follow; the trial remains paused and its original receipts are
+unchanged.
+
+## Additional mechanical review work approved (October 9)
+
+The user directs doing all sensible mechanical work. New evaluation preparations
+use schema 2 and apply these score-preserving rules, conditional on completed
+matching/support and any saved semantic verdict used as evidence:
+
+- No complete student match: the required teacher meaning's coverage is zero;
+  omit its remaining compatibility questions.
+- A full match already occurs below a student subject: that subject's
+  compatibility cannot change coverage; omit that question. Retain compatibility
+  checks for the matching entries themselves to detect DSM/DSL contradictions.
+- A compatible student subject has no full match beneath it: coverage is zero;
+  stop the other placement questions for that meaning, retaining matching-self
+  checks. A trusted teacher proof can provide this witness without inference.
+- Post support is false: that student's correctness contribution is zero;
+  omit its incoming-edge question. This does not settle descendants' correctness.
+
+Exact trusted ancestor paths additionally supply positive DSL verdicts. On the
+same 60 selected answers, they prove 325 additional distinct inputs across 393
+numbered occurrences; 28 already have outputs and 297 remain uncalled. A frozen
+C01 agent expectation conflicts with one path proof; the raw label is preserved.
+Teacher absence does not prove a negative when an equivalent paraphrase might
+appear elsewhere: 1,635 investigated negative candidates remain unproven and
+are not used. DSM matches do not settle DSS support or post-free DSL validity.
+
+The shared runner's `run(..., only=..., warm_cache=...)` dispatches selected
+frozen cases and retains its complete native report. The evaluator completes
+matching and support first, then checks required actual edges, matching-self
+guards and one remaining placement per unresolved meaning per wave. It retains
+concurrency 8, native exact-request reuse and provider-only lifetime retries.
+An eligible prefix is warmed at most once per group in one evaluation invocation;
+later waves retain the same cache identity without additional warmups.
+
+Skipped rows have `status: "skipped"`, a rule and dependency evidence, no semantic
+Boolean and no successful qualification. Native records and already completed
+judgments remain intact. Required aliases of the same request are dispatched
+together; another occurrence can obtain a native reused result at no extra
+call. `score_partial` applies the unchanged score law without inventing a complete
+DSR report. Reports distinguish complete scores from incomplete diagnostics and
+reviewer qualification; matching-self contradictions still block scores.
+
+The [saved workload investigation](../../target/distillation-review-v1/final-trial-20261009/analysis/score-law-eliminations.json)
+projects 11,764 original distinct requests to 5,201 with all measured reductions,
+given the paused matching/support decisions and known DSL witnesses. This is
+whole-workload potential, not past calls refunded or an accuracy/runtime estimate.
+It leaves 3,565 genuinely new DSL inputs rather than 9,664, before additional
+stopping on future outputs, warmups and retries. Frozen teacher groups, required
+flags, prompts, reasoning effort and cache eligibility are unchanged.
+
+Original schema-1 selections retain immediate-edge/equality accounting during
+verification; new schema-2 selections count ancestor proofs. Original selections,
+assessment seals, evaluations and receipts are never rewritten. Prepare a new
+evaluation with the same selection/assessments and the previous history root.
+`run-distillation-review-evaluation --max-new-attempts 0` joins verified saved
+receipts with no new model attempts; a later positive allowance is required for
+new inference. The trial remains paused, bulk qualification remains open and
+the reserved test stays sealed.
+
+Production-path tests first reproduced unnecessary dispatch and frozen-selection
+accounting failures. The integrated review suites now pass 110 tests; selected
+runner dispatch passes 66 Python and 74 Node tests with local workers. Tests cover
+positive and negative witness termination, required self guards, actual/placement
+aliases, shared budgets and resume, eligible caching, zero-allowance reuse, frozen
+byte preservation and the original exhaustive scorer. These checks establish
+mechanical behavior, not semantic reviewer accuracy.
 
 ## Actual distilled wording: offline preview (October 8)
 
