@@ -367,6 +367,20 @@ completely at every compatible returned heading occurrence. Optional broader
 headings are not mandatory; equivalent wording and valid extra headings are allowed.
 Keep teacher meaning groups fixed across versions and average per-note scores equally.
 
+**Prompt-development iteration approved October 10:** use 12–16 distinct
+complete review inputs for the prompt being changed, covering observed failures,
+correct positive and negative decisions, and earlier regressions. Establish
+source-assessed decisions and evidence before candidate calls. Check further
+cases and the fixed ten-note workflow after that development set passes; the
+original 50 random plus ten challenge answers remain the very final validation.
+The current ten-note DSLv4 run continues unchanged. Sol/xhigh, subscription SSE,
+concurrency 16, trusted ASv6.100, mechanical rules and schemas remain fixed;
+lower-effort testing remains paused. Native selected preparations shrink the
+case plan and subsequent reports while retaining full production inputs and
+baseline receipts. Audit explanations as well as decisions; keep ambiguities
+explicit and disclose development exposure. This is separate from the sealed
+pilot test split. See the [process and prepared reference](../../sse_multivector/distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
+
 **Mechanical decisions approved October 9:** all three checks use mechanical
 results wherever trusted inputs settle the question. An exact teacher subject
 match supplies meaning agreement and support for the same original post. An
