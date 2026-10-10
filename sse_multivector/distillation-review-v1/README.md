@@ -3439,6 +3439,14 @@ in reports. Compatible prior receipts are joined before inference; no
 intentional repeat is requested. The minimum lower reasoning effort remains
 open, and the final 60-answer validation is not part of this iteration.
 
+Before new model calls, the user changes this iteration's concurrency to
+**16**. Native preparation accepts `--concurrency 16` to freeze that setting
+without changing source selection, semantic prompts, reasoning effort, retry
+policy or cache eligibility. Omitting the option retains the selection setting.
+Concurrency is outside semantic request identity; compatible prior answers
+remain reusable. The preceding concurrency-8 preparation and zero-attempt
+inspection remain separate artifacts with no new inference.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with

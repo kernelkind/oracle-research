@@ -1046,6 +1046,9 @@ concurrency, retries and eligible prefix policy stay fixed. See the
 `prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
 freezes an override in the native request settings without changing the source
 selection. Without the flag, the selection's effort is retained.
+`--concurrency N` freezes a positive execution concurrency override, retaining
+the selection's value when omitted. Concurrency is outside semantic request
+identity, so compatible saved results remain reusable across this change.
 `--relationship-prompt PATH --relationship-prompt-id ID` binds an alternate
 relationship template during the same native preparation. Both flags are
 required together; natural-prefix grouping and generated specs use that

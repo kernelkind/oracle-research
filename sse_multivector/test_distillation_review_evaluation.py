@@ -115,6 +115,29 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 
+    def test_native_cli_prepares_concurrency_override_without_changing_selection(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        frozen = selected.read_bytes()
+        destination = self.root / "concurrency-16"
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", destination, "--runner-binary", self.worker(), "--concurrency", 16)
+        report = evaluation.report(destination)
+        self.assertTrue(all(row["settings"]["concurrency"] == 16 for row in report["experiments"]))
+        self.assertTrue(all(row["settings"]["reasoning_effort"] == "xhigh" for row in report["experiments"]))
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_concurrency_override_rejects_invalid_values_before_creating_output(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        for index, value in enumerate((0, -1, True, 1.5, "16")):
+            destination = self.root / ("invalid-concurrency-" + str(index))
+            with self.assertRaisesRegex(ValueError, "concurrency must be a positive integer"):
+                evaluation.prepare(selected, destination, concurrency=value)
+            self.assertFalse(destination.exists())
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_relationship_override_reuses_other_checks_and_runs_only_selected_answer(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         from sse_multivector import distillation_review_assessment as assessment
@@ -141,7 +164,7 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v4.md"
         self.native("prepare-distillation-review-evaluation", selected, "--output", changed,
             "--runner-binary", worker, "--history-root", self.root, "--assessments", context,
-            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4")
+            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4", "--concurrency", 16)
         identifier = answers[0]["id"]
         self.native("run-distillation-review-evaluation", changed, "--answer-id", identifier,
                     "--max-new-attempts", 0)
