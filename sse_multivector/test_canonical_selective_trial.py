@@ -84,6 +84,25 @@ class CanonicalSelectiveTrialTests(unittest.TestCase):
                    max_entries=max_entries, local_candidate_limit=32,
                    comparison_policy='policy.json'))
 
+    def test_discovery_nomination_uses_graph_search_without_reenabling_shortlist(self):
+        self.setup_completed_roots(root_relations={})
+        self.discovery_spec()
+        self.cli('prepare-canonical-selection-trial', 'graph-selection',
+                 '--base-trial', 'trial', '--spec', 'selection-spec.json', '--graph-search')
+        selected = self.state('graph-selection')
+        self.assertTrue(selected['graph_search'])
+        self.assertNotIn('comparison_policy', selected)
+        self.assertEqual(selected['candidate_selection']['schema_version'], 2)
+        self.finish('graph-selection')
+        completed = self.state('graph-selection')
+        self.assertEqual(completed['status'], 'complete')
+        self.assertIn('3', completed['graph_search_steps'])
+        self.assertNotIn('3', completed.get('comparison_policy_steps', {}))
+        self.select('graph-selection-next', base='graph-selection')
+        inherited = self.state('graph-selection-next')
+        self.assertTrue(inherited['graph_search'])
+        self.assertNotIn('comparison_policy', inherited)
+
     def test_singleton_roots_do_not_end_answer_free_discovery(self):
         self.setup_completed_roots(root_relations={})
         self.discovery_spec()

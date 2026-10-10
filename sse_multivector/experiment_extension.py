@@ -323,6 +323,7 @@ def add_commands(commands):
     p.add_argument('--history-root', type=Path,
                    help='freeze the native exact-answer search directory for all trial steps')
     p.add_argument('--graph-search', action='store_true', help='traverse canonical roots and children using comparison answers')
+    p.add_argument('--note-limit', type=int, help='take the first N distinct selected notes in source order; preserve their root order')
     p = commands.add_parser('fork-canonical-trial', help='preserve an unfinished raw trial and prepare its current step in a fresh directory; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
@@ -487,6 +488,7 @@ def add_commands(commands):
     p.add_argument('directory', type=Path)
     p.add_argument('--base-trial', type=Path, required=True)
     p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--graph-search', action='store_true', help='use graph traversal after the automated local nomination')
     p = commands.add_parser('audit-canonical-trial', help='measure saved canonical note sets and browsing choices; no inference or graph changes')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
@@ -531,7 +533,7 @@ def handle_command(args):
         if args.command == 'prepare-canonical-trial':
             result = prepare_trial(args.spec, args.directory, base_trial=args.base_trial,
                                    comparison_policy=args.comparison_policy, history_root=args.history_root,
-                                   graph_search=args.graph_search)
+                                   graph_search=args.graph_search, note_limit=args.note_limit)
         elif args.command == 'fork-canonical-trial':
             result = fork_trial(args.directory, args.output, graph_search=args.graph_search, at_step=args.at_step)
         elif args.command == 'prepare-canonical-child-trial':
@@ -678,7 +680,8 @@ def handle_command(args):
         print(json.dumps(prepare_vectors(args.source, args.destination, report), indent=2))
     elif args.command == 'prepare-canonical-selection-trial':
         from .canonical_selective_trial import prepare_selection
-        result = prepare_selection(args.spec, args.base_trial, args.directory)
+        result = prepare_selection(args.spec, args.base_trial, args.directory,
+                                   graph_search=args.graph_search)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command == 'measure-canonical-candidates':
         try:

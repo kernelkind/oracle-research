@@ -123,7 +123,7 @@ def _tasks(state, cfg):
                 overcrowded=pressure, equal_note_set_edges=equal)
 
 
-def prepare_selection(spec_path, base_trial, directory):
+def prepare_selection(spec_path, base_trial, directory, graph_search=False):
     spec_path, base_trial, directory = map(lambda path: Path(path).resolve(),
                                            (spec_path, base_trial, directory))
     if directory.exists():
@@ -273,6 +273,7 @@ def prepare_selection(spec_path, base_trial, directory):
     if chosen is None:
         return dict(status=report['status'], report=str(report_path), tasks=tasks)
     state = deepcopy(state)
+    graph_search = graph_search or state.get('graph_search', False)
     if next_query is not None:
         state['discovery_next_query'] = next_query
     state['queue'] = deepcopy(trial.execution_queue(state)) + [chosen]
@@ -283,13 +284,17 @@ def prepare_selection(spec_path, base_trial, directory):
     state.update(candidate_selection=cfg, selection_report=str(report_path),
                  status='preparing', experiment=None, base_trial=str(base_trial))
     if discovery:
-        state['comparison_policy'] = deepcopy(cfg['comparison_policy'])
         if 'history_root' in cfg:
             state['history_root'] = cfg['history_root']
-        from .canonical_comparison_policy import prepare_policy
-        prepare_policy(state)
+        if not graph_search:
+            state['comparison_policy'] = deepcopy(cfg['comparison_policy'])
+            from .canonical_comparison_policy import prepare_policy
+            prepare_policy(state)
     sources[str(report_path)] = trial._hash(report_path)
     state['sources'].update(sources)
+    if graph_search:
+        from .canonical_graph_policy import enable
+        enable(state)
     workflow.write(directory / 'state.json', state)
     return trial._prepare(directory, state) | dict(selection=report, report=str(report_path))
 
