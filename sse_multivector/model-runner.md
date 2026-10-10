@@ -3,8 +3,9 @@
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
 [Bootstrap-v103 qualification](shr_single_pair/bootstrap-current-as-qualification.md).
-The approved prompt's full-collection qualification remains pending; this does
-not activate a production prompt or modify earlier frozen experiments.
+The approved prompt's full-collection qualification is complete, with one
+factual-support failure and two materially ambiguous meanings in agent review.
+This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
