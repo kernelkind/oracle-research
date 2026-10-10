@@ -1,0 +1,53 @@
+{
+  "base_sha256": "c7d243fc5cf7e25f50c5814509b766958c7fd34fff8ab24bc91f79bc54ddae22",
+  "edits": [
+    {
+      "old": "Only the selected local and canonical nodes are compared. Their fixed meanings define their scopes; canonical ancestor and descendant meanings constrain compatible relations.",
+      "new": "Only the selected local and canonical nodes are compared. Canonical ancestor and descendant meanings constrain compatible relations."
+    },
+    {
+      "old": "Establish each node's scope from its own fixed meaning, including what its wording entails.",
+      "new": "Establish each node's scope from its own fixed meaning, including what its wording entails. Use the same interpretation in both containment directions and their canonical consequences."
+    },
+    {
+      "old": "If a fixed meaning permits materially different interpretations that would change the relation, return `uncertain` and identify the ambiguity.",
+      "new": "If a fixed meaning permits materially different interpretations that would change a coverage answer or the relation, leave any affected answer unresolved, return `uncertain` and identify the ambiguity."
+    },
+    {
+      "old": "Test both containment directions without changing either meaning. ",
+      "new": ""
+    },
+    {
+      "old": " Keep the same interpretation for both containment directions and their required ancestor and descendant consequences.",
+      "new": ""
+    },
+    {
+      "old": "Answer each question with a counterexample that rules out full coverage, a positive justification covering the child's whole scope, or an unresolved issue. Merely failing to find a counterexample does not establish containment. If admission or exclusion depends on materially different interpretations of a fixed meaning, leave the answer unresolved rather than choose a boundary.",
+      "new": "Record a counterexample that rules out full coverage, a conclusion that full coverage holds, or JSON `null` if unresolved. Put the counterexample or conclusion in `answer` and its decisive basis in `justification`. Merely failing to find a counterexample does not establish containment."
+    },
+    {
+      "old": "Do not approve a relation whose required consequence you reject. If the selected meanings clearly rule out containment, reject that direction. If a proposed relation conflicts with a supplied canonical branch and the conflict remains unresolved, return `uncertain` and identify the conflict. Do not change meanings or existing relations to make a placement fit.",
+      "new": "Do not approve a relation whose required consequence you reject. Do not change existing relations to make a placement fit.\n\nThe two answers assess the selected meanings. An unresolved canonical-branch conflict can require an `uncertain` relation without changing a settled answer about those meanings."
+    },
+    {
+      "old": "Choose exactly one relation:",
+      "new": "Choose exactly one relation, consistent with both answers and the canonical consequences. For `neither`, both answers must rule out full coverage. For `equivalent`, both must establish full coverage and both canonical conditions must hold. A directional containment relation requires full coverage in that direction, established failure of full coverage in the reverse direction, and compatible canonical consequences. Any null answer requires `uncertain`:"
+    },
+    {
+      "old": "  - `answer`: a concise counterexample or affirmative whole-scope coverage statement, or JSON `null` if the judgment remains unresolved.",
+      "new": "  - `answer`: a concise counterexample, a conclusion of full coverage, or JSON `null` if the judgment remains unresolved."
+    },
+    {
+      "old": "  - `justification`: why the counterexample fits the child and is excluded by the parent, why the parent covers the child's whole scope, or what prevents a settled judgment.",
+      "new": "  - `justification`: the brief decisive basis for `answer`: why the counterexample is admitted by the child and excluded by the parent, why the parent covers the child's whole scope, or what prevents a settled judgment."
+    },
+    {
+      "old": "- `relation`: one relation from the list above, consistent with both answers and the canonical consequences. A null answer requires `uncertain`.",
+      "new": "- `relation`: one relation from the list above."
+    },
+    {
+      "old": "Preserve the supplied local `meaning` even when the relation is `uncertain`. Do not rewrite either supplied meaning.\n\nThe two answers assess the selected meanings. An unresolved canonical-branch conflict can require an `uncertain` relation without changing a settled answer about those meanings.\n\nFor `neither`, both answers must rule out full coverage. For `equivalent`, both must establish full coverage. A directional containment relation requires full coverage in that direction, failure of full coverage in the reverse direction, and compatible canonical consequences. For `uncertain`, identify what prevents a settled judgment. Give concise questions, answers and decisive justifications, not a step-by-step reasoning trace. Return no Markdown or additional fields.",
+      "new": "Give concise questions, answers and decisive justifications, not a step-by-step reasoning trace. Return no Markdown or additional fields."
+    }
+  ]
+}

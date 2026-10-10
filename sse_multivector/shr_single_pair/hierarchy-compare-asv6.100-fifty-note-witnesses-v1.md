@@ -304,3 +304,28 @@ in the research worktree: the existing input adapters, runtime output schema,
 Bootstrap prompts and hierarchy artifacts were not changed. Qualification must
 first project saved regression inputs to this new contract through the shared
 native workflow while retaining their producer provenance outside model input.
+
+## Compare-v75: consolidated rules and distinct diagnostics
+
+The user approved this draft edit after reviewing official reasoning-model
+prompting guidance. [Compare-v75](Hierarchy-compare-v75.md) consolidates repeated
+fixed-meaning, interpretation and relation-selection instructions from exact
+v74 bytes. `answer` supplies the counterexample or coverage conclusion;
+`justification` supplies its brief decisive basis. The output fields and question
+IDs are unchanged.
+
+Both directional tests still include equality. Proper containment requires
+established failure in the reverse direction; any null answer requires
+`uncertain`. Interpretation ambiguity must leave the affected coverage answer
+unresolved even if a separate canonical conflict already makes the final
+relation uncertain. A branch conflict can prevent a relation without changing
+settled answers about the selected meanings. All recursive canonical implication
+checks and the source-free shared node contract remain in place.
+
+Independent read-only review found the answer-level ambiguity requirement during
+consolidation; it was retained in the global ambiguity instruction before native
+revision. Exact recipe reconstruction, native receipt hashes, input placeholder,
+diagnostic field names and preserved semantic obligations were checked without
+teacher calls. This remains an unrun, unadopted prompt draft in the research
+worktree. No runtime schema, input adapter, Bootstrap prompt or hierarchy was
+changed, and no reliability improvement is claimed.
