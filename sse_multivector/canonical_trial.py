@@ -26,6 +26,9 @@ def _check(state):
     if state.get('comparison_policy'):
         from .canonical_comparison_policy import check_state
         check_state(state)
+    if state.get('graph_search'):
+        from .canonical_graph_policy import check_state
+        check_state(state)
     if 'queue' in state:
         expected = _legacy_queue(state)
         queue = state['queue']
@@ -177,7 +180,14 @@ def _prepare(directory, state):
                 step = step / 'meaning'
                 step.mkdir(exist_ok=True)
                 eligible = []
-        if eligible and meaning and state.get('candidate_selection') and not state.get('comparison_policy'):
+        if eligible and meaning and state.get('graph_search'):
+            from .canonical_graph_policy import select
+            eligible = select(state, eligible)
+            record = state['graph_search_steps'][str(state['index'])]
+            number = len(record['phases']) - int(bool(record['phases']) and 'answers' not in record['phases'][-1])
+            step = step / f'graph-search-{number:03}'
+            step.mkdir(exist_ok=True)
+        if eligible and meaning and state.get('candidate_selection') and not state.get('comparison_policy') and not state.get('graph_search'):
             from .canonical_selective_trial import select_comparisons
             eligible = select_comparisons(state, local, meaning['meaning'], eligible)
         if eligible and meaning and state.get('comparison_policy'):
@@ -215,6 +225,9 @@ def _prepare(directory, state):
         if eligible and meaning and state.get('comparison_policy'):
             from .canonical_comparison_policy import bind_experiment
             bind_experiment(state, exp)
+        if eligible and meaning and state.get('graph_search'):
+            from .canonical_graph_policy import bind_experiment
+            bind_experiment(state, exp, eligible)
     workflow.write(directory / 'state.json', state)
     return summary(state)
 
@@ -228,7 +241,7 @@ def summary(state):
             {'phase': state['phase']} if state.get('independent_meanings') else {})
 
 
-def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None, history_root=None):
+def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None, history_root=None, graph_search=False):
     spec_path, directory = Path(spec_path).resolve(), Path(directory).resolve()
     cfg = workflow.read(spec_path)
     required = {'schema_version', 'corpus', 'bootstrap_spec', 'comparison_spec'}
@@ -325,6 +338,11 @@ def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None,
     if comparison_policy is not None or state.get('comparison_policy'):
         from .canonical_comparison_policy import prepare_policy
         prepare_policy(state, comparison_policy)
+    if graph_search:
+        if comparison_policy is not None:
+            raise ValueError('graph search cannot combine with a shortlist policy')
+        from .canonical_graph_policy import enable
+        enable(state)
     if directory.exists():
         raise ValueError('trial destination already exists')
     directory.mkdir(parents=True)
@@ -332,13 +350,25 @@ def prepare_trial(spec_path, directory, base_trial=None, comparison_policy=None,
     return _prepare(directory, state)
 
 
-def fork_trial(source, directory):
-    """Preserve an unfinished raw trial and prepare its current input elsewhere."""
+def fork_trial(source, directory, *, graph_search=False, at_step=None):
+    """Preserve a raw trial and optionally restart at a saved construction step."""
     source, directory = Path(source).resolve(), Path(directory).resolve()
     with workflow.locked(source):
         source_path = source / 'state.json'
         source_bytes = source_path.read_bytes()
         state = json.loads(source_bytes)
+        if at_step is not None:
+            if type(at_step) is not int or not 0 <= at_step < len(state['steps']):
+                raise ValueError('snapshot requires an existing construction step')
+            step = state['steps'][at_step]
+            state.update(index=at_step, nodes=deepcopy(step['before']),
+                         steps=state['steps'][:at_step], status='preparing', experiment=None)
+            for name in ('comparison_policy_steps', 'comparison_selections', 'graph_search_steps'):
+                if name in state:
+                    state[name] = {key: value for key, value in state[name].items() if int(key) < at_step}
+        if graph_search:
+            from .canonical_graph_policy import enable
+            enable(state)
         _check(state)
         queue = execution_queue(state)
         if ('shape' in state or state['status'] not in ('preparing', 'awaiting_review')
@@ -360,7 +390,7 @@ def fork_trial(source, directory):
         return _prepare(directory, state)
 
 
-def prepare_child_trial(base_trial, directory, note_ids=None, comparison_policy=None):
+def prepare_child_trial(base_trial, directory, note_ids=None, comparison_policy=None, graph_search=False):
     """Freeze one immediate unprocessed child level from a completed trial.
 
     All immediate local children remain candidates, including children of held
@@ -413,6 +443,11 @@ def prepare_child_trial(base_trial, directory, note_ids=None, comparison_policy=
     if comparison_policy is not None or state.get('comparison_policy'):
         from .canonical_comparison_policy import prepare_policy
         prepare_policy(state, comparison_policy)
+    if graph_search:
+        if comparison_policy is not None:
+            raise ValueError('graph search cannot combine with a shortlist policy')
+        from .canonical_graph_policy import enable
+        enable(state)
     directory.mkdir(parents=True)
     workflow.write(directory / 'state.json', state)
     return _prepare(directory, state)
@@ -463,7 +498,7 @@ def _placement(state, local, meaning, values):
     for n in nodes:
         parents = n['parents']
         n['parents'] = [p for p in parents if not any(p in ancestors[q] for q in parents if q != p)]
-    if state.get('candidate_selection'):
+    if state.get('candidate_selection') and state['candidate_selection'].get('schema_version') != 2:
         from .canonical_selective_trial import placement_improves
         if not placement_improves(state, nodes):
             return nodes, target, 'selected entry does not improve its declared browsing task; graph preserved', None
@@ -496,6 +531,11 @@ def advance_trial(directory, meaning_case, comment, hold=None, concurrency=None,
             raise ValueError('an explicit hold reason is required')
         result = workflow.report(state['experiment'], include_request_preview=False)
         cases = result['cases']
+        graph_record = None
+        if state.get('graph_search') and state.get('phase') == 'comparison':
+            from .canonical_graph_policy import checked_cases
+            graph_record = state['graph_search_steps'][str(state['index'])]
+            cases = checked_cases(state, cases)
         policy_record = None
         if state.get('comparison_policy') and state.get('phase') == 'comparison':
             from .canonical_comparison_policy import checked_cases
@@ -509,6 +549,13 @@ def advance_trial(directory, meaning_case, comment, hold=None, concurrency=None,
         if meaning_case not in {c['id'] for c in cases}:
             raise ValueError('select a returned meaning case')
         reason = hold
+        if graph_record is not None and not reason and all(
+                case['status'] == 'valid' and case['parsed']['relation'] != 'uncertain' for case in cases):
+            from .canonical_graph_policy import finish_phase
+            if not finish_phase(state, cases)['complete']:
+                state.update(experiment=None, status='preparing')
+                return _run_following(_prepare(directory, state), run_next,
+                                      max_new_attempts, attempt_budget_path)
         if policy_record is not None:
             from .canonical_comparison_policy import verification_hold
             reason = reason or verification_hold(state, cases)
@@ -593,6 +640,9 @@ def advance_trial(directory, meaning_case, comment, hold=None, concurrency=None,
                          if identifier not in queried], omitted_relation='unknown')
             step['comparison_phases'] = deepcopy(policy_record['comparison_phases'])
             step['comparison_experiments'] = [phase['experiment'] for phase in policy_record['comparison_phases']]
+        if graph_record is not None:
+            step['graph_search'] = deepcopy(graph_record.get('result', dict(complete=False)))
+            step['comparison_experiments'] = [phase['experiment'] for phase in graph_record['phases']]
         if concurrency is not None:
             for field in ('bootstrap_spec', 'comparison_spec'):
                 state[field]['runner']['concurrency'] = concurrency
