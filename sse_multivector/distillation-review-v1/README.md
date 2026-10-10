@@ -1983,6 +1983,10 @@ frozen cases and retains its complete native report. The evaluator completes
 matching and support first, then checks required actual edges, matching-self
 guards and one remaining placement per unresolved meaning per wave. It retains
 concurrency 8, native exact-request reuse and provider-only lifetime retries.
+Before fresh DSL work, it joins every receipt-validated reusable DSL input with
+a zero allowance. A cached positive witness can therefore settle coverage before
+a fresh earlier case is queried. The shared request preview supplies verified
+case IDs; unknown first cases cannot block later reusable witnesses.
 An eligible prefix is warmed at most once per group in one evaluation invocation;
 later waves retain the same cache identity without additional warmups.
 
@@ -2006,14 +2010,17 @@ Original schema-1 selections retain immediate-edge/equality accounting during
 verification; new schema-2 selections count ancestor proofs. Original selections,
 assessment seals, evaluations and receipts are never rewritten. Prepare a new
 evaluation with the same selection/assessments and the previous history root.
+Frozen schema-1 answer assessments retain their original immediate/equality
+proof validation, including labels newly contradicted by ancestor proofs. New
+schema-2 answer assessments validate the expanded proofs before freezing.
 `run-distillation-review-evaluation --max-new-attempts 0` joins verified saved
 receipts with no new model attempts; a later positive allowance is required for
 new inference. The trial remains paused, bulk qualification remains open and
 the reserved test stays sealed.
 
 Production-path tests first reproduced unnecessary dispatch and frozen-selection
-accounting failures. The integrated review suites now pass 110 tests; selected
-runner dispatch passes 66 Python and 74 Node tests with local workers. Tests cover
+accounting failures. The integrated review suites now pass 112 tests; selected
+runner dispatch and verified reuse pass 67 Python and 74 Node tests with local workers. Tests cover
 positive and negative witness termination, required self guards, actual/placement
 aliases, shared budgets and resume, eligible caching, zero-allowance reuse, frozen
 byte preservation and the original exhaustive scorer. These checks establish

@@ -113,6 +113,67 @@ class DistillationReviewAssessmentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "frozen"):
             assessment.record_wording_expectations(path, "R01", directory, value, reason="Frozen input rejected.")
 
+    def test_legacy_frozen_path_labels_load_unchanged_but_new_labels_are_rejected(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import distillation_run as run
+        fixture = fixtures.DistillationReviewPreviewTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        teacher = fixtures.subjects(("1", "Cables"), ("1.1", "Cable A"), ("1.1.1", "2 m cable A"))
+        student = fixtures.subjects(("1", "Cables"), ("1.1", "2 m cable A"))
+        manifest, outputs = fixture.fixture([dict(note_id="validation-a", post="Cable A is 2 m long.",
+            teacher=teacher, answer=fixtures.answer(student))])
+        selected = trial.prepare_trial(manifest, outputs, fixture.root / "trial", random_count=1, hard_count=0)
+        selection = Path(selected["selection_path"])
+        bundle = trial.load_trial(selection)
+        answer_id = bundle["random"]["answers"][0]["id"]
+        groups = [dict(teacher_numbers=[number], required=number == "1.1.1") for number in ("1", "1.1", "1.1.1")]
+        correct = dict(
+            matching=[dict(student_number=number, teacher_number=teacher_number, reason="Exact fixture wording.")
+                for number, teacher_number in (("1", "1"), ("1.1", "1.1.1"))],
+            support=[dict(student_number=number, valid=True, reason="Trusted source wording.") for number in ("1", "1.1")],
+            relationships=[dict(child="1.1", valid=True, reason="Trusted ancestor path.")],
+            compatibility=[dict(teacher_numbers=["1.1.1"], compatible_heading_numbers=["1", "1.1"],
+                                reason="Trusted path and equality.")])
+        for field, wrong_rows, message in (
+            ("compatibility", [dict(teacher_numbers=["1.1.1"], compatible_heading_numbers=["1.1"],
+                reason="Legacy false ancestor compatibility judgment.")], "trusted compatibility"),
+            ("relationships", [dict(child="1.1", valid=False, reason="Legacy false ancestor relationship judgment.")],
+                "trusted relationship")):
+            with self.subTest(field=field):
+                directory = fixture.root / (field + "-legacy")
+                assessment.record(selection, "R01", directory, teacher_meanings=groups, reason="Independent fixture context.")
+                saved = assessment.record(selection, "R01", directory, expectations=correct, reason="Complete fixture judgments.")
+                assessment.freeze(selection, directory)
+                answer_path = Path(saved["path"])
+                data = run.read_json(answer_path)
+                self.assertEqual(data["schema_version"], 2)
+                data["schema_version"] = 1
+                data["expectations"][field] = wrong_rows
+                run.write_json(answer_path, data)
+                seal_path = directory / "assessment.complete.json"
+                seal = run.read_json(seal_path)
+                seal[str(answer_path)] = run.sha256(answer_path)
+                run.write_json(seal_path, seal)
+                frozen = {path: path.read_bytes() for path in (answer_path, seal_path, selection)}
+                loaded = assessment.load_assessments(directory, bundle)
+                self.assertEqual(loaded["expectations"][answer_id], data["expectations"])
+                self.assertEqual({path: path.read_bytes() for path in frozen}, frozen)
+                current = fixture.root / (field + "-current")
+                assessment.record(selection, "R01", current, teacher_meanings=groups, reason="Independent fixture context.")
+                with self.assertRaisesRegex(ValueError, message):
+                    assessment.record(selection, "R01", current, expectations=dict(correct, **{field: wrong_rows}),
+                                      reason="New contradictory path judgment must be rejected.")
+                data["schema_version"] = 2
+                run.write_json(answer_path, data)
+                with self.assertRaisesRegex(ValueError, message):
+                    assessment.load_assessments(directory, bundle)
+                for version in (True, 0, 3):
+                    data["schema_version"] = version
+                    run.write_json(answer_path, data)
+                    with self.assertRaisesRegex(ValueError, "answer assessment reference"):
+                        assessment.load_assessments(directory, bundle)
+
 
 if __name__ == "__main__":
     unittest.main()

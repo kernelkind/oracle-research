@@ -460,6 +460,38 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(report["generation_usage"]["original_calls"], 10)
         self.assertEqual(report["summary"]["requests"]["totals"]["new"], 0)
 
+    def test_cached_later_witness_is_reused_before_a_fresh_earlier_question(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        teacher = subjects(("1", "Cable A"))
+        student = subjects(("1", "Fresh first heading"), ("2", "Cached compatible heading"), ("3", "Cable A"))
+        selected = self.selection([dict(note_id="validation-a", post="Cable A.",
+            teacher=teacher, answer=answer(student))])
+        context = self.root / "assessment"
+        assessment.record(selected, "R01", context, teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+                          reason="Independent complete source meaning.")
+        first, second = self.root / "first", self.root / "second"
+        prepared = evaluation.prepare(selected, first, runner_binary=self.worker(),
+            history_root=self.root, assessment_directory=context)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            for entry in prepared["experiments"]:
+                if entry["check"] != "relationship":
+                    experiment.run(Path(entry["path"]), 20)
+                else:
+                    rows = experiment.report(Path(entry["path"]), include_request_preview=False)["cases"]
+                    cached = next(row["id"] for row in rows if row["evidence"]["heading_number"] == "2")
+                    experiment.run(Path(entry["path"]), 1, only=[cached])
+            self.assertEqual(len(json.loads((self.root / "calls.json").read_text())), 5)
+            evaluation.prepare(selected, second, runner_binary=self.worker(),
+                history_root=self.root, assessment_directory=context)
+            report = evaluation.run(second, max_new_attempts=20)
+        self.assertEqual(len(json.loads((self.root / "calls.json").read_text())), 5)
+        row = report["random"]["answers"][0]
+        self.assertEqual(row["scores"]["coverage"]["value"], 0)
+        self.assertEqual(next(case["status"] for case in row["checks"]["relationship"]
+                              if case["evidence"]["heading_number"] == "1"), "skipped")
+
 
 if __name__ == "__main__":
     unittest.main()

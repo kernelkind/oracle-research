@@ -42,7 +42,7 @@ def inspect(selection_path, answer_id=None, *, teacher_only=False):
     return result
 
 
-def _validate_expectations(row, context, value):
+def _validate_expectations(row, context, value, *, allow_ancestor_paths=True):
     review._fields(value, {"matching", "support", "relationships", "compatibility"}, "trial expectations")
     known = {s["number"]: s["subject"] for s in row["student"]} if not row["errors"] else {}
     index = review._TeacherIndex(row["teacher"])
@@ -93,7 +93,9 @@ def _validate_expectations(row, context, value):
             raise ValueError("relationship expectation must be Boolean or unresolved")
         if not isinstance(entry.get("reason"), str) or not entry["reason"].strip():
             raise ValueError("expected relationship requires a reason")
-        if index.relationship(known[child.rpartition(".")[0]], known[child]) is not None and entry.get("valid") is False:
+        if (index.relationship(known[child.rpartition(".")[0]], known[child],
+                               allow_ancestor_paths=allow_ancestor_paths) is not None
+                and entry.get("valid") is False):
             raise ValueError("expectation contradicts a trusted relationship")
     if children != expected_children:
         raise ValueError("omitted expected immediate relationship")
@@ -112,7 +114,8 @@ def _validate_expectations(row, context, value):
             representative = next(g["teacher_numbers"][0] for g in context
                                   if frozenset(g["teacher_numbers"]) == group)
             subject = next(s["subject"] for s in row["teacher"] if s["number"] == representative)
-            if any(index.relationship(text, subject) is not None and number not in headings
+            if any(index.relationship(text, subject, allow_ancestor_paths=allow_ancestor_paths) is not None
+                   and number not in headings
                    for number, text in known.items()):
                 raise ValueError("expectation contradicts trusted compatibility")
         if not isinstance(entry.get("reason"), str) or not entry["reason"].strip():
@@ -148,7 +151,7 @@ def record(selection_path, answer_id, directory, *, teacher_meanings=None, expec
         context = run.read_json(context_path)["teacher_meanings"]
         _validate_expectations(row, context, expectations)
         path = directory / ("answer-" + preview._digest(row["id"]) + ".json")
-        data = dict(schema_version=1, origin="agent_assessed", selection=bound,
+        data = dict(schema_version=2, origin="agent_assessed", selection=bound,
             answer_id=row["id"], teacher_context_sha256=run.sha256(context_path),
             expectations=expectations, reason=reason)
     if path.exists():
@@ -231,7 +234,8 @@ def load_assessments(directory, selection_bundle):
         context_path = directory / ("teacher-" + _context_key(row) + ".json")
         if context_path.is_file():
             data = run.read_json(context_path)
-            if data["context_key"] != _context_key(row) or data["origin"] != "agent_assessed":
+            if (type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2)
+                    or data["context_key"] != _context_key(row) or data["origin"] != "agent_assessed"):
                 raise ValueError("teacher assessment source differs")
             check_selection(data["selection"])
             review._groups(data["teacher_meanings"], row["teacher"])
@@ -240,11 +244,15 @@ def load_assessments(directory, selection_bundle):
         answer_path = directory / ("answer-" + preview._digest(row["id"]) + ".json")
         if answer_path.is_file():
             data = run.read_json(answer_path)
-            if (data["answer_id"] != row["id"] or data["origin"] != "agent_assessed"
+            if (type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2)
+                    or data["answer_id"] != row["id"] or data["origin"] != "agent_assessed"
                     or data["teacher_context_sha256"] != sources.get(str(context_path))):
                 raise ValueError("answer assessment reference differs")
             check_selection(data["selection"])
-            _validate_expectations(row, contexts[row["id"]], data["expectations"])
+            # v1 judgments were recorded before ancestor-path proofs existed.
+            # Validate their original contract without rewriting frozen labels.
+            _validate_expectations(row, contexts[row["id"]], data["expectations"],
+                                   allow_ancestor_paths=data["schema_version"] >= 2)
             expectations[row["id"]] = data["expectations"]
             sources[str(answer_path)] = run.sha256(answer_path)
     seal_path = directory / "assessment.complete.json"

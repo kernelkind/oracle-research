@@ -455,7 +455,7 @@ def _apply_stopping(answer, checks, context):
                     dict(check="matching", answer_id=answer["id"])])
 
 
-def _relationship_wave(current, *, reuse_only=False):
+def _relationship_wave(current):
     """Check independent edges and self guards, plus one witness per meaning."""
     wanted, pending = set(), []
     for cohort in ("random", "challenge"):
@@ -486,7 +486,7 @@ def _relationship_wave(current, *, reuse_only=False):
                     groups.setdefault(group, row)
             wanted.update(row["input_sha256"] for row in groups.values())
     # Dispatch all needed numbered aliases together; native reuse owns receipts.
-    return {row["id"] for row in pending if reuse_only or row["input_sha256"] in wanted}
+    return {row["id"] for row in pending if row["input_sha256"] in wanted}
 
 
 def _usage(experiments, sources):
@@ -568,13 +568,13 @@ def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgra
     initial = report(output)
     frozen = experiment.read(Path(output).resolve() / "evaluation.json")
     remaining = max_new_attempts
-    def dispatch(entry, *, only=None, warm_cache=True):
+    def dispatch(entry, *, only=None, warm_cache=True, allowance=None):
         nonlocal remaining
         directory = Path(entry["experiment"])
         before = entry["summary"]["attempts"]
         selection = {} if frozen["schema_version"] == 1 else dict(only=only, warm_cache=warm_cache)
         try:
-            after = experiment.run(directory, remaining, runner_upgrade_reason,
+            after = experiment.run(directory, remaining if allowance is None else allowance, runner_upgrade_reason,
                 attempt_budget_path=Path(attempt_budget_path) if attempt_budget_path is not None else None,
                 include_request_preview=False, **selection)
         except engine.RunnerError as error:
@@ -596,9 +596,26 @@ def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgra
            for answer in current[cohort]["answers"] for check in ("matching", "support")
            for row in answer["checks"][check]):
         return current
+    # A cached positive witness may occur after a fresh question in case order.
+    # Join only verified saved inputs first; zero allowance cannot hide later
+    # cached answers behind a new-request scheduling stop.
+    joined = False
+    for entry in current["experiments"]:
+        if entry["cases"][0]["evidence"]["check"] != "relationship":
+            continue
+        plan, _, manifest = experiment.load(Path(entry["experiment"]))
+        reusable = experiment.request_preview(plan, manifest, entry["cases"],
+            include_reusable_case_ids=True)["reusable_case_ids"]
+        if reusable:
+            dispatch(entry, only=reusable, warm_cache=False, allowance=0)
+            joined = True
+    if joined:
+        current = report(output)
+    if max_new_attempts == 0:
+        return current
     warmed = set()
     while True:
-        selected = _relationship_wave(current, reuse_only=max_new_attempts == 0)
+        selected = _relationship_wave(current)
         if not selected:
             return current
         before = {(row["id"], row["status"], row.get("attempts", 0))
