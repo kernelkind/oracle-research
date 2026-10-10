@@ -60,6 +60,17 @@ own benchmark protocols and are not tests of our task or non-thinking readout.
 For MoE fine-tuning, inspect which expert tensors receive adapters before
 comparing an attention-only adaptation with dense all-linear LoRA.
 
+The current production `subject_training_model` already targets both packed
+expert projections in every Gemma 4 MoE layer, checks complete coverage and
+uses rank-two expert adapters alongside its configured module adapters. That
+reduces preparation work for this candidate; it is not a GB10 measurement or
+proof of Bootstrap/Compare learning. The same explicit coverage is not
+implemented for the sparse Qwen candidate. PEFT's
+[LoRA documentation](https://huggingface.co/docs/peft/v0.21.0/package_reference/lora#targeting-nnparameter-directly)
+explains why experts stored as parameters need `target_parameters` rather than
+only linear-module matching, and why unmerged expert adapters can add serving
+overhead. Compare the actual saved/reloaded inference path when assessing cost.
+
 The current [Kev-9B card](https://github.com/jaredpalmer/kev/blob/main/docs/model-cards/kev-9b.md)
 reports an 8,192-token validated context despite serving longer states. The
 16K contract bucket fails its predefined tolerance. This makes complete branch
@@ -93,6 +104,21 @@ actual input/output lengths and training objective, then verify gradients,
 save, fresh-process reload and inference. Final student choice should explain
 which current cases distinguish the candidates and which claims remain
 predictions about fine-tuning.
+
+The first ASv6.100 / Bootstrap-v96 generation screen now completes all eight
+selected inputs on the two cached dense references. Qwen has six strict-JSON
+valid responses and Gemma has none because it fences every response. Gemma
+uses less CUDA allocation and shorter request times, with different output
+lengths. Neither is an established fine-tuning winner: Qwen turns planned
+stock preservation into completed states, while Gemma's Cooking/Bread meanings
+leave distinguishing boundaries underspecified. The concrete observations and
+source-bound review roles are in
+[the current screen](SHR-STUDENT-PREPARATION.md#bootstrap-published-checkpoint-generation-screen).
+Both remain research candidates. Formatting behavior can change with supervised
+training; this screen has not measured that change or justified excluding sparse
+alternatives. Compare's newly qualified current inputs permit a separate screen,
+but their absent canonical branches leave production length and branch behavior
+unmeasured.
 
 ## Earlier SHR research and measurements
 

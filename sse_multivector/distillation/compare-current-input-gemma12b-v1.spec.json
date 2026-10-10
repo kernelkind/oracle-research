@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-compare-v48",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-disambiguation-v1/sse_multivector/shr_single_pair/Hierarchy-compare-v48.md"
+  },
+  "dataset": {
+    "adapter": "hierarchy_node_pairs",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-disambiguation-v1/sse_multivector/shr_single_pair/hierarchy-compare-asv6.100-b96-regressions-v1.json",
+    "select": [
+      "pair-001-forward",
+      "pair-001-reverse",
+      "pair-002-forward",
+      "pair-002-reverse",
+      "pair-003-forward",
+      "pair-003-reverse",
+      "pair-004-forward",
+      "pair-004-reverse",
+      "pair-017-forward",
+      "pair-017-reverse",
+      "pair-022-forward",
+      "pair-022-reverse",
+      "pair-048-forward",
+      "pair-048-reverse",
+      "pair-049-forward",
+      "pair-049-reverse",
+      "pair-051-forward",
+      "pair-051-reverse",
+      "pair-054-forward",
+      "pair-054-reverse",
+      "pair-055-forward",
+      "pair-055-reverse",
+      "pair-058-forward",
+      "pair-058-reverse",
+      "pair-113-forward",
+      "pair-113-reverse"
+    ]
+  },
+  "runner": {
+    "provider": "local",
+    "auth_file": null,
+    "model": "google/gemma-4-12B-it/707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7/126bea17fe158627b705181a40a84cb2e65535dee626a78b61174f88f636eb12",
+    "reasoning_effort": "off",
+    "concurrency": 1,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/sse_multivector/run-local-model.sh",
+    "transport": "http",
+    "timeout_seconds": 600,
+    "max_output_tokens": 2048,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "meaning": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relation": {
+          "type": "string",
+          "enum": [
+            "equivalent",
+            "local_contains_canonical",
+            "canonical_contains_local",
+            "neither",
+            "uncertain"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "meaning",
+        "relation",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

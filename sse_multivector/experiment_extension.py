@@ -693,7 +693,8 @@ def code_files(dataset):
     return {name: directory / name for name in names if (directory / name).exists()}
 
 def enrich_report(result, plan, cases):
-    diagnostics = relation_diagnostics(cases)
+    diagnostics = (relation_diagnostics(cases)
+                   if result['adapter'] in {'generic', 'subject_pairs'} else None)
     if diagnostics is not None:
         result['relation_diagnostics'] = diagnostics
     if result["adapter"] == "distillation_verdict":

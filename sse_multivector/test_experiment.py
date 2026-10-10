@@ -16,6 +16,15 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_compare_reports_do_not_inherit_shr_relation_diagnostics(self):
+        from sse_multivector.experiment_extension import enrich_report
+        result = {'adapter': 'hierarchy_node_pairs'}
+        cases = [{'id': 'fixed-meanings', 'status': 'valid',
+                  'parsed': {'relation': 'neither', 'reason': 'Independent topics.'},
+                  'inputs': {'INPUT_JSON': '{"local":{},"canonical":{}}'}}]
+        enrich_report(result, {}, cases)
+        self.assertNotIn('relation_diagnostics', result)
+
     def test_relation_diagnostics_pairs_actual_inputs_and_counts_relation_only_agreement(self):
         from sse_multivector.experiment_extension import relation_diagnostics
         def case(name, a, b, label, prior=None, status='valid'):
