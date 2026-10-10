@@ -11,8 +11,11 @@ student model for Bootstrap and one for Compare while both prompts remain
 under development, so their eventual final fine-tunes can each run as one
 planned campaign after freeze. Investigate model suitability and verify the
 training paths before that handoff. The work is distillation preparation,
-not prompt or hierarchy development. Neither student, final target format,
-training volume nor recipe is selected. Current subject-derived qualification
+not prompt or hierarchy development. The user subsequently confirmed that
+the distilled Compare model needs only the relation; teacher reasons remain
+diagnostic evidence. This does not change either teacher prompt or select a
+student. Bootstrap's final target format, training volume and recipes remain
+open. Current subject-derived qualification
 inputs require ASv6.100; pre-ASv6.100 results remain historical evidence.
 The separate SP model decision, release gates, schedule and spending approvals
 are unchanged. See the

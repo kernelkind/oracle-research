@@ -16,6 +16,16 @@ For a new experiment inheriting an older worker, `prepare --from` accepts
 `--runner-binary` to select the shared launcher's path explicitly. Without that
 override it preserves the inherited worker, including custom workers.
 
+The project's `generic` input adapter can also reference a native frozen
+experiment using a dataset file with
+`{"prepared_experiment":{"path":"EXPERIMENT","sha256":"EXPERIMENT_JSON_SHA256"}}`.
+Preparation checks the exact experiment envelope and its frozen files through
+the shared loader, preserves case IDs, complete template inputs and evidence,
+and binds the original sources. It reads no saved model answers. The new spec
+supplies its own response schema; this supports relation-only Compare student
+screens without altering the teachers' meaning/relation/reason validator.
+Mechanical-answer cases are refused rather than imported as input-only cases.
+
 [run-model.sh](run-model.sh) sends one caller-supplied prompt through pi-ai.
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.

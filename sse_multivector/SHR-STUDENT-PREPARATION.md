@@ -8,8 +8,10 @@ one planned final fine-tune per prompt, with model selection and execution
 problems resolved beforehand. Both prompts remain under development. This
 work investigates distillation; it does not change their wording, meanings,
 hierarchy construction or acceptance rules. The separate SP decision remains
-separate. Model choices, final target formats, training volume and settings are
-still open. Work continues in the existing owned worktree.
+separate. The user confirmed relation-only output for the distilled Compare
+model; diagnostic reasons are not required from that student. Model choices,
+Bootstrap's final target format, training volume and settings remain open.
+Work continues in the existing owned worktree.
 
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
@@ -235,15 +237,31 @@ assertion and numerical agreement with the complete native masked loss; the
 existing five-label checkpoint test passes too. These two GB10 tests ran
 against the exact new staged source. A separately bound v2 capacity run uses
 the same model revisions, shapes and memory budgets; it does not overwrite or
-resume the failed v1 evidence. Its large-model results are pending.
+resume the failed v1 evidence. Both large models completed training, saved
+adapters and passed numerical checkpoint verification in fresh processes:
 
-The conditional Ettin Compare path also needs longer execution checks: the
+| Model | 8,192 tokens: seconds/update; peak GiB | 13,312 tokens: seconds/update; peak GiB | Trainable adapter parameters |
+| --- | --- | --- | --- |
+| Qwen3.8-27B | 36.47; 28.68 | 59.82; 31.90 | 116,727,808 |
+| Gemma-4-12B-it | 33.21; 18.00 | 67.76; 20.00 | 65,568,768 |
+
+Each median uses two measured updates after one warmup. Qwen training and
+verification PIDs are 1304590/1342362; Gemma's are 1343870/1345760. Both publish
+`reload_matches: true` and `complete: true`. Report SHA-256 bindings are
+`0f6fa0a7c371eb6334c3a414c1de95ae4262e4d893c9ae6f1c11b8b20531701d`
+and `768ce0f8de6dabd97ef62859d7506f16f21b325083e8a8a15d7636f40e17f82f`
+respectively. These short random-target samples demonstrate executable GB10
+paths, not convergence, quality or a full training-time forecast. Qwen used
+the correct reference causal convolution because its optional optimized
+kernel is absent. Original failure artifacts remain preserved.
+
+The Ettin Compare path also needs longer execution checks: the
 current complete encoder inputs reach 2,241 tokens, beyond its older measured
 2,048 shape. A pinned synthetic configuration prepares full-weight training
 and batch-one/eight inference at 3,072 and 7,168 tokens, within its actual
 7,999-position limit. It preserves the successful earlier 32 GiB allocation
 budget, eight-GiB reserve and optimization settings. This is five-label random
-supervision, not relation fitting or acceptance of a classifier interface.
+supervision, not relation fitting or selection of the encoder.
 Its source-bound staging is `target/bootstrap-compare-student-v1/capacity-compare-v1`;
 execution follows the dense jobs sequentially. The longer shape checks cost
 headroom; no current ASv6.100 fixture demonstrates a branch of that length.
@@ -279,12 +297,16 @@ the actual training objective, saved weights, fresh-process reload and the
 intended inference readout on GB10. The earlier causal-LM capacity probe
 supervises **five vocabulary IDs at one output position**. It does not benchmark
 Bootstrap's multi-token supervised generation or its final output budget.
-Compare's native API currently also requires a nonempty `reason`; the user's
-earlier SHR relation-only preference does not silently remove that requirement.
-A pointer/encoder decision needs an agreed final interface before adoption.
+The user confirmed that the distilled Compare model returns only the relation.
+Kev and encoder candidates are therefore eligible. The teacher API still
+requires an exact meaning copy and nonempty `reason`; it is preserved for
+teacher diagnostics. The completed generation screens measured that API,
+not the newly agreed student contract. A separately bound student decision
+screen must validate relation-only outputs explicitly and preserve all input
+meanings and branch evidence.
 
 The freeze handoff should bind one checkpoint and training recipe per prompt,
-the final instruction/output contract, reviewed TRAIN targets, unchanged
+the final instructions and Bootstrap output contract, reviewed TRAIN targets, unchanged
 validation roles, maximum lengths without truncation, a planned checkpoint
 schedule and evaluation criteria. Final200 stays sealed. There is no final
 training run, task-specific student fit, accepted training corpus or chosen

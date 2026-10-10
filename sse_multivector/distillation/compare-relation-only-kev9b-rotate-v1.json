@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "pointer",
+  "quantization": "nf4",
+  "max_input_tokens": 8192,
+  "max_new_tokens": 512,
+  "memory_budget_gib": 12,
+  "reserve_gib": 8,
+  "model": "Qwen/Qwen3.5-9B-Base",
+  "revision": "68c46c4b3498877f3ef123c856ecfde50c39f404",
+  "adapter": "jaredpalmer/kev-9b",
+  "adapter_revision": "db029f08b290afd9fee4aa4bbcd9ae48602d1eb0",
+  "upstream_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/shr-student-diagnostics-v1/upstream/kev",
+  "upstream_model_sha256": "2ff3b2e67c048e3bc5a0d1a32aafe50804ed315a5564fce06bb4b95697c5271c",
+  "question": {
+    "instructions": "Apply the full Compare instructions in the state to its final local/canonical input. Preserve both supplied meanings and use the supplied branch constraints. Select exactly one relation. For this student decision, return only the relation; do not copy a meaning or generate a diagnostic reason.",
+    "criteria": {
+      "canonical_contains_local": "The fixed canonical meaning contains the whole fixed local meaning and is broader; every supplied canonical ancestor also contains the local meaning.",
+      "neither": "Both meanings are established, they are not equivalent, and neither contains the other in full under the supplied topic containment rules.",
+      "uncertain": "A meaning or relationship cannot be established, or a relevant evidence or branch conflict remains unresolved.",
+      "equivalent": "Each fixed meaning covers everything covered by the other; both canonical branch consequences hold.",
+      "local_contains_canonical": "The fixed local meaning contains the whole fixed canonical meaning and is broader; it also contains every supplied canonical descendant."
+    },
+    "output_field": "relation"
+  }
+}

@@ -14,10 +14,12 @@ root tree and full post, then generates a standalone meaning. Its present
 four-field API also carries ambiguities, resolutions and quoted evidence.
 It needs a generative model; a classification-only Kev or Ettin checkpoint
 cannot supply this contract. Compare consumes already fixed meanings and a
-canonical branch, then decides one of five relations. That permits a cheaper
-decision readout if the final interface allows it. The present Compare API
-also copies the local meaning and requires a nonempty diagnostic reason.
-Do not fabricate a reason or silently weaken validation to fit a model.
+canonical branch, then decides one of five relations. The user confirmed a
+**relation-only distilled Compare output**, making decision models eligible.
+The present teacher API also copies the local meaning and requires a nonempty
+diagnostic reason; it remains unchanged. Student decision screens must use
+their explicit output contract rather than fabricate a reason or weaken the
+teacher validator. Bootstrap's final distilled output format remains open.
 
 The useful distinction is the actual supervised output and complete input,
 not the old SHR/SP model ranking. A common foundation with two adapters is
@@ -32,9 +34,9 @@ do not guarantee fast GB10 training.
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Add to the research shortlist for generative quality with fewer active parameters | Potentially useful for many repeated decisions | GB10 measurements and exact expert/attention adaptation scope; published active count is not a measured speed |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
-| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized decision candidate on the Qwen3.8 foundation | Complete current branch lengths, readout/interface agreement and transfer to fixed-meaning comparisons |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized relation-only decision candidate on the Qwen3.8 foundation | Complete current branch lengths and transfer to fixed-meaning comparisons |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
-| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Conditional inexpensive fixed-task classifier | Task-specific learning evidence; an untrained five-way head cannot be ranked using published-checkpoint answers |
+| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Eligible inexpensive relation-only classifier | Task-specific learning evidence and full branch lengths; an untrained five-way head cannot be ranked using published-checkpoint answers |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
 
 This is a research shortlist, not authorization for every listed training campaign.

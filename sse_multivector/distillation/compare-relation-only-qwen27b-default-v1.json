@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "causal_lm",
+  "quantization": "nf4",
+  "max_input_tokens": 8192,
+  "max_new_tokens": 512,
+  "memory_budget_gib": 32,
+  "reserve_gib": 8,
+  "model": "Qwen/Qwen3.8-27B",
+  "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "readout": "options",
+  "question": {
+    "instructions": "Apply the full Compare instructions in the state to its final local/canonical input. Preserve both supplied meanings and use the supplied branch constraints. Select exactly one relation. For this student decision, return only the relation; do not copy a meaning or generate a diagnostic reason.",
+    "criteria": {
+      "equivalent": "Each fixed meaning covers everything covered by the other; both canonical branch consequences hold.",
+      "local_contains_canonical": "The fixed local meaning contains the whole fixed canonical meaning and is broader; it also contains every supplied canonical descendant.",
+      "canonical_contains_local": "The fixed canonical meaning contains the whole fixed local meaning and is broader; every supplied canonical ancestor also contains the local meaning.",
+      "neither": "Both meanings are established, they are not equivalent, and neither contains the other in full under the supplied topic containment rules.",
+      "uncertain": "A meaning or relationship cannot be established, or a relevant evidence or branch conflict remains unresolved."
+    },
+    "output_field": "relation"
+  },
+  "answer_prefix": "Answer: ("
+}

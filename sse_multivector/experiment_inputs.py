@@ -60,6 +60,27 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'generic' and 'prepared_experiment' in source:
+        engine._expect_fields(source, 'prepared input source', {'prepared_experiment'})
+        reference = source['prepared_experiment']
+        engine._expect_fields(reference, 'prepared experiment reference', {'path', 'sha256'})
+        directory = engine._resolve_path(reference['path'], 'prepared experiment', path.parent)
+        envelope_path = directory / 'experiment.json'
+        if engine._sha256_file(envelope_path) != reference['sha256']:
+            raise ValueError('prepared experiment reference hash differs')
+        from experiment_runner.experiment import load
+        plan, _, _ = load(directory)
+        if any('mechanical' in case for case in plan['cases']):
+            raise ValueError('input-only reuse cannot inherit mechanical answers')
+        cases = [{key: case[key] for key in ('id', 'inputs', 'evidence') if key in case}
+                 for case in plan['cases']]
+        sources.update(plan['sources'])
+        sources[str(envelope_path)] = reference['sha256']
+        sources.update({str(directory / name): expected for name, expected in plan['files'].items()})
+        preparation = dict(source_experiment=str(directory),
+            source_experiment_sha256=reference['sha256'], source_adapter=plan['dataset']['adapter'],
+            source_prompt_id=plan['prompt']['id'], application_allowed=False)
+        return prepare(dataset, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_verdict':
         try:
             from . import distillation_verdict

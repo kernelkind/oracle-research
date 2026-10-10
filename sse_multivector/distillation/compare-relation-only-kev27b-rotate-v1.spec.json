@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-compare-v48",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-disambiguation-v1/sse_multivector/shr_single_pair/Hierarchy-compare-v48.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/bootstrap-compare-student-v1/compare-relation-only-inputs-v1.json"
+  },
+  "runner": {
+    "provider": "local",
+    "auth_file": null,
+    "model": "jaredpalmer/kev-27b/af0e6d551bdc2cc724f3e9d7a8bee1cd4fb8f7bf/870017f73df7c428f5d0b301ec6afc829687c5a700a40fc8fe51d6a8b6d3faef",
+    "reasoning_effort": "off",
+    "concurrency": 1,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/sse_multivector/run-local-model.sh",
+    "transport": "http",
+    "timeout_seconds": 600,
+    "max_output_tokens": 512,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": [
+            "equivalent",
+            "local_contains_canonical",
+            "canonical_contains_local",
+            "neither",
+            "uncertain"
+          ]
+        }
+      },
+      "required": [
+        "relation"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

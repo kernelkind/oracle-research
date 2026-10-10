@@ -1,5 +1,6 @@
 """Exercise the real experiment CLI, loopback transport and server protocol."""
 from http.server import HTTPServer
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -83,6 +84,37 @@ class LocalModelTests(unittest.TestCase):
         shown = json.loads(self.cli('show', 'first', '--json').stdout)
         self.assertEqual(shown['summary']['valid'], 0)
         self.assertEqual(len(self.received), 1)
+
+    def test_reuses_frozen_inputs_with_a_separate_relation_only_contract(self):
+        self.cli('prepare', 'source', '--spec', 'spec.json', '--history-root', str(self.root))
+        reference = self.root/'source'/'experiment.json'
+        (self.root/'inputs-only.json').write_text(json.dumps({'prepared_experiment': {
+            'path': str(reference.parent),
+            'sha256': hashlib.sha256(reference.read_bytes()).hexdigest()}}))
+        spec = json.loads((self.root/'spec.json').read_text())
+        spec['dataset']['path'] = 'inputs-only.json'
+        spec['runner']['output_schema'] = {'type': 'object', 'additionalProperties': False,
+            'required': ['relation'], 'properties': {
+                'relation': {'type': 'string', 'enum': ['neither']}}}
+        (self.root/'relation-only.json').write_text(json.dumps(spec))
+        self.cli('prepare', 'student', '--spec', 'relation-only.json', '--history-root', str(self.root))
+        self.assertEqual(self.received, [])
+        frozen = json.loads((self.root/'student'/'experiment.json').read_text())['plan']
+        original = json.loads(reference.read_text())['plan']
+        self.assertEqual(frozen['cases'], original['cases'])
+        self.assertEqual(frozen['preparation']['source_experiment_sha256'],
+                         hashlib.sha256(reference.read_bytes()).hexdigest())
+        self.assertNotIn('reason', frozen['runner']['output_schema']['properties'])
+        self.answer = '{"relation":"neither"}'
+        self.cli('run', 'student')
+        shown = json.loads(self.cli('show', 'student', '--json').stdout)
+        self.assertEqual(shown['summary']['valid'], 1)
+        self.assertEqual(shown['cases'][0]['parsed'], {'relation': 'neither'})
+        self.assertEqual(self.received[0]['messages'][0]['content'], original['cases'][0]['prompt'])
+        (self.root/'source'/'runner-config.json').write_text('{}')
+        failure = self.cli('prepare', 'changed', '--spec', 'relation-only.json',
+                           '--history-root', str(self.root), success=False)
+        self.assertIn('prepared runner-config.json changed', failure.stderr)
 
     def test_changed_model_identity_is_rejected(self):
         self.returned_model = 'different/immutable'
