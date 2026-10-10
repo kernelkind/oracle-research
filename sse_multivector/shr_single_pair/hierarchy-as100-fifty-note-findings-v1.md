@@ -418,8 +418,8 @@ were checked against the native collection, and all
 Bootstrap prefetch specifications preserve identical prompt/schema/runner
 settings. The writeup and its prompt/menu dependencies are integrated into main.
 The research worktree remains because it contains the native artifacts and the
-still-unmerged constructor history; main's retained-branch record explicitly
-defers broad consolidation. Both menu recipes retain their original relative
+still-unmerged constructor history. Both menu recipes retain their original
+relative
 artifact bindings. Reproduction requires the original recipes and saved graph
 in the research checkout; copying a recipe into main does not copy its graph.
 
