@@ -14,6 +14,9 @@ This comparison does not demonstrate a correctness improvement or settle
 fresh-call consistency. DSLv4 remains a diagnostic draft; production adoption
 and semantic qualification remain pending. Lower-effort testing stays paused,
 and the existing study remains bound to DSLv2.
+The user has approved a fresh unchanged
+[DSLv4 xhigh consistency repeat](#dslv4-xhigh-consistency-repeat-october-10)
+on the same 14 pairs; preparation is complete and dispatch is pending.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -3124,6 +3127,42 @@ against assuming reliable fresh calls. DSLv4 has neither a clean complete-output
 pass nor unseen-data qualification. A fresh unchanged DSLv4 consistency check
 and broader validation remain necessary before adopting it or restarting the
 lower-effort study; neither starts as part of this bounded trial.
+
+## DSLv4 xhigh consistency repeat (October 10)
+
+The user approved a fresh unchanged DSLv4 repeat after the diagnostic trial.
+Native `prepare --from --repeat` inherits its `diagnostic-v4/actual`,
+`teacher-controls` and `large-controls` groups: the same **14 fixed pairs**,
+seven expected true and seven false. No DSLv3 arm, new cases, revised wording
+or changed labels are part of this repeat. Complete prompt bytes, inputs,
+evidence, schema, settings and runner/project code bindings match the prior
+DSLv4 groups exactly.
+
+Settings remain **GPT-6.1 Sol / xhigh / subscription SSE / concurrency 8**,
+with one native coordinator at a time and uncapped output. A separate native
+persistent counter allows **14 intended calls and at most 28 attempts**;
+only temporary provider errors permit a second attempt. Explicit repeats
+prevent answer reuse. The unchanged shared instructions remain below the
+1,024-token eligibility threshold, so prefix caching and warming stay disabled.
+No paid fallback or semantic retry is authorized.
+
+Assess every Boolean and complete evidence record against the same fixed source
+assessments, not the incorrect inherited positive labels for J6dc/J216/J58.
+Check both unsupported occurrence requirements and genuine action/timing
+restrictions. Every invalid counterexample must preserve the complete child's
+qualifications and relationships; in particular, inspect LL03's requirement
+for mocking the loss, which its prior counterexample failed to retain.
+Preserve the prior rejected response and record fresh attributed agent reviews.
+These expectations remain agent assessments rather than human-certified gold.
+
+Native artifacts are ignored under
+`target/distillation-review-v1/parent-restriction-dslv4-xhigh-repeat-20261010/`,
+in `actual`, `teacher-controls` and `large-controls` groups. Before dispatch,
+native reports show **14 unrun cases, zero attempts and zero reusable answers**;
+the new counter is **0/28**. The prior diagnostic counter remains **30/56**.
+This tests fresh-call consistency on development pairs; it cannot establish
+accuracy on unseen notes. Production adoption, broader qualification and
+lower-effort testing remain pending; the frozen 60-answer study is unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 
