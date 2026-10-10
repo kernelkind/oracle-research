@@ -3244,6 +3244,71 @@ ignored source artifacts. DSLv4, xhigh, concurrency 8, the frozen 60-answer
 selection and earlier receipts remain unchanged. Prompt adoption and lower-effort
 testing remain pending.
 
+The corrected small panel freezes **24 new DSLv4 questions from the original
+60 answers**, covering 24 distinct note contexts: **20 random-source and four
+challenge-source questions**, with twelve actual immediate pairs and twelve
+teacher-meaning/student-parent compatibility pairs. All belonged to completed
+semantic work after the native stopping rules; mechanical and skipped questions
+are excluded. Exact inputs from the prior fourteen DSLv4 development cases are
+excluded. These are new input pairs for DSLv4, not previously unused source notes.
+
+Selection uses seed `DSLv4-frozen60-diverse-20261010`: ascending SHA-256 of
+seed, NUL and native case ID for random-source cases; descending combined
+parent/child character length, then that hash, for challenge-source cases.
+Select one input per distinct note, allocating ten random and two challenge
+cases per role. Selection uses identities and structure, not saved verdicts.
+An independent assessor's report inspection incidentally exposed summary arrays
+of older incorrect-case IDs; labels and output reasons were not used for selection
+or the subsequent string-based assessments. This is not fully blinded human gold.
+
+Pre-call source assessments resolve **eleven true and eleven false**. Two remain
+unresolved before inference: no-KYC wording versus KYC requirements (`N02`),
+and standalone Hiring's work/rental senses versus Employment (`N05`). The
+independent assessor rejects N02 and leaves N05 unresolved; the coordinator
+preserves both interpretation questions rather than treating either inherited
+label as adjudicated truth. They remain outside correctness denominators.
+All inherited native labels, frozen assessments and baseline outputs stay intact.
+
+| Panel label | Native case | Pre-call source assessment |
+| --- | --- | --- |
+| `N01` | `M02-checkpoint-600-N0083:8.1` | True |
+| `N02` | `M03-checkpoint-200-N0033:17.1` | Unresolved |
+| `N03` | `M02-checkpoint-400-N0011:6.1.1` | True |
+| `N04` | `M01-checkpoint-600-N0061:5.1` | True |
+| `N05` | `M02-baseline-N0067:1.1` | Unresolved |
+| `N06` | `M03-checkpoint-600-N0064:4.1.1.1` | True |
+| `N07` | `M01-checkpoint-1000-N0060:4.1` | True |
+| `N08` | `M02-checkpoint-400-N0055:1.1.2` | True |
+| `N09` | `M01-checkpoint-200-N0054:1.2` | True |
+| `N10` | `M01-checkpoint-200-N0024:5.1.1.1` | True |
+| `N11` | `M01-baseline-N0051:compatibility:021:3` | False |
+| `N12` | `M02-checkpoint-800-N0043:compatibility:011:1.2` | False |
+| `N13` | `M01-checkpoint-600-N0017:compatibility:003:1.1.1.2` | False |
+| `N14` | `M02-checkpoint-200-N0015:compatibility:008:4.2` | False |
+| `N15` | `M03-checkpoint-1000-N0004:compatibility:002:6` | False |
+| `N16` | `M03-checkpoint-800-N0032:compatibility:003:7.1` | False |
+| `N17` | `M03-checkpoint-800-N0008:compatibility:005:6.1` | True |
+| `N18` | `M01-checkpoint-1000-N0096:compatibility:021:4.2` | False |
+| `N19` | `M02-checkpoint-1000-N0005:compatibility:007:4` | False |
+| `N20` | `M02-checkpoint-600-N0036:compatibility:004:3.1.1` | True |
+| `N21` | `M02-checkpoint-800-N0020:3.3.1.1.1.1` | False |
+| `N22` | `M02-checkpoint-1000-N0027:2.1.1.1.1.1.1.1.1` | False |
+| `N23` | `M01-checkpoint-800-N0085:compatibility:006:1.1.1.1.1.1.1.1.1` | False |
+| `N24` | `M02-checkpoint-600-N0028:compatibility:006:1.1.1.1.7.1` | True |
+
+Native `prepare --from --only --prompt --repeat` freezes the existing
+`evaluation-mechanical/experiments/relationship-ordinary` inputs and baseline
+with unchanged DSLv4. New artifacts are ignored under
+`target/distillation-review-v1/parent-restriction-dslv4-frozen60-diverse-20261010/`.
+The prepared panel has **24 unrun cases, zero attempts and zero reusable answers**.
+A separate native persistent counter permits **24 intended calls and at most
+48 provider-only attempts**. Settings remain Sol/xhigh/subscription SSE/
+concurrency 8, with uncapped output. Complete shared instructions remain shorter
+than 1,024 tokens; no explicit cache prefix or warming is used. Review both the
+Boolean and every restriction/evidence/counterexample record against these
+pre-call source assessments. This small component trial does not replace DSLv2
+in the original evaluation or restart lower-effort work.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with
