@@ -1,8 +1,10 @@
 # Distillation semantic review — process and evidence
 
-**Current iteration limit:** develop and compare the review process on
-**ten notes**. The agreed **50 random plus ten challenge answers** remain the
-very final validation, after development. The bounded
+**Current development process:** revise one prompt using
+[12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
+then run broader regression checks on the fixed **ten notes** once that set
+passes. The agreed **50 random plus ten challenge answers** remain the very
+final validation. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
 running unchanged DSLv4 at Sol/xhigh with **concurrency 16**. Independent agent
 audits cover fresh verdicts and complete evidence records as they arrive.
@@ -2081,9 +2083,10 @@ trial remained paused; the next approval resumes it.
 
 ## Reasoning-level comparison approved (October 9)
 
-**Current scope supersedes the expansion schedule below:** on October 10 the
-user limits ongoing iterations to ten notes and reserves the full 60 for the
-very final test. The earlier 5/10/20/40/60 schedule and its completed screens
+**Current scope supersedes the expansion schedule below:** prompt development
+uses 12–16 distinct cases before broader regression on the fixed ten notes;
+the full 60 remains the very final test. The earlier 5/10/20/40/60 schedule and
+its completed screens
 remain evidence for the prior study; they are not the next development run.
 The lower-than-xhigh objective and maximum two-point loss remain unchanged.
 
@@ -3390,13 +3393,16 @@ both relationship roles, not the whole 60-answer evaluation. Existing-note
 contexts, small selection size, prior development exposure and agent-only
 assessments limit generalization. It does not qualify DSLv4 for production,
 replace the original DSLv2 evaluation, establish a causal prompt improvement,
-or authorize lower-effort calls. The subsequent user direction limits ongoing
-qualification iterations to ten notes from the agreed set, as recorded below.
+or authorize lower-effort calls. The subsequent user direction bounds broader
+regression to ten notes from the agreed set, as recorded below.
 
 ## Iteration scope limited to ten notes (October 10)
 
 The user rejects the proposed immediate full-60 DSLv4 update as too large for
-development. Ongoing iterations are limited to **ten notes**; the original
+development and initially limits iterations to **ten notes**. The later
+[case-level development approval](#case-level-prompt-development-approved-october-10)
+uses a smaller set before returning to this fixed ten-note regression. The
+original
 **50 random and ten challenge answers** are reserved for the **very final**
 whole-process test. Do not expand development through 20, 40 or 60 answers.
 The original frozen selection, trusted ASv6.100, mechanical rules, existing
@@ -3482,6 +3488,71 @@ warmup is eligible. The native run permits at most 1,406 new attempts within
 the existing persistent counter, with provider-only retries and no semantic
 repeat. Adaptive stopping can reduce the actual question count. Existing
 expectations, prompt bytes, source data and earlier receipts remain unchanged.
+
+## Case-level prompt development approved (October 10)
+
+The user approves a faster development sequence: test a changed prompt on
+**12–16 distinct existing review inputs**, assess further cases not used to
+write that revision, then run the complete fixed ten-note workflow after the
+development set passes. The original 50 random plus ten challenge answers
+remain the very final whole-process validation. Cases come from the agreed ten
+notes; repeated placements and near-identical anatomy comparisons do not create
+additional kinds of test. Every call retains its complete production input.
+Sol/xhigh, subscription SSE, concurrency 16, ASv6.100, schemas, mechanical rules,
+provider-only retries and eligible-prefix caching remain unchanged. Lower-effort
+testing remains paused, and exact future prompt revisions require presentation
+before calls.
+
+Include observed failures, sound positive and negative decisions, and earlier
+regressions. Establish the expected decision and necessary evidence from the
+source wording before calling a candidate. Review both the Boolean or teacher
+ID and its explanation; a correct decision with an incorrect definition or
+counterexample does not pass complete-output review. Agent assessments are not
+independent human gold. Preserve legacy frozen labels, record interpretations
+separately, and keep unresolved cases outside correctness denominators.
+
+Use native `prepare --from OLD --only CASE_ID` to freeze a genuinely small
+experiment, retaining exact inputs and matching baselines. Subsequent revisions
+inherit that small experiment with `--prompt FILE --prompt-id VERSION` and the
+current shared worker. Do not use `--repeat` for changed instructions; it is
+reserved for an intentional unchanged fresh trial. Run only the changed check
+through the shared launcher and retain its native receipts and validation.
+`run --only` on a large prepared group still reports every frozen case, and the
+complete evaluation rebuilds all groups between waves. The first subset
+preparation also reports the old group once; subsequent small runs avoid that
+large reporting work. No runner or scheduler code changes are needed.
+
+The initial relationship reference is prepared at ignored
+`target/distillation-review-v1/prompt-development-cases-20261010/relationship-reference`.
+It contains **14 distinct inputs from seven of the fixed ten notes**, with
+source-assessed expectations of seven valid and seven invalid pairs. Native
+execution joins all fourteen existing receipt-verified outputs with **zero new
+attempts**, and every output passes the unchanged response schema. This is a
+saved baseline, not a new DSLv4 trial or a claim that all explanations pass.
+The source-bound case IDs and intended checks are:
+
+| Case ID | Expected valid | Check |
+| --- | --- | --- |
+| `M03-checkpoint-800-N0032:6.1` | true | Claim meaning preserved within an invitation; no added occurrence requirement |
+| `M03-checkpoint-800-N0032:7.1` | true | Prediction meaning preserved within an invitation |
+| `M01-checkpoint-1000-N0002:1.1.1.1` | true | Complete runtime-telemetry-junk meaning preserved as an instruction's object |
+| `M01-checkpoint-400-N0049:4.1` | true | Fifteen-years-ago restriction preserved in the price clause |
+| `M02-baseline-N0089:compatibility:003:3.1` | true | Current AI wave preserved as a temporal reference |
+| `M02-checkpoint-800-N0020:1.2.1.2.2.1` | true | Demand, price-floor relationship and negation all preserved |
+| `M02-checkpoint-800-N0020:2.3.1` | true | AI training runs preserved as the objects of nonresponse |
+| `M02-checkpoint-800-N0043:compatibility:005:1.1.1.1.1.1` | false | Explicit while-practicing timing absent; retain every XP qualification in the counterexample |
+| `M01-checkpoint-800-N0015:compatibility:017:1.1.1` | false | Broader ordinary MILF usage need not preserve motherhood |
+| `M01-checkpoint-800-N0015:compatibility:018:1.1` | false | Same missing motherhood; counterexample retains every named-content and tag qualification |
+| `M03-checkpoint-800-N0032:compatibility:003:4` | false | Winnerless round need not preserve pot carry-forward meaning; avoid adding actual occurrence |
+| `M01-checkpoint-800-N0015:compatibility:015:1.4` | false | Sisters lacks the sexual relationship and does not always denote close relatives |
+| `M01-checkpoint-800-N0015:compatibility:023:1.2` | false | Breasts lacks the daughter relationship; do not add a human-only parent restriction |
+| `M01-checkpoint-800-N0015:compatibility:017:3` | false | MILFs need not preserve anatomical subject matter; avoid an unconditional motherhood definition |
+
+The current ten-note run continues with its frozen settings. Its remaining
+cases have already been exposed through auditing, so call them broader
+regression checks, not unseen generalization. Small-panel success cannot
+establish population accuracy. Disclose development exposure in the final
+60-answer report; the separate pilot test notes remain sealed.
 
 ## Actual distilled wording: offline preview (October 8)
 

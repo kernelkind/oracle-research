@@ -244,3 +244,117 @@ leaving those source files unchanged. Prompt baselines match main byte-for-byte;
 only the prompt draft, its revision metadata and this maintained catalogue are
 eligible for bounded integration. This worktree remains needed for its unmerged
 research support and preserved native experiment artifacts.
+
+## Compare-v71: context-free input draft
+
+At the user's request, [Compare-v71](Hierarchy-compare-v71.md) is a draft-only
+revision against exact v70 bytes. It removes source `context` fields from local
+entries, original ancestors and canonical supporting entries, and removes their
+uses from the comparison instructions. Fixed meanings continue to establish
+scope. Original posts, subjects and canonical branch checks remain in this
+bounded revision. The counterexample diagnostics and five-field output are
+unchanged. No input adapter, runner, Bootstrap prompt or hierarchy was changed;
+no teacher calls were made and this version is not adopted.
+
+## Compare-v72–v73: terminology audit drafts
+
+The user requested consistent naming throughout the comparison prompt.
+[Compare-v73](Hierarchy-compare-v73.md) is the final unrun terminology draft
+against v71. `subject` names a topic; the fixed `meaning` describes the
+information covered; that information is the node's scope. The comparison
+outcome consistently uses `relation`. Local ancestors and canonical branches
+are distinguished explicitly, and proposed parent/child roles refer to nodes,
+not meaning strings. Equivalence compares covered information rather than
+requiring identical wording.
+
+The audit removes the duplicate meaning definition, replaces heading and
+definition aliases, and clarifies node containment in the canonical
+consequences. Existing restrictions, uncertainty rules, diagnostics, field
+names, relation values and context-free input remain in place. Independent
+read-only review informed the terminology fixes. Exact native recipe/receipt
+reconstruction, placeholder and output-field checks require no teacher calls.
+No runner, adapter, Bootstrap prompt or hierarchy changed.
+
+V72 is preserved as the first draft. The final audit found one remaining
+"label" alias and several node/scope wording mismatches; v73 records their
+correction without overwriting v72. Both retain native revision recipes and
+receipts pinned to v71. These drafts remain in the research worktree awaiting
+review and adoption; no improvement in model reliability is claimed.
+
+## Compare-v74: shared node data and no original evidence
+
+The user approved a draft simplification after v73: both compared nodes have
+`subject` and a fixed `meaning`. [Compare-v74](Hierarchy-compare-v74.md) removes
+`local.entry`, `local.post`, original local ancestors and `canonical.entries`.
+The canonical node retains its ID, immediate parent IDs and recursive canonical
+ancestor/descendant records describing its existing placement. The local node
+is outside that hierarchy.
+
+The draft removes original hierarchy definitions and source-evidence conflict
+checks. Comparison uses fixed meanings, their unresolved ambiguities and the
+supplied canonical branches. Subjects cannot add restrictions or settle an
+ambiguous meaning. Source validation remains outside this comparison contract;
+original producer evidence and native receipts are preserved.
+
+Native revision metadata is pinned to exact v73 bytes. The counterexample
+diagnostics, five-field output and canonical implication checks remain
+unchanged. Independent read-only review and mechanical reconstruction checks
+were completed without teacher calls. This is an unrun, unadopted prompt draft
+in the research worktree: the existing input adapters, runtime output schema,
+Bootstrap prompts and hierarchy artifacts were not changed. Qualification must
+first project saved regression inputs to this new contract through the shared
+native workflow while retaining their producer provenance outside model input.
+
+## Compare-v75: consolidated rules and distinct diagnostics
+
+The user approved this draft edit after reviewing official reasoning-model
+prompting guidance. [Compare-v75](Hierarchy-compare-v75.md) consolidates repeated
+fixed-meaning, interpretation and relation-selection instructions from exact
+v74 bytes. `answer` supplies the counterexample or coverage conclusion;
+`justification` supplies its brief decisive basis. The output fields and question
+IDs are unchanged.
+
+Both directional tests still include equality. Proper containment requires
+established failure in the reverse direction; any null answer requires
+`uncertain`. Interpretation ambiguity must leave the affected coverage answer
+unresolved even if a separate canonical conflict already makes the final
+relation uncertain. A branch conflict can prevent a relation without changing
+settled answers about the selected meanings. All recursive canonical implication
+checks and the source-free shared node contract remain in place.
+
+Independent read-only review found the answer-level ambiguity requirement during
+consolidation; it was retained in the global ambiguity instruction before native
+revision. Exact recipe reconstruction, native receipt hashes, input placeholder,
+diagnostic field names and preserved semantic obligations were checked without
+teacher calls. This remains an unrun, unadopted prompt draft in the research
+worktree. No runtime schema, input adapter, Bootstrap prompt or hierarchy was
+changed, and no reliability improvement is claimed.
+
+## Approved v75 qualification: native preparation
+
+The user approved v75 and authorized preparing, running and reviewing the
+102-case panel. The current-main-based `oracle-mvp-compare-v75-qualification-v1`
+worktree isolates this bounded task from the older research runtime history.
+The source [projection](hierarchy-compare-v75-fifty-note-witnesses-v1.json) pins
+the original v69 prepared experiment envelope by SHA-256. It imports original
+inputs and producer receipts, not historical comparison answers. The new
+[specification](hierarchy-compare-v75-fifty-note-witnesses-v1.spec.json) selects
+unchanged v75, Sol 6.1 medium, concurrency 32, automatic caching and the
+[five-field output schema](Hierarchy-compare-v75.output.schema.json).
+
+First failing native tests established missing preparation, diagnostics and
+consistency-report support. The implementation adds the opt-in `fixed_meanings`
+projection and preserves legacy validation. An independent preflight review
+verified all 102 projected inputs, exact meanings, graph IDs/parents, producer
+receipts and 887 protected source hashes. All inputs retain ASv6.100 provenance.
+There are 100 unique projected inputs: 68 isolated directional requests plus
+32 snapshots. The 35 registered isolated pairs include 34 unique request pairs;
+008 and 033 remain the same reversed duplicate witness.
+
+The prepared report correctly retains 102 unrun cases, 70 eligible isolated
+requests, 32 excluded snapshots and 35 unresolved pair witnesses. Preparation
+made no teacher calls. The 200-test software run had six skips and one missing
+`tiktoken` dependency; that check passed when rerun with the dependency supplied.
+No software test invoked the teacher. Model execution and semantic review are
+recorded separately below. This is qualification of a candidate, not production
+adoption or a claim of improvement over v69's different input/output contract.

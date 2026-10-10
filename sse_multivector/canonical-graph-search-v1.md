@@ -101,6 +101,12 @@ receipts are checked again before application. Existing eligibility, mapped-pare
 uncertainty and placement checks remain in place. Positive graph inferences are
 recorded separately from actual model answers; they do not create receipts.
 
+An uncertain answer in an earlier frontier holds the incoming entry without
+changing the graph, including when its required mapped parent has not yet been
+visited. Uncertainty is checked before looking up that parent's answer; no
+extra comparison is needed to establish a hold. The retained traversal remains
+incomplete rather than claiming answers for unvisited nodes.
+
 `prepare-canonical-trial --note-limit N` takes the first N distinct notes in
 the source definition's order, retaining their original root order. It does
 not alter the source corpus or choose topics by hand.

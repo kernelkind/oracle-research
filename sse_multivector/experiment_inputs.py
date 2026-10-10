@@ -75,8 +75,12 @@ def prepare_file(dataset, path, template, load_report=None):
         cases, protected, preparation = bootstrap_student_inputs.prepare(source, path.parent)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
-    if dataset['adapter'] == 'generic' and 'prepared_experiment' in source:
-        engine._expect_fields(source, 'prepared input source', {'prepared_experiment'})
+    if dataset['adapter'] in {'generic', 'hierarchy_node_pairs'} and 'prepared_experiment' in source:
+        fixed_meanings = dataset['adapter'] == 'hierarchy_node_pairs'
+        fields = {'prepared_experiment'} | ({'input_view'} if fixed_meanings else set())
+        engine._expect_fields(source, 'prepared input source', fields)
+        if fixed_meanings and source['input_view'] != 'fixed_meanings':
+            raise ValueError('prepared node pairs input_view must be fixed_meanings')
         reference = source['prepared_experiment']
         engine._expect_fields(reference, 'prepared experiment reference', {'path', 'sha256'})
         directory = engine._resolve_path(reference['path'], 'prepared experiment', path.parent)
@@ -85,17 +89,31 @@ def prepare_file(dataset, path, template, load_report=None):
             raise ValueError('prepared experiment reference hash differs')
         from experiment_runner.experiment import load
         plan, _, _ = load(directory)
+        if fixed_meanings and plan['dataset']['adapter'] != 'hierarchy_node_pairs':
+            raise ValueError('fixed_meanings requires a hierarchy_node_pairs prepared experiment')
         if any('mechanical' in case for case in plan['cases']):
             raise ValueError('input-only reuse cannot inherit mechanical answers')
         cases = [{key: case[key] for key in ('id', 'inputs', 'evidence') if key in case}
                  for case in plan['cases']]
-        sources.update(plan['sources'])
+        protected = {**plan['sources'], **{
+            str(directory / name): expected for name, expected in plan['files'].items()}}
+        manifest = Path(plan['run_directory']) / 'manifest.json'
+        protected[str(manifest)] = engine._sha256_file(manifest)
+        for name, expected in protected.items():
+            if engine._sha256_file(Path(name)) != expected:
+                raise ValueError('prepared input source changed: ' + name)
+            if name in sources and sources[name] != expected:
+                raise ValueError('conflicting prepared input source hash: ' + name)
+        sources.update(protected)
         sources[str(envelope_path)] = reference['sha256']
-        sources.update({str(directory / name): expected for name, expected in plan['files'].items()})
         preparation = dict(source_experiment=str(directory),
             source_experiment_sha256=reference['sha256'], source_adapter=plan['dataset']['adapter'],
             source_prompt_id=plan['prompt']['id'], application_allowed=False)
-        return prepare(dataset, dict(cases=cases), template), sources, preparation
+        if fixed_meanings:
+            from . import hierarchy_node_pairs
+            cases = [hierarchy_node_pairs.project_fixed_meanings(case) for case in cases]
+            preparation['input_view'] = 'fixed_meanings'
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes'}:
         try:
             from . import hierarchy_node_pairs as node_pairs
@@ -1325,7 +1343,10 @@ def validate(dataset, case, raw, schema):
             result['parsed'] = node_pairs.validate_meaning(
                 raw, post=post, diagnostic=diagnostic, ambiguity_diagnostics=ambiguity_diagnostics)
         else:
-            result['parsed'] = node_pairs.validate(raw)
+            properties = schema.get('properties', {}) if isinstance(schema, dict) else {}
+            diagnostics = bool({'questions', 'answers'} & properties.keys())
+            meaning = json.loads(case['inputs']['INPUT_JSON'])['local'].get('meaning')
+            result['parsed'] = node_pairs.validate(raw, diagnostics=diagnostics, meaning=meaning)
     if adapter == 'distillation_verdict':
         try:
             from . import distillation_verdict

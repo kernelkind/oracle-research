@@ -591,11 +591,11 @@ def advance_trial(directory, meaning_case, comment, hold=None, concurrency=None,
                 frozen = state['local_meanings'][str(state['index'])]
                 if any(v['meaning'] != frozen['meaning'] for v in values.values()):
                     reason = reason or 'comparison did not copy the independently fixed local meaning'
+        if any(v['meaning'] is None or v.get('relation') == 'uncertain' for v in values.values()):
+            reason = reason or 'uncertain meaning or relationship'
         if not reason and mapped_parent is not None and state.get('phase') != 'meaning' and values[mapped_parent]['relation'] not in (
                 'canonical_contains_local', 'equivalent'):
             reason = reason or 'local child does not fit its mapped canonical parent; manual review required'
-        if any(v['meaning'] is None or v.get('relation') == 'uncertain' for v in values.values()):
-            reason = reason or 'uncertain meaning or relationship'
         equivalent = [k for k, v in values.items() if v.get('relation') == 'equivalent']
         if len(equivalent) > 1:
             reason = reason or 'multiple canonical equivalents require review; no canonical merge'
