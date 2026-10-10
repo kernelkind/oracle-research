@@ -244,3 +244,14 @@ leaving those source files unchanged. Prompt baselines match main byte-for-byte;
 only the prompt draft, its revision metadata and this maintained catalogue are
 eligible for bounded integration. This worktree remains needed for its unmerged
 research support and preserved native experiment artifacts.
+
+## Compare-v71: context-free input draft
+
+At the user's request, [Compare-v71](Hierarchy-compare-v71.md) is a draft-only
+revision against exact v70 bytes. It removes source `context` fields from local
+entries, original ancestors and canonical supporting entries, and removes their
+uses from the comparison instructions. Fixed meanings continue to establish
+scope. Original posts, subjects and canonical branch checks remain in this
+bounded revision. The counterexample diagnostics and five-field output are
+unchanged. No input adapter, runner, Bootstrap prompt or hierarchy was changed;
+no teacher calls were made and this version is not adopted.
