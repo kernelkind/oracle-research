@@ -997,6 +997,18 @@ existing scores and compare them with frozen expectations, keeping unanswered or
 ambiguous work visible. Use `--output FILE` on the show command to retain the full
 report; terminal output contains its summary and usage.
 
+The current trial has completed DSMv3/DSSv2 while DSLv2 remains active. Raw
+semantic agreements are 569/591 and 585/600 resolved distinct inputs; unresolved
+inputs and mechanical decisions are reported separately. Thirty-seven native
+`review --role agent` entries record independent disagreement audits without
+changing frozen labels. Four clear errors remain in each completed check, and
+relationship inconsistencies can leave whole-answer scores pending. Matching
+reports 42.14% cached comparison input; support reports none. One transport
+attempt was retried successfully but has unknown usage: native accounting keeps
+complete cost unknown and counts original receipt lines, warmups and reuse
+separately. See the trial record for the completed-check evidence and remaining
+relationship work.
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 

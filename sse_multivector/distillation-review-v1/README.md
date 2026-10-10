@@ -1808,7 +1808,7 @@ uses seed `DS-final-20261009`. Version quotas differ by at most one: two or thre
 answers from each of 18 versions. Random selection favors distinct notes absent
 from earlier actual-output trials; all 50 chosen notes are previously unused.
 Four truncated answers remain in the 50-answer denominator. The ten challenges
-use different notes and cycle largest teacher catalog, nonexact composite
+use ten distinct notes and cycle largest teacher catalog, nonexact composite
 wording, deepest student hierarchy and same-note answer variation. Four challenge
 notes were used before. Selection uses structural complexity without consulting
 reviewer judgments. The cohorts are reported separately, and the randomized
@@ -1867,9 +1867,50 @@ explicitly classifying every distinct exact teacher wording. No unlisted meaning
 defaults to optional. `--wording-expectations` expands only identical student
 wording or identical ordered edge inputs; every distinct input still needs a
 judgment. `--expectations` accepts complete numbered arrays. Existing source
-files and frozen assessments cannot be overwritten. The trial is being prepared;
-reviewer-call results and any disagreement audit will be recorded here after
-completion.
+files and frozen assessments cannot be overwritten.
+
+Preparation and all references are sealed before calls. The 60 answers share
+54 distinct teacher contexts: six challenge notes also occur in the randomized
+cohort, with different answers. All **958 mechanical decisions** have independently
+verified exact teacher witnesses or identical-string rule proofs. Thirty-four
+compatibility occurrences retain unresolved agent labels despite their valid
+mechanical proofs; those labels remain excluded from reference-agreement denominators.
+
+**Completed matching and support; relationships still running.** The unchanged
+native trial has these frozen-reference results, excluding mechanical cases:
+
+| Check | Resolved distinct agreement | Distinct disagreements | Unresolved distinct inputs | Resolved occurrence agreement |
+| --- | --- | --- | --- | --- |
+| DSMv3 | 569/591 | 22 | 24 | 1,753/1,810 |
+| DSSv2 | 585/600 | 15 | 15 | 1,724/1,808 |
+
+Each check additionally passes all 258 mechanically settled occurrences.
+Independent cross-author audits classify matching's 22 disagreements as eight
+reference mistakes, four clear reviewer errors and ten ambiguities; support's
+15 as seven reference mistakes, four clear reviewer errors and four ambiguities.
+The **37 native agent reviews** preserve input/output hashes and attribution.
+Frozen labels are unchanged: these later classifications do not rewrite raw
+qualification or turn ambiguous reference agreement into accuracy.
+
+Matching errors include dropping a literal grid representation and accepting
+added recipient/speech-act restrictions. Support errors include rejecting the
+audience nickname `Cupcakes` and the information sense of `Intelligence`, while
+accepting two specifically attributed constructions with the unresolved pointer
+`the relevant categories`. Relationship auditing has also found two disjoint
+logical-inconsistency families, each guaranteeing at least one wrong verdict
+without identifying every involved call as erroneous. Scoring blockers remain
+explicit `inconsistent_verdicts`; no score is invented for them. Full score
+assembly and final qualification await the relationship phase.
+
+The completed checks used **1,230 semantic calls, nine warmups and one failed
+transport attempt followed by its allowed successful retry**, plus 2,528 reused
+judgment copies. Matching reports 288,768 cached input tokens: **42.14%** of
+comparison input, or **41.44%** including its eight warmups. Support reports no
+cache hits despite its eligible warmup. Across both checks and nine warmups,
+cached tokens are 23.70% of **reported** input tokens; the interrupted attempt
+has unknown usage and is excluded, rather than counted as zero. Complete cost
+remains unknown. Subscription SSE, prompts, effort and caching policy are
+unchanged; bulk review and the pilot's reserved test remain unapproved/sealed.
 
 ## Actual distilled wording: offline preview (October 8)
 

@@ -1803,6 +1803,19 @@ shared experiment runner. Reviewer extrapolation, lower reasoning effort and
 bulk review adoption depend on the resulting evidence. See the
 [trial record](../../sse_multivector/distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9).
 
+**Completed-check evidence, trial still running:** sealed references precede all
+calls; all 958 mechanical proofs have been independently verified.
+Matching and support finish with 569/591 and 585/600 resolved distinct semantic
+agreements, excluding 24 and 15 unresolved inputs. Independent audits identify
+four clear reviewer errors in each, preserving raw labels and separately
+recording reference mistakes/ambiguities in 37 native agent reviews. Relationship
+auditing has found two disjoint inconsistency families and explicit scoring
+blockers. Matching caches 42.14% of comparison input; support has no reported
+hits. A successfully retried transport interruption has unknown usage, so full
+cost remains unknown. The relationship phase and final qualification are pending;
+this evidence approves no prompt revision, lower effort, bulk grading or test
+unsealing.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

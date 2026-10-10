@@ -285,6 +285,16 @@ comparisons between each required teacher meaning and candidate headings.
 Randomized and challenge results remain separate, and pilot test data stays
 sealed. Reviewer qualification and bulk adoption await the trial results.
 
+Matching and support are now complete; relationships and coverage placement are
+still running. Raw semantic agreement is 569/591 resolved distinct matching
+inputs and 585/600 support inputs, with 24 and 15 unresolved inputs excluded.
+Independent audits identify four clear reviewer errors in each completed check,
+alongside reference mistakes and ambiguities; all 958 mechanical proofs are
+verified. Two relationship inconsistency families and pending scores are visible
+without rewriting frozen references. Matching caches 42.14% of comparison input;
+support has no reported cache hits. See the trial record for occurrence counts,
+native audit attribution and unknown-usage accounting. Bulk adoption remains open.
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;
