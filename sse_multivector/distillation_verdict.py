@@ -83,29 +83,35 @@ def prepare_source(source, base, selected=None):
     return cases, protected, dict(check=check, qualification_case_ids=[d["id"] for d in definitions])
 
 
+def _support_inputs(task, post, subject):
+    end = "Derive broader headings by generalizing source meanings without adding restrictions."
+    if task.count(end) != 1:
+        raise ValueError("ASv6.100 support rule boundary differs")
+    return dict(ASV6_100_SUPPORT_RULES=task[:task.index(end) + len(end)],
+                SUPPORT_INPUT=json.dumps(dict(post=post, student_subject=subject), ensure_ascii=False))
+
+
+def _relationship_inputs(task, parent, child):
+    start = "Judge each parent-child pair using only its `subject` strings across possible posts in any domain."
+    end = "The post's domain, `context` and other entries cannot supply a missing heading restriction."
+    if task.count(start) != 1 or task.count(end) != 1 or task.index(start) > task.index(end):
+        raise ValueError("ASv6.100 parent-child rule boundaries differ")
+    return dict(ASV6_100_PARENT_CHILD_RULES=task[task.index(start):task.index(end) + len(end)],
+                RELATIONSHIP_INPUT=json.dumps(dict(parent_subject=parent, child_subject=child), ensure_ascii=False))
+
+
 def _verdict_case(check, definition, post, students, task, evidence, expected_valid, teacher):
     number = definition["student_number"]
     if check == "support":
-        end = "Derive broader headings by generalizing source meanings without adding restrictions."
-        if task.count(end) != 1:
-            raise ValueError("ASv6.100 support rule boundary differs")
         subject = definition.get("student_subject", students[number])
-        variables = dict(ASV6_100_SUPPORT_RULES=task[:task.index(end) + len(end)],
-            SUPPORT_INPUT=json.dumps(dict(post=post,
-                student_subject=subject), ensure_ascii=False))
+        variables = _support_inputs(task, post, subject)
         mechanical = teacher.support(subject)
     else:
         parent_number = number.rpartition(".")[0]
         if parent_number not in students:
             raise ValueError("relationship control needs an actual immediate parent")
         evidence["parent_number"] = parent_number
-        start = "Judge each parent-child pair using only its `subject` strings across possible posts in any domain."
-        end = "The post's domain, `context` and other entries cannot supply a missing heading restriction."
-        if task.count(start) != 1 or task.count(end) != 1 or task.index(start) > task.index(end):
-            raise ValueError("ASv6.100 parent-child rule boundaries differ")
-        variables = dict(ASV6_100_PARENT_CHILD_RULES=task[task.index(start):task.index(end) + len(end)],
-            RELATIONSHIP_INPUT=json.dumps(dict(parent_subject=students[parent_number],
-                child_subject=students[number]), ensure_ascii=False))
+        variables = _relationship_inputs(task, students[parent_number], students[number])
         mechanical = teacher.relationship(students[parent_number], students[number])
     evidence["expected_valid"] = expected_valid
     case = dict(id=definition["id"], inputs=variables, evidence=evidence)

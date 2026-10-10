@@ -15,6 +15,9 @@ from the teacher and has no complete child match; its expected true label remain
 agent assessment, rather than a relationship certified by the teacher.
 The [complete validation workload preview](#complete-validation-workload-preview-october-9)
 now measures the mechanical savings and remaining distinct input questions offline.
+The [offline token and runtime estimate](#validation-review-token-and-runtime-estimate-october-9)
+projects about 15.34 hours for those questions at eight continuously occupied
+slots, using 59 selected fresh saved verdicts; qualification remains pending.
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
@@ -208,6 +211,79 @@ discovery. The command rejects duplicate model directories and existing report
 destinations. The ignored report binds source and counting-code hashes and saves
 all denominators. This workload result does not qualify the semantic reviewers,
 adjudicate A21, authorize inference or change final scoring.
+
+## Validation review token and runtime estimate (October 9)
+
+The subsequently authorized offline estimate extends the same preview command
+with `--estimate` and repeated `--timing-experiment` paths. It verifies current
+DSMv3/DSSv2/DSLv2 template bytes, frozen sources and native saved receipts without
+new model calls. Estimation requires `tiktoken` in the command's Python runtime.
+The [native report](../../target/distillation-review-v1/work-estimates-20261009/estimates.json)
+retains all workload denominators, source hashes and timing strata.
+
+The **36,310 distinct questions** contain **24,195,497 rendered input-text tokens**
+(24.195 million), compared with **79,399,475** (79.399 million) across the 105,652
+remaining occurrences. These `o200k_base` sizes exclude provider instructions,
+message framing and output-schema overhead; they are not provider input receipts.
+Saved-answer reuse is not resolved by this estimate.
+
+| Current prompt | Fresh verdict samples | Mean runner seconds | Mean output tokens |
+| --- | ---: | ---: | ---: |
+| DSMv3 | 20 | 12.34 | 391.8 |
+| DSSv2 | 20 | 12.46 | 421.0 |
+| DSLv2 | 19 | 11.90 | 424.0 |
+
+These **59 valid first-attempt calls** retain false and uncertain semantic
+judgments. The DSSv2 warmup is excluded; no retries or saved-answer reuse enter
+the samples. Output includes reasoning once. Runner duration includes process
+startup, admission waiting and receipt validation, rather than only provider
+generation. The weighted sample means project **15,049,776 output tokens**
+(15.050 million) and **15.34 service hours** with eight continuously occupied
+slots. Applying each check's median gives **10.86 hours**; applying each check's
+p90 gives **24.94 hours**. These scenarios are not confidence bounds.
+
+The selected development samples are small and include three prefix-role calls
+per matching/support check; all three matching calls hit the cache, while support
+has no hits. Other samples use ordinary full-user requests. Several batches have
+fewer than eight cases, so configured concurrency does not establish occupied
+slots or measured batch wall time. No additional cache speedup is applied;
+samples retain their observed cache mix. Warmups, throttling, retries and review
+work are additional and can make elapsed time longer.
+
+Current automatic template prefixes contain **468 matching, 112 support and
+71 relationship proxy tokens**, all below the 1,024-token threshold. Separate
+natural-prefix analysis finds **19 matching and two support groups**, with no
+eligible relationship group. Their **21 hypothetical warmups** contain **25,410
+input-text tokens**, before unknown output and request overhead. Up to **4,757,034
+proxy tokens** could be cache reads; a cold first use reduces that opportunity to
+**4,731,624**. Eligibility promises no hits, as the saved support sample shows.
+This analysis adopts no cache policy, grouping mode or optimization.
+
+Reproduce from the repository root with the collected outputs and five saved
+native timing experiments. The destination must not already exist:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+pilot_results=target/distillation-pilot-v1/main-pilot-memory-workspace-20261006/operation/result/work/results
+review_results=target/distillation-review-v1
+nix shell --impure --expr 'let pkgs = import <nixpkgs> {}; in pkgs.python3.withPackages (p: [ p.tiktoken ])' \
+  --command ../experiment-runner/bin/experiment-runner preview-distillation-review \
+  target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/manifest.json \
+  --model-output "$pilot_results/qwen" \
+  --model-output "$pilot_results/gemma-dense" \
+  --model-output "$pilot_results/gemma-moe" \
+  --estimate \
+  --timing-experiment "$review_results/actual-three-check-20261009/matching-other" \
+  --timing-experiment "$review_results/actual-three-check-20261009/matching-note27" \
+  --timing-experiment "$review_results/support-scope-dssv2-trial-20261009/actual-other" \
+  --timing-experiment "$review_results/support-scope-dssv2-trial-20261009/actual-note27" \
+  --timing-experiment "$review_results/parent-restriction-dslv2-trial-20261009/actual" \
+  --output "$review_results/work-estimates-20261009/reproduction-estimates.json"
+```
+
+Prompts, mechanical criteria, qualification, A21 and scoring retain their existing
+state. The estimate prepares no experiment, sends no inference and opens no
+reserved content or checkpoint weights.
 
 ## Coverage-matching qualification scope agreed October 8
 

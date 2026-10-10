@@ -1746,6 +1746,33 @@ weights are not opened. The report binds sources and counting code. This does
 not prepare model requests, add inference, qualify reviewers, adjudicate A21,
 change scoring or unseal test data.
 
+**Validation review token and runtime estimate subsequently authorized October 9:**
+the user authorizes an offline estimate of the remaining work, with zero new
+model calls. The existing preview command gains `--estimate` and repeated
+`--timing-experiment` inputs, requiring `tiktoken` only for estimation. The
+[native estimate](../../sse_multivector/distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9)
+binds the unchanged DSMv3/DSSv2/DSLv2 templates and verified fresh Sol / xhigh
+receipts. The 36,310 distinct questions contain 24.195 million rendered input-text
+tokens, versus 79.399 million across remaining occurrences, excluding provider
+instructions, framing and output-schema overhead. Twenty matching, twenty support
+and nineteen relationship verdicts project 15.050 million output tokens,
+including reasoning once, and 15.34 service hours at eight continuously occupied
+slots. The 10.86-hour median and 24.94-hour p90 scenarios are not confidence
+bounds. These selected samples include disputed verdicts and mixed prefix-role
+formats; configured concurrency does not establish measured slot occupancy or
+batch wall time. Warmups, throttling, retries and review work are additional.
+
+Current automatic template prefixes are 468/112/71 proxy tokens for matching,
+support and relationships, all below the 1,024-token threshold. Separate natural
+prefix analysis finds 19 matching and two support groups, with no eligible
+relationship group: 21 hypothetical warmups contain 25,410 input-text tokens;
+at most 4,757,034 proxy tokens could be cache reads, or 4,731,624 after a cold
+first use. Hits are not guaranteed; the earlier eligible support sample had none.
+Warmup output and request overhead are additional and not projected. This records
+opportunities without adopting a cache mode or optimization. Prompts, mechanical
+criteria, scoring, reviewer qualification, A21 and test sealing retain their
+existing state; the estimate authorizes no inference.
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

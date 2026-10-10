@@ -87,18 +87,22 @@ def prepare_source(source, base, selected=None, *, include_post=False):
     return cases, protected, dict(qualification_case_ids=[d["id"] for d in definitions])
 
 
+def _matching_inputs(teacher, subject, *, post=None):
+    variables = dict(MATCH_INPUT=json.dumps(dict(teacher_subjects=teacher.catalog,
+                                               student_subject=subject), ensure_ascii=False))
+    if post is not None:
+        variables["POST"] = json.dumps(post, ensure_ascii=False)
+    return variables
+
+
 def _matching_case(definition, teacher, subject, evidence, *, post=None):
     if not subject.strip():
         raise ValueError("matching subject must be nonempty")
     expected_number = definition["expected_teacher_number"]
     if expected_number is not None and (not isinstance(expected_number, str) or expected_number not in teacher.by_number):
         raise ValueError("unknown expected teacher number")
-    match_input = dict(teacher_subjects=teacher.catalog, student_subject=subject)
-    variables = dict(MATCH_INPUT=json.dumps(match_input, ensure_ascii=False))
-    if post is not None:
-        variables["POST"] = json.dumps(post, ensure_ascii=False)
     case = dict(id=definition["id"],
-        inputs=variables,
+        inputs=_matching_inputs(teacher, subject, post=post),
         evidence=dict(evidence, definition=definition,
             expected_teacher_id=None if expected_number is None else teacher.by_number[expected_number],
             expected_reason=definition["expected_reason"], teacher_numbers=teacher.numbers,

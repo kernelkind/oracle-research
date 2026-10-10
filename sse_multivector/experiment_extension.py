@@ -318,6 +318,9 @@ def add_commands(commands):
     p.add_argument('manifest', type=Path)
     p.add_argument('--model-output', type=Path, action='append', required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--estimate', action='store_true', help='estimate rendered tokens and eligible repeated prefixes')
+    p.add_argument('--timing-experiment', type=Path, action='append', default=[],
+                   help='use verified fresh native calls with the same approved prompt/settings for runtime estimates')
     p = commands.add_parser('rank-distillation-generations',
                             help='rank frozen teacher generation sizes and select training extremes; no inference')
     p.add_argument('manifest', type=Path)
@@ -393,10 +396,13 @@ def handle_command(args):
         from . import distillation_review_preview
         if args.output.exists():
             raise ValueError('review preview output already exists')
-        result = distillation_review_preview.preview(args.manifest, args.model_output)
+        result = distillation_review_preview.preview(args.manifest, args.model_output,
+            estimate=args.estimate, timing_experiments=args.timing_experiment)
         write(args.output, result)
-        print(json.dumps(dict(output=str(args.output), inference_calls=result['inference_calls'],
-                              totals=result['totals']), ensure_ascii=False, indent=2))
+        summary = dict(output=str(args.output), inference_calls=result['inference_calls'], totals=result['totals'])
+        if 'estimates' in result:
+            summary['estimates'] = result['estimates']
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
     elif args.command in {'count-post-tokens', 'review-post-sample', 'freeze-post-sample'}:
         try:
             from . import post_sampling

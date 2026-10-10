@@ -262,6 +262,18 @@ preserves all note/version/model denominators and source bindings. Only evaluati
 reference content is decoded; reserved files and checkpoint weights are not
 opened. Reviewer qualification, scoring and inference authorization remain open.
 
+The subsequently authorized [offline token and runtime estimate](../../sse_multivector/distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9)
+adds no model calls. The 36,310 distinct questions contain 24.195 million rendered
+input-text tokens, compared with 79.399 million across remaining occurrences;
+provider instructions, framing and schema overhead are additional. Fifty-nine fresh saved
+DSMv3/DSSv2/DSLv2 verdicts project 15.050 million output tokens, including reasoning
+once, and about 15.34 hours with eight continuously occupied slots. This small,
+selected sample mixes ordinary and prefix-role requests; it is not measured batch
+wall time. Warmups, throttling, retries and review work are additional. Current
+automatic template prefixes are ineligible; natural-prefix opportunities are
+reported without changing cache policy or promising hits. Qualification and A21
+remain open.
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

@@ -965,6 +965,20 @@ Only evaluation reference content is decoded after all mixed-ledger identity
 headers have been checked. Reserved files and checkpoint weights are not opened.
 See the [complete validation preview and command](distillation-review-v1/README.md#complete-validation-workload-preview-october-9).
 
+Add `--estimate` to count `o200k_base` rendered input-text tokens for the distinct
+questions and all remaining occurrences; this requires `tiktoken` in the command's
+Python runtime. Repeated `--timing-experiment EXPERIMENT` arguments add output-token
+and runtime projections from verified fresh receipts with the same complete
+approved template and Sol / xhigh settings. Warmup receipts are excluded from
+verdict statistics; failures, retries and reused answers cannot enter the sample.
+Output already includes reasoning. Reports retain cache-hit and prefix-role
+strata, source bindings and sample sizes. Service work divided by eight occupied
+slots is a projection, not measured batch wall time; median/p90 scenarios are
+not confidence bounds. Input-text sizes exclude provider instructions, message
+framing and schema overhead. Current automatic prefixes are below threshold;
+separate natural-prefix opportunities do not select a cache mode or guarantee
+hits. See the [current estimate and complete Nix command](distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9).
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 

@@ -405,6 +405,20 @@ checked before decoding only evaluation content; reserved files and checkpoint
 weights are not opened. This counts work without preparing reviewer requests,
 qualifying DSMv3/DSSv2/DSLv2, adjudicating A21 or changing scoring.
 
+**Offline token and runtime estimate subsequently authorized October 9:** the
+same command accepts `--estimate` and repeated `--timing-experiment` paths, with
+`tiktoken` available in its Python runtime. The [native estimate and reproduction command](../../sse_multivector/distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9)
+bind unchanged prompts and verified fresh saved receipts. Distinct questions
+contain 24.195 million rendered input-text tokens; all remaining occurrences
+contain 79.399 million. Both exclude provider instructions, framing and schema overhead.
+The 59 current-prompt verdicts project 15.050 million output tokens, including
+reasoning once, and 15.34 hours with eight continuously occupied slots. Small
+selected samples, mixed message roles and partial slot occupancy prevent treating
+this as measured batch wall time; warmups, throttling, retries and review work
+are additional. Current automatic template prefixes are below the caching
+threshold; separate natural-prefix opportunities promise no hits and adopt no
+cache change. This adds no inference, scoring, qualification or A21 adjudication.
+
 **Coverage-matching qualification scope agreed October 8:** target required
 complete teacher meanings; optional derived teacher headings are not mandatory
 coverage targets. Still review every student heading and immediate parent-child
