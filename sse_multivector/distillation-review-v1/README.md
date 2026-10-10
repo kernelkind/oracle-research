@@ -3220,6 +3220,30 @@ are not human-certified gold. Broader validation on new diverse pairs remains
 necessary before production adoption or restarting the lower-effort study.
 It is the recommended next step, not additional work authorized by this repeat.
 
+## DSLv4 broader-trial preparation (October 10)
+
+The user approved broader DSLv4 validation, then clarified that new cases must
+come from the **existing frozen 60-answer trial**. New means new to this DSLv4
+test; it does not require new notes outside the agreed evaluation. The initial
+19-note selection outside that trial was an unnecessary detour. Its ignored
+`parent-restriction-dslv4-new-contexts-20261010/unassessed-preview` remains unrun,
+with zero model attempts, and supplies no review accuracy evidence.
+
+Preparing saved-generation inputs exposed a loader gap: the shared matching,
+support and relationship loader decoded the entire mixed reference ledger.
+It now reuses the preview's complete identity-header gate and decodes only the
+validation slice after checking the ledger hash and all split identity headers.
+Reserved generation paths remain rejected; reserved reference content is not
+decoded. No subject wording, semantic rule or mechanical decision changes.
+
+A minimal production-preparation test first failed on poisoned non-validation
+content, then passed with the shared gate; resealed wrong identity headers are
+still rejected. All **89 related verdict, matching, preview, trial and evaluation
+regression/integration tests pass** with cached `tiktoken==0.14.0` and the existing
+ignored source artifacts. DSLv4, xhigh, concurrency 8, the frozen 60-answer
+selection and earlier receipts remain unchanged. Prompt adoption and lower-effort
+testing remain pending.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with

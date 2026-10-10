@@ -24,11 +24,27 @@ def _fields(value, fields, label):
         raise ValueError(f"expected exact {label} fields: {', '.join(sorted(fields))}")
 
 
+def _evaluation_reference_lines(raw, splits):
+    """Verify all identity headers before exposing only validation content."""
+    identities = [identifier for split in splits for identifier in split]
+    lines = raw.splitlines()
+    if len(lines) != len(identities):
+        raise ValueError("reference identity count differs from frozen splits")
+    header = re.compile(rb'^\s*\{\s*"note_id"\s*:\s*("(?:[^"\\]|\\.)*")\s*[,}]')
+    for line, identifier in zip(lines, identities):
+        match = header.match(line)
+        if match is None or json.loads(match[1]) != identifier:
+            raise ValueError("reference identity header order differs from frozen splits")
+    start = len(splits[0])
+    return lines[start:start + len(splits[1])]
+
+
 def load_saved_generations(dataset_manifest, definitions, base):
     """Bind selected validation answers to the frozen post, teacher and task.
 
     Matching, support and relationship preparation share these checks. Reserved
-    test generation paths are rejected before opening them; answers are parsed
+    test generation paths are rejected before opening them. The mixed reference
+    ledger is hash checked, but only its validation slice is decoded; answers are parsed
     through the production subject-result contract without rewriting wording.
     """
     try:
@@ -62,7 +78,8 @@ def load_saved_generations(dataset_manifest, definitions, base):
     for name in ("evaluation", "references"):
         _, raw = read_bound(dict(path=str(manifest_path.parent / (name + ".jsonl")),
                                 sha256=manifest["outputs"][name + ".jsonl"]))
-        rows[name] = [decode(line) for line in raw.splitlines()]
+        lines = _evaluation_reference_lines(raw, splits) if name == "references" else raw.splitlines()
+        rows[name] = [decode(line) for line in lines]
     if [row["note_id"] for row in rows["evaluation"]] != splits[1]:
         raise ValueError("saved validation evaluation identities differ")
     references = {row["note_id"]: row for row in rows["references"]}
