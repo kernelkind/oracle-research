@@ -7,6 +7,13 @@ This record covers only the fresh ASv6.100 rebuild under
 selective construction with guarded16 comparisons. It does not reuse findings
 from the deprecated AS<6.100 hierarchy as evidence for this rebuild.
 
+The saved build is in
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1`,
+at source commit `7f0a54b9e2fc9dcd47e62b7da0ac901056087904`. The constructor,
+receipts and ignored target artifacts remain in that research checkout.
+This writeup, the evaluated prompt files and the two menu recipes are integrated
+separately into main; they do not install the research constructor there.
+
 The prompt SHA-256 bindings are:
 
 - Bootstrap-v96: `599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845`.
@@ -65,6 +72,7 @@ The receipt table identifies exact native result records. Inspect a witness with
 the shared launcher, for example:
 
 ```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1
 ../experiment-runner/bin/experiment-runner --project-root . show \
   target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment \
   --case C005 --json
@@ -408,9 +416,12 @@ three producer records and one retained Coffee comparison listed below.
 All 34 maintained AS100 JSON sources parsed, all 252 original-entry pointers
 were checked against the native collection, and all
 Bootstrap prefetch specifications preserve identical prompt/schema/runner
-settings. Source changes are committed locally. The worktree remains because
-it contains the native artifacts and the still-unmerged constructor history;
-main's retained-branch record explicitly defers broad consolidation.
+settings. The writeup and its prompt/menu dependencies are integrated into main.
+The research worktree remains because it contains the native artifacts and the
+still-unmerged constructor history; main's retained-branch record explicitly
+defers broad consolidation. Both menu recipes retain their original relative
+artifact bindings. Reproduction requires the original recipes and saved graph
+in the research checkout; copying a recipe into main does not copy its graph.
 
 Saved artifacts below are relative to the build directory:
 

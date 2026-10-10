@@ -8,6 +8,17 @@ Four fully merged worktrees and their merged branches were removed first. A subs
 
 Verification confirmed that removed registrations were gone, protected checkouts remained, preserved branch heads were unchanged, all 157,844 archived entries matched their manifests, six modified runner files matched their backup checksums, and canonical working-tree changes were preserved. The cleanup and mapping phases made no code integrations or pushes.
 
+## Bounded findings integration
+
+The user subsequently requested landing the completed
+[fresh ASv6.100 fifty-note failure record](../../sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md).
+That record, its exact Bootstrap-v96 / Compare-v48 prompt files and its two menu
+recipes are integrated separately from the research constructor history.
+The `oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree remains because
+its native receipts, target artifacts and unmerged constructor are still needed
+to inspect and reproduce the evidence. The branch snapshot below records the
+earlier mapping, rather than the status of this later bounded landing.
+
 ## Main additions to assess
 
 | Branches or family | High-level addition |
