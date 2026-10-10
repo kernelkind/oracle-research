@@ -1043,6 +1043,16 @@ qualify an effort. Native request identity includes effort, so saved xhigh
 outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
 concurrency, retries and eligible prefix policy stay fixed. See the
 [reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
+`prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
+freezes an override in the native request settings without changing the source
+selection. Without the flag, the selection's effort is retained. Repeat
+`run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
+of stable source answer IDs; reports still contain all 60 answers, with
+unselected answers pending. Unknown or duplicate IDs fail before dispatch.
+Omitting `--answer-id` retains the complete-answer workflow. Distinct fixed
+diagnostic inputs can additionally run through native `run --only CASE_ID` in
+the prepared check group; this supplements the paired comparison without
+changing the evaluation's stopping rules or frozen source labels.
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:

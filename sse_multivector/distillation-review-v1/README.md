@@ -2081,6 +2081,46 @@ and recommends
 [task-specific comparisons with typical and difficult examples](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
 Source preparations and study choices freeze before lower-effort calls.
 
+Native preparation accepts `--reasoning-effort high|medium|low|xhigh`; absent
+that option it preserves the selection's original effort. The run command
+accepts repeated `--answer-id` values using stable source answer IDs, not the
+`R01`/`C01` display aliases. It dispatches only those answers while retaining
+the complete 60-answer report. Unknown or duplicate IDs fail before calls.
+This permits nested subsets without rewriting a frozen selection or native
+case manifest. Supplemental paired diagnostic cases use native `run --only`
+in the corresponding prepared check group; the scorer's stopping rules and
+frozen labels stay unchanged. The effort override and subset production paths
+passed all 117 tests across the seven distillation-review modules.
+
+The prespecified screen uses `R01`, `R02`, `R03`, `C01` and `C06`: three random
+answers covering all three distilled-model families, plus two challenge
+answers with both supported and unsupported wording. Remaining answer order
+uses the fixed `DS-effort-screen-20261009` hash seed, independently of lower
+effort outputs. Nested stages contain 5, 10, 20, 40 and 60 answers, with
+random/challenge counts 3/2, 8/2, 16/4, 32/8 and 50/10.
+
+Every stage includes all distinct nonmechanical DSMv3 and DSSv2 inputs for its
+answers. The initial DSLv2 screen deliberately covers positive and negative
+assessed examples. For each later answer, sample up to four distinct actual
+edge inputs and four compatibility inputs by source-seeded hash, without
+consulting labels, reference status or model outputs. Deduplicate exact
+rendered prompts while retaining every alias, role and source. The nested
+paired panels contain 297, 405, 713, 1,253 and 1,735 prompts. The full panel contains
+615 matching, 615 support and 505 relationship prompts; the actual-edge and
+compatibility subsets overlap and are not additional overall samples.
+The fixed panel supplements the approved adaptive pipeline; it does not
+require a full Cartesian set of compatibility comparisons.
+
+Save each stage's native pipeline report before supplemental diagnostics,
+then a separate report afterward. Some diagnostic questions were unnecessary
+for the pipeline's scores; their tokens and runtime must not inflate estimates
+of production review work. Bridge only exact panel inputs that still lack a
+verified receipt after each pipeline finishes. The receipt-only snapshot's
+potential xhigh bridge count is a worst case, not the final paid call count.
+Unknown reference aliases remain unknown even when another identical input
+has a resolved assessment. The initial label-balanced stress panel, uniform
+extension, random cohort and challenge cohort need separate summaries.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with
