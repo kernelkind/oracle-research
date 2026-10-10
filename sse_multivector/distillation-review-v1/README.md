@@ -2121,6 +2121,32 @@ Unknown reference aliases remain unknown even when another identical input
 has a resolved assessment. The initial label-balanced stress panel, uniform
 extension, random cohort and challenge cohort need separate summaries.
 
+Freeze the chosen xhigh verdict and verified receipt for every full-panel
+prompt before lower-effort calls. Later stages subset that frozen baseline;
+they cannot select a more favorable successful receipt. Preserve conflicting
+alias outputs and require complete paired responses. Normalize matching IDs
+only within the frozen teacher-meaning groups. Source-adjudicate every
+normalized disagreement, including those where existing labels favor xhigh.
+Identical verdicts cancel in relative accuracy even when both are wrong;
+absolute accuracy is a separate, unqualified claim.
+
+For paired count `N`, let `H` be baseline-correct/candidate-wrong decisions,
+`G` baseline-wrong/candidate-correct decisions and `A` unresolved discordant
+truths. Report relative loss `(H-G)/N` and conservative truth range
+`[(H-G-A)/N, (H-G+A)/N]`. This range is not a statistical confidence interval.
+At the full panel, its upper endpoint must be at most 2 percentage points, requiring
+`H-G+A <= 34` on the 1,735-prompt panel. Report sampling uncertainty separately;
+this selected panel does not establish population noninferiority.
+
+Before promotion, investigate a role whose source-adjudicated relative loss
+exceeds 2 points, or a new specific restriction error recurring on at least
+two distinct notes. Record the pattern and higher-effort comparison. This is
+an investigation trigger, not a stricter per-role numerical margin. A large
+relationship regression cannot pass unnoticed because matching/support
+contribute most of the panel. Clear recurring failures require stepping up;
+small screens and borderline losses justify further investigation or
+expansion, never a final qualification claim.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with
