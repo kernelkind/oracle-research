@@ -274,6 +274,17 @@ automatic template prefixes are ineligible; natural-prefix opportunities are
 reported without changing cache policy or promising hits. Qualification and A21
 remain open.
 
+The user authorizes the [complete-answer reviewer trial](../../sse_multivector/distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9):
+50 randomized validation answers across all 18 versions and ten deliberately
+difficult answers, using the actual mechanical and semantic workflow, score
+assembly and eligible natural-prefix caching. DSMv3/DSSv2/DSLv2, trusted ASv6.100,
+Sol / xhigh / subscription SSE and concurrency 8 remain fixed. Teacher meaning
+groups precede candidate assessment; independent agent expectations freeze before
+reviewer calls, with ambiguities explicit. Coverage includes unchanged DSLv2
+comparisons between each required teacher meaning and candidate headings.
+Randomized and challenge results remain separate, and pilot test data stays
+sealed. Reviewer qualification and bulk adoption await the trial results.
+
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
 prep checks pass. The October 3 separate preparation passed on older inputs;

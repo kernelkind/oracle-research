@@ -1,0 +1,468 @@
+"""Native checks for complete source-bound saved subject answers.
+
+Numbered occurrences remain separate cases. The shared runner reuses identical
+requests and owns model execution, warmups, receipt validation and usage.
+"""
+import hashlib
+import json
+from pathlib import Path
+
+from . import distillation_matching as matching
+from . import distillation_review as review
+from . import distillation_review_preview as preview
+from . import distillation_verdict as verdict
+from . import extraction_pipeline as engine
+
+
+_DEFINITIONS = dict(
+    matching=("DSMv3", "matching-prompt-v3.md", "matching-response-schema.json", "MATCH_INPUT", "student_subject"),
+    support=("DSSv2", "support-prompt-v2.md", "boolean-response-schema.json", "SUPPORT_INPUT", "student_subject"),
+    relationship=("DSLv2", "relationship-prompt-v2.md", "boolean-response-schema.json", "RELATIONSHIP_INPUT", "child_subject"))
+
+
+def _selection(reference, base):
+    from .distillation_review_trial import load_trial
+    review._fields(reference, {"path", "sha256"}, "review evaluation selection")
+    path = engine._resolve_path(reference["path"], "review evaluation selection", Path(base))
+    if engine._sha256_file(path) != reference["sha256"]:
+        raise ValueError("review evaluation selection hash differs")
+    bundle = load_trial(path)
+    return bundle, {**bundle["sources"], str(path): reference["sha256"]}
+
+
+def _assessments(directory, bundle):
+    if directory is None:
+        return dict(contexts={}, expectations={}, sources={})
+    from .distillation_review_assessment import load_assessments
+    return load_assessments(directory, bundle)
+
+
+def _cases(bundle, check, assessments):
+    cases = []
+    for answer in bundle["random"]["answers"] + bundle["challenge"]["answers"]:
+        if answer["errors"]:
+            continue
+        teacher = review._TeacherIndex(answer["teacher"])
+        students = {row["number"]: row["subject"] for row in answer["student"]}
+        expected = assessments["expectations"].get(answer["id"], {})
+        field = "relationships" if check == "relationship" else check
+        labels = {row["child" if check == "relationship" else "student_number"]: row
+                  for row in expected.get(field, [])}
+        for number, subject in students.items():
+            if check == "relationship" and not number.rpartition(".")[0]:
+                continue
+            identifier = answer["id"] + ":" + number
+            evidence = dict(check=check, answer_id=answer["id"], cohort=answer["cohort"],
+                note_id=answer["note_id"], generation=answer["generation"], student_number=number,
+                student_entries=len(students), expectation_status="unresolved",
+                selection="Complete frozen selected answer.", expected_reason="Not independently assessed.")
+            definition = dict(id=identifier, student_number=number, expected_teacher_number=None,
+                expected_reason=evidence["expected_reason"])
+            label = labels.get(number)
+            if label is not None:
+                evidence["expected_reason"] = definition["expected_reason"] = label["reason"]
+                resolved = not label.get("unresolved", False) if check == "matching" else label["valid"] is not None
+                evidence["expectation_status"] = "agent_assessed" if resolved else "unresolved"
+            if check == "matching":
+                if label is not None:
+                    definition["expected_teacher_number"] = label["teacher_number"]
+                case = matching._matching_case(definition, teacher, subject, evidence, post=answer["post"])
+            else:
+                evidence["role"] = "support" if check == "support" else "actual_relationship"
+                case = verdict._verdict_case(check, definition, answer["post"], students,
+                    answer["task_prompt"], evidence, None if label is None else label["valid"], teacher)
+            cases.append(case)
+        if check == "relationship":
+            compatibility_labels = {frozenset(row["teacher_numbers"]): row
+                                    for row in expected.get("compatibility", [])}
+            by_number = {row["number"]: row["subject"] for row in answer["teacher"]}
+            for ordinal, group in enumerate(assessments["contexts"].get(answer["id"], []), 1):
+                if not group["required"]:
+                    continue
+                representative = group["teacher_numbers"][0]
+                child = by_number[representative]
+                label = compatibility_labels.get(frozenset(group["teacher_numbers"]))
+                headings = None if label is None else label["compatible_heading_numbers"]
+                for number, heading in students.items():
+                    expected_valid = None if headings is None else number in headings
+                    evidence = dict(check=check, role="compatibility", answer_id=answer["id"], cohort=answer["cohort"],
+                        note_id=answer["note_id"], generation=answer["generation"], heading_number=number,
+                        teacher_numbers=group["teacher_numbers"], teacher_representative_number=representative,
+                        expectation_status="unresolved" if expected_valid is None else "agent_assessed",
+                        expected_valid=expected_valid, expected_reason="Not independently assessed." if label is None else label["reason"])
+                    case = dict(id=answer["id"] + f":compatibility:{ordinal:03}:" + number,
+                        inputs=verdict._relationship_inputs(answer["task_prompt"], heading, child), evidence=evidence)
+                    mechanical = teacher.relationship(heading, child)
+                    if mechanical is not None:
+                        case["mechanical"] = mechanical
+                    cases.append(case)
+    return cases
+
+
+def prepare_source(source, base, selected=None):
+    """Turn a verified trial selection into existing matching/verdict cases."""
+    review._fields(source, {"schema_version", "selection", "check", "assessment_directory"},
+                   "review evaluation source")
+    if type(source["schema_version"]) is not int or source["schema_version"] != 1:
+        raise ValueError("expected review evaluation source schema_version 1")
+    check = source["check"]
+    if check not in _DEFINITIONS:
+        raise ValueError("unknown review evaluation check")
+    bundle, sources = _selection(source["selection"], base)
+    directory = source["assessment_directory"]
+    if directory is not None:
+        directory = engine._resolve_path(directory, "review assessment directory", Path(base))
+    assessments = _assessments(directory, bundle)
+    sources.update(assessments["sources"])
+    cases = _cases(bundle, check, assessments)
+    identifiers = [case["id"] for case in cases]
+    if selected is not None:
+        engine._validate_string_array(selected, "review evaluation case selection", allow_empty=False)
+        if len(selected) != len(set(selected)) or set(selected) - set(identifiers):
+            raise ValueError("unknown or duplicate review evaluation case selection")
+        cases = [case for case in cases if case["id"] in selected]
+    return cases, sources, dict(check=check, qualification_case_ids=[case["id"] for case in cases])
+
+
+def validate(case, raw):
+    """Keep the established typed response and label-comparison contracts."""
+    return (matching.validate(case, raw) if case["evidence"]["check"] == "matching"
+            else verdict.validate(case, raw))
+
+
+def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None):
+    """Freeze native check groups; preparation never performs inference."""
+    from experiment_runner import experiment, inputs, project, prompt_cache
+    project.configure(Path(__file__).resolve().parents[1])
+    selection_path = Path(selection_path).expanduser().resolve()
+    output = Path(output).expanduser().resolve()
+    if output.exists():
+        raise ValueError("review evaluation output already exists")
+    reference = dict(path=str(selection_path), sha256=engine._sha256_file(selection_path))
+    bundle, _ = _selection(reference, selection_path.parent)
+    if assessment_directory is not None:
+        assessment_directory = str(Path(assessment_directory).expanduser().resolve())
+    assessments = _assessments(assessment_directory, bundle)
+    directory = Path(__file__).parent / "distillation-review-v1"
+    groups = []
+    for check, (identifier, filename, schema, payload, field) in _DEFINITIONS.items():
+        template = (directory / filename).read_text()
+        ordinary, prefixes = [], {}
+        for case in _cases(bundle, check, assessments):
+            if "mechanical" in case:
+                ordinary.append(case["id"])
+                continue
+            text = inputs.render(template, case["inputs"])
+            prefix = preview._natural_prefix(template, case["inputs"], payload, field, inputs.render)
+            if not text.startswith(prefix):
+                raise ValueError("review evaluation natural prefix differs from rendered prompt")
+            group = prefixes.setdefault(prefix, dict(cases=[], inputs=set()))
+            group["cases"].append(case["id"])
+            group["inputs"].add(inputs.digest(case["inputs"]))
+        for prefix, group in prefixes.items():
+            if len(group["inputs"]) > 1 and prompt_cache.prefix_policy(prefix)["eligible"]:
+                groups.append(dict(check=check, name=check + "-prefix-" + hashlib.sha256(prefix.encode()).hexdigest()[:12],
+                    cases=group["cases"], prefix=prefix, distinct_inputs=len(group["inputs"])))
+            else:
+                ordinary.extend(group["cases"])
+        if ordinary:
+            groups.append(dict(check=check, name=check + "-ordinary", cases=ordinary, prefix=None))
+    output.mkdir(parents=True)
+    (output / ".gitignore").write_text("*\n")
+    experiments = []
+    for group in groups:
+        check = group["check"]
+        identifier, filename, schema = _DEFINITIONS[check][:3]
+        source = output / "sources" / (group["name"] + ".json")
+        experiment.write(source, dict(schema_version=1, selection=reference, check=check,
+                                      assessment_directory=assessment_directory))
+        runner = {key: bundle["settings"][key] for key in (
+            "provider", "model", "reasoning_effort", "transport", "concurrency")}
+        runner["auth_file"] = None
+        runner["timeout_seconds"] = 3600
+        runner["output_schema_path"] = str(directory / schema)
+        if runner_binary is not None:
+            runner["runner_binary"] = str(Path(runner_binary).expanduser().resolve())
+        spec = output / "specs" / (group["name"] + ".json")
+        experiment.write(spec, dict(schema_version=1, prompt=dict(id=identifier, path=str(directory / filename)),
+            dataset=dict(adapter="distillation_review_evaluation", path=str(source), select=group["cases"]),
+            runner=runner))
+        destination = output / "experiments" / group["name"]
+        arguments = ["prepare", str(destination), "--spec", str(spec), "--history-root",
+                     str(Path(history_root).resolve() if history_root is not None else output)]
+        if group["prefix"] is not None:
+            prefix_path = output / "prefixes" / (group["name"] + ".txt")
+            prefix_path.parent.mkdir(exist_ok=True)
+            prefix_path.write_text(group["prefix"])
+            arguments.extend(["--prompt-cache-prefix", str(prefix_path)])
+        experiment.prepare(experiment.parser().parse_args(arguments), include_request_preview=False)
+        experiments.append(dict(check=check, path=str(destination),
+            sha256=engine._sha256_file(destination / "experiment.json"), occurrences=len(group["cases"]),
+            prefix_cached=group["prefix"] is not None))
+    if _assessments(assessment_directory, bundle)["sources"] != assessments["sources"]:
+        raise ValueError("review assessments changed while preparing")
+    frozen = dict(schema_version=1, selection=reference, assessment_directory=assessment_directory,
+                  assessment_sources=assessments["sources"],
+                  experiments=experiments, inference_calls=0)
+    experiment.write(output / "evaluation.json", frozen)
+    experiment.write(output / "evaluation.complete.json", {"evaluation.json": engine._sha256_file(output / "evaluation.json")})
+    return dict(frozen, output=str(output), summary=report(output)["summary"])
+
+
+def report(output):
+    """Join native outcomes to every selected answer and numbered occurrence."""
+    from experiment_runner import experiment, project
+    project.configure(Path(__file__).resolve().parents[1])
+    output = Path(output).expanduser().resolve()
+    frozen = experiment.read(output / "evaluation.json")
+    if experiment.read(output / "evaluation.complete.json") != {
+            "evaluation.json": engine._sha256_file(output / "evaluation.json")}:
+        raise ValueError("review evaluation preparation changed")
+    bundle, sources = _selection(frozen["selection"], output)
+    assessments = _assessments(frozen["assessment_directory"], bundle)
+    if assessments["sources"] != frozen["assessment_sources"]:
+        raise ValueError("review assessment snapshot changed")
+    sources.update(assessments["sources"])
+    cases, experiments = {}, []
+    for entry in frozen["experiments"]:
+        path = Path(entry["path"])
+        if engine._sha256_file(path / "experiment.json") != entry["sha256"]:
+            raise ValueError("review evaluation native preparation changed")
+        native = experiment.report(path, generation_costs=True, include_request_preview=False)
+        experiments.append(native)
+        for case in native["cases"]:
+            key = (entry["check"], case["id"])
+            if key in cases:
+                raise ValueError("duplicate review evaluation occurrence")
+            cases[key] = case
+    expected = {(check, case["id"]) for check in _DEFINITIONS for case in _cases(bundle, check, assessments)}
+    if set(cases) != expected:
+        raise ValueError("review evaluation omitted or added numbered occurrences")
+    cohorts = {}
+    for cohort in ("random", "challenge"):
+        answers = []
+        for answer in bundle[cohort]["answers"]:
+            checks = {check: [case for (name, _), case in cases.items()
+                              if name == check and case["evidence"]["answer_id"] == answer["id"]]
+                      for check in _DEFINITIONS}
+            all_cases = [case for rows in checks.values() for case in rows]
+            complete = all(case["status"] == "valid" for case in all_cases)
+            failed = any(case["status"] not in {"valid", "unrun"} for case in all_cases)
+            findings = dict(
+                incorrect_subjects=[case["evidence"]["student_number"] for case in checks["support"]
+                                    if case["status"] == "valid" and not case["parsed"]["valid"]],
+                invalid_relationships=[dict(parent=case["evidence"]["parent_number"], child=case["evidence"]["student_number"])
+                    for case in checks["relationship"] if case["evidence"]["role"] == "actual_relationship"
+                    and case["status"] == "valid" and not case["parsed"]["valid"]],
+                unmatched_subjects=[case["evidence"]["student_number"] for case in checks["matching"]
+                                    if case["status"] == "valid" and case["parsed"]["teacher_id"] is None])
+            result = dict(answer, status="invalid_output" if answer["errors"] else "complete" if complete else "failed" if failed else "pending",
+                checks=checks, findings=findings, coverage=dict(status="pending",
+                    reason="Independent teacher meaning groups, required flags and compatible-heading checks are needed."))
+            context = assessments["contexts"].get(answer["id"])
+            if answer["errors"]:
+                failure = review.score_saved_output({}, answer["raw_answer"]["raw"],
+                    truncated=answer["raw_answer"]["truncated"])
+                result.update(scores=failure["scores"], expected_scores=failure["scores"],
+                    expected_score_basis="The existing saved-output failure rule, independent of semantic judgments.",
+                    coverage=dict(status="output_failure", reason=failure["error"]))
+            elif complete and context is not None:
+                try:
+                    scored = _score(answer, checks, context)
+                except ValueError as error:
+                    result["coverage"] = dict(status="pending", reason=str(error))
+                    result["status"] = "inconsistent_verdicts"
+                else:
+                    result.update(scores=scored["scores"], assembled_review=scored["parsed"],
+                        scoring_basis="Assembled from the separate verified native checks; no additional model call or receipt.",
+                        coverage=dict(status="complete", findings=scored["findings"]["coverage"]))
+            if not answer["errors"] and context is not None:
+                gold = _expected_checks(checks)
+                if gold is not None:
+                    try:
+                        expected = _score(answer, gold, context)
+                    except ValueError as error:
+                        result["expected_score_error"] = str(error)
+                    else:
+                        result.update(expected_scores=expected["scores"],
+                            expected_score_basis="Pre-call agent-assessed expectations and independent frozen teacher context; not reviewer output.")
+            result["qualification"] = _qualification(result, all_cases)
+            answers.append(result)
+        cohorts[cohort] = dict(answers=answers)
+    usage, generation_usage = _usage(experiments, sources)
+    summary = {cohort: dict(answers=len(value["answers"]),
+        statuses={status: sum(row["status"] == status for row in value["answers"])
+                  for status in sorted({row["status"] for row in value["answers"]})},
+        score_comparisons=sum("scores" in row and "expected_scores" in row for row in value["answers"]),
+        score_mismatches=sum(bool(row["qualification"]["score_differences"]) for row in value["answers"]),
+        checks={check: _check_summary([case for row in value["answers"] for case in row["checks"][check]])
+                for check in _DEFINITIONS}) for cohort, value in cohorts.items()}
+    summary["requests"] = _request_summary(experiments)
+    return dict(schema_version=1, output=str(output), selection=frozen["selection"], sources=sources,
+                experiments=experiments, usage=usage, generation_usage=generation_usage, summary=summary, **cohorts)
+
+
+def _expected_checks(checks):
+    gold = {}
+    for check, rows in checks.items():
+        gold[check] = []
+        for row in rows:
+            evidence = row["evidence"]
+            if evidence["expectation_status"] == "unresolved":
+                return None
+            parsed = dict(reason=evidence["expected_reason"])
+            parsed["teacher_id" if check == "matching" else "valid"] = evidence[
+                "expected_teacher_id" if check == "matching" else "expected_valid"]
+            gold[check].append(dict(row, parsed=parsed))
+    return gold
+
+
+def _qualification(answer, rows):
+    incorrect = [row["id"] for row in rows if row.get("qualification", {}).get("passed") is False]
+    unresolved = [row["id"] for row in rows if row["evidence"]["expectation_status"] == "unresolved"]
+    differences = {}
+    if "scores" in answer and "expected_scores" in answer:
+        differences = {metric: dict(actual=value["value"], expected=answer["expected_scores"][metric]["value"])
+            for metric, value in answer["scores"].items() if value["value"] != answer["expected_scores"][metric]["value"]}
+    return dict(basis="agent_assessed" if not answer["errors"] else "saved_output_failure",
+        status="failed" if incorrect or differences or answer["status"] in {"failed", "inconsistent_verdicts"}
+               else "pending" if unresolved or "scores" not in answer or "expected_scores" not in answer else "passed",
+        checked=sum(type(row.get("qualification", {}).get("passed")) is bool for row in rows),
+        incorrect_cases=incorrect, unresolved=unresolved, score_differences=differences)
+
+
+def _check_summary(rows):
+    result = dict(occurrences=len(rows), mechanical=sum(row.get("origin") == "mechanical" for row in rows),
+        semantic=sum(row.get("origin") != "mechanical" for row in rows),
+        distinct_semantic_inputs=len({row["input_sha256"] for row in rows if row.get("origin") != "mechanical"}),
+        reused=sum(row.get("reused", False) for row in rows),
+        checked=sum(type(row.get("qualification", {}).get("passed")) is bool for row in rows),
+        incorrect_cases=[row["id"] for row in rows if row.get("qualification", {}).get("passed") is False],
+        unresolved=sum(row["evidence"]["expectation_status"] == "unresolved" for row in rows),
+        pending=sum(row["status"] == "unrun" for row in rows))
+    roles = sorted({row["evidence"].get("role", row["evidence"]["check"]) for row in rows})
+    result["roles"] = {role: dict(occurrences=len(selected), mechanical=sum(row.get("origin") == "mechanical" for row in selected),
+        semantic=sum(row.get("origin") != "mechanical" for row in selected),
+        checked=sum(type(row.get("qualification", {}).get("passed")) is bool for row in selected),
+        incorrect_cases=[row["id"] for row in selected if row.get("qualification", {}).get("passed") is False],
+        unresolved=sum(row["evidence"]["expectation_status"] == "unresolved" for row in selected))
+        for role in roles for selected in [[row for row in rows if row["evidence"].get("role", row["evidence"]["check"]) == role]]}
+    return result
+
+
+def _request_summary(experiments):
+    """Count the runner's exact identities, including its verified reuse lookup."""
+    from experiment_runner import experiment
+    states = {check: dict(distinct=set(), remaining=set(), reusable=0, new=0, warmups_remaining=0)
+              for check in _DEFINITIONS}
+    for native in experiments:
+        plan, _, manifest = experiment.load(Path(native["experiment"]))
+        representatives = {}
+        for row in native["cases"]:
+            if row.get("origin") == "mechanical":
+                continue
+            check = row["evidence"]["check"]
+            key = engine._prompt_request_key(manifest, row["prompt"])
+            states[check]["distinct"].add(key)
+            if row["status"] == "unrun" and key not in states[check]["remaining"]:
+                representatives.setdefault(key, row)
+        for key, row in representatives.items():
+            check = row["evidence"]["check"]
+            states[check]["remaining"].add(key)
+        check = native["cases"][0]["evidence"]["check"]
+        pending = experiment.request_preview(plan, manifest, list(representatives.values()))
+        for field in ("reusable", "new"):
+            states[check][field] += pending[field]
+        if pending["new"] and plan.get("cache_warmup", {}).get("eligible"):
+            states[check]["warmups_remaining"] += 1
+    return dict(checks={check: {key: len(value) if isinstance(value, set) else value
+                               for key, value in state.items()} for check, state in states.items()},
+        totals={**{field: len(set().union(*(state[field] for state in states.values())))
+                   for field in ("distinct", "remaining")},
+                **{field: sum(state[field] for state in states.values())
+                   for field in ("reusable", "new", "warmups_remaining")}},
+        basis="Native request identity and verified saved-answer lookup at inspection time; excludes retries. "
+              "One warmup per eligible group with new work on the next run, when its allowance permits.")
+
+
+def _usage(experiments, sources):
+    """Use the native receipt accounting once per original file/line."""
+    from experiment_runner import experiment
+    files = engine.ReceiptFiles()
+    originals, reconciled = {}, {}
+    local_roots = [Path(native["experiment"]) for native in experiments]
+    for native in experiments:
+        for source in native["generation_usage"]["sources"]:
+            key = source["results_path"], source["result_line"]
+            if key in originals:
+                if originals[key][0]["result_sha256"] != source["result_sha256"]:
+                    raise ValueError("review evaluation generation source changed")
+                continue
+            path = Path(key[0])
+            raw = files.line(path, key[1])
+            if hashlib.sha256(raw).hexdigest() != source["result_sha256"]:
+                raise ValueError("review evaluation receipt changed while reporting")
+            record = preview._decode(raw)
+            if path.parent not in reconciled:
+                records = [preview._decode(line) for line in files.lines(path)]
+                reconciled[path.parent] = engine.load_reconciled_costs(path.parent, records)
+                sources[str(path)] = engine._sha256_file(path)
+            warmup = files.json(path.parent / "manifest.json").get("cache_warmup", False)
+            originals[key] = source, record, engine.provider_cost(record, reconciled[path.parent]), warmup
+    calls, warmups, local_calls, local_warmups = [], [], [], []
+    for (filename, _), (_, record, charge, warmup) in originals.items():
+        call = record, charge
+        (warmups if warmup else calls).append(call)
+        if any(Path(filename).is_relative_to(root) for root in local_roots):
+            (local_warmups if warmup else local_calls).append(call)
+    generation = dict(experiment.usage_summary(calls, warmup_calls=warmups),
+        original_calls=len(originals), sources=[source for source, *_ in originals.values()],
+        source_calls_added=sum(source.get("added_from_reuse", False) for source, *_ in originals.values()),
+        failed_calls=sum(record["status"] == "failed" for _, record, _, _ in originals.values()))
+    return experiment.usage_summary(local_calls, warmup_calls=local_warmups), generation
+
+
+def _score(answer, checks, context):
+    teacher = review._TeacherIndex(answer["teacher"])
+    matches = {row["evidence"]["student_number"]: row["parsed"]["teacher_id"] for row in checks["matching"]}
+    coverage = []
+    for group in context:
+        teacher_ids = {teacher.by_number[number] for number in group["teacher_numbers"]}
+        headings = [row["evidence"]["heading_number"] for row in checks["relationship"]
+            if row["evidence"]["role"] == "compatibility"
+            and row["evidence"]["teacher_numbers"] == group["teacher_numbers"] and row["parsed"]["valid"]]
+        coverage.append(dict(group, student_numbers=[number for number, identifier in matches.items() if identifier in teacher_ids],
+            compatible_heading_numbers=headings, reason="Complete DSM matches and unchanged DSL compatibility judgments."))
+    assembled = dict(schema_version=1, prompt_id="DSRv2",
+        subjects=[dict(number=row["evidence"]["student_number"], **row["parsed"]) for row in checks["support"]],
+        relationships=[dict(parent=row["evidence"]["parent_number"], child=row["evidence"]["student_number"], **row["parsed"])
+            for row in checks["relationship"] if row["evidence"]["role"] == "actual_relationship"], coverage=coverage)
+    payload = dict(post=answer["post"], teacher=answer["teacher"], student=answer["student"],
+        exact_matches=review.exact_matches(answer["teacher"], answer["student"]), teacher_meanings=context)
+    case = dict(prompt="DSRv2", inputs=dict(REVIEW_INPUT=json.dumps(payload, ensure_ascii=False)))
+    return review.validate(case, json.dumps(assembled, ensure_ascii=False))
+
+
+def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgrade_reason=None):
+    """Execute native groups sequentially under one shared attempt allowance."""
+    from experiment_runner import experiment
+    if max_new_attempts is not None and (type(max_new_attempts) is not int or max_new_attempts < 1):
+        raise ValueError("max_new_attempts must be positive")
+    initial = report(output)
+    remaining = max_new_attempts
+    for entry in initial["experiments"]:
+        directory = Path(entry["experiment"])
+        before = entry["summary"]["attempts"]
+        try:
+            after = experiment.run(directory, remaining, runner_upgrade_reason,
+                attempt_budget_path=Path(attempt_budget_path) if attempt_budget_path is not None else None,
+                include_request_preview=False)
+        except engine.RunnerError as error:
+            message = str(error.__cause__ or error)
+            prefix = "unresolved prompt cases: "
+            if not message.startswith(prefix) or set(message[len(prefix):].split(", ")) != {"new-attempt allowance exhausted"}:
+                raise
+            after = experiment.report(directory, include_request_preview=False)
+        if remaining is not None:
+            remaining -= after["summary"]["attempts"] - before
+    return report(output)

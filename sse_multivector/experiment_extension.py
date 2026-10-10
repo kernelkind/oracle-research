@@ -313,6 +313,45 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('prepare-distillation-review-trial', help='freeze a complete-answer validation trial; no inference')
+    p.add_argument('manifest', type=Path)
+    p.add_argument('--model-output', type=Path, action='append', required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--random-count', type=int, default=50)
+    p.add_argument('--hard-count', type=int, default=10)
+    p.add_argument('--seed', default='DS-final-20261009')
+    p = commands.add_parser('show-distillation-review-trial', help='inspect frozen source evidence; no inference')
+    p.add_argument('selection', type=Path)
+    p.add_argument('--answer')
+    p.add_argument('--teacher-only', action='store_true')
+    p = commands.add_parser('assess-distillation-review', help='record source-bound pre-call judgments; no inference')
+    p.add_argument('selection', type=Path)
+    p.add_argument('--answer', required=True)
+    p.add_argument('--directory', type=Path, required=True)
+    group = p.add_mutually_exclusive_group(required=True)
+    group.add_argument('--teacher-meanings')
+    group.add_argument('--expectations')
+    group.add_argument('--wording-expectations', help='one judgment per identical input; expand every numbered occurrence')
+    group.add_argument('--required-numbers', help='comma-separated teacher representatives; only exact repeats are grouped')
+    p.add_argument('--optional-numbers', help='comma-separated explicitly optional teacher representatives')
+    p.add_argument('--reason', required=True)
+    p = commands.add_parser('freeze-distillation-review-assessments', help='seal complete pre-call judgments; no inference')
+    p.add_argument('selection', type=Path)
+    p.add_argument('--directory', type=Path, required=True)
+    p = commands.add_parser('prepare-distillation-review-evaluation', help='prepare the native complete-answer review workflow; no inference')
+    p.add_argument('selection', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--assessments', type=Path)
+    p.add_argument('--runner-binary', type=Path)
+    p.add_argument('--history-root', type=Path)
+    p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
+    p.add_argument('evaluation', type=Path)
+    p.add_argument('--output', type=Path)
+    p = commands.add_parser('run-distillation-review-evaluation', help='run prepared native groups with a shared attempt limit')
+    p.add_argument('evaluation', type=Path)
+    p.add_argument('--max-new-attempts', type=int)
+    p.add_argument('--attempt-budget', type=Path)
+    p.add_argument('--runner-upgrade-reason')
     p = commands.add_parser('preview-distillation-review',
                             help='count complete saved validation review work; no inference')
     p.add_argument('manifest', type=Path)
@@ -392,7 +431,55 @@ def add_commands(commands):
 
 
 def handle_command(args):
-    if args.command == 'preview-distillation-review':
+    if args.command == 'prepare-distillation-review-trial':
+        from . import distillation_review_trial
+        result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
+            random_count=args.random_count, hard_count=args.hard_count, seed=args.seed)
+        print(json.dumps({key: result[key] for key in ('selection_path', 'inference_calls', 'selection_policy')}, indent=2))
+    elif args.command in {'show-distillation-review-trial', 'assess-distillation-review', 'freeze-distillation-review-assessments'}:
+        from . import distillation_review_assessment as assessment
+        if args.command == 'show-distillation-review-trial':
+            result = assessment.inspect(args.selection, args.answer, teacher_only=args.teacher_only)
+        elif args.command == 'assess-distillation-review':
+            if args.wording_expectations is not None:
+                if args.optional_numbers is not None:
+                    raise ValueError('optional representatives require --required-numbers')
+                result = assessment.record_wording_expectations(args.selection, args.answer, args.directory,
+                    json.loads(args.wording_expectations), reason=args.reason)
+            elif args.required_numbers is not None:
+                if args.optional_numbers is None:
+                    raise ValueError('explicit optional representatives required, including an empty string')
+                result = assessment.record_exact_groups(args.selection, args.answer, args.directory,
+                    [n for n in args.required_numbers.split(',') if n],
+                    [n for n in args.optional_numbers.split(',') if n], reason=args.reason)
+            else:
+                if args.optional_numbers is not None:
+                    raise ValueError('optional representatives require --required-numbers')
+                result = assessment.record(args.selection, args.answer, args.directory,
+                    teacher_meanings=json.loads(args.teacher_meanings) if args.teacher_meanings is not None else None,
+                    expectations=json.loads(args.expectations) if args.expectations is not None else None, reason=args.reason)
+        else:
+            result = assessment.freeze(args.selection, args.directory)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
+        from . import distillation_review_evaluation as evaluation
+        if args.command == 'prepare-distillation-review-evaluation':
+            result = evaluation.prepare(args.selection, args.output, runner_binary=args.runner_binary,
+                history_root=args.history_root, assessment_directory=args.assessments)
+        elif args.command == 'run-distillation-review-evaluation':
+            result = evaluation.run(args.evaluation, max_new_attempts=args.max_new_attempts,
+                attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason)
+        else:
+            result = evaluation.report(args.evaluation)
+            if args.output:
+                write(args.output, result)
+        compact = {key: result[key] for key in ('output', 'inference_calls', 'summary', 'usage') if key in result}
+        if args.command == 'prepare-distillation-review-evaluation':
+            compact['experiments'] = result['experiments']
+        if args.command == 'show-distillation-review-evaluation' and args.output:
+            compact['report'] = str(args.output)
+        print(json.dumps(compact, ensure_ascii=False, indent=2))
+    elif args.command == 'preview-distillation-review':
         from . import distillation_review_preview
         if args.output.exists():
             raise ValueError('review preview output already exists')
@@ -494,12 +581,16 @@ def code_files(dataset):
              'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
-    if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict'}:
+    if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation'}:
         names += ['distillation_review.py', 'distillation_run.py']
     if dataset['adapter'] == 'distillation_matching':
         names += ['distillation_matching.py']
     if dataset['adapter'] == 'distillation_verdict':
         names += ['distillation_verdict.py']
+    if dataset['adapter'] == 'distillation_review_evaluation':
+        names += ['distillation_review_evaluation.py', 'distillation_review_assessment.py',
+                  'distillation_review_trial.py', 'distillation_review_preview.py',
+                  'distillation_matching.py', 'distillation_verdict.py']
     return {name: directory / name for name in names if (directory / name).exists()}
 
 def enrich_report(result, plan, cases):

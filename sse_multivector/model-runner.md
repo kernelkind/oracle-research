@@ -979,6 +979,24 @@ framing and schema overhead. Current automatic prefixes are below threshold;
 separate natural-prefix opportunities do not select a cache mode or guarantee
 hits. See the [current estimate and complete Nix command](distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9).
 
+The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
+adds native project commands: `prepare-distillation-review-trial`,
+`show-distillation-review-trial`, `assess-distillation-review`,
+`freeze-distillation-review-assessments`, `prepare-distillation-review-evaluation`,
+`run-distillation-review-evaluation` and `show-distillation-review-evaluation`.
+The `distillation_review_evaluation` adapter retains complete saved validation
+answers and all numbered occurrences, routes trusted exact results mechanically,
+and delegates requests, reuse, warmups, retry handling and receipts to the shared
+runner. Compatible-heading comparisons reuse unchanged DSLv2; required flags and
+meaning groups come from a source-bound candidate-independent assessment.
+Expectation files freeze before calls and remain agent-assessed rather than gold.
+Only repeated natural prefixes meeting the existing eligibility threshold are
+warmed, using explicit prefix/key configuration. Sequential native groups each
+use concurrency 8 and share a new-attempt allowance. Native reports assemble the
+existing scores and compare them with frozen expectations, keeping unanswered or
+ambiguous work visible. Use `--output FILE` on the show command to retain the full
+report; terminal output contains its summary and usage.
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 

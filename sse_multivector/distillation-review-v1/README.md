@@ -1795,6 +1795,82 @@ verified expected matches fixed before Sol calls. The user subsequently authoriz
 offline preparation, documented below. Additional calls, effort/batching
 experiments, full review adoption and final-test unsealing remain open.
 
+## Complete-answer reviewer trial (October 9)
+
+The user authorizes **50 randomized complete validation answers and ten difficult
+complete answers**, using the actual mechanical decisions, semantic requests,
+reuse and scoring process. **DSMv3/DSSv2/DSLv2**, trusted **ASv6.100**, **GPT-6.1
+Sol / xhigh / subscription SSE / concurrency 8** remain fixed. This reviewer
+trial uses validation data; the pilot's reserved test stays sealed.
+
+The sealed [selection](../../target/distillation-review-v1/final-trial-20261009/selection/selection.json)
+uses seed `DS-final-20261009`. Version quotas differ by at most one: two or three
+answers from each of 18 versions. Random selection favors distinct notes absent
+from earlier actual-output trials; all 50 chosen notes are previously unused.
+Four truncated answers remain in the 50-answer denominator. The ten challenges
+use different notes and cycle largest teacher catalog, nonexact composite
+wording, deepest student hierarchy and same-note answer variation. Four challenge
+notes were used before. Selection uses structural complexity without consulting
+reviewer judgments. The cohorts are reported separately, and the randomized
+cohort is not a uniform draw from all 1,800 answer outputs.
+
+Teacher meanings are grouped and marked required independently of candidates,
+using the approved complete-source-versus-derived-heading distinctions. Exact
+teacher duplicates can be grouped mechanically; nonidentical paraphrases require
+explicit assessment. Candidate judgments are separately assessed and frozen
+before calls. These references are **agent-assessed**, not independently
+adjudicated gold. Null support/link verdicts, null compatibility assessments and
+explicit unresolved matching labels remain outside error denominators.
+
+The complete workflow retains every subject and actual immediate edge. Exact
+trusted subject wording settles matching and post support; exact trusted ordered
+pairs or identical parent/child wording settle local validity. The remaining
+questions use native requests and typed responses. Coverage additionally compares
+each required teacher meaning, as child, with every candidate heading, as parent,
+using **unchanged DSLv2**. Identical requests share native results, while all
+numbered placements remain visible. The existing scorer checks full matches
+beneath every compatible occurrence, gives invalid outputs zero scores, and
+keeps incomplete or inconsistent reviews pending. The earlier 36,310-question
+estimate counted primitive checks and excludes these compatibility comparisons.
+
+Caching follows the earlier trial's manual natural-prefix/key approach. Native
+preparation selects prefixes only when they meet the existing 1,024-token policy
+and have more than one distinct semantic request; native warmups precede their
+comparisons. Automatic `--prompt-cache` is not used. The shared runner owns
+execution and receipt accounting; eligible prefixes do not guarantee hits.
+One native evaluation command executes the prepared groups sequentially, with
+eight requests per group and one shared new-attempt allowance including warmups
+and provider retries. Usage counts original receipt lines once rather than
+counting copied judgments as calls.
+
+The reusable native commands are available through
+`experiment-runner/bin/experiment-runner` with a `tiktoken`-enabled Python:
+
+```sh
+experiment-runner prepare-distillation-review-trial MANIFEST \
+  --model-output QWEN --model-output GEMMA_DENSE --model-output GEMMA_MOE \
+  --random-count 50 --hard-count 10 --seed DS-final-20261009 --output SELECTION_DIR
+experiment-runner show-distillation-review-trial SELECTION_JSON --answer R01 --teacher-only
+experiment-runner assess-distillation-review SELECTION_JSON --answer R01 \
+  --directory ASSESSMENTS --teacher-meanings GROUPS_JSON --reason REASON
+experiment-runner assess-distillation-review SELECTION_JSON --answer R01 \
+  --directory ASSESSMENTS --wording-expectations LABELS_JSON --reason REASON
+experiment-runner freeze-distillation-review-assessments SELECTION_JSON --directory ASSESSMENTS
+experiment-runner prepare-distillation-review-evaluation SELECTION_JSON \
+  --assessments ASSESSMENTS --output EVALUATION_DIR
+experiment-runner run-distillation-review-evaluation EVALUATION_DIR --max-new-attempts LIMIT
+experiment-runner show-distillation-review-evaluation EVALUATION_DIR --output REPORT_JSON
+```
+
+`--required-numbers` with `--optional-numbers` is a compact alternative for
+explicitly classifying every distinct exact teacher wording. No unlisted meaning
+defaults to optional. `--wording-expectations` expands only identical student
+wording or identical ordered edge inputs; every distinct input still needs a
+judgment. `--expectations` accepts complete numbered arrays. Existing source
+files and frozen assessments cannot be overwritten. The trial is being prepared;
+reviewer-call results and any disagreement audit will be recorded here after
+completion.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with

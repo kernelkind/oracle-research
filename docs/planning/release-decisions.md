@@ -1773,6 +1773,36 @@ opportunities without adopting a cache mode or optimization. Prompts, mechanical
 criteria, scoring, reviewer qualification, A21 and test sealing retain their
 existing state; the estimate authorizes no inference.
 
+**Complete-answer reviewer trial authorized October 9:** the user approves
+running 50 randomized validation answers and 10 deliberately difficult answers
+through the actual review workflow, including mechanical routing, reuse,
+semantic checks and score assembly. Preserve DSMv3/DSSv2/DSLv2, trusted
+ASv6.100, GPT-6.1 Sol / xhigh / subscription SSE and concurrency 8. Reuse the
+previous manual eligible natural-prefix/key caching and native warmups; do not
+enable automatic template-prefix caching or warm ineligible/single-use prefixes.
+The pilot's reserved test remains sealed.
+
+The frozen sample covers all 18 versions with seeded quotas of two or three
+answers, preferring previously unused note identities. It contains 50 distinct
+previously unused notes, including four truncated answers. The ten challenges
+have distinct note identities and cycle teacher catalog size, nonexact composite
+wording, student depth and same-note answer variation. Challenge results remain
+separate from the randomized cohort; neither selection is a simple uniform
+sample of all 1,800 outputs. Source hashes and selection policy are retained.
+
+Candidate-independent teacher meaning groups and required flags are recorded
+before answer assessments. Freeze independent agent-assessed expectations before
+reviewer calls; they are not adjudicated gold. Preserve unresolved labels and
+mechanical contradictions explicitly. Coverage uses the existing required-meaning
+and every-compatible-heading rule, with unchanged DSLv2 comparing a candidate
+heading as parent against the complete teacher meaning as child. Every numbered
+occurrence is retained. The earlier primitive-check estimate excludes those
+additional compatibility comparisons. New native project commands prepare,
+inspect, assess, freeze, run and report the complete-answer trial through the
+shared experiment runner. Reviewer extrapolation, lower reasoning effort and
+bulk review adoption depend on the resulting evidence. See the
+[trial record](../../sse_multivector/distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9).
+
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
 subject responses during baseline before training, training progress

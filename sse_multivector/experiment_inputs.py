@@ -83,6 +83,12 @@ def prepare_file(dataset, path, template, load_report=None):
         for case in rendered:
             case['evidence']['input_tokens'] = len(encoding.encode(case['prompt'], disallowed_special=()))
         return rendered, sources, preparation
+    if dataset['adapter'] == 'distillation_review_evaluation':
+        from . import distillation_review_evaluation
+        cases, protected, preparation = distillation_review_evaluation.prepare_source(
+            source, path.parent, dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_review':
         try:
             from . import distillation_review
@@ -1266,6 +1272,9 @@ def validate(dataset, case, raw, schema):
         except ImportError:
             import distillation_matching
         return distillation_matching.validate(case, raw)
+    if adapter == 'distillation_review_evaluation':
+        from . import distillation_review_evaluation
+        return distillation_review_evaluation.validate(case, raw)
     if adapter == 'distillation_review':
         try:
             from . import distillation_review
