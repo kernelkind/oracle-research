@@ -106,7 +106,7 @@ def _local_ancestor_scores(rows, local_entries, scores, identifiers):
 
 
 def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, limit=10,
-                  sibling_vectors=None, clustering='nearest', local_entries=None):
+                  sibling_vectors=None, clustering='nearest', local_entries=None, pair=None):
     """Propose sibling groups and inspect possible parents.
 
     The score is the weakest member cosine minus the strongest outside cosine.
@@ -119,6 +119,7 @@ def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, lim
     With original local_entries, candidates are scored through their proper
     descendants and retain exact paths. This supplies a direction cue, not an
     established relationship to any canonical node.
+    An explicit pair bypasses clustering and searches only those two siblings.
     """
     if clustering not in ('nearest', 'complete'):
         raise ValueError('unknown sibling clustering method')
@@ -127,6 +128,11 @@ def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, lim
     if type(limit) is not int or not 1 <= limit <= 20:
         raise ValueError('subgroup candidate limit must be between one and twenty')
     siblings = sorted(siblings, key=lambda row: row['id'])
+    if pair is not None:
+        if len(pair) != 2 or len(set(pair)) != 2 or set(pair) - {row['id'] for row in siblings}:
+            raise ValueError('pair requires two distinct supplied sibling IDs')
+        if clustering != 'nearest':
+            raise ValueError('an explicit pair bypasses clustering')
     identifiers, keys, scores, sibling_vectors = _scores(
         rows if local_entries is None else local_entries,
         siblings, vectors, sibling_vectors=sibling_vectors)
@@ -145,7 +151,9 @@ def rank_subgroups(rows, siblings, vectors, *, eligible=None, max_choices=6, lim
         if allowed[key] - set(identifiers):
             raise ValueError('eligibility contains an unknown sibling')
     proposals = set()
-    if clustering == 'complete':
+    if pair is not None:
+        proposals.add(tuple(sorted(identifiers.index(identifier) for identifier in pair)))
+    elif clustering == 'complete':
         from scipy.cluster.hierarchy import linkage
         from scipy.spatial.distance import squareform
         distances = 1 - np.clip(pairwise, -1, 1)
@@ -261,7 +269,7 @@ def load_sibling_meanings(directory, state_path, siblings, subject_receipt, vect
 
 
 def prepare(reference_project, state_path, menu_path, parent, output, *, method='second-best',
-            sibling_meanings=None, clustering='nearest', candidate_scope='subject'):
+            sibling_meanings=None, clustering='nearest', candidate_scope='subject', pair=None):
     """Freeze a nomination against existing native state, menu and SSE receipts."""
     if __package__:
         from .candidate_ranking_study import _reference
@@ -281,6 +289,8 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
     if candidate_scope not in ('subject', 'local-ancestors') or (
             candidate_scope != 'subject' and method != 'subgroups'):
         raise ValueError('local ancestor candidates require the subgroup method')
+    if pair is not None and (method != 'subgroups' or clustering != 'nearest'):
+        raise ValueError('an explicit pair requires the subgroup method without clustering')
     state_bytes, menu_bytes = state_path.read_bytes(), menu_path.read_bytes()
     protected = {str(state_path): hashlib.sha256(state_bytes).hexdigest(),
                  str(menu_path): hashlib.sha256(menu_bytes).hexdigest()}
@@ -356,7 +366,8 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
     groups = rank_subgroups(rows, siblings, vectors, eligible=eligible,
                            sibling_vectors=sibling_vectors,
                            clustering=clustering,
-                           local_entries=local_entries if candidate_scope == 'local-ancestors' else None
+                           local_entries=local_entries if candidate_scope == 'local-ancestors' else None,
+                           pair=pair
                            ) if method == 'subgroups' else None
     for path, expected in protected.items():
         if hashlib.sha256(Path(path).read_bytes()).hexdigest() != expected:
@@ -382,6 +393,10 @@ def prepare(reference_project, state_path, menu_path, parent, output, *, method=
         report.update(clustering='complete',
             clustering_runtime=dict(numpy=np.__version__, scipy=scipy.__version__),
             method=f'complete-link sibling {representation} groups; weakest member minus strongest outside {representation} cosine')
+    if pair is not None:
+        representation = 'meaning' if sibling_vectors is not None else 'subject'
+        report.update(pair=sorted(pair),
+            method=f'fixed sibling pair; weakest member minus strongest outside {representation} cosine')
     if candidate_scope == 'local-ancestors':
         report.update(candidate_scope=candidate_scope, original_local_entries=len(local_entries),
             method=report['method'] + '; candidate affinity through original proper local descendants',
@@ -426,10 +441,13 @@ def main():
                         help='subgroup algorithm; complete uses SciPy complete-link cosine distances')
     parser.add_argument('--candidate-scope', choices=('subject', 'local-ancestors'), default='subject',
                         help='score unused local headings or their original proper descendants')
+    parser.add_argument('--pair', nargs=2, metavar=('FIRST_ID', 'SECOND_ID'),
+                        help='search only this sibling pair without clustering')
     args = parser.parse_args()
     print(json.dumps(prepare(args.reference_project, args.state, args.menu, args.parent, args.output,
                              method=args.method, sibling_meanings=args.sibling_meanings,
-                             clustering=args.clustering, candidate_scope=args.candidate_scope)))
+                             clustering=args.clustering, candidate_scope=args.candidate_scope,
+                             pair=args.pair)))
 
 
 if __name__ == '__main__':

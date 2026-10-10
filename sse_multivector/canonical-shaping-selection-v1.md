@@ -5,6 +5,12 @@ group has too many children. A nomination still follows ordinary local versus
 canonical graph traversal. Selection does not establish containment, placement,
 equivalence or a preferred answer.
 
+**Current investigation: two siblings at a time.** The user approved searching
+for an unused local entry that could parent both, without clustering. Use
+`--method subgroups --pair FIRST_ID SECOND_ID` for this offline screen. Original
+local ancestry and SSE similarity remain retrieval evidence; ordinary traversal
+still decides placement. A useful grouping candidate remains unresolved.
+
 The [bounded selector](canonical_shaping_selection.py) ranks entries by their
 second-highest cosine against eligible immediate siblings' subject vectors.
 An exact match to one sibling therefore cannot alone dominate the ranking.
@@ -99,9 +105,9 @@ The second-highest cosine criterion detects resemblance to multiple siblings,
 but does not distinguish grouping two to six siblings from grouping all seven.
 For this target, a useful new intermediate parent must reduce the old choices,
 keep its own choices within six, and preserve strict note-set narrowing and
-useful route lengths. **Suggested next investigation, not implemented:** rank
-unused locals for grouping a proper subset of the overcrowded siblings. This
-single trial does not establish general selection accuracy or rejection of SSE.
+useful route lengths. The offline investigations below examine proper subsets
+of these siblings. This single trial does not establish general selection
+accuracy or rejection of SSE.
 
 Verification at this checkpoint: eighty-four selector, graph-search,
 construction, selection-regression, vector, native audit/shape and native usage
@@ -195,12 +201,10 @@ This does not exclude differently worded possible parents, but shows why an
 intuitively convenient group name cannot simply be nominated from this pool.
 Selection cannot manufacture a local entry absent from the supplied hierarchies.
 
-**Conclusion:** clustering is useful for proposing which children to group;
-the tested cosine difference is insufficient for choosing their parent. No
+The tested cosine difference is insufficient for choosing a group parent. No
 construction policy or live hierarchy changed, and no model calls were made in
-this investigation. Suggested next investigation, requiring approval: combine
-cluster retrieval with evidence of broader scope from original local ancestor
-relationships, while retaining normal traversal as the sole relationship judge.
+this investigation. The local-ancestor screen below tests original branch
+evidence, while retaining normal traversal as the sole relationship judge.
 Exact unused ancestors of the current children's own supports were absent in
 the initial audit, so this would need to search analogous local branches rather
 than assume an exact witness exists. If no supported parent is available, retain
@@ -300,10 +304,9 @@ python3 sse_multivector/canonical_shaping_selection.py \
   --output target/canonical-shaping-selection-v1/subgroups-meanings-C005-repeat.json
 ```
 
-Suggested next investigation, requiring approval: keep these meaning-based
-groups fixed and test local-parent retrieval using original local branch
-evidence of broader scope. This directly addresses the missing direction while
-preserving normal comparison traversal as the sole placement authority.
+The later local-ancestor investigation tests retrieval using original branch
+evidence with these saved meaning vectors. Normal comparison traversal remains
+the sole placement authority.
 
 ## Complete-link clustering of sibling meanings
 
@@ -401,11 +404,9 @@ python3 sse_multivector/canonical_shaping_selection.py \
   --output target/canonical-shaping-selection-v1/subgroups-complete-meanings-C005-repeat.json
 ```
 
-Suggested next investigation, requiring approval: use the two main C005 groups
-to retrieve unused local ancestors above similar subjects. This targets broader
-entries with original branch evidence instead of sending the current narrow
-nominees through expensive traversal. Normal local-versus-canonical comparison
-remains the sole placement authority.
+The next investigation retrieved unused local ancestors for these five formed
+groups. Those frozen results remain useful controls for the current pair-only
+search; the user has moved the active investigation away from larger clusters.
 
 ## Searching original local ancestors
 
@@ -516,12 +517,81 @@ python3 sse_multivector/canonical_shaping_selection.py \
   --output target/canonical-shaping-selection-v1/subgroups-complete-ancestor-C005-repeat.json
 ```
 
-Suggested next investigation, requiring approval: evaluate parent-title affinity
-alongside descendant evidence, on these fixed inputs. The Puns witness shows
-concretely why dropping the parent's own topic can promote an unrelated ancestor.
-This would reuse existing vectors without generating meanings for hundreds of
-unused entries; it still would not establish containment or guarantee a suitable
-parent is available.
+## Pair-only investigation
+
+The user approved focusing on pairs. `--pair FIRST_ID SECOND_ID` searches exactly
+one supplied pair of distinct immediate siblings, bypassing both clustering
+algorithms. Other siblings stay in the outside contrast. The same saved full
+meanings, unused original local ancestors, descendant scores and native
+eligibility remain fixed. No candidate is selected automatically, and the
+previous CLI defaults remain available to reproduce existing evidence.
+
+All 21 possible pairs of the seven C005 siblings were inspected separately.
+Each report searches the same 1,386 unused local entries; 812 have proper local
+descendants. This exposes 19 pairs absent from the preceding complete-link
+ancestor screen. Both previously formed pairs reproduce their rankings and
+exact source paths unchanged. No report invokes SciPy clustering, and all
+protected hashes match. No inference, new encodings or graph/UI changes occur.
+
+| Pair | Meaning cosine | First local ancestor nominee |
+|---|---:|---|
+| Bread preparation + Rosemary | 0.7623 | Puns |
+| Food smoking + Grilling | 0.6224 | Outdoor grilling |
+| Bread preparation + Pie preparation | 0.6005 | Half-and-half |
+| Cookware + Cooking appliances | 0.5230 | Food preservation |
+
+Pie preparation abbreviates C098's original heading without changing it. The
+Food preservation nominee is entry 3 of note
+`dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c`.
+Its context is “The beets are vacuum-sealed and prepared for freezer storage.”
+Its winning descendants are Preparation of food for freezer storage and Vacuum
+sealing food. These provide resemblance to food-handling subjects, but no
+source evidence that the parent topic encompasses both cookware and cooking
+appliances. Its separation score is -0.0006, so an outside sibling matches
+slightly more strongly than its weakest pair member.
+
+Fourteen of the 21 first-ranked nominees use one descendant subject for both
+members. Six first nominees have a weakest member cosine below 0.3; this is a
+descriptive count, not a fitted threshold or semantic verdict. Three first
+nominees have negative separation scores. Reviewing the returned topics still
+does not identify a parent nominee we recommend for full traversal. This is
+an agent selection assessment; no comparison outcomes or human gold were added.
+Pair-only search simplifies the investigation but has not resolved parent
+retrieval.
+
+Reports are under `target/canonical-shaping-selection-v1/pairs-C005-v1`, named
+by the two canonical IDs. The prior selector is preserved at `014a28f0` and
+ignored `selector-014a28f0.py`. Twenty-seven selector/receipt tests and
+seventy-two combined tests pass. The minimal test first failed because fixed
+pair selection was unsupported; it now verifies a pair omitted by nearest
+neighbors, eligibility, outside contrast, stable ordering, original ancestry
+evidence and rejection of invalid pair IDs or conflicting clustering settings.
+
+The option handles one selected pair per invocation; it does not enumerate all
+pairs automatically. This bounded seven-sibling study exhausts its 21 pairs;
+it is not an activated exhaustive-pair policy for large sibling groups.
+
+Repeat one pair with a NumPy-enabled environment:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 sse_multivector/canonical_shaping_selection.py \
+  --reference-project ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1 \
+  --state ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json \
+  --menu ../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-v2/state.json \
+  --parent C005 \
+  --method subgroups \
+  --pair C008 C014 \
+  --candidate-scope local-ancestors \
+  --sibling-meanings ../oracle-mvp-hierarchy-candidate-rankings-v1/target/candidate-ranking-as100-v1/meaning-vectors \
+  --output target/canonical-shaping-selection-v1/pair-C008-C014-repeat.json
+```
+
+Suggested next investigation, requiring approval: on a fixed pair, evaluate the
+candidate's own title alongside descendant evidence. The Puns and Food
+preservation witnesses show why a descendant match alone can promote an
+unrelated or narrower parent. This would reuse existing vectors without new
+encodings or meanings, and still would not establish containment.
 
 When a new intermediate parent groups m existing siblings, replacing their
 direct choices with that parent can reduce the original group by m−1 choices.
