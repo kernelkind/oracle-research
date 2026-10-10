@@ -1079,15 +1079,29 @@ failed-attempt usage leaves broader costs unknown. See the
 
 Low's same 297-question screen is complete: 283 agreements and H=10, G=1,
 A=3 give a 2.02–4.04 percentage-point loss range. A specific added-action
-failure recurs across two notes, so low will not expand. Medium is selected
+failure recurs across two notes, so low will not expand. Medium was selected
 for the frozen 10-answer investigation with 405 distinct panel questions;
-dispatch adds five source answers while retaining previous outputs and receipts.
-The added shared prefixes are too short for new warmups. Concurrency 8,
+dispatch added five source answers while retaining previous outputs and receipts.
+The added shared prefixes needed no new warmups. Concurrency 8,
 provider-only two-attempt retries and the approved review rules remain fixed.
 No effort has qualified; high remains available if medium degrades. Low's
 fixed chosen-response catalog estimate is 62.54% lower than xhigh's, but its
 complete paid cost remains unknown because a recovered failure lacks usage.
 See the [low evidence and selection](distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
+
+The medium ten-answer comparison is complete on all 405 fixed questions:
+387 agreements and source-adjudicated H=11, G=3, A=4 give a 0.99–2.96-point
+loss range. Prior 297 outputs and receipts are unchanged. A specific added
+main-occurrence/action requirement recurs in compatibility across two notes;
+this independently verified recurrence triggers selection of high on the same
+frozen 10 answers under the approved step-up rule. The numerical range alone
+is borderline; role losses trigger investigation, not new acceptance margins.
+The high ten-answer investigation is running; no 20-answer expansion has
+started. No effort is qualified or established as the minimum. The medium
+extension took 18 min 40 s plus a separate 48 s bridge, with no new warmups.
+Its fixed chosen-response catalog estimate is 56.93% lower than xhigh's;
+complete paid cost and actual provider charges remain unknown. See the
+[ten-answer medium evidence](distillation-review-v1/README.md#ten-answer-medium-investigation-october-10).
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:

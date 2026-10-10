@@ -339,10 +339,19 @@ catalog estimate is 57.8% lower than xhigh's. See the
 
 Low's completed screen finds H=10, G=1, A=3 over the same 297 questions,
 with a 2.02–4.04 percentage-point loss range and a specific added-action error
-across two notes. Low will not expand. Medium is selected for the frozen
+across two notes. Low will not expand. Medium was selected for the frozen
 10-answer, 405-question investigation; high remains available if medium
 degrades. No effort has qualified. See the
 [low results and selection](../../sse_multivector/distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10).
+
+Medium's 10-answer investigation is complete on 405 fixed questions, retaining
+the prior 297 choices. Source adjudication finds H=11, G=3, A=4 and a
+0.99–2.96 percentage-point loss range. The same added main-occurrence/action
+requirement now recurs in compatibility across two notes. High on the same
+10 answers is running under the step-up rule; no 20-answer expansion has started.
+The borderline numerical range alone does not establish rejection. No effort
+has qualified. See the
+[medium ten-answer record](../../sse_multivector/distillation-review-v1/README.md#ten-answer-medium-investigation-october-10).
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

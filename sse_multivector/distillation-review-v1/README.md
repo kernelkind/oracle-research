@@ -2425,12 +2425,104 @@ relationship losses require further source assessment; this is investigation,
 not qualification. High remains available if medium degrades significantly or
 shows a new recurring failure. The selection SHA-256 is
 `a4f97ec416736b44bb6b020035386877dfe726d3089f2bfc12399482648edb08`.
-The next five source answers follow the frozen order and preserve prior chosen
-outputs and receipts. Their added shared prefixes are below the warming
-threshold, so no new warmups are planned. One native coordinator, concurrency 8,
+The five added source answers followed the frozen order and preserved prior
+chosen outputs and receipts. Their shared prefixes were below the warming
+threshold, so no new warmups were needed. One native coordinator, concurrency 8,
 provider-only two-attempt retries, prompts and mechanical rules remain fixed.
 No effort has qualified, and bulk grading and reserved-test access remain
 unapproved. This checkpoint changes no prompt, rubric or release policy.
+
+## Ten-answer medium investigation (October 10)
+
+Sol/medium has completed the frozen 10-answer, **405-question** comparison:
+**387 decisions agree with xhigh**, with 18 discordances and no missing or
+conflicting panel decisions. All 18 have current source assessments, giving
+**H=11, G=3, A=4** and a correctness-loss range of **4–12 of 405 decisions**,
+or **0.99–2.96 percentage points**. All prior 297 chosen answers and original
+receipts are unchanged; the added 108 questions contribute H=3, G=1, A=2.
+Role results are:
+
+| Role | N | H | G | A | Loss in percentage points |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Matching | 123 | 0 | 0 | 1 | −0.81 to 0.81 |
+| Post support | 123 | 3 | 0 | 2 | 0.81–4.07 |
+| Actual student parent-child pairs | 81 | 3 | 0 | 1 | 2.47–4.94 |
+| Teacher/student compatibility | 84 | 6 | 3 | 0 | 3.57 |
+
+The relationship roles share six exact inputs, including one harmful
+difference; each counts once overall. The
+[medium ten-answer source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-medium-source-assessment.json)
+has SHA-256
+`2a2503e8f2e9fd950c4e7e82b0957db8179d9bd0d22670ee1430859f816f5bd4`.
+These are truth-uncertainty bounds from agent source assessment, not confidence
+intervals, human-certified gold or population reliability. Fresh-call variance
+and the effects of selecting an effort across nested stages remain unmeasured.
+
+The current-AI-wave modifier comparison Jec359 is accepted true, producing H.
+Both original source-only judgments were false and revised to true after
+anonymous reason review under the unchanged clause/modifier rule; all originals
+remain preserved. J6dc's English-practice-purpose comparison is accepted false,
+producing G after independent review. Both new hashtag support differences
+remain unresolved and contribute A; no source uncertainty is forced into a
+verdict.
+
+The [medium recurring-failure audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-medium-restriction-pattern-audit.json)
+has SHA-256
+`9a7b2541332b8bb25afd7f1bd85bfebafa10e823bdfc4361f5396eb9be43c8e2`.
+Four accepted harmful prompts show the same added requirement for the parent
+meaning to be the post's main subject, occurrence or performed action, despite
+that meaning surviving in a clause, modifier or object. Compatibility alone
+establishes recurrence across **R01 and R21**, two distinct notes. The actual
+student parent-child failures for this mechanism remain on R01 only; repeated
+R01 questions do not add independent notes. The separate actual People → Mothers
+error on C06 remains in the role totals. The initial high screen does not
+establish that high fixes the new R21 pair.
+
+The extension pipeline took **18 min 40 s**, followed by a separate **48 s**
+bridge for 16 missing panel inputs, all successful on their first attempts.
+No new warmups were needed. The
+[medium ten-answer execution seal](../../target/distillation-review-v1/final-trial-20261009/evaluation-medium/stage-10-complete-execution.md)
+keeps pipeline and supplement reports separate; cumulative native costs include
+prior stage-five work and are not extension-only expenses.
+
+For the same 405 chosen successful answers, the API-equivalent catalog estimate
+is **$1.9585544 at xhigh and $0.8435832 at medium**, or **56.93% lower**.
+Both contain 312,530 total observed input tokens; cached input is 25.93% at
+xhigh and 22.48% at medium. Output falls 76.33% and reasoning falls 88.99%;
+output already includes reasoning. The
+[405-question cost audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-medium-fixed-panel-cost-analysis.json)
+has SHA-256
+`e3f8d4451c08ef02651736281a70e3706321ae824f5a386216b8fa09611ee2d0`.
+Complete costs including all paid attempts remain unknown: xhigh has two failed
+attempts without usage and medium has one within this panel. Previously paid
+shared warmups remain separate; reuse aliases add no paid attempt. Actual
+provider charges are unknown. Summed chosen model-worker durations fall 57.92%,
+but include all 405 questions across both stages and are not extension wall time.
+Cache availability, history and adaptive branches prevent a causal effort-only
+cost or runtime conclusion.
+
+The [independent medium gate audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-medium-effort-gate-audit.json)
+has SHA-256
+`980ee2cd4c9fbeee451f19e1c202ea87acade7ed5572fe86bda615e833c33b70`.
+The numerical loss range alone is borderline. The independently verified
+specific two-note recurrence requires stepping up under the approved interim
+rule. Support and both relationship roles also require investigation and a
+higher-effort comparison; these are not new per-role acceptance thresholds.
+
+The [recorded next-effort decision](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-10-effort-selection-decision.json)
+selects **high on the same frozen 10 answers and 405 questions**, with dispatch
+authorized. Its SHA-256 is
+`5271afdc5abbdcd1654ae8d09a5a6652524265497abac881a9102233e6239534`.
+The high ten-answer investigation started at **13:18:53 UTC on October 10**
+and is running under one native coordinator. The five added answers retain the
+prior high-screen outputs and receipts, use concurrency 8 and need no new
+warmups. Complete the high pipeline and exact missing-panel bridge, then assess
+all new source disagreements before any 20-answer expansion. Medium remains
+unexpanded, and no 20-answer expansion has started. No effort is qualified or
+established as the minimum. Prompts,
+frozen data, references, mechanical rules, concurrency 8, provider-only
+two-attempt retries and natural-prefix eligibility
+remain unchanged. Bulk grading and reserved-test access remain unapproved.
 
 ## Actual distilled wording: offline preview (October 8)
 

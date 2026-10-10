@@ -1903,13 +1903,27 @@ Prompts, frozen references, mechanical rules and approval scope remain unchanged
 **October 10 low screen and next investigation:** all 297 paired questions are
 complete, with 283 agreements and source-adjudicated H=10, G=1, A=3. The
 2.02–4.04 percentage-point loss range and an independently checked specific
-failure across two notes rule out expanding low. Medium is selected for the
+failure across two notes rule out expanding low. Medium was selected for the
 frozen 10-answer investigation with 405 distinct questions; high remains
 available if medium degrades. No effort has qualified. This implements the
 approved study, with unchanged prompts, rules and controls; it adds no release
 policy or population guarantee. The
 [low results and selection record](../../sse_multivector/distillation-review-v1/README.md#initial-low-effort-screen-and-next-stage-selection-october-10)
 preserves the exact source assessments, original receipts and separate costs.
+
+**October 10 ten-answer medium checkpoint:** the fixed 405-question comparison
+is complete, retaining all prior 297 chosen answers and receipts. Source
+adjudication finds H=11, G=3, A=4 and a 0.99–2.96 percentage-point loss range.
+A specific added main-occurrence/action requirement recurs in compatibility
+across R01 and R21; actual student parent-child failures for this mechanism
+remain on R01 only. High on the same frozen 10 answers is now running under
+the existing step-up rule; no 20-answer expansion has started.
+The numerical range alone is borderline; the verified recurring mechanism
+requires stepping up. Role losses trigger investigation, without adding
+per-role numerical acceptance thresholds.
+No medium 20-answer expansion or qualification is established. The
+[ten-answer record](../../sse_multivector/distillation-review-v1/README.md#ten-answer-medium-investigation-october-10)
+preserves source uncertainty, the specific failure audit and separate costs.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual
