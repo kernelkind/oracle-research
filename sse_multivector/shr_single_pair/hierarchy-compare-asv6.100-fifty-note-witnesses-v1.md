@@ -329,3 +329,32 @@ diagnostic field names and preserved semantic obligations were checked without
 teacher calls. This remains an unrun, unadopted prompt draft in the research
 worktree. No runtime schema, input adapter, Bootstrap prompt or hierarchy was
 changed, and no reliability improvement is claimed.
+
+## Approved v75 qualification: native preparation
+
+The user approved v75 and authorized preparing, running and reviewing the
+102-case panel. The current-main-based `oracle-mvp-compare-v75-qualification-v1`
+worktree isolates this bounded task from the older research runtime history.
+The source [projection](hierarchy-compare-v75-fifty-note-witnesses-v1.json) pins
+the original v69 prepared experiment envelope by SHA-256. It imports original
+inputs and producer receipts, not historical comparison answers. The new
+[specification](hierarchy-compare-v75-fifty-note-witnesses-v1.spec.json) selects
+unchanged v75, Sol 6.1 medium, concurrency 32, automatic caching and the
+[five-field output schema](Hierarchy-compare-v75.output.schema.json).
+
+First failing native tests established missing preparation, diagnostics and
+consistency-report support. The implementation adds the opt-in `fixed_meanings`
+projection and preserves legacy validation. An independent preflight review
+verified all 102 projected inputs, exact meanings, graph IDs/parents, producer
+receipts and 887 protected source hashes. All inputs retain ASv6.100 provenance.
+There are 100 unique projected inputs: 68 isolated directional requests plus
+32 snapshots. The 35 registered isolated pairs include 34 unique request pairs;
+008 and 033 remain the same reversed duplicate witness.
+
+The prepared report correctly retains 102 unrun cases, 70 eligible isolated
+requests, 32 excluded snapshots and 35 unresolved pair witnesses. Preparation
+made no teacher calls. The 200-test software run had six skips and one missing
+`tiktoken` dependency; that check passed when rerun with the dependency supplied.
+No software test invoked the teacher. Model execution and semantic review are
+recorded separately below. This is qualification of a candidate, not production
+adoption or a claim of improvement over v69's different input/output contract.

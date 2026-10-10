@@ -392,11 +392,49 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
     return cases, {'version': version, 'cases': len(cases), 'application_allowed': False}
 
 
-def validate(raw):
+def project_fixed_meanings(case):
+    """Project a pinned native pair while retaining source evidence for audit."""
+    original = json.loads(case['inputs']['INPUT_JSON'])
+    local, canonical = original['local'], original['canonical']
+
+    def text(value, name):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(name + ' must be nonempty text')
+        return value
+
+    def node(value, name):
+        keys = ('id', 'subject', 'meaning', 'parents')
+        if not isinstance(value, dict) or not set(keys) <= value.keys():
+            raise ValueError(name + ' requires id, subject, meaning and parents')
+        result = {key: text(value[key], name + ' ' + key) for key in keys[:-1]}
+        engine._validate_string_array(value['parents'], name + ' parents', allow_empty=True)
+        result['parents'] = list(value['parents'])
+        return result
+
+    selected = node(canonical, 'canonical node')
+    for key in ('ancestors', 'descendants'):
+        if key not in canonical or not isinstance(canonical[key], list):
+            raise ValueError('fixed_meanings requires canonical ' + key)
+        selected[key] = [node(value, 'canonical ' + key) for value in canonical[key]]
+    payload = {'local': {
+        'subject': text(local['entry']['subject'], 'local subject'),
+        'meaning': text(local.get('meaning'), 'fixed local meaning')},
+        'canonical': selected}
+    evidence = case.get('evidence', {})
+    if 'input_view' in evidence or 'unprojected_input' in evidence:
+        raise ValueError('fixed_meanings requires original unprojected node pairs')
+    return {**case, 'inputs': {'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
+            'evidence': {**evidence, 'input_view': 'fixed_meanings',
+                         'unprojected_input': original}}
+
+
+def validate(raw, *, diagnostics=False, meaning=None):
     """Validate the approved output mechanics without judging its semantics."""
     value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
-    if not isinstance(value, dict) or set(value) != {'meaning', 'relation', 'reason'}:
-        raise ValueError('expected meaning, relation, and reason')
+    fields = {'meaning', 'relation', 'reason'} | ({'questions', 'answers'} if diagnostics else set())
+    if not isinstance(value, dict) or set(value) != fields:
+        raise ValueError('expected meaning, questions, answers, relation, and reason' if diagnostics
+                         else 'expected meaning, relation, and reason')
     if not isinstance(value['relation'], str) or value['relation'] not in RELATIONS:
         raise ValueError('unknown hierarchy comparison relation')
     if value['meaning'] is None:
@@ -406,6 +444,31 @@ def validate(raw):
         raise ValueError('meaning must be nonempty text or null')
     if not isinstance(value['reason'], str) or not value['reason'].strip():
         raise ValueError('reason must be nonempty text')
+    if diagnostics:
+        if not isinstance(meaning, str) or value['meaning'] != meaning:
+            raise ValueError('Compare answer must copy the fixed local meaning exactly')
+        directions = {'local_contains_canonical', 'canonical_contains_local'}
+        for key, identifier, fields in (
+                ('questions', 'id', {'id', 'question'}),
+                ('answers', 'question_id', {'question_id', 'answer', 'justification'})):
+            rows = value[key]
+            if not isinstance(rows, list) or len(rows) != 2:
+                raise ValueError(key + ' requires exactly two records')
+            seen = set()
+            for row in rows:
+                if not isinstance(row, dict) or set(row) != fields:
+                    raise ValueError(key + ' record has invalid fields')
+                direction = row[identifier]
+                if not isinstance(direction, str) or direction not in directions or direction in seen:
+                    raise ValueError(key + ' requires each containment direction exactly once')
+                seen.add(direction)
+                for field in fields - {identifier}:
+                    text = row[field]
+                    if field == 'answer' and text is None:
+                        if value['relation'] != 'uncertain':
+                            raise ValueError('null coverage answer requires uncertain')
+                    elif not isinstance(text, str) or not text.strip():
+                        raise ValueError(field + ' must be nonempty text')
     return value
 
 

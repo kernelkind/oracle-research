@@ -6343,3 +6343,30 @@ generated meaning and answer history without changing the source trial. Only
 `run`, `continue-canonical-trial` or an explicit `--run-next` dispatches requests.
 See [graph-search selection](canonical-graph-search-v1.md) for the tested native
 commands, saved ASv6.100 qualification and remaining full-build measurement.
+
+### Fixed-meaning Compare qualification
+
+The `hierarchy_node_pairs` adapter can project a pinned native experiment using
+a source with `prepared_experiment: {path, sha256}` and
+`input_view: "fixed_meanings"`. Preparation verifies the original experiment,
+inherited source hashes, runner files and manifest. It rejects mechanical
+answers and requires original node-pair inputs with a fixed local meaning and
+recursive canonical ancestor/descendant records.
+
+The model receives only local `subject` and `meaning`, plus canonical `id`,
+`subject`, `meaning`, `parents`, `ancestors` and `descendants`. All meanings and
+parent IDs are preserved. The original input and producer receipts remain
+review-only evidence; original comparison answers are not imported as targets.
+
+A schema containing `questions` and `answers` selects the five-field diagnostic
+contract. Native validation checks two unique containment-direction questions,
+one linked answer per question, exact local-meaning copying and null-answer
+propagation to `uncertain`. The legacy three-field contract remains available.
+
+Native `show --json` adds `node_pair_consistency`: producer-bound isolated
+reversals, transitivity, equivalence substitution and cycles. Canonical branch
+snapshots are excluded from isolated-pair denominators. Registered pair
+witnesses and unique request pairs are reported separately; unresolved and
+failed cases remain unresolved. These checks establish consistency, not semantic
+correctness. Counterexamples, whole-scope positive justifications and canonical
+consequences still require attributed review.

@@ -871,6 +871,8 @@ def code_files(dataset):
         names += ['bootstrap_student_inputs.py']
     if dataset['adapter'] == 'compare_student_inputs':
         names += ['bootstrap_student_inputs.py', 'compare_student_inputs.py']
+    if dataset['adapter'] == 'hierarchy_node_pairs':
+        names += ['hierarchy_node_pair_consistency.py']
     names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py', 'canonical_graph_policy.py', 'canonical_graph_search.py']
     names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_selective_trial.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
@@ -894,6 +896,9 @@ def enrich_report(result, plan, cases):
                    else None)
     if diagnostics is not None:
         result['relation_diagnostics'] = diagnostics
+    if result['adapter'] == 'hierarchy_node_pairs':
+        from . import hierarchy_node_pair_consistency
+        result['node_pair_consistency'] = hierarchy_node_pair_consistency.summarize(cases)
     if result["adapter"] == "distillation_verdict":
         try:
             from . import distillation_verdict
