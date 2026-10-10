@@ -5948,3 +5948,20 @@ Reuse the shared executor, receipts and reporting. For each behavior change,
 first add a failing test through the actual CLI or production codepath, implement
 the capability, then run the relevant regression tests with offline transport
 fixtures. Do not rerun model calls merely to add a preparation capability.
+
+### Canonical graph-search comparisons
+
+`prepare-canonical-trial`, `prepare-canonical-child-trial` and
+`fork-canonical-trial` accept opt-in `--graph-search`. The constructor starts at
+canonical roots, prepares the next comparisons from returned relationship labels,
+and applies one placement after traversal. Native exact reuse and receipt checks
+cover every phase; graph-derived relationships remain separate from model outputs.
+Each phase retains the same graph and independently fixed local meaning. Existing
+same-note eligibility, required mapped-parent and placement checks still apply.
+
+`fork-canonical-trial SOURCE --output DEST --at-step INDEX --graph-search`
+restarts from the saved graph before one original entry, retaining its independently
+generated meaning and answer history without changing the source trial. Only
+`run`, `continue-canonical-trial` or an explicit `--run-next` dispatches requests.
+See [graph-search selection](canonical-graph-search-v1.md) for the tested native
+commands, saved ASv6.100 qualification and remaining full-build measurement.
