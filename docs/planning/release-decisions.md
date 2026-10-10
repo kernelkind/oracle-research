@@ -1803,7 +1803,7 @@ shared experiment runner. Reviewer extrapolation, lower reasoning effort and
 bulk review adoption depend on the resulting evidence. See the
 [trial record](../../sse_multivector/distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9).
 
-**Completed-check evidence, trial still running:** sealed references precede all
+**Completed-check evidence, trial paused:** sealed references precede all
 calls; all 958 mechanical proofs have been independently verified.
 Matching and support finish with 569/591 and 585/600 resolved distinct semantic
 agreements, excluding 24 and 15 unresolved inputs. Independent audits identify
@@ -1812,7 +1812,15 @@ recording reference mistakes/ambiguities in 37 native agent reviews. Relationshi
 auditing has found two disjoint inconsistency families and explicit scoring
 blockers. Matching caches 42.14% of comparison input; support has no reported
 hits. A successfully retried transport interruption has unknown usage, so full
-cost remains unknown. The relationship phase and final qualification are pending;
+cost remains unknown. The user pauses the relationship phase to investigate
+scalability; final qualification remains pending. The earlier runtime estimate
+excludes compatibility: this trial adds 9,678 coverage requests to 2,086 primitive
+checks. Saved matching decisions leave 278 of 513 required-meaning/answer groups
+without a full match; their coverage fails regardless of placement. Omitting
+only that work would save 5,764 requests across the whole selected workload,
+conditional on the saved DSM decisions. No execution or exhaustive-report contract has
+changed; all completed receipts are preserved and workers have exited. See the
+trial record for the paused native counts and investigation boundaries;
 this evidence approves no prompt revision, lower effort, bulk grading or test
 unsealing.
 

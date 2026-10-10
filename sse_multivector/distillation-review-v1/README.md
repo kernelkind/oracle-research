@@ -17,7 +17,10 @@ The [complete validation workload preview](#complete-validation-workload-preview
 now measures the mechanical savings and remaining distinct input questions offline.
 The [offline token and runtime estimate](#validation-review-token-and-runtime-estimate-october-9)
 projects about 15.34 hours for those questions at eight continuously occupied
-slots, using 59 selected fresh saved verdicts; qualification remains pending.
+slots, using 59 selected fresh saved verdicts. It excludes coverage-placement
+comparisons and is not a complete-evaluation runtime estimate. The complete-answer
+trial is paused at the user's request to investigate scalability; qualification
+remains pending.
 
 [DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
 3/3 same-post controls** in the approved
@@ -1876,7 +1879,7 @@ verified exact teacher witnesses or identical-string rule proofs. Thirty-four
 compatibility occurrences retain unresolved agent labels despite their valid
 mechanical proofs; those labels remain excluded from reference-agreement denominators.
 
-**Completed matching and support; relationships still running.** The unchanged
+**Completed matching and support; relationships paused.** The unchanged
 native trial has these frozen-reference results, excluding mechanical cases:
 
 | Check | Resolved distinct agreement | Distinct disagreements | Unresolved distinct inputs | Resolved occurrence agreement |
@@ -1911,6 +1914,37 @@ cached tokens are 23.70% of **reported** input tokens; the interrupted attempt
 has unknown usage and is excluded, rather than counted as zero. Complete cost
 remains unknown. Subscription SSE, prompts, effort and caching policy are
 unchanged; bulk review and the pilot's reserved test remain unapproved/sealed.
+
+**User-requested pause for scalability:** the coordinator stopped new dispatch,
+allowed its already-submitted workers to finish, then exited. All receipts and
+frozen inputs are retained; no worker remains. The
+[paused native report](../../target/distillation-review-v1/final-trial-20261009/evaluation/paused-report.json)
+records 870 distinct successful relationship inputs. Only 808 are joined to
+every selected occurrence: 62 further inputs can reuse existing receipts, and
+9,664 require new model work. Relationship execution used 875 original attempts:
+870 distinct successes, two extra successful duplicate dispatches following
+transient failures, and three failed attempts with successful allowed retries.
+All checks together used 2,115 original receipts, including nine warmups, plus
+3,674 reused copies. Four failed attempts have unknown usage. Reported
+input is 1,306,730 uncached plus 288,768 cached tokens (18.10% cached), with
+753,026 output tokens including 637,606 reasoning tokens. The known catalog
+estimate is $10.1725968; complete cost remains unknown.
+
+The current 60-answer plan needs 2,086 distinct primitive requests, plus 9,678
+additional coverage-placement requests: 11,764 total. Required teacher meanings
+are compared against every returned subject, before mechanical settlement and
+identical-request reuse. Those additional requests account for 82.27% of the
+trial workload and were absent from the earlier full-validation runtime estimate.
+
+Read-only investigation of the existing coverage score law finds 278 of 513
+required-meaning/answer groups have no complete match under the saved DSM
+decisions. Their coverage fails regardless of compatibility. Omitting only their
+compatibility work would reduce the entire selected workload by 5,764 distinct
+requests, retaining uses needed for actual edges: 11,764 to 6,000. This is a
+conditional whole-workload count, not outstanding work saved or proof that DSM
+is correct. Current exhaustive compatibility diagnostics and reviewer
+qualification also depend on those judgments; no execution/report contract has
+been changed. The trial remains paused pending agreement on the approach.
 
 ## Actual distilled wording: offline preview (October 8)
 

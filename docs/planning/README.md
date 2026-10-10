@@ -286,14 +286,20 @@ Randomized and challenge results remain separate, and pilot test data stays
 sealed. Reviewer qualification and bulk adoption await the trial results.
 
 Matching and support are now complete; relationships and coverage placement are
-still running. Raw semantic agreement is 569/591 resolved distinct matching
-inputs and 585/600 support inputs, with 24 and 15 unresolved inputs excluded.
+paused at the user's request to investigate scalability. Raw semantic agreement
+is 569/591 resolved distinct matching inputs and 585/600 support inputs, with 24
+and 15 unresolved inputs excluded.
 Independent audits identify four clear reviewer errors in each completed check,
 alongside reference mistakes and ambiguities; all 958 mechanical proofs are
 verified. Two relationship inconsistency families and pending scores are visible
 without rewriting frozen references. Matching caches 42.14% of comparison input;
 support has no reported cache hits. See the trial record for occurrence counts,
 native audit attribution and unknown-usage accounting. Bulk adoption remains open.
+The earlier runtime estimate excludes coverage-placement comparisons. They add
+9,678 requests to this trial's 2,086 primitive checks. Read-only investigation
+finds 5,764 potentially unnecessary requests for teacher meanings with no full
+student match, conditional on the saved matching decisions; changing the
+exhaustive report/qualification contract remains unapproved.
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after
