@@ -8,6 +8,8 @@ DSLv3 scored 11/14, rejecting three valid invitation relationships that this
 xhigh trial accepts. Both versions pass all seven authored controls at both
 efforts. This selected development panel does not qualify a minimum reasoning
 level; the existing lower-effort study remains bound to DSLv2.
+The user authorized a [fresh DSLv3/xhigh consistency repeat](#dslv3-xhigh-consistency-repeat-october-10)
+on those same 14 pairs; its results are pending.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2860,7 +2862,38 @@ does not reopen the frozen lower-effort study or authorize new inference.
 
 The recommended next step is one fresh DSLv3/xhigh repeat on the same 14 pairs
 to check consistency before considering a separately authorized restart of the
-lower-reasoning comparison with the clarification. That repeat has not been started.
+lower-reasoning comparison with the clarification. The user subsequently authorized
+that repeat, recorded below.
+
+## DSLv3 xhigh consistency repeat (October 10)
+
+The user approved one fresh repeat of **DSLv3 / GPT-6.1 Sol / xhigh** on the
+same **14 fixed pairs**, seven expected true and seven false. Native
+`prepare --from --repeat` inherits the three completed candidate-v3 groups from
+the paired xhigh confirmation: seven actual pairs, three teacher controls and
+four large controls. All exact prompts, source expectations, inputs/evidence,
+ASv6.100 rules, schema, current worker, subscription SSE settings, concurrency 8,
+timeout and uncapped output remain unchanged. The prior xhigh responses and
+receipts are the native comparison baseline; no answers are reused.
+
+The repeat is bounded by **14 intended calls and 28 total attempts**, allowing
+only temporary-provider retries and at most two attempts per case. A separate
+native counter preserves the prior confirmation's 28/56 and high's 996/22,968.
+One coordinator runs at a time. The unchanged approximately 440-token prefix
+receives no explicit caching, warming or padding. There is no paid fallback,
+truncation, semantic retry, new selection, DSLv2 arm or lower-effort expansion.
+
+Frozen source assessments remain distinct from inherited native expectations
+and human gold. J298/Jbc/J540 still share R01; repeated pairs or calls do not add
+independent source contexts. Assess every decision and decisive reason against
+the fixed expectations and record attributed agent reviews, without relabeling
+the cases or revising the prompt after seeing responses.
+
+Native artifacts are retained under
+`target/distillation-review-v1/parent-restriction-dslv3-xhigh-repeat-20261010/`,
+in `actual`, `teacher-controls` and `large-controls` groups. Results are pending.
+This bounded consistency check does not establish extrapolation, qualify a
+minimum reasoning level or resume the frozen 60-answer study.
 
 ## Actual distilled wording: offline preview (October 8)
 
