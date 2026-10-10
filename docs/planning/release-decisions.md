@@ -1879,10 +1879,10 @@ adds no change to the approved prompts, semantics, mechanical rules or scope.
 
 **October 10 lower-effort checkpoint:** the initial high screen has 297 complete
 paired decisions, of which 289 agree with the frozen xhigh baseline. Source
-adjudication finds six high-only errors, one xhigh-only error and one unresolved
-difference: a 1.35–2.02 percentage-point overall loss bound, with larger losses
-in support and teacher/student compatibility. High has not cleared this small
-screen; medium and low will be assessed before selecting an expansion effort.
+adjudication now finds six high-only errors and two unresolved differences
+(H=6, G=0, A=2): a 1.35–2.69 percentage-point overall loss bound, with larger
+losses in support and teacher/student compatibility. High has not cleared this
+small screen; medium and low will be assessed before selecting an expansion effort.
 This bound covers truth uncertainty, not statistical confidence. No effort
 has qualified.
 All 60 original source-only diagnostic judgments are preserved separately from

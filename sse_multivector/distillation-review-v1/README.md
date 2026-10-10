@@ -2222,21 +2222,35 @@ The frozen compact snapshot SHA-256 is
 
 The fixed five-answer screen at Sol/high is complete: **289 of 297 decisions
 agree with the frozen xhigh baseline**, with eight discordances and zero missing
-or conflicting panel decisions. Agreement is not correctness. Completed
-source-first adjudication finds **six high-only errors, one xhigh-only error,
-and one unresolved difference**. Overall correctness loss is bounded by
-**1.35–2.02 percentage points**. Support loses 2/89 decisions (2.25 points),
-teacher/student compatibility loses 3/64 (4.69 points), and actual student
-parent-child pairs lose 1/61 (1.64 points). The distinct DSLv2 pool combines
+or conflicting panel decisions. Agreement is not correctness. Revised
+source adjudication finds **six high-only errors and two unresolved differences
+(H=6, G=0, A=2)**. Overall correctness loss is bounded by **4–8 of 297 decisions**,
+or **1.35–2.69 percentage points**. Matching has two unresolved differences over
+89 decisions, giving a possible loss of −2.25 to 2.25 points. Support loses
+2/89 decisions (2.25 points), teacher/student compatibility loses 3/64
+(4.69 points), and actual student parent-child pairs lose 1/61 (1.64 points).
+The distinct DSLv2 pool combines
 the latter two roles with six overlapping prompts: 4/119 losses (3.36 points).
 High has not cleared the conservative two-point margin and has role-level
 concerns.
 Medium and low remain the small screens before choosing an effort to expand;
 no reasoning level has qualified. The
-[source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-high-source-assessment.json)
-preserves each exact-prompt truth and original evidence. Its bounds express
-truth uncertainty, not statistical confidence or reliability beyond these
-five deliberately selected source contexts.
+[revised source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-high-source-assessment-revision-2.json)
+preserves each exact-prompt truth and original evidence. Its SHA-256 is
+`939820622a81cdc8b792ef8e0c433aa4734384c176e574fede21a4d02b139a39`.
+Its bounds express truth uncertainty, not statistical confidence or reliability
+beyond these five deliberately selected source contexts.
+
+The first assessment counted J73d2851a623d930327631f02 as a high correction:
+`Price-sensitive industrial users` matched T39,
+`Price-sensitive industrial electricity users`. A fresh exact-prompt policy
+audit could not settle whether the post interprets what `users` implicitly use
+or supplies an omitted electricity restriction. The
+[revised adjudication](../../target/distillation-review-v1/final-trial-20261009/analysis/semantic-adjudication/adjudications/J73d2851a623d930327631f02-revision-2.json)
+therefore counts this difference as unresolved; its SHA-256 is
+`8b804142243eec1c0553847c7593ae2365f7d3bfce8a832e7863ed377db13051`.
+All original judgments, reviews and the first assessment remain preserved.
+This correction changes no prompt, reference or mechanical rule.
 
 The high production pipeline took **1 h 6 min 42 s**, with 718 successful
 comparison attempts, three transient failures recovered on the second attempt,
@@ -2252,8 +2266,7 @@ All 60 original source-only diagnostic judgments have been saved. Those initial
 votes are not gold: independent review and concrete counterexamples can revise
 them. Final exact-prompt adjudications are separate artifacts, preserve every
 original, and can be reused across efforts. Unresolved differences contribute
-the conservative accuracy bound; they are never forced into a verdict. A source
-review has confirmed both a high-only error and an xhigh-only error, so student
+the conservative accuracy bound; they are never forced into a verdict. Student
 scores and raw agreement cannot substitute for this process.
 
 The [high screen seal](../../target/distillation-review-v1/final-trial-20261009/evaluation-high/stage-5-complete-execution.md)
