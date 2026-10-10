@@ -1,0 +1,34 @@
+{
+  "schema_version": 2,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "bootstrap_spec": "hierarchy-as100-fifty-note-b96-bootstrap-v1.spec.json",
+  "comparison_spec": "hierarchy-as100-fifty-note-c48-compare-v1.spec.json",
+  "independent_meanings": true,
+  "local_schema_version": 4,
+  "roots": [
+    {
+      "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+      "number": "2"
+    },
+    {
+      "note_id": "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+      "number": "1"
+    },
+    {
+      "note_id": "bb440af90858516c7aa1cc9d54df9c4a5b507671606f44137d02561733ed3a6b",
+      "number": "2"
+    },
+    {
+      "note_id": "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+      "number": "5"
+    },
+    {
+      "note_id": "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+      "number": "1"
+    },
+    {
+      "note_id": "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+      "number": "8"
+    }
+  ]
+}

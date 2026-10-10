@@ -1,0 +1,190 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "U01",
+      "local": {
+        "note_id": "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+        "number": "2.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U02",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U03",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "U04",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U05",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "U06",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1.3"
+      },
+      "review": {}
+    },
+    {
+      "id": "U07",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1.4"
+      },
+      "review": {}
+    },
+    {
+      "id": "U08",
+      "local": {
+        "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+        "number": "2.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U09",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U10",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "U11",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.3"
+      },
+      "review": {}
+    },
+    {
+      "id": "U12",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.4"
+      },
+      "review": {}
+    },
+    {
+      "id": "U13",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.5"
+      },
+      "review": {}
+    },
+    {
+      "id": "U14",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.6"
+      },
+      "review": {}
+    },
+    {
+      "id": "U15",
+      "local": {
+        "note_id": "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+        "number": "4.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U16",
+      "local": {
+        "note_id": "d8c979a95c694844c8852080c11945744aadfffc54b5ceda47243ab80a247f85",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U17",
+      "local": {
+        "note_id": "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U18",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "U19",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "U20",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.3"
+      },
+      "review": {}
+    },
+    {
+      "id": "U21",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.4"
+      },
+      "review": {}
+    },
+    {
+      "id": "U22",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.5"
+      },
+      "review": {}
+    },
+    {
+      "id": "U23",
+      "local": {
+        "note_id": "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+        "number": "1.1"
+      },
+      "review": {}
+    }
+  ]
+}

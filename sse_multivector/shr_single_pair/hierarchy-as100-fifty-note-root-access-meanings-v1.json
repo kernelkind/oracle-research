@@ -1,0 +1,70 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "A01",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "A02",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "A03",
+      "local": {
+        "note_id": "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+        "number": "2.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "A04",
+      "local": {
+        "note_id": "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+        "number": "1.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "A05",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "2.1"
+      },
+      "review": {}
+    },
+    {
+      "id": "A06",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "2.2"
+      },
+      "review": {}
+    },
+    {
+      "id": "A07",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "2.3"
+      },
+      "review": {}
+    },
+    {
+      "id": "A08",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "2.4"
+      },
+      "review": {}
+    }
+  ]
+}

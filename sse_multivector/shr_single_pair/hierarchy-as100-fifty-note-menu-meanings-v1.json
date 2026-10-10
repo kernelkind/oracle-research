@@ -1,0 +1,38 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "nodes": [
+    {
+      "id": "G01",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "2"
+      },
+      "review": {}
+    },
+    {
+      "id": "G02",
+      "local": {
+        "note_id": "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+        "number": "1"
+      },
+      "review": {}
+    },
+    {
+      "id": "G03",
+      "local": {
+        "note_id": "bb440af90858516c7aa1cc9d54df9c4a5b507671606f44137d02561733ed3a6b",
+        "number": "2"
+      },
+      "review": {}
+    },
+    {
+      "id": "G04",
+      "local": {
+        "note_id": "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+        "number": "5"
+      },
+      "review": {}
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-bootstrap-v96",
+    "path": "Hierarchy-bootstrap-v96.md"
+  },
+  "dataset": {
+    "adapter": "hierarchy_local_nodes",
+    "path": "hierarchy-as100-fifty-note-final-access-meanings-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "concurrency": 32,
+    "transport": "sse",
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "ambiguities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "question": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "question"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "resolutions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ambiguity_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "answer": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "justification": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "ambiguity_id",
+              "answer",
+              "justification"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "meaning": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "quote": {
+                "type": "string",
+                "minLength": 1
+              },
+              "supports": {
+                "type": "string",
+                "minLength": 1
+              },
+              "inference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              }
+            },
+            "required": [
+              "quote",
+              "supports",
+              "inference"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "ambiguities",
+        "resolutions",
+        "meaning",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "prompt_cache": true
+  }
+}
