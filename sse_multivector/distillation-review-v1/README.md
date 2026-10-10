@@ -8,9 +8,11 @@ final validation. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
 finished generating with unchanged DSLv4 at Sol/xhigh and **concurrency 16**.
 Its raw native report is preserved before formal audit reviews. Definition and
-counterexample defects found in its explanations motivate the untested
-[DSLv5 draft](#dslv5-definition-and-counterexample-draft-october-10);
-semantic qualification remains pending.
+counterexample defects found in its explanations motivate the completed
+[DSLv5 development trial](#dslv5-definition-and-counterexample-draft-october-10).
+Its 14 fresh Sol/xhigh verdicts agree with the prepared targets; complete
+records receive **nine accepts, two rejects and three uncertainties** from both
+agent audits. The development set does not pass; qualification remains pending.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3562,8 +3564,10 @@ establish population accuracy. Disclose development exposure in the final
 
 ## DSLv5 definition and counterexample draft (October 10)
 
-The user authorizes presenting a targeted parent-child prompt revision before
-candidate model calls. [DSLv5](relationship-prompt-v5.md) is an **untested draft**
+The user approved the exact [DSLv5](relationship-prompt-v5.md) wording and its
+14-case development trial after presentation. Generation and two agent audits
+are complete; the set **does not pass complete-output review**. Prompt adoption
+and reviewer qualification remain pending. The revision is
 against the last approved DSLv4 wording. It adds a required-versus-permitted
 meaning distinction to every evidence claim, including incidental child
 definitions. A usual instance, association or literal expansion is not proof
@@ -3586,8 +3590,8 @@ The shared `revise` command creates the draft and its hash-bound revision
 receipt from unchanged DSLv4. Native `prepare --from` with
 `--prompt`/`--prompt-id`, without `--repeat`, prepares
 `relationship-dslv5-preview-current-runner` from the existing 14-case relationship
-reference: 14 distinct unchanged complete inputs, 14 valid saved baseline
-results, 14 new requests and **zero candidate attempts**. Sol/xhigh,
+reference: at preparation, 14 distinct unchanged complete inputs, 14 valid saved
+baseline results, 14 new requests and **zero candidate attempts**. Sol/xhigh,
 subscription SSE and the exact response schema are inherited. The complete
 fixed instructions including the AS passage have 694 estimated `o200k_base`
 tokens, below the 1,024-token warming threshold; no prefix warmup is prepared.
@@ -3597,9 +3601,58 @@ current source; the first preview remains preserved. The inherited concurrency
 field is still 16, but current dispatch uses the runner's automatic shared
 30-request queue. This is an implementation change, not approval to change the
 user's requested concurrency; the 14-case panel itself permits at most 14
-simultaneous comparisons. The draft is presented before inference. Model calls,
-prompt adoption and lower-effort trials have not occurred for DSLv5; the
-original frozen study and pilot test access remain unchanged.
+simultaneous comparisons. The draft was presented before inference. Following
+the user's approval, native `run` completed the 14-case Sol/xhigh trial with a
+28-attempt persistent allowance, permitting at most two provider-only attempts
+per case. Two independent agents audited the verdicts and complete explanations
+as outputs arrived. Lower-effort testing remains paused; the original frozen
+study and pilot test access remain unchanged.
+
+All **14 distinct fresh outputs** are receipt/schema-valid and complete on the
+first attempt: seven true, seven false, zero reuse, zero provider retries and
+zero warmups. All 14 Booleans agree with the prepared source-assessed targets.
+Independent audits resolve 12 Boolean judgments and retain two named-reference
+uncertainties; no clear Boolean error is established. Target agreement is not
+proof of correctness for those unresolved interpretations. Full evidence records
+receive **nine accepts, two rejects and three uncertainties** in both audits.
+
+| Exact case | Boolean assessment | Complete evidence assessment |
+| --- | --- | --- |
+| `M01-checkpoint-800-N0015:compatibility:015:1.4` | False is sound | Reject: the unqualified Incest definition adds a human-only restriction and universal prohibition; the sisters/chores counterexample remains sound |
+| `M01-checkpoint-800-N0015:compatibility:017:1.1.1` | False is sound | Reject: the complete sexually-attractive-mothers parent record requires the same "people", although the parent does not require human bearers |
+| `M01-checkpoint-800-N0015:compatibility:017:3` | False is sound | Uncertain: an unnecessary categorical inclusive-list interpretation settles a still-open contract; the bodily-subject failure remains independently sound |
+| `M01-checkpoint-800-N0015:compatibility:018:1.1` | Uncertain despite false target agreement | Uncertain: the aunt/nephew counterexample retains the expressed qualifications but may vary the fixed named Family Ties work |
+| `M03-checkpoint-800-N0032:compatibility:003:4` | Uncertain despite false target agreement | Uncertain: refund compatibility with the fixed named game/round is unestablished; distinguish reviewer explanation of no rollover from a post discussing its absence |
+
+The remaining nine cases pass both verdict and full-record review. The XP
+counterexample retains the author, actually earned XP, today's completed
+100-XP English-practice goal, 143/100 progress, current total of 144 and online
+setting, while no English practice occurs. Positive meanings remain preserved
+within invitations, objects, modifiers and temporal references. The Daughters
+record avoids the baseline's universal persons restriction. The MILF records
+avoid an unconditional motherhood guarantee, and the Sisters record explicitly
+chooses a permitted sibling reading rather than treating it as universal.
+
+The Incest scope finding uses primary research that applies the term to banded
+mongooses: [Nichols et al., Biology Letters (2014)](https://researchonline.ljmu.ac.uk/id/eprint/1727/),
+DOI `10.1098/rsbl.2014.0898`. The sexually-attractive-mothers saved DSLv4 record
+had no human-only claim; the fresh DSLv5 record introduces one. This establishes
+an output difference, not a causal prompt effect: the trial uses saved baseline
+answers rather than fresh contemporaneous unchanged-prompt calls.
+
+The terminal raw native report was preserved before formal reviews. Root
+records the reconciled agent assessments through native `review`; outputs,
+receipts, source targets and legacy frozen labels remain unchanged. Both audits
+are agent assessments, not independent human gold. This exposed development
+panel does not establish unseen-note accuracy or qualify lower reasoning.
+
+Native usage is **10,666 input tokens, zero cached input, 21,320 output tokens
+(including 18,343 reasoning tokens)**. All 14 attempts have usage. The saved
+catalog API-equivalent estimate is **$0.234532**; it is not subscription billing.
+No warming or cache savings occurred. The persistent allowance records 14 of
+28 attempts used. Keep development on small cases: address unsupported universal
+definitions and unresolved reference/list interpretation before proposing a
+broader regression trial.
 
 ## Actual distilled wording: offline preview (October 8)
 

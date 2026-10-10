@@ -375,8 +375,11 @@ cases and the fixed ten-note workflow after that development set passes; the
 original 50 random plus ten challenge answers remain the very final validation.
 The ten-note DSLv4 run has finished generation unchanged and preserves its raw
 report before formal audit reviews. [DSLv5](../../sse_multivector/distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
-is an untested definition/counterexample draft with a prepared 14-case preview
-and zero candidate calls. Sol/xhigh, subscription SSE, trusted ASv6.100,
+has completed its approved 14-case Sol/xhigh development trial: all Booleans
+agree with prepared targets, with two named-reference interpretations unresolved.
+Complete records receive nine accepts, two rejects and three uncertainties in
+both agent audits. The set does not pass; qualification and adoption remain pending.
+Sol/xhigh, subscription SSE, trusted ASv6.100,
 mechanical rules and schemas remain fixed. The completed ten-note run retains
 its frozen concurrency of 16; the current shared runner uses automatic queue
 admission for future dispatch. Lower-effort testing remains paused. Native
