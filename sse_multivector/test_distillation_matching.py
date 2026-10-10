@@ -142,9 +142,9 @@ class DistillationMatchingTests(unittest.TestCase):
     def test_valid_empty_teacher_catalog_is_a_mechanical_nonmatch(self):
         self.actual_source()
         reference = self.path.parent / "references.jsonl"
-        row = json.loads(reference.read_text())
-        row["subjects"] = []
-        reference.write_text(json.dumps(row) + "\n")
+        rows = [json.loads(line) for line in reference.read_text().splitlines()]
+        rows[1]["subjects"] = []
+        reference.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
         manifest_path = self.path.parent / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
         manifest["outputs"]["references.jsonl"] = hashlib.sha256(reference.read_bytes()).hexdigest()
@@ -249,7 +249,9 @@ class DistillationMatchingTests(unittest.TestCase):
         messages = [dict(role="user", content="ASv6.100\n\n<post>\nTwo metres.\n</post>")]
         teacher = [dict(number="1", context="Cable.", subject="Cable A"),
                    dict(number="1.1", context="Length.", subject="2 m cable A")]
-        references = [dict(note_id="note-a", split="evaluation", text="Two metres.", subjects=teacher)]
+        references = [dict(note_id="train-a"),
+                      dict(note_id="note-a", split="evaluation", text="Two metres.", subjects=teacher),
+                      dict(note_id="test-a")]
         evaluation = [dict(note_id="note-a", messages=messages)]
         for name, rows in (("references", references), ("evaluation", evaluation)):
             (root / (name + ".jsonl")).write_text("\n".join(json.dumps(r) for r in rows) + "\n")

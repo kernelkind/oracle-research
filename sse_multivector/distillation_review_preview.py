@@ -10,7 +10,6 @@ import hashlib
 import json
 import math
 from pathlib import Path
-import re
 import statistics
 
 from . import distillation_review as review
@@ -48,18 +47,7 @@ def _validation(manifest_path, sources):
         raise ValueError("invalid or overlapping frozen validation splits")
     directory = manifest_path.parent
     raw = _read(directory / "references.jsonl", sources, manifest["outputs"]["references.jsonl"])
-    lines = raw.splitlines()
-    if len(lines) != len(identities):
-        raise ValueError("reference identity count differs from frozen splits")
-    # The frozen writer emits note_id first. Reject unsupported order before
-    # decoding any row content, including accidentally reordered reserved rows.
-    header = re.compile(rb'^\s*\{\s*"note_id"\s*:\s*("(?:[^"\\]|\\.)*")\s*[,}]')
-    for line, identifier in zip(lines, identities):
-        match = header.match(line)
-        if match is None or _decode(match[1]) != identifier:
-            raise ValueError("reference identity header order differs from frozen splits")
-    start = len(splits[0])
-    references = [_decode(line) for line in lines[start:start + len(splits[1])]]
+    references = [_decode(line) for line in review._evaluation_reference_lines(raw, splits)]
     raw = _read(directory / "evaluation.jsonl", sources, manifest["outputs"]["evaluation.jsonl"])
     evaluation = [_decode(line) for line in raw.splitlines()]
     if [r["note_id"] for r in evaluation] != splits[1]:

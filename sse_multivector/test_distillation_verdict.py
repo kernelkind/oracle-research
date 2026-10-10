@@ -49,8 +49,9 @@ class DistillationVerdictTests(unittest.TestCase):
         if teacher is None:
             teacher = [dict(number="1", context="Cables.", subject="Cables"),
                        dict(number="1.1", context="Cable A.", subject="2 m cable A")]
-        for name, rows in (("references", [dict(note_id="note-a", split="evaluation",
-                                                text=post, subjects=teacher)]),
+        for name, rows in (("references", [dict(note_id="train-a"),
+                                            dict(note_id="note-a", split="evaluation",
+                                                 text=post, subjects=teacher), dict(note_id="test-a")]),
                            ("evaluation", [dict(note_id="note-a", messages=messages)])):
             (root / (name + ".jsonl")).write_text("\n".join(json.dumps(r) for r in rows) + "\n")
         def bound(path):
@@ -73,6 +74,32 @@ class DistillationVerdictTests(unittest.TestCase):
                 expected_reason="Supported two-metre cable; the actual parent requires three metres.",
                 selection="Untouched saved validation output.")])
         return saved, generation
+
+    def test_saved_validation_does_not_decode_other_reference_splits(self):
+        self.actual_source("relationship")
+        root = self.path.parent
+        reference = root / "references.jsonl"
+        lines = reference.read_text().splitlines()
+        lines[0] = '{"note_id":"train-a", "poison": INVALID TRAIN CONTENT}'
+        lines[-1] = '{"note_id":"test-a", "poison": INVALID RESERVED CONTENT}'
+        reference.write_text("\n".join(lines) + "\n")
+        manifest_path = root / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["outputs"]["references.jsonl"] = hashlib.sha256(reference.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest))
+        self.source["dataset_manifest"]["sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        cases, protected, _ = self.prepare()
+        self.assertEqual(json.loads(cases[0]["inputs"]["RELATIONSHIP_INPUT"]),
+                         dict(parent_subject="3 m cables", child_subject="Cable A, two metres long"))
+        self.assertIn(str(reference), protected)
+        self.assertFalse(any(Path(p).name in {"train.jsonl", "test.jsonl"} for p in protected))
+        lines[-1] = '{"note_id":"unknown-test", "poison": INVALID RESERVED CONTENT}'
+        reference.write_text("\n".join(lines) + "\n")
+        manifest["outputs"]["references.jsonl"] = hashlib.sha256(reference.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest))
+        self.source["dataset_manifest"]["sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError, "reference identity header order differs"):
+            self.prepare()
 
     def test_exact_same_post_teacher_subject_is_mechanical_with_all_occurrences(self):
         self.source["cases"] = [dict(id="S01", case="TC01", student_number="1.2.1.1",
