@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-compare-v48",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-disambiguation-v1/sse_multivector/shr_single_pair/Hierarchy-compare-v48.md"
+  },
+  "dataset": {
+    "adapter": "compare_student_inputs",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/sse_multivector/distillation/compare-pilot-train-inputs-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "concurrency": 4,
+    "transport": "sse",
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "meaning": {"type": ["string", "null"]},
+        "relation": {"type": "string", "enum": ["equivalent", "local_contains_canonical", "canonical_contains_local", "neither", "uncertain"]},
+        "reason": {"type": "string"}
+      },
+      "required": ["meaning", "relation", "reason"],
+      "additionalProperties": false
+    }
+  }
+}

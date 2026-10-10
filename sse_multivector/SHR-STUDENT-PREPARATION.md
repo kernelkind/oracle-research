@@ -61,6 +61,36 @@ with independently generated selected ancestor meanings. A teacher answer or
 agent accept does not establish human gold. Preserve rejected/unresolved cases;
 never repair them into silent training targets.
 
+The completed Bootstrap runs returned **96/24 schema-valid answers**, using
+97/24 subscription attempts: one TRAIN provider retry consumed an attempt and
+one final untouched case completed on bounded resume. Native agent meaning
+reviews recorded **94/21 provisional accepts and 2/3 uncertain assessments**;
+these are not human approvals. There are **6/1 null meanings**. Exact source
+quotes and the full answer contract passed strict offline collection, including
+unresolved/null consistency. All 120 answers and bound reviews remain in
+`learning-pilot-v1/bootstrap-answers-v1/{bootstrap.json,provenance.json}`.
+The collection is provisional evidence, not an automatically fit-ready dataset.
+
+The native `compare_student_inputs` adapter selects **88/20 reviewed non-null
+meanings** from those same TRAIN development roles. Current user decisions
+override agent assessments; null or rejected/unresolved meanings never become
+Compare targets. Source-bound preparation produces **96/24 unordered nominations,
+184/46 requests** including reversals and **8/2 same-entry controls**. TRAIN's
+other nominations are 29 same-tree, 29 cross-post word-overlap and 30 cross-post
+controls; evaluation uses 7/7/8. No equal-heading cross-post family was available.
+These families nominate questions without supplying labels. Original posts,
+entry numbers, authors, local ancestors and fixed meanings are preserved.
+
+This first Compare qualification pass deliberately has empty canonical branches.
+It establishes candidate relationships before using accepted containment to
+prepare branch examples; it is not a production-branch benchmark or complete
+task coverage. Its **Compare-v48** teachers retain the original three-field
+meaning/relation/reason contract, with the local meaning checked for exact copy.
+The student remains relation-only. Native collection preserves every teacher
+answer and bound review; it does not apply relationships to a hierarchy. The
+prepared experiments are `learning-pilot-v1/compare-{train,evaluation}-teacher`;
+no task-specific fit has run.
+
 Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
 every support post, source entry, producer answer, reciprocal family and branch
 variant in the same pilot role. Nominate bounded same-tree, sibling, equal-heading,
@@ -69,7 +99,8 @@ reviewed Compare teacher decisions may supply relation-only targets. Include
 all five labels and real supplied ancestor/descendant consequences before
 claiming task coverage; the existing 196 isolated inputs lack that branch
 coverage. Never infer a negative from an absent SP edge or force a quota by
-relabeling a case. This corpus has not yet been produced or qualified.
+relabeling a case. The first prepared pass above does not yet supply qualified
+branch examples or final training targets.
 
 Learning comparison must preserve the same qualified source examples, target
 definitions and evaluation roles across candidates. Save the initial checkpoint

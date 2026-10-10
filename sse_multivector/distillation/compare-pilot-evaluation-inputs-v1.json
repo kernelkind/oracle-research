@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "bootstrap": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/bootstrap-compare-student-v1/learning-pilot-v1/bootstrap-answers-v1/bootstrap.json",
+    "sha256": "f107d232415bfccbc7138cdab4e13936e56ec3e6d052a41581463a344c8ba1c2"
+  },
+  "provenance": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-student-prep-v1/target/bootstrap-compare-student-v1/learning-pilot-v1/bootstrap-answers-v1/provenance.json",
+    "sha256": "7932dca3efc39e553807c87acb9074fac6e5ef7ef6d6d37cadc42bdf84b56b15"
+  },
+  "role": "evaluation",
+  "seed": "BOOTSTRAP-COMPARE-DEVELOPMENT-PILOT-v1",
+  "max_pairs": 24,
+  "self_pairs": 2
+}

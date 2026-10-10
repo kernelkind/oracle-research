@@ -60,6 +60,11 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'compare_student_inputs':
+        from . import compare_student_inputs
+        cases, protected, preparation = compare_student_inputs.prepare(source, path.parent)
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'bootstrap_student_inputs':
         from . import bootstrap_student_inputs
         cases, protected, preparation = bootstrap_student_inputs.prepare(source, path.parent)
@@ -1293,6 +1298,11 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'compare_student_inputs':
+        from . import compare_student_inputs
+        answer = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        meaning = json.loads(case['inputs']['INPUT_JSON'])['local']['meaning']
+        result['parsed'] = compare_student_inputs.validate_answer(answer, meaning)
     if adapter == 'distillation_verdict':
         try:
             from . import distillation_verdict

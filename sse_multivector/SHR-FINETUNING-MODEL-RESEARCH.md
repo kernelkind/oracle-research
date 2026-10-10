@@ -122,7 +122,12 @@ names and scaled FP8 weights against original logits. Preserving the outer
 checkpoint's quantization metadata is essential: otherwise extracting its text
 config silently casts FP8 tensors without their scales. That initial load made
 no task requests; it remains preserved separately. The corrected BF16 native
-Bootstrap screen is running. Native NF4 conversion and task-specific adaptation
+Bootstrap screen completed eight native requests: all failed the strict full
+response contract because of Markdown fences. Separate raw-meaning review also
+found root-to-instance narrowing for Rosemary, Bread and Risotto, invented
+Coffeechain identity, and nonverbatim evidence. Median request execution was
+83.13 seconds and peak CUDA allocation 28.17 GiB. These published-checkpoint
+observations do not establish post-fine-tune ranking. Native NF4 conversion and task-specific adaptation
 remain unverified; no quality result is claimed from loader preparation.
 
 Other sparse independent foundations remain credible secondary candidates.

@@ -151,6 +151,59 @@ class BootstrapStudentInputTests(unittest.TestCase):
         self.assertFalse((self.root/'bad').exists())
         self.assertEqual(self.calls(), [])
 
+    def test_native_collection_preserves_full_answers_nulls_and_bound_reviews(self):
+        self.source()
+        self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')
+        self.prepare()
+        answer = dict(ambiguities=[], resolutions=[], meaning=None, evidence=[])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        cases = self.show()['cases']
+        self.cli('review', 'E1', '--case', cases[0]['id'], '--role', 'agent',
+                 '--verdict', 'uncertain', '--comment', 'Do not fit this unresolved answer.')
+        saved = {p: p.read_bytes() for p in [self.log,
+            self.root/'E1/run/results.jsonl', self.root/'E1/reviews.jsonl']}
+        self.cli('collect', 'E1', '--output', 'collected')
+        data = json.loads((self.root/'collected/bootstrap.json').read_text())
+        self.assertIn('Provisional', data['semantic_status'])
+        self.assertEqual(len(data['cases']), 3)
+        for actual, expected in zip(data['cases'], cases):
+            self.assertEqual(actual['case_id'], expected['id'])
+            self.assertEqual(actual['inputs'], expected['inputs'])
+            self.assertEqual(actual['evidence'], expected['evidence'])
+            self.assertEqual(actual['receipt'], expected['receipt'])
+            self.assertEqual(actual['answer'], answer)
+            self.assertNotIn('accepted', actual)
+        review = data['cases'][0]['reviews'][-1]
+        self.assertEqual((review['role'], review['verdict'], review['current']),
+                         ('agent', 'uncertain', True))
+        provenance = json.loads((self.root/'collected/provenance.json').read_text())
+        self.assertEqual(provenance['inference_calls'], 0)
+        for path, before in saved.items():
+            self.assertEqual(path.read_bytes(), before)
+            if path != self.log:
+                self.assertEqual(provenance['sources'][str(path)],
+                                 hashlib.sha256(before).hexdigest())
+
+    def test_native_collection_refuses_nonverbatim_quotes_and_unresolved_meanings(self):
+        self.source()
+        self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')
+        bad_answers = [
+            (dict(ambiguities=[], resolutions=[], meaning='Plants', evidence=[dict(
+                quote='Invented quotation', supports='Plants', inference=None)]),
+             'quote is not verbatim original post'),
+            (dict(ambiguities=[dict(id='a1', question='Which plant?')], resolutions=[dict(
+                ambiguity_id='a1', answer=None, justification='Not established.')],
+                meaning='Rosemary', evidence=[]), 'requires null meaning')]
+        for index, (answer, message) in enumerate(bad_answers):
+            name = f'bad-{index}'
+            self.prepare(name, '--repeat')
+            self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+            calls = self.log.read_bytes()
+            result = self.cli('collect', name, '--output', name+'-collected', ok=False)
+            self.assertIn(message, result.stderr)
+            self.assertFalse((self.root/(name+'-collected')).exists())
+            self.assertEqual(self.log.read_bytes(), calls)
+
 
 if __name__ == '__main__':
     unittest.main()

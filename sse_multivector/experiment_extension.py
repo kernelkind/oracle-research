@@ -78,7 +78,7 @@ def collect(directories, output, worker_config=None):
         plan, _, _ = load(directory)
         if "path" not in plan["dataset"]:
             raise ValueError("collect requires source-bound preparation; import or prepare a new experiment")
-        if plan['dataset']['adapter'] == 'subject_pairs':
+        if plan['dataset']['adapter'] in {'subject_pairs', 'bootstrap_student_inputs', 'compare_student_inputs'}:
             reviews_path = directory / 'reviews.jsonl'
             if reviews_path.exists():
                 protected[str(reviews_path)] = engine._sha256_file(reviews_path)
@@ -104,6 +104,14 @@ def collect(directories, output, worker_config=None):
     adapters = {p["dataset"]["adapter"] for p, _ in bundles}
     if adapters == {"subjects"}:
         files = inputs.hierarchy_inputs.collect_subjects(bundles)
+    elif adapters in ({'bootstrap_student_inputs'}, {'compare_student_inputs'}):
+        from . import bootstrap_student_inputs, compare_student_inputs
+        collector = (bootstrap_student_inputs if adapters == {'bootstrap_student_inputs'}
+                     else compare_student_inputs)
+        collector_path = Path(collector.__file__).resolve()
+        protected[str(collector_path)] = engine._sha256_file(collector_path)
+        protected[str(Path(__file__).resolve())] = engine._sha256_file(Path(__file__))
+        files = collector.collect(bundles)
     elif adapters == {'subject_pairs'}:
         decisions, prompts, seen = [], {}, set()
         for plan, result in bundles:
@@ -176,7 +184,7 @@ def collect(directories, output, worker_config=None):
         files = {'node-sorting.json': dict(schema_version=1,
                   nodes=[nodes[nid] for nid in sorted(nodes)])}
     else:
-        raise ValueError("collect supports subjects, subject_pairs, masks, grouped_masks, node_descriptions and node_sorting experiments")
+        raise ValueError("collect supports subjects, subject_pairs, bootstrap_student_inputs, compare_student_inputs, masks, grouped_masks, node_descriptions and node_sorting experiments")
     if worker_config is not None:
         if not adapters <= {"masks", "grouped_masks"}:
             raise ValueError("--worker-config requires mask experiments")
@@ -683,6 +691,8 @@ def code_files(dataset):
         names += ['subject_pair_candidates.py']
     if dataset['adapter'] == 'bootstrap_student_inputs':
         names += ['bootstrap_student_inputs.py']
+    if dataset['adapter'] == 'compare_student_inputs':
+        names += ['bootstrap_student_inputs.py', 'compare_student_inputs.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
     if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation'}:

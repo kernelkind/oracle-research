@@ -40,6 +40,23 @@ no Bootstrap targets. The reusable examples are
 and its separate evaluation-role selection. Only subsequent `run` sends teacher
 requests; reviewed targets and model fitting remain separate stages.
 
+Native `collect` supports completed `bootstrap_student_inputs` experiments. It
+writes `bootstrap.json` and source-bound `provenance.json`, retaining full answers,
+null meanings and current/stale reviews. It checks verbatim source quotations
+and unresolved/null consistency without repairing or approving training targets.
+
+`compare_student_inputs` accepts hash-bound `bootstrap` and `provenance` references
+to that collection, a pilot `role`, `seed`, `max_pairs` and `self_pairs`. It
+nominates bounded same-tree and cross-post questions from current accepted,
+non-null meaning assessments, preserves source data roles and respects human
+review precedence. Its first qualification pass has empty canonical branches;
+SP paths are context and nominations, never relation targets. Each non-self pair
+gets both orientations. Teachers retain the three-field meaning/relation/reason
+response and must copy the local meaning exactly. Native `collect` writes
+provisional `compare.json` answers with receipts and reviews; relation-only
+student targets and branch examples require separate qualification. See
+[`distillation/compare-pilot-train-inputs-v1.json`](distillation/compare-pilot-train-inputs-v1.json).
+
 [run-model.sh](run-model.sh) sends one caller-supplied prompt through pi-ai.
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.

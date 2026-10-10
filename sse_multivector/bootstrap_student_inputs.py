@@ -14,6 +14,79 @@ from . import extraction_pipeline as engine
 from .hierarchy_inputs import validate_subjects
 
 
+def validate_answer(answer, post):
+    """Check the saved full Bootstrap contract without repairing its meaning."""
+    engine._expect_fields(answer, 'Bootstrap answer',
+                          {'ambiguities', 'resolutions', 'meaning', 'evidence'})
+    for key in ('ambiguities', 'resolutions', 'evidence'):
+        if not isinstance(answer[key], list):
+            raise ValueError(f'Bootstrap {key} must be an array')
+    if answer['meaning'] is not None:
+        engine._expect_string(answer['meaning'], 'Bootstrap meaning')
+    identifiers, resolved = set(), set()
+    for row in answer['ambiguities']:
+        engine._expect_fields(row, 'Bootstrap ambiguity', {'id', 'question'})
+        identifier = engine._expect_string(row['id'], 'ambiguity id')
+        engine._expect_string(row['question'], 'ambiguity question')
+        if identifier in identifiers:
+            raise ValueError('duplicate Bootstrap ambiguity id')
+        identifiers.add(identifier)
+    for row in answer['resolutions']:
+        engine._expect_fields(row, 'Bootstrap resolution',
+                              {'ambiguity_id', 'answer', 'justification'})
+        identifier = row['ambiguity_id']
+        if not isinstance(identifier, str) or identifier not in identifiers or identifier in resolved:
+            raise ValueError('Bootstrap resolutions must match distinct ambiguity ids')
+        resolved.add(identifier)
+        engine._expect_string(row['justification'], 'resolution justification')
+        if row['answer'] is None:
+            if answer['meaning'] is not None:
+                raise ValueError('unresolved Bootstrap resolution requires null meaning')
+        else:
+            engine._expect_string(row['answer'], 'resolution answer')
+    if resolved != identifiers:
+        raise ValueError('Bootstrap resolutions must cover every ambiguity')
+    for row in answer['evidence']:
+        engine._expect_fields(row, 'Bootstrap evidence', {'quote', 'supports', 'inference'})
+        quote = engine._expect_string(row['quote'], 'evidence quote')
+        engine._expect_string(row['supports'], 'evidence support')
+        if row['inference'] is not None:
+            engine._expect_string(row['inference'], 'evidence inference')
+        if quote not in post:
+            raise ValueError('Bootstrap evidence quote is not verbatim original post text')
+    return answer
+
+
+def collect(bundles):
+    """Preserve native teacher answers and reviews; do not qualify fit targets."""
+    cases, prompts, seen = [], {}, set()
+    for plan, result in bundles:
+        prompt_hash = engine._sha256_bytes(plan['prompt']['text'].encode())
+        prompt = prompts.setdefault(prompt_hash, dict(text=plan['prompt']['text'], prompt_ids=[]))
+        if plan['prompt']['id'] not in prompt['prompt_ids']:
+            prompt['prompt_ids'].append(plan['prompt']['id'])
+        planned = {case['id']: case for case in plan['cases']}
+        for case in result['cases']:
+            key = (plan['experiment'], case['id'])
+            if key in seen:
+                raise ValueError('duplicate collected Bootstrap decision')
+            seen.add(key)
+            local = json.loads(case['inputs']['INPUT_JSON'])['local']
+            answer = json.loads(case['output'],
+                                object_pairs_hook=engine._position_decoder().unique_object)
+            validate_answer(answer, local['post'])
+            cases.append(dict(experiment=plan['experiment'], case_id=case['id'],
+                prompt_id=plan['prompt']['id'], prompt_sha256=prompt_hash,
+                input_sha256=planned[case['id']]['input_sha256'], inputs=case['inputs'],
+                answer=answer, evidence=case['evidence'], reviews=case['reviews'],
+                receipt=case['receipt']))
+    if not cases:
+        raise ValueError('Bootstrap collection requires saved decisions')
+    return {'bootstrap.json': dict(schema_version=1, prompts=prompts, cases=cases,
+        semantic_status='Provisional saved Bootstrap answers and bound reviews; '
+                        'not automatically approved training targets or semantic gold.')}
+
+
 def prepare(source, base):
     engine._expect_fields(source, 'Bootstrap student input selection', {
         'schema_version', 'registry', 'manifest', 'split_manifest', 'posts',
