@@ -5,7 +5,9 @@ fixed expectations, versus fresh DSLv2's **12/14**, in the
 [bounded paired trial](#dslv3-bounded-paired-trial-october-10) at high effort.
 Both pass all seven authored controls, but DSLv3 rejects three valid invitation
 relationships. The clarification has not established reliable improvement;
-the existing lower-effort study remains bound to DSLv2.
+the existing lower-effort study remains bound to DSLv2. The user authorized
+[fresh xhigh confirmation](#dslv3-paired-xhigh-confirmation-october-10) on the
+same fixed panel; those results are pending.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -2758,7 +2760,43 @@ and `reviewed-show.json`; plans preserve the exact approved template bytes.
 The recommended next step is a fresh paired confirmation on this fixed panel
 with GPT-6.1 Sol / xhigh before another prompt revision or lower-effort expansion.
 It would check the clarification at the highest approved reasoning level;
-that additional inference has not been started or authorized by this trial.
+the user subsequently authorized that confirmation, recorded below.
+
+## DSLv3 paired xhigh confirmation (October 10)
+
+The user approved the recommended fresh confirmation on the same fixed panel.
+The scope is **14 distinct pairs in each of two fresh arms**, unchanged DSLv2
+and approved DSLv3, with **GPT-6.1 Sol / xhigh / subscription SSE / concurrency 8**.
+Only reasoning effort changes from the preceding paired high trial. All pairs,
+source expectations, quoted ASv6.100 rules, output schema, current shared worker,
+timeout and uncapped output settings remain fixed. Neither prompt is revised.
+
+The seven actual source assessments and seven authored controls retain their
+pre-call expectations above: seven true and seven false per arm. Actual pairs
+have four distinct source contexts; J298/Jbc/J540 share R01 and J58/J216 share
+C06. Existing source assessments remain distinct from inherited native labels
+and human-certified gold. Unresolved A06/A12/A21 cases remain excluded.
+
+Native `prepare --from --repeat` uses each corresponding completed high arm,
+preserving exact inputs and evidence while recording its saved high responses
+as the native comparison baseline. Fresh xhigh arms are compared directly;
+within-prompt high/xhigh differences are reported separately. The frozen high
+artifacts and original 60-answer study are preserved.
+
+There are **28 intended fresh verdict calls**, with at most 56 total attempts
+across the confirmation for temporary-provider retries only and at most two
+attempts per case. One native review coordinator runs at a time. Short unchanged
+prefixes receive no explicit caching, warming or padding. There is no paid
+fallback, truncation, semantic retry, additional case selection or full-study
+expansion. Independent source/settings checks precede dispatch; decisions and
+decisive reasons receive attributed agent reviews against the fixed expectations.
+
+Native artifacts are retained under
+`target/distillation-review-v1/parent-restriction-dslv3-xhigh-confirmation-20261010/`,
+with `baseline-v2` and `candidate-v3` arms and `actual`, `teacher-controls` and
+`large-controls` groups. Results are pending. This bounded development repeat
+does not qualify a reviewer, select a minimum reasoning level or resume bulk
+pilot grading.
 
 ## Actual distilled wording: offline preview (October 8)
 
