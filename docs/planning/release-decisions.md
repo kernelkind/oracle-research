@@ -1882,14 +1882,24 @@ paired decisions, of which 289 agree with the frozen xhigh baseline. Source
 adjudication now finds six high-only errors and two unresolved differences
 (H=6, G=0, A=2): a 1.35–2.69 percentage-point overall loss bound, with larger
 losses in support and teacher/student compatibility. High has not cleared this
-small screen; medium and low will be assessed before selecting an expansion effort.
-This bound covers truth uncertainty, not statistical confidence. No effort
-has qualified.
+small screen. This bound covers truth uncertainty, not statistical confidence.
+No effort has qualified.
 All 60 original source-only diagnostic judgments are preserved separately from
-final exact-prompt adjudications. Medium is running and the low small screen is
-pending under the existing authorization. The [screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10)
+final exact-prompt adjudications. The [screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10)
 keeps adaptive pipeline expenses and supplemental panel calls separate. This is
 an execution checkpoint; it changes no scoring rule, prompt or approval scope.
+
+**October 10 medium checkpoint:** the same 297-question screen is complete,
+with 285 agreements and 12 discordances. Source adjudication finds H=8, G=2,
+A=2, giving a 1.35–2.69 percentage-point loss range, the same overall range as
+high. Both relationship roles have larger losses. These bounds describe truth
+uncertainty, not statistical confidence or population reliability. The fixed
+chosen-response catalog estimate is 57.8% lower than xhigh's; shared warmups
+and adaptive pipeline expenses remain separate. Low is running; no effort
+has qualified and no 10-answer expansion has started. The
+[medium screen record](../../sse_multivector/distillation-review-v1/README.md#initial-medium-effort-screen-october-10)
+preserves the source assessment, cost comparison and role investigation.
+Prompts, frozen references, mechanical rules and approval scope remain unchanged.
 
 **October 1 observation and transfer design approved:** the assistant observes
 from launch through verified retrieval and explicit deletion, inspecting actual

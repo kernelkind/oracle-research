@@ -327,8 +327,14 @@ unresolved differences (H=6, G=0, A=2), bounding correctness loss at 1.35–2.69
 percentage points, with larger losses in support and teacher/student
 compatibility; high has not cleared the initial screen. All 60 original
 source-only diagnostic judgments are saved, with final truths kept separately.
-Medium is running; low screening and correctness qualification are pending. See
-the [high screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10).
+See the [high screen record](../../sse_multivector/distillation-review-v1/README.md#initial-high-effort-screen-october-10).
+
+Medium's same 297-question screen is complete: 285 decisions agree with xhigh,
+and source adjudication finds H=8, G=2, A=2, with a 1.35–2.69 percentage-point
+loss range and concerns in both relationship roles. Its fixed chosen-response
+catalog estimate is 57.8% lower than xhigh's. Low is running; no effort has
+qualified and no 10-answer expansion has started. See the
+[medium screen record](../../sse_multivector/distillation-review-v1/README.md#initial-medium-effort-screen-october-10).
 
 Freeze prep and pilot stages
 locally, then continue on the same rental with fresh pilot adapters only after

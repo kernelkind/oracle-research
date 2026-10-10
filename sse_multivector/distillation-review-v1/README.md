@@ -2233,8 +2233,7 @@ The distinct DSLv2 pool combines
 the latter two roles with six overlapping prompts: 4/119 losses (3.36 points).
 High has not cleared the conservative two-point margin and has role-level
 concerns.
-Medium and low remain the small screens before choosing an effort to expand;
-no reasoning level has qualified. The
+Lower-effort screening continues; no reasoning level has qualified. The
 [revised source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-high-source-assessment-revision-2.json)
 preserves each exact-prompt truth and original evidence. Its SHA-256 is
 `939820622a81cdc8b792ef8e0c433aa4734384c176e574fede21a4d02b139a39`.
@@ -2275,6 +2274,63 @@ report SHA-256 is
 `006553bc45f5a5915967931666cecc4b399f9d5205740f94fe95def3e761dd6f`.
 Prompts, mechanical rules, frozen references, concurrency 8 and natural-prefix
 caching remain fixed. Correctness qualification and bulk adoption remain open.
+
+## Initial medium-effort screen (October 10)
+
+The same fixed five-answer screen at Sol/medium is complete: **285 of 297
+decisions agree with the frozen xhigh baseline**, with 12 discordances and zero
+missing or conflicting panel decisions. Source adjudication finds **H=8, G=2,
+A=2**, giving a correctness-loss range of **4–8 of 297 decisions**, or
+**1.35–2.69 percentage points**. This is the same overall range as high;
+agreement does not establish correctness. Role results are:
+
+| Role | N | H | G | A | Loss in percentage points |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Matching | 89 | 0 | 0 | 1 | −1.12 to 1.12 |
+| Post support | 89 | 1 | 0 | 0 | 1.12 |
+| Actual student parent-child pairs | 61 | 3 | 0 | 1 | 3.28–6.56 |
+| Teacher/student compatibility | 64 | 5 | 2 | 0 | 4.69 |
+
+The relationship roles share six exact inputs; the overall count includes each
+once. The
+[source assessment](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-medium-source-assessment.json)
+has SHA-256
+`9bb53e5476200db1ed257dd88138f0cb3d805d275cfa35bd15c3ef5abde28da3`.
+Its bounds express truth uncertainty, not confidence intervals or population
+reliability; the five deliberately balanced source contexts remain a small
+screen, and initial reference labels are not gold.
+
+The medium pipeline took **58 min 39 s**, with 714 successful comparison
+attempts, one transient failure recovered on the second attempt, two eligible
+prefix warmups and 1,866 saved-answer reuse rows. The five selected answers
+yield two complete scores and three ungraded `inconsistent_verdicts`; none is
+operationally pending or invalid. The separate panel bridge took **1 min 27 s**
+and made 49 fresh successful calls, with no failures, reuse or warmups. See the
+[medium screen seal](../../target/distillation-review-v1/final-trial-20261009/evaluation-medium/stage-5-complete-execution.md)
+for the separate pipeline, supplement and paired reports. Missing usage for
+the pipeline failure prevents a complete pipeline cost.
+
+For the identical 297 frozen chosen responses, the catalog estimate falls from
+**$1.4758404 at xhigh to $0.6227392 at medium**, or **57.8% lower**. Both contain
+243,833 total observed input tokens. Cached input is 33.23% at xhigh and 28.82%
+at medium; output falls 76.48% and reasoning falls 88.81%. Output already
+includes reasoning. These are API-equivalent catalog estimates, not actual
+provider charges. The
+[fixed-panel cost analysis](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-medium-fixed-panel-cost-analysis.json)
+has SHA-256
+`39274eccb6c80addd3e1276091f735dd6b763cf47967428f4528cf93e0c2c4d3`.
+It preserves original paid receipts, historical baseline calls and shared
+warmups separately. Complete costs including xhigh's failed attempt remain
+unknown. Cache availability, history and adaptive branching differ, so these
+observations do not isolate reasoning effort's effect on cost or wall time.
+
+The [high/medium gate audit](../../target/distillation-review-v1/final-trial-20261009/analysis/stage-5-high-medium-gate-audit.json)
+records the role concerns and found no specific recurring failure across two
+distinct notes in this screen. Its SHA-256 is
+`1953c597a39601a48cce8dd418f4a1e9ecedfe14215d2a9ccd0b8eea051d1714`.
+This is an investigation record, not promotion authorization. Low's initial
+screen is running; no effort has qualified and no 10-answer expansion has
+started. The approved study controls and full xhigh freeze remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 

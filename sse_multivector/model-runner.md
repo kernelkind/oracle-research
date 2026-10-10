@@ -1069,6 +1069,15 @@ correctness. Its pipeline and missing-panel supplement have separate native rece
 and cost records in the
 [high screen evidence](distillation-review-v1/README.md#initial-high-effort-screen-october-10).
 
+The medium screen is complete on the same 297 questions: 285 agreements,
+12 discordances, and source-adjudicated H=8, G=2, A=2. Its loss range is
+1.35–2.69 percentage points, with larger losses in both relationship roles.
+The fixed chosen-response catalog estimate is 57.8% lower than xhigh's;
+shared warmups and adaptive pipeline costs remain separate, and missing
+failed-attempt usage leaves broader costs unknown. Low is running; no effort
+has qualified and no 10-answer expansion has started. See the
+[medium screen evidence](distillation-review-v1/README.md#initial-medium-effort-screen-october-10).
+
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 
