@@ -190,6 +190,78 @@ containment interpretation remain separate selection questions. A decision
 readout merits investigation; its ability to remove the observed errors is
 not measured by this generation screen.
 
+### Relation-only Compare published-checkpoint screens
+
+Following the user's explicit relation-only decision, native preparation
+reuses the exact frozen 26-case input plan through the project's `generic`
+adapter. IDs, complete input strings, fixed meanings and original evidence
+match the generation screen byte for byte. The new response schema accepts
+only `relation`; the teachers' three-field validator remains unchanged.
+Pinned configurations and specifications are
+`distillation/compare-relation-only-{qwen27b,kev27b,kev9b}-{default,rotate}-v1`.
+
+The two orders contain identical label descriptions, with their positions
+permuted. Kev uses its native pointer head. Qwen scores the five option-letter
+tokens at its explicit answer position; the worker maps the selected code to
+the relation. These interfaces construct a valid one-field response, so format
+validity is an interface check, not evidence of semantic accuracy. Published
+NF4 weights are used; synthetic optimization checkpoints are not reused.
+
+Kev-9B completes both orders with 52 valid fresh answers. It preserves 24/26
+decisions across orders, with 10/13 and 11/13 reciprocal pairs consistent.
+It creates unsupported strict containment between the general greeting
+meanings and calls Bread equivalent to Sourdough despite the latter's starter
+restriction. The Bread error survives option rotation. Native agent reviews
+record these specific failures; they are not TRAIN targets or human gold.
+
+Kev-27B also completes 52 valid fresh answers. It preserves 25/26 decisions,
+with 13/13 and 12/13 reciprocal pairs consistent. Both orders avoid the
+greeting and Bread/Sourdough errors. Rotation changes the forward Food
+preparation/Cooking decision from local containment to `neither`; that fails
+the supplied definitions and its reciprocal control, and receives an agent
+rejection. Its first-order decisions all match Qwen's first-order readout.
+
+Qwen's first order completes 26 valid fresh decisions and 13/13 consistent
+reciprocal pairs. The four earlier generation-label direction errors disappear
+on these exact inputs. The readout also changes framing and supplies explicit
+option descriptions: this is not an isolated ablation of diagnostic reasons.
+Its rotated screen completes another 26 fresh valid answers, preserving 24/26
+decisions with 11/13 reciprocal pairs consistent. It changes the forward
+greetings-equivalence decision to `neither`, an agent-rejected distinction,
+and the reverse salad/tomato-joke decision to `neither`, whose semantic
+interpretation remains open. Native targeted reviews preserve those roles.
+
+| Published NF4 checkpoint | Valid decision responses, both orders | Reciprocal consistency, default / rotated | Decisions preserved across option order |
+| --- | ---: | ---: | ---: |
+| Qwen3.8-27B | 52/52 | 13/13; 11/13 | 24/26 |
+| Kev-27B | 52/52 | 13/13; 12/13 | 25/26 |
+| Kev-9B | 52/52 | 10/13; 11/13 | 24/26 |
+
+Standalone first-order median request times are 1.15 seconds for Kev-9B,
+2.48 for Kev-27B and 2.60 for Qwen; their input framing and output mechanisms
+differ. Kev-27B's rotated requests overlap Qwen's weight loading, so those
+times are not a controlled speed comparison. All these results remain
+development diagnostics: the panel has no accepted relation gold, no canonical
+branches and no established coverage of all five labels. The salad/condiment
+joke interpretation remains explicitly open. No candidate is selected or
+task-fine-tuned.
+
+All 156 decisions have single fresh native receipts, without reuse, retry,
+teacher calls or fallback. Native `show` revalidates the current receipts and
+exact source inputs. The report extension now suppresses the historical SHR
+A/B diagnostics when `generic` preparation reuses a `hierarchy_node_pairs`
+source; those labels and reversal mechanics do not describe Compare. Its
+production-report test failed before the guard; the final workflow suite runs
+143 tests successfully with six optional skips. Native `show` also revalidates
+all six experiments with the guard. This affects report presentation, not the saved decisions.
+All six GB10 experiment workers stopped.
+
+Verification limitations remain explicit: the separate selection suite has
+one cost-reporting failure reproduced from the unchanged `cace46b0` source
+snapshot. The main-merge matching/verdict checks run 38 tests with two missing
+external TRAIN-fixture errors; no dataset copy or sealed reference access was
+used to supply those fixtures. Logs remain under this phase's ignored target.
+
 ### Causal training capacity preparation
 
 The existing benchmark now accepts `supervised_output_tokens` for causal-LM

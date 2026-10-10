@@ -24,6 +24,9 @@ class ExperimentTests(unittest.TestCase):
                   'inputs': {'INPUT_JSON': '{"local":{},"canonical":{}}'}}]
         enrich_report(result, {}, cases)
         self.assertNotIn('relation_diagnostics', result)
+        result = {'adapter': 'generic'}
+        enrich_report(result, {'preparation': {'source_adapter': 'hierarchy_node_pairs'}}, cases)
+        self.assertNotIn('relation_diagnostics', result)
 
     def test_relation_diagnostics_pairs_actual_inputs_and_counts_relation_only_agreement(self):
         from sse_multivector.experiment_extension import relation_diagnostics

@@ -30,13 +30,13 @@ do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
 | --- | --- | --- | --- |
-| Qwen3.8-27B | First dense generative reference: instruction-tuned, native long context; current screen and full-vocabulary suffix training measured locally | Strong common-foundation reference, including direct option scoring | Scope/state errors, current large-model reload check and production branch coverage |
+| Qwen3.8-27B | First dense generative reference: instruction-tuned, native long context; current screen and full-vocabulary suffix training verified locally | Common-foundation reference, including direct option scoring | Scope/state errors, matched task-specific learning and production branch coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Add to the research shortlist for generative quality with fewer active parameters | Potentially useful for many repeated decisions | GB10 measurements and exact expert/attention adaptation scope; published active count is not a measured speed |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
 | Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized relation-only decision candidate on the Qwen3.8 foundation | Complete current branch lengths and transfer to fixed-meaning comparisons |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
-| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Eligible inexpensive relation-only classifier | Task-specific learning evidence and full branch lengths; an untrained five-way head cannot be ranked using published-checkpoint answers |
+| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Eligible inexpensive relation-only classifier; longer full-training path verified on GB10 | Task-specific learning evidence and full branch lengths; an untrained five-way head cannot be ranked using published-checkpoint answers |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
 
 This is a research shortlist, not authorization for every listed training campaign.
@@ -112,6 +112,11 @@ must not be attributed to this release. Its compact generative contract makes
 it eligible for Bootstrap research even though it is not cached. Neither the
 existing Qwen/Gemma text extraction nor NF4 loading has been verified for this
 checkpoint. Cache availability determines experiment cost, not suitability.
+The official Transformers example uses `MistralCommonBackend` and documents
+`FineGrainedFP8Config(dequantize=True)` for BF16 loading. Read-only inspection
+finds the tokenizer implementation in GB10's installed Transformers but no
+`mistral_common` dependency. That is a preparation dependency, not evidence
+against the model. No environment change or weight download was made for it.
 
 Other sparse independent foundations remain credible secondary candidates.
 NVIDIA's [Nemotron 3 Nano 30B-A3B card](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16)
@@ -206,6 +211,18 @@ claim of held-out accuracy. The result supports testing the decision readout
 independently from free-form generation, rather than adopting the cleaner JSON
 checkpoint as the Compare student. See
 [the screen and review limits](SHR-STUDENT-PREPARATION.md#compare-published-checkpoint-generation-screen).
+
+The approved relation-only interface now has **156 fresh native decision
+receipts**: Qwen27, Kev27 and Kev9 on the same 26 inputs in two option orders.
+Qwen and Kev27 agree on all 26 first-order decisions and avoid the four earlier
+generation-direction errors. Across option order they preserve 24/26 and
+25/26 decisions respectively; Kev9 preserves 24/26 but retains the erroneous
+Bread/Sourdough equivalence. Both larger candidates remain useful references;
+this panel does not show a decisive specialized-head advantage or a compact
+model's post-fit ceiling. Qwen remains a plausible common foundation, while
+Ettin remains an inexpensive learning candidate requiring accepted targets.
+The panel has no canonical branches or relation gold. See
+[the current decision evidence](SHR-STUDENT-PREPARATION.md#relation-only-compare-published-checkpoint-screens).
 
 ## Earlier SHR research and measurements
 

@@ -694,7 +694,9 @@ def code_files(dataset):
 
 def enrich_report(result, plan, cases):
     diagnostics = (relation_diagnostics(cases)
-                   if result['adapter'] in {'generic', 'subject_pairs'} else None)
+                   if result['adapter'] in {'generic', 'subject_pairs'}
+                   and (plan.get('preparation') or {}).get('source_adapter') != 'hierarchy_node_pairs'
+                   else None)
     if diagnostics is not None:
         result['relation_diagnostics'] = diagnostics
     if result["adapter"] == "distillation_verdict":
