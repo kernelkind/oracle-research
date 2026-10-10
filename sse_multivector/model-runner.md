@@ -84,6 +84,14 @@ Use the cached GB10 Python headers in `CPATH` for native FLA/Triton CUDA kernels
 the [verified environment](SHR-STUDENT-PREPARATION.md#isolated-gb10-environment) describes
 the existing unprivileged header layout. Native CUDA regressions cover all
 three training paths and reversed option order.
+For an encoder-only input comparison,
+[`compare-pilot-ettin1b-input-json-v1.json`](distillation/compare-pilot-ettin1b-input-json-v1.json)
+sets `input_format` to `input_json`. The fitter retrieves the complete original
+case JSON from the bound collection after checking the reviewed targets again;
+it removes only the constant teacher instructions from the student input.
+The default `full_state` preserves the original complete rendered prompt.
+Both formats retain the same targets, source roles and fresh-process checks.
+This option does not change a teacher prompt or establish semantic equivalence.
 This is the partial-task development pilot path, separate from SP training and
 from final model selection. It has no provider calls or hierarchy application.
 
@@ -1427,7 +1435,12 @@ The approved prompt-development loop uses 12–16 distinct complete review input
 for the changed check, then further regression cases and the fixed ten-note
 workflow after that set passes. The full 60 remains very final validation.
 Lower-effort testing remains paused during DSLv4 development; the current
-ten-note xhigh run continues unchanged at concurrency 16. See the
+ten-note xhigh run has finished generation unchanged at concurrency 16, with
+its raw native report preserved before audit reviews. The
+[DSLv5 revision](distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
+is an untested draft with a prepared 14-case preview and zero candidate calls.
+The current shared runner uses automatic queue admission; inherited concurrency
+fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
 Prepare a small plan with `prepare --from OLD --only CASE_ID` before iterating;
 `run --only` filters dispatch but retains the large group's full report.

@@ -19,7 +19,9 @@ canonical branch, then decides one of five relations. The user confirmed a
 The present teacher API also copies the local meaning and requires a nonempty
 diagnostic reason; it remains unchanged. Student decision screens must use
 their explicit output contract rather than fabricate a reason or weaken the
-teacher validator. Bootstrap's final distilled output format remains open.
+teacher validator. Bootstrap's pilot student returns only `meaning` (string or
+null); the full teacher answer remains review evidence. The final distilled
+output contract remains open until prompt freeze.
 
 The useful distinction is the actual supervised output and complete input,
 not the old SHR/SP model ranking. A common foundation with two adapters is
@@ -67,6 +69,12 @@ not complete qualification: the eight evaluation posts supply no `uncertain`
 labels, non-identity equivalence or canonical branches. Matched Qwen27/Kev27
 native decision fits are now supported and tested, but their task results remain
 pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+
+The full case JSON alone averages 540 evaluation tokens versus 2,149 with the
+teacher instructions, with every supplied case field retained. A tested encoder
+input-only pilot is prepared to measure whether learned decision rules can
+replace that repeated constant text. Quality is not yet measured, and this
+branch-free panel does not predict the reduction for a large canonical branch.
 
 The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
 describes a post-trained dense 27B hybrid-attention model, native 262,144-token
