@@ -1,0 +1,3868 @@
+{
+  "schema_version": 2,
+  "corpus": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "meaning_prompt": {
+    "id": "Hierarchy-bootstrap-v96",
+    "path": "Hierarchy-bootstrap-v96.md"
+  },
+  "canonical_states": {
+    "roots-before-020": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/state.json",
+      "before_step": 20
+    },
+    "endpoint-001": [
+      {
+        "id": "C001",
+        "subject": "Food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-002": [
+      {
+        "id": "C001",
+        "subject": "Food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-000/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-003": [
+      {
+        "id": "C001",
+        "subject": "Dinner",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-018/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-004": [
+      {
+        "id": "C001",
+        "subject": "Coffee",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-005/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+            "number": "5"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "roots-clean-v3-before-024": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/state.json",
+      "before_step": 24
+    },
+    "endpoint-005": [
+      {
+        "id": "C001",
+        "subject": "Food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-006": [
+      {
+        "id": "C001",
+        "subject": "Food preparation",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-004/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+            "number": "7"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-007": [
+      {
+        "id": "C001",
+        "subject": "Cooking appliances",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-013/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "roots-clean-v3-before-025": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/state.json",
+      "before_step": 25
+    },
+    "endpoint-008": [
+      {
+        "id": "C001",
+        "subject": "Food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-009": [
+      {
+        "id": "C001",
+        "subject": "Cookware",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-007/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "number": "3"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-010": [
+      {
+        "id": "C001",
+        "subject": "Stockpots",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-014/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "verified-prefix-v3-before-005": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/state.json",
+      "before_step": 5
+    },
+    "endpoint-011": [
+      {
+        "id": "C001",
+        "subject": "Coffee",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+            "number": "5"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-012": [
+      {
+        "id": "C001",
+        "subject": "Food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-000/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "roots-clean-v3-before-033": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/state.json",
+      "before_step": 33
+    },
+    "endpoint-013": [
+      {
+        "id": "C001",
+        "subject": "Food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "verified-prefix-v3-before-019": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/state.json",
+      "before_step": 19
+    },
+    "endpoint-014": [
+      {
+        "id": "C001",
+        "subject": "Food dishes",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+            "number": "6"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-015": [
+      {
+        "id": "C001",
+        "subject": "Bread preparation",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-009/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "coverage-children-v1-before-059": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/state.json",
+      "before_step": 59
+    },
+    "endpoint-016": [
+      {
+        "id": "C001",
+        "subject": "Bread",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+            "number": "1.2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "coverage-children-v1-before-060": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/state.json",
+      "before_step": 60
+    },
+    "endpoint-017": [
+      {
+        "id": "C001",
+        "subject": "Butter",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-060/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+            "number": "1.3"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "coverage-children-v1-before-063": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/state.json",
+      "before_step": 63
+    },
+    "endpoint-018": [
+      {
+        "id": "C001",
+        "subject": "Tomatoes",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-063/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+            "number": "1.6"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "coverage-children-v1-before-066": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/state.json",
+      "before_step": 66
+    },
+    "endpoint-019": [
+      {
+        "id": "C001",
+        "subject": "Processed food",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-066/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+            "number": "1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "coverage-children-v1-before-067": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/state.json",
+      "before_step": 67
+    },
+    "endpoint-020": [
+      {
+        "id": "C001",
+        "subject": "Bread",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+            "number": "1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "roots-clean-v3-before-029": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/state.json",
+      "before_step": 29
+    },
+    "endpoint-021": [
+      {
+        "id": "C001",
+        "subject": "Salsa",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-029/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "f7ed481e9a564c95bf788dbcf34e0c098b32e7e5dffe2c841f769fb8cbc4f5e0",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "menu-growth-v1-before-076": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/state.json",
+      "before_step": 76
+    },
+    "endpoint-022": [
+      {
+        "id": "C001",
+        "subject": "Meals",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/step-076/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+            "number": "5"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "isolation-children-v1-before-097": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/state.json",
+      "before_step": 97
+    },
+    "endpoint-023": [
+      {
+        "id": "C001",
+        "subject": "Author making a raw vegan, gluten-free Easter matcha-cashew pie without baking or refined sugar",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-097/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+            "number": "7.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "isolation-children-v1-before-098": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/state.json",
+      "before_step": 98
+    },
+    "endpoint-024": [
+      {
+        "id": "C001",
+        "subject": "Turning pantry staples into chewy bagels",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+            "number": "2.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "last-access-children-v2-before-117": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/state.json",
+      "before_step": 117
+    },
+    "endpoint-025": [
+      {
+        "id": "C001",
+        "subject": "Preparing sourdough bread",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "2.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "regrouping-roots-v1-before-122": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json",
+      "before_step": 122
+    },
+    "endpoint-026": [
+      {
+        "id": "C001",
+        "subject": "Eating",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-122/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+            "number": "3"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "selection-004-before-081": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/state.json",
+      "before_step": 81
+    },
+    "endpoint-027": [
+      {
+        "id": "C001",
+        "subject": "The author's coffee",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/step-081/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "143fee7643620ece551e713d05f7a1d60315fb181b3df2d00c1a0453d4ba6e13",
+            "number": "3.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "fatigue-access-children-v1-before-090": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/state.json",
+      "before_step": 90
+    },
+    "endpoint-028": [
+      {
+        "id": "C001",
+        "subject": "Author's continuing pronounced fatigue today",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+            "number": "2.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-029": [
+      {
+        "id": "C001",
+        "subject": "Mental states",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-002/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "number": "5"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-030": [
+      {
+        "id": "C001",
+        "subject": "Fatigue",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-047/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "fatigue-access-children-v1-before-091": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/state.json",
+      "before_step": 91
+    },
+    "endpoint-031": [
+      {
+        "id": "C001",
+        "subject": "Author's sleepiness today",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+            "number": "2.2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "isolation-children-v1-before-110": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/state.json",
+      "before_step": 110
+    },
+    "endpoint-032": [
+      {
+        "id": "C001",
+        "subject": "Lamb served in the author's dinner tonight",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-110/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+            "number": "1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "isolation-children-v1-before-111": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/state.json",
+      "before_step": 111
+    },
+    "endpoint-033": [
+      {
+        "id": "C001",
+        "subject": "Steamed seasoned broccoli served in the author's dinner tonight",
+        "meaning_from": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-111/meaning/experiment",
+          "case": "bootstrap"
+        },
+        "entries": [
+          {
+            "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+            "number": "1.2"
+          }
+        ],
+        "parents": []
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "id": "snapshot-001-c001",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-before-020",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+          "case": "C001"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-002-c019",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-before-020",
+        "id": "C019"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+          "case": "C019"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-003-c006",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-before-020",
+        "id": "C006"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+          "case": "C006"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-004-c005",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-024",
+        "id": "C005"
+      },
+      "review": {
+        "family": "food-appliances",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment",
+          "case": "C005"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-005-c014",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-024",
+        "id": "C014"
+      },
+      "review": {
+        "family": "food-appliances",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment",
+          "case": "C014"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-006-c008",
+      "local": {
+        "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-025",
+        "id": "C008"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/experiment",
+          "case": "C008"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-007-c015",
+      "local": {
+        "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-025",
+        "id": "C015"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/verification/experiment",
+          "case": "C015"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-008-c001",
+      "local": {
+        "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "verified-prefix-v3-before-005",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/experiment",
+          "case": "C001"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-009-c001",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-033",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/experiment",
+          "case": "C001"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-010-c006",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-033",
+        "id": "C006"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/experiment",
+          "case": "C006"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-011-c010",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "verified-prefix-v3-before-019",
+        "id": "C010"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/experiment",
+          "case": "C010"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-012-c010",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "coverage-children-v1-before-059",
+        "id": "C010"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/experiment",
+          "case": "C010"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-013-c020",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "coverage-children-v1-before-059",
+        "id": "C020"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "comparison_role": "original-snapshot",
+        "classification": "consistency-witness",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-014-c005",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.3"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-060/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "coverage-children-v1-before-060",
+        "id": "C005"
+      },
+      "review": {
+        "family": "optional-role-butter",
+        "comparison_role": "original-snapshot",
+        "classification": "semantic-open",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-060/experiment",
+          "case": "C005"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. No settled semantic label; review the entire defined role and human/nourishment conditions."
+      }
+    },
+    {
+      "id": "snapshot-015-c005",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-063/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "coverage-children-v1-before-063",
+        "id": "C005"
+      },
+      "review": {
+        "family": "optional-role-tomatoes",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-063/experiment",
+          "case": "C005"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "neither"
+      }
+    },
+    {
+      "id": "snapshot-016-c020",
+      "local": {
+        "note_id": "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-066/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "coverage-children-v1-before-066",
+        "id": "C020"
+      },
+      "review": {
+        "family": "conjunction-and-state",
+        "comparison_role": "original-snapshot",
+        "classification": "reason-review",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-066/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "uncertain",
+        "required_reason_check": "Preserve intended AND prepared; any uncertainty must assess the independent Breakfast boundary instead of replacing that conjunction with merely intended."
+      }
+    },
+    {
+      "id": "snapshot-017-c020",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "coverage-children-v1-before-067",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-bread",
+        "comparison_role": "original-snapshot",
+        "classification": "scope-objection",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. Positive containment requires the whole local topic to satisfy the canonical meal-use condition; uncertainty may be appropriate for an already inconsistent branch.",
+        "provisional_forbidden_relations": [
+          "equivalent",
+          "canonical_contains_local"
+        ]
+      }
+    },
+    {
+      "id": "snapshot-018-c020",
+      "local": {
+        "note_id": "f7ed481e9a564c95bf788dbcf34e0c098b32e7e5dffe2c841f769fb8cbc4f5e0",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-029/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "roots-clean-v3-before-029",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-salsa",
+        "comparison_role": "original-snapshot",
+        "classification": "scope-objection",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-029/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. Positive containment requires the whole local topic to satisfy the canonical meal-use condition; uncertainty may be appropriate for an already inconsistent branch.",
+        "provisional_forbidden_relations": [
+          "equivalent",
+          "canonical_contains_local"
+        ]
+      }
+    },
+    {
+      "id": "snapshot-019-c020",
+      "local": {
+        "note_id": "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/step-076/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "menu-growth-v1-before-076",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-descendants",
+        "comparison_role": "original-snapshot",
+        "classification": "branch-conflict-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/step-076/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "uncertain"
+      }
+    },
+    {
+      "id": "snapshot-020-c020",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-097/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "isolation-children-v1-before-097",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-pie",
+        "comparison_role": "original-snapshot",
+        "classification": "scope-objection",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-097/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. Positive containment requires the whole local topic to satisfy the canonical meal-use condition; uncertainty may be appropriate for an already inconsistent branch.",
+        "provisional_forbidden_relations": [
+          "equivalent",
+          "canonical_contains_local"
+        ]
+      }
+    },
+    {
+      "id": "snapshot-021-c020",
+      "local": {
+        "note_id": "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "isolation-children-v1-before-098",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-bagels",
+        "comparison_role": "original-snapshot",
+        "classification": "scope-objection",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. Positive containment requires the whole local topic to satisfy the canonical meal-use condition; uncertainty may be appropriate for an already inconsistent branch.",
+        "provisional_forbidden_relations": [
+          "equivalent",
+          "canonical_contains_local"
+        ]
+      }
+    },
+    {
+      "id": "snapshot-022-c068",
+      "local": {
+        "note_id": "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "isolation-children-v1-before-098",
+        "id": "C068"
+      },
+      "review": {
+        "family": "meal-use-bagels",
+        "comparison_role": "original-snapshot",
+        "classification": "ancestor-consequence-review",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/experiment",
+          "case": "C068"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model."
+      }
+    },
+    {
+      "id": "snapshot-023-c020",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "last-access-children-v2-before-117",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-sourdough",
+        "comparison_role": "original-snapshot",
+        "classification": "scope-objection",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. Positive containment requires the whole local topic to satisfy the canonical meal-use condition; uncertainty may be appropriate for an already inconsistent branch.",
+        "provisional_forbidden_relations": [
+          "equivalent",
+          "canonical_contains_local"
+        ]
+      }
+    },
+    {
+      "id": "snapshot-024-c001",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "last-access-children-v2-before-117",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-sourdough",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/verification/experiment",
+          "case": "C001"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "canonical_contains_local"
+      }
+    },
+    {
+      "id": "snapshot-025-c001",
+      "local": {
+        "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+        "number": "3"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-122/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "regrouping-roots-v1-before-122",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-eating",
+        "comparison_role": "original-snapshot",
+        "classification": "semantic-open",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-122/experiment",
+          "case": "C001"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. No settled semantic label; review the entire defined role and human/nourishment conditions."
+      }
+    },
+    {
+      "id": "snapshot-026-c001",
+      "local": {
+        "note_id": "143fee7643620ece551e713d05f7a1d60315fb181b3df2d00c1a0453d4ba6e13",
+        "number": "3.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/step-081/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "selection-004-before-081",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-author-coffee",
+        "comparison_role": "original-snapshot",
+        "classification": "semantic-open",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/step-081/experiment",
+          "case": "C001"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model. No settled semantic label; review the entire defined role and human/nourishment conditions."
+      }
+    },
+    {
+      "id": "snapshot-027-c003",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "fatigue-access-children-v1-before-090",
+        "id": "C003"
+      },
+      "review": {
+        "family": "fatigue-mental-state",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/experiment",
+          "case": "C003"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "neither"
+      }
+    },
+    {
+      "id": "snapshot-028-c048",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "fatigue-access-children-v1-before-090",
+        "id": "C048"
+      },
+      "review": {
+        "family": "fatigue-specific",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/experiment",
+          "case": "C048"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "canonical_contains_local"
+      }
+    },
+    {
+      "id": "snapshot-029-c003",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "fatigue-access-children-v1-before-091",
+        "id": "C003"
+      },
+      "review": {
+        "family": "sleepiness-mental-state",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/experiment",
+          "case": "C003"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "canonical_contains_local"
+      }
+    },
+    {
+      "id": "snapshot-030-c048",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "fatigue-access-children-v1-before-091",
+        "id": "C048"
+      },
+      "review": {
+        "family": "sleepiness-fatigue",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/experiment",
+          "case": "C048"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "canonical_contains_local"
+      }
+    },
+    {
+      "id": "snapshot-031-c020",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-110/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "isolation-children-v1-before-110",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-lamb-control",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-110/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "canonical_contains_local"
+      }
+    },
+    {
+      "id": "snapshot-032-c020",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-111/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "isolation-children-v1-before-111",
+        "id": "C020"
+      },
+      "review": {
+        "family": "meal-use-broccoli-control",
+        "comparison_role": "original-snapshot",
+        "classification": "provisional-control",
+        "historical_relation_is_gold": false,
+        "expectation_authority": "provisional-agent-assessment",
+        "original_compare": {
+          "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-111/experiment",
+          "case": "C020"
+        },
+        "source_AS": "ASv6.100",
+        "qualification": "Original graph evidence and frozen Bootstrap-v96 meanings; no prior answer is supplied to the model.",
+        "provisional_expected_relation": "canonical_contains_local"
+      }
+    },
+    {
+      "id": "isolated-001-forward",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-002",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-001",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-001-reverse",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-001",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-001",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-002-forward",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-003",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-002",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+            "case": "C019"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-002-reverse",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-018/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-001",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-002",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+            "case": "C019"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-003-forward",
+      "local": {
+        "note_id": "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-004",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-003",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+            "case": "C006"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-003-reverse",
+      "local": {
+        "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-005/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-001",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-003",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-020/experiment",
+            "case": "C006"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-004-forward",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-006",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-appliances",
+        "families": [
+          "food-appliances"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-004",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment",
+            "case": "C005"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-004-reverse",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-004/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-005",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-appliances",
+        "families": [
+          "food-appliances"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-004",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment",
+            "case": "C005"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-005-forward",
+      "local": {
+        "note_id": "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-007",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-appliances",
+        "families": [
+          "food-appliances"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-005",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment",
+            "case": "C014"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-005-reverse",
+      "local": {
+        "note_id": "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-013/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-005",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-appliances",
+        "families": [
+          "food-appliances"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-005",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-024/experiment",
+            "case": "C014"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-006-forward",
+      "local": {
+        "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-009",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "families": [
+          "food-stockpots"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-006",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/experiment",
+            "case": "C008"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-006-reverse",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "3"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-007/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-008",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "families": [
+          "food-stockpots"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-006",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/experiment",
+            "case": "C008"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-007-forward",
+      "local": {
+        "note_id": "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-010",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "families": [
+          "food-stockpots"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-007",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/verification/experiment",
+            "case": "C015"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-007-reverse",
+      "local": {
+        "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-014/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-008",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "families": [
+          "food-stockpots"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-007",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-025/verification/experiment",
+            "case": "C015"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-008-forward",
+      "local": {
+        "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-012",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "families": [
+          "nourishment-bridge"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-008",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-008-reverse",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-011",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "families": [
+          "nourishment-bridge"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-008",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-009-forward",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-012",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "families": [
+          "nourishment-bridge"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-009",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-009-reverse",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-013",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "families": [
+          "nourishment-bridge"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-009",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-010-forward",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-011",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "families": [
+          "nourishment-bridge"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-010",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/experiment",
+            "case": "C006"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-010-reverse",
+      "local": {
+        "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-005/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-013",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-bridge",
+        "families": [
+          "nourishment-bridge"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-010",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-033/experiment",
+            "case": "C006"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-011-forward",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-015",
+        "id": "C001"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "families": [
+          "bread-preparation-chain"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-011",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/experiment",
+            "case": "C010"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-011-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-009/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "families": [
+          "bread-preparation-chain"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-011",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/experiment",
+            "case": "C010"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-012-forward",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-015",
+        "id": "C001"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "families": [
+          "bread-preparation-chain"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-012",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/experiment",
+            "case": "C010"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-012-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-009/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-016",
+        "id": "C001"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "families": [
+          "bread-preparation-chain"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-012",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/experiment",
+            "case": "C010"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-013-forward",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "families": [
+          "bread-preparation-chain"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-013",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-013-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-016",
+        "id": "C001"
+      },
+      "review": {
+        "family": "bread-preparation-chain",
+        "families": [
+          "bread-preparation-chain"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-013",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-059/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-014-forward",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.3"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-060/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-006",
+        "id": "C001"
+      },
+      "review": {
+        "family": "optional-role-butter",
+        "families": [
+          "optional-role-butter"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-014",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-060/experiment",
+            "case": "C005"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-014-reverse",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-004/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-017",
+        "id": "C001"
+      },
+      "review": {
+        "family": "optional-role-butter",
+        "families": [
+          "optional-role-butter"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-014",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-060/experiment",
+            "case": "C005"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-015-forward",
+      "local": {
+        "note_id": "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+        "number": "1.6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-063/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-006",
+        "id": "C001"
+      },
+      "review": {
+        "family": "optional-role-tomatoes",
+        "families": [
+          "optional-role-tomatoes"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-015",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-063/experiment",
+            "case": "C005"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-015-reverse",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-004/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-018",
+        "id": "C001"
+      },
+      "review": {
+        "family": "optional-role-tomatoes",
+        "families": [
+          "optional-role-tomatoes"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-015",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-063/experiment",
+            "case": "C005"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-016-forward",
+      "local": {
+        "note_id": "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-066/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "conjunction-and-state",
+        "families": [
+          "conjunction-and-state"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-016",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-066/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-016-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-019",
+        "id": "C001"
+      },
+      "review": {
+        "family": "conjunction-and-state",
+        "families": [
+          "conjunction-and-state"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-016",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-066/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-017-forward",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-bread",
+        "families": [
+          "meal-use-bread"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-017",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-017-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-020",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-bread",
+        "families": [
+          "meal-use-bread"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-017",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-018-forward",
+      "local": {
+        "note_id": "f7ed481e9a564c95bf788dbcf34e0c098b32e7e5dffe2c841f769fb8cbc4f5e0",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-029/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-salsa",
+        "families": [
+          "meal-use-salsa"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-018",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-029/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-018-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-021",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-salsa",
+        "families": [
+          "meal-use-salsa"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-018",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-029/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-019-forward",
+      "local": {
+        "note_id": "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/step-076/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-descendants",
+        "families": [
+          "meal-use-descendants"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-019",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/step-076/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-019-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-022",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-descendants",
+        "families": [
+          "meal-use-descendants"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-019",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-growth-v1/step-076/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-020-forward",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-097/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-pie",
+        "families": [
+          "meal-use-pie"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-020",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-097/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-020-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-023",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-pie",
+        "families": [
+          "meal-use-pie"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-020",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-097/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-021-forward",
+      "local": {
+        "note_id": "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-bagels",
+        "families": [
+          "meal-use-bagels"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-021",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-021-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-024",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-bagels",
+        "families": [
+          "meal-use-bagels"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-021",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-022-forward",
+      "local": {
+        "note_id": "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-020",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-bagels",
+        "families": [
+          "meal-use-bagels"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-022",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/experiment",
+            "case": "C068"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-022-reverse",
+      "local": {
+        "note_id": "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/coverage-children-v1/step-067/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-024",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-bagels",
+        "families": [
+          "meal-use-bagels"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-022",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/experiment",
+            "case": "C068"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-023-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-sourdough",
+        "families": [
+          "meal-use-sourdough"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-023",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-023-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-025",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-sourdough",
+        "families": [
+          "meal-use-sourdough"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-023",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-024-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-012",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-sourdough",
+        "families": [
+          "meal-use-sourdough"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-024",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/verification/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-024-reverse",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-025",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-sourdough",
+        "families": [
+          "meal-use-sourdough"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-024",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/last-access-children-v2/step-117/verification/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-025-forward",
+      "local": {
+        "note_id": "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+        "number": "3"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-122/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-012",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-eating",
+        "families": [
+          "nourishment-eating"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-025",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-122/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-025-reverse",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-026",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-eating",
+        "families": [
+          "nourishment-eating"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-025",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-122/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-026-forward",
+      "local": {
+        "note_id": "143fee7643620ece551e713d05f7a1d60315fb181b3df2d00c1a0453d4ba6e13",
+        "number": "3.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/step-081/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-012",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-author-coffee",
+        "families": [
+          "nourishment-author-coffee"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-026",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/step-081/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-026-reverse",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-027",
+        "id": "C001"
+      },
+      "review": {
+        "family": "nourishment-author-coffee",
+        "families": [
+          "nourishment-author-coffee"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-026",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/selection-004/step-081/experiment",
+            "case": "C001"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-027-forward",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-029",
+        "id": "C001"
+      },
+      "review": {
+        "family": "fatigue-mental-state",
+        "families": [
+          "fatigue-mental-state"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-027",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/experiment",
+            "case": "C003"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-027-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-002/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C001"
+      },
+      "review": {
+        "family": "fatigue-mental-state",
+        "families": [
+          "fatigue-mental-state"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-027",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/experiment",
+            "case": "C003"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-028-forward",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-030",
+        "id": "C001"
+      },
+      "review": {
+        "family": "fatigue-specific",
+        "families": [
+          "fatigue-specific"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-028",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/experiment",
+            "case": "C048"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-028-reverse",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-047/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C001"
+      },
+      "review": {
+        "family": "fatigue-specific",
+        "families": [
+          "fatigue-specific"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-028",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-090/experiment",
+            "case": "C048"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-029-forward",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-029",
+        "id": "C001"
+      },
+      "review": {
+        "family": "sleepiness-mental-state",
+        "families": [
+          "sleepiness-mental-state"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-029",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/experiment",
+            "case": "C003"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-029-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-002/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-031",
+        "id": "C001"
+      },
+      "review": {
+        "family": "sleepiness-mental-state",
+        "families": [
+          "sleepiness-mental-state"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-029",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/experiment",
+            "case": "C003"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-030-forward",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-030",
+        "id": "C001"
+      },
+      "review": {
+        "family": "sleepiness-fatigue",
+        "families": [
+          "sleepiness-fatigue"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-030",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/experiment",
+            "case": "C048"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-030-reverse",
+      "local": {
+        "note_id": "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots-clean-v3/step-047/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-031",
+        "id": "C001"
+      },
+      "review": {
+        "family": "sleepiness-fatigue",
+        "families": [
+          "sleepiness-fatigue"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-030",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/fatigue-access-children-v1/step-091/experiment",
+            "case": "C048"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-031-forward",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-110/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-lamb-control",
+        "families": [
+          "meal-use-lamb-control"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-031",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-110/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-031-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-032",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-lamb-control",
+        "families": [
+          "meal-use-lamb-control"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-031",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-110/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-032-forward",
+      "local": {
+        "note_id": "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+        "number": "1.2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-111/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-014",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-broccoli-control",
+        "families": [
+          "meal-use-broccoli-control"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-032",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-111/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-032-reverse",
+      "local": {
+        "note_id": "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+        "number": "6"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-019/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-033",
+        "id": "C001"
+      },
+      "review": {
+        "family": "meal-use-broccoli-control",
+        "families": [
+          "meal-use-broccoli-control"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-032",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [
+          {
+            "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-111/experiment",
+            "case": "C020"
+          }
+        ],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-033-forward",
+      "local": {
+        "note_id": "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-000/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-004",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-033",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-033-reverse",
+      "local": {
+        "note_id": "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-005/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-002",
+        "id": "C001"
+      },
+      "review": {
+        "family": "eating-drinking",
+        "families": [
+          "eating-drinking"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-033",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-034-forward",
+      "local": {
+        "note_id": "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+        "number": "7"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-004/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-007",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-appliances",
+        "families": [
+          "food-appliances"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-034",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-034-reverse",
+      "local": {
+        "note_id": "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-013/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-006",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-appliances",
+        "families": [
+          "food-appliances"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-034",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-035-forward",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "3"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-007/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-010",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "families": [
+          "food-stockpots"
+        ],
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "isolated-035",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    },
+    {
+      "id": "isolated-035-reverse",
+      "local": {
+        "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/step-014/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {
+        "state": "endpoint-009",
+        "id": "C001"
+      },
+      "review": {
+        "family": "food-stockpots",
+        "families": [
+          "food-stockpots"
+        ],
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "isolated-035",
+        "classification": "fixed-meaning-consistency",
+        "historical_relation_is_gold": false,
+        "source_AS": "ASv6.100",
+        "original_compare_witnesses": [],
+        "qualification": "Same original producer meanings and one founding support per canonical fixture. Original graph edges and snapshot labels are omitted; positive paths and tested shortcuts must remain compatible in each orientation. Missing, failed or uncertain answers remain unresolved."
+      }
+    }
+  ]
+}
