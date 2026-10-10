@@ -1438,7 +1438,10 @@ Lower-effort testing remains paused during DSLv4 development; the current
 ten-note xhigh run has finished generation unchanged at concurrency 16, with
 its raw native report preserved before audit reviews. The
 [DSLv5 revision](distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
-is an untested draft with a prepared 14-case preview and zero candidate calls.
+has completed its approved 14-case Sol/xhigh development trial: all Booleans
+agree with prepared targets, with two named-reference interpretations unresolved.
+Full records receive nine accepts, two rejects and three uncertainties in both
+agent audits; the set does not pass. Qualification and adoption remain pending.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
