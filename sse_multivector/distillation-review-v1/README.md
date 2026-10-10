@@ -2130,6 +2130,20 @@ normalized disagreement, including those where existing labels favor xhigh.
 Identical verdicts cancel in relative accuracy even when both are wrong;
 absolute accuracy is a separate, unqualified claim.
 
+Offline receipt validation and paired comparison live in the tracked
+[effort analysis module](../distillation_review_effort_analysis.py). Invoke
+`python3 -m sse_multivector.distillation_review_effort_analysis` with an explicit
+`--panel PANEL.json`. To compact and freeze a complete xhigh native report, add
+`--compact REPORT.json.gz --effort xhigh --freeze-baseline --output BASELINE.compact.json.gz`;
+the output path must be new and every panel prompt must have a valid receipt.
+For a paired stage, use `--stage 5 --report xhigh=BASELINE.compact.json.gz --report high=HIGH.json.gz --output PAIRED.json.gz`.
+Reports and compact snapshots support JSON or gzip. The output preserves receipt
+references, selected alias note IDs, role/cohort overlap and unresolved references;
+`missing_native_pool_cases` lists native experiment paths and case IDs for
+supplemental `run --only`. Missing responses or conflicting normalized verdicts
+block comparison. Run its checks through
+`python3 -m unittest sse_multivector.test_distillation_review_effort_analysis`.
+
 For paired count `N`, let `H` be baseline-correct/candidate-wrong decisions,
 `G` baseline-wrong/candidate-correct decisions and `A` unresolved discordant
 truths. Report relative loss `(H-G)/N` and conservative truth range
