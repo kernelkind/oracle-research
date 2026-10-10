@@ -47,6 +47,16 @@ class DistillationBenchmarkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "causal"):
             distillation_benchmark.validate_config(config)
 
+    def test_causal_capacity_can_supervise_a_complete_output_suffix(self):
+        config = {**self.config(), 'architecture': 'causal_lm', 'method': 'lora',
+                  'supervised_output_tokens': 64}
+        distillation_benchmark.validate_config(config)
+        for count in (0, 256, True):
+            with self.subTest(count=count), self.assertRaisesRegex(ValueError, 'output suffix'):
+                distillation_benchmark.validate_config({**config, 'supervised_output_tokens': count})
+        with self.assertRaisesRegex(ValueError, 'causal'):
+            distillation_benchmark.validate_config({**config, 'architecture': 'encoder'})
+
     def test_pointer_training_requires_its_pinned_native_configuration(self):
         config = {**self.config(), 'architecture': 'pointer', 'method': 'lora',
                   'quantization': 'nf4', 'pointer_config': 'diagnostic-kev9b.json'}
@@ -58,6 +68,35 @@ class DistillationBenchmarkTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("RUN_BENCHMARK_GPU_TESTS") == "1", "explicit CUDA integration run")
 class BenchmarkGPUIntegrationTests(unittest.TestCase):
+    def test_causal_output_suffix_trains_and_reloads_native_nf4_adapters(self):
+        import torch
+        from transformers import Qwen2Config, Qwen2ForCausalLM
+        self.assertTrue(torch.cuda.is_available())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            model = Qwen2ForCausalLM(Qwen2Config(vocab_size=2048, hidden_size=64,
+                intermediate_size=128, num_hidden_layers=2, num_attention_heads=4,
+                num_key_value_heads=2, max_position_embeddings=256))
+            model.save_pretrained(root/'base')
+            del model
+            config = {**DistillationBenchmarkTests().config(), 'model': str(root/'base'),
+                'architecture': 'causal_lm', 'method': 'lora', 'quantization': 'nf4',
+                'lengths': [32], 'inference_batch_sizes': [1], 'steps': 1,
+                'supervised_output_tokens': 8}
+            path = root/'config.json'
+            write_json(path, config)
+            trained = distillation_benchmark.run(path, root/'benchmark', stage='train')
+            self.assertTrue(trained['checkpoint_saved'])
+            self.assertEqual(trained['training'][0]['supervised_tokens_per_example'], 8)
+            self.assertIn('causal', trained['workload'])
+            # A newly initialized 2,048-word model has a much larger native
+            # token loss than a five-label classifier. Catch the old readout
+            # being timed while merely reporting a different workload.
+            self.assertGreater(trained['training'][0]['losses'][0], 4.6)
+            verified = distillation_benchmark.run(path, root/'benchmark', stage='verify')
+            self.assertTrue(verified['complete'])
+            self.assertTrue(verified['reload_matches'])
+
     def test_pointer_optimization_checkpoints_the_extracted_quantized_backbone(self):
         import sys
         import torch

@@ -150,6 +150,72 @@ relation is assigned. The reusable selection and specifications live under
 `sse_multivector/distillation/compare-current-input-*`; source hashes and exact
 input equality were verified against the full 196-case preparation.
 
+### Compare published-checkpoint generation screen
+
+Both candidates complete the same 26 native Compare-v48 requests. There are
+26 new attempts per model, without teacher calls, reuse, retries or fallback.
+The local worker, thinking-disabled framing and generation settings match the
+Bootstrap screen. These results assess the current three-field generative API;
+they do not test a separately trained relation-only student.
+
+| Candidate | Native strict-output valid | Median request seconds | Maximum CUDA allocation |
+| --- | ---: | ---: | ---: |
+| Qwen3.8-27B | 26/26 | 13.59 | 17.16 GiB |
+| Gemma 4 12B-it | 0/26 | 8.15 | 8.14 GiB |
+
+Qwen copies every local meaning exactly and supplies nonempty reasons, but
+only **9/13 reciprocal pairs** have the required inverse relation labels.
+Four forward outputs describe the local topic as broader in their reasons
+while emitting `canonical_contains_local`: Salads/Salad dressing, the salad
+joke, Food/Risotto and Food/Mushroom risotto with shrimp. Native agent reviews
+record 19 accept, four reject and three uncertain. The uncertain decisions
+concern the joke scenario and the prompt's permission for information
+containment across different kinds. They are not accepted relation targets.
+
+Gemma fences all 26 outputs; several also append a verbal re-evaluation and a
+second JSON object. Its raw direction errors include Food/Risotto and the bagel
+activity pair. All 26 native agent reviews reject the mechanical contract while
+preserving these separate raw-meaning/relation observations. Neither extracting
+the last object nor selecting the reason's implied direction repairs a response.
+
+The ignored experiments are
+`target/bootstrap-compare-student-v1/compare-current-input-qwen27b-v1` and
+`target/bootstrap-compare-student-v1/compare-current-input-gemma12b-v1`.
+All 52 reviews bind current inputs, outputs and native raw receipt hashes.
+The panel has no canonical branches or accepted relation gold and does not
+establish all five labels' quality. Formatting, label-direction mistakes and
+containment interpretation remain separate selection questions. A decision
+readout merits investigation; its ability to remove the observed errors is
+not measured by this generation screen.
+
+### Causal training capacity preparation
+
+The existing benchmark now accepts `supervised_output_tokens` for causal-LM
+LoRA only. It uses the production model's full-vocabulary next-token loss on
+that many final tokens, masking the preceding input with `-100`. Earlier
+configs retain their five-label objective unchanged. This closes an objective
+gap without adding a task training workflow or using provisional meanings
+as targets. All inputs and targets are random synthetic token tensors.
+
+The new config-admission test failed before support existed. Seven admission
+tests pass, and GB10's two real NF4 integration tests pass for the new causal
+suffix and the existing five-label path, including gradients, save and reload.
+The causal test checks the large native vocabulary loss, so relabeling a
+five-class timing report would fail it. The 14 benchmark/local-worker tests
+pass with three explicitly gated GPU skips on Anvil; the two GPU tests ran
+separately on GB10. The preceding main synchronization also passed 150
+project tests with eight optional skips.
+
+The pinned Qwen27 and Gemma12 configs prepare 8,192- and 13,312-token complete
+sequences with 2,048 supervised output tokens, batch one, rank-16/alpha-32
+all-linear adapters and gradient checkpointing. The longer shape exceeds
+the observed maximum Bootstrap input plus its output allowance. They use
+64/48 GiB allocation budgets and an eight-GiB system reserve respectively;
+96 GiB is not a hardware requirement. Real-model timing and fresh-process
+verification are separate pending measurements. The retained five-vocabulary-ID
+inference checks test checkpoint integrity, not Bootstrap generation quality
+or throughput. Generative API behavior was measured separately above.
+
 ### Selection and final-training readiness
 
 Freeze each candidate screen's input hashes, prompt revision, model revision,
@@ -178,7 +244,7 @@ interface check, not semantic generation quality.
 
 Before selecting either model, verify full input coverage, finite gradients,
 the actual training objective, saved weights, fresh-process reload and the
-intended inference readout on GB10. The existing causal-LM capacity probe
+intended inference readout on GB10. The earlier causal-LM capacity probe
 supervises **five vocabulary IDs at one output position**. It does not benchmark
 Bootstrap's multi-token supervised generation or its final output budget.
 Compare's native API currently also requires a nonempty `reason`; the user's

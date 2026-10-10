@@ -1,4 +1,4 @@
-"""Measure local five-way classification capacity with synthetic token tensors.
+"""Measure local classification or causal training capacity with synthetic tokens.
 
 No teachers, corpus labels, prompt experiments, quality claims or rentals.
 Encoder full/LoRA training and causal-LM LoRA use native model code; the latter
@@ -23,7 +23,7 @@ def validate_config(config):
     fields = {"model", "revision", "architecture", "method", "lengths", "train_batch_size",
               "inference_batch_sizes", "steps", "warmup_steps", "repetitions", "learning_rate",
               "memory_budget_gib", "reserve_gib", "seed"}
-    if not fields <= set(config) <= fields | {"quantization", "pointer_config"}:
+    if not fields <= set(config) <= fields | {"quantization", "pointer_config", "supervised_output_tokens"}:
         raise ValueError("unexpected or missing benchmark configuration fields")
     if not re.fullmatch(r"[0-9a-f]{40}", config["revision"]):
         raise ValueError("model revision must be an immutable commit")
@@ -42,6 +42,12 @@ def validate_config(config):
         values = config[name]
         if not isinstance(values, list) or not values or any(type(n) is not int or n <= 0 for n in values):
             raise ValueError(f"{name} must contain positive integers")
+    if 'supervised_output_tokens' in config:
+        if config['architecture'] != 'causal_lm':
+            raise ValueError('output suffix supervision requires a causal LM')
+        count = config['supervised_output_tokens']
+        if type(count) is not int or not 0 < count < min(config['lengths']):
+            raise ValueError('output suffix must be positive and leave an unsupervised input prefix')
     if config['architecture'] == 'pointer' and min(config['lengths']) < 7:
         raise ValueError('pointer lengths require five distinct option positions and a decision position')
     for name in ("train_batch_size", "steps", "warmup_steps", "repetitions"):
@@ -87,7 +93,10 @@ def run(config_path, output, *, stage='all'):
     torch.cuda.set_per_process_memory_fraction(min(1., config["memory_budget_gib"] * 2 ** 30 / total))
     torch.manual_seed(config["seed"])
     torch.set_num_threads(4)
-    report = {"schema_version": 1, "workload": "synthetic token tensors, five labels; no SHR quality estimate",
+    suffix = config.get('supervised_output_tokens')
+    workload = ('synthetic causal next-token supervision on an output suffix; no task quality estimate'
+                if suffix else 'synthetic token tensors, five labels; no SHR quality estimate')
+    report = {"schema_version": 1, "workload": workload,
               "config": config, "config_sha256": sha256(config_path),
               "code_sha256": {str(p): sha256(p) for p in (Path(__file__), Path(__file__).with_name("distillation_run.py"))},
               "system": {"architecture": platform.machine(), "gpu": torch.cuda.get_device_name(0),
@@ -234,8 +243,14 @@ def run(config_path, output, *, stage='all'):
                     reserve()
                     start = sync_time()
                     optimizer.zero_grad(set_to_none=True)
-                    labels = (torch.arange(config["train_batch_size"], device="cuda") + step) % 5
-                    loss = torch.nn.functional.cross_entropy(logits(inputs).float(), labels)
+                    if suffix:
+                        labels = inputs['input_ids'].clone()
+                        labels[:, :-suffix] = -100
+                        with torch.autocast('cuda', dtype=torch.bfloat16):
+                            loss = model(**inputs, labels=labels).loss
+                    else:
+                        labels = (torch.arange(config["train_batch_size"], device="cuda") + step) % 5
+                        loss = torch.nn.functional.cross_entropy(logits(inputs).float(), labels)
                     loss.backward()
                     norm = torch.nn.utils.clip_grad_norm_(parameters, 1.)
                     if not torch.isfinite(loss) or not torch.isfinite(norm) or norm <= 0:
@@ -249,6 +264,8 @@ def run(config_path, output, *, stage='all'):
                     "median_step_seconds": statistics.median(times), "losses": losses,
                     "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
                     "available_system_bytes_after": available_memory()})
+                if suffix:
+                    report['training'][-1]['supervised_tokens_per_example'] = suffix
                 publish()
             optimizer.zero_grad(set_to_none=True)
             del optimizer, parameters, inputs, loss, norm

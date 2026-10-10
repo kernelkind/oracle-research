@@ -71,6 +71,14 @@ explains why experts stored as parameters need `target_parameters` rather than
 only linear-module matching, and why unmerged expert adapters can add serving
 overhead. Compare the actual saved/reloaded inference path when assessing cost.
 
+Read-only inspection of GB10's installed Transformers 5.17.0 finds another
+constraint: its bitsandbytes conversion replaces linear/Conv1D modules, while
+Gemma's expert projections are packed three-dimensional parameters. This path
+does not quantize those expert tensors. A configuration labeled NF4 therefore
+does not imply four-bit storage for the entire sparse model. Include their
+resident storage and adapter execution in admission and cost measurements;
+do not extrapolate the dense models' measured allocation from active counts.
+
 The current [Kev-9B card](https://github.com/jaredpalmer/kev/blob/main/docs/model-cards/kev-9b.md)
 reports an 8,192-token validated context despite serving longer states. The
 16K contract bucket fails its predefined tolerance. This makes complete branch
@@ -96,6 +104,16 @@ Ettin for Compare rather than Bootstrap. It does not establish that a compact
 encoder can learn our abstraction boundaries from the eventual corpus, and
 ordinary NLI labels cannot be mapped directly to the five relations.
 
+The pinned cached Ettin-1B config sets `max_position_embeddings` to **7,999**,
+not an interchangeable 8,192. Its native encoder tokenizer counts all 196
+current isolated Compare inputs at 1,770–2,241 tokens including special tokens.
+This establishes input eligibility for that development panel, not semantic
+quality, production branch coverage or an adopted student interface. The earlier
+random-token capacity check had not needed tokenizer files; the three public
+tokenizer files were fetched at the same immutable revision, without changing
+weights or installing packages. The source-bound report is
+`target/bootstrap-compare-student-v1/compare-tokenizer-audit-v1/ettin-report.json`.
+
 Existing GB10 causal-LM timing probes optimize five vocabulary IDs at one
 position. They support Compare-style readout readiness, not Bootstrap's
 multi-token generation cost. Current native ASv6.100 Bootstrap inputs already
@@ -119,6 +137,15 @@ training; this screen has not measured that change or justified excluding sparse
 alternatives. Compare's newly qualified current inputs permit a separate screen,
 but their absent canonical branches leave production length and branch behavior
 unmeasured.
+
+That separate 26-request Compare-v48 screen completes with 26/26 strict-output
+valid Qwen responses versus 0/26 for Gemma. Qwen nevertheless has four reciprocal
+inconsistencies across 13 pairs, including valid outputs whose label reverses
+their reason's stated containment direction. These are concrete errors, not a
+claim of held-out accuracy. The result supports testing the decision readout
+independently from free-form generation, rather than adopting the cleaner JSON
+checkpoint as the Compare student. See
+[the screen and review limits](SHR-STUDENT-PREPARATION.md#compare-published-checkpoint-generation-screen).
 
 ## Earlier SHR research and measurements
 

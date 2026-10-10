@@ -1,0 +1,23 @@
+{
+  "model": "google/gemma-4-12B-it",
+  "revision": "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7",
+  "architecture": "causal_lm",
+  "method": "lora",
+  "quantization": "nf4",
+  "lengths": [
+    8192,
+    13312
+  ],
+  "train_batch_size": 1,
+  "inference_batch_sizes": [
+    1
+  ],
+  "steps": 2,
+  "warmup_steps": 1,
+  "repetitions": 1,
+  "learning_rate": 1e-05,
+  "memory_budget_gib": 48,
+  "reserve_gib": 8,
+  "seed": 17,
+  "supervised_output_tokens": 2048
+}

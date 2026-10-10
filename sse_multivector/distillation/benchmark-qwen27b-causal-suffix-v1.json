@@ -1,0 +1,23 @@
+{
+  "model": "Qwen/Qwen3.8-27B",
+  "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "architecture": "causal_lm",
+  "method": "lora",
+  "quantization": "nf4",
+  "lengths": [
+    8192,
+    13312
+  ],
+  "train_batch_size": 1,
+  "inference_batch_sizes": [
+    1
+  ],
+  "steps": 2,
+  "warmup_steps": 1,
+  "repetitions": 1,
+  "learning_rate": 1e-05,
+  "memory_budget_gib": 64,
+  "reserve_gib": 8,
+  "seed": 17,
+  "supervised_output_tokens": 2048
+}
