@@ -199,8 +199,17 @@ not settled. Duplicate inputs and overlapping chains remain explicit; rejected
 answers are not independent failure counts.
 
 After recording reviews, native `show --json` verified that all 102 input hashes,
-parsed outputs and producer receipts remained unchanged. The 85 relevant
+parsed outputs and producer receipts remained unchanged. The initial 85 relevant
 production-path tests for pair preparation, snapshots, consistency and settled
 relationships passed. Both dataset reviews also verified the original input
 mapping and reciprocal producer identities. No review required another model
 call, changed either prompt or altered the original hierarchy.
+
+The post-landing rerun passed 84 tests and hit the existing 30-second subprocess
+timeout in
+`test_ordinary_parent_checks_settled_pair_excluded_by_same_note`. That constructor
+integration test passed when rerun alone without source or timeout changes.
+The full-suite timeout remains a verification limitation; its cause was not
+established. These tests use the local offline transport fixture and made no
+teacher calls. Native result, review and receipt validation still passed after
+landing.
