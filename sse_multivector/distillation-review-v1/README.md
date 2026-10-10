@@ -1,22 +1,30 @@
 # Distillation semantic review — process and evidence
 
-**Latest repeat result:** unchanged [DSLv4](relationship-prompt-v4.md) agrees
-with **14/14** fixed expectations and supplies **14/14 complete evidence
-records** in the
-[fresh xhigh consistency repeat](#dslv4-xhigh-consistency-repeat-october-10).
-All 14 responses pass attributed agent review of their decisions and evidence;
-all calls complete on first attempts, with no reuse, warming or cache hits.
-LL03's earlier counterexample omitted mocking a loss; the fresh response retains
-all three mockery targets. The prior rejection remains preserved.
+**Latest DSLv4 result:** **22/22 resolved Boolean expectations and complete
+evidence records** pass both agent audits in the
+[broader trial within the frozen 60](#dslv4-broader-trial-preparation-october-10).
+Two pre-call interpretation questions remain unresolved and outside correctness
+denominators. All 24 pairs are new to DSLv4 and come from the agreed evaluation;
+no notes were added. Twenty-four responses require 25 attempts because one
+temporary provider socket failure receives its allowed successful retry. There
+is no answer reuse or warmup, and no cached tokens are observed.
+
+The preceding
+[fresh xhigh consistency repeat](#dslv4-xhigh-consistency-repeat-october-10)
+agrees with **14/14** fixed expectations and supplies **14/14 complete evidence
+records**. LL03's fresh counterexample retains all three mockery targets;
+its earlier incomplete response and rejection remain preserved.
 
 In the preceding [paired diagnostic trial](#dslv4-paired-diagnostic-trial-october-10),
 DSLv3 and DSLv4 both agreed with 14/14 Boolean expectations, while DSLv4's
 complete records passed 13/14. Both fresh DSLv4 rounds retain the same Boolean
-decisions. This is consistency evidence on the same development pairs, not
-unseen-data qualification or a demonstrated correctness improvement. DSLv4
-remains a diagnostic draft; production adoption and broader qualification remain
-pending. Lower-effort testing stays paused, and the frozen 60-answer study
-remains unchanged and bound to DSLv2.
+decisions. Those repeats provide consistency evidence on development pairs.
+The broader trial adds different pairs from existing evaluation contexts, with
+agent assessments rather than independent human gold. These results do not
+establish unseen-note accuracy or a demonstrated correctness improvement.
+DSLv4 remains a diagnostic draft; production adoption and reviewer qualification
+remain pending. Lower-effort testing stays paused, and the original 60-answer
+study remains unchanged and bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
 approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
@@ -3308,6 +3316,69 @@ than 1,024 tokens; no explicit cache prefix or warming is used. Review both the
 Boolean and every restriction/evidence/counterexample record against these
 pre-call source assessments. This small component trial does not replace DSLv2
 in the original evaluation or restart lower-effort work.
+
+The native run completes **24 schema-valid responses in 25 attempts**, ending
+the persistent counter at **25/48**. N24's first request loses its provider
+HTTP/2 stream; the saved metadata classifies this as `provider_transient`.
+The shared runner applies its backoff and one permitted retry, which succeeds.
+The failed receipt remains separate; no semantic retries, answer reuse, paid
+fallback or warmup requests occur. Old counters remain **14/28** and **30/56**.
+
+| Frozen pre-call subset | Boolean agreement | Accepted complete evidence records |
+| --- | --- | --- |
+| Actual immediate pairs | **10/10** | **10/10** |
+| Compatibility pairs | **12/12** | **12/12** |
+| Resolved total | **22/22** | **22/22** |
+| Unresolved N02 and N05 | Outside denominator | Two uncertain reviews |
+
+The coordinator and independent agent audits accept all 22 resolved decisions and
+complete evidence records, including all four challenge-source questions.
+The actual sample's two unresolved cases remain unresolved even though both
+model responses return false; their output cannot adjudicate the pre-call
+source assessment. N02 distinguishes an operational absence of KYC from a
+requirement relationship. N05 distinguishes personnel hiring from the word's
+rental sense. Their complete counterexamples are retained for later analysis.
+
+The long rejections retain every child qualification in their counterexamples.
+N21 preserves the inference-demand/baseload-displacement mechanism, Fed hikes
+up to 8%, training's rate insensitivity and the contrast with merely increasing
+data-center consumption; permanence and the all-sector transitory-looking
+inflation manifestation remain absent. N22 retains the named proof, both
+collaborator references, new preprint, about-one-page length and directed
+univalence setup while identifying the missing Cat structure and enhancement
+relationships. N23 retains the informed host's exact door/goat arrangement
+without the specified switching-advantage question. N24 credits all of the
+same guide's availability, chapter count, progression, prerequisite and price
+restrictions despite the added hardware-wallet setup. No new substantive or
+complete-record defect is observed in this small resolved panel.
+
+All 24 outputs have current native attributed agent reviews: **22 accepted,
+two uncertain, zero rejected**, with no user reviews. Exact native
+`terminal-show.json` and `reviewed-show.json` reports preserve the results;
+receipt/schema, input/output review digests, all **267 source bindings** and
+**25 current code bindings**, and the unchanged DSLv4 prompt verify.
+All **218 protected prior artifact/prompt/pending-placement files** remain
+byte-for-byte unchanged. The outside-60 preview remains **19 unrun questions
+and zero attempts**, with no inference receipts. The full earlier regression
+result remains **89 passing tests**; this result-recording step changes no code.
+
+Native usage reports **15,978 input tokens, 31,305 output tokens and 26,209
+reasoning tokens**; reasoning is already included in output. No cached-input or
+cache-write tokens are observed, and the 589-token shared instructions remain
+below the 1,024-token eligibility threshold. The failed transport attempt has
+no usage, so total token/cost/cache accounting for all attempts is incomplete.
+The native known catalog estimate is **USD 0.345006**; its all-attempt estimate
+and provider-reported cost remain unknown. Catalog estimates are reference
+estimates, not subscription charges.
+
+This panel passes its **22 resolved source-string checks**, with two preserved
+uncertainties. It tests different input pairs across 24 existing contexts and
+both relationship roles, not the whole 60-answer evaluation. Existing-note
+contexts, small selection size, prior development exposure and agent-only
+assessments limit generalization. It does not qualify DSLv4 for production,
+replace the original DSLv2 evaluation, establish a causal prompt improvement,
+or authorize lower-effort calls. The next decision is how to resolve the two
+interpretation questions and continue qualification within the agreed 60.
 
 ## Actual distilled wording: offline preview (October 8)
 
