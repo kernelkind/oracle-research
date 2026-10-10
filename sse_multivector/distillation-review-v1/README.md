@@ -1,7 +1,7 @@
 # Distillation semantic review — process and evidence
 
-**Latest proposal:** [DSLv3](relationship-prompt-v3.md) is an untested draft for
-user review. Its [clarification and scope](#dslv3-clarification-draft-october-10)
+**Latest wording approval:** [DSLv3](relationship-prompt-v3.md) has user-approved
+wording and remains untested. Its [approval and scope](#dslv3-wording-approval-october-10)
 are recorded below; existing experiments remain bound to DSLv2.
 
 [DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
@@ -2626,15 +2626,18 @@ this checkpoint is not goal completion or reviewer qualification. Prompts,
 source data, mechanics, controls and the stopping rule remain unchanged. Bulk
 pilot grading and reserved-test access remain unapproved.
 
-## DSLv3 clarification draft (October 10)
+## DSLv3 wording approval (October 10)
 
 After the high-effort screen repeated an added main-subject/action requirement,
 the user authorized drafting a clarification for review before new model calls.
-[DSLv3](relationship-prompt-v3.md) is **draft, unapproved and untested**. It does
-not change existing experiments, mechanical rules, source judgments or the
-accepted two-point comparison margin. The lower-reasoning goal remains open.
+After reviewing the displayed wording and confirming that DSLv3 includes the
+ASv6.100 parent-child section verbatim, the user approved the wording.
+[DSLv3](relationship-prompt-v3.md) has **approved wording, untested behavior**.
+This approval does not authorize model
+calls or change existing experiments, mechanical rules, source judgments or
+the accepted two-point comparison margin. The lower-reasoning goal remains open.
 
-The proposal makes preservation of the parent's complete meaning in an object,
+The clarification makes preservation of the parent's complete meaning in an object,
 modifier or temporal reference explicit. Its invalid-verdict counterexample
 must fail a restriction actually expressed by the parent, rather than an added
 main-subject or performance requirement. Actual action, purpose and timing
@@ -2645,8 +2648,10 @@ The shared runner's offline `revise` command generated DSLv3 against the unchang
 approved DSLv2 template, with a [native revision receipt](relationship-prompt-v3.md.revision.json).
 Only the version header, clarification paragraph and counterexample wording
 change. The quoted ASv6.100 rule, input variables and JSON decision schema are
-unchanged. No new model calls were made. The next step is user review of the
-wording; any bounded trial needs separate authorization.
+unchanged. The approved template and native revision receipt retain their exact
+draft bytes. No new model calls were made. The recommended next step is a
+bounded trial of preserved meanings and genuinely missing restrictions; that
+trial needs separate authorization.
 
 ## Actual distilled wording: offline preview (October 8)
 
