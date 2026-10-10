@@ -1,12 +1,25 @@
 # Worktree cleanup and retained branches
 
-Recorded October 10, 2026. The cleanup and branch review are closed out. Broad consolidation is deferred: retain unmerged branches and assess relevant work when it is needed. This record does not authorize further code integration or discarding unmerged work.
+Recorded October 10, 2026. The cleanup task is closed out. It preserved unmerged branches without integrating their histories as a group.
+
+This dated inventory does not change task authorization or the workspace `AGENTS.md` workflow. Coherent, reviewed and verified work from authorized tasks must still land in `main`, including maintained documentation and its required dependencies. When a task branch contains unrelated history, isolate the completed work and its dependencies for integration.
 
 ## Cleanup outcome
 
 Four fully merged worktrees and their merged branches were removed first. A subsequent cleanup removed 24 unused checkouts while preserving every branch in that batch, dirty changes and ignored artifacts. Sixteen other candidates were retained because live agents used them or retained experiments referenced their source or artifacts. Previously retained active and canonical checkouts remained outside the deletion scope.
 
 Verification confirmed that removed registrations were gone, protected checkouts remained, preserved branch heads were unchanged, all 157,844 archived entries matched their manifests, six modified runner files matched their backup checksums, and canonical working-tree changes were preserved. The cleanup and mapping phases made no code integrations or pushes.
+
+## Bounded findings integration
+
+The user subsequently requested landing the completed
+[fresh ASv6.100 fifty-note failure record](../../sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md).
+That record, its exact Bootstrap-v96 / Compare-v48 prompt files and its two menu
+recipes are integrated separately from the research constructor history.
+The `oracle-mvp-hierarchy-bootstrap-v88-three-note-v1` worktree remains because
+its native receipts, target artifacts and unmerged constructor are still needed
+to inspect and reproduce the evidence. The branch snapshot below records the
+earlier mapping, rather than the status of this later bounded landing.
 
 ## Main additions to assess
 

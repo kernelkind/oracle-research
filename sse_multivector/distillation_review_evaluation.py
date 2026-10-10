@@ -131,12 +131,15 @@ def validate(case, raw):
 
 
 def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None,
-            reasoning_effort=None, relationship_prompt=None, relationship_prompt_id=None):
+            reasoning_effort=None, relationship_prompt=None, relationship_prompt_id=None, concurrency=None,
+            relationship_runner_binary=None):
     """Freeze native check groups; preparation never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
     if reasoning_effort is not None and reasoning_effort not in ("xhigh", "high", "medium", "low"):
         raise ValueError("reasoning_effort must be xhigh, high, medium or low")
+    if concurrency is not None and (type(concurrency) is not int or concurrency < 1):
+        raise ValueError("concurrency must be a positive integer")
     if (relationship_prompt is None) != (relationship_prompt_id is None):
         raise ValueError("--relationship-prompt and --relationship-prompt-id must be supplied together")
     definitions = dict(_DEFINITIONS)
@@ -190,11 +193,16 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
             "provider", "model", "reasoning_effort", "transport", "concurrency")}
         if reasoning_effort is not None:
             runner["reasoning_effort"] = reasoning_effort
+        if concurrency is not None:
+            runner["concurrency"] = concurrency
         runner["auth_file"] = None
         runner["timeout_seconds"] = 3600
         runner["output_schema_path"] = str(directory / schema)
-        if runner_binary is not None:
-            runner["runner_binary"] = str(Path(runner_binary).expanduser().resolve())
+        binary = runner_binary
+        if check == "relationship" and relationship_runner_binary is not None:
+            binary = relationship_runner_binary
+        if binary is not None:
+            runner["runner_binary"] = str(Path(binary).expanduser().resolve())
         spec = output / "specs" / (group["name"] + ".json")
         experiment.write(spec, dict(schema_version=1, prompt=dict(id=identifier, path=str(directory / filename)),
             dataset=dict(adapter="distillation_review_evaluation", path=str(source), select=group["cases"]),

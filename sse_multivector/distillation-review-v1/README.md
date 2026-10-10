@@ -2,9 +2,10 @@
 
 **Current iteration limit:** develop and compare the review process on
 **ten notes**. The agreed **50 random plus ten challenge answers** remain the
-very final validation, after development. The next step is the bounded
-[ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10), rather
-than another full-60 run or intermediate 20/40-answer expansion.
+very final validation, after development. The bounded
+[ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
+running unchanged DSLv4 at Sol/xhigh with **concurrency 16**. Independent agent
+audits cover fresh verdicts and complete evidence records as they arrive.
 
 **Latest DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3438,6 +3439,49 @@ bounds execution to the fixed ten answers while retaining the full selection
 in reports. Compatible prior receipts are joined before inference; no
 intentional repeat is requested. The minimum lower reasoning effort remains
 open, and the final 60-answer validation is not part of this iteration.
+
+Before new model calls, the user changes this iteration's concurrency to
+**16**. Native preparation accepts `--concurrency 16` to freeze that setting
+without changing source selection, semantic prompts, reasoning effort, retry
+policy or cache eligibility. Omitting the option retains the selection setting.
+Concurrency is outside semantic request identity; compatible prior answers
+remain reusable. The preceding concurrency-8 preparation and zero-attempt
+inspection remain separate artifacts with no new inference.
+
+That zero-attempt inspection exposes a worker identity mismatch: original
+matching/support receipts bind `3e246132e01f45d06c61cc55e048b4ad3d390feee826e2550068956a2bc7bcf9`,
+while the current worker binds `5fa694dce385a2579286bae5a637625bfe14818ca6511de8cbec014724c44888`.
+The shared runner's `9cd629d` version reproduces the original identity; its
+transport JavaScript, shell and dependency lock match the current worker, while
+the identity-bearing Python file gains local-provider configuration support.
+An unmodified Git archive of that version, with the unchanged pinned runtime
+dependencies, supplies the original worker. Native
+`--relationship-runner-binary PATH` retains the current worker for new DSLv4
+work while `--runner-binary PATH` pins matching/support. Reuse validation and
+original receipts remain intact; new matching/support calls are unnecessary.
+
+A source-only audit before new calls flags **14 distinct prior expectation
+pairs, 23 occurrences** for separate assessment: an omitted block number,
+omitted simultaneous-practice timing, parent meanings retained in clauses,
+the broader ordinary senses of MILFs and bare Hiring, and one trusted teacher
+ancestor proof that supersedes a preserved legacy label. The frozen expectation
+files remain unchanged. Agreement with those labels is a diagnostic count,
+not a correctness estimate; unresolved interpretations remain outside accuracy
+denominators. Fresh outputs must be judged against the complete source wording
+and approved DSLv4 rule, with any assessment recorded separately.
+
+Native concurrency-16 preflight leaves **703 distinct new relationship
+questions** after receipt reuse and the current mechanical stopping rules.
+Five of the twelve previously paid input pairs are now settled mechanically;
+seven verified DSLv4 semantic results join nineteen numbered occurrences.
+Matching and support each join 123 distinct semantic inputs and retain 42
+mechanical numbered decisions in the selected ten answers, requiring no new
+matching/support calls. All twelve prepared groups freeze concurrency 16.
+The unchanged relationship prefix is 589 tokens, so no relationship cache
+warmup is eligible. The native run permits at most 1,406 new attempts within
+the existing persistent counter, with provider-only retries and no semantic
+repeat. Adaptive stopping can reduce the actual question count. Existing
+expectations, prompt bytes, source data and earlier receipts remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 

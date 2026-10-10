@@ -1199,13 +1199,15 @@ adds native project commands: `prepare-distillation-review-trial`,
 The `distillation_review_evaluation` adapter retains complete saved validation
 answers and all numbered occurrences, routes trusted exact results mechanically,
 and delegates requests, reuse, warmups, retry handling and receipts to the shared
-runner. Compatible-heading comparisons reuse unchanged DSLv2; required flags and
-meaning groups come from a source-bound candidate-independent assessment.
+runner. Compatible-heading comparisons use the configured relationship template,
+defaulting to DSLv2; required flags and meaning groups come from a source-bound
+candidate-independent assessment.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
-warmed, using explicit prefix/key configuration. Sequential native groups each
-use concurrency 8 and share a new-attempt allowance. New schema-2 evaluations
-stop questions that cannot change the score: absent full matches, placements
+warmed, using explicit prefix/key configuration. Sequential native groups use
+their frozen concurrency and share a new-attempt allowance. The original
+selection sets concurrency 8; preparation accepts an override. New schema-2
+evaluations stop questions that cannot change the score: absent full matches, placements
 already containing a match, a known compatible uncovered placement, and incoming
 edges of unsupported subjects. Matching-self compatibility guards remain
 required. The runner selects frozen case IDs with `only`; the evaluator warms
@@ -1255,15 +1257,26 @@ qualify an effort. Native request identity includes effort, so saved xhigh
 outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
 concurrency, retries and eligible prefix policy stay fixed. See the
 [reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
+The later development limit is ten notes per iteration, with the full 60 reserved
+for very final validation. Lower-effort testing remains paused during DSLv4
+development; the current ten-note xhigh run uses concurrency 16.
 `prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
 freezes an override in the native request settings without changing the source
 selection. Without the flag, the selection's effort is retained.
+`--concurrency N` freezes a positive execution concurrency override, retaining
+the selection's value when omitted. Concurrency is outside semantic request
+identity, so compatible saved results remain reusable across this change.
 `--relationship-prompt PATH --relationship-prompt-id ID` binds an alternate
 relationship template during the same native preparation. Both flags are
 required together; natural-prefix grouping and generated specs use that
 template. Matching, support, schemas, source assessments and mechanical rules
 are unchanged. Omitting the flags retains DSLv2. Compatible saved receipts
 remain reusable; do not use `--repeat` for a prompt update.
+`--relationship-runner-binary PATH` overrides only the relationship worker;
+other checks retain `--runner-binary` or the default. Worker identity remains
+part of semantic request identity. This allows unchanged completed checks to
+retain their original worker binding while a new relationship trial uses the
+current worker, without modifying receipts or relaxing reuse validation.
 Repeat
 `run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
 of stable source answer IDs; reports still contain all 60 answers, with
