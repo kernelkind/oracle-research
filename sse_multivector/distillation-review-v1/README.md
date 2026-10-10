@@ -2,9 +2,10 @@
 
 **Current iteration limit:** develop and compare the review process on
 **ten notes**. The agreed **50 random plus ten challenge answers** remain the
-very final validation, after development. The next step is the bounded
-[ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10), rather
-than another full-60 run or intermediate 20/40-answer expansion.
+very final validation, after development. The bounded
+[ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
+running unchanged DSLv4 at Sol/xhigh with **concurrency 16**. Independent agent
+audits cover fresh verdicts and complete evidence records as they arrive.
 
 **Latest DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3468,6 +3469,19 @@ files remain unchanged. Agreement with those labels is a diagnostic count,
 not a correctness estimate; unresolved interpretations remain outside accuracy
 denominators. Fresh outputs must be judged against the complete source wording
 and approved DSLv4 rule, with any assessment recorded separately.
+
+Native concurrency-16 preflight leaves **703 distinct new relationship
+questions** after receipt reuse and the current mechanical stopping rules.
+Five of the twelve previously paid input pairs are now settled mechanically;
+seven verified DSLv4 semantic results join nineteen numbered occurrences.
+Matching and support each join 123 distinct semantic inputs and retain 42
+mechanical numbered decisions in the selected ten answers, requiring no new
+matching/support calls. All twelve prepared groups freeze concurrency 16.
+The unchanged relationship prefix is 589 tokens, so no relationship cache
+warmup is eligible. The native run permits at most 1,406 new attempts within
+the existing persistent counter, with provider-only retries and no semantic
+repeat. Adaptive stopping can reduce the actual question count. Existing
+expectations, prompt bytes, source data and earlier receipts remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 
