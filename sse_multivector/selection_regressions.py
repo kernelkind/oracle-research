@@ -11,6 +11,11 @@ import importlib
 import json
 from pathlib import Path
 
+if __package__:
+    from .canonical_graph_search import GraphSearch
+else:
+    from canonical_graph_search import GraphSearch
+
 
 def read(path):
     return json.loads(Path(path).read_bytes())
@@ -106,9 +111,23 @@ def apply_review_hold(row, review):
                    retained_cases=len(set(row['queried']) | set(verification)))
 
 
-def evaluate_case(frame, selection, study, modules, *, history=None, review=None):
+def graph_selection(frame):
+    """Traverse using reached saved answers; leave missing comparisons pending."""
+    mapped_parent = frame['step'].get('mapped_parent')
+    search = GraphSearch(frame['rows'], eligible=frame['eligible'],
+                         required=() if mapped_parent is None else (mapped_parent,))
+    while search.candidates():
+        available = {k: frame['known'][k]['parsed']['relation']
+                     for k in search.candidates() if k in frame['known']}
+        if not available:
+            break
+        search.record(available)
+    return search.result()
+
+
+def evaluate_case(frame, selection, study, modules, *, history=None, review=None, pending=()):
     selected = checked_selection(frame, selection, study)
-    unknown = sorted(set(selected) - frame['known'].keys())
+    unknown = sorted((set(selected) - frame['known'].keys()) | set(pending))
     if unknown:
         row = dict(index=frame['step']['index'], queried=selected, verification={},
                    unresolved=unknown, reason=None, same_graph=False,
@@ -129,7 +148,7 @@ def evaluate_case(frame, selection, study, modules, *, history=None, review=None
                 raise ValueError('native evaluation and placement disagree: ' + reason)
             observed = relationships(nodes, target, frame['ids'])
     row.update(assess(expectation(frame), row['reason'], row['unresolved'], observed),
-               observed_relationships=observed)
+               observed_relationships=observed, local_subject=frame['local_subject'])
     if row.get('source_review_hold'):
         row['outcome'] = 'source_review_hold'
     return row
@@ -270,11 +289,18 @@ def evaluate(args):
     study, state, frames, provenance, modules = load_frames(suite['paths'])
     if [expectation(f) for f in frames] != suite['cases']:
         raise ValueError('frozen case expectations changed')
+    graph_plans = {}
     if args.selection_report:
         selected = selections_from_report(args.selection_report, args.profile,
             provenance['state_sha256'], [f['step']['index'] for f in frames])
         selection_source = dict(path=str(args.selection_report.resolve()),
                                 sha256=digest(args.selection_report), profile=args.profile)
+    elif args.method == 'graph-search':
+        graph_plans = {f['step']['index']: graph_selection(f) for f in frames}
+        selected = {index: plan['queried'] for index, plan in graph_plans.items()}
+        selection_source = dict(method='graph-search',
+            selector_sha256=digest(Path(__file__).with_name('canonical_graph_search.py')),
+            evaluator_sha256=digest(__file__))
     else:
         if args.method != 'baseline' and any('scores' not in f for f in frames):
             raise ValueError('this method needs auxiliary vectors; use baseline or a supplied selection report')
@@ -283,8 +309,17 @@ def evaluate(args):
             limit=args.limit, mapped_parent=f['step'].get('mapped_parent')) for f in frames}
         selection_source = dict(method=args.method, limit=args.limit)
     reviews = suite.get('source_review_holds', {})
-    rows = [evaluate_case(f, selected[f['step']['index']], study, modules,
-                         review=reviews.get(str(f['step']['index']))) for f in frames]
+
+    def evaluate_selected(frame, history=None):
+        index = frame['step']['index']
+        plan = graph_plans.get(index)
+        row = evaluate_case(frame, selected[index], study, modules, history=history,
+            review=reviews.get(str(index)), pending=() if plan is None else plan['pending'])
+        if plan is not None:
+            row['graph_search'] = plan
+        return row
+
+    rows = [evaluate_selected(f) for f in frames]
     # Single-case results always use their own original graph/history. The
     # sequential check instead removes skipped answers and stops at divergence.
     history, sequence = [], []
@@ -293,8 +328,7 @@ def evaluate(args):
         if step['index'] not in by_index:
             history.append(step)
             continue
-        row = evaluate_case(by_index[step['index']], selected[step['index']], study, modules,
-                            history=history, review=reviews.get(str(step['index'])))
+        row = evaluate_selected(by_index[step['index']], history=history)
         sequence.append(row)
         if not row['same_graph']:
             break
@@ -347,10 +381,11 @@ def main():
     run = commands.add_parser('evaluate', help='Evaluate a fixed selection against saved answers; no inference.')
     run.add_argument('--suite', type=Path, required=True)
     methods = run.add_mutually_exclusive_group(required=True)
-    methods.add_argument('--method', choices=('baseline', 'heading', 'meaning', 'contextual_heading',
+    methods.add_argument('--method', choices=('baseline', 'graph-search', 'heading', 'meaning', 'contextual_heading',
                                             'contextual_meaning', 'meaning_hybrid', 'late_interaction'))
     methods.add_argument('--selection-report', type=Path)
-    run.add_argument('--limit', type=int, default=16)
+    run.add_argument('--limit', type=int, default=16,
+                     help='Shortlist size for ranking methods; graph-search has no shortlist cap.')
     run.add_argument('--profile')
     run.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()

@@ -987,13 +987,15 @@ adds native project commands: `prepare-distillation-review-trial`,
 The `distillation_review_evaluation` adapter retains complete saved validation
 answers and all numbered occurrences, routes trusted exact results mechanically,
 and delegates requests, reuse, warmups, retry handling and receipts to the shared
-runner. Compatible-heading comparisons reuse unchanged DSLv2; required flags and
-meaning groups come from a source-bound candidate-independent assessment.
+runner. Compatible-heading comparisons use the configured relationship template,
+defaulting to DSLv2; required flags and meaning groups come from a source-bound
+candidate-independent assessment.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
-warmed, using explicit prefix/key configuration. Sequential native groups each
-use concurrency 8 and share a new-attempt allowance. New schema-2 evaluations
-stop questions that cannot change the score: absent full matches, placements
+warmed, using explicit prefix/key configuration. Sequential native groups use
+their frozen concurrency and share a new-attempt allowance. The original
+selection sets concurrency 8; preparation accepts an override. New schema-2
+evaluations stop questions that cannot change the score: absent full matches, placements
 already containing a match, a known compatible uncovered placement, and incoming
 edges of unsupported subjects. Matching-self compatibility guards remain
 required. The runner selects frozen case IDs with `only`; the evaluator warms
@@ -1043,6 +1045,9 @@ qualify an effort. Native request identity includes effort, so saved xhigh
 outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
 concurrency, retries and eligible prefix policy stay fixed. See the
 [reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
+The later development limit is ten notes per iteration, with the full 60 reserved
+for very final validation. Lower-effort testing remains paused during DSLv4
+development; the current ten-note xhigh run uses concurrency 16.
 `prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
 freezes an override in the native request settings without changing the source
 selection. Without the flag, the selection's effort is retained.
