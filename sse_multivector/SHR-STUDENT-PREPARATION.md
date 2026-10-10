@@ -110,11 +110,55 @@ contains and 118 neither**; evaluation has **2/8/8/28**. Neither role contains
 remain empty. This is useful partial-task learning evidence, not sufficient
 coverage for choosing the final Compare student.
 
-The first supported fit is a full-weight Ettin1B encoder with a five-way head,
+The first real fit is a full-weight Ettin1B encoder with a five-way head,
 using every TRAIN example in each epoch, separate evaluation, checkpoints at
-epochs 1 and 4, and fresh-process saved-score verification. Its native tiny-model
-integration passed; a real Ettin fit has not run yet. Qwen27 and Kev27 task fits
-remain subsequent work. Bootstrap's student format remains pending.
+epochs 1 and 4, and fresh-process saved-score verification. Both saved checkpoints
+pass verification in a different process. It updates 1,031,272,709 FP32 parameters
+with BF16 autocast, batch four, learning rate 2e-5 and seed 17: 180 updates and
+720 supervised TRAIN decisions. Complete inputs reach 2,763 TRAIN / 2,409
+evaluation tokens; no input is truncated. Loading takes 23.67 seconds; the
+training phase including evaluation and checkpoint writes takes 671.82 seconds,
+with 19.29 GiB peak CUDA allocation.
+
+The randomly initialized head starts at 9/46 teacher agreement. Epoch one
+predicts `neither` everywhere, giving 28/46, exactly the TRAIN-majority control.
+Epoch four reaches **42/46 (91.30%)**, or **40/44** excluding identity controls.
+It preserves both identity controls and all 28 `neither` targets, but correctly
+directs only **12/16 containment cases**. The four misses are Activities versus
+the stated need for padel courts in both directions, an invitation collapsed
+into the broader chai-transformation topic, and a reversed relation between a
+news item and posting that item. These are disagreements with provisional
+agent-reviewed teacher targets, not four established semantic-gold errors.
+The 46 decisions share 23 families and eight posts; they are not 46 independent
+held-out topics. Missing `uncertain`, non-identity equivalence and branch
+coverage still prevent final model selection.
+
+The complete report is
+`target/bootstrap-compare-student-v1/compare-pilot-ettin1b-complete-report-v1.json`,
+SHA-256 `9ed7f1c14abc97b3af74317a1c31da42667f29a32170cce24a39707662e243cd`;
+training/verification PIDs are 1484310/1488013. Original teacher answers,
+reviews and both checkpoint predictions remain unchanged.
+
+The same fitter now supports the existing native Qwen option readout and Kev
+pointer readout. Both retain complete states, train only adapters (and Kev's
+published head), map choice order back to the same five relations, and separately
+reload every saved checkpoint. Native tiny-model tests exercise encoder, causal
+NF4 and pointer NF4 fitting/reload, changed adapters/head and agreement with the
+published inference interfaces, including reversed option order. All two CUDA
+integration tests pass; CPU regressions pass 11 tests with eight native tests
+skipped. The resealed-target test first failed for missing native-config support
+and then passed through the same production provenance gate.
+
+Pinned Qwen27/Kev27 configurations use the same epochs, rate, seed and examples
+as Ettin, with batch one and rank-16/alpha-32 LoRA. `compare-targets-v3` retains
+byte-identical `data.json` to v2 (SHA-256
+`3b4478d917f722421f840b9436a3c51aae99816a6ee8ffa2de84642d79dcbb8c`),
+updating only the preparation-code binding. Qwen's first launch omitted the
+existing Python-header `CPATH`; its owned worker was stopped before measurement
+and the incomplete v1 artifact is preserved. The corrected launch reuses cached
+headers and kernels, without installation or teacher regeneration. Matched
+Qwen27 and Kev27 task results remain pending. Bootstrap's student format remains
+pending.
 
 Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
 every support post, source entry, producer answer, reciprocal family and branch

@@ -32,11 +32,11 @@ do not guarantee fast GB10 training.
 | --- | --- | --- | --- |
 | Qwen3.8-27B | First dense generative reference: instruction-tuned, native long context; current screen and full-vocabulary suffix training verified locally | Common-foundation reference, including direct option scoring | Scope/state errors, matched task-specific learning and production branch coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
-| Gemma 4 26B-A4B-it | Add to the research shortlist for generative quality with fewer active parameters | Potentially useful for many repeated decisions | GB10 measurements and exact expert/attention adaptation scope; published active count is not a measured speed |
+| Gemma 4 26B-A4B-it | Retained for generative quality with fewer active parameters; expert adaptation and long suffix training/reload verified on GB10 | Potentially useful for many repeated decisions | Representative meaning-generation learning and semantic fidelity |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
 | Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized relation-only decision candidate on the Qwen3.8 foundation | Complete current branch lengths and transfer to fixed-meaning comparisons |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
-| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Eligible inexpensive relation-only classifier; longer full-training path verified on GB10 | Task-specific learning evidence and full branch lengths; an untrained five-way head cannot be ranked using published-checkpoint answers |
+| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Eligible inexpensive relation-only classifier; first task fit learns beyond the majority control | Broader five-label and branch coverage, more evaluation posts and robust learning; its random head is not a published task model |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
 
 This is a research shortlist, not authorization for every listed training campaign.
@@ -56,13 +56,17 @@ learning pilot; they do not rank adapted models. See the
 [source-bound screens](SHR-STUDENT-PREPARATION.md#current-input-evidence).
 
 Reviewed Compare preparation yields **180 TRAIN / 46 separate evaluation**
-relation targets after excluding two unresolved reciprocal families. A native
-full-weight encoder fit and fresh-process checkpoint verification pass with a
-tiny model. This path is prepared for Ettin1B, whose untrained head cannot supply
-a meaningful published-checkpoint comparison. The data contains no `uncertain`
-labels or canonical branches, and evaluation equivalence is entirely identity
-controls. A fit can show initial learning but cannot establish full-task
-superiority or select a final student.
+relation targets after excluding two unresolved reciprocal families. Ettin1B's
+first full-weight fit passes fresh-process verification of both checkpoints.
+Teacher agreement moves from 9/46 with its random head, through a majority-only
+28/46 after one epoch, to **42/46 after four epochs**. The phase including
+evaluation/checkpoint writes takes **11.20 minutes**, with **19.29 GiB** peak
+allocation. Correct containment direction is only 12/16; all 28 `neither`
+targets and two identity controls pass. This demonstrates useful task learning,
+not complete qualification: the eight evaluation posts supply no `uncertain`
+labels, non-identity equivalence or canonical branches. Matched Qwen27/Kev27
+native decision fits are now supported and tested, but their task results remain
+pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
 describes a post-trained dense 27B hybrid-attention model, native 262,144-token

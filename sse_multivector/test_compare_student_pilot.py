@@ -104,19 +104,131 @@ class CompareStudentPilotTests(unittest.TestCase):
         value = json.loads(manifest.read_text())
         value['data_sha256'] = sha256(path.read_bytes()).hexdigest()
         manifest.write_text(json.dumps(value))
-        self.write('fit-config.json', dict(model='must-not-be-loaded', revision='a'*40,
+        config = dict(model='must-not-be-loaded', revision='a'*40,
             max_length=256, epochs=[1], batch_size=1, learning_rate=.001,
-            seed=17, memory_budget_gib=8, reserve_gib=8))
-        result = subprocess.run([sys.executable, '-m', 'sse_multivector.compare_student_pilot',
-            'train', '--config', str(self.root/'fit-config.json'), '--data', str(self.root/'pilot'),
-            '--output', str(self.root/'fit'), '--stage', 'train'], text=True, capture_output=True)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn('targets differ from reviewed teacher collection', result.stderr)
-        self.assertFalse((self.root/'fit').exists())
+            seed=17, memory_budget_gib=8, reserve_gib=8)
+        from sse_multivector.compare_student_pilot import LABELS
+        self.write('native.json', dict(model=config['model'], revision=config['revision'],
+            kind='causal_lm', readout='options', quantization='nf4', max_input_tokens=256,
+            memory_budget_gib=8, reserve_gib=8, question=dict(instructions='Compare fixed meanings.',
+                criteria={label: label for label in LABELS}, output_field='relation')))
+        for settings in (config, dict(config, local_model_config='native.json')):
+            with self.subTest(native='local_model_config' in settings):
+                self.write('fit-config.json', settings)
+                result = subprocess.run([sys.executable, '-m', 'sse_multivector.compare_student_pilot',
+                    'train', '--config', str(self.root/'fit-config.json'), '--data', str(self.root/'pilot'),
+                    '--output', str(self.root/'fit'), '--stage', 'train'], text=True, capture_output=True)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('targets differ from reviewed teacher collection', result.stderr)
+                self.assertFalse((self.root/'fit').exists())
 
 
 @unittest.skipUnless(os.environ.get('RUN_COMPARE_PILOT_GPU_TESTS') == '1', 'explicit CUDA integration run')
 class CompareStudentPilotGPUIntegrationTests(unittest.TestCase):
+    def test_native_option_and_pointer_fits_reload_their_real_adapters_and_head(self):
+        import torch
+        from tokenizers.pre_tokenizers import ByteLevel
+        from transformers import Qwen2Config, Qwen2Model, Qwen2ForCausalLM, Qwen2Tokenizer
+        from sse_multivector import compare_student_pilot as pilot
+        from sse_multivector.distillation_run import write_json, read_json
+        source = read_json(Path(__file__).parent/'distillation/compare-relation-only-kev27b-default-v1.json')
+        sys.path.insert(0, source['upstream_path'])
+        from kev.model import PointerHead, SPECIAL
+        for kind in ('causal_lm', 'pointer'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                torch.manual_seed(17)
+                model_config = Qwen2Config(vocab_size=512, hidden_size=32, intermediate_size=64,
+                    num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=1,
+                    max_position_embeddings=4096)
+                model = (Qwen2Model if kind == 'pointer' else Qwen2ForCausalLM)(model_config)
+                model.save_pretrained(root/'base')
+                words = ['[UNK]', '[PAD]', *sorted(ByteLevel.alphabet())]
+                tokenizer = Qwen2Tokenizer(vocab=dict(zip(words, range(len(words)))), merges=[],
+                    unk_token='[UNK]', pad_token='[PAD]', additional_special_tokens=SPECIAL)
+                tokenizer.chat_template = ('{% for message in messages %}{{message["content"]}}'
+                    '{% endfor %}{% if add_generation_prompt %}\nassistant\n{% endif %}')
+                tokenizer.save_pretrained(root/'base')
+                question = dict(instructions='Compare fixed meanings.',
+                    criteria={label: label for label in reversed(pilot.LABELS)}, output_field='relation')
+                native = dict(source, model=str(root/'base'), revision='a'*40, kind=kind,
+                    quantization='nf4', max_input_tokens=2048, memory_budget_gib=8,
+                    reserve_gib=8, question=question, readout='options')
+                if kind == 'causal_lm':
+                    native['answer_prefix'] = 'Answer: ('
+                if kind == 'pointer':
+                    head = PointerHead(32, 16)
+                    torch.save(dict(base='tiny-foundation', base_revision='a'*40,
+                        weights='full', head=head.state_dict(), head_dim=16, temperature=1.3), root/'base/head.pt')
+                    native.update(base_model='tiny-foundation', base_revision='a'*40)
+                write_json(root/'native.json', native)
+                self.targets(root)
+                config = dict(model=str(root/'base'), revision='a'*40, max_length=2048,
+                    epochs=[1, 2], batch_size=1, learning_rate=.001, seed=17,
+                    memory_budget_gib=8, reserve_gib=8, local_model_config='native.json')
+                write_json(root/'config.json', config)
+                command = [sys.executable, '-m', 'sse_multivector.compare_student_pilot', 'train',
+                    '--config', str(root/'config.json'), '--data', str(root/'data'), '--output', str(root/'fit')]
+                for stage in ('train', 'verify'):
+                    result = subprocess.run(command+['--stage', stage], text=True, capture_output=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                report = read_json(root/'fit/report.json')
+                self.assertTrue(report['complete'])
+                self.assertEqual(report['architecture'], kind)
+                self.assertEqual(report['training_examples_seen'], 2)
+                self.assertEqual(report['supervised_class_decisions'], 2)
+                self.assertNotEqual(report['training_pid'], report['verification_pid'])
+                self.assertTrue(all(c['reload_matches'] for c in report['checkpoints']))
+                self.assertLess(report['trainable_parameters'], report['parameters'])
+                from sse_multivector.local_weight_model import LocalWeights
+                native_readout = LocalWeights(root/'native.json')
+                state = read_json(root/'data/data.json')['evaluation'][0]['state']
+                reply = native_readout.complete(dict(model=native_readout.name,
+                    messages=[dict(role='user', content=state)]))
+                self.assertEqual(report['baseline']['decisions'][0]['relation'],
+                                 json.loads(reply['raw_text'])['relation'])
+                del native_readout
+                torch.cuda.empty_cache()
+                for checkpoint in report['checkpoints']:
+                    decisions = checkpoint['evaluation']['decisions']
+                    self.assertEqual([d['case_id'] for d in decisions], ['evaluation-fixture'])
+                    self.assertEqual(checkpoint['evaluation']['label_order'], list(pilot.LABELS))
+                from safetensors.torch import load_file
+                weights = load_file(root/'fit/checkpoints/epoch-2/adapter_model.safetensors')
+                self.assertTrue(any(v.norm() > 0 for k,v in weights.items() if 'lora_B' in k))
+                if kind == 'pointer':
+                    saved = torch.load(root/'fit/checkpoints/epoch-2/head.pt', weights_only=True)
+                    self.assertTrue(any(not torch.equal(head.state_dict()[k], v.cpu())
+                                        for k,v in saved['head'].items()))
+
+    def targets(self, root):
+        from sse_multivector import compare_student_pilot as pilot
+        from sse_multivector.distillation_run import write_json
+        cases, producers = [], []
+        text = 'Compare these fixed meanings.\n{INPUT_JSON}'
+        from hashlib import sha256
+        prompt_hash = sha256(text.encode()).hexdigest()
+        for role in ('train', 'evaluation'):
+            identity = role+'-fixture'
+            payload = dict(local=dict(meaning='Plants', post=role+' Plants', entry={}),
+                canonical=dict(id=identity, subject='Plants', meaning='Plants', entries=[],
+                               parents=[], ancestors=[], descendants=[]))
+            inputs_ = dict(INPUT_JSON=json.dumps(payload))
+            receipt = dict(results_path='fixture-only', record_sha256=sha256(identity.encode()).hexdigest())
+            support = dict(case_id=identity, note_id=identity, pubkey=identity, number='1')
+            cases.append(dict(experiment=identity, case_id=identity, prompt_id='fixture',
+                prompt_sha256=prompt_hash, input_sha256=pilot.digest(inputs_), inputs=inputs_,
+                answer=dict(meaning='Plants', relation='equivalent', reason='Fixture identical meanings.'),
+                evidence=dict(local=support, canonical=support, role=role, split='train', family_id=identity,
+                              family='same_entry_control', application_allowed=False), receipt=receipt,
+                reviews=[dict(role='agent', current=True, verdict='accept')]))
+            producers.append(dict(experiment=identity, prompt_id='fixture',
+                                  cases=[dict(id=identity, receipt=receipt)]))
+        write_json(root/'compare.json', dict(schema_version=1,
+            prompts={prompt_hash: dict(text=text, prompt_ids=['fixture'])}, cases=cases))
+        write_json(root/'provenance.json', dict(schema_version=1, experiments=producers, inference_calls=0))
+        pilot.prepare(root/'compare.json', root/'provenance.json', root/'data')
+
     def test_encoder_fits_only_train_and_verifies_saved_checkpoints_in_fresh_process(self):
         from tokenizers import Tokenizer, models, pre_tokenizers
         from transformers import ModernBertConfig, ModernBertForSequenceClassification, PreTrainedTokenizerFast
@@ -133,30 +245,7 @@ class CompareStudentPilotGPUIntegrationTests(unittest.TestCase):
                 max_position_embeddings=256, num_labels=5, pad_token_id=0,
                 bos_token_id=2, eos_token_id=2, cls_token_id=2, sep_token_id=2))
             model.save_pretrained(root/'base')
-            cases, producers = [], []
-            text = 'Compare these fixed meanings.\n{INPUT_JSON}'
-            from hashlib import sha256
-            prompt_hash = sha256(text.encode()).hexdigest()
-            for role in ('train', 'evaluation'):
-                identity = role+'-fixture'
-                payload = dict(local=dict(meaning='Plants', post=role+' Plants', entry={}),
-                    canonical=dict(id=identity, subject='Plants', meaning='Plants', entries=[],
-                                   parents=[], ancestors=[], descendants=[]))
-                inputs_ = dict(INPUT_JSON=json.dumps(payload))
-                receipt = dict(results_path='fixture-only', record_sha256=sha256(identity.encode()).hexdigest())
-                support = dict(case_id=identity, note_id=identity, pubkey=identity, number='1')
-                cases.append(dict(experiment=identity, case_id=identity, prompt_id='fixture',
-                    prompt_sha256=prompt_hash, input_sha256=pilot.digest(inputs_), inputs=inputs_,
-                    answer=dict(meaning='Plants', relation='equivalent', reason='Fixture identical meanings.'),
-                    evidence=dict(local=support, canonical=support, role=role, split='train', family_id=identity,
-                                  family='same_entry_control', application_allowed=False), receipt=receipt,
-                    reviews=[dict(role='agent', current=True, verdict='accept')]))
-                producers.append(dict(experiment=identity, prompt_id='fixture',
-                                      cases=[dict(id=identity, receipt=receipt)]))
-            write_json(root/'compare.json', dict(schema_version=1,
-                prompts={prompt_hash: dict(text=text, prompt_ids=['fixture'])}, cases=cases))
-            write_json(root/'provenance.json', dict(schema_version=1, experiments=producers, inference_calls=0))
-            pilot.prepare(root/'compare.json', root/'provenance.json', root/'data')
+            self.targets(root)
             config = dict(model=str(root/'base'), revision='a'*40, max_length=256,
                 epochs=[1, 2], batch_size=1, learning_rate=.001, seed=17,
                 memory_budget_gib=8, reserve_gib=8)

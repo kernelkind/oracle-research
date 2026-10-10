@@ -67,12 +67,23 @@ class/branch coverage explicitly. Neither agent review nor this preparation
 establishes human gold or final supervision.
 
 The same module's `train --config PATH --data PATH --output PATH --stage train`
-fits a full-weight encoder using only the prepared TRAIN role. It first derives
+fits a full-weight encoder or native decision readout using only the prepared
+TRAIN role. It first derives
 the targets again from the hash-bound teacher collection, forbids input truncation,
 saves configured epoch checkpoints and evaluates separately. `--stage verify`
 requires a fresh process and checks saved hashes and classification scores.
-The current pinned configuration is
+The pinned full-weight encoder configuration is
 [`distillation/compare-pilot-ettin1b-full-v1.json`](distillation/compare-pilot-ettin1b-full-v1.json).
+[`compare-pilot-qwen27b-lora-v1.json`](distillation/compare-pilot-qwen27b-lora-v1.json)
+and [`compare-pilot-kev27b-lora-v1.json`](distillation/compare-pilot-kev27b-lora-v1.json)
+bind the existing five-way option/pointer configurations through
+`local_model_config`. These native paths require batch one, preserve all input,
+train rank-16/alpha-32 adapters and the Kev head where present, and retain the
+published decision interface. Verification also checks the saved pointer head.
+Use the cached GB10 Python headers in `CPATH` for native FLA/Triton CUDA kernels;
+the [verified environment](SHR-STUDENT-PREPARATION.md#isolated-gb10-environment) describes
+the existing unprivileged header layout. Native CUDA regressions cover all
+three training paths and reversed option order.
 This is the partial-task development pilot path, separate from SP training and
 from final model selection. It has no provider calls or hierarchy application.
 

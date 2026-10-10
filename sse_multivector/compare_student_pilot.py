@@ -13,6 +13,8 @@ import math
 import os
 from pathlib import Path
 import random
+import string
+import sys
 import time
 
 from .compare_student_inputs import accepted, validate_answer
@@ -123,15 +125,16 @@ def prepare(collection, provenance, output):
 
 
 def train(config_path, data_path, output, stage):
-    """Full-weight encoder pilot; every gradient comes from the frozen TRAIN role."""
+    """Fit an encoder or native decision readout using only frozen TRAIN targets."""
     config_path, data_path, output = map(Path, (config_path, data_path, output))
     config = read_json(config_path)
     fields = {'model', 'revision', 'max_length', 'epochs', 'batch_size', 'learning_rate',
               'seed', 'memory_budget_gib', 'reserve_gib'}
-    if (set(config) != fields or not isinstance(config['model'], str) or not config['model']
+    if (set(config) not in (fields, fields | {'local_model_config'})
+            or not isinstance(config['model'], str) or not config['model']
             or not isinstance(config['revision'], str) or len(config['revision']) != 40
             or any(c not in '0123456789abcdef' for c in config['revision'])):
-        raise ValueError('expected pinned encoder pilot configuration')
+        raise ValueError('expected pinned Compare pilot configuration')
     for name in ('max_length', 'batch_size'):
         if type(config[name]) is not int or config[name] <= 0:
             raise ValueError('expected positive pilot sizes')
@@ -142,6 +145,23 @@ def train(config_path, data_path, output, stage):
     for name in ('learning_rate', 'memory_budget_gib', 'reserve_gib'):
         if not isinstance(config[name], (int, float)) or not math.isfinite(config[name]) or config[name] <= 0:
             raise ValueError('expected positive finite pilot settings')
+    native_path = native = None
+    kind = 'encoder'
+    if 'local_model_config' in config:
+        native_path = (config_path.parent / config['local_model_config']).resolve()
+        native = read_json(native_path)
+        kind = native.get('kind')
+        if (kind not in {'causal_lm', 'pointer'} or 'adapter' in native
+                or kind == 'causal_lm' and native.get('readout') != 'options'
+                or native.get('prompt_layout', 'chat') != 'chat'
+                or native.get('quantization') not in {'none', 'nf4'}
+                or any(native.get(key) != config[key] for key in
+                       ('model', 'revision', 'memory_budget_gib', 'reserve_gib'))
+                or native.get('max_input_tokens') != config['max_length']
+                or config['batch_size'] != 1
+                or set(native['question']['criteria']) != set(LABELS)
+                or native['question']['output_field'] != 'relation'):
+            raise ValueError('native pilot requires the pinned five-way batch-one readout')
     manifest = read_json(data_path/'manifest.json')
     if manifest.get('task') != 'compare' or sha256(data_path/'data.json') != manifest['data_sha256']:
         raise ValueError('Compare pilot dataset hash differs')
@@ -164,22 +184,59 @@ def train(config_path, data_path, output, stage):
     import torch
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
     if not torch.cuda.is_available() or not torch.cuda.is_bf16_supported():
-        raise ValueError('encoder pilot requires BF16 CUDA')
+        raise ValueError('Compare pilot requires BF16 CUDA')
     torch.set_num_threads(4)
     torch.manual_seed(config['seed'])
     torch.cuda.set_per_process_memory_fraction(min(1., config['memory_budget_gib']*2**30 /
                                                   torch.cuda.get_device_properties(0).total_memory))
     tokenizer = AutoTokenizer.from_pretrained(config['model'], revision=config['revision'])
+    keys = list(native['question']['criteria']) if native else list(LABELS)
+    candidate_ids = None
+    pointer = None
+    if kind == 'pointer':
+        upstream = Path(native['upstream_path'])
+        if sha256(upstream/'kev/model.py') != native['upstream_model_sha256']:
+            raise ValueError('pointer source differs from its frozen binding')
+        sys.path.insert(0, str(upstream))
+        from kev.model import encode
+    elif kind == 'causal_lm':
+        from .local_weight_model import choice_prompt
+        codes = list(string.ascii_uppercase[:5])
+        ids = [tokenizer.encode(code, add_special_tokens=False) for code in codes]
+        if (any(len(row) != 1 or row[0] in tokenizer.all_special_ids for row in ids)
+                or len({row[0] for row in ids}) != 5):
+            raise ValueError('native option codes must be distinct single tokens')
+        candidate_ids = [row[0] for row in ids]
     encoded = {}
     for role in ('train', 'evaluation'):
         encoded[role] = []
         for row in data[role]:
-            ids = tokenizer(row['state'], truncation=False, add_special_tokens=True)
+            if kind == 'pointer':
+                question = native['question']
+                record = dict(state=row['state'], questions=[dict(instr=question['instructions'],
+                    options=[f'{key}: {question["criteria"][key]}' for key in keys], label=0)])
+                prepared = encode(tokenizer, record, max_state=config['max_length'],
+                                  max_branch=config['max_length'], strict=True)
+                ids = dict(input_ids=prepared['ids'], attention_mask=[1]*len(prepared['ids']),
+                    position_ids=prepared['pos'], decide_idx=prepared['decide_idx'][0],
+                    opt_idx=prepared['opt_idx'][0])
+            elif kind == 'causal_lm':
+                prompt = choice_prompt(row['state'], native['question'], 'options')
+                rendered = tokenizer.apply_chat_template([dict(role='user', content=prompt)],
+                    add_generation_prompt=True, enable_thinking=False, tokenize=False) + native.get('answer_prefix', '')
+                ids = tokenizer(rendered, add_special_tokens=False, truncation=False)
+                if any(tokenizer.encode(rendered+code, add_special_tokens=False) != ids['input_ids']+[token]
+                       for code, token in zip(codes, candidate_ids)):
+                    raise ValueError('option code tokenization changes at the answer boundary')
+            else:
+                ids = tokenizer(row['state'], truncation=False, add_special_tokens=True)
             if len(ids['input_ids']) > config['max_length']:
                 raise ValueError('complete Compare input exceeds configured maximum; truncation is forbidden')
-            encoded[role].append(dict(input_ids=ids['input_ids'], attention_mask=ids['attention_mask']))
+            encoded[role].append({key: value for key, value in ids.items() if key != 'token_type_ids'})
     binding = dict(config_sha256=sha256(config_path), data_sha256=manifest['data_sha256'],
                    manifest_sha256=sha256(data_path/'manifest.json'), code_sha256=sha256(__file__))
+    if native_path:
+        binding['local_model_config_sha256'] = sha256(native_path)
     output.mkdir(parents=True, exist_ok=stage == 'verify')
     if stage == 'verify':
         report = read_json(output/'report.json')
@@ -190,6 +247,7 @@ def train(config_path, data_path, output, stage):
         report = dict(schema_version=1, binding=binding, config=config, data=manifest,
             training_pid=os.getpid(), complete=False, training_finished=False, updates=0,
             training_examples_seen=0, supervised_class_decisions=0, checkpoints=[],
+            architecture=kind, method='full' if kind == 'encoder' else 'lora',
             workload='Relation-only Compare development learning; provisional teacher agreement, not semantic gold.',
             input_tokens={role: dict(examples=len(values), total=sum(len(v['input_ids']) for v in values),
                                     maximum=max(len(v['input_ids']) for v in values))
@@ -203,11 +261,65 @@ def train(config_path, data_path, output, stage):
             raise ValueError('system memory fell below pilot reserve')
 
     def batch(role, indexes):
+        if kind == 'pointer':
+            row = encoded[role][indexes[0]]
+            return {key: torch.tensor([row[key]], device='cuda')
+                    for key in ('input_ids', 'attention_mask', 'position_ids')}
         result = tokenizer.pad([encoded[role][i] for i in indexes], padding=True, return_tensors='pt')
         return {key: value.to('cuda') for key, value in result.items()}
 
+    def load(checkpoint=None):
+        nonlocal pointer
+        if kind == 'encoder':
+            options = dict(dtype=torch.float32, attn_implementation='sdpa')
+            if not checkpoint:
+                options.update(revision=config['revision'], num_labels=5, ignore_mismatched_sizes=True)
+            model = AutoModelForSequenceClassification.from_pretrained(
+                checkpoint or config['model'], **options).to('cuda')
+            model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+            return model
+        if kind == 'causal_lm':
+            from .distillation_run import subject_training_model
+            return subject_training_model(dict(native, device='cuda', max_length=config['max_length'],
+                efficient_attention=True, lora_target_modules='all-linear', lora_rank=16,
+                lora_alpha=32, gradient_checkpointing=True), checkpoint)
+        from .local_weight_model import LocalWeights
+        from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
+        pointer = LocalWeights(native_path)
+        base = prepare_model_for_kbit_training(pointer.model, use_gradient_checkpointing=True)
+        model = (PeftModel.from_pretrained(base, checkpoint, is_trainable=True) if checkpoint else
+            get_peft_model(base, LoraConfig(task_type='FEATURE_EXTRACTION', target_modules='all-linear',
+                                          r=16, lora_alpha=32, lora_dropout=0.)))
+        if checkpoint:
+            saved = torch.load(checkpoint/'head.pt', map_location='cpu', weights_only=True)
+            if saved['source_config_sha256'] != sha256(native_path):
+                raise ValueError('saved pointer head source binding differs')
+            pointer.head.load_state_dict(saved['head'], strict=True)
+            pointer.head.temperature = saved['temperature']
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+        model.config.use_cache = False
+        pointer.model = model
+        return model
+
+    def mode(model, training):
+        model.train(training)
+        if pointer is not None:
+            pointer.head.train(training)
+
+    def scores(model, role, indexes):
+        inputs = batch(role, indexes)
+        if kind == 'encoder':
+            return model(**inputs).logits
+        if kind == 'causal_lm':
+            values = model(**inputs, use_cache=False, logits_to_keep=1).logits[:, -1, candidate_ids].float()
+        else:
+            row = encoded[role][indexes[0]]
+            h = model(**inputs).last_hidden_state[0].float()
+            values = pointer.head(h[row['decide_idx']], h[row['opt_idx']]).unsqueeze(0)
+        return values[:, [keys.index(label) for label in LABELS]]
+
     def evaluate(model):
-        model.eval()
+        mode(model, False)
         decisions, confusion = [], [[0]*5 for _ in LABELS]
         torch.cuda.synchronize()
         start = time.perf_counter()
@@ -215,7 +327,7 @@ def train(config_path, data_path, output, stage):
             for start_index in range(0, len(data['evaluation']), config['batch_size']):
                 reserve()
                 indexes = list(range(start_index, min(start_index+config['batch_size'], len(data['evaluation']))))
-                logits = model(**batch('evaluation', indexes)).logits
+                logits = scores(model, 'evaluation', indexes)
                 if not torch.isfinite(logits).all():
                     raise ValueError('nonfinite Compare classification scores')
                 for i, choice in zip(indexes, logits.argmax(-1).cpu().tolist()):
@@ -249,39 +361,43 @@ def train(config_path, data_path, output, stage):
                 directory = output/checkpoint['path']
                 if file_hashes(directory) != checkpoint['hashes']:
                     raise ValueError('saved encoder checkpoint hash differs')
-                model = AutoModelForSequenceClassification.from_pretrained(directory,
-                    dtype=torch.float32, attn_implementation='sdpa').to('cuda').eval()
+                model = load(directory)
+                mode(model, False)
                 probe = torch.load(directory/'probe.pt', map_location='cpu', weights_only=True)
                 with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
-                    actual = model(**batch('evaluation', [0])).logits.float().cpu()
+                    actual = scores(model, 'evaluation', [0]).float().cpu()
                 torch.testing.assert_close(actual, probe['logits'], rtol=1e-4, atol=1e-4)
                 checkpoint['reload_matches'] = True
                 del model, probe, actual
+                pointer = None
                 gc.collect()
                 torch.cuda.empty_cache()
             report.update(verification_pid=os.getpid(), complete=True)
         else:
             start = time.perf_counter()
-            model = AutoModelForSequenceClassification.from_pretrained(config['model'],
-                revision=config['revision'], num_labels=5, dtype=torch.float32,
-                attn_implementation='sdpa', ignore_mismatched_sizes=True).to('cuda')
+            model = load()
             limit = getattr(model.config, 'max_position_embeddings', None)
             if limit is not None and config['max_length'] > limit:
-                raise ValueError('configured complete input exceeds encoder position limit')
-            model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+                raise ValueError('configured complete input exceeds model position limit')
+            parameters = [p for p in model.parameters() if p.requires_grad]
+            if pointer is not None:
+                parameters += list(pointer.head.parameters())
             report.update(load_seconds=time.perf_counter()-start,
                 gradient_checkpointing=model.is_gradient_checkpointing,
-                parameters=sum(p.numel() for p in model.parameters()),
-                trainable_parameters=sum(p.numel() for p in model.parameters() if p.requires_grad),
+                parameters=(model.get_nb_trainable_parameters()[1] if native else
+                            sum(p.numel() for p in model.parameters())) + (
+                            sum(p.numel() for p in pointer.head.parameters()) if pointer is not None else 0),
+                trainable_parameters=sum(p.numel() for p in parameters),
                 baseline=evaluate(model))
             majority = Counter(row['target'] for row in data['train']).most_common(1)[0][0]
             report['train_majority_control'] = dict(relation=majority, evaluation_agreement=sum(
                 row['target'] == majority for row in data['evaluation'])/len(data['evaluation']))
-            optimizer = torch.optim.AdamW(model.parameters(), lr=config['learning_rate'])
+            publish()
+            optimizer = torch.optim.AdamW(parameters, lr=config['learning_rate'])
             started = time.perf_counter()
             torch.cuda.reset_peak_memory_stats()
             for epoch in range(1, max(config['epochs'])+1):
-                model.train()
+                mode(model, True)
                 order = list(range(len(data['train'])))
                 random.Random(config['seed']+epoch).shuffle(order)
                 losses = []
@@ -291,9 +407,9 @@ def train(config_path, data_path, output, stage):
                     labels = torch.tensor([LABELS.index(data['train'][i]['target']) for i in indexes], device='cuda')
                     optimizer.zero_grad(set_to_none=True)
                     with torch.autocast('cuda', dtype=torch.bfloat16):
-                        loss = model(**batch('train', indexes), labels=labels).loss
+                        loss = torch.nn.functional.cross_entropy(scores(model, 'train', indexes).float(), labels)
                     loss.backward()
-                    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+                    norm = torch.nn.utils.clip_grad_norm_(parameters, 1.)
                     if not torch.isfinite(loss) or not torch.isfinite(norm) or norm <= 0:
                         raise ValueError('nonfinite loss/gradient or zero pilot gradient')
                     optimizer.step()
@@ -306,8 +422,11 @@ def train(config_path, data_path, output, stage):
                     directory = output/'checkpoints'/f'epoch-{epoch}'
                     model.save_pretrained(directory)
                     tokenizer.save_pretrained(directory)
+                    if pointer is not None:
+                        torch.save(dict(head=pointer.head.state_dict(), temperature=pointer.head.temperature,
+                            source_config_sha256=sha256(native_path)), directory/'head.pt')
                     with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
-                        probe = model(**batch('evaluation', [0])).logits.float().cpu()
+                        probe = scores(model, 'evaluation', [0]).float().cpu()
                     torch.save(dict(logits=probe), directory/'probe.pt')
                     report['checkpoints'].append(dict(epoch=epoch, path=str(directory.relative_to(output)),
                         hashes=file_hashes(directory), updates=report['updates'],
@@ -331,7 +450,7 @@ def main():
     command = commands.add_parser('prepare', help='prepare native reviewed targets; no inference')
     for name in ('collection', 'provenance', 'output'):
         command.add_argument('--'+name, required=True, type=Path)
-    command = commands.add_parser('train', help='fit a full-weight encoder and separately verify saved weights')
+    command = commands.add_parser('train', help='fit an encoder or native decision readout and verify saved weights')
     for name in ('config', 'data', 'output'):
         command.add_argument('--'+name, required=True, type=Path)
     command.add_argument('--stage', choices=('train', 'verify'), required=True)
