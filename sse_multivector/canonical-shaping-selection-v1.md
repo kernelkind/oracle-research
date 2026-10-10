@@ -5,11 +5,13 @@ group has too many children. A nomination still follows ordinary local versus
 canonical graph traversal. Selection does not establish containment, placement,
 equivalence or a preferred answer.
 
-**Current investigation: two siblings at a time.** The user approved searching
-for an unused local entry that could parent both, without clustering. Use
+**Current investigation: manually identify parents for two siblings at a time.**
+The user approved checking whether the original local entries contain a suitable
+parent before trying to reverse-engineer its retrieval. Missing parent topics
+are diagnostic references only; they are not generated or inserted. Use
 `--method subgroups --pair FIRST_ID SECOND_ID` for this offline screen. Original
 local ancestry and SSE similarity remain retrieval evidence; ordinary traversal
-still decides placement. A useful grouping candidate remains unresolved.
+still decides placement. No new scoring rule is approved by this investigation.
 
 The [bounded selector](canonical_shaping_selection.py) ranks entries by their
 second-highest cosine against eligible immediate siblings' subject vectors.
@@ -587,11 +589,103 @@ python3 sse_multivector/canonical_shaping_selection.py \
   --output target/canonical-shaping-selection-v1/pair-C008-C014-repeat.json
 ```
 
-Suggested next investigation, requiring approval: on a fixed pair, evaluate the
-candidate's own title alongside descendant evidence. The Puns and Food
-preservation witnesses show why a descendant match alone can promote an
-unrelated or narrower parent. This would reuse existing vectors without new
-encodings or meanings, and still would not establish containment.
+The user subsequently directed a manual parent search before further ranking
+experiments. The Puns and Food preservation witnesses remain evidence that a
+descendant match alone can promote an unrelated or narrower parent. First
+establish that the desired parent meaning is available in the original entries;
+otherwise its absence from the ranking cannot diagnose retrieval failure.
+
+## Manual parent availability diagnostic
+
+This uses the same frozen fifty-note ASv6.100 / Bootstrap-v96 / Compare-v48
+snapshot, not another agent's newer construction. The selected pair is the two
+retained C005 children **Cookware C008** and **Cooking appliances C014**. Their
+fixed meanings are:
+
+- C008: “Cookware is vessels designed to hold food while it is cooked using
+  heat, including but not limited to cocottes and frying pans, for preparing
+  meals such as a Full English Breakfast.”
+- C014: “Cooking appliances are devices designed to cook food, including but
+  not limited to induction hobs. The topic covers these appliances and their
+  functions, design, installation and integrated components, which may include
+  extractor fans.”
+
+The manually proposed intermediate topic is **Cooking equipment**: physical
+tools, vessels and appliances designed for cooking food, including descriptions
+of those items' functions, design, installation and components. This is an
+agent-proposed diagnostic meaning, not user-reviewed semantic gold or a new
+local/canonical entry. It could group the equipment pair without requiring all
+the food-preparation activities to be children. Ordinary traversal would still
+be required for a real available candidate.
+
+The source has 1,510 local entries from fifty notes. Its 124 processed entries
+leave 1,386 unused entries, with 626 distinct headings and 1,206 distinct
+heading/context pairs. All 626 unused headings were screened manually; plausible
+alternatives then received detailed inspection of their source post, context
+and local branch. This is not a claim that every unused context was separately
+reviewed, nor a formal proof of semantic absence. It goes beyond searching only
+for the exact phrase Cooking equipment.
+
+| Original unused local entry | Evidence and availability assessment |
+|---|---|
+| Cooking, entry 4, note `51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70` | Context: “How to cook” establishes cooking as a subject. The post requests a mochi-bread recipe. This is the already tested broader activity topic; its saved traversal groups all seven children and relocates overcrowding. It is available, but does not supply the intermediate equipment meaning. |
+| Product design, entry 4, note `33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f` | Context: “The post describes the hob's sleek minimalist design.” This describes design rather than the general class of equipment. |
+| Cooking functions, entry 5, same note | Context: “The hob incorporates several advanced cooking functions.” This describes capabilities rather than the equipment class. |
+| Dishes, entry 5, note `f7ed481e9a564c95bf788dbcf34e0c098b32e7e5dffe2c841f769fb8cbc4f5e0` | Context: “Cleaned so many dishes from all the dishes i used doing all the above.” The post describes vessels used during salsa, yogurt, chicken and stock preparation. This does not establish a general class including induction hobs. |
+| Food smokers, entry 2, note `c68026e7c9e1f97913aa4044eea86d60c22ce1d8469b315ebb8a124149235525` | Context: “The post names a smoker used for brisket.” This is one equipment type, rather than a parent of both whole generic classes. |
+| Crockpots, entry 1, note `821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f` | Context: “The author names a crockpot holding beef stew.” This is another equipment type. |
+| Food preservation, entry 3, note `dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c` | Context: “The beets are vacuum-sealed and prepared for freezer storage.” This is the pair ranker's leading nominee, but it describes a process/purpose rather than the general equipment class. |
+
+Other inspected possibilities included charcoal grills, J-tubes, rocket mass
+heaters, extractor fans, worktops, knives, forks, recipes, brands, homesteading
+and food security. Equipment types/components are narrower; the knife/fork
+post establishes eating utensils; the remaining topics describe instructions,
+makers or broader themes. None supplies the proposed intermediate equipment
+meaning. These are manual availability assessments, not saved model rejections
+or a prohibition on thematic containment.
+
+**Finding:** no matching unused local topic was found for this diagnostic
+parent. An available Cooking entry was already retrieved and tested, so the
+finding is not that all possible parents are absent. The particular intermediate
+topic appears missing from this candidate pool. A selector cannot retrieve an
+entry that is not there; this pair alone cannot validate an improved ranker.
+No synthetic topic, comparison, encoding, graph change or UI update was made.
+
+### Available original-parent control
+
+A separate manual positive control does have an original unused entry:
+
+- Local **Plant foods**, entry **7.1**, note
+  `fbd3796768e2bb12f215dd5d15a4e7377f6c9ce7849c01e6de166cafffd29a25`,
+  under local Food. Context: “'Mostly plants' recommends plant foods; 'veggies'
+  names vegetables.” The post recommends real food, moderate amounts and mostly
+  plants, citing Michael Pollan's Food Rules. A proposed independent reading is
+  plant-derived foods for human consumption; it has not been generated or frozen.
+- Canonical **Avocados C062**: “Avocados as food: the edible fruits of the
+  avocado tree, whose fleshy pulp is eaten.”
+- Canonical **Cranberries C069**: “Cranberries are tart berries considered as
+  food, encompassing edible forms and culinary uses, including but not limited
+  to their use as an ingredient in sourdough bread with rosemary, brown sugar
+  and cinnamon.”
+
+Both canonical nodes have C001 Food as their original immediate parent. Their
+supports come from different notes than the proposed local parent, so this
+control does not depend on overriding same-note exclusion. The manual judgment
+is that Plant foods can encompass both fixed meanings. This is a proposed
+retrieval control, not user-approved gold or a model-verified placement.
+**Cranberries C069 is omitted from the shaped menu**, so retrieving this pair's
+parent would not by itself prove fewer menu choices or preserved hierarchy
+quality. It separates an available original parent from the equipment topic
+that appears missing, before any further retrieval experiment is designed.
+
+The manual checks assert the corpus counts, original entry identity/non-use,
+the pair's raw sibling relationship and menu membership. Frozen source SHA-256:
+
+| Source relative to `target/hierarchy-as100-b96-c48-fifty-note-v1` | SHA-256 |
+|---|---|
+| `subjects/subjects.json` | `18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a` |
+| `regrouping-roots-v1/state.json` | `853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae` |
+| `menu-v2/state.json` | `4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c` |
 
 When a new intermediate parent groups m existing siblings, replacing their
 direct choices with that parent can reduce the original group by m−1 choices.
