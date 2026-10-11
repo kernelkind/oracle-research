@@ -21,6 +21,7 @@ def _snapshot(reference, base):
         raise ValueError("coverage evaluation hash differs")
     report = evaluation.report(path.parent)
     protected = dict(report["sources"])
+    receipt_hashes = {}
     for item in (path, path.parent / "evaluation.complete.json"):
         protected[str(item)] = engine._sha256_file(item)
     for native in report["experiments"]:
@@ -38,7 +39,9 @@ def _snapshot(reference, base):
             if receipt:
                 results = Path(receipt["results_path"])
                 for item in (results, results.parent / "manifest.json"):
-                    protected[str(item)] = engine._sha256_file(item)
+                    if item not in receipt_hashes:
+                        receipt_hashes[item] = engine._sha256_file(item)
+                    protected[str(item)] = receipt_hashes[item]
     frozen = experiment.read(path)
     bundle, _ = evaluation._selection(frozen["selection"], path.parent)
     assessments = evaluation._assessments(frozen["assessment_directory"], bundle)

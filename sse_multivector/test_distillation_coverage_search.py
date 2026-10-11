@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import experiment_inputs
 
@@ -226,6 +227,45 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         plan = json.loads((Path(prepared["experiments"][0]["path"]) / "experiment.json").read_text())["plan"]
         with self.assertRaisesRegex(ValueError, "evaluation hash differs"):
             experiment_inputs.prepare_file(plan["dataset"], Path(plan["dataset"]["path"]), plan["prompt"]["text"])
+
+    def test_snapshot_hashes_each_shared_receipt_file_once(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        _, baseline, _ = self.baseline("receipt-hashes", edge_valid=True,
+            student=fixtures.subjects(("1", "Fruits"), ("1.1", "Cables"), ("1.2", "Cable bundles"), ("2", "Cable A")))
+        reference = dict(path=str(baseline / "evaluation.json"), sha256=coverage.engine._sha256_file(baseline / "evaluation.json"))
+        native_report = coverage.evaluation.report
+        def report(*args, **kwargs):
+            value = native_report(*args, **kwargs)
+            hashing.reset_mock()  # Measure snapshot binding after the native report's own verification.
+            return value
+        with patch.object(coverage.engine, "_sha256_file", wraps=coverage.engine._sha256_file) as hashing:
+            with patch.object(coverage.evaluation, "report", side_effect=report):
+                original, _, protected = coverage._snapshot(reference, baseline)
+        receipts = [Path(row["receipt"]["results_path"]) for native in original["experiments"]
+                    for row in native["cases"] if row.get("receipt")]
+        self.assertGreater(len(receipts), len(set(receipts)))
+        files = set(receipts) | {path.parent / "manifest.json" for path in receipts}
+        for path in files:
+            with self.subTest(path=path.name):
+                self.assertEqual(sum(Path(call.args[0]) == path for call in hashing.call_args_list), 1)
+                self.assertEqual(protected[str(path)], coverage.engine._sha256_file(path))
+
+    def test_native_preparation_rejects_receipt_changed_before_final_recheck(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker = self.baseline("receipt-changed", edge_valid=True)
+        original = coverage.evaluation.report(baseline)
+        results = next(Path(row["receipt"]["results_path"]) for native in original["experiments"]
+                       for row in native["cases"] if row.get("receipt"))
+        native_prepare = experiment.prepare
+        def prepare(*args, **kwargs):
+            value = native_prepare(*args, **kwargs)
+            results.write_bytes(results.read_bytes() + b"\n")
+            return value
+        with patch.object(experiment, "prepare", side_effect=prepare):
+            with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+                coverage.prepare(baseline, self.root / "receipt-changed-coverage", runner_binary=worker)
 
     def test_identical_uncovered_subjects_and_contexts_share_a_candidate_with_explicit_aliases(self):
         from sse_multivector import distillation_coverage_search as coverage
