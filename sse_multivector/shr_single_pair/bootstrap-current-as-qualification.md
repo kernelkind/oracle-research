@@ -2133,3 +2133,56 @@ pass. The broader 258-test run has 21 failures and six skips, including shared
 runner concurrency and ordered-response expectations. Representative failures
 reproduce on unchanged main; the entire broader suite is not claimed clean or
 every remaining failure separately proven pre-existing.
+
+### Controlled context ablation (prepared)
+
+The user approved preparing a test after considering whether to remove context.
+Context is an AS-generated interpretation, not independent factual evidence.
+The Coffee-chain subjects already suggest a business, so removing context may
+not fix that assignment. No specific replacement meaning is semantic gold.
+
+Both conditions use the identical experimental
+[Bootstrap-v110](Hierarchy-bootstrap-v110.md), revised from last approved v104
+only to permit optional input contexts. Its task rules, outputs and examples
+otherwise remain unchanged. The contextual condition includes original contexts;
+the other removes only the contexts of supplied entries. The post, selected
+number, ordered subjects, tree relationships, model, response schema, worker and
+cache prefix are fixed. Historical v104/v109 outputs are secondary evidence,
+not fresh controls for this new prompt. This measures context availability under
+v110; it does not isolate v109 wording or certify a permanently context-free
+prompt whose examples also omit contexts.
+
+The panel contains four complete real ASv6.100 trees:
+
+| Tree | Entries | Concern to inspect |
+|---|---:|---|
+| Coffee chains, root `1` | 2 | Particular business assignment unsupported by the supplied text. |
+| Mental states, root `5` | 3 | Figurative language, broad category and unsupported clinical claims. |
+| Rome, root `5` | 4 | Named identity, humorous proverb and the complete warning-sign list. |
+| Food storage, root `8` | 3 | Planned storage versus an assertion that storage occurred. |
+
+Each condition has 12 entries, eight immediate links and 12 recursive ancestor
+checks. Review final meanings for factual support and clear boundaries, accepting
+any evidence-consistent choice. Check branch compatibility using independently
+generated, fixed endpoints from that same condition and draw. Preserve nulls,
+malformed answers and disagreements; additional uncertainty alone is not an
+improvement. Repeat consequential differences before attributing an effect.
+These selected development cases are not a representative reliability estimate.
+
+Reusable definitions are the
+[contextual spec](hierarchy-bootstrap-context-ablation-with-context-v1.spec.json),
+[context-free spec](hierarchy-bootstrap-context-ablation-without-context-v1.spec.json)
+and [source view](hierarchy-bootstrap-context-ablation-subjects-only-v1.json).
+Native prepared experiments are under `target/bootstrap-context-ablation-v1/`.
+Preparation makes no teacher calls, activates no prompt and changes no original
+AS corpus. Future execution uses the shared runner, Sol 6.1 medium, automatic
+prefix caching and its shared request queue, within the existing persistent
+attempt allowance. No new allowance or counter reset follows from preparation.
+
+Offline verification: the minimal production CLI test first failed because the
+source view was unsupported. After the adapter extension, 78 local-node and
+snapshot tests and nine prompt-revision tests pass. All 12 frozen pairs differ
+only by removal of supplied context fields; full prompt, runner settings,
+response schema and cache prefix match. Independent read-only review confirms
+the design and its limits. Both experiments remain entirely unrun, with zero
+provider attempts or model-answer reuses; no performance result is claimed.

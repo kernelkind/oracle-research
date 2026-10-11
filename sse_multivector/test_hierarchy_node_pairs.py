@@ -676,6 +676,131 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual([row['id'] for row in self.show('screen')['cases']], [cases[1]['id']])
         self.assertEqual(self.calls(), [])
 
+    def test_local_collection_subjects_only_drops_only_context(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'original-local.json'}], 'review': {}}
+        self.write('source.json', collection)
+        self.prepare('contextual')
+        original = self.show('contextual')['cases'][0]
+        self.assertEqual(json.loads(original['inputs']['INPUT_JSON']), {
+            'local': {'post': 'FULL LOCAL POST {INPUT_JSON}', 'hierarchy': {
+                'selected': '1.1', 'entries': [
+                    {'number': '1', 'subject': 'Food', 'context': 'Local root context'},
+                    {'number': '1.1', 'subject': 'Vegetables', 'context': 'Local entry context'},
+                    {'number': '1.1.1', 'subject': 'LOCAL DESCENDANT', 'context': 'Excluded'}]}}})
+        self.assertNotIn('input_view', original['evidence'])
+        collection['input_view'] = 'subjects_only'
+        self.write('source.json', collection)
+        self.prepare('subjects-only')
+        projected = self.show('subjects-only')['cases'][0]
+        original_input = json.loads(original['inputs']['INPUT_JSON'])
+        expected = json.loads(original['inputs']['INPUT_JSON'])
+        for entry in expected['local']['hierarchy']['entries']:
+            del entry['context']
+        self.assertEqual(json.loads(projected['inputs']['INPUT_JSON']), expected)
+        self.assertEqual(projected['id'], original['id'])
+        self.assertNotEqual(projected['input_sha256'], original['input_sha256'])
+        evidence = projected['evidence']
+        self.assertEqual(evidence['input_view'], 'subjects_only')
+        self.assertEqual(evidence['original_input'], original_input)
+        self.assertEqual(evidence['original_input_sha256'], experiment_inputs.digest(original_input))
+        self.assertEqual(evidence['local_input_sha256'], experiment_inputs.digest(expected))
+        self.assertNotIn('Local entry context', projected['prompt'])
+        plan = json.loads((self.root / 'subjects-only/experiment.json').read_text())['plan']
+        self.assertEqual(plan['preparation']['input_view'], 'subjects_only')
+        self.assertIn(str(self.root / 'notes.json'), plan['sources'])
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_preserves_distinct_original_identities(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        changed = json.loads(json.dumps(local))
+        changed['nodes'][0]['context_overrides'] = {'1.1': 'Different original interpretation'}
+        self.write('changed-local.json', changed)
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'original-local.json'}, {'path': 'changed-local.json'}],
+                      'review': {}}
+        self.write('source.json', collection)
+        self.prepare('contextual')
+        originals = self.show('contextual')['cases']
+        collection['input_view'] = 'subjects_only'
+        self.write('source.json', collection)
+        self.prepare('subjects-only')
+        projected = self.show('subjects-only')['cases']
+        self.assertEqual([case['id'] for case in projected], [case['id'] for case in originals])
+        self.assertEqual(len(projected), 2)
+        self.assertEqual(projected[0]['inputs'], projected[1]['inputs'])
+        self.assertNotEqual(projected[0]['evidence']['original_input'],
+                            projected[1]['evidence']['original_input'])
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_rejects_unsupported_views_and_schemas(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'original-local.json'}], 'review': {},
+                      'input_view': 'subjects_only'}
+        for index, value in enumerate((None, '', 'contexts_only', [], 4)):
+            with self.subTest(view=value):
+                self.write('source.json', {**collection, 'input_view': value})
+                result = self.cli('prepare', f'bad-view-{index}', '--spec', self.spec, ok=False)
+                self.assertIn('input_view must be subjects_only', result.stderr)
+        legacy = {key: value for key, value in collection.items() if key != 'local_schema_version'}
+        self.write('source.json', legacy)
+        result = self.cli('prepare', 'legacy-collection', '--spec', self.spec, ok=False)
+        self.assertIn('subjects_only requires collection local_schema_version 4', result.stderr)
+        self.write('source.json', {**collection, 'local_schema_version': 3})
+        result = self.cli('prepare', 'bad-schema', '--spec', self.spec, ok=False)
+        self.assertIn('local_schema_version must be 4', result.stderr)
+        self.write('source.json', {**local, 'input_view': 'subjects_only'})
+        result = self.cli('prepare', 'standalone-view', '--spec', self.spec, ok=False)
+        self.assertIn('local node source.input_view', result.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_does_not_bypass_saved_source_validation(self):
+        self.saved_meaning_source(run=False, schema_version=4)
+        self.write('source.json', {'schema_version': 2, 'local_schema_version': 4,
+            'sources': [{'path': 'bootstrap-source.json'}],
+            'experiments': [{'path': 'bootstrap'}], 'review': {}, 'input_view': 'subjects_only'})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['adapter'] = 'hierarchy_local_nodes'
+        self.write('spec.json', spec)
+        corpus = json.loads((self.root / 'notes.json').read_text())
+        corpus['notes'][0]['subjects'][1]['context'] = 'Tampered source context'
+        self.write('notes.json', corpus)
+        result = self.cli('prepare', 'tampered', '--spec', self.spec, ok=False)
+        self.assertIn('source changed', result.stderr)
+        self.assertFalse((self.root / 'tampered').exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_preserves_native_quote_validation(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        self.write('source.json', {'schema_version': 2, 'local_schema_version': 4,
+            'sources': [{'path': 'original-local.json'}], 'review': {}, 'input_view': 'subjects_only'})
+        spec = json.loads(self.spec.read_text())
+        schema = Path(__file__).with_name('shr_single_pair') / 'Hierarchy-bootstrap-v79.output.schema.json'
+        spec['runner']['output_schema'] = json.loads(schema.read_text())
+        self.write('spec.json', spec)
+        self.prepare('valid-quote')
+        answer = {'ambiguities': [], 'resolutions': [], 'meaning': 'Selected topic', 'evidence': [
+            {'quote': 'FULL LOCAL POST', 'supports': 'Selected topic', 'inference': None}]}
+        self.cli('run', 'valid-quote', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('valid-quote')['cases'][0]['status'], 'valid')
+        self.prepare('invalid-quote', '--repeat')
+        answer['evidence'][0]['quote'] = 'Local entry context'
+        self.cli('run', 'invalid-quote', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)},
+                 ok=False)
+        case = self.show('invalid-quote')['cases'][0]
+        self.assertEqual(case['status'], 'malformed')
+        self.assertIn('exact contiguous excerpt of the local post', case['error'])
+
     def test_local_collection_saved_answers_are_witnesses_not_meaning_inputs(self):
         self.saved_meaning_source()
         self.cli('review', 'bootstrap', '--case', 'one', '--role', 'agent',
