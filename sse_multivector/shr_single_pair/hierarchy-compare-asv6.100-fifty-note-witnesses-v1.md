@@ -2391,3 +2391,59 @@ remain frozen. Native caps67/39 count retries and warming under the existing
 shared20000 allowance. If there are no reuses or retries,52 comparisons and
 two warmups require54 attempts. No operator or canonical guard changes are
 introduced; complete proof review and a fresh repeat remain required.
+
+V107's completed native proof review records11 accept,4 reject and14 uncertain
+core responses, plus13 accept,2 reject and4 uncertain controls. The four core
+failures are042 both and061 both; the latter exclude cancelled plans solely
+for nonexecution. The control failures omit the person test or drop subjective
+experience. Its native core reversal check also retains008/018/041/053
+conflicts. Source-scope qualifications remain separate from unsound proofs.
+
+V110 completes52 valid responses with54 fresh attempts,0 reuses,0 failures
+or retries and complete usage. Native API-equivalent cost is$0.4905736;
+hierarchy-compare-v110-usage-v1.json reproduces the accounting. Complete native
+proof review records16 accept,0 reject and17 uncertain core responses,
+plus9 accept,2 reject and8 uncertain controls. Both042/061 orientations
+recover complete consumer and intended-activity proofs. The019 snapshot and
+reverse control again miss the eating-occasion alternative; its forward
+orientation preserves it.029 now tests identity while retaining subjective
+experience, but the human-author implication remains qualified.064 preserves
+the desire's beverage connection and qualifies tea-leaf/herbal admission.
+
+The core still has018/052/053/071 reversal conflicts; the control panel has
+isolated019. These are partial-panel checks, not an entire-core comparison.
+The17 core agent qualifications are review uncertainty, not seventeen model nulls:
+the core itself returns four uncertain relations. A coherent outcome is not
+semantic certification when its lexical admission proof remains unsettled.
+All reviews bind unchanged input/output hashes and preserve disagreement.
+
+### V112/V113: separate alternative coverage from reading selection
+
+Two controlled candidates branch independently fromV110. V113 makes conditions
+explicitly local to each parent alternative, requires coverage through at least
+one alternative/connection for every case within every child alternative, and makes the question
+name the alternative being challenged. Escaping one alternative is insufficient;
+the candidate must preserve every child requirement and escape the others too.
+It removes the instruction to change only one condition because escaping
+different alternatives can require multiple unrestricted features to vary.
+Identity priority, meanings, topic operators and canonical guards remain intact.
+The unrunV111 draft had a quantifier precision concern: different parent
+alternatives may cover different cases within a single child alternative.
+V113 explicitly permits that union coverage before any inference.
+
+V112 changes only the ambiguity paragraph. It tests the same concrete candidate
+under competing ordinary readings of the complete meaning, identifies the
+decisive phrase and settles readings through wording, necessary implications
+and settled usage. If material competing readings remain viable, use null.
+An omitted qualifier alone is not ambiguity. This targets silent selection
+of roast, broth, eating-purpose or morning-context boundaries, not a policy
+of rejecting named kinds or making every extra qualification uncertain.
+
+Both inherit exactly the same completed52-case V110 gate through native
+preparation:33 core cases and19 controls, with all producer receipts, graph
+inputs, output schema and model/worker settings preserved. Caps67/39 per
+candidate use the persistent shared20000 counter; first attempts would total
+108 including four warmups absent reuse/retry. Tests remain separate, with
+independent receipt-bound proof assessments. Combine neither mechanism until
+its actual results support the prediction. Passing controls must retain useful
+containment and correct negative proofs; additional nulls alone are not success.
