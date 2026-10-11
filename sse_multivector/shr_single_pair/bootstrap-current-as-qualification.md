@@ -2841,5 +2841,83 @@ independently defined Food root. The Nostr child does not explicitly choose the
 root's consumer boundary, and broader food senses cannot be assumed solely to
 manufacture a conflict either. Preserve that branch qualification separately
 from factual support. Further Bootstrap work should check compatible scope
-across independently fixed complete-branch meanings; that next test has not
-been prepared or run by this audit.
+across independently fixed complete-branch meanings. The subsequent
+[saved Food-branch review](#complete-food-branch-review-and-transitive-reconciliation)
+checks those existing outputs without a fresh generation test.
+
+### Complete Food-branch review and transitive reconciliation
+
+The user authorized checking the complete risotto/Food branch before further
+edits. This is a read-only reassessment of the same saved v104 and v109 outputs,
+with each version's endpoints kept separate. Native `show --json` exports are
+`target/bootstrap-food-branch-reassessment-v1/{baseline,candidate}-native.json`.
+Each version contains 36 valid nonnull meanings, all selected entries from the
+same original ASv6.100 root tree, 35 immediate links and 176 recursive ancestor
+checks. The source post, complete tree and all 36 inputs match across versions;
+every diagnostic quote is an exact post substring. No fresh model calls,
+prompt changes, native review writes, Compare labels or hierarchy construction
+occurred. Existing individual verdicts remain unchanged.
+
+Three subagents partitioned the selected children and checked every assigned
+child against every independently defined ancestor. Their pair ledgers and
+exact endpoint receipts are in ignored `top-review.md`,
+`first-ingredients-review.md` and `last-ingredients-review.md` under that target.
+The coordinating agent inspected all final meanings and reconciled the combined
+assessment. No definite whole-topic incompatibility was established in either
+version. The 141 non-Food-root checks per version are provisionally compatible
+under information-topic inclusion. Joint ingredient collections require all
+fifteen named ingredients together; they do not admit unrelated alternatives.
+Named risotto identity is retained, and omitted repetition of a defining
+property is not permission to substitute an arbitrary non-risotto rice dish.
+No preparation, serving, eating or publication occurrence was inferred.
+
+The combined initial review could not be used as a consistent positive ledger.
+One reviewer accepted Food containing the named risotto kinds using their
+ordinary human culinary identity, while other reviewers left their Food-to-
+ingredient shortcuts uncertain for missing consumer wording. Since the
+risotto-to-ingredient links were accepted, the fixed-whole-meaning assumption
+would imply those shortcuts too. The same Food interpretation must apply
+throughout the chain. The reviewers preserved their initial notes and
+explicitly qualified or withdrew the blanket uncertainty classifications;
+those initial partition counts must not be aggregated as final results.
+
+Two coherent interpretations remain to distinguish:
+
+- **Human culinary-kind interpretation:** the named risotto kinds establish
+  the intended culinary role. Dish-specific ingredient and collective-list
+  topics preserve that role, so the 34 Food-to-dish-subtree relationships follow
+  from the accepted chains. Merely omitting the word human is not a separate
+  producer failure. This remains a qualified interpretation, not proof of the
+  intended eater of every particular batch.
+- **Use-specific consumption interpretation:** if Food requires intended human
+  consumption to be independently established for each described use, the
+  Food-to-named-dish links need the same qualification as the ingredient links.
+  They cannot be accepted to establish chains and then rejected at shortcuts.
+  A risotto prepared solely as animal feed is a possible membership probe;
+  its admission by the independently defined culinary kind has not been
+  established. It is not a fact about this post or semantic gold.
+
+The independent Nostr-content definition adds a separate human-food versus
+broader-food sense question: its unqualified food wording does not expressly
+choose the root's consumer boundary. This does not establish that the original
+post was published on Nostr, or turn the content itself into edible material.
+Preparation inputs removed before serving likewise do not establish an error
+without a consistent decision about the food role and information covered;
+literal ingestion of every unchanged input is not a supplied requirement.
+
+Keep the 35 Food-root checks convention-qualified rather than reporting a new
+pass/failure total. They share one membership interpretation issue; they are
+not 35 independent Bootstrap failures. The hypothetical discriminators and
+conditional chain implications above are review reasoning, not fresh teacher
+judgments. No wording effect or v109 advantage is established by this audit.
+The latest individual native counts remain v104: 113 accept / 0 reject /
+2 uncertain, and v109: 114 accept / 0 reject / 1 uncertain.
+
+Next recommended Bootstrap work is a focused independent repeat of Food,
+Risotto, Ingredients for mushroom risotto with shrimp and Food-related content
+on Nostr, checking whether the final definitions clearly choose kind-level or
+use-specific membership conditions. Either evidence-consistent choice is
+permitted; no old positive label or consumer preference is a required target.
+That repeat has not been prepared or run. Do not edit solely because a reviewer
+can imagine another plausible boundary, or infer a responsible prompt sentence
+from this saved-output reassessment.

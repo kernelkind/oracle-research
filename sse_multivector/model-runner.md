@@ -94,6 +94,18 @@ or whole-branch certification. Four earlier repeat meanings plus four
 warmups use eight attempts,
 with no answer reuse or failures. V104 remains approved; v109 is not activated.
 
+The subsequent [complete saved Food-branch review](shr_single_pair/bootstrap-current-as-qualification.md#complete-food-branch-review-and-transitive-reconciliation)
+inspects 36 independently established meanings and 176 recursive ancestor checks
+per version, without fresh calls or native verdict changes. No definite
+incompatibility is established. Its combined review exposed a convention
+inconsistency: accepting Food → Risotto and Risotto → dish-specific ingredients
+also establishes the Food → ingredient shortcuts under the fixed-meaning
+assumption. A stricter consumer-purpose reading must qualify the original
+Food → Risotto links too. Preserve this as one unresolved membership convention,
+not 35 producer failures or a measured prompt improvement. Conditional chain
+implications are not fresh Compare answers; Nostr's independent food-sense
+boundary remains separately qualified.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
