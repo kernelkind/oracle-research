@@ -2767,3 +2767,59 @@ bindings are checked before execution. Prompts and prepared plans are frozen
 before inference, and review ownership is exclusive per native experiment.
 No Bootstrap generation, hierarchy work or external agent message is involved.
 Usage source: hierarchy-compare-v123-v125-question-example-usage-v1.json.
+
+
+The V123/V124/V125 stage completed 76 comparisons using 83 actual attempts,
+including six warmups and one automatically recovered provider failure. No
+answers were reused. One failed attempt lacks usage; the native known
+API-equivalent subtotal is $0.709048, while the full cost remains unknown.
+
+Single-example review: V123 watch-only has 7 accepts/5 rejects: three semantic
+rejects (personhood in 041 forward, broth in 052 reverse, flour in Bread snapshot)
+and two procedure-only rejects. V124 hair-only has 8 accepts/4 rejects: two
+semantic rejects (broth in 053 forward, flour in Bread snapshot) and two
+procedure-only rejects. Both preserve valid appliance roles. These are one-draw
+outcome differences, not a causal attribution or a reliability estimate.
+
+V125 controls have 11 accepts/2 rejects/6 qualifications. Both rejects concern
+omitted missing-consumer candidates in required Food-ancestor proofs; selected
+dish relations remain valid, and nourishment-purpose implications stay
+qualified. Eating/water and author/person admissions remain qualified rather
+than converted into historical gold. Bread variants, Meal alternatives and
+activity-role controls pass. Core review finds 15 accepts/4 rejects/14 qualifications. Its immutable
+outputs include broth imports in 052 reverse/053 forward,
+a roasted-bean import in 008 forward, and a recipient restriction incorrectly
+carried into Greetings' independent contact alternative in 070 reverse. V125
+therefore does not qualify for broad adoption or a larger confirmation run.
+
+### V126/V128: isolate variant search from a focused question
+
+Both interventions independently start from V125. V126 restores V119's explicit
+recognized-ordinary-variant check before treating customary composition, method
+or function as necessary. It leaves V125's generic question wording unchanged.
+V127 makes the question name an applicable parent restriction absent
+from the child's explicit wording, prioritizing identity/consumer restrictions
+then other missing qualifications. It permits paraphrases and multiple
+conditions and does not restore mandatory one-quote/first-variation bookkeeping.
+Independent pre-dispatch review found its no-missing-restriction fallback
+conflicted with the hair demonstration's shared-condition test. V128 permits
+that test or a topic-connection test in the fallback. V127 and its prepared
+experiments remain unrun. V128 is the corrected question-focus intervention;
+its scope interpretation wording remains V125's. Neither intervention changes
+producer meanings, permitted topic connections, canonical guards, schema or
+synthetic demonstrations. Thus success cannot be credited to combining both.
+
+Each focused gate freezes the same 12 core and nine control inputs. Core covers
+Coffee 008, consumer 041/042, broth 052/053 and Greetings 070 in both orientations.
+Controls cover the Bread snapshot and both isolated orientations, all three
+Meals-route cases, appliance roles, and the two missing-consumer ancestor proofs
+031/032. No expected labels enter input. The original failed preparation used an
+incorrect snapshot ID and performed no inference or artifact creation; corrected
+native preparation retains the exact original snapshot-019-c020.
+
+Expected dispatch is 42 comparisons plus four warmups, 46 actual attempts absent
+retries/reuses; stage caps are 25/19 per version under the unchanged shared
+20000 counter. Compare-only source/replay/schema/input checks precede dispatch.
+The versions remain experimental. No Bootstrap generation or hierarchy build
+occurs. Native usage source:
+hierarchy-compare-v126-v128-restriction-usage-v1.json.
