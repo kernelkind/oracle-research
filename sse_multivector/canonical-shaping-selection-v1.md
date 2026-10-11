@@ -17,6 +17,9 @@ The subsequent unchanged-v11 online-course restriction test meets all three
 registered expectations in both fresh draws: six qualified agent accepts.
 It demonstrates the clear parent check on these inputs, without settling the
 Cuisine boundary or demonstrating a wording improvement.
+The user next authorizes testing unchanged v11 on the six remaining real
+sibling groups. The pre-call criteria and separate twelve-attempt ceiling are
+recorded in [the remaining real-group screen](#consolidation-v11-remaining-real-group-screen).
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -3377,3 +3380,55 @@ After the final main sync, all 35 relevant consolidation/prompt checks pass
 again; the 31 previously passed current traversal/search checks have unchanged
 construction source. The post-sync native aggregate preserves generation usage,
 cost and receipt attribution exactly. The task remains isolated as requested.
+## Consolidation-v11 remaining real-group screen
+
+The user accepts the recommendation to test the remaining real groups without
+editing the prompt. This screen covers Food preparation C005 (seven siblings),
+Food C001 (thirteen), Cooking appliances C014 (four), Eating C123 (five),
+Coffee C006 (six) and Food dishes C020 (six), twice each. Roots, Mental states
+and Cuisine are already tested with v11 and are not repeated here.
+
+The self-imposed ceiling is twelve fresh GPT-6.1 Sol medium subscription
+attempts, including any failure or retry. The new persistent native counter is
+`target/canonical-shaping-selection-v1/consolidation-v11-remaining-real-budget-v1.json`.
+The exhausted historical 369-attempt counter and six-attempt online-course
+counter remain unchanged. This approval does not expand into placement,
+Compare inference, Bootstrap edits, hierarchy changes or a prompt revision.
+
+Before generation, native `prepare --from` preserves the complete original
+groups from `consolidation-v10-broader-preparation-first-v1`,
+`consolidation-v10-broader-first-v1` and
+`consolidation-v10-remaining-first-v1`. `--only` selects whole cases rather than
+truncating siblings. Only the prompt changes to unchanged v11; settings retain
+ordinary SSE, GPT-6.1 Sol medium and the current shared production worker.
+The saved original subjects' provenance identifies ASv6.100. The second draw
+uses native `--repeat`, preserving the first draw's full inputs and settings
+while requesting fresh trials. Historical outputs and verdicts stay outside
+the model input. No more than three cases from this screen run concurrently.
+
+Pre-call assessment criteria:
+
+- Validate output fields and child IDs mechanically. A nonnull proposal must
+  cover every selected child's entire fixed meaning and list every supplied
+  sibling wholly covered by its final meaning. It must select at least two
+  children and fewer than the whole group.
+- With a parent, the final proposed meaning must fit wholly inside its fixed
+  meaning and be narrower. Do not infer a missing role or restriction from
+  existing placement or narrow a child to make it fit. Associated activities,
+  products and participants require the relationship stated in the proposal.
+- Assess the definition as written, without forcing earlier chosen headings
+  or child IDs. Cooking methods may include no-bake preparation; vessels need
+  not generate their own heat. A different valid proposal is acceptable.
+- Eating's historical nulls are only a diagnostic expectation, not proof that
+  no useful subgroup exists. Judge any new nonnull meaning on its own scope.
+- Keep Food dishes' meal-role boundary unresolved where the proposed meaning
+  requires a meal role not independently established for the full child scope.
+  Earlier uncertain Bread judgments are not negative human gold.
+- Report prospective note-set checks separately from semantic checks. Coffee's
+  historical equal-note-set problem cannot establish a prompt error because
+  note memberships are absent from model input. Structural reports remain
+  unapplied; partial reduction above six choices is useful progress.
+
+These are predeclared agent-review criteria, not new human pair labels or an
+accuracy benchmark. The committed usage selection is
+[hierarchy-consolidation-v11-remaining-real-usage-v1.json](shr_single_pair/hierarchy-consolidation-v11-remaining-real-usage-v1.json).
