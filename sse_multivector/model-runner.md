@@ -6657,6 +6657,9 @@ pre-call provisional targets are not certified accuracy. Two settled reversals,
 one positive/null orientation change and newly challenged input boundaries remain;
 V176 is not adopted. Details and native usage are in the
 [qualified-subset findings](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#qualified-subset-test-of-unchanged-v176).
-The user subsequently accepted the presented Cookware-contains-Stockpots
-relationship. Preserve its earlier agent proof qualification and contrary
-reverse output; do not treat the accepted positive label as a confirmed error.
+The user initially accepted Cookware containing Stockpots, then approved the
+laboratory-only culinary-stock counterexample after inspecting the reverse
+diagnostic. Under these exact meanings, neither follows: the forward containment
+is incorrect and the reverse answer is correct. Preserve both user decisions,
+the original provisional targets and all measured results; the review correction
+is not a prompt improvement.
