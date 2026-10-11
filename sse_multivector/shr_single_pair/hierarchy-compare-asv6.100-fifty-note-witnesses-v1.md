@@ -2075,3 +2075,35 @@ candidates were actually produced. Better labels without valid proofs, or
 loss of activity-role/aspect positives, do not qualify the prompt. This contrast
 can test candidate construction versus abstract classification, but cannot by
 itself separate that mechanism from reduced lexical priming.
+
+V100 completes all10 outputs validly in12 fresh attempts including warmups,
+without reuse, failure, retry or missing usage. Native API-equivalent cost is
+$0.0977900, reproduced by hierarchy-compare-v100-usage-v1.json.038 and019 both
+now give consistent admitted counterexamples;042 both still approve containment
+using a compound deliberateness/person condition, then establish deliberateness
+alone. The equivalence control036 changes to directional containment through an
+implicit-memory witness and needs independent scope review. Both activity-role
+controls and107 remain positive/negative as previously supported. Native reversal
+checks find no conflict among the three complete pairs in this small gate;
+this is not broad accuracy or repeat qualification.
+
+The next diagnostic supplies hypothetical nonhuman alertness and ketogenic
+feeding candidates without an expected answer. Compare-counterexample-diagnostic
+V1 describes their properties only; V2 adds their familiar category names.
+Original fixed inputs, topic connections, output schema and settings stay
+unchanged. The four native requests are038-forward/042-forward in both prompt
+conditions, with caps5 and5 under the existing counter. Both templates are
+diagnostic interventions, never adoption candidates, validation successes or
+synthetic examples for the reusable Compare prompt. The model must assess
+admission, exclusion and the relation rather than accept the supplied witness.
+
+Label-dependent admission would support taxonomy sensitivity. Correct admission
+in both conditions while ordinary comparison fails would show that supplied
+candidates can overcome the error, without separating search from lexical
+priming. Correct admission with a positive relation would identify proof/label
+inconsistency. Identical failures would not rule out priming from the unchanged
+meaning strings. Independent ordinary-gate qualification remains necessary.
+Independent pre-run review confirms that only candidate naming changes between
+the templates. Both selection instructions still name the child topics, and
+supplied entity bindings/exclusion stipulations can overcome defaults; the test
+does not remove all taxonomy cues or isolate binding from topic-operator effects.
