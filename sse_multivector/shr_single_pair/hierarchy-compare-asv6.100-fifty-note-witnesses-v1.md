@@ -3503,3 +3503,78 @@ Bootstrap inference, hierarchy construction or external messages. Review
 universal proofs, complete counterexamples, reversals and both chain directions,
 preserving qualifications and distinguishing procedure from semantic defects.
 Usage source: hierarchy-compare-v152-v154-controlled-usage-v1.json.
+
+All six experiments complete:156 valid comparisons in164 actual attempts,
+including six warmups and two recovered provider failures/retries. No reuse,
+terminal failures or unrun cases. Both failed attempts lack usage; $1.5326744 is
+the native known API-equivalent subtotal, not the unknown complete cost.
+Counter:17388/20000. V153 core has zero reversal conflicts and one reverse-chain
+witness; its controls have one reversal. V154 core has two reversals and one
+reverse-chain witness; controls have none. Fresh V152 core has three reversals
+and no chain witnesses; controls have none. These are consistency observations,
+not accuracy or evidence of stable improvement. Independent reviews and
+cross-review calibration remain native and receipt-bound.
+
+V153 core:20 accept/2 reject/11 qualified; controls:12 accept/0 reject/
+7 qualified. Both022 orientations still miss a recognized chewy holeless
+production case.072 now uses independent mild-chicken information, closing the
+earlier comparison/evaluation gap; its universal food-use implication remains
+qualified. No procedure-only rejections occur under V153's narrower duty.
+
+V154 core:16 accept/15 reject/2 qualified after calibration; controls:11 accept/
+8 reject/0 qualified verdicts. Four core answers omit or import person scope,
+both022 miss the ring-shaped restriction,071 reverse misses others versus
+someone, and107 forward leaves a drink ingredient's nourishing-composition
+connection unclosed. Seven additional core rejections concern the broader
+procedure, not established false relations. Controls include one unclosed
+sweetener proof and seven procedure-only positive omissions; their underlying
+personhood, food/drink and nourishment qualifications remain in comments.
+Total rejection counts are not semantic error rates and cannot be compared
+directly with the narrower procedure.022 forward's original accept is preserved:
+recognized holeless production survives both preparation readings, so the
+preparation/serving ambiguity alone does not justify its null. No adoption.
+
+V151's preceding fresh repeat is now fully reviewed: core22 accept/2 reject/
+9 qualified, controls12 accept/2 reject/5 qualified. Both022 core answers miss
+recognized chewy holeless bagels; the031/032 control rejections concern
+nourishment proof completeness, not an established contrary same-dinner
+witness. Reviewer disagreement is preserved. No definite procedure omission
+under V151's actual positive-only rule is established. Corrections append to
+native history rather than replacing old assessments.
+
+### V155/V157: specific property tests and visible positive proofs
+
+V155 changes only V152's ordinary-variant paragraph. A required parent
+condition absent from child wording is tested through variants of that actual
+property, rather than only a different method or feature. A familiar kind name
+alone cannot impose every descriptor in the parent's fixed definition. Whole-
+child admission remains independently necessary; this is not permission to
+invent a variant or unknown property of a fixed particular entity. This is a
+more specific rendering of an existing obligation, not new containment logic.
+
+V156 independently replaces V152's positive prerequisite with a visible
+restriction audit in the existing justification string. Identity/consumer
+conditions are tested first, followed by other applicable absent conditions;
+each has a concrete attempted violation and admission/all-parent adjudication.
+An alternative or permitted connection can cover the attempt. V157 changes only
+V156's canonical reference to name that same audit consistently; V156 and its
+two prepared batches remain unrun intermediate artifacts. No schema fields,
+synthetic examples, producer meanings or input evidence change.
+
+Relative to V152 this changes both prerequisite breadth and required visible
+recording. Relative to tested V154 it adds ordered, visible concrete-case
+adjudication under the same broad obligation. Naming conditions alone is not
+a repair: earlier condition extraction retained unsupported implications.
+Evaluate substantive candidate admission and exclusion, not formatted compliance
+alone. Independent preflights, exact revision replay, unchanged demonstration
+and input checks, both production-example validations, and full source/worker
+binding checks pass.
+
+Next stage freezes full33-core/19-control gates for each candidate:104
+comparisons plus four warmups,108 attempts absent retries/reuse. The immediately
+completed fresh V152 repeat is the comparison control; no redundant additional
+V152 draw is scheduled here. Neither candidate is adopted. Preserve the
+ASv6.100/Bootstrap-v96 qualification and all historical review disagreements;
+do not apply the broader procedure retroactively. No Bootstrap inference,
+hierarchy construction, service changes or external-session messages.
+Usage source: hierarchy-compare-v155-v157-controlled-usage-v1.json.
