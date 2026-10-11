@@ -1241,3 +1241,20 @@ Autonomous iteration continues with a new controlled candidate. The next
 diagnosis separates intended consumer, purpose and role restrictions rather
 than accepting one bundled assertion of a typical food use. This failure does
 not establish that counterpart definition borrowing was the responsible cause.
+
+### V5 separate-condition variation
+
+V5 replaces only the variation paragraph's first sentence. Independently
+required conditions must be tested separately even within one phrase, explicitly
+including intended consumer; each variation preserves the child's kind/activity
+and other restrictions. V4 varied toppings when the relevant omitted boundary
+was human consumers. The edit targets that procedural omission, not a mandated
+Food label or a newly supplied example. The initial eight, schema and settings
+remain fixed. Dispatch cap 17; pass requires all eight supported diagnostics and
+labels. Then remaining seven cap 15 and a fresh initial-eight repeat cap 17, before
+the frozen full 102 panel. Failed stages instead lead to a controlled new version.
+All attempts remain inside the persistent 20,000 allowance.
+
+A native source-bound Food-only bagel comparison is being prepared as a separate
+diagnosis of branch influence; its checkpoint binding must validate without
+editing code or saved state. It is not a substitute for the full snapshot.
