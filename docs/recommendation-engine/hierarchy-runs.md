@@ -1,9 +1,70 @@
 # Official hierarchy runs and experimental parameters
 
 This Markdown file is the register of official hierarchy runs and their
-experimental parameters. **HR04** is the completed 12-note run;
-**HR03** is the completed 50-note baseline. Each run's raw build, browsing menu
-and export share its ID.
+experimental parameters. **HR05** is the approved 24-note rerun being prepared.
+**HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
+Each run's raw build, browsing menu and export share its ID.
+
+## HR05 — ASv6.100 24-note hierarchy
+
+Approved as a rerun of HR04 with 24 notes. Execution has not started. The
+[run definition](../../sse_multivector/hierarchy-runs/hr05/traversal.spec.json)
+records complete note IDs in their original selection order. A review UI using
+the existing terminal hierarchy viewer will be prepared after the run.
+
+### Inputs and construction
+
+| Parameter | Selected value |
+| --- | --- |
+| Notes | First 24 notes in HR03's frozen 50-note selection, in the same order |
+| Subject prompt | ASv6.100; reuse HR03's saved subject trees |
+| Local subject entries | 832, including 150 local roots |
+| Bootstrap prompt | [Hierarchy-bootstrap-v109](../../sse_multivector/shr_single_pair/Hierarchy-bootstrap-v109.md) |
+| Compare prompt | [Hierarchy-compare-v179](../../sse_multivector/shr_single_pair/Hierarchy-compare-v179.md), symmetric A/B fixed meanings |
+| Consolidation prompt | [Hierarchy-consolidation-v4](../../sse_multivector/hierarchy-runs/hr05/Hierarchy-consolidation-v4.md), unchanged from the three-note trial |
+| Constructor | `traversal-v24`, including landed refinement change `c5cc28d31455403292dd012e862aa871d06e0241` |
+| Local schema version | 4 |
+| Initial graph | Empty |
+| Selection | L1 roots first, then deeper levels; rotate one local entry per note per pass in saved order |
+| Refinement after coverage | Deeper entries only from notes represented in leaves containing multiple notes |
+| Active local searches | At most 3; placements in selection order |
+| Consolidation trigger | An addition leaves 6 or more siblings, including roots; best effort |
+| Redundant browsing steps | Bypass equal-note-set parents, retaining deeper headings and preserving the raw graph |
+| Completion | All notes individually accessible, one note per browsing leaf, strictly smaller note sets on downward edges |
+
+The selected notes reuse the exact HR03 ASv6.100 corpus. Construction starts
+from an empty graph with native meanings and comparisons, retaining any exact
+answer reuse with its producer receipts.
+
+### Model execution and attempt allowance
+
+| Parameter | Selected value |
+| --- | --- |
+| Provider | `openai-codex`, subscription |
+| Model | `gpt-6.1-sol` |
+| Reasoning effort | medium |
+| Transport | SSE |
+| Prompt cache | Enabled, with automatic warming |
+| Shared provider queue | Maximum 30 requests across experiments |
+| Bootstrap timeout | 600 seconds |
+| Compare/consolidation timeout | 1,800 seconds |
+| Output-token limit | No explicit limit |
+| Seed / temperature | Unspecified; no overrides |
+| Persistent attempt ceiling | 500 total, including warmups, retries and every resume |
+
+The exact Bootstrap, Compare and consolidation settings are saved alongside the
+run definition. The same persistent allowance is used throughout. Reaching its
+ceiling preserves partial work and reports unfinished construction.
+
+### Git provenance and retained artifacts
+
+Before execution, record the full Oracle generation commit and clean source
+status in the frozen preparation record. The hierarchy source and prompts
+match HR04. The retained isolated runner remains at
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`. Run artifacts stay under
+`oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/`.
+The subject corpus SHA-256 remains
+`18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a`.
 
 ## HR04 — ASv6.100 12-note hierarchy
 
