@@ -3098,8 +3098,11 @@ nourishment qualifications instead of being mislabeled an omission.
 V139 core:20 accept/5 reject/8 qualified.019 both remain sound, and reverse071's
 supported null passes.041/042 forward import humans;070 forward skips recipient,
 072 forward chooses already-food venison, and reverse022 does not present a
-concrete variant. V139 controls are still undergoing final native registration;
-no provisional tally is counted as completed qualification. Independent challenge
+concrete variant. V139 controls initially record10 accept/5 reject/4 qualified;
+the later independent-topic audit corrects016 to accept, preserving its initial
+rejection. Latest totals are11 accept/4 reject/4 qualified. All four remaining
+rejections omit identity/consumer tests (029x3 and031). All025 and032 retain
+qualifications. Independent challenge
 confirms009's nonnutritive flavored-water case closes the actual dish-composition
 route, while032 now repairs the dinner role but does not independently establish
 nourishment. These qualifications are not permission to weaken canonical guards
@@ -3136,3 +3139,73 @@ new candidates. That is11 comparisons plus two warmups per version,39 expected
 repeat attempts. Improved labels without valid proofs or increased blanket
 uncertainty do not qualify a candidate. Usage source:
 hierarchy-compare-v140-v141-example-ablation-usage-v1.json.
+
+Both complete52-case gates and all three11-case repeats finish:137 valid
+comparisons in148 actual attempts, including ten warmups, one recovered provider
+failure and its retry. There is no reuse or terminal failure. One failed attempt
+has no usage, so $1.3049988 is the known native API-equivalent subtotal; complete
+cost is unknown. The shared persistent counter reads16764/20000 at this checkpoint.
+
+V140 first core:17 accept/6 reject/10 qualified; controls:9 accept/7 reject/
+3 qualified. Its repeat core:3 accept/5 reject; controls:0 accept/3 reject.
+Removing demonstrations loses identity/consumer tests and introduces desired-kind
+and all-alternative proof errors. Yes/no question-form deviations are retained
+separately in comments, not converted into wrong-label judgments:24 first core,
+12 first controls, eight repeat core and two repeat controls.
+
+V141 first core:21 accept/4 reject/8 qualified; controls:10 accept/6 reject/
+3 qualified. First core rejects008/053 forward counterpart imports,070 forward's
+already-qualified recipient and107 forward's unclosed nourishing-food composition
+route. Five control rejections omit identity/consumer tests; the sixth incorrectly
+excludes an explicitly prepared side dish for tomorrow's meal solely because it
+has not yet been served. Repeat core:6 accept/2 reject; controls:1 accept/1 reject/
+1 qualified.042 forward again imports a human eater, while053 forward now supplies
+the water-cooked wine-role witness.070 forward still skips its recipient test;
+reverse070 now correctly preserves an audience-boundary null. First009 and016
+initial proof rejections were corrected to accept, preserving native history:
+independent vessel design and generic flour manufacture do not inherit a
+qualifying food/dish-production topic merely through a possible association.
+Latest per-case assessments determine these totals; hash-compatible historical
+records remain visible and are not multiple independent samples.
+
+V139 repeat:5 accept/3 reject/3 qualified.041/070 forward still skip their required
+identity/recipient variations;009's sweetener-in-food negative leaves the actual
+nourishing-food composition route open.031/032 visibly test nonhuman consumers,
+but author/dinner and nourishment implications remain qualified. V140/V141 first
+core reversals are seven/two respectively, with one reverse chain conflict in
+V141. Controls have two/zero reversals. Each repeat core has one reversal.
+Missing orientations remain unknown. These totals and
+the changing actual proofs do not establish a stable causal orientation effect
+or qualify either candidate. No Bootstrap or hierarchy changes follow.
+
+### V142/V144: explicit violating entity versus a named scoped illustration
+
+V142 replaces only V139's question-construction paragraph. Instead of merely
+attempting to lack a restriction, its case must put an entity outside the
+required identity/consumer class in the constrained role and state that attempted
+violation in the question. The answer must assess admission even if a necessary
+child implication is expected to rule it out. This restores an executable part
+of V104's previously successful procedure without restoring quotation bookkeeping;
+it is a combined presentation test, not a newly discovered semantic rule.
+Other absent qualifications, complete admission/exclusion, corrected candidates,
+positive coverage, unresolved judgments and canonical guards are preserved.
+
+V143 branches separately from V139, changing only the synthetic watch
+demonstration to name watch repair as an aspect of the fixed mechanical kind.
+Independent preflight identifies an unqualified-alternative reading of its bare
+inclusion sentence. V144 anchors that information explicitly to 'these watches'
+before dispatch; V143 remains an unrun intermediate. The input/copy and existing
+negative proof are adjusted consistently. The separately defined Watch repair
+scope still admits electronic timekeepers, so merely naming repair under the
+mechanical kind does not establish coverage of that whole independently defined
+scope. Both existing cases, the relation, hair illustration, instructions and
+schema stay unchanged. This is a demonstration of conditional scope, distinct
+from V87/V117's earlier instruction-only attempts; it does not add a regression
+example or predetermine a corpus label.
+
+The complete partial33 core/19 controls remain frozen from V139 for each
+candidate. Expected108 initial attempts include four warmups, with native67/39
+stage caps and the existing persistent20000 counter. Check actual proofs and
+fresh identical-request repeats before attributing any gain to either mechanism.
+No Bootstrap generation, hierarchy construction or external-session message.
+Usage source: hierarchy-compare-v142-v144-scope-cue-usage-v1.json.
