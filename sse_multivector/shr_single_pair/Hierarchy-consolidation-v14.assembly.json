@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "prompt_id": "Hierarchy-consolidation-v14",
+  "output": {
+    "path": "Hierarchy-consolidation-v14.md",
+    "sha256": "514630345cf469ec79b41573b37d9e50414c8cbce0803c3dc6de54370493d377"
+  },
+  "parts": [
+    {
+      "path": "prompt_sources/Hierarchy-consolidation-v9.before.md",
+      "sha256": "21f2fdcf03bc3ec1043e61cbc09a7f45564e72c283e18dfa579744f51f2fcc09"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v5.md",
+      "sha256": "d3abcd9495e98c98e747b2bd160868ecb5287be8270e23482184e44e773fc92e"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-consolidation-v14.after.md",
+      "sha256": "3d39f0fd59a4c6f67ec15436a3edda9b867712b12c17e2b0482239fab4618c08"
+    }
+  ]
+}

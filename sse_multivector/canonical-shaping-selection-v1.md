@@ -1,5 +1,12 @@
 # Selecting local entries to reduce overcrowding
 
+The newest user-authorized draft is
+[Hierarchy-consolidation-v14](shr_single_pair/Hierarchy-consolidation-v14.md).
+It separates identifying all covered siblings from checking the proposed
+meaning. Shared meaning-writing rules, the synthetic example and output schema
+remain unchanged. V14 has mechanical checks only; no model calls, measured
+improvement or activation. See [the coverage draft](#consolidation-v14-complete-sibling-coverage-draft).
+
 The latest user-authorized tested candidate is
 [Hierarchy-consolidation-v13](shr_single_pair/Hierarchy-consolidation-v13.md).
 It clarifies that an activity topic includes information about plans to perform
@@ -4096,3 +4103,62 @@ requirement while preserving the generated scope and the qualified controls.
 The Coffee note-set limitation remains separate; repeated generation cannot
 establish the remaining unresolved semantic expectations. No new prompt edit or
 inference is undertaken by this review. The task remains isolated as requested.
+
+## Consolidation-v14 complete sibling coverage draft
+
+The user replies "proceed" to the recommendation that the next prompt iteration
+target every covered sibling. This authorizes the versioned draft; it does not
+reset any exhausted inference allowance. V13's Meals proposals already state
+composition scope that covers Food dishes C020. Their incomplete `children`
+lists expose failure to follow the existing coverage instruction, without
+requiring the generated Meals meanings to change.
+
+[Hierarchy-consolidation-v14](shr_single_pair/Hierarchy-consolidation-v14.md)
+replaces the mixed checking/list-selection block. The parent-fit and stated-
+relationship requirements remain, followed by the existing containment and
+activity/plans rules. A separate **Identify the children** section says:
+
+> Build `children` by comparing every supplied sibling's entire fixed meaning
+> with the final proposed meaning. Include exactly the IDs of wholly covered
+> siblings, including covered siblings beyond those that suggested the topic.
+> Apply all of the proposed meaning's scope, including any stated coverage of
+> associated activities, products or participants.
+
+The list still needs at least two distinct IDs and fewer than the whole group.
+The former selected-child check is removed because whole coverage determines
+list membership directly. This is a hypothesis that separating final list
+construction may reduce omissions; saved answers do not establish the model's
+internal cause, and drafting the instruction does not prove a fix. No Food
+example or expected regression answer enters the prompt. Shared writing,
+historical Bootstrap bytes, activity rule, synthetic example and JSON contract
+remain unchanged.
+
+The existing production assembly test is extended first and fails on the absent
+v14 manifest. Production shared-runner `revise` creates the new version and its
+receipt against last-approved v3. `prompt_assembly.py build` verifies that the
+new task wrapper plus pinned existing parts reconstruct those exact bytes. The
+complete native preparation path also checks that the shared runner freezes
+the assembled prompt without inference. These are integrity checks, not a
+semantic qualification. All 37 relevant assembly, revision and consolidation
+checks pass; the persistent broader-screen counter remains exhausted at 16/16.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v14.assembly.json)
+pins the unchanged shared fragment at
+`d3abcd9495e98c98e747b2bd160868ecb5287be8270e23482184e44e773fc92e`.
+V14 SHA-256 is
+`514630345cf469ec79b41573b37d9e50414c8cbce0803c3dc6de54370493d377`.
+The [native revision receipt](shr_single_pair/Hierarchy-consolidation-v14.md.revision.json)
+retains last-approved v3 as its baseline; v13 and all earlier producer bytes
+remain unchanged. The task remains isolated as requested.
+
+Short, direct requirements, clear section boundaries and no requested reasoning
+trace follow [OpenAI reasoning best practices](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+That advice supports the drafting approach, not the particular grouping rule
+or a measured improvement.
+
+The useful next authorized screen would test both omission correction and
+incorrect additions: the full Food sibling group, an existing restriction
+control, and the original activity/plans contrast. A returned Meals meaning
+must include C020 when that same composition scope is retained; a different
+coherent scope needs its own coverage assessment rather than a forced heading
+or answer. No new experiment, inference, graph change or UI update is begun.

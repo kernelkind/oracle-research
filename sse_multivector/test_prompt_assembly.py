@@ -327,6 +327,7 @@ class PromptAssemblyTests(unittest.TestCase):
         for version, previous_version, previous_hash in (
             ('v11', 'v10', '53cc0c8d4aa71db22408da13b60958a141d07cadc3df46cd43e1458e0f5cc452'),
             ('v13', 'v11', 'e388dca5ff6d498f29b3fd0051d7af77922344b20e61ed01796ebb20d3419461'),
+            ('v14', 'v13', 'baa849577fdfd0f9b46f035192681e8d8dca4db6163bc2b1ed430a33b946e644'),
         ):
             with self.subTest(version=version):
                 spec = PROMPTS / f'Hierarchy-consolidation-{version}.assembly.json'
@@ -368,7 +369,7 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8',
                         'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10',
                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
-                        'Hierarchy-consolidation-v13'):
+                        'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
@@ -376,7 +377,7 @@ class PromptAssemblyTests(unittest.TestCase):
                                                         'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8',
                                                         'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10',
                                                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
-                                                        'Hierarchy-consolidation-v13')
+                                                        'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14')
                                      or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')
