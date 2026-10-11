@@ -26,6 +26,9 @@ Both Food dishes proposals select Burgers and Chicken dishes instead of Bread,
 but retain the unresolved whole-child meal-role question. The pre-call criteria
 and results are recorded in
 [the remaining real-group screen](#consolidation-v11-remaining-real-group-screen).
+The user subsequently authorizes isolating the Grilling omission; the matched
+planned-scope diagnostic below keeps v11 unchanged and changes one sibling's
+meaning only in a clearly labeled synthetic control.
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -3520,4 +3523,73 @@ UI refresh, activation or agent messages.
 
 The most useful next diagnostic is to isolate whether Grilling's planned scope
 accounts for its omission from Food processing before deciding on another prompt
-edit. That test has not begun and is not included in this exhausted ceiling.
+edit. The user subsequently authorizes that separate screen below; it is not
+included in this exhausted ceiling.
+
+## Consolidation-v11 Grilling planned-scope diagnostic
+
+The user replies "proceed" to isolating the possible Grilling omission before
+editing the prompt. This diagnostic uses unchanged v11, the complete seven-child
+Food preparation group, two input conditions and two fresh draws of each.
+Its self-imposed ceiling is four GPT-6.1 Sol medium subscription attempts,
+including failures and retries. The separate native persistent counter is
+`target/canonical-shaping-selection-v1/consolidation-v11-grilling-plan-budget-v1.json`.
+Previous exhausted counters remain unchanged. The ordinary SSE settings and
+shared production worker are fixed, with at most two calls from this screen
+running concurrently. There is no warmup, Compare inference, Bootstrap change
+or graph application.
+
+The [source definition](shr_single_pair/hierarchy-consolidation-grilling-plan-source-v1.json)
+binds the same immutable ASv6.100 graph and menu hashes as the previous screen.
+The original condition preserves every title and meaning. In the synthetic
+condition, only Grilling C012 changes: its first sentence and indoor/outdoor
+scope stay intact, while the clause covering plans and its planned-dinner example
+are removed. Its resulting meaning is:
+
+> Grilling is cooking food on a grill using direct heat. The topic covers
+> indoor and outdoor grilling.
+
+The existing consolidation preparation path now accepts explicit diagnostic
+`meaning_edits` on a selected sibling. Each edit checks its exact `before`
+meaning against the hash-bound saved source, supplies an `after` meaning only
+to the test input, and records the edit outside model input as synthetic
+evidence. Unknown siblings, parent targets, duplicate targets, stale meanings,
+empty definitions and no-op edits fail before inference. All other siblings
+and the parent remain unchanged; original source bytes are never edited.
+Synthetic outputs do not claim saved-menu note-set quality or apply placement.
+Default preparation and structural reports remain unchanged.
+
+A production CLI test first fails because `meaning_edits` is unsupported. The
+minimal implementation then passes that native prepare/run/show test, confirming
+complete inputs, source preservation and distinct synthetic report qualification.
+Invalid-target and stale-meaning cases also exercise native preparation.
+Together with the existing consolidation, assembly and revision checks, all
+37 relevant tests pass before model calls.
+
+Pre-call assessment criteria:
+
+- Review each final proposed meaning against the unchanged parent and every
+  complete sibling meaning, rather than requiring an old title or child list.
+  The new parent must stay wholly within Food preparation and be narrower.
+- When a proposal covers physical/chemical transformation of food ingredients
+  without a further restriction excluding grilling, the no-plans Grilling
+  control must appear in its covered children. Direct-heat cooking establishes
+  the relevant transformation independently of the old placement.
+- For the original condition, distinguish performed processing from its plans
+  using the proposal as written. Do not settle the unresolved general
+  activity/plans convention by importing an unstated boundary.
+- A different valid grouping, including another bakery proposal, is not an
+  omission error. If neither condition generates a comparable processing topic,
+  the screen is inconclusive about why the historical output omitted Grilling.
+- Different titles, selected siblings or counts alone do not establish the
+  planned clause caused a change. Two draws cannot establish reliability or
+  recover the historical model's private decision mechanism.
+
+Native preparation from the
+[spec](shr_single_pair/hierarchy-consolidation-v11-grilling-plan-v1.spec.json)
+requests intentional fresh trials. Native `--from ... --repeat` supplies the
+second draw without changing inputs or settings. Neither old proposals nor
+assessment criteria enter the model input. The committed
+[usage selection](shr_single_pair/hierarchy-consolidation-v11-grilling-plan-usage-v1.json)
+will summarize only these two native experiments; no old inference is rerun as
+a charged baseline or treated as new data.

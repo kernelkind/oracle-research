@@ -784,7 +784,7 @@ def prepare_hierarchy_construction(source, selected=None):
 
 
 def prepare_consolidations(source, base, read):
-    """Gather unchanged canonical meanings for complete sibling groups."""
+    """Gather complete sibling groups and explicitly declared diagnostic edits."""
     from . import canonical_trial as trial
     engine._expect_fields(source, 'consolidation source', {'schema_version', 'state', 'menu', 'selections'})
     if type(source['schema_version']) is not int or source['schema_version'] != 1:
@@ -822,7 +822,8 @@ def prepare_consolidations(source, base, read):
         raise ValueError('consolidation selections must be nonempty')
     cases = []
     for selection in source['selections']:
-        engine._expect_fields(selection, 'consolidation selection', {'id', 'parent'})
+        fields = {'id', 'parent'} | ({'meaning_edits'} if 'meaning_edits' in selection else set())
+        engine._expect_fields(selection, 'consolidation selection', fields)
         parent = selection['parent']
         if parent is not None and (not isinstance(parent, str) or parent not in nodes):
             raise ValueError('unknown consolidation parent')
@@ -832,9 +833,31 @@ def prepare_consolidations(source, base, read):
             raise ValueError('consolidation requires between three and 512 siblings')
         payload = dict(parent=None if parent is None else supplied(nodes[parent]),
                        siblings=[supplied(node) for node in sorted(siblings, key=lambda n: n['id'])])
+        evidence = dict(state=str(state_path), menu=str(menu_path), parent=parent,
+                        application_allowed=False)
+        if 'meaning_edits' in selection:
+            edits = selection['meaning_edits']
+            if not isinstance(edits, list) or not edits:
+                raise ValueError('meaning edits must be a nonempty array')
+            offered = {node['id']: node for node in payload['siblings']}
+            seen = set()
+            for edit in edits:
+                engine._expect_fields(edit, 'meaning edit', {'id', 'before', 'after'})
+                for key in ('id', 'before', 'after'):
+                    engine._expect_string(edit[key], 'meaning edit ' + key)
+                if edit['id'] not in offered:
+                    raise ValueError('meaning edit targets an unknown sibling')
+                if edit['id'] in seen:
+                    raise ValueError('duplicate meaning edit')
+                seen.add(edit['id'])
+                if offered[edit['id']]['meaning'] != edit['before']:
+                    raise ValueError('meaning edit before differs from saved meaning')
+                if edit['after'] == edit['before']:
+                    raise ValueError('meaning edit must change the saved meaning')
+                offered[edit['id']]['meaning'] = edit['after']
+            evidence.update(synthetic=True, meaning_edits=edits)
         cases.append(dict(id=selection['id'], inputs=dict(INPUT_JSON=json.dumps(payload, ensure_ascii=False)),
-            evidence=dict(state=str(state_path), menu=str(menu_path), parent=parent,
-                          application_allowed=False)))
+                          evidence=evidence))
     return cases
 
 

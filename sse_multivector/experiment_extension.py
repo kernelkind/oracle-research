@@ -861,6 +861,11 @@ def consolidation_shapes(plan, cases):
         if case['status'] != 'valid' or case.get('parsed') is None:
             summaries.append(summary)
             continue
+        if case.get('evidence', {}).get('synthetic'):
+            summary['qualification'] = ('Synthetic meaning edits; saved-menu note sets do not '
+                                        'establish shape quality for these altered topics.')
+            summaries.append(summary)
+            continue
         path = case.get('evidence', {}).get('menu')
         if path is None:
             summary['qualification'] = 'No saved menu supplied; note-set shape checks are unavailable.'

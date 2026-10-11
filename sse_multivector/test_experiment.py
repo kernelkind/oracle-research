@@ -50,6 +50,51 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(self.show('E1', '--case', 'group')['status'], 'valid')
         self.assertEqual(len(self.calls()), 1)
 
+    def test_consolidation_meaning_edits_preserve_bound_sources(self):
+        self.consolidation_spec(parent='P')
+        source = json.loads((self.root / 'consolidation-source.json').read_text())
+        source['selections'].append(dict(id='edited', parent='P', meaning_edits=[dict(
+            id='C0', before='Meaning 0', after='Meaning 0 without planned activity.')]))
+        self.write('consolidation-source.json', source)
+        originals = {name: (self.root / name).read_bytes() for name in ('raw.json', 'menu.json')}
+        self.prepare()
+        original = self.show('E1', '--case', 'group')
+        edited = self.show('E1', '--case', 'edited')
+        expected = json.loads(original['inputs']['INPUT_JSON'])
+        expected['siblings'][0]['meaning'] = 'Meaning 0 without planned activity.'
+        self.assertEqual(json.loads(edited['inputs']['INPUT_JSON']), expected)
+        self.assertNotIn('meaning_edits', edited['inputs']['INPUT_JSON'])
+        self.assertEqual(edited['evidence']['meaning_edits'], source['selections'][1]['meaning_edits'])
+        self.assertTrue(edited['evidence']['synthetic'])
+        self.assertFalse(edited['evidence']['application_allowed'])
+        self.assertEqual(self.calls(), [])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"title":"Equipment","meaning":"Equipment used in preparation.","children":["C0","C1"]}'})
+        report = self.show('E1')
+        shapes = {item['case']: item for item in report['consolidation_shapes']}
+        self.assertIn('local_group_constraints_met', shapes['group'])
+        self.assertNotIn('local_group_constraints_met', shapes['edited'])
+        self.assertIn('Synthetic', shapes['edited']['qualification'])
+        self.assertEqual({name: (self.root / name).read_bytes() for name in originals}, originals)
+
+    def test_consolidation_meaning_edits_reject_stale_and_invalid_targets(self):
+        self.consolidation_spec(parent='P')
+        source = json.loads((self.root / 'consolidation-source.json').read_text())
+        for index, (edits, error) in enumerate([
+            ([dict(id='C0', before='Stale meaning', after='New meaning')], 'meaning edit before differs'),
+            ([dict(id='missing', before='Meaning 0', after='New meaning')], 'unknown sibling'),
+            ([dict(id='P', before='Preparing food.', after='New meaning')], 'unknown sibling'),
+            ([dict(id='C0', before='Meaning 0', after='New meaning')] * 2, 'duplicate meaning edit'),
+            ([dict(id='C0', before='Meaning 0', after='')], 'meaning edit after'),
+        ]):
+            with self.subTest(index=index):
+                source['selections'][0]['meaning_edits'] = edits
+                self.write('consolidation-source.json', source)
+                failure = self.cli('prepare', f'bad{index}', '--spec', self.spec, ok=False)
+                self.assertIn(error, failure.stderr)
+                self.assertFalse((self.root / f'bad{index}').exists())
+        self.assertEqual(self.calls(), [])
+
     def test_consolidation_inline_traversal_prepares_and_reports_saved_answer(self):
         self.prompt.write_text('GENERIC PROMPT: propose a parent. {INPUT_JSON}')
         payload = dict(parent=None, siblings=[dict(id=f'C{i}', title=f'Topic {i}',
