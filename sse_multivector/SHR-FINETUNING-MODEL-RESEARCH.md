@@ -17,7 +17,7 @@ cannot supply this contract. Compare consumes already fixed meanings and a
 canonical branch, then decides one of five relations. The user confirmed a
 **relation-only distilled Compare output**, making decision models eligible.
 The frozen Compare-v48 development pilot's teacher API copies the local meaning
-and gives a diagnostic reason. Compare-v75 on local main additionally returns
+and gives a diagnostic reason. The later Compare-v75 definition additionally returns
 two containment questions and their answers/justifications; its five relation
 labels are unchanged. These evolving teacher diagnostics do not alter the user's
 relation-only student decision. Student decision screens must use
@@ -182,6 +182,19 @@ versus 8.52. Both checkpoints pass fresh-process verification; peak allocation
 remains almost unchanged at 19.27 GiB. These measured savings and error counts
 support further qualification, not a production input-format decision. This
 branch-free panel does not predict savings or quality for a large canonical branch.
+
+The broader B96/C48 saved-checkpoint evaluation now exposes a substantial Ettin
+transfer gap. Epoch four matches **106/196 regression references with full
+instructions and 119/196 with input JSON**, while both match **16/21 branch
+references**. The shorter variant takes **5.68 forward seconds versus 31.07**
+and reverses predictions consistently on 86/98 families versus 62/98. However,
+nonidentity-equivalent matches are only **0/16 versus 1/16**, and both variants
+fail all three branch equivalents and both conflict-uncertainty fixtures.
+The fitting set has only one nonidentity-equivalence family, no uncertainty
+targets and no canonical branches. This evidence supports the shorter Ettin
+recipe as its provisional cost/quality lead, not final student selection or an
+encoder-capacity conclusion. Larger-student evaluation remains active; see the
+[native broader results and bindings](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 
 The current research priority is **Qwen27 for further Bootstrap qualification**,
 with Gemma26 retained as an alternative, and **Ettin1B, Qwen27 and Kev27 for Compare**.
