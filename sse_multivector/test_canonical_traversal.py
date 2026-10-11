@@ -3,6 +3,9 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import time
+import signal
+import shutil
 import unittest
 
 from sse_multivector import test_experiment as fixtures
@@ -12,11 +15,12 @@ class CanonicalTraversalTests(unittest.TestCase):
     setUp = fixtures.ExperimentTests.setUp
     write = fixtures.ExperimentTests.write
     def cli(self, *args, ok=True, env=None):
-        project = Path(__file__).resolve().parents[1]
-        launcher = project.parent/'experiment-runner/bin/experiment-runner'
+        project = getattr(self, 'project', Path(__file__).resolve().parents[1])
+        launcher = Path(__file__).resolve().parents[2]/'experiment-runner/bin/experiment-runner'
         result = subprocess.run([str(launcher), '--project-root', str(project), *map(str,args)],
             cwd=self.root, env={**os.environ, 'FAKE_RUNNER_LOG':str(self.log), **(env or {})},
-            text=True, capture_output=True, timeout=30)
+            text=True, capture_output=True,
+            timeout=120 if args and args[0] == 'run-canonical-traversal' else 30)
         self.assertEqual(result.returncode == 0, ok, result.stderr+result.stdout)
         return result
 
@@ -24,6 +28,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         help_text = self.cli('--help').stdout
         self.assertIn('prepare-canonical-traversal', help_text)
         self.assertIn('advance-canonical-traversal', help_text)
+        self.assertIn('run-canonical-traversal', help_text)
         for retired in ('prepare-canonical-trial', 'fork-canonical-trial',
                         'prepare-canonical-child-trial', 'advance-canonical-trial',
                         'continue-canonical-trial', 'prepare-canonical-selection-trial'):
@@ -72,6 +77,222 @@ class CanonicalTraversalTests(unittest.TestCase):
                 value = answer(record) if callable(answer) else answer
                 self.cli('run', record['experiment'], env={
                     'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+
+    def automatic_fixture(self, count=2, roots_only=False):
+        original = '''    output_text = os.environ.get(
+        "FAKE_RUNNER_PROMPT_RESPONSE", f"Response to: {prompt}"
+    )'''
+        replacement = '''    payload = json.loads(prompt.removeprefix("GENERIC PROMPT "))
+    if "siblings" in payload:
+        value = None
+    elif "canonical" in payload:
+        value = dict(meaning=payload["local"]["meaning"],
+                     relation=os.environ.get("AUTO_RELATION", "neither"), reason="Fixture")
+    else:
+        branch = payload["local"]["hierarchy"]
+        value = dict(meaning=next(e["subject"] for e in branch["entries"]
+                                  if e["number"] == branch["selected"]))
+    output_text = json.dumps(value)'''
+        self.assertIn(original, fixtures.FAKE_RUNNER)
+        self.runner.write_text(fixtures.FAKE_RUNNER.replace(original, replacement))
+        self.write('allowance.json', dict(schema_version=1, limit=100, used=0))
+        notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=[
+            dict(number='1', subject=f'Root {i}', context='Original role')])
+            for i in range(count)] if roots_only else None
+        return self.prepare(count=count, notes=notes)
+
+    def automatic_run(self, *, ok=True, env=None):
+        return self.cli('run-canonical-traversal', 'trial', '--attempt-budget',
+                        'allowance.json', ok=ok, env=env)
+
+    def test_automatic_run_finishes_multiple_frontiers_and_consolidation(self):
+        self.automatic_fixture(count=7)
+        result = json.loads(self.automatic_run().stdout)
+        self.assertEqual(result['status'], 'complete')
+        self.assertEqual(result['execution_status'], 'complete')
+        state = self.state()
+        self.assertEqual(len(state['nodes']), 7)
+        self.assertEqual([c['outcome'] for c in state['consolidations']], ['null', 'null'])
+        calls = fixtures.ExperimentTests.calls(self)
+        self.assertGreater(len(calls), 7)
+        used = json.loads((self.root/'allowance.json').read_text())['used']
+        claims = (self.root/'allowance.json.claims.jsonl').read_text().splitlines()
+        self.assertEqual(used, len(claims))
+        # Stop can cancel a reserved launch; native admission never refunds it.
+        self.assertGreaterEqual(used, len(calls))
+        frozen = (self.root/'trial/state.json').read_bytes()
+        self.automatic_run()
+        self.assertEqual(fixtures.ExperimentTests.calls(self), calls)
+        self.assertEqual((self.root/'trial/state.json').read_bytes(), frozen)
+
+    def test_automatic_budget_stop_resumes_without_repeating_successful_calls(self):
+        self.automatic_fixture()
+        self.write('allowance.json', dict(schema_version=1, limit=1, used=0))
+        result = json.loads(self.automatic_run(ok=False).stdout)
+        self.assertEqual(result['status'], 'constructing')
+        self.assertEqual(result['execution_status'], 'attempt_budget_exhausted')
+        calls = fixtures.ExperimentTests.calls(self)
+        self.assertLessEqual(len(calls), 1)
+        self.assertEqual(json.loads((self.root/'allowance.json').read_text())['used'], 1)
+        # An explicitly enlarged allowance keeps the same irreversible counter.
+        self.write('allowance.json', dict(schema_version=1, limit=100, used=1))
+        self.assertEqual(json.loads(self.automatic_run().stdout)['status'], 'complete')
+        repeated = [call['prompt'] for call in fixtures.ExperimentTests.calls(self)]
+        self.assertEqual(len(repeated), len(set(repeated)))
+
+    def test_automatic_terminal_failure_is_held_and_other_notes_continue(self):
+        self.automatic_fixture()
+        failure = {'AUTO_RELATION': 'equivalent', 'FAKE_RUNNER_FAILURES': json.dumps({
+            'Root 0': {'metadata': {'abort_reason': {'name': 'TimeoutError'}}}})}
+        result = json.loads(self.automatic_run(ok=False, env=failure).stdout)
+        self.assertEqual(result['execution_status'], 'exhausted')
+        self.assertGreater(result['held'], 0)
+        state = self.state()
+        self.assertEqual(state['steps'][0]['status'], 'held')
+        self.assertTrue(any(step['status'] == 'added' for step in state['steps']))
+        calls = fixtures.ExperimentTests.calls(self)
+        failed_prompts = [c['prompt'] for c in calls if 'Root 0' in c['prompt']]
+        self.assertEqual(len(failed_prompts), len(set(failed_prompts)))
+        self.assertEqual(json.loads((self.root/'allowance.json').read_text())['used'], len(calls))
+
+    def test_automatic_search_advances_before_other_meaning_batches_finish(self):
+        self.automatic_fixture(count=3)
+        marker = self.root/'comparison-started'
+        result = self.automatic_run(env={'FAKE_RUNNER_SEQUENCE': json.dumps({
+            '"subject": "Root 2"': {'wait_for': str(marker)},
+            '"canonical"': {'touch': str(marker)},
+        })})
+        self.assertEqual(json.loads(result.stdout)['status'], 'complete')
+        self.assertTrue(marker.exists())
+        self.assertEqual(json.loads(result.stdout)['held'], 0)
+
+    def test_native_provider_retry_is_not_collected_as_terminal_failure(self):
+        self.automatic_fixture(count=3)
+        result = self.automatic_run(env={'FAKE_RUNNER_FAILURES': json.dumps({
+            'Root 1': {'attempts': 1, 'metadata': {'http_status': 503}}
+        })})
+        self.assertEqual(json.loads(result.stdout)['held'], 0)
+        first = next(record for record in self.state()['experiments']
+                     if record['role'] == 'meaning' and record['local']['note_id'] == 'n1')
+        records = [json.loads(line) for line in
+                   (Path(first['experiment'])/'run/results.jsonl').read_text().splitlines()]
+        self.assertEqual([r['status'] for r in records], ['failed', 'succeeded'])
+        self.assertEqual(first['answers'][0]['status'], 'valid')
+
+    def test_automatic_run_rejects_missing_or_changed_allowance_before_dispatch(self):
+        self.automatic_fixture()
+        missing = self.cli('run-canonical-traversal', 'trial', '--attempt-budget',
+                           'missing.json', ok=False)
+        self.assertIn('attempt budget', missing.stderr)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+        self.automatic_run()
+        calls = fixtures.ExperimentTests.calls(self)
+        self.write('other-allowance.json', dict(schema_version=1, limit=100, used=0))
+        changed = self.cli('run-canonical-traversal', 'trial', '--attempt-budget',
+                           'other-allowance.json', ok=False)
+        self.assertIn('prepared step differs from saved state', changed.stderr)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), calls)
+
+    def test_native_retry_without_remaining_allowance_is_resumable(self):
+        self.automatic_fixture(count=1, roots_only=True)
+        self.write('allowance.json', dict(schema_version=1, limit=1, used=0))
+        result = self.automatic_run(ok=False, env={'FAKE_RUNNER_FAILURES': json.dumps({
+            'Root 0': {'attempts': 1, 'metadata': {'http_status': 503}}
+        })})
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary['execution_status'], 'attempt_budget_exhausted')
+        self.assertEqual(summary['held'], 0)
+        self.assertEqual(len(fixtures.ExperimentTests.calls(self)), 1)
+        self.assertNotIn('answers', self.state()['experiments'][0])
+        self.write('allowance.json', dict(schema_version=1, limit=2, used=1))
+        self.assertEqual(json.loads(self.automatic_run().stdout)['status'], 'complete')
+        self.assertEqual(len(fixtures.ExperimentTests.calls(self)), 2)
+        records = [json.loads(line) for line in (self.root/
+                   'trial/batch-00000/experiment/run/results.jsonl').read_text().splitlines()]
+        self.assertEqual([r['status'] for r in records], ['failed', 'succeeded'])
+
+    def test_second_driver_is_rejected_without_dispatch(self):
+        import fcntl
+        self.automatic_fixture()
+        with (self.root/'trial/.traversal-run.lock').open('a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            result = self.automatic_run(ok=False)
+        self.assertIn('traversal execution is already active', result.stderr)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
+    def test_killed_driver_resumes_saved_graph_and_completed_receipts(self):
+        self.automatic_fixture(count=2, roots_only=True)
+        marker = self.root/'comparison-waiting'
+        project = Path(__file__).resolve().parents[1]
+        launcher = project.parent/'experiment-runner/bin/experiment-runner'
+        with (self.root/'driver.log').open('w') as log:
+            process = subprocess.Popen([str(launcher), '--project-root', str(project),
+                'run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json'],
+                cwd=self.root, stdout=log, stderr=log, start_new_session=True,
+                env={**os.environ, 'FAKE_RUNNER_LOG': str(self.log),
+                    'FAKE_RUNNER_SEQUENCE': json.dumps({'"canonical"': {
+                        'touch': str(marker), 'wait_for': str(self.root/'never-created')}})})
+            try:
+                deadline = time.monotonic()+20
+                while not marker.exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(.02)
+                self.assertTrue(marker.exists(), (self.root/'driver.log').read_text())
+                saved = self.state()
+                self.assertEqual(len(saved['nodes']), 1)
+                receipts = {Path(r['experiment'])/'run/results.jsonl':
+                    (Path(r['experiment'])/'run/results.jsonl').read_bytes()
+                    for r in saved['experiments'] if 'answers' in r}
+                used = json.loads((self.root/'allowance.json').read_text())['used']
+            finally:
+                if process.poll() is None:
+                    os.killpg(process.pid, signal.SIGKILL)
+                process.wait(timeout=10)
+        self.assertEqual(json.loads(self.automatic_run().stdout)['status'], 'complete')
+        self.assertEqual(self.state()['nodes'][0], saved['nodes'][0])
+        for path, raw in receipts.items():
+            self.assertEqual(path.read_bytes(), raw)
+        self.assertGreaterEqual(json.loads((self.root/'allowance.json').read_text())['used'], used)
+        meanings = [c['prompt'] for c in fixtures.ExperimentTests.calls(self)
+                    if '"canonical"' not in c['prompt']]
+        self.assertEqual(len(meanings), len(set(meanings)))
+
+    def test_reviewed_code_fix_resumes_without_changing_graph_inputs_or_receipts(self):
+        # Isolate code to exercise a real source transition without editing a
+        # checkout bound to another test's experiments.
+        project = Path(__file__).resolve().parents[1]
+        self.project = self.root/'project'
+        (self.project/'sse_multivector').mkdir(parents=True)
+        shutil.copy2(project/'experiment-runner.json', self.project)
+        for path in (project/'sse_multivector').glob('*.py'):
+            shutil.copy2(path, self.project/'sse_multivector')
+        self.automatic_fixture(count=2, roots_only=True)
+        self.write('allowance.json', dict(schema_version=1, limit=2, used=0))
+        self.automatic_run(ok=False)
+        saved = self.state()
+        calls = fixtures.ExperimentTests.calls(self)
+        code = self.project/'sse_multivector/canonical_traversal.py'
+        code.write_text(code.read_text()+'\n# Reviewed continuation fix.\n')
+        refused = self.automatic_run(ok=False)
+        self.assertIn('trial source changed', refused.stderr)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), calls)
+        self.write('allowance.json', dict(schema_version=1, limit=20, used=2))
+        result = self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
+                          '--runner-upgrade-reason', 'Reviewed continuation fix; inputs unchanged')
+        self.assertEqual(json.loads(result.stdout)['status'], 'complete')
+        state = self.state()
+        self.assertEqual(state['nodes'][:len(saved['nodes'])], saved['nodes'])
+        for before, after in zip(saved['experiments'], state['experiments']):
+            if 'answers' in before:
+                self.assertEqual(after, before)
+        self.assertEqual(state['source_upgrades'][0]['reason'],
+                         'Reviewed continuation fix; inputs unchanged')
+        for field in ('corpus', 'note_ids', 'bootstrap_spec', 'comparison_spec', 'consolidation_spec'):
+            self.assertEqual(state[field], saved[field])
+        # An execution upgrade must never authorize changing frozen post evidence.
+        corpus = self.root/'notes.json'
+        corpus.write_text(corpus.read_text()+'\n')
+        self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
+                 '--runner-upgrade-reason', 'Cannot authorize different inputs', ok=False)
 
     def test_rotates_l1_then_l2_and_prepares_only_three_concurrent_searches(self):
         self.prepare(extra_root=True)

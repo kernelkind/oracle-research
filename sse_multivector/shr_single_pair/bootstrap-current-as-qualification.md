@@ -3368,3 +3368,109 @@ test, it supplies no demonstrated repair of the unresolved Coffee assignment.
 V112 remains experimental, with no adoption recommendation; v104 remains
 approved. Further wording changes should target a demonstrated evidence conflict
 rather than treat this unresolved reading as predetermined failure gold.
+
+### Saved v109 whole-branch evidence recheck
+
+After the two Coffee wording diagnostics found no demonstrated repair, the user
+authorized returning to whole-branch tests focused on definite evidence
+conflicts. Three independent reviewers re-examined the unchanged complete v109
+cohort in `target/bootstrap-v109-scope-preservation-v1/candidate`. Native `show`
+exported it to `target/bootstrap-v109-whole-branch-evidence-review-v1/native.json`.
+This is a saved-output recheck, not a new teacher draw or an unseen benchmark.
+No prompt, schema, producer input, output, receipt or native review was changed.
+
+The [existing complete-branch collection](hierarchy-bootstrap-asv6.100-complete-branches-v1.json)
+contains 115 entries from 17 complete original trees and 13 distinct posts.
+The three source corpus/provenance hashes match their recorded bindings, and
+all four producer experiments' prompt IDs and exact template bytes match the
+recorded approved ASv6.100 hash. Synthetic posts remain explicitly identified
+as synthetic. All 115 Bootstrap receipts match their original native
+records; all 265 evidence quotations occur verbatim in the supplied posts.
+Every original entry has one independently fixed meaning, and every selected
+root tree has complete coverage. Model inputs contain only the original post,
+original tree and selected pointer, with no historical judgments or generated
+ancestor definitions.
+
+| Review partition | Trees | Meanings | Immediate links | Ancestor checks |
+|---|---:|---:|---:|---:|
+| Food / risotto | 1 | 36 | 35 | 176 |
+| Cooking, preservation, storage and planned/served controls | 8 | 45 | 37 | 71 |
+| Bread, Rosemary, Mental states, Jesús, Rome, Coffee, Amusement and metal handles | 8 | 34 | 26 | 53 |
+| Total | 17 | 115 | 98 | 300 |
+
+The 98 immediate links are included in the 300 ancestor checks; these are
+dependent fixed-endpoint assessments, not 398 independent observations or model
+comparisons. Reviewers ignored historical assessments initially and examined
+each selected subject using its own context, complete tree and post. The
+coordinator verified coverage and inspected consequential endpoint definitions.
+Later user approvals of different Food/Risotto draws were not transferred to
+these saved outputs.
+
+No new definite evidence contradiction, lost named alternative, or incompatible
+explicit role/state/process boundary was established. Planned canning and
+storage remain planned; expected yields remain estimates. Broad categories do
+not collapse to their illustrated members. The known Coffee-child assignment
+remains uncertain at its original user-bound receipt; the recheck does not
+prescribe null or transfer that judgment to another draw. Existing individual
+native reviews and their history remain unchanged.
+
+#### Retained fixed-meaning relationship diagnostics
+
+These cases remain useful regressions for the common containment convention.
+Their individual definitions are supported; that does not certify their
+relationships. Do not broaden a parent, delete part of a child, or choose a
+different definition while checking a link.
+
+- **Complete ingredient collection beneath one ingredient.** Fifteen immediate
+  relationships have this form. The Shrimp parent is "Shrimp as a food ingredient
+  in mushroom risotto with shrimp: shrimp serving as a component of a risotto
+  dish containing mushrooms and shrimp." The child retains all fifteen named
+  ingredients together. It is information necessarily concerning shrimp in
+  that role, but is not physically a shrimp. Whole-topic containment requires
+  one consistent convention, rather than switching between information and
+  physical-kind membership.
+- **Complete cookware collection beneath one constituent item.** The metal
+  handle definitions preserve both cookware items and the steel-or-brass
+  alternatives. A collection's information relationship to its constituent
+  does not justify erasing the other item or the other material.
+- **Complete warning list beneath its workout-plan component.** The Rome
+  branch retains all three warning-list items and the proverb reference. Its
+  relationship to the component is likewise an information-topic question,
+  not permission to delete the food or people components.
+- **Food storage and explicitly planned pantry storage.** The parent says
+  "Food storage is keeping food in a place or container for later use, including
+  but not limited to pantry storage." The child explicitly describes the
+  author's intended placement and keeping of today's stock batch. The parent
+  does not expressly require an already completed storage episode; adding that
+  requirement would manufacture a conflict. Whether the topic covers plans
+  must follow the same convention used for other activity topics.
+- **Stock Cooking and later planned handling of its batch.** The Cooking root
+  defines applying heat to food or ingredients. The descendant defines planned
+  pantry storage of the identified stock batch. Both preserve supported facts;
+  whether the entire later-handling topic is contained by the production topic
+  is unresolved comparison scope, not a demonstrated claim that storage occurred.
+
+Exact retained endpoints, all in the same native v109 experiment:
+
+| Endpoint | Case ID suffix after `bootstrap-` | Record SHA-256 |
+|---|---|---|
+| Shrimp ingredient | `7f1f344745caf68fd75dd332ff959c80c98f4c8b6f558e4702ebb973eb5b3e21` | `5417e6cfd457d67a7d59d7082ce88a2599f4a1b9d8c8ef4c7538ee407eefb78e` |
+| Its complete ingredient collection | `fce575812893a49dc58c09ef7f310ef66728f46a80475b4045b551e97cdb8e0e` | `cf95678a919e572619b5a911987931a21d7c6134ecb8e04a529298b1bbe23c84` |
+| Food storage | `5011944235c2986dcd05715c3a4585dda652567200c7d7dcd27c077c376ce13b` | `1db77185177402967412b5f0327a0240ac27fd35f34f97939234363299f0c3fc` |
+| Planned pantry storage beneath Food storage | `b314c715b2878b7010c8e919f524845eb5dce70a7a46709c0ced4c538da396eb` | `0f05ed32eb9e920e05d139224e63933b47ba533225267d0839581c4c4855bb65` |
+| Stock Cooking | `08fa4fbc12d593658267ee4143c64665ceab7b3a1b6edea8bfd7296e22c094de` | `9501020aeae3cdd15136371123a987b76d0c4168712c98d4873ae8cedc8c8000` |
+| Planned pantry handling beneath stock Cooking | `b5f85981185f3f2c69193c2416ba3a33b28ec4ef0f6203a5602a24d2c20e2404` | `37473aad8bf6610cfd57d8a00bbc1864aefed787e218895ff66893a849bfa472` |
+
+Food's culinary sense is locally supported. Omitting the word human in a
+descendant does not alone admit animal-feed cases, and a stricter interpretation
+cannot be applied only to a shortcut after accepting its connecting chain.
+Jesús's ASv6.100 tree has no Music ancestor, so this local recheck does not
+certify a Music relationship or settle whole-person versus musician-role scope.
+
+This stage dispatched **zero new teacher attempts**. All 115 outputs are saved
+answers rather than fresh or newly reused execution results. It establishes
+no wording effect, fresh-draw stability estimate, semantic gold, or complete
+branch certification. It supplies no justification for another Bootstrap edit.
+V104 remains approved and v109 experimental. The next useful work is to settle
+the retained relationship diagnostics with the Compare owner using these exact
+fixed meanings; no Compare calls, external message or hierarchy build began.
