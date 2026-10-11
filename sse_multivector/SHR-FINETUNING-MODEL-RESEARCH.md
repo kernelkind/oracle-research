@@ -103,12 +103,15 @@ token loss moves from **1.4162 before training**, to **0.9712 after epoch one**
 and **1.2290 after epoch four**; TRAIN loss falls from 0.9177 to 0.1300. The
 cumulative training/evaluation/checkpoint phase takes **158.30 minutes**, with
 **24.99 GiB** peak CUDA allocation. The earlier checkpoint has lower held-out
-loss; native baseline and first-epoch generations now each return 21/21 valid
-responses with no failures or reuse. Source-based agent reviews accept 6/21
-baseline and 15/21 first-epoch meanings (14/4 rejected, 1/2 uncertain). Most of
+loss; native baseline and both saved-epoch generations now each return 21/21
+valid responses with no failures or reuse. Source-based agent reviews accept
+6/21 baseline, 15/21 first-epoch and 16/21 fourth-epoch meanings (14/4/3
+rejected, 1/2/2 uncertain). Most of
 the gain preserves broad root scope; unresolved activity identity and standalone
 membership definitions still fail. These provisional judgments on eight posts
-are not gold accuracy. The fourth-epoch generation remains pending. Gemma26
+are not gold accuracy. Epoch four repairs some cases and introduces an invented
+pixel-art method in another; its one-entry gain is weak selection evidence.
+Gemma26
 completes the same four passes and both saved epochs
 pass fresh-process verification. Its held-out loss moves from **2.8927**, to
 **1.1682 after epoch one**, and **1.3720 after epoch four**; TRAIN loss falls
