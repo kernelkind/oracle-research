@@ -6714,3 +6714,12 @@ positive/equivalent controls, but both Fasting forward proofs assume personhood
 while their reversals refute it. V177 is not adopted. The saved-reference timing,
 provisional controls, native 36-attempt usage and proof qualifications are recorded
 in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
+V178 starts from V176 and focuses each question on one absent parent requirement,
+retaining the identity prerequisite. Six fresh Stockpots draws find only one
+correct neither answer out of twelve; all sixteen control answers have supported
+relationships. One failed answer asks specifically about meal purpose but tests
+a commercial stock-making case that retains it. Question focus alone does not
+establish a sound necessity proof. V178 is not adopted; the proposed next
+diagnostic separates saved-case adjudication from counterexample construction.
+See the [V178 focused-question test](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v178-focused-question-ablation)
+for exact preserved evidence and native usage.
