@@ -1484,7 +1484,16 @@ See the [complete algorithm and preparation contract](hierarchy-traversal-draft.
 The [next-generation hierarchy draft v2](hierarchy-generation-draft-v2.md)
 specifies PPv35 selection of every L1 scoring at least 50, or only the highest
 L1 per note when none qualifies. Every selected L1 must be processed before
-stopping. This is intended design; the current constructor does not implement it.
+stopping. After that pass, remaining L1s are tried only for uncovered notes.
+Refinement prioritizes the largest multi-note leaf and rotates across its notes,
+selecting highest-prominence unused descendants within the supporting original
+local branches, level by level. A leaf stops receiving refinement when it has
+one note or exhausts those descendants; notes supported at internal nodes do not
+require their own singleton node. For an equal-note-set parent with only one
+child, retain the child and omit the parent from the finished browsing hierarchy,
+preserving the original construction graph. Other equal-note-set cases and
+automatic shaping remain open. This is intended v2 design; the current constructor
+does not implement it.
 
 Use these offline commands after construction:
 
@@ -7266,3 +7275,26 @@ after inspecting exact experimental v109 meanings and the original tree. This
 source edge is not positive Compare gold; its reverse relationship and complete
 pair label remain unapproved. Frozen producer outputs and existing v96 panels
 remain intact. See the [source-edge decision and exact receipts](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#user-rejected-v109-ingredient-source-edge).
+
+The authorized matched ambiguity-instruction test compares fresh V179 with
+experimental [V184](shr_single_pair/Hierarchy-compare-v184.md), replacing only
+the existing ambiguity sentence with an explicit null for the affected direction and
+boundary requirement. All other instructions/examples, fixed endpoints and
+the existing V179 output schema remain unchanged. Native
+`prepare --from ... --repeat` preserves both physical member orders in the original two-case
+Stockpots panel and the six-case synthetic nonfood panel, with two fresh draws
+per order and prompt: sixteen experiments and 64 requests. All actual requests
+and receipts pass independent matched-identity checks, and all answers pass
+the existing strict symmetric validator. No comparison data enter examples.
+
+Both prompt arms retain all 24 clear control judgments and independently reviewed
+proofs, with zero reversal/order/repeat changes. Stockpots has 3/4 reversal and
+physical-order conflicts in the fresh V179 arm, versus 4/4 in V184; repeat
+changes are 1/4 versus 0/4. No model null is emitted. The Stockpots semantic
+expectation remains qualified; its sixteen native `uncertain` agent reviews
+preserve that status, separately from 48 accepted synthetic control responses.
+The focused replacement fails its gate and is not adopted; V179 remains the
+development baseline. Native usage records 64 first attempts, no answer reuse,
+warmup, retry, failure or missing usage, 17 backend prefix-cache reads and
+$0.4786384 API-equivalent catalog cost. The existing shared counter moves 19,141
+to 19,205. See [preparation, completed evidence and next diagnostic limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v184-explicit-ambiguity-instruction-test).
