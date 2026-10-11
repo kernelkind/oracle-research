@@ -16,6 +16,71 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def shaping_nomination_spec(self):
+        self.prompt.write_text('GENERIC PROMPT: choose an existing local parent. {INPUT_JSON}')
+        corpus = dict(notes=[dict(note_id='source', text='A cup of wine. DATA ONLY.',
+            subjects=[dict(number='1', subject='Consumption', context='Taking a drink.'),
+                      dict(number='1.1', subject='Drinking', context='Drinking wine.')])])
+        self.write('corpus.json', corpus)
+        nodes = [dict(id=f'C{i}', subject=f'Topic {i}', meaning=f'Meaning {i}',
+                      parents=[], entries=[dict(note_id=f'n{i}', number='1')]) for i in range(7)]
+        raw = self.write('raw.json', dict(status='complete', corpus=str(self.root/'corpus.json'),
+            nodes=nodes, steps=[], roots=[dict(note_id='source', number='1')]))
+        menu = self.write('menu.json', dict(status='shaped_candidate', shape={},
+            corpus=str(self.root/'corpus.json'), nodes=nodes))
+        protected = {str(p): hashlib.sha256(p.read_bytes()).hexdigest()
+                     for p in (raw, menu, self.root/'corpus.json')}
+        report = self.write('nomination.json', dict(schema_version=1, state=str(raw),
+            menu=str(menu), parent=None, siblings=[n['id'] for n in nodes], max_choices=6,
+            sources=protected, ranked=[dict(local=dict(note_id='source', number='1.1'),
+                subject='Drinking', score=.4, eligible_siblings=7)]))
+        source = dict(schema_version=1, max_candidates=20, selections=[dict(id='roots',
+            nomination=dict(path='nomination.json',
+                sha256=hashlib.sha256(report.read_bytes()).hexdigest()))])
+        self.write('nomination-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_shaping_nomination', path='nomination-source.json')
+        self.write('spec.json', spec)
+
+    def test_shaping_nomination_prepares_whole_group_and_original_local_evidence(self):
+        self.shaping_nomination_spec()
+        self.prepare()
+        plan = json.loads((self.root/'E1/experiment.json').read_text())['plan']
+        case = self.show('E1', '--case', 'roots')
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(len(payload['siblings']), 7)
+        self.assertEqual(payload['siblings'][0]['meaning'], 'Meaning 0')
+        self.assertEqual(payload['local_entries'][0]['subject'], 'Drinking')
+        self.assertEqual(payload['local_entries'][0]['ancestors'],
+                         [dict(subject='Consumption', context='Taking a drink.')])
+        self.assertEqual(payload['posts'], [dict(id='N008', text='A cup of wine. DATA ONLY.')])
+        self.assertNotIn('score', payload['local_entries'][0])
+        self.assertNotIn('relation', case['inputs']['INPUT_JSON'])
+        self.assertFalse(plan['preparation']['application_allowed'])
+        self.assertIn(str(self.root/'raw.json'), plan['sources'])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"candidate_id":"L001","children":["C0","C1"],"reason":"A broader activity."}'})
+        self.assertEqual(self.show('E1', '--case', 'roots')['status'], 'valid')
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_shaping_nomination_refuses_changed_sources_and_invented_output(self):
+        from sse_multivector import experiment_inputs as inputs
+        self.shaping_nomination_spec()
+        self.prepare()
+        case = self.show('E1', '--case', 'roots')
+        dataset = dict(adapter='canonical_shaping_nomination')
+        for candidate, children in [('invented', ['C0', 'C1']),
+                                    ('L001', ['C0', 'invented']),
+                                    ('L001', ['C0']), ('L001', ['C0', 'C0']),
+                                    (None, ['C0', 'C1'])]:
+            with self.subTest(candidate=candidate, children=children), self.assertRaises(ValueError):
+                inputs.validate(dataset, case, json.dumps(dict(candidate_id=candidate,
+                    children=children, reason='Test.')), None)
+        self.write('raw.json', {})
+        failure = self.cli('prepare', 'E2', '--spec', self.spec, ok=False)
+        self.assertIn('shaping nomination source changed', failure.stderr)
+        self.assertEqual(self.calls(), [])
+
     def test_compare_reports_do_not_inherit_shr_relation_diagnostics(self):
         from sse_multivector.experiment_extension import enrich_report
         result = {'adapter': 'hierarchy_node_pairs'}

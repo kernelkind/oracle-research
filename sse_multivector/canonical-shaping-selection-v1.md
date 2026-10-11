@@ -10,7 +10,9 @@ overcrowded sibling group.** The user clarified that the input is the whole
 group, including roots; choosing a particular pair first is optional. Pair
 examples are evidence for this broader selection problem. The latest offline
 whole-group screen rejects estimating containment membership from a cosine
-cutoff; its note-set check cannot fix incorrect predicted membership.
+cutoff; its note-set check cannot fix incorrect predicted membership. The later
+model nomination screen also fails the saved Cooking/Drinking contrasts in two
+independent draws. Neither screen is adopted as a shaping rule.
 
 The user explicitly clarified that improving these particular menus is a means
 of discovering the rules, rather than the end goal. Plant foods retrieval,
@@ -1421,9 +1423,9 @@ is inadequate, nor a comparison-prompt failure.
 The remaining task is selecting an original local parent likely to contain
 any useful subset of the whole oversized sibling group. The source heading,
 context and original ancestors may supply information about broader scope that
-cosine alone does not express. A bounded semantic nomination screen is a possible
-next investigation; it is not implemented, tested, or authorized by this result.
-Ordinary traversal and actual end-hierarchy checks would remain decisive.
+cosine alone does not express. The user subsequently authorized the bounded
+semantic nomination investigation below. Ordinary traversal and actual
+end-hierarchy checks remain decisive.
 
 Verification reused the production vector normalization, source-branch
 aggregation and native eligibility paths. Original corpus, raw-state and
@@ -1432,3 +1434,110 @@ Cooking outcomes remain the native saved audits. All calculations above are
 separate estimates, not model answers or new canonical edges. There are no new
 source functions, experiment cases, model receipts, hierarchy changes or UI
 refreshes to integrate.
+
+## Whole-group model nomination: failed saved-outcome screen
+
+The user approved a small test in which SSE retrieves available original local
+entries and a model nominates a useful parent while considering the entire
+overcrowded sibling group. This authorizes the experiment, not a production
+selection rule or changes to the comparison/bootstrap prompts.
+
+Experimental [Hierarchy-parent-nomination-v1](shr_single_pair/Hierarchy-parent-nomination-v1.md)
+was tested on the frozen B96/C48 fifty-note graph's seven roots and Food
+preparation's seven children. For each group, the existing second-highest
+eligible sibling subject-cosine ranking supplied twenty distinct exact
+headings. The first eligible original entry for each heading was retained;
+context variants were not tested exhaustively. No candidate was injected using
+its historical outcome. Drinking was heading rank eleven, original-entry rank
+thirteen; Cooking was first in its group.
+
+The new `canonical_shaping_nomination` input adapter in
+[experiment_inputs.py](experiment_inputs.py) gathers the saved group and
+original entries through native preparation. The model receives:
+
+- Every sibling's original heading, immutable meaning, immediate canonical
+  parents and deduplicated recursive note membership.
+- The group's canonical parent and its recursive canonical ancestors, with
+  their parent IDs preserving the relationships.
+- Each offered local entry's heading, context, original local ancestors,
+  source-note ID and eligible sibling IDs, plus its full original post.
+
+Original posts are supplied once per distinct note, rather than repeated for
+each entry. Short note labels are bound to original IDs in review evidence.
+SSE scores, saved model answers, expected relations and historical outcome
+labels do not enter the prompt. Hashes bind the original corpus, raw graph,
+shaped menu, SSE receipts and ranking report. Preparation rejects changed
+sources, processed entries, incomplete local ancestor branches and changed
+canonical evidence. Output validation refuses invented IDs, duplicates,
+ineligible children or a proposal covering fewer than two or the whole group.
+It validates mechanics, not containment. This adapter never applies placement.
+
+Two independent native draws used GPT-6.1 Sol medium. The second was prepared
+with `--from ... --repeat`; it dispatched again with the same rendered input,
+instructions, schema and settings, without reusing the first answers.
+
+| Whole group | First draw | Fresh repeat | Saved ordinary-traversal contrast |
+|---|---|---|---|
+| Seven roots | No nominee | No nominee | Drinking was accepted above Coffee and Slush drinks; the retained menu's root choices decreased from seven to six. |
+| Food preparation's seven children | Cooking above Cookware, Bread preparation, Food smoking, Grilling and Cooking appliances | Same nominee and same five children | B96 Cooking contained all seven children, produced an equal-note-set edge beneath Food preparation and increased depth without reducing excess choices. |
+
+The root answers explicitly rejected Drinking because it is an activity rather
+than a beverage category. That differs from the saved Compare-v48 results.
+The Cooking answers excluded Rosemary and the raw, no-bake pie, predicting
+that the five-child grouping would improve shape. The saved bootstrap meaning
+instead admits culinary techniques including mixing and shaping without
+requiring heating. Its actual traversal contained both excluded siblings and
+the saved shape audit showed the unnecessary extra level.
+
+**Finding:** this concrete nomination screen misses the demonstrated useful
+nominee and favours the demonstrated unhelpful nominee, in both draws. It is
+not adopted. Model-based selection cannot be treated as a shortcut if it uses
+a different containment contract or establishes a different local meaning
+from the one ordinary traversal will compare. The prompt was not supplied the
+candidates' saved bootstrap meanings; this is a plausible contributor to the
+Cooking mismatch, not an isolated causal result. Activity-versus-product
+interpretation is another observed mismatch in the reasons.
+
+The saved traversal outcomes are evaluation controls, not new human semantic
+gold. No broader-parent topics were invented, no new full traversal was run,
+and no hierarchy, comparison/bootstrap prompt or review UI was changed. This
+test establishes no operational-policy savings, quality preservation or
+reliability estimate. Its rendered group data were 12,233 and 15,950 characters;
+using bounded candidate lists limits per-request work, but production scaling
+and shortlist coverage remain unproven.
+
+Native evidence is retained under `target/canonical-shaping-selection-v1/` in
+the task worktree:
+
+- `whole-roots-v2.json` and `whole-food-preparation-v2.json`: frozen SSE rankings.
+- `parent-nomination-v1` and `parent-nomination-repeat-v1`: prepared inputs,
+  native outputs and immutable receipts.
+- `parent-nomination-usage-v1.json`: shared-runner accounting from
+  [the maintained usage selection](shr_single_pair/hierarchy-parent-nomination-usage-v1.json).
+
+There were **four fresh attempts, four valid outputs, zero exact reuses,
+retries, failures, warmups or new SSE encodings**. Total observed input was
+18,604 tokens and output was 755 tokens, including 394 reasoning tokens; cache
+read and write counts were zero. Saved total API-equivalent catalog cost was
+**$0.044758**; subscription cash charge was zero. The persistent task counter
+advanced from 189/220 to **193/220**, leaving 27 attempts. The earlier Cooking
+and Drinking traversals were reused as evidence and were not billed or counted
+again.
+
+The production-CLI input test first failed on the missing adapter, then passed
+after preparation/validation support was added. The two new adapter tests and
+two related exact-reuse and subject-pair checks pass; all twenty-seven
+shaping-selection tests pass. Broad suites were also run:
+the experiment suite had nineteen failures and six skips among 140 tests,
+and the shaping/canonical suite had two failures among 61 tests. Selected
+unchanged-main checks reproduced obsolete configurable-concurrency and
+retry-order expectations. The transitive graph-preservation fixture both
+passed and failed on unchanged main and the task branch. Its single-attempt
+counterexample does not specify a case ID and therefore depends on dispatch
+order. Those broad suites are not reported as passing; their runner migration
+and order-sensitive tests were left outside this experiment's scope.
+
+The most useful next diagnostic is to test nomination using the saved fixed
+meanings and the same containment contract as ordinary comparison. Reuse the
+two saved outcomes; do not bootstrap the whole shortlist merely to run this
+control. That follow-up has not begun, and no selection policy is activated.
