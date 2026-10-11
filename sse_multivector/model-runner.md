@@ -6843,43 +6843,52 @@ V176 is not adopted. Details and native usage are in the
 [qualified-subset findings](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#qualified-subset-test-of-unchanged-v176).
 The user initially accepted Cookware containing Stockpots, then approved the
 laboratory-only culinary-stock counterexample after inspecting the reverse
-diagnostic. Under these exact meanings, neither follows: the forward containment
-is incorrect and the reverse answer is correct. Preserve both user decisions,
-the original provisional targets and all measured results; the review correction
-is not a prompt improvement.
+diagnostic. The user subsequently reopened that interpretation by highlighting
+the two design purposes and whether stock is food. Neither containment nor
+`neither` is a current semantic target for this exact pair. Preserve all user
+decisions, original provisional targets, emitted answers and measured results.
+Current agent uncertainty qualifies earlier reviews without rewriting them;
+this is an evaluation correction, not a prompt improvement. See the
+[current pair qualification](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#current-cookware--stockpots-qualification).
 Six fresh repeats of this exact pair find the accepted counterexample in 0/6
-Cookware-local requests and 2/6 Stockpots-local requests. All other answers infer
-meal purpose from stock-making or leave it unchecked. Four consistent pairs are
-wrong, so reversal counts alone miss the defect. This single-pair diagnostic does
-not establish which instruction caused it; V176 remains experimental. See the
+Cookware-local requests and 2/6 Stockpots-local requests. These are historical
+counterexample-admission observations under the disputed meal-purpose reading,
+not current correctness counts. Two reciprocal conflicts remain measured;
+the four consistent pairs have unresolved semantic correctness. This diagnostic
+does not establish which instruction caused the instability; V176 remains
+experimental. See the
 [orientation diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#unchanged-v176-stockpots-orientation-diagnostic).
 The authorized V177 ablation extends the mandatory positive check to all
-applicable parent requirements. Six fresh Stockpots-pair draws still find only
-two valid neither answers out of twelve; the ten failures still substitute
-culinary stock-making for meal purpose. Two fresh control draws preserve the
+applicable parent requirements. Six fresh Stockpots-pair draws produce two
+neither answers and ten containment answers; all twelve now require scope
+qualification, while two reversal conflicts remain. Two fresh control draws preserve the
 positive/equivalent controls, but both Fasting forward proofs assume personhood
 while their reversals refute it. V177 is not adopted. The saved-reference timing,
 provisional controls, native 36-attempt usage and proof qualifications are recorded
 in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
 V178 starts from V176 and focuses each question on one absent parent requirement,
-retaining the identity prerequisite. Six fresh Stockpots draws find only one
-correct neither answer out of twelve; all sixteen control answers have supported
-relationships. One failed answer asks specifically about meal purpose but tests
-a commercial stock-making case that retains it. Question focus alone does not
-establish a sound necessity proof. V178 is not adopted; the proposed next
+retaining the identity prerequisite. Six fresh Stockpots draws produce one
+neither answer and eleven containment answers, with one reciprocal conflict;
+their semantic labels are currently unresolved. All sixteen control answers
+have supported relationships. A question tests meal purpose using a commercial
+stock-making case that retains it; a covered case alone cannot prove universal
+coverage. V178 is not adopted; the subsequent
 diagnostic separates saved-case adjudication from counterexample construction.
 See the [V178 focused-question test](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v178-focused-question-ablation)
 for exact preserved evidence and native usage.
 The subsequent saved-case diagnostic uses experimental
 `Hierarchy-compare-case-check-v1`, rather than changing the production Compare
 prompt. Four judgments of the original fully specified laboratory-only stock
-vessel correctly fit Stockpots and escape Cookware; four commercial
+vessel were judged to fit Stockpots and escape Cookware under the now-disputed
+meal-purpose reading; those four complete answers are currently qualified.
+Four commercial
 meal-ingredient judgments fit both. A shorter saved laboratory proposal leaves
 stock production versus reheating ambiguous, yielding two definitive admissions
 qualified by independent review and two appropriate unresolved admissions.
-All four of its Cookware exclusions remain supported. This points toward
-counterexample construction and whole-scope proof testing without establishing
-a causal prompt fix. Twelve fresh attempts, zero reuses/failures/retries and
+Its four Cookware exclusions are now qualified too, without erasing the separate
+stock-making/reheating issue. This no longer establishes a correct laboratory
+exclusion or a production proof-generation failure. Twelve fresh attempts,
+zero reuses/failures/retries and
 $0.03306 native API-equivalent cost are recorded in the
 [saved-case diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#saved-case-adjudication-diagnostic-v1).
 
@@ -6923,12 +6932,13 @@ to native accounting; no artificial padding is added.
 
 The completed V2 ablation has 40 fresh valid comparisons, no warming, reuse,
 retry, failure or missing usage. Native API-equivalent catalog cost totals
-$0.301204. Attributed semantic review supports 18/20 V179 responses and 15/20
-V180 responses; native reversal reporting finds two and three conflicts,
-respectively, across five pairs repeated twice. Both versions still make the
-Stockpots meal-purpose leap. Removing examples also loses person-restriction
-and intended-activity controls. V179 remains the preferred development
-candidate for isolating that purpose inference, not a qualified hierarchy
+$0.301204. Earlier attributed review recorded 18/20 V179 and 15/20 V180 supports
+under the withdrawn Stockpots expectation. Current assessment supports all 16
+V179 controls and 12/16 V180 controls, with all four Stockpots responses in each
+arm unresolved. Native reversal reporting still finds two and three conflicts,
+respectively, across five pairs repeated twice. Removing examples loses
+person-restriction and intended-activity controls. V179 remains the preferred
+development candidate for addressing reciprocal inconsistency, not a qualified hierarchy
 prompt. Exact witnesses, review qualifications and accounting are in the
 [ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).
 
@@ -6943,9 +6953,10 @@ included. This tests an attention hypothesis about purpose requirements,
 not a new containment convention. See the
 [V181 qualification record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v181-challenge-all-applicable-absent-parent-restrictions).
 
-The completed V181 panel fails qualification: 16/20 supported responses and
-four reversal conflicts, versus saved V179's 18/20 and two conflicts. Stockpots'
-meal-purpose leap persists in both forward draws, and both Fasting forward
+The completed V181 panel fails qualification: four reversal conflicts, versus
+saved V179's two. Its historical 16/20 support count assumes the withdrawn
+Stockpots expectation; current assessment has 14 supported controls, two Fasting
+errors and four unresolved Stockpots responses. Both Fasting forward
 draws now import a person restriction absent from its fixed meaning. Reverse
 answers find supported counterexamples under the same definitions. All other
 controls pass. Twenty fresh valid attempts use $0.1711924 in native
@@ -6966,11 +6977,12 @@ or hierarchy work occurs. See the
 [V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).
 
 The completed V182 diagnostic follows B-first question/answer ordering in all
-20 responses but leaves both Stockpots forward errors in the same A/B
-orientation. Independent review supports 17/20 responses, versus saved V179's
-18/20; native reporting finds three versus two reversal conflicts across five
+20 responses but leaves both Stockpots forward containment outputs in the same
+A/B orientation. Earlier review's 17/20 support count is historical; current
+assessment has 15 supported controls, one Fasting error and four unresolved
+Stockpots responses. Native reporting still finds three versus two reversal conflicts across five
 pairs repeated twice. One Fasting forward draw adds a person restriction absent
-from its fixed meaning. The Stockpots error does not move with report order;
+from its fixed meaning. The Stockpots relation pattern does not move with report order;
 internal evaluation order is unobservable. V182 is not adopted or broadened;
 the symmetric A/B development line and V179 baseline remain. Twenty fresh valid
 attempts use $0.179492 in native API-equivalent catalog usage, with zero reuse,
@@ -6992,17 +7004,18 @@ scheduling and the persistent attempt counter. See the
 
 The completed B-first input diagnostic has 20 fresh valid answers, no reuse,
 warming, retry or failure, and $0.161408 native API-equivalent catalog cost.
-Independent attributed review supports 18/20 responses, with two reversal
-conflicts, matching saved V179's counts. Both Stockpots errors move from forward
-to reverse: the unsupported meal-purpose inference follows Cookware being the
-physically first input member rather than its A/B name. All 16 controls pass.
+Earlier attributed review supports 18/20 responses under the withdrawn Stockpots
+expectation. Current assessment has 16 supported controls and four unresolved
+Stockpots responses, while two reversal conflicts remain. The positive Cookware
+containment outputs move from forward to reverse, following its physical first
+position rather than its A/B name. Their semantic correctness is unresolved.
 Actual request bodies differ from the saved baseline only by input member order;
 all outputs still report A's coverage first. Saved-versus-fresh sampling/time
 confounds prevent a causal claim, and internal reasoning order is unobservable.
-Reordering is not adopted because it relocates the error without reducing it.
+Reordering is not adopted because it preserves the reciprocal conflict.
 See [completed evidence, integrity checks and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-b-first-input-diagnostic).
 
-The next authorized Compare experiment is
+The V183 preparation used
 [Hierarchy-compare-v183](shr_single_pair/Hierarchy-compare-v183.md), a native V179
 revision adding one independent synthetic coating-tool example that distinguishes
 function from required design purpose. Instructions, old examples, symmetric
@@ -7013,17 +7026,25 @@ evidence, disabled explicit warming and the persistent counter are preserved.
 See the [pre-call design, scaling and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v183-synthetic-function-and-purpose-example).
 
 The completed V183 experiment has 24 fresh valid comparisons, zero reuse,
-warming, retries, failures or missing usage. Attributed independent review
-supports 21/24 complete responses, with three reversal conflicts and one
-directional label changing between draws. The standard A-first panel stays at
-18/20 supported, while B-first Stockpots improves from two to three of four
-supported responses without repeat stability. All 16 tested controls pass.
-Stock-making still acquires an unsupported meal purpose, including in an
-answer whose question explicitly tests that requirement. V183 fails its
+warming, retries, failures or missing usage. Its original 21/24 support count
+assumes the withdrawn Stockpots expectation. Current assessment supports all 16
+controls, with eight Stockpots responses unresolved. Three reversal conflicts
+and one directional label changing between draws remain unchanged. This is no
+longer evidence of a purpose-inference improvement or failure by either label.
+V183 fails its
 qualification gate and is not adopted or broadened; V179 remains the shorter
 development baseline and the A/B contract remains fixed. Native usage separates
 $0.1804176 for 20 new A-first attempts and $0.0385164 for four new B-first
 attempts from saved baseline generation. The shared counter moves 18,935 to
 18,959. See the [completed qualification and evidence limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v183-purpose-example-qualification).
-An independent check of the specific saved unsupported implication is proposed,
-not prepared or run; no Bootstrap or hierarchy work follows from this result.
+The proposed independent proof check presumed the disputed meal-purpose
+interpretation and is not pursued. No Bootstrap or hierarchy work follows.
+
+The next authorized diagnostic freshly matches both physical input orders under
+unchanged Compare-v179: two A/B assignments, two member orders and two draws,
+eight requests in total. The Stockpots semantic expectation remains unresolved;
+reversal, physical-order and repeat consistency are measured separately. Native
+preparation preserves exact ASv6.100/Bootstrap-v96 definitions and disables answer
+reuse and explicit warming. All four experiments share current code/settings and
+the persistent 20,000-attempt counter. See the
+[pre-call design and limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fresh-matched-v179-input-order-diagnostic).
