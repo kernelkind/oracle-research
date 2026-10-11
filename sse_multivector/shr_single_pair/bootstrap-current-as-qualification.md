@@ -2380,25 +2380,28 @@ the original output and the producer receipt. This applies the user's rule to
 that output; it does not invent a full-output user verdict or certify its branch
 relationships. No prompt change or model call was made.
 
-Current latest-verdict counts are **110 accept / 0 reject / 5 uncertain** for
-v104, including its malformed endpoint, and **111 accept / 0 reject /
-4 uncertain** for v109. These are changed agent assessments, not new model
-outputs, human approval or a measured improvement. The independently fixed
-branch checks remain qualified; no endpoint is redefined to force compatibility.
+After the [remaining flagged-meaning reassessment](#remaining-flagged-meanings-under-the-approved-rule),
+current latest agent-verdict counts are **113 accept / 0 reject / 2 uncertain**
+for v104, including its malformed endpoint, and **114 accept / 0 reject /
+1 uncertain** for v109. These are changed agent assessments, not new model
+outputs, human approval or a measured improvement. The earlier 110 / 0 / 5 and
+111 / 0 / 4 counts remain assessment history. The independently fixed branch
+checks remain qualified; no endpoint is redefined to force compatibility.
 
 The Coffee-chain child remains uncertain with a corrected rationale. Its root
-defines a general business category, while the child assigns a particular
-multi-outlet business to the post's hashtag. The latter is not merely a
-conditional category definition; the post does not establish outlet count or
-venue affiliation. Both exact child outputs receive new native uncertainty
-comments preserving the older assessment history.
+defines a general business category, while the child selects a particular
+multi-outlet business as the post's reference. The post does not independently
+establish that reference or its outlet count. Neither final child meaning
+asserts that the rave venue belongs to the business. This is a qualified
+interpretation, not a demonstrated falsehood or a mandatory null. The existing
+native uncertainty comments and older assessment history are preserved.
 
 The remaining review concerns are evidence support or genuinely unresolved
 meaning, rather than preferences between clear, supported boundaries:
 
 | Local entry | Remaining question |
 |---|---|
-| Risotto `1`, Food | Does intended consumption characterize the culinary kinds covered, or have to hold for each particular application described? The human culinary interpretation is supported locally; the separate dog-food example cannot settle this condition. |
+| Risotto Food `1` → Food-related content on Nostr `1.2` | Both endpoints pass individual review. Does the independently defined child's unqualified food scope fit the root's explicit human-consumption scope? Do not supply that boundary by borrowing the generated parent definition during review. |
 | Coffee-chain `1.1`, described as weird today | What should Bootstrap return when the selected AS subject/context proposes a particular business that the original post does not establish? A coherent root definition does not establish that child's factual assignment. |
 
 The Coffee-chain child is the clearest remaining factual-support concern, not a
@@ -2698,7 +2701,79 @@ Following review of this witness, the user approved the
 above. A useful next step is to assess the remaining flagged meanings for
 concrete contradictions or unjustified factual claims using their own evidence,
 keeping scope preference and ordinary interpretive uncertainty separate.
-That further audit has not begun. No Bootstrap revision/adoption, Compare test,
-hierarchy construction or context-removal activation occurred in this diagnostic.
+That [further audit is complete](#remaining-flagged-meanings-under-the-approved-rule).
+No Bootstrap revision/adoption, Compare test, hierarchy construction or
+context-removal activation occurred in this diagnostic or the subsequent audit.
 Retain the worktree because native receipts and original source bindings refer
 to its absolute artifact paths.
+
+### Remaining flagged meanings under the approved rule
+
+The user authorized reassessing the remaining flags using each node's own
+evidence. Three subagents independently examined the saved Food, Nostr-content
+and Coffee-chain cases, and the coordinating agent checked their native inputs,
+resolutions, final meanings and receipts. Both cohorts remain unchanged:
+`target/bootstrap-v109-scope-preservation-v1/baseline` uses approved v104 and
+`candidate` uses experimental v109, with original ASv6.100 subjects. No fresh
+model calls, prompt edits, Compare tests or hierarchy construction occurred.
+
+Six native agent qualified accepts supersede the earlier uncertainties:
+
+- **Food roots:** each definition explicitly chooses a human culinary scope
+  supported by the risotto title and ingredient list. Neither asserts that
+  cooking, serving or eating occurred. A broader Food definition elsewhere is
+  not contradictory evidence for these nodes.
+- **Food-related content on Nostr:** the meanings define a general category of
+  content shared on Nostr and concerning food. They do not assert publication
+  of this particular original post. The paired hashtags support a topic
+  association; actual publication remains unproved by this text alone.
+- **Coffee chains roots:** the meanings define the commercial category, without
+  asserting that this post identifies a particular multi-outlet business or
+  that the rave venue belongs to one. That plausible sense can be accepted
+  while particular reference assignment remains qualified.
+
+The reviews were appended with the shared runner's native `review` command,
+using role `agent`; no user verdict was created. Before/after checks confirmed
+unchanged inputs, raw outputs, parsed outputs and producer receipts for all
+230 cases, and preserved every prior review. Counts use the latest hash-bound
+agent verdict per case; `current: true` alone does not identify supersession.
+The native flagged-case check now leaves only the Coffee child in each cohort
+and the malformed baseline cocotte.
+
+| Selected entry | Cohort | Producer record SHA-256 |
+|---|---|---|
+| Food `1` | v104 baseline | `b0a9f2451ec93b7bab53a24380360f7ea6cedb6bc977c8a81f8f076b456135c2` |
+| Food `1` | v109 candidate | `2c356c523a3bc962252a6948ddd3b426cfa930f0b6719bdc808df4821642927f` |
+| Food-related content on Nostr `1.2` | v104 baseline | `0fb65895482eee2c9a91d09c284146c98be2e8f1a2902a062cc3c15b082ad1ca` |
+| Food-related content on Nostr `1.2` | v109 candidate | `90b0e71864c62eebe33db9d74333d1d342fcc44539cbf7e900d5ef22eba9bccd` |
+| Coffee chains `1` | v104 baseline | `e75ac5291dbb693cb7a9e9295c0d40aed71a92373c1ab86c04f04e24b58617e6` |
+| Coffee chains `1` | v109 candidate | `adaad31fac828bcddc46330ab2c5cef2becfbd34015b6f49af0051b0ea96c4ca` |
+
+Each receipt is in its cohort's native `run/results.jsonl`. Case IDs are
+`bootstrap-4acb29436208dbb08b34c9bbbd68c0177ecc052b956b474fc05fa93e8985bc92`
+for Food,
+`bootstrap-113ea08b087533fe5fc88f7105faaa7ab23140507a2417173f05ece267c9d3a2`
+for Nostr content, and
+`bootstrap-07e181e89a6505355db1ee59722fca1ad57baa49f7a72c8bccf9c0f4bd2f4005`
+for Coffee chains. The baseline Food output was an exact reuse during the
+original experiment; the other five were fresh then. None is a fresh audit
+sample, and these corrected assessments establish no prompt improvement.
+
+The baseline cocotte case
+`bootstrap-d3aedf749dbd5f926b6748704e3777c018e45a8f28e4c488752f4968cc98f9c6`
+remains malformed. Its evidence quote changes the post's nonbreaking space
+after `brand` from U+00A0 to U+0020, failing the exact-contiguous-excerpt check.
+Producer record
+`76e078c9adbae36cad80781c057e33ba7b7637a714ba6151abcd3a9dcc448303`
+is preserved, but its unvalidated raw meaning cannot become an established
+endpoint. Its three affected recursive branch checks remain unresolved.
+The corresponding v109 output is valid and retains its existing accept; this
+audit neither retries the baseline nor substitutes a normalized output.
+
+Individual acceptance does not certify the 35 relationships under the
+independently defined Food root. The Nostr child does not explicitly choose the
+root's consumer boundary, and broader food senses cannot be assumed solely to
+manufacture a conflict either. Preserve that branch qualification separately
+from factual support. Further Bootstrap work should check compatible scope
+across independently fixed complete-branch meanings; that next test has not
+been prepared or run by this audit.
