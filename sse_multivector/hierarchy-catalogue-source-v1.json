@@ -2,6 +2,97 @@
   "schema_version": 1,
   "repository": "..",
   "generated_since": "2026-10-08T00:00:00-04:00",
-  "areas": ["target"],
-  "exclude": ["**/sse_multivector/**"]
+  "official_runs": [
+    {
+      "version_id": "HR03",
+      "name": "ASv6.100 50-note hierarchy \u2014 Bootstrap-v96 / Compare-v48",
+      "root": "../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1",
+      "artifact_path": "target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json",
+      "sha256": "853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae",
+      "related_outputs": [
+        {
+          "label": "Browsing menu (menu-v2)",
+          "path": "target/hierarchy-as100-b96-c48-fifty-note-v1/menu-v2/state.json",
+          "sha256": "4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c"
+        },
+        {
+          "label": "Browser export (review-ui-v1)",
+          "path": "target/hierarchy-as100-b96-c48-fifty-note-v1/review-ui-v1/hierarchy.json",
+          "sha256": "763ddd9c614581529653dcd1dcd342a3145ccd9beb9f194655448ee5f4f69060"
+        }
+      ],
+      "code_provenance": {
+        "repository_generation_commit": null,
+        "runner_generation_commit": null,
+        "uncommitted_source_changes_at_generation": "unknown: not recorded",
+        "preserved_source_commit": "7f0a54b9e2fc9dcd47e62b7da0ac901056087904",
+        "preserved_source_commit_role": "Later findings/source-preservation commit, made after generation; not a recorded generation commit.",
+        "evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md",
+        "preserved_runner_commit": "e27660d98798facf959d4661000b885e2dcd298f",
+        "preserved_runner_commit_role": "Hash-verified runner source; the actual generation HEAD and dirty source changes were not recorded.",
+        "hash_verified_project_python_files": 53,
+        "hash_verified_runner_python_files": 8,
+        "runner_fingerprint_sha256": "5fa694dce385a2579286bae5a637625bfe14818ca6511de8cbec014724c44888",
+        "code_hash_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-123/experiment/experiment.json",
+        "runner_fingerprint_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-123/experiment/run/manifest.json"
+      },
+      "experimental_parameters": {
+        "input": {
+          "notes": 50,
+          "subject_prompt": "ASv6.100",
+          "subject_entries": 1510,
+          "subjects_sha256": "18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a"
+        },
+        "construction": {
+          "bootstrap_prompt": "Hierarchy-bootstrap-v96",
+          "comparison_prompt": "Hierarchy-compare-v48",
+          "comparison_policy": "guarded16",
+          "comparison_limit": 16,
+          "local_candidate_limit": 32,
+          "max_entries": 200,
+          "max_choices": 6,
+          "independent_meanings": true,
+          "local_schema_version": 4
+        },
+        "model_execution": {
+          "provider": "openai-codex",
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "transport": "sse",
+          "prepared_concurrency": 32,
+          "execution_concurrency": 32,
+          "warm_cache": true,
+          "timeout_seconds": {
+            "subjects": 1800,
+            "bootstrap_and_compare": 600
+          },
+          "max_output_tokens": null,
+          "seed": "unknown: not recorded",
+          "temperature": "unknown: not recorded"
+        },
+        "subject_vectors": {
+          "model": "sentence-transformers/sentence-t5-base",
+          "device": "cpu",
+          "note_batch_size": 8,
+          "unique_subject_texts": 693,
+          "dimensions": 768,
+          "max_length": 512,
+          "pooling": "selected-contextual-token-mean-linear-relu-linear-v1",
+          "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+          "model_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+          "container_image": "sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+          "python_version": "3.13.12",
+          "torch_version": "2.13.0+cpu",
+          "transformers_version": "4.57.1",
+          "tokenizers_version": "0.22.2"
+        },
+        "browsing_menu": {
+          "recipe": "sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-shape-v2.json",
+          "recipe_sha256": "bd576d8e2617940bb7dfb9bb37ce5692654bcc8e2dee4c7d53cbdd256a5dacfe",
+          "max_choices": 6
+        },
+        "parameter_evidence": "Saved final state, subjects provenance, 249 bound native plans/execution settings, subject-vector config/receipt, and menu recipe; complete projections are retained below."
+      }
+    }
+  ]
 }

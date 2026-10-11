@@ -1372,13 +1372,16 @@ validation. No saved LG01 output is rewritten.
 
 ### Canonical hierarchy construction
 
-Give each hierarchy run a specific, unique version identifier and use it in
-reports and comparisons. Link it to the exact hierarchy output and the frozen
-inputs, prompt/model settings, construction policy and native receipts used to
-generate it. Saved versions and recorded parameters are collected in the
-[hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md). Refresh
-it with `catalogue-hierarchies` after saving an output, and report its `H0001`-style
-ID when discussing or comparing hierarchies.
+Register only hierarchy runs the human explicitly designates as official. Use
+one unique ID for the raw build and its derived menu/export in reports and
+comparisons; checkpoints do not receive separate run IDs. **HR03** identifies
+the official ASv6.100 50-note Bootstrap-v96 / Compare-v48 build. Its frozen inputs,
+prompt/model settings, construction policy and native receipts are collected in
+the [hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md).
+Update the explicit official-run list before regenerating it with the offline
+`catalogue-hierarchies` command. Diagnostic execution approval, completion and
+browsing exports do not establish official status. The previous `H0001`–`H0701`
+diagnostic inventory IDs are withdrawn and must not be reused.
 
 The standalone canonical constructor is available through the shared launcher.
 Oracle owns construction, comparison selection, consolidation and inspection;
