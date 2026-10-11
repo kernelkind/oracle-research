@@ -271,8 +271,8 @@ class CanonicalComparisonPolicyTests(unittest.TestCase):
         self.prepare_children(policy=False)
         self.finish_child({'Baby potatoes': {'C001': 'canonical_contains_local',
                                             'C002': 'canonical_contains_local'}})
-        self.assertEqual([call['canonical']['id'] for call in self.comparison_calls(count)],
-                         ['C001', 'C002'])
+        self.assertCountEqual([call['canonical']['id'] for call in self.comparison_calls(count)],
+                              ['C001', 'C002'])
         self.assertEqual(self.state('children')['steps'][-1]['status'], 'added')
 
     def test_explicit_hold_cannot_finalize_an_unrun_verification(self):

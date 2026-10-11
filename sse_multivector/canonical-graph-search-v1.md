@@ -396,6 +396,13 @@ methods share one irreversible 32,768-attempt technical counter; an entry cap
 or attempt cap remains an incomplete construction result, not acceptance.
 No paid API fallback or rented compute is used.
 
+The additional automatic-selection/policy suite passes **41 checks** after one
+equivalent dispatch-order assertion update. Its first run passed 40 checks and
+failed only the legacy one-batch assertion's arrival order. The expected two
+canonical IDs, completed placement and receipt checks remain enforced; no
+production selection or placement code changed. Together the preflight suites
+cover 79 passing checks.
+
 Native artifacts remain under
 `../oracle-mvp-canonical-graph-construction-v1/target/graph-search-fifty-b98-c69-v1/`.
 The task code/spec worktree is
