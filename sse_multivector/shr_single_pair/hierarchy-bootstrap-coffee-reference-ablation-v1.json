@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {"path": "hierarchy-bootstrap-coffee-grounding-post-controls-v1.json"}
+  ],
+  "experiments": [
+    {
+      "path": "../../target/bootstrap-v109-coffee-reference-v1/original",
+      "select": ["bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411"]
+    }
+  ],
+  "review": {
+    "scope": "Matched single-sentence Bootstrap ablation. Preserve original ASv6.100 subjects, contexts, full root tree and posts. Prior answers and judgments remain outside model input.",
+    "original": "The user judged the original particular-business assignment uncertain. This is not predetermined null gold; assess whether the new meaning relies on an unjustified factual assumption.",
+    "controls": "Three existing explicitly synthetic changed posts retain the original ASv6.100 tree, which was not generated for those edited posts. Preserve supported business coverage; do not reward blanket nulls or force a replacement hashtag subject."
+  }
+}
