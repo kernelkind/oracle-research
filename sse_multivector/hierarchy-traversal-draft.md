@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v14
+# Hierarchy selection by traversal — draft v15
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -304,6 +304,43 @@ adds no separate semantic-review prompt or exhaustive comparison pass. Required
 relationships can reuse exact answers and the same transitive inferences as
 ordinary traversal.
 
+## Proposed eligibility and original-parent rules
+
+**A canonical node sharing the incoming local node's source note remains
+eligible for normal traversal.**
+
+We are comparing the local node's fixed meaning with a canonical node's fixed
+meaning. Sharing an original note establishes neither containment nor
+equivalence. A canonical node may also carry support from many other notes.
+Use the agreed branch rules, exact answer reuse and transitive inference to
+avoid comparisons; do not exclude a reached node merely because one of its
+supporting entries has the incoming note's ID.
+
+Suppose a canonical node is supported by N001 and N063, and the incoming
+local node comes from N063. The current filter excludes that canonical node
+unless it is the incoming node's mapped original parent. This proposal lets
+normal traversal establish their relationship instead.
+
+**Retain the original-parent placement requirement, accepting a relationship
+established by normal traversal or valid inference.**
+
+When present, `mapped_parent` identifies the canonical node representing the
+incoming local node's original local parent. Before placing the incoming node,
+establish that this canonical parent contains it or is equivalent to it. An
+exact saved comparison or valid transitive inference can discharge the
+requirement; a new direct comparison is not mandatory.
+
+Do not reopen a stopped branch or append a forced mapped-parent comparison
+after traversal. If the required parent relationship is contradicted or remains
+unchecked, hold the incoming local node and preserve the graph. A local root
+has no mapped-parent requirement. Synthetic proposals retain their separately
+agreed target-parent and nominated-child checks.
+
+These eligibility and original-parent rules are proposals awaiting review.
+They change neither a supplied meaning nor a returned comparison label.
+Removing the exclusion may increase comparisons for some nodes; its API cost
+and hierarchy effects have not been measured.
+
 ## Proposed walk
 
 The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
@@ -355,8 +392,7 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- How existing same-note exclusions and the required mapped-parent comparison
-  should interact with branch stopping.
+- Whether to adopt the proposed eligibility and original-parent rules above.
 
 ## Current implementation
 
@@ -369,6 +405,13 @@ remain documented in
 The current selector exposes the whole queued set of eligible comparisons. It
 does not defer a queued descendant when a queued ancestor could first settle
 its relationship. The draft's top-to-bottom order adds that dependency rule.
+
+[`_eligible`](canonical_trial.py) currently excludes canonical nodes with any
+supporting entry from the incoming note, except its mapped original parent.
+The graph selector requires that parent to be directly compared even when a
+relationship is inferred or ordinary traversal would not reach it. Placement
+requires a containing or equivalent answer. The proposed rules remove the
+same-note filter and forced comparison while retaining the required parent fit.
 
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
