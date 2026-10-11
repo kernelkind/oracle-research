@@ -949,9 +949,11 @@ also remains attached to Drinking; no support is transferred to another node.
 This fixes the root-choice violation without creating another structural
 violation. It adds one selection for six notes; the other 44 shortest routes
 are unchanged. Food C001 still has 13 children and Food preparation C005 still
-has seven. The complete hierarchy is therefore not finished. The result is a
-qualified shaping improvement under the approved six-choice limit, not a
-reduction in every route length or proof of semantic accuracy/global optimality.
+has seven. Under the then-approved six-choice limit, the complete hierarchy
+remained unfinished. That limit is now a best-effort goal, so these counts alone
+no longer establish that the hierarchy is unfinished. The saved result remains
+a qualified shaping improvement under its original bound, not a reduction in
+every route length or proof of semantic accuracy/global optimality.
 
 ### Accounting, preparation and retained evidence
 

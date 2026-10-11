@@ -45,6 +45,14 @@ API-equivalent cost is $0.4660116, with complete cost unknown due to missing
 failed-warmup usage. V104 remains the last approved prompt.
 This does not activate a production prompt or modify earlier frozen experiments.
 
+Bootstrap definition and review follow the user-approved
+[sense and factual-evidence rule](shr_single_pair/bootstrap-current-as-qualification.md#approved-sense-and-factual-evidence-rule):
+choose a justified interpretation consistent with the post, preserve unknown
+instance facts, and return null when establishing the meaning requires an
+unjustified factual assumption. Another plausible interpretation alone does not
+establish an error or require null. This decision changes no frozen prompt,
+schema, source input, output or receipt.
+
 The user subsequently approved subject-scope preservation: Bootstrap clarifies
 the supplied subject, using post/context to resolve sense rather than adding
 restrictions from its particular example. Experimental v109 implements that
@@ -1335,9 +1343,14 @@ Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
 note IDs. The approved finished-menu requirements are all notes reachable,
-strictly smaller note sets on every downward edge, at most six roots/children,
-and no known valid improvement that reduces browsing decisions while preserving
-those constraints. The constructor does not solve menu optimization
+strictly smaller note sets on every downward edge, and no known valid improvement
+that reduces browsing decisions while preserving those constraints. Manage root
+and child choice counts on a best-effort basis; exceeding six is no longer a
+reason by itself to declare the hierarchy unfinished. The
+[traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
+addition leaves six or more siblings. Existing workflow code and frozen audit
+bounds remain unchanged, so saved sibling-limit violations still describe their
+original evaluation. The constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 
@@ -6812,9 +6825,27 @@ The subsequent user-approved design produces experimental draft
 metadata or canonical-consequence judgments. Its four-field output removes the
 local-meaning copy and uses `A_contains_B` / `B_contains_A`. The draft simplifies
 counterexample and necessary-coverage diagnostics while retaining fixed-scope,
-information-topic, identity/consumer and state rules. The current comparison
-adapter and V176 schema still use the earlier local/canonical contract; they
-are unchanged, so V179 requires native input/schema adaptation before execution.
-No inference or hierarchy adoption accompanies this draft. Details and
+information-topic, identity/consumer and state rules. At draft creation the
+comparison adapter and V176 schema use the earlier local/canonical contract.
+No inference or hierarchy adoption accompanies that draft. Details and
 qualification limits are in the
 [V179 draft record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-symmetric-pair-draft).
+
+The subsequent authorized native adaptation adds opt-in node-pair
+`input_view: "symmetric_fixed_meanings"` for receipt-bound prepared sources.
+Both original and fixed-meaning local/canonical inputs project to identical
+`A` and `B` objects containing only `subject` and `meaning`; original inputs and
+producer provenance remain outside model input. Four-field output validation
+uses the A/B direction names, requires each diagnostic ID exactly once and
+preserves null-answer uncertainty. Existing local/canonical paths are unchanged.
+Native pair consistency supports symmetric reversals and chains without
+requiring the removed meaning copy or applying canonical placement guards.
+
+The authorized examples ablation compares V179 with experimental V180, which
+removes only its synthetic-example section. Five fixed ASv6.100/Bootstrap-v96
+pairs, both orientations and two fresh draws yield 40 comparison requests.
+Preparation uses `--repeat`, Sol 6.1 medium/SSE, the shared worker and the same
+V179 schema; warmups and retries also consume the existing persistent allowance.
+Shared internal scheduling handles concurrency. See the
+[ablation preparation and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-preparation)
+before treating provisional control labels as accuracy targets.

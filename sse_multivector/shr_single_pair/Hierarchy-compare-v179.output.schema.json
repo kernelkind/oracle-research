@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "enum": ["A_contains_B", "B_contains_A"]},
+          "question": {"type": "string", "minLength": 1}
+        },
+        "required": ["id", "question"],
+        "additionalProperties": false
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question_id": {"type": "string", "enum": ["A_contains_B", "B_contains_A"]},
+          "justification": {"type": "string", "minLength": 1},
+          "answer": {"type": ["string", "null"], "minLength": 1}
+        },
+        "required": ["question_id", "justification", "answer"],
+        "additionalProperties": false
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "relation": {
+      "type": "string",
+      "enum": ["equivalent", "A_contains_B", "B_contains_A", "neither", "uncertain"]
+    },
+    "reason": {"type": "string", "minLength": 1}
+  },
+  "required": ["questions", "answers", "relation", "reason"],
+  "additionalProperties": false
+}
