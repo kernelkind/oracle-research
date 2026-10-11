@@ -1619,3 +1619,36 @@ labels and counterexample validity must all be checked; an observed change
 would indicate order sensitivity, not prove internal reasoning order. A
 meaning-position intervention is separate and must not be combined with this
 test. No Bootstrap outputs or historical labels are altered.
+
+### V84 matched order test and V85 broader qualification
+
+Both fresh eight-case draws completed: sixteen valid comparisons, eighteen
+attempts including two warmups, no failures/reuses/missing usage, known
+API-equivalent cost $0.1266396. Every v83 question/answer array is local-first;
+every v84 array is canonical-first. All eight matched labels are unchanged.
+There is no evidence here that reversing visible direction order fixes the
+reversal, and no claim about private reasoning order. The order-only change is
+not carried into v85. Native receipts and generation/reviewed snapshots remain
+under target/compare-v84-order-ablation-v1.
+
+The fresh025 forward answers now use nourishing drinking water, not cultivation.
+Reverse answers treat nourishing drinks as satisfying Eating's food-and-swallow
+conditions. This reveals a distinct food-kind boundary qualification; the
+intended-role rule cannot override the parent's required kind. The earlier
+cultivation diagnostic rejection does not automatically reject this new witness.
+Twelve control outputs have agent accept reviews; four025 outputs retain
+uncertain reviews. No original producer meaning or historical judgment changes.
+
+The second independent v83 gate reviewer also rejects isolated024-reverse's
+question targets: both questions ask admission to the child rather than
+exclusion from the parent. The neither label and actual counterexamples remain
+coherent. Native gate-reviewed.json therefore records seventeen accept and two
+reject reviews, distinguishing question validity from relation validity.
+
+V85 replaces only the question-writing instruction. A question must name the
+proposed child and the proposed parent's required condition, and seek admission
+to the child together with exclusion from the parent. All information-topic
+rules, meanings, output fields and canonical guards remain v83's. Qualification
+now includes the entire102-case consequence panel and the separate196-case
+ASv6.100/B96 source-free core, with independent diagnostic review. Underclosed
+producer boundaries remain qualifications, not manufactured fixed labels.
