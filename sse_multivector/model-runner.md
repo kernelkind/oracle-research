@@ -99,6 +99,18 @@ supplies its own response schema; this supports relation-only Compare student
 screens without altering the teachers' meaning/relation/reason validator.
 Mechanical-answer cases are refused rather than imported as input-only cases.
 
+For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
+collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
+Preparation validates and deduplicates the original source-bound inputs before
+removing only each supplied hierarchy entry's `context`. Post, selected number,
+entry order, numbers and subjects stay fixed. Original case IDs remain stable;
+projected inputs receive new request hashes, so a contextual answer is not reused
+as a context-free answer. Review evidence retains original inputs and both local
+input digests. Original source validation and output quote validation still apply;
+this does not change the default input format or permit hierarchy application.
+The first prepared two-condition panel is documented in
+[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation-prepared).
+
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
 `train_notes`, `evaluation_notes`, `entries_per_note` and `role` (`train` or
@@ -6714,3 +6726,12 @@ positive/equivalent controls, but both Fasting forward proofs assume personhood
 while their reversals refute it. V177 is not adopted. The saved-reference timing,
 provisional controls, native 36-attempt usage and proof qualifications are recorded
 in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
+V178 starts from V176 and focuses each question on one absent parent requirement,
+retaining the identity prerequisite. Six fresh Stockpots draws find only one
+correct neither answer out of twelve; all sixteen control answers have supported
+relationships. One failed answer asks specifically about meal purpose but tests
+a commercial stock-making case that retains it. Question focus alone does not
+establish a sound necessity proof. V178 is not adopted; the proposed next
+diagnostic separates saved-case adjudication from counterexample construction.
+See the [V178 focused-question test](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v178-focused-question-ablation)
+for exact preserved evidence and native usage.

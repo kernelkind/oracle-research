@@ -13,6 +13,7 @@ it does not introduce browsing preferences or hierarchy-shaping requirements.
 [BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
 on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
 and its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
+plus the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
 but not generally qualified. BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
@@ -262,9 +263,51 @@ schema and cache settings. Native receipts and exact post quotes validate.
 No prompt edit, Compare inference, hierarchy build or
 activation occurred.
 
-Next proposed check: evaluate the unresolved named-topic boundaries for Rome
-and Jesús Molina under unchanged BBv6 before considering another revision.
-Those tests have not started.
+The user approved the proposed named-topic checks. Their results follow.
+
+#### Unchanged BBv6 named-topic checks
+
+The shared runner prepared `target/bootstrap-broad-v6-rome-v1` and
+`target/bootstrap-broad-v6-jesus-v1` in the BB worktree. Each inherits its exact
+post, complete original root tree, selected pointer, input hash and evidence
+from the saved v109 ASv6.100 collection. BBv6, medium effort, schema, SSE
+transport and cache prefix match the earlier BBv6 tests. Each answer is fresh;
+saved v109 answers remain baseline metadata outside model input. No source
+entry, post, prompt or supplied meaning was edited.
+
+The coordinating agent and independent read-only reviewer `bb_example_audit`
+give both outputs **qualified accepts** for the focused breadth criterion:
+
+| Selected topic | Resolution and final meaning | Qualification |
+|---|---|---|
+| Rome, root `5` | Resolution chooses the city generally and explicitly treats construction/proverbial use as nonlimiting. The meaning identifies Italy's capital and appends its proverbial use. | The appended use is unnecessary but does not demonstrate exclusion of other information about Rome. BBv5's explicit **here** wording is absent in this draw. |
+| Jesús Molina, root `2` | Resolution covers information about the individual generally. The meaning identifies the jazz pianist and musician, then says his activities and associations **include** the described trio. | The ancillary association and unnamed trio remain imprecise; neither expressly imposes musician-role-only or trio-only coverage. His exact role in the trio is not invented. |
+
+Do not equate an appended descriptive fact with a demonstrated membership
+restriction. These judgments use each node's own original evidence; they are
+not new human gold or proof that the final definitions are ideal. Earlier
+named-topic uncertainty remains in the BBv5 record. Broad interpretations
+already appeared in those earlier resolutions, so these single-draw accepts
+do not establish a BBv6 wording repair or a causal effect of its participant
+paragraph. Unnecessary application details remain a definition-quality concern.
+
+| Topic | Native case ID | Record SHA-256 |
+|---|---|---|
+| Rome | `bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5` | `84badd14f822a22768ca566561724a846574fdb161c713adc57f26d3bf3e40ae` |
+| Jesús Molina | `bootstrap-230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` | `78a01c5f4a9c99f38b8b93218509f7930c93aa9d59191b5851cfd9a318819409` |
+
+Both answers validate; native agent reviews preserve these qualifications and
+bind them to their exact receipts. Post quotes are verbatim substrings and
+ambiguity/resolution IDs match. Each experiment uses one fresh subscription
+attempt, with no retry, failure, answer reuse or warmup. Both record 4,864
+cached-input tokens. Native API-equivalent costs are $0.0067524 for Rome and
+$0.0065464 for Jesús Molina, excluding earlier producer generation; these are
+not subscription invoices. No Compare calls, hierarchy build, prompt revision
+or activation occurred. Native data remains ignored in the retained worktree.
+
+Next proposed qualification: a small set of complete original ASv6.100 branches
+under unchanged BBv6, reviewing supported breadth and independently generated
+parent/child compatibility separately. This has not started.
 
 ## Existing Bootstrap qualification
 
@@ -2133,3 +2176,56 @@ pass. The broader 258-test run has 21 failures and six skips, including shared
 runner concurrency and ordered-response expectations. Representative failures
 reproduce on unchanged main; the entire broader suite is not claimed clean or
 every remaining failure separately proven pre-existing.
+
+### Controlled context ablation (prepared)
+
+The user approved preparing a test after considering whether to remove context.
+Context is an AS-generated interpretation, not independent factual evidence.
+The Coffee-chain subjects already suggest a business, so removing context may
+not fix that assignment. No specific replacement meaning is semantic gold.
+
+Both conditions use the identical experimental
+[Bootstrap-v110](Hierarchy-bootstrap-v110.md), revised from last approved v104
+only to permit optional input contexts. Its task rules, outputs and examples
+otherwise remain unchanged. The contextual condition includes original contexts;
+the other removes only the contexts of supplied entries. The post, selected
+number, ordered subjects, tree relationships, model, response schema, worker and
+cache prefix are fixed. Historical v104/v109 outputs are secondary evidence,
+not fresh controls for this new prompt. This measures context availability under
+v110; it does not isolate v109 wording or certify a permanently context-free
+prompt whose examples also omit contexts.
+
+The panel contains four complete real ASv6.100 trees:
+
+| Tree | Entries | Concern to inspect |
+|---|---:|---|
+| Coffee chains, root `1` | 2 | Particular business assignment unsupported by the supplied text. |
+| Mental states, root `5` | 3 | Figurative language, broad category and unsupported clinical claims. |
+| Rome, root `5` | 4 | Named identity, humorous proverb and the complete warning-sign list. |
+| Food storage, root `8` | 3 | Planned storage versus an assertion that storage occurred. |
+
+Each condition has 12 entries, eight immediate links and 12 recursive ancestor
+checks. Review final meanings for factual support and clear boundaries, accepting
+any evidence-consistent choice. Check branch compatibility using independently
+generated, fixed endpoints from that same condition and draw. Preserve nulls,
+malformed answers and disagreements; additional uncertainty alone is not an
+improvement. Repeat consequential differences before attributing an effect.
+These selected development cases are not a representative reliability estimate.
+
+Reusable definitions are the
+[contextual spec](hierarchy-bootstrap-context-ablation-with-context-v1.spec.json),
+[context-free spec](hierarchy-bootstrap-context-ablation-without-context-v1.spec.json)
+and [source view](hierarchy-bootstrap-context-ablation-subjects-only-v1.json).
+Native prepared experiments are under `target/bootstrap-context-ablation-v1/`.
+Preparation makes no teacher calls, activates no prompt and changes no original
+AS corpus. Future execution uses the shared runner, Sol 6.1 medium, automatic
+prefix caching and its shared request queue, within the existing persistent
+attempt allowance. No new allowance or counter reset follows from preparation.
+
+Offline verification: the minimal production CLI test first failed because the
+source view was unsupported. After the adapter extension, 78 local-node and
+snapshot tests and nine prompt-revision tests pass. All 12 frozen pairs differ
+only by removal of supplied context fields; full prompt, runner settings,
+response schema and cache prefix match. Independent read-only review confirms
+the design and its limits. Both experiments remain entirely unrun, with zero
+provider attempts or model-answer reuses; no performance result is claimed.

@@ -22,6 +22,13 @@ Final training still follows prompt freeze. The user confirmed **meaning or null
 encoded as a JSON object with the single `meaning` field. Teacher generation
 continues to preserve its full current response for review.
 
+On October 11 the user approved extending evaluation of the existing checkpoints
+with exactly **Bootstrap-v96 / Compare-v48**. Every Compare input meaning must
+also come from v96. Keep instructions, producer provenance, teacher references
+and semantic review criteria bound to this pair; newer prompt versions require
+a separate matched experiment. This extension evaluates saved checkpoints,
+not another fit or final training. Student choices remain open.
+
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 Published-checkpoint behavior can support a choice of starting weights; it
@@ -245,7 +252,7 @@ justify removing Kev, and Qwen's intermediate epochs were not measured.
 A broader development evaluation needs all five
 Compare labels, nonidentity equivalence, canonical branches and independent
 posts, alongside reviewed Bootstrap null, factual-state and scope cases. This
-is a recommendation for subsequent qualification, not a new experiment or final
+is the approved next qualification under the fixed v96/v48 pair, not a final
 training decision. Final training volume and student input layout remain open;
 the complete teacher instructions used for these controls repeat substantial
 work per example. Their current fit/request times are not a final-training or
