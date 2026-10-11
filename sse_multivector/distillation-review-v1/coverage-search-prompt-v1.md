@@ -1,9 +1,9 @@
 DCSv1 — draft coverage-placement search
 
 Review one required teacher subject against the supplied candidate student
-subjects. Find whether the teacher subject preserves every restriction of any
-candidate under the quoted ASv6.100 rule. In each comparison, the candidate
-student subject is the parent and the teacher subject is the child.
+subjects. Determine whether this teacher subject belongs beneath any supplied
+student subject under ASv6.100's parent-child rule. Treat the student subject
+as the parent and the teacher subject as the child.
 
 Preparation has established that this teacher meaning has a complete student
 match, but no full match occurs at or beneath any supplied candidate. A valid
