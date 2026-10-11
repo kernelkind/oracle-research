@@ -1,25 +1,25 @@
 # Distillation semantic review — process and evidence
 
-**Current development result:** approved experimental [DSLv10](relationship-prompt-v10.md)
-passes the resolved complete-output checks in the
-[four-note regression](#dslv10-four-note-regression-october-11), following its
+**Current development result:** the completed
+[eight-note xhigh regression](#dslv10-eight-note-regression-october-11) with
+approved experimental [DSLv10](relationship-prompt-v10.md) **does not pass**.
+All three checks finish: 784 completed occurrences and 553 justified relationship
+skips. Root and the independent assessor assigned to each note accept 380
+distinct full model records, reject one and retain 15 as uncertain. These are
+396 output versions for 395 semantic inputs, including one recovered retry
+whose request also received another successful response. All 77 mechanical
+proofs pass. The definite DSL error accepts an account of morning odd jobs
+around town beneath `Author's morning outings`, although the jobs can be done
+from home. Production remains DSLv2; reviewer qualification and lower-effort
+qualification remain pending.
+
+The preceding [four-note regression](#dslv10-four-note-regression-october-11)
+passes its 156 resolved complete model records following the
 [twelve-case timing diagnostic](#dslv10-timing-scope-diagnostic-october-11).
-All three checks complete with the original sealed inputs, mechanical rules,
-verified saved-request reuse and eligible caching. Root and the independent
-assessor assigned to each note accept all 156 resolved model decisions and full
-explanations. The three matching/support Nostr judgments remain uncertain;
-the [source audit](#nostr-relationship-source-audit-october-11) establishes no
-definite error or prompt defect for them. The earlier DSLv9 timing finding does
-not recur in the audited DSLv10 outputs. Production remains DSLv2. This is
-development regression evidence, not unseen accuracy or production adoption;
-lower-effort qualification and final-sixty validation remain pending.
-The user subsequently expands this development regression to
-[eight notes at xhigh](#dslv10-eight-note-regression-october-11), retaining all
-three checks and the existing prompts. Generation and complete-output audit are
-in progress. The expanded audit finds one definite DSLv10 error: R05's humorous
-account of morning odd jobs around town does not require the author's morning
-outings. The eight-note regression therefore does not pass; finishing the
-unchanged run will establish the complete result.
+Its three Nostr matching/support records remain uncertain and are carried
+unchanged into the expanded run. Both panels are development-exposed;
+they do not establish unseen accuracy. The next recommended step is a small
+diagnostic of the outings failure before any lower-effort or final-sixty run.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4858,11 +4858,24 @@ new work; the native shared queue controls admission.
 
 Source-only assessments precede verified joining and fresh generation. The
 original four answers join with zero new calls and retain identical complete
-outputs and stopping evidence. Generation and complete-output audit remain in
-progress; no lower-effort calls, prompt revision, production adoption or
-final-sixty run is authorized by this scope expansion.
+outputs and stopping evidence. Generation completes in **28 min 35 s** using the
+native automatic shared queue. All eight answers reach complete status; no
+model work or warmups remain. The attempt allowance reconciles at **167/940**:
+160 successful fresh DSL comparisons, five eligible-prefix warmups and two
+transient SSE/socket failures that recover on their second lifetime attempt.
+Those successes cover 159 new semantic inputs. A retry and another alias both
+complete the same R01 request with different sound false explanations; both
+full versions are audited. No fresh matching or support calls are needed.
 
-The interim full-output audit identifies a substantive error in R05 `2.2`:
+Verified reuse supplies 416 historical occurrences from 236 successful original
+requests: 130 matching from 67 originals, 130 support from 67, and 156 DSL from
+102. Another 131 DSL aliases reuse 65 successes from this run. These aliases are
+not independent model draws. Completed occurrences total **784 = 707 model +
+77 mechanical**. The remaining **553** frozen DSL checks have justified native
+stops: 483 `no_full_match`, 36 `match_beneath_heading`, 27
+`uncovered_compatible_heading` and seven `unsupported_child`.
+
+The complete-output audit identifies a substantive error in R05 `2.2`:
 parent `Author's morning outings`; child `Author's humorous comment on the
 specificity of the account of a fairly big day with all sorts of activities,
 including many odd jobs around town in the morning`. DSLv10 returns true,
@@ -4878,6 +4891,88 @@ The assessor originally favored false, briefly retained wording uncertainty
 after inspecting the true candidate, and then resolved it through that concrete
 witness. Original assessments and qualification labels remain fixed. The
 expanded regression does not pass; qualification remains pending.
+
+Root and the assigned independent assessor audit every completed decision and
+its full explanation, including verified earlier evidence and both retry
+versions. Among **395 distinct semantic inputs / 396 full model records**, the
+agent assessments are **380 accept, one reject and 15 uncertain**:
+
+| Check | Full model records | Accept | Reject | Uncertain |
+| --- | ---: | ---: | ---: | ---: |
+| DSMv3 matching | 67 | 63 | 0 | 4 |
+| DSSv2 post support | 67 | 59 | 0 | 8 |
+| DSLv10 relationships | 262 | 258 | 1 | 3 |
+| Total | 396 | 380 | 1 | 15 |
+
+The uncertainties retain their source and interpretation boundaries rather
+than becoming correctness targets through agent agreement:
+
+| Source question | Distinct model records | Completed aliases |
+| --- | ---: | ---: |
+| Earlier Nostr learning-network/community readings, matching and support | 3 | 9 |
+| R01 pot availability/invitation versus the student's added next-round destination | 2 | 12 |
+| R03 jobs report as an employment-statistics release or a broader report about jobs | 1 | 1 |
+| R04 stock-market closing levels versus stock-market-index closing levels | 1 | 1 |
+| R05 contextual morning-job timing and evening plans, post support | 6 | 17 |
+| R05 account reference versus ownership of the described day, relationships | 2 | 4 |
+| Total | 15 | 44 |
+
+Native current agent review records cover all 784 completed occurrences:
+**739 accept, one reject and 44 uncertain**, including the 77 accepted mechanical
+proofs. Source-first assessments, subsequent challenge history and original
+qualification labels remain preserved. Legacy expected-answer disagreements
+are not automatically reviewer errors. These are agent assessments, not
+independently verified user gold or a population accuracy estimate.
+
+The independent mechanical audit verifies 16 exact trusted-teacher matching
+subjects, 16 exact trusted-teacher support subjects, seven identical-string DSL
+pairs, 14 actual trusted-teacher edges and 24 trusted-teacher ancestor paths.
+All 42 required full-match self-guards are true, including seven mechanical
+and 35 semantic occurrences. Skipped dependencies, original receipt identity,
+frozen source/code bindings, budget accounting and native score assembly pass.
+All **2,667 source entries and 450 code entries** stay hash-bound. Scores remain
+conditional on the uncertain judgments; the R05 reviewer error also prevents
+certifying its assembled score.
+
+The retry index is verified after completion. R01's already indexed first
+success stays intact; the recovered R05 success is missing from the index and
+is registered through production `RequestHistory.remember` using its original
+ledger line after full receipt validation. No output, source, prompt, schema or
+production code is replaced. This preserves verified reuse; the extra retry
+response is not an additional independent semantic input.
+
+**Caching and usage:** the 165 known successful local receipts contain
+**218,630 uncached plus 18,560 cached input tokens**, **185,019 output including
+147,838 reasoning**, and a **$2.289306 catalog API-equivalent subtotal**.
+Sixteen comparisons have cache hits; **7.82% of known input tokens are cached**.
+Production receipt accounting on this known subset compares comparisons plus
+all five warmups with a hypothetical uncached comparison baseline, finding
+**negative net savings of $0.020318 (−0.90%)**: warmup overhead costs about two
+cents more. Comparisons alone save $0.035264, while the five warmups cost
+$0.055582. All five warmed groups lose cost after overhead; three produce
+comparison hits and two do not. Warmed groups alone lose $0.0358828, partly
+offset by $0.0155648 from ordinary implicit hits. Both failed attempts lack
+usage, so full-run cost and net savings are unknown. Subscription charges are
+unknown. These are saved-pricing estimates, not an uncached paired experiment.
+
+Ignored evidence remains under
+`oracle-mvp-review-dslv10-eight-note/target/distillation-review-v1/dslv10-eight-note/`:
+native preparations, input-only assessments, source-first and final review
+histories, full receipts, intermediate reports, `terminal-raw.json`,
+`reviewed.json`, terminal usage and persistent budget reconciliation. The raw
+terminal report is frozen before formal output reviews, SHA-256
+`05fc95cf2de6b1b1b673a3ce850f5da4f735230746f744d5b931b934c086fed3`.
+The evidence worktree remains because these bindings depend on its absolute
+paths. Documentation integrates through a separate worktree so changing main
+does not alter frozen experiment sources.
+
+**Result:** the eight-note development regression does not pass because of the
+outings error. The recommended next step is a small balanced diagnostic of that
+failure using preserved meanings and omitted travel restrictions before lower
+reasoning levels. No prompt revision, production adoption, lower-effort calls
+or final-sixty validation is performed in this scope expansion. The final
+50 random plus ten challenge answers and agreed two-percentage-point tolerance
+remain reserved for later qualification.
 
 ## Actual distilled wording: offline preview (October 8)
 

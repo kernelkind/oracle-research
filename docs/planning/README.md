@@ -392,13 +392,20 @@ retain the four answers and add the first four other valid answers in the frozen
 random order (R01, R03, R04, R05). Prompts, mechanical rules, verified reuse,
 eligible caching and original source assessments remain fixed. Input-first
 review precedes candidate inspection; interpretation uncertainties remain
-separate. Generation and complete-output audit are in progress. The expanded
-audit finds a definite DSLv10 error: R05's humorous account of morning odd jobs
-around town does not preserve the parent's morning outings, since those jobs
-can be done from home. This fails even granting ownership of the described day.
-The unchanged run continues to establish the complete result; the eight-note
-regression does not pass. Lower-effort testing, qualification and final-sixty
-validation remain pending.
+separate. Generation completes in 28 min 35 s: 784 completed occurrences and
+553 justified relationship skips, with 160 successful fresh comparisons, five
+warmups and two recovered failed attempts. All 77 mechanical proofs, stopping
+dependencies, receipt/budget checks and frozen source bindings pass. Complete
+model-output audits give **380 accepts, one reject and 15 uncertainties** across
+396 full versions of 395 semantic inputs. The definite DSLv10 error accepts
+R05's humorous account of morning odd jobs around town beneath the parent's
+morning outings, although those jobs can be done from home. This fails even
+granting ownership of the described day. The eight-note regression does not
+pass. Known successful receipts cache 7.82% of input tokens; warmup overhead
+makes net catalog savings negative by about two cents. Full cost is unknown
+because the two failed receipts lack usage. The next recommended step is a
+small diagnostic of the outings error; lower-effort testing, qualification and
+final-sixty validation remain pending.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
