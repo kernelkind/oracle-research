@@ -416,10 +416,21 @@ without calls. Native validation and the shared 11/22 attempt reconciliation
 pass, with ten fresh judgments, one warmup and no failures or retries.
 No prompt revision is justified by the disputed original alone. Lower-effort
 testing, qualification and final-sixty validation remain pending.
+The subsequent authorized
+[four-note high comparison](../../sse_multivector/distillation-review-v1/README.md#four-note-high-versus-xhigh-comparison-october-11)
+pauses after one support decision error and two matching explanation errors.
+All 92 completed relationship outputs and 25 mechanical proofs pass; one answer
+retains 12 distinct pending requests. Fresh xhigh confirmations correct all
+three errors; software-runtime interpretation joins the three Nostr uncertainties
+outside correctness counts. On 142 resolved shared inputs, high decision loss
+is 0.70 percentage points and full-output loss is 2.11 points. This partial,
+exposed panel does not qualify high. Prompts and mechanical rules remain fixed;
+minimum reasoning effort, reviewer qualification and final-sixty validation
+remain open.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
-Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
-pending. The completed ten-note run retains its frozen concurrency of 16; the
+Sol/xhigh and subscription SSE remain the baseline; lower-effort qualification
+remains pending. The completed ten-note run retains its frozen concurrency of 16; the
 current shared runner uses automatic queue admission for future dispatch.
 Native small preparations retain inputs, receipts, schemas and baseline
 outputs without full evaluation rebuilds.

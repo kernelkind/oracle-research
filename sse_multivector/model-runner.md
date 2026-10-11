@@ -1752,6 +1752,18 @@ no failures or retries. Fresh catalog usage totals $0.1867664; both original
 comparisons hit cache but warmup overhead makes net savings negative by
 $0.0067664. No prompt revision follows from the disputed original alone.
 Lower-effort calls and final-sixty validation are not run in this diagnostic.
+The subsequent authorized
+[four-note high comparison](distillation-review-v1/README.md#four-note-high-versus-xhigh-comparison-october-11)
+pauses after one definite support decision error and two matching explanation
+errors. All 92 completed relationship outputs and 25 mechanical proofs pass;
+one answer retains 12 distinct pending requests. Four fresh xhigh calls correct
+the three errors and leave software-runtime interpretation uncertain. On 142
+resolved shared model inputs, decision loss is 0.70 percentage points and full
+output loss is 2.11 points; this partial exposed panel does not qualify high.
+Prompts, production DSLv2 and mechanical rules remain unchanged. Native
+accounting reconciles at 99/428 attempts, including two warmups, one recovered
+failure and four confirmations; full cost is unknown because the failed receipt
+lacks usage. Minimum reasoning effort and final-sixty validation remain open.
 Known successful local receipts cache 7.82% of input tokens and total a catalog
 $2.289306. Net savings including warming are **−$0.020318 (−0.90%)** on that known
 subset; both failed attempts lack usage, so full cost and savings are unknown.
