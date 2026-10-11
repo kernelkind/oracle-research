@@ -6989,3 +6989,15 @@ This is input-presentation diagnostic v1, not a revised prompt or adopted policy
 The 20 planned fresh comparisons retain disabled explicit warming, shared native
 scheduling and the persistent attempt counter. See the
 [pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-b-first-input-presentation-diagnostic).
+
+The completed B-first input diagnostic has 20 fresh valid answers, no reuse,
+warming, retry or failure, and $0.161408 native API-equivalent catalog cost.
+Independent attributed review supports 18/20 responses, with two reversal
+conflicts, matching saved V179's counts. Both Stockpots errors move from forward
+to reverse: the unsupported meal-purpose inference follows Cookware being the
+physically first input member rather than its A/B name. All 16 controls pass.
+Actual request bodies differ from the saved baseline only by input member order;
+all outputs still report A's coverage first. Saved-versus-fresh sampling/time
+confounds prevent a causal claim, and internal reasoning order is unobservable.
+Reordering is not adopted because it relocates the error without reducing it.
+See [completed evidence, integrity checks and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-b-first-input-diagnostic).
