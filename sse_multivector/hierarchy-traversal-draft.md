@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v8
+# Hierarchy selection by traversal — draft v9
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -198,7 +198,42 @@ while the trigger holds; a `null` result ends attempts for that group until a
 later qualifying addition.
 
 This is an agreed construction rule for the draft, not an implemented change.
-How consolidation fits between the serialized placements remains to be drafted.
+The timing proposal below is not yet approved.
+
+## Proposed consolidation timing
+
+**Finish the consolidation attempts triggered by a placement before applying
+the next local-node placement.**
+
+1. Apply the local-node placement through the existing checks.
+2. For each sibling group meeting the agreed trigger, call consolidation using
+   the current parent and immediate siblings with their fixed meanings. For
+   roots, there is no parent.
+3. If the prompt returns `null`, or its proposal fails normal validation, leave
+   that group unchanged and finish this attempt. Preserve the local-node
+   placement already made. A later qualifying addition can trigger another
+   attempt.
+4. If validation permits adding a synthetic parent, apply it and check that
+   addition's sibling groups using the same trigger. Complete any further
+   attempts triggered by synthetic additions.
+5. Once these attempts finish, allow the next local-node placement. Check its
+   search against the current graph, including the synthetic additions and
+   changed branches, before applying it.
+
+Other local-node searches can continue on their fixed snapshots throughout
+consolidation, within the agreed limit of three active searches. Only applying
+the next placement waits. The experiment runner still controls model-request
+concurrency.
+
+For example, a local-node addition leaves seven siblings. Consolidation groups
+two beneath a synthetic parent, leaving six siblings including that new parent.
+That synthetic addition triggers consolidation again. If this attempt returns
+`null`, keep the six siblings and proceed to the next placement. Its search must
+account for the synthetic parent and the changed branches first.
+
+This ordering keeps consolidation's inputs current and makes its resulting
+graph available to the next placement. Its effect on elapsed time and comparison
+cost has not been measured.
 
 ## Proposed walk
 
@@ -247,6 +282,7 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
+- Whether to adopt the proposed consolidation timing above.
 - How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
