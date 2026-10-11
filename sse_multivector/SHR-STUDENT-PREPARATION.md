@@ -107,8 +107,9 @@ the first-checkpoint and complete-training snapshots remain preserved.
 Qwen27 Compare, both Bootstrap pilots and input-only Ettin Compare have
 completed fitting and fresh-process verification of both checkpoints. Kev27
 Compare stopped after 115 updates, before a saved epoch, on the loss/gradient
-check. Its failure remains preserved; a separately bound corrected run is
-pending. The original queue shell was PID 1529676 (coordinator 1529675), with its source-bound local receipt at
+check. Its failure remains preserved. The separately bound v2 run now has its
+first saved epoch and continues training in PID 1919728. The original queue
+shell was PID 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
 and stops the sequence on error; there is no overwrite or automatic retry.
@@ -340,9 +341,22 @@ The first new guard-test invocation omitted the required stage argument; its
 fixture error is preserved and corrected without another production change.
 The immutable `compare-pilot-native-test-runtime-v5` binds production SHA-256
 `8960c61a60172952eacc20da07b5ed2ab89963b04df87edb27e4b419ea0e6cdd`.
-An independent output is required to establish whether this corrects Kev's
-actual failure; no failure is overwritten or silently resumed. Bootstrap's
-pilot student target remains the confirmed single `meaning` field, null allowed.
+The independently preserved `compare-pilot-kev27b-v2` run, on byte-identical
+targets and unchanged settings, completes its first **180 updates** with **18
+finite zero-loss/zero-gradient updates**, no reported error and mean TRAIN loss
+**0.2797**. Teacher agreement improves to **44/46**, **42/44 nonidentity** and
+**14/16 containment**. All 46 predictions exactly match Qwen27's epoch-four
+predictions, including the same two `neither` disagreements in the Activities /
+padel-courts family. Kev's first-epoch phase takes **2,979.26 seconds (49.65
+minutes)**, with **23.78 GiB** peak CUDA allocation; loading and baseline
+evaluation precede it. Later epochs and fresh-process reload remain pending.
+The original failed run does not retain its exact loss/norm, so that condition
+cannot be retrospectively verified. The preserved first-checkpoint report is
+`compare-pilot-kev27b-epoch1-report-v2.json`, SHA-256
+`808746c9991faba4f426cf0343988f9da12235578fbdc57a253e5a34268d2a08`.
+`compare-targets-v5` retains the same data hash and binds the corrected code;
+the launch receipt is `kev27-learning-recovery-v2.json`. Bootstrap's pilot
+student target remains the confirmed single `meaning` field, null allowed.
 
 The encoder can also be tested with `input_format: "input_json"`: it takes the
 complete original `INPUT_JSON` from the hash-bound native collection, keeping
