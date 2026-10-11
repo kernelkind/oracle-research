@@ -47,6 +47,16 @@ The 93 shared-runner and six local transport regressions pass, including a
 loaded older coordinator. New local evaluation plans use a fresh worker snapshot;
 the existing fitting and generation snapshots remain immutable.
 
+Compare now supports native `prepare-evaluation` and inference-only `evaluate`
+for the saved epoch 1/4 checkpoints. Preparation proves the exact B96 meaning
+producers, C48 instructions, fitting exposure and original split membership;
+external prompt-development partitions keep their original roles. Historical
+fitter relocation requires the original source hash and preserves the fit
+manifest bytes. GB10 consumes prepared panels bound by an explicit Anvil
+manifest hash, while retaining the original config, supervision, fitter and
+checkpoint guards. The combined CPU suite passes 46 tests; 29 CUDA cases are
+skipped locally. GPU verification is still pending.
+
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 Published-checkpoint behavior can support a choice of starting weights; it
