@@ -3578,3 +3578,70 @@ ASv6.100/Bootstrap-v96 qualification and all historical review disagreements;
 do not apply the broader procedure retroactively. No Bootstrap inference,
 hierarchy construction, service changes or external-session messages.
 Usage source: hierarchy-compare-v155-v157-controlled-usage-v1.json.
+
+All four experiments complete:104 valid comparisons in108 actual attempts,
+including four warmups, no reuse, failures, retries, missing usage or unrun
+cases. Native API-equivalent cost:$1.0340200; counter17496/20000. Independent
+preflights and attributed native reviews preserve all inputs, outputs and
+receipts. V155 core has two reversals and no chain witnesses; V157 core has
+one reversal and a chain witness in each orientation. Controls have no
+consistency conflicts. Neither candidate is adopted.
+
+V155 core:21 accept/2 proof reject/10 qualified; controls:13 accept/1 procedure
+reject/5 qualified.022 reverse now independently tests genuine chewy holeless
+pantry-ingredient production; all four052/053 proofs preserve ingredient roles
+in broth-free rice cooking. All six038/041/042 animal controls pass.022 forward's
+completed-bagel dressing admission remains preparation/production-qualified.
+070 forward generalizes one opening pet greeting into all qualifying greetings;
+071 reverse chooses conventional-wish/content-context readings without closing
+other supported readings. Those are unclosed positive proofs, not forced
+opposite labels. Independent challenge and owner calibration agree. The single
+control procedure rejection omits a concrete attempted repair of a nonfood oral-play
+candidate that lacked the child's nourishment purpose; food/drink scope remains
+qualified rather than negative gold.
+
+V157 core:21 accept/8 reject/4 qualified; controls:11 accept/4 reject/4 qualified.
+Both022 and053 forward retain ring/broth necessity errors.071 misses the
+someone/others boundary;018 and070 positive audits remain incomplete without
+established opposite labels. The control sweetener-in-drink proof leaves a
+nourishing-composition connection open; three further control rejections are
+audit omissions, not demonstrated wrong labels. Only eight of15 directional
+positive claims have complete visible audits. Recording and ordering alone do
+not establish reliable semantic improvement.
+
+The fresh V152 control is now fully reviewed: core21 accept/4 reject/8 qualified,
+controls15 accept/2 reject/2 qualified.022 both miss the recognized holeless
+variant;052 reverse misses broth-free risotto;070 reverse leaves the unrestricted
+initiate-contact alternative unclosed.031/032 concern nourishment proof gaps
+without an established contrary same-dinner witness. Recipient, meat-use and
+coffee particularity qualifications and historical disagreements remain native.
+No definite additional V152 procedure omission is established.
+
+### V158/V159: repair an admitted case that another alternative covers
+
+V158 adds only an admitted-but-covered case repair clause to V155's matching-
+answer paragraph. Attempt a variation preserving the whole child and exclusions
+already established from other routes, then test escape from the covering
+alternative or permitted connection. Do not presume a variation exists; a child
+requirement or necessary implication may prevent it. This extends the existing
+child-requirement repair instruction. Earlier versions continued after covered
+cases; this specifically repairs the same admitted candidate while preserving
+its earlier exclusions. No containment rule, input, schema or demonstration
+changes. The unchanged fixed-entity and null rules remain binding.
+
+This targets the opening-contact inference without asserting that ongoing
+acknowledgment necessarily escapes audience coverage. Repair may instead expose
+unresolved audience or greeting-function boundaries. Failure to find a repair
+is not proof of universal coverage. Two independent preflights find no semantic
+blocker; exact revision replay and both production-example validations pass.
+
+V159 changes only the repair clause's terminology: it consistently names parent
+alternatives and permitted connections instead of introducing the abbreviation
+routes. V158 and its prepared batches remain unrun intermediate artifacts.
+
+Next stage: V159's full33-core/19-control gate and a fresh matched V155 repeat,
+104 comparisons plus four warmups,108 attempts absent retries/reuse. The broader
+196/102 V155 panel is prepared offline with exact meanings and fresh execution
+requested, but remains unrun while targeted stability is checked. No additional
+spending allowance, Bootstrap inference, hierarchy construction or external
+messages. Usage source: hierarchy-compare-v155-v159-controlled-usage-v1.json.
