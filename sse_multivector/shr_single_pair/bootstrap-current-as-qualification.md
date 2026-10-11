@@ -2177,9 +2177,10 @@ runner concurrency and ordered-response expectations. Representative failures
 reproduce on unchanged main; the entire broader suite is not claimed clean or
 every remaining failure separately proven pre-existing.
 
-### Controlled context ablation (prepared)
+### Controlled context ablation
 
-The user approved preparing a test after considering whether to remove context.
+The user approved preparing and running a test after considering whether to
+remove context.
 Context is an AS-generated interpretation, not independent factual evidence.
 The Coffee-chain subjects already suggest a business, so removing context may
 not fix that assignment. No specific replacement meaning is semantic gold.
@@ -2216,16 +2217,104 @@ Reusable definitions are the
 [contextual spec](hierarchy-bootstrap-context-ablation-with-context-v1.spec.json),
 [context-free spec](hierarchy-bootstrap-context-ablation-without-context-v1.spec.json)
 and [source view](hierarchy-bootstrap-context-ablation-subjects-only-v1.json).
-Native prepared experiments are under `target/bootstrap-context-ablation-v1/`.
-Preparation makes no teacher calls, activates no prompt and changes no original
-AS corpus. Future execution uses the shared runner, Sol 6.1 medium, automatic
-prefix caching and its shared request queue, within the existing persistent
-attempt allowance. No new allowance or counter reset follows from preparation.
+Native experiments are under `target/bootstrap-context-ablation-v1/`.
+Preparation makes no teacher calls. The completed execution uses the shared
+runner, Sol 6.1 medium, automatic prefix caching and its shared request queue,
+within the existing persistent attempt allowance. No prompt was activated,
+original AS corpus changed, new allowance granted or counter reset.
 
 Offline verification: the minimal production CLI test first failed because the
 source view was unsupported. After the adapter extension, 78 local-node and
 snapshot tests and nine prompt-revision tests pass. All 12 frozen pairs differ
 only by removal of supplied context fields; full prompt, runner settings,
 response schema and cache prefix match. Independent read-only review confirms
-the design and its limits. Both experiments remain entirely unrun, with zero
-provider attempts or model-answer reuses; no performance result is claimed.
+the design and its limits.
+
+#### Completed panel and fresh repeats
+
+On 2026-10-11, both 12-entry conditions completed. Then the complete three-entry
+Food storage tree and the isolated Coffee-chain child were repeated freshly in
+both conditions. Mental states and Rome were not repeated. Each repeat keeps its
+own condition's exact original inputs, prompt and runner settings; every repeat
+has a new producer receipt. No first-draw parent is combined with a repeat child
+to claim a repeated branch result. The Coffee child repeats do not independently
+qualify a newly generated Coffee root.
+
+| Condition, including repeats | Valid meanings | Agent qualified accepts | Agent uncertain | Provider attempts | Exact reuses |
+|---|---:|---:|---:|---:|---:|
+| Original entry contexts | 16 | 14 | 2 | 19 | 0 |
+| Entry contexts omitted | 16 | 14 | 2 | 18 | 0 |
+
+All answers are non-null and structurally valid, with no terminal failures,
+malformed outputs or invalid receipts. These are agent assessments, not human
+gold. Three independent read-only reviewers divided the initial trees and
+challenged the full panel; repeat reviews checked the complete storage trees
+and isolated Coffee child. Native agent reviews preserve qualifications and
+bind them to exact input/output hashes. All 32 input/output and producer-receipt
+identities remain unchanged after those reviews.
+
+**Coffee-chain source assignment remains uncertain in both conditions and both
+draws.** Each child identifies a particular coffee-shop chain characterized as
+unusual that day. The post says `Weird #coffeechain today` and `Rave at a coffee
+shop lol`; it does not establish a multi-outlet business or the shop's
+affiliation. The original AS subjects already name a business chain, so omission
+of entry contexts does not remove that interpretation. This is unsupported or
+unknown assignment, not a proven falsehood or a mandatory alternative hashtag
+meaning. The roots are coherent general business-category definitions; accepting
+those definitions does not certify their assignment to this post.
+
+**The Food storage explicitness difference repeats.** The contextual roots
+expressly include planned storage in both draws; the context-free roots define
+keeping food for later use without naming plans. For example, the contextual
+repeat says, "The topic covers storage activities and plans for them." The
+context-free repeat says, "Food storage is the activity of keeping food in a
+designated place for later use" and its evidence still identifies a plan.
+Both conditions' children retain planned canning/storage and an approximate
+expected yield. No completed canning/storage episode is invented. Omission of
+a plans clause does not itself establish an occurred-episode requirement; this
+remains a clarity qualification, not a demonstrated containment failure.
+
+Mental states remains broader than its figurative post examples, without a
+clinical diagnosis. Rome retains a supported city/proverb interpretation and
+the complete jointly named warning-sign list. No particular alternative
+boundary is imposed as gold. Read-only information-topic review found no
+concrete incompatibility among the 12 recursive ancestor checks per initial
+condition, or the three recursive checks per repeat storage tree. Coffee's
+source-assignment uncertainty remains separate. These are fixed-endpoint agent
+checks, not Compare calls or semantic certification of arbitrary future links.
+
+Key native case IDs are
+`bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411`
+for the Coffee child and
+`bootstrap-5011944235c2986dcd05715c3a4585dda652567200c7d7dcd27c077c376ce13b`
+for Food storage. Their exact producer record hashes follow; other endpoints'
+receipts remain in their native reports and `run/results.jsonl`.
+
+| Experiment directory suffix | Coffee child record SHA-256 | Food storage root record SHA-256 |
+|---|---|---|
+| `with-context` | `7c7c711beb0f381764dc6f199ff1fff9e073810cf9758a555c8bf8eca66b0446` | `3462a6eb940c378e0e3187a99b21fba6acf9b50f5108edeb8a6fb8eb48c83195` |
+| `without-context` | `f9cbf9709e1a8cf46718b838e43baf31dbf2d8b033c61710168158d7ea050bcc` | `1dde35d1c3b00d9609ee95d1e11633d4c28b60ebad56d1a9dbe5c4fa98d569a8` |
+| `with-context-repeat` | `765ee3356893157397348fa48bb0045a6ed226993acf6c4c8d98c6f60da35e1f` | `1f33760940a34d530e54ea01f386ad0be7e069af3b22a4dcaea7b8957c6f9fe6` |
+| `without-context-repeat` | `2b6628669efdc9fa8f21547a1d2ac31de0dca74449c34fcaf773b4138a6d05e8` | `67fbdd901d0bf57b0c1c904de6c259d6318283fcf4992b1e3658f03b56c2056b` |
+
+Native [usage source](hierarchy-bootstrap-context-ablation-usage-v1.json) and
+`target/bootstrap-context-ablation-v1/usage-native-v1.json` account for all four
+experiments: **37 attempts**, comprising 32 valid meaning calls, four prefix
+warmups and one recovered HTTP 503 failure. The failure exposes no recognized
+upstream reason; telemetry retains proxy reference
+`proxy-YALLQ6HLVHNH33ZCMH4L74UOE5`. Its usage is missing, so the known
+API-equivalent subtotal **$0.2457112** is not the complete cost. All 32 valid
+meaning requests recorded cached input. Across all attempts, native accounting
+records 158,592 known cached-input tokens, including warmups. Reasoning is already
+included in output usage. These are subscription calls;
+API-equivalent estimates are not additional subscription invoices. The existing
+20,000-attempt counter reads 18,790 after completion and was not reset.
+
+This panel establishes no clear improvement from removing entry contexts.
+It also does not establish that contexts are generally necessary or that their
+omission is harmless on the full collection. The optional-context prompt remains
+experimental; v104 and all original AS inputs remain unchanged. A useful next
+investigation is whether Bootstrap treats an AS subject's uncertain factual
+interpretation as established by the post, using Coffeechain as a witness.
+That investigation has not begun; no prompt edit, Compare test or hierarchy
+construction follows automatically from this result.

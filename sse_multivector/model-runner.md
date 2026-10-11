@@ -108,8 +108,12 @@ projected inputs receive new request hashes, so a contextual answer is not reuse
 as a context-free answer. Review evidence retains original inputs and both local
 input digests. Original source validation and output quote validation still apply;
 this does not change the default input format or permit hierarchy application.
-The first prepared two-condition panel is documented in
-[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation-prepared).
+The completed two-condition panel and targeted fresh repeats are documented in
+[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation).
+All 32 meanings validate, while Coffee-chain source assignment remains uncertain
+in both conditions. Native accounting records 37 attempts, including warmups and
+one recovered failure with unknown usage. The test does not activate context
+removal or establish a general quality improvement.
 
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
