@@ -3,18 +3,19 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Bootstrap broad: BBv5 draft
+## Bootstrap broad: BBv6 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv5](Hierarchy-bootstrap-broad-v5.md) is the current development draft, tested
-on the [four-case panel below](#bbv5-four-case-development-check) but not qualified.
+[BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
+on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
+but not qualified. BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
-BBv2 through BBv5 are direct, hash-pinned revisions of unchanged v109 through
+BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
 the shared runner's offline `revise` command.
 [BBv1](Hierarchy-bootstrap-broad-v1.md) used v104; it remains preserved as the
 initial draft, rather than serving as the corrected baseline. This does not
@@ -159,11 +160,57 @@ over warming while retaining the existing cache prefix; observed cached input
 is 5,504 tokens. Native API-equivalent cost is $0.0087944, excluding earlier
 generation. Prompt text remains unchanged.
 
-The next proposed edit should address the distinction between the post's
-particular actor or occurrence and conditions defining the selected topic,
-while preserving genuinely particular identities expressed by the subject.
-Test it against the same stock input before broadening qualification. This
-proposal is not an applied prompt change or a new started test.
+The user subsequently agreed to explicitly checking general activity versus
+a particular person's activity during ambiguity identification, followed by
+retesting this stock input. That change and its first result follow.
+
+### BBv6 general activity versus particular participant
+
+[BBv6](Hierarchy-bootstrap-broad-v6.md) changes only the second
+ambiguity-identification paragraph relative to BBv5. It asks whether the
+selected subject describes a general activity or a particular person's
+activity, permits the post to resolve a participant identified by the subject,
+and distinguishes that participant from one in a supporting example. It also
+adds participants to the paragraph's boundary considerations. This applies
+the existing breadth and identity rules; it does not introduce a stock-specific
+example or discard participants actually identified by the subject. Both
+synthetic examples, the input/output contract and other instructions remain
+byte-identical to BBv5. The direct v109 revision receipt records seven exact
+edits and pins BBv6 SHA-256
+`a73328f633b4caacb583fe3770a6c4b8103871355d18b9fa200037161c727e28`.
+
+Native `prepare --from` created `target/bootstrap-broad-v6-stock-v1`, preserving
+the exact sole case from the unchanged BBv5 repeat. Full input, original tree,
+post, input hash and evidence match. Model, medium effort, schema and SSE
+transport are unchanged; only the prompt and its derived cache prefix differ.
+No historical answer enters the model input.
+
+This first BBv6 answer explicitly asks whether the topic covers the recurring
+practice generally or only the author's practice and today's batch. Its
+resolution chooses the general activity because the subject names no
+particular participant. The final meaning retains cooking to produce chicken
+stock, carcasses saved during butchering and approximate twice-yearly
+recurrence. It does not add the author-only condition. Canning/storage remain
+optional subsequent handling; stock pots and the estimated 25-quart yield
+remain example details. Native agent assessment accepts the output on this
+focused criterion. An independent read-only instruction and result review by
+`bb_instruction_audit` agrees, including preservation of the frequency, source
+and cooking process. It corrects the observed narrowing in this draw; it does
+not establish repeatability, isolate one responsible sentence or qualify the
+other named-topic cases.
+
+The candidate receipt record SHA-256 is
+`2e5ed6cc7620bdb65283c79c2d0d41777d01d6e7fa6c208bfd74cd9eb4d6f6f2`.
+One new subscription attempt produced a valid answer, with no retry, failure,
+answer reuse or warmup. Caching was enabled, but this new-prefix request shows
+zero cached-input tokens. Native API-equivalent cost is $0.019182, excluding
+earlier generation. Exact post quotes, resolution IDs, single-paragraph delta
+and receipt bindings pass; nine native revision tests pass. No Compare calls,
+hierarchy construction or activation occurred.
+
+Next, repeat the unchanged case and check a genuinely particular activity to
+test both the generic scope and identity preservation before expanding the
+panel. Those are proposed tests, not started experiments.
 
 ## Existing Bootstrap qualification
 
@@ -1732,7 +1779,8 @@ frequency/material requirements. The rejection assumed that omitting an actor
 from the subject required other makers to qualify. The subsequent node-local
 reassessment below withdraws that definite failure classification: this entry's
 own context and post explicitly describe the author's practice. The difference
-is an actor-scope choice requiring review, not a demonstrated prompt correction.
+is a supported actor-scope choice, not a demonstrated prompt correction. The
+user's subsequent clarification below accepts either evidence-consistent choice.
 
 Two baseline definitions were initially qualified rather than rejected: the selected
 green-beans ignition adds the other foods' purposes, and pantry storage adds
@@ -1959,9 +2007,8 @@ is "The author describes making chicken stock a couple of times a year." Its
 post says "We save carcasses when we butcher and a couple of times a year do
 this." The saved v104 resolution consistently chooses the author's recurring
 practice. That choice cannot be rejected solely because the subject omits an
-actor. Whether the node should instead cover other makers following the same
-practice remains an explicit user-review question; neither scope is certified
-by the different Food example or the other version's output.
+actor. The different Food example and the other version's output cannot require
+this node to cover other makers following the same practice.
 
 A new native agent `uncertain` review supersedes the stock rejection while
 preserving its history, exact output and producer record
@@ -1978,7 +2025,18 @@ collections retain all named ingredients together; they do not admit independent
 ingredient alternatives. Ten new native qualified accepts preserve the earlier
 uncertainties in history.
 
-Current latest-verdict counts are **109 accept / 0 reject / 6 uncertain** for
+After seeing the exact stock meanings and their original evidence, the user
+clarified, verbatim: **"idc which boundaries the agent makes. as long as it's not
+contradicting the evidence"**. Evaluation therefore accepts any clear boundary
+consistent with this local node's evidence; it does not require a preferred
+actor, role or category scope. Meanings must still settle consequential boundaries
+and avoid unsupported claims about particular things. A new native qualified
+agent accept supersedes the stock uncertainty, preserving all earlier reviews,
+the original output and the producer receipt. This applies the user's rule to
+that output; it does not invent a full-output user verdict or certify its branch
+relationships. No prompt change or model call was made.
+
+Current latest-verdict counts are **110 accept / 0 reject / 5 uncertain** for
 v104, including its malformed endpoint, and **111 accept / 0 reject /
 4 uncertain** for v109. These are changed agent assessments, not new model
 outputs, human approval or a measured improvement. The independently fixed
@@ -1991,19 +2049,22 @@ conditional category definition; the post does not establish outlet count or
 venue affiliation. Both exact child outputs receive new native uncertainty
 comments preserving the older assessment history.
 
-The consequential questions to surface one at a time are:
+The remaining review concerns are evidence support or genuinely unresolved
+meaning, rather than preferences between clear, supported boundaries:
 
 | Local entry | Remaining question |
 |---|---|
-| Stock `5.1`, recurring stock-making | Does this selected node cover the author's recurring practice or other makers following the same practice? Both saved definitions explicitly choose a supported scope; no actor-neutral expectation is gold. |
 | Risotto `1`, Food | Does intended consumption characterize the culinary kinds covered, or have to hold for each particular application described? The human culinary interpretation is supported locally; the separate dog-food example cannot settle this condition. |
 | Coffee-chain `1.1`, described as weird today | What should Bootstrap return when the selected AS subject/context proposes a particular business that the original post does not establish? A coherent root definition does not establish that child's factual assignment. |
-| Jesús Molina `2` and Rome `5` | Does profession/proverb wording identify the named entity or restrict the information covered? Interpret each output from its own evidence; punctuation or another note's matching name cannot establish the boundary. |
-| Rome `5.1.1.1`, complete warning-sign list | Does the final list definition require the full joint description, while its resolution describes separately admitted signs? Review actual information coverage before declaring a branch conflict; diagnostic wording alone does not fail a clear final meaning. |
 
-These questions are review qualifications, not new user labels, mandatory
-replacement meanings or a reason to rewrite the current prompts. The first
-presentation uses stock `5.1`, its original post and complete local branch.
+The Coffee-chain child is the clearest remaining factual-support concern, not a
+demonstrated contradiction in the post. Independently reviewed Jesús Molina and
+Rome meanings retain supported named identities; no boundary preference needs
+user resolution. The Rome warning-sign meaning clearly describes the complete
+three-item list. Diagnostic wording alone does not establish an error in that
+final meaning. These findings do not certify every branch relationship or clear
+the malformed baseline cocotte endpoint. Remaining qualifications are not new
+user labels, mandatory replacement meanings or a reason to rewrite the prompts.
 
 Review selection must distinguish an input/output-bound record from the newest
 decision: `current: true` certifies matching hashes, not supersession. Native

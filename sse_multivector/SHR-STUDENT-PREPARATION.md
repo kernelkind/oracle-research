@@ -278,6 +278,10 @@ for Qwen and 19.27 GiB for Ettin. The maximum swap increase over each observer's
 first sample is 1.51 MiB sequentially and zero concurrently.
 Memory capacity permits this pair, but the measured aggregate gain is small.
 
+The human chose sequential scheduling for this student investigation after
+this measurement: run one GB10 student fit at a time. The Bootstrap/Compare
+candidate sets remain unchanged, and final student selection remains open.
+
 This is one sequential/concurrent pair, sequential first, with staggered
 loading and a short Ettin fit inside a long Qwen fit. Warm caches and ordinary
 run variation are uncontrolled. It does not establish equal-duration job
