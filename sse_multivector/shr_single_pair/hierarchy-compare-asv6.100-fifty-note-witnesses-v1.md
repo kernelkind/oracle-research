@@ -1538,3 +1538,28 @@ used. All 196 original case IDs and the current five-field schema are verified.
 These are independent historical B96 producer fixtures, not latest Bootstrap
 certification. Their empty canonical branches complement rather than replace
 the fifty-note consequence panel. Preparation makes no inference calls.
+
+### V81 gate: the information-topic test is still unstable
+
+All nineteen comparisons are valid, with twenty fresh attempts including
+warmup and no failure/reuse/missing usage. Native consistency identifies one
+reversal: isolated019-forward contains Food dishes through Meals' eating-occasion
+alternative, while reverse excludes accidentally eaten display food because
+the food is not itself an eating occasion. That is physical-instance exclusion,
+not exclusion from the activity's permitted participant-role information scope.
+Both orientations use identical fixed endpoint meaning strings without source
+evidence. This remains a Compare diagnostic failure.
+
+Snapshot019 now gives a valid display-only Bread counterexample to Meals
+descendant coverage, avoiding the v80 snack-parent transfer. Thus the consequence
+mechanism improved without establishing endpoint reliability. Other seven
+complete reciprocal pairs match. No broader v81 panel is dispatched after the
+failed gate; full-v1 and as100-core-v1 remain unrun preparations.
+
+Native gate-generation.json and gate-v1 receipts are preserved under
+target/compare-v81-qualification-v1. Native usage source
+hierarchy-compare-v81-usage-v1.json records known API-equivalent cost $0.1696936.
+V82's controlled hypothesis will replace the counterexample-validation
+paragraph so rejection tests every permitted information-topic connection,
+including established participant/use roles, rather than just physical identity.
+The intended-consumer, food/cookware, graph and appliance controls must survive.

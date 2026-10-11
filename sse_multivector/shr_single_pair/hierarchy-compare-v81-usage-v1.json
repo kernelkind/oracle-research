@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v81_gate": ["../../target/compare-v81-qualification-v1/gate-v1"]
+  }
+}
