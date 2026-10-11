@@ -5,11 +5,12 @@ group has too many children. A nomination still follows ordinary local versus
 canonical graph traversal. Selection does not establish containment, placement,
 equivalence or a preferred answer.
 
-**Current investigation: manually identify parents for two siblings at a time.**
-The user approved checking whether the original local entries contain a suitable
-parent before trying to reverse-engineer its retrieval. Missing parent topics
-are diagnostic references only; they are not generated or inserted. Use
-`--method subgroups --pair FIRST_ID SECOND_ID` for this offline screen. Original
+**Current investigation: reverse-engineer retrieval of an available parent.**
+The user approved using Plant foods as a known candidate and investigating a
+general rule for finding it. Title-pair similarity and original source branches
+have been screened offline; the proposed priority is not activated. Missing
+parent topics remain diagnostic references only. The earlier subgroup screens
+use `--method subgroups --pair FIRST_ID SECOND_ID`. Original
 local ancestry and SSE similarity remain retrieval evidence; ordinary traversal
 still decides placement. No new scoring rule is approved by this investigation.
 
@@ -686,6 +687,133 @@ the pair's raw sibling relationship and menu membership. Frozen source SHA-256:
 | `subjects/subjects.json` | `18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a` |
 | `regrouping-roots-v1/state.json` | `853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae` |
 | `menu-v2/state.json` | `4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c` |
+
+## Reverse-engineering available parent retrieval
+
+The user requested inspection of the Plant foods control, then a general rule
+for retrieving it. No teacher calls, new encodings, graph changes or selector
+behavior changes were made. This is a candidate-selection investigation;
+ordinary local-versus-canonical traversal still decides relationships.
+
+### Why the previous score fails this pair
+
+Inspecting all 23 original Food C001 children rather than the 13 retained menu
+children keeps Cranberries C069 in the diagnostic. Native eligibility leaves
+1,313 unused original entries for Avocados C062 + Cranberries C069. The title
+versus full-meaning separation score puts Plant foods 962nd. Its components
+are a weakest pair cosine of 0.4081 minus an outside cosine of 0.7271 against
+Growing one's own food C094. Rain ranks first despite a weakest pair cosine of
+only 0.0837: its outside maximum is even smaller, 0.0710.
+
+The original-descendant version places Plant foods 616th of 769 eligible local
+parents. It subtracts the 0.7740 Vegetables-to-Cabbage match from a weakest pair
+match of 0.3638. Strong resemblance to Cabbage need not be a defect: Plant foods
+can also be a useful parent of Cabbage. Pair inspection does not require the
+prospective parent to exclude every other sibling.
+
+Dropping this subtraction alone improves Plant foods to entry rank 167 using
+its title and 247 using descendants. Full canonical meanings still promote
+long culinary descriptions ahead of this short class heading. These are
+retrieval failures, not comparison-prompt failures or semantic rejections.
+
+### Word-independent rule under investigation
+
+For a chosen sibling pair, score each eligible unused local heading by the
+**weaker of its two SSE cosines against the siblings' original headings**.
+Candidate and sibling headings are each encoded alone, using the existing
+receipt-bound subject vectors. Do not subtract similarity to other siblings.
+The weaker match rewards resemblance to both supplied subjects. It supplies
+no evidence about containment direction.
+
+For Avocados + Cranberries, Plant foods scores 0.4534 against Avocados and
+0.4123 against Cranberries, giving 0.4123. It is the first eligible original
+entry and the first distinct heading. No Plant foods-specific word, weight or
+threshold enters the rule. The existing production `rank_candidates` function,
+when supplied just these two canonical rows and the corresponding eligibility,
+already implements this weaker-heading score; no new scoring component was
+needed for the offline checks. The CLI's existing defaults remain unchanged.
+
+Original branch structure improves the retrieval pool further:
+
+1. Take the overcrowded canonical parent's heading, such as Food.
+2. Find matching headings in the original local hierarchies, using
+   case-insensitive exact wording for this screen.
+3. Prioritize eligible unused entries anywhere beneath those original local
+   headings, then order them by the weaker sibling-heading cosine.
+4. Preserve a wider search outside those branches. Heading equality does not
+   establish meaning equality, and a useful parent may originate elsewhere.
+
+Food's original branches contain 186 unused entries with 105 distinct headings,
+compared with 1,386 entries and 626 headings in the full unused pool. The
+source-local relationship gives a retrieval cue; it does not become a canonical
+edge or establish a relationship to either selected sibling. Canonical fixed
+meanings, the local evidence and native eligibility remain unchanged.
+
+### Broader screen and qualifications
+
+Three panels reuse the same fifty-note source:
+
+- **Plant foods:** all 15 pairs among Avocados C062, Tomatoes C064, Cranberries
+  C069, Potatoes C087, Cabbage C088 and Green beans C089. Each fixed meaning
+  establishes a plant-food role. The parent expectation is a manual assessment.
+- **Vegetables:** Cabbage + Green beans, Potatoes + Cabbage, and Potatoes + Green
+  beans. The unused Food → Plant foods → Vegetables entry supplies an original
+  food-role candidate. These expectations are also manual assessments.
+- **Cooking:** 36 pairs among nine original C005 children with explicitly saved
+  positive Cooking C125 comparisons: C008, C010, C011, C012, C014, C070, C071,
+  C072 and C098. These are model-judged positives, not human gold. No unverified
+  Butter relationship is included. The previous Cooking insertion still failed
+  the menu-shaping test; retrieving it is not automatically a useful regrouping.
+
+The ranks below count distinct eligible headings. Computation shares a vector
+for identical text; original entries, contexts and source IDs remain separate.
+For example, Plant foods' full-pool worst heading rank is 8, while its worst
+original-entry rank is 23 because other headings have repeated source entries.
+An eight-heading retrieval is therefore not an eight-comparison cost claim.
+
+| Panel | Pairs | Full unused pool: heading minimum, median / worst rank | Matching original branches: median / worst rank |
+|---|---:|---:|---:|
+| Plant foods | 15 | 4 / 8 | 2 / 3 |
+| Vegetables | 3 | 1 / 3 | 1 / 1 |
+| Cooking | 36 | 22.5 / 148 | Candidate absent from this pool |
+
+Plant foods is first for Avocados + Cranberries in both pools. All 15 plant-food
+pairs put it in the first three headings when using the original Food branches.
+Vegetables is first on all three vegetable pairs in that pool. Restricting
+the priority to **immediate** original children would instead exclude
+Vegetables; using recursive original descendants matters.
+
+Food preparation has no unused descendants beneath matching original headings
+in this snapshot. The Cooking candidate is an independent original root, so a
+hard source-branch filter would lose it entirely. Even unrestricted heading
+minimum fails some Cooking pairs: Cooking ranks 134th for Grilling + Rosemary.
+Heading average raises it to second, but performs worse on the Plant foods
+panel; averaging full-meaning matches raises it only to sixteenth. Taking the
+best title/meaning similarity for each sibling does not solve these panels
+either. No single tested score is presented as a universal parent retriever.
+
+**Proposed use:** prioritize original matching branches with heading-pair
+minimum, while retaining a wider fallback. This retrieves the available plant
+parents without forcing an exclusive two-child group. It is exploratory,
+food-domain evidence from three parent headings, not independent validation,
+an adopted scheduling policy or proof of end-hierarchy quality/API savings.
+The stronger 18-case source-branch result concerns two parent headings and
+does not generalize the unresolved Cooking cases away.
+
+The screen reuses original 768-dimensional vectors and the saved full-meaning
+vectors only for contrasts. Each selected pair needs two heading similarities
+per candidate heading. A larger implementation should use existing vector
+retrieval and indexed source-branch lookup; repeated corpus scans or automatic
+enumeration of every sibling pair are not implied by this bounded study.
+Large Food branches, retrieval recall and total construction cost remain open.
+
+Ignored reports in the retained task worktree are
+`target/canonical-shaping-selection-v1/parent-pair-retrieval-screen-v1.json`
+(54 qualified controls, seven score contrasts, exact-entry ranks and source
+hashes) and `parent-pair-source-branches-v1.json` in the same directory
+(the source-branch contrast using the native two-sibling ranker). Source hashes
+and SSE identities were verified before and after inspection. Existing saved
+requests and results remain immutable. No new relation labels enter a prompt.
 
 When a new intermediate parent groups m existing siblings, replacing their
 direct choices with that parent can reduce the original group by m−1 choices.
