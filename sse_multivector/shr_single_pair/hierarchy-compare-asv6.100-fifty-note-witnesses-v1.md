@@ -1430,3 +1430,39 @@ The initial full-v1 preparation made no calls. Current main was synchronized
 after all active runs ended, and all 66 hierarchy-node-pair tests passed on the
 combined code. Prepare a fresh full-v2 after this checkpoint so it binds that
 code. Model input bytes, meanings and producer identities must still match v75.
+
+### V78 broader failures; separate v79 graph-authority test
+
+Full-v2 completed all 102 cases with 88 dispatched attempts and 17 exact reuses.
+Native isolated analysis finds one reversal conflict, pair019 (Meals/Food
+dishes), and no settled chain conflicts in either orientation. This does not
+semantically certify the whole panel. Broader independent review continues.
+
+Snapshot009 is a definite additional scope failure. Its canonical Food meaning
+defines nourishing substances and information about those substances. The
+answer instead admits cookware design as an endpoint counterexample, citing
+the existing Cookware descendant as confirming that coverage. The identical
+endpoint meanings in isolated009 retain their correct broader/narrower Food
+relationship. A conflicting descendant must constrain the final placement;
+it cannot expand the selected endpoint definition to make the graph coherent.
+
+Pair019 is a separate restriction-applicability failure. Meals independently
+covers eating occasions and food intended for them. Forward rules out coverage
+from absence of food intention; reverse establishes coverage through the
+required serving/eating role in an eating occasion. Independent review finds
+the forward exclusion incomplete under the existing activity-role convention:
+it rejects one parent alternative without excluding the other. This is a
+provisional semantic assessment, not new human gold. The reversal itself proves
+inconsistency without deciding which interpretation must change.
+
+V79 changes only the unconditional graph premise: valid parent relationships
+cover whole child scopes, but supplied relationships do not establish or
+broaden meanings. All other v78 text, output schema and frozen inputs remain
+unchanged. Native gate is snapshot009 plus isolated009 both directions, food/
+cookware006 both directions, appliance034 both directions, snapshot022 and
+Bread/bagel022 both directions: ten cases, cap21. Require fixed endpoint
+interpretation across graph/no-graph positions, failed-descendant protection,
+and preserved appliance positives / edible-food negatives / bagel guards.
+Then fresh repeat before expansion. Pair019 will receive a separately controlled
+restriction-applicability test; do not claim this graph-only edit fixed it from
+one favorable draw. All calls remain within the persistent 20,000 allowance.
