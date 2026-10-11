@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "proposals": [
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v3-expanded-first-v1",
+        "sha256": "b739305e3746dd9f6f3313b91f17c36b6c57005eb5509f0f1d1555a59cb4bf4d"
+      },
+      "case": "food"
+    },
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v3-expanded-first-v1",
+        "sha256": "b739305e3746dd9f6f3313b91f17c36b6c57005eb5509f0f1d1555a59cb4bf4d"
+      },
+      "case": "mental-states"
+    },
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v3-expanded-first-v1",
+        "sha256": "b739305e3746dd9f6f3313b91f17c36b6c57005eb5509f0f1d1555a59cb4bf4d"
+      },
+      "case": "cuisine"
+    },
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v3-expanded-first-v1",
+        "sha256": "b739305e3746dd9f6f3313b91f17c36b6c57005eb5509f0f1d1555a59cb4bf4d"
+      },
+      "case": "food-dishes"
+    },
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v3-expanded-first-v1",
+        "sha256": "b739305e3746dd9f6f3313b91f17c36b6c57005eb5509f0f1d1555a59cb4bf4d"
+      },
+      "case": "cooking-appliances"
+    }
+  ]
+}

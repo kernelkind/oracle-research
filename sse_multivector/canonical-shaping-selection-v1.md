@@ -1,8 +1,8 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work is the expanded prompt test of approved
+The latest user-authorized work is containment review of the expanded tests of approved
 Hierarchy-consolidation-v3; see [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording)
-and [expanded results](#expanded-consolidation-v3-prompt-test).
+and [the prepared containment screen](#expanded-consolidation-v3-containment-screen).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1829,6 +1829,71 @@ Twenty-four relevant production-adapter, assembly and revision checks pass.
 Native preparation and receipt validation preserve the original source files
 and complete input/settings identity. This work remains isolated in the shaping
 task worktree, as requested. No graph, prompt text, UI or other agent's worktree
-changed, and no agent message was sent. The next proposed work is focused
-containment evaluation of these saved definitions before changing the prompt;
-full synthetic-node placement is not the current development priority.
+changed, and no agent message was sent. The user subsequently approved
+proceeding with focused containment review of these saved definitions before
+changing the prompt; the prepared native screen is described below. Full
+synthetic-node placement is not the current development priority.
+
+## Expanded consolidation-v3 containment screen
+
+The user approved proceeding with containment review. The previous proposal
+allowance is exhausted at 233/233. A separate request for at most forty new
+GPT-6.1 Sol medium attempts is pending; no additional requests have been sent
+and the counter has not been changed for this stage.
+
+The [comparison source](shr_single_pair/hierarchy-consolidation-v3-expanded-comparison-source-v1.json)
+selects the five usable first-draw definitions, preserving the producer
+experiment envelope hash and each valid native receipt. Coffee is excluded
+because its proposed note sets cannot strictly narrow; Eating supplied no
+definition. Both Food's useful partial reduction and the four other promising
+groups are included. The [specification](shr_single_pair/hierarchy-consolidation-v3-expanded-comparison-v1.spec.json)
+retains the earlier screen's Compare-v75 prompt, response schema, GPT-6.1 Sol
+medium/SSE settings and complete canonical ancestor/descendant input. It does
+not activate or qualify Compare-v75 as the current hierarchy-generation prompt.
+
+The shared runner prepared
+`target/canonical-shaping-selection-v1/consolidation-v3-expanded-compare-v75-v1`:
+
+| Saved proposal | Offered siblings plus immediate parent |
+|---|---:|
+| Meals, from Food | 14 |
+| Motivational states, from Mental states | 7 |
+| Prepared dishes, from Cuisine | 7 |
+| Dough and batter foods, from Food dishes | 7 |
+| Cookware, from Cooking appliances | 5 |
+| Total | 40 |
+
+These are twelve intended-child checks, five supplied-parent checks and
+twenty-three checks for other siblings. All forty exact requests require new
+answers under the saved request identities. Preparation itself made no model
+calls. Each synthetic local input contains only its saved title and meaning;
+no fabricated original post or original local branch is added. Source hashes
+and the complete original graph meanings are verified.
+
+Before inference, two concerns are recorded with the native `review` command
+as source-bound **agent uncertain** assessments of the saved proposals:
+
+- **Cuisine:** Prepared dishes explicitly covers ingredient and preparation
+  variations, but omits Turning pantry staples into chewy bagels C099. Check
+  whether that activity's whole fixed meaning fits. An activity/product
+  distinction alone does not establish exclusion.
+- **Food dishes:** the supplied parent C020 defines prepared foods served or
+  eaten as a meal or part of a meal; the proposed dough/batter-food definition
+  does not state that condition. The supplied Bread and Pancakes meanings also
+  omit it. Check containment without silently adding a meal restriction;
+  a conflict could originate in the existing branch rather than consolidation.
+
+These concerns are not confirmed failures, new human judgments or teacher
+answers. Original proposal outputs and inference receipts remain immutable.
+The two production-adapter checks pass. The prepared source/configuration and
+review findings remain isolated in this task worktree.
+
+The planned evaluation distinguishes a rejected selected edge, an omitted
+sibling that is actually contained, and an unresolved pre-existing canonical
+branch. Expected roles remain outside model input. A compatible selected edge
+requires `local_contains_canonical`; the supplied parent requires
+`canonical_contains_local`. An omitted sibling returned as
+`local_contains_canonical` or `equivalent` needs review against consolidation's
+include-all requirement. An uncertain branch judgment alone does not establish
+a consolidation-wording failure. No graph, prompt text, UI or other agent's
+worktree changed, and no agent message was sent.
