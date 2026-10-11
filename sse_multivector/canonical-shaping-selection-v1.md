@@ -1,14 +1,16 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work tests experimental
-[Hierarchy-consolidation-v5](shr_single_pair/Hierarchy-consolidation-v5.md)
-on the same nine sibling groups in two independent draws. The early check has
-not resolved the recurring whole-child and parent-fit defects.
+The latest user-authorized work drafts experimental
+[Hierarchy-consolidation-v6](shr_single_pair/Hierarchy-consolidation-v6.md)
+with one synthetic geometry example unrelated to the regression topics.
+The completed v5 panel still shows the whole-child and parent-fit defects;
+v6 has no model trial yet.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
 the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
-[the v5 revision record](#consolidation-v5-draft), and
-[the completed v5 proposal panel](#consolidation-v5-proposal-panel).
+[the v5 revision record](#consolidation-v5-draft),
+[the completed v5 proposal panel](#consolidation-v5-proposal-panel), and
+[the v6 example draft](#consolidation-v6-synthetic-example-draft).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1609,8 +1611,9 @@ The pinned assembly manifests for the approved references are
 [Bootstrap-v104 with expanded shared clauses](shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json)
 and [Consolidation-v3](shr_single_pair/Hierarchy-consolidation-v3.assembly.json).
 Both reference the exact same nine shared files in the same order. The
-experimental [Consolidation-v4 manifest](shr_single_pair/Hierarchy-consolidation-v4.assembly.json)
-and [Consolidation-v5 manifest](shr_single_pair/Hierarchy-consolidation-v5.assembly.json)
+experimental [Consolidation-v4 manifest](shr_single_pair/Hierarchy-consolidation-v4.assembly.json),
+[Consolidation-v5 manifest](shr_single_pair/Hierarchy-consolidation-v5.assembly.json)
+and [Consolidation-v6 manifest](shr_single_pair/Hierarchy-consolidation-v6.assembly.json)
 also preserve those exact shared files and separators, changing only their
 task-specific wrappers. V3 remains the last human-approved full consolidation
 wording; authorization to draft or test later versions is not semantic qualification. The bootstrap
@@ -1644,7 +1647,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v5.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v6.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -2268,15 +2271,53 @@ Reasoning is already counted in output; catalog amounts are not subscription
 invoices.
 
 V5 is not established as an improvement over v4. Moving the same condition
-earlier has not made the generated definitions obey it. **Recommended next
-prompt experiment, not drafted or run:** teach the constraint with a short,
-purposeful worked contrast, then test Cuisine and Food dishes alongside
-Beverages and Mental states. Two independent draws on these four complete
-groups would take eight new attempts. Preserve the shared Bootstrap clauses
-and fixed meanings, and keep unsupported parent restrictions separate from
-the later note-set check. This remains a consolidation prompt proposal, not
-authorization for a v6 edit or more calls. The task stays isolated as requested.
+earlier has not made the generated definitions obey it. The user subsequently
+authorized the synthetic example draft below. The proposed targeted panel
+remains unrun: Cuisine and Food dishes alongside Beverages and Mental states,
+with two independent draws per group, would take eight new attempts. Keep
+unsupported parent restrictions separate from the later note-set check.
 
 Twenty-six production-adapter, assembly and revision checks pass after syncing
 current local main. The v5 assembly hash and shared Bootstrap clauses remain
 unchanged; the prompt remains experimental.
+
+## Consolidation-v6 synthetic example draft
+
+The user approved adding an example and explicitly required it to be synthetic
+and unrelated to the tests.
+[Hierarchy-consolidation-v6](shr_single_pair/Hierarchy-consolidation-v6.md)
+adds exactly one input/output example to unchanged v5 wording. It uses Blue
+shapes as the supplied parent, with Squares of any color, Blue triangles,
+Blue rectangles and Blue circles as siblings. The output proposes Blue
+polygons above the two wholly covered siblings, triangles and rectangles.
+
+The example teaches the scope constraints through a useful non-null grouping:
+Squares cannot acquire a blue-only restriction from existing placement;
+Blue circles fit the supplied parent but not the proposed polygon category;
+and a proposed polygon meaning allowing any color would extend beyond the
+supplied parent. All definitions, IDs and the answer were authored for this
+example, without copying a corpus entry, saved judgment or regression label.
+None of its topic names occurs in the nine frozen regression inputs. Its two
+JSON blocks parse, and removing the example reconstructs v5 exactly.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v6.assembly.json)
+reuses v5's unchanged before-wrapper and all nine shared Bootstrap-v104
+clauses and separators. Only the after-wrapper is new. The shared runner's
+native `revise` uses last human-approved v3 as the baseline and records the
+[revision provenance](shr_single_pair/Hierarchy-consolidation-v6.md.revision.json).
+The complete v6 SHA-256 is
+`591c92c0677b027fa6b2e3576c58bf2201511f03e5aee6d85fdca7e1890abe42`.
+Historical prompts, definitions, test inputs and saved receipts are unchanged.
+
+The production assembly test first failed on the missing v6 manifest, then
+passed. Twenty-seven production-adapter, assembly and revision checks pass,
+including native preparation freezing the complete v6 text without inference.
+The input/output contract is unchanged. V6 is a draft, not a qualified prompt;
+no new model calls were made and the counter remains **309/309**. This task
+remains isolated in its worktree, with no hierarchy or UI changes.
+
+**Recommended next test, not run:** the eight-attempt panel described above.
+Changing only the example while retaining complete saved inputs and settings
+will test whether it helps the two failing groups without losing useful
+Beverages and cognitive-state groupings. It needs a new bounded allowance;
+the draft does not establish that the example helps.
