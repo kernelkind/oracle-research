@@ -9,8 +9,11 @@ unchanged. V12 is preserved with an unintended missing paragraph break; v13
 corrects that formatting without rewriting v12. Its four-attempt activity-scope
 screen meets the targeted checks in both independent draws: Grilling is retained
 and the synthetic completion requirement excludes plans. The proposals remain
-unapplied. The user subsequently authorizes the remaining eight real groups,
-twice each, under the sixteen-attempt screen registered below.
+unapplied. The remaining eight real groups complete twice each: eight qualified
+agent accepts, two Coffee structural rejects and six uncertain Food/Cuisine/Food
+dishes assessments after a documented Food reassessment. No new clear semantic
+regression is established; unresolved judgments remain unresolved. V13 is
+experimental and has not been activated.
 See [the draft record](#consolidation-v13-activity-topic-draft) and
 [the registered screen](#consolidation-v13-activity-scope-screen).
 
@@ -3982,3 +3985,100 @@ binds the ten first/repeat experiments. Frozen preparation and the existing
 production-path checks use the shared runner; no new execution or evaluation
 code, hierarchy, UI, Compare/Bootstrap prompt or agent communication is needed.
 All 37 relevant consolidation, assembly and revision checks pass before calls.
+
+### Completed remaining real-group results
+
+All sixteen fresh attempts complete as valid results, with no reuses, warmups,
+retries, failures, invalid receipts or missing usage. Every repeated request has
+the same complete input, settings and actual HTTP body as its first draw. All
+sixteen retained responses have distinct references and HTTP 200 status,
+report GPT-6.1 Sol, and retain one request-producing code hash. Actual bodies
+request medium reasoning and contain one user `input_text` block, empty
+`instructions` and no conversation link. The worker reports one HTTP attempt
+for each call, with no hidden transport retries.
+
+| Complete group | First draw | Independent repeat | Current agent assessment |
+|---|---|---|---|
+| Roots | Beverages: Coffee C006 + Slush drinks C039 | Same children, independently worded meaning | Two qualified accepts; seven choices to six |
+| Mental states | Motivational states: Perceived needs C047 + Desires C076 | Identical meaning and children from a distinct response | Two qualified accepts; six to five |
+| Cuisine | Prepared dishes: Pizza C054 + Cheesesteaks C066 + Risotto C073 | Same children, independently worded meaning | Two uncertain whole-parent-fit assessments; prospective six to four |
+| Food | Meals: Breakfast C018 + Dinners C059 | Same children, independently worded meaning | Two uncertain completeness assessments after reassessment; prospective thirteen to twelve |
+| Eating | JSON null | JSON null | Two qualified diagnostic accepts; no impossibility proof |
+| Cooking appliances | Cooking vessels: Stockpots C015 + Cast-iron cookware C105 | Same children, independently worded meaning | Two qualified accepts; four to three |
+| Coffee | Further coffee: Second coffee C101 + Additional coffee C102 | Same children, independently worded meaning | Two structural rejects: new-parent note set equals C102's |
+| Food dishes | Meat and meat-alternative dishes: Burgers C036 + Chicken dishes C114 | Dough and batter dishes: Pancakes C031 + Bread C068 | Two uncertain whole-child/parent-fit assessments; prospective six to five |
+
+The qualified root, mental-state and vessel groupings survive without forcing
+old headings or child lists. Motivational states explicitly describes wanting
+or believed/felt necessities, covering both selected cognitive/emotional
+conditions. Vessel definitions require food held within a cooking container
+and do not add a requirement to generate their own heat.
+
+Both Meals definitions emphasize occasions and food as a whole, but also cover
+composition and descriptions. The initial assessment treated the whole/part
+distinction as enough to justify omitting Food dishes C020. That is not
+established: C020 explicitly covers foods served or eaten as meals or parts of
+meals, which may fit the proposed composition scope. Both Food results are
+reassessed as uncertain completeness rather than confirmed passes. No omitted-
+child error is confirmed until this meaning boundary is resolved.
+
+Coffee repeats a measured finished-structure limitation. Its proposed parent
+represents two notes; Second coffee represents one and Additional coffee two.
+The proposed edge above C102 therefore would not narrow the note set. A six-to-
+five option reduction alone does not make that new step useful. Note memberships
+are absent from the model input, so this structural rejection is not by itself
+a semantic failure or evidence that v13 caused a regression. The definitions
+closely resemble the existing Additional coffee topic, but that resemblance
+alone is not a newly validated equivalence judgment.
+
+Cuisine's broad Prepared dishes proposal and its style/tradition/associated-
+dishes parent retain the unresolved scope convention. Food dishes' first
+proposal retains the parent's meal role, but whether Burgers' entire generic
+food-kind meaning establishes that role remains unresolved. The repeat selects
+Pancakes and Bread and also covers recipes, mixtures, preparation, taste and
+desire to eat the foods. Its selected foods' whole meal role and the whole fit
+of those associated activities/materials beneath the prepared-meal-food parent
+remain uncertain. Neither repetition settles these judgments, and different
+proposed scopes with different children are not themselves contradictions.
+
+Native `review --role agent` initially records ten qualified accepts, two
+structural rejects and four uncertainties. Appended Food reassessments preserve
+the original accepts in review history; the current counts are **eight
+qualified accepts, two structural rejects and six uncertainties**. These are
+assessments of sixteen development draws, not sixteen independently human-
+labeled judgments or an accuracy rate. Immutable pre-review, reviewed and Food
+reassessed snapshots preserve all producer, input, output, receipt, metadata
+and usage fields; only attributed reviews change. This is an evaluation
+correction, not a model-output or prompt change.
+All shape reports retain `applied: false`. Food's twelve remaining choices
+still exceed six, so its native local-group flag remains false even if the
+proposed partial reduction is semantically valid. No final hierarchy quality
+or optimality is claimed.
+
+The maintained native usage selection reproduces ignored
+`target/canonical-shaping-selection-v1/consolidation-v13-broader-real-usage-v1.json`.
+Complete usage is **23,582 input tokens**, zero reported cached-input/write
+tokens, and **4,783 output tokens including 4,018 reasoning tokens**. Complete
+API-equivalent catalog cost is **$0.094994**, with reasoning counted once and
+zero incremental subscription cash charge. The new counter is exhausted at
+**16/16**. All five earlier exhausted counters remain byte-identical.
+
+After synchronizing current main at `17ea0b74`, all 37 relevant production-path
+consolidation, assembly and revision checks pass again. A fresh native aggregate,
+`consolidation-v13-broader-real-usage-post-sync-v1.json`, reproduces the original
+totals and generation attribution exactly after the reviews and synchronization.
+The unrelated canonical release-decisions modification is preserved.
+
+Unchanged v13 now has two fresh draws on all nine frozen real groups, plus two
+draws of the separate completed-painting control. Its earlier Grilling and
+completion results remain intact; this screen establishes no new clear failure
+on the qualified semantic controls. It does not settle the food conventions
+or establish broad reliability. No prompt edit, Compare/Bootstrap inference,
+hierarchy change, UI refresh, activation or agent message occurs.
+
+The most useful next step is to settle one exact uncertain meaning comparison
+with the user, starting with whether the proposed Meals composition scope covers
+Food dishes C020, before another prompt edit. The Coffee note-set limitation is
+already measured separately;
+repeated generation cannot establish the unresolved semantic expectations.
+That review is proposed, not begun. The task remains isolated as requested.
