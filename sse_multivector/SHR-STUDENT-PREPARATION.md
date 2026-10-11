@@ -47,6 +47,21 @@ The 93 shared-runner and six local transport regressions pass, including a
 loaded older coordinator. New local evaluation plans use a fresh worker snapshot;
 the existing fitting and generation snapshots remain immutable.
 
+Compare now supports native `prepare-evaluation` and inference-only `evaluate`
+for the saved epoch 1/4 checkpoints. Preparation proves the exact B96 meaning
+producers, C48 instructions, fitting exposure and original split membership;
+external prompt-development partitions keep their original roles. Historical
+fitter relocation requires the original source hash and preserves the fit
+manifest bytes. GB10 consumes prepared panels bound by an explicit Anvil
+manifest hash, while retaining the original config, supervision, fitter and
+checkpoint guards. The combined CPU suite passes 46 tests; 29 CUDA cases are
+skipped locally. The native GB10 integration passes all four saved-checkpoint
+paths: Ettin full state and input JSON, Qwen NF4 options and Kev NF4 pointer.
+It checks both epochs, direct forward agreement, zero evaluation updates,
+unchanged original fit files, portable source bindings and refusal of oversized
+inputs before weight loading. The corrected run takes 56.61 seconds; the first
+run exposed only an assertion that omitted Kev's native overflow wording.
+
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 Published-checkpoint behavior can support a choice of starting weights; it
