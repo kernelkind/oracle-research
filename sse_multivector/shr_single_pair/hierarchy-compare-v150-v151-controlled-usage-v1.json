@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v150_core": ["../../target/compare-v150-fixed-case-question-gate-v1/core"],
+    "v150_controls": ["../../target/compare-v150-fixed-case-question-gate-v1/controls"],
+    "v151_core": ["../../target/compare-v151-compact-instructions-gate-v1/core"],
+    "v151_controls": ["../../target/compare-v151-compact-instructions-gate-v1/controls"],
+    "v149_repeat_core": ["../../target/compare-v149-matched-repeat-v1/core"],
+    "v149_repeat_controls": ["../../target/compare-v149-matched-repeat-v1/controls"]
+  }
+}

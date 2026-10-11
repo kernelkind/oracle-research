@@ -3289,3 +3289,90 @@ Compare; no Bootstrap inference, hierarchy build or external message follows.
 Definitions and production-example checks precede dispatch. Independent native
 reviews inspect concrete proofs, reversals and consequences, not labels alone.
 Usage source: hierarchy-compare-v146-v149-controlled-usage-v1.json.
+
+All eight experiments complete with135 valid comparisons in144 actual attempts,
+including eight warmups, one provider failure and its successful retry. No reuse
+or terminal failures. The failed attempt has no usage: $1.26812 is the native
+known API-equivalent subtotal, not the unknown complete cost. Persistent counter:
+17016/20000. No candidate is adopted.
+
+V146 core:20 accept/3 reject/10 qualified; controls:12 accept/3 reject/4 qualified.
+019 reverse imports an eating purpose;052 reverse imports broth after a failed
+pasta candidate;107 forward dismisses an actual dessert-ingredient connection
+without closing nourishing-food composition coverage. Both animal dietary
+orientations execute sound tests. Controls wrongly exclude cultivation of
+tomatoes established as human food from Eating's qualifying-food information
+connection, and two Author controls repair software simulation by adding a
+person without proving that identity required by the fixed particular Author.
+The supported Food/water null passes. Four core reversals, no directional chain
+conflicts; no control reversals. Audience and producer boundaries remain qualified.
+
+V148 core:17 accept/4 reject/12 qualified; controls:11 accept/1 reject/7 qualified.
+019 reverse still imports eating purpose;022 reverse assumes ring-shaped coverage
+despite recognized chewy holeless bagels;041 forward does not correct imposed
+deprivation to the animal's own deliberate fasting;070 forward prequalifies a
+nonhuman audience and misses the required outside-recipient test before coverage.
+The only control reject is the same tomato-cultivation operator defect. Human-
+consumer tests and author/nourishment implications are distinguished rather than
+forcing animal alternatives into a particular dinner. Five core reversals, no
+directional chain conflicts; no control reversals. All33 core and19 controls have
+native hash-bound assessments. One controls question-form-only verdict was
+corrected with native history preserved: open-question formatting is a separate
+comment, not proof that a supported semantic judgment is wrong.
+
+V149 core:7 accept/3 reject/4 qualified; controls:0 accept/6 reject/0 qualified.
+008 reverse assigns unroasted beans to the particular author's coffee, while
+forward008 correctly leaves that property's applicability unresolved.070 forward
+still lacks whole-recipient coverage. Other defects include missed identity tests,
+an unclosed nourishing-dish composition connection in009, and031/032's asserted
+nourishment intention after a dinner-role argument. All four generic animal
+dietary controls pass. Two core reversals, no directional chain conflicts; no
+control reversals. The blind owner distinguishes missing nourishment proof more
+strictly than other cohorts' qualifications; independent cross-review retains
+that disagreement instead of turning the count difference into a candidate
+accuracy conclusion. Ambiguous defining-kind versus entity-identity classification
+does not create new rice/beverage procedure rejections.
+
+The fresh V142 baseline repeat gives core6 accept/1 reject/1 qualified and
+controls0 accept/1 procedure reject/2 qualified. Animal fasting, animal ketogenic
+regimens and ordinary water-risotto/wine-free proofs all pass.070 forward fails
+to correct an unattended-machine candidate before asserting recipient coverage.
+009's final uncertain relation is supported, but its ancillary positive Cuisine/
+Salsa consequences omit required consumer tests. A sufficient negative may stop
+testing; it does not certify unsupported positive claims the answer nevertheless
+asserts. One core reversal remains. Repair of042 in the unchanged baseline repeat
+precludes attributing a one-draw gain to a candidate's wording.
+
+### V150/V151: particular-case construction and complete-body simplification
+
+V150 changes only V149's question paragraph. A particular-entity child is tested
+through that same entity's supplied or necessary properties; a decisive unknown
+is investigated rather than assigned a hypothetical value. General children
+retain outside-class priority and admit different qualifying instances. This
+targets008 reverse's concrete invented property at question construction, not a
+new identity-preservation rule or forced null. Scope aspects, necessary implication,
+correction, all alternatives and guards remain unchanged. Independent preflight
+finds no substantive blocker; restricting tests to supplied properties must not
+be mistaken for limiting a node's entire information scope to listed facts.
+
+V151 branches independently from V148. Its complete instruction body is929 words
+versus1213, removing duplicated clauses and simplifying presentation while
+preserving both synthetic demonstrations and final input block byte-for-byte.
+No semantic obligation is intentionally dropped: independent scope, ordinary
+variants, qualifying kind/activity connections, state, every alternative,
+corrected candidates, universal positives, supported nulls and positive identity/
+consumer prerequisites for selected and canonical relationships remain explicit.
+This tests length/layout/paraphrase together, not token count alone. Earlier
+compact candidates preceded this combined contract or changed only part of it;
+V140 removed demonstrations and does not establish the effect of this revision.
+Independent preflight and both production-example validators pass.
+
+Next stage freezes V150's14-core/6-control panel from completed V149, V151's
+complete33-core/19-control gate from V148, and a fresh identical-request V149
+repeat of its20 cases. Expected92 comparisons plus six warmups:98 attempts absent
+retries/reuse, under the unchanged persistent allowance. Review particular and
+general children separately; assess new defaults, corrected candidates and every
+asserted positive consequence rather than rewarding blanket uncertainty or a
+convenient negative label. No Bootstrap inference, hierarchy construction,
+provider changes or external-session messages. Usage source:
+hierarchy-compare-v150-v151-controlled-usage-v1.json.
