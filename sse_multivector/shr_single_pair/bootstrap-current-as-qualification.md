@@ -2,6 +2,35 @@
 
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
+
+## Bootstrap broad: BBv1 draft
+
+The user authorized a separate Bootstrap broad line, abbreviated BB. Its
+criterion is the broadest coherent explicit meaning the selected node's evidence
+allows, with clearly defined boundaries. This is a scope-selection objective;
+it does not introduce browsing preferences or hierarchy-shaping requirements.
+
+[BBv1](Hierarchy-bootstrap-broad-v1.md) is an untested draft revised through the
+shared runner's offline `revise` command from last-approved Bootstrap-v104.
+It changes the opening task and the ambiguity-resolution section. Additional
+restrictions require support as defining conditions of the selected topic;
+when supported interpretations differ by inclusion, choose the broader one.
+Named identities, express restrictions and all named alternatives remain
+preserved. Different senses are resolved from the input rather than combined.
+The inferred-parent fitting rules are replaced by interpretation of the local
+hierarchy as evidence. Input, output, definition-writing rules and both existing
+synthetic examples remain byte-identical to v104.
+
+The adjacent revision receipt pins the baseline, exact edits and resulting
+prompt hash. Nine native revision tests pass; no model calls or semantic
+qualification have been performed. Existing Bootstrap versions and approval
+status remain unchanged. The draft follows the
+[official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+on direct instructions, clear delimiters and concise output requirements;
+that guidance does not establish BB's semantic correctness.
+
+## Existing Bootstrap qualification
+
 The user approved [Bootstrap-v103](Hierarchy-bootstrap-v103.md) and qualification
 on the current 344-case collection. The initial completed agent review
 found one factual-support failure and two materially ambiguous meanings. Two
