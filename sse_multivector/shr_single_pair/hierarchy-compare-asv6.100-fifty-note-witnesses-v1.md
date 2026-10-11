@@ -5544,3 +5544,84 @@ preserved positive, equivalent, consumer and intended-state controls, with
 valid questions and directional justifications. Correct labels with unsupported
 proofs do not pass. Broader fixed-meaning qualification follows only if this
 panel holds up; even complete success would not establish general reliability.
+
+### Completed V181 qualification
+
+The four native experiments complete with 20 fresh valid responses, no reuse,
+warming, retry, failure or missing usage. All 20 response IDs are distinct;
+requests contain one user message, empty additional instructions and no
+conversation linkage. Model inputs match their saved V179 baselines byte for
+byte, and schema/settings remain matched. Pre-review `final-generation.json`
+snapshots preserve outputs, inputs and receipts. No producer meaning or source
+evidence changes.
+
+An independent agent reviews all 20 full responses without prescribed labels,
+old answers or prompt templates; experiment paths disclose the version, so this
+is not fully blinded review. Root independently checks the decisive evidence.
+Attributed native reviews support 16 responses and reject four. The Stockpots
+counterexample has the user's prior acceptance; the other controls remain
+qualified agent assessments, not new human gold.
+
+| Measure | Saved V179 | Fresh V181 |
+|---|---:|---:|
+| Supported complete responses | 18/20 | 16/20 |
+| Relation errors | 2/20 | 4/20 |
+| Reversal conflicts | 2/10 | 4/10 |
+| Directional labels changed between fresh draws | 0/10 | 0/10 |
+| Uncertain responses | 0 | 0 |
+| Native API-equivalent catalog cost | $0.1643176 | $0.1711924 |
+
+Each column represents five pairs in both orientations, repeated twice.
+Reversal conflicts count the ten pair/draw checks, not ten independent topics.
+Both V181 draws have identical labels, including the same two erroneous
+forward answers. These small development samples do not estimate population
+accuracy or establish that the edit caused the additional errors.
+
+The four rejected responses each have one unsupported positive proof and one
+supported negative case:
+
+- **Stockpots / Cookware:** `pair-01` and `pair-02`,
+  `isolated-035-forward`, return `A_contains_B`. Their proofs claim stock
+  preparation "necessarily entails" or "necessarily supplies" meal-preparation
+  purpose. A vessel designed exclusively to prepare culinary stock for
+  laboratory analysis satisfies the entire fixed Stockpots meaning while
+  lacking that Cookware purpose. Merely discarding a stock batch would not
+  establish design-purpose exclusion. Both reverse answers find the complete
+  laboratory-only counterexample and return `neither`. The focused wording
+  change therefore does not resolve the original failure.
+- **Dietary practices / Fasting:** `controls-01` and `controls-02`,
+  `pair-041-forward`, return `A_contains_B`. Their proofs say deliberate
+  dietary abstention necessarily governs "whether and when a person eats".
+  The fixed Fasting meaning does not require a person. A coherent hypothetical
+  nonhuman deliberately following its own dietary abstention practice preserves
+  all its restrictions while escaping the person-specific parent scope.
+  Involuntary hunger would not establish admission. Both reverse answers
+  recognize that distinction and return `neither`. All four saved V179 answers
+  preserve this control.
+
+The Salads/Salad dressing, equivalent Coffee and intended-grilling controls
+remain supported in all 12 responses. Questions test the reported boundary
+and match their answers. The errors concern necessity claims, not JSON
+validity, missing questions, a changed producer definition or a failure to
+preserve the other directional counterexample. Neither lab-only vessel design
+nor hypothetical nonhuman abstention assigns an unknown property to an
+identified real entity.
+
+Native accounting in `target/compare-v181-required-boundaries-v1/usage.json`
+separates the 20 newly dispatched V181 attempts ($0.1711924) from the 20 saved
+V179 attempts ($0.1643176). The combined $0.33551 is original catalog-equivalent
+generation, not new spending. These are subscription usage equivalents, not
+cash charges. Two candidate requests report backend cache hits; explicit
+warming remains disabled in both arms. The persistent shared counter reads
+18,861 before this cohort and 18,881 afterward. Native cohort accounting, rather
+than a shared-counter difference alone, establishes its 20 attempts.
+
+V181 fails the predeclared qualification and is not adopted or broadened.
+V179 remains the better-supported development baseline, with its Stockpots
+failure unresolved. Generalizing a reminder did not fix the unsupported
+necessity proof. The repeatable forward/reverse asymmetry motivates a proposed
+diagnostic that changes directional evaluation order while holding A/B data,
+scope rules, examples and schema fixed. This could distinguish evaluation-order
+effects from input-order effects; neither cause is established here. That
+diagnostic is a recommendation only, with no preparation, edit or new calls
+authorized by this result.

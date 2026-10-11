@@ -1362,9 +1362,14 @@ final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
 [traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
-addition leaves six or more siblings. Existing workflow code and frozen audit
-bounds remain unchanged, so saved sibling-limit violations still describe their
-original evaluation. The constructor does not solve menu optimization
+addition leaves six or more siblings. Its stopping-check timing is provisionally
+approved: check after each placement and all triggered consolidation against the
+current hierarchy and the whole selected corpus. When both conditions pass,
+stop dispatching new searches and comparison calls, save the answers of calls
+already dispatched, and preserve the graph and unfinished searches for later
+resumption. Existing workflow code and frozen audit bounds remain unchanged, so
+saved sibling-limit violations still describe their original evaluation. The
+constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 
@@ -6882,8 +6887,8 @@ candidate for isolating that purpose inference, not a qualified hierarchy
 prompt. Exact witnesses, review qualifications and accounting are in the
 [ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).
 
-The next authorized experimental candidate, [V181](shr_single_pair/Hierarchy-compare-v181.md),
-replaces only V179's focused identity/consumer challenge with a challenge of
+The subsequent authorized experiment tested [V181](shr_single_pair/Hierarchy-compare-v181.md),
+which replaces only V179's focused identity/consumer challenge with a challenge of
 all applicable absent parent restrictions. It preserves union coverage,
 particular-entity safeguards, examples and the V179 schema. Twenty fresh
 comparisons inherit the four completed V179 V2 baselines via native
@@ -6892,3 +6897,15 @@ ASv6.100 producer receipts remain fixed; no Bootstrap or hierarchy work is
 included. This tests an attention hypothesis about purpose requirements,
 not a new containment convention. See the
 [V181 qualification record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v181-challenge-all-applicable-absent-parent-restrictions).
+
+The completed V181 panel fails qualification: 16/20 supported responses and
+four reversal conflicts, versus saved V179's 18/20 and two conflicts. Stockpots'
+meal-purpose leap persists in both forward draws, and both Fasting forward
+draws now import a person restriction absent from its fixed meaning. Reverse
+answers find supported counterexamples under the same definitions. All other
+controls pass. Twenty fresh valid attempts use $0.1711924 in native
+API-equivalent catalog usage, with no reuse, warming, retry, failure or missing
+usage. V181 is not adopted or broadened; V179 remains the development baseline
+with an unresolved failure. A directional evaluation-order diagnostic is
+proposed, not begun. See the
+[completed qualification and review limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v181-qualification).

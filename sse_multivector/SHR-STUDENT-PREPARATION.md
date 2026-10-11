@@ -120,6 +120,40 @@ examples seen. They live under
 Qwen/Kev Compare and the remaining Bootstrap generations are still underway
 or queued. Final student selection remains open.
 
+The focused Bootstrap Qwen passes are complete on the same 40 cases, with
+40 fresh valid responses each, no failures and no null meanings. Native reviews
+use the exact v96 standalone-meaning, factual-state and scope requirements:
+
+| Saved Qwen epoch | Accept / reject / uncertain | Median native request seconds | Peak CUDA GiB |
+| --- | ---: | ---: | ---: |
+| 1 | 25 / 5 / 10 | 14.62 | 20.45 |
+| 4 | 28 / 5 / 7 | 14.31 | 20.42 |
+
+Two supplementary epoch-one reviews reconcile differing reviewer criteria:
+nonexhaustive edible Seed-oil examples are acceptable, while merely naming
+pressure-canning omits the defining heat-under-pressure process. Both earlier
+records remain preserved. Counts select the latest bound agent review per case;
+binding-current historical reviews are not extra cases. These reconciliations
+are not output changes or measured quality gains.
+
+Both epochs still have clear defects. Epoch four improves Risotto and
+experimentation boundaries but invents experienced harm from the author's
+personal assessment, loses the stated successful rosemary-addition outcome,
+and supplies an unsupported Coffeechain interpretation. Cooking remains broad
+enough to make heat optional. The six provisional teacher-null cases all
+receive meanings; one epoch-four conjunctive interpretation is defensible and
+five remain disputed. Their existing teacher reviews are uncertain, so this
+panel does not establish refusal accuracy. Gemma's matched generations remain
+queued, and the independent provisional reviews do not establish an epoch
+ranking by their raw acceptance difference.
+
+The native `run/results.jsonl` / `reviews.jsonl` SHA-256 bindings are:
+
+| Directory under `broader-evaluation-v1` | Results / reviews SHA-256 |
+| --- | --- |
+| `qwen27b-epoch1-v2` | `27896178a0c730a309b475a6acd425e4054d2fd2e938e7788632e448715f8a3b` / `0c7b28b2e4c790b4c9b5cee297f14c204b25c789ad63063431feb1cda215c8b5` |
+| `qwen27b-epoch4-v2` | `a9233237ca41ce9fcbe20cdcc60ea0263b977c6349a6b0047a0e522e8a12cc9b` / `893cfbe82f8b1fd12eb1904283e5b0206c677282d85e33710a5afe7439209836` |
+
 ### Meaning-only Bootstrap learning preparation
 
 `bootstrap_student_pilot.py` derives **94 TRAIN / 21 evaluation** targets from
