@@ -65,6 +65,9 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'canonical_consolidation':
+        return prepare({**dataset, 'adapter': 'generic'}, source, template), sources, dict(
+            application_allowed=False, purpose='Proposed grouping; ordinary traversal validates placement.')
     if dataset['adapter'] == 'canonical_shaping_nomination':
         cases = prepare_shaping_nominations(source, path.parent, sources)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
@@ -1460,6 +1463,9 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'canonical_consolidation':
+        from .canonical_traversal import validate_consolidation
+        result['parsed'] = validate_consolidation(raw, json.loads(case['inputs']['INPUT_JSON']))
     if adapter == 'canonical_shaping_nomination':
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         engine._expect_fields(value, 'shaping nomination output', {'candidate_id', 'children', 'reason'})

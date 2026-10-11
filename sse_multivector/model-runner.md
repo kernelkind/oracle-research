@@ -1393,8 +1393,15 @@ approved: check after each placement and all triggered consolidation against the
 current hierarchy and the whole selected corpus. When both conditions pass,
 stop dispatching new searches and comparison calls, save the answers of calls
 already dispatched, and preserve the graph and unfinished searches for later
-resumption. Existing workflow code and frozen audit bounds remain unchanged, so
-saved sibling-limit violations still describe their original evaluation. The
+resumption. The opt-in `prepare-canonical-traversal` and
+`advance-canonical-traversal` commands implement these rules; both are offline,
+with returned experiments executed through ordinary `run`. They rotate across
+notes within each original local level, allow three overlapping local searches,
+serialize guarded placements and finish triggered consolidation before the next
+placement. Their specs and null-or-object consolidation adapter are documented
+in the linked design. Existing legacy constructor behavior and frozen audit
+bounds remain unchanged, so saved sibling-limit violations still describe their
+original evaluation. The
 constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.

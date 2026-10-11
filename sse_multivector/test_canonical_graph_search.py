@@ -10,6 +10,58 @@ def node(identifier, *parents):
 
 
 class CanonicalGraphSearch(unittest.TestCase):
+    def test_v24_neither_stops_only_that_branch_and_keeps_unknowns_unknown(self):
+        search = GraphSearch([node('Food'), node('Other'), node('Meals', 'Food'),
+                              node('Breakfast', 'Meals', 'Other')], policy='traversal-v24')
+        search.record({'Food': 'canonical_contains_local', 'Other': 'canonical_contains_local'})
+        self.assertEqual(search.candidates(), ['Meals'])
+        search.record({'Meals': 'neither'})
+        self.assertEqual(search.candidates(), ['Breakfast'])
+        search.record({'Breakfast': 'neither'})
+        self.assertTrue(search.result()['complete'])
+        pruned = GraphSearch([node('Meals'), node('Breakfast', 'Meals')],
+                             policy='traversal-v24')
+        pruned.record({'Meals': 'neither'})
+        self.assertEqual(pruned.result()['inferred'], {})
+        self.assertEqual(pruned.candidates(), [])
+
+    def test_v24_shared_descendant_waits_for_unfinished_ancestor(self):
+        search = GraphSearch([node('A'), node('B'), node('Parent', 'A'),
+                              node('Shared', 'Parent', 'B')], policy='traversal-v24')
+        search.record({'A': 'canonical_contains_local', 'B': 'canonical_contains_local'})
+        self.assertEqual(search.candidates(), ['Parent'])
+        search.record({'Parent': 'local_contains_canonical'})
+        self.assertEqual(search.candidates(), [])
+        self.assertEqual(search.result()['inferred'], {'Shared': 'local_contains_canonical'})
+
+    def test_v24_required_parent_can_be_inferred_but_cannot_reopen_pruned_branch(self):
+        graph = [node('Parent'), node('Mapped', 'Parent')]
+        search = GraphSearch(graph, required=['Mapped'], policy='traversal-v24')
+        search.record({'Parent': 'local_contains_canonical'})
+        self.assertEqual(search.candidates(), [])
+        self.assertEqual(search.result()['inferred'], {'Mapped': 'local_contains_canonical'})
+        pruned = GraphSearch(graph, required=['Mapped'], policy='traversal-v24')
+        pruned.record({'Parent': 'neither'})
+        self.assertEqual(pruned.candidates(), [])
+        self.assertEqual(pruned.result()['inferred'], {})
+
+    def test_v24_uncertain_holds_search_and_accepts_already_selected_answers(self):
+        search = GraphSearch([node('A'), node('B'), node('Child', 'A')],
+                             policy='traversal-v24')
+        self.assertEqual(search.candidates(), ['A', 'B'])
+        search.record({'A': 'uncertain'})
+        self.assertEqual(search.candidates(), [])
+        search.record({'B': 'neither'})
+        self.assertTrue(search.result()['held'])
+        self.assertEqual(search.result()['queried'], ['A', 'B'])
+        self.assertEqual(search.result()['inferred'], {})
+
+    def test_v24_candidates_follow_saved_node_order_after_partial_batches(self):
+        search = GraphSearch([node('A'), node('Child', 'A'), node('B')],
+                             policy='traversal-v24')
+        search.record({'A': 'canonical_contains_local'})
+        self.assertEqual(search.candidates(), ['Child', 'B'])
+
     def test_starts_at_all_roots_then_follows_every_containing_branch(self):
         search = GraphSearch([node('Food'), node('Mental states'),
                               node('Meals', 'Food'), node('Hopes', 'Mental states')])

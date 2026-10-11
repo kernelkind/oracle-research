@@ -1,7 +1,9 @@
 # Hierarchy selection by traversal — draft v24
 
-**Status: algorithm draft.** This records the discussion; it does not change
-the constructor, comparison prompt or existing experiments.
+**Status: approved design, implemented by the opt-in `traversal-v24` workflow.**
+Stopping-check timing remains provisional. Comparison prompts and previously
+frozen experiments retain their existing contracts. No live model trial of this
+implementation has been run.
 
 ## Goal and inputs
 
@@ -52,7 +54,7 @@ represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
 The selection order and stopping conditions below are agreed. Stopping-check
-timing is provisionally approved. No selection code or model calls change here.
+timing is provisionally approved. The opt-in implementation follows these rules.
 
 ## Agreed traversal rules
 
@@ -277,8 +279,8 @@ concurrent-search rules. When both pass:
 
 On later resumption, reuse exact unchanged answers and check a search against
 the then-current graph before placement, as required by the concurrent-search
-policy. This timing is approved provisionally for the draft; it is not
-implemented or measured.
+policy. This timing is implemented provisionally; live cost and hierarchy quality
+have not been measured.
 
 ## Agreed consolidation trigger
 
@@ -302,7 +304,7 @@ or more nodes, call consolidation again. Repeat after successful additions
 while the trigger holds; a `null` result ends attempts for that group until a
 later qualifying addition.
 
-This is an agreed construction rule for the draft, not an implemented change.
+The opt-in workflow implements this trigger.
 
 ## Agreed consolidation timing
 
@@ -386,7 +388,7 @@ proposal and its comparison results for review, preserve the local-node
 placement that triggered consolidation, and continue the approved timing
 sequence. Do not rewrite the synthetic meaning during validation to force fit.
 
-This validation policy is agreed draft design, not an implemented change. It
+The opt-in workflow implements this validation policy. It
 adds no separate semantic-review prompt or exhaustive comparison pass. Required
 relationships can reuse exact answers and the same transitive inferences as
 ordinary traversal.
@@ -408,7 +410,7 @@ local node comes from N063. The current filter excludes that canonical node
 unless it is the incoming node's mapped original parent. The approved rule lets
 normal traversal establish their relationship instead.
 
-Removal of the exclusion is approved draft design, not an implemented change.
+The opt-in workflow removes this exclusion.
 Its API cost and hierarchy effects have not been measured.
 
 ## Agreed original-parent handling
@@ -428,7 +430,7 @@ unchecked, hold the incoming local node and preserve the graph. A local root
 has no mapped-parent requirement. Synthetic proposals retain their separately
 agreed target-parent and nominated-child checks.
 
-This original-parent handling is agreed draft design, not an implemented change.
+The opt-in workflow implements this original-parent handling.
 It changes neither a supplied meaning nor a returned comparison label.
 
 ## Agreed walk
@@ -491,33 +493,45 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Current implementation
 
-[canonical_graph_search.py](canonical_graph_search.py) currently descends after
-`neither`, and the constructor processes one local node at a time. These differ
-from this draft's agreed rules. The implementation and its historical results
-remain documented in
-[canonical-graph-search-v1.md](canonical-graph-search-v1.md).
+[canonical_traversal.py](canonical_traversal.py) implements this policy through
+the shared experiment runner's `prepare-canonical-traversal` and
+`advance-canonical-traversal` commands. Both are offline. Preparation starts up
+to three local searches; advancement collects native answers, applies guarded
+placements in selection order and prepares the reached comparisons. Run the
+returned experiment directories using the runner's ordinary `run` command.
 
-The existing [`prepare_selection`](canonical_selective_trial.py) prioritizes
-missing note coverage, then individual-note access, then similarity-ranked
-discovery in schema 2. The approved draft instead rotates across notes within
-each local level, using the saved note order per round and node order per note.
+The preparation spec contains `schema_version: 1`, `corpus`, saved `note_ids`
+in selection order, `local_schema_version` (1, 3 or 4), `bootstrap_spec`,
+`comparison_spec` and `consolidation_spec`. Prompt and schema paths resolve
+relative to their original specs and are frozen. Bootstrap and comparison
+specs require JSON output schemas. Comparison uses local/canonical labels and
+the fixed-meaning input with recursive canonical ancestors and descendants.
+Consolidation uses the `canonical_consolidation` project adapter, which validates
+either JSON null or `title`, `meaning` and a proper subset of sibling IDs. Its
+spec omits a runner output schema because the runner requires an object at the
+top level; the adapter validates the null-or-object contract after the native
+response is received.
 
-The current selector exposes the whole queued set of eligible comparisons. It
-does not defer a queued descendant when a queued ancestor could first settle
-its relationship. The draft's top-to-bottom order adds that dependency rule.
+Unchanged answers are reused before further preparation. Before placement,
+searches restart traversal on the latest graph and reuse only identical input
+payloads. The prospective graph passes the existing cycle, returned-relation
+and settled-answer checks in [`_placement`](canonical_trial.py). Synthetic
+nodes retain their native proposal receipt, with no invented note support.
+Pending consolidation uses the current siblings. If a synthetic addition changes
+a group before its queued attempt starts, that attempt uses the updated group;
+it does not leave a duplicate retry queued for after a null result.
 
-[`_eligible`](canonical_trial.py) currently excludes canonical nodes with any
-supporting entry from the incoming note, except its mapped original parent.
-The graph selector requires that parent to be directly compared even when a
-relationship is inferred or ordinary traversal would not reach it. Placement
-requires a containing or equivalent answer. The approved draft removes the
-same-note filter and the forced direct comparison while retaining the required
-parent fit, established by normal traversal or valid inference.
+After placement and triggered consolidation, the workflow checks individual
+note access and strict note-set narrowing across the whole selected corpus.
+When both pass, it pauses active runner queues, exposes no new experiments for
+dispatch, and retains unfinished searches and already-returned answers. Later
+advancement can collect in-flight results without modifying the finished graph.
+Exhausting the local inventory while a stopping condition fails reports
+`exhausted`, rather than claiming completion. The workflow does not automatically
+remove existing equal-note-set intermediates.
 
-The fixed-meaning comparison input already accepts `local.subject` and
-`local.meaning` without original-note evidence. The constructor's
-[`_placement` function](canonical_trial.py), however, still builds new nodes
-from original note entries. The design above reuses the comparison contract;
-synthetic insertion is not currently implemented by this draft.
-
-No implementation changes or model calls have been made for this draft.
+The older `--graph-search` constructor and
+[`prepare_selection`](canonical_selective_trial.py) retain their legacy behavior
+for existing callers and frozen trials. Their historical results remain in
+[canonical-graph-search-v1.md](canonical-graph-search-v1.md). `GraphSearch` uses
+the approved rules when explicitly constructed with `policy='traversal-v24'`.
