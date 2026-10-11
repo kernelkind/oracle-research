@@ -20,8 +20,11 @@ Cuisine boundary or demonstrating a wording improvement.
 The user next authorizes testing unchanged v11 on the six remaining real
 sibling groups. All twelve fresh calls complete: seven qualified agent accepts,
 two structural Coffee rejects and three uncertain scope/completeness judgments.
-One Food preparation repeat proposes Food processing but omits Grilling;
-whether its activity meaning covers the child's explicit plans remains open.
+One Food preparation repeat proposes Food processing but omits Grilling.
+The subsequent user review confirms this exact containment: information about
+plans to grill concerns the defined processing activity, and the proposed parent
+does not require that processing has already happened. The omission is therefore
+a confirmed completeness error for that displayed proposal.
 Both Food dishes proposals select Burgers and Chicken dishes instead of Bread,
 but retain the unresolved whole-child meal-role question. The pre-call criteria
 and results are recorded in
@@ -29,9 +32,10 @@ and results are recorded in
 The user subsequently authorizes isolating the Grilling omission. Both fresh
 draws omit Grilling from Food processing when its fixed meaning explicitly
 includes plans and select it under heat/smoke preparation when that clause is
-removed. This supports wording sensitivity without settling the activity/plans
-boundary or proving the original omission is wrong. The matched diagnostic
-below leaves v11 and all original hierarchy meanings unchanged.
+removed. This supports wording sensitivity; the later user review settles the
+displayed Food processing/Grilling boundary separately from those measurements.
+The matched diagnostic below leaves v11 and all original hierarchy meanings
+unchanged. See [the approved activity-topic decision](#approved-activity-topic-decision).
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -3479,9 +3483,10 @@ The Food preparation repeat writes:
 
 This is narrower than its supplied parent. Omitted Grilling C012 cooks food
 with direct heat, which matches the physical-changing process, but its entire
-fixed topic also explicitly covers plans to grill. The proposal does not state
-whether those plans belong. Preserve this as a possible omitted covered child,
-not a confirmed pass or a definite failure whose direction has been settled.
+fixed topic also explicitly covers plans to grill. The original agent review
+left this as a possible omitted covered child. The subsequent user review
+below confirms that the displayed Food processing meaning covers Grilling's
+plans and therefore confirms this omission; the earlier review is preserved.
 The no-bake pie's fixed definition does not independently establish its exact
 processing steps. The first bakery proposal explicitly preserves individual
 stages and both baked and no-bake forms; its ordinary bakery-food identity
@@ -3614,8 +3619,10 @@ on planning or settle what an unqualified activity topic covers.
 
 Both original outputs define physical-form, composition or flavor transformation
 to produce food, fitting narrower inside Food preparation. Grilling's direct-heat
-process would satisfy that boundary. Whether those activity definitions also
-cover the plans explicitly included in the original Grilling topic remains open.
+process would satisfy that boundary. At this diagnostic's agent-review stage,
+the activity/plans boundary remained unresolved. The subsequent user decision
+below concerns the exact earlier displayed Food processing definition;
+the two diagnostic proposals retain their separate saved agent reviews.
 Both controls explicitly allow heat **or** smoke, preserving cold as well as hot
 smoking. Bread preparation can include individual non-heating stages, while
 the complete raw pie activity does not require heat or smoke; the device and
@@ -3627,10 +3634,9 @@ inputs omit Grilling, and clause-removed controls select it. That is evidence of
 sensitivity to the planned wording. The proposed topics change too, and four
 calls do not establish that the clause explains the historical omission or a
 general error rate. This diagnostic therefore does not justify another prompt
-edit on its own. The next useful step is to settle the activity/plans boundary
-using the exact saved Food processing and Grilling definitions, rather than
-continue unconstrained generation and treat every new scope choice as failure.
-No further test or prompt revision has begun.
+edit on its own. The user subsequently reviews the exact saved Food processing
+and Grilling definitions and settles that comparison below. No further test or
+prompt revision has begun.
 
 For the two unchanged-input proposals, native prospective note sets strictly
 narrow and seven choices would become five, but semantic completeness is still
@@ -3656,3 +3662,48 @@ maintained findings are committed in the isolated worktree as requested.
 Thirty-seven relevant production-path consolidation, assembly and revision
 checks pass. No Compare inference, Bootstrap edit, placement, UI refresh,
 activation, runner-repository change or agent message occurs.
+
+## Approved activity-topic decision
+
+The exact reviewed proposal is the Food preparation repeat from the remaining
+real-group screen:
+
+> Food processing is the activity of altering the physical or chemical
+> properties of ingredients to produce food or dishes, rather than merely
+> arranging them.
+
+The omitted supplied sibling is Grilling C012:
+
+> Grilling is cooking food on a grill using direct heat. The topic covers indoor
+> and outdoor grilling and plans to perform it, including but not limited to
+> planned outdoor preparation of dinner.
+
+The assistant distinguishes performing the activity from information about
+plans to perform it. Plans to grill concern the defined food-processing activity;
+the proposed parent does not require that processing has already happened.
+The exact question and user reply are retained verbatim:
+
+> **Assistant:** Do you agree that this activity topic includes information about
+> plans specifically to perform it?
+>
+> **User:** yes
+
+**Decision:** this Food processing meaning contains the entire displayed
+Grilling meaning, including its plans. Omitting C012 from this proposal is a
+confirmed completeness error. This is a judgment about information-topic
+containment, not evidence that a planned action occurred.
+
+Required roles, purposes and states still govern containment. The distinction
+between food intended for cooking and completed food remains intact. The user
+has not approved every Food processing proposal or resolved the other disputed
+Cuisine, Bread or Food dishes boundaries. The later diagnostic proposals have
+different definitions and retain their saved agent reviews; the displayed pair
+is the precise user-reviewed comparison.
+
+This documentation records the decision without changing saved inputs,
+receipts, native reviews, prompt bytes, canonical meanings, graph edges or UI.
+All experiment ceilings remain exhausted; this review makes no model calls.
+V11 remains the experimental prompt. The suggested next step is a versioned
+consolidation draft clarifying that an activity topic can include information
+about plans to perform that activity unless its meaning explicitly requires
+performance. That draft and any tests require their own authorization.
