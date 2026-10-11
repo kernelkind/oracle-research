@@ -2013,3 +2013,39 @@ repeat before broad evaluation. A separate independent meaning-only review
 challenges the targeted expectations before inspecting any answers; lexical
 implication or ambiguity must not be suppressed merely to clear old error counts.
 No Bootstrap changes, hierarchy construction or production-code changes occur.
+
+### V99 failed qualification and independent expectation challenge
+
+All14 outputs complete validly in16 fresh attempts including two warmups, with
+no reuse, retry, failure or missing usage. Native API-equivalent cost is$0.0905608,
+reproduced by hierarchy-compare-v99-usage-v1.json. The examples do not resolve
+the person-condition errors:038 and042 both still approve containment while
+proving mental properties or deliberate dietary design without establishing
+human identity.019-reverse also adds eating intent that019-forward explicitly
+allows to vary. Native reversal witnesses018 and019 are incompatible under the
+unchanged fixed meanings, regardless of which particular answer should change.
+The appliance-role, ensemble-role, explicit-consumer/purpose and equivalence
+controls remain supported. V99 is not qualified or adopted.
+
+A separate reviewer examined the exact inputs and V97's convention before seeing
+any outputs, reviews or historical findings. Nonhuman alertness is a strong
+admitted child case: mental wakefulness, attention and readiness do not establish
+a person's mind ([canine attention research](https://pmc.ncbi.nlm.nih.gov/articles/PMC3916763/)).
+A deliberately designed mouse ketogenic feeding practice likewise preserves very
+low carbohydrates, relatively high fat and the ketosis purpose, while human
+researcher agency does not make the consumer a person
+([mouse ketogenic feeding](https://pmc.ncbi.nlm.nih.gov/articles/PMC6024661/),
+[mouse ketone metabolism](https://pubmed.ncbi.nlm.nih.gov/35995402/)).
+These are agent semantic assessments supported by factual admission evidence,
+not new human gold or a rule that all unstated conditions are variable.
+
+The same independent challenge qualifies018 and041. Whether making edible
+bagels solely for destructive testing remains a "food-preparation activity"
+depends on whether that phrase itself requires an eating purpose. Likewise,
+animal food abstention does not suffice for041: the child requires deliberate
+abstention as a dietary practice. Observed dogs choosing to wait with food
+accessible establish behavioral possibility, not that category membership
+([canine delayed food choice](https://pmc.ncbi.nlm.nih.gov/articles/PMC5341119/)).
+Both are lexical scope qualifications; neither prior positives nor provisional
+negatives settle them. Earlier reviews are preserved, with this later challenge
+recorded separately. Removing a contradiction does not establish accuracy.
