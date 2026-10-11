@@ -498,10 +498,29 @@ child case]?" can be a valid counterexample test. The defect is substituting
 positive association or a matching role for that test. These are additional
 diagnostic defects within the already-rejected outputs, not three additional
 independent failures. An independent read-only reviewer confirmed the 024/025
-question defect. The preferred individual labels remain qualified agent
-assessments; this inspection adds no human semantic gold and does not prove
+question defect. At that inspection stage, preferred individual labels were
+qualified agent assessments, without human semantic gold; this does not prove
 which prompt wording caused the failures. Prompt, inputs and saved outputs
 remain unchanged.
+
+The user subsequently approved **neither** for the exact Preparing sourdough
+bread / Food meanings in `isolated-024-forward` and `isolated-024-reverse`.
+The approved explanation was: "Under these definitions, neither is correct in
+both orientations." The user's verbatim reply was: "\"Under these definitions,
+neither is correct in both orientations.\" agree". Food requires intended human
+consumption, while the supplied sourdough-preparation meaning also admits bread
+made solely for animal feed. This is a user-approved expectation for this exact
+pair, not a general prohibition on Food containing preparation activities.
+
+The user also approved **neither** for the exact Eating / Food meanings in
+`isolated-025-forward` and `isolated-025-reverse`. The approved explanation was:
+"the positive answer overlooks Food’s human-consumption requirement. Eating’s
+meaning also permits a cow eating livestock-only fodder, which Food excludes."
+The user's verbatim reply was: "gotcha agree." This expectation applies to the
+supplied meanings in this pair. Butter's preferred label remains an agent
+assessment. Native outputs, attributed agent reviews and the prompt are
+unchanged. Present each reviewed pair in isolation and explain why its saved
+judgments constitute a failure.
 
 Every case has exactly one current native agent review. After review, all 102
 input strings/hashes, raw outputs, parsed values and receipt references remained
