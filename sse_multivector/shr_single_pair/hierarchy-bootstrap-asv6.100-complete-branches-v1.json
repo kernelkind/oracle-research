@@ -1,0 +1,171 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-asv6.100-complete-branches-v1-main.json"
+    },
+    {
+      "path": "hierarchy-bootstrap-asv6.100-complete-branches-v1-risotto.json"
+    },
+    {
+      "path": "hierarchy-bootstrap-asv6.100-complete-branches-v1-amusement.json"
+    }
+  ],
+  "review": {
+    "status": "Experimental complete-branch Bootstrap-v105 qualification, selected before inference. Current ASv6.100 original trees only; prior outputs/labels are not semantic gold. Individual meanings and fixed ancestor compatibility are separate agent assessments.",
+    "criteria": [
+      "Preserve the selected subject's identity and abstraction. Its context and complete current selected-root hierarchy guide interpretation; the full post is definitive evidence for actual facts.",
+      "Use general knowledge to define the interpreted category without inventing an occurrence, purpose or state of the particular example.",
+      "Require a coherent standalone meaning with explicit material membership boundaries. Distinguish kind-level roles from required roles or states of a particular example; keep multiple covered kinds' restrictions explicit.",
+      "The final meaning must express its chosen material boundaries consistently with its resolutions. Diagnostic phrasing alone is not a failure of an otherwise correct and unambiguous final meaning.",
+      "State membership affirmatively, retaining the selected topic's identity. Examples may illustrate a broader category without exhaustively defining it.",
+      "Distinguish which people or things qualify from the information covered about them when that choice materially changes scope. Do not require one predetermined scope for all named subjects.",
+      "For selected branches, compare each independently generated child meaning with the exact independently generated meanings of its selected ancestors. Preserve missing definitions, null outputs and supported source-link conflicts; do not force compatibility or convert a null into pair-label gold.",
+      "Report mechanical validation, agent meaning review and selected branch compatibility separately. This development collection is not human semantic gold or an unseen reliability benchmark.",
+      "Keep changed, ambiguous and absent legacy regression intents visible. Never recreate an absent old entry, transplant its number/context, or score deprecated producer meanings as current results.",
+      "A named preparation process must explicitly preserve making the named product. Broad categories and illustrated methods remain distinct from particular ongoing or completed episodes; no universal recipe or predetermined boundary is gold.",
+      "Close defining process, required heat, hashtag identity and kind-role versus occurred-state ambiguities in the final meaning. Do not invent a particular technique, commercial affiliation, completion or consumption to close a category boundary."
+    ],
+    "selection": {
+      "entries": 115,
+      "trees": 17,
+      "distinct_posts": 13,
+      "immediate_links": 98,
+      "recursive_ancestor_checks": 300
+    },
+    "as_producer": {
+      "prompt_id": "ASv6.100",
+      "template_sha256": "0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f"
+    },
+    "source_bindings": [
+      {
+        "selection": "main",
+        "corpus": "target/bootstrap-asv6.100-regression-refresh-v1/collected/subjects.json",
+        "corpus_sha256": "dc8444b80301ba1cf6041d45c23c6f0bd4a98c04c5921a5af4c21fcf090456c8",
+        "native_provenance_sha256": "86010f43d2df2919174df5c12d7db8d77476414c27220a46e962eb4973d18537",
+        "trees": [
+          {
+            "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "root": "1",
+            "subject": "Cooking",
+            "entries": 9
+          },
+          {
+            "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "root": "5",
+            "subject": "Cooking",
+            "entries": 8
+          },
+          {
+            "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "root": "6",
+            "subject": "Food preservation",
+            "entries": 4
+          },
+          {
+            "note_id": "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "root": "8",
+            "subject": "Food storage",
+            "entries": 3
+          },
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "root": "1",
+            "subject": "Bread",
+            "entries": 4
+          },
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "root": "2",
+            "subject": "Food preparation",
+            "entries": 3
+          },
+          {
+            "note_id": "03313183e42615c765021814b8c6b3de61c7ff95f89e75f5cebe588c1bcb0f4a",
+            "root": "2",
+            "subject": "Rosemary",
+            "entries": 3
+          },
+          {
+            "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "root": "5",
+            "subject": "Mental states",
+            "entries": 3
+          },
+          {
+            "note_id": "c1649016c338c0d84f44e7d018afd94abef8c5927b4d02aea9d7571b7f061608",
+            "root": "2",
+            "subject": "Jesús Molina",
+            "entries": 3
+          },
+          {
+            "note_id": "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+            "root": "5",
+            "subject": "Rome",
+            "entries": 4
+          },
+          {
+            "note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+            "root": "1",
+            "subject": "Coffee chains",
+            "entries": 2
+          },
+          {
+            "note_id": "bootstrap-synthetic-sushi-planned-state-v1",
+            "root": "3",
+            "subject": "Meal planning",
+            "entries": 5
+          },
+          {
+            "note_id": "bootstrap-synthetic-sushi-served-state-v1",
+            "root": "4",
+            "subject": "Eating food",
+            "entries": 7
+          },
+          {
+            "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "root": "4",
+            "subject": "Metal handles",
+            "entries": 13
+          },
+          {
+            "note_id": "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+            "root": "1",
+            "subject": "Food",
+            "entries": 36
+          }
+        ]
+      },
+      {
+        "selection": "risotto",
+        "corpus": "target/bootstrap-asv6.100-regression-refresh-v1/risotto-process-v1/collected/subjects.json",
+        "corpus_sha256": "5d4acb7747ed2accc39624d71fdd8458bbabb236d97dab2daed4b939a8fc8ad4",
+        "native_provenance_sha256": "9027191eb05a5ea9f87dc1051bfef3c0f4a3c7b97eed93db6bd80902139a1f63",
+        "trees": [
+          {
+            "note_id": "bootstrap-synthetic-risotto-process-v1",
+            "root": "3",
+            "subject": "Cooking",
+            "entries": 6
+          }
+        ]
+      },
+      {
+        "selection": "amusement",
+        "corpus": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+        "corpus_sha256": "18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a",
+        "native_provenance_sha256": "76c72b8a324f82a817a22189f53b5939146a438a3c69d0f93928304fa76fb421",
+        "trees": [
+          {
+            "note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+            "root": "4",
+            "subject": "Amusement",
+            "entries": 2
+          }
+        ]
+      }
+    ],
+    "sampling": "Each selected original entry occurs once; exact native request reuse is permitted without choosing preferred outputs. Record fresh/reused provenance. This is an adaptive development panel, not independent unseen gold."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v105_complete_branches": [
+      "../../target/bootstrap-v105-complete-branches-v1"
+    ]
+  }
+}
