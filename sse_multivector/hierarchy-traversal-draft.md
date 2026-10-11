@@ -240,8 +240,8 @@ a canonical-node addition leaves six or more siblings. A `null` result or a
 rejected proposal leaves the group unchanged; a later qualifying addition can
 trigger another attempt.
 
-This changes the intended requirement, not the existing implementation or saved
-experiment assessments.
+The opt-in workflow uses this best-effort requirement. Legacy workflows and
+saved experiment assessments retain their original choice-limit checks.
 
 ## Agreed stopping conditions
 
@@ -406,7 +406,7 @@ avoid comparisons; do not exclude a reached node merely because one of its
 supporting entries has the incoming note's ID.
 
 Suppose a canonical node is supported by N001 and N063, and the incoming
-local node comes from N063. The current filter excludes that canonical node
+local node comes from N063. The legacy filter excludes that canonical node
 unless it is the incoming node's mapped original parent. The approved rule lets
 normal traversal establish their relationship instead.
 
