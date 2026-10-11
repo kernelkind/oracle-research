@@ -7078,7 +7078,7 @@ attempts from saved baseline generation. The shared counter moves 18,935 to
 The proposed independent proof check presumed the disputed meal-purpose
 interpretation and is not pursued. No Bootstrap or hierarchy work follows.
 
-The next authorized diagnostic freshly matches both physical input orders under
+The matched diagnostic freshly compares both physical input orders under
 unchanged Compare-v179: two A/B assignments, two member orders and two draws,
 eight requests in total. The Stockpots semantic expectation remains unresolved;
 reversal, physical-order and repeat consistency are measured separately. Native
@@ -7086,3 +7086,14 @@ preparation preserves exact ASv6.100/Bootstrap-v96 definitions and disables answ
 reuse and explicit warming. All four experiments share current code/settings and
 the persistent 20,000-attempt counter. See the
 [pre-call design and limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fresh-matched-v179-input-order-diagnostic).
+
+Its eight fresh valid outputs reproduce the same pattern in both draws:
+Cookware containment when Cookware is physically first, `neither` when it is
+second. Four paired reversal checks conflict, all four physical-order comparisons
+change relation, and all four exact repeated requests retain their labels. Both
+presentations are fresh under matched settings; the observation still does not
+certify either semantic label or identify internal reasoning. Native cost is
+$0.072474 API-equivalent, with no reuse, warming, cache hits, retry, failure or
+missing usage; the shared counter moves 18,979 to 18,987. Ordering is not adopted,
+and no prompt or Bootstrap change follows. See the
+[completed diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-fresh-matched-order-diagnostic).
