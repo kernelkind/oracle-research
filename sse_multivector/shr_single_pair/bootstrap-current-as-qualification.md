@@ -30,15 +30,18 @@ This records the interpretation and review contract. Prompt versions, schemas,
 source data, producer receipts and historical reviews remain unchanged;
 approval of the rule does not activate a prompt or authorize a new experiment.
 
-## Bootstrap broad: BBv7 draft
+## Bootstrap broad: BBv7
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv7](Hierarchy-bootstrap-broad-v7.md) is the current development draft,
-reviewed offline but untested by the model. Its
+[BBv7](Hierarchy-bootstrap-broad-v7.md) is the current experimental prompt. The
+user approved its draft and requested a generated-output comparison with normal
+Bootstrap. The [five-case matched panel](#bbv7-matched-outputs-versus-normal-v109)
+is complete; it does not demonstrate broader coverage or general qualification.
+Its
 [independent component-scope change](#bbv7-independent-component-scope)
 addresses the unclosed trio target boundary without choosing a required answer.
 [BBv6](Hierarchy-bootstrap-broad-v6.md) was tested
@@ -502,8 +505,9 @@ It was not reset.
 BBv6 remains unchanged and not generally qualified. No Compare calls, hierarchy
 build, UI refresh or prompt activation occurred. The subsequent authorized
 [BBv7 draft](#bbv7-independent-component-scope) separately resolves the scope of
-each person or thing within a compound subject. No follow-on model calls have
-begun; the repeat does not establish that this wording change will work.
+each person or thing within a compound subject. The subsequent matched BBv7
+panel is recorded below; the repeat alone does not establish that this wording
+change will work.
 
 ### BBv7 independent component scope
 
@@ -550,11 +554,73 @@ traces. It does not establish this semantic mechanism. BBv7 is a draft, not an
 activated or model-qualified prompt. This step made zero model calls and no
 Compare, hierarchy or UI changes.
 
-The recommended next test is the exact trio parent/child pair under BBv7, with
+The recommended next test was the exact trio parent/child pair under BBv7, with
 independent review of whether its target boundary is actually closed. Include
 broad-category and named-identity controls. Keep source-parent compatibility
 separate from scope faithfulness and do not force earlier relation labels.
-That test has not begun.
+The subsequent user-requested output comparison includes that pair and the
+three breadth/identity controls below.
+
+### BBv7 matched outputs versus normal v109
+
+The user clarified that the requested comparison concerns generated meanings,
+not prompt text. The shared runner prepared and completed
+`target/bootstrap-broad-v7-v109-output-comparison-v1` in the BB worktree using
+native `prepare --from ... --only ...`. Its five frozen normal Bootstrap-v109
+answers come from the completed current-AS qualification in
+`oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate`.
+All five actual input objects match their baselines exactly: full original posts,
+complete ASv6.100 selected-root trees and selected pointers. Baseline outputs
+remain outside model input. No generated parent meaning is supplied to another
+producer. Normal v109 was not rerun; these are single matched outputs, not
+independent repeat estimates or a causal ablation of individual instructions.
+
+Unchanged BBv7, GPT-6.1 Sol medium, SSE transport, the existing output schema and
+automatic prefix caching are frozen in the native experiment. Preparation and
+execution bind the isolated task worktree. No source changed during execution.
+All five BBv7 outputs are fresh; neither version's source inputs or old receipts
+were rewritten.
+
+| Selected topic | Observed difference and qualification |
+|---|---|
+| Recurring stock-making | Both definitions describe the recurring practice, preserving frequency, saved carcasses and stock-making process. BB expressly permits other suitable vessels; normal v109 did not require stock pots either. No demonstrated coverage gain. |
+| Mental states | Both describe a broad non-exhaustive category, rather than only the illustrated abnormal states. Different examples do not establish changed membership. Neither invents a diagnosis. |
+| Jesús Molina | Both identify the individual through profession and trio association. BB adds that the trio receives enthusiasm, a supported post-summary fact rather than a necessary identity boundary. Whole-person versus professional-role coverage remains qualified. |
+| Associated jazz trio | BB expressly chooses a particular ensemble; normal v109 leaves particular-versus-category identity implicit. BB uses the specific mention to reject the category alternative without settling why the broader category is unsupported. Whether particular identity is necessary under BB remains uncertain. |
+| Enthusiasm for the trio | BB's first question still combines qualifying-trio generality with the author's particular reaction. Its explanation broadens observers; its second question distinguishes trio from person, not particular ensemble from category. The target-identity boundary remains materially unclosed. |
+
+The coordinator and two independent read-only reviewers find no demonstrated
+broadening in this panel and no definite unsupported factual addition. The trio
+and enthusiasm definitions are not a proven incompatible pair: a generic-target
+reading conflicts with the particular parent, while a retained-particular-target
+reading can be compatible. The final child meaning does not explicitly choose
+between those readings. Source ancestry and historical positive labels are not
+semantic gold. Native receipt-bound agent reviews record two qualified accepts
+and three uncertain scope assessments; these are not user judgments or a
+general prompt failure rate.
+
+| Case ID | Fresh BBv7 record SHA-256 |
+|---|---|
+| `bootstrap-2bf8ef02c91a82528e1de36c2ac9723d4b9cf1c9e2ba4f0a19e36945b8127066` | `9521bed436c480694a4234aa31ba1c1f7deed2f3680c5e58b368b30a6f19b130` |
+| `bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e` | `c51c3cd2f512817796659679310d93398c3d1172b04ada20f73225be2c1d1336` |
+| `bootstrap-230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` | `3d7e086d1760bee0bec80f36364b10a1f800e5492b69b847d1e45aa6d67670e9` |
+| `bootstrap-4d093cebbca84c917bc6401355d4b4ddeaec8f9d660a1851a22e6aae2227d6da` | `9068497ba2f65f15a8b9128cfdc6897fd02b0c82aefb41d0449a6bdcd956f32e` |
+| `bootstrap-4f4e1f65f56589569c2d4a2b9410b63c0d80a045aa5cbb53a3e5e00e6f8f7f09` | `1622998e925f8e6ba0ab8d511b06247e4d4a27680992f0e06992c5c794c74d69` |
+
+All five answers validate; paired diagnostics and exact post quotes validate for
+both versions. The run makes six new attempts: five meanings and one automatic
+warmup, without reuse, retries or failures. All five substantive requests record
+cache hits. Native new-attempt usage totals 7,258 uncached input, 24,960 cached
+input and 2,999 output tokens; 862 reasoning tokens are already included in
+output. Known API-equivalent cost is $0.047002, including warmup and excluding
+earlier baseline generation. No attempt lacks usage. This is not a subscription
+invoice. The existing shared 20,000-attempt counter was preserved.
+
+This experiment did not edit or activate a prompt, perform Compare calls,
+construct a hierarchy or refresh a UI. Native inputs, outputs and reviews remain
+ignored in the retained worktree. The recommended next step is to examine the
+particular-ensemble choice and the independently unclosed enthusiasm target
+before another edit; no follow-on test or prompt change has begun.
 
 ## Existing Bootstrap qualification
 
