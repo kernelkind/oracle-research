@@ -2968,3 +2968,48 @@ including two warmups, caps13/9, persistent20000 counter unchanged. Both
 illustrations pass the production validator, and exact inputs, evidence and
 source hashes match V133. The five-field contract and explicit guard checks
 remain unchanged. Usage source: hierarchy-compare-v134-candidate-usage-v1.json.
+
+V134 completes all ten comparisons in12 actual attempts, without reuse,
+failure, retry or missing usage. Native API-equivalent cost: $0.098536.
+Core reviews:3 accept/2 reject/1 qualified. 041 forward still proposes no relevant
+identity candidate, so the candidate-correction rule never executes; reverse041
+and both042 preserve complete nonhuman cases. Reverse070's pet-at-waking witness
+does not exclude the independent contact-initiation route. Forward070's universal
+recipient assertion remains qualified. Controls:2 accept/0 reject/2 qualified.
+012 independently uses a batter-based loaf;019 independently uses an untouched
+future-meal apple with no preparation or qualifying-dish production connection.
+031/032 now show consumer tests while keeping the separate nourishment-purpose
+qualification. Two native core reversal witnesses remain.
+
+Read-only history audit rejects simply repeating a shared-label-not-reference
+sentence: V86 already tested that mechanism, and V87 tested illustrative-example
+authority. Both left seven of eight then-targeted errors. The current forward041
+proof is consistent with either hypothesis but does not isolate a cause.
+
+### V136: concretize the prioritized question before answering it
+
+V135 replaces only V134's question-recording paragraph: each question presents
+one concrete potential case, prioritizing the applicable missing identity/
+consumer restriction. Its answer must adjudicate that exact case against the
+whole child and all parent alternatives/connections before concluding coverage.
+The case is explicitly a test, not presumed admitted or excluded. Necessary
+implications, all-route negatives, full coverage, unresolved judgments and
+canonical guards remain intact. The four fictional example questions now use
+their existing diagnostic cases. V136 corrects the positive hair example to
+adjudicate its actual scissor-cutting customer case instead of the old singeing
+variation. V135 remains an unrun intermediate; no illustration meaning or
+relation changes, and no corpus example is added.
+
+Earlier V89 also tried concrete questions but lacked the later targeted
+identity/consumer priority and current demonstrations. This is a controlled
+combination of previously separate mechanisms, not a claim that concreteness
+alone is novel or sufficient. Independent design review agrees the actual case
+in the question makes a skipped variation visible and answerable.
+
+The native gate returns to the complete partial52-case panel,33 core plus19
+controls, with exact V125 inputs, producer evidence and schema. This checks
+collateral errors earlier instead of repeating only ten increasingly familiar
+cases; it is not the full196/102 qualification or a fresh repeat. Expected54
+first attempts include two warmups; caps67/39 retain the same persistent20000
+counter. All source hashes and both illustrations' production validation pass.
+Usage source: hierarchy-compare-v136-concrete-usage-v1.json.
