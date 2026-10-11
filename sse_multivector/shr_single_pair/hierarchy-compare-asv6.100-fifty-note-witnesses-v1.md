@@ -2223,3 +2223,16 @@ The current kind/production rule addresses012 in principle, but the
 activity/realization convention for061 needs explicit qualification.071
 remains an ambiguity control rather than a forced positive. These are future
 checks under the existing Compare task, not hierarchy or Bootstrap work.
+
+V105 is a separate example-only branch fromV100. Its one fully synthetic
+human-versus-general job-sequencing example separates the designer of a
+deliberate procedure from the entity making a selection. The independent
+controller witness also excludes a role assisting a person's selection;
+the reverse proof preserves procedures, evaluations and tool-role information.
+This is a different teaching mechanism fromV99's generic bird/flight contrast.
+No food, animals, source posts or original validation names occur in the
+example, and both synthetic subjects are absent from all298 frozen input
+subject strings. Its output passes the production five-field validator.
+AllV100 instructions remain unchanged. TestingV104 andV105 on the same ten
+original requests separates obligatory condition isolation from a participant
+demonstration instead of accumulating both mechanisms in one candidate.

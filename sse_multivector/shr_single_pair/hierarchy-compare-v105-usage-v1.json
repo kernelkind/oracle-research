@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v105_core": ["../../target/compare-v105-qualification-v1/core-participant-example-v1"],
+    "v105_tool": ["../../target/compare-v105-qualification-v1/tool-participant-example-v1"]
+  }
+}
