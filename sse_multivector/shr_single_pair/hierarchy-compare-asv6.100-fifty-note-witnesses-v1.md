@@ -1652,3 +1652,43 @@ rules, meanings, output fields and canonical guards remain v83's. Qualification
 now includes the entire102-case consequence panel and the separate196-case
 ASv6.100/B96 source-free core, with independent diagnostic review. Underclosed
 producer boundaries remain qualifications, not manufactured fixed labels.
+
+### V85 complete panels: shared restrictions and topic operators
+
+Both frozen panels completed with all298 case outputs valid. Native usage
+records296 actual attempts,7 exact reuses,1 recovered failed attempt and3 retry
+attempts, including resume admissions. Known API-equivalent subtotal is
+$1.6842464; one failed attempt lacks usage, so the complete total is unknown.
+The persistent shared20000 counter remains unchanged in identity.
+
+Independent review of the102-case panel gives93 accept,3 reject and6 qualified
+responses. Rejected cultivation diagnostics are snapshot025 and isolated025
+forward; isolated012-forward incorrectly excludes bread-making stages because
+finished Bread does not yet exist. Pair012 is the panel's sole settled reversal.
+The six qualifications are isolated025-reverse's liquid-food boundary; all
+three009 comparisons' kind-aspect/activity operator distinction; and two
+031/032 ancestor approvals that infer intended nourishment from dinner service.
+
+The two independent core reviewers give179 accept,11 reject and6 qualified
+responses across196 outputs. Both018 orientations import preparation-for-eating
+from another Food preparation definition via a shared label. Both038,041,042
+orientations import a person restriction into independently defined alertness,
+fasting and ketogenic regimens. Both061 orientations add an actual-performance
+restriction to Cooking to exclude a canceled plan. Reverse071 selects a
+permissive morning-context interpretation while forward071 correctly leaves it
+unresolved. Qualified pairs051,062,101 concern cuisine identity, the plan's
+heat-method boundary and representing versus belonging to a generation.
+
+The core has no settled reversal conflicts, but its two directional graphs each
+contain018→022 versus019: the first link incorrectly imports the eating purpose.
+Unresolved pairs are not passes. Review counts describe responses, not
+independent errors or human gold, and exact reuse is not an independent draw.
+Native generation snapshots remain under target/compare-v85-qualification-v1.
+
+V86 replaces only the first fixed-meaning interpretation paragraph. A shared
+kind/activity label is not a reference to another supplied node. Necessary
+implication requires a contradiction when the parent condition is violated while
+all child restrictions remain unchanged. The controlled gate tests missing
+purpose/person restrictions and preserves production, appliance, alternative
+and branch controls. Kind-aspect/activity and planned-activity operators remain
+separate subsequent mechanisms; this revision is not claimed to fix them.
