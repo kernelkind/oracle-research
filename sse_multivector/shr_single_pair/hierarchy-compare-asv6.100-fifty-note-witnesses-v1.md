@@ -2646,3 +2646,59 @@ three warmups, absent retries/reuses; caps37/27/9 retain the same persistent
 20000 counter. Review distinguishes wrong proof, procedure-only defect and
 unclear fixed meanings. No Bootstrap meanings or hierarchy are changed.
 Usage source: hierarchy-compare-v118-starting-variation-usage-v1.json.
+
+The completed independent V117 consumer repeat has 3 accept/1 reject: all
+person/consumer proofs are sound, while041 forward combines independent
+conditions in its other question. This procedure-only defect does not overturn
+the supported neither relation. All four requests match the main panel exactly
+but have distinct responses and no reused answers.
+
+V118 completes 35 valid comparisons with 39 actual attempts, no reuses, one
+recovered provider failure/retry and one missing-usage attempt. Known
+API-equivalent subtotal: $0.3419596; full cost unknown. Core reviews give
+9 accept/4 reject/5 uncertain; controls 5 accept/2 reject/6 uncertain; the
+independent four-case repeat 2 accept/2 reject. Core 042 forward and repeat 041/042
+forwards import a person after establishing only deliberateness. Core 052/053
+forwards import broth, while both reverses correctly admit water-cooked
+variants. Bread snapshot/forward imports flour, while its reverse admits
+flourless bread. Core 041 forward is separately rejected for a compound
+question condition; bagel-purpose and author/person boundaries stay qualified.
+V118 has three core reversals, two control reversals and two repeat reversals.
+It repairs some question phrasing but does not qualify the semantic mechanism.
+
+### V119 versus V121: ordinary-variant wording or demonstrations
+
+Two independent interventions start from V118; they are not combined.
+V119 replaces only its first necessary-implication sentence: before treating
+a customary composition, method or function as necessary, test a recognized
+ordinary variant preserving the meaning's kind/activity and every restriction.
+A label cannot establish admission and the counterpart cannot establish
+necessity. It does not specifically repair designer-versus-consumer confusion.
+
+V121 instead retains all V118 instructions and adds two synthetic full-schema
+demonstrations outside the original-post datasets. Hair cutting distinguishes
+a human performer from a required human recipient. Mechanical Watches versus
+general Watch repair distinguishes a recognized ordinary variant from a
+narrower supplied definition, while preserving qualifying kind aspects and
+activity roles. These fictional meanings are prompt illustrations, not
+Bootstrap outputs or new gold. V120 is an unrun intermediate illustration;
+V121 restores the internal ordinary kind name wristwatches so the second
+demonstration actually tests lexical admission rather than only literal fields.
+
+Each version freezes the same 18 core and 13 controls from V118. Initial
+dispatch is 62 comparisons plus four warmups: 66 attempts absent retries/reuses,
+with stage caps37/27 per version under the existing persistent counter.
+Only a clean initial semantic gate justifies repeating or broadening a version;
+failed and qualified proofs remain visible. If demonstrations improve outcomes,
+their two contributions require separate assessment before causal attribution.
+Unchanged inputs, evidence, producer receipts, output schema and execution
+bindings are verified natively. Prefixes are 1681 estimated tokens for V119
+and 2635 for V121; extra demonstration tokens repeat per input even when cached.
+No Bootstrap or hierarchy work occurs. The source is
+hierarchy-compare-v119-v121-variant-usage-v1.json.
+
+Official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+was fetched again: keep instructions direct, avoid requested reasoning traces,
+and consider closely aligned input/output examples after zero-shot attempts.
+This supports testing the two alternatives; it does not establish either fix
+or excuse demonstrations copied from validation data.
