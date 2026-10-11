@@ -3013,3 +3013,63 @@ cases; it is not the full196/102 qualification or a fresh repeat. Expected54
 first attempts include two warmups; caps67/39 retain the same persistent20000
 counter. All source hashes and both illustrations' production validation pass.
 Usage source: hierarchy-compare-v136-concrete-usage-v1.json.
+
+
+V136 completes52 valid comparisons in54 actual attempts, including two warmups,
+without reuse, failures, retries or missing usage. Native full API-equivalent
+catalog cost is $0.4625244. Two core reversal conflicts remain (018 and066);
+there are no complete-chain conflicts in this partial panel. Control reversals
+are absent among the five complete pairs; missing orientations remain unknown.
+The controls' latest native assessments are10 accept/6 reject/3 qualified.
+All029 omit the prescribed outside-person candidate.031 omits the outside-human
+consumer guard test;032 tests dog feed beside dinner, rejects its lost in-dinner
+role, and does not test whether correcting that role can preserve exclusion.
+Snapshot009's seasoning is actually used in a dish, but its exclusion proof does
+not resolve that dish's qualifying composition connection. These procedure/proof
+rejections do not establish opposite selected labels. All025 retain the independent
+water/food-kind qualification. The independent core challenge identifies019's
+unsupported eating-purpose imports and070's already-qualified recipient tests;
+018/022, thought, tea and morning boundaries retain producer qualifications.
+The33 final native core assessments are19 accept/5 reject/9 qualified, with
+one record per case.019 both import eating purpose;070 both bypass the prescribed
+recipient variation, while071 reverse omits a concrete morning-context test.
+071 forward's supported nulls pass review; an uncertain relation does not itself
+make the assessment uncertain. The owner retains064's tea/herbal qualifications
+alongside018/022, thought and066; the independent challenger did not establish
+a definite defect in064. Qualifications and review disagreement remain visible.
+
+### V137/V139: required missing-condition candidate versus compact presentation
+
+V137 changes one clause in V136's question-recording paragraph. The concrete
+question must attempt to lack an applicable absent parent restriction, rather
+than already satisfy it; identity/consumer priority and admission checks remain.
+This targets questions that choose qualifying listeners or ordinary drowsiness
+instead of testing the omitted recipient/person boundary. It does not establish
+that any such variation is actually admissible or any historical label is gold.
+
+V138 replaces only V137's containment-test section with a compact349-word version
+of the570-word section. Independent preflight found that explicit at-least-one
+parent-route wording had been compressed away; V139 restores it before dispatch.
+V138 and its prepared gates remain unrun intermediates. It retains independent conditions, alternative-local
+restrictions, a concrete prioritized question, independent admission/exclusion,
+all permitted connections, corrected incomplete candidates, full child coverage,
+and unresolved answers. Scope rules, canonical guards, examples, output schema
+and all supplied meanings remain unchanged. This is a presentation ablation,
+not an attribution of an outcome to one removed sentence. Earlier V97 tested a
+compact presentation before the current priority, ordinary-variant checks and
+illustrations; its results do not establish this combination's effectiveness.
+
+Both candidates freeze the identical33 core/19 controls from V136 with the
+ASv6.100/Bootstrap-v96 producer evidence unchanged. Expected first dispatch is
+104 comparisons plus four warmups,108 attempts absent retries/reuse. Stage caps
+67/39 per candidate and the persistent20000 counter bound execution. Native
+source hashes, input/evidence bytes and both illustrations are checked before
+calls. Fresh qualification beyond this panel depends on observed proof quality,
+not merely reversal totals. Neither candidate is adopted. No Bootstrap changes,
+hierarchy generation or external messages. Usage source:
+hierarchy-compare-v137-v139-matched-usage-v1.json.
+
+The current official reasoning guidance recommends clear direct instructions and
+closely aligned examples. It supports testing this simplification, not the claim
+that compactness or any particular semantic rule improves accuracy:
+https://developers.openai.com/api/docs/guides/reasoning-best-practices .
