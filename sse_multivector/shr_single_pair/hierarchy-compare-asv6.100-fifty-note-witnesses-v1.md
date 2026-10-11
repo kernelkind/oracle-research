@@ -85,13 +85,16 @@ are currently unresolved. All 16 tested controls still pass, and its three
 reversal conflicts and one changed label between draws remain unchanged. The
 original all-supported/no-conflict/repeat-stability gate still does not pass.
 
-The existing matched meanings show order-associated instability: V179's positive
-Cookware relationship follows its physical first position in the saved/fresh
-input-order comparison, while V182's requested report-order change leaves the
-original pattern. That does not establish which semantic answer is correct,
-internal reasoning order or a causal physical-position effect. A fresh matched
-order-only comparison is warranted before another prompt change; another test
-presuming stock-making cannot imply meal preparation is not.
+The completed [fresh eight-request matched diagnostic](#completed-fresh-matched-order-diagnostic)
+reproduces Cookware containment when Cookware is physically first and `neither`
+when it is second, with four reversal conflicts and four order changes. The
+subsequent [24-request nonfood controls](#completed-nonfood-purpose-diagnostic)
+retain all three explicit-purpose judgments across assignments, member orders
+and fresh repeats. Neither diagnostic certifies the Stockpots label or identifies
+a causal instruction. The remaining Compare investigation concerns consistent
+handling of the unresolved stock-making/meal-purpose implication; tests must
+retain clear positive and negative controls without imposing either disputed
+Stockpots label.
 
 ## User-rejected v109 ingredient source edge
 
