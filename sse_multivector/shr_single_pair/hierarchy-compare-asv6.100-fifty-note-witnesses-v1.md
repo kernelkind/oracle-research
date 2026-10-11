@@ -1030,3 +1030,56 @@ true, before treating a usual purpose as necessary. Keep the established
 activity/tool-role convention and positive controls. This needs a controlled
 prompt test; the present multi-field diagnostic does not identify one causal
 instruction or authorize a further edit merely by recording that suggestion.
+
+### Condition diagnostic v2: preregistered purpose-variation test
+
+The user authorized the next focused test. V2 inserts one paragraph into the
+tested diagnostic v1. For each required parent purpose or role, the paragraph
+asks whether it can differ or be absent while information still satisfies the
+child's entire fixed meaning; the existing `basis` records the variation and
+result. Excluding a candidate must be supported by child wording or a necessary
+implication requiring that parent condition. A customary purpose alone is
+insufficient. Unsettled admission/exclusion remains unresolved.
+
+All other prompt bytes, the two-field output schema and inference settings stay
+unchanged. This is a diagnostic procedure change, not production Compare
+adoption. In particular, the existing information-topic/activity-role convention
+remains fixed: varying actual use does not erase an explicitly required design
+purpose. Rejecting an invalid candidate is not itself proof of coverage; the
+child's meaning must establish the parent's condition across its whole scope.
+
+The first native experiment inherits the completed v1 initial eight through
+`prepare --from`, overriding only prompt/path/ID. Inputs, review-only producer
+evidence and schema remain exact. Prior responses are baseline evidence only;
+none enters model input. Independent preflight must verify this before dispatch.
+No `--repeat` is needed for the first new-prompt draw.
+
+The conditional schedule is the same fixed 8 + 7 + fresh 8 used for v1:
+
+1. Run the same eight cases: 024 both, 025 both, 034 both, isolated 022 forward
+   and snapshot 022/C068. Cap 17 attempts including warmup/retries. Require all
+   labels and condition records to pass independent review, including the
+   snapshot's intended-human-nourishment and meal requirements. Preserve the
+   isolated Bread and appliance positives; blanket uncertainty fails.
+2. Only after that pass, import the other seven from the same pinned full v77
+   source using the v2 generic spec: 006 both, 014 both, 031 both and 022 reverse.
+   Cap 15 attempts. Keep the same qualification distinctions and original
+   frozen ASv6.100/Bootstrap-v96 producer meanings.
+3. Only after all 15 pass, prepare a new native `--repeat` of the v2 initial
+   eight with identical inputs/prompt/schema/settings. Cap 17 attempts; require
+   fresh receipt IDs without conversation linkage. Cache hits are not reuse.
+
+Maximum dispatch for this protocol is 49 actual attempts inside the existing
+20,000 persistent allowance. A failed dispatched stage still completes its
+independent cases; later stages remain unprepared. The shared runner's automatic
+fair queue, subscription Sol 6.1 medium, SSE, timeout and caching stay fixed.
+No Bootstrap, adapter, constructor or hierarchy work is included.
+
+Independent review checks the actual variation against both fixed meanings,
+quoted support versus claimed necessary implication, optional clauses,
+alternative roles, positive controls and every required canonical consequence.
+Keep exact user judgments separate from provisional agent controls. Record
+reviews and usage natively and preserve old outputs. A successful draw would
+qualify this panel; it would not prove causal significance, general accuracy or
+production readiness. Official reasoning guidance remains the previously
+fetched direct/concise-instruction guidance, not proof of this semantic fix.
