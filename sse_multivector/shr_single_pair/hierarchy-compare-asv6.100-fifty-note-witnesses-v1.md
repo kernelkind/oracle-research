@@ -4238,3 +4238,49 @@ This changes observable diagnostics, not hidden reasoning order. Producer
 meanings and ASv6.100/Bootstrap-v96 provenance stay frozen; no Bootstrap calls,
 hierarchy work, external messages or additional allowance. Usage source:
 hierarchy-compare-v173-search-question-gate-usage-v1.json.
+
+V173 completed: 52 valid comparisons in 54 attempts, including two warmups;
+no retries, failures, reuse or missing usage. Native API-equivalent cost is
+$0.507826; persistent counter 18224/20000. Core review records 21 accept /
+4 proof reject / 8 qualified. Both 022 positives leave production/ring closure
+unproved; 066 forward asserts that linguistic description establishes an
+independent topic; 072 forward dismisses a comparative meat preference through
+physical non-instance reasoning. Two settled reversals (018/066) and one forward
+chain witness remain. Protective particular-property nulls and the animal,
+broth-free ingredient, intended-cooking and musician-role controls survive.
+The question format executes but does not qualify the candidate.
+
+An independent methodological audit separates observable label contradictions,
+invalid proofs, procedure-only omissions and qualified producer boundaries.
+018's food-preparation genus, 070's audience and 071's self-salutation/function
+readings are not forced gold. Particular coffee/event versus category readings
+also qualify earlier definite property-invention assessments. Review corrections
+and changing obligations must not be reported as prompt accuracy gains. Supported
+nulls need no extra search; blanket uncertainty cannot qualify useful comparison.
+No native assessments or producer meanings were rewritten by this audit.
+
+### V174: retain aspects of an established information connection
+
+This independent single-passage revision starts from completed V173. It replaces
+the activity-role-specific aspect sentence with a common conditional rule: an
+explicitly included aspect retains an independently established permitted
+connection while remaining about the same qualifying kind or activity. Calling
+it linguistic or psychological does not alone establish independence. Independent
+associated topics still do not inherit that connection. This clarifies a Compare
+convention gap in 066; it cannot establish unknown beverage qualification, eating
+purpose or author identity, or cover independent child alternatives.
+
+All directional proof duties, particular-entity safeguards, graph consequences,
+schemas and fictional examples stay byte-identical. Exact native revision replay,
+production-example validation, independent preflight and twenty relevant tests
+pass. Planned fresh screen: 25 core / 11 controls, 36 comparisons and two warmups,
+38 attempts absent retries. It retains the prior 30-case screen, adds both 066
+and 072 orientations and both isolated029 author controls. Review actual base
+connections and aspect retention, complete admission/exclusion, positive proofs
+and stable scope; do not reward blanket positives or mere diagnostic compliance.
+
+V174 is experimental and unrun at this checkpoint. ASv6.100/Bootstrap-v96 inputs,
+original receipts and producer boundaries remain frozen. No Bootstrap generation,
+hierarchy work, external messages or additional allowance. A promising screen
+requires fresh confirmation and broader qualification before adoption. Usage
+source: hierarchy-compare-v174-aspect-connection-screen-usage-v1.json.
