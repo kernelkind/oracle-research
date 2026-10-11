@@ -138,23 +138,26 @@ remain preserved. Qwen27's baseline and both saved-epoch generations each comple
 21 fresh native attempts with 21 valid responses, no failures and no reuse.
 Each consumes 106,527 input tokens; baseline/epoch-one/epoch-four output totals
 are 727/896/924. All three Qwen stages are complete. Gemma's baseline also
-completes 21 fresh attempts, with 9 valid and 12 failed responses. Its first-epoch
-generation also completes 21 fresh attempts, all valid with no failures or reuse;
-only its fourth-epoch generation remains, with that worker loading.
-These owned-GB10 calls incur no provider charge.
+completes 21 fresh attempts, with 9 valid and 12 failed responses. Both saved
+Gemma epochs complete 21 fresh attempts each, all valid with no failures or
+reuse. All six stages and all 126 source-bound agent reviews are complete;
+only Gemma's baseline has contract failures. The inference worker stopped. These owned-GB10 calls incur no provider charge.
 
 Source-bound native agent reviews compare each meaning to the complete post,
 selected tree and Bootstrap-v96 rules, with teacher answers as provisional
 references rather than gold. The current assessment is:
 
-| Qwen27 generation | Accept | Reject | Uncertain |
-| --- | ---: | ---: | ---: |
-| Published baseline | 6 | 14 | 1 |
-| Saved epoch 1 | 15 | 4 | 2 |
-| Saved epoch 4 | 16 | 3 | 2 |
+| Student and generation | Native valid / 21 | Accept | Reject | Uncertain |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen27 published baseline | 21 | 6 | 14 | 1 |
+| Qwen27 saved epoch 1 | 21 | 15 | 4 | 2 |
+| Qwen27 saved epoch 4 | 21 | 16 | 3 | 2 |
+| Gemma26 published baseline | 9 | 2 | 18 | 1 |
+| Gemma26 saved epoch 1 | 21 | 13 | 4 | 4 |
+| Gemma26 saved epoch 4 | 21 | 14 | 5 | 2 |
 
-The improvement mainly preserves broad root scope instead of replacing roots
-with their illustrated descendants. Remaining first-epoch errors include
+Qwen's improvement mainly preserves broad root scope instead of replacing roots
+with their illustrated descendants. Remaining Qwen first-epoch errors include
 inventing PuffPuffPaint's activity or tool identity instead of returning null,
 underspecifying support for the military proposal, and referring to an unnamed
 post inside a meaning that must stand alone. Price availability and an omitted
@@ -218,6 +221,39 @@ hashes are
 `4eb4d84cc410e27327bff5905a4385667444ffe24625b3652f8606b9197955e5` /
 `fde4f7212917f87185f15d7f0b07fff56136fff327bd5e758042ca588ab348fe`.
 
+Gemma26 epoch-four generation consumes 107,196 input / 910 output tokens,
+with median native request execution of 71.98 seconds and 49.07 GiB peak CUDA
+allocation. It resolves earlier price, governor-country, location-reference and
+closure-list uncertainties, but still requires flag-posting as support, claims
+the town hall was televised, fails the activity refusal and references an
+unnamed post in the Kubrick meaning. It newly attributes a growing movement to
+the London chai transformation. The collective Activities boundary and adding
+the descendant's alleged Kubrick confirmation to the parent belief remain
+uncertain. Native review accepts 14, rejects 5 and leaves 2 uncertain. Result/review
+hashes are
+`3f829b10f40f002e4fe6b2929ac5fd7cbaf6aa585eef1c5e32efdf6308760921` /
+`088b46bdb70da9b7dd60f6bf5399dcc3e01054d980b0d0792c697c93c5760e1d`.
+
+Qwen27 is the stronger Bootstrap candidate for further qualification on this
+provisional panel. Gemma26 learns the output format and trains faster here,
+but supplies no measured quality lead and its unmerged serving path is slower.
+Neither is selected. For Compare, Ettin1B remains the inexpensive candidate and
+Qwen27 the larger quality reference; Kev27 supplies no prediction advantage on
+the current 46-case panel. A broader development evaluation needs all five
+Compare labels, nonidentity equivalence, canonical branches and independent
+posts, alongside reviewed Bootstrap null, factual-state and scope cases. This
+is a recommendation for subsequent qualification, not a new experiment or final
+training decision. Final training volume and student input layout remain open;
+the complete teacher instructions used for these controls repeat substantial
+work per example. Their current fit/request times are not a final-training or
+production-throughput forecast.
+
+No owned fit, verification or generation job remains active. The worktree stays
+because frozen experiment/source bindings and unique checkpoint/receipt artifacts
+use its absolute paths; all completed source changes are locally committed and
+landed on main. Preserved baseline failures and superseded run receipts remain
+ignored artifacts.
+
 The PuffPuffPaint refusal judgment remains provisional: Bootstrap permits
 general knowledge to identify known names. An external name check found
 [an organizer's cannabis/painting event](https://cannatainmentevents.com/trippy-canvas/)
@@ -231,8 +267,9 @@ The learning report separates optimizer time, loading, teacher-forced evaluation
 and checkpoint phase time. Fresh-process verification checks saved file hashes,
 exact adapter weights through the existing loader, and native scores/loss.
 Teacher-forced loss is a training diagnostic, not semantic meaning accuracy.
-Generated outputs still require native runner receipts and source-bound review
-of topic boundaries, factual state, null decisions and ancestor compatibility.
+Generated outputs have native runner receipts and source-bound agent reviews
+of topic boundaries, factual state, null decisions and ancestor compatibility;
+human qualification remains separate.
 Twenty-five focused CPU tests pass (three explicit CUDA tests skipped) against
 the bound runner snapshot. The native CUDA test exercises both causal NF4 and
 packed-expert NF4 adapters, agrees with complete masked causal loss in the real
