@@ -2486,3 +2486,65 @@ test whether desired-beverage and intended-food aspects stop being rejected
 solely through direct-instance/action classification. This mechanism does
 not claim to close ordinary bread/risotto lexical boundaries. Independent
 proof review and fresh repeat remain prerequisites to broad qualification.
+
+Completed native core reviews give V11220 accept,4 reject,9 uncertain and
+V11314 accept,2 reject,17 uncertain. These are proof assessments, not accuracy
+estimates or human gold. V112's rejected proofs import a broth requirement,
+exclude the desired beverage connection, or fail to inspect the Greetings
+contact alternative. V113's rejects exclude that beverage connection or give
+a non-null answer despite expressly unresolved admission. Its qualified
+question compliance and lexical claims remain recorded in native comments.
+
+V114 completes52 valid responses with55 actual attempts,0 reuses,1 recovered
+provider failure and1 retry. One failed attempt lacks usage; $0.4958424 is a
+known API-equivalent subtotal, not complete cost. Native accounting is
+reproduced by hierarchy-compare-v114-usage-v1.json. Its partial core has four
+settled reversal conflicts (018/041/042/070); the controls have one (012).
+Unresolved and missing directions are reported separately, not counted as
+settled reversals. Control proof review gives9 accept,3 reject,7 uncertain:
+two flour/water imports and a skipped person-priority question. All019
+alternative checks survive; the intended-food connection survives in isolated
+025. The snapshot025 water/food-kind boundary remains qualified rather than
+being treated as the earlier eating-versus-drinking-label defect. Completed
+core proof review gives12 accept,10 reject,11 uncertain. Seven comparison
+proof errors omit the human eater or recipient, or import broth through the
+dish name. Three separate procedure defects combine independent question
+conditions or fail to resolve the selected intention test; they are not three
+additional wrong semantic labels. All33 core and19 control reviews preserve
+the original input/output hashes and exact copied meanings. No candidate is
+adopted.
+
+Independent lexical checking finds concrete counterevidence to treating the
+ordinary names as necessarily imposing the other node's recipe restrictions:
+[La Cucina Italiana's water-based risotto](https://www.lacucinaitaliana.com/italian-food/hacks/how-to-make-risotto-without-broth)
+retains creaminess without stock, and [Elavegan's oat/seed bread](https://elavegan.com/oatmeal-seed-bread/)
+is explicitly flourless. These support admission of the corresponding kinds
+of variation; they do not regenerate meanings or determine every pair label.
+Neither source, recipe, past answer nor expected relation enters model input.
+Do not classify every missing recipe condition as ambiguity simply because a
+typical dictionary description repeats it.
+
+### V115: controlled question-selection position test
+
+V115 moves the entire unchanged question-selection paragraph from the test
+section to immediately before Output. Every paragraph's bytes, the semantic
+contract and the response schema remain identical; paragraph order alone
+changes. The hypothesis is improved execution of the person/consumer priority
+in041/042 and029. This tests position/context sensitivity, not recency alone,
+and predicts no repair of flour/broth lexical boundaries.
+
+Native preparation freezes the same52 inputs for V115 and an intentional
+fresh V114 repeat. The repeat disables exact reuse; ordinary V115 preparation
+preserves native exact-request matching. Four experiments use caps67/39 each
+under the unchanged shared20000 counter. With no reuses/retries,104 comparisons
+and four warmups require108 attempts. Producer evidence, input hashes,
+graph snapshots, schema, model and worker settings stay unchanged. Matched
+proof reviews must measure actual condition selection and preserved route,
+role and state controls; label improvements alone cannot validate the change.
+Native usage source is hierarchy-compare-v115-position-usage-v1.json.
+
+The official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+supports clear direct instructions and task-specific constraints. It does not
+establish this position hypothesis or the semantic interpretation of named
+food kinds. The experiment, rather than that guidance, must establish any
+observed effect.
