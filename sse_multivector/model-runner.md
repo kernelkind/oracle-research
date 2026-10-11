@@ -5,6 +5,8 @@ branch regression findings are maintained in
 [Bootstrap-v103 qualification](shr_single_pair/bootstrap-current-as-qualification.md).
 The approved prompt's full-collection qualification is complete, with one
 factual-support failure and two materially ambiguous meanings in agent review.
+Two fresh diagnostic draws reproduce the business-identity error and Rome's
+unclear final scope; the amusement qualifier's failure status remains disputed.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate
