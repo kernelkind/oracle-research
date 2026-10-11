@@ -6165,3 +6165,60 @@ reasoning. The native
 for the eight fresh requests separately by member order. Existing control results
 are not fresh controls for this diagnostic. No ordering policy or prompt revision
 is adopted solely because one presentation emits a convenient label.
+
+### Completed fresh matched order diagnostic
+
+All eight requests complete with valid fresh outputs: no reuse, explicit warming,
+retry, failure or missing usage. The four native `final-generation.json` snapshots
+preserve the original answers before review. Both fresh draws reproduce the same
+pattern:
+
+| Physical member order | A | B | Draw 1 | Draw 2 |
+|---|---|---|---|---|
+| A, B | Cookware | Stockpots | A contains B | A contains B |
+| A, B | Stockpots | Cookware | Neither | Neither |
+| B, A | Cookware | Stockpots | Neither | Neither |
+| B, A | Stockpots | Cookware | B contains A | B contains A |
+
+There are **4/4 reversal conflicts**, **4/4 relationship changes with physical
+member order**, and **0/4 label changes between identical fresh repeats**.
+Cookware containment is emitted exactly when Cookware appears physically first,
+independently of its A/B name. Both orders are fresh under matched settings, so
+the previous saved-versus-fresh comparison is no longer the explanation for this
+result. This is a reproducible order-associated scope instability on one pair,
+not population accuracy or observation of internal reasoning.
+
+An independent post-call audit verifies the actual recorded provider bodies:
+four request identities are each repeated twice, with eight distinct response
+IDs and receipts. Repeated bodies are exact; corresponding cross-order bodies
+differ only by input member order. Model, medium effort, schema, worker, wrapper
+and request-producing code are unchanged. Each body contains one user message,
+empty additional instructions and no conversation or previous-response linkage.
+Producer references and final meaning strings remain exact. The recorded requests
+rule out answer reuse, conversation linkage and changed prompt bytes as
+explanations for this test.
+
+Two independent reviewers inspect one draw each; their workflow familiarity is
+disclosed, and neither prescribes a relationship label. All four Stockpots-to-
+Cookware proofs in each draw retain a shallow frying-pan counterexample. The
+opposite direction changes its treatment of meal purpose: containment answers
+either assert stock-making necessarily prepares meals or establish food/heat
+design without separately establishing meal purpose. `Neither` answers require
+meal-preparation design and propose vessels designed exclusively for nonmeal
+stock-making. These proposals distinguish design from actual use, but their
+exclusion still depends on the disputed boundary. The unchanged strings therefore
+receive incompatible treatments of that boundary. All eight overall semantic
+reviews remain qualified; neither choosing containment nor choosing `neither`
+is a demonstrated repair. Eight native agent `uncertain` reviews register that
+qualification with output-specific comments. Native `final-reviewed.json`
+snapshots preserve unchanged generation fields, frozen hashes, receipts and
+complete consistency reports; review registration makes no model calls.
+
+Native `usage.json` records eight actual attempts and **$0.072474 API-equivalent
+catalog cost**, including reasoning in output. Explicit warming and backend cache
+hits are both zero. The persistent shared counter moves from 18,979 to 18,987,
+leaving 1,013 at that read; concurrent work may subsequently change it. No
+Bootstrap, hierarchy or prompt change occurs. V179 remains an experimental
+development baseline, and reordering is not adopted: both presentations retain
+the reversal conflict. Further Compare work should address stable interpretation
+of unchanged definitions without imposing this pair's unresolved label.
