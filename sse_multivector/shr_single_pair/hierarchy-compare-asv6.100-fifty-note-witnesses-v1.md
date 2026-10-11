@@ -5194,3 +5194,107 @@ than the prompt's requested open-ended form. Record this separately from label
 and proof assessment: schema validation does not test open-endedness, and an
 accepted semantic proof does not imply complete instruction compliance. No
 existing output, target or review is rewritten to hide the form deviations.
+
+## Saved-case adjudication diagnostic V1
+
+The user authorizes the proposed separation of constructing a counterexample
+from adjudicating it. Experimental `Hierarchy-compare-case-check-v1` judges
+two saved V178 concrete descriptions against both unchanged Stockpots/Cookware
+meanings, in both node orders, with two fresh draws: eight case judgments.
+This is a focused diagnostic prompt, not Compare-v179 or adoption of V178.
+It retains the information-kind/activity convention while omitting whole-scope
+proof search and canonical placement. Differences from the full prompt mean
+success here cannot identify a causal wording fix by itself.
+
+The first description comes verbatim from pair-01 reverse's laboratory-only
+answer. The second is the exact commercial-kitchen noun phrase from pair-04
+reverse's justification. Its appended claim of coverage is excluded. Neither
+prior relations, justifications, questions, reviews nor expected answers enters
+model input. Input contains only the supplied case and each node's exact subject
+and meaning. Original producer diagnostics, receipts and selected excerpts stay
+in review evidence; native preparation validates their frozen sources.
+
+Pre-call agent expectations follow the user's accepted missing-purpose witness:
+the laboratory-only case satisfies Stockpots and escapes Cookware's meal purpose;
+the commercial meal-ingredient case satisfies both. Admission of the latter
+does not establish coverage of all Stockpots. Swapping node roles must preserve
+these case judgments. Missing case properties or genuine alternative scope
+readings should be surfaced, rather than filled in to match expectations.
+These two exposed development cases are not a held-out accuracy estimate.
+
+The short diagnostic intentionally has no padded cache prefix. It uses the
+shared runner, subscription Sol 6.1 medium, its internal queue and the existing
+20,000-attempt counter. Preparation makes no calls. No original meanings,
+production Compare prompt, Bootstrap prompt, historical answers or hierarchy
+are changed.
+
+The first eight judgments repeatedly exclude the laboratory-only vessel from
+Cookware and admit the commercial meal-ingredient vessel under both meanings.
+In both Cookware-local orders, Stockpots admission remains unresolved because
+the V178 description says to simmer stock, rather than explicitly make stock
+from ingredients. Preserve that genuine wording qualification. A subsequent
+same-prompt diagnostic uses the original user-accepted V176 laboratory answer,
+which explicitly describes preparing stock by simmering ingredients in liquid.
+It tests both node orders twice: four additional attempts, with the same meanings
+and no supplied expected answers. This separates the incomplete saved candidate
+from interpretation of the missing meal purpose; it does not rewrite V178's
+original answer or treat an unresolved admission as negative semantic gold.
+
+### Completed saved-case diagnostic
+
+| Saved description | Judgments | Stockpots | Cookware |
+|---|---:|---|---|
+| V178 shorter laboratory-only vessel | 4 | Two fits; two unresolved | Four outside |
+| V178 commercial meal-ingredient vessel | 4 | Four fits | Four fits |
+| V176 explicit stock-making laboratory vessel | 4 | Four fits | Four outside |
+
+Both original explicit-case draws correctly retain the size/depth and intended
+stock-making design while distinguishing laboratory analysis/disposal from meal
+preparation. Both commercial draws correctly retain meal purpose despite sale
+of an ingredient instead of production of a complete meal. All eight complete
+case judgments survive node-order reversal. This establishes successful
+adjudication of these supplied cases, not general Compare reliability.
+
+The shorter laboratory proposal produces the same order-sensitive pattern in
+both fresh draws: Stockpots-local yields a definitive fit, whereas
+Stockpots-canonical yields unresolved admission. Independent review qualifies
+both definitive admissions because they silently strengthen the description.
+The two unresolved outputs correctly identify the production-versus-reheating
+gap; all four Cookware exclusions remain sound. Do not score this as twelve
+unqualified passes or reject the fully specified witness because a shorter
+proposal omitted part of its design.
+
+These findings point toward counterexample construction and unsupported
+whole-scope proofs as the next production Compare mechanism to isolate. The
+model can apply the relevant purpose distinction when a complete case is given.
+However, this short diagnostic also changes task, prompt length, schema and
+available case evidence; it does not prove which original instruction causes
+the failure or that a two-stage production workflow is necessary. The current
+Compare prompt remains unchanged and V178 remains unadopted. A focused next
+production test should require verifying the actual absent parent restriction
+in the proposed case before using it to justify coverage or exclusion, with
+the existing positive and identity controls preserved.
+
+Native usage totals twelve fresh attempts, with zero warmups, exact reuses,
+failures, retries or missing usage, and $0.03306 known API-equivalent catalog
+cost. This is not a subscription charge; reasoning is included in output.
+The shared counter moves from 18,790 to 18,802 of 20,000 during this diagnostic.
+The native aggregate is `target/compare-case-check-v1/usage.json`. Twelve
+distinct provider response IDs and native receipts establish fresh execution;
+912 unique frozen source files and four runner configurations verify unchanged
+bindings. No hierarchy or Bootstrap prompt is changed.
+
+Independent review registers ten native agent accepts and two uncertain
+assessments, the latter for definitive Stockpots admission under the incomplete
+description. Each case has one current input/output-bound assessment; all
+non-review case fields and generation hashes remain unchanged. These are
+attributed agent assessments, not twelve human judgments. All 38 frozen code
+hashes verify against their bound project source and shared-runner commit
+`e3dea03`. The later shared-runner update `780df94` lands after every generation
+snapshot is complete; it does not rewrite runtime provenance or trigger calls.
+
+Generation snapshots are preserved before review:
+- `draw-01`: `55b1df92e404c1ffe9b84b88d903152cecff0c4a35fd531a44e45242817859b3`.
+- `draw-02`: `b7049770bd8bd88cd424f205dd689dcbf3ab77557db927a14c4e098d0b36f054`.
+- `explicit-01`: `e6d008d85fe02abe720ae46812e70db76166e64ab2442722f8885f9d5dfcd991`.
+- `explicit-02`: `ba75422f4976358fa9706e10df7dd9792e6072e458c3908ca03ef990ab24551c`.

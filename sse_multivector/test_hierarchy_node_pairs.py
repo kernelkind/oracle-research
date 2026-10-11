@@ -17,6 +17,81 @@ class HierarchyNodePairsTests(unittest.TestCase):
     show = fixtures.ExperimentTests.show
     calls = fixtures.ExperimentTests.calls
 
+    def counterexample_source(self, run=True, name='producer'):
+        self.prompt.write_text('GENERIC PROMPT DIAGNOSTIC {INPUT_JSON}')
+        payload = {'local': {'subject': 'Devices', 'meaning': 'Devices with lamps.'},
+                   'canonical': {'id': 'C1', 'subject': 'Red devices',
+                                 'meaning': 'Devices with red lamps.',
+                                 'parents': [], 'ancestors': [], 'descendants': []}}
+        self.write(name + '-cases.json', {'cases': [{'id': 'pair',
+            'inputs': {'INPUT_JSON': json.dumps(payload)},
+            'evidence': {'private': 'OLD TARGET EXCLUDED'}}]})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = {'adapter': 'generic', 'path': name + '-cases.json'}
+        spec['runner']['output_schema'] = {'type': 'object'}
+        self.write(name + '-spec.json', spec)
+        self.cli('prepare', name, '--spec', name + '-spec.json')
+        if run:
+            self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps({
+                'answers': [{'question_id': 'canonical_contains_local',
+                    'answer': 'A device with a blue lamp.',
+                    'justification': 'An ordinary device. A device with a red lamp. OLD LABEL.'}],
+                'relation': 'neither'})})
+        envelope = self.root / name / 'experiment.json'
+        selected = dict(id='blue', experiment={'path': name,
+            'sha256': hashlib.sha256(envelope.read_bytes()).hexdigest()}, case_id='pair',
+            direction='canonical_contains_local', field='answer', excerpt=None, reverse=False)
+        source = dict(schema_version=1, saved_counterexamples=[selected])
+        self.write('checks.json', source)
+        spec['dataset']['path'] = 'checks.json'
+        self.write('spec.json', spec)
+        return source
+
+    def test_saved_counterexamples_prepare_blind_cases_with_exact_receipts(self):
+        source = self.counterexample_source()
+        source['saved_counterexamples'].append(dict(source['saved_counterexamples'][0],
+            id='red', field='justification', excerpt='A device with a red lamp.', reverse=True))
+        self.write('checks.json', source)
+        self.prepare('checks')
+        cases = self.show('checks')['cases']
+        blue, red = [json.loads(case['inputs']['INPUT_JSON']) for case in cases]
+        self.assertEqual(blue, {'local': {'subject': 'Devices', 'meaning': 'Devices with lamps.'},
+            'canonical': {'subject': 'Red devices', 'meaning': 'Devices with red lamps.'},
+            'case': 'A device with a blue lamp.'})
+        self.assertEqual(red, {'local': blue['canonical'], 'canonical': blue['local'],
+                              'case': 'A device with a red lamp.'})
+        for case in cases:
+            for excluded in ('OLD TARGET', 'OLD LABEL', 'neither', 'justification'):
+                self.assertNotIn(excluded, case['prompt'])
+            self.assertEqual(case['evidence']['saved_counterexample']['receipt'],
+                             self.show('producer')['cases'][0]['receipt'])
+        plan = json.loads((self.root / 'checks/experiment.json').read_text())['plan']
+        self.assertIn(str(self.root / 'producer/run/results.jsonl'), plan['sources'])
+        self.assertFalse(plan['preparation']['application_allowed'])
+        self.assertEqual(len(self.calls()), 1)
+        self.cli('run', 'checks', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"local":{"verdict":"fits"},"canonical":{"verdict":"outside"}}'})
+        self.assertEqual(self.show('checks')['summary']['valid'], 2)
+        self.assertEqual(len(self.calls()), 3)
+
+    def test_saved_counterexamples_refuse_invalid_selectors_and_unrun_answers(self):
+        source = self.counterexample_source()
+        for field, value, error in (
+                ('case_id', 'missing', 'valid saved comparison'),
+                ('direction', 'wrong', 'containment direction'),
+                ('field', 'relation', 'answer or justification'),
+                ('excerpt', 'not in saved answer', 'exact unique excerpt'),
+                ('reverse', 'yes', 'reverse must be boolean')):
+            changed = json.loads(json.dumps(source))
+            changed['saved_counterexamples'][0][field] = value
+            self.write('checks.json', changed)
+            result = self.cli('prepare', 'invalid-' + field, '--spec', self.spec, ok=False)
+            self.assertIn(error, result.stderr)
+            self.assertFalse((self.root / ('invalid-' + field)).exists())
+        self.counterexample_source(run=False, name='unrun-producer')
+        result = self.cli('prepare', 'unrun', '--spec', self.spec, ok=False)
+        self.assertIn('valid saved comparison', result.stderr)
+
     def source(self):
         self.prompt.write_text('GENERIC PROMPT\n<input>\n{INPUT_JSON}\n</input>\n')
         self.write('notes.json', {'schema_version': 1, 'notes': [

@@ -23,7 +23,8 @@ def identity():
     paths = [Path(__file__), Path(__file__).with_name('local_weight_model.py'),
              Path(__file__).with_name('distillation_run.py')]
     return {'runner_version': 'oracle-local-model-runner/1',
-            'runner_sha256': hashlib.sha256(b''.join(p.read_bytes() for p in paths)).hexdigest()}
+            'runner_sha256': hashlib.sha256(b''.join(p.read_bytes() for p in paths)).hexdigest(),
+            'endpoint_admission': True}
 
 
 def endpoint(value):
@@ -99,12 +100,18 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     run = commands.add_parser('run')
     run.add_argument('--send', action='store_true', required=True)
+    commands.add_parser('admission', help='print fixed endpoint capacity without loading weights or making requests')
     serve = commands.add_parser('serve')
     serve.add_argument('--config', type=Path, required=True)
     serve.add_argument('--port', type=int, required=True)
     name = commands.add_parser('model-name', help='print the exact configuration-bound checkpoint identity without loading weights')
     name.add_argument('--config', type=Path, required=True)
     args = parser.parse_args()
+    if args.command == 'admission':
+        parsed = endpoint(os.environ['LOCAL_MODEL_URL'])
+        scope = json.dumps(['oracle-local-endpoint/1', parsed.hostname, parsed.port], separators=(',', ':'))
+        print(json.dumps({'scope': hashlib.sha256(scope.encode()).hexdigest(), 'capacity': 1}))
+        return
     if args.command == 'serve':
         from sse_multivector.local_weight_model import serve
         serve(args.config, args.port)

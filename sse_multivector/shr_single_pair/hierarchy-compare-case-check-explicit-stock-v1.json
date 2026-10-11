@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "saved_counterexamples": [
+    {
+      "id": "proposal-03-order-01",
+      "experiment": {
+        "path": "../../target/compare-v176-qualified-accuracy-v1/fifty",
+        "sha256": "b9fb57f8360418786b0665b5ef1cd62a569b940aa5081fd446c611529e0a954f"
+      },
+      "case_id": "isolated-035-reverse",
+      "direction": "canonical_contains_local",
+      "field": "answer",
+      "excerpt": null,
+      "reverse": false
+    },
+    {
+      "id": "proposal-03-order-02",
+      "experiment": {
+        "path": "../../target/compare-v176-qualified-accuracy-v1/fifty",
+        "sha256": "b9fb57f8360418786b0665b5ef1cd62a569b940aa5081fd446c611529e0a954f"
+      },
+      "case_id": "isolated-035-reverse",
+      "direction": "canonical_contains_local",
+      "field": "answer",
+      "excerpt": null,
+      "reverse": true
+    }
+  ]
+}

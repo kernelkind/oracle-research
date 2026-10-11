@@ -563,6 +563,73 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
     return cases, {'version': version, 'cases': len(cases), 'application_allowed': False}
 
 
+def create_counterexample_checks(source, *, base, read, load_report):
+    """Bind exact saved proposals to their unchanged meanings without old labels."""
+    engine._expect_fields(source, 'saved counterexample checks',
+                          {'schema_version', 'saved_counterexamples'})
+    selections = source['saved_counterexamples']
+    if (type(source['schema_version']) is not int or source['schema_version'] != 1
+            or not isinstance(selections, list) or not 1 <= len(selections) <= 128):
+        raise ValueError('expected schema 1 and 1 through 128 saved counterexamples')
+    cases, identifiers = [], set()
+    for selection in selections:
+        engine._expect_fields(selection, 'saved counterexample selection',
+            {'id', 'experiment', 'case_id', 'direction', 'field', 'excerpt', 'reverse'})
+        identifier = engine._expect_identifier(selection['id'], 'counterexample id')
+        if identifier in identifiers:
+            raise ValueError('duplicate counterexample id')
+        identifiers.add(identifier)
+        reference = selection['experiment']
+        engine._expect_fields(reference, 'saved comparison reference', {'path', 'sha256'})
+        directory = engine._resolve_path(reference['path'], 'saved comparison', base)
+        envelope_path = directory / 'experiment.json'
+        if engine._sha256_file(envelope_path) != reference['sha256']:
+            raise ValueError('saved comparison reference hash differs')
+        read(envelope_path)
+        report = load_report(directory)
+        matching = [case for case in report['cases'] if case['id'] == selection['case_id']]
+        if (len(matching) != 1 or matching[0]['status'] != 'valid'
+                or not matching[0].get('receipt')):
+            raise ValueError('counterexample requires a valid saved comparison')
+        saved = matching[0]
+        if selection['direction'] not in {'local_contains_canonical', 'canonical_contains_local'}:
+            raise ValueError('unknown counterexample containment direction')
+        if selection['field'] not in {'answer', 'justification'}:
+            raise ValueError('counterexample field must be answer or justification')
+        parsed = saved.get('parsed') or {}
+        answers = [row for row in parsed.get('answers', [])
+                   if row.get('question_id') == selection['direction']]
+        if len(answers) != 1:
+            raise ValueError('counterexample requires exactly one saved directional answer')
+        proposal = answers[0].get(selection['field'])
+        engine._expect_string(proposal, 'saved counterexample text')
+        excerpt = selection['excerpt']
+        if excerpt is not None:
+            engine._expect_string(excerpt, 'counterexample excerpt')
+            if proposal.count(excerpt) != 1:
+                raise ValueError('counterexample requires an exact unique excerpt')
+            proposal = excerpt
+        if type(selection['reverse']) is not bool:
+            raise ValueError('counterexample reverse must be boolean')
+        original = json.loads(saved['inputs']['INPUT_JSON'])
+        nodes = {}
+        for role in ('local', 'canonical'):
+            value = original[role]
+            nodes[role] = {key: engine._expect_string(value[key], 'fixed ' + key)
+                           for key in ('subject', 'meaning')}
+        if selection['reverse']:
+            nodes['local'], nodes['canonical'] = nodes['canonical'], nodes['local']
+        payload = {**nodes, 'case': proposal}
+        cases.append(dict(id=identifier,
+            inputs={'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
+            evidence=dict(saved_counterexample=dict(selection=selection,
+                experiment=str(directory), prompt_id=report['prompt_id'],
+                input_sha256=saved['input_sha256'], receipt=saved['receipt'],
+                parsed=saved['parsed'], original_input=original), application_allowed=False)))
+    return cases, dict(input_view='saved_counterexamples', cases=len(cases),
+                       application_allowed=False)
+
+
 def project_fixed_meanings(case):
     """Project a pinned native pair while retaining source evidence for audit."""
     original = json.loads(case['inputs']['INPUT_JSON'])

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "saved_counterexamples": [
+    {
+      "id": "proposal-01-order-01",
+      "experiment": {
+        "path": "../../target/compare-v178-focused-question-v1/pair-01",
+        "sha256": "279371e2d4d57234346f9a42c2d02346faa2b11a489577c25fa21da980b6baef"
+      },
+      "case_id": "isolated-035-reverse",
+      "direction": "canonical_contains_local",
+      "field": "answer",
+      "excerpt": null,
+      "reverse": false
+    },
+    {
+      "id": "proposal-01-order-02",
+      "experiment": {
+        "path": "../../target/compare-v178-focused-question-v1/pair-01",
+        "sha256": "279371e2d4d57234346f9a42c2d02346faa2b11a489577c25fa21da980b6baef"
+      },
+      "case_id": "isolated-035-reverse",
+      "direction": "canonical_contains_local",
+      "field": "answer",
+      "excerpt": null,
+      "reverse": true
+    },
+    {
+      "id": "proposal-02-order-01",
+      "experiment": {
+        "path": "../../target/compare-v178-focused-question-v1/pair-04",
+        "sha256": "e2ff546baff59e971f8c241235dfdd15f413e9b9a170d1cdc974987a8c035ba7"
+      },
+      "case_id": "isolated-035-reverse",
+      "direction": "canonical_contains_local",
+      "field": "justification",
+      "excerpt": "A stockpot designed for a commercial kitchen to make stock sold as a meal ingredient",
+      "reverse": false
+    },
+    {
+      "id": "proposal-02-order-02",
+      "experiment": {
+        "path": "../../target/compare-v178-focused-question-v1/pair-04",
+        "sha256": "e2ff546baff59e971f8c241235dfdd15f413e9b9a170d1cdc974987a8c035ba7"
+      },
+      "case_id": "isolated-035-reverse",
+      "direction": "canonical_contains_local",
+      "field": "justification",
+      "excerpt": "A stockpot designed for a commercial kitchen to make stock sold as a meal ingredient",
+      "reverse": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v178_saved_proposals": [
+      "../../target/compare-case-check-v1/draw-01",
+      "../../target/compare-case-check-v1/draw-02"
+    ],
+    "v176_explicit_laboratory_case": [
+      "../../target/compare-case-check-v1/explicit-01",
+      "../../target/compare-case-check-v1/explicit-02"
+    ]
+  }
+}

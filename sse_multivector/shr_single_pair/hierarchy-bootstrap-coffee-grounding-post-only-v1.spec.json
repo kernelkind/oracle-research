@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-post-grounding-diagnostic-v1",
+    "path": "Hierarchy-post-grounding-diagnostic-v1.md"
+  },
+  "dataset": {
+    "adapter": "posts",
+    "path": "../../target/bootstrap-asv6.100-regression-refresh-v1/collected/subjects.json",
+    "select": ["ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852"]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "output_schema_path": "Hierarchy-post-grounding-diagnostic-v1.output.schema.json",
+    "transport": "sse",
+    "prompt_cache": false,
+    "runner_binary": "../../../experiment-runner/experiment_runner/run-model.sh"
+  }
+}

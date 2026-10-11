@@ -128,8 +128,9 @@ def prepare_file(dataset, path, template, load_report=None):
             cases = [hierarchy_node_pairs.project_fixed_meanings(case) for case in cases]
             preparation['input_view'] = 'fixed_meanings'
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
-    if dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes',
-                              'hierarchy_meaning_diagnostics'}:
+    saved_counterexamples = dataset['adapter'] == 'generic' and 'saved_counterexamples' in source
+    if saved_counterexamples or dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes',
+                                                       'hierarchy_meaning_diagnostics'}:
         try:
             from . import hierarchy_node_pairs as node_pairs
         except ImportError:
@@ -165,7 +166,10 @@ def prepare_file(dataset, path, template, load_report=None):
                 reports[directory] = result
             return reports[directory]
 
-        if dataset['adapter'] == 'hierarchy_meaning_diagnostics':
+        if saved_counterexamples:
+            cases, preparation = node_pairs.create_counterexample_checks(
+                source, base=path.parent, read=read, load_report=saved_report)
+        elif dataset['adapter'] == 'hierarchy_meaning_diagnostics':
             cases, preparation = node_pairs.create_meaning_diagnostic_source(
                 source, base=path.parent, read=read, load_report=saved_report)
         else:
