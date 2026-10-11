@@ -5298,3 +5298,46 @@ Generation snapshots are preserved before review:
 - `draw-02`: `b7049770bd8bd88cd424f205dd689dcbf3ab77557db927a14c4e098d0b36f054`.
 - `explicit-01`: `e6d008d85fe02abe720ae46812e70db76166e64ab2442722f8885f9d5dfcd991`.
 - `explicit-02`: `ba75422f4976358fa9706e10df7dd9792e6072e458c3908ca03ef990ab24551c`.
+
+## V179 symmetric pair draft
+
+The user approves the audit findings about customary-case bias, unsupported
+whole-scope proofs and the rigid question/search procedure, and requests
+identical A/B datatypes with no parent, ancestor or node-ID input.
+Experimental draft [Hierarchy-compare-v179](Hierarchy-compare-v179.md) implements
+that contract through native `revise` from V176. V178 remains measured evidence;
+its unsuccessful results and all original receipts are preserved.
+
+Both `A` and `B` contain only `subject` and `meaning`. Removing the graph
+metadata also removes descendants and canonical-consequence instructions.
+This prompt judges the supplied pair only. Output retains questions, answers,
+relation and reason, uses `A_contains_B` / `B_contains_A`, and removes the
+asymmetric local-meaning copy. Fixed meanings, information-topic connections,
+all-alternative coverage, particular-entity uncertainty, identity/consumer
+checks and action/intention/state distinctions remain.
+
+The draft permits coherent hypothetical counterexamples without requiring
+customary use. A full-coverage justification must establish necessary coverage
+of every child case, with different parent alternatives allowed for different
+cases. A shared example, an inadmissible candidate or failure to find a
+counterexample cannot establish that coverage. Questions identify the evaluated
+boundary without prescribing a repair-and-variation sequence. The two existing
+synthetic examples are adapted to the symmetric contract; no validation case
+is added as an example.
+
+This is an untested draft, not a causal result or hierarchy adoption. The native
+comparison adapter and V176 output schema still implement the earlier
+local/canonical contract; they are unchanged and cannot execute V179 as-is.
+Pair-preparation/schema adaptation is a separate next step before testing.
+Bootstrap, frozen meanings, historical labels and hierarchy state are unchanged.
+Graph consistency still requires separate evaluation; pair-only input does not
+certify the consequences of insertion. No teacher calls are made for this draft.
+
+An independent prompt review catches and resolves a draft ambiguity about
+coverage by a union of parent alternatives before the version is published.
+Mechanical example/contract and revision-provenance checks pass, as do all nine
+existing production-path prompt-revision tests. These checks do not establish
+semantic quality. A future test should retain the exact Stockpots/Cookware
+meanings and identity/consumer, positive/equivalent and state controls, then
+broaden qualification if the changed contract holds up. This bundled draft
+cannot isolate the contribution of each wording change by itself.

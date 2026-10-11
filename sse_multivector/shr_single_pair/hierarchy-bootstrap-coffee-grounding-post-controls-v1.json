@@ -1,0 +1,30 @@
+{
+  "schema_version": 4,
+  "corpus": "../../target/bootstrap-asv6.100-regression-refresh-v1/collected/subjects.json",
+  "nodes": [
+    {
+      "id": "no-business-cue",
+      "local": {"note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852", "number": "1.1"},
+      "post_override": "Weird coffee shop visit today\nRave at a coffee shop lol https://video.nostr.build/252e03e0d852e21d29e875ca7e1f381ad5559b8eee53b4a683babcb688b946ed.mp4 ",
+      "review": {
+        "condition": "Synthetic intervention replacing the hashtag with a coffee-shop visit. Retain the original ASv6.100 tree, which was generated for the original post, not this edited post. No expected replacement meaning."
+      }
+    },
+    {
+      "id": "business-confirmed",
+      "local": {"note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852", "number": "1.1"},
+      "post_override": "Weird #coffeechain today\nRave at a coffee shop lol https://video.nostr.build/252e03e0d852e21d29e875ca7e1f381ad5559b8eee53b4a683babcb688b946ed.mp4 \nThis shop is one outlet of a business operating multiple coffee shops under the same brand; that business is the coffee chain I am describing as weird today.",
+      "review": {
+        "condition": "Synthetic intervention adding explicit support for the business interpretation. Retain the original ASv6.100 tree, which was generated for the original post, not this edited post. Check supported coverage rather than rewarding blanket nulls."
+      }
+    },
+    {
+      "id": "hashtag-clarified",
+      "local": {"note_id": "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852", "number": "1.1"},
+      "post_override": "Weird #coffeechain today\nRave at a coffee shop lol https://video.nostr.build/252e03e0d852e21d29e875ca7e1f381ad5559b8eee53b4a683babcb688b946ed.mp4 \nI use #coffeechain here as a tag for posts about coffee, not as the name or description of a coffee business. This is an independent, single-location coffee shop.",
+      "review": {
+        "condition": "Synthetic intervention explicitly clarifying hashtag usage and the independent shop. Retain the original ASv6.100 tree, which was generated for the original post, not this edited post. Preserve a supported interpretation or unresolved conflict without forcing a particular replacement meaning."
+      }
+    }
+  ]
+}

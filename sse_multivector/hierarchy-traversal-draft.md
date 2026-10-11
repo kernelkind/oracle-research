@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v14
+# Hierarchy selection by traversal — draft v18
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -21,6 +21,23 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
   canonical node's ancestors.
 - A local node containing a canonical node also contains all that canonical
   node's descendants.
+
+## Agreed next-local-node selection
+
+**Select local roots first, then L2, then L3, continuing one local level at a
+time across all notes. Within each level, preserve the saved note and node
+order.** L1 is the root level; each local child is one level below its parent.
+
+Use this order to start up to three local-node searches under the concurrent
+policy below. Apply placements in that same order, finishing triggered
+consolidation before applying the next placement.
+
+Do not skip a local child merely because its original parent's canonical node
+represents one note. The local child may have useful relationships elsewhere
+in the canonical graph, so it remains eligible for ordinary traversal.
+
+This is an agreed selection order, not a stopping rule. When to stop selecting
+deeper local nodes remains open. No selection code or model calls change here.
 
 ## Agreed traversal rules
 
@@ -151,7 +168,8 @@ through the experiment runner.**
 
 Start at the roots. Apply returned labels and exact reusable answers before
 sending further comparisons; skip relationships established by valid transitive
-inference, subject to the required-comparison policy still open below.
+inference. The original-parent requirement below also accepts these established
+relationships.
 
 For a shared node, resolve unfinished traversal work on its ancestors first.
 An already stopped branch has no remaining work along that path and stays
@@ -162,7 +180,7 @@ runner handles request concurrency.
 ## Agreed concurrent-search policy
 
 **Allow up to three active local-node searches. Apply placements one at a time,
-in the original local-node selection order.**
+in the agreed local-level and saved source order.**
 
 Each search uses a fixed graph snapshot and the agreed traversal rules. A
 finished search waits for earlier selected local nodes to be placed or held.
@@ -304,20 +322,63 @@ adds no separate semantic-review prompt or exhaustive comparison pass. Required
 relationships can reuse exact answers and the same transitive inferences as
 ordinary traversal.
 
-## Proposed walk
+## Agreed same-note eligibility
 
-The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
-policy and consolidation rules above are agreed. The walk below combines them;
-the eligibility decisions listed below remain open.
+**A canonical node sharing the incoming local node's source note remains
+eligible for normal traversal.**
 
-1. Start at the canonical roots.
+We are comparing the local node's fixed meaning with a canonical node's fixed
+meaning. Sharing an original note establishes neither containment nor
+equivalence. A canonical node may also carry support from many other notes.
+Use the agreed branch rules, exact answer reuse and transitive inference to
+avoid comparisons; do not exclude a reached node merely because one of its
+supporting entries has the incoming note's ID.
+
+Suppose a canonical node is supported by N001 and N063, and the incoming
+local node comes from N063. The current filter excludes that canonical node
+unless it is the incoming node's mapped original parent. The approved rule lets
+normal traversal establish their relationship instead.
+
+Removal of the exclusion is approved draft design, not an implemented change.
+Its API cost and hierarchy effects have not been measured.
+
+## Agreed original-parent handling
+
+**Retain the original-parent placement requirement, accepting a relationship
+established by normal traversal or valid inference.**
+
+When present, `mapped_parent` identifies the canonical node representing the
+incoming local node's original local parent. Before placing the incoming node,
+establish that this canonical parent contains it or is equivalent to it. An
+exact saved comparison or valid transitive inference can discharge the
+requirement; a new direct comparison is not mandatory.
+
+Do not reopen a stopped branch or append a forced mapped-parent comparison
+after traversal. If the required parent relationship is contradicted or remains
+unchecked, hold the incoming local node and preserve the graph. A local root
+has no mapped-parent requirement. Synthetic proposals retain their separately
+agreed target-parent and nominated-child checks.
+
+This original-parent handling is agreed draft design, not an implemented change.
+It changes neither a supplied meaning nor a returned comparison label.
+
+## Agreed walk
+
+The next-local-node selection order, comparison actions, shared-node rule,
+top-to-bottom order, concurrent-search policy, same-note eligibility,
+original-parent handling and consolidation rules above are agreed. The walk
+below combines them.
+
+1. Select the next local node in the agreed order. Start its traversal at the
+   canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
    top-to-bottom order above.
 3. Follow the returned label using the table below.
 4. Continue until no comparisons remain along the branches being searched,
    or an `uncertain` answer holds this local node for review.
 5. If the local node is not held, wait for its placement turn and check its
-   results against the updated graph as specified above. Use the resulting
+   results against the updated graph as specified above. Require original-parent
+   fit when applicable, using direct answers or valid inference. Use the resulting
    relationships for placement, retaining the existing constructor's checks.
 6. After a canonical-node addition, finish its triggered consolidation attempts
    before applying the next placement. Other searches can keep running on
@@ -353,10 +414,9 @@ The Food relationship remains a possible placement. The final placement depends
 on the other comparisons. If Breakfast were to contain the local node, Meals
 would also contain it by transitivity, conflicting with the Meals answer.
 
-## Decisions still open
+## Decision still open
 
-- How existing same-note exclusions and the required mapped-parent comparison
-  should interact with branch stopping.
+- When to stop selecting deeper local nodes.
 
 ## Current implementation
 
@@ -366,9 +426,22 @@ from this draft's agreed rules. The implementation and its historical results
 remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
 
+The existing [`prepare_selection`](canonical_selective_trial.py) prioritizes
+missing note coverage, then individual-note access, then similarity-ranked
+discovery in schema 2. The approved draft instead uses local levels and saved
+source order to select the next local node.
+
 The current selector exposes the whole queued set of eligible comparisons. It
 does not defer a queued descendant when a queued ancestor could first settle
 its relationship. The draft's top-to-bottom order adds that dependency rule.
+
+[`_eligible`](canonical_trial.py) currently excludes canonical nodes with any
+supporting entry from the incoming note, except its mapped original parent.
+The graph selector requires that parent to be directly compared even when a
+relationship is inferred or ordinary traversal would not reach it. Placement
+requires a containing or equivalent answer. The approved draft removes the
+same-note filter and the forced direct comparison while retaining the required
+parent fit, established by normal traversal or valid inference.
 
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
