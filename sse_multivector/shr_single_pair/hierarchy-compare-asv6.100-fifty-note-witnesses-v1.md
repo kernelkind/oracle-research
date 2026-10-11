@@ -3962,3 +3962,59 @@ fixed-entity conditions, composition, information connections and all canonical
 consequences remain binding. No Bootstrap inference, hierarchy construction,
 external messages or new allowance. Native usage source:
 hierarchy-compare-v166-scoped-illustration-screen-usage-v1.json.
+
+V166's screen completed:30 valid comparisons in32 attempts, including two
+warmups, no reuse, failure, retry, missing usage or unrun cases. Native
+API-equivalent cost:$0.3177780; counter17907/20000. Neither022 tests ring shape.
+The core has one settled reversal(018) and one complete forward chain conflict
+(018/022/019), with no reverse chain conflict. The example is not expanded or
+adopted. Native controls review:5 accept/0 reject/4 qualified; food/drink and
+particular-author/meal-purpose qualifications remain. All nine control copies,
+receipts and frozen source/code bindings are unchanged. The sound009 host-food
+tests in this draw do not establish a causal demonstration benefit. Independent
+core proof review is complete:14 accept/4 proof reject/3 qualified. The rejected
+018 forward correction conflates edibility with eating intention; both022
+universal proofs omit actual ring-shape adjudication;071 reverse chooses a
+convenient morning-context reading. The particular-coffee nulls, both042 dog
+consumer tests and Music role coverage pass. All21 exact copies, outputs,
+receipts and source/code bindings remain unchanged. An independent read-only
+chain review confirms that the matched V159 proof patterns persist; it does
+not identify which018 relation must change. Changed labels do not settle which
+chain link is wrong.
+
+### V167/V168: independent simplifications of V159
+
+These are independent native revisions from V159, not a combined extension of
+V166. V167 replaces only the compulsory failed-case and covered-case repair
+sentences with a choice of a revision or an independent case. A revision retains
+whole-child admission and established exclusions; an independent case requires
+its own complete admission and exclusion tests. All other proof obligations,
+particular-entity rules, positive prerequisites, canonical consequences,
+examples and output contract remain unchanged. The hypothesis is attention to
+the first failed candidate, not a demonstrated limitation of instruction length.
+V166018 forward replaces an inedible prop with edible food and treats that
+correction as restoring eating intention; the reverse independently admits
+genuine food produced solely for laboratory testing. The edibility-to-intention
+implication requires justification separately from the disputed genus reading.
+
+V168 deletes only Synthetic examples. Every rule, output field and input byte
+is retained. This tests whether the examples help this fixed task; it is not a
+new semantic convention. Official reasoning guidance recommends clear, direct
+instructions and checking zero-shot before few-shot; newer GPT-6 prompting
+guidance suggests removing one instruction/example group at a time and rerunning
+the same evaluations. These support controlled tests, not a predicted gain for
+the unchanged Sol6.1 medium target:
+https://developers.openai.com/api/docs/guides/reasoning-best-practices and
+https://developers.openai.com/api/docs/guides/latest-model.
+
+Planned bounded screen for each candidate:the exact21 core and9 control inputs
+of V166, with the full fresh V159 experiment as baseline. Thirty comparisons
+plus two warmups per arm:64 total attempts absent retries. Producer meanings,
+ASv6.100 sources, settings, native receipts and code bindings remain fixed.
+Score complete proofs, actual missing-property adjudication, canonical guards
+and complete018/019/022 consistency. More uncertainty alone is not success;
+supported positives and valid negatives must survive. A promising screen needs
+independent fresh confirmation and broader qualification before adoption. No
+Bootstrap inference, hierarchy construction, external messages or new allowance.
+Usage sources:hierarchy-compare-v167-independent-case-screen-usage-v1.json and
+hierarchy-compare-v168-without-examples-screen-usage-v1.json.
