@@ -1765,6 +1765,24 @@ The historical provisional uncertainty remains alongside explicit subsequent
 acceptances; this test changes no review-precedence semantics and does not
 establish broad reviewer qualification.
 
+The [four additional-note coverage trial](distillation-review-v1/README.md#dcsv1-four-additional-notes-october-11)
+adds 24 new DCS inputs from the frozen sixty. Candidate preparation now honors
+exact input/output/check-bound external actual-edge disputes, preserving the
+existing native-review veto and otherwise-positive omission behavior. This
+corrects the approved unresolved-edge rule; it adds no acceptance requirement.
+The native regression first fails, then all twenty relevant tests pass. Three
+disputed edges are retained before their five affected inputs run; only one
+rendered input changes, while the other twenty-three retain exact parity.
+Twenty-two complete search outputs are accepted and two remain unresolved.
+Both returned witnesses reuse unchanged DSLv10 responses. The gas-fee/Payments
+pair has conflicting search and verification results; neither model agreement
+nor the verifier Boolean establishes semantic correctness. The original two
+experiment worktrees remain frozen, with integration in a separate checkout.
+Native accounting records 29 fresh attempts including five warmups, two
+verification reuses, no retries or failures, and 28.27% fresh cached input.
+Prompts, effort settings, review precedence and final qualification remain
+unchanged; the full-evaluation runtime is still unqualified.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,

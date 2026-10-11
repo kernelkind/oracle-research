@@ -24,6 +24,13 @@ accepted, with seven saved DSLv10 witness responses reused and no new semantic
 error found. Generation takes approximately 72 seconds. These exposed controls
 establish repeat consistency, not broad qualification.
 
+The [four additional-note trial](#dcsv1-four-additional-notes-october-11)
+completes 24 new coverage searches: 22 complete outputs are accepted and two
+remain unresolved, including a search/verification disagreement over gas fees
+beneath Payments. Preflight catches and corrects external uncertain-edge
+omissions before their affected inputs run. DCSv1 and full runtime remain
+unqualified.
+
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
@@ -5762,6 +5769,70 @@ inputs require fresh preparation and source-first assessment before calls.
 The current preflight verifies all 82 positive self guards, 92 other accepted
 omitted edges, exact wording/context aliases and source/post bindings.
 Prompts and semantic criteria remain unchanged.
+
+### Corrected preparation and completed trial
+
+The filter now uses the existing exact input/output/check audit binding for
+actual student edges as well as matching premises. Hash-bound rejected or
+uncertain external assessments, including decision/explanation error flags,
+prevent descendant omission. The original native-review veto, including stale
+review conservatism, is preserved. Otherwise-positive edges do not acquire a
+new requirement for an explicit acceptance. Disputes are indexed once per answer.
+The minimal native-CLI regression first fails for rejected and uncertain edges;
+the corrected implementation and identity/error-flag controls pass with the
+related regressions: **20 tests total**. Source fix: `75ab47c0`.
+
+All three disputed edges remain represented. Across the four notes, all **82
+self guards** and **92 remaining unique omitted edges** have accepted evidence.
+All 246 original candidate wordings, ordered contexts and posts retain parity.
+Four affected inputs restore uncertain occurrences through exact aliases;
+only Agent Trust Layer `017` changes its rendered input, from 18 to **19
+candidates**. The other 23 inputs, settlements and self guards stay identical.
+Final totals are 247 candidates, 154 alias occurrences and 518 omitted occurrences.
+The five corrected inputs receive independent source-first reassessment before
+their calls; unsafe original preparations make no calls.
+
+All **24 searches** complete on first attempts: 22 return null and two return
+witnesses. Final independent full-output assessment accepts **22** and leaves
+**two unresolved**, with no established model error. The 21 unchanged clear
+pre-call null expectations pass; New York Times beneath Sources is resolved as
+a valid newspaper/information-source type without importing attribution to a
+particular story. NGP `002` remains uncertain about a private-equity firm's
+intrinsic investment-business type beneath Investments.
+
+Both witnesses receive unchanged DSLv10 checks through **two exact saved-response
+reuses and zero new verification calls**. Sources/New York Times returns true.
+Agent Trust Layer `009` returns Payments for the low-gas-fee Base L2 report
+subject, but the reused verifier returns false: it distinguishes network
+charges/rates from payment subject matter without requiring a completed payment.
+The search's payment-type argument is supported by the
+[Ethereum gas definition](https://ethereum.org/developers/docs/gas/), which
+describes gas fees as payment for computation. That definition is interpretation
+evidence, not a new restriction or an automatic AS verdict. The charge/rate
+versus payment interpretation remains unresolved; disagreement is not itself
+proof of which model response is wrong. Rejecting this witness operationally
+does not prove every other candidate invalid. Earlier expectations and all
+provisional assessments/acceptances remain in the native review history.
+
+Native accounting reconciles **29/104 attempts**: 24 fresh searches and five
+eligible warmups, no retries or failures. The first nineteen generate in
+97.21 seconds and the corrected five in 78.64 seconds; a 58.73-second gap for
+the corrected preparation separates them. The full generation clock span is
+**234.58 seconds**, with 175.85 seconds in those two generation phases.
+Mean search service time is 38.23 seconds; maximum admission wait is 0.311
+seconds. Fresh cached input is **15,232 of 53,881 tokens (28.27%)**; thirteen
+searches receive hits. Fresh API-equivalent cost is $0.4923852 and estimated
+net caching savings are $0.0051168 (1.03%), including warmups. Historical
+verification generation is separate from these subscription cost estimates.
+
+Native experiments, reviews, scheduling and usage reports remain ignored under
+`oracle-mvp-review-coverage-new-four/target/distillation-review-v1/coverage-new-four/`
+and the source-bound corrected preparation under
+`oracle-mvp-review-coverage-edge-audits/target/distillation-review-v1/coverage-edge-audits/`.
+Both experiment worktrees stay frozen; integration uses a separate checkout.
+This trial establishes neither unseen accuracy nor the eight-hour full-corpus
+target. Prompts, reasoning levels and the final sixty-answer validation remain
+unchanged. Resolve the payment-type disagreement before further expansion.
 
 ## Actual distilled wording: offline preview (October 8)
 
