@@ -1,11 +1,14 @@
 # Distillation semantic review — process and evidence
 
-**Current draft:** [DSLv9](relationship-prompt-v9.md) implements the user-approved
-[audit correction](#dslv9-evidence-requirements-draft-october-11). It restores AS's
+**Current development result:** [DSLv9](relationship-prompt-v9.md) implements the
+user-approved [audit correction](#dslv9-evidence-requirements-draft-october-11). It restores AS's
 subject-wording guidance, makes hypothetical counterexamples optional and
 receives selected trusted teacher contexts for interpreting existing words.
-Its exact wording awaits review; no DSLv9 inference or production adoption has
-occurred. Preparation tests pass; the known bulk-runner migration remains open.
+The exact wording and bounded diagnostic were approved. Its
+[fourteen-case Sol/xhigh trial](#dslv9-approved-diagnostic-october-11) passes all
+fourteen verdicts and complete explanations in both agent audits. This is
+development regression evidence, not unseen accuracy or production adoption.
+Production defaults to DSLv2; the known bulk-runner migration remains open.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4143,9 +4146,11 @@ pending; production still defaults to DSLv2.
 The user authorized proceeding with the deep audit's recommended correction.
 Native `revise` creates [DSLv9](relationship-prompt-v9.md) and
 [its revision receipt](relationship-prompt-v9.md.revision.json) from DSLv8.
-This is an unrun draft for exact-wording review, not reviewer qualification or
-production adoption. DSMv3, DSSv2, trusted ASv6.100, Boolean/reason validation,
-mechanical decisions and Sol/xhigh subscription SSE remain unchanged.
+The drafting step performed no inference and presented the exact wording for
+review. Its subsequently approved diagnostic is recorded below; reviewer
+qualification and production adoption remain pending. DSMv3, DSSv2, trusted
+ASv6.100, Boolean/reason validation, mechanical decisions and Sol/xhigh
+subscription SSE remain unchanged.
 
 DSLv9 receives ASv6.100's complete subject-wording paragraph before the unchanged
 parent-child passage. It establishes that a heading names a subject at its level
@@ -4185,8 +4190,9 @@ enriched input is valid. The previously unscored winnerless-round case can be
 assessed invalid through the missing funds/carry-forward relationship, without
 inventing an alternative game history. The twelve earlier assessed targets stay
 unchanged; these are new prospective agent assessments, not changes to frozen
-DSLv7/v8 targets or independently adjudicated gold. Record them with native
-pre-call reviews before any separately authorized diagnostic.
+DSLv7/v8 targets or independently adjudicated gold. Fourteen native pre-call
+reviews record seven valid and seven invalid assessments before the approved
+diagnostic dispatch.
 
 Two new production-preparation tests first fail because `TEACHER_CONTEXTS` is
 missing, then pass after the adapter change. They cover both verdict source
@@ -4201,15 +4207,84 @@ concurrency setting; two lack the pilot training fixture). The baseline runs
 Old templates omit the new input and retain their original AS excerpt;
 production still defaults to DSLv2.
 
-Exact DSLv9 wording is presented before calls. Its new inputs must be rebuilt
-through the native source adapter; `prepare --from` alone cannot recover teacher
-contexts absent from DSLv8. The unchanged fourteen-case identities can supply the
-bounded development diagnostic after approval, with prior outputs as baseline.
-That is regression evidence; previously used cases and portions of the final
-sixty do not establish independent unseen accuracy. The known bulk preparation
-helper still emits the rejected concurrency setting and requires its own scoped
-migration before the complete ten-note workflow can resume. No inference,
-broader regression, lower-effort trial or final-sixty run is performed here.
+Exact DSLv9 wording was presented and approved before calls. Its new inputs are
+rebuilt through the native source adapter; `prepare --from` alone cannot recover
+teacher contexts absent from DSLv8. Drafting itself performed no inference. The
+subsequent bounded diagnostic uses the unchanged fourteen-case identities and
+retains prior outputs as a baseline snapshot. Previously used cases and portions
+of the final sixty do not establish independent unseen accuracy. The known bulk
+preparation helper still emits the rejected concurrency setting and requires its
+own scoped migration before the complete ten-note workflow can resume. Broader
+regression, lower-effort testing and the final-sixty run remain pending.
+
+## DSLv9 approved diagnostic (October 11)
+
+The user approved the exact DSLv9 prompt and fourteen-case diagnostic. Native
+`prepare --spec` rebuilds the original pair strings and posts with the new AS
+excerpt and selected teacher contexts. Prompt SHA-256 is
+`2945c67f29ede878d22bfdecb03afa117d355d740127da5c4c184f37d839ff3f`.
+The model remains `gpt-6.1-sol / xhigh / openai-codex / SSE`, with the unchanged
+Boolean schema. There is no repeat flag, mechanical verdict or answer reuse.
+The related DSLv8 history root is reused. Its fourteen outputs are preserved in
+the native baseline snapshot, but all comparisons are `input_mismatch` because
+DSLv9 adds source-context inputs and expands the AS excerpt. There are zero
+matching-input baselines; this is an input-and-prompt revision rather than a
+prompt-only comparison.
+
+Before dispatch, native reports verify fourteen distinct unrun cases, zero
+attempts and fourteen new requests. Native agent pre-call reviews record seven
+valid and seven invalid targets. A separate auditor reads only the approved
+prompt and input-only view, independently records the same decisions before
+seeing candidates, then examines only current inputs and outputs. Legacy source
+expectations, old outputs, reviews and qualification labels are withheld from
+that audit. Frozen DSLv7/v8 labels remain provenance rather than current gold.
+
+All **14 calls** complete successfully on first attempts. Every Boolean matches
+the prospective assessment, and both audits accept **all fourteen complete
+explanations**, with no rejected or uncertain records. Two sets of native agent
+output reviews retain the case evidence; these are not user reviews or human
+gold. In particular:
+
+- The maternal tag preserves Mothers using the trusted gloss `the sexual
+  category of sexually desirable mothers`, without inventing performer or
+  character motherhood.
+- The winnerless named round omits a prize pot's carrying-forward relationship;
+  its posted rollover is not restored through identity, and no alternative
+  game history is invented.
+- English-practice goal wording still fails to preserve the parent's explicit
+  `while practicing English` timing, despite additional teacher ancestor rows.
+- The Keke Palmer contribution remains absent from the child naming the same
+  reboot. Temporal references, instruction objects and the complete AI-demand
+  causal relationship retain the corresponding parent meanings.
+
+The allowance and claims reconcile at **14/28**, with fourteen distinct native
+receipts and request identities, no retry, failure, truncation or reuse. Model
+execution takes **64.714 seconds** from recorded start to finish; admission
+observes a peak of **nine concurrent comparisons**, with automatic recovery
+limits initially delaying some admissions. The host queue limit of thirty is
+not the achieved case concurrency. The exact approved template's prefix is
+**76 `o200k_base` tokens**, below the 1,024-token threshold, so `--prompt-cache`
+is omitted and there are no warmup calls. Cached tokens are zero. Usage is
+**19,399 input** and **16,679 output**, including **13,604 reasoning** tokens. The saved catalog
+estimate is **$0.205588** API-equivalent; subscription provider charges are
+unknown. Reasoning is already included in output.
+
+Preparation and execution use `oracle-mvp-review-dslv5-draft`, binding its code,
+prompt and schema. Canonical source references are individually hash-protected
+ignored `target/` data, not canonical tracked code or Git HEAD; they require no
+reconstruction or relocation. Original source bytes and selected case IDs are
+retained. The ignored evidence root is
+`target/distillation-review-v1/relationship-dslv9-evidence-requirements/`, with
+`spec.json`, `trial/`, the persistent allowance and native pre-call, terminal-raw,
+reviewed and final-verified reports. The raw report precedes output reviews.
+All 45 code hashes and 266 source-file hashes match at completion. The old DSLv8
+inputs, outputs, reviews and receipts remain consistent with the pre-dispatch
+baseline snapshot; its allowance remains 14/28.
+
+This panel passes the development gate. It does not establish extrapolation to
+unseen answers or qualification of the complete review workflow. Production
+remains DSLv2; native bulk-runner migration and the fixed ten-note regression are
+next prerequisites. Lower-reasoning trials and the final sixty remain pending.
 
 ## Actual distilled wording: offline preview (October 8)
 
