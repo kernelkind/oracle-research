@@ -1754,3 +1754,34 @@ still requires every remaining condition. The existing two question IDs,
 five fields, fixed meanings and topic convention are unchanged. This tests
 condition omission directly; it does not claim to fix activity aspects or
 planned-versus-performed interpretation, and does not carry V86/V87 edits.
+
+### V88 gate: the questions still avoid the missing condition
+
+All40 outputs completed validly in43 attempts including two warmups and one
+native recovery. One failed attempt lacks usage; known API-equivalent subtotal
+is $0.3163796 and the complete total is unknown. The shared runner retained
+the persistent counter and recovery telemetry; no manual retry or service
+investigation was introduced. Native usage: hierarchy-compare-v88-usage-v1.json.
+
+The core reviewer gives9 accept,7 reject and2 qualified responses. Only018
+reverse corrects the eight targeted restriction errors. Alertness questions
+vary bodily versus mental conditions, not personhood. Fasting questions still
+negate the compound definition. Ketogenic diet tests deliberateness while
+omitting personhood. The forward Bagel making question leaves its candidate
+abstract and the answer imports an eating purpose; reverse describes genuine
+edible display bagels and succeeds. Both071 readings remain qualified rather
+than certified temporal or referential scope. Full production-stage and
+cultivation diagnostics still fail while the unrelated accepted controls survive.
+Snapshots and independent reviews remain under target/compare-v88-qualification-v1.
+
+Earlier v76 supplied-candidate probes already established that the model can
+recognize animal-only and display-only counterexamples when supplied. The
+v1–v7 condition matrices already showed that structured quotations alone do
+not prevent unsupported implications. Neither experiment is duplicated here.
+
+V89 replaces only V88's first question paragraph. The question now describes
+a specific hypothetical candidate and the circumstances varying one parent
+condition, instead of asking an abstract negation of the definition. Its answer
+must still resolve that exact candidate and a positive must establish all other
+conditions. The same40 frozen inputs, meanings, schema and controls qualify
+whether candidate discovery improves; no validation examples enter the prompt.
