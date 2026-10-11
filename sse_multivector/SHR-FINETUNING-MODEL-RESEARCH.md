@@ -82,8 +82,12 @@ Kev27's baseline is **40/46**; its first fit stops after 115 updates before a
 saved epoch. A native regression reproduces the fitter rejecting a valid finite
 zero-loss/zero-gradient example. The corrected check retains numerical failure
 checks and records their exact case/loss/norm; its regressions pass. A separate
-run remains necessary to identify the original cause and measure Kev's learned
-task result. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+run on unchanged examples/settings now completes its first epoch with 18 finite
+zero-loss/zero-gradient updates and **44/46 teacher agreement**, exactly the
+same 46 predictions as Qwen27's fourth epoch. Its first-epoch phase takes
+**49.65 minutes**, with **23.78 GiB** peak allocation. Later epochs and fresh
+reload remain pending; the original failure's exact values were not saved.
+See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`
@@ -145,7 +149,10 @@ fixes the all-linear router inclusion by explicitly excluding router projections
 as required by this loader's existing frozen-router contract. The initial full
 Gemma26 capacity attempt stopped before optimization on that check. The corrected
 run adapts 78.06M parameters at 8,192/13,312 tokens in 27.30/49.80 seconds per
-update, with 54.21/57.65 GiB peak CUDA allocation; fresh-process reload is pending.
+update, with 54.21/57.65 GiB peak CUDA allocation. The saved synthetic checkpoint
+passes fresh-process weight/score reload
+verification, in PID 1482840 distinct from training PID 1445286, and finite
+inference at both lengths.
 This improves its execution evidence, not its measured task quality. The same explicit coverage is not
 implemented for the sparse Qwen candidate. PEFT's
 [LoRA documentation](https://huggingface.co/docs/peft/v0.21.0/package_reference/lora#targeting-nnparameter-directly)
