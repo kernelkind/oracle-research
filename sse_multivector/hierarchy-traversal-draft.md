@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v16
+# Hierarchy selection by traversal — draft v17
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -151,7 +151,8 @@ through the experiment runner.**
 
 Start at the roots. Apply returned labels and exact reusable answers before
 sending further comparisons; skip relationships established by valid transitive
-inference, subject to the required-comparison policy still open below.
+inference. The original-parent requirement below also accepts these established
+relationships.
 
 For a shared node, resolve unfinished traversal work on its ancestors first.
 An already stopped branch has no remaining work along that path and stays
@@ -324,7 +325,7 @@ normal traversal establish their relationship instead.
 Removal of the exclusion is approved draft design, not an implemented change.
 Its API cost and hierarchy effects have not been measured.
 
-## Proposed original-parent handling
+## Agreed original-parent handling
 
 **Retain the original-parent placement requirement, accepting a relationship
 established by normal traversal or valid inference.**
@@ -341,14 +342,14 @@ unchecked, hold the incoming local node and preserve the graph. A local root
 has no mapped-parent requirement. Synthetic proposals retain their separately
 agreed target-parent and nominated-child checks.
 
-This original-parent handling remains a proposal awaiting review. It changes
-neither a supplied meaning nor a returned comparison label.
+This original-parent handling is agreed draft design, not an implemented change.
+It changes neither a supplied meaning nor a returned comparison label.
 
-## Proposed walk
+## Agreed walk
 
 The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
-policy, same-note eligibility and consolidation rules above are agreed. The
-walk below combines them; original-parent handling remains open.
+policy, same-note eligibility, original-parent handling and consolidation rules
+above are agreed. The walk below combines them.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
@@ -357,7 +358,8 @@ walk below combines them; original-parent handling remains open.
 4. Continue until no comparisons remain along the branches being searched,
    or an `uncertain` answer holds this local node for review.
 5. If the local node is not held, wait for its placement turn and check its
-   results against the updated graph as specified above. Use the resulting
+   results against the updated graph as specified above. Require original-parent
+   fit when applicable, using direct answers or valid inference. Use the resulting
    relationships for placement, retaining the existing constructor's checks.
 6. After a canonical-node addition, finish its triggered consolidation attempts
    before applying the next placement. Other searches can keep running on
@@ -393,10 +395,6 @@ The Food relationship remains a possible placement. The final placement depends
 on the other comparisons. If Breakfast were to contain the local node, Meals
 would also contain it by transitivity, conflicting with the Meals answer.
 
-## Decisions still open
-
-- Whether to adopt the proposed original-parent handling above.
-
 ## Current implementation
 
 [canonical_graph_search.py](canonical_graph_search.py) currently descends after
@@ -414,8 +412,8 @@ supporting entry from the incoming note, except its mapped original parent.
 The graph selector requires that parent to be directly compared even when a
 relationship is inferred or ordinary traversal would not reach it. Placement
 requires a containing or equivalent answer. The approved draft removes the
-same-note filter. The original-parent proposal removes the forced comparison
-while retaining the required parent fit.
+same-note filter and the forced direct comparison while retaining the required
+parent fit, established by normal traversal or valid inference.
 
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
