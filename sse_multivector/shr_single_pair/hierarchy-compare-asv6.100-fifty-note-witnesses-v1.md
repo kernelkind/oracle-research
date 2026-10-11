@@ -3663,11 +3663,13 @@ and all six animal-role controls persist. Control009 leaves actual garnish
 composition unclosed;025 reverse fails to establish the corrected whole-child
 food-kind implication. No opposite labels are imposed by these proof defects.
 
-V159 core attribution is still being recorded; its owner identifies a missed
-robust022 production witness,070 recipient qualifiers leaking into unrestricted
-contact initiation,071 selection of a convenient context reading, and018
-continuing from a failed inedible-display candidate without closing eating
-purpose. These are distinct proof mechanisms, not forced opposite labels.
+V159 core final attribution:23 accept/4 proof reject/6 qualified. Its owner
+identifies a missed robust022 production witness,070 recipient qualifiers
+leaking into unrestricted contact initiation,071 selection of a convenient
+context reading, and018 continuing from a failed inedible-display candidate
+without closing eating purpose. These are distinct proof mechanisms, not forced
+opposite labels. All33 native assessments, exact meaning copies and20 protected
+hashes are verified; all four052/053 ingredient-role proofs pass.
 
 V159 controls:13 accept/1 proof reject/5 qualified.009 isolated forward treats
 an actual garnish role as mere association and does not close nourishing-food
@@ -3708,3 +3710,69 @@ gate and fresh V155 repeat remain the controls; another baseline repeat is
 deferred until an improvement merits confirmation. ASv6.100/Bootstrap-v96
 meanings stay frozen. No Bootstrap inference, hierarchy work, external messages
 or changed allowance. Usage source:hierarchy-compare-v160-v161-controlled-usage-v1.json.
+
+
+All four V160/V161 experiments completed:104 valid comparisons in110 actual
+attempts, including four warmups and two recovered failures/retries. No exact
+reuses, terminal failures or unrun comparisons. Two failed attempts lack usage;
+$1.0587888 is the known API-equivalent subtotal, not an exact complete cost.
+Persistent counter17714/20000. V160 core has one settled reversal and one forward
+chain witness; V161 core has two settled reversals and no chain witnesses.
+Controls have no settled consistency conflicts. Neither candidate is adopted.
+
+Independent attributed reviews:V160 core19 accept/5 proof reject/9 qualified,
+controls14 accept/0 reject/5 qualified. Core008 reverse invents unroasted
+preparation for a particular author's beverage; both022 import necessary ring
+shape;071 reverse misses the independent self-directed recipient test;072
+forward denies an evaluation connection its saved comparative preference
+establishes. All four052/053 proofs pass. The control gold tests now use
+independent consumption rather than assuming an actual nourishing garnish
+connection. Particular author, food/drink and nourishment qualifications remain
+explicitly unresolved, not newly settled labels.
+
+V161 core24 accept/3 proof reject/6 qualified; controls12 accept/4 proof reject/
+3 qualified. Core022 forward imports ring shape;041 forward substitutes the
+caregiver's plan for the eater's deliberate abstention;072 forward denies the
+actual comparative gamey-meat evaluation connection.022 reverse retrieves a
+valid holeless production case, and all052/053 proofs pass. Controls009 leave
+qualifying-food composition coverage open;025 snapshot improperly excludes
+food-production information because cultivation does not itself eat;019's
+particular counterexample omits the required served state, although other
+consequences still support uncertainty. Form-only closed-question comments,
+including071's appended acceptance correction, are separate from these proof
+counts. Every current native source, input/output, receipt and copy hash is
+verified. Single draws do not establish causal effects or prompt adoption.
+
+### V162/V163: select the reported diagnostic after testing candidates
+
+This independent ablation starts from V159, replacing only the sentence that
+records the question. Assess candidate admission and exclusion before selecting
+the reported case. An inadmissible, covered or materially ambiguous first
+candidate prompts independent tests of other applicable conditions; the final
+question reports the diagnostic or remaining unresolved case. The matching answer
+still resolves that exact reported case. No changes to scope, particular-entity
+identity, universal proof, canonical guards, schema or demonstrations.
+
+The mechanism under test is first-candidate anchoring. Recognized holeless
+production appears in some current draws but disappears in others focused on
+uncooked dough or dressing, so missing variant knowledge is not the only
+plausible cause. Earlier continued-search and same-case repair instructions did
+not explicitly defer selection of the reported question. This ablation does
+not presume a successful counterexample exists or settle old producer
+ambiguities. A positive answer still requires the unchanged universal proof;
+a later candidate must concern the same particular entity. Two independent
+read-only preflights identify no scope blocker. The second
+finds an unconditional-search duty when no applicable condition remains
+unresolved. V163 corrects that duty and names a diagnostic case, preserving the
+universal-proof requirement for positives. V162 remains an unrun intermediate.
+Exact revision/example checks pass before execution.
+
+Planned matched targeted test:V163's full33-core/19-control gate and a fresh
+V159 baseline,104 comparisons plus four warmups,108 attempts absent retries.
+Primary checks are retrieval/admission of022 variants and preservation of041
+agency,008 fixed-entity scope,052/053 ingredient roles and protected canonical
+consequences. Review complete labels and diagnostics; unsupported necessities,
+invalid counterexamples and qualified readings remain distinct. The broader
+196/102 panels stay unrun until a candidate merits qualification. No Bootstrap
+inference, hierarchy work, external messages or additional allowance.
+Usage source:hierarchy-compare-v159-v163-controlled-usage-v1.json.
