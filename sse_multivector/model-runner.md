@@ -22,6 +22,11 @@ ingredient and parent flags remain as review history; diagnostic disagreement
 alone does not fail a clear final meaning. Some changed counts reflect review
 corrections, not new outputs or a measured wording effect. V104 is still the
 last approved prompt, and no reliable v105 fix has been established.
+V105's subsequent complete-branch qualification has 115 valid meanings from
+17 complete original ASv6.100 trees. Agent review records 113 individual accepts,
+one factual-support reject and one uncertain meaning. Thirty-five relationships
+to the risotto Food root remain unresolved; individual acceptance does not certify
+whole-branch compatibility. V104 remains approved and v105 experimental.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate

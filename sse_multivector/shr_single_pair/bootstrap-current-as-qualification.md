@@ -22,6 +22,11 @@ all ten first-draw meanings and four targeted fresh repeats are provisionally
 accepted after challenges. The latest
 [parent repeat and assessment reconciliation](#unchanged-v105-parent-repeat-and-assessment-reconciliation)
 preserves earlier flags as history. This does not establish a reliable fix or activate v105.
+The subsequent [complete-branch qualification](#bootstrap-v105-complete-original-branch-qualification)
+reviews 115 meanings from 17 complete ASv6.100 trees: 113 individual accepts,
+one factual-support reject and one uncertain meaning. Thirty-five relationships
+to the risotto Food root remain scope-qualified. Individual acceptance does not
+establish whole-branch compatibility or a measured gain over v104.
 
 ## Input and review contract
 
@@ -718,8 +723,8 @@ independent unseen cases. The two accepted parent repeats do not erase the
 first assessment or demonstrate a measured reliability improvement. In
 particular, some apparent progress came from correcting review flags, rather
 than changing the prompt or model outputs. Historical v104 assessments remain
-unchanged; a matched review standard has not yet been reapplied to that baseline,
-so this panel does not establish a v104-to-v105 causal performance gain.
+unchanged at that checkpoint; the subsequently completed matched reassessment
+is recorded below. Neither stage establishes a v104-to-v105 causal performance gain.
 
 Native artifacts in the retained task worktree:
 
@@ -801,3 +806,185 @@ review overclassification. V104 remains approved; v105 remains experimental.
 Complete-branch qualification remains separate and must assess independently
 generated ancestors and children together, rather than treating individual
 acceptance as proof of compatibility.
+
+## Bootstrap-v105 complete original-branch qualification
+
+The user authorized complete-branch qualification after the matched saved
+v104/v105 reassessment. V105 stayed unchanged; no Compare calls, prompt edits,
+subject extraction, canonical construction or UI updates were performed.
+V104 remains the last approved prompt. This panel does not establish a measured
+v104-to-v105 gain: no matched v104 whole-panel draw was run.
+
+The [reusable selection](hierarchy-bootstrap-asv6.100-complete-branches-v1.json)
+enumerates every original entry in 17 selected root trees: 115 entries from
+13 posts (ten real, three synthetic), 98 immediate links and 300 recursive
+ancestor checks. It combines three receipt-validated native AS collections;
+all four original producer templates match approved ASv6.100 SHA-256
+`0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f`.
+Each source corpus and native provenance hash is recorded in the selection.
+The coffee-chain and amusement trees intentionally retain their different
+original AS draws; their common post identity does not make the trees interchangeable.
+
+The panel covers rocket and stock Cooking, stock preservation/storage,
+sourdough Bread/Food preparation, rosemary, Mental states, Jesús Molina, Rome,
+coffee chains/amusement, planned and served meal states, metal handles and the
+complete risotto Food/ingredient tree. Sixty-nine original inputs already
+occurred in the v103 collection; 46 missing original selectors complete these
+trees without new AS inference. Native schema-4 preparation supplies the full
+post and complete root tree. No generated meanings, historical labels or
+review metadata enter the model input.
+
+The [native spec](hierarchy-bootstrap-v105-complete-branches-v1.spec.json)
+freezes unchanged Bootstrap-v105, SHA-256
+`3c851548f70d9e6cf4ad5ff3bf0bef312abc2dafeb6b2e8334a3ea9f7f612bd8`,
+output schema 79, GPT-6.1 Sol medium, subscription SSE and automatic caching.
+The shared runner admits requests through its host-wide fair queue, reaching
+30 active requests during this run. The declared prefix is 4,667 estimated
+o200k_base tokens. Original inputs, post/tree numbering and evidence stay fixed.
+Both approved synthetic prompt examples remain unchanged.
+
+### Fixed outputs and independent reviews
+
+All 115 cases are valid and non-null. The runner reuses five exact v105 answers:
+Stock Cooking and risotto Food from the first controls experiment, both
+sourdough-preparation entries from its fresh repeat, and Food preparation from
+the second parent repeat. All other 110 outputs are fresh. The exact native
+reuse receipts—not a preferred answer selected during review—fix those endpoints.
+This is a frozen same-version panel combining reuse and new generation, not a
+fresh independent 115-answer draw or a single newly generated whole-tree sample.
+
+Three reviewers read separate complete-tree partitions, checking supported
+identity, abstraction, action, role/state boundaries and original evidence.
+The root independently challenges consequential interpretations. Native output
+receipt hashes and input digests match; all 267 quoted excerpts are exact
+contiguous post substrings. No output or original subject tree is rewritten.
+
+| Partition | Meanings | Immediate links | All ancestor checks | Final individual assessments |
+|---|---:|---:|---:|---|
+| Cooking, storage, sourdough, rosemary, Mental states | 43 | 34 | 64 | 43 qualified accepts |
+| Risotto Food and ingredients | 36 | 35 | 176 | 35 accepts, one uncertain |
+| Identity, material and planned/served controls | 36 | 29 | 60 | 35 accepts, one reject |
+| **Total** | **115** | **98** | **300** | **113 accepts, one reject, one uncertain** |
+
+These are output-bound agent assessments, not human semantic gold or Compare
+answers. No demonstrated incompatible label is manufactured from an unresolved
+scope reading. Of 300 ancestor checks, 264 are provisionally compatible between
+accepted meanings; one is logically compatible but blocked by its unsupported
+child; 35 relationships to Food remain unresolved. Among immediate links the
+corresponding counts are 95, one and two. Fifteen of the 17 trees have only
+individually accepted definitions and provisionally compatible internal links.
+The coffee-chain and risotto Food trees remain unqualified.
+Cross-tree equivalence and Compare orientation stability are separate, untested
+questions in this Bootstrap-only panel.
+
+### Confirmed factual failure and material scope qualification
+
+**Coffee-chain child 1.1** asserts:
+
+> Coffee chain described as weird today: a business operating multiple coffee shops that the author characterizes as unusual on the day of the post.
+
+The original post says `Weird #coffeechain today` and `Rave at a coffee shop lol`.
+It does not establish a business with multiple shops or the venue's affiliation.
+The final definition assigns that business identity; its diagnostics do not
+resolve the named-hashtag versus business interpretation. General knowledge
+about business chains cannot establish those facts about this particular
+reference. The AS subject/context is not independent factual proof. The root's
+general business-chain definition is individually accepted with a post-assignment
+qualification; it does not certify that this post names a business chain.
+The child is narrower under the supplied definitions, but compatibility cannot
+certify an unsupported definition. This is not negative pair gold.
+
+Exact case:
+`bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411`;
+current receipt SHA-256
+`330dc9cb220d37b64ba8f38e16832de28adb270cdb7377d14d32ea0421deb128`.
+This is a fresh v105 output and a recurrence of the earlier factual witness,
+not a successful v105 correction.
+
+**Food's human-consumption condition** leaves whole-branch qualification open.
+The exact reused parent says:
+
+> Food is the category of substances intended for human eating or drinking, including prepared dishes and ingredients intended for their preparation. The topic also encompasses content about these foods and ingredients, including but not limited to posts about mushroom risotto with shrimp.
+
+Its opening condition governs ingredients and content. The broad ingredient
+or content clause cannot silently create a consumer-neutral alternative.
+The independently defined risotto kinds, designated ingredients and food-related
+Nostr content do not all expressly settle that consumer condition. Whether
+human intention identifies a food **kind** or must hold for the **particular
+application** changes inclusion. A named culinary dish does not by itself prove
+human-only information scope or make animal-directed preparation cease to be
+that dish. Actual consumption is not required by either reading.
+
+The strongest witness is child 1.2:
+
+> Food-related content on Nostr is content shared on the Nostr social network whose subject is food, including but not limited to posts about dishes and their ingredients.
+
+A Nostr post about feed intended solely for cattle distinguishes plausible
+readings of this criterion. The example is a scope probe, not a claim about the
+original risotto post. Neither the child nor its resolutions chooses the consumer
+domain. Do not install a human restriction by treating the parent as a global
+glossary or broadening it during review.
+
+The initial partition review reported 175 compatible checks and one unresolved
+Food/Nostr check. The root's challenge extended the same concern to the other
+34 descendant-to-Food checks. Both reviewers agree to withdraw unqualified
+compatibility: retain 141 non-Food ancestor checks as provisionally compatible,
+and keep all 35 Food relationships unresolved. This is a review correction on
+unchanged outputs, not 35 demonstrated producer failures or a model regression.
+Individual supported definitions remain distinct from whole-branch certification.
+
+Exact fixed endpoints:
+
+- Food root: `bootstrap-4acb29436208dbb08b34c9bbbd68c0177ecc052b956b474fc05fa93e8985bc92`;
+  current receipt `66d40e956b29177ff9cfaced8daf16d762f92db8f1620cdf5d766fc07d13fa9a`.
+- Food-related content on Nostr: `bootstrap-113ea08b087533fe5fc88f7105faaa7ab23140507a2417173f05ece267c9d3a2`;
+  receipt `64177bd5902225fb43f9d139403e4f2ecbdfa430b9a13c92e9e52b36ca4564ab`.
+- Risotto: `bootstrap-5fa9e10f69c1a8b95c57dcf3075945f32125aba19ba8255b3687222250cde203`;
+  receipt `cde3e5a9f9b29f37199928232ba84fa7576739b31ca6cb4fcc3d0025a6e37332`.
+
+Other consequential qualifications are retained in native reviews. Stock's
+frequency describes the recurring practice, while the identified current batch
+is its source-established occurrence, not an independently recurring event.
+Plans remain plans. Joint material, ingredient and meal descriptions retain
+required parts together; they do not independently admit companion parts under
+a narrower component. Cooking explicitly chooses heat and admits its supported
+preparatory actions. Mental states stays nonexhaustive. The context-bound
+proverbial Rome choice is accepted without imposing the older broad-city
+preference. Jesús Molina identifies the named individual; profession alone is
+not a musical-role-only restriction. No Music containment is tested here.
+
+### Native evidence and accounting
+
+Artifacts remain under
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v105-complete-branches-v1/`.
+The unchanged before-review snapshot is `report-before-review.json`, SHA-256
+`ad874c23986f61e1914b05aa48ec485104546bd52bc1526cb3733e0201ba67a7`.
+New `review --role agent` records bind all 115 individual verdicts and branch
+qualifications to their exact input/output digests. The reviewed snapshot is
+`report-reviewed-complete-branches-v2.json`, SHA-256
+`7832e536483fa419aa6df287932c2e2edf0cf311f086a6c5bc5031e6716c2d3c`.
+It retains 116 native review records for 115 current case assessments. One
+comment-only correction removes contradictory acceptance boilerplate from the
+uncertain Nostr-food review; its verdict, output and receipt are unchanged.
+The first reviewed snapshot remains preserved.
+Original reuse chains remain in
+`run/results.jsonl`; existing experiments and their reviews are preserved.
+
+[Native usage source](hierarchy-bootstrap-v105-complete-branches-usage-v1.json)
+produces `usage-native-v1.json`, SHA-256
+`81d6e0633fde733847dcaf1fa1e7fce47a0821b35b80cd60b8e103ed16cb5aae`.
+The run contributes 111 fresh attempts: 110 meanings and one warmup. There are
+five exact reuses, zero provider failures/retries and no missing usage.
+All 110 fresh meaning requests have cache hits. Fresh API-equivalent cost is
+$0.9674448. Native generation accounting includes the five reused answers'
+original production and relevant prior warmups: 119 original calls and
+$1.0366524. Neither is an incremental subscription cash charge; reasoning is
+already included in output. The persistent shared 20,000-attempt counter is
+not reset and includes other agents' work.
+
+The panel does not qualify v105 as a complete solution. The next useful work is
+a focused diagnostic on kind-level versus application-specific purpose and
+named-hashtag identity, using fixed original inputs and fresh disputed-endpoint
+repeats before changing wording. Preserve the separate individual and branch
+assessment standards; do not improve counts by rewriting frozen meanings,
+forcing historical labels, or dropping difficult entries.
