@@ -2107,3 +2107,39 @@ Independent pre-run review confirms that only candidate naming changes between
 the templates. Both selection instructions still name the child topics, and
 supplied entity bindings/exclusion stipulations can overcome defaults; the test
 does not remove all taxonomy cues or isolate binding from topic-operator effects.
+
+Independent native V100 review records7 accept,2 reject and1 qualified uncertain:
+019/038 both and107/111/034 are accepted;042 both are rejected;036's implicit-memory
+witness does not establish exclusion from "involving a person's thought," which
+may include mental content or unconscious thought. Historical equivalence is not
+forced as the replacement label. The accepted negative witnesses test decisive
+conditions even where the diagnostic question still quotes a compound phrase.
+
+Both supplied-candidate conditions return correct admission/exclusion and neither
+for038/042 in this draw: four valid outputs, six fresh attempts including warmups,
+no reuse, failure, retry or missing usage, native API-equivalent cost$0.0440384.
+The model explicitly distinguishes a human designer from the animal consumer.
+No additional candidate-label sensitivity is observed; this does not establish
+that ordinary scope interpretation is immune to naming. Accounting is reproduced
+by compare-counterexample-diagnostic-v1-usage-v1.json. These answers assess
+provided candidates, not the ability to discover them independently.
+
+### V101/V102: keep each condition attached to what it constrains
+
+The next ordinary candidate replaces V100's scope-identification paragraph,
+requiring each identity, role, purpose, intended use, consumer or state to be
+attached to the person, thing, activity or information that must satisfy it.
+Separate independent conditions in one phrase; a condition satisfied elsewhere
+does not by itself fulfill this requirement. Legitimate connections still follow
+from wording or necessary implications. This tests the new participant-binding
+hypothesis rather than merely restating a property-versus-kind warning.
+
+V101's initial cross-participant prohibition was too absolute under independent
+design review: a designer's intention can establish an object's intended use.
+V102 preserves such stated or necessary connections. V101 remains an unrun draft;
+V102 uses the same ten original ordinary requests and native schema as V100,
+without supplied witnesses or examples. Scope roles, canonical guards and output
+order are unchanged. Native caps19 and3 count all dispatches against the same
+persistent allowance. Its1355-token prefix is eligible for automatic caching;
+backend hits are measured separately. Independent proof review and fresh-repeat
+qualification are required before any broad accuracy claim or adoption.

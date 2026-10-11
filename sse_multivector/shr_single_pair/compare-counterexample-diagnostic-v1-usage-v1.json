@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "unlabelled": [
+      "../../target/compare-counterexample-diagnostic-v1/unlabelled"
+    ],
+    "labelled": [
+      "../../target/compare-counterexample-diagnostic-v1/labelled"
+    ]
+  }
+}
