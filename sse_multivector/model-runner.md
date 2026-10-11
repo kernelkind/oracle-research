@@ -1484,7 +1484,13 @@ See the [complete algorithm and preparation contract](hierarchy-traversal-draft.
 The [next-generation hierarchy draft v2](hierarchy-generation-draft-v2.md)
 specifies PPv35 selection of every L1 scoring at least 50, or only the highest
 L1 per note when none qualifies. Every selected L1 must be processed before
-stopping. This is intended design; the current constructor does not implement it.
+stopping. After that pass, remaining L1s are tried only for uncovered notes.
+Refinement prioritizes the largest multi-note leaf and rotates across its notes,
+selecting highest-prominence unused descendants within the supporting original
+local branches, level by level. A leaf stops receiving refinement when it has
+one note or exhausts those descendants; notes supported at internal nodes do not
+require their own singleton node. Equal-note-set shaping remains open. This is
+intended v2 design; the current constructor does not implement it.
 
 Use these offline commands after construction:
 
