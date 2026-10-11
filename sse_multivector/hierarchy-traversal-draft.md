@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v9
+# Hierarchy selection by traversal — draft v14
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -144,6 +144,21 @@ The local node remains unplaced despite the positive Food answer. Stop its
 search and retain the answers for review; construction continues with other
 local nodes. This retains the current constructor's hold behavior.
 
+## Agreed comparison order within one traversal
+
+**Traverse top to bottom. Compare independent reached nodes concurrently
+through the experiment runner.**
+
+Start at the roots. Apply returned labels and exact reusable answers before
+sending further comparisons; skip relationships established by valid transitive
+inference, subject to the required-comparison policy still open below.
+
+For a shared node, resolve unfinished traversal work on its ancestors first.
+An already stopped branch has no remaining work along that path and stays
+stopped. Independent branches keep moving. Among ready comparisons, preserve
+the saved graph's node order. Ordering uses existing parent links; the experiment
+runner handles request concurrency.
+
 ## Agreed concurrent-search policy
 
 **Allow up to three active local-node searches. Apply placements one at a time,
@@ -154,7 +169,8 @@ finished search waits for earlier selected local nodes to be placed or held.
 Before placing its result:
 
 1. Check the search against the current canonical graph, including earlier
-   placements made since its snapshot was taken.
+   local-node placements and synthetic additions made since its snapshot was
+   taken.
 2. Reuse exact saved comparisons whose inputs remain unchanged.
 3. Compare with newly added canonical nodes where traversal requires it, and
    repeat required comparisons whose canonical inputs changed.
@@ -162,6 +178,8 @@ Before placing its result:
    Other local-node searches can continue using their own snapshots.
 5. Apply the placement through the existing constructor checks, or preserve
    the graph and hold the local node when those checks prevent placement.
+6. After a canonical-node addition, finish its triggered consolidation attempts
+   as described below before applying the next local-node placement.
 
 For example, three local nodes search concurrently. The first becomes
 canonical. Before placing the second, account for the new canonical node and
@@ -198,9 +216,8 @@ while the trigger holds; a `null` result ends attempts for that group until a
 later qualifying addition.
 
 This is an agreed construction rule for the draft, not an implemented change.
-The timing proposal below is not yet approved.
 
-## Proposed consolidation timing
+## Agreed consolidation timing
 
 **Finish the consolidation attempts triggered by a placement before applying
 the next local-node placement.**
@@ -235,20 +252,76 @@ This ordering keeps consolidation's inputs current and makes its resulting
 graph available to the next placement. Its effect on elapsed time and comparison
 cost has not been measured.
 
+## Agreed synthetic-parent validation
+
+**Use the proposed synthetic topic as the incoming node in the same traversal.
+Its proposed children are claims to check, not automatic edges.**
+
+Freeze the consolidation output's title and explicit meaning before comparison.
+Supply the title as `local.subject` and the definition as `local.meaning`; each
+comparison's canonical side uses the existing node and its canonical branches.
+No Bootstrap call is needed: consolidation has already written the definition.
+Do not invent an original note or local branch for a synthetic topic.
+
+Start at the canonical roots and use the agreed comparison actions, including
+branch stopping, equivalence reuse and transitive inference. Keep the graph
+fixed for this traversal and placement, while other local-node searches
+continue on their snapshots. The comparison labels establish the relationships;
+the consolidation output does not prescribe positive answers.
+
+Before insertion, require all of the following:
+
+- When the offered siblings have a parent, traversal establishes that this
+  parent strictly contains the proposed topic. Equivalence with that parent
+  would merely add another name for the same level. Roots have no such parent
+  requirement.
+- The proposed topic strictly contains each nominated child, through a direct
+  comparison or valid inference under the agreed hierarchy assumption. A
+  pruned or unreached child remains unchecked and cannot supply this approval.
+- The established grouping covers at least two of the offered siblings and
+  fewer than the whole group. Include any additional offered siblings that
+  traversal establishes are contained; do not ignore them to manufacture a
+  useful subset.
+- The prospective graph passes the existing placement checks, reduces the
+  target group's immediate choices, and makes the new grouping edges strictly
+  narrow distinct-note sets. Count existing supporting notes and recursive
+  descendants once per note; the synthetic topic adds no invented note support.
+
+Check the prospective graph before changing the real one. Route grouped
+siblings through the proposed parent instead of retaining their redundant
+direct edges in the target group; preserve their other parent branches and
+existing ancestry. Existing equivalent nodes are reused under the agreed
+equivalence rule, retaining their fixed meanings.
+
+An `uncertain` comparison, an unsupported nominated relationship or a failed
+placement/shaping check ends this proposal without graph changes. Save the
+proposal and its comparison results for review, preserve the local-node
+placement that triggered consolidation, and continue the approved timing
+sequence. Do not rewrite the synthetic meaning during validation to force fit.
+
+This validation policy is agreed draft design, not an implemented change. It
+adds no separate semantic-review prompt or exhaustive comparison pass. Required
+relationships can reuse exact answers and the same transitive inferences as
+ordinary traversal.
+
 ## Proposed walk
 
-All five comparison actions and the shared-node rule above are agreed. The
-other steps below carry forward the current traversal behavior as a starting
-point for further discussion.
+The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
+policy and consolidation rules above are agreed. The walk below combines them;
+the eligibility decisions listed below remain open.
 
 1. Start at the canonical roots.
-2. Compare the local node with a reached, eligible canonical node.
+2. Compare the local node with a reached, eligible canonical node in the
+   top-to-bottom order above.
 3. Follow the returned label using the table below.
 4. Continue until no comparisons remain along the branches being searched,
    or an `uncertain` answer holds this local node for review.
 5. If the local node is not held, wait for its placement turn and check its
    results against the updated graph as specified above. Use the resulting
    relationships for placement, retaining the existing constructor's checks.
+6. After a canonical-node addition, finish its triggered consolidation attempts
+   before applying the next placement. Other searches can keep running on
+   their fixed snapshots.
 
 | Returned label | Traversal action |
 | --- | --- |
@@ -282,8 +355,6 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Whether to adopt the proposed consolidation timing above.
-- How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
 
@@ -294,5 +365,15 @@ would also contain it by transitivity, conflicting with the Meals answer.
 from this draft's agreed rules. The implementation and its historical results
 remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
+
+The current selector exposes the whole queued set of eligible comparisons. It
+does not defer a queued descendant when a queued ancestor could first settle
+its relationship. The draft's top-to-bottom order adds that dependency rule.
+
+The fixed-meaning comparison input already accepts `local.subject` and
+`local.meaning` without original-note evidence. The constructor's
+[`_placement` function](canonical_trial.py), however, still builds new nodes
+from original note entries. The design above reuses the comparison contract;
+synthetic insertion is not currently implemented by this draft.
 
 No implementation changes or model calls have been made for this draft.

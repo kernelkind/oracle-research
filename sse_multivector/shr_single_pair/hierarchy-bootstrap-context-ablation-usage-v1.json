@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "with_context": [
+      "../../target/bootstrap-context-ablation-v1/with-context",
+      "../../target/bootstrap-context-ablation-v1/with-context-repeat"
+    ],
+    "without_context": [
+      "../../target/bootstrap-context-ablation-v1/without-context",
+      "../../target/bootstrap-context-ablation-v1/without-context-repeat"
+    ]
+  }
+}
