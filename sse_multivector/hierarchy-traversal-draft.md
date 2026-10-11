@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v9
+# Hierarchy selection by traversal — draft v10
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -154,7 +154,8 @@ finished search waits for earlier selected local nodes to be placed or held.
 Before placing its result:
 
 1. Check the search against the current canonical graph, including earlier
-   placements made since its snapshot was taken.
+   local-node placements and synthetic additions made since its snapshot was
+   taken.
 2. Reuse exact saved comparisons whose inputs remain unchanged.
 3. Compare with newly added canonical nodes where traversal requires it, and
    repeat required comparisons whose canonical inputs changed.
@@ -162,6 +163,8 @@ Before placing its result:
    Other local-node searches can continue using their own snapshots.
 5. Apply the placement through the existing constructor checks, or preserve
    the graph and hold the local node when those checks prevent placement.
+6. After a canonical-node addition, finish its triggered consolidation attempts
+   as described below before applying the next local-node placement.
 
 For example, three local nodes search concurrently. The first becomes
 canonical. Before placing the second, account for the new canonical node and
@@ -198,9 +201,8 @@ while the trigger holds; a `null` result ends attempts for that group until a
 later qualifying addition.
 
 This is an agreed construction rule for the draft, not an implemented change.
-The timing proposal below is not yet approved.
 
-## Proposed consolidation timing
+## Agreed consolidation timing
 
 **Finish the consolidation attempts triggered by a placement before applying
 the next local-node placement.**
@@ -237,9 +239,10 @@ cost has not been measured.
 
 ## Proposed walk
 
-All five comparison actions and the shared-node rule above are agreed. The
-other steps below carry forward the current traversal behavior as a starting
-point for further discussion.
+The comparison actions, shared-node rule, concurrent-search policy and
+consolidation rules above are agreed. The walk below combines them with the
+current root-start and eligibility behavior as a starting point for further
+discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
@@ -249,6 +252,9 @@ point for further discussion.
 5. If the local node is not held, wait for its placement turn and check its
    results against the updated graph as specified above. Use the resulting
    relationships for placement, retaining the existing constructor's checks.
+6. After a canonical-node addition, finish its triggered consolidation attempts
+   before applying the next placement. Other searches can keep running on
+   their fixed snapshots.
 
 | Returned label | Traversal action |
 | --- | --- |
@@ -282,7 +288,6 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Whether to adopt the proposed consolidation timing above.
 - How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
