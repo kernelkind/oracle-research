@@ -1,8 +1,11 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work tests
-[Hierarchy-consolidation-v9](shr_single_pair/Hierarchy-consolidation-v9.md).
-Its matched v8/v9 panel has sixteen fresh valid GPT-6.1 Sol medium requests,
+The latest user-authorized draft is
+[Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
+It restores one instruction from v8: “Define the selected topic, not every
+concept it mentions.” All other v9 prompt bytes remain unchanged. V10 has
+offline assembly and native preparation checks; it has not been model-tested.
+The preceding matched v8/v9 panel has sixteen fresh valid GPT-6.1 Sol medium requests,
 two draws for each of four complete sibling groups. Each prompt has four
 qualified agent accepts on the clear controls and four uncertain disputed
 judgments. All prospective local shape checks pass; no proposal is applied.
@@ -10,7 +13,7 @@ V9 uses 13.4% fewer input tokens and has 17.1% lower observed API-equivalent
 cost in this panel. This does not establish broader accuracy or hierarchy
 quality. One v9 output unnecessarily defines Bread inside its proposed meaning;
 the simplification omitted the general rule against defining every mentioned
-concept. Restoring that rule is recommended, not implemented or trialed.
+concept. V10 restores that rule without claiming a measured improvement.
 Historical Bootstrap and consolidation versions remain fixed; Bootstrap has
 not adopted the new wording. Bread/Food dishes and Cuisine boundaries remain
 unsettled, and previous reviews remain preserved. No semantic improvement or
@@ -26,7 +29,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v7 revision and panel](#consolidation-v7-required-condition-revision-and-panel), and
 [the v8 draft and evaluation correction](#consolidation-v8-draft-and-evaluation-correction), and
 [the v9 definition-writing simplification](#consolidation-v9-definition-writing-simplification), and
-[the matched v8/v9 panel](#consolidation-v8v9-matched-panel).
+[the matched v8/v9 panel](#consolidation-v8v9-matched-panel), and
+[the v10 targeted restoration](#consolidation-v10-topic-definition-rule-restoration).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1644,6 +1648,10 @@ null-meaning behavior. The [Consolidation-v9 manifest](shr_single_pair/Hierarchy
 instead pins one [simplified definition-writing fragment](shr_single_pair/prompt_parts/explicit-meaning-rules-v4.md).
 This is new draft wording, not a byte-exact Bootstrap extraction. Only v9
 adopts it; Bootstrap-v104 and all existing consumers keep their pinned versions.
+The [Consolidation-v10 manifest](shr_single_pair/Hierarchy-consolidation-v10.assembly.json)
+pins [fragment v5](shr_single_pair/prompt_parts/explicit-meaning-rules-v5.md),
+which adds only “Define the selected topic, not every concept it mentions.”
+to v4. Only v10 adopts v5, retaining the exact v9 wrappers and separators.
 Historical Bootstrap and consolidation recipes remain
 fixed. V3 remains the last human-approved full consolidation
 wording; authorization to draft or test later versions is not semantic qualification. The bootstrap
@@ -1677,7 +1685,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v9.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v10.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -2744,8 +2752,8 @@ V9 omitted that general instruction and retains a narrower instruction against
 separate technical definitions only for activities. The omission is established
 by the prompt diff; one output cannot establish its causal effect or a regression
 rate. The extra sentence is unnecessary here, not evidence that the disputed
-grouping is wrong. Restoring the general rule is a proposed next edit; no v10
-or Bootstrap change has been made.
+grouping is wrong. The user subsequently authorized restoring the general rule
+in the v10 draft below. Bootstrap remains unchanged.
 
 The committed [usage selection](shr_single_pair/hierarchy-consolidation-v8-v9-matched-usage-v1.json)
 reproduces native `consolidation-v8-v9-matched-usage-v1.json` under
@@ -2777,6 +2785,40 @@ relevant consolidation, assembly and revision checks pass after syncing local
 main. Broader suite limitations remain recorded above. No Compare calls,
 Bootstrap edits, graph changes, UI updates or agent messages occurred.
 V9 is tested and experimental, not human-approved as a full prompt or activated.
-The task remains isolated as requested. The recommended next change is to
-restore the lost general writing rule, then broaden clear controls rather than
-treating repeated disputed judgments as progress or failures.
+The task remains isolated as requested. The targeted restoration is now drafted
+below; broader clear controls remain the recommended next evaluation rather
+than treating repeated disputed judgments as progress or failures.
+
+## Consolidation-v10 topic-definition rule restoration
+
+The user authorized the targeted edit following the matched panel.
+[Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md)
+adds exactly “Define the selected topic, not every concept it mentions.” after
+the standalone-definition instruction. Removing that insertion reproduces v9
+byte for byte. The sentence is retained verbatim from v8; no test-specific
+topic, preferred grouping or additional example is introduced.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v10.assembly.json)
+pins the new 207-word shared fragment and unchanged v9 wrappers. Historical
+fragments, prompts and Bootstrap-v104 reconstruction hashes remain fixed.
+Native `revise` uses the last approved full consolidation v3 as baseline. Its
+[revision receipt](shr_single_pair/Hierarchy-consolidation-v10.md.revision.json)
+records the full output SHA-256
+`53cc0c8d4aa71db22408da13b60958a141d07cadc3df46cd43e1458e0f5cc452`.
+The full prompt has 737 whitespace-delimited words. This count is not a token
+or API-cost measurement; the previous panel's observed savings apply to v9.
+
+The production assembly check first failed because the v10 manifest was absent,
+then passed after authoring. Thirty-three relevant consolidation, assembly and
+revision checks pass, including native preparation freezing complete v10 text
+without inference. The exact v9 delta and the historical v9/v104 hashes are
+checked. Broader runner-suite limitations remain recorded above. The ignored
+preview, native edits and full-context diff are under
+`target/canonical-shaping-selection-v1/consolidation-v10-*`.
+
+No provider, warmup or Compare calls were made; the attempt counter remains
+**345/345**. No graph, UI, Bootstrap or active policy changed, and no messages
+were sent to another agent. V10 is an isolated draft, not a tested or activated
+prompt. Bread/Food dishes and Cuisine scope judgments remain unresolved.
+Next qualify v10 on clear controls and broaden those controls under a new
+inference allowance; repeated disputed judgments cannot establish accuracy.

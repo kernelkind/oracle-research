@@ -296,6 +296,33 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertEqual(Path(revision['base_path']).name, baseline.name)
         self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
 
+    def test_consolidation_v10_restores_only_the_topic_definition_rule(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v10.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = json.loads(spec.read_text())
+        previous = json.loads((PROMPTS / 'Hierarchy-consolidation-v9.assembly.json').read_text())
+        self.assertEqual(current['parts'][:2], previous['parts'][:2])
+        self.assertEqual(current['parts'][3:], previous['parts'][3:])
+        old_shared = (PROMPTS / previous['parts'][2]['path']).read_bytes()
+        new_shared = (PROMPTS / current['parts'][2]['path']).read_bytes()
+        insertion = b' Define the selected topic, not every concept it mentions.'
+        self.assertEqual(new_shared.count(insertion), 1)
+        self.assertEqual(new_shared.replace(insertion, b''), old_shared)
+        prompt = (PROMPTS / current['output']['path']).read_bytes()
+        old_prompt = (PROMPTS / previous['output']['path']).read_bytes()
+        self.assertEqual(prompt.count(new_shared), 1)
+        self.assertEqual(prompt.replace(insertion, b''), old_prompt)
+        self.assertEqual(sha256(old_prompt),
+                         '751c9d83c43fa69ca1f57042a95cc5574eed8a556e57b1547c4bb38b9baf6beb')
+        self.assertEqual(sha256((PROMPTS / 'Hierarchy-bootstrap-v104.md').read_bytes()),
+                         'd97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0')
+        baseline = PROMPTS / 'Hierarchy-consolidation-v3.md'
+        revision = json.loads((PROMPTS / 'Hierarchy-consolidation-v10.md.revision.json').read_text())
+        self.assertEqual(revision['base_sha256'], sha256(baseline.read_bytes()))
+        self.assertEqual(Path(revision['base_path']).name, baseline.name)
+        self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -310,13 +337,13 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
                         'Hierarchy-consolidation-v5', 'Hierarchy-consolidation-v6',
                         'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8',
-                        'Hierarchy-consolidation-v9'):
+                        'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
                                                         'Hierarchy-consolidation-v5', 'Hierarchy-consolidation-v6',
                                                         'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8',
-                                                        'Hierarchy-consolidation-v9')
+                                                        'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10')
                                      or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')
