@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "id": "timing-local-preserved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author finishing packing and then walking to work, with the author talking to Lee during the walk\", \"child_subject\": \"Author finishing packing without talking to Lee and then walking to work while talking to Lee by phone\"}",
+        "POST": "An account of the author finishing packing, then walking to work, and talking to Lee by phone.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_timing_control",
+        "origin": "Authored semantic control; post support is unassessed.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-timing/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": true,
+        "expected_reason": "Talking to Lee qualifies the walk only; absence of that conversation during packing does not lose a parent restriction."
+      }
+    },
+    {
+      "id": "timing-local-moved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author finishing packing and then walking to work, with the author talking to Lee during the walk\", \"child_subject\": \"Author finishing packing while talking to Lee by phone and then walking to work without talking to Lee\"}",
+        "POST": "An account of the author finishing packing, then walking to work, and talking to Lee by phone.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_timing_control",
+        "origin": "Authored semantic control; post support is unassessed.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-timing/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": false,
+        "expected_reason": "The required conversation during the walk is replaced by a conversation during packing; the walk explicitly lacks it."
+      }
+    },
+    {
+      "id": "timing-shared-preserved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author finishing packing and then walking to work, with the author talking to Lee during both activities\", \"child_subject\": \"Author finishing packing while talking to Lee by phone and then walking to work while continuing that conversation with Lee\"}",
+        "POST": "An account of the author finishing packing, then walking to work, and talking to Lee by phone.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_timing_control",
+        "origin": "Authored semantic control; post support is unassessed.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-timing/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": true,
+        "expected_reason": "Conversation with Lee during both packing and walking preserves the explicitly shared timing."
+      }
+    },
+    {
+      "id": "timing-shared-dropped",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author finishing packing and then walking to work, with the author talking to Lee during both activities\", \"child_subject\": \"Author finishing packing without talking to Lee and then walking to work while talking to Lee by phone\"}",
+        "POST": "An account of the author finishing packing, then walking to work, and talking to Lee by phone.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_timing_control",
+        "origin": "Authored semantic control; post support is unassessed.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-timing/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": false,
+        "expected_reason": "The parent explicitly requires talking to Lee during both activities; the child drops that requirement during packing."
+      }
+    }
+  ]
+}

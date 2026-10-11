@@ -1596,6 +1596,15 @@ implicit cache hits, known-receipt net savings are $0.0064912 (0.534%); full-run
 cost/savings and subscription charges remain unknown. AS, schema and model
 settings stay fixed. Qualification, lower-effort testing and final 60 remain
 pending; production defaults to DSLv2.
+The subsequently authorized [DSLv10 draft](distillation-review-v1/README.md#dslv10-timing-scope-draft-october-11)
+changes only the version title and one scope paragraph. Three native offline
+preparations retain three four-note scope inputs, five accepted DSLv9 controls
+and four authored local/shared timing contrasts. The eight inherited inputs and
+baselines remain exact; authored inputs use the existing generic adapter and
+production AS-excerpt function, with no adapter or output-schema changes.
+Independent input assessment agrees on five true and seven false targets. All
+twelve candidates are unrun; wording review precedes calls. Sol/xhigh/SSE and
+automatic queue admission stay fixed; the short template prefix is not warmed.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

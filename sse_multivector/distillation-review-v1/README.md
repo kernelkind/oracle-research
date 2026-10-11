@@ -12,6 +12,9 @@ three checks and verifies the mechanical pipeline, but fails the complete-output
 gate: one DSL explanation expands a timing restriction, and two related
 explanations remain uncertain. Production defaults to DSLv2; lower-effort testing
 and final-sixty validation remain paused pending prompt correctness.
+The user-authorized [DSLv10 timing-scope draft](#dslv10-timing-scope-draft-october-11)
+and twelve-case diagnostic are prepared offline; exact wording review precedes
+model calls. DSLv10 is untested and production remains DSLv2.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4452,8 +4455,99 @@ missing/obsolete fixture failures remain recorded rather than concealed.
 
 The next proposed development step is a focused timing-scope correction and
 small diagnostic before another four-note regression. That prompt revision is
-not implemented or approved by this run. Lower-reasoning trials and the final
-sixty remain pending; production continues to use DSLv2.
+not implemented or approved by this run. The user subsequently authorizes the
+drafting step recorded below. Lower-reasoning trials and the final sixty remain
+pending; production continues to use DSLv2.
+
+## DSLv10 timing-scope draft (October 11)
+
+The user authorizes proceeding with the focused timing-scope correction and
+small diagnostic. Native `revise` creates [DSLv10](relationship-prompt-v10.md)
+and its [hash-bound receipt](relationship-prompt-v10.md.revision.json) from
+unchanged approved DSLv9. Only the version title and one existing occurrence,
+performance and timing paragraph change. There is no XP-specific example or
+new output field. The ASv6.100 quotations, every-restriction requirement, source
+interpretation boundaries, DSMv3, DSSv2, mechanical rules and production DSLv2
+default remain fixed. This is a draft, not tested or adopted wording.
+
+The replacement asks the reviewer to identify what action, state or relationship
+a modifier qualifies. Neither coordination or a shared actor nor proximity
+alone establishes its scope. An ordinary permitted attachment must not be
+reported as a necessary restriction. In the failed XP explanation, a local
+reading lets earlier completion and earnings precede English practice while
+the current XP total accompanies practice. A wider attachment may also be
+grammatically possible; the failure is asserting that wider timing as required,
+not proving that the wording has a uniquely narrow parse. Correct negative
+Booleans on the three original cases cannot demonstrate that this explanation
+defect is fixed.
+
+Three native offline preparations contain **twelve distinct comparisons**:
+
+| Group | Cases | Purpose |
+| --- | ---: | --- |
+| `scope-trial` | 3 | Preserve the exact failed/uncertain four-note inputs and their DSLv9 baseline outputs. |
+| `control-trial` | 5 | Preserve accepted DSLv9 clause, timing, reference and qualified-relationship controls. |
+| `authored-trial` | 4 | Distinguish local timing from timing explicitly shared by both activities. |
+
+The first two use native `prepare --from --only --prompt ... --prompt-id DSLv10`,
+retaining exact complete inputs, saved baseline receipts and worker bindings.
+The changed prompt prepares twelve fresh semantic requests; `--repeat` is not
+used. All eight inherited inputs match their originals byte for byte. The
+three scope IDs are the rejected and uncertain records above. The five controls
+are:
+
+- `M03-checkpoint-800-N0032:6.1` — claim preserved as an invitation's object.
+- `M02-baseline-N0089:compatibility:003:3.1` — current AI wave preserved as a temporal reference.
+- `M02-checkpoint-800-N0020:1.2.1.2.2.1` — complete qualified energy-demand relationship retained.
+- `M02-checkpoint-800-N0043:compatibility:005:1.1.1.1.1.1` — an English-practice goal does not preserve current practice timing.
+- `M01-checkpoint-600-N0017:compatibility:003:1.1.1.2` — the named reboot alone does not preserve Palmer's brightening relationship.
+
+The four maintained [authored controls](relationship-timing-source.json) use
+the existing generic adapter. Production `_relationship_inputs` supplies the
+same verbatim AS subject-wording and parent-child excerpts used by the real
+checks. All share a neutral authored post about packing, walking and talking to
+Lee; teacher-context rows are empty. Only the subject pair varies. Expected
+judgments stay in review evidence outside model input and remain agent-assessed.
+The extracted AS quotation is frozen as input; the full AS file path and hash
+are provenance in this generic source rather than a separate runtime binding.
+No adapter or schema change is added to manufacture that binding.
+
+| Authored case | Required parent timing | Child timing | Prospective verdict |
+| --- | --- | --- | ---: |
+| `timing-local-preserved` | Conversation during the walk | No conversation during packing; conversation during the walk | true |
+| `timing-local-moved` | Conversation during the walk | Conversation during packing; none during the walk | false |
+| `timing-shared-preserved` | Conversation during both activities | Conversation during packing and the walk | true |
+| `timing-shared-dropped` | Conversation during both activities | Same child as `timing-local-preserved` | false |
+
+Root and an independent auditor agree on **five true and seven false** targets
+before candidate generation. The independent auditor reads only native
+input-only views and the new prompt, without the authored targets or previous
+control outputs; the three original failures were already familiar from its
+earlier audit. Native prospective reviews preserve its restriction assessments.
+Full-output acceptance must reject a correct Boolean with an invented timing
+scope, a missing explicit shared restriction, or an overbroad Nostr association.
+These easy authored contrasts and reused cases are development evidence, not
+unseen validation, human gold or a causal estimate of prompt improvement.
+
+Native preparation verifies twelve unrun cases, zero attempts, zero mechanical
+answers and zero reusable candidate requests. Eight saved baselines are available;
+the four authored cases have none. Frozen source and schema checks pass. Model
+settings remain `gpt-6.1-sol / xhigh / openai-codex / SSE`, under the automatic
+shared queue and provider-only maximum of two attempts per case. The ordinary
+template prefix is 76 tokens, below the 1,024-token threshold; there is no padding, cache
+marker, `--prompt-cache` flag or warmup. A future bounded run would use one shared
+24-attempt allowance for these twelve cases and reserve no output-token cap.
+
+Ignored evidence is at
+`oracle-mvp-review-dslv10-timing/target/distillation-review-v1/relationship-dslv10-timing/`:
+exact revision edits/diff, authored spec, three native preparations and input-only
+views, prospective reviews and offline verification. The task worktree is
+retained for these frozen bindings. No model is called during drafting or
+preparation. Exact wording review and semantic testing are next; broader
+four-note regression, lower efforts and final-sixty validation remain pending.
+This scoped diagnostic follows the [official OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+to test task-specific historical failures and controls; it does not adopt the
+separate hosted Evals platform.
 
 ## Actual distilled wording: offline preview (October 8)
 

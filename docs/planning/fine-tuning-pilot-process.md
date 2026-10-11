@@ -444,6 +444,12 @@ related uncertain explanations; no definite DSL Boolean error is identified.
 The regression fails its complete-output gate. Three reused matching/support
 inputs also retain uncertainty over `on Nostr` versus `with Nostr`. Lower-effort
 testing remains paused; the final sixty remain pending.
+The user subsequently authorizes a
+[DSLv10 timing-scope draft](../../sse_multivector/distillation-review-v1/README.md#dslv10-timing-scope-draft-october-11).
+It replaces one explanatory paragraph and prepares twelve native cases offline:
+three exact scope failures, five accepted controls and four authored local/shared
+timing contrasts. Independent input review agrees on five valid and seven
+invalid targets. Wording review precedes model calls; DSLv10 remains untested.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
