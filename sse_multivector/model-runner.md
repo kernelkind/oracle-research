@@ -1445,8 +1445,8 @@ runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
 schemas or frozen experiment inputs. Finish active experiments before changing
 their bound source. Saved meanings, decisions and native receipts are retained.
 
-Select L1 roots first, then L2 and deeper local levels. At each level, rotate
-across notes in saved order, one entry per note per pass. Up to three searches
+The current constructor selects L1 roots first, then L2 and deeper local levels.
+At each level, rotate across notes in saved order, one entry per note per pass. Up to three searches
 can overlap on fixed graph snapshots; placements follow selection order.
 Before placement, account for graph changes and reuse only exact unchanged
 comparisons. Sharing a note does not exclude a canonical comparison. Mapped
@@ -1454,9 +1454,18 @@ original-parent containment may follow from traversal or transitive inference;
 an unchecked or contradicted requirement holds the local entry without reopening
 a pruned branch.
 
+The approved traversal draft now requires restricted refinement after note
+coverage: deeper selections come only from notes represented by leaves
+containing multiple notes. The finished hierarchy must remove redundant steps
+with equal parent/child note sets and retain individual access with one note per
+leaf. The constructor does not yet implement these updates; do not report its
+existing stopping check as satisfying them. Separate required L1 processing in
+the prominence draft is unchanged. The retained-node choice for redundant steps
+remains to be worked through before implementing automatic removal.
+
 Each selected local node receives an independently generated immutable meaning.
-Every comparison is local versus canonical with the fixed meanings and recursive
-canonical branch evidence. `neither` stops that branch; `uncertain` holds the
+Every comparison is local versus canonical with fixed meanings; its input
+fields follow the configured Compare contract. `neither` stops that branch; `uncertain` holds the
 local entry. Containment and equivalence reuse established ancestor/descendant
 relationships. Prospective placement retains cycle, returned-relation and
 settled-answer checks. A canonical addition leaving six or more siblings triggers
@@ -1488,9 +1497,12 @@ Use these offline commands after construction:
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved stopping conditions are all notes reachable individually
-and strictly smaller note sets on every downward edge. There is no additional
-requirement to find or apply every known regrouping or shortcut, or to conduct a
+note IDs. The approved finished-hierarchy conditions are all notes reachable
+individually,
+one distinct note per canonical leaf, and strictly smaller note sets on every
+downward edge. The current constructor checks individual access and strict edges
+only; its completion does not establish the new leaf requirement. There is no
+additional requirement to find or apply every known regrouping or shortcut, or to conduct a
 final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
