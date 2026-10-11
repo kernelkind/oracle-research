@@ -103,16 +103,21 @@ token loss moves from **1.4162 before training**, to **0.9712 after epoch one**
 and **1.2290 after epoch four**; TRAIN loss falls from 0.9177 to 0.1300. The
 cumulative training/evaluation/checkpoint phase takes **158.30 minutes**, with
 **24.99 GiB** peak CUDA allocation. The earlier checkpoint has lower held-out
-loss; both native generation plans are prepared, but generated meaning fidelity
-remains unmeasured. Gemma26 completes the same four passes and both saved epochs
+loss; native baseline and first-epoch generations now each return 21/21 valid
+responses with no failures or reuse. Source-based agent reviews accept 6/21
+baseline and 15/21 first-epoch meanings (14/4 rejected, 1/2 uncertain). Most of
+the gain preserves broad root scope; unresolved activity identity and standalone
+membership definitions still fail. These provisional judgments on eight posts
+are not gold accuracy. The fourth-epoch generation remains pending. Gemma26
+completes the same four passes and both saved epochs
 pass fresh-process verification. Its held-out loss moves from **2.8927**, to
 **1.1682 after epoch one**, and **1.3720 after epoch four**; TRAIN loss falls
 from 1.5005 to 0.3176. Its cumulative phase takes **115.38 minutes**, with
 **52.54 GiB** peak CUDA allocation. Different tokenizers prevent direct
 cross-model loss ranking. Both models' baseline and epoch generation plans are
-prepared and their configuration hashes verified on GB10, with no generation.
-All five task fits and fresh checkpoint checks are complete; native generated
-meaning evaluation is beginning with the published Qwen27 baseline.
+prepared and their configuration hashes verified on GB10. Gemma's generations
+remain pending. All five task fits and fresh checkpoint checks are complete;
+native generated-meaning evaluation and review continue through all six stages.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).

@@ -117,7 +117,7 @@ Full-model jobs ran sequentially. Generated-meaning evaluation and semantic
 review follow the saved checkpoints; the queue itself performs only fits and
 fresh-process integrity checks.
 
-Both published-checkpoint generation baselines are prepared, with no inference,
+Both published-checkpoint generation baselines are prepared
 under `target/bootstrap-compare-student-v1/bootstrap-meaning-generation-evaluation-v1`.
 Native `generic` preparation selects the same 21 qualified evaluation IDs from
 the preserved teacher input plan. Complete rendered prompts and evidence match
@@ -126,15 +126,43 @@ the single-field meaning/null schema, greedy generation, a 512-token response
 allowance and one local request at a time. The separate immutable generation
 runtime inherits the fit's source snapshot and the exact stable launcher and
 local worker scripts; existing running snapshots are untouched. Native
-generation is beginning after the completed GPU fitting sequence, with semantic
-review still pending. Native preparation and `show` also validate both models' epoch
+generation follows the completed GPU fitting sequence. Native preparation and
+`show` also validate both models' epoch
 plans: all six plans have the same 21 complete case prompts, inputs and evidence;
 no teacher answers are copied, and checkpoint model configs bind the actual
 verified adapter hashes. All six configs are staged and hash-verified on GB10
 under `target/bootstrap-meaning-generation-configs-v1`. Adapter paths resolve
 from the owned GB10 `target` directory. Two earlier preparations rejected absolute-path model
 identifiers before inference; original configurations and the rejection receipt
-remain preserved. No generation request has run yet.
+remain preserved. Qwen27's baseline and epoch-one generations each complete
+21 fresh native attempts with 21 valid responses, no failures and no reuse.
+Both consume 106,527 input tokens; output totals are 727 and 896 respectively.
+The worker has moved to the saved fourth epoch; Gemma's three stages remain
+prepared. These owned-GB10 calls incur no provider charge.
+
+Source-bound native agent reviews compare each meaning to the complete post,
+selected tree and Bootstrap-v96 rules, with teacher answers as provisional
+references rather than gold. The current assessment is:
+
+| Qwen27 generation | Accept | Reject | Uncertain |
+| --- | ---: | ---: | ---: |
+| Published baseline | 6 | 14 | 1 |
+| Saved epoch 1 | 15 | 4 | 2 |
+
+The improvement mainly preserves broad root scope instead of replacing roots
+with their illustrated descendants. Remaining first-epoch errors include
+inventing PuffPuffPaint's activity or tool identity instead of returning null,
+underspecifying support for the military proposal, and referring to an unnamed
+post inside a meaning that must stand alone. Price availability and an omitted
+location referent remain uncertain. These are agent judgments on 21 entries
+from eight development posts, not independent gold accuracy or final selection.
+Native `reviews.jsonl` files bind every judgment to its input/output hashes.
+Baseline/epoch-one `run/results.jsonl` SHA-256 values are
+`99098f4a137c87c0e857e9c707748dd215e0ebd3d5335fc97f4e4242cc294d51` /
+`646c8099402869e8cf610a28e3c3269f5e04ed9f2547d2a9b9421343c79d0a87`;
+their current review hashes are
+`f2af5c2cd4b75b6085de416b51ef6fccb5329646c52edd6d2d56edde1077d2e0` /
+`c40d0010fbff8647d1c57d4d7c889912301fe6199b70aa96f3ebecf633c1a048`.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
