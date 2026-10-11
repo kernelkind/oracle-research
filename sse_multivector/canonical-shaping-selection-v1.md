@@ -1,14 +1,15 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized draft is
+The latest user-authorized tested candidate is
 [Hierarchy-consolidation-v13](shr_single_pair/Hierarchy-consolidation-v13.md).
 It clarifies that an activity topic includes information about plans to perform
 the activity unless its meaning explicitly requires that it happened. It adds
 one checking paragraph; shared meaning-writing rules, example and output remain
 unchanged. V12 is preserved with an unintended missing paragraph break; v13
-corrects that formatting without rewriting v12. V13 passes offline checks but
-has not been activated. The user subsequently authorizes the four-attempt
-activity-scope screen below; results are not yet established.
+corrects that formatting without rewriting v12. Its four-attempt activity-scope
+screen meets the targeted checks in both independent draws: Grilling is retained
+and the synthetic completion requirement excludes plans. The proposals remain
+unapplied, and broader real-group regressions have not been rerun with v13.
 See [the draft record](#consolidation-v13-activity-topic-draft) and
 [the registered screen](#consolidation-v13-activity-scope-screen).
 
@@ -3766,8 +3767,9 @@ decision above, not from that advice.
 No model calls are made and all exhausted experiment counters remain unchanged.
 The useful next test would check the original full Food preparation sibling
 group and a synthetic contrast whose parent explicitly requires performance,
-retaining the existing restriction controls. That test is proposed, not begun;
-no reliable improvement is claimed from this draft alone.
+retaining the existing restriction controls. The user subsequently authorizes
+the bounded screen below. No reliable improvement is claimed from this draft
+alone.
 
 ## Consolidation-v13 activity-scope screen
 
@@ -3835,3 +3837,94 @@ assembly and revision checks pass before inference. An initial test invocation
 used a nonexistent class name; after selecting the actual production-path test
 methods, the complete relevant suite passes. No production source changes are
 needed to prepare either input.
+
+### Completed activity-scope results
+
+All four attempts complete with valid outputs, no reuses, warmups, retries,
+failures or missing usage. Paired requests have identical complete inputs,
+settings and HTTP request bodies. Each is one user `input_text` block with empty
+`instructions` and no conversation link. Four distinct raw HTTP 200 response
+references report GPT-6.1 Sol; all actual bodies request medium reasoning and
+all four retain the same request-producing code hash. The retained native
+worker reports one HTTP attempt per call, excluding hidden transport retries.
+The retained first original-case v11 and v13 HTTP bodies differ only by the
+new checking paragraph; no historical request is rerun for that comparison.
+
+| Complete input | First draw | Independent repeat | Targeted assessment |
+|---|---|---|---|
+| Original Food preparation group | Food processing: C010, C011, C012, C098 | Food preparation using heat or smoke: C011, C012 | Grilling, including plans, retained twice; two qualified agent accepts |
+| Synthetic completed home painting | Completed interior surface painting: S001, S002 | Completed interior home painting: S001, S002 | Completion retained and both planned siblings excluded twice; two agent accepts |
+
+The first original-case proposal writes:
+
+> Food processing is the activity of transforming ingredients by changing their
+> physical properties, composition or flavor to produce food or dishes.
+
+It covers Bread preparation, Food smoking, Grilling and the raw no-bake pie
+preparation. Grilling's planned scope is retained under the user-approved
+activity-topic interpretation. Cookware and Cooking appliances are devices,
+and Rosemary is an ingredient; the definition does not establish membership
+for them as processing activities.
+
+The independently repeated original input writes:
+
+> Food preparation using heat or smoke is the activity of processing food by
+> applying heat or exposing it to smoke to produce prepared food or dishes.
+
+That narrower meaning covers Food smoking and Grilling, including the latter's
+plans. Its **or** preserves cold smoking; Bread preparation may include unheated
+stages and the raw pie does not require heat or smoke. The different selected
+children reflect different valid proposed scopes rather than contradictory
+membership under one fixed meaning. This repeat is not a second test of the
+exact Food processing definition.
+
+The two synthetic proposals retain the explicit completion condition:
+
+> Completed interior surface painting is applying paint to surfaces inside a
+> home, with the painting finished.
+
+> Completed interior home painting is applying paint to surfaces or fixtures
+> inside a home, with the painting finished.
+
+Both fit wholly inside completed home painting and are narrower because they
+require interior work. Both cover the two completed items and exclude both
+planned topics, whose full meanings permit painting never to happen. The new
+activity-topic rule therefore does not erase this explicit state restriction
+in either draw.
+
+The two real proposals also pass native prospective local note-set checks:
+seven choices would become four or six, respectively; the new parent would
+represent five or two notes, with no equal parent/child note-set step. The
+synthetic reports withhold note-set checks because no menu is supplied. All
+reports retain `applied: false`, so these results are not a generated hierarchy
+or a claim about full browsing quality.
+
+Native `review --role agent` records all four qualified assessments. Immutable
+pre-review and reviewed `*-report-v1.json` snapshots preserve every producer,
+input, output, receipt, metadata and usage field; only attributed reviews change.
+The exact previously displayed Food processing/Grilling pair remains the human
+decision. These generated proposals are agent assessments, not additional
+human approvals or an accuracy estimate.
+
+The maintained usage selection reproduces ignored
+`target/canonical-shaping-selection-v1/consolidation-v13-activity-scope-usage-v1.json`.
+Complete usage is **5,466 input tokens**, zero reported cached-input/write
+tokens, and **1,376 output tokens including 1,184 reasoning tokens**. Complete
+API-equivalent catalog cost is **$0.024692**; reasoning is charged once.
+Subscription cash charge is zero. All four actual attempts count toward the
+native ceiling, now exhausted at **4/4**. Earlier exhausted counters remain
+byte-identical. Original graph/menu, historical prompt and v13 bytes remain
+unchanged; no Compare, Bootstrap, placement, UI or agent-message work occurs.
+
+This is a promising bounded result for the reviewed omission and its explicit
+completion contrast. It does not establish broad reliability, certify the
+other food boundaries or show that every future consolidation will choose the
+most useful scope. The next useful step is testing unchanged v13 on the
+remaining frozen real sibling groups, preserving unresolved judgments rather
+than converting them into definite failures. That next screen is proposed,
+not started.
+
+After the final current-main sync, all 37 relevant production-path checks pass
+again. A fresh native usage aggregate reproduces the same four-call totals,
+cost and generation attribution exactly. The worktree stays isolated under the
+user's existing instruction; current main receives no task changes.
