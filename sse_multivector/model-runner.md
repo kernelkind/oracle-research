@@ -45,6 +45,14 @@ API-equivalent cost is $0.4660116, with complete cost unknown due to missing
 failed-warmup usage. V104 remains the last approved prompt.
 This does not activate a production prompt or modify earlier frozen experiments.
 
+Bootstrap definition and review follow the user-approved
+[sense and factual-evidence rule](shr_single_pair/bootstrap-current-as-qualification.md#approved-sense-and-factual-evidence-rule):
+choose a justified interpretation consistent with the post, preserve unknown
+instance facts, and return null when establishing the meaning requires an
+unjustified factual assumption. Another plausible interpretation alone does not
+establish an error or require null. This decision changes no frozen prompt,
+schema, source input, output or receipt.
+
 The user subsequently approved subject-scope preservation: Bootstrap clarifies
 the supplied subject, using post/context to resolve sense rather than adding
 restrictions from its particular example. Experimental v109 implements that
@@ -1335,9 +1343,14 @@ Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
 note IDs. The approved finished-menu requirements are all notes reachable,
-strictly smaller note sets on every downward edge, at most six roots/children,
-and no known valid improvement that reduces browsing decisions while preserving
-those constraints. The constructor does not solve menu optimization
+strictly smaller note sets on every downward edge, and no known valid improvement
+that reduces browsing decisions while preserving those constraints. Manage root
+and child choice counts on a best-effort basis; exceeding six is no longer a
+reason by itself to declare the hierarchy unfinished. The
+[traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
+addition leaves six or more siblings. Existing workflow code and frozen audit
+bounds remain unchanged, so saved sibling-limit violations still describe their
+original evaluation. The constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 

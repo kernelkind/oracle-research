@@ -3,14 +3,45 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Bootstrap broad: BBv6 draft
+## Approved sense and factual-evidence rule
+
+The user approved these rules verbatim, replying **“agree”**:
+
+- Bootstrap may choose a justified sense or category boundary consistent with the post.
+- It must preserve unknown facts about particular people, things and events.
+- Return null when establishing the meaning requires an unjustified factual assumption.
+
+Interpretation can use the selected subject, original hierarchy, context and
+ordinary language knowledge; factual claims must remain justified by that node's
+own evidence. A post need not contain a dictionary definition. The existence of
+another plausible interpretation alone does not require a null meaning or make
+the chosen interpretation erroneous. Defining a general kind does not itself
+establish that a particular thing in the post belongs to it.
+
+The [Coffeechain diagnostic](#coffeechain-factual-evidence-sensitivity-completed-results)
+therefore remains a qualified reference-interpretation witness, not an
+established factual error. Its original child meanings choose a particular
+business reading but do not explicitly assert that the rave venue belongs to
+that business. Do not add that affiliation claim when assessing them. Neither
+the business sense nor the alternative hashtag sense becomes human semantic
+gold through this approval.
+
+This records the interpretation and review contract. Prompt versions, schemas,
+source data, producer receipts and historical reviews remain unchanged;
+approval of the rule does not activate a prompt or authorize a new experiment.
+
+## Bootstrap broad: BBv7 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
+[BBv7](Hierarchy-bootstrap-broad-v7.md) is the current development draft,
+reviewed offline but untested by the model. Its
+[independent component-scope change](#bbv7-independent-component-scope)
+addresses the unclosed trio target boundary without choosing a required answer.
+[BBv6](Hierarchy-bootstrap-broad-v6.md) was tested
 on the [focused stock case below](#bbv6-general-activity-versus-particular-participant),
 its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
 the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
@@ -23,7 +54,7 @@ incompatibility classification was withdrawn after challenge.
 BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
-BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
+BBv2 through BBv7 are direct, hash-pinned revisions of unchanged v109 through
 the shared runner's offline `revise` command.
 [BBv1](Hierarchy-bootstrap-broad-v1.md) used v104; it remains preserved as the
 initial draft, rather than serving as the corrected baseline. This does not
@@ -469,13 +500,61 @@ other authorized agents' work, so its delta is not this repeat's call count.
 It was not reset.
 
 BBv6 remains unchanged and not generally qualified. No Compare calls, hierarchy
-build, UI refresh or prompt activation occurred. The next proposed prompt
-experiment would separately resolve the scope of each person or thing within
-a compound subject, then expressly state whether its target is a particular
-identified thing or a qualifying category. Generalizing one part should not
-silently decide another part's scope. This is an untested mechanism hypothesis,
-not a required particular-target answer or authorization to edit; no new
-version or follow-on model calls have begun.
+build, UI refresh or prompt activation occurred. The subsequent authorized
+[BBv7 draft](#bbv7-independent-component-scope) separately resolves the scope of
+each person or thing within a compound subject. No follow-on model calls have
+begun; the repeat does not establish that this wording change will work.
+
+### BBv7 independent component scope
+
+The user authorized drafting the next BB revision after the unchanged trio
+repeat. [BBv7](Hierarchy-bootstrap-broad-v7.md) makes exactly three instruction
+substitutions against BBv6:
+
+- Consider the activity or response, its participants and what it concerns
+  separately; decide whether each describes a category or identifies a
+  particular person, thing, collection or occurrence.
+- Ask separate questions about material choices that can change independently.
+- Express each chosen distinction between particular identity and category
+  scope in the final meaning itself.
+
+Generalizing who experiences enthusiasm therefore cannot silently determine
+which ensemble the enthusiasm concerns. The draft does not require either a
+particular-ensemble or a general-ensemble answer. It retains the broadest
+supported-scope objective, subject identity and expressed restrictions, factual
+uncertainty, and the rule to define the selected topic rather than every concept
+it mentions. Material ambiguities determine which questions are needed; the
+prompt does not mandate a fixed diagnostic checklist for every activity.
+
+The input and four-field output contracts and both AS-generated synthetic
+examples are byte-identical to BBv6. No trio witness or validation answer was
+added to the examples. The native revision receipt reconstructs BBv7 directly
+from unchanged Bootstrap-v109, whose SHA-256 remains
+`caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1`.
+BBv7 SHA-256 is
+`9c6e986cf1782736420499cb48923183001b0a2147b36b2d20cd549dc9e08281`.
+The unchanged BBv6 hash and exactly three substitutions were also verified.
+
+Two independent read-only agent audits found no material instruction or
+example inconsistency. Feedback remains a broad response category; the
+photographic-negative example separately preserves portrait content and the
+identified collection. Neither audit establishes effectiveness on the harder
+observer-versus-ensemble witness. Both example outputs pass the production
+meaning validator, including exact post quotes and paired ambiguity IDs;
+selected pointers and hierarchy parent closure pass. All nine existing native
+prompt-revision tests pass.
+
+[Official reasoning-model guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+supports direct instructions and precise constraints without requested reasoning
+traces. It does not establish this semantic mechanism. BBv7 is a draft, not an
+activated or model-qualified prompt. This step made zero model calls and no
+Compare, hierarchy or UI changes.
+
+The recommended next test is the exact trio parent/child pair under BBv7, with
+independent review of whether its target boundary is actually closed. Include
+broad-category and named-identity controls. Keep source-parent compatibility
+separate from scope faithfulness and do not force earlier relation labels.
+That test has not begun.
 
 ## Existing Bootstrap qualification
 
@@ -2614,9 +2693,12 @@ reasoning is already included in output usage. Subscription calls do not create
 an additional API invoice. The existing shared attempt counter was used without
 resetting it; other experiments' concurrent usage is outside this panel's cost.
 
-A useful next step is to settle how Bootstrap should represent an unresolved
-reference before writing a definition, using the original ambiguous witness.
-This is a recommendation, not an approved new uncertainty rule. No Bootstrap
-revision/adoption, Compare test, hierarchy construction or context-removal
-activation occurred in this diagnostic. Retain the worktree because native
-receipts and original source bindings refer to its absolute artifact paths.
+Following review of this witness, the user approved the
+[sense and factual-evidence rule](#approved-sense-and-factual-evidence-rule)
+above. A useful next step is to assess the remaining flagged meanings for
+concrete contradictions or unjustified factual claims using their own evidence,
+keeping scope preference and ordinary interpretive uncertainty separate.
+That further audit has not begun. No Bootstrap revision/adoption, Compare test,
+hierarchy construction or context-removal activation occurred in this diagnostic.
+Retain the worktree because native receipts and original source bindings refer
+to its absolute artifact paths.
