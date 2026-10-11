@@ -5,11 +5,14 @@ group has too many children. A nomination still follows ordinary local versus
 canonical graph traversal. Selection does not establish containment, placement,
 equivalence or a preferred answer.
 
-**Current investigation: reverse-engineer retrieval of an available parent.**
-The user approved using Plant foods as a known candidate and investigating a
-general rule for finding it. Title-pair similarity and original source branches
-have been screened offline; the proposed priority is not activated. Missing
-parent topics remain diagnostic references only. The earlier subgroup screens
+**Current investigation: derive general shaping rules from toy examples.**
+The user explicitly clarified that improving these particular menus is a means
+of discovering the rules, rather than the end goal. Plant foods retrieval and
+the Cooking/Drinking placements provide contrasting examples. Title-pair
+similarity and original source branches have been screened offline; proposed
+priorities remain unactivated. New shaping rules below are proposals, not
+approved changes to construction or its guards. Missing parent topics remain
+diagnostic references only. The earlier subgroup screens
 use `--method subgroups --pair FIRST_ID SECOND_ID`. Original
 local ancestry and SSE similarity remain retrieval evidence; ordinary traversal
 still decides placement. No new scoring rule is approved by this investigation.
@@ -953,3 +956,131 @@ failed with `PYTHONHASHSEED=0` and passed with `PYTHONHASHSEED=1`. It now checks
 the same exact two-root multiset, matching the neighboring mapped-parent test;
 its hold reason, unchanged graph and unvisited-descendant checks remain intact.
 No production traversal behavior was changed.
+
+## Food sibling examples: deriving shaping rules
+
+This continuation inspects the same frozen fifty-note source, saved native
+answers and existing subject vectors. It makes zero new provider calls or
+encodings and leaves the attempt allowance at 189 used / 31 remaining. No
+comparison prompt, constructor guard or selector behavior changes.
+
+### A missing nominee can be an excluded held entry
+
+Two original entries appeared absent when looking only at unused entries:
+**Meals** and **Processed food**. Both actually exist, and both had already been
+attempted and held. The implementation excludes every processed entry from
+nomination, including held entries; neither became canonical. The preliminary
+absence assessment was corrected after inspecting their recorded status.
+
+Meals is original root **5** in note
+`dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c`.
+Its context says: `“5 meals of sides in a pinch” identifies a meal-related use
+for the beets.` The independently generated fixed meaning is:
+
+> Meals are eating occasions and the food intended to be eaten as part of
+> them, including but not limited to side dishes accompanying the main food.
+> Meal components may be prepared or stored for later use, including when
+> food is needed at short notice.
+
+The saved comparison at `menu-growth-v1/step-076/experiment` establishes:
+
+| Compared canonical node | Saved relation to local Meals |
+|---|---|
+| Food C001 | `canonical_contains_local` |
+| Dinners C059 | `local_contains_canonical` |
+| Food for a lunch box C058 | `local_contains_canonical` |
+| Food dishes C020 | `uncertain` |
+
+The uncertainty caused the entire Meals entry to be held. Its reason cites
+Food dishes' descendants Bread and Salsa lacking a meal-use restriction. This
+investigation preserves that answer and hold. The positives concern their
+original frozen comparison inputs; they do not certify placement against the
+current graph, whose descendant evidence has grown. Breakfast C018 was not
+queried in that sixteen-node phase, so Breakfast + Dinners remains a proposed
+control rather than a fully labeled positive pair.
+
+The Dinners + Food for a lunch box pair is especially useful: both are retained
+Food menu children, and both original comparisons to Meals are saved positives.
+Using the weaker heading-pair SSE score with native eligibility:
+
+| Candidate pool | Eligible entries / distinct headings | Meals heading rank |
+|---|---:|---:|
+| Unused original entries | 1,320 / 601 | Excluded as previously processed |
+| Unused entries plus held entries, diagnostic only | 1,334 / 604 | **2** |
+
+Meals scores 0.7929 against Dinners and 0.7092 against Food for a lunch box;
+the weaker score is 0.7092. Lunch makers ranks first, demonstrating that
+similarity alone still does not identify the containment direction or guarantee
+a suitable parent. For Breakfast + Dinners, Meals ranks seventh among headings
+and tenth among original entries in the expanded diagnostic pool.
+
+Processed food is original entry **1.1** in note
+`54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165`.
+It was held at `coverage-children-v1/step-066/experiment`, also because the
+Food dishes comparison was uncertain. For Cheese doodles C022 + Processed
+food being harmful to the author C081, its source note also makes it ineligible
+to compare with C081 under the existing same-note rule. Including held entries
+in retrieval does not remove that second blocker. No exception is introduced.
+
+**Selection implication:** distinguish an original parent topic that is absent,
+one excluded by comparison eligibility, and one previously attempted but held.
+Keep the latter's identity and blocking reason visible to the investigation;
+do not silently treat it as nonexistent or automatically repeat its model calls.
+This is a proposal for shaping-selection evidence, not approval to relax holds.
+The ignored `food-pair-availability-v1.json` artifact records six bounded pool
+contrasts with source hashes; it is a ranking diagnostic, not comparison input.
+
+### Evaluate the affected groups together
+
+The prior native audits distinguish useful regrouping from relocated
+overcrowding. With K = 6, count the choices beyond six in each sibling group,
+including roots, and sum them across the menu:
+
+| Saved menu | Choices beyond six, summed across groups | Equal-note-set edges | Total shortest individual selections |
+|---|---:|---:|---:|
+| Frozen baseline | 9 | 0 | 134 |
+| Cooking insertion | 9 | 1 | 143 |
+| Drinking insertion | **8** | 0 | 140 |
+
+Cooking moves all seven children into another seven-choice group, introduces
+a non-narrowing step and increases depth. Drinking fixes the root group at
+the cost of one additional selection for six notes. Neither counting a smaller
+original group alone nor minimizing depth alone describes the approved goal.
+
+For illustration only, start with Food's 13 children and replace m direct
+choices with a new parent containing those m children. Without additional
+rewiring, Food then has 13−m+1 choices and the new parent has m:
+
+| Children grouped | New choice counts: Food / new parent | Choices beyond six in these groups: before → after |
+|---|---:|---:|
+| 2 | 12 / 2 | 7 → 6 |
+| 8 | 6 / 8 | 7 → 2 |
+| 13 | 1 / 13 | 7 → 7 |
+
+These are arithmetic examples, not generated edges or semantic judgments.
+A new parent may still have too many children while making useful progress;
+requiring every intermediate grouping to be finished immediately would exclude
+the eight-child example. Conversely, merely moving the entire list does not
+reduce the remaining overcrowding. Actual placement may affect other branches,
+so use the completed menu audit rather than just this local formula.
+
+### Draft process suggested by the examples
+
+1. Start with an overcrowded browsing group and a plausible pair of its
+   children. Use available original local entries to nominate a broader topic;
+   retain prior construction status and normal comparison eligibility.
+2. Send the selected local entry through ordinary graph traversal. A similarity
+   score or original local ancestry never supplies the canonical relationship.
+   Keep blocked candidates separate from candidates that were never found.
+3. Evaluate all affected groups together. Prefer a reduction in choices beyond
+   K, preserve strictly smaller note sets at each downward step, and measure
+   added selections. The new parent need not contain only the selected pair.
+4. Once choice limits are satisfied, favor fewer selections using already valid
+   relationships. The approved shortcut rule remains relevant: direct choices
+   may remain when there is room, rather than forcing every route through a
+   new intermediate parent.
+
+This is a draft to review, not a complete optimization objective. The ordering
+of competing improvements and the acceptable depth cost remain open. The
+existing semantic, immutable-meaning, note-coverage and uncertainty requirements
+remain in force; no change to those requirements is inferred from this study.
