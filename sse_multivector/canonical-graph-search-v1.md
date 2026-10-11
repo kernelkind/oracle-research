@@ -420,7 +420,7 @@ Once the baseline roots were complete, the graph-root continuation was started
 alongside the baseline's deeper-entry construction. It can reuse all completed
 baseline root requests; each method's graph and entry order remain independent.
 The native continuation ownership lock prevents duplicate execution when the
-coordinator later revisits the completed graph-root phase. Its separate log is
+completed graph-root phase is revisited. Its separate log is
 `native-cli-logs/graph-roots-overlap.log`.
 
 The first root divergence occurs at original queue index 24, a Food entry from
@@ -433,3 +433,44 @@ admits the entry. Both use the same independently generated local meaning.
 This is a concrete difference in observed-versus-inferred coverage, not proof
 that either semantic interpretation is correct. Final graph quality and cost
 remain pending; matching early roots does not establish final preservation.
+
+Both fifty-root phases are now complete. Native reports retain the following
+checkpoint, before either method's deeper-entry construction is complete:
+
+| Measure | Guarded16 | Graph traversal |
+| --- | ---: | ---: |
+| Original roots processed | 50 | 50 |
+| Canonical nodes | 35 | 35 |
+| Canonical edges | 34 | 28 |
+| Roots / maximum children | 10 / 10 | 9 / 9 |
+| Held original entries | 9 | 9 |
+| Valid cases, including meaning generation | 707 | 913 |
+| Original source calls, including warmups and failures | 809 | 1,133 |
+| Original source warmups | 100 | 218 |
+| Known original-generation catalog cost | $2.4585984 | $2.9999648 |
+| Original calls with unknown cost | 2 | 2 |
+
+The known original-generation subtotal is **22.0193% higher** for traversal.
+Complete costs remain unknown; this is not a precise total-cost percentage or
+a savings result. Graph's 372 exact answer reuses reduce new execution, not the
+observed operational work represented by those answers. Source warmups remain
+included, with the fresh-standalone warming qualification above. The graphs
+differ despite equal admission counts, and neither root graph meets the final
+structural requirements. Evidence: `baseline-roots-audit.json`,
+`graph-roots-audit.json` and the two `*-roots-usage.json` native reports.
+
+The completed baseline 100-entry checkpoint reaches all fifty notes, but its
+raw graph has fifteen roots, up to sixteen children, five equal-note-set edges
+and fourteen structural violations. `baseline-entry100-audit.json` retains
+that bounded offline audit; coverage alone is not finished-menu acceptance.
+
+Deeper construction is now scheduled concurrently across methods to avoid an
+idle traversal arm. The earlier sequential coordinator was stopped while the
+baseline's 60th selected-entry continuation was active. Native ownership
+locking allowed that same frozen continuation to finish and be resumed without
+redispatch; no model call was canceled. Each method still processes its own
+automatic entry order sequentially, uses the same frozen inputs and guards,
+and shares exact-request history and the irreversible attempt counter.
+`native-cli-logs/*-v2.log` retain the continued native invocations. The full
+200-entry comparison remains running; the root result is not substituted for
+that later result.
