@@ -1983,3 +1983,33 @@ for qualification. No candidate is adopted, no difficult topic is removed,
 and no relation is changed merely to match a historical label. The next
 mechanism considered is demonstrating the comparison method through fully
 synthetic examples, without using validation subjects, posts or expectations.
+
+### V98/V99: synthetic demonstrations of independent conditions and activity roles
+
+V98 changes V97 only by adding two complete synthetic input/output examples.
+Bird movement versus winged flight demonstrates preserving an activity while
+changing the actor, and preserving the actor while changing the activity.
+Measurement versus laser-ranging instruments demonstrates the established
+intended activity role and its coverage of the qualifying instrument's design,
+arrangement and functions. The examples teach different decisions; neither
+contains validation subjects, original posts or purported AS outputs. All four
+synthetic subjects are absent from the 298 frozen regression inputs. Both
+example outputs pass the existing production five-field validator.
+
+Independent review accepts both examples' logic. V99 corrects a direction-dependent
+use of "child" in the reverse instrument justification and removes an unnecessary
+wing-support claim about ground walking. V98 is an unrun draft with preserved bytes;
+V99 is the qualification candidate. These precision changes do not alter the
+example relations or the instructions inherited from V97.
+
+The fourteen-case gate is inherited directly from V97: eight targeted restriction
+outputs, both019 narrower-bagel controls, and four explicit-scope/role controls.
+Original inputs, producer evidence, model, worker and output schema are unchanged;
+only the prompt and corresponding automatic cache identity change. The cached
+prefix is2109 estimated tokens. Native stage caps27 and3 allow warmups and
+provider recovery within the persistent shared20000 allowance. Qualification
+requires valid diagnostic proofs and control preservation, followed by a fresh
+repeat before broad evaluation. A separate independent meaning-only review
+challenges the targeted expectations before inspecting any answers; lexical
+implication or ambiguity must not be suppressed merely to clear old error counts.
+No Bootstrap changes, hierarchy construction or production-code changes occur.
