@@ -94,6 +94,18 @@ or whole-branch certification. Four earlier repeat meanings plus four
 warmups use eight attempts,
 with no answer reuse or failures. V104 remains approved; v109 is not activated.
 
+The subsequent [complete saved Food-branch review](shr_single_pair/bootstrap-current-as-qualification.md#complete-food-branch-review-and-transitive-reconciliation)
+inspects 36 independently established meanings and 176 recursive ancestor checks
+per version, without fresh calls or native verdict changes. No definite
+incompatibility is established. Its combined review exposed a convention
+inconsistency: accepting Food → Risotto and Risotto → dish-specific ingredients
+also establishes the Food → ingredient shortcuts under the fixed-meaning
+assumption. A stricter consumer-purpose reading must qualify the original
+Food → Risotto links too. Preserve this as one unresolved membership convention,
+not 35 producer failures or a measured prompt improvement. Conditional chain
+implications are not fresh Compare answers; Nostr's independent food-sense
+boundary remains separately qualified.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -6887,8 +6899,8 @@ candidate for isolating that purpose inference, not a qualified hierarchy
 prompt. Exact witnesses, review qualifications and accounting are in the
 [ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).
 
-The next authorized experimental candidate, [V181](shr_single_pair/Hierarchy-compare-v181.md),
-replaces only V179's focused identity/consumer challenge with a challenge of
+The subsequent authorized experiment tested [V181](shr_single_pair/Hierarchy-compare-v181.md),
+which replaces only V179's focused identity/consumer challenge with a challenge of
 all applicable absent parent restrictions. It preserves union coverage,
 particular-entity safeguards, examples and the V179 schema. Twenty fresh
 comparisons inherit the four completed V179 V2 baselines via native
@@ -6897,3 +6909,25 @@ ASv6.100 producer receipts remain fixed; no Bootstrap or hierarchy work is
 included. This tests an attention hypothesis about purpose requirements,
 not a new containment convention. See the
 [V181 qualification record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v181-challenge-all-applicable-absent-parent-restrictions).
+
+The completed V181 panel fails qualification: 16/20 supported responses and
+four reversal conflicts, versus saved V179's 18/20 and two conflicts. Stockpots'
+meal-purpose leap persists in both forward draws, and both Fasting forward
+draws now import a person restriction absent from its fixed meaning. Reverse
+answers find supported counterexamples under the same definitions. All other
+controls pass. Twenty fresh valid attempts use $0.1711924 in native
+API-equivalent catalog usage, with no reuse, warming, retry, failure or missing
+usage. V181 is not adopted or broadened; V179 remains the development baseline
+with an unresolved failure. A directional evaluation-order diagnostic is
+proposed, not begun. See the
+[completed qualification and review limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v181-qualification).
+
+The subsequent authorized [V182](shr_single_pair/Hierarchy-compare-v182.md)
+diagnostic starts from V179 and changes only requested directional evaluation
+and report order, with corresponding reordering of its existing synthetic
+example diagnostics. Symmetric A/B subjects/meanings, semantic rules and schema
+remain fixed. Twenty fresh comparisons inherit the saved V179 five-pair panel,
+both orientations and two draws. Report-order compliance is measured separately
+from semantic support; internal reasoning order is not observable. No Bootstrap
+or hierarchy work occurs. See the
+[V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).

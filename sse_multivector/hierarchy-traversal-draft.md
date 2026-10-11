@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v22
+# Hierarchy selection by traversal — draft v24
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -7,6 +7,10 @@ the constructor, comparison prompt or existing experiments.
 
 Place one selected local node in the canonical hierarchy with fewer comparisons.
 Each comparison is local versus canonical, using the existing compare prompt.
+
+When starting from an empty canonical hierarchy, promote the first selected
+local root, with its independently established explicit meaning, as the initial
+canonical node. Subsequent selected nodes go through ordinary traversal.
 
 The local node's explicit meaning stays fixed. Each traversal uses a fixed
 snapshot of the canonical graph. Other local nodes may be placed while that
@@ -26,13 +30,18 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
 
 **Select local roots first, then L2, then L3, continuing one local level at a
 time across all notes.** L1 is the root level; each local child is one level
-below its parent.
+below its parent. These levels belong to the original local hierarchies, not
+the resulting canonical graph.
 
 **Rotate across notes, taking one local node per note per round at the current
-level.** Preserve saved note order within each round and each note's saved node
-order. Take the next unprocessed node at that level from each note; skip notes
-with none remaining. Move to the next local level once the current level is
-exhausted across all notes, unless the stopping conditions end selection first.
+level.** A round means one pass through the notes.
+Preserve saved note order within each pass and each note's saved node order.
+Take the next unprocessed node at that level from each note; skip notes with
+none remaining. Move to the next local level once the current level is exhausted
+across all notes, unless the stopping conditions end selection first.
+
+This rotation sets selection order. Searches can overlap without waiting for
+a pass to finish.
 
 Use the selected order to start up to three local-node searches under the
 concurrent policy below. Apply placements in that same order, finishing
@@ -254,6 +263,10 @@ unchecked deeper local nodes.
 conditions against the current browsing hierarchy and every note in the selected
 corpus.** A complete local level is not required before checking.
 
+Check from L1 onward. If L1 already provides individual access to every note and
+all canonical edges strictly narrow the note set, stop there. Remaining L1 roots
+and deeper local nodes stay unprocessed.
+
 If either condition fails, continue construction under the selection and
 concurrent-search rules. When both pass:
 
@@ -426,8 +439,10 @@ eligibility, original-parent handling and consolidation rules above are agreed.
 The walk below combines them with the provisionally approved stopping-check
 timing.
 
-1. Select the next local node in the agreed order. Start its traversal at the
-   canonical roots.
+1. Select the next local node in the agreed order. When the canonical hierarchy
+   is empty, promote the first selected local root with its established meaning
+   as the seed and proceed to consolidation and stopping checks in steps 6–7.
+   Otherwise, start its traversal at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
    top-to-bottom order above.
 3. Follow the returned label using the table below.
