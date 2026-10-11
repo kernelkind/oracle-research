@@ -5730,6 +5730,39 @@ negative-search reliability, per-check reasoning qualification, interpretation
 uncertainties and the eight-hour full-evaluation target open. The final sixty
 are not rerun.
 
+## DCSv1 four additional notes (October 11)
+
+The user approves four more notes from the frozen sixty, testing new coverage
+inputs with the current mechanical reductions and unchanged DCSv1 at Sol/xhigh.
+These answers have prior matching/actual-edge receipts from the completed
+24-note panel, but none has supplied a previous DCS search. All three exact-hash
+complete-output premise audits are bound before preparation.
+
+| Saved answer | Domain | Residual searches | Candidates before audit correction |
+| --- | --- | ---: | ---: |
+| `M03-checkpoint-200-N0033` | Agent Trust Layer, AI agents and payments | 9 | 14–18 |
+| `M03-checkpoint-800-N0008` | Noem, ICE shooting and Mamdani | 8 | 3–10 |
+| `M02-checkpoint-600-N0036` | NGP battery investment and AI power demand | 5 | 2–7 |
+| `M01-checkpoint-1000-N0060` | Axios hijacking and possible computer compromise | 2 | 5–7 |
+
+Pre-call source-first assessments expect null on twenty-two cases. Noem `015`
+retains uncertainty over whether the newspaper type preserves Sources. NGP
+`002` retains root uncertainty over whether an investment-business type
+preserves broad Investments. Baseline verdicts are diagnostic, not gold.
+These are agent assessments, not human-confirmed labels; any post-call label
+correction must remain explicit.
+
+Preparation preflight finds a violation of the existing approved omission rule:
+three Agent Trust Layer actual edges (`3.1`, `4.1`, `7.1`) have exact-hash
+external uncertainty, but the candidate filter consults only native reviews.
+Five inputs depend on those omissions: `002`, `008`, `009`, `012`, `017`.
+Nineteen unaffected searches proceed in frozen native groups while a separate
+worktree corrects the filter to retain disputed descendants. The five affected
+inputs require fresh preparation and source-first assessment before calls.
+The current preflight verifies all 82 positive self guards, 92 other accepted
+omitted edges, exact wording/context aliases and source/post bindings.
+Prompts and semantic criteria remain unchanged.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with
