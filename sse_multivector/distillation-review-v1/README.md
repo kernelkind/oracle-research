@@ -5638,6 +5638,47 @@ Ignored native evidence remains under
 Prompts, semantic criteria, reasoning settings, reviewer qualification and the
 final sixty-answer validation retain their existing status.
 
+## DCSv1 focused negative-search controls (October 11)
+
+The user approves a small focused test of negative-search reliability after
+receipt-hashing reuse. Independent source-first assessments freeze twelve
+existing residual inputs before fresh model calls: six have a valid placement
+and six require a complete negative account of every supplied candidate.
+These are development-exposed agent-assessed controls, not unseen examples or
+human gold labels. DCSv1, Sol/xhigh, all source wording and interpretation rows
+remain unchanged.
+
+| Saved answer | Coverage-search suffixes | Expected result |
+| --- | --- | --- |
+| `M01-checkpoint-200-N0054` | `005`, `008`, `013`, `016`, `017` | Positive; student `9`, Markets, is a valid witness |
+| `M02-checkpoint-200-N0015` | `015` | Positive; student `3`, Girls and women, is a valid witness |
+| `M01-checkpoint-600-N0017` | `004`, `008`, `009` | Null; every candidate adds a missing restriction |
+| `M01-baseline-N0076` | `001`, `006`, `009` | Null; every candidate adds a missing restriction |
+
+IDs expand as `<answer>:coverage-search:<suffix>`. Other independently sound
+witnesses remain acceptable. Candidate lists contain **2–14 entries**; the
+Markets witness appears first of two, eleventh of twelve, or tenth of eleven.
+ETF meanings preserve financial-market activity; Sisters preserves the fixed
+human-family meaning of girls or women. Negative controls check that person
+names, ordinary art, greed, a streaming service and the named contribution do
+not acquire the other candidates' actions, types, identities or relationships
+through co-mention or context.
+
+NFT `004`, Blockchain technology beneath Digital, is excluded from negative
+controls: ordinary digital-ledger type meaning preserves the candidate. Its
+existing DCS result correctly returns that witness. Rejecting the Incest witness
+in family `006` cannot establish a negative for its unresolved Body alternative;
+that case and the Mothers/Daughters beneath Girls uncertainties stay separate.
+
+Native `prepare --from --only --repeat --prompt-cache` selects the exact frozen
+cases from the four `after-final` receipt-hashing experiments. Each prefix is
+eligible; four warmups and twelve comparisons need sixteen initial attempts,
+with provider-only retry headroom retained in the shared attempt counter.
+The shared queue admits up to thirty requests. Native validation checks
+candidate accounting; complete decisions and every reason require independent
+audit. Passing a fresh repeat would establish consistency on these controls,
+not broad reviewer qualification or full-evaluation runtime.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with
