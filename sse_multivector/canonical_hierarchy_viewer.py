@@ -19,8 +19,9 @@ def export_viewer(directory, output):
     state_bytes = state_path.read_bytes()
     state = json.loads(state_bytes)
     canonical_trial._check(state)
-    nodes = {node['id']: node for node in state['nodes']}
-    if not nodes or len(nodes) != len(state['nodes']) or 'VIEW_ROOT' in nodes:
+    rows = state.get('menu', {}).get('nodes', state['nodes'])
+    nodes = {node['id']: node for node in rows}
+    if not nodes or len(nodes) != len(rows) or 'VIEW_ROOT' in nodes:
         raise ValueError('invalid canonical viewer node IDs')
     children = {identifier: [] for identifier in nodes}
     for node in nodes.values():

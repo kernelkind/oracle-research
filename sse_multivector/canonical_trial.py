@@ -56,6 +56,19 @@ def _ancestors(nodes):
     return result
 
 
+def _note_sets(nodes):
+    parents = {n['id']: n['parents'] for n in nodes}
+    children = {n: [] for n in parents}
+    represented = {n['id']: {e['note_id'] for e in n['entries']} for n in nodes}
+    for child, links in parents.items():
+        for parent in links:
+            children[parent].append(child)
+    for parent in reversed(tuple(TopologicalSorter(parents).static_order())):
+        for child in children[parent]:
+            represented[parent].update(represented[child])
+    return represented, children
+
+
 def _save_once(path, value):
     if path.exists():
         if workflow.read(path) != value:

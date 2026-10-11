@@ -1455,15 +1455,18 @@ original-parent containment may follow from traversal or transitive inference;
 an unchecked or contradicted requirement holds the local entry without reopening
 a pruned branch.
 
-The approved traversal draft now requires restricted refinement after note
+The constructor implements restricted refinement after note
 coverage: deeper selections come only from notes represented by leaves
 containing multiple notes. The finished hierarchy must remove redundant steps
 with equal parent/child note sets and retain individual access with one note per
 leaf. The constructor and structural audit now check single-note leaves, even
-when the same notes are individually accessible elsewhere. Restricted refinement
-and automatic redundant-step removal remain unimplemented. Separate required L1 processing in
-the prominence draft is unchanged. The retained-node choice for redundant steps
-remains to be worked through before implementing automatic removal.
+when the same notes are individually accessible elsewhere. Retain the deeper
+heading when a parent and child represent the same notes, reconnecting other
+branches through established ancestors. The saved `menu` is separate from the
+unchanged raw comparison graph; the audit and requested viewer export use it.
+Rebuild it as notes arrive, so a previously omitted heading can return when
+useful. Keep skipped local entries unused for later eligibility changes.
+Separate required L1 processing in the prominence draft is unchanged.
 
 Each selected local node receives an independently generated immutable meaning.
 Every comparison is local versus canonical with fixed meanings; its input
@@ -1501,7 +1504,9 @@ Count a node's own supporting notes and recursive descendants, deduplicating
 note IDs. The approved finished-hierarchy conditions are all notes reachable
 individually,
 one distinct note per canonical leaf, and strictly smaller note sets on every
-downward edge. The current constructor checks individual access, single-note
+downward edge. Individual access permits notes attached directly to a parent
+that also has children; it does not require one singleton canonical node per
+note. The current constructor checks individual access, single-note
 leaves and strict edges. Exhausted local inventory with a multi-note leaf reports
 unfinished construction. There is no
 additional requirement to find or apply every known regrouping or shortcut, or to conduct a

@@ -1,10 +1,10 @@
-# Hierarchy selection by traversal — draft v25
+# Hierarchy selection by traversal — draft v26
 
 **Status: approved traversal baseline implemented by the standalone
-`traversal-v24` constructor, including the v25 single-note-leaf stopping check.
-Restricted refinement and automatic redundant-step removal below remain
-approved design, not yet implemented.** Stopping-check timing remains
-provisional. Comparison prompts and previously frozen experiments retain their
+`traversal-v24` constructor, including restricted refinement, single-note-leaf
+stopping and deeper-heading retention in the finished browsing hierarchy.**
+Source hashes distinguish this implementation from earlier frozen runs.
+Stopping-check timing remains provisional. Comparison prompts and previously frozen experiments retain their
 existing contracts. The limited three-note trial is recorded below.
 
 ## Goal and inputs
@@ -51,19 +51,18 @@ Use the selected order to start up to three local-node searches under the
 concurrent policy below. Apply placements in that same order, finishing
 triggered consolidation before applying the next placement.
 
-Do not skip a local child merely because its original parent's canonical node
-represents one note. The local child may have useful relationships elsewhere
+Before note coverage, do not skip a local child merely because its original
+parent's canonical node represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
-The initial selection order is implemented. The refinement restriction below
-is newly approved and not yet implemented.
+The initial selection order and the refinement restriction below are implemented.
 
 ### Agreed refinement after note coverage
 
 **Once every selected note is represented, select only unused, deeper local
 nodes from notes represented by canonical leaves containing multiple notes.**
-A canonical leaf has no canonical children. Count its distinct supporting note
-IDs; do not count duplicate entries as separate notes. Take the union of note
+A canonical leaf has no children in the finished browsing hierarchy. Count its
+distinct supporting note IDs; do not count duplicate entries as separate notes. Take the union of note
 IDs across all leaves containing more than one note. Only those notes supply
 subsequent deeper local selections. Preserve the saved level and round-robin
 order within that eligible set, and use ordinary traversal for each selected
@@ -78,7 +77,14 @@ selection draft.
 
 If a leaf containing multiple notes has no remaining eligible local nodes that
 produce a valid split, report it as unresolved rather than claiming completion.
-This rule is not implemented by the current constructor.
+Skipped entries remain unused and can become eligible if later graph changes
+produce a multi-note leaf containing their notes. Searches selected before
+coverage retain their saved results and ordinary placement checks.
+
+Notes may remain directly attached to a node that also has children; each note
+does not need a separate canonical node. For example, Food representing N1 and
+N2 with a Vegetables child representing N1 has one single-note leaf. N2 remains
+attached to Food; this example requires no additional refinement.
 
 ## Agreed traversal rules
 
@@ -285,9 +291,18 @@ shortcuts is required before stopping.
 notes in the finished hierarchy.** Preserve individual note access and valid
 containment when reconnecting the retained nodes. Equal observed note sets do
 not establish equivalent meanings; do not merge meanings or transfer local
-support merely because note sets match. Choosing which node to retain and
-handling its other branches still require a concrete worked example. Automatic
-removal is not yet implemented. The constructor and structural audit now require
+support merely because note sets match. **Retain the deeper node and bypass its
+redundant parent.** Reconnect all of the removed parent's children to its
+surviving parents, or promote them to roots when no parent survives. Preserve
+other branches; shared note sets do not establish containment between siblings.
+
+The constructor saves the finished browsing hierarchy in `menu`, alongside the
+full comparison graph and unchanged construction history. Comparison traversal
+continues to use the full graph. Rebuild the menu after graph changes; a heading
+omitted now may become useful after new notes arrive. The audit and requested
+viewer export use the saved menu. No UI refresh occurs during construction.
+
+The constructor and structural audit require
 every leaf to contain one distinct note. Individual access elsewhere does not
 waive an unfinished multi-note leaf; exhausted inventory reports unresolved
 construction rather than completion.
@@ -317,9 +332,10 @@ concurrent-search rules. When both pass:
 On later resumption, reuse exact unchanged answers and check a search against
 the then-current graph before placement, as required by the concurrent-search
 policy. The current constructor implements this timing for individual access,
-strict edges and single-note leaves. It does not yet automatically remove
-redundant steps. The limited trial below does not
-establish general hierarchy quality.
+strict edges and single-note leaves after removing equal-note steps from the
+browsing hierarchy. Individual access means that each selected note remains
+attached to a reachable canonical node; that node may also have children. The
+limited trial below does not establish general hierarchy quality.
 
 ## Agreed consolidation trigger
 
@@ -635,9 +651,11 @@ the complete total is unknown because the failed attempt lacks usage. Receipts,
 `run-summary.json`, `audit.json`, `usage.json` and resume state remain in the
 ignored task artifacts. The task worktree must remain for those frozen paths.
 
-**Current shaping limitation:** strict note-set narrowing is a stopping check;
-the L1-first round-robin selector has no rule targeting equal-note-set edges.
-The six-sibling consolidation trigger addresses option count, and cannot be
+**Frozen trial limitation:** strict note-set narrowing was a stopping check;
+the L1-first round-robin selector had no rule targeting equal-note-set edges.
+The six-sibling consolidation trigger addressed option count, and could not be
 assumed to remove such edges. This trial has no edges and does not exercise that
 limitation. The user subsequently approved the redundant-step removal and
-restricted refinement selection recorded above. These updates have not been implemented.
+restricted refinement selection recorded above. They are now implemented and
+covered by offline production-path checks; this saved trial is unchanged and
+does not validate them with live model judgments.
