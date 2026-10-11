@@ -10,10 +10,10 @@ corrects that formatting without rewriting v12. Its four-attempt activity-scope
 screen meets the targeted checks in both independent draws: Grilling is retained
 and the synthetic completion requirement excludes plans. The proposals remain
 unapplied. The remaining eight real groups complete twice each: eight qualified
-agent accepts, two Coffee structural rejects and six uncertain Food/Cuisine/Food
-dishes assessments after a documented Food reassessment. No new clear semantic
-regression is established; unresolved judgments remain unresolved. V13 is
-experimental and has not been activated.
+agent accepts, two Meals omitted-sibling rejects, two Coffee structural rejects
+and four uncertain Cuisine/Food dishes assessments after documented Food
+reassessments. The Meals proposals omit Food dishes despite including meal
+composition. V13 is experimental and has not been activated.
 See [the draft record](#consolidation-v13-activity-topic-draft) and
 [the registered screen](#consolidation-v13-activity-scope-screen).
 
@@ -4002,7 +4002,7 @@ for each call, with no hidden transport retries.
 | Roots | Beverages: Coffee C006 + Slush drinks C039 | Same children, independently worded meaning | Two qualified accepts; seven choices to six |
 | Mental states | Motivational states: Perceived needs C047 + Desires C076 | Identical meaning and children from a distinct response | Two qualified accepts; six to five |
 | Cuisine | Prepared dishes: Pizza C054 + Cheesesteaks C066 + Risotto C073 | Same children, independently worded meaning | Two uncertain whole-parent-fit assessments; prospective six to four |
-| Food | Meals: Breakfast C018 + Dinners C059 | Same children, independently worded meaning | Two uncertain completeness assessments after reassessment; prospective thirteen to twelve |
+| Food | Meals: Breakfast C018 + Dinners C059 | Same children, independently worded meaning | Two omitted-sibling rejects after composition review: Food dishes C020 is covered but absent |
 | Eating | JSON null | JSON null | Two qualified diagnostic accepts; no impossibility proof |
 | Cooking appliances | Cooking vessels: Stockpots C015 + Cast-iron cookware C105 | Same children, independently worded meaning | Two qualified accepts; four to three |
 | Coffee | Further coffee: Second coffee C101 + Additional coffee C102 | Same children, independently worded meaning | Two structural rejects: new-parent note set equals C102's |
@@ -4016,11 +4016,18 @@ and do not add a requirement to generate their own heat.
 
 Both Meals definitions emphasize occasions and food as a whole, but also cover
 composition and descriptions. The initial assessment treated the whole/part
-distinction as enough to justify omitting Food dishes C020. That is not
-established: C020 explicitly covers foods served or eaten as meals or parts of
-meals, which may fit the proposed composition scope. Both Food results are
-reassessed as uncertain completeness rather than confirmed passes. No omitted-
-child error is confirmed until this meaning boundary is resolved.
+distinction as enough to justify omitting Food dishes C020, then corrected both
+results to uncertain completeness. The user subsequently points to the exact
+composition wording:
+
+> "thier compositions and descriptions" i think it falls under this, right
+
+The agent agrees: C020 explicitly covers foods served or eaten as meals or parts
+of meals, which falls within this stated composition scope. Both Food results
+are now rejected for omitting a wholly covered offered
+sibling. This preserves the user's tentative wording and the agent's separate
+assessment rather than assigning a new human-gold label. The generated meaning
+need not change to identify this membership-list failure.
 
 Coffee repeats a measured finished-structure limitation. Its proposed parent
 represents two notes; Second coffee represents one and Additional coffee two.
@@ -4043,13 +4050,14 @@ proposed scopes with different children are not themselves contradictions.
 
 Native `review --role agent` initially records ten qualified accepts, two
 structural rejects and four uncertainties. Appended Food reassessments preserve
-the original accepts in review history; the current counts are **eight
-qualified accepts, two structural rejects and six uncertainties**. These are
-assessments of sixteen development draws, not sixteen independently human-
-labeled judgments or an accuracy rate. Immutable pre-review, reviewed and Food
-reassessed snapshots preserve all producer, input, output, receipt, metadata
-and usage fields; only attributed reviews change. This is an evaluation
-correction, not a model-output or prompt change.
+the original accepts and subsequent uncertainties in review history; after the
+composition review, the current counts are **eight qualified accepts, two
+omitted-sibling rejects, two structural rejects and four uncertainties**. These
+are assessments of sixteen development draws, not sixteen independently human-
+labeled judgments or an accuracy rate. Immutable pre-review, reviewed, Food
+reassessed and composition-reviewed snapshots preserve all producer, input,
+output, receipt, metadata and usage fields; only attributed reviews change.
+This is an evaluation correction, not a model-output or prompt change.
 All shape reports retain `applied: false`. Food's twelve remaining choices
 still exceed six, so its native local-group flag remains false even if the
 proposed partial reduction is semantically valid. No final hierarchy quality
@@ -4069,16 +4077,22 @@ consolidation, assembly and revision checks pass again. A fresh native aggregate
 totals and generation attribution exactly after the reviews and synchronization.
 The unrelated canonical release-decisions modification is preserved.
 
+At the subsequent composition review, all 37 checks pass after synchronizing
+main at `f6202b41`. The native composition-review aggregate preserves the same
+usage, cost and exhausted 16/16 counter. Both appended native reviews leave all
+producer/input/output/receipt/usage fields unchanged. No further calls occur.
+
 Unchanged v13 now has two fresh draws on all nine frozen real groups, plus two
 draws of the separate completed-painting control. Its earlier Grilling and
-completion results remain intact; this screen establishes no new clear failure
-on the qualified semantic controls. It does not settle the food conventions
-or establish broad reliability. No prompt edit, Compare/Bootstrap inference,
-hierarchy change, UI refresh, activation or agent message occurs.
+completion results remain intact, while both broader Food draws fail the
+complete-child-list requirement under their own proposed Meals meanings. This
+does not settle the remaining Cuisine/Food dishes scope conventions or establish
+broad reliability. No prompt edit, Compare/Bootstrap inference, hierarchy
+change, UI refresh, activation or agent message occurs.
 
-The most useful next step is to settle one exact uncertain meaning comparison
-with the user, starting with whether the proposed Meals composition scope covers
-Food dishes C020, before another prompt edit. The Coffee note-set limitation is
-already measured separately;
-repeated generation cannot establish the unresolved semantic expectations.
-That review is proposed, not begun. The task remains isolated as requested.
+The Meals composition review now identifies the failure as an incomplete child
+list. A subsequent authorized prompt-development step can target that existing
+requirement while preserving the generated scope and the qualified controls.
+The Coffee note-set limitation remains separate; repeated generation cannot
+establish the remaining unresolved semantic expectations. No new prompt edit or
+inference is undertaken by this review. The task remains isolated as requested.
