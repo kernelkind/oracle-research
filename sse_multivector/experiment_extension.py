@@ -413,6 +413,11 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('catalogue-hierarchies', help='version saved hierarchies and collect recorded parameters; no inference')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--registry', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--saved-only', action='store_true', help='rebuild the catalogue from retained records without discovering new outputs')
     p = commands.add_parser('prepare-canonical-traversal', help='prepare the approved L1-first traversal policy; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--spec', type=Path, required=True)
@@ -460,6 +465,12 @@ def add_commands(commands):
     p.add_argument('--relationship-runner-binary', type=Path, help='override the worker for relationship checks only')
     p.add_argument('--relationship-prompt', type=Path, help='bind this relationship prompt; requires --relationship-prompt-id')
     p.add_argument('--relationship-prompt-id', help='version ID for --relationship-prompt; other checks retain their defaults')
+    p = commands.add_parser('prepare-distillation-coverage-search', help='prepare coverage searches from completed native checks; no inference')
+    p.add_argument('evaluation', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--answer-id', action='append', help='prepare only this frozen answer ID; repeat for a subset')
+    p.add_argument('--runner-binary', type=Path)
+    p.add_argument('--history-root', type=Path)
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path)
@@ -573,6 +584,10 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command == 'catalogue-hierarchies':
+        from .hierarchy_catalogue import catalogue
+        print(json.dumps(catalogue(args.source, args.registry, args.output, saved_only=args.saved_only), indent=2))
+        return 0
     if args.command in ('prepare-canonical-traversal', 'advance-canonical-traversal'):
         from . import canonical_traversal
         result = (canonical_traversal.prepare(args.spec, args.directory, args.history_root)
@@ -617,6 +632,11 @@ def handle_command(args):
                     expectations=json.loads(args.expectations) if args.expectations is not None else None, reason=args.reason)
         else:
             result = assessment.freeze(args.selection, args.directory)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'prepare-distillation-coverage-search':
+        from . import distillation_coverage_search
+        result = distillation_coverage_search.prepare(args.evaluation, args.output,
+            answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
@@ -806,16 +826,18 @@ def code_files(dataset):
     names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
-    if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation'}:
+    if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation', 'distillation_coverage_search'}:
         names += ['distillation_review.py', 'distillation_run.py']
     if dataset['adapter'] == 'distillation_matching':
         names += ['distillation_matching.py']
     if dataset['adapter'] == 'distillation_verdict':
         names += ['distillation_verdict.py']
-    if dataset['adapter'] == 'distillation_review_evaluation':
+    if dataset['adapter'] in {'distillation_review_evaluation', 'distillation_coverage_search'}:
         names += ['distillation_review_evaluation.py', 'distillation_review_assessment.py',
                   'distillation_review_trial.py', 'distillation_review_preview.py',
                   'distillation_matching.py', 'distillation_verdict.py']
+    if dataset['adapter'] == 'distillation_coverage_search':
+        names += ['distillation_coverage_search.py']
     return {name: directory / name for name in names if (directory / name).exists()}
 
 def enrich_report(result, plan, cases):

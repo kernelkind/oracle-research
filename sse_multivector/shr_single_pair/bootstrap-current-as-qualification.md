@@ -3261,3 +3261,110 @@ occurred. Forty-two production-path prompt-revision and current-main traversal
 and graph-search tests passed after the routine main merge; the merge retained
 main's code-file registrations. JSON, link and diff checks cover the prompt
 and reusable preparation sources separately from semantic qualification.
+
+### Coffee-reference interpretation-choice ablation: predeclared check
+
+The user authorized testing whether the category-choice instruction overrides
+preserving unknown facts about particular people, things and events.
+Experimental Bootstrap-v112 replaces only the first sentence of v109's
+interpretation-choice paragraph with:
+
+> Resolve competing senses or defining boundaries by choosing a supported
+> interpretation that preserves the subject's level of abstraction and
+> expressed restrictions. If choosing an interpretation would require deciding
+> an unknown fact about a particular person, thing or event, leave that
+> ambiguity unresolved.
+
+This changes when the choice instruction applies, without changing its
+surrounding instructions or examples. It tests a wording interaction; it does
+not establish a model mechanism. V104 remains approved. V109, v111 and v112
+remain experimental, and v112 is derived from unchanged v109 rather than
+accumulating the previous unproven v111 change.
+
+Prepare fresh matched v109/v112 draws from the unchanged four-case
+[source collection](hierarchy-bootstrap-coffee-reference-ablation-v1.json),
+using the shared runner, Sol 6.1 medium and automatic caching. Preserve the
+original ASv6.100 tree and exact inputs. The three edited posts remain
+synthetic controls whose tree was generated for the original post. In
+particular, the coffee-shop-visit control changes both the hashtag and what is
+called weird; it cannot isolate hashtag removal.
+
+Evaluate the difference between defining a business sense and establishing
+that this particular post refers to such a business. Another plausible sense
+alone does not require null, and the user's original uncertainty does not
+prescribe null gold. Preserve the explicit-business positive and inspect
+whether a final meaning adds unsupported facts or preserves uncertainty.
+Returning null merely because another reading is possible is not a repair.
+If the original materially changes, repeat that case freshly under both
+unchanged conditions before recommending a prompt change. One first draw per
+control is a limited check, not a reliability estimate.
+
+Targets are `target/bootstrap-coffee-choice-ablation-v1/v109` and `v112`.
+Each first run admits at most six new attempts; conditional original repeats
+admit at most three per condition, for at most eighteen total attempts in this
+diagnostic. All warmups, retries and failures count against the persistent
+shared counter. Independent reviewers examine outputs and provenance. No
+Compare calls, hierarchy build or prompt activation belongs to this check.
+
+#### Completed interpretation-choice first draw
+
+Both conditions produced four valid fresh meanings. Independent blinded review
+finds no demonstrated improvement or regression. The original remains agent
+uncertain in both conditions; each synthetic control has a qualified agent
+accept in both. All eight reviews are saved through native `review`, separately
+from the user's historical uncertainty. No new user judgment was inferred.
+
+| Case | Fresh v109 | Fresh v112 |
+|---|---|---|
+| Original ambiguous hashtag | Business meaning; agent uncertain | Business meaning; agent uncertain |
+| Synthetic coffee-shop visit | Null; qualified accept | Null; qualified accept |
+| Synthetic explicit business evidence | Supported particular business; qualified accept | Supported particular business; qualified accept |
+| Synthetic hashtag clarification | Null; qualified accept | Null; qualified accept |
+
+The original v109 meaning is:
+
+> A coffee chain—a business operating multiple coffee shops under a shared
+> brand—characterized by the author as weird on the day of the post.
+
+The original v112 meaning is:
+
+> The coffee-shop chain—a business operating multiple coffee shops—referred
+> to by #coffeechain and characterized by the author as weird on the day of
+> the post.
+
+V112 makes particular identity more explicit, but v109's resolutions already
+required the particular chain. Neither settles business reference versus
+coffee-topic-tag use. This establishes neither a factual falsehood nor required
+null, and neither original meaning asserts venue-chain affiliation or a business
+name. Quotes match their supplied posts and diagnostics align with final
+meanings. The predeclared material-change trigger was not met; no repeats ran.
+
+The original-case receipts are respectively
+`0fe984d19c25210cd55deea0cc4eb1198009f15c8dc1f7a1a1a77696755594da`
+and `c53042771a05fd2b51c4f2df0dbbaf29f10a37f37f852f8d28f06561f874244e`,
+bound to each condition's `run/results.jsonl`. Independent integrity review
+verified all eight definition receipts and both warmup receipts through the
+shared production digest, including raw/parsed outputs and request hashes.
+All paired model-facing inputs, executable bindings, schema, worker and medium
+reasoning settings match. The candidate's four frozen baseline copies match
+the fresh v109 outputs and receipts exactly. The single-sentence replacement
+and source ASv6.100 provenance were verified separately; source and synthetic
+qualifications remain unchanged.
+
+The [native accounting source](hierarchy-bootstrap-coffee-choice-ablation-usage-v1.json)
+produces `target/bootstrap-coffee-choice-ablation-v1/usage-native-v1.json`:
+**ten fresh attempts**, eight valid definitions and two warmups, zero reuses,
+retries, failures, invalid receipts or unfinished cases. Complete native
+API-equivalent cost is **$0.0741512**: $0.0279388 for v109 and $0.0462124 for
+v112. Reasoning is already included in output. Definition cache hits are
+four of four for v109 and three of four for v112; this is not a uniform-cache
+cost comparison or evidence of a semantic quality difference. The persistent
+shared attempt counter was preserved. Nine production-path prompt-revision
+tests and exact revision/input/JSON/diff checks passed.
+
+This one-draw panel does not identify a uniquely responsible instruction or
+prove the choice rule irrelevant. Together with the earlier opening-sentence
+test, it supplies no demonstrated repair of the unresolved Coffee assignment.
+V112 remains experimental, with no adoption recommendation; v104 remains
+approved. Further wording changes should target a demonstrated evidence conflict
+rather than treat this unresolved reading as predetermined failure gold.

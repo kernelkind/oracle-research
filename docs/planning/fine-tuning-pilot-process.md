@@ -547,7 +547,7 @@ assuming resolved backoff and at most 30 concurrent requests. The six-hour
 model-work target leaves two hours of headroom; it is not a measured forecast.
 The final fifty random plus ten challenge answers and accepted maximum
 two-percentage-point correctness loss remain unchanged.
-Draft **DCSv1** for review before model calls: search uncovered student subjects
+The user approves **DCSv1** wording for a four-note xhigh trial: search uncovered student subjects
 for one compatible placement of an already-matched required teacher meaning,
 then verify any positive witness with the existing relationship check. A
 negative search must establish that every supplied candidate is incompatible.
@@ -558,7 +558,7 @@ that comparison separate from high qualification for single-pair DSLv10.
 Retain actual-edge judgments and matched-subject consistency checks. Separately
 qualify high for relationships and reuse of positive semantic premises for
 support/relationship judgments, retaining model-dependent provenance. Do not
-propagate negative support verdicts. Exact DCSv1 wording, reliability, the
+propagate negative support verdicts. DCSv1 reliability, the
 remaining required-meaning contexts and runtime remain open; production stays
 DSLv2. See the [evidence and qualification direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11).
 
