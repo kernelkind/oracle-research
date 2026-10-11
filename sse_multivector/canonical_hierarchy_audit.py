@@ -49,7 +49,7 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
     if selected - available.keys():
         raise ValueError('unknown selected note ID')
     nodes, children, direct = {}, {}, {}
-    for row in state['nodes']:
+    for row in state.get('menu', {}).get('nodes', state['nodes']):
         charge(1 + len(row['parents']) + len(row['entries']))
         identifier = row['id']
         if not isinstance(identifier, str) or identifier in nodes:
@@ -103,6 +103,9 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
         violations.append({'kind': 'unreachable_notes', 'note_ids': missing})
     equal_edges, proper_edges = [], []
     for parent in order:
+        if not children[parent] and len(represented[parent]) > 1:
+            violations.append({'kind': 'multi_note_leaf', 'node': parent,
+                               'note_ids': sorted(represented[parent])})
         if len(children[parent]) > max_choices:
             choice_warnings.append({'kind': 'too_many_children', 'node': parent,
                                     'count': len(children[parent])})
@@ -133,7 +136,7 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
 
     def route(candidates):
         if not candidates:
-            return {'status': 'not_isolated', 'node': None, 'path': [], 'option_counts': []}
+            return {'status': 'not_reachable', 'node': None, 'path': [], 'option_counts': []}
         target = min(candidates, key=lambda n: (distances[n], n))
         path, current = [], target
         while current is not None:
@@ -146,16 +149,19 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
                 else 'exceeds_choice_limit', 'node': target, 'path': path,
                 'option_counts': options}
 
-    by_notes = {}
+    by_notes, by_direct_note = {}, {}
     for identifier in order:
         charge(len(represented[identifier]))
         by_notes.setdefault(represented[identifier], []).append(identifier)
+        for note_id in direct[identifier]:
+            charge()
+            by_direct_note.setdefault(note_id, []).append(identifier)
     individual = []
     for note_id in sorted(selected):
-        task = {'note_id': note_id, **route(by_notes.get(frozenset({note_id}), []))}
+        task = {'note_id': note_id, **route(by_direct_note.get(note_id, []))}
         individual.append(task)
-        if task['status'] == 'not_isolated':
-            violations.append({'kind': 'note_not_isolated', 'note_id': note_id})
+        if task['status'] == 'not_reachable':
+            violations.append({'kind': 'note_not_reachable', 'note_id': note_id})
     groups = [{'note_ids': sorted(notes), 'candidate_nodes': sorted(candidates), **route(candidates)}
               for notes, candidates in sorted(by_notes.items(), key=lambda pair: tuple(sorted(pair[0])))
               if len(notes) > 1]

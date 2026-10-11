@@ -1,7 +1,7 @@
-"""Offline version catalogue for saved hierarchy outputs and parameter evidence.
+"""Offline catalogue of explicitly designated official hierarchy runs.
 
-Original experiments are read only. IDs bind output bytes, their relative source
-path, and adjacent parameter evidence; a copied checkout is not another run.
+Original experiments are read only. Each selected ID binds an immutable saved
+output; supporting checkpoints and diagnostics never receive catalogue IDs.
 """
 import ast
 from collections import Counter, deque
@@ -51,10 +51,6 @@ DATA_FIELDS = {
 }
 SECRET_FIELDS = {'api_key', 'access_token', 'refresh_token', 'password', 'authorization'}
 HEX = re.compile(r'^[0-9a-f]{64}$')
-CANDIDATES = ('hierarchy.json', 'categories.json', 'state.json', 'results.json',
-              'response.json', 'hdbscan-response.json', 'graph.json',
-              'native-graph.json', 'graph.sqlite', 'result.json', 'tree.json',
-              'categories-with-mask-ids.json')
 
 
 def encoded(value):
@@ -153,6 +149,7 @@ def source_roots(source):
     if spec.get('schema_version') != 1:
         raise ValueError('unsupported catalogue source schema')
     roots = [(source.parent / p).resolve() for p in spec.get('roots', [])]
+    roots += [(source.parent / r['root']).resolve() for r in spec['official_runs']]
     if 'repository' in spec:
         repository = (source.parent / spec['repository']).resolve()
         output = subprocess.check_output(['git', '-C', str(repository), 'worktree', 'list', '--porcelain'], text=True)
@@ -160,28 +157,45 @@ def source_roots(source):
     return sorted(set(roots), key=str)
 
 
-def discover(root, destination, spec):
-    areas = [str(root / area) for area in spec.get('areas', ['target', 'sse_multivector'])
-             if (root / area).is_dir()]
-    if not areas:
-        return
-    command = ['rg', '--files', '--hidden', '--no-ignore', '-0']
-    for pattern in (*CANDIDATES, '*hierarchy*.json', 'M0[1-9].json'):
-        command.extend(['-g', pattern])
-    for pattern in ('node_modules', 'site-packages', '.venv', 'debug', 'release',
-                    'fixtures', 'tests', '*smoke*', '*persistent-cost*', '*browser-test*',
-                    'hierarchy-catalogue'):
-        command.extend(['-g', f'!**/{pattern}/**'])
-    for pattern in spec.get('exclude', []):
-        command.extend(['-g', '!' + pattern])
-    found = subprocess.run(command + areas, capture_output=True)
-    if found.returncode not in (0, 1):
-        raise ValueError(found.stderr.decode())
-    for name in found.stdout.split(b'\0'):
-        if name:
-            path = Path(name.decode())
-            if destination not in path.parents:
-                yield path
+def official_runs(source, spec):
+    if spec.get('schema_version') != 1:
+        raise ValueError('unsupported catalogue source schema')
+    if not isinstance(spec.get('official_runs'), list):
+        raise ValueError('catalogue source must explicitly list official_runs; automatic discovery is unavailable')
+    ids, outputs, selected = set(), set(), []
+    for entry in spec['official_runs']:
+        if not isinstance(entry, dict) or any(not isinstance(entry.get(k), str) or not entry[k]
+                for k in ('version_id', 'name', 'root', 'artifact_path', 'sha256')):
+            raise ValueError('official run requires version_id, name, root, artifact_path and sha256')
+        version = entry['version_id']
+        if not re.fullmatch(r'[A-Za-z][A-Za-z0-9._-]*', version) or version in ids:
+            raise ValueError(f'invalid or duplicate official version ID: {version}')
+        if not HEX.fullmatch(entry['sha256']):
+            raise ValueError(f'{version}: invalid pinned output SHA-256')
+        root = (source.parent / entry['root']).resolve()
+        path = (root / entry['artifact_path']).resolve()
+        if Path(entry['artifact_path']).is_absolute() or root not in path.parents or path in outputs:
+            raise ValueError(f'{version}: artifact_path must identify a distinct output within root')
+        related = entry.get('related_outputs', [])
+        if not isinstance(related, list):
+            raise ValueError(f'{version}: related_outputs must be a list')
+        for item in related:
+            if not isinstance(item, dict) or any(not isinstance(item.get(k), str) or not item[k]
+                    for k in ('label', 'path', 'sha256')) or not HEX.fullmatch(item['sha256']):
+                raise ValueError(f'{version}: related output requires label, path and SHA-256')
+            related_path = (root / item['path']).resolve()
+            if not related_path.is_file():
+                raise ValueError(f'{version}: missing related output: {related_path}')
+            if digest(related_path) != item['sha256']:
+                raise ValueError(f'{version}: changed pinned related output: {related_path}')
+        if not path.is_file():
+            raise ValueError(f'{version}: missing official output: {path}')
+        if path.suffix != '.sqlite' and digest(path) != entry['sha256']:
+            raise ValueError(f'{version}: changed pinned official output: {path}')
+        ids.add(version)
+        outputs.add(path)
+        selected.append((entry, root, path))
+    return selected
 
 
 def dated(value):
@@ -527,6 +541,11 @@ class CodeSources:
                     visit(item, parent)
 
         visit(row['parameters'], Path(row['locations'][0]).parent)
+        for related in row.get('related_outputs', []):
+            visit(related.get('parameters', {}), Path(related['path']).parent)
+            for item in related.get('evidence', []):
+                if evidence_matches_binding(related, item):
+                    visit(documents[item['sha256']], Path(item['path']).parent)
         for item in row['evidence']:
             if evidence_matches_binding(row, item):
                 visit(documents[item['sha256']], Path(item['path']).parent)
@@ -611,6 +630,9 @@ def write_page(output, result):
         (output / 'records' / f"{row['version_id']}.js").write_text(
             'window.hierarchyCatalogueRecord(' + page_literal(row['version_id']) + ',' + page_literal(row) + ');\n')
         terms = page_search_terms(row['parameters'])
+        terms.update(page_search_terms(row.get('experimental_parameters', {})))
+        for related in row.get('related_outputs', []):
+            terms.update(page_search_terms(related.get('parameters', {})))
         for evidence in row['evidence']:
             if evidence_matches_binding(row, evidence):
                 terms.update(evidence_terms[evidence['sha256']])
@@ -625,6 +647,7 @@ def write_page(output, result):
 def catalogue(source, registry, output, *, saved_only=False):
     source, registry, output = source.resolve(), registry.resolve(), output.resolve()
     spec = json.loads(source.read_text())
+    selected = official_runs(source, spec)
     cutoff = dated(spec.get('generated_since'))
     if 'generated_since' in spec and cutoff is None:
         raise ValueError('generated_since must be an ISO timestamp with a timezone')
@@ -636,121 +659,118 @@ def catalogue(source, registry, output, *, saved_only=False):
     saved = json.loads(registry.read_text()) if registry.exists() else {'schema_version': 1, 'versions': []}
     if saved.get('schema_version') != 1:
         raise ValueError('unsupported version registry schema')
-    versions = {r['identity']: r for r in saved['versions']}
-    if len(versions) != len(saved['versions']) or len({r['version_id'] for r in versions.values()}) != len(versions):
+    previous_versions = {r['version_id']: r for r in saved['versions']}
+    if len(previous_versions) != len(saved['versions']) or len({r['identity'] for r in saved['versions']}) != len(previous_versions):
         raise ValueError('duplicate version registry identity or ID')
-    number = max((int(r['version_id'][1:]) for r in versions.values()), default=0)
     evidence = Evidence()
-    payloads = {}
-    current = {}
-    errors = []
-    candidates = 0
-    excluded = 0
-    if saved_only:
-        prior = json.loads((output / 'catalogue.json').read_text())
-        current = {row['identity']: row for row in prior['hierarchies'] if row['currently_discovered']}
-        errors, candidates = prior['discovery_errors'], prior['candidates_checked']
-        excluded = prior.get('excluded_before_cutoff', 0)
+    rows, versions = [], []
     with tempfile.TemporaryDirectory(dir=output) as temporary:
-        for root in ([] if saved_only else roots):
-            print(f'Cataloguing saved outputs: {root.name}', file=sys.stderr, flush=True)
-            for path in sorted(discover(root, output, spec)):
-                candidates += 1
-                relative = str(path.relative_to(root))
-                try:
-                    if path.suffix == '.sqlite':
-                        snapshot = sqlite_snapshot(path, Path(temporary))
-                        if snapshot is None:
-                            continue
-                        artifact, stats = snapshot
-                        data, family = {'sqlite_counts': stats}, 'Local SQLite'
-                        timing = generation_time(path, data)
-                    else:
-                        artifact = path
-                        raw = path.read_bytes()
-                        sha = hashlib.sha256(raw).hexdigest()
-                        if sha not in payloads:
-                            data = json.loads(raw)
-                            family = classify(data)
-                            if family is None:
-                                continue
-                            timing = generation_time(path, data)
-                            if cutoff and dated(timing['timestamp']) < cutoff:
-                                excluded += 1
-                                continue
-                            payloads[sha] = (family, parameters(data))
-                        family, data = payloads[sha]
-                        if family is None:
-                            continue
-                        timing = generation_time(path, data)
-                    if cutoff and dated(timing['timestamp']) < cutoff:
-                        excluded += 1
-                        continue
-                    if path.suffix == '.sqlite':
-                        sha = digest(artifact)
-                    direct = parameters(data)
-                    adjacent = evidence.adjacent(path, root)
-                    adjacent_hashes = {str(p.relative_to(root)): evidence.sha(p) for p in adjacent}
-                    identity = hashlib.sha256(encoded([relative, sha, adjacent_hashes])).hexdigest()
-                    if identity in current:
-                        current[identity]['locations'].append(str(path))
-                        continue
-                    configuration = path.parent / 'configuration.json'
-                    if configuration.exists():
-                        defaults = archived_defaults(path, root, evidence.load(configuration)[1])
-                        if defaults:
-                            direct['archived_method_defaults'] = defaults
-                    refs, bindings, unknown = evidence.collect(path, root, direct, output)
-                    if identity not in versions:
-                        number += 1
-                        versions[identity] = {'version_id': f'H{number:04d}', 'identity': identity,
-                                             'artifact_path': relative, 'sha256': sha, 'family': family}
-                    version = versions[identity]['version_id']
-                    snapshot_path = output / 'outputs' / f'{version}{path.suffix}'
-                    snapshot_path.parent.mkdir(exist_ok=True)
-                    if snapshot_path.exists() and digest(snapshot_path) != sha:
-                        raise ValueError(f'changed immutable snapshot: {snapshot_path}')
-                    if not snapshot_path.exists():
-                        if path.suffix == '.sqlite':
-                            shutil.copyfile(artifact, snapshot_path)
-                        else:
-                            snapshot_path.write_bytes(raw)
-                    name = data.get('run_id') or data.get('experiment_id') or data.get('hierarchy_id') or path.parent.name
-                    text = json.dumps([direct, [evidence.cache[Path(e['path'])][1] for e in refs]])
-                    subject_versions = sorted(set(re.findall(r'ASv\d+\.\d+', text)))
-                    older = any(tuple(map(int, v[3:].split('.'))) < (6, 100) for v in subject_versions)
-                    status = ('historical/deprecated' if older else
-                              'source recorded: ' + ', '.join(subject_versions) if subject_versions else 'subject version unknown')
-                    row = {**versions[identity], 'name': name, 'source_status': status,
-                           'subject_versions': subject_versions, 'run_status': data.get('status', 'saved'),
-                           'output': str(snapshot_path.relative_to(output)), 'locations': [str(path)],
-                           'generation_time': timing, 'parameters': direct, 'evidence': refs,
-                           'bindings': bindings, 'unknown': unknown}
-                    current[identity] = row
-                except (OSError, ValueError, sqlite3.Error) as error:
-                    errors.append({'path': str(path), 'error': str(error)})
-    rows = []
-    for record in sorted(versions.values(), key=lambda r: r['version_id']):
-        path = output / 'records' / f"{record['version_id']}.json"
-        row = current.get(record['identity'])
-        if row is not None:
-            if path.exists():
-                previous = json.loads(path.read_text())
-                if previous['identity'] != row['identity'] or previous['sha256'] != row['sha256']:
-                    raise ValueError(f'changed retained version record: {path}')
-                # Preserve settings recovered while their frozen sources existed.
-                # Later edits to a source must not replace that historical evidence.
-                prior_evidence = {e['path']: e for e in previous['evidence']}
-                row['evidence'] = [prior_evidence.get(e['path'], e) for e in row['evidence']]
-                row['evidence'] += [e for e in previous['evidence'] if e['path'] not in {n['path'] for n in row['evidence']}]
-                row['parameters'] = {**previous['parameters'], **row['parameters']}
-            write(path, row)
-        elif path.exists():
-            row = json.loads(path.read_text())
-        else:
-            raise ValueError(f"missing retained record for {record['version_id']}; preserve the catalogue output directory")
-        row = {**row, 'currently_discovered': record['identity'] in current}
-        rows.append(row)
+        for entry, root, path in selected:
+            version, expected = entry['version_id'], entry['sha256']
+            print(f'Cataloguing official run: {version} · {entry["name"]}', file=sys.stderr, flush=True)
+            artifact, sqlite_counts = path, None
+            if path.suffix == '.sqlite':
+                snapshot = sqlite_snapshot(path, Path(temporary))
+                if snapshot is None:
+                    raise ValueError(f'{version}: selected SQLite output is not a saved hierarchy')
+                artifact, sqlite_counts = snapshot
+            if digest(artifact) != expected:
+                raise ValueError(f'{version}: changed pinned official output: {path}')
+            relative = str(path.relative_to(root))
+            old = previous_versions.get(version)
+            if old and (old['sha256'] != expected or old['artifact_path'] != relative):
+                raise ValueError(f'{version}: version ID is already bound to another immutable output')
+            identity = old['identity'] if old else hashlib.sha256(encoded([version, relative, expected])).hexdigest()
+            record_path = output / 'records' / f'{version}.json'
+            previous = json.loads(record_path.read_text()) if record_path.exists() else None
+            if previous and (previous['identity'] != identity or previous['sha256'] != expected):
+                raise ValueError(f'{version}: changed retained version record: {record_path}')
+            snapshot_path = output / 'outputs' / f'{version}{path.suffix}'
+            snapshot_path.parent.mkdir(exist_ok=True)
+            if snapshot_path.exists() and digest(snapshot_path) != expected:
+                raise ValueError(f'{version}: changed immutable snapshot: {snapshot_path}')
+            if saved_only:
+                if previous is None or not snapshot_path.is_file():
+                    raise ValueError(f'{version}: missing retained official record or output; run a full refresh first')
+                row = dict(previous)
+            else:
+                data = {'sqlite_counts': sqlite_counts} if sqlite_counts is not None else json.loads(path.read_bytes())
+                family = 'Local SQLite' if sqlite_counts is not None else classify(data)
+                if family is None:
+                    raise ValueError(f'{version}: selected output is not a saved hierarchy: {path}')
+                timing = generation_time(path, data)
+                if cutoff and dated(timing['timestamp']) < cutoff:
+                    raise ValueError(f'{version}: selected official output predates generated_since')
+                if not snapshot_path.exists():
+                    shutil.copyfile(artifact, snapshot_path)
+                direct = parameters(data)
+                configuration = path.parent / 'configuration.json'
+                if configuration.exists():
+                    defaults = archived_defaults(path, root, evidence.load(configuration)[1])
+                    if defaults:
+                        direct['archived_method_defaults'] = defaults
+                refs, bindings, unknown = evidence.collect(path, root, direct, output)
+                if previous:
+                    prior = {e['path']: e for e in previous['evidence']}
+                    for item in refs:
+                        if item['path'] in prior and item['sha256'] != prior[item['path']]['sha256']:
+                            bindings[item['path']] = {'sha256': prior[item['path']]['sha256'],
+                                                      'actual_sha256': item['sha256'], 'status': 'changed'}
+                            unknown.append('Changed parameter evidence: ' + item['path'])
+                    refs = [prior.get(e['path'], e) for e in refs]
+                    refs += [e for e in previous['evidence'] if e['path'] not in {n['path'] for n in refs}]
+                    direct = {**previous['parameters'], **direct}
+                documents = [json.loads((output / e['file']).read_text()) for e in refs]
+                subject_versions = sorted(set(re.findall(r'ASv\d+\.\d+', json.dumps([direct, documents]))))
+                older = any(tuple(map(int, v[3:].split('.'))) < (6, 100) for v in subject_versions)
+                status = ('historical/deprecated' if older else
+                          'source recorded: ' + ', '.join(subject_versions) if subject_versions else 'subject version unknown')
+                row = {'version_id': version, 'identity': identity, 'artifact_path': relative,
+                       'sha256': expected, 'family': family, 'source_status': status,
+                       'subject_versions': subject_versions, 'run_status': data.get('status', 'saved'),
+                       'output': str(snapshot_path.relative_to(output)), 'locations': [str(path)],
+                       'generation_time': timing, 'parameters': direct, 'evidence': refs,
+                       'bindings': bindings, 'unknown': sorted(set(unknown))}
+            if cutoff and dated(row['generation_time']['timestamp']) < cutoff:
+                raise ValueError(f'{version}: selected official output predates generated_since')
+            row['name'], row['currently_discovered'] = entry['name'], True
+            for key in ('code_provenance', 'experimental_parameters', 'generator_commits'):
+                if key in entry:
+                    row[key] = parameters(entry[key])
+                else:
+                    row.pop(key, None)
+            related = []
+            prior_related = {r['path']: r for r in previous.get('related_outputs', [])} if previous else {}
+            for index, item in enumerate(entry.get('related_outputs', []), 1):
+                original = (root / item['path']).resolve()
+                destination = output / 'outputs' / f'{version}-related-{index}{original.suffix}'
+                if destination.exists() and digest(destination) != item['sha256']:
+                    raise ValueError(f'{version}: changed immutable related snapshot: {destination}')
+                if not destination.exists():
+                    shutil.copyfile(original, destination)
+                prior = prior_related.get(str(original))
+                if saved_only and prior and prior['sha256'] == item['sha256']:
+                    related_data = dict(prior)
+                else:
+                    direct = parameters(json.loads(original.read_bytes())) if original.suffix == '.json' else {}
+                    refs, bindings, unknown = evidence.collect(original, root, direct, output)
+                    if prior and prior['sha256'] == item['sha256']:
+                        old_refs = {e['path']: e for e in prior.get('evidence', [])}
+                        refs = [old_refs.get(e['path'], e) for e in refs]
+                        refs += [e for e in prior.get('evidence', []) if e['path'] not in {n['path'] for n in refs}]
+                        direct = {**prior.get('parameters', {}), **direct}
+                    related_data = {'parameters': direct, 'evidence': refs,
+                                    'bindings': bindings, 'unknown': unknown}
+                related_data.update({**parameters(item), 'path': str(original),
+                                     'output': str(destination.relative_to(output))})
+                related.append(related_data)
+                seen = {(e['path'], e['sha256']) for e in row['evidence']}
+                row['evidence'] += [e for e in related_data['evidence'] if (e['path'], e['sha256']) not in seen]
+                for bound_path, binding in related_data['bindings'].items():
+                    row['bindings'].setdefault(bound_path, binding)
+            row['related_outputs'] = related
+            rows.append(row)
+            versions.append({k: row[k] for k in ('version_id', 'identity', 'artifact_path', 'sha256', 'family')})
     by_sha = {}
     for row in rows:
         by_sha.setdefault(row['sha256'], []).append(row['version_id'])
@@ -762,20 +782,21 @@ def catalogue(source, registry, output, *, saved_only=False):
                  for sha in sorted({e['sha256'] for r in rows for e in r['evidence']})}
     code_sources = CodeSources(roots, output, evidence)
     for row in rows:
-        if saved_only and row.get('generator_code') and all(evidence_matches_binding(row, e) for e in row['evidence']):
+        previous = json.loads((output / 'records' / f"{row['version_id']}.json").read_text()) if saved_only else None
+        if saved_only and row.get('generator_code') and row['evidence'] == previous['evidence'] and all(evidence_matches_binding(row, e) for e in row['evidence']):
             row['generator_code'] = code_sources.refresh(row['generator_code'])
         else:
             row['generator_code'] = code_sources.record(row, documents)
         write(output / 'records' / f"{row['version_id']}.json", row)
     result = {'schema_version': 1, 'generated_at': datetime.now(timezone.utc).isoformat(),
-              'roots': [str(r) for r in roots], 'hierarchies': rows, 'discovery_errors': errors,
-              'candidates_checked': candidates,
-              'scope': {k: spec[k] for k in ('generated_since', 'areas', 'exclude') if k in spec},
-              'excluded_before_cutoff': excluded,
-              'parameter_evidence': documents}
+              'roots': [str(r) for r in roots], 'hierarchies': rows, 'discovery_errors': [],
+              'candidates_checked': len(selected),
+              'scope': {'official_runs': [e['version_id'] for e, _, _ in selected],
+                        **({'generated_since': spec['generated_since']} if 'generated_since' in spec else {})},
+              'excluded_before_cutoff': 0, 'parameter_evidence': documents}
     write(output / 'catalogue.json', result)
     write_page(output, result)
-    write(registry, {'schema_version': 1, 'versions': sorted(versions.values(), key=lambda r: r['version_id'])})
-    return {'hierarchies': len(rows), 'currently_discovered': len(current), 'copies': sum(len(r['locations']) - 1 for r in current.values()),
-            'families': dict(Counter(r['family'] for r in rows)), 'excluded_before_cutoff': excluded,
-            'errors': errors, 'catalogue': str(output / 'index.html'), 'inference_calls': 0}
+    write(registry, {'schema_version': 1, 'versions': versions})
+    return {'hierarchies': len(rows), 'currently_discovered': len(rows), 'copies': 0,
+            'families': dict(Counter(r['family'] for r in rows)), 'excluded_before_cutoff': 0,
+            'errors': [], 'catalogue': str(output / 'index.html'), 'inference_calls': 0}

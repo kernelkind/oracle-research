@@ -9,10 +9,20 @@ The approved **DCSv1** wording completes a
 outputs, two errors and two uncertainties**. Unchanged DSLv10 verification
 catches the invalid positive witness; a false negative remains. Native
 source-bound preparation and output validation are implemented, but DCSv1
-remains unqualified. Accepted complete matching plus trusted teacher paths
-could settle four of these searches, including that false negative; this reuse
-is a recommendation, not implemented behavior. Current defaults and the final
+remains unqualified. The subsequently approved
+[conditional matching/path reuse](#conditional-matchingpath-reuse-october-11)
+settles four of these searches, including that false negative, during native
+offline preparation. [Receipt hashing reuse](#coverage-preparation-receipt-hashing-october-11)
+reduces the slowest four-note preparation from 13.25 to 7.61 seconds while
+preserving every reviewer input and evidence record. Current defaults and the final
 sixty-answer validation remain unchanged.
+
+The subsequent [twelve-case fresh repeat](#dcsv1-focused-negative-search-controls-october-11)
+passes all eleven unchanged assessed expectations; one pre-call negative label
+is corrected after independent reassessment. All twelve complete outputs are
+accepted, with seven saved DSLv10 witness responses reused and no new semantic
+error found. Generation takes approximately 72 seconds. These exposed controls
+establish repeat consistency, not broad qualification.
 
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -5534,9 +5544,191 @@ placement and leaves 34 searches. The recommended next step is to implement
 and test this reuse with exact provenance before further model calls. It is
 conditional reuse of positive semantic premises: an erroneous match could
 propagate, and uncertain matching records are excluded. This reuse is not yet
-implemented or newly authorized by the diagnosis. No new panel, prompt change
+implemented or newly authorized by the diagnosis at the end of that trial.
+The user subsequently approves the implementation described below. No new panel, prompt change
 or lower-effort trial starts from this result. Negative-search reliability,
 interpretation context completeness and the eight-hour target remain open.
+
+## Conditional matching/path reuse (October 11)
+
+The user approves implementing and testing the conditional reuse recommended
+by the four-note challenge. The experimental coverage adapter now substitutes
+an **accepted complete-meaning match** into an actual trusted teacher ancestor
+path. If the required teacher subject belongs beneath that ancestor and the
+matched student occurrence is uncovered, preparation records the compatible
+placement without a DCS or DSL model call. This implements positive placement
+reuse only: missing matches or paths establish no negative result.
+
+The matching premise must have a current native full-output acceptance or an
+existing complete-output audit bound to its exact input/output hashes. Any
+current rejection or uncertainty prevents reuse. Repeated `--premise-audit`
+arguments bind existing audit JSONL files and their hashes; explicit
+non-judgment `skip` records do not become acceptances. Target self guards remain
+positive and accepted, and available ancestor-match self guards must also be
+positive and accepted. Unrun or disputed guards retain the search. Evidence
+copies the matching receipt, audit path/hash/line or current native reviews,
+mechanical guard proofs, and every numbered teacher path occurrence with its
+subject and context. Matching and guard indexes are built once per answer;
+each meaning group filters its own uncovered occurrences before walking the
+actual teacher paths. No subject correspondence is guessed.
+
+Native offline preparation of the same four development answers binds the
+existing `audit-b.jsonl` at SHA-256
+`ab8144294c62114af5593293f208ea6f44548e48da318cf2aa4591e70c913da5`:
+
+| Saved answer | Previous searches | Searches after reuse |
+| --- | ---: | ---: |
+| `M01-checkpoint-600-N0017` | 6 | 4 |
+| `M01-baseline-N0076` | 8 | 6 |
+| `M01-checkpoint-200-N0054` | 13 | 13 |
+| `M02-checkpoint-200-N0015` | 11 | 11 |
+| **Total** | **38** | **34** |
+
+The four conditional settlements are television `005`/`007` and NFT
+`003`/`005`. All **89 existing self guards**, remaining case IDs, input strings,
+input hashes and rendered reviewer prompts retain exact parity. Both accepted
+ancestor matching receipts and each recorded teacher path/context are checked
+against the frozen originals. The television `007` placement no longer needs
+the search that missed it. Its separate required-child matching uncertainty
+remains unresolved; this path proves compatibility, not complete matching.
+
+The minimal native production-path test first fails with one search where zero
+is required, then passes after implementation. Thirteen adapter regressions
+cover provenance, unaudited/disputed/null matches, stale approvals, disconnected
+and duplicate teacher occurrences, false/unrun guards, exact-output audit
+binding and changed audit bytes, alongside the previous preparation tests.
+Three related native evaluation regressions also pass: **16 tests total**.
+This verification makes **zero model calls**. Final artifacts remain ignored under
+`oracle-mvp-review-coverage-teacher-path/target/distillation-review-v1/coverage-teacher-path-four-note/final-code/`.
+The deployed evaluation and DSLv2 defaults remain unchanged. DCSv1, the
+remaining interpretation contexts, lower reasoning efforts and the eight-hour
+runtime target remain unqualified; the final sixty are not rerun.
+
+## Coverage preparation receipt hashing (October 11)
+
+The user approves removing repeated receipt-file hashing from coverage
+preparation. After the native evaluation report independently verifies the
+saved results, `_snapshot` now hashes each distinct receipt results file and
+manifest once during its binding pass. A dictionary local to that snapshot
+retains fresh checksums and preserves the original order of source bindings.
+Inherited expected hashes do not substitute for reading the receipt files.
+Subsequent snapshots read them again, and preparation still rechecks every
+protected source before writing its completion record.
+
+The same four development answers are prepared offline through the stable
+launcher, with four independent commands run in parallel:
+
+| Saved answer | Before, seconds | After, seconds |
+| --- | ---: | ---: |
+| `M01-checkpoint-600-N0017` | 6.52 | 5.03 |
+| `M01-baseline-N0076` | 5.68 | 4.32 |
+| `M01-checkpoint-200-N0054` | 13.25 | 7.61 |
+| `M02-checkpoint-200-N0015` | 7.42 | 4.61 |
+| **Sum of command wall times** | **32.87** | **21.57** |
+
+The slowest command is approximately **42% faster**; summed command wall times
+fall **34.4%**. The final parallel batch directly measures 7.613 seconds; the
+before batch is approximated by its longest command. This is one before/after
+measurement on the same host, without controlling filesystem cache state. It
+measures offline preparation, not model generation or full-evaluation runtime.
+
+All **34 searches, four conditional settlements and 89 positive self guards**
+retain exact parity, including complete native case inputs, rendered prompts,
+input hashes, evidence, protected source checksums and preparation judgments.
+Native plans bind the changed adapter code; the project extension is unchanged.
+The new hash-count test first fails on repeated receipt reads, then passes.
+Receipt mutation after native preparation is still rejected by the final source
+recheck. Fifteen coverage regressions and three related native evaluation
+regressions pass: **18 tests total**. This task makes **zero model calls**.
+Ignored native evidence remains under
+`oracle-mvp-review-coverage-receipt-hashes/target/distillation-review-v1/coverage-receipt-hashes/{before,after-final}/`.
+Prompts, semantic criteria, reasoning settings, reviewer qualification and the
+final sixty-answer validation retain their existing status.
+
+## DCSv1 focused negative-search controls (October 11)
+
+The user approves a small focused test of negative-search reliability after
+receipt-hashing reuse. Independent source-first assessments freeze twelve
+existing residual inputs before fresh model calls: six have a valid placement
+and six require a complete negative account of every supplied candidate.
+These are development-exposed agent-assessed controls, not unseen examples or
+human gold labels. DCSv1, Sol/xhigh, all source wording and interpretation rows
+remain unchanged.
+
+| Saved answer | Coverage-search suffixes | Frozen pre-call expectation |
+| --- | --- | --- |
+| `M01-checkpoint-200-N0054` | `005`, `008`, `013`, `016`, `017` | Positive; student `9`, Markets, is a valid witness |
+| `M02-checkpoint-200-N0015` | `015` | Positive; student `3`, Girls and women, is a valid witness |
+| `M01-checkpoint-600-N0017` | `004`, `008`, `009` | Null; every candidate adds a missing restriction |
+| `M01-baseline-N0076` | `001`, `006`, `009` | Null; every candidate adds a missing restriction |
+
+IDs expand as `<answer>:coverage-search:<suffix>`. Other independently sound
+witnesses remain acceptable. Candidate lists contain **2–14 entries**; the
+Markets witness appears first of two, eleventh of twelve, or tenth of eleven.
+ETF meanings preserve financial-market activity; Sisters preserves the fixed
+human-family meaning of girls or women. Negative controls check that person
+names, ordinary art, greed, a streaming service and the named contribution do
+not acquire the other candidates' actions, types, identities or relationships
+through co-mention or context.
+
+NFT `004`, Blockchain technology beneath Digital, is excluded from negative
+controls: ordinary digital-ledger type meaning preserves the candidate. Its
+existing DCS result correctly returns that witness. Rejecting the Incest witness
+in family `006` cannot establish a negative for its unresolved Body alternative;
+that case and the Mothers/Daughters beneath Girls uncertainties stay separate.
+
+Native `prepare --from --only --repeat --prompt-cache` selects the exact frozen
+cases from the four `after-final` receipt-hashing experiments. Each prefix is
+eligible; four warmups and twelve comparisons need sixteen initial attempts,
+with provider-only retry headroom retained in the shared attempt counter.
+The shared queue admits up to thirty requests. Native validation checks
+candidate accounting; complete decisions and every reason require independent
+audit. Passing a fresh repeat would establish consistency on these controls,
+not broad reviewer qualification or full-evaluation runtime.
+
+### Fresh repeat result
+
+All twelve searches complete on their first attempts in **72.36 seconds**,
+including prefix warming and queue admission. They return seven witnesses and
+five nulls. Root and independent full-output audits accept all twelve decisions
+and every explanation. **Eleven of eleven unchanged assessed expectations pass**;
+the remaining discrepancy is an incorrect pre-call label, not a model error.
+
+Television `008` returns student `1`, Television, for Peacock streaming service.
+Independent reassessment establishes that the parent denotes the broad
+television medium/field and the fixed child referent is a television-distribution
+service within it. Requiring a programme, television device or exclusively
+television catalogue would add restrictions absent from the parent. The
+particular reboot and review do not supply this intrinsic service type.
+The original frozen null expectation is retained above. Native review history
+retains the provisional uncertainty and subsequent explicit acceptances;
+both remain hash-current under existing review semantics. No review-precedence
+change or automatic qualification is claimed.
+
+Every returned witness receives unchanged DSLv10 verification through **seven
+exact saved-response reuses and zero new calls**. Parent/child strings, original
+posts and complete teacher-context arrays match the new DCS witnesses. All seven
+saved verdicts are true, and their complete reasons pass root audit. Receipt
+reuse does not provide independent model samples or settle correctness by itself.
+
+Native `summarize-experiments` reconciles **16/32 attempts**: twelve fresh
+searches and four warmups, seven separate verification reuses, no retries or
+failures. Fresh requests contain **19,840 cached of 29,183 total input tokens
+(67.98%)**; ten of twelve comparisons receive hits. Fresh API-equivalent cost
+is **$0.1584**; estimated net caching savings are **$0.0158 (9.07%)**, including
+warmup overhead. Historical generation usage for reused receipts stays separate;
+these estimates are not subscription bills.
+
+Ignored experiments, native agent reviews, scheduling evidence and native usage
+reports remain under
+`oracle-mvp-review-coverage-negative-controls/target/distillation-review-v1/coverage-negative-controls/`.
+The unused ETF preparation with a different history root makes no calls and is
+excluded from accounting. Prompts, adapter behavior and reasoning settings do
+not change; native preparation preserves exact input, rendered-prompt, evidence
+and cache-prefix parity. This small development-exposed repeat leaves unseen
+negative-search reliability, per-check reasoning qualification, interpretation
+uncertainties and the eight-hour full-evaluation target open. The final sixty
+are not rerun.
 
 ## Actual distilled wording: offline preview (October 8)
 

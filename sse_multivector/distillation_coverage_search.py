@@ -1,7 +1,7 @@
 """Source-bound focused coverage searches; saved premise checks remain separate.
 
 This experimental adapter changes the question shape, not coverage criteria.
-It does not score an unverified positive witness as a missing placement.
+It does not score an unverified DCS-returned witness as a missing placement.
 """
 import hashlib
 import json
@@ -21,6 +21,7 @@ def _snapshot(reference, base):
         raise ValueError("coverage evaluation hash differs")
     report = evaluation.report(path.parent)
     protected = dict(report["sources"])
+    receipt_hashes = {}
     for item in (path, path.parent / "evaluation.complete.json"):
         protected[str(item)] = engine._sha256_file(item)
     for native in report["experiments"]:
@@ -38,14 +39,129 @@ def _snapshot(reference, base):
             if receipt:
                 results = Path(receipt["results_path"])
                 for item in (results, results.parent / "manifest.json"):
-                    protected[str(item)] = engine._sha256_file(item)
+                    if item not in receipt_hashes:
+                        receipt_hashes[item] = engine._sha256_file(item)
+                    protected[str(item)] = receipt_hashes[item]
     frozen = experiment.read(path)
     bundle, _ = evaluation._selection(frozen["selection"], path.parent)
     assessments = evaluation._assessments(frozen["assessment_directory"], bundle)
     return report, assessments, protected
 
 
-def _cases(report, assessments):
+def _premise_audits(references, base, protected):
+    """Bind existing complete-output assessments, never invent an acceptance."""
+    audits = {}
+    if not isinstance(references, list):
+        raise ValueError("coverage premise audits must be an array")
+    for reference in references:
+        review._fields(reference, {"path", "sha256"}, "coverage premise audit reference")
+        path = engine._resolve_path(reference["path"], "coverage premise audit", Path(base))
+        raw = path.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != reference["sha256"]:
+            raise ValueError("coverage premise audit hash differs")
+        protected[str(path)] = reference["sha256"]
+        for line_number, line in enumerate(raw.splitlines(), 1):
+            row = json.loads(line, object_pairs_hook=engine._position_decoder().unique_object)
+            if isinstance(row, dict) and row.get("record_type") == "skip" and "verdict" not in row:
+                continue
+            if (not isinstance(row, dict) or row.get("check") not in {"matching", "support", "relationship"}
+                    or row.get("verdict") not in {"accept", "reject", "uncertain"}
+                    or not isinstance(row.get("reason"), str) or not row["reason"].strip()):
+                raise ValueError("coverage premise audit requires a complete-output assessment")
+            for field in ("input_sha256", "output_sha256"):
+                checksum = row.get(field)
+                if (not isinstance(checksum, str) or len(checksum) != 64
+                        or any(char not in "0123456789abcdef" for char in checksum)):
+                    raise ValueError("coverage premise audit requires exact input/output hashes")
+            verdict = row["verdict"]
+            if row.get("decision_error") or row.get("explanation_error"):
+                verdict = "reject"
+            key = row["check"], row["input_sha256"], row["output_sha256"]
+            audits.setdefault(key, []).append(dict(path=str(path), sha256=reference["sha256"],
+                line=line_number, verdict=verdict, reason=row["reason"]))
+    return audits
+
+
+def _accepted_premise(row, audits):
+    if row["status"] != "valid":
+        return None
+    output_hash = hashlib.sha256(row["output"].encode()).hexdigest()
+    bound = audits.get((row["evidence"]["check"], row["input_sha256"], output_hash), [])
+    reviews = [item for item in row.get("reviews", []) if item.get("current") is True]
+    if any(item.get("verdict") in {"reject", "uncertain"} for item in reviews + bound):
+        return None
+    if row.get("origin") != "mechanical" and not any(item.get("verdict") == "accept" for item in reviews + bound):
+        return None
+    premise = dict(case_id=row["id"], input_sha256=row["input_sha256"], output_sha256=output_hash,
+        origin=row.get("origin"), receipt=row.get("receipt"), reviews=reviews, audits=bound)
+    if row.get("origin") == "mechanical":
+        premise.update(mechanical_evidence=row["mechanical_evidence"], mechanical_sha256=row["mechanical_sha256"])
+    return premise
+
+
+def _accepted_matching(teacher, matching, relationships, audits):
+    """Index accepted matches and their available self guards once per answer."""
+    by_number = {row["evidence"]["student_number"]: row for row in matching}
+    guards, identifiers = {}, {}
+    for row in relationships:
+        if row["evidence"]["role"] != "compatibility":
+            continue
+        number = row["evidence"]["heading_number"]
+        group = tuple(row["evidence"]["teacher_numbers"])
+        if group not in identifiers:
+            identifiers[group] = {teacher.by_number[item] for item in group}
+        if by_number[number]["parsed"]["teacher_id"] in identifiers[group]:
+            guards.setdefault(number, []).append(row)
+    accepted = {}
+    for number, row in by_number.items():
+        identifier = row["parsed"]["teacher_id"]
+        if identifier is None:
+            continue
+        premise = _accepted_premise(row, audits)
+        own_guards = guards.get(number, [])
+        guard_premises = [_accepted_premise(guard, audits) for guard in own_guards]
+        if (premise is not None
+                and all(guard["status"] == "valid" and guard["parsed"]["valid"] is True for guard in own_guards)
+                and all(guard is not None for guard in guard_premises)):
+            accepted[number] = dict(teacher_id=identifier, premise=premise, self_guards=guard_premises)
+    return accepted
+
+
+def _matching_path_settlement(identity, teacher, group, matching, accepted, uncovered, guards, audits):
+    """Substitute an accepted equivalent parent into an actual trusted path."""
+    target_guards = [_accepted_premise(row, audits) for row in guards]
+    if any(row["status"] != "valid" or row["parsed"]["valid"] is not True for row in guards) \
+            or any(premise is None for premise in target_guards):
+        return None
+    candidates = {}
+    order = {number: index for index, number in enumerate(uncovered)}
+    for number in uncovered:
+        if number in accepted:
+            candidates.setdefault(accepted[number]["teacher_id"], number)
+    witness = None
+    for child_number in group["teacher_numbers"]:
+        path = [child_number]
+        ancestor = child_number.rpartition(".")[0]
+        while ancestor:
+            path.append(ancestor)
+            number = candidates.get(teacher.by_number[ancestor])
+            if number is not None and (witness is None or order[number] < order[witness[0]]):
+                witness = number, list(reversed(path))
+            ancestor = ancestor.rpartition(".")[0]
+    if witness is None:
+        return None
+    number, path = witness
+    premise = accepted[number]
+    return dict(identity, rule="accepted_matching_trusted_teacher_path", covered=False,
+        witness_student_number=number, matching_premise=premise["premise"],
+        matched_teacher_id=premise["teacher_id"], matching_case_ids=[row["id"] for row in matching],
+        matching_self_guard_premises=target_guards + premise["self_guards"],
+        teacher_path=[dict(number=item, subject=teacher.subjects[item], context=teacher.contexts[item]) for item in path],
+        semantic_status="Conditional on the accepted ancestor match, saved coverage matches and fixed interpretations of the trusted teacher path; separate matching uncertainties remain unresolved.")
+
+
+def _cases(report, assessments, audits=None):
+    audits = {} if audits is None else audits
     cases, settlements, guards = [], [], []
     for cohort in ("random", "challenge"):
         for answer in report[cohort]["answers"]:
@@ -63,6 +179,7 @@ def _cases(report, assessments):
             actual = {row["evidence"]["student_number"]: row
                 for row in answer["checks"]["relationship"]
                 if row["evidence"]["role"] == "actual_relationship"}
+            accepted_matching = _accepted_matching(teacher, matching, answer["checks"]["relationship"], audits)
             for ordinal, group in enumerate(groups, 1):
                 if not group["required"]:
                     continue
@@ -100,6 +217,11 @@ def _cases(report, assessments):
                     number, proof = mechanical
                     settlements.append(dict(identity, rule="trusted_uncovered_compatible_heading", covered=False,
                         witness_student_number=number, mechanical_evidence=proof["evidence"]))
+                    continue
+                derived = _matching_path_settlement(identity, teacher, group, matching,
+                    accepted_matching, uncovered, guard_rows, audits)
+                if derived is not None:
+                    settlements.append(derived)
                     continue
                 roots, omitted = [], []
                 for number in uncovered:
@@ -152,12 +274,14 @@ def _cases(report, assessments):
 
 
 def prepare_source(source, base, selected=None):
-    review._fields(source, {"schema_version", "evaluation", "answer_ids"}, "coverage search source")
+    fields = {"schema_version", "evaluation", "answer_ids"}
+    review._fields(source, fields | ({"premise_audits"} if "premise_audits" in source else set()), "coverage search source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("coverage search source schema_version must be 1")
     report, assessments, protected = _snapshot(source["evaluation"], base)
     report = evaluation._answer_subset(report, source["answer_ids"])
-    cases, settlements, guards = _cases(report, assessments)
+    audits = _premise_audits(source.get("premise_audits", []), base, protected)
+    cases, settlements, guards = _cases(report, assessments, audits)
     if selected is not None:
         engine._validate_string_array(selected, "coverage search selection", allow_empty=False)
         known = {row["id"] for row in cases}
@@ -207,7 +331,7 @@ def validate(case, raw):
             witness_requires_verification=witness is not None))
 
 
-def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, history_root=None):
+def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, history_root=None, premise_audits=None):
     """Prepare native xhigh search experiments; never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
@@ -221,6 +345,9 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
         baseline = evaluation.report(path.parent)
         answer_ids = [answer["id"] for cohort in ("random", "challenge") for answer in baseline[cohort]["answers"]]
     source = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids)
+    if premise_audits is not None:
+        source["premise_audits"] = [dict(path=str(Path(audit).expanduser().resolve()),
+            sha256=engine._sha256_file(Path(audit).expanduser().resolve())) for audit in premise_audits]
     cases, protected, preparation = prepare_source(source, path.parent)
     directory = Path(__file__).parent / "distillation-review-v1"
     template = (directory / "coverage-search-prompt-v1.md").read_text()
@@ -265,7 +392,7 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
             raise ValueError("coverage premise changed while preparing: " + filename)
     frozen = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids, sources=protected,
         experiments=experiments, inference_calls=0, preparation=preparation,
-        semantic_status="Experimental. Positive witnesses require separate unchanged DSL verification.")
+        semantic_status="Experimental. DCS-returned positive witnesses require separate unchanged DSL verification; conditional teacher-path settlements retain their accepted premises.")
     experiment.write(output / "coverage-search.json", frozen)
     experiment.write(output / "coverage-search.complete.json", {
         "coverage-search.json": engine._sha256_file(output / "coverage-search.json")})

@@ -1372,13 +1372,17 @@ validation. No saved LG01 output is rewritten.
 
 ### Canonical hierarchy construction
 
-Give each hierarchy run a specific, unique version identifier and use it in
-reports and comparisons. Link it to the exact hierarchy output and the frozen
-inputs, prompt/model settings, construction policy and native receipts used to
-generate it. Saved versions and recorded parameters are collected in the
-[hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md). Refresh
-it with `catalogue-hierarchies` after saving an output, and report its `H0001`-style
-ID when discussing or comparing hierarchies.
+Register only hierarchy runs the human explicitly designates as official. Use
+one unique ID for the raw build and its derived menu/export in reports and
+comparisons; checkpoints do not receive separate run IDs. **HR03** identifies
+the official ASv6.100 50-note Bootstrap-v96 / Compare-v48 build. Its frozen inputs,
+prompt/model settings, construction policy and native receipts are collected in
+the [Markdown hierarchy register](../docs/recommendation-engine/hierarchy-runs.md).
+Update that register and the explicit official-run list before regenerating the
+HTML viewer with the offline
+`catalogue-hierarchies` command. Diagnostic execution approval, completion and
+browsing exports do not establish official status. The previous `H0001`–`H0701`
+diagnostic inventory IDs are withdrawn and must not be reused.
 
 The standalone canonical constructor is available through the shared launcher.
 Oracle owns construction, comparison selection, consolidation and inspection;
@@ -1442,8 +1446,8 @@ runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
 schemas or frozen experiment inputs. Finish active experiments before changing
 their bound source. Saved meanings, decisions and native receipts are retained.
 
-Select L1 roots first, then L2 and deeper local levels. At each level, rotate
-across notes in saved order, one entry per note per pass. Up to three searches
+The current constructor selects L1 roots first, then L2 and deeper local levels.
+At each level, rotate across notes in saved order, one entry per note per pass. Up to three searches
 can overlap on fixed graph snapshots; placements follow selection order.
 Before placement, account for graph changes and reuse only exact unchanged
 comparisons. Sharing a note does not exclude a canonical comparison. Mapped
@@ -1451,9 +1455,22 @@ original-parent containment may follow from traversal or transitive inference;
 an unchecked or contradicted requirement holds the local entry without reopening
 a pruned branch.
 
+The constructor implements restricted refinement after note
+coverage: deeper selections come only from notes represented by leaves
+containing multiple notes. The finished hierarchy must remove redundant steps
+with equal parent/child note sets and retain individual access with one note per
+leaf. The constructor and structural audit now check single-note leaves, even
+when the same notes are individually accessible elsewhere. Retain the deeper
+heading when a parent and child represent the same notes, reconnecting other
+branches through established ancestors. The saved `menu` is separate from the
+unchanged raw comparison graph; the audit and requested viewer export use it.
+Rebuild it as notes arrive, so a previously omitted heading can return when
+useful. Keep skipped local entries unused for later eligibility changes.
+Separate required L1 processing in the prominence draft is unchanged.
+
 Each selected local node receives an independently generated immutable meaning.
-Every comparison is local versus canonical with the fixed meanings and recursive
-canonical branch evidence. `neither` stops that branch; `uncertain` holds the
+Every comparison is local versus canonical with fixed meanings; its input
+fields follow the configured Compare contract. `neither` stops that branch; `uncertain` holds the
 local entry. Containment and equivalence reuse established ancestor/descendant
 relationships. Prospective placement retains cycle, returned-relation and
 settled-answer checks. A canonical addition leaving six or more siblings triggers
@@ -1466,11 +1483,6 @@ verdict takes precedence over the latest agent verdict. A current rejection or
 uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
 See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
-
-The [next-generation hierarchy draft v2](hierarchy-generation-draft-v2.md)
-specifies PPv35 selection of every L1 scoring at least 50, or only the highest
-L1 per note when none qualifies. Every selected L1 must be processed before
-stopping. This is intended design; the current constructor does not implement it.
 
 Use these offline commands after construction:
 
@@ -1485,15 +1497,21 @@ Use these offline commands after construction:
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved stopping conditions are all notes reachable individually
-and strictly smaller note sets on every downward edge. There is no additional
-requirement to find or apply every known regrouping or shortcut, or to conduct a
+note IDs. The approved finished-hierarchy conditions are all notes reachable
+individually,
+one distinct note per canonical leaf, and strictly smaller note sets on every
+downward edge. Individual access permits notes attached directly to a parent
+that also has children; it does not require one singleton canonical node per
+note. The current constructor checks individual access, single-note
+leaves and strict edges. Exhausted local inventory with a multi-note leaf reports
+unfinished construction. There is no
+additional requirement to find or apply every known regrouping or shortcut, or to conduct a
 final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
 [constructor](hierarchy-traversal-draft.md) calls consolidation after an addition
 leaves six or more siblings. Its stopping-check timing remains provisional:
-check individual note access and strict note-set narrowing after each placement
+check individual note access, single-note leaves and strict note-set narrowing after each placement
 and all triggered consolidation against the whole selected corpus. When both
 pass, stop dispatching new searches/comparisons and save already-dispatched
 answers without further graph changes. The constructor does not solve menu optimization
@@ -1680,7 +1698,15 @@ answers. Preparation binds the existing selection, teacher-meaning assessments,
 receipts and premise snapshots; it performs no inference. It omits no-match
 and already-covered work, preserves matching-self guards, retains children
 behind invalid, unrun or explicitly disputed edges, and shares exact candidate
-wording/context duplicates. Ordinary `run`, `show` and `review` operate on the
+wording/context duplicates. It also reuses accepted complete matching against
+actual trusted teacher ancestor paths to settle positive placements before
+search. Repeated `--premise-audit AUDIT.jsonl` arguments bind existing exact
+input/output assessments when acceptance is separate from native reviews.
+Current native acceptance also qualifies; stale, rejected, uncertain or missing
+acceptance cannot license reuse. Available matching self guards remain enforced.
+Evidence retains matching receipts, accepted audit hashes/lines or current
+reviews, mechanical guard proofs and each actual teacher path/context.
+Absent paths or null matches do not establish a negative. Ordinary `run`, `show` and `review` operate on the
 returned experiments. Eligible repeated prefixes use `--prompt-cache`.
 Complete negative evidence is mechanically validated; semantic correctness and
 positive-witness verification remain separate requirements. Historical pair
@@ -1703,10 +1729,37 @@ fresh calls; it rejects the invalid positive witness and accepts the other
 pair with zero fresh calls. The final native summary reconciles 44 fresh
 attempts, 17 reuses and no retries or failures; it keeps historical generation
 usage separate. A false negative remains outside positive-witness verification.
-Accepted complete matching plus trusted teacher paths could settle four of
-these searches, but that model-dependent reuse is not implemented. DCSv1
-remains unqualified; the diagnosis recommends implementing and testing that
-reuse before further model calls, while retaining its exact provenance.
+The subsequently approved
+[conditional matching/path reuse](distillation-review-v1/README.md#conditional-matchingpath-reuse-october-11)
+is implemented in the experimental adapter. Offline native preparation settles
+exactly four of these searches: 38 become 34, with all 89 self guards and
+remaining reviewer inputs unchanged. It verifies matching receipts, audit
+bindings and actual teacher paths without inference. Separate required-child
+matching uncertainties remain unresolved. DCSv1 and full runtime remain unqualified.
+
+Coverage preparation hashes each distinct receipt results file and manifest
+once per snapshot binding pass, after native report verification. The hashes
+are local to that snapshot; inherited source bindings do not replace fresh
+reads, and the final preparation source recheck remains enforced. The
+[four-note offline benchmark](distillation-review-v1/README.md#coverage-preparation-receipt-hashing-october-11)
+reduces the slowest preparation from 13.25 to 7.61 seconds with exact case-input,
+rendered-prompt, evidence and protected-source parity. Eighteen targeted tests
+pass, including changed-receipt rejection. No inference or review criteria
+change; the full-evaluation runtime target remains unqualified.
+
+The [focused DCSv1 fresh repeat](distillation-review-v1/README.md#dcsv1-focused-negative-search-controls-october-11)
+selects twelve unchanged residual cases with native `prepare --from --only
+--repeat --prompt-cache`. Independent expected judgments are recorded before
+calls. Generation finishes in 72.36 seconds; all eleven unchanged expectations
+pass full-output audit, and one mistaken null expectation is corrected without
+declaring a model error. All seven returned witnesses receive unchanged DSLv10
+verification through exact response reuse. The completed verification subsets
+retain the original history root that indexes those receipts; an alternate root
+can miss reuse even with identical input strings. Native accounting records
+sixteen fresh attempts including four warmups and seven verification reuses.
+The historical provisional uncertainty remains alongside explicit subsequent
+acceptances; this test changes no review-precedence semantics and does not
+establish broad reviewer qualification.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -7185,3 +7238,54 @@ $0.072474 API-equivalent, with no reuse, warming, cache hits, retry, failure or
 missing usage; the shared counter moves 18,979 to 18,987. Ordering is not adopted,
 and no prompt or Bootstrap change follows. See the
 [completed diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-fresh-matched-order-diagnostic).
+
+The subsequent unchanged-V179 nonfood purpose diagnostic directly specifies
+three clear synthetic fixed pairs outside AS/Bootstrap producer collections and
+prompt examples. The native generic adapter prepares both A/B assignments,
+both physical member orders and two fresh draws: 24 comparisons. Two preflight
+reviewers qualify the design-purpose/sealing boundaries; two post-call reviewers
+accept all 24 labels and 48 directional proofs. Existing strict symmetric
+validation also passes. There are zero conflicts in twelve reversal checks,
+twelve input-order contrasts and twelve exact-request repeat checks. These are
+three related semantic cases tested repeatedly, not population accuracy or
+general comparison certification.
+
+Native output-specific agent reviews, generation/reviewed snapshots and usage
+remain under `target/compare-v179-nonfood-purpose-order-v1`. Actual request audit
+finds 24 distinct fresh responses, twelve repeated body identities and no answer
+reuse or conversation linkage. Ten backend prefix-cache hits occur without
+explicit warming. The native usage summary records 24 attempts, no retries,
+failures or missing usage, and $0.149514 API-equivalent catalog cost. The same
+shared counter moves 19,117 to 19,141. The generic adapter's old SHR diagnostics
+do not cover this symmetric supplied-meaning panel; no Bootstrap receipts are
+invented to qualify it. See the [complete preparation, results and limitations](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-nonfood-design-purpose-order-diagnostic).
+
+Separately, the user rejects the original ASv6.100 source edge from the
+shrimp-specific ingredient entry to its complete fifteen-ingredient collection
+after inspecting exact experimental v109 meanings and the original tree. This
+source edge is not positive Compare gold; its reverse relationship and complete
+pair label remain unapproved. Frozen producer outputs and existing v96 panels
+remain intact. See the [source-edge decision and exact receipts](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#user-rejected-v109-ingredient-source-edge).
+
+The authorized matched ambiguity-instruction test compares fresh V179 with
+experimental [V184](shr_single_pair/Hierarchy-compare-v184.md), replacing only
+the existing ambiguity sentence with an explicit null for the affected direction and
+boundary requirement. All other instructions/examples, fixed endpoints and
+the existing V179 output schema remain unchanged. Native
+`prepare --from ... --repeat` preserves both physical member orders in the original two-case
+Stockpots panel and the six-case synthetic nonfood panel, with two fresh draws
+per order and prompt: sixteen experiments and 64 requests. All actual requests
+and receipts pass independent matched-identity checks, and all answers pass
+the existing strict symmetric validator. No comparison data enter examples.
+
+Both prompt arms retain all 24 clear control judgments and independently reviewed
+proofs, with zero reversal/order/repeat changes. Stockpots has 3/4 reversal and
+physical-order conflicts in the fresh V179 arm, versus 4/4 in V184; repeat
+changes are 1/4 versus 0/4. No model null is emitted. The Stockpots semantic
+expectation remains qualified; its sixteen native `uncertain` agent reviews
+preserve that status, separately from 48 accepted synthetic control responses.
+The focused replacement fails its gate and is not adopted; V179 remains the
+development baseline. Native usage records 64 first attempts, no answer reuse,
+warmup, retry, failure or missing usage, 17 backend prefix-cache reads and
+$0.4786384 API-equivalent catalog cost. The existing shared counter moves 19,141
+to 19,205. See [preparation, completed evidence and next diagnostic limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v184-explicit-ambiguity-instruction-test).

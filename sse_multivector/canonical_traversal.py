@@ -8,7 +8,6 @@ from collections import deque
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextvars import copy_context
 from copy import deepcopy
-from graphlib import TopologicalSorter
 from pathlib import Path
 import json
 import fcntl
@@ -19,10 +18,13 @@ from . import experiment as workflow
 from .canonical_graph_search import GraphSearch, RELATIONS
 from .hierarchy_node_pairs import project_fixed_meanings, project_symmetric_fixed_meanings, validate
 from .canonical_receipts import _failure_receipts, _producer_hold
+from .canonical_hierarchy_shape import finish_nodes
+from .canonical_trial import _note_sets
 
 
 POLICY = 'traversal-v24'
 _CODE_FILES = ('canonical_traversal.py', 'canonical_graph_search.py', 'canonical_trial.py',
+               'canonical_hierarchy_shape.py',
                'hierarchy_node_pairs.py', 'canonical_receipts.py', 'experiment_inputs.py',
                'experiment_extension.py')
 
@@ -79,11 +81,19 @@ def check_state(state):
     if (len(state['searches']) > 3 or state['index'] != len(state['steps'])
             or not 0 <= state['cursor'] <= len(state['inventory'])):
         raise ValueError('invalid traversal construction state')
-    selected = [s['local'] for s in state['steps'] if s['local'] is not None] + [
-        s['local'] for s in state['searches']]
-    if selected != [r['local'] for r in state['inventory'][:state['cursor']]]:
+    selected = [s for s in state['steps'] if s['local'] is not None] + state['searches']
+    ordinals = {(r['local']['note_id'], r['local']['number']): i
+                for i, r in enumerate(state['inventory'])}
+    keys = [(s['local']['note_id'], s['local']['number']) for s in selected]
+    if (len(selected) != state['cursor'] or len(set(keys)) != len(keys)
+            or any(key not in ordinals for key in keys)
+            or [s.get('selection_index', ordinals.get(key)) for s, key in zip(selected, keys)]
+               != list(range(state['cursor']))
+            or any(s.get('ordinal', ordinals[key]) != ordinals[key] for s, key in zip(selected, keys))):
         raise ValueError('traversal selection order differs from saved history')
     trial._ancestors(state['nodes'])
+    if 'menu' in state and state['menu'] != _menu(state['nodes']):
+        raise ValueError('saved browsing hierarchy differs from construction graph')
 
 
 def check_synthetic(node):
@@ -190,7 +200,8 @@ def _comparison_output(slot, output):
 
 
 def _new_search(directory, state, row, ordinal):
-    slot = dict(**deepcopy(row), ordinal=ordinal, snapshot=deepcopy(state['nodes']),
+    slot = dict(**deepcopy(row), ordinal=ordinal, selection_index=state['cursor'],
+                snapshot=deepcopy(state['nodes']),
                 cache={}, experiments=[], meaning=None, symmetric=_symmetric(state))
     source = dict(schema_version=state['local_schema_version'], corpus=state['corpus'],
                   nodes=[dict(id='meaning', local=row['local'], review={})])
@@ -264,26 +275,38 @@ def _search_work(directory, state, slot):
     return True, values
 
 
-def _note_sets(nodes):
-    parents = {n['id']: n['parents'] for n in nodes}
-    children = {n: [] for n in parents}
-    represented = {n['id']: {e['note_id'] for e in n['entries']} for n in nodes}
-    for child, links in parents.items():
-        for parent in links:
-            children[parent].append(child)
-    for parent in reversed(tuple(TopologicalSorter(parents).static_order())):
-        for child in children[parent]:
-            represented[parent].update(represented[child])
-    return represented, children
+def _menu(nodes):
+    finished = finish_nodes(nodes)
+    retained = {n['id'] for n in finished}
+    return dict(nodes=finished, omitted_nodes=sorted(n['id'] for n in nodes if n['id'] not in retained))
 
 
 def _stopping(state):
-    represented, children = _note_sets(state['nodes'])
-    isolated = {next(iter(notes)) for notes in represented.values() if len(notes) == 1}
+    state['menu'] = _menu(state['nodes'])
+    represented, children = _note_sets(state['menu']['nodes'])
+    accessible = {entry['note_id'] for node in state['menu']['nodes'] for entry in node['entries']}
     equal = [dict(parent=parent, child=child) for parent, kids in children.items()
              for child in kids if not represented[child] < represented[parent]]
-    return dict(individual_access=set(state['note_ids']) <= isolated, strict_edges=not equal,
-                missing_individual=sorted(set(state['note_ids'])-isolated), equal_note_edges=equal)
+    multi = [dict(id=identifier, note_ids=sorted(notes))
+             for identifier, notes in represented.items() if not children[identifier] and len(notes) > 1]
+    return dict(individual_access=set(state['note_ids']) <= accessible, strict_edges=not equal,
+                single_note_leaves=all(len(notes) == 1 for identifier, notes in represented.items()
+                                       if not children[identifier]), multi_note_leaves=multi,
+                missing_individual=sorted(set(state['note_ids'])-accessible), equal_note_edges=equal)
+
+
+def _next_locals(state):
+    """Keep skipped entries unused; changed leaves can make them eligible later."""
+    selected = {(s['local']['note_id'], s['local']['number']) for s in state['steps']
+                if s['local'] is not None}
+    selected.update((s['local']['note_id'], s['local']['number']) for s in state['searches'])
+    eligible = {note for leaf in state['stopping']['multi_note_leaves'] for note in leaf['note_ids']}
+    for ordinal, row in enumerate(state['inventory']):
+        local = row['local']
+        if ((local['note_id'], local['number']) not in selected and (
+                not state['stopping']['individual_access'] or '.' not in local['number']
+                or local['note_id'] in eligible)):
+            yield ordinal, row
 
 
 def _mapped_parent(state, slot):
@@ -354,6 +377,7 @@ def _apply(state, slot, values, comment, *, group=None):
         inputs = _payload(slot, _canonical_input(slot['snapshot'], identifier))
         answers.append(deepcopy(slot['cache'][workflow.inputs.digest(inputs)]))
     state['steps'].append(dict(index=state['index'], local=slot.get('local'),
+        ordinal=slot.get('ordinal'), selection_index=slot.get('selection_index', slot.get('ordinal')),
         selected_meaning=slot['meaning'], status='held' if reason else 'equivalent' if equivalent else 'added',
         reason=reason, canonical_id=None if reason else target, before=before,
         after=deepcopy(state['nodes']), answers=answers, comment=comment,
@@ -361,6 +385,7 @@ def _apply(state, slot, values, comment, *, group=None):
         graph_search=slot.get('search_result'), mapped_parent=parent,
         settled_relation_contradiction=witness))
     state['index'] += 1
+    state['stopping'] = _stopping(state)
     if not reason and not equivalent:
         _triggers(state, target)
     return reason
@@ -413,6 +438,7 @@ def _consolidate(directory, state, comment):
 
 
 def _schedule(directory, state, comment):
+    state['stopping'] = _stopping(state)
     # Advance independent snapshots even while consolidation blocks placements.
     for slot in state['searches']:
         _search_work(directory, state, slot)
@@ -422,14 +448,15 @@ def _schedule(directory, state, comment):
                 break
             continue
         if state.pop('check_stopping', False):
-            state['stopping'] = _stopping(state)
-            if state['stopping']['individual_access'] and state['stopping']['strict_edges']:
+            if (state['stopping']['individual_access'] and state['stopping']['strict_edges']
+                    and state['stopping']['single_note_leaves']):
                 state['status'] = 'complete'
                 _stop_dispatch(state)
                 break
-        while len(state['searches']) < 3 and state['cursor'] < len(state['inventory']):
-            ordinal = state['cursor']
-            state['searches'].append(_new_search(directory, state, state['inventory'][ordinal], ordinal))
+        for ordinal, row in _next_locals(state):
+            if len(state['searches']) >= 3:
+                break
+            state['searches'].append(_new_search(directory, state, row, ordinal))
             state['cursor'] += 1
         if not state['searches']:
             state['status'] = 'exhausted'
@@ -468,6 +495,7 @@ def _stop_dispatch(state, reason='traversal stopping conditions met'):
 def summary(state):
     return dict(status=state['status'], index=state['index'], selected=state['cursor'],
                 canonical_nodes=len(state['nodes']), active_searches=len(state['searches']),
+                browsing_nodes=len(state.get('menu', {}).get('nodes', state['nodes'])),
                 held=sum(s['status'] == 'held' for s in state['steps']),
                 stopping=state.get('stopping'),
                 experiments=[] if state['status'] == 'complete' else [
@@ -570,6 +598,10 @@ def _resume_sources(directory, reason):
                 if path not in allowed:
                     raise ValueError('trial source changed: '+path)
                 before[path], after[path] = digest, current
+        shape = str(Path(__file__).with_name('canonical_hierarchy_shape.py').resolve())
+        constructor = str(Path(__file__).resolve())
+        if shape not in state['sources'] and constructor in state['sources']:
+            before[shape], after[shape] = None, trial._hash(shape)
         if after:
             from experiment_runner.scheduling import snapshot
             for record in state['experiments']:
@@ -580,6 +612,9 @@ def _resume_sources(directory, reason):
                 reason=reason, before=before, after=after, index=state['index'],
                 graph_sha256=workflow.inputs.digest(state['nodes'])))
             state['sources'].update(after)
+            if state['status'] == 'complete':
+                state['status'] = 'constructing'
+                state['check_stopping'] = True
         check_state(state)
         if after:
             workflow.write(directory/'state.json', state)

@@ -337,6 +337,34 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
                  '--runner-upgrade-reason', 'Cannot authorize different inputs', ok=False)
 
+    def test_reviewed_upgrade_pins_new_shaping_code_for_a_legacy_resume(self):
+        self.automatic_fixture(count=2, roots_only=True)
+        self.write('allowance.json', dict(schema_version=1, limit=2, used=0))
+        self.automatic_run(ok=False)
+        saved = self.state()
+        shape = str(Path(__file__).with_name('canonical_hierarchy_shape.py').resolve())
+        # Earlier constructor states did not bind this newly used component.
+        state = json.loads(json.dumps(saved))
+        state['sources'].pop(shape)
+        state.pop('menu')
+        for step in state['steps']:
+            step.pop('ordinal', None)
+            step.pop('selection_index', None)
+        for slot in state['searches']:
+            slot.pop('selection_index', None)
+        self.write('trial/state.json', state)
+        self.write('allowance.json', dict(schema_version=1, limit=20, used=2))
+        self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
+                 '--runner-upgrade-reason', 'Adopt reviewed finished-menu implementation')
+        resumed = self.state()
+        self.assertIn(shape, resumed['sources'])
+        self.assertIsNone(resumed['source_upgrades'][0]['before'][shape])
+        self.assertEqual(resumed['source_upgrades'][0]['after'][shape], resumed['sources'][shape])
+        self.assertEqual(resumed['nodes'][:len(saved['nodes'])], saved['nodes'])
+        for before, after in zip(saved['experiments'], resumed['experiments']):
+            if 'answers' in before:
+                self.assertEqual(after, before)
+
     def test_rotates_l1_then_l2_and_prepares_only_three_concurrent_searches(self):
         self.prepare(extra_root=True)
         state = self.state()
@@ -378,6 +406,191 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(payload['local']['meaning'], 'Meaning n1')
         self.assertEqual(payload['canonical']['subject'], 'Root 0')
         self.assertEqual(state['steps'][0]['local'], dict(note_id='n0', number='1'))
+
+    def test_singleton_routes_elsewhere_do_not_finish_a_shared_leaf(self):
+        notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=[
+            dict(number='1', subject='Shared', context='Shared topic'),
+            dict(number='2', subject=f'Solo {i}', context='Independent topic')])
+            for i in range(2)]
+        self.prepare(notes=notes)
+        for _ in range(12):
+            state = self.state()
+            if state['status'] in ('complete', 'exhausted'):
+                break
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                local = record['local']
+                meaning = 'Shared' if local['number'] == '1' else 'Solo '+local['note_id']
+                for identifier in record['inputs']:
+                    value = dict(meaning=meaning)
+                    if record['role'] == 'comparison':
+                        value.update(relation='equivalent' if local['number'] == '1'
+                                     else 'neither', reason='Fixture fixed meanings')
+                    self.cli('run', record['experiment'], '--only', identifier, env={
+                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+            self.advance()
+        state = self.state()
+        self.assertEqual(state['status'], 'exhausted')
+        self.assertTrue(state['stopping']['individual_access'])
+        self.assertTrue(state['stopping']['strict_edges'])
+        self.assertFalse(state['stopping']['single_note_leaves'])
+        self.assertEqual(state['stopping']['multi_note_leaves'], [
+            dict(id='C001', note_ids=['n0', 'n1'])])
+        report = json.loads(self.cli('audit-canonical-trial', 'trial',
+                                     '--output', 'audit.json').stdout)
+        self.assertFalse(report['structural_constraints_met'])
+        audit = json.loads((self.root/'audit.json').read_text())
+        self.assertIn(dict(kind='multi_note_leaf', node='C001', note_ids=['n0', 'n1']),
+                      audit['violations'])
+
+    def test_note_supported_by_a_parent_does_not_need_its_own_canonical_node(self):
+        from sse_multivector.canonical_traversal import _stopping
+        state = dict(note_ids=['n0', 'n1'], nodes=[
+            dict(id='F', subject='Food', meaning='Food', parents=[], entries=[
+                dict(note_id='n0', number='1'), dict(note_id='n1', number='1')]),
+            dict(id='V', subject='Vegetables', meaning='Vegetables', parents=['F'], entries=[
+                dict(note_id='n0', number='1.1')])])
+        result = _stopping(state)
+        self.assertTrue(result['individual_access'])
+        self.assertTrue(result['strict_edges'])
+        self.assertTrue(result['single_note_leaves'])
+
+    def test_equal_note_steps_retain_the_deeper_heading_and_original_supports(self):
+        from sse_multivector.canonical_traversal import _stopping
+        nodes = [
+            dict(id='R', subject='Topics', meaning='All topics', parents=[], entries=[
+                dict(note_id='n2', number='1')]),
+            dict(id='F', subject='Food', meaning='Food', parents=['R'], entries=[
+                dict(note_id='n0', number='1'), dict(note_id='n1', number='1')]),
+            dict(id='V', subject='Vegetables', meaning='Vegetables', parents=['F'], entries=[
+                dict(note_id='n0', number='1.1'), dict(note_id='n1', number='1.1')])]
+        original = json.loads(json.dumps(nodes))
+        state = dict(note_ids=['n0', 'n1', 'n2'], nodes=nodes)
+        result = _stopping(state)
+        self.assertTrue(result['strict_edges'])
+        self.assertFalse(result['single_note_leaves'])
+        self.assertEqual(state['menu']['omitted_nodes'], ['F'])
+        self.assertEqual(state['menu']['nodes'], [nodes[0], {**nodes[2], 'parents': ['R']}])
+        self.assertEqual(state['nodes'], original)
+        root_state = dict(note_ids=['n0', 'n1'], nodes=[
+            {**nodes[1], 'parents': []}, nodes[2]])
+        _stopping(root_state)
+        self.assertEqual(root_state['menu']['nodes'], [{**nodes[2], 'parents': []}])
+        # New evidence can make a formerly redundant broad heading useful again.
+        state['nodes'].append(dict(id='X', subject='Other food', meaning='Other food',
+            parents=['F'], entries=[dict(note_id='n2', number='2')]))
+        _stopping(state)
+        self.assertIn('F', [n['id'] for n in state['menu']['nodes']])
+
+    def test_removing_equal_parent_preserves_other_branches_without_new_containments(self):
+        from sse_multivector.canonical_traversal import _stopping
+        nodes = [
+            dict(id='R', subject='Topics', meaning='All topics', parents=[], entries=[
+                dict(note_id='n3', number='1')]),
+            dict(id='O', subject='Other parent', meaning='Other parent', parents=['R'], entries=[
+                dict(note_id='n2', number='1')]),
+            dict(id='F', subject='Food', meaning='Food', parents=['R'], entries=[
+                dict(note_id='n0', number='1'), dict(note_id='n1', number='1')]),
+            dict(id='V', subject='Vegetables', meaning='Vegetables', parents=['F', 'O'], entries=[
+                dict(note_id='n0', number='1.1'), dict(note_id='n1', number='1.1')]),
+            dict(id='S', subject='Side branch', meaning='Side branch', parents=['F'], entries=[
+                dict(note_id='n0', number='2')])]
+        state = dict(note_ids=['n0', 'n1', 'n2', 'n3'], nodes=nodes)
+        _stopping(state)
+        menu = {n['id']: n for n in state['menu']['nodes']}
+        self.assertNotIn('F', menu)
+        self.assertEqual(menu['V']['parents'], ['O', 'R'])
+        self.assertEqual(menu['S']['parents'], ['R'])
+        self.assertEqual(menu['S']['entries'], nodes[-1]['entries'])
+
+    def test_after_coverage_selects_deeper_nodes_only_from_multi_note_leaves(self):
+        self.prepare(count=4)
+        for _ in range(18):
+            state = self.state()
+            if state['status'] in ('complete', 'exhausted'):
+                break
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                local = record['local']
+                subject = next(r['subject'] for r in state['inventory'] if r['local'] == local)
+                for identifier in record['inputs']:
+                    value = dict(meaning=subject)
+                    if record['role'] == 'comparison':
+                        value.update(reason='Fixture consistent topics', relation=(
+                            'equivalent' if local == dict(note_id='n1', number='1')
+                            and identifier == 'C001' else 'canonical_contains_local'
+                            if '.' in local['number'] and identifier == 'C001' else 'neither'))
+                    self.cli('run', record['experiment'], '--only', identifier, env={
+                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+            self.advance()
+        state = self.state()
+        selected = [r['local'] for r in state['experiments'] if r['role'] == 'meaning']
+        self.assertNotIn(dict(note_id='n2', number='1.1'), selected)
+        self.assertNotIn(dict(note_id='n3', number='1.1'), selected)
+        self.assertEqual(state['status'], 'complete')
+        self.assertTrue(state['stopping']['single_note_leaves'])
+        audit = json.loads(self.cli('audit-canonical-trial', 'trial', '--output', 'audit.json').stdout)
+        self.assertTrue(audit['structural_constraints_met'])
+        tasks = json.loads((self.root/'audit.json').read_text())['individual_tasks']
+        self.assertEqual(next(t for t in tasks if t['note_id'] == 'n1')['node'], 'C001')
+
+    def test_skipped_locals_are_unused_and_filtered_selection_resumes(self):
+        self.prepare(count=5)
+        for _ in range(20):
+            state = self.state()
+            if state['status'] in ('complete', 'exhausted'):
+                break
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                local = record['local']
+                subject = next(r['subject'] for r in state['inventory'] if r['local'] == local)
+                for identifier in record['inputs']:
+                    value = dict(meaning=subject)
+                    if record['role'] == 'comparison':
+                        parent = {'n0': 'C001', 'n1': 'C002', 'n3': 'C004', 'n4': 'C004'}
+                        value.update(reason='Fixture consistent topics', relation=(
+                            'equivalent' if local == dict(note_id='n4', number='1')
+                            and identifier == 'C004' else 'canonical_contains_local'
+                            if '.' in local['number'] and identifier == parent.get(local['note_id'])
+                            else 'neither'))
+                    self.cli('run', record['experiment'], '--only', identifier, env={
+                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+            self.advance()
+        state = self.state()
+        self.assertEqual(state['status'], 'complete')
+        self.assertNotIn(dict(note_id='n2', number='1.1'),
+                         [r['local'] for r in state['experiments'] if r['role'] == 'meaning'])
+        step = next(s for s in state['steps'] if s['local'] == dict(note_id='n3', number='1.1'))
+        self.assertEqual((step['ordinal'], step['selection_index']), (8, 7))
+        saved = (self.root/'trial/state.json').read_bytes()
+        self.advance()
+        self.assertEqual((self.root/'trial/state.json').read_bytes(), saved)
+
+    def test_unused_entries_can_become_eligible_again_after_leaf_changes(self):
+        from sse_multivector.canonical_traversal import _next_locals
+        rows = [dict(local=dict(note_id=f'n{i}', number='1.1'), subject=f'Child {i}')
+                for i in range(2)]
+        state = dict(inventory=rows, steps=[], searches=[], stopping=dict(
+            individual_access=True, multi_note_leaves=[dict(id='L', note_ids=['n1', 'other'])]))
+        self.assertEqual(list(_next_locals(state)), [(1, rows[1])])
+        state['searches'] = [rows[1]]
+        state['stopping']['multi_note_leaves'] = [dict(id='L', note_ids=['n0', 'n1'])]
+        self.assertEqual(list(_next_locals(state)), [(0, rows[0])])
+
+    def test_saved_menu_cannot_change_a_canonical_meaning(self):
+        self.prepare(count=1)
+        self.run_pending(dict(meaning='Fixed meaning'))
+        self.advance()
+        state = self.state()
+        self.assertEqual(state['status'], 'complete')
+        state['menu']['nodes'][0]['meaning'] = 'Changed meaning'
+        self.write('trial/state.json', state)
+        rejected = self.cli('advance-canonical-traversal', 'trial', '--comment',
+                            'Refuse an altered menu', ok=False)
+        self.assertIn('saved browsing hierarchy differs', rejected.stderr)
 
     def test_revalidation_reuses_unchanged_root_and_compares_only_new_roots(self):
         self.prepare(count=4)

@@ -453,9 +453,13 @@ through unchanged DSLv10 reuse. The subsequent
 generates 38 searches and four warmups in approximately 118 seconds: complete
 audits record 34 accepts, two errors and two uncertainties. DSLv10 catches the
 invalid positive witness, but cannot catch the false negative. Accepted complete
-matching plus trusted teacher paths could settle four searches, including that
-miss; implementing and testing provenance-preserving reuse is recommended,
-not yet implemented. DCSv1 and full-evaluation runtime remain unqualified. Deployed
+matching plus trusted teacher paths can settle four searches, including that
+miss. The subsequently approved
+[conditional reuse implementation](../../sse_multivector/distillation-review-v1/README.md#conditional-matchingpath-reuse-october-11)
+verifies that reduction offline: 38 searches become 34, with all 89 self guards
+and remaining reviewer inputs unchanged. Exact acceptance/receipt hashes and
+actual teacher paths remain bound; separate matching uncertainties are not
+resolved by placement reuse. DCSv1 and full-evaluation runtime remain unqualified. Deployed
 defaults, the final sixty and the maximum two-percentage-point loss remain
 unchanged.
 Historical DSLv8 outputs, reviews and targets remain unchanged.

@@ -17,6 +17,30 @@ except ImportError:
     from canonical_hierarchy_audit import audit_trial
 
 
+def finish_nodes(nodes):
+    """Bypass equal-note-set parents, retaining deeper nodes and their evidence.
+
+    Other children reconnect to surviving ancestors, never to an equal sibling.
+    Rebuild from the raw graph so later note growth can restore a broad heading.
+    """
+    represented, children = canonical_trial._note_sets(nodes)
+    omitted = {parent for parent, kids in children.items()
+               if any(represented[parent] == represented[child] for child in kids)}
+    parents = {n['id']: n['parents'] for n in nodes}
+    surviving = {}
+    for identifier in TopologicalSorter(parents).static_order():
+        surviving[identifier] = ({identifier} if identifier not in omitted else
+            {ancestor for parent in parents[identifier] for ancestor in surviving[parent]})
+    result = []
+    for node in nodes:
+        if node['id'] not in omitted:
+            copied = deepcopy(node)
+            copied['parents'] = sorted({ancestor for parent in node['parents']
+                                        for ancestor in surviving[parent]})
+            result.append(copied)
+    return result
+
+
 def shape_trial(source_path, output_directory, work_budget=200000, max_choices=6):
     if type(work_budget) is not int or work_budget < 1:
         raise ValueError('work_budget must be positive')

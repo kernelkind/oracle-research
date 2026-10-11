@@ -3198,18 +3198,19 @@ HD15 cycle policy without changing cross-post selection, cutoffs or saved baseli
 
 #### Recording and replaying hierarchy decisions
 
-**Hierarchy run identifiers — approved October 11:** every hierarchy run must
-have a specific, unique version identifier so runs can be referred to
-unambiguously. Report it with the exact hierarchy output and experimental
-parameters, linking the existing frozen inputs, configuration and native
-receipts used to generate that hierarchy. Saved outputs use `H0001`, `H0002`,
-and so on in the [hierarchy catalogue](../recommendation-engine/hierarchy-runs.md),
-which collects their recorded experimental parameters in one place. Copies
-share an ID; changed outputs and independently saved experiments remain distinct.
-The existing-output inventory starts October 8, 2026 at midnight
+**Official hierarchy run identifiers — approved October 11:** register only runs
+the human explicitly designates as official, using one unique ID for the raw
+build and its derived menu/export. The human designated the completed ASv6.100
+50-note Bootstrap-v96 / Compare-v48 build as official; its ID is **HR03**. The
+[Markdown hierarchy register](../recommendation-engine/hierarchy-runs.md) collects its
+frozen inputs, configuration, source hashes, native receipts and experimental
+parameters in one place. Diagnostic execution approval, completion and browsing
+exports do not establish official status; checkpoints do not receive separate
+run IDs. The `H0001`–`H0701` diagnostic inventory is withdrawn and its IDs must
+not be reused. The existing-run cutoff remains October 8, 2026 at midnight
 America/New_York; older bound inputs remain provenance. Before new runs, record
-the full Git commit hashes of this repository and the shared runner, plus any
-uncommitted source changes. Unrecorded historical commits remain unknown.
+the full Git commits of Oracle and the shared runner, plus any uncommitted source
+changes. Unrecorded historical commits remain unknown.
 
 **NEv2 user review (September 25):** Coffee, Food, and morning-greetings merges
 accepted ("the other 3 look fine"); Beef / Beef products remains rejected.

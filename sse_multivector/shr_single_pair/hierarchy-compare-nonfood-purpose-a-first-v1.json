@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "included-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"},\"B\":{\"subject\":\"Manufacturing pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "nonfood-design-purpose-v1",
+        "pair_id": "included-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "Every sealed manufacturing pressure vessel meets the parent's liquid-heating design and sale-product manufacturing purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "included-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Manufacturing pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale.\"},\"B\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "nonfood-design-purpose-v1",
+        "pair_id": "included-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "Every sealed manufacturing pressure vessel meets the parent's liquid-heating design and sale-product manufacturing purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "excluded-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"},\"B\":{\"subject\":\"Laboratory measurement pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with the sole design purpose of measuring their pressure–temperature behavior in basic laboratory research.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "nonfood-design-purpose-v1",
+        "pair_id": "excluded-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "A sealed vessel designed solely for basic-research measurement has no manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Actual repurposing cannot establish the required design intention.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "excluded-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Laboratory measurement pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with the sole design purpose of measuring their pressure–temperature behavior in basic laboratory research.\"},\"B\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "nonfood-design-purpose-v1",
+        "pair_id": "excluded-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "A sealed vessel designed solely for basic-research measurement has no manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Actual repurposing cannot establish the required design intention.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "unrestricted-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"},\"B\":{\"subject\":\"Liquid-heating pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with no restriction on their design purpose.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "nonfood-design-purpose-v1",
+        "pair_id": "unrestricted-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "The child expressly permits research-only design purposes that do not meet manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Explicit purpose freedom is not unresolved wording.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "unrestricted-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with no restriction on their design purpose.\"},\"B\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "nonfood-design-purpose-v1",
+        "pair_id": "unrestricted-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "The child expressly permits research-only design purposes that do not meet manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Explicit purpose freedom is not unresolved wording.",
+          "user_gold": false
+        }
+      }
+    }
+  ]
+}

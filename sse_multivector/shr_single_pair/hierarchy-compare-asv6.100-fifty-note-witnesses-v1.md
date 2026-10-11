@@ -5,8 +5,9 @@ new hierarchy. The user authorized adding the failures identified in the
 [fresh fifty-note findings](hierarchy-as100-fifty-note-findings-v1.md) to the
 Compare regression set. The original construction used unchanged Bootstrap-v96
 and Compare-v48. Compare-v69 and approved-for-qualification Compare-v75 completed
-the initial experimental trials. Experimental V183 retains reversal conflicts
-and is not adopted; V179 remains the symmetric A/B development baseline. V176's
+the initial experimental trials. Experimental V183 retains reversal conflicts,
+and V184's focused ambiguity-instruction test also fails its consistency gate.
+Neither is adopted; V179 remains the symmetric A/B development baseline. V176's
 subsequent
 [qualified-subset test](#qualified-subset-test-of-unchanged-v176) retains two
 settled reversals and additional input qualifications. The
@@ -85,13 +86,47 @@ are currently unresolved. All 16 tested controls still pass, and its three
 reversal conflicts and one changed label between draws remain unchanged. The
 original all-supported/no-conflict/repeat-stability gate still does not pass.
 
-The existing matched meanings show order-associated instability: V179's positive
-Cookware relationship follows its physical first position in the saved/fresh
-input-order comparison, while V182's requested report-order change leaves the
-original pattern. That does not establish which semantic answer is correct,
-internal reasoning order or a causal physical-position effect. A fresh matched
-order-only comparison is warranted before another prompt change; another test
-presuming stock-making cannot imply meal preparation is not.
+The completed [fresh eight-request matched diagnostic](#completed-fresh-matched-order-diagnostic)
+reproduces Cookware containment when Cookware is physically first and `neither`
+when it is second, with four reversal conflicts and four order changes. The
+subsequent [24-request nonfood controls](#completed-nonfood-purpose-diagnostic)
+retain all three explicit-purpose judgments across assignments, member orders
+and fresh repeats. Neither diagnostic certifies the Stockpots label or identifies
+a causal instruction. The remaining Compare investigation concerns consistent
+handling of the unresolved stock-making/meal-purpose implication; tests must
+retain clear positive and negative controls without imposing either disputed
+Stockpots label.
+
+The [matched V179/V184 test](#completed-matched-v179v184-test) preserves all
+clear controls but retains the Stockpots reversal and input-order conflicts.
+The explicit ambiguity instruction is not an established repair.
+
+## User-rejected v109 ingredient source edge
+
+The user inspected the full original post, ASv6.100 local tree, independently
+generated experimental Bootstrap-v109 meanings and ambiguity resolutions, then
+judged: **"this is an AS fuckup imo"**. The rejected source edge is
+**Shrimp as an ingredient in mushroom risotto with shrimp -> the complete
+fifteen-ingredient collection for that dish**. AS repeats that full collection
+beneath all fifteen individual ingredient entries. This is not positive Compare
+gold and does not establish a fresh Compare-model failure. The reverse relation
+and a complete pair label have not been approved.
+
+Exact v109 producer cases in the separate experimental cohort:
+
+- `bootstrap-7f1f344745caf68fd75dd332ff959c80c98f4c8b6f558e4702ebb973eb5b3e21`,
+  receipt `5417e6cfd457d67a7d59d7082ce88a2599f4a1b9d8c8ef4c7538ee407eefb78e`.
+- `bootstrap-fce575812893a49dc58c09ef7f310ef66728f46a80475b4045b551e97cdb8e0e`,
+  receipt `cf95678a919e572619b5a911987931a21d7c6134ecb8e04a529298b1bbe23c84`.
+
+Both refer to the Bootstrap owner's native
+`target/bootstrap-v109-scope-preservation-v1/candidate/run/results.jsonl` in
+`oracle-mvp-shr-pair-correctness-v1`. The original selected entries are
+`1.1.1.1.1.1` and `1.1.1.1.1.1.1`, with identical full post and original tree.
+Bootstrap keeps the parent shrimp-specific and the child about the full
+collection. Preserve those original outputs, source relationships and receipts;
+do not relabel or modify the frozen ASv6.100/Bootstrap-v96 Compare panels. No
+Compare request for this exact v109 pair is made as part of this classification.
 
 ## Frozen selection
 
@@ -6222,3 +6257,249 @@ Bootstrap, hierarchy or prompt change occurs. V179 remains an experimental
 development baseline, and reordering is not adopted: both presentations retain
 the reversal conflict. Further Compare work should address stable interpretation
 of unchanged definitions without imposing this pair's unresolved label.
+
+## V179 nonfood design-purpose order diagnostic
+
+The user authorized a small diagnostic after rejecting the v109 ingredient
+source edge above. This panel supplies synthetic fixed meanings directly; it
+does not generate AS or Bootstrap outputs, certify original source links, replace
+the existing producer-bound panels, or add validation cases to prompt examples.
+Unchanged Compare-v179 and its four-field output schema are retained.
+
+The common parent names liquid-heating vessels designed for manufacturing
+chemical products intended for sale and explicitly permits open or sealed
+vessels. Three sealed pressure-vessel children vary only design purpose:
+
+| Pair | Child design purpose | Pre-call agent expectation |
+|---|---|---|
+| Included | Manufacturing chemical products intended for sale | Parent contains child |
+| Excluded | Solely pressure-temperature measurement in basic laboratory research | Neither |
+| Unrestricted | Explicitly unrestricted | Neither |
+
+Two independent read-only preflight assessments find these scopes clear. An open
+manufacturing vat establishes the reverse exclusion in every pair. A sealed
+vessel designed solely for independent research measurement can escape the
+manufacturing-purpose parent in the latter two pairs. The counterexamples must
+preserve design intention; actual repurposing does not establish it. These are
+agent-qualified controls, not user-certified gold.
+
+The reusable [A-first source](hierarchy-compare-nonfood-purpose-a-first-v1.json)
+and [B-first source](hierarchy-compare-nonfood-purpose-b-first-v1.json) each
+contain the three pairs in both A/B assignments. Expected relations and review
+provenance remain in evidence outside model input. The two
+[A-first](hierarchy-compare-v179-nonfood-purpose-a-first-v1.spec.json) and
+[B-first](hierarchy-compare-v179-nonfood-purpose-b-first-v1.spec.json)
+specifications use the existing generic native adapter, shared worker,
+Sol 6.1 medium/SSE and disabled explicit cache warming, matching the previous
+order diagnostic's request convention. No new adapter or execution script is
+needed. Create two fresh draws with native `prepare --repeat`, then
+`prepare --from ... --repeat`: **3 pairs x 2 assignments x 2 member orders x
+2 draws = 24 planned comparisons**. Every attempt and provider-only retry counts
+against the existing shared 20,000 counter; a run's twelve-attempt ceiling allows
+one temporary-provider retry per case. No unresolved request counts as success.
+
+Before dispatch verify that corresponding rendered requests differ only in
+physical input member order and that repeats have identical complete request
+identity. Inspect actual recorded provider requests afterward for distinct fresh
+response IDs and absence of conversation linkage or answer reuse. Evaluate
+twelve reversal checks, twelve order contrasts and twelve identical-request
+repeat checks, with semantic diagnostics reviewed separately from labels.
+
+The generic schema check preserves native outputs and receipts, but does not
+apply the hierarchy adapter's directional-field checks. Therefore check every
+valid response read-only with existing production
+`hierarchy_node_pairs.validate(..., diagnostics=True, symmetric=True)` and
+register output-specific assessments through native `review`. Producer-bound
+`node_pair_consistency` cannot certify directly specified synthetic endpoints;
+do not fabricate Bootstrap receipts to make it do so. Read-only normalization
+of native saved labels supplies the paired diagnostic counts. Native
+[usage aggregation](hierarchy-compare-v179-nonfood-purpose-usage-v1.json)
+retains all four experiments and actual attempt/usage accounting.
+
+This is a bounded mechanism diagnostic with three related semantic cases,
+not a population accuracy estimate. Stable controls would narrow the evidence
+toward ambiguity-sensitive scope interpretation; they would not prove general
+order invariance or resolve Cookware/Stockpots. A failed clear control warrants
+focused instruction ablation rather than treating the ambiguous pair as gold.
+
+### Completed nonfood purpose diagnostic
+
+All 24 comparisons completed as fresh valid first attempts under unchanged V179.
+All also pass the existing strict symmetric directional validator. Two
+independent post-call reviewers each assess twelve responses and all twenty-four
+directional proofs in one draw. They accept every label and directional proof,
+preserving design purpose rather than inferring it from incidental actual use.
+Their judgments remain agent assessments. Twenty-four output-specific native
+agent accept reviews preserve those findings; `final-generation.json` and
+`final-reviewed.json` in each directory retain unchanged nonreview case fields.
+
+| Control pair | Responses matching prequalified label | Reversal conflicts | Physical-order changes | Fresh-repeat changes |
+|---|---:|---:|---:|---:|
+| Included manufacturing purpose | 8/8 | 0/4 | 0/4 | 0/4 |
+| Sole research-measurement purpose | 8/8 | 0/4 | 0/4 | 0/4 |
+| Explicitly unrestricted purpose | 8/8 | 0/4 | 0/4 | 0/4 |
+| Total | 24/24 | 0/12 | 0/12 | 0/12 |
+
+These are three related fixed semantic cases tested repeatedly; the 24 responses
+and overlapping contrasts are not 24 independent semantic cases. The positive
+control succeeds in every assignment/order, so the pass is not produced by
+returning only `neither` or `uncertain`.
+
+An independent recorded-request audit finds 24 distinct response IDs and receipt
+hashes, with twelve exact request bodies each repeated twice. Each request has
+one fresh user message, no added instructions, and no conversation or previous-
+response linkage. Expected relations and review evidence are absent from model
+input. Prompt, schema, medium effort, worker, wrapper and request-producing code
+remain identical. Input-order contrasts change only physical JSON member order;
+both A/B assignments retain the exact endpoints. Every frozen source binding
+resolves to this task worktree, with matching hashes. There is no answer reuse,
+warmup, retry, failure, missing usage or unrun request. Ten backend prefix-cache
+hits occur despite disabled explicit warming; these are not answer reuse.
+
+Native `usage.json` reports **24 actual attempts and $0.149514 API-equivalent
+catalog cost**, including reasoning in output. The shared counter reads 19,117
+before dispatch and 19,141 afterward, leaving 859 at that read. It remains the
+same persistent 20,000 counter; no allowance is reset or added. All native
+generated artifacts stay ignored under `target/compare-v179-nonfood-purpose-order-v1`.
+
+A read-only comparison with the original matched Stockpots draw finds the
+unstable boundary is whether stock-making necessarily carries a meal-preparation
+design purpose. One positive explicitly says culinary stock preparation is meal
+preparation even as an intermediate ingredient; another proves food/heat without
+separately proving meal purpose. The opposite-order negatives retain stock-making
+design and stipulate exclusive laboratory purposes. Their exclusion remains
+conditional on the unresolved stock/food/meal boundary. The clear nonfood
+controls preserve all explicit purposes and sealing conditions in both directions.
+
+The result narrows the evidence toward ambiguity-sensitive or domain-dependent
+interpretation, rather than establishing a general inability to compare design
+purpose. It does not distinguish lexical implications from clause attachment,
+prove a causal instruction mechanism, settle either Stockpots label or fix V179.
+V179 already requires unresolved judgments for materially different supported
+readings, but the saved responses choose incompatible readings without closing
+that issue. The next warranted test is a focused replacement of that scope-
+interpretation paragraph, retaining both the original unresolved pair and these
+clear positive/negative controls. No such edit or further inference is begun
+as part of this completed diagnostic.
+
+## V184 explicit ambiguity-instruction test
+
+The user authorized testing a focused replacement after V179 passed all three
+explicit nonfood purpose controls. Experimental
+[Compare-v184](Hierarchy-compare-v184.md) replaces only V179's final ambiguity
+sentence. The replacement retains all coverage-changing ambiguity types:
+
+> General knowledge may clarify language. If materially different readings of a meaning remain supported and change coverage, return null for the affected direction and identify the disputed boundary; do not choose a reading to obtain a definite judgment.
+
+Two independent preflight reviews check scope preservation and native preparation.
+The absence-alone-is-not-ambiguity rule, all other instructions and examples,
+both input objects and the existing V179 four-field schema remain unchanged.
+The native revision pins the V179 hash and records one exact replacement; V184's
+SHA-256 is `df0f0fe8b85ff7d40f1c464e58a3bd3fd279a8473a5c73d39e8388f897b4db3c`.
+No example, Bootstrap meaning, source hierarchy or placement rule changes.
+
+Use a contemporaneous fresh V179 control arm, not saved answers as fresh trials.
+Native `prepare --from ... --repeat` preserves the two original Stockpots cases
+and six nonfood cases in each member order. Candidate preparation adds only
+`--prompt .../Hierarchy-compare-v184.md --prompt-id Hierarchy-compare-v184`.
+For each arm and family, independently repeat both member orders once. This
+creates sixteen native experiments under `target/compare-v184-ambiguity-instruction-v1`:
+**2 prompts x (2 original + 6 nonfood cases) x 2 member orders x 2 fresh draws =
+64 planned comparisons**. Each arm has eight original and twenty-four control
+responses. The same shared worker, Sol 6.1 medium/SSE, automatic admission queue,
+disabled explicit warming and persistent 20,000-attempt counter apply. A native
+run ceiling allows at most two provider attempts per case; count actual retries
+and failures separately. The native
+[usage source](hierarchy-compare-v179-v184-ambiguity-usage-v1.json) keeps both
+prompts and both families separate.
+
+Before dispatch verify identical fixed inputs, output schema and contemporaneous
+code/settings across prompt arms; their rendered requests must differ only in
+the replaced sentence. Physical-order contrasts must differ only in input
+member order, and fresh repeats must have identical request bodies. Inspect
+actual receipts, response IDs and absence of conversation linkage afterward.
+The historical source families have different adapter code inventories; compare
+current prompt arms within the same family rather than requiring historical
+inventories to match across families. Baseline outputs and reviews remain
+outside model input, and fresh execution disables exact answer reuse.
+
+The gate requires all twenty-four clear control judgments and directional proofs
+to remain supported, with no unsupported uncertainty. For Stockpots, the
+semantic label remains unresolved: do not force containment, `neither` or
+`uncertain` as gold. Evaluate reversals, input-order contrasts and fresh repeats,
+and separately inspect whether a null identifies a genuinely supported
+coverage-changing boundary or merely avoids the task. Each arm has sixteen
+checks per measure (four original, twelve control). A null-containing reversal
+remains unresolved in native consistency; its stable treatment must not be
+misreported as a settled positive relationship. Any promising result still
+requires broader frozen-panel qualification before adoption.
+
+### Completed matched V179/V184 test
+
+All sixteen native experiments complete: **64 fresh valid first attempts**,
+32 per prompt arm. Every response also passes existing strict symmetric
+directional validation. The recorded requests preserve exact endpoints, schema,
+worker, medium effort and code. Across arms, the only rendered-request change is
+the intended scope sentence; order contrasts change only JSON member order.
+Each arm has sixteen distinct request bodies, each repeated twice, with 64
+distinct response IDs and native receipts overall. Every receipt links to its
+exact succeeded record and parsed answer. There is no answer reuse, conversation
+linkage, added instructions, explicit warming, provider retry, failed/unrun
+request or missing usage. Seventeen backend prefix-cache reads occur; those are
+not answer reuse.
+
+| Measure | Fresh V179 | Experimental V184 |
+|---|---:|---:|
+| Supported nonfood control responses | 24/24 | 24/24 |
+| Control reversal conflicts | 0/12 | 0/12 |
+| Control physical-order changes | 0/12 | 0/12 |
+| Control repeat changes | 0/12 | 0/12 |
+| Stockpots reversal conflicts | 3/4 | 4/4 |
+| Stockpots physical-order changes | 3/4 | 4/4 |
+| Stockpots repeat changes | 1/4 | 0/4 |
+
+V184 reproduces Cookware containment when Cookware is physically first and
+`neither` when it is second in both fresh draws. The fresh V179 arm has one
+first-position `neither` result, producing one changed label between repeats
+and three rather than four conflicts. This small dependent panel does not
+establish V184 is generally worse. It establishes that the replacement did
+not repair the replicated order-associated instability. Neither arm returns
+null or an `uncertain` model label; improved ambiguity handling is not observed.
+
+An independent semantic reviewer accepts all 48 nonfood responses and both
+directional proofs in every one. The included-purpose proofs retain all parent
+requirements; the other pairs give separating designs and open manufacturing
+vessels without confusing actual use with design intention. Separating
+counterexamples establish noncontainment, not necessarily disjoint scopes.
+Forty-eight native agent accept reviews register these output-specific findings.
+
+A separate Stockpots reviewer supports all sixteen shallow-frying-pan exclusions
+in the opposite direction. On a required-meal-purpose reading, it favors the
+nine `neither` outputs with purpose-built research designs and finds the seven
+containment proofs fail to justify necessary meal purpose. Its narrow independent
+counterchallenge initially proposes a permissive reading, then withdraws it
+under the instruction to preserve purpose. This is a conditional agent semantic
+assessment, not a replacement for the user's reopened evaluation expectation.
+The Stockpots label remains unapproved. Sixteen output-specific native agent
+`uncertain` reviews retain that qualification and the reviewer's interpretation;
+they do not require the model to return `uncertain` or count either disputed
+label as a semantic error. Saved `final-generation.json` and `final-reviewed.json`
+snapshots verify every nonreview case field remains unchanged.
+
+Native `usage.json` reports **64 actual attempts and $0.4786384 API-equivalent
+catalog cost**, reasoning included in output. The same persistent shared counter
+moves from 19,141 to 19,205, leaving 795 at that read; other authorized work may
+subsequently advance it. No fresh allowance, Bootstrap work or hierarchy
+construction follows. All generated artifacts remain ignored in this trial's
+native directories. Thirty-one relevant production-path tests pass.
+
+V184 fails the consistency gate and is not adopted. The successful clear controls
+show the edit did not cause broad uncertainty, but adding an explicit null
+instruction alone has not stabilized interpretation of these familiar food
+terms. There is no basis to call it a causal fix or broaden it as a promising
+candidate. Before another instruction edit, the next warranted diagnostic is a
+controlled input ablation that separately makes the meal-purpose boundary and
+the scope of stock explicit. Use separately labeled diagnostic copies under
+unchanged V179, retaining the original producer strings and evaluation panel
+untouched. This can distinguish ambiguous clause scope from presumed lexical
+implications; it is proposed, not prepared or executed here.
