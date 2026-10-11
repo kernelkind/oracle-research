@@ -3,10 +3,12 @@
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
 [Bootstrap-v103 qualification](shr_single_pair/bootstrap-current-as-qualification.md).
-The approved prompt's full-collection qualification is complete, with one
-factual-support failure and two materially ambiguous meanings in agent review.
+The approved prompt's initial full-collection agent review found one
+factual-support failure and two materially ambiguous meanings.
 Two fresh diagnostic draws reproduce the business-identity error and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
+A subsequent user decision classifies implicit material scope as a failure;
+the saved v103 sourdough meaning also leaves its consumer boundary unresolved.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate

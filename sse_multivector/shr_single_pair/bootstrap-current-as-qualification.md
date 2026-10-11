@@ -3,10 +3,12 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 The user approved [Bootstrap-v103](Hierarchy-bootstrap-v103.md) and qualification
-on the current 344-case collection. Qualification is complete: agent review
+on the current 344-case collection. The initial completed agent review
 found one factual-support failure and two materially ambiguous meanings. Two
 fresh diagnostic draws reproduce the factual failure and Rome's unclear final
-scope; review of the amusement qualifier remains disputed. Details are below.
+scope; review of the amusement qualifier remains disputed. A subsequent user
+decision classifies implicit material scope as a failure; the saved v103
+sourdough meaning also fails that criterion. Details are below.
 Approval does not activate a production prompt.
 
 ## Input and review contract
@@ -33,6 +35,11 @@ independently generated ancestors from their own draw; do not broaden a parent
 during review or splice preferred endpoints across draws. Joint descriptions
 and independently admitted alternatives require different inclusion checks.
 Nulls remain unresolved producer coverage, not negative comparison labels.
+
+When alternative scope interpretations change containment, leaving that choice
+implicit is a Bootstrap failure. The final meaning must express the chosen
+boundary. This does not predetermine a narrow or broad choice, or establish
+unknown facts about a particular consumer or occurrence.
 
 The [full reusable selection](hierarchy-bootstrap-asv6.100-regressions-v3.json)
 contains 344 selected entries from 38 posts and 122 root trees, with 222 immediate
@@ -143,8 +150,8 @@ unsupported coffee-chain child still fits its generated business-chain parent.
 No Compare label, independently repeated 344-case draw, semantic gold or
 large-corpus reliability claim follows.
 
-The definite failure is **Coffee chain described as weird today**. The post
-says "Weird #coffeechain today" and "Rave at a coffee shop lol". Its final meaning
+The initial review's definite failure is **Coffee chain described as weird today**.
+The post says "Weird #coffeechain today" and "Rave at a coffee shop lol". Its final meaning
 asserts an unnamed particular coffee-shop business chain. The post does not
 establish a network of shops, shared branding or the venue's chain affiliation;
 the parent's own diagnostic admits ownership and chain identity are unknown.
@@ -180,7 +187,7 @@ They enumerate every meaning, original receipt/reuse origin and selected link.
 They bind the original native `report-reviewed-source.json`, SHA-256
 `f66f7818d851d58804cd1f56a6b9f8ca32f96a966a5e6bf1b7cbfbed282ef069`.
 Five consequential cases additionally have output-bound native agent reviews;
-the 341/1/2 figures are the complete cohort assessment, not 344 CLI review
+the 341/1/2 figures are the original complete cohort assessment, not 344 CLI review
 records or human decisions. Original outputs and earlier reviews stay unchanged.
 
 [Native accounting](hierarchy-bootstrap-v103-asv6.100-full-usage-v1.json) records
@@ -305,3 +312,35 @@ Native evidence remains under
 and `bootstrap-v103-scope-repeat-draw2-v1` in the continuing task worktree.
 This nine-entry development panel lacks a verified commercial-chain positive;
 it does not establish general reliability or certify all business-chain senses.
+
+## Explicit consumer-scope decision
+
+The user's subsequent decision is: "implicit scope is a failure IMO."
+The historical v96 sourdough omission is therefore a failure, rather than merely
+a qualification. Read-only inspection establishes the same omission in the
+saved v103 **Preparing sourdough bread** meaning:
+
+> Preparing sourdough bread is the food-preparation activity of carrying out one or more stages of making bread from dough fermented with a sourdough culture, with sourdough bread as the intended product. The activity can be undertaken as a way to spend some moments.
+
+Its diagnostics settle preparation stages and the time-spending purpose, but
+do not choose the consumer boundary. Specifying an intended bread product does
+not settle whether scope requires human consumption, permits other consumers,
+or depends on a particular occurrence's consumption purpose. The independently
+generated **Food preparation** parent also leaves the consumer boundary open.
+This is a current Bootstrap explicitness failure without prescribing which
+supported boundary should replace it or asserting an actual consumer.
+
+The child is native case
+`bootstrap-bb29dd5ee83305a148d73e8ce515ff365e5e1ae295b177853acddf5569e61d93`,
+producer record SHA-256
+`3273aa3a98229f3b7921e8507b822f0ce40d5ebf5b2fb37d6b1e32671b37994a`.
+Its parent is case
+`bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b`,
+record `90d9779001e36b6e6e7f7b1a4f858632529840165f4a1a48904e4a9f000d05b9`.
+Both are preserved in the full-collection snapshot identified above.
+
+The original cohort counts are retained as the earlier assessment; no complete
+rescoring has occurred under this clarified criterion. V96 and v103 use
+different original trees for this post, so this inspection is not a controlled
+prompt-only comparison. No prompt, output, receipt or relation label changed,
+and no new model calls were made.
