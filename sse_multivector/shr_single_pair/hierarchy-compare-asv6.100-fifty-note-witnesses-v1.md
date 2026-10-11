@@ -5411,3 +5411,136 @@ expectations, receipt upgrades and missing tiktoken. The initial UI failure
 passes fresh baseline and current reruns. No unrelated runner behavior is
 changed to make these checks pass. Baseline evidence is retained in
 `target/symmetric-adapter-baseline-f983f6b1-tests.log`.
+
+## V179 / V180 examples ablation: results
+
+All eight V2 native experiments complete with 40 fresh valid comparisons,
+zero reuse, warming, retry, failure or missing usage. Every request has one
+user message, empty additional instructions and no conversation linkage;
+all 40 native response IDs are distinct. The exact A/B inputs and output
+schema match across arms and draws. Native `final-generation.json` snapshots
+preserve each experiment before reviews. Neither frozen producer meanings nor
+original ASv6.100 subjects change.
+
+Two agents independently inspect their assigned draw without historical
+targets, prompt templates or the other draw. Experiment paths disclose version
+numbers, so this is not fully blinded review. Root reviews the evidence too.
+One reviewer initially accepts Stockpots' purpose implication, and the other
+initially accepts the human-only Fasting implication. Explicit counterexample
+challenges resolve those disagreements; native attributed comments preserve
+the rechecks rather than silently replacing them with pre-call targets.
+Nonperson fasting witnesses are coherent hypothetical deliberate practices,
+not evidence about an identified real animal.
+
+| Measure | V179: examples | V180: no examples |
+|---|---:|---:|
+| Supported complete responses | 18/20 | 15/20 |
+| Relation errors | 2/20 | 5/20 |
+| Reversal conflicts | 2/10 | 3/10 |
+| Directional labels changed between fresh draws | 0/10 | 3/10 |
+| Uncertain responses | 0 | 0 |
+| Native API-equivalent cost | $0.1643176 | $0.1368864 |
+
+The ten reversal comparisons per arm are five pairs repeated twice, not ten
+independent subjects. A stable wrong answer does not pass: V180's first-draw
+Fasting orientations agree with each other while both ignore the person
+restriction. Counts are qualified agent semantic assessments, with the
+Stockpots boundary additionally supported by the user's accepted counterexample;
+they are not a broad accuracy estimate.
+
+| Pair | V179 supported / four responses | V180 supported / four responses |
+|---|---:|---:|
+| Stockpots / Cookware | 2 | 3 |
+| Salads / Salad dressing | 4 | 4 |
+| Coffee / Coffee | 4 | 4 |
+| Dietary practices / Fasting | 4 | 1 |
+| Cooking / Planned outdoor grilling of dinner | 4 | 3 |
+
+Every rejected response has one unsupported directional answer; its other
+direction remains supported. Questions test escape from the parent and match
+the reported answer's boundary. The failure is the semantic justification,
+not JSON validity or a missing counterexample question:
+
+- **Stockpots purpose leap:** V179 `isolated-035-forward` in both draws and
+  V180's second draw claim that preparing culinary stock necessarily prepares
+  a meal. The same fixed Stockpots meaning permits a vessel designed exclusively
+  to simmer stock for laboratory analysis and disposal. Cookware expressly
+  requires meal-preparation design purpose. Stock-making, food and heat do not
+  make that separate purpose unavoidable. All reverse Stockpots responses
+  find a supported laboratory counterexample. In particular, V179's unchanged
+  forward/reverse inputs contradict each other in both draws.
+- **Fasting person restriction:** V180 `pair-041-forward/reverse` in the first
+  draw and `pair-041-reverse` in the second draw assert that Fasting necessarily
+  governs a person's eating, or that the broader definition adds no consumer
+  restriction. The fixed Dietary practices meaning explicitly requires a
+  person; Fasting does not. A hypothetical nonperson deliberately abstaining
+  from available food preserves all supplied Fasting requirements. The
+  positive proofs do not establish a necessary person restriction. All V179
+  answers and V180's remaining orientation retain that distinction.
+- **Intended cooking form:** V180's second-draw `pair-061-reverse` proposes a
+  canceled outdoor dinner-grilling plan. Admission under the intended activity
+  is supported, but exclusion from Cooking is not: information about an
+  intended qualifying cooking form remains covered under the activity-topic
+  convention without claiming any heat was actually applied. Other answers
+  correctly preserve intention while comparing that form's topic.
+
+Native usage summary is
+`target/compare-v179-examples-ablation-v2/usage.json`: $0.301204 total
+API-equivalent catalog cost, 40 actual attempts. This is subscription usage,
+not a cash charge. Explicit prefix warming remains disabled in both arms;
+four backend cache hits are retained as observed usage. The persistent shared
+counter reads 18,816 immediately before launch and 18,861 after completion:
+the native cohort accounts for 40 attempts, with five additional shared-counter
+claims outside this cohort. Counter differences alone are not experiment accounting.
+
+V179 is the better-supported development candidate on this small panel, but
+the samples do not establish a reliable population effect of examples.
+Removing examples neither fixes Stockpots nor preserves all controls.
+Retain the existing examples for subsequent development and isolate the
+remaining purpose-necessity failure before broad qualification. Do not add
+this validation witness as an example, claim the prompt is fixed, regenerate
+meanings to erase the disagreement or adopt either version for hierarchy
+construction on the basis of this panel. The A/B simplification and removal
+of the former search procedure were bundled in V179; this ablation does not
+identify their effects relative to V178.
+
+## V181: challenge all applicable absent parent restrictions
+
+The user authorizes one focused replacement in experimental
+[Hierarchy-compare-v181](Hierarchy-compare-v181.md), then 20 fresh comparisons
+against the preserved V179 baseline. Native `revise` from V179 changes only
+the pre-positive challenge: it explicitly considers all applicable parent
+restrictions absent from the child's wording, including role, purpose,
+intended use and state alongside identity and consumer. A candidate must
+preserve every child requirement and escape every parent alternative and
+permitted information connection. Positive conclusions still require the
+existing necessary whole-scope coverage rule. Particular-entity uncertainty,
+performer/recipient distinctions, both synthetic examples and output schema
+are unchanged.
+
+This is an attention hypothesis, not a changed meaning of containment. V179
+already states the general coverage requirement but explicitly challenges only
+identity and consumer before a positive conclusion. Its two Stockpots forward
+draws assume meal purpose while the reverse draws find a laboratory-only
+counterexample for the identical meanings. Generalizing that focused challenge
+may prevent the unsupported purpose implication; the edit does not establish
+that selective emphasis caused it. Independent pre-call review verifies exact
+single-edit replay, union coverage and unchanged particular-entity safeguards.
+
+Native `prepare --from` inherits each completed V179 V2 experiment's inputs,
+settings and saved baseline, with V181 as the prompt override. `--repeat`
+requests independent outputs: five original pairs × two orientations × two
+draws = 20 fresh comparisons. Both arms retain Sol 6.1 medium/SSE, the V179
+four-field schema and disabled explicit warming. Existing shared scheduling,
+native provider retry bounds and the persistent 20,000-attempt counter apply.
+All meanings and source receipts remain frozen ASv6.100/Bootstrap-v96 evidence;
+no Bootstrap generation or hierarchy construction occurs. The four new native
+directories are `target/compare-v181-required-boundaries-v1/{pair,controls}-01`
+and `-02`. The maintained usage source separates saved V179 generation from
+new V181 attempts. No inference result is claimed at preparation.
+
+Success requires supported Stockpots counterexamples in both orientations and
+preserved positive, equivalent, consumer and intended-state controls, with
+valid questions and directional justifications. Correct labels with unsupported
+proofs do not pass. Broader fixed-meaning qualification follows only if this
+panel holds up; even complete success would not establish general reliability.

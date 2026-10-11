@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v20
+# Hierarchy selection by traversal — draft v21
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -42,9 +42,9 @@ Do not skip a local child merely because its original parent's canonical node
 represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
-The local-level order and stopping conditions below are agreed. Within-level
-order and stopping-check timing remain open. No selection code or model calls
-change here.
+The local-level order and stopping conditions below are agreed. Stopping-check
+timing is provisionally approved; within-level order remains open. No selection
+code or model calls change here.
 
 ## Agreed traversal rules
 
@@ -213,8 +213,9 @@ placements. Every comparison remains local versus canonical.
 
 The experiment runner controls model-request concurrency. The traversal policy
 limits active local-node searches; it adds no separate comparison-call limiter.
-When a local node is placed or held, its slot becomes available for another
-selected local node.
+While construction continues, placing or holding a local node makes its slot
+available for another selected local node. The provisional stopping policy below
+can end scheduling before another search starts.
 
 Elapsed time and API cost for this policy have not been measured.
 
@@ -246,8 +247,26 @@ trigger below. No additional final review or search for unused regroupings or
 shortcuts is required before stopping.
 
 These conditions do not claim global optimality or establish relationships for
-unchecked deeper local nodes. Stopping-check timing and handling already-active
-searches remain to be settled.
+unchecked deeper local nodes.
+
+## Provisionally approved stopping-check timing
+
+**After each placement and all consolidation it triggered, check both stopping
+conditions against the current browsing hierarchy and every note in the selected
+corpus.** A complete local level is not required before checking.
+
+If either condition fails, continue construction under the selection and
+concurrent-search rules. When both pass:
+
+- Stop starting new local-node searches and dispatching comparison calls.
+- Let already-dispatched calls finish and save their answers.
+- Keep the current graph unchanged. Save unfinished searches and their existing
+  results for later resumption, including completed searches awaiting placement.
+
+On later resumption, reuse exact unchanged answers and check a search against
+the then-current graph before placement, as required by the concurrent-search
+policy. This timing is approved provisionally for the draft; it is not
+implemented or measured.
 
 ## Agreed consolidation trigger
 
@@ -402,11 +421,11 @@ It changes neither a supplied meaning nor a returned comparison label.
 
 ## Agreed walk
 
-The local-level selection order, stopping conditions, comparison actions, shared-node rule,
-top-to-bottom order, concurrent-search policy, same-note eligibility,
-original-parent handling and consolidation rules above are agreed. The walk
-below combines them; within-level selection order and stopping-check timing
-remain open.
+The local-level selection order, stopping conditions, comparison actions,
+shared-node rule, top-to-bottom order, concurrent-search policy, same-note
+eligibility, original-parent handling and consolidation rules above are agreed.
+The walk below combines them with the provisionally approved stopping-check
+timing; within-level selection order remains open.
 
 1. Select the next local node in the selected order. Start its traversal at the
    canonical roots.
@@ -422,6 +441,9 @@ remain open.
 6. After a canonical-node addition, finish its triggered consolidation attempts
    before applying the next placement. Other searches can keep running on
    their fixed snapshots.
+7. After the placement and its consolidation finish, check the stopping
+   conditions using the provisional timing above. Stop scheduling and preserve
+   the graph when both pass; otherwise continue construction.
 
 | Returned label | Traversal action |
 | --- | --- |
@@ -453,10 +475,9 @@ The Food relationship remains a possible placement. The final placement depends
 on the other comparisons. If Breakfast were to contain the local node, Meals
 would also contain it by transitivity, conflicting with the Meals answer.
 
-## Decisions still open
+## Decision still open
 
 - Whether to adopt the proposed rotation across notes within each local level.
-- When to check the stopping conditions and how to finish already-active searches.
 
 ## Current implementation
 

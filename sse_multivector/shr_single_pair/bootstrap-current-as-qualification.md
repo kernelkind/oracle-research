@@ -30,15 +30,18 @@ This records the interpretation and review contract. Prompt versions, schemas,
 source data, producer receipts and historical reviews remain unchanged;
 approval of the rule does not activate a prompt or authorize a new experiment.
 
-## Bootstrap broad: BBv7 draft
+## Bootstrap broad: BBv7
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv7](Hierarchy-bootstrap-broad-v7.md) is the current development draft,
-reviewed offline but untested by the model. Its
+[BBv7](Hierarchy-bootstrap-broad-v7.md) is the current experimental prompt. The
+user approved its draft and requested a generated-output comparison with normal
+Bootstrap. The [five-case matched panel](#bbv7-matched-outputs-versus-normal-v109)
+is complete; it does not demonstrate broader coverage or general qualification.
+Its
 [independent component-scope change](#bbv7-independent-component-scope)
 addresses the unclosed trio target boundary without choosing a required answer.
 [BBv6](Hierarchy-bootstrap-broad-v6.md) was tested
@@ -502,8 +505,9 @@ It was not reset.
 BBv6 remains unchanged and not generally qualified. No Compare calls, hierarchy
 build, UI refresh or prompt activation occurred. The subsequent authorized
 [BBv7 draft](#bbv7-independent-component-scope) separately resolves the scope of
-each person or thing within a compound subject. No follow-on model calls have
-begun; the repeat does not establish that this wording change will work.
+each person or thing within a compound subject. The subsequent matched BBv7
+panel is recorded below; the repeat alone does not establish that this wording
+change will work.
 
 ### BBv7 independent component scope
 
@@ -550,11 +554,73 @@ traces. It does not establish this semantic mechanism. BBv7 is a draft, not an
 activated or model-qualified prompt. This step made zero model calls and no
 Compare, hierarchy or UI changes.
 
-The recommended next test is the exact trio parent/child pair under BBv7, with
+The recommended next test was the exact trio parent/child pair under BBv7, with
 independent review of whether its target boundary is actually closed. Include
 broad-category and named-identity controls. Keep source-parent compatibility
 separate from scope faithfulness and do not force earlier relation labels.
-That test has not begun.
+The subsequent user-requested output comparison includes that pair and the
+three breadth/identity controls below.
+
+### BBv7 matched outputs versus normal v109
+
+The user clarified that the requested comparison concerns generated meanings,
+not prompt text. The shared runner prepared and completed
+`target/bootstrap-broad-v7-v109-output-comparison-v1` in the BB worktree using
+native `prepare --from ... --only ...`. Its five frozen normal Bootstrap-v109
+answers come from the completed current-AS qualification in
+`oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate`.
+All five actual input objects match their baselines exactly: full original posts,
+complete ASv6.100 selected-root trees and selected pointers. Baseline outputs
+remain outside model input. No generated parent meaning is supplied to another
+producer. Normal v109 was not rerun; these are single matched outputs, not
+independent repeat estimates or a causal ablation of individual instructions.
+
+Unchanged BBv7, GPT-6.1 Sol medium, SSE transport, the existing output schema and
+automatic prefix caching are frozen in the native experiment. Preparation and
+execution bind the isolated task worktree. No source changed during execution.
+All five BBv7 outputs are fresh; neither version's source inputs or old receipts
+were rewritten.
+
+| Selected topic | Observed difference and qualification |
+|---|---|
+| Recurring stock-making | Both definitions describe the recurring practice, preserving frequency, saved carcasses and stock-making process. BB expressly permits other suitable vessels; normal v109 did not require stock pots either. No demonstrated coverage gain. |
+| Mental states | Both describe a broad non-exhaustive category, rather than only the illustrated abnormal states. Different examples do not establish changed membership. Neither invents a diagnosis. |
+| Jesús Molina | Both identify the individual through profession and trio association. BB adds that the trio receives enthusiasm, a supported post-summary fact rather than a necessary identity boundary. Whole-person versus professional-role coverage remains qualified. |
+| Associated jazz trio | BB expressly chooses a particular ensemble; normal v109 leaves particular-versus-category identity implicit. BB uses the specific mention to reject the category alternative without settling why the broader category is unsupported. Whether particular identity is necessary under BB remains uncertain. |
+| Enthusiasm for the trio | BB's first question still combines qualifying-trio generality with the author's particular reaction. Its explanation broadens observers; its second question distinguishes trio from person, not particular ensemble from category. The target-identity boundary remains materially unclosed. |
+
+The coordinator and two independent read-only reviewers find no demonstrated
+broadening in this panel and no definite unsupported factual addition. The trio
+and enthusiasm definitions are not a proven incompatible pair: a generic-target
+reading conflicts with the particular parent, while a retained-particular-target
+reading can be compatible. The final child meaning does not explicitly choose
+between those readings. Source ancestry and historical positive labels are not
+semantic gold. Native receipt-bound agent reviews record two qualified accepts
+and three uncertain scope assessments; these are not user judgments or a
+general prompt failure rate.
+
+| Case ID | Fresh BBv7 record SHA-256 |
+|---|---|
+| `bootstrap-2bf8ef02c91a82528e1de36c2ac9723d4b9cf1c9e2ba4f0a19e36945b8127066` | `9521bed436c480694a4234aa31ba1c1f7deed2f3680c5e58b368b30a6f19b130` |
+| `bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e` | `c51c3cd2f512817796659679310d93398c3d1172b04ada20f73225be2c1d1336` |
+| `bootstrap-230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` | `3d7e086d1760bee0bec80f36364b10a1f800e5492b69b847d1e45aa6d67670e9` |
+| `bootstrap-4d093cebbca84c917bc6401355d4b4ddeaec8f9d660a1851a22e6aae2227d6da` | `9068497ba2f65f15a8b9128cfdc6897fd02b0c82aefb41d0449a6bdcd956f32e` |
+| `bootstrap-4f4e1f65f56589569c2d4a2b9410b63c0d80a045aa5cbb53a3e5e00e6f8f7f09` | `1622998e925f8e6ba0ab8d511b06247e4d4a27680992f0e06992c5c794c74d69` |
+
+All five answers validate; paired diagnostics and exact post quotes validate for
+both versions. The run makes six new attempts: five meanings and one automatic
+warmup, without reuse, retries or failures. All five substantive requests record
+cache hits. Native new-attempt usage totals 7,258 uncached input, 24,960 cached
+input and 2,999 output tokens; 862 reasoning tokens are already included in
+output. Known API-equivalent cost is $0.047002, including warmup and excluding
+earlier baseline generation. No attempt lacks usage. This is not a subscription
+invoice. The existing shared 20,000-attempt counter was preserved.
+
+This experiment did not edit or activate a prompt, perform Compare calls,
+construct a hierarchy or refresh a UI. Native inputs, outputs and reviews remain
+ignored in the retained worktree. The recommended next step is to examine the
+particular-ensemble choice and the independently unclosed enthusiasm target
+before another edit; no follow-on test or prompt change has begun.
 
 ## Existing Bootstrap qualification
 
@@ -2380,25 +2446,28 @@ the original output and the producer receipt. This applies the user's rule to
 that output; it does not invent a full-output user verdict or certify its branch
 relationships. No prompt change or model call was made.
 
-Current latest-verdict counts are **110 accept / 0 reject / 5 uncertain** for
-v104, including its malformed endpoint, and **111 accept / 0 reject /
-4 uncertain** for v109. These are changed agent assessments, not new model
-outputs, human approval or a measured improvement. The independently fixed
-branch checks remain qualified; no endpoint is redefined to force compatibility.
+After the [remaining flagged-meaning reassessment](#remaining-flagged-meanings-under-the-approved-rule),
+current latest agent-verdict counts are **113 accept / 0 reject / 2 uncertain**
+for v104, including its malformed endpoint, and **114 accept / 0 reject /
+1 uncertain** for v109. These are changed agent assessments, not new model
+outputs, human approval or a measured improvement. The earlier 110 / 0 / 5 and
+111 / 0 / 4 counts remain assessment history. The independently fixed branch
+checks remain qualified; no endpoint is redefined to force compatibility.
 
 The Coffee-chain child remains uncertain with a corrected rationale. Its root
-defines a general business category, while the child assigns a particular
-multi-outlet business to the post's hashtag. The latter is not merely a
-conditional category definition; the post does not establish outlet count or
-venue affiliation. Both exact child outputs receive new native uncertainty
-comments preserving the older assessment history.
+defines a general business category, while the child selects a particular
+multi-outlet business as the post's reference. The post does not independently
+establish that reference or its outlet count. Neither final child meaning
+asserts that the rave venue belongs to the business. This is a qualified
+interpretation, not a demonstrated falsehood or a mandatory null. The existing
+native uncertainty comments and older assessment history are preserved.
 
 The remaining review concerns are evidence support or genuinely unresolved
 meaning, rather than preferences between clear, supported boundaries:
 
 | Local entry | Remaining question |
 |---|---|
-| Risotto `1`, Food | Does intended consumption characterize the culinary kinds covered, or have to hold for each particular application described? The human culinary interpretation is supported locally; the separate dog-food example cannot settle this condition. |
+| Risotto Food `1` → Food-related content on Nostr `1.2` | Both endpoints pass individual review. Does the independently defined child's unqualified food scope fit the root's explicit human-consumption scope? Do not supply that boundary by borrowing the generated parent definition during review. |
 | Coffee-chain `1.1`, described as weird today | What should Bootstrap return when the selected AS subject/context proposes a particular business that the original post does not establish? A coherent root definition does not establish that child's factual assignment. |
 
 The Coffee-chain child is the clearest remaining factual-support concern, not a
@@ -2698,7 +2767,79 @@ Following review of this witness, the user approved the
 above. A useful next step is to assess the remaining flagged meanings for
 concrete contradictions or unjustified factual claims using their own evidence,
 keeping scope preference and ordinary interpretive uncertainty separate.
-That further audit has not begun. No Bootstrap revision/adoption, Compare test,
-hierarchy construction or context-removal activation occurred in this diagnostic.
+That [further audit is complete](#remaining-flagged-meanings-under-the-approved-rule).
+No Bootstrap revision/adoption, Compare test, hierarchy construction or
+context-removal activation occurred in this diagnostic or the subsequent audit.
 Retain the worktree because native receipts and original source bindings refer
 to its absolute artifact paths.
+
+### Remaining flagged meanings under the approved rule
+
+The user authorized reassessing the remaining flags using each node's own
+evidence. Three subagents independently examined the saved Food, Nostr-content
+and Coffee-chain cases, and the coordinating agent checked their native inputs,
+resolutions, final meanings and receipts. Both cohorts remain unchanged:
+`target/bootstrap-v109-scope-preservation-v1/baseline` uses approved v104 and
+`candidate` uses experimental v109, with original ASv6.100 subjects. No fresh
+model calls, prompt edits, Compare tests or hierarchy construction occurred.
+
+Six native agent qualified accepts supersede the earlier uncertainties:
+
+- **Food roots:** each definition explicitly chooses a human culinary scope
+  supported by the risotto title and ingredient list. Neither asserts that
+  cooking, serving or eating occurred. A broader Food definition elsewhere is
+  not contradictory evidence for these nodes.
+- **Food-related content on Nostr:** the meanings define a general category of
+  content shared on Nostr and concerning food. They do not assert publication
+  of this particular original post. The paired hashtags support a topic
+  association; actual publication remains unproved by this text alone.
+- **Coffee chains roots:** the meanings define the commercial category, without
+  asserting that this post identifies a particular multi-outlet business or
+  that the rave venue belongs to one. That plausible sense can be accepted
+  while particular reference assignment remains qualified.
+
+The reviews were appended with the shared runner's native `review` command,
+using role `agent`; no user verdict was created. Before/after checks confirmed
+unchanged inputs, raw outputs, parsed outputs and producer receipts for all
+230 cases, and preserved every prior review. Counts use the latest hash-bound
+agent verdict per case; `current: true` alone does not identify supersession.
+The native flagged-case check now leaves only the Coffee child in each cohort
+and the malformed baseline cocotte.
+
+| Selected entry | Cohort | Producer record SHA-256 |
+|---|---|---|
+| Food `1` | v104 baseline | `b0a9f2451ec93b7bab53a24380360f7ea6cedb6bc977c8a81f8f076b456135c2` |
+| Food `1` | v109 candidate | `2c356c523a3bc962252a6948ddd3b426cfa930f0b6719bdc808df4821642927f` |
+| Food-related content on Nostr `1.2` | v104 baseline | `0fb65895482eee2c9a91d09c284146c98be2e8f1a2902a062cc3c15b082ad1ca` |
+| Food-related content on Nostr `1.2` | v109 candidate | `90b0e71864c62eebe33db9d74333d1d342fcc44539cbf7e900d5ef22eba9bccd` |
+| Coffee chains `1` | v104 baseline | `e75ac5291dbb693cb7a9e9295c0d40aed71a92373c1ab86c04f04e24b58617e6` |
+| Coffee chains `1` | v109 candidate | `adaad31fac828bcddc46330ab2c5cef2becfbd34015b6f49af0051b0ea96c4ca` |
+
+Each receipt is in its cohort's native `run/results.jsonl`. Case IDs are
+`bootstrap-4acb29436208dbb08b34c9bbbd68c0177ecc052b956b474fc05fa93e8985bc92`
+for Food,
+`bootstrap-113ea08b087533fe5fc88f7105faaa7ab23140507a2417173f05ece267c9d3a2`
+for Nostr content, and
+`bootstrap-07e181e89a6505355db1ee59722fca1ad57baa49f7a72c8bccf9c0f4bd2f4005`
+for Coffee chains. The baseline Food output was an exact reuse during the
+original experiment; the other five were fresh then. None is a fresh audit
+sample, and these corrected assessments establish no prompt improvement.
+
+The baseline cocotte case
+`bootstrap-d3aedf749dbd5f926b6748704e3777c018e45a8f28e4c488752f4968cc98f9c6`
+remains malformed. Its evidence quote changes the post's nonbreaking space
+after `brand` from U+00A0 to U+0020, failing the exact-contiguous-excerpt check.
+Producer record
+`76e078c9adbae36cad80781c057e33ba7b7637a714ba6151abcd3a9dcc448303`
+is preserved, but its unvalidated raw meaning cannot become an established
+endpoint. Its three affected recursive branch checks remain unresolved.
+The corresponding v109 output is valid and retains its existing accept; this
+audit neither retries the baseline nor substitutes a normalized output.
+
+Individual acceptance does not certify the 35 relationships under the
+independently defined Food root. The Nostr child does not explicitly choose the
+root's consumer boundary, and broader food senses cannot be assumed solely to
+manufacture a conflict either. Preserve that branch qualification separately
+from factual support. Further Bootstrap work should check compatible scope
+across independently fixed complete-branch meanings; that next test has not
+been prepared or run by this audit.
