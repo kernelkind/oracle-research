@@ -53,7 +53,10 @@ and v109 is complete: 115 candidate meanings validate, compared with 114 baselin
 meanings and one exact-quote failure. Initial review flagged a baseline
 author-only stock-making scope absent from the candidate draw; node-local
 reassessment withdrew that failure claim because its own context describes the
-author's practice. That actor-scope choice remains pending user review. Forty-one
+author's practice. The user subsequently clarified: "idc which boundaries the
+agent makes. as long as it's not contradicting the evidence". Either explicit,
+locally supported choice is acceptable; the stock baseline now has a qualified
+agent accept. Scope preference alone is not a failure. Forty-one
 candidate ancestor checks remain unresolved around two concentrated Food/stock
 interpretations; no general scope repair is established. Independent generation
 and input/output schemas stay unchanged. Source assignment, definition coherence
@@ -6703,3 +6706,11 @@ meal purpose from stock-making or leave it unchecked. Four consistent pairs are
 wrong, so reversal counts alone miss the defect. This single-pair diagnostic does
 not establish which instruction caused it; V176 remains experimental. See the
 [orientation diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#unchanged-v176-stockpots-orientation-diagnostic).
+The authorized V177 ablation extends the mandatory positive check to all
+applicable parent requirements. Six fresh Stockpots-pair draws still find only
+two valid neither answers out of twelve; the ten failures still substitute
+culinary stock-making for meal purpose. Two fresh control draws preserve the
+positive/equivalent controls, but both Fasting forward proofs assume personhood
+while their reversals refute it. V177 is not adopted. The saved-reference timing,
+provisional controls, native 36-attempt usage and proof qualifications are recorded
+in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
