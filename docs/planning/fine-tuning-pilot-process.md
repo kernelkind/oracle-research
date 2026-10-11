@@ -564,8 +564,19 @@ finishes ten fresh searches and four eligible warmups in approximately 75
 seconds. Three full-output audits accept nine negatives and one missing-placement
 witness; unchanged DSLv10 verifies the witness through exact-input reuse with
 zero new calls. The small, development-exposed panel has only one positive
-case. Generalization, remaining required-meaning contexts and the full runtime
-remain open; production stays DSLv2. See the
+case. The authorized
+[four-note positive-placement challenge](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-positive-placement-challenge-october-11)
+then completes 38 searches and four warmups in approximately 118 seconds.
+Full-output audits record 34 accepts, two errors and two uncertainties.
+Unchanged DSLv10 verifies all 18 returned witnesses: 17 valid pairs and one
+invalid pair, using 16 exact-input reuses and two fresh calls. It catches the
+invalid incest witness; the missed television placement remains a false
+negative. Read-only analysis finds accepted complete matching plus trusted
+teacher paths could settle four searches, including that miss. Implementing
+and testing this conditional reuse with its provenance is the recommendation;
+it remains unimplemented. DCSv1 is unqualified, and further expansion unchanged
+is not recommended. Remaining interpretation contexts and the eight-hour
+runtime remain open; production stays DSLv2. See the
 [evidence and qualification direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11).
 
 **Mechanical decisions approved October 9:** all three checks use mechanical
