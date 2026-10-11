@@ -3376,3 +3376,66 @@ asserted positive consequence rather than rewarding blanket uncertainty or a
 convenient negative label. No Bootstrap inference, hierarchy construction,
 provider changes or external-session messages. Usage source:
 hierarchy-compare-v150-v151-controlled-usage-v1.json.
+
+All six experiments complete:92 valid comparisons in99 actual attempts,
+including six warmups and one failed provider attempt followed by a successful
+retry. No reuse or terminal failures. One attempt has no usage: $0.887448 is the
+native known API-equivalent subtotal, not the unknown complete cost. Persistent
+counter:17115/20000. No candidate is adopted.
+
+V151 core:19 accept/4 reject/10 qualified after two native review corrections;
+controls:11 accept/1 reject/7 qualified. Both022 orientations assume universal
+ring-shaped production despite independently recognized chewy holeless pantry-
+ingredient bagels.070 forward leaves recipient/audience coverage unclosed.
+072 forward introduces a comparison with strongly flavored meat, then dismisses
+that evaluation connection through physical-kind membership. The control009
+sweetener counterexample leaves nourishing-dish composition coverage unclosed.
+These last two reject the supplied proof, not necessarily the final relation.
+008's initially accepted generic green-coffee witness was corrected to qualified:
+generic variant admission does not establish a property of the fixed author's
+particular coffee/event. Original native assessments remain in history. No
+reversal conflicts; one chain conflict in each orientation. Neither zero
+reversals nor corrected assessment counts establish reliable improvement.
+
+V150 core:6 accept/4 reject/4 qualified; controls:0 accept/4 reject/2 qualified.
+008 reverse correctly investigates the particular coffee's unknown preparation
+and returns supported null, but forward still asserts roasting without proof.
+041 forward imports a human eater into independent general Fasting. Other rejects
+include mandatory-question omissions and the particular dinner's nourishment
+proof gap; no contrary same-dinner witness is established, and reviewer
+disagreement remains explicit. Two core reversals; no chain or control conflicts.
+
+Fresh V149 repeat core:11 accept/1 reject/2 qualified; controls:1 accept/4 reject/
+1 qualified.008 forward assigns an unestablished unroasted property to the fixed
+coffee. Controls retain diagnostic omissions and nourishment proof qualifications.
+The four general animal-diet tests pass. No reversal or chain conflicts in this
+partial panel. Every assessment is native, attributed and hash-bound; counts
+include procedure and proof judgments and are not semantic accuracy estimates.
+
+The independent operator audit finds no demonstrated valid nontransitive triple
+in the unchanged Food/preparation/tool witness. Food's human-nourishment condition
+already blocks the unrestricted preparation child. Tool information need not be
+edible, but a positive first link must cover the entire preparation topic and
+all permitted information connections. This identifies an unproved prerequisite,
+not a license to relax transitivity or import missing conditions through parents.
+
+### V152: combine the particular-question safeguard with the compact contract
+
+V152 changes only V151's question paragraph. A particular-entity child tests that
+same entity and establishes decisive properties from its supplied meaning or
+necessary implications; unknown properties cannot be assigned hypothetically.
+General children still test conditions or permitted connections while attempting
+to preserve the full child. Topic scope is not restricted to listed facts.
+V151's positive-only identity/consumer prerequisite remains: a valid negative
+does not require an unrelated diagnostic first. Both fictional demonstrations,
+schema and final input block are unchanged. Independent preflight and exact
+revision replay plus both production-example validations pass.
+
+Next stage: complete33-core/19-control V152 gates plus fresh matched V151 repeats
+of all52 inputs. Expected104 comparisons plus four warmups:108 attempts absent
+retries or reuse. Producer meanings, ASv6.100/Bootstrap-v96 qualification,
+evidence and runner identity remain fixed. Review actual proofs and supported
+nulls, separately from procedure compliance; do not manufacture a particular
+entity's properties or convert unresolved producer wording to preferred labels.
+No Bootstrap inference, hierarchy construction or external-session messages.
+Usage source: hierarchy-compare-v151-v152-controlled-usage-v1.json.
