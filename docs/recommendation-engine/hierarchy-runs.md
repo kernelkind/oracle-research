@@ -1,13 +1,13 @@
 # Official hierarchy runs and experimental parameters
 
 This Markdown file is the register of official hierarchy runs and their
-experimental parameters. **HR04** is the approved 12-note run being prepared;
+experimental parameters. **HR04** is the approved 12-note run in progress;
 **HR03** is the completed 50-note baseline. Each run's raw build, browsing menu
 and export share its ID.
 
 ## HR04 — ASv6.100 12-note hierarchy
 
-Approved October 11, 2026. Execution has not started. The run uses the current
+Approved October 11, 2026. Execution is in progress. The run uses the current
 standalone constructor, including restricted refinement, single-note leaves and
 deeper-heading retention. The
 [run definition](../../sse_multivector/hierarchy-runs/hr04/traversal.spec.json)
@@ -61,12 +61,17 @@ ceiling preserves partial work and reports unfinished construction.
 
 ### Git provenance and retained artifacts
 
-Preparation starts from source base
-`dd7c5173735eb52dfd4b62c7f02a326c1784d483`; its only change from the proposed
-`81fe043938a66c379d0f0077cbb81ea885d1b97e` is documentation. Before execution,
-record the actual full Oracle generation commit, source status and frozen code
-hashes in the run's `code-provenance.json`. The isolated shared-runner source
-commit is `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`.
+| Generation provenance | Recorded value |
+| --- | --- |
+| Oracle generation commit | `17ea0b74959106090de110d2971e6797eff73c11` |
+| Shared-runner generation commit | `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7` |
+| Uncommitted source changes at generation | None in either isolated worktree |
+
+The [frozen preparation record](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/prepared-provenance.json)
+contains the commits, selected note IDs, complete settings, frozen constructor
+hashes and initial native plan bindings. Later documentation commits do not
+change these generation commits. Resume from the retained task worktree with
+the same attempt-budget path; its frozen source remains unchanged.
 
 The run worktree is `oracle-mvp-hierarchy-hr04-twelve-note-v1`; artifacts remain
 under `target/hierarchy-hr04-twelve-note-v1/`. Its saved AS corpus SHA-256 is
@@ -75,6 +80,11 @@ HR03's bound subject corpus. The prepared definition separately binds the exact
 12-note selection. Preserve the raw graph, menu, execution summary, attempt
 ledger, native receipts and source provenance there. Register immutable output
 hashes after execution ends; do not bind this ID to a changing live state.
+
+| Live artifact | File |
+| --- | --- |
+| Graph and browsing menu | [Current state](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/trial/state.json) |
+| Attempt allowance and usage | [Persistent counter](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/attempt-budget.json) |
 
 ## HR03 — ASv6.100 50-note hierarchy
 
