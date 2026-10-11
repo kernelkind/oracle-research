@@ -6805,3 +6805,16 @@ counterexample construction and whole-scope proof testing without establishing
 a causal prompt fix. Twelve fresh attempts, zero reuses/failures/retries and
 $0.03306 native API-equivalent cost are recorded in the
 [saved-case diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#saved-case-adjudication-diagnostic-v1).
+
+The subsequent user-approved design produces experimental draft
+[Hierarchy-compare-v179](shr_single_pair/Hierarchy-compare-v179.md): identical
+`A` and `B` objects containing only `subject` and `meaning`, with no hierarchy
+metadata or canonical-consequence judgments. Its four-field output removes the
+local-meaning copy and uses `A_contains_B` / `B_contains_A`. The draft simplifies
+counterexample and necessary-coverage diagnostics while retaining fixed-scope,
+information-topic, identity/consumer and state rules. The current comparison
+adapter and V176 schema still use the earlier local/canonical contract; they
+are unchanged, so V179 requires native input/schema adaptation before execution.
+No inference or hierarchy adoption accompanies this draft. Details and
+qualification limits are in the
+[V179 draft record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-symmetric-pair-draft).
