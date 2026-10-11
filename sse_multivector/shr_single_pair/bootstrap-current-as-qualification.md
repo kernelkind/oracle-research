@@ -3,31 +3,51 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Bootstrap broad: BBv1 draft
+## Bootstrap broad: BBv3 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv1](Hierarchy-bootstrap-broad-v1.md) is an untested draft revised through the
-shared runner's offline `revise` command from last-approved Bootstrap-v104.
-It changes the opening task and the ambiguity-resolution section. Additional
-restrictions require support as defining conditions of the selected topic;
-when supported interpretations differ by inclusion, choose the broader one.
-Named identities, express restrictions and all named alternatives remain
-preserved. Different senses are resolved from the input rather than combined.
-The inferred-parent fitting rules are replaced by interpretation of the local
-hierarchy as evidence. Input, output, definition-writing rules and both existing
-synthetic examples remain byte-identical to v104.
+[BBv3](Hierarchy-bootstrap-broad-v3.md) is the current untested draft. The user
+corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
+Both [BBv2](Hierarchy-bootstrap-broad-v2.md) and BBv3 are direct, hash-pinned
+revisions of unchanged v109 through the shared runner's offline `revise` command.
+[BBv1](Hierarchy-bootstrap-broad-v1.md) used v104; it remains preserved as the
+initial draft, rather than serving as the corrected baseline. This does not
+activate BB or change the separate Bootstrap line's approval status.
 
-The adjacent revision receipt pins the baseline, exact edits and resulting
-prompt hash. Nine native revision tests pass; no model calls or semantic
-qualification have been performed. Existing Bootstrap versions and approval
-status remain unchanged. The draft follows the
+The corrected draft retains v109's distinction between the subject's scope,
+example details and factual evidence. Additional restrictions must be expressed
+by the selected subject or define its intended sense. When supported scopes of
+the same topic differ by inclusion, choose the broader one. Evidence need not
+illustrate every member; descendants remain non-exhaustive unless the selected
+subject expressly defines a complete set. Named identities, expressed
+restrictions and all named alternatives remain preserved. Different senses are
+resolved from the input rather than combined.
+
+The complete instructions and both examples were audited by the coordinating
+agent and two independent read-only reviewers. The Feedback example's
+activity/experience restriction and circumstance-independence wording are
+removed. The first v109-based correction in BBv2 omitted feedback's defining
+response relationship and therefore admitted ordinary announcements, including
+the same post's sentence about packed-away batteries. BBv3 requires that
+relationship consistently in its resolution, meaning and evidence. The negatives
+example explicitly chooses the particular scanning queue identified by the
+selected subject, context and post, preserving that collection's identity.
+The original example posts and hierarchy inputs remain unchanged.
+
+Both reviewers found no remaining material internal inconsistency in BBv3.
+This is an agent assessment of the written prompt, not model qualification or
+new human gold. The adjacent revision receipts pin each baseline, exact edits
+and resulting prompt hash. Nine native revision tests, nested example-schema
+and exact-quote checks pass. Input/output contracts, factual-evidence rules and
+final definition-writing rules remain unchanged from v109. No model calls have
+been made for this draft. The
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
-on direct instructions, clear delimiters and concise output requirements;
-that guidance does not establish BB's semantic correctness.
+supports direct instructions and clear delimiters; it does not establish BB's
+semantic correctness.
 
 ## Existing Bootstrap qualification
 
