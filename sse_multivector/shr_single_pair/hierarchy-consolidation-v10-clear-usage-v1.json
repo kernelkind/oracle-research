@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v10_clear_controls": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v10-clear-roots-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v10-clear-mental-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v10-clear-roots-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v10-clear-mental-repeat-v1"
+    ]
+  }
+}

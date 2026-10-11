@@ -1,10 +1,14 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized draft is
+The latest user-authorized test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
 It restores one instruction from v8: “Define the selected topic, not every
-concept it mentions.” All other v9 prompt bytes remain unchanged. V10 has
-offline assembly and native preparation checks; it has not been model-tested.
+concept it mentions.” All other v9 prompt bytes remain unchanged. Four fresh
+GPT-6.1 Sol medium requests test roots and Mental states in two independent
+draws each. All four have qualified agent accepts and pass prospective local
+grouping checks; no proposal is applied. Each meaning defines only the proposed
+topic. This small positive-control screen does not establish the omitted rule's
+effect, broader accuracy or a resolution of the disputed Bread/Cuisine cases.
 The preceding matched v8/v9 panel has sixteen fresh valid GPT-6.1 Sol medium requests,
 two draws for each of four complete sibling groups. Each prompt has four
 qualified agent accepts on the clear controls and four uncertain disputed
@@ -30,7 +34,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v8 draft and evaluation correction](#consolidation-v8-draft-and-evaluation-correction), and
 [the v9 definition-writing simplification](#consolidation-v9-definition-writing-simplification), and
 [the matched v8/v9 panel](#consolidation-v8v9-matched-panel), and
-[the v10 targeted restoration](#consolidation-v10-topic-definition-rule-restoration).
+[the v10 targeted restoration](#consolidation-v10-topic-definition-rule-restoration), and
+[the v10 clear-control screen](#consolidation-v10-clear-control-screen).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2816,9 +2821,71 @@ checked. Broader runner-suite limitations remain recorded above. The ignored
 preview, native edits and full-context diff are under
 `target/canonical-shaping-selection-v1/consolidation-v10-*`.
 
-No provider, warmup or Compare calls were made; the attempt counter remains
-**345/345**. No graph, UI, Bootstrap or active policy changed, and no messages
-were sent to another agent. V10 is an isolated draft, not a tested or activated
-prompt. Bread/Food dishes and Cuisine scope judgments remain unresolved.
-Next qualify v10 on clear controls and broaden those controls under a new
-inference allowance; repeated disputed judgments cannot establish accuracy.
+At this draft checkpoint, no provider, warmup or Compare calls were made and
+the attempt counter remained **345/345**. No graph, UI, Bootstrap or active
+policy changed, and no messages were sent to another agent. V10 was an isolated
+draft without a model trial or activation. The following section records its
+subsequently authorized clear-control screen. Bread/Food dishes and Cuisine
+scope judgments remain unresolved; repeated disputed judgments cannot establish
+accuracy.
+
+## Consolidation-v10 clear-control screen
+
+The user authorized proceeding with the clear-control test. The screen is
+bounded to four additional GPT-6.1 Sol medium subscription attempts, advancing
+the persistent counter from 345 used to **349/349**. All four are fresh and
+valid, with distinct upstream response references and HTTP 200 metadata naming
+GPT-6.1 Sol. There are no failures, retries, warmups, reuses or missing usage.
+At most two requests from this screen run concurrently, within the shared native
+queue; no service limit is changed.
+
+Native `prepare --from` inherits the matched v9 inputs and settings. `--only`
+selects Mental states without changing its complete sibling group. The first
+draws preserve the v9 rendered prompts except for the one restored sentence.
+Native `prepare --from FIRST --repeat` requests independent second draws;
+offline checks confirm their complete prompts, inputs and settings match the
+first draws exactly. Ordinary SSE transport and the saved response schema stay
+fixed. Old answers and reviews remain outside model input. Bread/Food dishes
+and Cuisine are excluded because their expected containment judgments are still
+unsettled; this is not a full rerun of the earlier panel.
+
+| Complete supplied group | First draw | Independent repeat | Bounded agent assessment |
+|---|---|---|---|
+| Roots: 7 | Beverages: Coffee C006 + Slush drinks C039 | Same title and children | Two accepts |
+| Mental states: 6 | Motivational states: Perceived needs C047 + Desires C076 | Same title and children | Two accepts |
+
+All four standalone meanings define the selected topic without separately
+defining an illustrative member or component. The Beverages meanings admit
+partially frozen drinks. The Motivational states meanings preserve wanting and
+perceived necessity and fit within cognitive or emotional Mental states.
+This is a bounded agent assessment, not human gold or an accuracy estimate.
+Passing these controls does not prove that the restored sentence caused the
+observed behavior or fixed the separate Bread-definition issue.
+
+All four native prospective grouping checks pass. Roots would shrink seven
+choices to six; Mental states would shrink six to five. Each proposal groups
+two children and has a larger distinct-note set than each child; the proposed
+Mental states subgroup is smaller than its existing parent. Every report
+retains `applied: false`. These are local shape checks, not full traversal or a
+newly generated hierarchy, and no existing branch or immutable meaning changes.
+
+The committed [usage selection](shr_single_pair/hierarchy-consolidation-v10-clear-usage-v1.json)
+reproduces native `consolidation-v10-clear-usage-v1.json` under
+`target/canonical-shaping-selection-v1/`. It records 5,480 input tokens, zero
+cached-input/write tokens, and 1,184 output tokens including 981 reasoning
+tokens. Complete API-equivalent catalog cost is **$0.022800**; reasoning is
+counted once. This is not subscription billing or a matched savings estimate.
+The previous v8/v9 savings measurement remains separate.
+
+Ignored experiments are `consolidation-v10-clear-{roots,mental}-{first,repeat}-v1`.
+Native `*-report-v1.json` snapshots preserve outputs before the four attributed
+role-agent reviews. Post-review snapshots retain exact answers, parsed outputs,
+receipts, raw metadata, usage and input hashes. The prompt and source remain
+fixed throughout the screen. Thirty-three relevant consolidation, assembly and
+revision checks pass after syncing current main. Broader runner-suite limitations
+remain recorded above. No Compare calls, Bootstrap edits, graph changes,
+UI refresh or agent messages occur. The work remains isolated as requested.
+V10 is tested and experimental, not approved as a full prompt or activated.
+Next broaden the clear controls, including a group with no useful valid parent,
+before considering adoption. Disputed scope judgments remain a separate review
+problem, and this four-attempt allowance is exhausted.
