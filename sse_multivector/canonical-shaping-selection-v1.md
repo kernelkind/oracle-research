@@ -1,18 +1,20 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work drafts
+The latest user-authorized work tests
 [Hierarchy-consolidation-v9](shr_single_pair/Hierarchy-consolidation-v9.md).
-It simplifies the repeated definition-writing instructions into one new,
-versioned 198-word fragment. The input, containment checks, synthetic example
-and output contract are retained from v8. Historical Bootstrap and consolidation
-versions remain fixed; Bootstrap has not adopted the new wording. Bread/Food
-dishes and Cuisine boundary judgments remain unsettled. Fourteen earlier agent
-rejects have appended uncertain reassessments; original answers and review
-history are preserved. V9 has offline assembly checks, but no model trial. The prior
-audits accept both disputed proposals twice, and v7 preserves useful controls
-without resolving those boundaries. Neither semantic improvement nor a change
-in failure rate is established. Next qualify the unresolved boundaries and
-test the draft against clear controls without treating disputes as error gold.
+Its matched v8/v9 panel has sixteen fresh valid GPT-6.1 Sol medium requests,
+two draws for each of four complete sibling groups. Each prompt has four
+qualified agent accepts on the clear controls and four uncertain disputed
+judgments. All prospective local shape checks pass; no proposal is applied.
+V9 uses 13.4% fewer input tokens and has 17.1% lower observed API-equivalent
+cost in this panel. This does not establish broader accuracy or hierarchy
+quality. One v9 output unnecessarily defines Bread inside its proposed meaning;
+the simplification omitted the general rule against defining every mentioned
+concept. Restoring that rule is recommended, not implemented or trialed.
+Historical Bootstrap and consolidation versions remain fixed; Bootstrap has
+not adopted the new wording. Bread/Food dishes and Cuisine boundaries remain
+unsettled, and previous reviews remain preserved. No semantic improvement or
+change in a verified failure rate is established.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
 the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
@@ -23,7 +25,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the completed consolidation audit](#consolidation-audit-v1), and
 [the v7 revision and panel](#consolidation-v7-required-condition-revision-and-panel), and
 [the v8 draft and evaluation correction](#consolidation-v8-draft-and-evaluation-correction), and
-[the v9 definition-writing simplification](#consolidation-v9-definition-writing-simplification).
+[the v9 definition-writing simplification](#consolidation-v9-definition-writing-simplification), and
+[the matched v8/v9 panel](#consolidation-v8v9-matched-panel).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2689,6 +2692,89 @@ passed. Thirty-two relevant consolidation, assembly and revision checks pass,
 including native preparation freezing complete v9 text without inference.
 Historical v8 and Bootstrap-v104 hashes remain unchanged. Broader runner-suite
 limitations remain recorded above. No provider calls, graph or UI changes, or
-agent messages occurred; the attempt counter remains 329/329. The draft remains
-isolated as requested. Next compare v9 with v8 on the same clear controls once
-a model-trial allowance is available, keeping disputed judgments separate.
+agent messages occurred; the attempt counter remained 329/329 at this draft
+checkpoint. The following section records the subsequently authorized matched
+trial. The task remains isolated as requested.
+
+## Consolidation-v8/v9 matched panel
+
+The user authorized sixteen additional GPT-6.1 Sol medium subscription attempts
+for four complete groups, both prompts and two independent draws per prompt.
+The persistent counter advanced from 329/329 to **345/345**. All sixteen requests
+are valid, with distinct upstream response references and reported GPT-6.1 Sol.
+There are no failures, retries, reuses, warmups or missing usage. Native queue
+recovery delayed admission; it cleared without changing account limits or
+bypassing backoff. No allowance remains from this panel.
+
+The shared runner's `prepare --from` freezes the same v7 source cases for v8
+and v9. Complete inputs, original evidence, schema and worker settings match.
+The ordinary request format is retained; only prompt wording differs between
+versions. Repeats are prepared from each completed first draw with `--repeat`.
+Offline equality checks confirm their prompts, cases and settings are unchanged.
+Neither saved answers nor reviews enter a later model input. The prompts and
+source code stay fixed during execution.
+
+| Complete supplied group | V8 first / repeat | V9 first / repeat | Current bounded agent assessment |
+|---|---|---|---|
+| Roots: 7 | Beverages: Coffee + Slush drinks, both draws | Same children, both draws | Four accepts |
+| Mental states: 6 | Alertness: Brain fog and mental clarity + sleepiness; then Motivational states: Perceived needs + Desires | Same respective children | Four accepts; two useful alternative subsets |
+| Cuisine: 6 | Prepared dishes: Pizza + Cheesesteaks + Risotto, both draws | Same children, both draws | Four uncertain parent-fit judgments |
+| Food dishes: 6 | Dough and batter dishes: Pancakes + Bread, both draws | Dough and batter foods: Pancakes + Bread; then Bread-based foods: Burgers + Bread | Four uncertain whole-child judgments |
+
+Native role-agent reviews preserve four qualified accepts and four uncertain
+judgments for each prompt. This is not human gold or an accuracy estimate.
+The clear controls preserve coverage and parent fit in both draws. The disputed
+cases still turn on Cuisine's associated-dishes scope and Food dishes' meal
+condition as a food-kind or particular-instance role. The panel does not settle
+either convention. Changed valid subsets are not themselves errors.
+
+All sixteen prospective local grouping checks pass: roots shrink seven choices
+to six, Mental states and Food dishes shrink six to five, and Cuisine shrinks
+six to four. Each proposed parent has two or three children and strictly larger
+distinct-note sets than its individual children; it is narrower than an existing
+parent's note set. These are source-bound local checks, not full traversal or
+semantic validation. All proposals remain unapplied; no hierarchy or UI changed.
+
+One writing issue deserves a targeted follow-up. V9's repeated Food dishes answer
+adds a separate sentence defining Bread after defining Bread-based foods. V8's
+shared rule says “Define the selected topic, not every concept it mentions.”
+V9 omitted that general instruction and retains a narrower instruction against
+separate technical definitions only for activities. The omission is established
+by the prompt diff; one output cannot establish its causal effect or a regression
+rate. The extra sentence is unnecessary here, not evidence that the disputed
+grouping is wrong. Restoring the general rule is a proposed next edit; no v10
+or Bootstrap change has been made.
+
+The committed [usage selection](shr_single_pair/hierarchy-consolidation-v8-v9-matched-usage-v1.json)
+reproduces native `consolidation-v8-v9-matched-usage-v1.json` under
+`target/canonical-shaping-selection-v1/`:
+
+| Native usage and saved catalog pricing | V8: 8 attempts | V9: 8 attempts |
+|---|---:|---:|
+| Input tokens | 12,798 | 11,086 |
+| Cached input / cache-write tokens | 0 / 0 | 0 / 0 |
+| Output tokens, reasoning included | 2,598 | 2,056 |
+| Reasoning tokens, a subset of output | 2,120 | 1,630 |
+| API-equivalent total cost | $0.051576 | $0.042732 |
+
+The observed API-equivalent reduction is **17.15%**, calculated as
+`(0.051576 - 0.042732) / 0.051576`. Inputs drop 13.38%; every corresponding
+request is 214 input tokens shorter. Outputs drop 20.86% in these particular
+draws. Output variability means the observed cost reduction is not a guaranteed
+saving or an isolated measurement of the input change. The full panel costs
+$0.094308 at saved catalog prices; subscription billing is not inferred.
+Native accounting totals include reasoning once, retain zero cache observations,
+and have no missing-cost or missing-usage qualifications.
+
+Ignored experiments are `consolidation-v{8,9}-matched-roots-{first,repeat}-v1`
+and `consolidation-v{8,9}-matched-{first,repeat}-v1`. Native `*-report-v1.json`
+snapshots preserve the outputs before reviews; `show` retains the attributed
+assessments. Offline checks confirm answers, parsed outputs, receipts, raw
+metadata, usage and input hashes remain unchanged after review. Thirty-two
+relevant consolidation, assembly and revision checks pass after syncing local
+main. Broader suite limitations remain recorded above. No Compare calls,
+Bootstrap edits, graph changes, UI updates or agent messages occurred.
+V9 is tested and experimental, not human-approved as a full prompt or activated.
+The task remains isolated as requested. The recommended next change is to
+restore the lost general writing rule, then broaden clear controls rather than
+treating repeated disputed judgments as progress or failures.
