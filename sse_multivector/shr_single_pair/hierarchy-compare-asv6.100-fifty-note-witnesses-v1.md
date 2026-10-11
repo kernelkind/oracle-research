@@ -1466,3 +1466,36 @@ and preserved appliance positives / edible-food negatives / bagel guards.
 Then fresh repeat before expansion. Pair019 will receive a separately controlled
 restriction-applicability test; do not claim this graph-only edit fixed it from
 one favorable draw. All calls remain within the persistent 20,000 allowance.
+
+### V79 focused graph qualification completed
+
+Graph-gate-v1 and graph-gate-repeat-v1 each completed ten valid comparisons.
+All twenty receive independent agent acceptance of their diagnostics, not just
+their labels. Endpoint Food coverage stays unchanged across isolated and graph
+inputs; an animal-only Meat descendant blocks placement without broadening
+Food. Bread still covers bagel preparation while the meal-role ancestor blocks
+placement. Edible-food/cookware negatives and cooking-appliance positives remain.
+This qualifies the focused graph-authority mechanism, not all Compare behavior.
+
+Native reviewed snapshots and receipts are retained under
+target/compare-v79-qualification-v1. The native usage source
+hierarchy-compare-v79-usage-v1.json records 22 actual attempts including two
+warmups, zero reuse, retries, failures or missing usage, and $0.145532
+API-equivalent cost. Fresh repeated requests have separate responses; prior
+answers are never passed into model input.
+
+V78 full-panel review is now recorded natively: three definite diagnostic
+errors (snapshot009 graph expansion, isolated019-forward parent-alternative
+omission, isolated011-reverse physical-kind exclusion), with producer-boundary
+qualifications retained separately. Two snapshot review IDs were initially
+misassigned; native correction records preserve that history. The current
+five-experiment usage report records 126 actual attempts, 17 exact reuses,
+five failed attempts, three recovered failures, and one terminal runtime case.
+Known API-equivalent subtotal is $0.724506; five attempts lack usage/cost, so
+the complete subtotal is unknown.
+
+The next separately controlled hypothesis is parent restriction applicability:
+an exclusion from one parent alternative is not an exclusion from its entire
+meaning. Retain each alternative's restrictions and the topic-role convention;
+do not turn descriptive aspects into unrelated unrestricted topics. Qualification
+must preserve graph guards and earlier consumer/intention negatives.
