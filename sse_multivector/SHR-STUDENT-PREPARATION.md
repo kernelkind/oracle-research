@@ -139,7 +139,7 @@ remain preserved. Qwen27's baseline and both saved-epoch generations each comple
 Each consumes 106,527 input tokens; baseline/epoch-one/epoch-four output totals
 are 727/896/924. All three Qwen stages are complete. Gemma's baseline also
 completes 21 fresh attempts, with 9 valid and 12 failed responses; its two
-saved-epoch stages remain prepared, with the first-epoch worker loading.
+saved-epoch stages remain prepared, with first-epoch generation running.
 These owned-GB10 calls incur no provider charge.
 
 Source-bound native agent reviews compare each meaning to the complete post,
@@ -192,6 +192,18 @@ prevent interpreting this as a matched successful-generation speed comparison.
 Baseline result/review hashes are
 `829fcedcb7f87302918f0d0b037e7726988e477bb178166708c64100911bbed3` /
 `4e6c79410edee2deb6b481ed0e5fbe05876200ed72ca17f3fd8a10a30b81b7f2`.
+
+The first three Gemma26 epoch-one requests return valid objects but take
+53.55/45.74/89.63 seconds. The current generation loader keeps adapters
+unmerged. In installed PEFT 0.21, `ParamWrapper._activate_lora` temporarily
+parametrizes packed expert weights; `_LoraFactorsProxy.forward` forms adjusted
+whole expert stacks with `torch.baddbmm` during each model forward. This is a
+possible source of the observed decode overhead, not a profiled causal
+attribution or optimized Gemma speed ceiling. The inspected installed
+`peft/tuners/lora/layer.py` SHA-256 is
+`052d8fbd12774150315a4043ed66ef1648fb5ceabd0cbde3fced8fc718502c1b`.
+Folding fixed expert adapters before inference has not been implemented or
+measured; frozen current evaluations retain their existing loader and settings.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
