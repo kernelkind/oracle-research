@@ -137,9 +137,10 @@ identifiers before inference; original configurations and the rejection receipt
 remain preserved. Qwen27's baseline and both saved-epoch generations each complete
 21 fresh native attempts with 21 valid responses, no failures and no reuse.
 Each consumes 106,527 input tokens; baseline/epoch-one/epoch-four output totals
-are 727/896/924. All three Qwen stages are complete; Gemma's three stages remain
-prepared, with its baseline worker loading. These owned-GB10 calls incur no
-provider charge.
+are 727/896/924. All three Qwen stages are complete. Gemma's baseline also
+completes 21 fresh attempts, with 9 valid and 12 failed responses; its two
+saved-epoch stages remain prepared, with the first-epoch worker loading.
+These owned-GB10 calls incur no provider charge.
 
 Source-bound native agent reviews compare each meaning to the complete post,
 selected tree and Bootstrap-v96 rules, with teacher answers as provisional
@@ -175,6 +176,22 @@ their current review hashes are
 Epoch-four result/review SHA-256 values are
 `9330dd293268139cbecae5a5adb49c226e2ace283607ca8b40391b83c78d19b7` /
 `e02c7d17bca3f2126e14924a1401c9136af2837e59a5cea0b5069d47a2af1914`.
+
+Gemma26's baseline failures are saved HTTP-200 model responses rejected by the
+native JSON contract, not missing GPU answers. They return plain definitions,
+strings or raw null rather than the required object. There is no response
+repair or retry. Among all 21 outputs, native agent review accepts 2, rejects
+18 and leaves 1 uncertain; the 12 contract failures are rejected even when
+their underlying meaning or refusal is plausible. Raw null correctly refuses
+PuffPuffPaint's unresolved identity but also incorrectly refuses Activities;
+the valid invitation-to-London output wrongly returns null. Other errors repeat
+the selected label or omit its stated boundaries. The run consumes 107,196
+input / 430 output tokens, with median native batch-one execution of 4.45
+seconds and 47.36 GiB peak CUDA allocation. Shorter outputs and contract failures
+prevent interpreting this as a matched successful-generation speed comparison.
+Baseline result/review hashes are
+`829fcedcb7f87302918f0d0b037e7726988e477bb178166708c64100911bbed3` /
+`4e6c79410edee2deb6b481ed0e5fbe05876200ed72ca17f3fd8a10a30b81b7f2`.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.

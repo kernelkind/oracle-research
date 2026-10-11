@@ -118,8 +118,14 @@ pass fresh-process verification. Its held-out loss moves from **2.8927**, to
 from 1.5005 to 0.3176. Its cumulative phase takes **115.38 minutes**, with
 **52.54 GiB** peak CUDA allocation. Different tokenizers prevent direct
 cross-model loss ranking. Both models' baseline and epoch generation plans are
-prepared and their configuration hashes verified on GB10. Gemma's generations
-remain pending. All five task fits and fresh checkpoint checks are complete;
+prepared and their configuration hashes verified on GB10. Gemma's published
+baseline completes 21 fresh attempts but passes the single-field JSON contract
+on only 9; its 12 plain-text/string/raw-null failures remain preserved without
+repair or retry. Source-based agent review accepts 2/21, rejects 18 and leaves
+1 uncertain, including contract failures in rejection. Raw refusal is appropriate
+for PuffPuffPaint but misplaced for the broad Activities root. Its saved-epoch
+generations remain pending; published format failures do not establish post-fit
+failure. All five task fits and fresh checkpoint checks are complete;
 native generated-meaning evaluation and review continue through all six stages.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
