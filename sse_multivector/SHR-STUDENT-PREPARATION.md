@@ -105,15 +105,15 @@ SHA-256 `4518c0e9d0fc723bb6ced9a3d404512f12acf46f94293cb614c6c51d09a382e3`;
 the first-checkpoint and complete-training snapshots remain preserved.
 
 Qwen27 Compare, both Bootstrap pilots and input-only Ettin Compare have
-completed fitting and fresh-process verification of both checkpoints. Kev27
-Compare stopped after 115 updates, before a saved epoch, on the loss/gradient
-check. Its failure remains preserved. The separately bound v2 run now has its
-first saved epoch and continues training in PID 1919728. The original queue
+completed fitting and fresh-process verification of both checkpoints. Kev27's
+separately bound v2 run has also completed and verified both saved epochs.
+Its original 115-update failure remains preserved. All five planned task fits
+and their integrity checks are complete. The original queue
 shell was PID 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
 and stops the sequence on error; there is no overwrite or automatic retry.
-Full-model jobs run sequentially. Generated-meaning evaluation and semantic
+Full-model jobs ran sequentially. Generated-meaning evaluation and semantic
 review follow the saved checkpoints; the queue itself performs only fits and
 fresh-process integrity checks.
 
@@ -126,8 +126,8 @@ the single-field meaning/null schema, greedy generation, a 512-token response
 allowance and one local request at a time. The separate immutable generation
 runtime inherits the fit's source snapshot and the exact stable launcher and
 local worker scripts; existing running snapshots are untouched. Native
-generation and semantic review remain pending until the GPU fitting sequence
-finishes. Native preparation and `show` now also validate both models' epoch
+generation is beginning after the completed GPU fitting sequence, with semantic
+review still pending. Native preparation and `show` also validate both models' epoch
 plans: all six plans have the same 21 complete case prompts, inputs and evidence;
 no teacher answers are copied, and checkpoint model configs bind the actual
 verified adapter hashes. All six configs are staged and hash-verified on GB10
@@ -349,7 +349,8 @@ finite zero-loss/zero-gradient updates**, no reported error and mean TRAIN loss
 predictions, including the same two `neither` disagreements in the Activities /
 padel-courts family. Kev's first-epoch phase takes **2,979.26 seconds (49.65
 minutes)**, with **23.78 GiB** peak CUDA allocation; loading and baseline
-evaluation precede it. Later epochs and fresh-process reload remain pending.
+evaluation precede it. Later epochs and fresh-process reload were pending in
+that first-checkpoint report.
 The original failed run does not retain its exact loss/norm, so that condition
 cannot be retrospectively verified. The preserved first-checkpoint report is
 `compare-pilot-kev27b-epoch1-report-v2.json`, SHA-256
@@ -357,6 +358,24 @@ cannot be retrospectively verified. The preserved first-checkpoint report is
 `compare-targets-v5` retains the same data hash and binds the corrected code;
 the launch receipt is `kev27-learning-recovery-v2.json`. Bootstrap's pilot
 student target remains the confirmed single `meaning` field, null allowed.
+
+Kev27 v2 completes all **720 updates / TRAIN decisions**, including **78 finite
+zero-loss/zero-gradient updates**. Epoch four's mean TRAIN loss is **0.0723**,
+but all 46 evaluation predictions remain exactly unchanged from epoch one and
+equal to Qwen27's epoch-four predictions. Both saved epochs reach **44/46**
+teacher agreement, **42/44 nonidentity** and **14/16 containment**, preserving
+all neither and identity targets. The cumulative phase takes **11,472.52 seconds
+(191.21 minutes)**, with **23.78 GiB** peak CUDA allocation; the 326.73-second
+load and baseline evaluation precede it. Fresh verification PID **2073260**,
+distinct from training PID **1919728**, passes hashes and numerical reloads for
+both epochs. Training metrics, configuration/data/code bindings and checkpoint
+hashes remain unchanged. The complete report is
+`compare-pilot-kev27b-complete-report-v2.json`, SHA-256
+`7a959bb01da4aa76850bd2ec399a7367eb2aa7d1dd5a746718d1a8080d7f2758`;
+the epoch-one, complete-training and failed-v1 reports remain preserved. This
+small shared panel demonstrates no quality advantage over Qwen; it does not
+establish a capacity ceiling or qualify either model for all five labels and
+canonical branches.
 
 The encoder can also be tested with `input_format: "input_json"`: it takes the
 complete original `INPUT_JSON` from the hash-bound native collection, keeping

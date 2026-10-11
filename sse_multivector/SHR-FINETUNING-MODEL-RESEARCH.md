@@ -85,8 +85,13 @@ checks and records their exact case/loss/norm; its regressions pass. A separate
 run on unchanged examples/settings now completes its first epoch with 18 finite
 zero-loss/zero-gradient updates and **44/46 teacher agreement**, exactly the
 same 46 predictions as Qwen27's fourth epoch. Its first-epoch phase takes
-**49.65 minutes**, with **23.78 GiB** peak allocation. Later epochs and fresh
-reload remain pending; the original failure's exact values were not saved.
+**49.65 minutes**, with **23.78 GiB** peak allocation. It now completes all 720
+updates, including 78 finite zero-loss/zero-gradient updates, with both saved
+epochs verified in a distinct fresh process. Epoch four preserves exactly the
+same 46 predictions; its cumulative phase takes **191.21 minutes**, with the
+same peak allocation. Mean TRAIN loss falls to 0.0723. This supplies no quality
+advantage over Qwen on this panel, and does not establish a model-size ceiling.
+The original failure's exact values were not saved.
 See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
@@ -106,6 +111,8 @@ from 1.5005 to 0.3176. Its cumulative phase takes **115.38 minutes**, with
 **52.54 GiB** peak CUDA allocation. Different tokenizers prevent direct
 cross-model loss ranking. Both models' baseline and epoch generation plans are
 prepared and their configuration hashes verified on GB10, with no generation.
+All five task fits and fresh checkpoint checks are complete; native generated
+meaning evaluation is beginning with the published Qwen27 baseline.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
