@@ -815,6 +815,76 @@ cap is 17, including warming/retries within the existing shared 20,000 counter.
 No full 102-case trial, meaning regeneration, hierarchy build or automatic
 production adoption is scheduled by this bounded test.
 
+### Completed v77 bounded test
+
+All 15 cases completed validly through shared runner 1.6.1. Actual execution
+used 16 attempts, including one warmup, with no retries, reuses, failures or
+missing usage. Native API-equivalent cost was **$0.0930796** including warmup;
+subscription incremental cash remained zero. Fourteen of 15 comparisons
+reported cache hits. The persistent shared attempt counter was retained;
+experiment receipts, rather than a shared-counter subtraction, attribute these
+16 calls.
+
+Independent reviews accept 13 responses and reject two. Sourdough/Food now
+returns the user-approved neither in both orientations, using animal-only
+preparation as a concrete witness. Butter and Food/Cookware remain neither.
+All three positive-control pairs retain their intended containment, including
+the role-defined appliance topic. V77 did not gain these outcomes through
+blanket rejection or uncertainty.
+
+Two failures remain:
+
+- **025 forward:** its justification says the local meaning establishes eating
+  food by people. The supplied action definition has no mandatory human-eater
+  or human-food condition; the sentence about people's possible enjoyment is
+  descriptive. The positive answer adds those conditions despite the new
+  requirement to establish coverage from the child's own meaning. Reverse
+  admits animal-only consumption and returns the user-approved neither.
+- **Snapshot 022:** selected Bread/bagel endpoint coverage is supported, but
+  its reason again asserts that bagels are eaten as part of a meal. The local
+  meaning does not require meal use. Snack-only bagel preparation remains an
+  admitted counterexample against Food dishes, so final relation must remain
+  uncertain without changing the settled endpoint answers.
+
+The seven complete reciprocal pairs have one reversal witness, for 025.
+The earlier v76 first gate had two reversal witnesses; its later fresh eight-
+case draw had one, for 024. Those draws have different sample schedules and
+failure orientations. A lower count in one draw does not establish reliability
+or causality for the changed paragraph. This v77 test demonstrates a correct
+sourdough result in this draw, not a durable resolution of scope interpretation.
+
+Question form remains qualified: all six accepted positive-control outputs
+use general coverage probes rather than named concrete candidates. Several
+other boundary questions have the same limitation. Reviews distinguish those
+diagnostic defects from accepted labels and supported coverage justifications;
+the 13 accept reviews are not human-gold accuracy or full prompt qualification.
+
+**V77 fails the semantic/consistency gate. Neither the conditional fresh repeat
+nor the full 102-case panel was prepared or run.** The one-paragraph change
+does not prevent the model from asserting unsupported child conditions or
+clearing an ancestor through invented scope. Existing negative and positive
+controls remain useful; their meanings should not be rewritten to erase these
+Compare contradictions.
+
+Preflight verified 889 source bindings, one config and 39 current code bindings.
+Exact inputs, review-only evidence, schema, provider/model/medium settings,
+SSE transport, timeout, shared worker and output-cap state match the v76 gate.
+Every local meaning is copied exactly. All 16 response IDs, including warmup,
+are fresh and disjoint from both earlier v76 draws; requests have no conversation
+linkage, prior answers or repeated HTTP attempts. Attributed native reviews
+preserve every input, evidence, output, parsed value, receipt and usage field.
+Native snapshots are `gate-generation.json` and `gate-reviewed.json` under
+`target/compare-v77-fifty-note-witnesses-v1/`.
+
+V77 remains experimental and is not adopted. No Bootstrap prompt/meaning,
+constructor or hierarchy changed; no external agent message was sent. The next
+proposed diagnostic is an explicit condition check that records the required
+parent condition and the child wording or necessary implication establishing
+it, keeping permissive/descriptive clauses distinct from membership conditions.
+It should also expose the condition needed by a consequential ancestor. This
+would test the unsupported inference directly before further production edits;
+it is not authorized or implemented merely by recording the suggestion here.
+
 Read-only inspection of the exact Butter witness:
 
 ```bash
