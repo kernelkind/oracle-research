@@ -1692,3 +1692,35 @@ all child restrictions remain unchanged. The controlled gate tests missing
 purpose/person restrictions and preserves production, appliance, alternative
 and branch controls. Kind-aspect/activity and planned-activity operators remain
 separate subsequent mechanisms; this revision is not claimed to fix them.
+
+### V86 gate: standalone proof still omits governing restrictions
+
+All40 outputs are valid, using42 fresh attempts including two warmups,
+no retries/reuses/failures/missing usage, and $0.2636536 API-equivalent cost.
+The independent agent assessment is22 accept,13 reject and5 qualified;
+these are response assessments, not human gold. Exact receipts and native
+reviews remain under target/compare-v86-qualification-v1.
+
+Only018-reverse corrects the eight targeted018/038/041/042 restriction errors.
+The forward Bagel making proof substitutes nonfood display objects for the
+relevant variation: genuine edible bagels made solely for display. Mental
+alertness, Fasting and Ketogenic diet proofs still omit the parent's person
+condition. Core019-reverse and043-forward regress, importing eating intention
+and deliberateness. Both071 orientations select an unresolved morning-context
+reading. Two dinner snapshots still infer intended nourishment from service.
+
+Bread's intermediate production stages now pass in both orientations, and
+Food/Cookware, Meals alternatives and appliance-role controls survive.
+The liquid-food reversal and kind-aspect/activity qualifications remain.
+V86 is not promoted and its proof paragraph is not accumulated automatically
+into the next candidate. Native usage is reproduced by
+hierarchy-compare-v86-usage-v1.json.
+
+V87 branches from V85, replacing only its descriptive-list sentence. Within
+one meaning, nonexhaustive examples inherit the governing definition's
+applicable restrictions; their names do not establish coverage of another
+independently defined node. The hypothesis is directly supported by some
+saved proofs citing parent examples, while other proofs assert lexical
+implications instead. The same40-case gate tests whether the wording changes
+those answers without losing positive controls. This is an untested candidate,
+not a semantic label change, and retains V85's original interpretation paragraph.
