@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-consolidation-audit-v1",
+    "path": "Hierarchy-consolidation-audit-v1.md"
+  },
+  "dataset": {
+    "adapter": "canonical_consolidation_review",
+    "path": "hierarchy-consolidation-audit-v1-source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "timeout_seconds": 600,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "output_schema_path": "Hierarchy-consolidation-audit-v1.output.schema.json"
+  }
+}

@@ -1,19 +1,20 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work tests experimental
-[Hierarchy-consolidation-v6](shr_single_pair/Hierarchy-consolidation-v6.md)
-with one synthetic geometry example unrelated to the regression topics.
-The eight-request matched panel preserves promising Beverages and Mental states
-groupings, but whole-child and parent-fit defects still recur. Four bounded
-agent accepts, two direct agent rejections and two unresolved assessments do
-not qualify v6 or establish an improvement over v5.
+The latest user-authorized work audits the two saved scope failures from
+experimental [Hierarchy-consolidation-v6](shr_single_pair/Hierarchy-consolidation-v6.md).
+Both independent audits accept both proposals, disagreeing with the recorded
+agent rejections. Their brief explanations do not address the disputed meal
+and culinary-tradition conditions. A separate auditing task therefore does
+not automatically correct generation. The diagnostic below motivates a v7
+required-condition revision, rather than another example or a Compare change.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
 the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v5 revision record](#consolidation-v5-draft),
 [the completed v5 proposal panel](#consolidation-v5-proposal-panel),
 [the v6 example draft](#consolidation-v6-synthetic-example-draft), and
-[the completed v6 panel](#consolidation-v6-focused-proposal-panel).
+[the completed v6 panel](#consolidation-v6-focused-proposal-panel), and
+[the completed consolidation audit](#consolidation-audit-v1).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2395,3 +2396,69 @@ syncing current local main. All eight receipt identities and matched controls
 were checked offline. Prompt text remains unchanged from the v6 draft; no
 Compare calls, graph insertions, UI changes or agent messages occurred. The
 consolidation task remains isolated as requested.
+
+## Consolidation-audit-v1
+
+The user approved four diagnostic requests before another wording edit: audit
+the two saved v6 scope failures twice each using unchanged meanings. Experimental
+[Hierarchy-consolidation-audit-v1](shr_single_pair/Hierarchy-consolidation-audit-v1.md)
+receives the complete original `parent` and `siblings`, plus the exact saved
+`proposal`. It returns `covers_children`, `fits_parent`, `valid` and a brief
+`reason`; it cannot rewrite meanings, generate a replacement or establish
+placement. No agent verdict, expected answer or identified failure enters
+model input. The Compare prompt and all Bootstrap shared clauses are unchanged.
+
+The native `canonical_consolidation_review` adapter reuses the existing saved
+proposal loader rather than manually assembling cases. Hash-bound producer
+references, frozen inputs, native receipt validation and protected source
+hashes are retained; whole-group review creates one case per proposal, while
+the existing `canonical_consolidation_pairs` path still creates edge checks.
+The new production-path test first failed on the unknown adapter, then passed
+after this bounded extension. A second test rejects null proposals and changed
+producer references before inference. Review evidence and labels stay outside
+the rendered input. This adds no production shaping or validation stage.
+
+All four GPT-6.1 Sol medium requests complete successfully through main's
+shared runner, with four distinct fresh native receipts. Native `--repeat`
+keeps the full prompts, inputs and settings identical and dispatches new
+requests. There are no retries, reuses, warmups or missing usage. The counter
+advances from **317/317 to 321/321** under the four-request diagnostic allowance.
+
+| Saved proposal | First audit | Fresh repeat | What the brief explanations check |
+|---|---|---|---|
+| Bread-based dishes under Food dishes, selecting Burgers and Bread | All three booleans true | All three booleans true | Bread is explicitly included; Burgers has a bun or roll |
+| Cooked dishes under Cuisine, selecting Pizza, Cheesesteaks and Risotto | All three booleans true | All three booleans true | These foods have cooked ingredients; Cuisine covers culinary dishes |
+
+Neither Bread explanation addresses the proposal's added meal-role condition.
+Neither Cuisine explanation requires the tradition association in the supplied
+parent definition. These are disagreements with the recorded bounded agent
+assessments, not independently established human errors or direct access to
+the model's internal process. The hypothesis that generation alone fails while
+focused auditing reliably recognizes the violations is not supported by this
+screen. Required-condition interpretation remains the useful next target.
+
+The native first-draw and repeat artifacts are `consolidation-audit-v1-first-v1`
+and `consolidation-audit-v1-repeat-v1` under
+`target/canonical-shaping-selection-v1/`, with exact `*-report-v1.json` snapshots.
+The [usage selection](shr_single_pair/hierarchy-consolidation-audit-v1-usage.json)
+reproduces native `consolidation-audit-v1-usage-v1.json`: **3,802 input tokens**,
+zero cache reads/writes, **688 output tokens including 306 reasoning tokens**,
+and complete **$0.014484 API-equivalent cost**. Reasoning is included in output;
+catalog cost is not a subscription invoice.
+
+Twenty-nine relevant consolidation, assembly and revision checks pass. The
+broader suite runs 169 tests with 19 failures and six skips: old configurable
+concurrency and sequential backoff expectations conflict with the current
+shared queue, and the parent-guide preparation test lacks `tiktoken`. Three
+representative failures reproduce with the committed baseline test definitions;
+this task has not repaired or claimed a passing full runner suite. The new
+adapter's preparation, receipt binding and native execution checks pass.
+
+The next v7 hypothesis is that a containing meaning's required conditions must
+already hold throughout the contained meaning. Naming a child as an included
+kind cannot exempt it from those conditions. This is a wording hypothesis to
+test under the approved follow-up, not a new graph guard or semantic gold.
+It follows the official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+in using explicit success criteria, direct instructions and a brief decision
+explanation without requesting a reasoning trace. That guidance does not
+establish this particular semantic rule or prove that it fixes the failures.

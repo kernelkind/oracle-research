@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "proposals": [
+    {
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-canonical-shaping-selection-v1/target/canonical-shaping-selection-v1/consolidation-v6-focused-first-v1",
+        "sha256": "dfee6163006473b908fe3db86936c3616a854715e6ec11ee65915857387d1759"
+      },
+      "case": "food-dishes"
+    },
+    {
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-canonical-shaping-selection-v1/target/canonical-shaping-selection-v1/consolidation-v6-focused-repeat-v1",
+        "sha256": "d22f99327c662b63802fe77a26d57fea2dbc75614a3a763c22f540bb1a39c2e2"
+      },
+      "case": "cuisine"
+    }
+  ]
+}

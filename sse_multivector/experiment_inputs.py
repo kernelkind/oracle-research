@@ -69,10 +69,12 @@ def prepare_file(dataset, path, template, load_report=None):
         cases = prepare_consolidations(source, path.parent, read)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
             application_allowed=False, purpose='Synthetic proposal only; normal traversal owns placement.')
-    if dataset['adapter'] == 'canonical_consolidation_pairs':
-        cases = prepare_consolidation_pairs(source, path.parent, read, load_report, sources)
+    if dataset['adapter'] in {'canonical_consolidation_pairs', 'canonical_consolidation_review'}:
+        pairwise = dataset['adapter'] == 'canonical_consolidation_pairs'
+        cases = prepare_saved_consolidations(source, path.parent, read, load_report, sources,
+                                             pairwise=pairwise)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
-            application_allowed=False, purpose='Validate proposed edges; full placement is separate.')
+            application_allowed=False, purpose='Review saved proposals; full placement is separate.')
     if dataset['adapter'] == 'canonical_shaping_nomination':
         cases = prepare_shaping_nominations(source, path.parent, sources)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
@@ -814,8 +816,8 @@ def prepare_consolidations(source, base, read):
     return cases
 
 
-def prepare_consolidation_pairs(source, base, read, load_report, sources):
-    """Compare saved proposals unchanged against their offered nodes and parent."""
+def prepare_saved_consolidations(source, base, read, load_report, sources, *, pairwise):
+    """Load verified saved proposals for whole-group review or edge comparisons."""
     from . import canonical_trial as trial
     engine._expect_fields(source, 'consolidation comparisons', {'schema_version', 'proposals'})
     if (type(source['schema_version']) is not int or source['schema_version'] != 1
@@ -853,6 +855,12 @@ def prepare_consolidation_pairs(source, base, read, load_report, sources):
         receipt_path = Path(saved['receipt']['results_path']).resolve()
         sources[str(receipt_path)] = engine._sha256_file(receipt_path)
         offered = json.loads(saved['inputs']['INPUT_JSON'])
+        if not pairwise:
+            cases.append(dict(id=f'proposal-{index}',
+                inputs=dict(INPUT_JSON=json.dumps({**offered, 'proposal': proposal}, ensure_ascii=False)),
+                evidence=dict(proposal_experiment=str(directory), proposal_case=item['case'],
+                    proposal_receipt=saved['receipt'], application_allowed=False)))
+            continue
         state = read(Path(saved['evidence']['state']))
         nodes = {node['id']: node for node in state['nodes']}
         ancestors = trial._ancestors(state['nodes'])

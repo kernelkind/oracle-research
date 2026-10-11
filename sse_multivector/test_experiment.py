@@ -93,6 +93,60 @@ class ExperimentTests(unittest.TestCase):
             inputs.validate(spec['dataset'], case,
                 '{"meaning":"Rewritten","relation":"neither","reason":"Test."}', None)
 
+    def test_consolidation_review_preserves_complete_inputs_and_saved_proposal(self):
+        self.consolidation_spec(parent='P')
+        self.prepare()
+        proposal = dict(title='Equipment', meaning='Equipment used in preparation.',
+                        children=['C0', 'C1'])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(proposal)})
+        original = self.show('E1', '--case', 'group')
+        self.cli('review', 'E1', '--case', 'group', '--role', 'agent',
+                 '--verdict', 'reject', '--comment', 'REVIEW_ONLY_VERDICT')
+        envelope = self.root/'E1/experiment.json'
+        source = dict(schema_version=1, proposals=[dict(experiment=dict(path='E1',
+            sha256=hashlib.sha256(envelope.read_bytes()).hexdigest()), case='group')])
+        self.write('review-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_consolidation_review', path='review-source.json')
+        spec['runner']['output_schema'] = dict(type='object', properties={
+            'valid': dict(type='boolean'), 'reason': dict(type='string')},
+            required=['valid', 'reason'], additionalProperties=False)
+        review_spec = self.write('review-spec.json', spec)
+        self.cli('prepare', 'proposal-review', '--spec', review_spec)
+        shown = self.show('proposal-review')
+        self.assertEqual(len(shown['cases']), 1)
+        case = shown['cases'][0]
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(payload, {**json.loads(original['inputs']['INPUT_JSON']),
+                                   'proposal': proposal})
+        self.assertNotIn('REVIEW_ONLY_VERDICT', case['prompt'])
+        self.assertEqual(case['evidence']['proposal_receipt'], original['receipt'])
+        self.assertFalse(case['evidence']['application_allowed'])
+        self.assertEqual(len(self.calls()), 1, 'review preparation makes no calls')
+        self.cli('run', 'proposal-review', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"valid":false,"reason":"A proposed condition is not supported."}'})
+        self.assertEqual(self.show('proposal-review')['summary']['valid'], 1)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_consolidation_review_rejects_null_and_changed_producer_references(self):
+        self.consolidation_spec()
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': 'null'})
+        envelope = self.root/'E1/experiment.json'
+        reference = dict(path='E1', sha256=hashlib.sha256(envelope.read_bytes()).hexdigest())
+        source = dict(schema_version=1, proposals=[dict(experiment=reference, case='group')])
+        self.write('review-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_consolidation_review', path='review-source.json')
+        review_spec = self.write('review-spec.json', spec)
+        failure = self.cli('prepare', 'proposal-review', '--spec', review_spec, ok=False)
+        self.assertIn('a null proposal has no comparisons', failure.stderr)
+        reference['sha256'] = '0'*64
+        self.write('review-source.json', source)
+        failure = self.cli('prepare', 'changed-review', '--spec', review_spec, ok=False)
+        self.assertIn('consolidation proposal experiment changed', failure.stderr)
+        self.assertEqual(len(self.calls()), 1, 'failed preparation makes no calls')
+
     def test_consolidation_report_rejects_an_equal_note_set_step(self):
         self.consolidation_spec()
         for name in ('raw.json', 'menu.json'):
