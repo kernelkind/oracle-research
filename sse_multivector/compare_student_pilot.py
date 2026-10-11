@@ -255,7 +255,7 @@ def train(config_path, data_path, output, stage):
     else:
         report = dict(schema_version=1, binding=binding, config=config, data=manifest,
             training_pid=os.getpid(), complete=False, training_finished=False, updates=0,
-            training_examples_seen=0, supervised_class_decisions=0, checkpoints=[],
+            training_examples_seen=0, supervised_class_decisions=0, zero_loss_updates=0, checkpoints=[],
             architecture=kind, method='full' if kind == 'encoder' else 'lora', input_format=input_format,
             workload='Relation-only Compare development learning; provisional teacher agreement, not semantic gold.',
             input_tokens={role: dict(examples=len(values), total=sum(len(v['input_ids']) for v in values),
@@ -419,10 +419,18 @@ def train(config_path, data_path, output, stage):
                         loss = torch.nn.functional.cross_entropy(scores(model, 'train', indexes).float(), labels)
                     loss.backward()
                     norm = torch.nn.utils.clip_grad_norm_(parameters, 1.)
-                    if not torch.isfinite(loss) or not torch.isfinite(norm) or norm <= 0:
-                        raise ValueError('nonfinite loss/gradient or zero pilot gradient')
+                    loss_value, norm_value = loss.item(), norm.item()
+                    if (not math.isfinite(loss_value) or not math.isfinite(norm_value)
+                            or norm_value <= 0 and loss_value != 0):
+                        report['failed_update'] = dict(epoch=epoch,
+                            case_ids=[data['train'][i]['case_id'] for i in indexes],
+                            loss=loss_value if math.isfinite(loss_value) else str(loss_value),
+                            gradient_norm=norm_value if math.isfinite(norm_value) else str(norm_value))
+                        raise ValueError('nonfinite loss/gradient or zero gradient with nonzero loss')
+                    if norm_value == 0:
+                        report['zero_loss_updates'] += 1
                     optimizer.step()
-                    losses.append(loss.item())
+                    losses.append(loss_value)
                     report['updates'] += 1
                     report['training_examples_seen'] += len(indexes)
                     report['supervised_class_decisions'] += len(indexes)
