@@ -1343,9 +1343,14 @@ Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
 note IDs. The approved finished-menu requirements are all notes reachable,
-strictly smaller note sets on every downward edge, at most six roots/children,
-and no known valid improvement that reduces browsing decisions while preserving
-those constraints. The constructor does not solve menu optimization
+strictly smaller note sets on every downward edge, and no known valid improvement
+that reduces browsing decisions while preserving those constraints. Manage root
+and child choice counts on a best-effort basis; exceeding six is no longer a
+reason by itself to declare the hierarchy unfinished. The
+[traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
+addition leaves six or more siblings. Existing workflow code and frozen audit
+bounds remain unchanged, so saved sibling-limit violations still describe their
+original evaluation. The constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 

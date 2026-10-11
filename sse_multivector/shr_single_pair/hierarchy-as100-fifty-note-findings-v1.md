@@ -21,9 +21,11 @@ The prompt SHA-256 bindings are:
 - Bootstrap-v96: `599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845`.
 - Compare-v48: `b225da8653af04dfbe41fc8ff9e4f9d8bf780df527e27ee3e2d088c0e7eb23af`.
 
-The rebuild and bounded menu assessment completed. The candidate does not meet
-the approved six-choice requirement; no prompt changes or forced relationships
-were made to remove that limitation.
+The rebuild and bounded menu assessment completed. The candidate did not meet
+the then-approved six-choice requirement; no prompt changes or forced
+relationships were made to remove that limitation. Choice counts are now a
+best-effort goal rather than a hard completion requirement; the saved assessment
+and counts below remain unchanged.
 
 ## What failed
 

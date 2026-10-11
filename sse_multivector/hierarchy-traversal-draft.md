@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v18
+# Hierarchy selection by traversal — draft v19
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -210,6 +210,20 @@ When a local node is placed or held, its slot becomes available for another
 selected local node.
 
 Elapsed time and API cost for this policy have not been measured.
+
+## Agreed best-effort sibling grouping
+
+**Keep root and child choice counts manageable on a best-effort basis. Six is
+not a hard maximum for a finished hierarchy.**
+
+A group exceeding six choices does not by itself prevent stopping or make the
+hierarchy unfinished. The agreed trigger below still calls consolidation after
+a canonical-node addition leaves six or more siblings. A `null` result or a
+rejected proposal leaves the group unchanged; a later qualifying addition can
+trigger another attempt.
+
+This changes the intended requirement, not the existing implementation or saved
+experiment assessments. The remaining local-node stopping rule is still open.
 
 ## Agreed consolidation trigger
 
