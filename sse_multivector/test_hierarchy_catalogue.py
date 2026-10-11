@@ -205,7 +205,8 @@ class HierarchyCatalogue(unittest.TestCase):
             self.assertEqual(row['bindings'][str(config)]['status'], 'changed')
             self.assertEqual(row['bindings']['/missing/configuration.json']['status'], 'missing')
             self.assertNotIn('must-not-appear', (root / 'catalogue/index.html').read_text())
-            self.assertIn('historical-model', (root / 'catalogue/index.html').read_text())
+            self.assertNotIn('historical-model', (root / 'catalogue/index.html').read_text())
+            self.assertEqual(evidence['runner']['model'], 'historical-model')
 
     def test_sqlite_snapshot_includes_committed_wal_rows(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -338,6 +339,53 @@ class HierarchyCatalogue(unittest.TestCase):
                 self.assertEqual(generator['recovered_from']['repository'], str(repository))
                 self.assertIn('git_blob', generator['recovered_from'])
                 self.assertEqual(row['generator_code']['commit_status'], 'unknown: not recorded')
+
+
+    def test_page_loads_complete_parameters_from_local_assets_without_embedding_evidence(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact, _, source = self.fixture(root)
+            complete_value = 'FULL_PARAMETER_VALUE_' + 'x' * 250000 + '</script>&'
+            config = artifact.with_name('configuration.json')
+            config.write_text(json.dumps({'model': 'large-evidence-model', 'seed': 731,
+                                         'calibration_detail': complete_value}))
+            data = self.run_catalogue(root, source)
+            row, = data['hierarchies']
+            index = root / 'catalogue/index.html'
+            self.assertLess(index.stat().st_size, 30000)
+            page = index.read_text()
+            self.assertNotIn('FULL_PARAMETER_VALUE_', page)
+            self.assertIn('large-evidence-model', page)
+            self.assertIn('731', page)
+            record_asset = root / 'catalogue/records' / (row['version_id'] + '.js')
+            evidence_asset = root / 'catalogue/evidence' / (row['evidence'][0]['sha256'] + '.js')
+            for asset, identifier, expected in (
+                    (record_asset, row['version_id'], row),
+                    (evidence_asset, row['evidence'][0]['sha256'],
+                     data['parameter_evidence'][row['evidence'][0]['sha256']])):
+                script = asset.read_text()
+                arguments = json.loads('[' + script.split('(', 1)[1].rsplit(')', 1)[0] + ']')
+                self.assertEqual(arguments, [identifier, expected])
+                self.assertNotIn('</script>', script)
+            self.assertEqual(json.loads(evidence_asset.with_suffix('.json').read_text())['calibration_detail'], complete_value)
+
+    def test_changed_source_metadata_does_not_establish_generator_code(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact, payload, source = self.fixture(root)
+            code = root / 'later-generator.py'
+            code.write_text('def generate(): return "later edit"\n')
+            changed = root / 'source-spec.json'
+            changed.write_text(json.dumps({'model': 'later-model', 'git_commit': 'c' * 40,
+                                           'code': {str(code): hashlib.sha256(code.read_bytes()).hexdigest()}}))
+            payload['sources'] = {str(changed): '0' * 64}
+            artifact.write_text(json.dumps(payload))
+            data = self.run_catalogue(root, source)
+            row, = data['hierarchies']
+            self.assertEqual(row['generator_code']['files'], [])
+            self.assertEqual(row['generator_code']['commit_status'], 'unknown: not recorded')
+            page = (root / 'catalogue/index.html').read_text()
+            self.assertNotIn('later-model', page)
 
 
 if __name__ == '__main__':

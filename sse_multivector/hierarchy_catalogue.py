@@ -352,7 +352,9 @@ class Evidence:
             if sha not in self.written:
                 write(destination, saved)
                 self.written.add(sha)
-            references(saved, candidate.parent)
+            binding = bindings.get(str(candidate))
+            if not binding or binding['sha256'] == sha:
+                references(saved, candidate.parent)
         for name, binding in bindings.items():
             if binding['status'] in {'missing', 'changed'}:
                 unknown.append(f"{binding['status'].capitalize()} frozen source: {name}")
@@ -503,8 +505,7 @@ class CodeSources:
         return result
 
     def record(self, row, documents):
-        references = {(path, binding['sha256']) for path, binding in row['bindings'].items()
-                      if Path(path).suffix in CODE_SUFFIXES}
+        references = set()
         commits = set()
 
         def visit(value, parent):
@@ -527,7 +528,8 @@ class CodeSources:
 
         visit(row['parameters'], Path(row['locations'][0]).parent)
         for item in row['evidence']:
-            visit(documents[item['sha256']], Path(item['path']).parent)
+            if evidence_matches_binding(row, item):
+                visit(documents[item['sha256']], Path(item['path']).parent)
         # M01–M09 recorded the module hash without its filename.
         if row['family'] == 'Merge rules' and HEX.fullmatch(str(row['parameters'].get('source_code_sha256', ''))):
             references.add((str(self.roots[0] / 'sse_multivector/merge_rule_experiment.py'), row['parameters']['source_code_sha256']))
@@ -543,6 +545,81 @@ class CodeSources:
                 'commit_status': 'recorded' if commits else 'unknown: not recorded',
                 'files': files,
                 'coverage': 'Only source files identified by saved hashes; unrecorded files and dependency defaults remain unknown.'}
+
+    def refresh(self, record):
+        """Verify retained sources and restore missing archives without rewalking metadata."""
+        files = []
+        for item in record['files']:
+            if item['status'] != 'preserved':
+                files.append(item)
+                continue
+            snapshot = self.output / item['snapshot'] if item.get('snapshot') else None
+            if snapshot and snapshot.is_file():
+                if self.evidence.sha(snapshot) != item['sha256']:
+                    raise ValueError(f'changed preserved source: {snapshot}')
+                files.append(item)
+            else:
+                choices = [self.preserve(path, item['sha256']) for path in item['recorded_paths']]
+                chosen = next((c for c in choices if c['status'] == 'preserved'), choices[0])
+                files.append({**chosen, 'recorded_paths': item['recorded_paths']})
+        return {**record, 'files': files}
+
+
+def evidence_matches_binding(row, item):
+    binding = row['bindings'].get(item['path'])
+    return not binding or binding['sha256'] == item['sha256']
+
+
+def page_literal(value):
+    return json.dumps(value, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('&', '\\u0026')
+
+
+def page_search_terms(value):
+    """Index common saved settings without copying full evidence into each row."""
+    terms = set()
+    fields = {'prompt_id', 'model', 'base_model', 'provider', 'reasoning_effort',
+              'transport', 'method', 'seed', 'concurrency'}
+
+    def visit(item):
+        if isinstance(item, dict):
+            for key, child in item.items():
+                if key == 'prompt' and isinstance(child, dict) and isinstance(child.get('id'), str):
+                    terms.add('prompt: ' + child['id'])
+                if key in fields and isinstance(child, (str, int, float)):
+                    terms.add(f'{key}: {child}')
+                visit(child)
+        elif isinstance(item, list):
+            for child in item:
+                visit(child)
+
+    visit(value)
+    return terms
+
+
+def write_page(output, result):
+    """Keep the central page small; local scripts load selected records on demand."""
+    documents = result['parameter_evidence']
+    evidence_terms = {}
+    for sha, document in documents.items():
+        (output / 'evidence' / f'{sha}.js').write_text(
+            'window.hierarchyCatalogueEvidence(' + page_literal(sha) + ',' + page_literal(document) + ');\n')
+        evidence_terms[sha] = page_search_terms(document)
+    summaries = []
+    fields = {'version_id', 'name', 'artifact_path', 'family', 'source_status',
+              'run_status', 'generation_time', 'output', 'currently_discovered'}
+    for row in result['hierarchies']:
+        (output / 'records' / f"{row['version_id']}.js").write_text(
+            'window.hierarchyCatalogueRecord(' + page_literal(row['version_id']) + ',' + page_literal(row) + ');\n')
+        terms = page_search_terms(row['parameters'])
+        for evidence in row['evidence']:
+            if evidence_matches_binding(row, evidence):
+                terms.update(evidence_terms[evidence['sha256']])
+        summaries.append({**{k: row[k] for k in fields if k in row},
+                          'search_terms': sorted(terms)})
+    index = {k: v for k, v in result.items() if k not in {'hierarchies', 'parameter_evidence'}}
+    index['hierarchies'] = summaries
+    template = Path(__file__).with_name('hierarchy_catalogue.html').read_text()
+    (output / 'index.html').write_text(template.replace('__CATALOGUE__', page_literal(index)))
 
 
 def catalogue(source, registry, output, *, saved_only=False):
@@ -685,7 +762,10 @@ def catalogue(source, registry, output, *, saved_only=False):
                  for sha in sorted({e['sha256'] for r in rows for e in r['evidence']})}
     code_sources = CodeSources(roots, output, evidence)
     for row in rows:
-        row['generator_code'] = code_sources.record(row, documents)
+        if saved_only and row.get('generator_code') and all(evidence_matches_binding(row, e) for e in row['evidence']):
+            row['generator_code'] = code_sources.refresh(row['generator_code'])
+        else:
+            row['generator_code'] = code_sources.record(row, documents)
         write(output / 'records' / f"{row['version_id']}.json", row)
     result = {'schema_version': 1, 'generated_at': datetime.now(timezone.utc).isoformat(),
               'roots': [str(r) for r in roots], 'hierarchies': rows, 'discovery_errors': errors,
@@ -694,9 +774,7 @@ def catalogue(source, registry, output, *, saved_only=False):
               'excluded_before_cutoff': excluded,
               'parameter_evidence': documents}
     write(output / 'catalogue.json', result)
-    template = Path(__file__).with_name('hierarchy_catalogue.html').read_text()
-    payload = json.dumps(result, ensure_ascii=False).replace('<', '\\u003c').replace('&', '\\u0026')
-    (output / 'index.html').write_text(template.replace('__CATALOGUE__', payload))
+    write_page(output, result)
     write(registry, {'schema_version': 1, 'versions': sorted(versions.values(), key=lambda r: r['version_id'])})
     return {'hierarchies': len(rows), 'currently_discovered': len(current), 'copies': sum(len(r['locations']) - 1 for r in current.values()),
             'families': dict(Counter(r['family'] for r in rows)), 'excluded_before_cutoff': excluded,

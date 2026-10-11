@@ -1692,6 +1692,21 @@ seconds. Three complete-output audits accept all ten decisions and reasons;
 unchanged DSLv10 verifies the sole witness through exact-input reuse. Native
 `summarize-experiments` reconciles usage and the attempt budget. These small-panel
 results do not qualify negative-search reliability or full-evaluation runtime.
+The subsequent
+[four-note positive-placement challenge](distillation-review-v1/README.md#dcsv1-four-note-positive-placement-challenge-october-11)
+completes 38 searches and four eligible warmups in approximately 118 seconds.
+All outputs are structurally valid; full-output audits record 34 accepted
+outputs, two semantic errors and two uncertainties. Native
+DSLv10 verification of all 18 witnesses uses 16 exact-input reuses and two
+fresh calls; it rejects the invalid positive witness and accepts the other
+17 pairs. One additional missed-witness evidence experiment reuses an accepted
+pair with zero fresh calls. The final native summary reconciles 44 fresh
+attempts, 17 reuses and no retries or failures; it keeps historical generation
+usage separate. A false negative remains outside positive-witness verification.
+Accepted complete matching plus trusted teacher paths could settle four of
+these searches, but that model-dependent reuse is not implemented. DCSv1
+remains unqualified; the diagnosis recommends implementing and testing that
+reuse before further model calls, while retaining its exact provenance.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

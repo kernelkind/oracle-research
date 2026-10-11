@@ -3,13 +3,16 @@
 **Approved direction:** qualify a
 [focused coverage search and per-check reasoning settings](#eight-hour-review-direction-approved-october-11)
 for the full 1,800-output evaluation within eight hours of model generation.
-The approved **DCSv1** wording completes its
-[four-note xhigh development trial](#dcsv1-four-note-coverage-search-trial-october-11):
-three audits accept all ten complete outputs, including one independently
-verified missing-placement witness. Generation takes approximately 75 seconds.
-Native source-bound preparation and output validation are implemented;
-generalization and the full eight-hour runtime remain unqualified. Current
-defaults and the final sixty-answer validation remain unchanged.
+The approved **DCSv1** wording completes a
+[four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):
+38 searches generate in approximately 118 seconds, with **34 accepted complete
+outputs, two errors and two uncertainties**. Unchanged DSLv10 verification
+catches the invalid positive witness; a false negative remains. Native
+source-bound preparation and output validation are implemented, but DCSv1
+remains unqualified. Accepted complete matching plus trusted teacher paths
+could settle four of these searches, including that false negative; this reuse
+is a recommendation, not implemented behavior. Current defaults and the final
+sixty-answer validation remain unchanged.
 
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -5319,7 +5322,10 @@ The [four-note DCSv1 trial](#dcsv1-four-note-coverage-search-trial-october-11)
 compares xhigh searches with independently audited pair evidence, keeping
 reasoning effort fixed while testing the new task shape. Three audits accept
 all ten complete outputs. The panel has only one missing-placement witness,
-so negative-search reliability on fresh and more positive cases remains open.
+so the user authorizes a four-note challenge with more positive cases. That
+[follow-up](#dcsv1-four-note-positive-placement-challenge-october-11) exposes
+one false negative and one invalid witness. Negative-search reliability and
+the full eight-hour runtime remain unqualified.
 Qualify high with unchanged single-pair DSLv10 separately; its previous results
 do not qualify DCSv1. Report unresolved interpretations separately.
 
@@ -5425,11 +5431,112 @@ The experiment worktree remains frozen because these artifacts bind its source
 and paths. Implementation commit: `715e36ea`.
 
 This is a successful small development trial, not reviewer qualification.
-The recommended next step is a balanced four-note panel with more genuine
-missing placements, using unchanged DCSv1 at xhigh, to test missed-witness
-errors before expansion. No new panel or lower-effort calls begin from this
-result. Production remains DSLv2, and the final fifty random plus ten challenge
-answers remain reserved for final validation.
+The user subsequently authorizes the following four-note panel with more
+genuine missing placements, using unchanged DCSv1 at xhigh. Production remains
+DSLv2, and the final fifty random plus ten challenge answers remain the final
+validation rather than another development iteration.
+
+## DCSv1 four-note positive-placement challenge (October 11)
+
+The authorized follow-up uses four different development-exposed answers from
+the completed 24-note xhigh panel. The native adapter binds each original
+post, trusted ASv6.100 subjects, required-meaning assessment, complete matching
+and actual-edge receipts, and dispute reviews. Prompt wording, Sol/xhigh,
+DSLv10 witness verification, eligible-prefix caching and the shared runner's
+maximum of 30 concurrent requests remain unchanged. No runner changes or
+complete-answer reruns are made.
+
+| Saved answer | Searches | Accepted complete outputs | Rejected | Uncertain |
+| --- | ---: | ---: | ---: | ---: |
+| `M01-checkpoint-600-N0017` — television review | 6 | 5 | 1 | 0 |
+| `M01-baseline-N0076` — NFT claims and tags | 8 | 8 | 0 | 0 |
+| `M01-checkpoint-200-N0054` — ETF outflows | 13 | 13 | 0 | 0 |
+| `M02-checkpoint-200-N0015` — family/body/media tags | 11 | 8 | 1 | 2 |
+| **Total** | **38** | **34** | **2** | **2** |
+
+Source-first review identifies 17 sound positive cases, 17 expected negatives
+and four interpretation-sensitive cases before inspecting the new outputs.
+Independent audits assess every complete decision and reason; root assessments
+agree with those audits. These are agent assessments, not human gold labels or
+an estimate of unseen accuracy. The searches return 18 witnesses and 20 nulls.
+
+Preparation reduces **954 original uncovered occurrences** to **391 supplied
+candidate representatives**, with 42 exact wording/ordered-context aliases
+and 521 omitted descendants. All candidate contexts, aliases, descendant
+chains and 79 distinct accepted actual-edge premises are independently checked;
+all 89 positive matching-self guards have accepted evidence. These reductions
+depend on accepted semantic edge judgments under fixed interpretations, rather
+than only trusted-input mechanical proofs. Invalid, unrun or disputed edges
+do not license an omission.
+
+Two complete outputs are substantively wrong:
+
+- **False negative:** `M01-checkpoint-600-N0017:coverage-search:007` treats
+  Keke Palmer's positive contribution to the named reboot as unrelated
+  co-mention. The original title establishes the contribution's target.
+  Its sole supplied candidate has independently accepted pair evidence;
+  candidate-list size cannot explain this miss.
+- **Invalid witness:** `M02-checkpoint-200-N0015:coverage-search:006` places
+  unrestricted *Sex between family members* beneath *Incest*. Unrelated
+  spouses can be family members; the child lacks the close/incestuous kinship
+  restriction. The separate `#incest` subject cannot narrow that child.
+
+The two uncertainties concern *Mothers* and *Daughters* beneath *Girls*:
+age/sense interpretation remains unresolved, and the supplied interpretation
+rows omit the relevant trusted Women/`#girls` row. They stay separate from
+errors and qualification scores. ETF search `007` finds a sound alternative
+under *Markets*, without resolving whether *outflows* preserves *outflow
+trends*. The incest witness is erroneous independently of the previously
+uncertain *Body* candidate.
+
+All **18 returned witnesses** receive unchanged native DSLv10 verification:
+**17 valid pairs and one invalid pair**. Sixteen identical receipts are reused;
+two fresh calls verify the ETF/*Markets* and *Sisters*/*Girls and women* pairs.
+Complete reasons are audited, including the rejection of the incest pair.
+A separate exact-input native evidence experiment reuses the accepted missed
+television witness with zero fresh calls. Positive verification therefore
+catches the invalid witness, but cannot catch a false negative that supplies
+no witness. Rejecting one witness also does not settle whether another
+candidate could establish missing coverage.
+
+Generation of 38 searches plus four eligible warmups takes **117.79 seconds**.
+Search service time averages **35.39 seconds**, with median **28.61** and
+maximum **105.42**. This excludes preparation, auditing and documentation and
+does not establish full-evaluation runtime. Every search succeeds structurally
+on its first attempt; structural validity does not certify semantic accuracy.
+
+The native DCS-only summary records **42 fresh attempts**, zero retries or
+failures, and **12,288 cached tokens out of 78,587 input tokens (15.64%)**.
+Twelve of 38 searches receive cache hits. Output is 45,899 tokens, including
+35,721 reasoning tokens. Saved catalogue estimates total **$0.5928168**;
+the same outputs at uncached input rates without warmups would cost $0.596398.
+Net estimated caching savings are **$0.0035812 (0.60%)**. This is an
+API-equivalent counterfactual, not subscription billing or a separate uncached
+experiment. Including the two fresh verification calls, the final native
+summary reconciles **44/168 allowed attempts**, 17 exact-input reuses and
+**$0.6209728** in new-call estimates across nine experiments. Historical receipt
+generation is retained separately and excluded from those fresh-call totals.
+
+Artifacts remain ignored under
+`oracle-mvp-review-coverage-search-positive/target/distillation-review-v1/coverage-search-positive-four-note/`:
+the four `prepared-<answer>/coverage-search.json` files, native reports and agent
+reviews, `verification/`, `verification-missed-witness/`,
+`dcs-usage-summary.json` and `usage-final-summary.json`. The experiment worktree
+remains frozen for source/path bindings. This follow-up changes no source,
+prompt or effort settings; the adapter's seven production-path tests were
+already verified in the preceding trial.
+
+**Result:** DCSv1 is not qualified for expansion unchanged. Read-only analysis
+finds that two accepted complete matching records, combined with actual trusted
+teacher ancestor paths, could settle **four of 38 searches (10.5%)**:
+television `005`/`007` and NFT `003`/`005`. This includes the missed television
+placement and leaves 34 searches. The recommended next step is to implement
+and test this reuse with exact provenance before further model calls. It is
+conditional reuse of positive semantic premises: an erroneous match could
+propagate, and uncertain matching records are excluded. This reuse is not yet
+implemented or newly authorized by the diagnosis. No new panel, prompt change
+or lower-effort trial starts from this result. Negative-search reliability,
+interpretation context completeness and the eight-hour target remain open.
 
 ## Actual distilled wording: offline preview (October 8)
 

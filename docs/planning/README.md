@@ -448,8 +448,14 @@ measured forecast. Native preparation and response validation are implemented.
 The [four-note xhigh DCSv1 development trial](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
 finishes ten searches and four warmups in approximately 75 seconds; three
 audits accept all ten complete outputs, with the sole positive witness verified
-through unchanged DSLv10 reuse. The panel contains only one missing placement;
-unseen reliability and full-evaluation runtime remain unqualified. Deployed
+through unchanged DSLv10 reuse. The subsequent
+[four-note positive-placement challenge](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-positive-placement-challenge-october-11)
+generates 38 searches and four warmups in approximately 118 seconds: complete
+audits record 34 accepts, two errors and two uncertainties. DSLv10 catches the
+invalid positive witness, but cannot catch the false negative. Accepted complete
+matching plus trusted teacher paths could settle four searches, including that
+miss; implementing and testing provenance-preserving reuse is recommended,
+not yet implemented. DCSv1 and full-evaluation runtime remain unqualified. Deployed
 defaults, the final sixty and the maximum two-percentage-point loss remain
 unchanged.
 Historical DSLv8 outputs, reviews and targets remain unchanged.

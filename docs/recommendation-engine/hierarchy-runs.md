@@ -2,7 +2,8 @@
 
 Open the [hierarchy catalogue](../../target/hierarchy-catalogue/index.html) for
 all saved versions and their recorded experimental parameters. Search by version
-ID, original experiment name, prompt, model, seed or other saved setting. Select
+ID, original experiment name, prompt, model, provider, reasoning effort,
+transport, method, seed or concurrency. Select
 two versions to inspect their parameters side by side. The existing-output
 inventory starts **October 8, 2026 at midnight America/New_York**
 (`2026-10-08T04:00:00Z`), per the user-approved cutoff.
@@ -14,7 +15,10 @@ they do not receive hierarchy IDs through this inventory. Tracked historical
 output copies and nested source snapshots are excluded.
 Each entry includes an immutable output copy, its SHA-256, original locations,
 recorded configuration, source bindings and parameter evidence. Missing or
-changed frozen sources are displayed. Unrecorded historical defaults stay
+changed frozen sources are displayed. Changed metadata is labelled as current
+contents with original settings unknown; it cannot establish the generator's
+code or commit. Complete parameters and evidence load when selected or expanded.
+Unrecorded historical defaults stay
 unknown; current defaults are never substituted. Archived geometric signature
 defaults are included only when the source matches its recorded hash. Each
 entry shows its date and the evidence used: a saved output timestamp, the latest
@@ -70,7 +74,9 @@ preserve that directory together with the original retained experiments.
 The registry alone is not a backup of experiment data. A missing retained
 record stops regeneration instead of silently losing a version's evidence.
 Use `--saved-only` to rebuild the page and source archives from the retained
-inventory without discovering new hierarchy outputs.
+inventory without discovering new hierarchy outputs. It verifies preserved
+source files and restores missing archives; locating previously unavailable
+code requires a full refresh.
 
 The workspace copy linked above lives under the canonical repository's
 `target/hierarchy-catalogue/`. Refreshing the catalogue is an offline inventory
