@@ -3,18 +3,19 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Bootstrap broad: BBv5 draft
+## Bootstrap broad: BBv6 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv5](Hierarchy-bootstrap-broad-v5.md) is the current development draft, tested
-on the [four-case panel below](#bbv5-four-case-development-check) but not qualified.
+[BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
+on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
+but not qualified. BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
-BBv2 through BBv5 are direct, hash-pinned revisions of unchanged v109 through
+BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
 the shared runner's offline `revise` command.
 [BBv1](Hierarchy-bootstrap-broad-v1.md) used v104; it remains preserved as the
 initial draft, rather than serving as the corrected baseline. This does not
@@ -159,11 +160,57 @@ over warming while retaining the existing cache prefix; observed cached input
 is 5,504 tokens. Native API-equivalent cost is $0.0087944, excluding earlier
 generation. Prompt text remains unchanged.
 
-The next proposed edit should address the distinction between the post's
-particular actor or occurrence and conditions defining the selected topic,
-while preserving genuinely particular identities expressed by the subject.
-Test it against the same stock input before broadening qualification. This
-proposal is not an applied prompt change or a new started test.
+The user subsequently agreed to explicitly checking general activity versus
+a particular person's activity during ambiguity identification, followed by
+retesting this stock input. That change and its first result follow.
+
+### BBv6 general activity versus particular participant
+
+[BBv6](Hierarchy-bootstrap-broad-v6.md) changes only the second
+ambiguity-identification paragraph relative to BBv5. It asks whether the
+selected subject describes a general activity or a particular person's
+activity, permits the post to resolve a participant identified by the subject,
+and distinguishes that participant from one in a supporting example. It also
+adds participants to the paragraph's boundary considerations. This applies
+the existing breadth and identity rules; it does not introduce a stock-specific
+example or discard participants actually identified by the subject. Both
+synthetic examples, the input/output contract and other instructions remain
+byte-identical to BBv5. The direct v109 revision receipt records seven exact
+edits and pins BBv6 SHA-256
+`a73328f633b4caacb583fe3770a6c4b8103871355d18b9fa200037161c727e28`.
+
+Native `prepare --from` created `target/bootstrap-broad-v6-stock-v1`, preserving
+the exact sole case from the unchanged BBv5 repeat. Full input, original tree,
+post, input hash and evidence match. Model, medium effort, schema and SSE
+transport are unchanged; only the prompt and its derived cache prefix differ.
+No historical answer enters the model input.
+
+This first BBv6 answer explicitly asks whether the topic covers the recurring
+practice generally or only the author's practice and today's batch. Its
+resolution chooses the general activity because the subject names no
+particular participant. The final meaning retains cooking to produce chicken
+stock, carcasses saved during butchering and approximate twice-yearly
+recurrence. It does not add the author-only condition. Canning/storage remain
+optional subsequent handling; stock pots and the estimated 25-quart yield
+remain example details. Native agent assessment accepts the output on this
+focused criterion. An independent read-only instruction and result review by
+`bb_instruction_audit` agrees, including preservation of the frequency, source
+and cooking process. It corrects the observed narrowing in this draw; it does
+not establish repeatability, isolate one responsible sentence or qualify the
+other named-topic cases.
+
+The candidate receipt record SHA-256 is
+`2e5ed6cc7620bdb65283c79c2d0d41777d01d6e7fa6c208bfd74cd9eb4d6f6f2`.
+One new subscription attempt produced a valid answer, with no retry, failure,
+answer reuse or warmup. Caching was enabled, but this new-prefix request shows
+zero cached-input tokens. Native API-equivalent cost is $0.019182, excluding
+earlier generation. Exact post quotes, resolution IDs, single-paragraph delta
+and receipt bindings pass; nine native revision tests pass. No Compare calls,
+hierarchy construction or activation occurred.
+
+Next, repeat the unchanged case and check a genuinely particular activity to
+test both the generic scope and identity preservation before expanding the
+panel. Those are proposed tests, not started experiments.
 
 ## Existing Bootstrap qualification
 
