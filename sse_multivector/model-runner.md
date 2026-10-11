@@ -1837,6 +1837,25 @@ subset; both failed attempts lack usage, so full cost and savings are unknown.
 The final history audit preserves R01's valid first success and registers only
 the missing recovered R05 original ledger line through production
 `RequestHistory.remember`. No frozen output or production code changes.
+
+The user subsequently expands unchanged xhigh development to
+[24 notes within the frozen sixty](distillation-review-v1/README.md#dslv10-twenty-four-note-regression-october-11).
+Retain the previous eight and add the next sixteen structurally valid random
+answers. Native per-note evaluations run alongside three eight-note evaluations
+to fill the shared 30-request queue; complete inputs, prompts and settings,
+including cache prefixes, are verified against the full preparation before
+calls. Verified request history is enabled; repeated fresh receipts remain
+accounted for. Three agents audit separate note assignments during generation.
+All 24 notes finish, with zero-new-call full assembly after one genuine missing
+history receipt is registered through production validation. The complete
+1,621-version audit confirms three support errors and retains 45 uncertainties.
+Native accounting reconciles 1,004 local attempts with the shared counter
+(delta zero); all eleven transport failures recover and no invalid receipts
+remain. Known cached input share is 13.93%, using cached input divided by
+uncached plus cached input. Known local catalog estimate is $13.1383; eleven
+failed attempts lack usage, so complete cost and net savings remain unknown.
+Reviewer qualification and minimum reasoning effort remain open.
+
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
