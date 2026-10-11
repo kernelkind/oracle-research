@@ -16,7 +16,9 @@ Work continues in the existing owned worktree.
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence
-before narrowing that pilot; Compare prioritizes Qwen27, Kev27 and Ettin1B.
+before narrowing that pilot. The broader Compare evidence now makes Kev27 the
+provisional foundation priority, with Qwen27 retained as the quality reference
+and Ettin1B input JSON as the inexpensive candidate with transfer limits.
 These pilots use fixed development snapshots while prompt work continues.
 Final training still follows prompt freeze. The user confirmed **meaning or null** for Bootstrap's pilot student output,
 encoded as a JSON object with the single `meaning` field. Teacher generation
@@ -70,7 +72,7 @@ checks establish capacity and checkpoint integrity, not learning quality.
 
 ### Broader saved-checkpoint evaluation
 
-The completed Compare passes evaluate the original Ettin and Qwen checkpoints
+The completed Compare passes evaluate the original Ettin, Qwen and Kev checkpoints
 without updates on the matched 196-case regression and 21-case branch panels.
 
 | Compare variant / epoch | Regression reference matches | Branch reference matches | Regression forward seconds |
@@ -81,6 +83,8 @@ without updates on the matched 196-case regression and 21-case branch panels.
 | Ettin input JSON / 4 | 119/196 | 16/21 | 5.68 |
 | Qwen27 / 1 | 180/196 | 16/21 | 610.38 |
 | Qwen27 / 4 | 185/196 | 13/21 | 606.27 |
+| Kev27 / 1 | 191/196 | 19/21 | 857.74 |
+| Kev27 / 4 | 183/196 | 21/21 | 859.12 |
 
 These are provisional teacher matches, not gold accuracy. At epoch four the
 shorter variant gains 21 regression matches and loses eight relative to full
@@ -130,7 +134,36 @@ establish an epoch-four preference across both panels, a capacity ceiling or
 final student selection. The fitting set contains no canonical branches or
 uncertainty targets.
 
-All six native reports are complete with zero updates and zero training
+Kev's regression matches fall from 191/196 to 183/196, with eight new misses
+and no repaired cases. Equivalent matches fall from 16/16 to 15/16; neither
+epoch produces false-equivalent regression predictions. Reciprocal consistency
+is 94/98 then 93/98 families. Excluding contradictory reference family 033 gives
+189/194 then 181/194; the native regression report retains all 196 references.
+Branch matches improve from 19/21 to 21/21, or 18/20 to 20/20 excluding the
+identity control. Both epochs match all three true equivalents. Epoch one
+returns equivalent for Gamey meat against the selected Meat canonical meaning,
+whose descendant matches the local meaning, and approves local containment
+despite the synthetic incompatible descendant; epoch four repairs exactly
+those two cases. The other 19 predictions remain unchanged, including uncertainty
+for the incompatible ancestor. Conflict matches improve from 1/2 to 2/2, and
+reciprocal branch consistency from 8/9 to 9/9 families. The corresponding 18
+isolated comparisons match 18/18 at both epochs; their compatible branch
+comparisons improve from 17/18 to 18/18.
+
+Kev's full-state regression pass processes 409,792 tokens, maximum 2,354 per
+case; branch totals/maxima are 46,200/2,280. Branch forward times are 96.01 and
+94.36 seconds, with peak allocation about 18.84/18.87 GiB across both panels.
+Its regression forward passes take longer than Qwen's measured passes.
+Kev27 is the provisional Compare foundation priority, with Qwen retained as
+the quality reference and Ettin input JSON as the inexpensive candidate with
+measured transfer limits. Epoch one has the stronger isolated regression result
+and epoch four the stronger branch result; no production pilot adapter or epoch
+is selected. These small exposed diagnostics do not establish gold accuracy
+or a capacity ceiling. The 21 short single-support branch fixtures come from
+three notes and do not establish production branch capacity or complete
+hierarchy performance.
+
+All eight native reports are complete with zero updates and zero training
 examples seen. They live under
 `target/bootstrap-compare-student-v1/broader-evaluation-v1/compare-results/`:
 
@@ -142,9 +175,11 @@ examples seen. They live under
 | `ettin-input-json-branches` | `7dd51684267a1e532c737aef956e4a75ecf10ce868464f0de043bd6b90618749` |
 | `qwen27b-regressions` | `442ed7e44a170b2013fa1588c21fc338b5fcd6df59e1c01e9900a916b05afd85` |
 | `qwen27b-branches` | `a241c7632cdc99bf226f8184c0c73d1526a37d15e6ac7157ab870ab04cab1395` |
+| `kev27b-regressions` | `f268f149ceb415cddbcc892cb810d417df9e79d290fa3edcae7c4e261b54b1ef` |
+| `kev27b-branches` | `356b22396ef04d86ac286c692593667b462de6727cb559b90cd173dcc33ef8b6` |
 
-Kev Compare and the Gemma Bootstrap generations are still underway
-or queued. Final student selection remains open.
+All Compare evaluations are complete. The Gemma Bootstrap generations remain
+underway or queued. Final student selection remains open.
 
 The focused Bootstrap Qwen passes are complete on the same 40 cases, with
 40 fresh valid responses each, no failures and no null meanings. Native reviews
@@ -389,16 +424,15 @@ hashes are
 Qwen27 is the stronger Bootstrap candidate for further qualification on this
 provisional panel. Gemma26 learns the output format and trains faster here,
 but supplies no measured quality lead and its unmerged serving path is slower.
-Neither is selected. For Compare, Ettin1B remains the inexpensive candidate and
-Qwen27 the larger quality reference. Kev27 remains a candidate for broader
-evaluation: its first epoch already matches Qwen27's fourth-epoch predictions
-in 49.65 versus 141.37 phase minutes. The equal 46-case predictions do not
-justify removing Kev, and Qwen's intermediate epochs were not measured.
-A broader development evaluation needs all five
-Compare labels, nonidentity equivalence, canonical branches and independent
-posts, alongside reviewed Bootstrap null, factual-state and scope cases. This
-is the approved next qualification under the fixed v96/v48 pair, not a final
-training decision. Final training volume and student input layout remain open;
+Neither is selected. The broader saved-checkpoint evaluation above now makes
+Kev27 the provisional Compare foundation priority, with Qwen27 retained as the
+quality reference and Ettin1B input JSON as the inexpensive candidate with
+transfer limits. The earlier equal 46-case predictions did not distinguish
+Kev and Qwen, although Kev's first epoch reached that result in 49.65 versus
+141.37 phase minutes for Qwen's fourth epoch. Broader independent coverage and
+reviewed Bootstrap null, factual-state and scope cases remain necessary under
+the fixed v96/v48 pair. No final model, production pilot adapter or checkpoint
+epoch is selected. Final training volume and student input layout remain open;
 the complete teacher instructions used for these controls repeat substantial
 work per example. Their current fit/request times are not a final-training or
 production-throughput forecast.
