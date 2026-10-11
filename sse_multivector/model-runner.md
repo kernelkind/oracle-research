@@ -106,6 +106,20 @@ not 35 producer failures or a measured prompt improvement. Conditional chain
 implications are not fresh Compare answers; Nostr's independent food-sense
 boundary remains separately qualified.
 
+The [unchanged v109 Food-boundary repeats](shr_single_pair/bootstrap-current-as-qualification.md#unchanged-v109-food-boundary-repeats)
+are complete: two fresh four-entry draws, eight valid nonnull definitions and
+two warmups, zero answer reuse, retries or failures. Native API-equivalent cost
+including warmups is $0.1075436; six of eight definition calls report cache hits.
+The current shared runner preserved exact model-facing inputs, prompt, schema
+and cache identity, with fresh request contexts. Its complete historical worker
+digest changed, so this is not an unchanged-executable repeat. Independent
+reviews found no definite source contradiction; all eight final standalone
+verdicts are qualified agent accepts, not an accuracy measure. The draw-2 Nostr
+review initially imported a separately generated parent scope and withdrew that
+uncertain suggestion. Kind-level versus individual-use consumer interpretation
+and Food-to-Nostr compatibility remain qualified. No Compare calls, hierarchy
+build or prompt edit occurred; v104 remains approved and v109 experimental.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
