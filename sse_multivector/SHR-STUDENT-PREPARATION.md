@@ -65,6 +65,18 @@ Actual complete-token inventories on the reviewed data are:
 | Qwen27 | 501,255 / 6,905 | 107,478 / 5,224 | 4,568 / 168 |
 | Gemma26 | 503,798 / 6,922 | 108,143 / 5,265 | 4,590 / 172 |
 
+Qwen27 Bootstrap's first saved checkpoint follows **94 updates / one epoch**.
+Held-out mean token loss falls from **1.4162 to 0.9712**, with mean TRAIN loss
+0.9177. Optimizer steps take **38.54 minutes**; the cumulative phase including
+evaluation and checkpoint saving takes **41.18 minutes**, with **24.99 GiB**
+peak CUDA allocation. These are teacher-forced losses, not generated-meaning
+scores. Epochs two through four, fresh-process verification and native semantic
+generation evaluation remain pending. The preserved epoch-one report is
+`target/bootstrap-compare-student-v1/bootstrap-pilot-qwen27b-epoch1-report-v1.json`,
+SHA-256 `01923ac79d8eabec4bc4d1be224d16c118eb7cb60c5bf9fac835a64c82678a93`;
+its saved adapter SHA-256 is
+`b0d4f3d0feace381b68331816a2601c9bee1a318ca7c343ee4be0054d5479048`.
+
 Qwen27 Compare has completed fitting and fresh-process verification of both
 checkpoints. The GB10 sequence has started Bootstrap Qwen27 (PID 1620383), then
 fits/verifies Bootstrap Gemma26, input-only Ettin Compare, and Kev27 Compare,
