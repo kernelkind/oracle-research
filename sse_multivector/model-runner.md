@@ -1747,6 +1747,20 @@ rendered-prompt, evidence and protected-source parity. Eighteen targeted tests
 pass, including changed-receipt rejection. No inference or review criteria
 change; the full-evaluation runtime target remains unqualified.
 
+The [focused DCSv1 fresh repeat](distillation-review-v1/README.md#dcsv1-focused-negative-search-controls-october-11)
+selects twelve unchanged residual cases with native `prepare --from --only
+--repeat --prompt-cache`. Independent expected judgments are recorded before
+calls. Generation finishes in 72.36 seconds; all eleven unchanged expectations
+pass full-output audit, and one mistaken null expectation is corrected without
+declaring a model error. All seven returned witnesses receive unchanged DSLv10
+verification through exact response reuse. The completed verification subsets
+retain the original history root that indexes those receipts; an alternate root
+can miss reuse even with identical input strings. Native accounting records
+sixteen fresh attempts including four warmups and seven verification reuses.
+The historical provisional uncertainty remains alongside explicit subsequent
+acceptances; this test changes no review-precedence semantics and does not
+establish broad reviewer qualification.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,
