@@ -1214,3 +1214,81 @@ qualifiers, settle whether a parent purpose condition governs a food kind or
 each particular use discussed. More unchanged repeats cannot resolve that
 interpretation disagreement. No additional wording change or inference stage
 has begun; v105 remains experimental without a measured reliable fix.
+
+## Predeclared subject-authority and parent-fit wording diagnostic
+
+The user authorized the controlled test recommended after the unchanged-v105
+repeats. This is Bootstrap-only: no Compare work, AS generation, hierarchy build,
+UI refresh or activation. V104 remains approved. V105 remains the experimental
+reference. The new v106-v108 prompts are experimental conditions, each revised
+through the native CLI against approved v104, preserving v105's two prior edits.
+
+The repeated business child explicitly cites the selected subject and parent as
+establishing a business category. The factual-evidence ban already exists.
+The controlled intervention replaces two instruction blocks rather than adding
+a coffee-specific exception or inserting regression examples. The two original
+synthetic examples, input/output schemas and all unrelated wording remain fixed.
+
+| Condition | Subject/hierarchy authority | Parent fit |
+|---|---|---|
+| [v105](Hierarchy-bootstrap-v105.md) | Original | Original |
+| [v106](Hierarchy-bootstrap-v106.md) | Define a category separately from establishing a particular member; hierarchy proposes relationships | Original |
+| [v107](Hierarchy-bootstrap-v107.md) | Original | Establish a supported meaning, then verify the intended relationship; do not choose another identity to preserve it |
+| [v108](Hierarchy-bootstrap-v108.md) | v106 replacement | v107 replacement |
+
+Two fresh draws of each condition use the same eight exact cases from completed
+`target/bootstrap-v105-complete-branches-v1`. Native `prepare --from --only --repeat`
+preserves full posts, complete original ASv6.100 trees and selected pointers;
+earlier meanings and labels remain outside model input. Each call has a fresh
+request context. Cached identical instructions are not previous answers.
+
+| Entry | Selected number | Native case ID suffix after `bootstrap-` |
+|---|---|---|
+| Coffee chains | `1` | `07e181e89a6505355db1ee59722fca1ad57baa49f7a72c8bccf9c0f4bd2f4005` |
+| Coffee chain described as weird today | `1.1` | `4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411` |
+| Amusement at the rave | `4.1` | `23ca6add8e936f3e74fbc8bfde36ebd22fcdb6d3753b554ba02e29203f8a3c22` |
+| Mental states | `5` | `1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e` |
+| Jesús Molina | `2` | `230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` |
+| Planned pantry storage | `8.1` | `b314c715b2878b7010c8e919f524845eb5dce70a7a46709c0ced4c538da396eb` |
+| Steel or brass handles | `4.2` | `565746d591a13f18c21b12cf9ef961ec172330e1caf49e30700e7febf402b82a` |
+| Black cocotte with a steel or brass handle | `4.2.1` | `d3aedf749dbd5f926b6748704e3777c018e45a8f28e4c488752f4968cc98f9c6` |
+
+Independent reviewers assess final meanings under four separate criteria:
+
+- Factual support: a category definition is not evidence of its particular
+  occurrence, affiliation or state. A hashtag and one shop do not establish a
+  multi-outlet business. General knowledge may identify the named musician,
+  without establishing his precise role in the referenced ensemble.
+- Meaning and boundaries: preserve identity, broad abstraction, supported roles
+  and all explicitly admitted material alternatives. Reasonable changed scopes
+  are reviewed on their own evidence, not forced to match prior strings.
+- Coverage: nulls remain visible. A justified source conflict is not a supported
+  non-null repair; losing the supported amusement, named-person or planned-storage
+  topic is a material loss. Plans must not become completed storage or certain yield.
+- Branch compatibility: inspect the independently defined material parent and
+  child within each draw and across both endpoint draws. A cocotte can narrow a
+  handle information topic without being physically a handle. Keep this check
+  separate from factual support; do not select favorable endpoint combinations.
+
+The coffee root retains its definition-only acceptance/source-assignment
+qualification. The amusement control remains in its own original tree. The Food
+interpretation disagreement stays separate and is not a predetermined error
+count or a reason to force human qualifiers into recipe-defined children.
+
+Expected execution is 64 fresh meaning calls plus eight cache warmups. Each
+native run has an 18-attempt cap, leaving room for provider retries; the maximum
+stage bound is 144 attempts, also constrained by the existing persistent
+20,000-attempt counter. No counter reset, paid fallback or retry override is
+permitted. Unrun/failed answers remain unresolved. The main shared stable launcher
+uses Sol 6.1 medium/SSE, automatic prefix caching and fair scheduling with at most
+30 requests shared across experiments; no new concurrency field is introduced.
+
+The [native usage source](hierarchy-bootstrap-v106-v108-authority-parent-usage-v1.json)
+separates all four conditions. This adaptive eight-case panel isolates blocks,
+not individual sentences or an internal mechanism; two draws do not estimate
+general reliability or qualify a prompt for full branches. The next broader
+step requires its own review of these results, not automatic adoption.
+
+The design follows [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+on clear, direct constraints and consistent examples. That guidance does not
+certify these semantic replacements or their expected outcomes.
