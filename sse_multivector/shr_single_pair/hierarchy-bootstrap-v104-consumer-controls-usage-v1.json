@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v104_first": [
+      "../../target/bootstrap-v104-consumer-controls-v1"
+    ],
+    "v104_repeat": [
+      "../../target/bootstrap-v104-consumer-controls-repeat-v1"
+    ]
+  }
+}

@@ -2,8 +2,8 @@
 
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
-[Bootstrap-v103 qualification](shr_single_pair/bootstrap-current-as-qualification.md).
-The approved prompt's initial full-collection agent review found one
+[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md).
+Bootstrap-v103's initial full-collection agent review found one
 factual-support failure and two materially ambiguous meanings.
 Two fresh diagnostic draws reproduce the business-identity error and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
@@ -12,6 +12,9 @@ the saved v103 sourdough meaning also leaves its consumer boundary unresolved.
 A focused 28-case reassessment preserves that witness and reviewer disagreements;
 missing a human qualifier alone does not establish a scope failure. The focused
 review's preliminary nine-Food-failure count was withdrawn after challenge.
+The user approved v104; its ten-case test and three-case fresh repeat preserve
+the sourdough failure. Controls remain provisionally accepted, while the repeat
+adds a material parent-clause ambiguity. This is bounded qualification.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate

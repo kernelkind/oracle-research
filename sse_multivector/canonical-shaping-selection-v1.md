@@ -9,7 +9,8 @@ equivalence or a preferred answer.
 The user explicitly clarified that improving these particular menus is a means
 of discovering the rules, rather than the end goal. Plant foods retrieval,
 Cooking/Drinking placements, held Food nominees and the Coffee shortcut
-provide contrasting examples. Title-pair
+provide contrasting examples. Competing nominees are now inspected against
+the actual retained browsing choices and saved placement outcomes. Title-pair
 similarity and original source branches have been screened offline; proposed
 priorities remain unactivated. New shaping rules below are proposals, not
 approved changes to construction or its guards. Missing parent topics remain
@@ -1208,3 +1209,94 @@ and reports 73 strictly narrowing edges, zero equal-note-set edges and the
 same three baseline structural violations. Individual and topic routes remain
 structural measurements, not semantic certification or a complete model of
 which note groups a user will request.
+
+## Competing nominations for the same sibling pair
+
+This is an offline continuation of the shaping-rule investigation. It reuses
+the same frozen ASv6.100 / B96 / C48 source, production `rank_candidates`,
+native eligibility and receipt-bound subject vectors. It makes no provider
+calls, encodings, prompt changes or construction-policy changes. The shared
+allowance remains 189 used / 31 remaining. These are candidate comparisons,
+not a head-to-head model trial of every nominee.
+
+### Similarity order and demonstrated shaping benefit differ
+
+For retained roots Coffee C006 + Slush drinks C039, the weaker of the two
+heading cosines gives this order among eligible unused distinct headings:
+
+| Heading rank | Original local nominee | Weaker cosine | Existing evidence |
+|---|---|---:|---|
+| 1 | Coffee | 0.4669 | Context describes the author's lack of need for coffee; no saved placement for this specific unused entry. |
+| 2 | Coffee chains | 0.4456 | Context names a coffee-chain hashtag; no saved placement for this entry. |
+| 3 | Ice cream | 0.4421 | Context names ice cream in a list; no saved placement for this entry. |
+| 4 | Drinking | 0.4375 | Completed native traversal and audit reduce root choices from seven to six, with six notes taking one extra selection. |
+
+The first three are associated topics whose source evidence does not itself
+establish that they contain the selected pair. They remain untested, not
+model-rejected negatives. Drinking's measured benefit is already documented
+above. Choosing only the highest cosine would fail to nominate that demonstrated
+useful entry. Keeping four headings happens to include it in this example;
+this does not establish four as a sufficient general shortlist size.
+
+For Food children Dinners C059 + Food for a lunch box C058, the unused pool
+starts with Lunch makers (0.7464), Meal planning (0.6630), Food (0.6459),
+Lunchly (0.6168), then Author's clean, simple, healthy dinner today (0.6154).
+The first nominee is original local entry 5.6 in note
+`38862a72602118a848694796950dd35f2bb48770c085735f6a9d1abdb0f7fe8c`.
+Its ancestor is **People**, and its context describes people making lunches.
+Meal planning is an original root about the author's intention to plan meals.
+Those original roles explain why close wording can nominate an associated
+person or activity; they are retrieval evidence, not canonical rejections.
+
+Meals is excluded from that unused pool because it was held. In the diagnostic
+pool that also shows held entries, it ranks second at 0.7092. Native `show`
+confirms both original saved pair answers are `local_contains_canonical`.
+Its separate Food dishes uncertainty still blocks placement, and those answers
+do not certify the current larger descendant contexts. Its four Dinners notes,
+one lunch-box note and distinct original beet-post support would make six
+distinct notes if only that pair were grouped. That arithmetic permits strict
+child narrowing, but it neither resolves the hold nor establishes an actual
+menu improvement. No alternative nominee is declared a successful parent.
+
+For Cookware C008 + Cooking appliances C014, Cooking ranks first at 0.7612,
+ahead of Crockpots (0.7018) and Charcoal grills (0.6050). Cooking's saved
+complete placement is positive to the pair, yet its measured menu moves all
+seven choices into another seven-choice group and introduces an equal-note-set
+edge. Thus even a high-ranking, model-accepted broader topic can fail the
+shaping goal. The other nominees remain untested; the earlier manual source
+inspection did not find the proposed intermediate Cooking equipment topic.
+
+### Use the displayed group as the shaping target
+
+Only **Avocados C062** is retained in the browsing menu among the six topics
+used in the earlier Plant foods retrieval panel. Tomatoes C064, Cranberries
+C069, Potatoes C087, Cabbage C088 and Green beans C089 remain in the raw graph
+but are omitted from that menu. The panel remains a useful retrieval control;
+its excellent ranks do not establish removal of two currently visible Food
+choices. Similar-looking raw topics elsewhere in the graph do not automatically
+identify the group whose option count needs reducing.
+
+The combined examples suggest the following draft selection process:
+
+1. Pick a pair of immediate choices actually displayed in an overcrowded
+   group, including roots. Keep raw-only retrieval controls separate.
+2. Retrieve several eligible original entries by weaker pair-heading similarity.
+   Use original branches as additional retrieval evidence, retaining a wider
+   fallback. Keep original entry identities and prior held/tried status visible.
+   No fixed shortlist size, threshold or automatic semantic filter is validated.
+3. Send the selected original entry through ordinary traversal. Its eventual
+   children may extend beyond the nominated pair. Neither rank nor source
+   ancestry supplies the relationship or a predicted number of children.
+4. Assess the completed menu using actual valid placements: distinct-note
+   narrowing, choices beyond K across affected groups, preserved coverage and
+   added selections. An accepted broader topic alone is not shaping success.
+
+No automatic ordering among untested competitors is adopted. The evidence
+supports considering more than the first similarity result and distinguishing
+untried, held, accepted-but-unhelpful and demonstrated useful nominations.
+It does not establish comparative model accuracy for the untried entries.
+Inspection covers three fixed pairs and their first few candidates, not all
+possible sibling pairs or a corpus-scale retrieval benchmark. A larger system
+should retrieve bounded candidates from existing vectors and source indexes;
+this investigation does not propose exhaustive pair enumeration or repeated
+full-corpus scans for every placement.
