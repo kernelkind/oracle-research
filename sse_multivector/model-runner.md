@@ -119,6 +119,29 @@ review initially imported a separately generated parent scope and withdrew that
 uncertain suggestion. Kind-level versus individual-use consumer interpretation
 and Food-to-Nostr compatibility remain qualified. No Compare calls, hierarchy
 build or prompt edit occurred; v104 remains approved and v109 experimental.
+The user subsequently quoted the exact draw-1 Food and Risotto definitions and
+approved them as written, replying "this is fine". Two native user accepts bind
+that approval to those producer receipts. It supplies no pair label or answer
+to the animal-only hypothetical, and approves neither the other outputs nor
+v109 activation. This witness currently establishes no Bootstrap error to edit.
+The user also reviewed the exact original v109 Coffee-chain child and judged
+its assignment to a particular multi-outlet business uncertain, replying
+"it's uncertain". A native user-uncertain review binds that judgment to the
+candidate receipt; it does not prescribe null or a preferred hashtag meaning.
+
+The subsequent [v109 Coffee-reference controls](shr_single_pair/bootstrap-current-as-qualification.md#unchanged-v109-coffee-reference-controls)
+retain the original ASv6.100 subjects, contexts and complete tree while changing
+only the post in three explicitly synthetic controls. All three fresh answers
+are valid and receive qualified agent accepts: null for the unsupported business
+assignment, a supported particular-business meaning with explicit evidence, and
+null for the contradicted assignment. The original answer is one exact reuse,
+not a fresh draw, and retains its separately recorded user uncertainty.
+Four newly dispatched attempts include one warmup; all three definition calls
+report cache hits, with no retries or failures. Native API-equivalent fresh cost
+is $0.0206752; generation tracing including the reused original and its source
+warmup is $0.038848. This bounded result establishes evidence sensitivity with
+contexts present, not a cause for the original interpretation or a prompt fix.
+V104 remains approved; v109 remains experimental and unchanged.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
@@ -1398,8 +1421,15 @@ approved: check after each placement and all triggered consolidation against the
 current hierarchy and the whole selected corpus. When both conditions pass,
 stop dispatching new searches and comparison calls, save the answers of calls
 already dispatched, and preserve the graph and unfinished searches for later
-resumption. Existing workflow code and frozen audit bounds remain unchanged, so
-saved sibling-limit violations still describe their original evaluation. The
+resumption. The opt-in `prepare-canonical-traversal` and
+`advance-canonical-traversal` commands implement these rules; both are offline,
+with returned experiments executed through ordinary `run`. They rotate across
+notes within each original local level, allow three overlapping local searches,
+serialize guarded placements and finish triggered consolidation before the next
+placement. Their specs and null-or-object consolidation adapter are documented
+in the linked design. Existing legacy constructor behavior and frozen audit
+bounds remain unchanged, so saved sibling-limit violations still describe their
+original evaluation. The
 constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.

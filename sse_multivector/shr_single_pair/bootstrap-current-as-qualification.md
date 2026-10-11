@@ -2462,6 +2462,19 @@ asserts that the rave venue belongs to the business. This is a qualified
 interpretation, not a demonstrated falsehood or a mandatory null. The existing
 native uncertainty comments and older assessment history are preserved.
 
+The user subsequently reviewed the exact v109 child meaning, original full post
+and two-entry ASv6.100 tree, and replied verbatim: **"it's uncertain"**. Native
+`review --role user --verdict uncertain` binds that factual-assignment judgment
+to candidate case
+`bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411`
+and producer record
+`6109a01a900e426a12e19ecd971b1e5359a5ca10cb479bf838461e244041e527`.
+The unresolved point is identifying a particular multi-outlet business from
+this post. It is not a verdict that the venue is affiliated with that business,
+a proved falsehood, a mandatory-null expectation or a preferred hashtag sense.
+No user verdict was copied to v104 or other producers. Input, meaning, diagnostics
+and receipt remain unchanged; this review made no model calls or prompt edits.
+
 The remaining review concerns are evidence support or genuinely unresolved
 meaning, rather than preferences between clear, supported boundaries:
 
@@ -3022,8 +3035,105 @@ Native estimated net cache savings are $0.0592904 (35.54%), including warming
 overhead; this is not a matched uncached experiment. The shared persistent
 attempt counter was retained. Its total also includes other agents' work.
 
-Recommended next step is to settle the common inclusion interpretation using
-these fixed meanings before more repeats or a prompt edit. The repeated outputs
-do not establish a responsible prompt sentence, a v109 improvement, or a need
-to force human-consumption wording into every child. Another plausible scope
-alone remains insufficient to reject a standalone meaning.
+The repeated outputs do not establish a responsible prompt sentence, a v109
+improvement, or a need to force human-consumption wording into every child.
+Another plausible scope alone remains insufficient to reject a standalone
+meaning. The subsequent user review below accepts the two presented definitions;
+the hypothetical does not supply a new negative regression expectation.
+
+#### User acceptance of the exact draw-1 definitions
+
+The user quoted the complete Food and Risotto definitions from draw 1, then
+replied verbatim: **"this is fine"**. Native `review --role user --verdict accept`
+records this approval against those two exact outputs and their producer receipts
+listed above. Inputs, meanings, resolutions and receipts remain unchanged;
+prior qualified agent assessments are preserved.
+
+This approves the standalone definitions as written. It does not establish a
+Food/Risotto pair label or the membership of the proposed animal-only risotto
+example. The user did not choose between including and excluding that
+hypothetical; do not infer either choice from approval of the definitions.
+The ingredient and Nostr outputs, draw-2 definitions and v109 prompt activation
+are outside this approval. No fresh model calls or prompt edits occurred.
+
+The additional read-only review found no demonstrated admitted counterexample
+or missing Bootstrap instruction: v109 already asks whether a condition concerns
+a kind or a particular example when that distinction is material. Retained
+culinary names and roles carry meaning; omitted repetition of a consumer word
+does not automatically broaden them. Keep branch inclusion qualifications
+separate from these user-approved standalone definitions. This witness does not
+currently justify a Bootstrap edit; prioritize remaining evidence-qualified
+cases rather than requiring another decision about an imagined use.
+
+### Unchanged v109 Coffee-reference controls
+
+Following the user's original Coffee-chain uncertainty judgment, the user
+authorized checking the existing business and hashtag controls with unchanged
+Bootstrap-v109. The original answer is a native exact reuse from
+`target/bootstrap-v109-scope-preservation-v1/candidate`; it is **not** a fresh
+draw. Three new calls use the existing synthetic post interventions, now with
+the original ASv6.100 subjects and contexts retained. Each has the same complete
+two-entry tree and selected pointer `1.1`; only `local.post` changes.
+
+Native preparation and independent integrity checks establish byte-identical
+v109 prompt, model-facing original input, schema, model, medium reasoning and
+cache identity. The prompt SHA-256 remains
+`caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1`.
+The original tree was generated for the original post, **not** these edited
+posts. Retaining its annotations deliberately tests whether they can override
+the changed factual evidence; this is not newly generated AS data or a
+replacement real-corpus validation set.
+
+| Native case | Final meaning | Qualified agent assessment |
+|---|---|---|
+| `no-business-cue` | Null | Preserves unknown chain affiliation and distinguishes a weird visit from a business characterized as weird |
+| `business-confirmed` | Particular multi-outlet business | Preserves the explicitly supported business and dated characterization without inventing its name |
+| `hashtag-clarified` | Null | Preserves the source conflict with explicit hashtag-only usage and an independent single-location shop |
+
+The supported positive's exact meaning is:
+
+> The coffee chain described as weird today: the particular business operating
+> multiple coffee shops under the same brand that the author characterizes as
+> weird on the day of the post, and of which the mentioned shop is one outlet.
+
+All three answers are valid, freshly generated and independently reviewed.
+Diagnostics and final meanings agree; all seven evidence quotations match
+contiguous excerpts of their supplied posts. Native qualified **agent accepts**
+preserve the inputs, outputs and receipts. No new user semantic judgments were
+invented or transferred to these controls. The original child's business
+assignment remains user-uncertain at its original producer receipt.
+
+Native experiments are `target/bootstrap-v109-coffee-reference-v1/original`
+and `target/bootstrap-v109-coffee-reference-v1/controls`. Controls' producer
+record SHA-256 values are:
+
+| Case | Producer record SHA-256 |
+|---|---|
+| `no-business-cue` | `ea5f5d3a54dcb63f5ce8f087e3b2307f51693be41634b9028f74347f778051e9` |
+| `business-confirmed` | `4c2214d500022f8d306344dc8d712f0eb566ea4361868f86b0fe3a2b355fa7f9` |
+| `hashtag-clarified` | `633dd489ff0cd79c6f20cef5ef5eb42e23374d0f8cf9253f953c02aa9e7b200f` |
+
+The [reusable v109 spec](hierarchy-bootstrap-v109-coffee-grounding-controls-v1.spec.json)
+uses the existing [synthetic post-control source](hierarchy-bootstrap-coffee-grounding-post-controls-v1.json)
+directly, retaining contexts. The
+[native accounting source](hierarchy-bootstrap-v109-coffee-reference-usage-v1.json)
+produces `target/bootstrap-v109-coffee-reference-v1/usage-native-v1.json`.
+It records **four newly dispatched attempts**: three definitions and one prefix
+warmup, with one exact answer reuse and no retries, failures, invalid receipts
+or unfinished cases. All three fresh definitions report cached input. Fresh
+API-equivalent cost is **$0.0206752**. Native original-generation tracing,
+including the reused original answer and its source warmup, totals **$0.038848**
+across six original calls. Usage is complete; reasoning is included in output.
+The existing shared attempt counter was retained without resetting it.
+
+These results establish bounded factual-evidence sensitivity with contexts
+present. They do not make the original business interpretation false, resolve
+the user's uncertainty, or isolate a responsible instruction. The no-business
+intervention changes both the hashtag wording and what is called weird; its
+null is not attributable to hashtag removal alone. Earlier context-free v110
+controls also changed the prompt, so they do not provide a one-factor context
+ablation. Each current control has only one fresh draw. The two nulls remain
+synthetic source conflicts, not real-corpus failures or negative Compare labels.
+No prompt edit or adoption, Compare call or hierarchy build occurred; v104
+remains approved and v109 experimental. Retain this worktree for its source
+bindings and native receipts.

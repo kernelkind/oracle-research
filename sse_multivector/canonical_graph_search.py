@@ -1,7 +1,8 @@
 """Select local-versus-canonical comparisons by traversing a fixed graph.
 
 Comparison labels are trusted. Positive containment propagates through existing
-edges; neither and uncertain leave children available. No ranking, inference
+edges. The traversal-v24 policy prunes neither and holds uncertain; the legacy
+policy preserves frozen trials' former traversal. No ranking, inference
 transport, prompt changes or fabricated model answers belong in this selector.
 """
 from graphlib import CycleError, TopologicalSorter
@@ -19,7 +20,11 @@ class GraphSearch:
     callers keep graph/meaning/receipt bindings and placement checks themselves.
     """
 
-    def __init__(self, nodes, *, eligible=None, required=()):
+    def __init__(self, nodes, *, eligible=None, required=(), policy='legacy'):
+        if policy not in ('legacy', 'traversal-v24'):
+            raise ValueError('unknown graph-search policy')
+        self.policy = policy
+        self._held = False
         self.parents = {}
         for node in nodes:
             identifier, parents = node['id'], node['parents']
@@ -32,7 +37,7 @@ class GraphSearch:
         if any(p not in self.parents for ps in self.parents.values() for p in ps):
             raise ValueError('unknown canonical parent')
         try:
-            tuple(TopologicalSorter(self.parents).static_order())
+            self.order = tuple(TopologicalSorter(self.parents).static_order())
         except CycleError as error:
             raise ValueError('canonical cycle') from error
         self.eligible = set(self.parents if eligible is None else eligible)
@@ -65,9 +70,11 @@ class GraphSearch:
 
     def candidates(self):
         """Return each currently reachable eligible node once, without a cap."""
+        if self._held:
+            return []
         while True:
             skipped = [k for k in self._queue if k not in self.eligible
-                       or k in self._inferred and k not in self.required]
+                       or k in self._inferred and (self.policy != 'legacy' or k not in self.required)]
             if not skipped:
                 break
             for identifier in skipped:
@@ -77,8 +84,18 @@ class GraphSearch:
                         or self._inferred[identifier] == 'canonical_contains_local'):
                     self._expand(identifier)
         if self._queue:
-            self._selected.update(self._queue)
-            return list(self._queue)
+            if self.policy == 'traversal-v24':
+                blocked = {}
+                for identifier in self.order:
+                    blocked[identifier] = any(p in self._queue or blocked[p]
+                                              for p in self.parents[identifier])
+                ready = [k for k in self.parents if k in self._queue and not blocked[k]]
+            else:
+                ready = list(self._queue)
+            self._selected.update(ready)
+            return ready
+        if self.policy == 'traversal-v24':
+            return []
         # Preserve native requirements, such as comparing the mapped original
         # parent, even when its relationship followed from an earlier answer.
         for identifier in self.parents:
@@ -102,11 +119,16 @@ class GraphSearch:
                 self._infer(identifier, 'canonical_contains_local', self.parents)
             if relation in ('local_contains_canonical', 'equivalent'):
                 self._infer(identifier, 'local_contains_canonical', self.children)
-            else:
+            elif relation == 'canonical_contains_local' or self.policy == 'legacy':
                 self._expand(identifier)
+            elif relation == 'uncertain':
+                self._held = True
 
     def result(self):
         pending = self.candidates()
-        return dict(queried=list(self._answers), pending=pending, complete=not pending,
+        result = dict(queried=list(self._answers), pending=pending, complete=not pending,
                     inferred={k: v for k, v in self._inferred.items()
                               if k in self.eligible and k not in self._answers})
+        if self.policy == 'traversal-v24':
+            result['held'] = self._held
+        return result
