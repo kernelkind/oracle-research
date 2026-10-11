@@ -8,13 +8,14 @@ found one factual-support failure and two materially ambiguous meanings. Two
 fresh diagnostic draws reproduce the factual failure and Rome's unclear final
 scope; review of the amusement qualifier remains disputed. A subsequent user
 decision classifies implicit material scope as a failure; the saved v103
-sourdough meaning also fails that criterion. Details are below.
+sourdough meaning was flagged under that criterion. Details are below.
 Approval does not activate a production prompt.
 The user subsequently approved [Bootstrap-v104](Hierarchy-bootstrap-v104.md).
-Its [focused qualification](#bootstrap-v104-consumer-and-product-role-qualification)
-does not clear the sourdough failure; an unchanged fresh repeat reproduces the
-omission and exposes a compound-purpose ambiguity in the parent. V104 remains
-the last approved prompt; the full-collection evidence above is exclusively v103.
+Its initial [focused qualification](#bootstrap-v104-consumer-and-product-role-qualification)
+flagged sourdough and parent scope. The subsequent
+[matched final-meaning reassessment](#matched-v104-and-v105-final-meaning-reassessment)
+withdraws those flags for the saved v104 outputs while retaining their history.
+V104 remains the last approved prompt; the full-collection evidence above is exclusively v103.
 Experimental [Bootstrap-v105](Hierarchy-bootstrap-v105.md) has a separate
 [focused qualification](#bootstrap-v105-resolution-and-final-clause-qualification):
 all ten first-draw meanings and four targeted fresh repeats are provisionally
@@ -538,7 +539,7 @@ incremental cash charge. The persistent shared counter remains intact; its
 attempt count. Native telemetry retains the account-backoff/recovery waits;
 no service policy was changed.
 
-V104 has not cleared the explicit-scope criterion or been activated for
+At that checkpoint, v104 had not cleared the explicit-scope criterion or been activated for
 production. No prompt edits, Compare calls or hierarchy construction occurred
 during this qualification. The proposed next change targets choosing the
 qualifying condition in resolutions and expressing it independently in every
@@ -747,3 +748,56 @@ next qualification applies the same final-meaning review standard to the saved
 v104 baseline and then tests v105 on contrasting complete original branches,
 including known identity/state regressions. That can distinguish a producer
 defect from a diagnostic-only disagreement before another wording change.
+
+## Matched v104 and v105 final-meaning reassessment
+
+The user authorized applying the same final-meaning review standard to saved
+v104 outputs before v105 complete-branch qualification. Two reviewers reassess
+the original ten-case panel and three-case repeat, keeping each original
+input, output and receipt unchanged. V105 counterparts have identical inputs
+and inference settings apart from prompt/cache identity. The assessment is
+paired and read-only, not a new model draw, blinded study or reliability estimate.
+
+| Saved draw | Previously recorded assessment | Matched reassessment |
+|---|---|---|
+| v104 first, ten meanings | Eight accept, one reject, one uncertain | Ten qualified accepts |
+| v104 repeat, three meanings | One reject, two uncertain | Three qualified accepts |
+| v105 first, ten meanings | Flags withdrawn through recorded challenges | Ten qualified accepts |
+| v105 first repeat, three meanings | Three accept | Three qualified accepts |
+
+Making the sourdough bread kind supplies a production criterion in the saved
+v104 definitions too. An actual eating-purpose condition was not established
+by their final text. The repeated parent's production-or-readiness alternatives
+also have a defensible reading without importing a stronger restriction from
+diagnostic shorthand. These corrections preserve the implicit-material-scope
+criterion: two input-supported readings with materially different membership
+would still fail it. A broader explicit criterion is not ambiguous merely
+because a narrower restriction could be added.
+
+The controls are accepted without certifying interchangeable scopes. Two
+corrections to earlier shorthand are important: rocket Food v105 adds human
+scope but drops v104's explicit nourishment condition, so its overall scope is
+not simply narrower. Stock Food v104's opening human-consumption/nourishment
+condition governs its included ingredients; a broader diagnostic does not
+certify a separate preparation-only admission route. Removed/discarded
+ingredient coverage remains untested. V105 also expresses associated
+preservation/storage information and food-production alternatives differently;
+these supported choices do not establish that v104 was wrong.
+
+Thirteen new native `review --role agent` records preserve earlier verdicts and
+bind the reassessments to exact input/output digests. No human output approvals,
+model answers, subject trees or comparison labels are rewritten. The two fresh
+read-only snapshots are:
+
+- `target/bootstrap-v104-consumer-controls-v1/report-reviewed-matched-standard-v1.json`:
+  SHA-256 `141a27b22ace642a5b600006f833c3cac63ba7e837f3814ff73d5839c233634c`.
+- `target/bootstrap-v104-consumer-controls-repeat-v1/report-reviewed-matched-standard-v1.json`:
+  SHA-256 `8d23ec34de1d8ff2a51406b8aff16d991dff7190650737b3196d1cd4e2655b74`.
+
+This stage makes zero model calls and incurs no new inference charge. Native
+receipt/digest checks pass. The matched panel demonstrates no v104-to-v105
+failure correction: earlier differences in reported failure counts included
+review overclassification. V104 remains approved; v105 remains experimental.
+Complete-branch qualification remains separate and must assess independently
+generated ancestors and children together, rather than treating individual
+acceptance as proof of compatibility.
