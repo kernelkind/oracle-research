@@ -2,7 +2,7 @@
 
 ## Bootstrap and Compare selection
 
-Updated October 10, 2026. The authorized goal is one student choice per prompt
+Updated October 11, 2026. The authorized goal is one student choice per prompt
 and verified training readiness before freeze, followed by one planned final
 fine-tune per prompt. **Neither model is selected.** Both prompts are still
 being developed. Earlier SHR results below inform candidate priorities but
@@ -90,8 +90,12 @@ and **1.2290 after epoch four**; TRAIN loss falls from 0.9177 to 0.1300. The
 cumulative training/evaluation/checkpoint phase takes **158.30 minutes**, with
 **24.99 GiB** peak CUDA allocation. The earlier checkpoint has lower held-out
 loss; both native generation plans are prepared, but generated meaning fidelity
-remains unmeasured. Gemma26 Bootstrap fitting has started. Teacher-forced loss
-and checkpoint verification alone cannot rank generated meaning fidelity. See the
+remains unmeasured. Gemma26's first epoch reduces its held-out loss from
+**2.8927 to 1.1682**; its phase takes **29.72 minutes**, with **52.54 GiB** peak
+CUDA allocation. Its remaining epochs and fresh-process verification are
+pending. Different tokenizers prevent direct cross-model loss ranking.
+Teacher-forced loss and checkpoint verification alone cannot rank generated
+meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
 The full case JSON alone averages 540 evaluation tokens versus 2,149 with the

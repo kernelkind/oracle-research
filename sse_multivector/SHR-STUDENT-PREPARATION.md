@@ -84,6 +84,19 @@ do not establish semantic meaning quality. The complete source-bound report is
 SHA-256 `b601a49c1877840945425797c561eecfd5f9f0a95b179a0116b48fb619dd3cbc`.
 The earlier epoch-one and complete-training snapshots remain preserved.
 
+Gemma26 Bootstrap's first checkpoint follows **94 updates / one epoch**.
+Held-out mean token loss falls from **2.8927 to 1.1682**, with mean TRAIN loss
+1.5005. Optimizer steps take **27.91 minutes**; the cumulative phase including
+evaluation and checkpoint saving takes **29.72 minutes**, with **52.54 GiB**
+peak CUDA allocation. The 305.18-second load and baseline evaluation precede
+that phase. Its 78,059,520 trainable adapter parameters include both packed
+expert projections. Further fitting, fresh-process verification and generated
+meaning quality remain pending. Cross-model token losses do not directly rank
+semantic quality: their tokenizers and completion likelihoods differ. The
+preserved first-checkpoint report is
+`target/bootstrap-compare-student-v1/bootstrap-pilot-gemma26b-epoch1-report-v1.json`,
+SHA-256 `49e4ef6d50866a8d15daacf246c941be47464f68a8a1d431bafe4625dac622dd`.
+
 Qwen27 Compare and Bootstrap have completed fitting and fresh-process
 verification of both checkpoints. The GB10 sequence has started Bootstrap
 Gemma26 (PID 1768470), then fits/verifies input-only Ettin Compare and Kev27
