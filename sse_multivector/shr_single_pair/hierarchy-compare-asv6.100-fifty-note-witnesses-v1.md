@@ -2174,3 +2174,52 @@ whether042 actually tests the person/consumer condition before deliberateness.
 The fresh baseline helps distinguish changed execution from sampling variation;
 one matched gate cannot establish a stable improvement rate. No adoption or
 broader hierarchy generation follows from a successful draw alone.
+
+### V103 and fresh V100: compound questions still hide an unmet condition
+
+Both ten-case runs completed with12 fresh attempts apiece, including two
+warmups each, with no reuse, retry, failure or missing usage. Native
+API-equivalent cost is$0.0767140 forV103 and$0.0742996 for the freshV100 draw;
+hierarchy-compare-v103-usage-v1.json and
+hierarchy-compare-v100-repeat-usage-v1.json reproduce the accounting. All
+freshV100 comparison receipts differ from the earlier draw. Inputs, producer
+evidence, schema, worker, model and reasoning settings remain identical.
+
+V103 independently finds valid dog counterexamples for both038 orientations,
+but both042 outputs still quote the entire compound deliberate/person clause.
+Their answers prove deliberateness and assert a person consumer without
+establishing it. NativeV103 review records8 accept,2 reject and0 qualified
+responses. Its036 proof maps the cognitive/awareness/experience alternatives
+under broad "involving" wording without requiring conscious articulated
+thought; that reviewer accepts equivalence. The new priority rule did not
+execute the intended consumer test.
+The freshV100 draw retains the same two042 errors and regresses038-forward
+to an unsupported person inference while038-reverse retains its dog witness.
+Native review of that fresh baseline records6 accept,3 reject and1 qualified
+response. That baseline reviewer qualifies036's changed equivalence answer
+because thought-versus-cognition wording remains unsettled in that proof.
+Preserve the review difference rather than forcing either a historical label
+or universal ambiguity on every new036 proof.
+V102's completed native review likewise records6 accept,3 reject and1
+qualified response. None of these candidates is adopted.
+
+V104 replaces onlyV103's question-priority paragraph. Split a compound
+phrase, quote one independently required condition, and test an entity
+outside an unestablished identity/consumer restriction even when a necessary
+implication is expected to reject it. Assess that implication in the answer,
+instead of selecting another condition. This is an observable procedure
+change:042 must test the consumer fragment, not deliberateness or the
+unsplit compound clause. It preserves whole-child admission, every permitted
+topic connection and the full-coverage burden. The same ten original requests
+are prepared through native inheritance with unchanged output schema.
+Independent review and intentional repeat are required before broad
+qualification; supplied-witness successes are not discovery successes.
+
+Separate read-only review of broaderV85 failures preserves the next operator
+checks: full012 confuses production information with existing finished bread;
+core061 mistakes an intended activity topic for performed cooking; core071
+has a genuine morning-context ambiguity with inconsistent scope selection.
+The current kind/production rule addresses012 in principle, but the
+activity/realization convention for061 needs explicit qualification.071
+remains an ambiguity control rather than a forced positive. These are future
+checks under the existing Compare task, not hierarchy or Bootstrap work.
