@@ -3555,8 +3555,10 @@ native resume that also warmed again. Failed partial outputs were never scored
 as meanings or semantic negatives.
 
 The [native accounting source](hierarchy-bootstrap-v109-low-reasoning-usage-v1.json)
-produces `target/bootstrap-v109-low-reasoning-v1/usage-native-v2.json`. The full
-low run records 52,206 output tokens, including 2,117 reasoning tokens, versus
+produces `target/bootstrap-v109-low-reasoning-v1/usage-native-v2.json`. Native
+artifacts and source-relative accounting remain in the retained
+`oracle-mvp-shr-pair-correctness-v1` worktree. The full low run records 52,206
+output tokens, including 2,117 reasoning tokens, versus
 65,302/11,303 in saved medium. Those are known subtotals: two low failed attempts
 lack usage, so complete low cost and total savings are unknown. Known
 API-equivalent subtotals are $0.9025492 for full low, $0.02939 for the fresh low
