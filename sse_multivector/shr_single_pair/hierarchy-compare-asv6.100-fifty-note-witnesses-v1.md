@@ -2447,3 +2447,42 @@ candidate use the persistent shared20000 counter; first attempts would total
 independent receipt-bound proof assessments. Combine neither mechanism until
 its actual results support the prediction. Passing controls must retain useful
 containment and correct negative proofs; additional nulls alone are not success.
+
+The separateV112/V113 tests complete all104 responses with109 actual attempts,
+0 reuses,1 recovered provider body-stream failure and1 native retry. No case
+remains failed or unrun. One failed attempt lacks usage, so$1.0404648 is only
+the known API-equivalent subtotal; complete cost is unknown. Native accounting
+is reproduced by hierarchy-compare-v112-v113-usage-v1.json. V112's core retains
+053/070 reversals; V113 retains052/053. Their controls have0 and2 reversals
+respectively, with unresolved/missing pair directions reported separately.
+These are the same partial52-case panel, not a complete196-case qualification.
+
+V113's completed control proof review records9 accept,4 reject and6 uncertain.
+All three019 comparisons now inspect the eating-occasion alternative, and the
+snapshot holds on a Pancakes descendant lacking the meal role rather than
+inventing a selected-pair negative. This executes the route test's intended
+mechanism in one draw. Its remaining rejects import flour/water into generic
+bread production, add an Eating-versus-drinking action restriction from the
+label, or reject tube-delivered soup despite retaining its intended oral-food
+role. Core andV112 proof reviews continue; no combined candidate is certified.
+
+### V114: specify what information a counterexample describes
+
+V114 replaces onlyV113's valid-counterexample paragraph. Its candidate must be
+concrete information covered by the whole child and outside every parent
+alternative/connection. Specify what the information describes; hypothetical
+cases remain allowed. An entity's failure to be a physical instance of a kind,
+or an action's nonexecution, is insufficient without exclusion from the
+parent's permitted information connections. Independent admission/exclusion,
+every child requirement and the label guard remain required. This
+operationalizes the existing information-scope convention, not new domain
+permissions or a relaxation of required identity/state restrictions.
+
+The same52 cases inherit unchanged V113 inputs, producer evidence, graph
+snapshots, output schema and model/worker settings. Native caps67/39 count
+actual dispatches under the unchanged shared20000 counter;54 first attempts
+are expected absent reuse/retry. Keep the route and identity controls, and
+test whether desired-beverage and intended-food aspects stop being rejected
+solely through direct-instance/action classification. This mechanism does
+not claim to close ordinary bread/risotto lexical boundaries. Independent
+proof review and fresh repeat remain prerequisites to broad qualification.
