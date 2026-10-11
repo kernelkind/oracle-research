@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v4
+# Hierarchy selection by traversal — draft v5
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -96,11 +96,36 @@ Breakfast as a proposed child. Skip comparing with Pancake breakfasts: Meals
 contains it through Breakfast. Continue with Dinner and other remaining
 branches.
 
+### Canonical contains local
+
+**`canonical_contains_local` leads to comparisons with all immediate children
+of the containing canonical node.**
+
+Record the canonical node as a possible parent, then follow its children to
+find more specific parents. Follow every containing branch: the local node
+may have multiple valid parents. The containing canonical node's ancestors
+also contain the local node by transitivity.
+
+For example, suppose the existing graph is:
+
+```text
+Food
+└── Meals (C2)
+    ├── Breakfast (C3)
+    └── Dinner (C5)
+```
+
+The incoming local node is Pancake breakfasts. If Meals contains it, compare
+with Breakfast and Dinner. If Breakfast contains it, continue down Breakfast;
+if Dinner returns `neither`, stop that branch. If Breakfast has no children,
+it becomes a proposed direct parent. Meals and Food remain ancestors through
+Breakfast.
+
 ## Proposed walk
 
-The `neither`, shared-node, equivalence and `local_contains_canonical` rules
-above are agreed. The other steps below carry forward the current traversal
-behavior as a starting point for further discussion.
+The containment, `neither`, shared-node and equivalence rules above are agreed.
+The other steps below carry forward the current traversal behavior as a
+starting point for further discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
@@ -111,7 +136,7 @@ behavior as a starting point for further discussion.
 
 | Returned label | Traversal action |
 | --- | --- |
-| `canonical_contains_local` | Record the canonical node as a possible parent. Follow its children to find more specific parents. Its ancestors also contain the local node. |
+| `canonical_contains_local` | Record the canonical node as a possible parent. Follow all its immediate children to find more specific parents. Its ancestors also contain the local node. |
 | `local_contains_canonical` | Record the canonical node as a possible child. Stop descending there; containment of its descendants follows from the existing graph. |
 | `equivalent` | Use the existing canonical node. Its ancestor and descendant relationships apply. Stop descending there and continue other branches. |
 | `neither` | Stop descending this branch. Continue other branches. |
