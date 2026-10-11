@@ -3913,3 +3913,52 @@ The self-case is not decisive gold. Latest core counts:21 accept/4 proof reject/
 outputs, receipts and pre-review snapshot bytes remain unchanged. Native
 settled contradiction counts remain zero. Preserve both prior attribution and
 the corrected scope of the finding.
+
+V165's matched screen completed:24 valid comparisons in28 attempts, including
+four warmups, no reuse, failures, retries, missing usage or unrun cases. Native
+API-equivalent cost:$0.2340548; counter17875/20000. Independent native reviews:
+V165 core4 accept/3 proof reject/2 qualified, fresh V159 core6 accept/2 proof
+reject/1 qualified; each controls panel1 accept/0 reject/2 qualified. V165 has
+two settled reversal conflicts, fresh V159 none; neither core has a chain
+conflict. V165042 forward imports a human consumer;070 forward leaves recipient
+coverage unclosed;071 reverse asserts morning-context coverage despite the
+supported competing reading. Fresh V159070 forward and071 reverse retain their
+own unclosed proofs. Neither arm actually tests speaker-relative identity.
+Both particular-coffee nulls and Music ensemble-role proofs pass. The two
+Food-ancestor controls in each arm remain particular-author/meal-purpose
+qualifications, not invented nonhuman gold. All copies, receipts and frozen
+sources remain unchanged. No expansion or adoption follows from this screen.
+
+### V166: a parent illustration cannot restrict an independent child
+
+This independent example-only ablation starts from V159. In the fictional
+Watches example, add a repair illustration explicitly restricted to mechanical
+wristwatches, update its exact output meaning copy, and explain that the scoped
+illustration cannot restrict the independently defined Watch repair activity.
+The electronic-watch counterexample still escapes both the mechanical kind
+and its qualifying repair connection. Ordinary undamaged time-reading remains
+outside restoration. Every instruction, the first example, schema and input
+suffix remain byte-identical to V159. No real validation topic is added to the
+examples, and no producer meaning or regression input changes.
+
+The hypothesis targets transfer of a parent illustration's conditions into
+the independent child, rather than appending another coverage instruction.
+Prior instruction-only ablations failed to reliably test ring shape. Two
+independent preflights accept the synthetic comparison and scope boundaries;
+native exact revision replay and production validation of both demonstrations
+pass. A gain must include actual missing-property adjudication, not just a
+changed relation. A holeless pantry recipe is still a qualified admission;
+the example does not prescribe an opposite022 label or manufacture producer
+clarity.
+
+Planned bounded30-case screen:core008/018/019/022/041/042/052/053/070/071 in both
+orientations plus111 forward(21cases); controls snapshot009/019/025/031/032 and
+isolated009/025 in both orientations(9cases). The just-completed full fresh
+V159 exact inputs are the baseline, without rerunning them. Thirty comparisons
+plus two warmups:32 attempts absent retries. The018/019/022 chain is complete;
+unrelated broader chains remain untested. Only a promising mechanism warrants
+fresh matched confirmation and full qualification. Supported nulls, actor and
+fixed-entity conditions, composition, information connections and all canonical
+consequences remain binding. No Bootstrap inference, hierarchy construction,
+external messages or new allowance. Native usage source:
+hierarchy-compare-v166-scoped-illustration-screen-usage-v1.json.
