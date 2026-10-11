@@ -7,6 +7,13 @@
       "artifact_path": "target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json",
       "sha256": "853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae",
       "family": "Canonical"
+    },
+    {
+      "version_id": "HR04",
+      "identity": "b7c7512b6ea5031a4a70af05c8a5cb127ac4ff7d38b5de28c0028ca1f79575d7",
+      "artifact_path": "target/hierarchy-hr04-twelve-note-v1/final/state.json",
+      "sha256": "f482553bd90d76b9b4eeac77ec0662419dd3387465d1dbc67d046c034cce19b7",
+      "family": "Canonical"
     }
   ]
 }
