@@ -1563,3 +1563,36 @@ V82's controlled hypothesis will replace the counterexample-validation
 paragraph so rejection tests every permitted information-topic connection,
 including established participant/use roles, rather than just physical identity.
 The intended-consumer, food/cookware, graph and appliance controls must survive.
+
+### V82 gate: disputed historical expectation versus a common role rule
+
+Gate-v1 completed nineteen valid judgments with twenty fresh attempts including
+warmup, no failures/reuses/missing usage, and $0.1483204 API-equivalent cost
+through hierarchy-compare-v82-usage-v1.json. Pair019 and its snapshot now have
+coherent participant-role and consequence diagnostics. Native consistency finds
+one reversal, pair025 (Eating/Food).
+
+Both independent reviewers accept eighteen judgments under the current written
+activity-role convention and reject isolated025-forward's cultivation
+counterexample. The reverse positive establishes Food's explicit intended oral
+consumption role, and retains sourcing/cultivation as information about those
+qualifying substances. This is parallel to appliance design/installation under
+Food preparation; neither requires an activity to have occurred. Animal-only
+feed still rules out Food containing unrestricted Eating. The Eating meaning
+does not explicitly exclude liquid food.
+
+This conflicts with the historical human neither expectation, which remains
+preserved as disputed evidence. No human judgment or source meaning is rewritten,
+and no new gold is created. Retaining neither through cultivation alone would
+require reconsidering the general intended-role convention and appliance
+controls. The user is asked to clarify that choice; experimental testing of the
+existing convention continues provisionally, without adoption.
+
+V83 will make specified aspects of a role-qualified kind retain that qualifying
+connection, without requiring each aspect to perform the activity itself.
+Independent associated topics cannot borrow it. Named whole-person versus
+role-limited information remains a qualification: identifying a musician does
+not establish that all biography has musical scope. Preserve completed-state
+checks and test broader original ASv6.100 meanings rather than declaring that
+boundary already solved. The broader V82 preparations remain unrun after its
+failed consistency gate.
