@@ -1,18 +1,30 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized test uses
+The latest user-authorized draft is
+[Hierarchy-consolidation-v11](shr_single_pair/Hierarchy-consolidation-v11.md).
+It changes one checking paragraph to require an explicit relationship for
+associated activities, products or participants and apply the full meaning
+to every sibling. Shared writing rules, example and output schema are unchanged.
+Its six-request Cuisine/roots/Mental states screen is authorized below; preparation
+and offline checks make no inference calls. V11 is an experimental hypothesis,
+not a demonstrated correction or an activated prompt.
+
+The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
 It restores one instruction from v8: “Define the selected topic, not every
 concept it mentions.” All other v9 prompt bytes remain unchanged. The latest
 six fresh GPT-6.1 Sol medium requests complete two independent draws on Coffee,
 Cuisine and Food dishes. Definition-writing checks provisionally pass on all
-six; neither Bread output adds a separate Bread definition. Agent review flags
-one omitted covered sibling: Place-based cuisines explicitly includes
-geographically associated dishes but omits the fixed Italian rice dish Risotto.
+six; neither Bread output adds a separate Bread definition. The initial agent
+review flags Risotto as an omitted covered sibling. After the user challenges
+that reading with Pizza and Cheesesteaks, a definition-first reassessment
+withdraws the definite omission claim and retains an unclear-boundary judgment.
 Both Coffee proposals retain the known equal-note-set step through Additional
-coffee. The other Cuisine proposal and both Food dishes proposals remain
-qualified by unsettled containment conventions. These are separate review
-measures, not three certified semantic prompt failures. No proposal is applied.
+coffee. Both Cuisine proposals and both Food dishes proposals remain qualified
+by unsettled containment conventions. Current native reviews contain two
+structural rejects and four uncertain judgments, preserving the initial reject
+in history. This is a grading correction, not a measured prompt improvement.
+No proposal is applied.
 The earlier four-request clear-control and eight-request broader screens remain
 preserved. V10 now has eighteen fresh requests: two per each of the nine frozen
 real sibling groups. These visible development cases do not establish broader
@@ -46,7 +58,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v10 targeted restoration](#consolidation-v10-topic-definition-rule-restoration), and
 [the v10 clear-control screen](#consolidation-v10-clear-control-screen), and
 [the broader v10 screen](#consolidation-v10-broader-screen), and
-[the remaining v10 groups](#consolidation-v10-remaining-group-screen).
+[the remaining v10 groups](#consolidation-v10-remaining-group-screen), and
+[the v11 definition-first audit and draft](#consolidation-v11-definition-first-audit-and-draft).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -3009,14 +3022,14 @@ assessments remain outside model input.
 | Complete supplied group | First draw | Independent repeat | Bounded agent assessment |
 |---|---|---|---|
 | Coffee C006: 6 | Further coffee: Second coffee C101 + Additional coffee C102 | Same title and selected children; independently worded meaning | Both structurally rejected; writing checks provisionally pass |
-| Cuisine C016: 6 | Prepared dishes: Pizza C054 + Cheesesteaks C066 + Risotto C073 | Place-based cuisines: Japanese food C052 + Sorrento's cuisine C108 | First parent fit uncertain; repeat rejected for omitted Risotto |
+| Cuisine C016: 6 | Prepared dishes: Pizza C054 + Cheesesteaks C066 + Risotto C073 | Place-based cuisines: Japanese food C052 + Sorrento's cuisine C108 | Both currently uncertain; repeat's initial omission rejection withdrawn below |
 | Food dishes C020: 6 | Cooked food dishes: Pancakes C031 + Burgers C036 + Bread C068 + Risotto C073 | Dough and batter foods: Pancakes C031 + Bread C068 | Both whole-child judgments uncertain; writing checks provisionally pass |
 
-The six native role-agent reviews therefore contain three rejects and three
-uncertain verdicts. Separate their reasons: two rejects concern the prospective
-note-set structure and one flags an incomplete child list. They are not new
-human gold, a measured accuracy estimate, or evidence that every different
-interpretation is wrong.
+Initial role-agent reviews contain three rejects and three uncertain verdicts.
+The definition-first reassessment below changes only the Cuisine repeat to
+uncertain, leaving two structural rejects and four uncertain judgments current.
+The initial incomplete-child-list rejection remains in review history. Neither
+assessment is new human gold or a measured accuracy estimate.
 
 The Cuisine repeat's exact proposed meaning is:
 
@@ -3027,12 +3040,15 @@ The Cuisine repeat's exact proposed meaning is:
 
 Its `children` contains only C052 and C108. The supplied C073 meaning explicitly
 begins “Risotto is an Italian rice dish” and retains its cooking process and
-variations. Under the proposal's own associated-dishes scope, that Italian dish
-is also covered. Omitting it conflicts with the existing instruction to list
-all covered supplied siblings. This agent judgment does not rely on guessing
-a geographic restriction for Pizza or Cheesesteaks. The other Cuisine output's
-relationship to the parent retains the earlier unresolved convention about
-finished dishes versus styles/traditions and their associated dishes.
+variations. The initial review reads the second sentence as covering that dish
+and flags its omission. The user challenges this with Pizza and Cheesesteaks.
+The subsequent audit finds that the definition does not make clear how its
+culinary-tradition/repertoire identity maps to individual dish topics. Risotto's
+explicit Italian descriptor alone does not settle that boundary or exclude the
+other dishes. The current assessment is therefore uncertain, preserving the
+original output and initial review. The other Cuisine output's relationship to
+the parent retains the earlier unresolved convention about finished dishes
+versus styles/traditions and their associated dishes.
 
 Both Food dishes outputs define only their selected topic: the separate Bread
 definition observed in v9 does not recur. All six definitions name coherent
@@ -3072,8 +3088,75 @@ messages occur. Work remains isolated as requested; v10 is tested and
 experimental rather than activated or approved as a full prompt.
 
 The six-attempt allowance is exhausted. All nine frozen real groups have now
-been tested with v10. The useful next review is the omitted Risotto under the
-exact Place-based cuisines definition before choosing a targeted repeat or
-prompt revision. The existing all-covered-siblings instruction already requires
-this behavior; this screen alone does not identify which wording would fix it.
-No additional trial or prompt edit is authorized by that recommendation.
+been tested with v10. The subsequently authorized audit and v11 experiment below
+address the unclear scope without treating the original omission flag as gold.
+
+## Consolidation-v11 definition-first audit and draft
+
+The user challenges the Risotto assessment verbatim:
+
+> idk that's a slippery sloap. what about pizza and cheesesteak?
+
+The user subsequently authorizes auditing the saved definitions before editing,
+drafting a focused v11 with unchanged shared Bootstrap wording, and testing
+Cuisine, roots and Mental states twice each. That is six additional Sol 6.1
+medium attempts, not authorization to change Compare, Bootstrap, hierarchy
+construction or the UI. The existing experimental isolation remains in effect.
+
+The audit reads the eighteen saved v10 definitions before comparing their
+selected child lists. The reviewer has seen these cases before; this is a
+definition-first reassessment, not independent blind adjudication. Definitions
+and original fixed inputs, rather than the producer's selected list, determine
+the review. It separates coherent scope, whole-child fit, complete child lists
+and prospective note-set structure. A different valid grouping is not a failure.
+
+| Saved group | Definition-first finding |
+|---|---|
+| Roots, both draws | Drinking requirement covers Coffee C006 and Slush drinks C039; other root meanings are not wholly drinks |
+| Mental states, both draws | Wanting/felt-necessity requirement covers Perceived needs C047 and Desires C076; other states do not wholly require it |
+| Food preparation, both draws | Bread/pastry/dessert preparation covers C010 and C098, retaining no-bake alternatives; bakery/dessert identity remains a qualified agent interpretation |
+| Food, both draws | Day/waking-period or main-meal role covers Breakfast C018 and Dinners C059; other fixed siblings do not wholly require that role |
+| Cooking appliances, both draws | Cooking-container identity covers Stockpots C015 and Cast-iron cookware C105; no power or heat-generation requirement is added |
+| Coffee, both draws | Later/additional-coffee relationship provisionally covers C101/C102; prospective grouping still fails strict note-set narrowing |
+| Eating, both draws | Null remains a qualified diagnostic, not proof that no possible useful parent exists |
+| Food dishes, both draws | Meal-role and associated-information conventions remain unresolved; no writing failure is established |
+| Cuisine, first draw | Finished dishes versus the existing style/tradition parent remains unresolved |
+| Cuisine, repeat | Tradition/repertoire identity and included individual dishes lack one clear boundary; withdraw definite Risotto-omission classification |
+
+Native role-agent review records the Cuisine repeat as uncertain with the earlier
+reject preserved. No saved meaning, child list, input, provider receipt or usage
+changes, and no new human semantic decision is invented. This review correction
+does not establish a better prompt failure rate.
+
+V11 replaces only the introductory paragraph in `Check the proposal`:
+
+> Use the final `meaning` unchanged in these checks. If it covers associated
+> activities, products or participants, the meaning must state the relationship
+> required for them to belong. Apply that full scope to every supplied sibling:
+
+This is a general wording hypothesis about explicit scope and consistent
+selection. It specifies no preferred Cuisine grouping, imposes no Food convention
+and introduces no domain example. The full prompt has 764 whitespace words,
+compared with v10's 737; this is not a measured token count or savings claim.
+All other v10 bytes are preserved, including the shared
+`explicit-meaning-rules-v5.md` fragment and the synthetic example/output schema.
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v11.assembly.json)
+pins the unchanged before wrapper/shared fragment and the new after wrapper.
+The [native revision receipt](shr_single_pair/Hierarchy-consolidation-v11.md.revision.json)
+still uses last human-approved consolidation-v3 as its baseline. Historical
+Bootstrap-v104 and prior consolidation prompt hashes remain unchanged.
+
+Official guidance supports [brief direct reasoning instructions](https://developers.openai.com/api/docs/guides/reasoning-best-practices),
+[stating instructions once and testing representative cases](https://developers.openai.com/api/docs/guides/latest-model#favor-leaner-prompts),
+and [calibrating evaluation with human feedback](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
+Those practices support this bounded process, not the proposed semantic rule's
+correctness. No reasoning trace or extra output field is requested.
+
+The added production assembly test first fails because v11's manifest is absent.
+The versioned sources and native revision then make it pass. Thirty-four relevant
+consolidation, assembly and revision checks pass, including native preparation
+freezing the full new prompt without inference. Original prompts, shared writing,
+schema and example are mechanically preserved. Before calls, the planned review
+accepts any coherent useful grouping supported by the whole fixed meanings;
+unresolved conventions remain uncertain. Making everything null is not evidence
+of successful consolidation when clear controls permit useful grouping.
