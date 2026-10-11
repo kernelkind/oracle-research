@@ -35,7 +35,7 @@ class CanonicalTraversalTests(unittest.TestCase):
             with self.subTest(command=retired):
                 self.assertNotIn(retired, help_text)
 
-    def prepare(self, count=4, extra_root=False, notes=None):
+    def prepare(self, count=4, extra_root=False, notes=None, symmetric=False):
         self.prompt.write_text('GENERIC PROMPT {INPUT_JSON}')
         subjects = lambda i: [dict(number='1', subject=f'Root {i}', context='Original role'),
                               dict(number='1.1', subject=f'Child {i}', context='Narrower role')]
@@ -56,6 +56,9 @@ class CanonicalTraversalTests(unittest.TestCase):
                 if name == 'consolidation' else
                 {'type':'object', 'properties':{'meaning':{'type':['string','null']}},
                  'required':['meaning'], 'additionalProperties':False})
+            if name == 'comparison' and symmetric:
+                schema = json.loads(Path(__file__).with_name('shr_single_pair').joinpath(
+                    'Hierarchy-compare-v179.output.schema.json').read_text())
             self.write(name+'.json', {**base, 'runner':{**base['runner'],
                 **({} if name == 'consolidation' else {'output_schema':schema})}})
         self.write('traversal.json', dict(schema_version=1, corpus='notes.json',
@@ -104,6 +107,46 @@ class CanonicalTraversalTests(unittest.TestCase):
     def automatic_run(self, *, ok=True, env=None):
         return self.cli('run-canonical-traversal', 'trial', '--attempt-budget',
                         'allowance.json', ok=ok, env=env)
+
+    def test_symmetric_compare_maps_both_directions_and_preserves_native_answers(self):
+        self.prepare(count=3)
+        spec = json.loads((self.root/'comparison.json').read_text())
+        spec['runner']['output_schema'] = json.loads(Path(__file__).with_name(
+            'shr_single_pair').joinpath('Hierarchy-compare-v179.output.schema.json').read_text())
+        self.write('comparison.json', spec)
+        self.cli('prepare-canonical-traversal', 'symmetric-trial', '--spec', 'traversal.json')
+        self.trial = 'symmetric-trial'
+        for _ in range(12):
+            state = json.loads((self.root/self.trial/'state.json').read_text())
+            if len(state['steps']) >= 3:
+                break
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                if record['role'] == 'meaning':
+                    answer = {'meaning': 'Meaning '+record['local']['note_id']}
+                else:
+                    payload = json.loads(next(iter(record['inputs'].values()))['INPUT_JSON'])
+                    self.assertEqual(set(payload), {'A', 'B'})
+                    self.assertEqual(set(payload['B']), {'subject', 'meaning'})
+                    direction = ('B_contains_A' if record['local']['note_id'] == 'n1'
+                                 else 'A_contains_B')
+                    answer = dict(relation=direction, reason='Fixture coverage',
+                        questions=[dict(id=d, question='Boundary?') for d in
+                                   ('A_contains_B', 'B_contains_A')],
+                        answers=[dict(question_id=d, answer='Coverage or counterexample',
+                                      justification='Fixture condition') for d in
+                                 ('A_contains_B', 'B_contains_A')])
+                self.cli('run', record['experiment'], env={
+                    'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+            self.cli('advance-canonical-traversal', self.trial, '--comment', 'Symmetric trial')
+        state = json.loads((self.root/self.trial/'state.json').read_text())
+        self.assertEqual([s['status'] for s in state['steps']], ['added', 'added', 'added'])
+        self.assertEqual(state['nodes'][1]['parents'], ['C001'])
+        self.assertEqual(state['nodes'][0]['parents'], ['C003'])
+        raw = state['steps'][1]['answers'][0]['output']
+        self.assertEqual(raw['relation'], 'B_contains_A')
+        self.assertNotIn('meaning', raw)
 
     def test_automatic_run_finishes_multiple_frontiers_and_consolidation(self):
         self.automatic_fixture(count=7)
@@ -529,7 +572,13 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(step['before'], step['after'])
 
     def test_new_parent_cannot_change_a_settled_neither_relationship(self):
-        self.prepare(count=3)
+        self.settled_neither_fixture(symmetric=False)
+
+    def test_symmetric_new_parent_cannot_change_a_settled_neither_relationship(self):
+        self.settled_neither_fixture(symmetric=True)
+
+    def settled_neither_fixture(self, *, symmetric):
+        self.prepare(count=3, symmetric=symmetric)
         for _ in range(12):
             state = self.state()
             if len(state['steps']) >= 3:
@@ -544,6 +593,16 @@ class CanonicalTraversalTests(unittest.TestCase):
                         value.update(reason='Controlled graph fixture', relation=(
                             'canonical_contains_local' if identifier == 'C001'
                             else 'local_contains_canonical') if note == 'n2' else 'neither')
+                    if record['role'] == 'comparison' and symmetric:
+                        relation = {'canonical_contains_local': 'B_contains_A',
+                                    'local_contains_canonical': 'A_contains_B'}.get(
+                                        value['relation'], value['relation'])
+                        value = dict(relation=relation, reason=value['reason'],
+                            questions=[dict(id=d, question='Boundary?') for d in
+                                       ('A_contains_B', 'B_contains_A')],
+                            answers=[dict(question_id=d, answer='Coverage or counterexample',
+                                          justification='Fixture condition') for d in
+                                     ('A_contains_B', 'B_contains_A')])
                     self.cli('run', record['experiment'], '--only', identifier, env={
                         'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(value)})
             self.advance()

@@ -527,8 +527,13 @@ The preparation spec contains `schema_version: 1`, `corpus`, saved `note_ids`
 in selection order, `local_schema_version` (1, 3 or 4), `bootstrap_spec`,
 `comparison_spec` and `consolidation_spec`. Prompt and schema paths resolve
 relative to their original specs and are frozen. Bootstrap and comparison
-specs require JSON output schemas. Comparison uses local/canonical labels and
-the fixed-meaning input with recursive canonical ancestors and descendants.
+specs require JSON output schemas. The configured comparison schema selects
+either the local/canonical format or the symmetric A/B format. For Compare-v179,
+A is the incoming local or synthetic node and B is the selected canonical node;
+each receives only its subject and immutable meaning. Translate A/B containment
+labels for traversal and graph checks without changing the raw native answers.
+Local/canonical prompts retain their recursive canonical ancestor and descendant
+input. Graph checks remain active in both formats.
 Consolidation uses the `canonical_consolidation` project adapter, which validates
 either JSON null or `title`, `meaning` and a proper subset of sibling IDs. Its
 spec omits a runner output schema because the runner requires an object at the
