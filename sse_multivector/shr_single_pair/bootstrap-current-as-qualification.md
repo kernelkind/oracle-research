@@ -1,4 +1,4 @@
-# Bootstrap-v103 current-AS qualification
+# Bootstrap current-AS qualification
 
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
@@ -10,9 +10,11 @@ scope; review of the amusement qualifier remains disputed. A subsequent user
 decision classifies implicit material scope as a failure; the saved v103
 sourdough meaning also fails that criterion. Details are below.
 Approval does not activate a production prompt.
-The user subsequently approved drafting a controlled revision. The
-[v104 draft](#bootstrap-v104-consumer-and-product-role-draft) is untested;
-v103 remains the last approved prompt.
+The user subsequently approved [Bootstrap-v104](Hierarchy-bootstrap-v104.md).
+Its [focused qualification](#bootstrap-v104-consumer-and-product-role-qualification)
+does not clear the sourdough failure; an unchanged fresh repeat reproduces the
+omission and exposes a compound-purpose ambiguity in the parent. V104 remains
+the last approved prompt; the full-collection evidence above is exclusively v103.
 
 ## Input and review contract
 
@@ -421,7 +423,7 @@ from an actual episode's purpose. No wording change has been isolated by this
 read-only audit; no prompt edit, new generation, Compare call or hierarchy build
 was performed.
 
-## Bootstrap-v104 consumer and product role draft
+## Bootstrap-v104 consumer and product role qualification
 
 The user approved the proposed next step: draft a revision targeting genuinely
 ambiguous consumer/product roles while preserving clear broad definitions.
@@ -448,10 +450,92 @@ The [official reasoning prompting guidance](https://developers.openai.com/api/do
 supports brief, direct instructions; it does not independently validate this
 semantic rule.
 
-V104 is a draft, not an approved or activated prompt. No model calls, fresh
-meanings, comparison tests or hierarchy construction were performed for this
-draft. Before broader qualification, the proposed next test compares the two
-saved sourdough preparation entries with explicit and broad Food controls and
-activity/kind controls under unchanged original inputs. Reviews must preserve
-coherent broad meanings and distinguish unresolved material scope from mere
-breadth. The user must approve that next step before execution.
+The user then approved v104. Ten selected cases were prepared natively from
+the completed v103 collection: two sourdough preparation entries, Food
+preparation from the same post, four Food controls, and Butter, Eating meat
+and Cooking controls. All original input bytes, source evidence, dataset,
+model, reasoning effort, transport, worker and output schema match v103.
+Only the prompt and its derived cache key changed. This is an adaptively
+selected development panel, not an unseen reliability estimate or a fresh
+matched v103 draw. V104 SHA-256 is
+`d97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0`.
+
+Three subagents independently reviewed the first draw through native `show`.
+An intentional native `--repeat` produced three further fresh outputs for
+the two sourdough entries and their Food preparation parent, with unchanged
+inputs, evidence, prompt and settings. Repeat parents and children were
+reviewed together within that draw; no endpoints were spliced across draws.
+Two reviewers independently challenged the repeated parent's compound scope.
+Reviews are bound to exact output hashes with native `review --role agent`;
+none is recorded as a new human output approval.
+
+| Draw | Valid meanings | Output-bound agent reviews |
+|---|---:|---|
+| v104 first | 10 | Eight accept, one reject, one uncertain |
+| v104 targeted fresh repeat | 3 | One reject, two uncertain |
+
+The approved failure persists at selected number `2.1` in both v104 draws.
+The first meaning calls it a "food-preparation activity" and lists breadmaking
+stages; the repeat calls it a "food-making activity". Both resolutions settle
+making versus serving and optional time-spending, but neither chooses whether
+producing the food kind suffices or an eating-related preparation purpose is
+required. Renaming the activity does not expressly settle that condition.
+Neither failure prescribes human-only scope or asserts an actual consumer.
+First-draw receipt is
+`ce191c440d7310007174a56b1fdbfb7fc6c01af52ac14fcb111c5d1971c6cbe5`;
+repeat receipt is
+`357f2a97e478be8f4f8fcfb38c60a3a123d85e518f9cb8435ee3babcc61e6d12`.
+
+The other sourdough entry, selected number `1.1.1`, remains qualified in both
+draws. Its Bread/Sourdough ancestors support production of the bread kind;
+review did not establish an additional actual eating-purpose requirement.
+It is not counted as a second certified error merely because consumers are
+unnamed.
+
+The independently generated Food preparation parent is clear in the first
+draw: "working on food or ingredients toward making food ready to eat".
+Its repeat instead says "making food from ingredients or performing operations
+on food to ready it for eating". The first alternative may qualify through
+food-kind production, while the second explicitly readies food for eating;
+other resolutions suggest the eating-related condition governs both.
+Two independent reviewers preserve this as a material clause-scope qualification,
+not a proven wrong relationship. Repeat parent receipt is
+`1695f427d08a5cc55d8d927cf3a6ac2303eaa5b5dfb5a5d690879f87610c3de8`.
+
+All seven first-draw Food/activity/kind controls are provisionally accepted.
+The two consumer-neutral Food meanings remain broad, and the two human-food
+controls retain explicit human consumption. Butter retains its dairy-food
+kind, Eating meat its broad consumption action, and stock Cooking its heat
+and culinary-purpose conditions. Risotto Food now limits ingredients to
+those intended for consumption as part of the dish; its v103 definition also
+covered culinary/flavoring inputs more broadly. That is a supported independent
+scope choice here, not proof of compatibility with removed/discarded ingredients
+or equivalence between the Food definitions. These controls were not repeated.
+
+Native artifacts in the retained task worktree:
+
+- `target/bootstrap-v104-consumer-controls-v1/report-reviewed-source.json`:
+  SHA-256 `2c6722a2739c6190b74ee72300e48267af2d8461d02dc2d22c87af20a5e60a06`.
+- `target/bootstrap-v104-consumer-controls-repeat-v1/report-reviewed-source.json`:
+  SHA-256 `91c87f1885df5a5663486b01bccea1577666adf99b9f23be4b3e91f26912d09e`.
+- `target/bootstrap-v104-consumer-controls-v1/usage-both-draws.json`, produced
+  by native `summarize-experiments` using
+  [the maintained accounting source](hierarchy-bootstrap-v104-consumer-controls-usage-v1.json).
+
+Accounting: 13 valid fresh meanings, two cache warmups, 15 total attempts,
+zero exact reuses, failures or retries, and complete saved usage. All 13
+meaning requests have cache hits. Native API-equivalent cost is $0.1187464;
+estimated net cache savings including warmups are 46.08%, not a matched
+uncached experiment or a subscription charge. Subscription inference adds no
+incremental cash charge. The persistent shared counter remains intact; its
+14,007/20,000 snapshot includes other authorized work and is not this panel's
+attempt count. Native telemetry retains the account-backoff/recovery waits;
+no service policy was changed.
+
+V104 has not cleared the explicit-scope criterion or been activated for
+production. No prompt edits, Compare calls or hierarchy construction occurred
+during this qualification. The proposed next change targets choosing the
+qualifying condition in resolutions and expressing it independently in every
+affected final clause, rather than another domain-specific example. The two
+sourdough interpretations and clear broad controls remain visible; no frozen
+output, earlier review or comparison label is rewritten to manufacture a pass.
