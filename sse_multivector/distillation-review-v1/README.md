@@ -12,8 +12,9 @@ Production defaults to DSLv2; the known bulk-runner migration remains open.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
-then run broader regression checks on the fixed **ten notes** once that set
-passes. The agreed **50 random plus ten challenge answers** remain the very
+then run broader regression checks on **four notes** once that set passes,
+under the [reduced regression scope](#regression-scope-reduced-to-four-notes-october-11).
+The agreed **50 random plus ten challenge answers** remain the very
 final validation. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
 finished generating with unchanged DSLv4 at Sol/xhigh and **concurrency 16**.
@@ -2128,7 +2129,7 @@ trial remained paused; the next approval resumes it.
 ## Reasoning-level comparison approved (October 9)
 
 **Current scope supersedes the expansion schedule below:** prompt development
-uses 12–16 distinct cases before broader regression on the fixed ten notes;
+uses 12–16 distinct cases before broader regression on four notes;
 the full 60 remains the very final test. The earlier 5/10/20/40/60 schedule and
 its completed screens
 remain evidence for the prior study; they are not the next development run.
@@ -3445,7 +3446,8 @@ regression to ten notes from the agreed set, as recorded below.
 The user rejects the proposed immediate full-60 DSLv4 update as too large for
 development and initially limits iterations to **ten notes**. The later
 [case-level development approval](#case-level-prompt-development-approved-october-10)
-uses a smaller set before returning to this fixed ten-note regression. The
+introduces a smaller prompt-development set. The next broader regression now
+uses [four notes](#regression-scope-reduced-to-four-notes-october-11). The
 original
 **50 random and ten challenge answers** are reserved for the **very final**
 whole-process test. Do not expand development through 20, 40 or 60 answers.
@@ -3457,9 +3459,11 @@ The existing source-frozen ten-answer screen provides ten distinct notes:
 `R01`, `R02`, `R03`, `R21`, `R39`, `R14`, `R15`, `R06`, `C01`, `C06`.
 It contains eight random and two challenge answers, already specified by the
 native effort panel; no replacement draw or notes outside the 60 are required.
-Keep this subset fixed for paired development comparisons. Exact case manifests,
-new prompt bindings and verified receipt reuse must be prepared before dispatch.
-This scope record performs no model calls and adopts no prompt or reasoning level.
+This subset was fixed for the ten-note comparisons. The counts below describe
+that earlier scope, not the next four-note run. Exact case manifests, new prompt
+bindings and verified receipt reuse must be prepared before future dispatch.
+The original scope record performed no model calls and adopted no prompt or
+reasoning level.
 
 A read-only count renders those answers' existing relationship inputs with the
 unchanged DSLv4 template through the shared runner and uses its native request
@@ -3537,10 +3541,11 @@ expectations, prompt bytes, source data and earlier receipts remain unchanged.
 
 The user approves a faster development sequence: test a changed prompt on
 **12–16 distinct existing review inputs**, assess further cases not used to
-write that revision, then run the complete fixed ten-note workflow after the
+write that revision, then run the complete four-note workflow after the
 development set passes. The original 50 random plus ten challenge answers
-remain the very final whole-process validation. Cases come from the agreed ten
-notes; repeated placements and near-identical anatomy comparisons do not create
+remain the very final whole-process validation. Development cases come from
+the existing ten-note pool; the next complete-workflow regression uses four.
+Repeated placements and near-identical anatomy comparisons do not create
 additional kinds of test. Every call retains its complete production input.
 Sol/xhigh, subscription SSE, ASv6.100, schemas, mechanical rules, provider-only
 retries and eligible-prefix caching remain unchanged. The user requested
@@ -4214,7 +4219,7 @@ subsequent bounded diagnostic uses the unchanged fourteen-case identities and
 retains prior outputs as a baseline snapshot. Previously used cases and portions
 of the final sixty do not establish independent unseen accuracy. The known bulk
 preparation helper still emits the rejected concurrency setting and requires its
-own scoped migration before the complete ten-note workflow can resume. Broader
+own scoped migration before the complete four-note workflow can run. Broader
 regression, lower-effort testing and the final-sixty run remain pending.
 
 ## DSLv9 approved diagnostic (October 11)
@@ -4283,8 +4288,19 @@ baseline snapshot; its allowance remains 14/28.
 
 This panel passes the development gate. It does not establish extrapolation to
 unseen answers or qualification of the complete review workflow. Production
-remains DSLv2; native bulk-runner migration and the fixed ten-note regression are
+remains DSLv2; native bulk-runner migration and the four-note regression are
 next prerequisites. Lower-reasoning trials and the final sixty remain pending.
+
+## Regression scope reduced to four notes (October 11)
+
+The user reduces the next complete-workflow regression from ten notes to
+**four distinct notes**, because the ten-note iteration took too long. Select
+from the existing ten-note pool within the agreed sample; exact selection and
+native preparation remain pending. All three checks and their approved semantic
+rules stay in scope, using DSMv3, DSSv2 and experimental DSLv9 at Sol/xhigh.
+The completed ten-note results remain evidence, not the
+next run size. The original **50 random plus ten challenge answers** remain the
+very final validation. This scope correction performs no model calls.
 
 ## Actual distilled wording: offline preview (October 8)
 

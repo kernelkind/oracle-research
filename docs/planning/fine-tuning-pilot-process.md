@@ -371,7 +371,9 @@ Keep teacher meaning groups fixed across versions and average per-note scores eq
 complete review inputs for the prompt being changed, covering observed failures,
 correct positive and negative decisions, and earlier regressions. Establish
 source-assessed decisions and evidence before candidate calls. Check further
-cases and the fixed ten-note workflow after that development set passes; the
+cases and the
+[four-note workflow](../../sse_multivector/distillation-review-v1/README.md#regression-scope-reduced-to-four-notes-october-11)
+after that development set passes; the
 original 50 random plus ten challenge answers remain the very final validation.
 The ten-note DSLv4 run has finished generation unchanged and preserves its raw
 report before formal audit reviews. [DSLv5](../../sse_multivector/distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
@@ -431,7 +433,7 @@ targets or prior reviews. This passes the development panel, not unseen accuracy
 or production adoption. The run takes 64.714 seconds with no retries or reuse;
 the 76-token prefix is ineligible, so no caching or warming is used. Three new
 preparation tests pass; broader failures reproduce on unchanged code. Native
-bulk-runner migration and the fixed ten-note regression remain prerequisites.
+bulk-runner migration and the four-note regression remain prerequisites.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
