@@ -29,6 +29,24 @@ and semantic review criteria bound to this pair; newer prompt versions require
 a separate matched experiment. This extension evaluates saved checkpoints,
 not another fit or final training. Student choices remain open.
 
+The focused Bootstrap panel selects **40 cases from 21 real notes and two
+synthetic control notes**, including all six existing null outputs. It excludes
+the 13 cases sharing a fitting author. Existing teachers include nine uncertain
+reviews, so their outputs are provisional references, not expected gold answers.
+Compare uses **196 existing v48 cases plus 21 freshly judged branch fixtures**
+from 29 notes in total, all disjoint from fitting notes, authors and post text.
+The branch batch completes 21 valid answers with 21 native agent accepts,
+including appropriate `uncertain` responses to two synthetic branch conflicts.
+Both panels remain exposed prompt-development diagnostics. The original final
+200 notes remain sealed, and this extension supplies no new gradient targets.
+
+The native local worker now declares its serial endpoint capacity to the shared
+queue. Pending requests wait before worker launch, attempt reservation and the
+response timeout; other endpoints and provider requests can still proceed.
+The 93 shared-runner and six local transport regressions pass, including a
+loaded older coordinator. New local evaluation plans use a fresh worker snapshot;
+the existing fitting and generation snapshots remain immutable.
+
 The current task contracts and candidate priorities are in
 [model research](SHR-FINETUNING-MODEL-RESEARCH.md#bootstrap-and-compare-selection).
 Published-checkpoint behavior can support a choice of starting weights; it
