@@ -1,9 +1,133 @@
 # Official hierarchy runs and experimental parameters
 
-Open the [hierarchy catalogue](../../target/hierarchy-catalogue/index.html) for
-official hierarchy runs and their recorded experimental parameters. **HR03** is
-the human-designated ASv6.100 50-note Bootstrap-v96 / Compare-v48 build. Its raw
-build and derived menu/export belong to this one run ID.
+This Markdown file is the register of official hierarchy runs and their
+experimental parameters. The current official run is **HR03**. Its raw build,
+browsing menu and export share that ID.
+
+## HR03 — ASv6.100 50-note hierarchy
+
+Generated October 10, 2026, using Bootstrap-v96 and Compare-v48. The latest
+saved execution start is `2026-10-10T19:29:26.716124Z`.
+
+### Inputs and construction
+
+| Parameter | Recorded value |
+| --- | --- |
+| Notes | 50 |
+| Note selection | [Frozen 50-note subject-generation specification](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-subjects-v1.spec.json) |
+| Initial construction | [20 local roots from 20 notes](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-prefix-v1.json), before extending to the selected 50 notes |
+| Subject prompt | [ASv6.100, frozen run template](../../target/hierarchy-catalogue/code/0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f.txt) |
+| Subject entries | 1,510 |
+| Bootstrap prompt | [Hierarchy-bootstrap-v96, frozen run copy](../../target/hierarchy-catalogue/code/599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845.md) |
+| Compare prompt | [Hierarchy-compare-v48, frozen run copy](../../target/hierarchy-catalogue/code/b225da8653af04dfbe41fc8ff9e4f9d8bf780df527e27ee3e2d088c0e7eb23af.md) |
+| Comparison policy | guarded16 |
+| Comparison limit | 16 |
+| Local candidate limit | 32 |
+| Maximum entries | 200 |
+| Maximum choices setting | 6 |
+| Independent meanings | true |
+| Local schema version | 4 |
+
+### Model execution
+
+These are the saved settings, including the historical concurrency of 32.
+
+| Parameter | Recorded value |
+| --- | --- |
+| Provider | `openai-codex` |
+| Model | `gpt-6.1-sol` |
+| Reasoning effort | medium |
+| Transport | SSE |
+| Prepared concurrency | 32 |
+| Execution concurrency | 32 |
+| Prompt cache | enabled in the frozen Bootstrap/Compare specifications |
+| Warm cache | true |
+| Subject-generation timeout | 1,800 seconds |
+| Bootstrap/Compare timeout | 600 seconds |
+| Output-token limit | No explicit limit; `null` in saved manifests |
+| Seed | Unknown; not recorded |
+| Temperature | Unknown; not recorded |
+
+### Subject vectors
+
+| Parameter | Recorded value |
+| --- | --- |
+| Model | `sentence-transformers/sentence-t5-base` |
+| Device | CPU |
+| Note batch size | 8 |
+| Unique subject texts | 693 |
+| Dimensions | 768 |
+| Maximum length | 512 |
+| Pooling | `selected-contextual-token-mean-linear-relu-linear-v1` |
+| Python | `3.13.12` |
+| PyTorch | `2.13.0+cpu` |
+| Transformers | `4.57.1` |
+| Tokenizers | `0.22.2` |
+
+### Browsing menu
+
+The run uses the saved
+[shape-v2 recipe](../../sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-shape-v2.json)
+to select roots and child links from the raw hierarchy. The maximum-choices
+setting was 6; the resulting menu has 7 roots, with 13 choices under Food.
+The saved recipe and assessment retain those actual choices.
+
+### Generator code and Git commits
+
+| Code provenance | Recorded value |
+| --- | --- |
+| Oracle generation commit | Unknown; not recorded |
+| Shared-runner generation commit | Unknown; not recorded |
+| Uncommitted source changes at generation | Unknown; not recorded |
+| Preserved Oracle source commit | `7f0a54b9e2fc9dcd47e62b7da0ac901056087904` |
+| Preserved shared-runner source commit | `e27660d98798facf959d4661000b885e2dcd298f` |
+
+The preserved Oracle commit was made after generation. Its source matches all
+53 recorded project Python files. The preserved runner commit matches eight
+recorded Python files and the saved seven-file runner fingerprint. These checks
+identify matching source; they do not recover the execution-time Git HEAD or
+uncommitted changes. Exact source-file snapshots and their hashes are listed in
+the [complete HR03 record](../../target/hierarchy-catalogue/records/HR03.json).
+
+### Outputs and complete evidence
+
+| Output | Saved file |
+| --- | --- |
+| Raw hierarchy (`regrouping-roots-v1`) | [HR03 raw state](../../target/hierarchy-catalogue/outputs/HR03.json) |
+| Browsing menu (`menu-v2`) | [HR03 menu](../../target/hierarchy-catalogue/outputs/HR03-related-1.json) |
+| Browser export (`review-ui-v1`) | [HR03 browser export](../../target/hierarchy-catalogue/outputs/HR03-related-2.json) |
+
+The [complete HR03 record](../../target/hierarchy-catalogue/records/HR03.json)
+contains the frozen construction settings, response schemas, source bindings,
+menu recipe and references to saved parameter evidence. The original native
+[plan and code hashes](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-123/experiment/experiment.json)
+and [execution settings](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/step-123/experiment/execution-settings.jsonl)
+remain available. Unrecorded historical settings stay unknown.
+
+### SHA-256 bindings
+
+| Input, source or output | SHA-256 |
+| --- | --- |
+| Source corpus | `581e465d9a4c3ac5e6e2067a2edb9e9711acb3fd68982909394c9c704151dbf3` |
+| 50-note selection specification | `452add80668e785462e01c8a8840e2547108e47212d2d33d344d549639a5ac99` |
+| Initial 20-root construction definition | `3e3922c1c9dc9c5356fbff871d7ed0695f8c7caaa9eed0521483a54adb03d54b` |
+| Subjects | `18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a` |
+| ASv6.100 template | `0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f` |
+| Bootstrap-v96 prompt | `599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845` |
+| Compare-v48 prompt | `b225da8653af04dfbe41fc8ff9e4f9d8bf780df527e27ee3e2d088c0e7eb23af` |
+| Subject-vector checkpoint | `ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d` |
+| Subject-vector model tree | `bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d` |
+| Subject-vector container image | `a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa` |
+| Subject-vector worker source | `eccf48810ca4f43724f7e197d71c25e456d62ed510ba13f8cf40e90127a580fc` |
+| Subject-vector receipt | `c35d1d37279c164a4e628be9c12e769667b8b3a8166be7ee686a2726881b80a1` |
+| Subject-vector data | `d2012833be298658fe6686c8e9ea3233279d806a5d4061be7071059da0f7d429` |
+| Menu recipe | `bd576d8e2617940bb7dfb9bb37ce5692654bcc8e2dee4c7d53cbdd256a5dacfe` |
+| Shared-runner fingerprint | `5fa694dce385a2579286bae5a637625bfe14818ca6511de8cbec014724c44888` |
+| Raw hierarchy | `853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae` |
+| Browsing menu | `4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c` |
+| Browser export | `763ddd9c614581529653dcd1dcd342a3145ccd9beb9f194655448ee5f4f69060` |
+
+## Registering future runs
 
 Register a run only when the human explicitly designates it as official.
 Completing a diagnostic, approving its execution or generating a browsing output
@@ -20,13 +144,12 @@ its preserved output and parameter evidence. The existing-run cutoff remains
 October 8, 2026 at midnight America/New_York (`2026-10-08T04:00:00Z`). Older bound
 inputs remain provenance.
 
-The catalogue shows frozen input, prompt, model, construction and execution
-settings, source hashes and native receipts together. Compare runs there;
-missing settings and historical Git commits stay explicitly unknown. Generator
-source is accepted only when its bytes match a saved hash. An exact Git blob
-identifies file contents, not the run's overall commit. Before a new run, record
-the full commits of Oracle and the shared runner, plus any uncommitted source
-changes, alongside their frozen code hashes.
+Keep this Markdown register and the explicit source list synchronized when
+registering an official run. Before a new run, record the full commits of Oracle
+and the shared runner, plus any uncommitted source changes, alongside their
+frozen code hashes. Generator source is accepted only when its bytes match a
+saved hash. An exact Git blob identifies file contents, not the run's overall
+commit.
 
 Regenerate the catalogue after updating the explicit official-run list, from a
 task worktree:
@@ -44,3 +167,5 @@ Use `--saved-only` to regenerate from retained records. Generated pages, paramet
 evidence and output snapshots stay ignored under `target/`; preserve them with
 the original runs. The registry alone is not a backup. Experiment preparation,
 execution and resumption still use task worktrees and the shared launcher.
+The [HTML viewer](../../target/hierarchy-catalogue/index.html) also supports
+side-by-side comparison of official runs.

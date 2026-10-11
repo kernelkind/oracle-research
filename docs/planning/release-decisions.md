@@ -3202,7 +3202,7 @@ HD15 cycle policy without changing cross-post selection, cutoffs or saved baseli
 the human explicitly designates as official, using one unique ID for the raw
 build and its derived menu/export. The human designated the completed ASv6.100
 50-note Bootstrap-v96 / Compare-v48 build as official; its ID is **HR03**. The
-[hierarchy catalogue](../recommendation-engine/hierarchy-runs.md) collects its
+[Markdown hierarchy register](../recommendation-engine/hierarchy-runs.md) collects its
 frozen inputs, configuration, source hashes, native receipts and experimental
 parameters in one place. Diagnostic execution approval, completion and browsing
 exports do not establish official status; checkpoints do not receive separate
