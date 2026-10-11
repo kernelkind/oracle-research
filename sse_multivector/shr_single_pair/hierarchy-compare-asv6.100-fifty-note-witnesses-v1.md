@@ -2892,3 +2892,45 @@ correction to unchanged bytes leaves both records hash-current. Assessment total
 here use the latest owner record per case, and preserve prior records as history.
 Do not mistake multiple hash-compatible historical records for multiple samples
 or count every such record as an independent current verdict.
+
+The completed V129/V131 gate has 42 valid comparisons, 47 actual attempts,
+no reuses, one automatically recovered provider failure/retry, and one attempt
+without usage. Native known API-equivalent subtotal is $0.4087984; full cost is
+unknown. V129 reviews: core 10 accept/0 reject/2 qualified; controls 7 accept/
+1 reject/1 qualified. Both recipient proofs remain qualified and omit their
+prescribed concrete recipient test. Control031 omits the Food-ancestor consumer
+test;032 supplies an animal-feed test but retains author/consumer/nourishment
+qualifications. All recognized coffee, water-risotto, seed-bread, meal-route and
+appliance proofs in this draw pass independent proof review.
+
+V131 reviews: core 7 accept/3 reject/2 qualified; controls 7 accept/2 reject.
+041 forward imports a person without resolving a concrete identity variation;
+042 in both orientations mistakes designed composition for a required human
+eater. Reverse070 correctly preserves a separate nonhuman-audience route but
+does not establish that every admitted addressee necessarily has that role.
+031/032 omit concrete missing-consumer tests in their Food-ancestor checks.
+These procedure/proof defects do not establish opposite selected labels, and
+qualified meanings are not repaired or converted into semantic gold. This is
+one draw per version, not causal proof that the third illustration caused the
+consumer regressions. V129 is the stronger experimental candidate, not adopted.
+
+### V133: execute the existing restriction test on canonical consequences
+
+V133 changes only V129's canonical-consequence paragraph. Each required
+ancestor/descendant relationship must repeat the same counterexample tests,
+including applicable missing identity/consumer restrictions, and resolve the
+concrete cases in `reason`. An unresolved required consequence prevents approval;
+the selected directions can stay settled. The selected-node scope rules,
+two questions, five-field schema and two fictional illustrations remain intact.
+V132 is an unrun application of this paragraph to V131, prepared before V131's
+consumer regressions were reviewed. Its eight-case gate remains unrun rather
+than spending calls on the weaker parent candidate.
+
+The V133 gate freezes six core cases (041/042/070, both orientations) and four
+controls (031/032 ancestor checks,012 snapshot and019 reverse) from V129.
+Expected dispatch is ten comparisons plus two warmups,12 actual attempts absent
+retry/reuse, with caps13/9 and the unchanged persistent20000 counter. Inputs,
+producer evidence, sources, worker/model/schema and the two mechanical example
+outputs are checked before dispatch. No Bootstrap generation, hierarchy build,
+service changes or external messages. Usage source:
+hierarchy-compare-v133-guard-usage-v1.json.

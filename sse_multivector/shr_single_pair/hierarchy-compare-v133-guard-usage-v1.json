@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "core": ["../../target/compare-v133-guard-gate-v1/core"],
+    "controls": ["../../target/compare-v133-guard-gate-v1/controls"]
+  }
+}
