@@ -9,7 +9,8 @@ unchanged. V12 is preserved with an unintended missing paragraph break; v13
 corrects that formatting without rewriting v12. Its four-attempt activity-scope
 screen meets the targeted checks in both independent draws: Grilling is retained
 and the synthetic completion requirement excludes plans. The proposals remain
-unapplied, and broader real-group regressions have not been rerun with v13.
+unapplied. The user subsequently authorizes the remaining eight real groups,
+twice each, under the sixteen-attempt screen registered below.
 See [the draft record](#consolidation-v13-activity-topic-draft) and
 [the registered screen](#consolidation-v13-activity-scope-screen).
 
@@ -3928,3 +3929,56 @@ After the final current-main sync, all 37 relevant production-path checks pass
 again. A fresh native usage aggregate reproduces the same four-call totals,
 cost and generation attribution exactly. The worktree stays isolated under the
 user's existing instruction; current main receives no task changes.
+
+## Consolidation-v13 remaining real-group regression
+
+The user replies "proceed" to testing unchanged v13 on the remaining frozen
+real sibling groups. There are eight complete groups: roots (seven siblings),
+Mental states (six), Cuisine (six), Food (thirteen), Eating (five), Cooking
+appliances (four), Coffee (six) and Food dishes (six). Food preparation and the
+synthetic completion contrast have already been tested and are not repeated.
+
+The ceiling is **sixteen fresh GPT-6.1 Sol medium subscription attempts**,
+including failures and retries. Native initialization creates
+`target/canonical-shaping-selection-v1/consolidation-v13-broader-real-budget-v1.json`
+at 0/16; no earlier counter is reset. Ordinary SSE and the shared production
+worker remain fixed. At most three requests from this task run concurrently;
+there is no cache warmup, additional caching setting or output truncation.
+
+Native `prepare --from` inherits the five v11 collections `roots`, `mental`,
+`cuisine`, `broader` and `remaining`. Each complete case input is verified
+byte-identical to its saved predecessor. Only the prompt becomes unchanged
+v13 with the current worker. All original titles, meanings and source evidence
+remain fixed. The second draw uses native `--from ... --repeat`, preserving
+the same complete inputs/settings and requesting fresh independent trials.
+Historical model outputs and reviews remain outside model input.
+
+Pre-call assessment criteria:
+
+- First assess the proposed meaning as written against the parent's whole
+  fixed meaning and every complete sibling meaning. Preserve all required
+  roles, purposes and states; use the approved activity/plans interpretation
+  where applicable. Do not demand an earlier chosen title or child list.
+- Include every supplied sibling wholly covered by the final proposed meaning
+  and exclude those that do not fit. Require a coherent useful subgroup of at
+  least two siblings and fewer than the whole group, strictly within its parent
+  when one is supplied. Existing placement cannot add missing restrictions.
+- Preserve the qualified positive controls. Null answers in Eating remain a
+  bounded diagnostic, not proof that no valid subgroup exists. A different
+  valid grouping is allowed; making every difficult group null is not success.
+- Cuisine's tradition/associated-dishes scope and Food dishes' meal-role
+  boundary remain unresolved where the full definitions do not establish the
+  required relation. Those cases are uncertain unless a distinct clear defect
+  is established; repeated agreement and historical agent labels are not human
+  decisions.
+- Keep prospective shape checks separate. A Coffee proposal with an equal
+  parent/child note set fails the finished-hierarchy narrowing requirement;
+  note memberships are absent from model input, so that alone does not prove
+  a semantic prompt defect. Food's remaining options above six can still be
+  useful partial reduction from one insertion. No proposal is applied.
+
+The [native usage selection](shr_single_pair/hierarchy-consolidation-v13-broader-real-usage-v1.json)
+binds the ten first/repeat experiments. Frozen preparation and the existing
+production-path checks use the shared runner; no new execution or evaluation
+code, hierarchy, UI, Compare/Bootstrap prompt or agent communication is needed.
+All 37 relevant consolidation, assembly and revision checks pass before calls.
