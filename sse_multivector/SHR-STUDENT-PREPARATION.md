@@ -252,20 +252,56 @@ work per example. Their current fit/request times are not a final-training or
 production-throughput forecast.
 
 The completed model-selection pilots and generated-meaning reviews remain
-preserved. A separately authorized GB10 concurrency measurement is now active;
-it uses the existing native Compare fitter without training-code changes.
+preserved. The separately authorized October 11 GB10 concurrency fits are complete;
+they use the existing native Compare fitter without training-code changes.
 Qwen27 and Ettin1B's `input_json` path each fit one full epoch on the same
 180 TRAIN / 46 development-evaluation bank under sequential and concurrent
 conditions. Model-specific settings, seeds and case order are identical across
 conditions. Loading is staggered: the concurrent Ettin job starts after Qwen's
 native baseline is published, ensuring actual workload overlap. Per-process
 `/usr/bin/time -v`, pair start/end timestamps and two-second `free -b` samples
-measure completion time and shared system memory; checkpoint reload checks
-follow separately. The sequential control is running; no concurrency advantage
-is measured yet. This short Ettin overlap will not establish arbitrary-job
-scaling or justify fitting all candidates simultaneously.
+measure completion time and shared system memory. All four saved checkpoints
+pass file-hash and probe-score verification in distinct fresh processes,
+outside the measured pair times. The owned fit, verification and memory
+observer workers have exited.
+
+| One-epoch Compare workload | Sequential process wall | Concurrent process wall |
+| --- | ---: | ---: |
+| Qwen27, 180 updates | 44m 50.06s | 46m 29.92s |
+| Ettin1B `input_json`, 45 updates | 2m 06.81s | 4m 21.75s |
+| Pair, recorded start to last finish | 46m 56.89s | 46m 29.93s |
+
+The pair finishes **26.96 seconds sooner (0.96%)** under this overlap, while
+each individual process takes longer. Sampled minimum `MemAvailable` is
+49.99 GiB sequentially and 50.26 GiB concurrently. CUDA peaks remain 21.15 GiB
+for Qwen and 19.27 GiB for Ettin. The maximum swap increase over each observer's
+first sample is 1.51 MiB sequentially and zero concurrently.
+Memory capacity permits this pair, but the measured aggregate gain is small.
+
+This is one sequential/concurrent pair, sequential first, with staggered
+loading and a short Ettin fit inside a long Qwen fit. Warm caches and ordinary
+run variation are uncontrolled. It does not establish equal-duration job
+scaling, simultaneous loading, or fitting all candidates at once. Native phase
+timings include evaluation and checkpoint writing: Ettin's phase takes 95.74
+versus 212.50 seconds, including shard writes of 37.12 versus 78.40 seconds.
+Those are not optimizer-only throughput measurements. Memory extrema cover
+each observer's full lifetime; the two-second samples have no timestamps.
+
+Identical model-specific settings, seed, data and token counts do not yield
+identical learned weights. All 46 Qwen checkpoint decisions match across
+conditions (45/46 teacher agreement), with mean TRAIN loss 0.2784 versus 0.3063.
+Its new sequential checkpoint also differs from the historical first epoch's
+43/46 result, before any overlap; that historical run used an earlier fitter
+revision. Ettin reaches 28/46 versus 35/46 with 16 changed
+decisions despite identical baseline decisions. The fitter does not enable
+deterministic algorithms and saves baseline decisions rather than initial
+logits or weights; the cause of this variation is unestablished. These
+provisional development results do not promote or eliminate a student or show
+a quality benefit from concurrency.
 
 The source-bound artifacts are under `target/concurrency-benchmark-v1/`.
+`summary.json` derives timing/memory metrics from the preserved native reports,
+process receipts and recorded endpoints, retaining report hashes/bindings.
 The immutable `compare-pilot-native-test-runtime-v5` and `compare-targets-v5`
 retain data SHA-256
 `3b4478d917f722421f840b9436a3c51aae99816a6ee8ffa2de84642d79dcbb8c`.
@@ -303,8 +339,8 @@ Twenty-five focused CPU tests pass (three explicit CUDA tests skipped) against
 the bound runner snapshot. The native CUDA test exercises both causal NF4 and
 packed-expert NF4 adapters, agrees with complete masked causal loss in the real
 fit's baseline, fits only TRAIN targets, checks fresh-process reload, and loads
-the saved adapters through the generation worker. It passes in 47.97 seconds
-while Qwen Compare training is active. A preceding failure came from missing
+the saved adapters through the generation worker. It passed in 47.97 seconds
+while the earlier Qwen Compare fit was active. A preceding failure came from missing
 end-of-turn IDs in the tiny fixture; that fixture was corrected, with no model
 loader or inference repair. Original failure evidence is preserved.
 

@@ -99,12 +99,18 @@ were not measured. Equal predictions on this small panel are insufficient to
 exclude Kev; four-epoch duration alone misses its earlier convergence.
 See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
-A matched GB10 concurrency benchmark is running with existing reviewed Compare
-cases: one epoch each of Qwen27 and Ettin1B `input_json`, sequentially and with
-staggered concurrent loading. Total pair wall time and sampled system-memory
-headroom will determine whether this overlap helps; no benefit has yet been
-measured. The fitter and teacher targets are unchanged. This measurement does
-not start broader supervision or freeze either prompt. See the
+A matched GB10 concurrency fit comparison is complete with existing reviewed
+Compare cases: one epoch each of Qwen27 and Ettin1B `input_json`, sequentially
+and with staggered concurrent loading. The pair takes **46m 56.89s sequentially
+versus 46m 29.93s concurrently**, a 26.96-second (0.96%) observed saving. Both
+individual jobs take longer under overlap; sampled minimum available system
+memory remains about 50 GiB. This one short overlap supplies little aggregate
+gain and does not establish longer-job scaling or all-model concurrency. Warm
+caches/run variation are uncontrolled, and Ettin's learned predictions differ
+between runs despite matching bindings and baseline decisions. All four
+checkpoints pass fresh-process hash/probe verification outside the measured
+fit times; owned benchmark workers have exited. The fitter and
+teacher targets are unchanged; both prompts remain in development. See the
 [benchmark bindings and status](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
@@ -150,7 +156,8 @@ Median native execution is 71.98 seconds with the same 49.07 GiB peak. It fixes
 price/location and some scope uncertainties but adds an unsupported growing
 movement and retains refusal, factual-state and standalone-meaning defects.
 All five task fits, fresh checkpoint checks, six generation stages and 126
-source-bound reviews are complete. The owned GPU worker and tunnel are stopped.
+source-bound reviews are complete. That meaning-generation campaign's owned
+GPU worker and tunnel are stopped.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
@@ -167,7 +174,7 @@ support further qualification, not a production input-format decision. This
 branch-free panel does not predict savings or quality for a large canonical branch.
 
 The current research priority is **Qwen27 for further Bootstrap qualification**,
-with Gemma26 retained as an alternative, and **Ettin1B versus Qwen27 for Compare**.
+with Gemma26 retained as an alternative, and **Ettin1B, Qwen27 and Kev27 for Compare**.
 Kev27 has no measured prediction advantage over Qwen on this panel. These are
 candidate priorities, not selected final students: the development evaluation
 still needs broader independent post coverage, all five Compare labels and
