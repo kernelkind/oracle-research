@@ -103,6 +103,9 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
         violations.append({'kind': 'unreachable_notes', 'note_ids': missing})
     equal_edges, proper_edges = [], []
     for parent in order:
+        if not children[parent] and len(represented[parent]) > 1:
+            violations.append({'kind': 'multi_note_leaf', 'node': parent,
+                               'note_ids': sorted(represented[parent])})
         if len(children[parent]) > max_choices:
             choice_warnings.append({'kind': 'too_many_children', 'node': parent,
                                     'count': len(children[parent])})
