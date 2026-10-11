@@ -438,14 +438,15 @@ minimum reasoning effort remain open; the sixty remain the final validation.
 The user subsequently approves the
 [eight-hour review direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11)
 for all **1,800 validation outputs**, assuming resolved backoff and at most
-30 concurrent requests. Draft **DCSv1** searches uncovered student subjects
+30 concurrent requests. The approved **DCSv1** wording searches uncovered student subjects
 for one compatible placement of an already-matched required teacher meaning,
 then verifies a positive witness with the existing relationship check. Qualify
 relationships at high separately while retaining matching/support at xhigh,
 and qualify reuse of positive model verdicts with their provenance. The six-hour
 model-work target is conditional arithmetic with two hours of headroom, not a
-measured forecast. Exact wording and reliability remain open; this drafting
-step makes no model calls or implementation changes. Deployed defaults, the
+measured forecast. Native preparation and response validation are implemented
+for the authorized four-note xhigh development trial; accuracy and runtime
+remain unmeasured. Deployed defaults, the
 final sixty and the maximum two-percentage-point loss remain unchanged.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
