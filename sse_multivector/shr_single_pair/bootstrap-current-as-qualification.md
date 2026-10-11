@@ -1420,10 +1420,94 @@ The broader legacy-suite limitations recorded above remain; no execution code
 changed in this stage. Native revisions and the predeclared protocol were
 committed and landed before inference; no active experiment binding was edited.
 
-The next useful test would target identification of a term used as a name/tag
-versus its ordinary descriptive sense, within the existing ambiguity section.
-Keep these source inputs and framing controls fixed, without prescribing a
-hashtag interpretation or inserting this case into the examples. Because the
-current source-assignment contract remains qualified, inspect the exact witness
-with the user before treating a conditional business definition as definite
-semantic failure. No further prompt revision or inference stage has begun.
+## Approved subject-scope preservation and matched v104/v109 qualification
+
+The user approved addressing the AS/Bootstrap scope mismatch by making
+Bootstrap clarify the selected subject rather than choose a new category from
+the post. The subject establishes identity, abstraction and expressed
+restrictions. Post, context and original hierarchy resolve its sense and
+references; details of an illustrated use do not automatically restrict the
+whole category. Defining features of the chosen sense remain permissible.
+
+Independent meaning generation and the existing input/output schema remain
+unchanged. No generated parent meaning is added to the input. Full branch checks
+already inspect exact independently generated parent and child meanings; they
+must identify conflicts rather than redefine either endpoint to force a link.
+This approved contract does not certify every AS assignment or source edge.
+
+Experimental [Bootstrap-v109](Hierarchy-bootstrap-v109.md) is revised from
+last-approved v104 through native `revise`. It replaces scope authority,
+input-suggested restrictions, inferred-parent fitting and free abstraction
+choice. The writing paragraph anchors activity restrictions to the selected
+subject's intended meaning. Both synthetic examples, output instructions and
+input suffix remain byte-identical. The examples are not validation posts.
+V104 remains the approved version; preparing/testing v109 does not activate it.
+
+Before the edit, a three-case native v104 smoke test used the exact existing
+Food, Rome and Mental states inputs. Its Food output explicitly chooses
+human-only consumption. An initial preservation rejection assumes that this
+narrows the intended AS Food category, whose documented example includes Dog
+food. An independent challenge notes that the diagnostics select a general
+human-food sense rather than explicitly deriving that condition from this
+risotto instance. The assessment is therefore qualified as uncertain; the
+smoke is a concrete regression witness, not an unequivocal failing semantic
+test. Earlier native reviews remain preserved. The conflicting v104 parent-fit
+and free-abstraction instructions are directly observable; their removal does
+not prove which generated Food sense is right. The smoke uses two fresh
+answers, one exact reuse and one cache warmup, with three actual attempts.
+
+### Predeclared matched evaluation
+
+Both versions use all 115 exact inputs from the completed v105 branch panel:
+17 complete ASv6.100 root trees, 13 posts, 98 immediate links and 300 recursive
+ancestor checks. No old answers or labels enter model input. Native
+`prepare --from --prompt` keeps cases, settings and source evidence fixed,
+with current shared worker identity and automatic caching. Normal exact reuse
+is retained; reuses are reported rather than described as fresh draws. Every
+endpoint in each version's collection uses that version. No v105 endpoint is
+substituted into either branch collection.
+
+Review criteria apply identically to baseline and candidate:
+
+- Definition coherence and material boundary clarity: the final meaning must
+  be standalone and express its consequential choices. Diagnostic wording
+  alone does not fail a clear final meaning.
+- Subject preservation: retain identity, abstraction, expressed restrictions,
+  named alternatives and required joint parts. A scope failure needs a concrete
+  interpretation admitted by the subject but lost through an added incidental
+  restriction, or admitted by the definition after a required restriction is
+  dropped. Defining a genuinely different sense is distinguished from selecting
+  a narrower subset of the same category. If that distinction is disputed,
+  preserve the qualification rather than treating the presence or absence of
+  a human qualifier alone as a failure or improvement.
+- Source assignment: separately check whether the post supports assigning the
+  subject to this occurrence. A coherent conditional business definition does
+  not prove the hashtag identifies that business. Disputed assignment is not
+  silently scored as a definition failure or a preferred tag interpretation.
+- Branch compatibility: inspect every independently generated child's whole
+  information topic against its exact generated ancestors. Preserve unresolved
+  information-topic interpretations and source-edge conflicts. Individually
+  acceptable definitions do not automatically certify their branches.
+- Coverage and dependence: retain null/failed/unrun cases; separate individual
+  meaning counts, original trees, distinct posts, immediate links and recursive
+  checks. One root issue affecting many links is not many independent failures.
+
+Three reviewers partition complete original trees and examine both versions
+under this rubric. Consequential disagreements receive an independent challenge
+before results are reported. Saved reviews are agent assessments, not human
+gold. Historical judgments remain source-bound evidence rather than mandatory
+labels for revised definitions. This remains an adaptive development panel,
+not an unseen benchmark or a general reliability estimate.
+
+Execution stays on the main shared stable launcher from this task worktree,
+Sol 6.1 medium/SSE, automatic prefix caching and the shared fair queue (at most
+30 active requests). The persistent counter is
+`target/hierarchy-selective-sprint-v1/attempt-budget.json`; its pre-smoke snapshot
+was 14,878/20,000 and includes other agents' work. There is no reset or paid
+fallback. Native command caps are eight attempts for the smoke, 230 for the
+full baseline and 232 for the candidate; warmups/retries/failures count. No
+Compare calls, AS generation, hierarchy construction or UI refresh is included.
+
+The use of direct outcome constraints and unchanged examples follows
+[official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+That guidance does not establish the correct semantic boundary or qualify v109.

@@ -45,6 +45,15 @@ API-equivalent cost is $0.4660116, with complete cost unknown due to missing
 failed-warmup usage. V104 remains the last approved prompt.
 This does not activate a production prompt or modify earlier frozen experiments.
 
+The user subsequently approved subject-scope preservation: Bootstrap clarifies
+the supplied subject, using post/context to resolve sense rather than adding
+restrictions from its particular example. Experimental v109 implements that
+contract from approved v104. A matched complete-branch qualification of v104
+and v109 is predeclared in the Bootstrap qualification record. Independent
+generation and input/output schemas stay unchanged; exact generated endpoints
+are checked together, with source assignment separate from definition coherence
+and branch compatibility. V104 remains approved; v109 is not activated.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1596,6 +1605,15 @@ implicit cache hits, known-receipt net savings are $0.0064912 (0.534%); full-run
 cost/savings and subscription charges remain unknown. AS, schema and model
 settings stay fixed. Qualification, lower-effort testing and final 60 remain
 pending; production defaults to DSLv2.
+The subsequently authorized [DSLv10 draft](distillation-review-v1/README.md#dslv10-timing-scope-draft-october-11)
+changes only the version title and one scope paragraph. Three native offline
+preparations retain three four-note scope inputs, five accepted DSLv9 controls
+and four authored local/shared timing contrasts. The eight inherited inputs and
+baselines remain exact; authored inputs use the existing generic adapter and
+production AS-excerpt function, with no adapter or output-schema changes.
+Independent input assessment agrees on five true and seven false targets. All
+twelve candidates are unrun; wording review precedes calls. Sol/xhigh/SSE and
+automatic queue admission stay fixed; the short template prefix is not warmed.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

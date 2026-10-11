@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v104_baseline": [
+      "../../target/bootstrap-v109-scope-preservation-v1/baseline-smoke",
+      "../../target/bootstrap-v109-scope-preservation-v1/baseline"
+    ],
+    "v109_candidate": [
+      "../../target/bootstrap-v109-scope-preservation-v1/candidate"
+    ]
+  }
+}
