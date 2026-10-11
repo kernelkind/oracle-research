@@ -394,6 +394,11 @@ agent assessments kept outside model inputs, not human gold. The original
 MILFs explanation and named-reference/list uncertainties remain unresolved.
 Synthetic success does not qualify natural-case accuracy; broader qualification
 and lower-effort testing remain pending.
+The user has authorized a [DSLv7 wording draft](../../sse_multivector/distillation-review-v1/README.md#dslv7-post-interpretation-draft-october-10)
+using the original post to interpret supplied wording, with the AS parent-child
+rule and output contract fixed. Wording approval, native post-input support,
+preparation and model calls remain pending. The two uncertain named-reference
+targets remain unresolved; production still defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
 mechanical rules and schemas remain fixed. The completed ten-note run retains
 its frozen concurrency of 16; the current shared runner uses automatic queue
