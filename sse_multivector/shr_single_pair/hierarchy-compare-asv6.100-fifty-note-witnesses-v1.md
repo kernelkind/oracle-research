@@ -2318,3 +2318,38 @@ further exact reuse reduced work below the preparation estimate. The unchanged
 persistent shared20000 counter is15733 used at this checkpoint. Generated
 snapshots and native reviews remain ignored artifacts in the retained task
 worktree; maintained definitions/findings stay versioned.
+
+### V107: additional parent qualifications before shared conditions
+
+Complete-proof review of V104's larger panels finds more than reversal
+inconsistency. Some responses import flour/water into a production topic,
+miss the parent's alternative covering an eating occasion, or exclude
+preparation information without checking its established eating connection.
+The isolated beverage-wish comparison also needs its full kind/aspect test.
+Review preserves unresolved lexical boundaries rather than assigning new gold.
+
+V106 generalizes V104's question priority from identity/consumer to any further
+parent qualification absent from explicit child wording. Read-only review
+finds two holes: requiring such a qualification even when none exists, and
+allowing an ordinary-language implication without requiring necessity. V107
+closes those two holes before inference. V106 remains an unrun draft, including
+its two ignored prepared experiments. Both versioned revisions remain replayable.
+
+V107 is a condition-selection hypothesis, not a repair claim for every
+admission, topic-connection or lexical ambiguity failure. The native gate has
+29 core cases and 19 fifty-note controls, inherited from the completed V104
+panels with unchanged explicit meanings, producer evidence, graph inputs,
+response schema and model/worker settings. The added six controls cover the
+Meal alternative and person/subjective-feeling witness omissions. Native
+caps59/39 reserve up to two attempts per case plus warming under the unchanged
+shared20000 counter. First attempts would total50 including two warmups if
+there are no reuses or retries. Preparation performs no inference.
+
+Evaluate whether questions actually test the additional qualification and
+whether the answers independently preserve the whole child while escaping
+every parent alternative and permitted topic connection. Keep successful
+person, purpose, musical-role and cooking-tool controls. A coherent label is
+insufficient if its proof drops a child requirement or imports a counterpart's
+definition. Independent proof review and a fresh repeat of any proposed fix
+precede broader qualification or adoption. Neither Bootstrap nor hierarchy
+construction changes in this Compare-only investigation.
