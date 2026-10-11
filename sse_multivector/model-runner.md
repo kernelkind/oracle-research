@@ -135,6 +135,15 @@ controls. It keeps Bootstrap-v110 and the original ASv6.100 subjects fixed;
 edited posts remain explicitly synthetic diagnostics, not new AS output or
 validation replacements. The separate post-only task is not a matched Bootstrap
 instruction ablation.
+Its [completed results](shr_single_pair/bootstrap-current-as-qualification.md#coffeechain-factual-evidence-sensitivity-completed-results)
+contain eight fresh valid outputs across two draws per condition: the post-only
+probe leaves the business identity unknown, explicit business evidence produces
+a supported meaning, and the other two synthetic controls produce supported
+null source conflicts. Native accounting records ten attempts, including two
+warmups, and complete API-equivalent cost of $0.04176. All six Bootstrap cases
+used cached input. These qualified agent assessments show evidence sensitivity,
+without identifying the cause of the original ambiguous assignment or adopting
+a new Bootstrap rule.
 
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
@@ -1752,6 +1761,18 @@ no failures or retries. Fresh catalog usage totals $0.1867664; both original
 comparisons hit cache but warmup overhead makes net savings negative by
 $0.0067664. No prompt revision follows from the disputed original alone.
 Lower-effort calls and final-sixty validation are not run in this diagnostic.
+The subsequent authorized
+[four-note high comparison](distillation-review-v1/README.md#four-note-high-versus-xhigh-comparison-october-11)
+pauses after one definite support decision error and two matching explanation
+errors. All 92 completed relationship outputs and 25 mechanical proofs pass;
+one answer retains 12 distinct pending requests. Four fresh xhigh calls correct
+the three errors and leave software-runtime interpretation uncertain. On 142
+resolved shared model inputs, decision loss is 0.70 percentage points and full
+output loss is 2.11 points; this partial exposed panel does not qualify high.
+Prompts, production DSLv2 and mechanical rules remain unchanged. Native
+accounting reconciles at 99/428 attempts, including two warmups, one recovered
+failure and four confirmations; full cost is unknown because the failed receipt
+lacks usage. Minimum reasoning effort and final-sixty validation remain open.
 Known successful local receipts cache 7.82% of input tokens and total a catalog
 $2.289306. Net savings including warming are **−$0.020318 (−0.90%)** on that known
 subset; both failed attempts lack usage, so full cost and savings are unknown.

@@ -16,6 +16,13 @@ not an established error. The current assessment retains 380 accepts and
 Production remains DSLv2; reviewer qualification and lower-effort qualification
 remain pending.
 
+The subsequent [four-note high comparison](#four-note-high-versus-xhigh-comparison-october-11)
+is paused after three confirmed complete-output errors: one support decision
+and two matching explanations. Fresh xhigh confirmations correct all three.
+All 92 completed high relationship outputs pass full-output audit. High is not
+qualified; one answer remains pending, and software-runtime interpretation is
+newly uncertain. Prompts and mechanical rules remain unchanged.
+
 The preceding [four-note regression](#dslv10-four-note-regression-october-11)
 passes its 156 resolved complete model records following the
 [twelve-case timing diagnostic](#dslv10-timing-scope-diagnostic-october-11).
@@ -5073,11 +5080,78 @@ code, prompt, schema, mechanical rule or historical output changes.
 
 **Result:** retain DSLv10; this disputed original alone does not justify a
 prompt revision. Reviewer qualification remains pending, production remains
-DSLv2, and lower-effort calls and the final sixty are not run here. The next
-recommended step is a high-versus-xhigh comparison on the four-note audited
-panel, scoring resolved judgments against the same source assessments and
-reporting uncertainties separately. The agreed two-percentage-point tolerance
+DSLv2, and lower-effort calls and the final sixty are not run here. The
+recommended next step was the subsequently authorized
+[high-versus-xhigh comparison](#four-note-high-versus-xhigh-comparison-october-11)
+on the four-note audited panel, scoring resolved judgments against the same
+source assessments and reporting uncertainties separately. The agreed two-percentage-point tolerance
 remains a later full assessed-set criterion; a small panel cannot establish it.
+
+## Four-note high versus xhigh comparison (October 11)
+
+The user authorizes all three unchanged checks over R02/R15/R21/R14 at high,
+with concurrent auditing to reduce iteration time. Native preparation verifies
+identical prompts, complete inputs and runtime settings against the four-note
+xhigh baseline, except reasoning effort. DSMv3/DSSv2 reuse 58 verified distinct
+high originals; experimental DSLv10 runs through the shared stable launcher,
+automatic queue admission and eligible native prefix warming. ASv6.100 remains
+trusted. No prompt, production code, source assessment or mechanical rule changes.
+
+Three agents audit matching/support and two separate relationship note groups
+as results complete. Two independent audits confirm three substantive defects:
+
+- Support rejects **144 XP total** because English practice is omitted, despite
+  the post explicitly stating the amount, unit and total role and AS permitting
+  broader subjects to omit instance details.
+- Matching returns sound `null` for **Claude Code runtime telemetry**, but
+  incorrectly describes **Instructions** as a broader meaning.
+- Matching returns sound `null` for **Learning**, but incorrectly describes
+  **English language** as narrower than learning.
+
+The high support decision for **Software runtimes** is interpretation-sensitive
+and excluded from certified correctness counts. Its previously saved assessment
+is preserved. The three earlier Nostr uncertainties also remain excluded.
+
+High stops after 270 completed occurrences: 150 distinct model outputs and all
+25 mechanical proofs audited. Full-output counts are **143 accept, three reject,
+four uncertain**; all 92 relationship outputs pass. Three answers are complete;
+R14 retains 16 pending occurrences representing 12 distinct requests, with 168
+justified skips. This is a partial development comparison, not qualification.
+
+| Resolved shared inputs | High | Xhigh | Difference |
+| --- | ---: | ---: | ---: |
+| Decisions | 141/142 (99.30%) | 142/142 (100%) | −0.70 percentage points |
+| Complete decisions and explanations | 139/142 (97.89%) | 142/142 (100%) | −2.11 percentage points |
+
+The paired denominator contains 28 matching, 26 support and 88 relationship
+inputs; it excludes four uncertainties, mechanical proofs, aliases, unrun
+inputs and four high-only relationship successes previously skipped by xhigh.
+These exposed inputs provide descriptive rates, not an estimate of unseen
+accuracy or proof of the agreed two-point full-evaluation tolerance.
+
+Four fresh unchanged xhigh calls repeat the three defective inputs and the
+runtime uncertainty. Independent full-output audit accepts all three corrected
+outputs; the runtime response remains uncertain. High is paused under the
+approved small-subset failure rule; xhigh remains the baseline effort for the
+resolved development inputs. Minimum effort and final-sixty validation remain
+open. Relationship-only high testing is a possible next experiment, not an
+approved change of review settings.
+
+High generation reaches its paused terminal state in **6 min 7 s**, using
+95 attempts: 92 successful relationship judgments, two warmups and one recovered
+HTTP/2 SSE failure. The four confirmations bring the shared counter to **99/428**,
+which reconciles exactly. Eligible prefixes are approximately 1,302/1,344 tokens;
+known high receipts cache **10,368/128,689 total input tokens (8.06%)**. Known fresh
+catalog cost is $0.5565188 for high and $0.021574 for confirmations. The failed
+receipt lacks usage, so full cost and cache savings remain unknown.
+
+Ignored evidence remains under
+`oracle-mvp-review-high-four-note/target/distillation-review-v1/high-four-note/`:
+native evaluation, frozen pre-review `paused-terminal-raw.json`, attributed
+case reviews, fresh confirmation groups and `terminal-usage.json`. Complete
+response aliases, receipt validation, native stopping state, frozen source
+bindings and locked attempt accounting pass inspection. Frozen legacy target
+agreement and score agreement are not used as adjudicated correctness.
 
 ## Actual distilled wording: offline preview (October 8)
 
