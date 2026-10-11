@@ -90,19 +90,27 @@ and **1.2290 after epoch four**; TRAIN loss falls from 0.9177 to 0.1300. The
 cumulative training/evaluation/checkpoint phase takes **158.30 minutes**, with
 **24.99 GiB** peak CUDA allocation. The earlier checkpoint has lower held-out
 loss; both native generation plans are prepared, but generated meaning fidelity
-remains unmeasured. Gemma26's first epoch reduces its held-out loss from
-**2.8927 to 1.1682**; its phase takes **29.72 minutes**, with **52.54 GiB** peak
-CUDA allocation. Its remaining epochs and fresh-process verification are
-pending. Different tokenizers prevent direct cross-model loss ranking.
+remains unmeasured. Gemma26 completes the same four passes and both saved epochs
+pass fresh-process verification. Its held-out loss moves from **2.8927**, to
+**1.1682 after epoch one**, and **1.3720 after epoch four**; TRAIN loss falls
+from 1.5005 to 0.3176. Its cumulative phase takes **115.38 minutes**, with
+**52.54 GiB** peak CUDA allocation. Different tokenizers prevent direct
+cross-model loss ranking. Both models' baseline and epoch generation plans are
+prepared and their configuration hashes verified on GB10, with no generation.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
 The full case JSON alone averages 540 evaluation tokens versus 2,149 with the
-teacher instructions, with every supplied case field retained. A tested encoder
-input-only pilot is prepared to measure whether learned decision rules can
-replace that repeated constant text. Quality is not yet measured, and this
-branch-free panel does not predict the reduction for a large canonical branch.
+teacher instructions, with every supplied case field retained. Ettin's completed
+input-only fit reaches **41/46 teacher agreement**, versus 42/46 with instructions;
+both match **40/44 nonidentity cases** and 12/16 containment decisions. The input-only
+fit misses one identity control. Its cumulative phase takes **4.32 minutes**,
+versus 11.20, and batch-four forward evaluation takes **2.15 seconds for 46 cases**,
+versus 8.52. Both checkpoints pass fresh-process verification; peak allocation
+remains almost unchanged at 19.27 GiB. These measured savings and error counts
+support further qualification, not a production input-format decision. This
+branch-free panel does not predict savings or quality for a large canonical branch.
 
 The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
 describes a post-trained dense 27B hybrid-attention model, native 262,144-token
