@@ -4,7 +4,9 @@ Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 The user approved [Bootstrap-v103](Hierarchy-bootstrap-v103.md) and qualification
 on the current 344-case collection. Qualification is complete: agent review
-found one factual-support failure and two materially ambiguous meanings.
+found one factual-support failure and two materially ambiguous meanings. Two
+fresh diagnostic draws reproduce the factual failure and Rome's unclear final
+scope; review of the amusement qualifier remains disputed. Details are below.
 Approval does not activate a production prompt.
 
 ## Input and review contract
@@ -192,7 +194,114 @@ again remains unknown. Reuse savings are not prompt-quality improvement. These
 are subscription reference estimates, not new paid API charges. All attempts
 use the existing persistent 20,000-attempt counter, without reset.
 
-The next useful diagnostic is an unchanged-v103 fresh repeat of the three
-disputed entries with contrasting hashtag and named-role controls. Preserve
-source-assignment qualifications separately, then edit only the reproduced
-mechanism. No further calls or prompt changes have begun after this qualification.
+## Unchanged-v103 scope repeats
+
+The user authorized fresh repeats of the three disputed entries with contrasting
+hashtag and named-role controls. Nine entries were selected before results:
+
+| Selected topic | Original selected number | Diagnostic purpose |
+|---|---|---|
+| Coffee chains | 1 | General business-category definition versus factual assignment to the venue |
+| Coffee chain described as weird today | 1.1 | Disputed particular business identity |
+| Amusement | 4 | Independently defined emotional category |
+| Author's amusement at a rave at a coffee shop as today's unusual coffee-chain experience | 4.1 | Disputed hashtag versus business framing |
+| Coffeechain | 13 | Explicitly named hashtag-topic contrast |
+| Rome | 5 | Disputed city-wide versus proverbial-use information scope |
+| Rome not being built in six weeks | 5.1 | Explicit proverbial-claim contrast |
+| Jesús Molina | 2 | Individual identity versus musical-role information scope |
+| New-generation jazz trio associated with Jesús Molina | 2.1 | Explicit association without inventing his role in the trio |
+
+Prepare each draw natively from `bootstrap-v103-full-v1` using these exact case
+IDs through repeatable `--only` arguments, `--repeat`, `--history-root target`
+and `--prompt-cache`. IDs are unchanged from the full experiment. Its exact
+original posts, selected-root trees, subject wording, context, schemas, model,
+medium effort, subscription SSE worker and cache prefix remain frozen.
+Neither historical meanings nor preferred judgments enter the new model input.
+
+Both draws are complete, with nine valid, non-null fresh meanings each and zero
+exact reuses. All 18 inputs and rendered prompts match their original full-run
+cases byte-for-byte; native baselines bind the full-run outputs. Every evidence
+quote is a contiguous original-post excerpt. These checks establish preserved
+inputs and valid receipts, not semantic success.
+
+**The particular coffee-chain failure reproduces in both draws.** Draw 1 defines
+the author's described chain as "a business operating multiple coffee shops
+under a shared brand". Draw 2 calls it "An unspecified coffee chain". Both
+interpret the particular example as a business despite the post establishing
+only `#coffeechain` and a rave at one coffee shop. The general Coffee-chains root
+can remain a coherent business-category definition, with source assignment
+qualified. It cannot supply the missing fact that this venue belongs to a chain.
+ASv6.100's selected subject and context already suggest the business reading:
+this is not solely a newly invented Bootstrap premise. Bootstrap nevertheless
+fails its explicit rule that those fields cannot establish unsupported facts
+about a particular example. A fitting parent-child definition does not repair
+factual support.
+
+**Amusement repeats the wording, but its failure classification is disputed.**
+Both final meanings retain "coffee-chain experience", with empty ambiguity and
+resolution arrays. One reviewer finds the hashtag-versus-business framing
+materially ambiguous. Another provisionally accepts the attributed wording
+"framed/presented as", reading it as the post's framing of the supported reaction
+to this rave rather than a required business affiliation. Do not count agreement
+about the repeated words as agreement that the meaning fails. The named
+Coffeechain control identifies the hashtag topic in both draws without
+fabricating a particular business. This contrast does not make the hashtag
+interpretation mandatory for every differently worded coffee-chain entry.
+
+**Rome remains unclear in the final meaning in both draws.** Draw 1 does not
+explicitly choose between all city information and the city's proverbial use.
+Draw 2 does choose general-city scope in resolution a2, saying construction and
+proverbial use are narrower information rather than membership conditions. Its
+final meaning still describes the city "invoked in the humorous saying" without
+making that chosen information boundary clear. The improved diagnostic alone
+does not establish an unambiguous standalone meaning. Either clearly expressed,
+supported boundary remains eligible; the previous human preference is not gold.
+
+All six contrasting controls retain supported meanings, with the business root's
+source assignment qualified. Jesús Molina's first draw uses his profession as
+an identifying appositive; the second explicitly covers musical work and
+associations. Two reviewers accept the first as a general-person topic; another
+retains uncertainty about its professional-role scope. Do not silently treat
+these independently generated meanings as equivalent or splice their endpoints.
+The trio definitions preserve the named association without asserting leadership
+or performance by Molina.
+
+Two complete independent reviews cover all 18 meanings and eight own-draw
+parent-child links. Their differing assessments are preserved, not averaged into
+semantic gold. One reviewer records six accepts, one reject and two uncertainties
+per draw. The other records nine accepts, four qualified accepts, three
+uncertainties and two rejects across both draws. A third focused review accepts
+the attributed amusement framing and the first draw's general-person reading
+with qualifications. The coordinating native agent reviews record 14 accepts,
+two rejects and two uncertainties, preserving disagreements in their comments.
+No definite incompatible ancestor link was established. Rejected or ambiguous
+endpoint meanings remain visible; compatibility does not certify the rejected
+business fact, and no relation labels were generated.
+
+Ignored complete audits are `semantic-review-scope-repeat.md` in each draw and
+`independent-scope-repeat-review.md` in draw 2. Each preserves exact outputs,
+producer hashes and the fixed endpoint pairs. Immutable native snapshots are
+`report-reviewed-source.json` in the respective directories; later native agent
+reviews do not rewrite those snapshots or saved outputs.
+
+The next proposed prompt work targets these two reproduced output patterns: accepting
+an unsupported premise about a particular example from the local hierarchy,
+and leaving a chosen information scope implicit in the final meaning. These
+repeats do not isolate which instruction causes either pattern. Change and test
+factual grounding separately from final-scope expression. No prompt edit,
+Compare call or hierarchy build has begun in this diagnostic.
+
+[Native repeat accounting](hierarchy-bootstrap-v103-scope-repeat-usage-v1.json)
+records 18 fresh answers and 21 actual attempts: 18 successful case calls, two
+warmups and one recovered provider failure. All 18 successful case calls hit the
+prefix cache. There are no terminal failures or remaining cases. Known
+API-equivalent reference cost is $0.1131188; the failed attempt has missing usage,
+so complete cost is unknown. Reasoning is included in output. These are
+subscription reference estimates, not new paid API charges, and all attempts
+use the unchanged persistent 20,000-attempt counter.
+
+Native evidence remains under
+`target/bootstrap-asv6.100-regression-refresh-v1/bootstrap-v103-scope-repeat-draw1-v1`
+and `bootstrap-v103-scope-repeat-draw2-v1` in the continuing task worktree.
+This nine-entry development panel lacks a verified commercial-chain positive;
+it does not establish general reliability or certify all business-chain senses.

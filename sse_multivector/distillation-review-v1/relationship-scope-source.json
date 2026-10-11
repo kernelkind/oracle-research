@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "check": "relationship",
+  "review_source": {
+    "path": "relationship-scope-review-source.json",
+    "sha256": "6db311adf88006e9450e4ff596a002ae3e7597aee93290b3938ea16e9174c5be"
+  },
+  "cases": [
+    {
+      "id": "scope-human-complete",
+      "case": "scope-authored-pairs",
+      "student_number": "1.1",
+      "expected_reason": "Both motherhood and sexual attractiveness qualify the same human adults; the parent does not require a particular domain or attraction target."
+    },
+    {
+      "id": "scope-animal-complete",
+      "case": "scope-authored-pairs",
+      "student_number": "2.1",
+      "expected_reason": "Both motherhood and sexual attractiveness qualify the same nonhuman adults; no human-only parent restriction is expressed."
+    },
+    {
+      "id": "scope-human-motherhood",
+      "case": "scope-authored-pairs",
+      "student_number": "3.1",
+      "expected_reason": "Maternal status is retained but sexual attractiveness is not guaranteed. A post about adult human mothers without sexual appeal fits the complete child and fails the parent qualifier."
+    },
+    {
+      "id": "scope-animal-motherhood",
+      "case": "scope-authored-pairs",
+      "student_number": "4.1",
+      "expected_reason": "Maternal status is retained but sexual attractiveness is not guaranteed. A post about adult nonhuman mothers without sexual appeal fits the complete child and fails the parent qualifier."
+    },
+    {
+      "id": "scope-human-attractiveness",
+      "case": "scope-authored-pairs",
+      "student_number": "5.1",
+      "expected_reason": "Sexual attractiveness is retained but maternal status is not guaranteed. Sexually attractive adult humans who have never had or parented children fit the child and fail motherhood."
+    },
+    {
+      "id": "scope-animal-attractiveness",
+      "case": "scope-authored-pairs",
+      "student_number": "6.1",
+      "expected_reason": "Sexual attractiveness is retained but maternal status is not guaranteed. Sexually attractive adult nonhuman animals that have never had offspring or served as mothers fit the child and fail motherhood."
+    },
+    {
+      "id": "scope-human-disjoint",
+      "case": "scope-authored-pairs",
+      "student_number": "7.1",
+      "expected_reason": "The complete child permits two disjoint human groups: mothers without sexual appeal and sexually attractive adults who have never been mothers. Neither group preserves both parent properties on the same individuals."
+    },
+    {
+      "id": "scope-animal-disjoint",
+      "case": "scope-authored-pairs",
+      "student_number": "8.1",
+      "expected_reason": "The complete child permits two disjoint nonhuman groups: mothers without sexual appeal and sexually attractive adults that have never been mothers. Neither group preserves both parent properties on the same individuals."
+    }
+  ]
+}

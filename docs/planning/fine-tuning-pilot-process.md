@@ -385,6 +385,15 @@ two named-reference interpretations remain uncertain. Complete records receive
 ten accepts, one reject and three uncertainties in both audits; the mothers/MILFs
 record still adds human-only scope. The set does not pass; qualification and
 adoption remain pending. The AS rule and schema stay fixed.
+The subsequent approved [controlled scope diagnostic](../../sse_multivector/distillation-review-v1/README.md#dslv6-controlled-scope-diagnostic-october-10)
+completed eight authored human/animal comparisons and six exact saved natural
+controls with unchanged DSLv6 at Sol/xhigh. Both audits accept all 14 Booleans
+and complete records; controls retain saved decisions. Native first attempts
+reconcile at 14/28 with no reuse, retry or warming. The authored targets are
+agent assessments kept outside model inputs, not human gold. The original
+MILFs explanation and named-reference/list uncertainties remain unresolved.
+Synthetic success does not qualify natural-case accuracy; broader qualification
+and lower-effort testing remain pending.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
 mechanical rules and schemas remain fixed. The completed ten-note run retains
 its frozen concurrency of 16; the current shared runner uses automatic queue

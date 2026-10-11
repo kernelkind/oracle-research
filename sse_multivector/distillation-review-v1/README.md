@@ -19,6 +19,11 @@ its same-input 14-case Sol/xhigh trial. All Booleans retain the DSLv5 decisions;
 records receive **ten accepts, one reject and three uncertainties** from both
 agent audits. The mothers/MILFs record still adds human-only parent scope;
 the development set does not pass. Adoption and qualification remain pending.
+The subsequent [controlled scope diagnostic](#dslv6-controlled-scope-diagnostic-october-10)
+completed eight authored human/animal comparisons and six exact saved controls
+with unchanged DSLv6. Both audits accept all 14 verdicts and complete records.
+This shows sound scope handling on those cases; it does not repair the original
+MILFs explanation or settle the named-reference/list uncertainties.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3738,12 +3743,136 @@ No warming or cache savings occur. The persistent allowance records 14 of 28
 attempts used. Production adoption, qualification and lower-effort testing
 remain pending; no broader regression or final-60 run is started.
 
-The recommended next step is a controlled scope diagnostic with unchanged
-DSLv6: establish whether the repeated human-only paraphrase causes wrong
-verdicts while checking preservation of motherhood, attractiveness and their
-same-bearer relationship. Synthetic diagnostic results must remain separate
-from natural-case accuracy. This recommendation is not a prepared or authorized
-trial and cannot settle the open named-reference/list contracts.
+The user subsequently approved the controlled scope diagnostic below with
+unchanged DSLv6. It checks whether the repeated human-only paraphrase causes
+wrong verdicts while checking preservation of motherhood, attractiveness and
+their same-bearer relationship. It cannot settle the open named-reference/list
+contracts.
+
+## DSLv6 controlled scope diagnostic (October 10)
+
+The approved diagnostic contains **eight authored comparisons and six saved
+natural controls**, all fresh Sol/xhigh calls with unchanged
+[DSLv6](relationship-prompt-v6.md). The authored targets were established before
+candidate calls and independently checked. They are agent assessments, not
+independent human gold or a sample for estimating natural-note accuracy.
+
+Every authored parent is `Sexually attractive mothers`. Four child patterns
+are each tested for adult humans and adult nonhuman animals:
+
+| Child pattern | Assessed `valid`, both domains |
+| --- | --- |
+| Mothers who are sexually attractive to adult members of their own species | True |
+| Mothers, without requiring sexual attractiveness | False |
+| Adults sexually attractive to adult members of their own species, without requiring motherhood | False |
+| Two disjoint groups: mothers; sexually attractive adults | False |
+
+The positive wording attaches both properties to the same adults. Negatives
+omit a required property rather than adding a denial; disjoint groups test the
+relationship between the properties. Adulthood and attraction to members of
+the same species are child qualifications, not universal parent requirements.
+The parallel domains expose a human-only interpretation through the actual
+animal-positive verdict as well as the complete explanations.
+
+The reusable [authored source](relationship-scope-review-source.json),
+[verdict selection](relationship-scope-source.json) and
+[spec](relationship-scope-spec.json) use the existing native
+`distillation_review`/`distillation_verdict` preparation. The existing trusted
+ASv6.100 worked example C6 supplies source/schema provenance; its post and
+teacher subjects are not assessed or supplied to the DSL reviewer. Authored
+hierarchy replacements are diagnostic inputs, not distilled-model generations.
+Post support is unassessed. The model receives only the unchanged AS rule and
+complete parent/child strings; context, case IDs and expected reasons remain
+outside its input. No preparation or execution helper is added.
+
+Native `prepare --from relationship-dslv6-preview-current-runner --only ...
+--repeat` selects the six complete saved controls without copying or shortening
+their wording, evidence or receipt-bound baselines:
+
+| Saved control | Pre-call assessed `valid` |
+| --- | --- |
+| `M03-checkpoint-800-N0032:6.1` — Claims/invitation | True |
+| `M01-checkpoint-400-N0049:4.1` — 15-years-ago cost clause | True |
+| `M02-baseline-N0089:compatibility:003:3.1` — current AI wave temporal reference | True |
+| `M02-checkpoint-800-N0020:1.2.1.2.2.1` — demand, floor and negation in the object | True |
+| `M02-checkpoint-800-N0043:compatibility:005:1.1.1.1.1.1` — missing actual XP practice timing | False |
+| `M01-checkpoint-800-N0015:compatibility:023:1.2` — Daughters/Breasts | False |
+
+These control assessments agree with the previously accepted DSLv6 outputs.
+Legacy frozen qualification flags remain untouched; they are not current gold.
+Both diagnostic groups use `--repeat`: saved outputs are baselines, never fresh
+candidates or mechanically routed answers.
+
+Preparation and execution use the isolated
+`oracle-mvp-review-dslv5-draft` task worktree and bind its source paths. The
+ignored artifact root is the canonical checkout's
+`oracle-mvp/target/distillation-review-v1/prompt-development-cases-20261010/`, with
+`relationship-dslv6-scope-authored` and `relationship-dslv6-scope-controls`.
+The controls also inherit two historical source bindings in canonical main:
+`boolean-response-schema.json` and `relationship-prompt-v4.md` under
+`sse_multivector/distillation-review-v1/`. These bytes remain unchanged and
+verified through completion. The current DSLv6 prompt binds the task worktree;
+the frozen controls are not fully independent of those inherited paths. No
+binding or receipt is rewritten. Retain the task worktree for frozen source
+and receipt references.
+Native pre-call reports verify **14 distinct unrun inputs, zero attempts,
+eight new requests without baselines and six new requests with exact saved
+DSLv6 baselines**. Prompt, AS passage, schema, subscription SSE, model and
+reasoning effort stay fixed. A new native persistent allowance limits both
+groups together to 28 attempts: 14 initial calls plus provider-only retry
+reserve, at most two attempts per case. Automatic shared queue admission
+controls dispatch; initial provider recovery temporarily lowers capacity.
+The fixed instructions remain 707 tokens, below prefix-cache eligibility:
+no prefix warming or caching is prepared. No paid provider fallback is used.
+
+Both groups completed on the first attempt: **14 receipt/schema-valid fresh
+outputs, zero reuse, zero retries and zero warmups**. Root and two independent
+agents agree on every Boolean and complete evidence record:
+
+| Group | Fresh decisions | Complete-record assessments |
+| --- | --- | --- |
+| Eight authored comparisons | Two true, six false; all agree with pre-call targets | Eight accepts, zero rejects, zero uncertainties |
+| Six natural controls | Four true, two false; all retain saved DSLv6 decisions | Six accepts, zero rejects, zero uncertainties |
+
+The animal-positive record explicitly rejects a universal human-only parent
+restriction and attaches both properties to the same animals. Both disjoint
+records distinguish separate membership from guaranteed conjunction: their
+complete counterexamples supply mothers lacking appeal and attractive adults
+lacking motherhood, rather than claiming that disjointness alone negates
+either property. All remaining authored counterexamples preserve the complete
+child's qualifications. The XP control preserves completion, numerical
+progress and current total in an earned-bonus witness while omitting actual
+contemporaneous English practice. Earlier positive controls remain sound.
+
+Terminal raw reports are preserved before native attributed agent reviews:
+`relationship-dslv6-scope-authored-terminal-raw-report.json` and
+`relationship-dslv6-scope-controls-terminal-raw-report.json`. Root records the
+reconciled assessments through native `review`; exact inputs, source evidence,
+outputs, receipts, baselines and legacy labels remain unchanged. Native
+`summarize-experiments` writes `relationship-dslv6-scope-usage-summary.json`:
+**10,905 input tokens, zero cached input, 18,084 output tokens including 15,155
+reasoning tokens**, with complete usage and no accounting warnings. The saved
+catalog API-equivalent estimate is **$0.202650**, not subscription billing.
+The native persistent allowance reconciles at **14/28 used**, zero delta.
+No caching savings occur.
+
+This diagnostic establishes sound controlled scope handling on these eight
+authored cases, including preserved conjunctions and omitted restrictions.
+It establishes no causal prompt improvement: DSLv6 was unchanged, the authored cases are closely
+related, and the six natural controls were already development-exposed.
+The exact earlier mothers/MILFs pair was not included; its human-only
+explanation remains rejected. The original named-reference/list uncertainties
+are unchanged. Synthetic success does not qualify natural-note or unseen-note
+accuracy. No additional scope patch is justified by these results alone.
+
+The recommended next step is to establish the named-reference interpretation
+against ASv6.100 and the two existing uncertain named-work/game cases, then
+present the proposed rule and exact examples for approval before more model calls.
+Another unchanged trial cannot decide whether a counterexample may alter facts
+of a fixed named work or game. This is a recommendation, not newly authorized
+research or implementation. Production still defaults to DSLv2. Prompt
+adoption, qualification, list interpretation, broader regression,
+lower-effort testing and final-60 validation remain pending.
 
 ## Actual distilled wording: offline preview (October 8)
 
