@@ -158,6 +158,22 @@ recommended for adoption; v104 remains approved. Forty-two production-path
 revision/current-main traversal/graph-search checks passed; no Compare calls or
 hierarchy construction occurred in this diagnostic.
 
+The subsequent [interpretation-choice ablation](shr_single_pair/bootstrap-current-as-qualification.md#coffee-reference-interpretation-choice-ablation-predeclared-check)
+tests experimental v112 against unchanged v109 on the same original and three
+synthetic controls. Only the choice sentence changes: choosing a category
+interpretation must not settle an unknown fact about a particular example.
+Fresh matched runs retain exact source inputs, medium reasoning and automatic
+caching. The original is not predetermined-null gold; supported business
+coverage must survive. Both conditions completed four valid fresh meanings:
+the original remains uncertain and the three controls remain qualified accepts.
+Independent blinded review finds no demonstrated improvement or regression,
+and no material change triggered repeats. Ten attempts include two warmups;
+native API-equivalent cost is $0.0741512 with seven of eight definition cache
+hits, no reuses, failures or retries. All receipts and exact paired bindings
+passed independent integrity review; nine prompt-revision tests passed.
+V112 remains experimental without an adoption recommendation. V104 remains
+approved and no Compare or hierarchy work belongs to this diagnostic.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1334,7 +1350,10 @@ validation. No saved LG01 output is rewritten.
 Give each hierarchy run a specific, unique version identifier and use it in
 reports and comparisons. Link it to the exact hierarchy output and the frozen
 inputs, prompt/model settings, construction policy and native receipts used to
-generate it. The naming format remains open.
+generate it. Saved versions and recorded parameters are collected in the
+[hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md). Refresh
+it with `catalogue-hierarchies` after saving an output, and report its `H0001`-style
+ID when discussing or comparing hierarchies.
 
 The standalone canonical constructor is available through the shared launcher.
 Oracle owns construction, comparison selection, consolidation and inspection;

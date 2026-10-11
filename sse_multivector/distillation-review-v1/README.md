@@ -1,5 +1,12 @@
 # Distillation semantic review — process and evidence
 
+**Approved direction:** qualify a
+[focused coverage search and per-check reasoning settings](#eight-hour-review-direction-approved-october-11)
+for the full 1,800-output evaluation within eight hours of model generation.
+The new **DCSv1** prompt is a draft awaiting review; no new model calls or
+implementation follow from this drafting step. Current defaults and the final
+sixty-answer validation remain unchanged.
+
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
@@ -2176,7 +2183,11 @@ performance degrades significantly during expansion, stop that level, step up
 one level and continue. The user explicitly accepts at most **2 percentage
 points of correctness loss versus xhigh**. This replaces the earlier pause;
 bulk pilot grading and reserved-test access remain unapproved.
-The final choice is one reasoning level used for all three checks.
+The original study selected one reasoning level for all three checks. The
+[October 11 eight-hour direction](#eight-hour-review-direction-approved-october-11)
+supersedes that restriction for qualification: matching and support stay at
+xhigh while relationship checks are evaluated separately at high. Existing
+frozen studies and deployed defaults retain their original settings.
 
 Compare reviewer decisions against source evidence and assessed references.
 The student `correctness` score is a different quantity. Exact mechanical
@@ -5142,8 +5153,9 @@ runtime uncertainty. Independent full-output audit accepts all three corrected
 outputs; the runtime response remains uncertain. High is paused under the
 approved small-subset failure rule; xhigh remains the baseline effort for the
 resolved development inputs. Minimum effort and final-sixty validation remain
-open. Relationship-only high testing is a possible next experiment, not an
-approved change of review settings.
+open. This trial did not authorize relationship-only high settings; the later
+[eight-hour direction](#eight-hour-review-direction-approved-october-11)
+authorizes qualifying them separately without changing deployed defaults.
 
 High generation reaches its paused terminal state in **6 min 7 s**, using
 95 attempts: 92 successful relationship judgments, two warmups and one recovered
@@ -5259,6 +5271,70 @@ usage/cost, so full totals and net cache savings remain unknown. Native raw-grou
 skip; project execution is complete. Qualification, prompt correctness and the
 minimum reasoning effort remain open. No lower-effort run or prompt change is
 started by this expansion.
+
+## Eight-hour review direction approved (October 11)
+
+The user approves developing a process that retains **all 1,800 validation
+outputs** and finishes model generation within **eight hours**, assuming
+resolved backoff and a maximum of **30 concurrent requests**. The six-hour
+model-work target leaves two hours of headroom; it is conditional planning
+arithmetic, not a measured forecast. All three approved checks, full-meaning
+coverage at every compatible subject occurrence, the original final sixty,
+and the maximum two-percentage-point correctness loss remain unchanged.
+
+Qualify matching/support at xhigh and relationship checks at high separately.
+The four-note comparison has 88 identical relationship inputs: mean recorded
+latency is **14.865 s at high versus 37.145 s at xhigh**. All 92 completed high
+relationship outputs pass full-output audit, but four exposed notes do not
+qualify high. Matching/support failures from that trial remain failures.
+
+Draft **DCSv1** in [coverage-search-prompt-v1.md](coverage-search-prompt-v1.md)
+for user review before calls. For one required teacher meaning with a complete
+student match, search the currently uncovered student subjects for one
+compatible placement. Return `evidence` (numbered reasons) followed by
+`witness_student_number` (a string or `null`). A positive witness receives the existing
+single-pair relationship check; a confirmed witness establishes missing
+coverage. A negative search must account for every supplied candidate before
+it can establish coverage. Keep actual-edge judgments and matched-subject
+consistency checks separate. No complete match already establishes failed
+coverage; it requires no search.
+
+For a negative result, the evidence must name every supplied candidate exactly
+once; for a positive result, it must name only the witness. A future native
+validator can check that identity and completeness, but cannot certify the
+semantic reasons. Keep per-candidate trusted interpretation rows. An uncovered
+node may be omitted only when a retained uncovered ancestor reaches it through
+positively valid student edges under consistent interpretations. Invalid,
+skipped or unresolved edges create separate candidates. Numbering alone is
+not a valid relationship. This preparation and validation are not implemented
+by the draft.
+
+First compare DCSv1 at xhigh against independently audited pair evidence on four
+existing notes; keep reasoning effort fixed while testing the new task shape.
+Report unresolved interpretations separately. Qualify high with unchanged
+single-pair DSLv10 separately; its previous results do not qualify DCSv1.
+
+Offline counting on the saved 24 notes finds 197 required meaning groups:
+94 lack a complete match, eight are handled mechanically, and 95 need a
+semantic search. Combining those 95 searches with up to 24 observed positive
+witness checks and 60 retained consistency checks gives approximately **179
+coverage calls versus 1,025 existing distinct compatibility inputs**. These
+counts condition on saved outcomes; they are neither an exact future call
+count nor proof that DCSv1 can reliably return `null` over a candidate list.
+
+Qualify reuse of positive semantic premises: a complete teacher match can
+establish support, and proven meaning/relationship implications can settle
+other relationships. Saved inputs suggest avoiding 69 support and 61
+relationship questions. Such reuse depends on model verdicts and must retain
+their provenance; it is not a new trusted-input mechanical proof. Do not
+propagate negative support verdicts, which would amplify the certified
+`Intelligence` rejection. Two endpoint matches alone do not prove a link.
+
+Exact prompt wording, negative-search reliability, mixed-effort qualification,
+46 remaining posts' required-meaning contexts and the full runtime estimate
+remain open. Production stays DSLv2 and the deployed effort defaults remain
+unchanged. This step drafts the prompt and records the approved direction;
+it performs no model calls or implementation changes.
 
 ## Actual distilled wording: offline preview (October 8)
 

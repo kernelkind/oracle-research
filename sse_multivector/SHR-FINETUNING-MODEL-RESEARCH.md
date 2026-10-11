@@ -45,9 +45,9 @@ do not guarantee fast GB10 training.
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Retained for generative quality with fewer active parameters; expert adaptation and long suffix training/reload verified on GB10 | Potentially useful for many repeated decisions | Representative meaning-generation learning and semantic fidelity |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
-| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Larger specialized relation-only decision candidate on the Qwen3.8 foundation | Complete current branch lengths and transfer to fixed-meaning comparisons |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Provisional Compare foundation priority on the matched B96/C48 panels | Broader independent coverage, production branch lengths and checkpoint tradeoff |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
-| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Eligible inexpensive relation-only classifier; first task fit learns beyond the majority control | Broader five-label and branch coverage, more evaluation posts and robust learning; its random head is not a published task model |
+| Ettin-1B encoder | Cannot generate a Bootstrap meaning | Inexpensive input-JSON candidate with measured transfer limits | Broader reviewed learning and evaluation coverage; its random head is not a published task model |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
 
 This is a research shortlist, not authorization for every listed training campaign.
@@ -209,14 +209,34 @@ byte-identical to the local meaning while the selected canonical scope differs,
 consistent with confusing the selected node with a relative, without proving
 an attention mechanism. Epoch one remains relevant, and the branch-free,
 uncertainty-free fitting set prevents these results from establishing a
-capacity ceiling or final selection. Kev Compare and Gemma Bootstrap evaluation
-remain active; see the
+capacity ceiling or final selection.
+
+Kev27 reaches **191/196 then 183/196 regression matches**, adding eight misses
+without repairing any, and **19/21 then 21/21 branch matches**. Both regression
+epochs produce zero false equivalents; equivalent recall falls from 16/16 to
+15/16. Excluding the contradictory provisional family 033 gives 189/194 then
+181/194. Both epochs recover all three branch equivalents; conflict matches
+improve from 1/2 to 2/2 and reciprocal branch consistency from 8/9 to 9/9.
+The fourth epoch repairs exactly the Gamey meat/selected Meat false equivalent
+and the incompatible-descendant containment approval; the other 19 predictions
+remain unchanged. Corresponding isolated comparisons match 18/18 at both
+epochs while compatible branch comparisons improve from 17/18 to 18/18.
+Regression forward times are 857.74/859.12 seconds, slower than the measured
+Qwen passes. Epoch one leads on isolated regressions and epoch four on branches;
+this tradeoff selects neither production pilot adapter nor checkpoint epoch.
+The 21 short single-support branch fixtures from three notes do not establish
+production branch capacity or complete hierarchy performance.
+All Compare evaluations are complete; Gemma Bootstrap evaluation remains active.
+See the
 [native broader results and bindings](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 
 The current research priority is **Qwen27 for further Bootstrap qualification**,
-with Gemma26 retained as an alternative, and **Ettin1B, Qwen27 and Kev27 for Compare**.
-Kev27 has no measured prediction advantage over Qwen on the earlier 46-case
-fit panel. These are candidate priorities, not selected final students: the
+with Gemma26 retained as an alternative, and **Kev27 as the provisional Compare
+foundation priority**, with Qwen27 retained as the quality reference and Ettin1B
+input JSON as the inexpensive candidate with measured transfer limits.
+The earlier 46-case fit panel did not distinguish Kev and Qwen predictions;
+the broader panels now support Kev's provisional priority. These are candidate
+priorities, not selected final students: the
 development evaluation still needs broader independent post coverage and
 qualification across all five Compare labels and canonical branches, plus
 reviewed Bootstrap refusal/state/scope boundaries.
