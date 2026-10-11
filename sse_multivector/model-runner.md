@@ -1377,8 +1377,9 @@ one unique ID for the raw build and its derived menu/export in reports and
 comparisons; checkpoints do not receive separate run IDs. **HR03** identifies
 the official ASv6.100 50-note Bootstrap-v96 / Compare-v48 build. Its frozen inputs,
 prompt/model settings, construction policy and native receipts are collected in
-the [hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md).
-Update the explicit official-run list before regenerating it with the offline
+the [Markdown hierarchy register](../docs/recommendation-engine/hierarchy-runs.md).
+Update that register and the explicit official-run list before regenerating the
+HTML viewer with the offline
 `catalogue-hierarchies` command. Diagnostic execution approval, completion and
 browsing exports do not establish official status. The previous `H0001`–`H0701`
 diagnostic inventory IDs are withdrawn and must not be reused.
@@ -1697,7 +1698,15 @@ answers. Preparation binds the existing selection, teacher-meaning assessments,
 receipts and premise snapshots; it performs no inference. It omits no-match
 and already-covered work, preserves matching-self guards, retains children
 behind invalid, unrun or explicitly disputed edges, and shares exact candidate
-wording/context duplicates. Ordinary `run`, `show` and `review` operate on the
+wording/context duplicates. It also reuses accepted complete matching against
+actual trusted teacher ancestor paths to settle positive placements before
+search. Repeated `--premise-audit AUDIT.jsonl` arguments bind existing exact
+input/output assessments when acceptance is separate from native reviews.
+Current native acceptance also qualifies; stale, rejected, uncertain or missing
+acceptance cannot license reuse. Available matching self guards remain enforced.
+Evidence retains matching receipts, accepted audit hashes/lines or current
+reviews, mechanical guard proofs and each actual teacher path/context.
+Absent paths or null matches do not establish a negative. Ordinary `run`, `show` and `review` operate on the
 returned experiments. Eligible repeated prefixes use `--prompt-cache`.
 Complete negative evidence is mechanically validated; semantic correctness and
 positive-witness verification remain separate requirements. Historical pair
@@ -1720,10 +1729,13 @@ fresh calls; it rejects the invalid positive witness and accepts the other
 pair with zero fresh calls. The final native summary reconciles 44 fresh
 attempts, 17 reuses and no retries or failures; it keeps historical generation
 usage separate. A false negative remains outside positive-witness verification.
-Accepted complete matching plus trusted teacher paths could settle four of
-these searches, but that model-dependent reuse is not implemented. DCSv1
-remains unqualified; the diagnosis recommends implementing and testing that
-reuse before further model calls, while retaining its exact provenance.
+The subsequently approved
+[conditional matching/path reuse](distillation-review-v1/README.md#conditional-matchingpath-reuse-october-11)
+is implemented in the experimental adapter. Offline native preparation settles
+exactly four of these searches: 38 become 34, with all 89 self guards and
+remaining reviewer inputs unchanged. It verifies matching receipts, audit
+bindings and actual teacher paths without inference. Separate required-child
+matching uncertainties remain unresolved. DCSv1 and full runtime remain unqualified.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
