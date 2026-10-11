@@ -1666,6 +1666,12 @@ Complete negative evidence is mechanically validated; semantic correctness and
 positive-witness verification remain separate requirements. Historical pair
 agreement is diagnostic rather than qualification. This adapter does not replace
 the deployed all-pairs evaluation or establish the eight-hour runtime target.
+Its [four-note xhigh development trial](distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+completes ten fresh searches plus four eligible warmups in approximately 75
+seconds. Three complete-output audits accept all ten decisions and reasons;
+unchanged DSLv10 verifies the sole witness through exact-input reuse. Native
+`summarize-experiments` reconciles usage and the attempt budget. These small-panel
+results do not qualify negative-search reliability or full-evaluation runtime.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

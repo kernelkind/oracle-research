@@ -558,9 +558,15 @@ that comparison separate from high qualification for single-pair DSLv10.
 Retain actual-edge judgments and matched-subject consistency checks. Separately
 qualify high for relationships and reuse of positive semantic premises for
 support/relationship judgments, retaining model-dependent provenance. Do not
-propagate negative support verdicts. DCSv1 reliability, the
-remaining required-meaning contexts and runtime remain open; production stays
-DSLv2. See the [evidence and qualification direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11).
+propagate negative support verdicts. The
+[four-note xhigh DCSv1 trial](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+finishes ten fresh searches and four eligible warmups in approximately 75
+seconds. Three full-output audits accept nine negatives and one missing-placement
+witness; unchanged DSLv10 verifies the witness through exact-input reuse with
+zero new calls. The small, development-exposed panel has only one positive
+case. Generalization, remaining required-meaning contexts and the full runtime
+remain open; production stays DSLv2. See the
+[evidence and qualification direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11).
 
 **Mechanical decisions approved October 9:** all three checks use mechanical
 results wherever trusted inputs settle the question. An exact teacher subject
