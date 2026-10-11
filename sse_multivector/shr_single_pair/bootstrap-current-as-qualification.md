@@ -12,7 +12,8 @@ it does not introduce browsing preferences or hierarchy-shaping requirements.
 
 [BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
 on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
-but not qualified. BBv5's four-case panel and unchanged repeat remain evidence.
+and its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
+but not generally qualified. BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
 BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
@@ -208,9 +209,62 @@ earlier generation. Exact post quotes, resolution IDs, single-paragraph delta
 and receipt bindings pass; nine native revision tests pass. No Compare calls,
 hierarchy construction or activation occurred.
 
-Next, repeat the unchanged case and check a genuinely particular activity to
-test both the generic scope and identity preservation before expanding the
-panel. Those are proposed tests, not started experiments.
+The user approved the unchanged repeat and a genuinely particular activity
+control. Both completed under unchanged BBv6, as recorded below.
+
+#### Unchanged BBv6 stock repeat and person-specific control
+
+The shared runner prepared and completed two separate single-case experiments
+in the BB worktree, using GPT-6.1 Sol medium and the same BBv6 prompt, output
+schema, SSE transport and cache prefix. Both received fresh contexts and
+processes with no conversation history. Stock used native `--from --repeat`
+against the first BBv6 experiment; exact-answer reuse was deliberately
+disabled. The person-specific control inherited its complete input and original
+evidence from the saved v109 ASv6.100 collection; the old answer remained
+baseline metadata and did not enter model input. The control's post is the
+existing **synthetic risotto process post**, not a real-post sample or a new
+AS generation. Neither input nor prompt was edited.
+
+| Check | Native experiment | Agent assessment |
+|---|---|---|
+| Generic recurring stock-making, selected `5.1` | `target/bootstrap-broad-v6-stock-repeat-v1` | Accept: the fresh answer explicitly resolves general activity versus author-only practice, retaining frequency, saved-carcass source and cooking to produce stock. Vessels, batch sizes, canning and storage remain optional. |
+| Author making risotto for the shared game-night dinner, selected `3.1` | `target/bootstrap-broad-v6-person-control-v1` | Accept: the meaning preserves the expressly named author and particular meal purpose, with cooking rice to prepare risotto as the process. Its ongoing state is directly supported; it invents neither completion nor plating. |
+
+The stock repeat's final meaning remains generic. Its optional handling details
+are longer than the first draw's definition, but do not add membership
+requirements. Thus both independent BBv6 stock draws preserve the supported
+broader activity, whereas both earlier BBv5 draws added author-only scope.
+This small adaptive check supports the observed change; it is not a stability
+estimate or an isolated causal attribution to one sentence.
+
+The person-specific control does not broaden away an expressed participant or
+occasion. Descendant techniques remain evidence about the particular activity,
+without becoming universal recipe requirements. The contrast shows that this
+BBv6 draw distinguishes an actor in the selected subject from an actor only in
+a supporting example. It does not qualify other identity boundaries or certify
+whole-branch containment. Independent read-only review by
+`bb_instruction_audit` agrees with both assessments; native agent reviews bind
+them to the exact outputs. These are agent findings, not new user semantic gold.
+
+| Check | Native case ID | Record SHA-256 |
+|---|---|---|
+| Stock repeat | `bootstrap-2bf8ef02c91a82528e1de36c2ac9723d4b9cf1c9e2ba4f0a19e36945b8127066` | `958f48a2f863f7f07606a9dc95a0d8a2e7b531fc51fc3dc87174f02c831a64c1` |
+| Person-specific control | `bootstrap-82843ae0911de7b947a36ad1e74680193c616f1c869aee476d9fe4663f3578fd` | `0b760827ea8f749b5f2c0fd67afe5a912a4cc49ba84d72e3347af99f4aff150e` |
+
+Each experiment used one fresh attempt, with one valid answer and no retry,
+failure, answer reuse or warmup. The one-attempt caps retained caching while
+giving substantive requests priority. Stock records 5,504 cached-input tokens
+and native API-equivalent cost $0.0094844; the control records 4,864 cached-input
+tokens and $0.0087184. These costs exclude earlier producer generation and do
+not represent subscription invoices. Original inputs/evidence match their
+inherited source cases; both conditions use unchanged BBv6 and identical model,
+schema and cache settings. Native receipts and exact post quotes validate.
+No prompt edit, Compare inference, hierarchy build or
+activation occurred.
+
+Next proposed check: evaluate the unresolved named-topic boundaries for Rome
+and Jesús Molina under unchanged BBv6 before considering another revision.
+Those tests have not started.
 
 ## Existing Bootstrap qualification
 
