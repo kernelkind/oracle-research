@@ -174,7 +174,7 @@ meaning fidelity. See the
 
 The broader fixed-v96 Bootstrap panel now has 40 fresh valid meanings from
 Gemma's first epoch, with no failures or nulls. Bound agent reviews accept
-**16, reject 10 and leave 14 uncertain**, versus Qwen's provisional 25/5/10
+**16, reject 10 and leave 14 uncertain**, versus Qwen's provisional 24/6/10
 and 28/5/7 at epochs one and four. Gemma broadens Rosemary to mint-family plants
 and Rome to an empire, invents experienced health harm, and retains undefined
 activity processes and joined-topic identity defects. All six provisional
@@ -182,8 +182,19 @@ teacher-null cases receive meanings; their unsettled references do not establish
 refusal accuracy. Median native/model execution is **67.91/67.80 seconds**,
 with **51.88 GiB** peak allocation and 230,329 input / 1,489 output tokens.
 The verified unmerged expert-adapter path limits optimized serving forecasts.
-These exposed diagnostics preserve Qwen's provisional Bootstrap priority;
-Gemma's fourth-epoch evaluation remains pending and no final student is selected.
+Qwen's first-epoch count includes three supplementary criterion reconciliations:
+accept the nonexhaustive edible Seed-oil definition and reject pressure-canning
+and stock-making without their defining processes. All original 40 plus three
+supplementary reviews remain preserved; counts use the latest bound review for
+each of the 40 unchanged outputs.
+Qwen's provisional Bootstrap priority has concrete paired support: both epochs
+preserve Rosemary's herb identity, Rome's city identity and Potatoes as a kind,
+and its fourth epoch defines stock-making through cooking carcasses with water.
+Gemma's first epoch instead preserves Cooking's heat requirement better than
+either Qwen epoch. Both retain defects, including pressure-canning's omitted
+process and experienced-harm invention in Qwen's fourth epoch and Gemma's first.
+Review counts alone do not rank these foundations. Gemma's fourth-epoch
+evaluation remains pending and no final student is selected.
 Native identities and result/review hashes are in the
 [broader evaluation record](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 

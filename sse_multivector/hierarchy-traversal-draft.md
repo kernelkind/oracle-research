@@ -1,9 +1,10 @@
-# Hierarchy selection by traversal — draft v24
+# Hierarchy selection by traversal — draft v25
 
-**Status: approved design, implemented by the standalone `traversal-v24` constructor.**
-Stopping-check timing remains provisional. Comparison prompts and previously
-frozen experiments retain their existing contracts. No live model trial of this
-implementation has been run.
+**Status: approved traversal baseline implemented by the standalone
+`traversal-v24` constructor; the v25 shaping and refinement updates below are
+approved design, not yet implemented.** Stopping-check timing remains
+provisional. Comparison prompts and previously frozen experiments retain their
+existing contracts. The limited three-note trial is recorded below.
 
 ## Goal and inputs
 
@@ -53,8 +54,30 @@ Do not skip a local child merely because its original parent's canonical node
 represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
-The selection order and stopping conditions below are agreed. Stopping-check
-timing is provisionally approved. The constructor follows these rules.
+The initial selection order is implemented. The refinement restriction below
+is newly approved and not yet implemented.
+
+### Agreed refinement after note coverage
+
+**Once every selected note is represented, select only unused, deeper local
+nodes from notes represented by canonical leaves containing multiple notes.**
+A canonical leaf has no canonical children. Count its distinct supporting note
+IDs; do not count duplicate entries as separate notes. Take the union of note
+IDs across all leaves containing more than one note. Only those notes supply
+subsequent deeper local selections. Preserve the saved level and round-robin
+order within that eligible set, and use ordinary traversal for each selected
+node. Recompute eligibility from the current graph as construction proceeds.
+
+A note remains eligible if it belongs to any leaf containing multiple notes,
+even when it is individually accessible elsewhere. Before every note is
+represented, retain the initial selection rules; this restriction must not
+prevent admission of uncovered notes. It changes later-level selection, not
+separately required initial L1 processing in a workflow such as the prominence
+selection draft.
+
+If a leaf containing multiple notes has no remaining eligible local nodes that
+produce a valid split, report it as unresolved rather than claiming completion.
+This rule is not implemented by the current constructor.
 
 ## Agreed traversal rules
 
@@ -248,13 +271,22 @@ groups as warnings; six is not a structural completion requirement.
 **Stop selecting further local nodes when the finished browsing hierarchy meets
 both conditions:**
 
-- Every note is reachable individually.
+- Every note is reachable individually, and every canonical leaf represents
+  exactly one distinct note.
 - Every downward step strictly reduces the distinct-note set.
 
 Count a node's own supporting notes and recursive canonical descendants,
 deduplicating note IDs. Grouping remains best effort under the consolidation
 trigger below. No additional final review or search for unused regroupings or
 shortcuts is required before stopping.
+
+**Remove a redundant step when its parent and child represent exactly the same
+notes in the finished hierarchy.** Preserve individual note access and valid
+containment when reconnecting the retained nodes. Equal observed note sets do
+not establish equivalent meanings; do not merge meanings or transfer local
+support merely because note sets match. Choosing which node to retain and
+handling its other branches still require a concrete worked example. Automatic
+removal and the new leaf-completion check are not yet implemented.
 
 These conditions do not claim global optimality or establish relationships for
 unchecked deeper local nodes.
@@ -265,9 +297,10 @@ unchecked deeper local nodes.
 conditions against the current browsing hierarchy and every note in the selected
 corpus.** A complete local level is not required before checking.
 
-Check from L1 onward. If L1 already provides individual access to every note and
-all canonical edges strictly narrow the note set, stop there. Remaining L1 roots
-and deeper local nodes stay unprocessed.
+Check from L1 onward. If L1 already provides individual access to every note,
+every canonical leaf represents one note, and all canonical edges strictly
+narrow the note set, stop there. Remaining L1 roots and deeper local nodes
+stay unprocessed.
 
 If either condition fails, continue construction under the selection and
 concurrent-search rules. When both pass:
@@ -279,8 +312,10 @@ concurrent-search rules. When both pass:
 
 On later resumption, reuse exact unchanged answers and check a search against
 the then-current graph before placement, as required by the concurrent-search
-policy. This timing is implemented provisionally; live cost and hierarchy quality
-have not been measured.
+policy. The current constructor implements this timing for the earlier
+individual-access and strict-edge checks. It does not yet require every leaf to contain one note
+or automatically remove redundant steps. The limited trial below does not
+establish general hierarchy quality.
 
 ## Agreed consolidation trigger
 
@@ -563,3 +598,42 @@ these rules directly, without policy, eligibility or forced-comparison switches.
 The former root/child/growth, shortlist and continuation construction paths have
 been removed; their implementations remain in Git history. Shared graph checks,
 receipt validation and saved-data review tools remain available.
+
+### Three-note automatic trial with Bootstrap-v109 and Compare-v179
+
+The user selected these exact prompts for the first real automatic trial on
+2026-10-11. The saved ASv6.100 corpus is an unchanged copy of
+`oracle-mvp-shr-pair-correctness-v1/target/bootstrap-asv6.100-regression-refresh-v1/collected/subjects.json`.
+Selected original notes, in order: rocket-stove cooking (`99e6a514…`), lamb dinner
+(`26749e4b…`) and shrimp risotto (`a7475c94…`). Full IDs and frozen bindings are in
+`oracle-mvp-canonical-traversal-three-note-v1/target/canonical-traversal-three-note-v1/traversal.spec.json`
+and `trial/state.json`. Execution used the shared stable launcher, GPT-6.1 Sol
+medium subscription requests and a persistent 100-attempt safety limit. The
+Consolidation-v4 text was copied unchanged from the shaping task; no prompt was
+edited or broadly activated.
+
+The automatic command finished with three independent canonical roots: Cooking,
+Dinner and Food. Each represents one distinct note, so individual access passes
+and the zero-edge graph has no note-set violations. Compare-v179 returned
+neither for all three root pairs; its reasons distinguish the required cooking
+activity, evening-meal restriction and Food's human-consumer restriction. These
+are saved model judgments, not new human gold. Five local entries were selected;
+three were placed and two concurrent searches were preserved without placement.
+The run stopped during L1. It exercised neither descendant placement nor
+consolidation, and therefore does not qualify those behaviors or hierarchy
+quality generally.
+
+Native accounting reconciles 15 fresh attempts, including warmups and one
+recovered failure, plus two exact answer reuses. There were zero terminal
+failures or held placements. Two unrun comparison cases remain paused following
+the stopping decision. Known fresh API-equivalent catalog cost is $0.067084;
+the complete total is unknown because the failed attempt lacks usage. Receipts,
+`run-summary.json`, `audit.json`, `usage.json` and resume state remain in the
+ignored task artifacts. The task worktree must remain for those frozen paths.
+
+**Current shaping limitation:** strict note-set narrowing is a stopping check;
+the L1-first round-robin selector has no rule targeting equal-note-set edges.
+The six-sibling consolidation trigger addresses option count, and cannot be
+assumed to remove such edges. This trial has no edges and does not exercise that
+limitation. The user subsequently approved the redundant-step removal and
+restricted refinement selection recorded above. These updates have not been implemented.
