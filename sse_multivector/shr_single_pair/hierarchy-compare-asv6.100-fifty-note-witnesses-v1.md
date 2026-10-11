@@ -1083,3 +1083,84 @@ reviews and usage natively and preserve old outputs. A successful draw would
 qualify this panel; it would not prove causal significance, general accuracy or
 production readiness. Official reasoning guidance remains the previously
 fetched direct/concise-instruction guidance, not proof of this semantic fix.
+
+### Completed condition diagnostic v2
+
+All eight initial cases completed validly through the shared runner: nine
+actual attempts including one warmup, zero retries/reuses/failures/missing usage,
+and eight of eight comparison cache hits. Native API-equivalent cost was
+**$0.062224**, including warmup; subscription incremental cash remained zero.
+The native usage source is `compare-condition-diagnostic-usage-v2.json`, with
+report `target/compare-condition-diagnostic-v2/usage-v1.json`. The existing
+persistent counter was retained; receipt attribution separates this work from
+other agents' concurrent consumption.
+
+Independent semantic review accepts six outputs and rejects two. Seven final
+labels are supported; the rejected bagel snapshot has the correct final label
+but an unsupported condition. These remain bounded agent assessments and exact
+previous human judgments, not general accuracy estimates:
+
+| Cases | V2 assessment |
+| --- | --- |
+| 024 both | Accept neither. Forward finds genuine sourdough made solely as a theatrical prop; reverse finds sourdough made solely for livestock. Both preserve breadmaking/fermentation while removing required intended human nourishment. |
+| 025 both | Accept neither. Dog-only consumption fits Eating but fails human-nourishment Food; cultivation/preparation without eating defeats reverse coverage. |
+| 022 isolated forward | Accept Bread containing bagel preparation under the retained information-topic convention. |
+| 034 forward | Reject neither: it treats an integrated extractor fan aspect as an independently defined component topic. |
+| 034 reverse | Accept Food preparation containing the role-defined cooking-appliance topic. |
+| Snapshot 022/C068 | Reject diagnostics: endpoint Bread coverage, snack-only meal counterexample and final uncertain are supported, but intended human nourishment is still invented at Food ancestor C001. |
+
+The purpose variation elicits valid counterexamples for both exact human-reviewed
+negative pairs in this draw. V1 had incorrectly accepted sourdough/Food in both
+orientations. The original Cooking appliance positives do not both survive,
+however, and the same bagel consumer-purpose inference remains. V1's five
+review accepts become six in this one matched eight-case draw; this is not a
+reliability estimate or evidence of causal significance. No repeat was run.
+
+The appliance reversal is a concrete unchanged-meaning contradiction. Forward
+uses the integrated fan's ventilation purpose to reject Food preparation
+covering Cooking appliances. Reverse retains the appliance's cooking-design
+purpose and correctly treats integrated components as information about that
+same role-defined equipment. The forward counterexample does not establish
+information outside the parent under the retained topic convention: it makes
+the selected child's component aspect an independent topic. This assessment
+does not establish containment for a separately defined extractor-fan node.
+Even without accepting that semantic assessment as gold, the contradictory
+reciprocal labels establish that at least one response is wrong.
+
+The snapshot's C001 condition now states:
+
+> Making bagels as food necessarily establishes preparation of substances intended for people to eat for nourishment; no different purpose is admitted by the stated food-preparation topic.
+
+The child's definition does not require human consumers; animal-food-only
+preparation can retain its bagel, texture and pantry constraints. This diagnostic
+still lacks a supported necessity proof or an exclusion of that variation.
+Both reviewers preserve this objection as an agent assessment, not new user
+gold. The valid meal-role counterexample and final uncertain remain intact.
+
+**V2 fails the initial gate. The remaining seven and fresh eight-case repeat
+were not prepared or run.** Its three complete reciprocal pairs contain one
+reversal, for 034. This experiment changes neither Compare-v77 nor Bootstrap
+meanings/prompts, the schema, adapters, constructor or hierarchy. No external
+agent message was sent; v2 remains a tested experimental diagnostic.
+
+Mechanical audits verify 66 exact non-null phrase quotations, 18 unique
+node-pair checks, complete required endpoint/consequence inventories and
+relations consistent with each response's declared statuses. All eight inputs,
+review-only evidence and settings match v1. All 897 source, one config and 38
+code bindings match. Nine response IDs are fresh and disjoint from the 58 prior
+relevant responses; no conversation/history linkage or HTTP retry occurred.
+Native reviews preserve all non-review case fields. Generation/reviewed
+snapshots are `initial-generation.json` and `initial-reviewed.json` under
+`target/compare-condition-diagnostic-v2/`.
+
+The component-rule sentence is a concrete next ablation candidate:
+
+> A material or component must have its own established role; do not transfer the finished equipment's use to it.
+
+The rejected forward explanation applies that rule to a component merely
+mentioned within an appliance's fixed topic. A useful controlled test would
+remove only this sentence, retaining v2's purpose variation, and compare the
+appliance pair alongside separately defined material/component controls.
+Removal must not silently give those separate topics the finished equipment's
+role. This is a causal hypothesis, not a demonstrated responsible sentence or
+authorization for another edit merely because the suggestion is recorded.

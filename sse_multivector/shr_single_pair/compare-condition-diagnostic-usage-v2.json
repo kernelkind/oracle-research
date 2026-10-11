@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "condition_diagnostic_v2_initial": ["../../target/compare-condition-diagnostic-v2/initial-v1"]
+  }
+}
