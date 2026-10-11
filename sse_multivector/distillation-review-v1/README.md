@@ -1,5 +1,12 @@
 # Distillation semantic review — process and evidence
 
+**Current draft:** [DSLv9](relationship-prompt-v9.md) implements the user-approved
+[audit correction](#dslv9-evidence-requirements-draft-october-11). It restores AS's
+subject-wording guidance, makes hypothetical counterexamples optional and
+receives selected trusted teacher contexts for interpreting existing words.
+Its exact wording awaits review; no DSLv9 inference or production adoption has
+occurred. Preparation tests pass; the known bulk-runner migration remains open.
+
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
 then run broader regression checks on the fixed **ten notes** once that set
@@ -40,7 +47,7 @@ calls retain all twelve frozen assessed targets; the two originally unscored
 cases remain unscored. Both complete-output audits give **twelve accepts, one
 rejected explanation and one uncertainty**. The rollover verdict now excludes
 the omitted posted action, but its counterexample only changes what is
-discussed. The MILF tag's lexical scope remains unresolved. This development
+discussed. The MILF tag's lexical scope was unresolved in that review. This development
 set does not pass; broader regression and lower-effort testing remain pending.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
@@ -4122,12 +4129,87 @@ wall duration is not stored. Cache share and estimated savings are zero.
 
 The development set still does not pass. The clarification removes the
 observed restoration of posted facts through identity, but does not establish
-causal improvement or unseen accuracy. The next recommendation is to settle
-what evidence can establish an invalid fixed-reference pair under the mandatory
-counterexample requirement, rather than launch another revision or repeat.
-The tag's lexical scope remains a separate open interpretation. No proof-rule
-change is adopted. Broader regression, qualification, lower-effort testing and
-the final 60 remain pending; production still defaults to DSLv2.
+causal improvement or unseen accuracy. That result led to a deep audit and the
+user-approved [DSLv9 drafting step](#dslv9-evidence-requirements-draft-october-11),
+which changes the proposed evidence requirement rather than retrying this
+unchanged prompt. The audit also found an existing trusted maternal interpretation
+that this diagnostic never received. Original outputs, reviews and unscored
+targets remain preserved; neither finding retrospectively makes DSLv8 pass.
+Broader regression, qualification, lower-effort testing and the final 60 remain
+pending; production still defaults to DSLv2.
+
+## DSLv9 evidence requirements draft (October 11)
+
+The user authorized proceeding with the deep audit's recommended correction.
+Native `revise` creates [DSLv9](relationship-prompt-v9.md) and
+[its revision receipt](relationship-prompt-v9.md.revision.json) from DSLv8.
+This is an unrun draft for exact-wording review, not reviewer qualification or
+production adoption. DSMv3, DSSv2, trusted ASv6.100, Boolean/reason validation,
+mechanical decisions and Sol/xhigh subscription SSE remain unchanged.
+
+DSLv9 receives ASv6.100's complete subject-wording paragraph before the unchanged
+parent-child passage. It establishes that a heading names a subject at its level
+of generality without necessarily asserting its occurrence. The quoted
+hierarchy-building instruction to reconstruct complete referents is removed;
+AS's guidance for interpreting names remains verbatim. Invalidity requires an
+expressed parent restriction missing or changed in the child's meaning, with
+an explanation grounded in the complete wording. A hypothetical post is optional;
+if supplied, it must preserve the interpretation and child qualifications without
+inventing fixed-referent facts. Wrong definitions or explanations still fail
+complete-output review, even when the Boolean is right.
+
+The existing teacher index retains source contexts. When a template requests
+`TEACHER_CONTEXTS`, preparation copies at most two selected source paths: each
+endpoint's exact teacher occurrence and its ancestors. Existing catalog order
+selects the first exact occurrence; coverage compatibility uses its already-bound
+`teacher_representative_number` for the child. Shared source numbers and identical
+subject/context rows are deduplicated. Only `subject` and `context` reach the
+model; `teacher_context_numbers` remains native review evidence. Existing source
+hash checks protect the original teacher data. No semantic retrieval, generated
+glossary, extra model call or new mechanical verdict is introduced.
+
+Additional context grows with those two hierarchy depths, not all duplicate
+branches or the full teacher answer. This is selected evidence rather than an
+exhaustive interpretation inventory. An endpoint without exact teacher wording
+adds no teacher path and retains original-post interpretation. Contexts can
+establish the meaning of words already present; their instance facts cannot
+restore absent actions, amounts, evaluations, purposes or relationships, or
+narrow a general heading to the context's particular instance.
+
+For the previously unscored tag case, the existing trusted teacher explicitly
+defines `MILFs` as `the sexual category of sexually desirable mothers`. The
+selected `6`, `9`, `9.1` paths supply that interpretation alongside the complete
+tag child. Under this meaning, the Mothers topic is retained without asserting
+that performers or characters are mothers. The prospective assessment for this
+enriched input is valid. The previously unscored winnerless-round case can be
+assessed invalid through the missing funds/carry-forward relationship, without
+inventing an alternative game history. The twelve earlier assessed targets stay
+unchanged; these are new prospective agent assessments, not changes to frozen
+DSLv7/v8 targets or independently adjudicated gold. Record them with native
+pre-call reviews before any separately authorized diagnostic.
+
+Two new production-preparation tests first fail because `TEACHER_CONTEXTS` is
+missing, then pass after the adapter change. They cover both verdict source
+formats, exact maternal source wording, unrelated-row exclusion, retained pair
+strings and absence of a new mechanical verdict. A native preparation regression
+also verifies actual student pairs, a specific coverage child occurrence despite
+earlier duplicate wording, empty evidence for unmatched pairs, withheld target
+metadata and zero inference. The four relevant suites run 96 tests: 63 pass and
+33 failures reproduce on unchanged HEAD `65876790` (31 reject the removed runner
+concurrency setting; two lack the pilot training fixture). The baseline runs
+93 tests with the same failing names and reasons; all three added tests pass.
+Old templates omit the new input and retain their original AS excerpt;
+production still defaults to DSLv2.
+
+Exact DSLv9 wording is presented before calls. Its new inputs must be rebuilt
+through the native source adapter; `prepare --from` alone cannot recover teacher
+contexts absent from DSLv8. The unchanged fourteen-case identities can supply the
+bounded development diagnostic after approval, with prior outputs as baseline.
+That is regression evidence; previously used cases and portions of the final
+sixty do not establish independent unseen accuracy. The known bulk preparation
+helper still emits the rejected concurrency setting and requires its own scoped
+migration before the complete ten-note workflow can resume. No inference,
+broader regression, lower-effort trial or final-sixty run is performed here.
 
 ## Actual distilled wording: offline preview (October 8)
 

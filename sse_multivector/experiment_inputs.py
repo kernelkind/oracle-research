@@ -165,7 +165,8 @@ def prepare_file(dataset, path, template, load_report=None):
         except ImportError:
             import distillation_verdict
         cases, protected, preparation = distillation_verdict.prepare_source(
-            source, path.parent, dataset.get('select'), include_post='{POST}' in template)
+            source, path.parent, dataset.get('select'), include_post='{POST}' in template,
+            include_teacher_contexts='{TEACHER_CONTEXTS}' in template)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_matching':
@@ -185,7 +186,8 @@ def prepare_file(dataset, path, template, load_report=None):
     if dataset['adapter'] == 'distillation_review_evaluation':
         from . import distillation_review_evaluation
         cases, protected, preparation = distillation_review_evaluation.prepare_source(
-            source, path.parent, dataset.get('select'), include_post='{POST}' in template)
+            source, path.parent, dataset.get('select'), include_post='{POST}' in template,
+            include_teacher_contexts='{TEACHER_CONTEXTS}' in template)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_review':
