@@ -4,9 +4,13 @@ This is an additional **Compare development panel**, not a Bootstrap test or a
 new hierarchy. The user authorized adding the failures identified in the
 [fresh fifty-note findings](hierarchy-as100-fifty-note-findings-v1.md) to the
 Compare regression set. The original construction used unchanged Bootstrap-v96
-and Compare-v48. Compare-v69 and the newer approved-for-qualification
-Compare-v75 have completed experimental trials; neither is adopted for
-production. The v75 results and remaining failures are recorded below.
+and Compare-v48. Compare-v69 and approved-for-qualification Compare-v75 completed
+the initial experimental trials. The latest experimental V176 failed fresh
+confirmation and is not adopted. The
+[input-validity audit](#input-validity-audit-before-further-compare-edits) separates
+provisional accuracy candidates, ambiguous meanings and consistency fixtures
+before further edits. Original results, producer receipts and actual user
+decisions remain preserved below; review counts are not accuracy rates.
 
 ## Frozen selection
 
@@ -4425,14 +4429,14 @@ Independent controls review:6 accept/0 proof reject/4 qualified. Snapshot025
 and both isolated025 judgments retain the independent food/drink boundary;
 snapshot032 assumes particular human/nourishment properties. Both029 and
 snapshot031 retain supported nulls. One settled isolated025 reversal remains.
-Core review preliminarily records15 accept/0 proof reject/3 qualified, with zero
+Completed native core review records15 accept/0 proof reject/3 qualified, with zero
 settled reversals/chains. Actual closed-hole production now tests the ring
 requirement; display-only bagels, animal consumers, water-risotto, intended cooking,
 music and independent enjoyment-only consumption have supported proofs. Final
-native core registration remains pending at this checkpoint. These draws do not
+native core registration is complete. These draws do not
 establish causality or reliability; the unresolved control conflict blocks adoption.
 
-Next: a fresh matched V173/V176 full33-core/19-control panel for both versions,
+The fresh matched V173/V176 full33-core/19-control panel for both versions covers
 104 comparisons plus four warmups,108 attempts absent failures/retries. This
 repeats the28 screened cases and includes24 additional target cases per version;
 it is not the196/102 broader qualification. Inputs, meanings and comparison rules
@@ -4442,3 +4446,233 @@ reversals, chains and canonical consequences. Persistent conflicts or renewed
 imports falsify reliable repair; do not append another order instruction.
 Broader qualification requires a promising confirmed result. Native usage source:
 hierarchy-compare-v176-matched-confirmation-usage-v1.json.
+
+The matched repeat completed104 valid comparisons in108 attempts, including four
+warmups, with no failures, retries, exact reuses or missing usage. Native catalog
+API-equivalent cost is$0.9395856. All104 outputs execute their respective ordering:
+candidate justification before answer, baseline answer before justification.
+Native core review records candidate20 accept/4 proof reject/9 qualified and
+baseline23 accept/3 proof reject/7 qualified. Candidate control review records
+14 accept/1 proof reject/4 qualified; baseline14 accept/2 proof reject/3 qualified.
+These are output/proof assessments, not semantic accuracy rates.
+
+Candidate core has three settled reversals(018/053/070), one forward chain witness
+and none in reverse; controls add one isolated025 reversal. Baseline core has
+one070 reversal and no chain witness; baseline controls have no settled reversal.
+The candidate's renewed053 broth requirement, both022 production/ring proofs and
+071 morning-context claim were challenged by the output reviewers. These are
+review findings, not independently certified wrong relation labels. Several of
+those cases also have qualified input boundaries;
+the subsequent input audit must distinguish producer ambiguity from definite
+Compare mistakes rather than treating every rejected justification as wrong gold.
+V176 is not adopted. Exact inputs, meaning copies, outputs, receipts, source/code
+bindings and worker identities passed all four independent reviews. No Bootstrap
+generation, hierarchy construction or additional allowance was used.
+
+## Input-validity audit before further Compare edits
+
+The user authorized auditing the regression inputs and separating justified
+accuracy candidates from ambiguity and consistency checks. This audit makes no
+model calls and changes no original meaning, expectation, output, receipt or
+historical review. It does not certify human gold, withdraw an actual user
+decision, or change the comparison convention.
+
+The audited native sources are completed V104's `as100-core` and `fifty-note`
+experiments under `target/compare-v104-expanded-v1`. Their experiment-envelope
+plan hashes are respectively
+`de8c394d36141189d2102d0ca4629391bc33dbb138a0f6e458d5c5437d52da75`
+and `0a696be6670a3aa709e28c00944ccba62ae564b87b517e9019403aa9fbdfe000`.
+Fresh native read-only reports are under
+`target/compare-dataset-validity-audit-v1/{core-native,fifty-native}.json`.
+
+Mechanical inspection verifies298 cases:196 core isolated requests and102
+fifty-note requests, comprising70 isolated requests and32 original snapshots.
+All inputs contain only the fixed local subject/meaning and canonical
+subject/meaning/ID/branches contract; expectation and original-post metadata are
+outside `INPUT_JSON`. All124 referenced producer experiments retain exactly
+Bootstrap-v96 hash
+`599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845`.
+They are ASv6.100 development inputs, not a certification of current Bootstrap.
+Native inspection validates all298 saved outputs and finds no native human-role
+review in these two experiments. Actual user judgments recorded elsewhere retain
+their own authority and exact-input limits.
+
+There are291 unique serialized request strings. The133 registered isolated
+families represent130 distinct unordered subject/meaning pairs: core006/007,
+core010/014 and fifty-note008/033 repeat the same meanings. Core009's reciprocal
+requests are identical self-comparisons. Different producer receipts or pair IDs
+do not turn identical wordings into independent semantic coverage. Reversal and
+chain witnesses may also overlap. V176's two fictional examples contain none of
+the exact regression meanings; that limited check does not prove absence of all
+development-set overfitting. The entire collection is development data, with no
+untouched test partition established here.
+
+Input reviews use three separate qualifications:
+
+- **Accuracy candidate:** the standalone meanings support an independently
+  justified relationship under the established information-topic convention.
+  Agent justification remains provisional, not human gold.
+- **Ambiguous:** materially different supported readings of a meaning change
+  the relationship. Preserve the exact disputed scope boundary. An unknown
+  particular property alone is different: a clear meaning with a decisive
+  unknown fact can justify `uncertain` as a provisional accuracy candidate.
+  Neither situation establishes a fabricated negative relationship.
+- **Consistency only:** the exact inputs can test stable interpretation, but an
+  exact accuracy target depends on an unsettled information-connection convention
+  or has not yet been independently justified. Record the specific missing proof;
+  lack of a verified counterexample is not evidence of ambiguity or containment.
+  This category does not itself establish a defect in the supplied meanings.
+
+Canonical snapshots additionally test supplied graph consequences. Their old
+edges cannot supply semantic gold; an inherited incompatible branch is distinct
+from an incorrect selected pair judgment. No snapshot expectation or uncertainty
+may transfer to its isolated pair. Diagnostic formatting/omissions, invalid
+proofs, incorrect relations and unresolved inputs must be reported separately.
+
+Frozen snapshot024 still carries the original provisional positive for Food over
+sourdough preparation. The later user-approved neither for the exact meanings is
+recorded above. Retire that obsolete provisional positive from future targets;
+preserve both historical records. Neither an old expectation nor a changed
+procedure should be treated as an accuracy label automatically.
+
+### Input-only qualification catalogue
+
+Five internal reviewers audited disjoint inputs covering every registered pair
+and all32 snapshots. They did not consult Compare outputs or old output verdicts
+for these classifications. They have prior task context, so this is an
+answer-independent audit, not a claim of fresh blinded external annotation.
+A separate reviewer challenged the current panel's hardest inputs without
+consulting its outputs. The coordinator retains disagreements instead of
+promoting reviewer consensus to truth.
+
+The133 paired families split into82 provisional accuracy candidates,
+37 materially ambiguous families and14 consistency-only families. After removing
+the three repeated meaning pairs, there are79 distinct accuracy candidates,
+37 ambiguous pairs and14 consistency-only pairs. The corresponding source case
+counts are164/74/28. All32 canonical snapshots remain a separate graph-evidence
+panel rather than being added to the isolated accuracy denominator. Classification
+does not imply that the meanings match a post's correct Bootstrap scope; that
+separate producer assessment is outside this Compare audit.
+
+The following catalogue uses forward pair numbers. Reverse requests inherit
+the same eligibility, with proposed containment direction reversed. Prefixes
+`pair-` refer to the196-case core; `isolated-` refers to the70 paired fifty-note
+cases. Gaps in numbering are absent nominations, not failed or omitted audit work.
+
+| Source slice | Accuracy candidates | Ambiguous | Consistency only |
+| --- | --- | --- | --- |
+| Core001–040 | 002,005,006,007,009,010,013,014,016,017,019,020,023,024,025,028,029,032,033,034,038,039,040 | 001,008,018,021,026,036 | 003,004,015,022 |
+| Core041–080 | 041,042,043,044,045,046,047,056,059,060,061,064,065,066,067,068,074,076,077,078,079,080 | 048,049,050,051,052,053,054,055,057,058,062,063,069,070,071,072,073,075 | — |
+| Core081–116 | 085,088,089,090,091,092,094,096,098,107,108,109,111,112,113,114,116 | 101,102,105,106 | 082,083,095,099 |
+| Fifty-note isolated001–035 | 003,004,005,006,007,008,009,010,012,014,015,024,026,028,030,031,032,033,034,035 | 001,013,017,018,019,020,025,027,029 | 002,011,016,021,022,023 |
+
+Proposed forward labels below are deliberate input-review assessments, not
+native human labels or replacements for frozen expectations. They still require
+independent challenge before becoming a trusted accuracy target. A matching
+model label does not validate its proof. Clear particular-property unknowns
+support provisional uncertain targets without inventing another entity.
+
+| Source slice | local_contains_canonical | canonical_contains_local | equivalent | neither | uncertain |
+| --- | --- | --- | --- | --- | --- |
+| Core001–040 | 002,005,013,017,023,024,028,029,034,039,040 | — | 009,010,014 | 006,007,016,019,020,025,032,033,038 | — |
+| Core041–080 | 059,060,061,076,077,078 | 068 | 074 | 041,042,043,044,045,046,047,056,065,067,079,080 | 064,066 |
+| Core081–116 | 085,088,089,090,091,092,094,096,098,109,111,112 | — | — | 107,108,113,114,116 | — |
+| Fifty-note isolated001–035 | 009,034,035 | 028,030,031,032 | — | 003,004,005,006,007,008,010,012,014,015,024,033 | 026 |
+
+Important qualifications, which must remain attached to the IDs:
+
+- **Core018/021:** the food-preparation genus may entail eating purpose, or name
+  a broader activity admitting edible display/testing output. The explicit
+  eating-purpose parent must not inherit its answer from an illustration.
+  Core019 lacks that genus; genuine chewy pantry bagels made solely for destructive
+  testing supply a proposed counterexample. Its ingredients are not restricted
+  to pantry ingredients exclusively.
+- **Core022 / isolated022:** missing universal shape/production or flour proof
+  does not establish the opposite relationship. A variant's name alone is not
+  admission evidence. Both remain outside accuracy until the whole-child lexical
+  proof or a qualifying concrete variant is established. The earlier claim that
+  every unanswered ring question is a definite wrong label is not justified.
+- **Core052/053:** the independently described ingredient's host can be an
+  ordinary dish kind or a reference to the defined broth-specific dish. The
+  old positive and the broth-free rejection are not independently certified gold.
+  A fixed-meaning reversal remains instability; producer scope and Compare
+  interpretation cannot be attributed exclusively from it.
+- **Core069–071:** audience, contact initiation, conventional wishes and temporal
+  versus referential morning context remain material. A nonhuman example alone
+  does not exclude every permitted parent alternative. Do not force the familiar
+  greeting positives or manufacture an opposite negative.
+- **Isolated013/017/018/019/020:** Food dishes says "prepared foods or combinations
+  of foods served or eaten as a meal or part of a meal." A final modifier may
+  constrain both alternatives or only combinations. Another reviewer reads it
+  as constraining both, so the disagreement is retained. The selected served
+  meal components031/032 fit both readings. This qualification also applies to
+  snapshots using that same Food-dishes meaning; old blanket meal objections
+  cannot supply unconditional accuracy targets.
+- **Core015 and directed-emotion/software pairs:** whole-topic coverage of tools,
+  producing software or emotional reception needs an explicit convention;
+  association and physical non-instance alone are insufficient. Reviewers treat
+  several independent vessel/device examples as negatives by their own-topic
+  scope; core015 remains conservatively qualified. The user's prior cookware
+  negative is preserved, not withdrawn or replaced with an agent positive.
+- **Particular coffee, desire, fatigue and dinner:** an unknown fact is distinct
+  from a general-kind variant. Do not replace the particular object/person/event
+  with a convenient example. An unfeeling bot fails the experienced-state child
+  and cannot certify author identity. Dinner coverage at the selected dish node
+  does not automatically establish the Food ancestor's human/nourishment purpose.
+
+For isolated012, an independently recognized
+[flourless bread](https://www.foodforlife.com/product/breads/ezekiel-49-sesame-sprouted-whole-grain-bread)
+supports the proposed flour-restriction counterexample. For isolated022, the
+[dictionary bagel definition](https://www.merriam-webster.com/dictionary/bagel)
+and a [sprouted-bagel manufacturer description](https://www.foodforlife.com/product/bagels/organic-ezekiel-49-sprouted-original-bagels)
+do not establish a flourless ordinary bagel satisfying every chewy/pantry
+requirement. Do not transfer the bread witness to that narrower activity.
+
+Snapshot expectation audit preserves these specific findings:
+
+| Snapshot IDs | Qualification |
+| --- | --- |
+| 024 | Original provisional Food-over-sourdough positive is unsupported; the generic activity requires neither human consumers nor nourishment intention. No ancestor guard explains that target. Later exact user neither remains recorded. |
+| 027,029 | Bodily versus psychological fatigue and author/person identity qualify the old neither/positive targets. Neither an invented author nor an unfeeling bot establishes the fixed person's state. |
+| 031,032 | Selected served-dish coverage is supported; Food-ancestor humanity and nourishment intention remain separately qualified. |
+| 016 | Old uncertain target is conditional on a positive proposal triggering the Breakfast descendant, not unconditional pair gold. |
+| 019 | Primarily a canonical consequence fixture: generic descendant products can violate the proposed meal scope even if the selected pair fits one reading. |
+| 009,022,025 | Complete ancestor/descendant checks remain essential. Snapshot025 includes65 descendants, including independent appliance-installation topics; intended food consumption does not automatically cover them. |
+| 015,028,030 | Selected tomato/preparation negative and particular-state/Fatigue positives are plausible candidates, but not certified whole-graph gold. |
+
+The remaining snapshots preserve selected comparisons and historical graph
+evidence without a newly certified final label. All expectation/review keys are
+outside model input; every historical-relation gold flag remains false.
+
+The panel is also concentrated rather than representative. In the final25 core
+families,20 concern music,13 jazz and11 the Molina ensemble/enthusiasm descriptions;
+they reuse only17 distinct meanings. Food and repeated production/consumption
+families dominate many other selected comparisons. Reciprocal views, paraphrases
+and shared chains do not add independent topical coverage. A future untouched,
+coverage-diverse test is still required before a general accuracy claim.
+
+### Reassessment of the latest matched repeat
+
+Applying the input catalogue to each version's saved52-case matched panel yields
+21 provisional accuracy cases,21 ambiguous cases,3 consistency-only cases and
+7 canonical snapshots. The21 provisional accuracy cases comprise16 core requests
+and5 isolated controls. Native saved relations for both V173 and V176 match all21
+proposed targets. This is agreement with provisional input-review assessments,
+not21 independently certified correct judgments; it does not validate every
+diagnostic proof or establish generalization.
+
+The candidate's four settled reversal conflicts concern core018/053/070 and
+isolated025, all classified ambiguous by the input audit. The baseline's sole
+settled reversal is core070. The candidate's chain witness also includes
+unqualified links. Preserve these as interpretation-instability evidence, but
+do not count them as four independently established semantic errors or attribute
+their cause exclusively to Compare. Supported alternate readings do not excuse
+incompatible judgments after a reading has been fixed.
+
+There is no demonstrated V176 accuracy gain on the qualified portion, and the
+candidate does not improve the observed consistency counts. Further wording
+changes should not be driven by forcing labels on the ambiguous remainder.
+Future evaluation should retain qualified accuracy, invalid-proof checks,
+interpretation consistency and canonical consequences as separate results.
+This reassessment uses saved outputs only: no new model calls, producer changes,
+prompt changes or rewritten historical reviews.
