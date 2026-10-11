@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v7
+# Hierarchy selection by traversal — draft v11
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -154,7 +154,8 @@ finished search waits for earlier selected local nodes to be placed or held.
 Before placing its result:
 
 1. Check the search against the current canonical graph, including earlier
-   placements made since its snapshot was taken.
+   local-node placements and synthetic additions made since its snapshot was
+   taken.
 2. Reuse exact saved comparisons whose inputs remain unchanged.
 3. Compare with newly added canonical nodes where traversal requires it, and
    repeat required comparisons whose canonical inputs changed.
@@ -162,6 +163,8 @@ Before placing its result:
    Other local-node searches can continue using their own snapshots.
 5. Apply the placement through the existing constructor checks, or preserve
    the graph and hold the local node when those checks prevent placement.
+6. After a canonical-node addition, finish its triggered consolidation attempts
+   as described below before applying the next local-node placement.
 
 For example, three local nodes search concurrently. The first becomes
 canonical. Before placing the second, account for the new canonical node and
@@ -175,11 +178,122 @@ selected local node.
 
 Elapsed time and API cost for this policy have not been measured.
 
+## Agreed consolidation trigger
+
+**After every canonical-node addition, call the consolidation prompt for each
+of the added node's sibling groups containing six or more nodes, including the
+added node itself.**
+
+For a node with a parent, its sibling group is that parent's immediate children.
+For a root, the sibling group is all canonical roots. A node with multiple
+parents belongs to a sibling group under each parent.
+
+The prompt proposes a synthetic parent to group some of the siblings. A
+proposal still needs normal validation before it can change the graph. If the
+prompt returns `null`, leave the group unchanged and continue construction.
+Try that group again after a later node addition meets the same trigger; do not
+retry immediately just because it still contains six or more nodes.
+
+**Adding a synthetic parent follows exactly the same trigger.** Count the
+synthetic node together with its own siblings. If that group still contains six
+or more nodes, call consolidation again. Repeat after successful additions
+while the trigger holds; a `null` result ends attempts for that group until a
+later qualifying addition.
+
+This is an agreed construction rule for the draft, not an implemented change.
+
+## Agreed consolidation timing
+
+**Finish the consolidation attempts triggered by a placement before applying
+the next local-node placement.**
+
+1. Apply the local-node placement through the existing checks.
+2. For each sibling group meeting the agreed trigger, call consolidation using
+   the current parent and immediate siblings with their fixed meanings. For
+   roots, there is no parent.
+3. If the prompt returns `null`, or its proposal fails normal validation, leave
+   that group unchanged and finish this attempt. Preserve the local-node
+   placement already made. A later qualifying addition can trigger another
+   attempt.
+4. If validation permits adding a synthetic parent, apply it and check that
+   addition's sibling groups using the same trigger. Complete any further
+   attempts triggered by synthetic additions.
+5. Once these attempts finish, allow the next local-node placement. Check its
+   search against the current graph, including the synthetic additions and
+   changed branches, before applying it.
+
+Other local-node searches can continue on their fixed snapshots throughout
+consolidation, within the agreed limit of three active searches. Only applying
+the next placement waits. The experiment runner still controls model-request
+concurrency.
+
+For example, a local-node addition leaves seven siblings. Consolidation groups
+two beneath a synthetic parent, leaving six siblings including that new parent.
+That synthetic addition triggers consolidation again. If this attempt returns
+`null`, keep the six siblings and proceed to the next placement. Its search must
+account for the synthetic parent and the changed branches first.
+
+This ordering keeps consolidation's inputs current and makes its resulting
+graph available to the next placement. Its effect on elapsed time and comparison
+cost has not been measured.
+
+## Proposed synthetic-parent validation
+
+**Use the proposed synthetic topic as the incoming node in the same traversal.
+Its proposed children are claims to check, not automatic edges.**
+
+Freeze the consolidation output's title and explicit meaning before comparison.
+Supply the title as `local.subject` and the definition as `local.meaning`; each
+comparison's canonical side uses the existing node and its canonical branches.
+No Bootstrap call is needed: consolidation has already written the definition.
+Do not invent an original note or local branch for a synthetic topic.
+
+Start at the canonical roots and use the agreed comparison actions, including
+branch stopping, equivalence reuse and transitive inference. Keep the graph
+fixed for this traversal and placement, while other local-node searches
+continue on their snapshots. The comparison labels establish the relationships;
+the consolidation output does not prescribe positive answers.
+
+Before insertion, require all of the following:
+
+- When the offered siblings have a parent, traversal establishes that this
+  parent strictly contains the proposed topic. Equivalence with that parent
+  would merely add another name for the same level. Roots have no such parent
+  requirement.
+- The proposed topic strictly contains each nominated child, through a direct
+  comparison or valid inference under the agreed hierarchy assumption. A
+  pruned or unreached child remains unchecked and cannot supply this approval.
+- The established grouping covers at least two of the offered siblings and
+  fewer than the whole group. Include any additional offered siblings that
+  traversal establishes are contained; do not ignore them to manufacture a
+  useful subset.
+- The prospective graph passes the existing placement checks, reduces the
+  target group's immediate choices, and makes the new grouping edges strictly
+  narrow distinct-note sets. Count existing supporting notes and recursive
+  descendants once per note; the synthetic topic adds no invented note support.
+
+Check the prospective graph before changing the real one. Route grouped
+siblings through the proposed parent instead of retaining their redundant
+direct edges in the target group; preserve their other parent branches and
+existing ancestry. Existing equivalent nodes are reused under the agreed
+equivalence rule, retaining their fixed meanings.
+
+An `uncertain` comparison, an unsupported nominated relationship or a failed
+placement/shaping check ends this proposal without graph changes. Save the
+proposal and its comparison results for review, preserve the local-node
+placement that triggered consolidation, and continue the approved timing
+sequence. Do not rewrite the synthetic meaning during validation to force fit.
+
+This validation policy is a proposal awaiting review. It adds no separate
+semantic-review prompt or exhaustive comparison pass. Required relationships
+can reuse exact answers and the same transitive inferences as ordinary traversal.
+
 ## Proposed walk
 
-All five comparison actions and the shared-node rule above are agreed. The
-other steps below carry forward the current traversal behavior as a starting
-point for further discussion.
+The comparison actions, shared-node rule, concurrent-search policy and
+consolidation rules above are agreed. The walk below combines them with the
+current root-start and eligibility behavior as a starting point for further
+discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
@@ -189,6 +303,9 @@ point for further discussion.
 5. If the local node is not held, wait for its placement turn and check its
    results against the updated graph as specified above. Use the resulting
    relationships for placement, retaining the existing constructor's checks.
+6. After a canonical-node addition, finish its triggered consolidation attempts
+   before applying the next placement. Other searches can keep running on
+   their fixed snapshots.
 
 | Returned label | Traversal action |
 | --- | --- |
@@ -222,6 +339,7 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
+- Whether to adopt the proposed synthetic-parent validation above.
 - How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
@@ -233,5 +351,11 @@ would also contain it by transitivity, conflicting with the Meals answer.
 from this draft's agreed rules. The implementation and its historical results
 remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
+
+The fixed-meaning comparison input already accepts `local.subject` and
+`local.meaning` without original-note evidence. The constructor's
+[`_placement` function](canonical_trial.py), however, still builds new nodes
+from original note entries. The proposal above reuses the comparison contract;
+synthetic insertion is not currently implemented by this draft.
 
 No implementation changes or model calls have been made for this draft.

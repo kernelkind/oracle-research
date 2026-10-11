@@ -108,8 +108,12 @@ projected inputs receive new request hashes, so a contextual answer is not reuse
 as a context-free answer. Review evidence retains original inputs and both local
 input digests. Original source validation and output quote validation still apply;
 this does not change the default input format or permit hierarchy application.
-The first prepared two-condition panel is documented in
-[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation-prepared).
+The completed two-condition panel and targeted fresh repeats are documented in
+[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation).
+All 32 meanings validate, while Coffee-chain source assignment remains uncertain
+in both conditions. Native accounting records 37 attempts, including warmups and
+one recovered failure with unknown usage. The test does not activate context
+removal or establish a general quality improvement.
 
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
@@ -1705,16 +1709,28 @@ complete one request with different sound explanations. Both full versions
 are audited. All 784 completed occurrences and 553 justified DSL stops are
 accounted for. Every mechanical proof (77), self-guard (42), stopping dependency,
 frozen source/code binding and native score assembly passes. Complete model
-records receive **380 accepts, one reject and 15 uncertainties** across 396
-versions of 395 inputs; current native occurrence reviews are 739 accept, one
+records initially receive **380 accepts, one reject and 15 uncertainties** across
+396 versions of 395 inputs; the saved native occurrence reviews are 739 accept, one
 reject and 44 uncertain, including mechanical proofs.
-The definite DSLv10 error is R05 `2.2`: it accepts a humorous account of morning
-odd jobs around town beneath `Author's morning outings`, although the complete
-child permits those jobs to be done from home. The extra account, ownership and
-timing wording does not require going out; the post cannot supply it. Root and
-two independent agents agree after a concrete counterexample. The eight-note
-regression does not pass. The next recommended step is a small diagnostic of
-that error; no prompt revision, lower-effort calls or final-sixty run starts here.
+The sole historical rejection is R05 `2.2`, a humorous account of morning odd
+jobs around town beneath `Author's morning outings`. A subsequent independent
+source-first audit challenges its home-work witness: locating clients around
+town may change the established meaning of jobs around town. The account's
+actor relationship is also disputed. The current assessment therefore leaves
+this record uncertain rather than establishing an error. The original labels,
+raw report and native review history remain unchanged. The 380 accepted full
+records remain accepted; 16 are now unresolved in the current assessment.
+Qualification remains pending. The authorized small
+[outings diagnostic](distillation-review-v1/README.md#dslv10-outings-diagnostic-october-11)
+then completes with DSLv10 unchanged: all eight balanced authored controls pass
+complete-output audit, the simple original repeats sound false, and the rich
+original repeats true but remains uncertain. Two sound saved controls reuse
+without calls. All twelve outputs and receipts pass native validation; the
+shared budget reconciles at 11/22, ten judgments plus one eligible warmup, with
+no failures or retries. Fresh catalog usage totals $0.1867664; both original
+comparisons hit cache but warmup overhead makes net savings negative by
+$0.0067664. No prompt revision follows from the disputed original alone.
+Lower-effort calls and final-sixty validation are not run in this diagnostic.
 Known successful local receipts cache 7.82% of input tokens and total a catalog
 $2.289306. Net savings including warming are **−$0.020318 (−0.90%)** on that known
 subset; both failed attempts lack usage, so full cost and savings are unknown.
