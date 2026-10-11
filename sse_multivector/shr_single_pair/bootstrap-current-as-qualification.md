@@ -15,8 +15,11 @@ on the [focused stock case below](#bbv6-general-activity-versus-particular-parti
 its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
 the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
 and the [three complete-branch checks](#unchanged-bbv6-complete-branch-check),
-but not generally qualified. The branch check finds one incompatible identity
-boundary and leaves several information-coverage implications unresolved.
+but not generally qualified. The branch check and its
+[fresh trio repeat](#unchanged-bbv6-trio-repeat-and-review-correction) find a
+materially ambiguous target-identity boundary and leave several
+information-coverage implications unresolved. The initial definite
+incompatibility classification was withdrawn after challenge.
 BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
@@ -331,18 +334,22 @@ previous BBv6 tests. Ordinary v109 answers remain baseline metadata outside
 model input. No generated parent meaning was supplied to another producer.
 
 The coordinating agent and two independent read-only reviewers examined all
-14 final meanings and all 25 ancestor implications. Native receipt-bound agent
-reviews record **13 qualified individual accepts and one uncertain trio
-definition**. These are not human gold or a 13/14 branch success rate:
-individually supported meanings can still establish incompatible scopes.
+14 final meanings and all 25 ancestor implications. Initial native receipt-bound
+agent reviews recorded 13 qualified individual accepts and one uncertain trio
+definition. Subsequent challenge withdrew the definite incompatibility verdict
+for the enthusiasm child: its target identity is materially ambiguous. The latest
+agent assessment for each entry gives **12 qualified accepts and two uncertain definitions**,
+preserving the earlier assessment in native review history. These are not human
+gold or a branch success rate; individual support does not certify compatible
+independently chosen scopes.
 
 | Branch | Individual meanings | Fixed-meaning branch assessment |
 |---|---|---|
 | Mental states | The root remains a general psychological category. Its children describe the author's distraction and figurative experience of thinking not working normally, without inventing a clinical diagnosis. | Both immediate implications are compatible. This does not independently qualify every possible category boundary. |
-| Jesús Molina | The person root retains general identity. The trio preserves an unspecified association; whether its particular-ensemble restriction is necessary remains uncertain. The enthusiasm category broadens beyond the author's own reaction. | One incompatible identity boundary, detailed below. The two implications to the person root remain qualified: an association alone does not settle whole-topic inclusion. |
+| Jesús Molina | The person root retains general identity. The trio preserves an unspecified association; whether its particular-ensemble restriction is necessary remains uncertain. The enthusiasm category broadens beyond the author's own reaction, but leaves its target identity unclear. | The enthusiasm-to-trio implication is uncertain, detailed below. The two implications to the person root remain qualified: an association alone does not settle whole-topic inclusion. |
 | Stock Cooking | The root explicitly requires heat. Descendants preserve the recurring practice, particular batch, planned preservation/storage and estimated yield. All eight are individually supported. | Cooking episodes fit the heat-based activity. The batch descendants concern the same identified batch. Coverage of products and subsequent handling by Cooking or the recurring activity remains unresolved; the tree is not certified as 20 compatible implications. |
 
-The concrete trio mismatch is between independently fixed meanings:
+The independently fixed trio meanings underlying the disputed classification:
 
 - Parent `2.1`: **“The new-generation jazz trio associated with Jesús Molina is
   the particular three-musician jazz ensemble connected with him and described
@@ -352,12 +359,20 @@ The concrete trio mismatch is between independently fixed meanings:
   jazz ensemble characterized as belonging to a new generation and connected
   with the musician Jesús Molina.”**
 
-The parent chooses one particular ensemble. The child admits enthusiasm for
-any ensemble satisfying its stated conditions. Admiration for a different
-qualifying Molina-associated trio fits the child but not that particular parent.
-Broadening the observer beyond the author does not require broadening the
-target ensemble. The mismatch establishes incompatible selected boundaries,
-not which definition must change. The parent's broader diagnostic alternative
+The parent chooses one particular ensemble. Our initial review interpreted the
+child as admitting any ensemble satisfying its stated conditions and classified
+the link as incompatible. Challenge identified another supported reading: the
+child's justification says it retains **“the specified object of enthusiasm”**,
+which can preserve the particular ensemble while broadening who feels enthusiasm.
+That phrase can also refer to the specified kind of ensemble. The standalone
+final meaning does not expressly choose between those target scopes.
+
+We therefore withdraw the definite incompatibility claim. Under a generic-target
+reading, admiration for a different qualifying Molina-associated trio fits the
+child but not its particular parent; under a same-target reading, this identity
+conflict is absent. Broadening who feels enthusiasm does not require broadening
+its target. The material ambiguity remains a Bootstrap definition problem and
+does not identify which producer should change. The parent's broader diagnostic alternative
 also fails to expressly retain Molina association; that omission does not prove
 that the parent must be broadened. Original AS ancestry is evidence to examine,
 not permission to force a definition or a relation label.
@@ -398,10 +413,69 @@ cost is **$0.0910812**, including warmup and excluding original charged generati
 behind the two reuses. No attempt lacks usage. This is not a subscription invoice.
 
 No Compare calls, hierarchy build, UI update, prompt edit or activation occurred.
-Native artifacts and reviews remain ignored in the retained worktree. The next
-proposed diagnostic is a fresh identical-input repeat of the disputed trio
-parent and child before editing, checking target identity separately from the
-observer. This has not started; the stock coverage qualifications remain open.
+Native artifacts and reviews remain ignored in the retained worktree. The user
+then authorized the fresh identical-input repeat of the disputed trio parent and
+child below; the stock coverage qualifications remain open.
+
+#### Unchanged BBv6 trio repeat and review correction
+
+`target/bootstrap-broad-v6-trio-repeat-v1` deliberately repeats only the two
+trio entries through native `prepare --from ... --only ... --repeat`, with
+exact-answer reuse disabled. Full original posts, selected-root trees, selected
+pointers, evidence, input hashes and rendered prompts match the first draw.
+BBv6, Sol 6.1 medium, output schema, SSE transport and cache identity remain
+unchanged. Preparation and execution bind the task worktree; no source changed
+during the run. Both repeat answers are fresh. No original person-root definition
+was regenerated or combined with these outputs to claim a fresh full-tree test.
+
+| Repeat entry | Final meaning and boundary diagnostics |
+|---|---|
+| Trio `2.1` | **“The new-generation jazz trio associated with Jesús Molina is the particular group of three jazz musicians characterized as belonging to a newer generation and linked to Molina.”** Its ambiguity explicitly contrasts this particular group with **all new-generation jazz trios associated with him**; unlike the first draw, the broader alternative retains association. The resolution again chooses particular identity and leaves Molina's precise role unspecified. |
+| Enthusiasm `2.1.1` | **“Enthusiasm for a new-generation jazz trio associated with Jesús Molina is positive excitement, admiration or approval directed toward a three-musician jazz ensemble identified as belonging to a newer generation of jazz and associated with the musician Jesús Molina.”** Its question says **“qualifying jazz trios generally”**, while its justification explains broadening beyond the author. Another answer says **“A qualifying trio must be associated”**. It does not explicitly choose the particular target versus any qualifying target. |
+
+The coordinator and two read-only reviewers distinguish target scope from who
+experiences the emotional response. The repeat supplies stronger evidence for a
+generic-target interpretation, but reviewers disagree about whether those
+diagnostics conclusively establish it. One sees a generic target incompatible
+with the particular parent; the other notes that the answer can still describe
+necessary conditions identifying the same target. The coordinator records
+**material target-identity ambiguity**, preserving that disagreement rather than
+claiming two conclusively incompatible draws. This concerns the final meaning's
+coverage, not diagnostic style alone. Both child meanings leave a consequential
+boundary unclosed.
+
+The parent interpretation is locally plausible; whether its particular scope is
+necessary under BB remains uncertain. Neither output invents Molina's membership
+or leadership, musicians' ages or an ensemble formation date. Both native
+repeat agent reviews are uncertain. The initial child's corrected uncertain
+review is appended separately; original outputs, input hashes and producer
+receipts remain unchanged. Original AS ancestry does not supply semantic gold
+or decide which independently selected boundary must change.
+
+| Native case ID | Fresh repeat record SHA-256 |
+|---|---|
+| `bootstrap-4d093cebbca84c917bc6401355d4b4ddeaec8f9d660a1851a22e6aae2227d6da` | `5a6961a6096f18a4b292f03f161767c81330dbd922ccf65d86577f6de61fc569` |
+| `bootstrap-4f4e1f65f56589569c2d4a2b9410b63c0d80a045aa5cbb53a3e5e00e6f8f7f09` | `eb5155a7128c2c8692e34a0441aff088ba343ec7743aa9935f664b90b7561268` |
+
+Both answers validate, their evidence quotes are exact source substrings, and
+ambiguity/resolution IDs match. The run uses **three new attempts: two meanings
+and one automatic prefix warmup**, with no reuse, retry or failure. Native usage
+records 563 uncached input tokens, 15,104 cached input tokens and 1,436 output
+tokens; 449 reasoning tokens are already included in output. Both substantive
+requests have cache hits. Known new-attempt API-equivalent cost is **$0.0169964**,
+including warmup, with no missing usage; this is not a subscription invoice.
+The existing shared counter reads 18,815/20,000 after verification, including
+other authorized agents' work, so its delta is not this repeat's call count.
+It was not reset.
+
+BBv6 remains unchanged and not generally qualified. No Compare calls, hierarchy
+build, UI refresh or prompt activation occurred. The next proposed prompt
+experiment would separately resolve the scope of each person or thing within
+a compound subject, then expressly state whether its target is a particular
+identified thing or a qualifying category. Generalizing one part should not
+silently decide another part's scope. This is an untested mechanism hypothesis,
+not a required particular-target answer or authorization to edit; no new
+version or follow-on model calls have begun.
 
 ## Existing Bootstrap qualification
 
