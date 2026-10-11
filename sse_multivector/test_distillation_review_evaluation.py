@@ -68,13 +68,17 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
             cases[entry["check"]].extend(report["cases"])
             self.assertEqual(report["settings"]["model"], "gpt-6.1-sol")
             self.assertEqual(report["settings"]["reasoning_effort"], "xhigh")
-            self.assertEqual(report["settings"]["concurrency"], 8)
+            self.assertEqual(report["settings"]["concurrency"], 30)
             self.assertEqual(report["settings"]["timeout_seconds"], 3600)
+            spec = json.loads((self.root / "evaluation" / "specs" / (Path(entry["path"]).name + ".json")).read_text())
+            self.assertNotIn("concurrency", spec["runner"])
         self.assertEqual({name: len(rows) for name, rows in cases.items()},
                          dict(matching=11, support=11, relationship=6))
         self.assertEqual(sum(case.get("origin") == "mechanical" for rows in cases.values() for case in rows), 13)
         self.assertTrue(all(case["evidence"]["expectation_status"] == "unresolved"
                             for rows in cases.values() for case in rows))
+        self.assertEqual(json.loads(selected.read_text())["settings"]["concurrency"], 8)
+        self.assertNotIn("answer_ids", prepared)
         self.assertFalse((self.root / "calls.json").exists())
 
     def test_native_cli_prepares_a_reasoning_override_without_changing_selection(self):
@@ -88,6 +92,71 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertTrue(all(row['settings']['reasoning_effort'] == 'high' for row in report['experiments']))
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / 'calls.json').exists())
+
+    def test_prepare_answer_subset_preserves_complete_native_cases_and_frozen_sources(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        notes = [dict(note_id="validation-" + letter, post="Cable " + letter + ".",
+            teacher=subjects(("1", "Cable " + letter)), answer=answer(subjects(
+                ("1", "Cable " + letter), ("1.1", "Detail " + letter), ("2", "Other " + letter))))
+            for letter in ("A", "B")]
+        selected = self.selection(notes, random_count=2)
+        frozen = selected.read_bytes()
+        answers = json.loads(frozen)["random"]["answers"]
+        identifier = answers[1]["id"]
+        context = self.root / "assessment"
+        for row in answers:
+            assessment.record(selected, row["id"], context,
+                teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+                reason="Independent frozen fixture meaning.")
+        snapshots = {path: path.read_bytes() for path in context.iterdir()}
+        scoped = evaluation.prepare(selected, self.root / "scoped", runner_binary=self.worker(),
+            assessment_directory=context, answer_ids=[identifier])
+        self.assertEqual(scoped["answer_ids"], [identifier])
+        baseline = self.root / "all"
+        evaluation.prepare(selected, baseline, runner_binary=self.worker(), assessment_directory=context)
+        complete = evaluation.report(baseline)
+        changed = evaluation.report(self.root / "scoped")
+        self.assertEqual([row["id"] for row in changed["random"]["answers"]], [identifier])
+        self.assertEqual(changed["challenge"]["answers"], [])
+        self.assertEqual(changed["summary"]["random"]["answers"], 1)
+        old = next(row for row in complete["random"]["answers"] if row["id"] == identifier)
+        for check in ("matching", "support", "relationship"):
+            self.assertEqual([(c["id"], c["inputs"], c["evidence"], c["prompt"], c.get("origin"))
+                              for c in changed["random"]["answers"][0]["checks"][check]],
+                             [(c["id"], c["inputs"], c["evidence"], c["prompt"], c.get("origin"))
+                              for c in old["checks"][check]])
+        self.assertTrue(all(case["evidence"]["answer_id"] == identifier
+                            for native in changed["experiments"] for case in native["cases"]))
+        with self.assertRaisesRegex(ValueError, "answer_ids"):
+            evaluation.run(self.root / "scoped", answer_ids=[answers[0]["id"]])
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertEqual({path: path.read_bytes() for path in snapshots}, snapshots)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_unscoped_legacy_evaluation_versions_report_all_answers(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_evaluation as evaluation
+        notes = [dict(note_id="validation-" + letter, post="Cable " + letter + ".",
+            teacher=subjects(("1", "Cable " + letter)), answer=answer(subjects(("1", "Cable " + letter))))
+            for letter in ("A", "B")]
+        selected = self.selection(notes, random_count=2)
+        expected = [row["id"] for row in json.loads(selected.read_text())["random"]["answers"]]
+        destination = self.root / "evaluation"
+        evaluation.prepare(selected, destination, runner_binary=self.worker())
+        path = destination / "evaluation.json"
+        frozen = experiment.read(path)
+        self.assertNotIn("answer_ids", frozen)
+        for version in (1, 2):
+            frozen["schema_version"] = version
+            experiment.write(path, frozen)
+            experiment.write(destination / "evaluation.complete.json",
+                             {"evaluation.json": hashlib.sha256(path.read_bytes()).hexdigest()})
+            result = evaluation.report(destination)
+            self.assertEqual([row["id"] for row in result["random"]["answers"]], expected)
+            self.assertEqual(result["summary"]["random"]["answers"], 2)
+            self.assertEqual(result["summary"]["random"]["checks"]["matching"]["occurrences"], 2)
+        self.assertFalse((self.root / "calls.json").exists())
 
     def test_native_cli_binds_relationship_prompt_override_without_changing_other_checks(self):
         from sse_multivector import distillation_review_evaluation as evaluation
@@ -116,16 +185,59 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 
-    def test_native_cli_prepares_concurrency_override_without_changing_selection(self):
+    def test_native_cli_prepares_repeated_answer_ids_without_changing_selection(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        notes = [dict(note_id="validation-" + letter, post="Cable " + letter + ".",
+            teacher=subjects(("1", "Cable " + letter)),
+            answer=answer(subjects(("1", "Cable " + letter), ("1.1", "Detail " + letter))))
+            for letter in ("A", "B", "C")]
+        selected = self.selection(notes, random_count=3)
+        frozen = selected.read_bytes()
+        answers = json.loads(frozen)["random"]["answers"]
+        identifiers = [answers[2]["id"], answers[0]["id"]]
+        destination = self.root / "subset"
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", destination, "--runner-binary", self.worker(),
+            "--answer-id", identifiers[0], "--answer-id", identifiers[1])
+        report = evaluation.report(destination)
+        self.assertEqual(json.loads((destination / "evaluation.json").read_text())["answer_ids"], identifiers)
+        self.assertEqual([row["id"] for row in report["random"]["answers"]],
+                         [answers[0]["id"], answers[2]["id"]])
+        self.assertTrue(all(case["evidence"]["answer_id"] in identifiers
+                            for native in report["experiments"] for case in native["cases"]))
+        self.assertTrue(all(row["settings"]["reasoning_effort"] == "xhigh" for row in report["experiments"]))
+        self.assertNotIn("--concurrency", self.native("prepare-distillation-review-evaluation", "--help"))
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_prepare_relationship_history_override_preserves_other_checks_and_fallback(self):
+        from experiment_runner import experiment
         from sse_multivector import distillation_review_evaluation as evaluation
         selected = self.selection()
         frozen = selected.read_bytes()
-        destination = self.root / "concurrency-16"
+        relationship_history = self.root / "relationship-history"
+        relationship_history.mkdir()
+        changed = evaluation.prepare(selected, self.root / "override", runner_binary=self.worker(),
+            history_root=self.root, relationship_history_root=relationship_history)
+        for entry in changed["experiments"]:
+            _, _, manifest = experiment.load(Path(entry["path"]))
+            expected = relationship_history if entry["check"] == "relationship" else self.root
+            self.assertEqual(manifest["request_reuse"]["history_root"], str(expected))
+        cli_override = self.root / "cli-override"
         self.native("prepare-distillation-review-evaluation", selected,
-            "--output", destination, "--runner-binary", self.worker(), "--concurrency", 16)
-        report = evaluation.report(destination)
-        self.assertTrue(all(row["settings"]["concurrency"] == 16 for row in report["experiments"]))
-        self.assertTrue(all(row["settings"]["reasoning_effort"] == "xhigh" for row in report["experiments"]))
+            "--output", cli_override, "--runner-binary", self.worker(), "--history-root", self.root,
+            "--relationship-history-root", relationship_history)
+        for entry in evaluation.report(cli_override)["experiments"]:
+            _, _, manifest = experiment.load(Path(entry["experiment"]))
+            check = entry["cases"][0]["evidence"]["check"]
+            self.assertEqual(manifest["request_reuse"]["history_root"],
+                             str(relationship_history if check == "relationship" else self.root))
+        fallback = self.root / "fallback"
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", fallback, "--runner-binary", self.worker(), "--history-root", self.root)
+        for entry in evaluation.report(fallback)["experiments"]:
+            _, _, manifest = experiment.load(Path(entry["experiment"]))
+            self.assertEqual(manifest["request_reuse"]["history_root"], str(self.root))
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 
@@ -224,13 +336,14 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 
-    def test_concurrency_override_rejects_invalid_values_before_creating_output(self):
+    def test_prepare_answer_subset_rejects_invalid_ids_before_creating_output(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         selected = self.selection()
-        for index, value in enumerate((0, -1, True, 1.5, "16")):
-            destination = self.root / ("invalid-concurrency-" + str(index))
-            with self.assertRaisesRegex(ValueError, "concurrency must be a positive integer"):
-                evaluation.prepare(selected, destination, concurrency=value)
+        identifier = json.loads(selected.read_text())["random"]["answers"][0]["id"]
+        for index, value in enumerate(([], ["missing"], [identifier, identifier], "not-an-array", [""], [True])):
+            destination = self.root / ("invalid-subset-" + str(index))
+            with self.assertRaisesRegex(ValueError, "answer_ids"):
+                evaluation.prepare(selected, destination, answer_ids=value)
             self.assertFalse(destination.exists())
         self.assertFalse((self.root / "calls.json").exists())
 
@@ -263,7 +376,7 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         relationship_worker.chmod(0o755)
         self.native("prepare-distillation-review-evaluation", selected, "--output", changed,
             "--runner-binary", worker, "--history-root", self.root, "--assessments", context,
-            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4", "--concurrency", 16,
+            "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv4",
             "--relationship-runner-binary", relationship_worker)
         identifier = answers[0]["id"]
         self.native("run-distillation-review-evaluation", changed, "--answer-id", identifier,

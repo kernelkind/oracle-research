@@ -493,7 +493,8 @@ def add_commands(commands):
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
     p.add_argument('--reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'))
-    p.add_argument('--concurrency', type=int, help='freeze an execution concurrency override; defaults to the selection setting')
+    p.add_argument('--answer-id', action='append', help='prepare only this frozen answer ID; repeat for a subset')
+    p.add_argument('--relationship-history-root', type=Path, help='override saved-request history for relationship checks only')
     p.add_argument('--relationship-runner-binary', type=Path, help='override the worker for relationship checks only')
     p.add_argument('--relationship-prompt', type=Path, help='bind this relationship prompt; requires --relationship-prompt-id')
     p.add_argument('--relationship-prompt-id', help='version ID for --relationship-prompt; other checks retain their defaults')
@@ -691,8 +692,9 @@ def handle_command(args):
             result = evaluation.prepare(args.selection, args.output, runner_binary=args.runner_binary,
                 history_root=args.history_root, assessment_directory=args.assessments,
                 reasoning_effort=args.reasoning_effort, relationship_prompt=args.relationship_prompt,
-                relationship_prompt_id=args.relationship_prompt_id, concurrency=args.concurrency,
-                relationship_runner_binary=args.relationship_runner_binary)
+                relationship_prompt_id=args.relationship_prompt_id,
+                relationship_runner_binary=args.relationship_runner_binary, answer_ids=args.answer_id,
+                relationship_history_root=args.relationship_history_root)
         elif args.command == 'run-distillation-review-evaluation':
             result = evaluation.run(args.evaluation, max_new_attempts=args.max_new_attempts,
                 attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason,
