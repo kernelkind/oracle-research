@@ -332,11 +332,17 @@ from DSL inputs and a compulsory-counterexample requirement that obscures
 missing restrictions. The user authorized the
 [DSLv9 draft](../../sse_multivector/distillation-review-v1/README.md#dslv9-evidence-requirements-draft-october-11):
 restore AS's subject-wording guidance, supply selected trusted source contexts
-for interpreting existing words, and make counterexamples optional. Its exact
-wording awaits review; no DSLv9 model calls or adoption have occurred. Three new
-preparation tests pass; broader failures reproduce on unchanged code. The known
-bulk-runner concurrency migration remains a separate prerequisite. Historical
-DSLv8 outputs, reviews and targets remain unchanged.
+for interpreting existing words, and make counterexamples optional. The exact
+wording and [fourteen-case diagnostic](../../sse_multivector/distillation-review-v1/README.md#dslv9-approved-diagnostic-october-11)
+were approved. All fourteen fresh Sol/xhigh first attempts match the seven valid
+and seven invalid pre-call assessments; both audits accept all complete records.
+The independent auditor assessed inputs before viewing candidates, without
+targets or prior reviews. This passes the development panel, not unseen accuracy
+or production adoption. The run takes 64.714 seconds with no retries or reuse;
+the 76-token prefix is ineligible, so no caching or warming is used. Three new
+preparation tests pass; broader failures reproduce on unchanged code. Native
+bulk-runner migration and the fixed ten-note regression remain prerequisites.
+Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
 paused. The completed ten-note run retains its frozen concurrency of 16; the

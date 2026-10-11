@@ -1541,14 +1541,27 @@ The set does not pass under its existing proof requirement. The subsequent deep
 audit led to the user-authorized
 [DSLv9 drafting step](distillation-review-v1/README.md#dslv9-evidence-requirements-draft-october-11).
 It restores AS's subject-wording guidance, makes counterexamples optional and
-supplies selected teacher contexts only for interpreting existing words. Exact
-wording awaits review; no DSLv9 inference or production adoption has occurred.
+supplies selected teacher contexts only for interpreting existing words. The
+exact wording and [fourteen-case diagnostic](distillation-review-v1/README.md#dslv9-approved-diagnostic-october-11)
+were approved. Fourteen fresh Sol/xhigh first attempts match all prospective
+targets, and both agent audits accept all verdicts and complete explanations.
+The independent auditor recorded decisions before seeing candidates and did
+not inspect target metadata or prior reviews. This passes the development panel,
+not unseen accuracy or production adoption. Native execution takes 64.714
+seconds, with a peak of nine comparisons under automatic queue admission.
+The 76-token prefix is ineligible, so caching and warming are omitted. Usage is
+19,399 input and 16,679 output tokens, including 13,604 reasoning; the catalog
+API-equivalent estimate is $0.205588, with provider charges unknown. There are
+no retries, reuse or failures, and allowance usage reconciles at 14/28.
 Native adapters copy at most two selected teacher ancestor paths, keeping source
 numbers outside model input and original source hashes protected. New inputs
 require source-adapter preparation rather than unchanged `prepare --from`.
 Three new preparation tests pass; existing broader failures reproduce on the
 unchanged baseline. The bulk helper's obsolete concurrency setting remains a
-separate prerequisite. Historical results and labels remain unchanged.
+separate prerequisite before the fixed ten-note regression. Historical results
+and labels remain unchanged. The preserved DSLv8 snapshot has fourteen input
+mismatches after the AS/context-input revision, so this is not a prompt-only
+paired comparison.
 AS, schema and model settings stay fixed. Qualification,
 broader regression, lower-effort testing and final 60 remain pending; production
 defaults to DSLv2.
