@@ -4944,3 +4944,125 @@ when that variation is rejected. Keep the rest of V176 unchanged and retain
 positive controls, so producing blanket neither or uncertainty cannot count as
 success. This is a proposal for a separate version and controlled test; the
 present diagnostic changes neither prompt nor meanings.
+
+## V177 mandatory restriction-check ablation
+
+The user authorized the proposed single-mechanism edit and controlled test.
+Experimental V177 replaces V176's identity/consumer-only positive prerequisite
+with a concrete test of every applicable parent requirement absent from the
+child's explicit wording, and updates the canonical-consequences cross-reference
+to that prerequisite. All other instructions, synthetic examples and the V176
+justification-first output schema remain unchanged. Native revision provenance
+pins V176 SHA256 `aba4eaa4e8a5d6dc840264b9c404b2b6d6394312b47796eeec19e79fe71002ea`;
+V177 SHA256 is `c58311a953940bcea066fcf4af9e2d334a9f4b740d60b8218cf379845f11970a`.
+V176 is an experimental controlled reference, not an adopted production prompt.
+
+Before dispatch, native preparation freezes six fresh two-case Stockpots draws
+in `target/compare-v177-all-restrictions-v1/pair-01` through `pair-06`. Each
+inherits its matching completed V176 orientation draw with `--repeat` and only
+the prompt changed. The six saved V176 draws are the reference; they are not
+rerun or concurrent temporal controls. The user-adjudicated expected relation is
+neither. Review must establish both a whole-child-admitted counterexample to
+meal purpose and the independent noncontainment in the opposite direction;
+uncertainty and an invalid proof are reported separately.
+
+Two additional fresh eight-case draws, `controls-01` and `controls-02`, inherit
+the unchanged core inputs for both orientations of pairs 002, 010, 041 and 061.
+The provisional controls are Salads containing Salad dressing, equivalent Coffee
+definitions, neither Dietary practices/Fasting under the explicit person
+restriction, and Cooking containing Planned outdoor grilling of dinner. The
+saved V176 answers are agent-qualified references, not new human gold or
+equal-repeat-rate estimates. Check diagnostic validity as well as labels; do not
+force these expectations if a genuine meaning ambiguity is established.
+The positives test retained information connections and intended activity;
+equivalence and the person restriction check guard against blanket rejection.
+
+All meanings remain the exact ASv6.100/Bootstrap-v96 producer strings. Canonical
+branches are empty, so this panel does not qualify graph consequences. Settings
+remain Sol 6.1 medium, SSE and automatic prefix caching through the shared stable
+launcher and original worker. Preparation uses the task worktree, exact native
+inputs and receipts; historical targets and source evidence remain outside model
+input. No Bootstrap calls, hierarchy/UI work, provider changes or external
+messages are included. Following [OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices),
+the edit is direct and requests decisive diagnostics rather than a reasoning trace;
+that guidance does not validate this semantic hypothesis.
+
+The planned 28 fresh comparisons plus eight warmups require 36 actual attempts
+absent failures. Each pair has a five-attempt ceiling and each control draw has
+a seventeen-attempt ceiling, all sharing the existing 20,000 counter at 18,681.
+The usage definition is `hierarchy-compare-v177-all-restrictions-usage-v1.json`.
+This is a targeted development ablation, not an untouched accuracy benchmark.
+
+### Completed V177 ablation
+
+All 28 comparisons validate, with 28 distinct provider response IDs, no reused
+answers and exact local-meaning copies. Input strings, producer evidence,
+response schema and non-prompt runner settings match their native references.
+All answer records retain justification-before-answer order. Protected native
+`final-generation.json` snapshots were captured with zero reviews before
+independent assessment.
+
+| Draw | Cookware local, Stockpots canonical | Stockpots local, Cookware canonical |
+|---|---|---|
+| 01 | Cookware contains Stockpots | Neither |
+| 02 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 03 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 04 | Neither | Cookware contains Stockpots |
+| 05 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 06 | Cookware contains Stockpots | Cookware contains Stockpots |
+
+V177 still produces only two correct neither relationships among twelve answers,
+matching V176's total. Its orientation counts are 1/6 and 1/6, compared with
+V176's 0/6 and 2/6; these small development samples do not establish an orientation
+effect. There are two reversals and four consistent-but-wrong pairs. No primary
+answer is uncertain. Neither successful answer loses the opposite-direction
+shallow-frying-pan witness.
+
+The two successful questions isolate meal-preparation purpose and construct
+exclusively experimental culinary-stock vessels. Nine failed questions combine
+that purpose with shared food/heat/design requirements; the remaining failed
+question substitutes food preparation and omits meal purpose. Their justifications
+reject cold-storage or nonfood vessels, then infer meal preparation from culinary
+stock-making. They do not test a vessel retaining the complete stock-simmering
+design while lacking meal purpose. Explicitly naming every restriction in a
+mandatory instruction therefore does not establish that the generated concrete
+case tests it. V177 has no observed improvement on this witness.
+
+Both control draws preserve Salad-dressing containment, Coffee equivalence and
+planned-grilling containment in both orientations. Both Dietary-practices-local
+answers instead approve Fasting containment, while both reversals retain neither.
+One forward proof never tests a nonhuman deliberate practitioner. The other
+rejects instinctive animal feeding because it is not deliberate, then assumes
+the whole activity is human. The reverse answers admit deliberately time-bounded
+nonhuman fasting. The forward proofs fail to establish their asserted person
+restriction; do not mistake an incomplete candidate for proof of full coverage.
+These two control changes are observed losses against the qualified V176 reference,
+not a quantified causal regression rate: V176's controls have one saved draw,
+while V177 has two, and they were not run concurrently. Their provisional
+expectations remain separate from the user-adjudicated Stockpots witness.
+
+All valid positives and equivalence remain, so the candidate is not achieving
+its negative judgments by blanket rejection. Nevertheless, the unchanged
+primary failure and unsupported control proofs mean V177 is not adopted.
+The next useful hypothesis is to make a question isolate an absent parent
+qualification while preserving the child's shared conditions, and to keep the
+specific identity check when testing that broader mechanism. This requires a
+separate authorized revision; no additional edit or dispatch is part of V177.
+
+Native usage is complete: 36 attempts, comprising 28 comparisons and eight
+warmups; zero failures, retries, reuses or missing usage. Known API-equivalent
+catalog cost is $0.2781708, including warming, and 20/28 comparisons have cache
+hits. This is not subscription billing. Reasoning is included in output. The
+shared counter advances from 18,681 to 18,717 of 20,000. Native aggregate output
+is `target/compare-v177-all-restrictions-usage-v1.json`. Frozen verification covers
+908 unique source bindings, 39 code bindings, eight runner-config bindings and
+28 exact output receipts. Source meanings and prior targets/reviews remain intact.
+
+Independent native assessment records sixteen agent accepts and twelve rejects:
+Stockpots has two accepts and ten rejects; each eight-case control draw has seven
+accepts and one rejected forward Fasting proof. No assessment is uncertain.
+These assess saved proofs under the stated qualifications, not new human gold.
+Each case has exactly one current review bound to its input/output hashes.
+`final-reviewed.json` snapshots preserve every non-review case field and all
+eight zero-review generation snapshots retain their original hashes. Both the
+independent reviewer and the root verify these bindings and preservation.
