@@ -6503,3 +6503,178 @@ the scope of stock explicit. Use separately labeled diagnostic copies under
 unchanged V179, retaining the original producer strings and evaluation panel
 untouched. This can distinguish ambiguous clause scope from presumed lexical
 implications; it is proposed, not prepared or executed here.
+
+## V185 whole instruction-core qualification
+
+### Frozen preparation and gates
+
+The subsequent user-authorized whole-prompt audit replaces the previously
+suggested input ablation as the next experiment. Experimental
+[Compare-v185](Hierarchy-compare-v185.md) rewrites V179's instructional core
+around one operational containment rule, with explicit binding of parent
+requirements to the thing or activity supplying the information connection.
+It consolidates repeated checks; it does not add a new output procedure.
+The A/B subject-and-meaning contract, four-field output instructions, schema,
+two synthetic examples and final input section remain unchanged. Instruction
+words fall from 754 to 662; total words from 1,261 to 1,169. Native
+[revision provenance](Hierarchy-compare-v185.md.revision.json) pins V179 and
+records this package intervention. V185 SHA256 is
+`abbc60964a81ca2eb40d8c0dc0c130edef3c711a19ad60db0d6efe82ccfa41c2`.
+
+Independent semantic preflight retained all parent restrictions, identity,
+role, intention, state and whole-alternative coverage. Five fresh synthetic
+pairs were designed without seeing the candidate instructions and qualified
+by two independent agent assessments before inference. They cover a kind's
+repair, an activity's intended tools, particular identity versus a kind,
+partially overlapping alternatives and incompatible states at one explicitly
+shared reference instant. Their labels remain provisional agent expectations,
+not user gold. They are outside the prompt examples and all producer-bound
+regression collections. No AS or Bootstrap generation occurs.
+
+The [A-first](hierarchy-compare-whole-core-controls-a-first-v1.json) and
+[B-first](hierarchy-compare-whole-core-controls-b-first-v1.json) generic sources
+combine these five pairs with the three unchanged nonfood purpose controls.
+Each includes both semantic orientations; only physical JSON member order
+changes between sources. Expectations, proofs and synthetic qualifications
+stay outside `INPUT_JSON`. The historical Stockpots/Cookware pair retains its
+exact ASv6.100 / Bootstrap-v96 endpoints through native `prepare --from` of
+the saved matched-order experiments. Its correct label remains unresolved:
+we evaluate interpretation, reversal and order consistency without prescribing
+a positive, negative or null answer.
+
+The first screen prepares eight native experiments under
+`target/compare-v185-whole-core-v1/{v179,v185}/{stockpots,controls}`. Each
+family has `a-first-01` and `b-first-01`; the Stockpots directories each have
+two cases, the controls directories sixteen. This is nine semantic pairs
+times two A/B assignments times two physical member orders times two prompt
+arms: **72 planned fresh calls**, 36 per arm. All use intentional `--repeat`,
+Sol 6.1 medium, SSE, the same worker and schema, and no explicit prefix warmup.
+The shared runner's automatic queue supplies capacity; no concurrency field
+is added. The existing persistent 20,000-attempt counter bounds all calls and
+provider retries, with at most two lifetime attempts per case. It reads 19,205
+before preparation; this is not a new allowance. Native
+[usage aggregation](hierarchy-compare-v179-v185-whole-core-usage-v1.json)
+separates arms and families. Request/cache/body and native receipt checks remain
+required; a cache read is not an answer reuse or a conversational context.
+
+The candidate must pass strict symmetric directional validation, all clear
+semantic controls without unsupported uncertainty, and both directional proof
+reviews. Consistency checks cover all reversals and physical-order contrasts,
+separately for Stockpots and clear controls. A candidate failing this screen
+does not receive repetitions merely to search for a favorable draw. Only a
+surviving unchanged candidate warrants fresh confirmation, then broader frozen
+real-data qualification before adoption. Stable labels alone do not establish
+semantic correctness. This package comparison can establish a candidate
+difference, not which removed sentence caused it; any successful package would
+need targeted add-back diagnostics before such a causal claim.
+
+Official reasoning guidance supports clear, direct instructions and concise
+auditable diagnostic conclusions instead of requested reasoning traces;
+evaluation guidance identifies position bias and recommends clear rubrics and
+human alignment. Neither endorses this particular containment convention or
+guarantees the rewrite will work. The chosen Sol-medium workload must supply
+that evidence. Sources: [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+and [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#llm-as-a-judge-and-model-graders).
+
+### Completed first screen
+
+All eight native experiments finish with **72 fresh valid first attempts**,
+36 per arm. Existing production `hierarchy_node_pairs.validate` accepts every
+response under `diagnostics=True, symmetric=True`. No provider retry, failure,
+unrun request, exact answer reuse, explicit warmup or missing usage occurs.
+The same persistent counter moves from 19,205 to 19,277. Native `usage.json`
+reports **$0.4713536 API-equivalent catalog cost**, including reasoning in
+output; this is not subscription billing. Twenty-four backend cache reads
+are distinct from answer reuse or conversational context.
+
+| First-screen measure | Fresh V179 | Experimental V185 |
+|---|---:|---:|
+| Clear-control expected labels | 32/32 | 32/32 |
+| Clear-control reversal conflicts | 0/16 | 0/16 |
+| Clear-control physical-order changes | 0/16 | 0/16 |
+| Stockpots reversal conflicts | 1/2 | 2/2 |
+| Stockpots physical-order changes | 1/2 | 2/2 |
+
+V185 again concludes Cookware contains Stockpots when Cookware is physically
+first, and `neither` when it is second. Its first-position positive proofs
+infer meal preparation from stock preparation; its second-position negative
+proofs admit an experimental stock-preparation design without that intention.
+The two unchanged definitions do not justify changing interpretation according
+to position. Fresh V179 has three `neither` results and one containment result,
+so it also fails consistency. Four responses per arm on one disputed pair
+cannot establish general worsening or a reliable error rate. The expected
+Stockpots relation remains unresolved; these counts identify inconsistent
+interpretation rather than certifying which semantic answer must change.
+
+The candidate fails the declared consistency gate. No second draw, broader
+panel or adoption follows from this screen. The package preserves clear
+label behavior but has not repaired the original failure. It does not prove
+that clarity, brevity, question generation or any removed individual sentence
+causes the residual error. Original endpoints and all frozen producer panels
+remain untouched.
+
+Seventy-three existing production-path node-pair tests pass. An initial test
+invocation also named a nonexistent additional module; the corrected command
+runs the actual supported node-pair suite alone. The read-only output audit
+uses the existing validator's returned parsed result and exceptions, not an
+invented `valid` flag. No production code or test APIs are changed.
+
+Independent semantic reviews accept all **64 clear-control responses**, including
+all 128 directional questions, answers and proofs. Repair and tool information
+remain covered without requiring physical instance membership or performed
+action; identity counterexamples do not assign unknown Lumen properties;
+alternative and state exclusions retain the whole supplied requirements.
+Three identity responses use battery-capacity wording with a justification
+identifying the distinct qualifying battery-powered lamp. Review accepts the
+combined evidence while recording this minor standalone wording qualification.
+The reviewers projected input and output, without reading candidate instructions
+or expected-label fields. Directory names still exposed version identifiers,
+so this is not a fully arm-blinded study. After completing its V185 judgments,
+one reviewer saw the already-completed H5 design summary through an agent-status
+call; it was not available before those judgments. The delegated V179 review
+remained independently blinded to that summary.
+
+A separate Stockpots review distinguishes five conditional `neither` arguments
+from three conditional containment arguments. If Cookware universally requires
+meal-preparation design and Stockpots does not, the experimental designs supply
+valid separating cases. The three positives instead infer meal intention from
+stock or food preparation without independently establishing that implication.
+If the meal clause only illustrates unrestricted food-preparation design, the
+experimental cases do not escape the parent. These conditional assessments
+do not resolve the user's original label. V185's `b-first-01`,
+`isolated-035-reverse` also leaves its shallow-pan counterexample's meal-design
+admission under-established on the restrictive reading; frying eggs is not an
+explicit intention proof in this response. We do not transfer favorable
+interpretations from other outputs to repair that evidence.
+
+Native output-specific agent reviews accept the 64 controls and mark the eight
+original Stockpots cases uncertain with these qualifications. Their original
+model labels are preserved. This review verdict does not require the model to
+return `uncertain`; it records unresolved semantic gold. `final-generation.json`
+and native `final-reviewed.json` preserve original outputs and receipts;
+reviews do not alter any nonreview case field. No homemade evaluation artifacts
+or producer receipts are substituted for the native record.
+
+The next warranted diagnostic is now a controlled boundary test under an
+unchanged prompt: separately distinguish universal meal-design intention from
+an illustrative meal application, then explicit meal intention from food
+identity in Stockpots. Retain the original producer strings and disputed gold
+untouched. Test one boundary at a time in both assignments and member orders.
+That can determine whether the residual comparison failure survives genuinely
+closed scopes before another instruction rewrite. It is a recommendation,
+not prepared or run here. No Bootstrap coordination, hierarchy generation or
+additional allowance is implied.
+
+The independent native identity audit verifies all 72 actual request bodies and
+receipt-to-result links. Model, effort, endpoint, worker, SSE settings, ordered
+schema and frozen executable code match across arms; 905 recorded source-file
+hashes remain unchanged. The only arm-specific body change is the instruction
+prefix before `# Output`. Order variants change only top-level JSON member
+order; all 36 within-arm reversal comparisons exchange the exact endpoints.
+All eight Stockpots cases retain original baseline inputs and evidence, both
+Bootstrap-v96 producer meanings/receipts, and the original ASv6.100 post/tree
+provenance. Seventy-two production receipt validations, request/output hashes
+and unique response IDs pass. Each actual body contains exactly one user
+prompt, empty instructions, `store:false` and no conversation linkage. Native
+generation and review records remain unchanged; no source or proof blocker
+explains away the observed comparison inconsistency.

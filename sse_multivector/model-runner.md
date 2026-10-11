@@ -7307,3 +7307,35 @@ development baseline. Native usage records 64 first attempts, no answer reuse,
 warmup, retry, failure or missing usage, 17 backend prefix-cache reads and
 $0.4786384 API-equivalent catalog cost. The existing shared counter moves 19,141
 to 19,205. See [preparation, completed evidence and next diagnostic limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v184-explicit-ambiguity-instruction-test).
+
+### Compare-v185 whole instruction-core qualification
+
+Experimental [Compare-v185](shr_single_pair/Hierarchy-compare-v185.md) rewrites
+the V179 instructional core while retaining the A/B input, four output fields,
+schema and two synthetic examples unchanged. The user-authorized whole-prompt
+audit supersedes the previously proposed endpoint ablation as the immediate
+next experiment. A fresh matched screen uses the original unresolved
+Stockpots/Cookware pair, three unchanged nonfood purpose controls and five
+independently designed synthetic holdouts. Both semantic assignments and both
+physical JSON member orders yield 72 planned calls across V179/V185. Synthetic
+expectations remain agent assessments outside model input; no Bootstrap or AS
+generation occurs, and the frozen producer panels remain unchanged.
+
+Use native prepare/repeat, the shared automatic queue, Sol 6.1 medium/SSE and
+the existing persistent counter. Explicit cache warming is disabled equally
+in both arms. Strict directional validation, semantic proof review and reversal
+and order checks gate further testing. Candidate failure stops this screen;
+survival would require fresh confirmation and broader qualification before
+adoption. See [frozen design and gates](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v185-whole-instruction-core-qualification).
+
+The first screen completes: 72 fresh valid first attempts, all strict symmetric
+directional checks passed, no retry/reuse/warmup/failure/missing usage. Both
+arms match 32/32 clear-control labels with zero reversal or member-order
+conflicts. V185 has 2/2 Stockpots reversal conflicts and 2/2 member-order
+changes; fresh V179 has 1/2 of each. The small disputed-pair result is not a
+general performance ranking. V185 fails qualification and receives no second
+draw or broader adoption test. Native usage is $0.4713536 API-equivalent; the
+persistent counter moves to 19,277. Seventy-three production node-pair tests
+pass. Full proof review and exact request/receipt audit are recorded with the
+maintained results; neither prompt is certified by consistent clear controls
+alone.
