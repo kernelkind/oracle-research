@@ -6,7 +6,9 @@ new hierarchy. The user authorized adding the failures identified in the
 Compare regression set. The original construction used unchanged Bootstrap-v96
 and Compare-v48. Compare-v69 and approved-for-qualification Compare-v75 completed
 the initial experimental trials. The latest experimental V176 failed fresh
-confirmation and is not adopted. The
+confirmation and is not adopted. Its subsequent
+[qualified-subset test](#qualified-subset-test-of-unchanged-v176) retains two
+settled reversals and additional input qualifications. The
 [input-validity audit](#input-validity-audit-before-further-compare-edits) separates
 provisional accuracy candidates, ambiguous meanings and consistency fixtures
 before further edits. Original results, producer receipts and actual user
@@ -4676,3 +4678,140 @@ Future evaluation should retain qualified accuracy, invalid-proof checks,
 interpretation consistency and canonical consequences as separate results.
 This reassessment uses saved outputs only: no new model calls, producer changes,
 prompt changes or rewritten historical reviews.
+
+## Qualified-subset test of unchanged V176
+
+The user authorized testing the wider qualified subset after the input audit.
+The pre-call selection retains all 82 provisional accuracy families: 124 core
+requests and 40 isolated fifty-note requests. Their 164 registered requests
+represent 157 distinct serialized inputs and 79 distinct unordered meaning
+pairs. Duplicates retain their original identities and are not independent
+accuracy observations. The 37 ambiguous families, 14 consistency-only families
+and 32 graph snapshots remain separate; no new judgments on them are claimed.
+Every selected canonical fixture has empty branches, so this test does not
+qualify canonical consequence handling.
+
+Native preparation uses the existing V176 core/control specs with the audited
+case IDs selected through `prepare --only`, automatic caching and `history_root`
+set to this task worktree's `target`. It retains ASv6.100/Bootstrap-v96 meanings
+byte for byte. The prompt and response schema remain unchanged, including
+justification-before-answer order. Preparation verifies task-source code hashes,
+the stable shared worker, Sol 6.1 medium and SSE; no Bootstrap generation or
+hierarchy construction occurs.
+
+Native experiments are `target/compare-v176-qualified-accuracy-v1/{core,fifty}`.
+Their plan hashes are respectively
+`f97da51471f695c68c3b5b4c268b6d23859253eb7bba504f160fff68ab4b4a3f`
+and `4078adafeed2361269f155740460a5f7863bf91bf3e1136317b4980ec4852a04`.
+V176's unchanged template hash is
+`aba4eaa4e8a5d6dc840264b9c404b2b6d6394312b47796eeec19e79fe71002ea`.
+The complete `core-final-generation.json` and `fifty-final-generation.json`
+native snapshots were saved with zero reviews and are preserved before subsequent
+attributed assessments. All 164 actual outputs copy local meanings exactly and
+emit `question_id`, `justification`, then `answer` in both answer records.
+
+### Execution and pre-call target comparison
+
+All 164 cases validate. Native usage records 141 newly dispatched attempts:
+136 successful comparisons, two warmups and three automatically retried provider
+failures. There are 28 exact answer reuses, including seven duplicate requests
+resolved within this trial. Failed attempts are counted, not refunded. The shared
+20,000 counter moves from 18,522 to 18,663 during the run; it remains shared with
+other authorized work.
+
+The maintained usage source is
+`hierarchy-compare-v176-qualified-accuracy-usage-v1.json`; the corresponding native
+report is `target/compare-v176-qualified-accuracy-usage-v1.json`. Known newly
+dispatched API-equivalent cost is $0.898470. Including original generation behind
+reused answers gives a known $1.0782304 subtotal. Three failed attempts lack usage,
+so neither complete cost nor complete caching savings is known. These estimates
+are not subscription billing, and reasoning tokens are already included in output.
+
+The original provisional targets match 122/124 core labels and 39/40 fifty-note
+labels: 161/164 registered requests, or 154/157 distinct requests. Disagreements
+are core005-forward (`neither` rather than provisional local containment),
+core039-forward (`uncertain` rather than provisional local containment), and
+isolated035-reverse (`neither` rather than provisional canonical containment).
+This is comparison with pre-call agent assessments, not certified accuracy.
+Targets are not changed to make this result pass.
+
+Native consistency detects core005 and isolated035 settled reversal conflicts
+among 78 registered/75 distinct settled reciprocal pairs. Core039 additionally
+changes from unresolved to positive across orientations; the native settled-only
+denominator excludes it. Both tested directional graphs have no detected chain,
+equivalence-substitution or cycle conflict. Missing comparisons remain unknown;
+this does not establish exhaustive consistency or general correctness.
+
+### Qualifications exposed by output review
+
+An additional independent read-only reviewer challenged the disputed inputs
+without changing their targets or recording an extra model draw. Preserve these
+qualifications alongside the pre-call results:
+
+- **Core005:** the parent explicitly requires roughly equal milk/cream proportions;
+  the child names dairy half-and-half in the author's coffee without establishing
+  that formulation. The forward answer invents a 78/22 formulation for that use.
+  That can test a general-use reading, but cannot establish the composition of the
+  same particular product. The reverse answer instead claims the familiar product
+  name necessarily imposes equal proportions. The official milkfat standard
+  permits other formulations, so that necessity claim is unsupported. Particular
+  versus general-use scope and the actual formulation remain qualified; neither
+  original positive nor newly proposed negative is certified gold.
+- **Core034/039:** experienced thinking, awareness and alertness establish a mental
+  connection. Rejecting an unfeeling text generator does not establish the
+  particular author's personhood. An ordinary human-author reading remains
+  defensible, while a reading requiring independent identity evidence supports
+  core039-forward's null. The input audit's unconditional positive targets need
+  qualification, including core034's matching labels; a target match alone did
+  not expose this proof gap.
+- **Isolated035:** Cookware ends with "for preparing meals such as a Full English
+  Breakfast." "Such as" is illustrative, but whether the preceding meal-purpose
+  phrase restricts every vessel remains disputed. Under a strict purpose reading,
+  Stockpots admits a vessel designed solely for preparing experimental culinary
+  stock for analysis/disposal; preparing stock does not necessarily serve meals.
+  The forward proof invokes the strict meal scope but tests a textile-dye vessel
+  that fails the child, then assumes stock preparation establishes meal purpose.
+  The reverse tests the missing purpose directly. Under an illustrative-use
+  reading, that reverse case fails exclusion. The two labels switch readings;
+  neither the prior blanket positive nor a replacement blanket negative is gold.
+
+The independent product-kind check uses
+[21 CFR section 131.180](https://www.govinfo.gov/content/pkg/CFR-2025-title21-vol2/pdf/CFR-2025-title21-vol2-sec131-180.pdf):
+the named milk/cream mixture is constrained by milkfat content, not an equal
+ingredient-share requirement. This establishes a genuine lexical alternative,
+not the particular author's product composition or a particular blend calculation.
+
+Requalification after seeing outputs is not a measured prompt improvement.
+The original selection, proposed targets, meanings, answers and receipts remain
+intact. This wider test exposes interpretation/proof instability and weaknesses
+in the provisional input audit; it does not justify another edit solely to force
+those targets or adoption of V176.
+
+### Attributed review and next diagnostic
+
+Four independent agent reviewers register one current native assessment per
+case: core has 118 accepts and six uncertain assessments; fifty-note has 38
+accepts, one rejected proof and one uncertain assessment. The total is 156
+accepts, one rejection and seven qualifications. These assess the saved answers
+and their proofs; they are not human gold, an accuracy denominator or additional
+model draws. The fifth reviewer independently challenges the disputed boundaries
+without registering duplicate assessments.
+
+Native reviewed snapshots are `core-final-reviewed.json` and
+`fifty-final-reviewed.json` in the same trial directory. Every assessment binds
+to its current input and output hashes. All non-review case fields remain exactly
+equal to the pre-review snapshots, including original meanings, outputs and
+receipts. Their protected generation-snapshot hashes remain respectively
+`cb180ff70035f50b1655072197b19894340745420e3c254c94d79f8fd96935dc`
+and `dc516f4b6edd019df1e25bc5efaa24956610265ac63b6a523ba23ac0908b231a`.
+Producer receipts, frozen source/code hashes and reused-answer origins verify.
+
+The most useful next diagnostic is the Stockpots meal-purpose test after fixing
+that disputed clause's reading explicitly. The current positive proof tests a
+child-invalid vessel, then assumes an untested parent purpose. Separate whether
+Compare fails to check that missing restriction from whether the original prose
+supports different attachments. Preserve the original case and its provisional
+target; any clarified-input contrasts are separate diagnostic cases, not repairs
+to this score. No new prompt version or further experiment is authorized by this
+recommendation. An untouched, coverage-diverse holdout is still needed before a
+general accuracy claim.

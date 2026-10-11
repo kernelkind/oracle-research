@@ -3,17 +3,17 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Bootstrap broad: BBv3 draft
+## Bootstrap broad: BBv5 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv3](Hierarchy-bootstrap-broad-v3.md) is the current untested draft. The user
+[BBv5](Hierarchy-bootstrap-broad-v5.md) is the current untested draft. The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
-Both [BBv2](Hierarchy-bootstrap-broad-v2.md) and BBv3 are direct, hash-pinned
-revisions of unchanged v109 through the shared runner's offline `revise` command.
+BBv2 through BBv5 are direct, hash-pinned revisions of unchanged v109 through
+the shared runner's offline `revise` command.
 [BBv1](Hierarchy-bootstrap-broad-v1.md) used v104; it remains preserved as the
 initial draft, rather than serving as the corrected baseline. This does not
 activate BB or change the separate Bootstrap line's approval status.
@@ -21,7 +21,11 @@ activate BB or change the separate Bootstrap line's approval status.
 The corrected draft retains v109's distinction between the subject's scope,
 example details and factual evidence. Additional restrictions must be expressed
 by the selected subject or define its intended sense. When supported scopes of
-the same topic differ by inclusion, choose the broader one. Evidence need not
+the same topic differ by inclusion, choose the broader one. This preference
+governs boundary selection while establishing the intended sense. Distinguish
+a category from its restricted subset even when the restriction is described
+as a sense; different word meanings and identified people or things still
+require resolution from the evidence. Evidence need not
 illustrate every member; descendants remain non-exhaustive unless the selected
 subject expressly defines a complete set. Named identities, expressed
 restrictions and all named alternatives remain preserved. Different senses are
@@ -38,12 +42,22 @@ example explicitly chooses the particular scanning queue identified by the
 selected subject, context and post, preserving that collection's identity.
 The original example posts and hierarchy inputs remain unchanged.
 
+A subsequent user review identified that BBv3 could appear to apply breadth
+only after an intended sense had been chosen. The user authorized making the
+preference apply during boundary selection. [BBv4](Hierarchy-bootstrap-broad-v4.md)
+and BBv5 make interpretation and boundary selection joint decisions. BBv5
+uses ordinary wording for the distinction between different word meanings,
+people or things and a category's restricted subset. A further read-only audit
+found no material contradiction in the clarified rule; both examples remain
+compatible. This clarifies the written contract without demonstrating model
+behavior.
+
 Both reviewers found no remaining material internal inconsistency in BBv3.
 This is an agent assessment of the written prompt, not model qualification or
 new human gold. The adjacent revision receipts pin each baseline, exact edits
 and resulting prompt hash. Nine native revision tests, nested example-schema
-and exact-quote checks pass. Input/output contracts, factual-evidence rules and
-final definition-writing rules remain unchanged from v109. No model calls have
+and exact-quote checks pass. Input/output contracts and final definition-writing rules remain unchanged
+from v109; factual-evidence safeguards are retained. No model calls have
 been made for this draft. The
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 supports direct instructions and clear delimiters; it does not establish BB's

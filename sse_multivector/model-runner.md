@@ -6651,3 +6651,9 @@ Compare prompt. Agent agreement and zero contradiction counts do not certify gol
 On the latest matched V173/V176 panel, both versions match the 21 provisional
 accuracy targets. Its other 31 cases require ambiguity, missing-proof or graph
 qualification; their old review counts must not be presented as accuracy rates.
+The subsequent unchanged V176 qualified-subset trial validates all 164 requests,
+with 28 exact reuses and 141 newly dispatched attempts. Its 161 matches to
+pre-call provisional targets are not certified accuracy. Two settled reversals,
+one positive/null orientation change and newly challenged input boundaries remain;
+V176 is not adopted. Details and native usage are in the
+[qualified-subset findings](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#qualified-subset-test-of-unchanged-v176).
