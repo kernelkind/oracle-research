@@ -17,6 +17,81 @@ class HierarchyNodePairsTests(unittest.TestCase):
     show = fixtures.ExperimentTests.show
     calls = fixtures.ExperimentTests.calls
 
+    def counterexample_source(self, run=True, name='producer'):
+        self.prompt.write_text('GENERIC PROMPT DIAGNOSTIC {INPUT_JSON}')
+        payload = {'local': {'subject': 'Devices', 'meaning': 'Devices with lamps.'},
+                   'canonical': {'id': 'C1', 'subject': 'Red devices',
+                                 'meaning': 'Devices with red lamps.',
+                                 'parents': [], 'ancestors': [], 'descendants': []}}
+        self.write(name + '-cases.json', {'cases': [{'id': 'pair',
+            'inputs': {'INPUT_JSON': json.dumps(payload)},
+            'evidence': {'private': 'OLD TARGET EXCLUDED'}}]})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = {'adapter': 'generic', 'path': name + '-cases.json'}
+        spec['runner']['output_schema'] = {'type': 'object'}
+        self.write(name + '-spec.json', spec)
+        self.cli('prepare', name, '--spec', name + '-spec.json')
+        if run:
+            self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps({
+                'answers': [{'question_id': 'canonical_contains_local',
+                    'answer': 'A device with a blue lamp.',
+                    'justification': 'An ordinary device. A device with a red lamp. OLD LABEL.'}],
+                'relation': 'neither'})})
+        envelope = self.root / name / 'experiment.json'
+        selected = dict(id='blue', experiment={'path': name,
+            'sha256': hashlib.sha256(envelope.read_bytes()).hexdigest()}, case_id='pair',
+            direction='canonical_contains_local', field='answer', excerpt=None, reverse=False)
+        source = dict(schema_version=1, saved_counterexamples=[selected])
+        self.write('checks.json', source)
+        spec['dataset']['path'] = 'checks.json'
+        self.write('spec.json', spec)
+        return source
+
+    def test_saved_counterexamples_prepare_blind_cases_with_exact_receipts(self):
+        source = self.counterexample_source()
+        source['saved_counterexamples'].append(dict(source['saved_counterexamples'][0],
+            id='red', field='justification', excerpt='A device with a red lamp.', reverse=True))
+        self.write('checks.json', source)
+        self.prepare('checks')
+        cases = self.show('checks')['cases']
+        blue, red = [json.loads(case['inputs']['INPUT_JSON']) for case in cases]
+        self.assertEqual(blue, {'local': {'subject': 'Devices', 'meaning': 'Devices with lamps.'},
+            'canonical': {'subject': 'Red devices', 'meaning': 'Devices with red lamps.'},
+            'case': 'A device with a blue lamp.'})
+        self.assertEqual(red, {'local': blue['canonical'], 'canonical': blue['local'],
+                              'case': 'A device with a red lamp.'})
+        for case in cases:
+            for excluded in ('OLD TARGET', 'OLD LABEL', 'neither', 'justification'):
+                self.assertNotIn(excluded, case['prompt'])
+            self.assertEqual(case['evidence']['saved_counterexample']['receipt'],
+                             self.show('producer')['cases'][0]['receipt'])
+        plan = json.loads((self.root / 'checks/experiment.json').read_text())['plan']
+        self.assertIn(str(self.root / 'producer/run/results.jsonl'), plan['sources'])
+        self.assertFalse(plan['preparation']['application_allowed'])
+        self.assertEqual(len(self.calls()), 1)
+        self.cli('run', 'checks', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"local":{"verdict":"fits"},"canonical":{"verdict":"outside"}}'})
+        self.assertEqual(self.show('checks')['summary']['valid'], 2)
+        self.assertEqual(len(self.calls()), 3)
+
+    def test_saved_counterexamples_refuse_invalid_selectors_and_unrun_answers(self):
+        source = self.counterexample_source()
+        for field, value, error in (
+                ('case_id', 'missing', 'valid saved comparison'),
+                ('direction', 'wrong', 'containment direction'),
+                ('field', 'relation', 'answer or justification'),
+                ('excerpt', 'not in saved answer', 'exact unique excerpt'),
+                ('reverse', 'yes', 'reverse must be boolean')):
+            changed = json.loads(json.dumps(source))
+            changed['saved_counterexamples'][0][field] = value
+            self.write('checks.json', changed)
+            result = self.cli('prepare', 'invalid-' + field, '--spec', self.spec, ok=False)
+            self.assertIn(error, result.stderr)
+            self.assertFalse((self.root / ('invalid-' + field)).exists())
+        self.counterexample_source(run=False, name='unrun-producer')
+        result = self.cli('prepare', 'unrun', '--spec', self.spec, ok=False)
+        self.assertIn('valid saved comparison', result.stderr)
+
     def source(self):
         self.prompt.write_text('GENERIC PROMPT\n<input>\n{INPUT_JSON}\n</input>\n')
         self.write('notes.json', {'schema_version': 1, 'notes': [
@@ -675,6 +750,131 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.prepare('screen')
         self.assertEqual([row['id'] for row in self.show('screen')['cases']], [cases[1]['id']])
         self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_drops_only_context(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'original-local.json'}], 'review': {}}
+        self.write('source.json', collection)
+        self.prepare('contextual')
+        original = self.show('contextual')['cases'][0]
+        self.assertEqual(json.loads(original['inputs']['INPUT_JSON']), {
+            'local': {'post': 'FULL LOCAL POST {INPUT_JSON}', 'hierarchy': {
+                'selected': '1.1', 'entries': [
+                    {'number': '1', 'subject': 'Food', 'context': 'Local root context'},
+                    {'number': '1.1', 'subject': 'Vegetables', 'context': 'Local entry context'},
+                    {'number': '1.1.1', 'subject': 'LOCAL DESCENDANT', 'context': 'Excluded'}]}}})
+        self.assertNotIn('input_view', original['evidence'])
+        collection['input_view'] = 'subjects_only'
+        self.write('source.json', collection)
+        self.prepare('subjects-only')
+        projected = self.show('subjects-only')['cases'][0]
+        original_input = json.loads(original['inputs']['INPUT_JSON'])
+        expected = json.loads(original['inputs']['INPUT_JSON'])
+        for entry in expected['local']['hierarchy']['entries']:
+            del entry['context']
+        self.assertEqual(json.loads(projected['inputs']['INPUT_JSON']), expected)
+        self.assertEqual(projected['id'], original['id'])
+        self.assertNotEqual(projected['input_sha256'], original['input_sha256'])
+        evidence = projected['evidence']
+        self.assertEqual(evidence['input_view'], 'subjects_only')
+        self.assertEqual(evidence['original_input'], original_input)
+        self.assertEqual(evidence['original_input_sha256'], experiment_inputs.digest(original_input))
+        self.assertEqual(evidence['local_input_sha256'], experiment_inputs.digest(expected))
+        self.assertNotIn('Local entry context', projected['prompt'])
+        plan = json.loads((self.root / 'subjects-only/experiment.json').read_text())['plan']
+        self.assertEqual(plan['preparation']['input_view'], 'subjects_only')
+        self.assertIn(str(self.root / 'notes.json'), plan['sources'])
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_preserves_distinct_original_identities(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        changed = json.loads(json.dumps(local))
+        changed['nodes'][0]['context_overrides'] = {'1.1': 'Different original interpretation'}
+        self.write('changed-local.json', changed)
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'original-local.json'}, {'path': 'changed-local.json'}],
+                      'review': {}}
+        self.write('source.json', collection)
+        self.prepare('contextual')
+        originals = self.show('contextual')['cases']
+        collection['input_view'] = 'subjects_only'
+        self.write('source.json', collection)
+        self.prepare('subjects-only')
+        projected = self.show('subjects-only')['cases']
+        self.assertEqual([case['id'] for case in projected], [case['id'] for case in originals])
+        self.assertEqual(len(projected), 2)
+        self.assertEqual(projected[0]['inputs'], projected[1]['inputs'])
+        self.assertNotEqual(projected[0]['evidence']['original_input'],
+                            projected[1]['evidence']['original_input'])
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_rejects_unsupported_views_and_schemas(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        collection = {'schema_version': 2, 'local_schema_version': 4,
+                      'sources': [{'path': 'original-local.json'}], 'review': {},
+                      'input_view': 'subjects_only'}
+        for index, value in enumerate((None, '', 'contexts_only', [], 4)):
+            with self.subTest(view=value):
+                self.write('source.json', {**collection, 'input_view': value})
+                result = self.cli('prepare', f'bad-view-{index}', '--spec', self.spec, ok=False)
+                self.assertIn('input_view must be subjects_only', result.stderr)
+        legacy = {key: value for key, value in collection.items() if key != 'local_schema_version'}
+        self.write('source.json', legacy)
+        result = self.cli('prepare', 'legacy-collection', '--spec', self.spec, ok=False)
+        self.assertIn('subjects_only requires collection local_schema_version 4', result.stderr)
+        self.write('source.json', {**collection, 'local_schema_version': 3})
+        result = self.cli('prepare', 'bad-schema', '--spec', self.spec, ok=False)
+        self.assertIn('local_schema_version must be 4', result.stderr)
+        self.write('source.json', {**local, 'input_view': 'subjects_only'})
+        result = self.cli('prepare', 'standalone-view', '--spec', self.spec, ok=False)
+        self.assertIn('local node source.input_view', result.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_does_not_bypass_saved_source_validation(self):
+        self.saved_meaning_source(run=False, schema_version=4)
+        self.write('source.json', {'schema_version': 2, 'local_schema_version': 4,
+            'sources': [{'path': 'bootstrap-source.json'}],
+            'experiments': [{'path': 'bootstrap'}], 'review': {}, 'input_view': 'subjects_only'})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['adapter'] = 'hierarchy_local_nodes'
+        self.write('spec.json', spec)
+        corpus = json.loads((self.root / 'notes.json').read_text())
+        corpus['notes'][0]['subjects'][1]['context'] = 'Tampered source context'
+        self.write('notes.json', corpus)
+        result = self.cli('prepare', 'tampered', '--spec', self.spec, ok=False)
+        self.assertIn('source changed', result.stderr)
+        self.assertFalse((self.root / 'tampered').exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_local_collection_subjects_only_preserves_native_quote_validation(self):
+        local = self.local_source()
+        local['schema_version'] = 4
+        self.write('original-local.json', local)
+        self.write('source.json', {'schema_version': 2, 'local_schema_version': 4,
+            'sources': [{'path': 'original-local.json'}], 'review': {}, 'input_view': 'subjects_only'})
+        spec = json.loads(self.spec.read_text())
+        schema = Path(__file__).with_name('shr_single_pair') / 'Hierarchy-bootstrap-v79.output.schema.json'
+        spec['runner']['output_schema'] = json.loads(schema.read_text())
+        self.write('spec.json', spec)
+        self.prepare('valid-quote')
+        answer = {'ambiguities': [], 'resolutions': [], 'meaning': 'Selected topic', 'evidence': [
+            {'quote': 'FULL LOCAL POST', 'supports': 'Selected topic', 'inference': None}]}
+        self.cli('run', 'valid-quote', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('valid-quote')['cases'][0]['status'], 'valid')
+        self.prepare('invalid-quote', '--repeat')
+        answer['evidence'][0]['quote'] = 'Local entry context'
+        self.cli('run', 'invalid-quote', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)},
+                 ok=False)
+        case = self.show('invalid-quote')['cases'][0]
+        self.assertEqual(case['status'], 'malformed')
+        self.assertIn('exact contiguous excerpt of the local post', case['error'])
 
     def test_local_collection_saved_answers_are_witnesses_not_meaning_inputs(self):
         self.saved_meaning_source()

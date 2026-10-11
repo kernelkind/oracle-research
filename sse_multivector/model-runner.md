@@ -99,6 +99,37 @@ supplies its own response schema; this supports relation-only Compare student
 screens without altering the teachers' meaning/relation/reason validator.
 Mechanical-answer cases are refused rather than imported as input-only cases.
 
+For blind adjudication of saved Compare proposals, a `generic` dataset may
+instead declare schema 1 with a `saved_counterexamples` array. Each selection
+specifies `id`, a hash-bound `experiment` reference, `case_id`, containment
+`direction`, `field` (`answer` or `justification`), an exact unique `excerpt`
+or null for the whole field, and boolean `reverse`. Native preparation requires
+a valid receipt-bound directional answer and fixed subject/meaning inputs.
+It emits only `local` and `canonical` subject/meaning objects plus the selected
+`case` text; `reverse` swaps the two nodes. Old labels, proof claims outside the
+selected text, source evidence and reviews remain outside model input.
+The selector must exclude any old verdict embedded in the chosen text;
+exact extraction does not certify that a proposal is semantically valid.
+Frozen source files, producer receipts and complete original diagnostics remain
+bound for review. This diagnostic cannot apply hierarchy changes and uses the
+new spec's ordinary response schema, rather than the production Compare schema.
+
+For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
+collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
+Preparation validates and deduplicates the original source-bound inputs before
+removing only each supplied hierarchy entry's `context`. Post, selected number,
+entry order, numbers and subjects stay fixed. Original case IDs remain stable;
+projected inputs receive new request hashes, so a contextual answer is not reused
+as a context-free answer. Review evidence retains original inputs and both local
+input digests. Original source validation and output quote validation still apply;
+this does not change the default input format or permit hierarchy application.
+The completed two-condition panel and targeted fresh repeats are documented in
+[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation).
+All 32 meanings validate, while Coffee-chain source assignment remains uncertain
+in both conditions. Native accounting records 37 attempts, including warmups and
+one recovered failure with unknown usage. The test does not activate context
+removal or establish a general quality improvement.
+
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
 `train_notes`, `evaluation_notes`, `entries_per_note` and `role` (`train` or
@@ -1693,16 +1724,28 @@ complete one request with different sound explanations. Both full versions
 are audited. All 784 completed occurrences and 553 justified DSL stops are
 accounted for. Every mechanical proof (77), self-guard (42), stopping dependency,
 frozen source/code binding and native score assembly passes. Complete model
-records receive **380 accepts, one reject and 15 uncertainties** across 396
-versions of 395 inputs; current native occurrence reviews are 739 accept, one
+records initially receive **380 accepts, one reject and 15 uncertainties** across
+396 versions of 395 inputs; the saved native occurrence reviews are 739 accept, one
 reject and 44 uncertain, including mechanical proofs.
-The definite DSLv10 error is R05 `2.2`: it accepts a humorous account of morning
-odd jobs around town beneath `Author's morning outings`, although the complete
-child permits those jobs to be done from home. The extra account, ownership and
-timing wording does not require going out; the post cannot supply it. Root and
-two independent agents agree after a concrete counterexample. The eight-note
-regression does not pass. The next recommended step is a small diagnostic of
-that error; no prompt revision, lower-effort calls or final-sixty run starts here.
+The sole historical rejection is R05 `2.2`, a humorous account of morning odd
+jobs around town beneath `Author's morning outings`. A subsequent independent
+source-first audit challenges its home-work witness: locating clients around
+town may change the established meaning of jobs around town. The account's
+actor relationship is also disputed. The current assessment therefore leaves
+this record uncertain rather than establishing an error. The original labels,
+raw report and native review history remain unchanged. The 380 accepted full
+records remain accepted; 16 are now unresolved in the current assessment.
+Qualification remains pending. The authorized small
+[outings diagnostic](distillation-review-v1/README.md#dslv10-outings-diagnostic-october-11)
+then completes with DSLv10 unchanged: all eight balanced authored controls pass
+complete-output audit, the simple original repeats sound false, and the rich
+original repeats true but remains uncertain. Two sound saved controls reuse
+without calls. All twelve outputs and receipts pass native validation; the
+shared budget reconciles at 11/22, ten judgments plus one eligible warmup, with
+no failures or retries. Fresh catalog usage totals $0.1867664; both original
+comparisons hit cache but warmup overhead makes net savings negative by
+$0.0067664. No prompt revision follows from the disputed original alone.
+Lower-effort calls and final-sixty validation are not run in this diagnostic.
 Known successful local receipts cache 7.82% of input tokens and total a catalog
 $2.289306. Net savings including warming are **−$0.020318 (−0.90%)** on that known
 subset; both failed attempts lack usage, so full cost and savings are unknown.
@@ -6714,3 +6757,24 @@ positive/equivalent controls, but both Fasting forward proofs assume personhood
 while their reversals refute it. V177 is not adopted. The saved-reference timing,
 provisional controls, native 36-attempt usage and proof qualifications are recorded
 in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
+V178 starts from V176 and focuses each question on one absent parent requirement,
+retaining the identity prerequisite. Six fresh Stockpots draws find only one
+correct neither answer out of twelve; all sixteen control answers have supported
+relationships. One failed answer asks specifically about meal purpose but tests
+a commercial stock-making case that retains it. Question focus alone does not
+establish a sound necessity proof. V178 is not adopted; the proposed next
+diagnostic separates saved-case adjudication from counterexample construction.
+See the [V178 focused-question test](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v178-focused-question-ablation)
+for exact preserved evidence and native usage.
+The subsequent saved-case diagnostic uses experimental
+`Hierarchy-compare-case-check-v1`, rather than changing the production Compare
+prompt. Four judgments of the original fully specified laboratory-only stock
+vessel correctly fit Stockpots and escape Cookware; four commercial
+meal-ingredient judgments fit both. A shorter saved laboratory proposal leaves
+stock production versus reheating ambiguous, yielding two definitive admissions
+qualified by independent review and two appropriate unresolved admissions.
+All four of its Cookware exclusions remain supported. This points toward
+counterexample construction and whole-scope proof testing without establishing
+a causal prompt fix. Twelve fresh attempts, zero reuses/failures/retries and
+$0.03306 native API-equivalent cost are recorded in the
+[saved-case diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#saved-case-adjudication-diagnostic-v1).

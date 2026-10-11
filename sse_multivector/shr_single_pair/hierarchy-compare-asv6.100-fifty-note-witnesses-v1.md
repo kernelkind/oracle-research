@@ -5066,3 +5066,235 @@ Each case has exactly one current review bound to its input/output hashes.
 `final-reviewed.json` snapshots preserve every non-review case field and all
 eight zero-review generation snapshots retain their original hashes. Both the
 independent reviewer and the root verify these bindings and preservation.
+
+## V178 focused-question ablation
+
+The user authorized testing the proposed focused-question draft. Experimental
+V178 starts from V176, preserving its specific identity/consumer prerequisite.
+It replaces the general-child question instruction: choose one applicable parent
+requirement absent from the child's explicit wording, retain the child's whole
+meaning and keep other shared conditions satisfied. The matching answer tests
+the same named requirement. These two native edits form one question/answer
+focus mechanism; all other instructions, synthetic examples and the V176 output
+schema remain unchanged. V177's broader prerequisite is not incorporated.
+Native revision provenance pins the exact V176 baseline hash. V176 remains an
+experimental reference, not an adopted production prompt. The focused diagnostic
+is consistent with [OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+on direct, specific instructions without requesting a reasoning trace; the
+guidance does not certify this semantic hypothesis.
+
+Before dispatch, prepare six independent native two-case experiments in
+`target/compare-v178-focused-question-v1/pair-01` through `pair-06`, using
+`--from` each matching saved V176 orientation draw, the new prompt and `--repeat`.
+The Stockpots counterexample is user-adjudicated: preserve the culinary
+stock-simmering design while varying meal purpose. Neither is the expected
+relation for these exact meanings. Check both directional diagnostics and
+positive proofs, not labels alone. Null/uncertainty is separate from success.
+The six earlier V176 draws are saved references, not concurrently rerun controls;
+timing and the small, known development witness limit causal/general claims.
+
+Two fresh eight-case control draws inherit both orientations of core pairs 002,
+010, 041 and 061: Salads containing Salad dressing, equivalent Coffee definitions,
+neither Dietary practices/Fasting under the person restriction, and Cooking
+containing Planned outdoor grilling of dinner. These are provisional agent-
+qualified references, not new human gold. Review the admission and exclusion
+proofs independently; a real scope qualification must not be forced to match an
+old target. Compare the preserved V177 control failures separately without
+changing old answers or assessments.
+
+All model inputs preserve exact ASv6.100/Bootstrap-v96 fixed meanings, with
+empty canonical branches and no source evidence or target labels. No Bootstrap
+calls or hierarchy construction are included. Sol 6.1 medium, SSE, automatic
+caching, schema and worker settings remain fixed through the shared stable
+launcher in the task worktree. This panel cannot certify canonical-consequence
+handling or held-out accuracy. Review question focus, whether the concrete case
+actually varies the named restriction, meaning copying, reversals, positive
+control survival and any unresolved interpretation separately.
+
+Planned work is 28 fresh comparisons and eight automatic warmups, 36 attempts
+absent failures. Pair experiments have five-attempt ceilings; each control draw
+has a seventeen-attempt ceiling. All use the existing persistent 20,000 counter,
+at 18,717 before dispatch. Native usage source is
+`hierarchy-compare-v178-focused-question-usage-v1.json`. Earlier targets, receipts,
+outputs and review histories remain intact.
+
+### Completed V178 focused-question test
+
+Native V178 SHA256 is
+`0d7cf41d67b57cdfe1d32ec556f41ef7c69124efc63451edc224ca50447b062e`.
+All 28 comparisons validate with distinct response IDs, no answer reuse and
+exact meaning copies. Their input strings, producer evidence, response schema
+and non-prompt settings match the saved V176 references. All answer records
+retain justification-before-answer order. Eight native `final-generation.json`
+snapshots preserve the outputs before attributed review.
+
+| Draw | Cookware local, Stockpots canonical | Stockpots local, Cookware canonical |
+|---|---|---|
+| 01 | Cookware contains Stockpots | Neither |
+| 02 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 03 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 04 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 05 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 06 | Cookware contains Stockpots | Cookware contains Stockpots |
+
+Only draw 01 reverse finds the user-accepted laboratory-only culinary-stock
+counterexample. Eleven positive proofs still infer meal purpose from culinary
+stock-making or leave it unchecked. No primary answer is uncertain. The panel
+has one reversal and five consistent-but-wrong pairs; fewer reversals than V176
+or V177 do not establish greater accuracy. V178 finds 1/12 correct answers,
+compared with 2/12 in each preserved reference sample. These small, previously
+exposed development samples do not establish a causal performance decrease.
+
+Eight questions still bundle meal purpose with shared food/heat/design; two
+select food/heat and omit meal purpose. The other two isolate meal purpose.
+One succeeds, but draw 04 reverse wrongly approves containment even after
+asking whether stockpots can lack meal-preparation purpose. Its concrete case
+is a commercial-kitchen vessel making stock sold as a meal ingredient. That
+retains meal purpose and therefore cannot resolve whether a stockpot can lack
+it. The answer neither supplies a missing-purpose variant nor proves that such
+a variant contradicts the child. Good question selection is not sufficient to
+establish a sound answer or a necessary implication. The main observed failure
+is still an unsupported purpose inference, not a missing food or heat condition.
+
+Both eight-case control draws retain all provisional relationships and supported
+proofs: Salads/Salad dressing, Coffee equivalence, Dietary practices/Fasting and
+Cooking/planned grilling. All four Fasting diagnostics preserve deliberate
+timed abstention by a nonhuman eater; human observers/trainers are not substituted
+for the eater. There are no control reversals or null answers. These sixteen
+results qualify the selected controls, not held-out accuracy or a causal claim
+that the question edit repaired V177's identity failures. V178 also restored
+V176's unchanged identity prerequisite when it chose that baseline.
+
+V178 is not adopted. A useful next diagnostic would adjudicate saved concrete
+cases against the unchanged meanings, separating case construction from the
+claim that culinary stock-making necessarily entails meal purpose. It should
+include a case that actually violates that purpose and one that retains it,
+without telling the model which is valid. This is a proposed separately
+authorized diagnostic, not a new prompt edit, hierarchy policy or inference run.
+
+Native usage is complete: 36 attempts (28 comparisons and eight warmups), zero
+failures/retries/reuses/missing usage, and $0.2455948 known API-equivalent catalog
+cost including warming. All 28 comparisons have cache hits. This is not a
+subscription charge; reasoning is already included in output. The existing
+counter moves from 18,717 to 18,753 of 20,000. The aggregate is
+`target/compare-v178-focused-question-usage-v1.json`. Verification covers 908
+unique source hashes, 39 code hashes, eight configurations, 28 distinct output
+receipts and preserved input/schema/settings bindings.
+
+Independent native review registers seventeen agent accepts and eleven rejects,
+with no uncertain assessments: one accepted primary proof, eleven rejected
+primary proofs and sixteen accepted control proofs. These are attributed semantic
+assessments, not twenty-eight human labels. Each case has exactly one current
+review bound to its unchanged input/output. Native `final-reviewed.json` reports
+retain every non-review case field; all eight protected generation hashes remain
+unchanged. Root and independent reviewer verify this preservation separately.
+
+Thirteen of the fifty-six diagnostic questions use a closed yes/no form rather
+than the prompt's requested open-ended form. Record this separately from label
+and proof assessment: schema validation does not test open-endedness, and an
+accepted semantic proof does not imply complete instruction compliance. No
+existing output, target or review is rewritten to hide the form deviations.
+
+## Saved-case adjudication diagnostic V1
+
+The user authorizes the proposed separation of constructing a counterexample
+from adjudicating it. Experimental `Hierarchy-compare-case-check-v1` judges
+two saved V178 concrete descriptions against both unchanged Stockpots/Cookware
+meanings, in both node orders, with two fresh draws: eight case judgments.
+This is a focused diagnostic prompt, not Compare-v179 or adoption of V178.
+It retains the information-kind/activity convention while omitting whole-scope
+proof search and canonical placement. Differences from the full prompt mean
+success here cannot identify a causal wording fix by itself.
+
+The first description comes verbatim from pair-01 reverse's laboratory-only
+answer. The second is the exact commercial-kitchen noun phrase from pair-04
+reverse's justification. Its appended claim of coverage is excluded. Neither
+prior relations, justifications, questions, reviews nor expected answers enters
+model input. Input contains only the supplied case and each node's exact subject
+and meaning. Original producer diagnostics, receipts and selected excerpts stay
+in review evidence; native preparation validates their frozen sources.
+
+Pre-call agent expectations follow the user's accepted missing-purpose witness:
+the laboratory-only case satisfies Stockpots and escapes Cookware's meal purpose;
+the commercial meal-ingredient case satisfies both. Admission of the latter
+does not establish coverage of all Stockpots. Swapping node roles must preserve
+these case judgments. Missing case properties or genuine alternative scope
+readings should be surfaced, rather than filled in to match expectations.
+These two exposed development cases are not a held-out accuracy estimate.
+
+The short diagnostic intentionally has no padded cache prefix. It uses the
+shared runner, subscription Sol 6.1 medium, its internal queue and the existing
+20,000-attempt counter. Preparation makes no calls. No original meanings,
+production Compare prompt, Bootstrap prompt, historical answers or hierarchy
+are changed.
+
+The first eight judgments repeatedly exclude the laboratory-only vessel from
+Cookware and admit the commercial meal-ingredient vessel under both meanings.
+In both Cookware-local orders, Stockpots admission remains unresolved because
+the V178 description says to simmer stock, rather than explicitly make stock
+from ingredients. Preserve that genuine wording qualification. A subsequent
+same-prompt diagnostic uses the original user-accepted V176 laboratory answer,
+which explicitly describes preparing stock by simmering ingredients in liquid.
+It tests both node orders twice: four additional attempts, with the same meanings
+and no supplied expected answers. This separates the incomplete saved candidate
+from interpretation of the missing meal purpose; it does not rewrite V178's
+original answer or treat an unresolved admission as negative semantic gold.
+
+### Completed saved-case diagnostic
+
+| Saved description | Judgments | Stockpots | Cookware |
+|---|---:|---|---|
+| V178 shorter laboratory-only vessel | 4 | Two fits; two unresolved | Four outside |
+| V178 commercial meal-ingredient vessel | 4 | Four fits | Four fits |
+| V176 explicit stock-making laboratory vessel | 4 | Four fits | Four outside |
+
+Both original explicit-case draws correctly retain the size/depth and intended
+stock-making design while distinguishing laboratory analysis/disposal from meal
+preparation. Both commercial draws correctly retain meal purpose despite sale
+of an ingredient instead of production of a complete meal. All eight complete
+case judgments survive node-order reversal. This establishes successful
+adjudication of these supplied cases, not general Compare reliability.
+
+The shorter laboratory proposal produces the same order-sensitive pattern in
+both fresh draws: Stockpots-local yields a definitive fit, whereas
+Stockpots-canonical yields unresolved admission. Independent review qualifies
+both definitive admissions because they silently strengthen the description.
+The two unresolved outputs correctly identify the production-versus-reheating
+gap; all four Cookware exclusions remain sound. Do not score this as twelve
+unqualified passes or reject the fully specified witness because a shorter
+proposal omitted part of its design.
+
+These findings point toward counterexample construction and unsupported
+whole-scope proofs as the next production Compare mechanism to isolate. The
+model can apply the relevant purpose distinction when a complete case is given.
+However, this short diagnostic also changes task, prompt length, schema and
+available case evidence; it does not prove which original instruction causes
+the failure or that a two-stage production workflow is necessary. The current
+Compare prompt remains unchanged and V178 remains unadopted. A focused next
+production test should require verifying the actual absent parent restriction
+in the proposed case before using it to justify coverage or exclusion, with
+the existing positive and identity controls preserved.
+
+Native usage totals twelve fresh attempts, with zero warmups, exact reuses,
+failures, retries or missing usage, and $0.03306 known API-equivalent catalog
+cost. This is not a subscription charge; reasoning is included in output.
+The shared counter moves from 18,790 to 18,802 of 20,000 during this diagnostic.
+The native aggregate is `target/compare-case-check-v1/usage.json`. Twelve
+distinct provider response IDs and native receipts establish fresh execution;
+912 unique frozen source files and four runner configurations verify unchanged
+bindings. No hierarchy or Bootstrap prompt is changed.
+
+Independent review registers ten native agent accepts and two uncertain
+assessments, the latter for definitive Stockpots admission under the incomplete
+description. Each case has one current input/output-bound assessment; all
+non-review case fields and generation hashes remain unchanged. These are
+attributed agent assessments, not twelve human judgments. All 38 frozen code
+hashes verify against their bound project source and shared-runner commit
+`e3dea03`. The later shared-runner update `780df94` lands after every generation
+snapshot is complete; it does not rewrite runtime provenance or trigger calls.
+
+Generation snapshots are preserved before review:
+- `draw-01`: `55b1df92e404c1ffe9b84b88d903152cecff0c4a35fd531a44e45242817859b3`.
+- `draw-02`: `b7049770bd8bd88cd424f205dd689dcbf3ab77557db927a14c4e098d0b36f054`.
+- `explicit-01`: `e6d008d85fe02abe720ae46812e70db76166e64ab2442722f8885f9d5dfcd991`.
+- `explicit-02`: `ba75422f4976358fa9706e10df7dd9792e6072e458c3908ca03ef990ab24551c`.

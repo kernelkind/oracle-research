@@ -11,9 +11,13 @@ allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
 [BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
-on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
-and its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
-but not generally qualified. BBv5's four-case panel and unchanged repeat remain evidence.
+on the [focused stock case below](#bbv6-general-activity-versus-particular-participant),
+its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
+the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
+and the [three complete-branch checks](#unchanged-bbv6-complete-branch-check),
+but not generally qualified. The branch check finds one incompatible identity
+boundary and leaves several information-coverage implications unresolved.
+BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
 BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
@@ -262,9 +266,142 @@ schema and cache settings. Native receipts and exact post quotes validate.
 No prompt edit, Compare inference, hierarchy build or
 activation occurred.
 
-Next proposed check: evaluate the unresolved named-topic boundaries for Rome
-and Jesús Molina under unchanged BBv6 before considering another revision.
-Those tests have not started.
+The user approved the proposed named-topic checks. Their results follow.
+
+#### Unchanged BBv6 named-topic checks
+
+The shared runner prepared `target/bootstrap-broad-v6-rome-v1` and
+`target/bootstrap-broad-v6-jesus-v1` in the BB worktree. Each inherits its exact
+post, complete original root tree, selected pointer, input hash and evidence
+from the saved v109 ASv6.100 collection. BBv6, medium effort, schema, SSE
+transport and cache prefix match the earlier BBv6 tests. Each answer is fresh;
+saved v109 answers remain baseline metadata outside model input. No source
+entry, post, prompt or supplied meaning was edited.
+
+The coordinating agent and independent read-only reviewer `bb_example_audit`
+give both outputs **qualified accepts** for the focused breadth criterion:
+
+| Selected topic | Resolution and final meaning | Qualification |
+|---|---|---|
+| Rome, root `5` | Resolution chooses the city generally and explicitly treats construction/proverbial use as nonlimiting. The meaning identifies Italy's capital and appends its proverbial use. | The appended use is unnecessary but does not demonstrate exclusion of other information about Rome. BBv5's explicit **here** wording is absent in this draw. |
+| Jesús Molina, root `2` | Resolution covers information about the individual generally. The meaning identifies the jazz pianist and musician, then says his activities and associations **include** the described trio. | The ancillary association and unnamed trio remain imprecise; neither expressly imposes musician-role-only or trio-only coverage. His exact role in the trio is not invented. |
+
+Do not equate an appended descriptive fact with a demonstrated membership
+restriction. These judgments use each node's own original evidence; they are
+not new human gold or proof that the final definitions are ideal. Earlier
+named-topic uncertainty remains in the BBv5 record. Broad interpretations
+already appeared in those earlier resolutions, so these single-draw accepts
+do not establish a BBv6 wording repair or a causal effect of its participant
+paragraph. Unnecessary application details remain a definition-quality concern.
+
+| Topic | Native case ID | Record SHA-256 |
+|---|---|---|
+| Rome | `bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5` | `84badd14f822a22768ca566561724a846574fdb161c713adc57f26d3bf3e40ae` |
+| Jesús Molina | `bootstrap-230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` | `78a01c5f4a9c99f38b8b93218509f7930c93aa9d59191b5851cfd9a318819409` |
+
+Both answers validate; native agent reviews preserve these qualifications and
+bind them to their exact receipts. Post quotes are verbatim substrings and
+ambiguity/resolution IDs match. Each experiment uses one fresh subscription
+attempt, with no retry, failure, answer reuse or warmup. Both record 4,864
+cached-input tokens. Native API-equivalent costs are $0.0067524 for Rome and
+$0.0065464 for Jesús Molina, excluding earlier producer generation; these are
+not subscription invoices. No Compare calls, hierarchy build, prompt revision
+or activation occurred. Native data remains ignored in the retained worktree.
+
+#### Unchanged BBv6 complete-branch check
+
+The user authorized the proposed small complete-branch qualification. The
+shared runner prepared and completed
+`target/bootstrap-broad-v6-complete-branches-v1` in the BB worktree. It selects
+every entry in three original ASv6.100 root trees from
+`oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate`:
+
+| Original selected root | Entries | Immediate links | Recursive ancestor implications |
+|---|---:|---:|---:|
+| Cooking, stock post, `5` | 8 | 7 | 20 |
+| Mental states, `5` | 3 | 2 | 2 |
+| Jesús Molina, `2` | 3 | 2 | 3 |
+| Total | 14 | 11 | 25 |
+
+Every selected pointer occurs once per tree. Full posts, complete trees, input
+hashes and evidence match the source collection exactly. Unchanged BBv6
+(`a73328f633b4caacb583fe3770a6c4b8103871355d18b9fa200037161c727e28`),
+GPT-6.1 Sol medium, output schema, SSE transport and cache prefix match the
+previous BBv6 tests. Ordinary v109 answers remain baseline metadata outside
+model input. No generated parent meaning was supplied to another producer.
+
+The coordinating agent and two independent read-only reviewers examined all
+14 final meanings and all 25 ancestor implications. Native receipt-bound agent
+reviews record **13 qualified individual accepts and one uncertain trio
+definition**. These are not human gold or a 13/14 branch success rate:
+individually supported meanings can still establish incompatible scopes.
+
+| Branch | Individual meanings | Fixed-meaning branch assessment |
+|---|---|---|
+| Mental states | The root remains a general psychological category. Its children describe the author's distraction and figurative experience of thinking not working normally, without inventing a clinical diagnosis. | Both immediate implications are compatible. This does not independently qualify every possible category boundary. |
+| Jesús Molina | The person root retains general identity. The trio preserves an unspecified association; whether its particular-ensemble restriction is necessary remains uncertain. The enthusiasm category broadens beyond the author's own reaction. | One incompatible identity boundary, detailed below. The two implications to the person root remain qualified: an association alone does not settle whole-topic inclusion. |
+| Stock Cooking | The root explicitly requires heat. Descendants preserve the recurring practice, particular batch, planned preservation/storage and estimated yield. All eight are individually supported. | Cooking episodes fit the heat-based activity. The batch descendants concern the same identified batch. Coverage of products and subsequent handling by Cooking or the recurring activity remains unresolved; the tree is not certified as 20 compatible implications. |
+
+The concrete trio mismatch is between independently fixed meanings:
+
+- Parent `2.1`: **“The new-generation jazz trio associated with Jesús Molina is
+  the particular three-musician jazz ensemble connected with him and described
+  as representing a new generation in jazz.”**
+- Child `2.1.1`: **“Enthusiasm for a new-generation jazz trio associated with
+  Jesús Molina is excitement or admiration directed toward a three-musician
+  jazz ensemble characterized as belonging to a new generation and connected
+  with the musician Jesús Molina.”**
+
+The parent chooses one particular ensemble. The child admits enthusiasm for
+any ensemble satisfying its stated conditions. Admiration for a different
+qualifying Molina-associated trio fits the child but not that particular parent.
+Broadening the observer beyond the author does not require broadening the
+target ensemble. The mismatch establishes incompatible selected boundaries,
+not which definition must change. The parent's broader diagnostic alternative
+also fails to expressly retain Molina association; that omission does not prove
+that the parent must be broadened. Original AS ancestry is evidence to examine,
+not permission to force a definition or a relation label.
+
+In the stock branch, the strongest unresolved implication is Cooking `5` above
+planned pantry storage `5.1.1.3`. Cooking's resolution says storage alone does
+not qualify; the child describes intended placement and keeping of this batch.
+A cooked-stock target does not automatically establish coverage of the entire
+storage topic. Conversely, a child's omission of another known fact about the
+same identified batch does not itself prove a scope conflict. Product, activity
+and combined-action relationships require an information-topic interpretation;
+this review does not impose a blanket literal-instance rule or a completed-action
+restriction. Plans remain plans throughout these outputs.
+
+Key current records below are in this experiment's `run/results.jsonl`:
+
+| Case ID | Record SHA-256 |
+|---|---|
+| `bootstrap-08fa4fbc12d593658267ee4143c64665ceab7b3a1b6edea8bfd7296e22c094de` — Cooking | `268549dc7931c8de3e2c9e25a2828dfe7b376f90cdadc87dd878ae71fc595664` |
+| `bootstrap-b5f85981185f3f2c69193c2416ba3a33b28ec4ef0f6203a5602a24d2c20e2404` — pantry plan | `d45038e6008224666a36c309ff296790337d11f52dd6476de1a8bf18ca56fb7d` |
+| `bootstrap-4d093cebbca84c917bc6401355d4b4ddeaec8f9d660a1851a22e6aae2227d6da` — trio | `7603676cca7ca6e2cf9b6e5fc5067526c170c444453c7f415adce920421a5769` |
+| `bootstrap-4f4e1f65f56589569c2d4a2b9410b63c0d80a045aa5cbb53a3e5e00e6f8f7f09` — enthusiasm | `e24c3e3683c9c6f21611f08f7ca38a50a5f1e26db3a3b5c6847ca9d4231bb9c5` |
+
+All 14 answers validate and are non-null; evidence quotes are verbatim substrings
+of their own posts and ambiguity/resolution IDs match. There were **12 fresh
+outputs, two exact answer reuses and one fresh cache warmup: 13 new attempts**,
+without retries or failures. The recurring stock activity reuses
+`target/bootstrap-broad-v6-stock-repeat-v1`, original record
+`958f48a2f863f7f07606a9dc95a0d8a2e7b531fc51fc3dc87174f02c831a64c1`;
+the person root reuses `target/bootstrap-broad-v6-jesus-v1`, original record
+`78a01c5f4a9c99f38b8b93218509f7930c93aa9d59191b5851cfd9a318819409`.
+These reused outputs are not independent new draws.
+
+Every fresh substantive request records a cache hit. Native new-attempt usage
+is 7,944 uncached input tokens, 63,232 cached input tokens and 6,887 output
+tokens; the 1,658 reasoning tokens are included in output. Known API-equivalent
+cost is **$0.0910812**, including warmup and excluding original charged generation
+behind the two reuses. No attempt lacks usage. This is not a subscription invoice.
+
+No Compare calls, hierarchy build, UI update, prompt edit or activation occurred.
+Native artifacts and reviews remain ignored in the retained worktree. The next
+proposed diagnostic is a fresh identical-input repeat of the disputed trio
+parent and child before editing, checking target identity separately from the
+observer. This has not started; the stock coverage qualifications remain open.
 
 ## Existing Bootstrap qualification
 
@@ -2133,3 +2270,145 @@ pass. The broader 258-test run has 21 failures and six skips, including shared
 runner concurrency and ordered-response expectations. Representative failures
 reproduce on unchanged main; the entire broader suite is not claimed clean or
 every remaining failure separately proven pre-existing.
+
+### Controlled context ablation
+
+The user approved preparing and running a test after considering whether to
+remove context.
+Context is an AS-generated interpretation, not independent factual evidence.
+The Coffee-chain subjects already suggest a business, so removing context may
+not fix that assignment. No specific replacement meaning is semantic gold.
+
+Both conditions use the identical experimental
+[Bootstrap-v110](Hierarchy-bootstrap-v110.md), revised from last approved v104
+only to permit optional input contexts. Its task rules, outputs and examples
+otherwise remain unchanged. The contextual condition includes original contexts;
+the other removes only the contexts of supplied entries. The post, selected
+number, ordered subjects, tree relationships, model, response schema, worker and
+cache prefix are fixed. Historical v104/v109 outputs are secondary evidence,
+not fresh controls for this new prompt. This measures context availability under
+v110; it does not isolate v109 wording or certify a permanently context-free
+prompt whose examples also omit contexts.
+
+The panel contains four complete real ASv6.100 trees:
+
+| Tree | Entries | Concern to inspect |
+|---|---:|---|
+| Coffee chains, root `1` | 2 | Particular business assignment unsupported by the supplied text. |
+| Mental states, root `5` | 3 | Figurative language, broad category and unsupported clinical claims. |
+| Rome, root `5` | 4 | Named identity, humorous proverb and the complete warning-sign list. |
+| Food storage, root `8` | 3 | Planned storage versus an assertion that storage occurred. |
+
+Each condition has 12 entries, eight immediate links and 12 recursive ancestor
+checks. Review final meanings for factual support and clear boundaries, accepting
+any evidence-consistent choice. Check branch compatibility using independently
+generated, fixed endpoints from that same condition and draw. Preserve nulls,
+malformed answers and disagreements; additional uncertainty alone is not an
+improvement. Repeat consequential differences before attributing an effect.
+These selected development cases are not a representative reliability estimate.
+
+Reusable definitions are the
+[contextual spec](hierarchy-bootstrap-context-ablation-with-context-v1.spec.json),
+[context-free spec](hierarchy-bootstrap-context-ablation-without-context-v1.spec.json)
+and [source view](hierarchy-bootstrap-context-ablation-subjects-only-v1.json).
+Native experiments are under `target/bootstrap-context-ablation-v1/`.
+Preparation makes no teacher calls. The completed execution uses the shared
+runner, Sol 6.1 medium, automatic prefix caching and its shared request queue,
+within the existing persistent attempt allowance. No prompt was activated,
+original AS corpus changed, new allowance granted or counter reset.
+
+Offline verification: the minimal production CLI test first failed because the
+source view was unsupported. After the adapter extension, 78 local-node and
+snapshot tests and nine prompt-revision tests pass. All 12 frozen pairs differ
+only by removal of supplied context fields; full prompt, runner settings,
+response schema and cache prefix match. Independent read-only review confirms
+the design and its limits.
+
+#### Completed panel and fresh repeats
+
+On 2026-10-11, both 12-entry conditions completed. Then the complete three-entry
+Food storage tree and the isolated Coffee-chain child were repeated freshly in
+both conditions. Mental states and Rome were not repeated. Each repeat keeps its
+own condition's exact original inputs, prompt and runner settings; every repeat
+has a new producer receipt. No first-draw parent is combined with a repeat child
+to claim a repeated branch result. The Coffee child repeats do not independently
+qualify a newly generated Coffee root.
+
+| Condition, including repeats | Valid meanings | Agent qualified accepts | Agent uncertain | Provider attempts | Exact reuses |
+|---|---:|---:|---:|---:|---:|
+| Original entry contexts | 16 | 14 | 2 | 19 | 0 |
+| Entry contexts omitted | 16 | 14 | 2 | 18 | 0 |
+
+All answers are non-null and structurally valid, with no terminal failures,
+malformed outputs or invalid receipts. These are agent assessments, not human
+gold. Three independent read-only reviewers divided the initial trees and
+challenged the full panel; repeat reviews checked the complete storage trees
+and isolated Coffee child. Native agent reviews preserve qualifications and
+bind them to exact input/output hashes. All 32 input/output and producer-receipt
+identities remain unchanged after those reviews.
+
+**Coffee-chain source assignment remains uncertain in both conditions and both
+draws.** Each child identifies a particular coffee-shop chain characterized as
+unusual that day. The post says `Weird #coffeechain today` and `Rave at a coffee
+shop lol`; it does not establish a multi-outlet business or the shop's
+affiliation. The original AS subjects already name a business chain, so omission
+of entry contexts does not remove that interpretation. This is unsupported or
+unknown assignment, not a proven falsehood or a mandatory alternative hashtag
+meaning. The roots are coherent general business-category definitions; accepting
+those definitions does not certify their assignment to this post.
+
+**The Food storage explicitness difference repeats.** The contextual roots
+expressly include planned storage in both draws; the context-free roots define
+keeping food for later use without naming plans. For example, the contextual
+repeat says, "The topic covers storage activities and plans for them." The
+context-free repeat says, "Food storage is the activity of keeping food in a
+designated place for later use" and its evidence still identifies a plan.
+Both conditions' children retain planned canning/storage and an approximate
+expected yield. No completed canning/storage episode is invented. Omission of
+a plans clause does not itself establish an occurred-episode requirement; this
+remains a clarity qualification, not a demonstrated containment failure.
+
+Mental states remains broader than its figurative post examples, without a
+clinical diagnosis. Rome retains a supported city/proverb interpretation and
+the complete jointly named warning-sign list. No particular alternative
+boundary is imposed as gold. Read-only information-topic review found no
+concrete incompatibility among the 12 recursive ancestor checks per initial
+condition, or the three recursive checks per repeat storage tree. Coffee's
+source-assignment uncertainty remains separate. These are fixed-endpoint agent
+checks, not Compare calls or semantic certification of arbitrary future links.
+
+Key native case IDs are
+`bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411`
+for the Coffee child and
+`bootstrap-5011944235c2986dcd05715c3a4585dda652567200c7d7dcd27c077c376ce13b`
+for Food storage. Their exact producer record hashes follow; other endpoints'
+receipts remain in their native reports and `run/results.jsonl`.
+
+| Experiment directory suffix | Coffee child record SHA-256 | Food storage root record SHA-256 |
+|---|---|---|
+| `with-context` | `7c7c711beb0f381764dc6f199ff1fff9e073810cf9758a555c8bf8eca66b0446` | `3462a6eb940c378e0e3187a99b21fba6acf9b50f5108edeb8a6fb8eb48c83195` |
+| `without-context` | `f9cbf9709e1a8cf46718b838e43baf31dbf2d8b033c61710168158d7ea050bcc` | `1dde35d1c3b00d9609ee95d1e11633d4c28b60ebad56d1a9dbe5c4fa98d569a8` |
+| `with-context-repeat` | `765ee3356893157397348fa48bb0045a6ed226993acf6c4c8d98c6f60da35e1f` | `1f33760940a34d530e54ea01f386ad0be7e069af3b22a4dcaea7b8957c6f9fe6` |
+| `without-context-repeat` | `2b6628669efdc9fa8f21547a1d2ac31de0dca74449c34fcaf773b4138a6d05e8` | `67fbdd901d0bf57b0c1c904de6c259d6318283fcf4992b1e3658f03b56c2056b` |
+
+Native [usage source](hierarchy-bootstrap-context-ablation-usage-v1.json) and
+`target/bootstrap-context-ablation-v1/usage-native-v1.json` account for all four
+experiments: **37 attempts**, comprising 32 valid meaning calls, four prefix
+warmups and one recovered HTTP 503 failure. The failure exposes no recognized
+upstream reason; telemetry retains proxy reference
+`proxy-YALLQ6HLVHNH33ZCMH4L74UOE5`. Its usage is missing, so the known
+API-equivalent subtotal **$0.2457112** is not the complete cost. All 32 valid
+meaning requests recorded cached input. Across all attempts, native accounting
+records 158,592 known cached-input tokens, including warmups. Reasoning is already
+included in output usage. These are subscription calls;
+API-equivalent estimates are not additional subscription invoices. The existing
+20,000-attempt counter reads 18,790 after completion and was not reset.
+
+This panel establishes no clear improvement from removing entry contexts.
+It also does not establish that contexts are generally necessary or that their
+omission is harmless on the full collection. The optional-context prompt remains
+experimental; v104 and all original AS inputs remain unchanged. A useful next
+investigation is whether Bootstrap treats an AS subject's uncertain factual
+interpretation as established by the post, using Coffeechain as a witness.
+That investigation has not begun; no prompt edit, Compare test or hierarchy
+construction follows automatically from this result.
