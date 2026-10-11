@@ -572,9 +572,13 @@ Unchanged DSLv10 verifies all 18 returned witnesses: 17 valid pairs and one
 invalid pair, using 16 exact-input reuses and two fresh calls. It catches the
 invalid incest witness; the missed television placement remains a false
 negative. Read-only analysis finds accepted complete matching plus trusted
-teacher paths could settle four searches, including that miss. Implementing
-and testing this conditional reuse with its provenance is the recommendation;
-it remains unimplemented. DCSv1 is unqualified, and further expansion unchanged
+teacher paths could settle four searches, including that miss. The user then
+approves the [conditional reuse implementation](../../sse_multivector/distillation-review-v1/README.md#conditional-matchingpath-reuse-october-11).
+Native offline preparation verifies 38 searches become 34, with all 89 self
+guards and remaining reviewer inputs unchanged. Reuse requires current native
+acceptance or exact-input/output bound audit acceptance; it records the matching
+receipt and actual teacher path/context, leaves separate matching uncertainties
+unresolved and makes no new model calls. DCSv1 is unqualified, and further expansion unchanged
 is not recommended. Remaining interpretation contexts and the eight-hour
 runtime remain open; production stays DSLv2. See the
 [evidence and qualification direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11).

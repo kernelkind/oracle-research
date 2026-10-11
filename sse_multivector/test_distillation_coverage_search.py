@@ -1,4 +1,5 @@
 """Focused coverage search through native production preparation and validation."""
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -23,6 +24,7 @@ class DistillationCoverageSearchTests(unittest.TestCase):
             capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("--answer-id", result.stdout)
+        self.assertIn("--premise-audit", result.stdout)
 
     def test_null_requires_every_candidate_and_positive_requires_only_the_witness(self):
         case = dict(inputs=dict(COVERAGE_INPUT=json.dumps(dict(teacher_subject="Cable A", candidates=[
@@ -46,7 +48,8 @@ class DistillationCoverageSearchTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 experiment_inputs.validate(dataset, case, json.dumps(bad), None)
 
-    def baseline(self, name, *, edge_valid=None, student=None, teacher=None):
+    def baseline(self, name, *, edge_valid=None, student=None, teacher=None, matching_teacher_id=None,
+                 required_subjects=("Cable A",)):
         from sse_multivector import test_distillation_review_evaluation as fixtures
         from sse_multivector import distillation_review_evaluation as evaluation
         from sse_multivector import distillation_review_assessment as assessment
@@ -57,10 +60,16 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         selected = fixture.selection([dict(note_id="validation-" + name, post="Cable A. Fruit.",
             teacher=teacher, answer=fixtures.answer(student))], name=name)
         context = self.root / (name + "-assessment")
+        meanings = {}
+        for row in teacher:
+            meanings.setdefault(row["subject"], dict(teacher_numbers=[], required=row["subject"] in required_subjects))[
+                "teacher_numbers"].append(row["number"])
         assessment.record(selected, "R01", context,
-            teacher_meanings=[dict(teacher_numbers=[row["number"]], required=row["subject"] == "Cable A")
-                              for row in teacher], reason="Independent complete fixture meanings.")
+            teacher_meanings=list(meanings.values()), reason="Independent complete fixture meanings.")
         worker = fixture.worker()
+        if matching_teacher_id is not None:
+            worker.write_text(worker.read_text().replace('{"teacher_id": None,',
+                '{"teacher_id": ' + json.dumps(matching_teacher_id) + ','))
         if edge_valid is False:
             worker.write_text(worker.read_text().replace('else {"valid": True, "reason": "Fixture semantic verdict."}',
                 'else {"valid": not prompt.startswith("DSLv2"), "reason": "Fixture semantic verdict."}'))
@@ -70,6 +79,115 @@ class DistillationCoverageSearchTests(unittest.TestCase):
             if edge_valid is not None or entry["check"] != "relationship":
                 fixture.native("run", entry["path"], "--max-new-attempts", 10)
         return fixture, output, worker
+
+    def path_baseline(self, name, *, teacher=None, matching_teacher_id="T01", edge_valid=True,
+                      required_subjects=("Cable A",)):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        fixture, baseline, worker = self.baseline(name, edge_valid=edge_valid,
+            teacher=teacher or fixtures.subjects(("1", "Cables"), ("1.1", "Cable A")),
+            student=fixtures.subjects(("1", "Cables in general"), ("2", "Cable A")),
+            matching_teacher_id=matching_teacher_id, required_subjects=required_subjects)
+        original = evaluation.report(baseline)
+        parent = original["random"]["answers"][0]["checks"]["matching"][0]
+        native = next(row for row in original["experiments"]
+                      if any(case["id"] == parent["id"] for case in row["cases"])
+                      and row["cases"][0]["evidence"]["check"] == "matching")
+        return fixture, baseline, worker, parent, native
+
+    def test_accepted_complete_match_reuses_a_trusted_teacher_path_with_provenance(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, parent, native = self.path_baseline("matched-path")
+        fixture.native("review", native["experiment"], "--case", parent["id"],
+            "--role", "agent", "--verdict", "accept", "--comment", "Complete matching output audited.")
+        prepared = coverage.prepare(baseline, self.root / "matched-path-coverage", runner_binary=worker)
+        self.assertEqual(prepared["search_cases"], 0)
+        self.assertEqual(prepared["inference_calls"], 0)
+        settlement = prepared["preparation"]["settlements"][0]
+        self.assertEqual(settlement["rule"], "accepted_matching_trusted_teacher_path")
+        self.assertFalse(settlement["covered"])
+        self.assertEqual(settlement["witness_student_number"], "1")
+        premise = settlement["matching_premise"]
+        self.assertEqual(premise["case_id"], parent["id"])
+        self.assertEqual(premise["input_sha256"], parent["input_sha256"])
+        self.assertEqual(premise["output_sha256"], hashlib.sha256(parent["output"].encode()).hexdigest())
+        self.assertEqual([row["number"] for row in settlement["teacher_path"]], ["1", "1.1"])
+        self.assertTrue(all("context" in row for row in settlement["teacher_path"]))
+        self.assertIn("Conditional", settlement["semantic_status"])
+        self.assertIn(str(Path(native["experiment"]) / "reviews.jsonl"), prepared["sources"])
+
+    def test_unaudited_disputed_and_null_matches_keep_the_search(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        for verdict, identifier in ((None, "T01"), ("reject", "T01"), ("uncertain", "T01"), ("accept", None)):
+            with self.subTest(verdict=verdict, identifier=identifier):
+                name = str(verdict) + str(identifier)
+                fixture, baseline, worker, parent, native = self.path_baseline(name, matching_teacher_id=identifier)
+                if verdict is not None:
+                    fixture.native("review", native["experiment"], "--case", parent["id"],
+                        "--role", "agent", "--verdict", verdict, "--comment", "Fixture complete-output assessment.")
+                prepared = coverage.prepare(baseline, self.root / (name + "-coverage"), runner_binary=worker)
+                self.assertEqual(prepared["search_cases"], 1)
+                self.assertFalse(prepared["preparation"]["settlements"])
+
+    def test_only_an_actual_connected_teacher_occurrence_can_supply_the_path(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        for name, teacher, expected in (
+                ("unrelated", fixtures.subjects(("1", "Cables"), ("2", "Tools"), ("2.1", "Cable A")), None),
+                ("duplicate", fixtures.subjects(("1", "Cables"), ("2", "Cables"), ("2.1", "Cable A")), ["2", "2.1"])):
+            with self.subTest(name=name):
+                fixture, baseline, worker, parent, native = self.path_baseline(name, teacher=teacher)
+                fixture.native("review", native["experiment"], "--case", parent["id"],
+                    "--role", "agent", "--verdict", "accept", "--comment", "Complete matching output audited.")
+                prepared = coverage.prepare(baseline, self.root / (name + "-coverage"), runner_binary=worker)
+                self.assertEqual(prepared["search_cases"], 1 if expected is None else 0)
+                if expected is not None:
+                    self.assertEqual([row["number"] for row in prepared["preparation"]["settlements"][0]["teacher_path"]], expected)
+
+    def test_false_and_unrun_parent_self_guards_cannot_license_reuse(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        for state in (False, None):
+            with self.subTest(state=state):
+                name = "guard-" + str(state)
+                fixture, baseline, worker, parent, native = self.path_baseline(name, edge_valid=state,
+                    required_subjects=("Cables", "Cable A"))
+                fixture.native("review", native["experiment"], "--case", parent["id"],
+                    "--role", "agent", "--verdict", "accept", "--comment", "Complete matching output audited.")
+                prepared = coverage.prepare(baseline, self.root / (name + "-coverage"), runner_binary=worker)
+                self.assertGreater(prepared["search_cases"], 0)
+                self.assertNotIn("accepted_matching_trusted_teacher_path",
+                    [row["rule"] for row in prepared["preparation"]["settlements"]])
+
+    def test_native_cli_binds_existing_exact_output_audits_and_rejects_changed_audit_bytes(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, parent, _ = self.path_baseline("audit-path")
+        row = dict(check="matching", input_sha256=parent["input_sha256"],
+            output_sha256=hashlib.sha256(parent["output"].encode()).hexdigest(),
+            verdict="accept", reason="Complete saved matching output audited.")
+        audit = self.root / "complete-output-audit.jsonl"
+        audit.write_text(json.dumps(dict(record_type="skip", check="relationship")) + "\n" + json.dumps(row) + "\n")
+        prepared = json.loads(fixture.native("prepare-distillation-coverage-search", baseline,
+            "--output", self.root / "audit-coverage", "--premise-audit", audit, "--runner-binary", worker))
+        self.assertEqual(prepared["search_cases"], 0)
+        premise = prepared["preparation"]["settlements"][0]["matching_premise"]
+        self.assertEqual(premise["audits"][0]["line"], 2)
+        self.assertEqual(premise["audits"][0]["sha256"], prepared["sources"][str(audit)])
+        source = dict(schema_version=1, evaluation=prepared["evaluation"], answer_ids=prepared["answer_ids"],
+            premise_audits=[dict(path=str(audit), sha256=prepared["sources"][str(audit)])])
+        audit.write_bytes(audit.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "premise audit hash differs"):
+            coverage.prepare_source(source, baseline)
+
+    def test_stale_native_acceptance_and_other_output_audits_cannot_license_reuse(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, parent, _ = self.path_baseline("stale-audit")
+        audit = self.root / "other-output-audit.jsonl"
+        audit.write_text(json.dumps(dict(check="matching", input_sha256=parent["input_sha256"],
+            output_sha256="0" * 64, verdict="accept", reason="A different output was audited.")) + "\n")
+        prepared = coverage.prepare(baseline, self.root / "other-output-coverage", runner_binary=worker, premise_audits=[audit])
+        self.assertEqual(prepared["search_cases"], 1)
+        stale = dict(parent, reviews=[dict(verdict="accept", current=False)])
+        self.assertIsNone(coverage._accepted_premise(stale, {}))
 
     def test_native_preparation_retains_invalid_or_unknown_children_and_only_shrinks_valid_edges(self):
         from sse_multivector import distillation_coverage_search as coverage
