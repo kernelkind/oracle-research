@@ -9,16 +9,20 @@ problems resolved beforehand. Both prompts remain under development. This
 work investigates distillation; it does not change their wording, meanings,
 hierarchy construction or acceptance rules. The separate SP decision remains
 separate. The user confirmed relation-only output for the distilled Compare
-model; diagnostic reasons are not required from that student. Model choices,
-Bootstrap's final target format, training volume and settings remain open.
-Work continues in the existing owned worktree.
+model; diagnostic reasons are not required from that student. The completed
+matched pilot and broader evidence support recommending **Qwen3.8-27B starting
+weights for Bootstrap** and **pinned Kev-27B v2 for relation-only Compare**.
+Final frozen-task fine-tuning and evaluation await prompt freeze; no production
+pilot adapter or epoch is selected. Bootstrap's final
+target format, training volume and settings remain open. The owned worktree
+retains needed source-bound artifacts and native receipt paths.
 
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence
-before narrowing that pilot. The broader Compare evidence now makes Kev27 the
-provisional foundation priority, with Qwen27 retained as the quality reference
-and Ettin1B input JSON as the inexpensive candidate with transfer limits.
+before narrowing that pilot. The broader Compare evidence now supports the
+recommended pinned Kev27 v2 starting weights, with Qwen27 retained as the quality
+reference and Ettin1B input JSON as the inexpensive candidate with transfer limits.
 These pilots use fixed development snapshots while prompt work continues.
 Final training still follows prompt freeze. The user confirmed **meaning or null** for Bootstrap's pilot student output,
 encoded as a JSON object with the single `meaning` field. Teacher generation
@@ -29,7 +33,8 @@ with exactly **Bootstrap-v96 / Compare-v48**. Every Compare input meaning must
 also come from v96. Keep instructions, producer provenance, teacher references
 and semantic review criteria bound to this pair; newer prompt versions require
 a separate matched experiment. This extension evaluates saved checkpoints,
-not another fit or final training. Student choices remain open.
+not another fit or final training. The recommended starting models do not select
+a production pilot adapter or epoch; final frozen-task training remains pending.
 
 The focused Bootstrap panel selects **40 cases from 21 real notes and two
 synthetic control notes**, including all six existing null outputs. It excludes
@@ -178,9 +183,9 @@ examples seen. They live under
 | `kev27b-regressions` | `f268f149ceb415cddbcc892cb810d417df9e79d290fa3edcae7c4e261b54b1ef` |
 | `kev27b-branches` | `356b22396ef04d86ac286c692593667b462de6727cb559b90cd173dcc33ef8b6` |
 
-All Compare evaluations and Gemma's first Bootstrap epoch evaluation are
-complete. Gemma's fourth-epoch evaluation remains pending. Final student
-selection remains open.
+All authorized Compare and focused Bootstrap evaluations are complete.
+The recommended starting models still need final frozen-task training and
+evaluation; no production pilot adapter or epoch is selected.
 
 The completed focused Bootstrap passes use the same 40 cases, with
 40 fresh valid responses each, no failures and no null meanings. Native reviews
@@ -190,7 +195,8 @@ use the exact v96 standalone-meaning, factual-state and scope requirements:
 | --- | ---: | ---: | ---: |
 | Qwen27 / 1 | 24 / 6 / 10 | 14.62 | 20.45 |
 | Qwen27 / 4 | 28 / 5 / 7 | 14.31 | 20.42 |
-| Gemma26 / 1 | 16 / 10 / 14 | 67.91 | 51.88 |
+| Gemma26 / 1 | 16 / 11 / 13 | 67.91 | 51.88 |
+| Gemma26 / 4 | 22 / 9 / 9 | 82.97 | 51.88 |
 
 Three supplementary Qwen epoch-one reviews reconcile differing reviewer criteria:
 nonexhaustive edible Seed-oil examples are acceptable, while merely naming
@@ -211,39 +217,69 @@ panel does not establish refusal accuracy. The independent provisional reviews
 do not establish an epoch ranking by their raw acceptance difference.
 
 Gemma's first epoch also returns meanings for all six provisional teacher-null
-cases. Its ten rejected meanings broaden Rosemary to mint-family plants and
+cases. Its eleven rejected meanings broaden Rosemary to mint-family plants and
 Rome to the ancient empire, invent experienced harm from the author's processed
 food assessment, import a specific stove-use condition into Potatoes, and leave
 stock-making or pressure-canning processes undefined. The joined ingredient
 list collapses into Shrimp as an ingredient, and the joined rocket-stove/heater
-topic admits additional equipment. Fourteen meanings remain uncertain under
-the v96 identity, parent-fit, composition and factual-state criteria. These
+topic admits additional equipment. Healthy diet preserves its church-learning
+and author-attributed value role but leaves the dietary topic undefined.
+Thirteen meanings remain uncertain under the v96 identity, parent-fit,
+composition and factual-state criteria. These
 agent judgments remain provisional; unsettled references do not establish
 refusal accuracy or final student selection.
 
-Qwen's provisional Bootstrap priority has concrete paired support: both Qwen
-epochs preserve Rosemary's herb identity, Rome's city identity and Potatoes as
-a kind where Gemma's first epoch changes those boundaries. Qwen's fourth epoch
-defines stock-making through cooking carcasses with water; Qwen's first epoch
-and Gemma's first epoch only name its preparation. Gemma's first epoch defines
-Cooking through heat, where both Qwen epochs admit other transformations.
-Both foundations retain defects: all three omit pressure-canning's process,
-and Qwen's fourth epoch and Gemma's first epoch invent experienced health harm.
-These paired differences support further qualification, not a ranking from
-review counts. Gemma's fourth epoch remains pending.
+One supplementary Gemma epoch-one review reconciles Healthy diet with the
+same standalone-content criterion used for epoch four. It retains the valid
+church-learning and value attribution while changing uncertain to reject for
+the missing dietary definition. All original 40 reviews plus that record remain
+preserved; effective counts use the latest bound review for each unchanged
+output. This reconciliation changes the criterion application, not the output
+or measured model behavior.
 
-All 40 Gemma receipts validate under the frozen generation runtime and canonical
-shared runner, with case IDs, complete inputs, student prompts and output schema
-matching both Qwen plans. Each is a fresh single attempt with normal termination.
-Saved receipts record 230,329 input / 1,489 output tokens, maxima 10,685 / 68,
-median model execution 67.80 seconds and native request execution 67.91 seconds.
-The generation config SHA-256 is
+The current paired comparison of the fourth epochs supports recommending
+Qwen's starting weights. Gemma repairs its first-epoch Rosemary/Rome identity
+widening and Risotto definition; those are no longer Qwen advantages. Qwen
+preserves Potatoes as a kind, defines stock-making through cooking carcasses
+with water, and defines the dietary lesson through nutritious, balanced eating
+guidance. It keeps the synthetic selected sushi eating event separate from the
+pizza descendant, and case 24 states experimentation's trial action with both
+named equipment kinds. Gemma instead retains the successful rosemary-addition
+outcome that Qwen drops. Both give acceptable meanings for the script functions.
+
+Both fourth epochs still make Cooking's heat optional, only name
+pressure-canning, and invent processed-food consumption or experienced harm. Whole-topic parent
+fit disputes remain uncertain, and the provisional null references do not
+establish refusal accuracy. These concrete paired differences support the
+recommended Qwen starting weights, with no production pilot adapter or epoch
+selected; review counts alone do not rank foundations.
+
+Both 40-case Gemma passes validate under the frozen generation runtime and
+canonical shared runner, with case IDs, complete inputs, student prompts and
+output schema matching both Qwen plans. Each is a fresh single attempt with normal termination.
+Both passes record 230,329 input tokens, maximum 10,685. Epoch-one/four output
+totals are 1,489/1,799, maxima 68/102; median model execution is 67.80/82.85
+seconds and native request execution 67.91/82.97 seconds. Gemma's fourth-epoch
+native median is about 5.80 times Qwen's measured 14.31-second median.
+The epoch-one generation config SHA-256 is
 `92b98c0c1fc83f44636ff0c82b877112ee2d7af1d99062e9e0622bb6d25bb5e5`;
 its epoch-one adapter weights match the original fit SHA-256
 `737d28c78e20cabdeef546091d18dbf3dac1cab31d6e076392f6c911c08d285c`.
+The epoch-four generation config SHA-256 is
+`23eeed0c822f435bf2a5e83153286bdd32360908cd23e95cd4c9103eded265c9`;
+its adapter weights match the original fit SHA-256
+`5f72d5087b932e29fdbf637e945602a34139186f3432a2d7359d4934c6309668`.
 The verified loader retains unmerged packed-expert adapters, so these timings
-do not establish optimized Gemma inference cost. Gemma's fourth epoch remains
-pending.
+do not establish optimized Gemma inference cost.
+
+Gemma's fourth epoch still makes Cooking's heat optional, omits stock-making
+and pressure-canning processes, invents processed-food consumption and harm,
+and restricts Potatoes to the author's stove. Experimenting and Healthy diet
+remain underdefined. A synthetic single-sushi eating topic also gains its
+descendant's joined pizza scope, although both food events are supported facts.
+Named-topic referents and whole-topic parent fit remain uncertain in nine
+reviews. All six provisional teacher-null cases again receive meanings;
+unsettled references do not establish refusal accuracy.
 
 The native `run/results.jsonl` / `reviews.jsonl` SHA-256 bindings are:
 
@@ -251,7 +287,12 @@ The native `run/results.jsonl` / `reviews.jsonl` SHA-256 bindings are:
 | --- | --- |
 | `qwen27b-epoch1-v2` | `27896178a0c730a309b475a6acd425e4054d2fd2e938e7788632e448715f8a3b` / `22c47240394a7efe4d51bc094736b4350d7cd70f2cdd031d74aaf9f15bc3be5a` |
 | `qwen27b-epoch4-v2` | `a9233237ca41ce9fcbe20cdcc60ea0263b977c6349a6b0047a0e522e8a12cc9b` / `893cfbe82f8b1fd12eb1904283e5b0206c677282d85e33710a5afe7439209836` |
-| `gemma26b-epoch1-v1` | `eed567abe4fa62d9dbeeb752c547ba643d7ac186e370c70de47555548b64b81f` / `1f44adbf2e54de87a08ec471cabcc109eb93fe3e7a9e54c722ece39defbf114f` |
+| `gemma26b-epoch1-v1` | `eed567abe4fa62d9dbeeb752c547ba643d7ac186e370c70de47555548b64b81f` / `1cfb3635e3cf1dc1d7da7de7d644091d2856f98187ad23880374992e10119c60` |
+| `gemma26b-epoch4-v1` | `a971abe6eb6d7e986f93f7d96aa184470519b7d66bd2ec613d0f18fe21901318` / `b911a2ba600659d3a2615ee94399cd21700a3b23bdd213dd190aa2975d6b1eef` |
+
+All authorized GB10 jobs are finished. The experiment workers stopped; the GPU showed no applications after completion.  The worktree is
+retained because its ignored source-bound artifacts and absolute native receipt
+paths remain needed.
 
 ### Meaning-only Bootstrap learning preparation
 
@@ -462,15 +503,18 @@ hashes are
 Qwen27 is the stronger Bootstrap candidate for further qualification on this
 provisional panel. Gemma26 learns the output format and trains faster here,
 but supplies no measured quality lead and its unmerged serving path is slower.
-Neither is selected. The broader saved-checkpoint evaluation above now makes
-Kev27 the provisional Compare foundation priority, with Qwen27 retained as the
-quality reference and Ettin1B input JSON as the inexpensive candidate with
-transfer limits. The earlier equal 46-case predictions did not distinguish
+The completed matched pilot and broader evaluation support recommending
+Qwen3.8-27B starting weights for Bootstrap and pinned Kev27 v2 for Compare.
+Qwen27 remains the Compare quality reference, and Ettin1B input JSON remains the
+inexpensive candidate with transfer limits. The earlier equal 46-case predictions
+did not distinguish
 Kev and Qwen, although Kev's first epoch reached that result in 49.65 versus
-141.37 phase minutes for Qwen's fourth epoch. Broader independent coverage and
-reviewed Bootstrap null, factual-state and scope cases remain necessary under
-the fixed v96/v48 pair. No final model, production pilot adapter or checkpoint
-epoch is selected. Final training volume and student input layout remain open;
+141.37 phase minutes for Qwen's fourth epoch. The fixed v96/v48 evidence remains
+limited to exposed development posts, short branches and unsettled Bootstrap
+null, factual-state and scope boundaries. Final qualification under the eventual
+frozen prompts needs independent coverage of those boundaries. Final frozen-task
+fine-tuning and evaluation await prompt freeze; no production pilot adapter or
+checkpoint epoch is selected. Final training volume and student input layout remain open;
 the complete teacher instructions used for these controls repeat substantial
 work per example. Their current fit/request times are not a final-training or
 production-throughput forecast.
@@ -503,8 +547,9 @@ first sample is 1.51 MiB sequentially and zero concurrently.
 Memory capacity permits this pair, but the measured aggregate gain is small.
 
 The human chose sequential scheduling for this student investigation after
-this measurement: run one GB10 student fit at a time. The Bootstrap/Compare
-candidate sets remain unchanged, and final student selection remains open.
+this measurement: run one GB10 student fit at a time. The completed evidence now
+supports recommended starting weights Qwen3.8-27B for Bootstrap and pinned Kev27
+v2 for Compare; final frozen-task fine-tuning and evaluation await prompt freeze.
 
 This is one sequential/concurrent pair, sequential first, with staggered
 loading and a short Ettin fit inside a long Qwen fit. Warm caches and ordinary

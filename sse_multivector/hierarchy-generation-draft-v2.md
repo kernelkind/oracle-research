@@ -1,15 +1,21 @@
-# Hierarchy generation — draft v2
+# Hierarchy generation V2 — FUTURE WORK
 
-**Status: next-generation draft; not implemented or tested.** The user approved
-the L1 prominence threshold, guaranteed selection and highest-score fallback.
-The current constructor still follows the
+**Status: V2 — FUTURE WORK. Design draft; not implemented or tested.** This
+document records decisions for a future version, not the current generation
+algorithm. Landing this document in `main` does not activate V2.
+
+For V2, the user approved guaranteed L1 selection by prominence, additional L1s
+for uncovered notes, prominence-ordered refinement of multi-note leaves, and
+retaining the child when an equal-note-set parent has only that child. Other
+equal-note-set cases and automatic shaping remain open. The current constructor
+still follows the
 [standalone traversal design](hierarchy-traversal-draft.md).
 
 ## Purpose
 
 Build the hierarchy around topics that represent a substantial share of each
-note. Ensure every selected L1 is considered, even if individual note access
-becomes possible before all selected L1s have been processed.
+note. Ensure every guaranteed L1 is considered, even if every note becomes
+represented before all guaranteed L1s have been processed.
 
 L1 means a root in a note's original local hierarchy. L2 is its immediate-child
 level, and subsequent local levels continue downward. These levels do not refer
@@ -33,10 +39,11 @@ complete post's meaning concerning the supplied topic. It is not confidence in
 a relationship. Overlapping L1 topics can each score highly; their separate
 scores need not sum to 100.
 
-## Select L1s separately for each note
+## Select guaranteed L1s separately for each note
 
 - If at least one L1 has prominence **greater than or equal to 50**, select
-  **all** of that note's L1s meeting the threshold. Exclude its other L1s.
+  **all** of that note's L1s meeting the threshold for the guaranteed pass.
+  Leave its other L1s unused for now.
 - If **none** reaches 50, select **only the highest-scoring L1** of that note.
 
 Proposed tie handling: when several L1s share the highest score in the fallback
@@ -48,48 +55,104 @@ meaning or prominence result is unresolved evidence, not a score of zero and
 not permission to invoke the fallback using incomplete scores.
 
 Preserve the existing rotation across notes and saved local-node order, taking
-one selected L1 per note per pass. Do not select an excluded L1 later merely
-because stopping conditions remain unmet.
+one guaranteed L1 per note per pass.
 
 ## Guaranteed processing
 
-**Every selected L1 must be processed before construction can stop.**
+**Every guaranteed L1 must be processed before construction can stop.**
 
-The first selected L1 seeds an empty canonical hierarchy with its established
-meaning. Every subsequent selected L1 follows ordinary local-versus-canonical
+The first guaranteed L1 seeds an empty canonical hierarchy with its established
+meaning. Every subsequent guaranteed L1 follows ordinary local-versus-canonical
 traversal and the existing placement checks.
 
 Selection guarantees an opportunity for placement, not admission to the
-canonical hierarchy. A selected L1 can become a new canonical node, supply
+canonical hierarchy. A guaranteed L1 can become a new canonical node, supply
 equivalent support to an existing node, or be held when comparison or validation
 prevents placement. Preserve those outcomes and their evidence.
 
-Do not stop merely because the existing browsing conditions pass while selected
+Do not stop merely because browsing conditions pass while guaranteed
 L1s remain unprocessed. Starting a search is not enough: its placement or hold
 must be recorded, and any triggered consolidation must finish.
 
-## Later levels and stopping
+## Add remaining L1s only for uncovered notes
 
-This revision applies the prominence threshold to **L1 only**. It does not add a
-prominence filter to L2 or deeper levels. Their later selection follows the
-approved refinement restriction in the traversal design. Once all selected L1s
-and their triggered consolidation have finished:
+After the guaranteed pass and its triggered consolidation finish, check which
+notes have at least one original local entry represented in a canonical node.
+An equivalent placement counts as representation; a held entry does not.
 
-- Stop if every note is individually reachable, each canonical leaf represents
-  one distinct note, and every downward edge strictly reduces the note set.
-- If every note is represented but some leaves contain multiple notes, select
-  deeper local nodes only from the notes in those leaves, preserving the saved
-  level and rotation order. A note individually reachable on another branch
-  still qualifies when it belongs to a leaf containing multiple notes.
-- While notes remain uncovered, continue under the initial traversal selection
-  rules. This does not waive the required processing of every selected L1.
-- Remove equal-note-set steps from the finished hierarchy while preserving note
-  access, fixed meanings and valid containment. The retained-node choice and
-  automatic removal remain to be worked through before implementation.
+For a note still absent, select its remaining unused L1s until one is admitted.
+Use its already saved prominence scores, taking the highest unused first. Stop
+selecting additional L1s for that note once it is represented. Rotate across
+uncovered notes when several still need admission.
 
-A held L1 does not waive individual note access. If construction exhausts its
-eligible local entries while the browsing conditions remain unmet, report that
-outcome rather than claiming a finished hierarchy.
+If every L1 of a note is processed without admission, record that coverage is
+unresolved. Do not fabricate support or claim that note is represented.
+
+## Refine multi-note canonical leaves
+
+A canonical leaf has no canonical children. Its note set consists of its
+supporting note IDs, deduplicated. Select unused deeper local nodes to refine
+leaves containing more than one distinct note.
+
+1. Choose the unfinished leaf containing the most distinct notes. Use saved
+   canonical-node order to break ties.
+2. For each note in that leaf, identify the original local branch supporting
+   it. Initially, consider only the L2 children of that branch's local root,
+   rather than every L2 across the note's other local roots.
+3. Establish each eligible child's explicit meaning and run PPv35 using that
+   meaning and its complete original post, as for L1. Prominence sets priority;
+   there is **no 50-point cutoff** at these deeper levels.
+4. Rotate across the leaf's notes in saved note order. Take the highest-scoring
+   unused eligible child for each note on its turn. Break prominence ties using
+   saved local-node order.
+5. Every selected child follows ordinary traversal of the canonical hierarchy.
+   Selecting from a leaf's supporting branch does not force placement beneath
+   that leaf. Reassess leaf membership after placements and consolidation.
+
+For a leaf containing notes A, B and C, selection proceeds as:
+
+```text
+A's highest unused L2 -> B's highest unused L2 -> C's highest unused L2
+A's next unused L2    -> B's next unused L2    -> C's next unused L2
+```
+
+When the relevant L2 is exhausted and refinement is still needed, repeat at L3
+and subsequent levels within those original local branches. Continue rotating
+across notes and selecting the highest-prominence unused node at that level.
+Do not repeat a local node already processed through another leaf.
+
+Stop expanding a leaf when it represents one note or its relevant original
+local branches have no unused descendants left. Record a multi-note group that
+remains after exhaustion. A note represented only at an internal canonical node
+does not require additional comparisons solely to create a singleton node for it.
+
+## Selection completion and shaping
+
+Selection has no remaining work when every guaranteed L1 has been processed,
+every note is represented, and no multi-note leaf has eligible unused descendants.
+Uncovered notes remain an unresolved outcome rather than successful coverage.
+
+The finished browsing hierarchy must strictly narrow the distinct-note set at
+every downward edge. Count own supporting notes plus recursive canonical
+descendants, deduplicating note IDs. Remove equal-note-set steps while preserving
+note access, fixed meanings and valid containment. Equal observed note sets do
+not establish semantic equivalence.
+
+**Approved single-child rule:** when a parent has exactly one canonical child
+and both represent the same distinct-note set, retain the more specific child
+and omit the parent from the finished browsing hierarchy. A root's child becomes
+a browsing root. Below another retained ancestor, bypass the omitted parent
+using the existing transitive containment relationship.
+
+For example, if `Food {A, B}` has only `Vegetables {A, B}` beneath it, retain
+Vegetables. Do not merge their meanings, transfer Food's evidence into
+Vegetables, or delete Food from the original construction graph. This rule
+changes which canonical nodes appear in the finished browsing hierarchy.
+
+Equal-note-set cases involving a parent with multiple children remain open.
+Automatic shaping is not implemented. The selection rules alone do not resolve
+all equal-note-set edges or establish that a finished hierarchy has passed this
+requirement.
 
 ## Existing construction rules
 
@@ -106,9 +169,11 @@ and validation. Six remains a trigger, not a hard maximum.
 ## Work and validation
 
 Meaning generation and prominence scoring cover every original L1, including
-those subsequently excluded. The added work grows with the number of L1s and
-their source-post lengths, not every local/canonical pair. Traversal then
-processes the selected L1s, reusing exact saved answers where available.
+those outside the guaranteed pass. Deeper scoring covers eligible entries in
+the relevant local branches of multi-note leaves, not every deeper entry of
+every note. The added scoring work grows with the entries assessed and their
+source-post lengths, not every local/canonical pair. Reuse exact saved meanings,
+prominence answers and comparisons where available.
 
 No cost reduction or hierarchy-quality improvement has been measured for this
 draft. Compare actual finished hierarchies and total API-equivalent cost,

@@ -17,6 +17,13 @@ reduces the slowest four-note preparation from 13.25 to 7.61 seconds while
 preserving every reviewer input and evidence record. Current defaults and the final
 sixty-answer validation remain unchanged.
 
+The subsequent [twelve-case fresh repeat](#dcsv1-focused-negative-search-controls-october-11)
+passes all eleven unchanged assessed expectations; one pre-call negative label
+is corrected after independent reassessment. All twelve complete outputs are
+accepted, with seven saved DSLv10 witness responses reused and no new semantic
+error found. Generation takes approximately 72 seconds. These exposed controls
+establish repeat consistency, not broad qualification.
+
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
@@ -5637,6 +5644,91 @@ Ignored native evidence remains under
 `oracle-mvp-review-coverage-receipt-hashes/target/distillation-review-v1/coverage-receipt-hashes/{before,after-final}/`.
 Prompts, semantic criteria, reasoning settings, reviewer qualification and the
 final sixty-answer validation retain their existing status.
+
+## DCSv1 focused negative-search controls (October 11)
+
+The user approves a small focused test of negative-search reliability after
+receipt-hashing reuse. Independent source-first assessments freeze twelve
+existing residual inputs before fresh model calls: six have a valid placement
+and six require a complete negative account of every supplied candidate.
+These are development-exposed agent-assessed controls, not unseen examples or
+human gold labels. DCSv1, Sol/xhigh, all source wording and interpretation rows
+remain unchanged.
+
+| Saved answer | Coverage-search suffixes | Frozen pre-call expectation |
+| --- | --- | --- |
+| `M01-checkpoint-200-N0054` | `005`, `008`, `013`, `016`, `017` | Positive; student `9`, Markets, is a valid witness |
+| `M02-checkpoint-200-N0015` | `015` | Positive; student `3`, Girls and women, is a valid witness |
+| `M01-checkpoint-600-N0017` | `004`, `008`, `009` | Null; every candidate adds a missing restriction |
+| `M01-baseline-N0076` | `001`, `006`, `009` | Null; every candidate adds a missing restriction |
+
+IDs expand as `<answer>:coverage-search:<suffix>`. Other independently sound
+witnesses remain acceptable. Candidate lists contain **2–14 entries**; the
+Markets witness appears first of two, eleventh of twelve, or tenth of eleven.
+ETF meanings preserve financial-market activity; Sisters preserves the fixed
+human-family meaning of girls or women. Negative controls check that person
+names, ordinary art, greed, a streaming service and the named contribution do
+not acquire the other candidates' actions, types, identities or relationships
+through co-mention or context.
+
+NFT `004`, Blockchain technology beneath Digital, is excluded from negative
+controls: ordinary digital-ledger type meaning preserves the candidate. Its
+existing DCS result correctly returns that witness. Rejecting the Incest witness
+in family `006` cannot establish a negative for its unresolved Body alternative;
+that case and the Mothers/Daughters beneath Girls uncertainties stay separate.
+
+Native `prepare --from --only --repeat --prompt-cache` selects the exact frozen
+cases from the four `after-final` receipt-hashing experiments. Each prefix is
+eligible; four warmups and twelve comparisons need sixteen initial attempts,
+with provider-only retry headroom retained in the shared attempt counter.
+The shared queue admits up to thirty requests. Native validation checks
+candidate accounting; complete decisions and every reason require independent
+audit. Passing a fresh repeat would establish consistency on these controls,
+not broad reviewer qualification or full-evaluation runtime.
+
+### Fresh repeat result
+
+All twelve searches complete on their first attempts in **72.36 seconds**,
+including prefix warming and queue admission. They return seven witnesses and
+five nulls. Root and independent full-output audits accept all twelve decisions
+and every explanation. **Eleven of eleven unchanged assessed expectations pass**;
+the remaining discrepancy is an incorrect pre-call label, not a model error.
+
+Television `008` returns student `1`, Television, for Peacock streaming service.
+Independent reassessment establishes that the parent denotes the broad
+television medium/field and the fixed child referent is a television-distribution
+service within it. Requiring a programme, television device or exclusively
+television catalogue would add restrictions absent from the parent. The
+particular reboot and review do not supply this intrinsic service type.
+The original frozen null expectation is retained above. Native review history
+retains the provisional uncertainty and subsequent explicit acceptances;
+both remain hash-current under existing review semantics. No review-precedence
+change or automatic qualification is claimed.
+
+Every returned witness receives unchanged DSLv10 verification through **seven
+exact saved-response reuses and zero new calls**. Parent/child strings, original
+posts and complete teacher-context arrays match the new DCS witnesses. All seven
+saved verdicts are true, and their complete reasons pass root audit. Receipt
+reuse does not provide independent model samples or settle correctness by itself.
+
+Native `summarize-experiments` reconciles **16/32 attempts**: twelve fresh
+searches and four warmups, seven separate verification reuses, no retries or
+failures. Fresh requests contain **19,840 cached of 29,183 total input tokens
+(67.98%)**; ten of twelve comparisons receive hits. Fresh API-equivalent cost
+is **$0.1584**; estimated net caching savings are **$0.0158 (9.07%)**, including
+warmup overhead. Historical generation usage for reused receipts stays separate;
+these estimates are not subscription bills.
+
+Ignored experiments, native agent reviews, scheduling evidence and native usage
+reports remain under
+`oracle-mvp-review-coverage-negative-controls/target/distillation-review-v1/coverage-negative-controls/`.
+The unused ETF preparation with a different history root makes no calls and is
+excluded from accounting. Prompts, adapter behavior and reasoning settings do
+not change; native preparation preserves exact input, rendered-prompt, evidence
+and cache-prefix parity. This small development-exposed repeat leaves unseen
+negative-search reliability, per-check reasoning qualification, interpretation
+uncertainties and the eight-hour full-evaluation target open. The final sixty
+are not rerun.
 
 ## Actual distilled wording: offline preview (October 8)
 

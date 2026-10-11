@@ -70,3 +70,22 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertIn('trial source changed', refused.stderr)
         self.assertFalse((self.root / 'changed').exists())
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
+    def test_export_uses_the_finished_menu_and_preserves_the_raw_graph(self):
+        from sse_multivector.canonical_traversal import _stopping
+        path = self.source()
+        state = json.loads(path.read_text())
+        state.pop('shape')
+        state['note_ids'] = ['n1', 'n3']
+        _stopping(state)
+        path.write_text(json.dumps(state))
+        original = path.read_bytes()
+        self.cli('export-canonical-viewer', 'trial', '--output', 'viewer')
+        view = json.loads((self.root/'viewer/hierarchy.json').read_text())
+        nodes = {n['node_id']: n for n in view['nodes']}
+        self.assertEqual(set(nodes), {'VIEW_ROOT', 'C002', 'C003'})
+        self.assertEqual(nodes['VIEW_ROOT']['children'], ['C002'])
+        self.assertEqual(nodes['C003']['note_ids'], ['N001'])
+        self.assertEqual(nodes['C003']['children'], [])
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
