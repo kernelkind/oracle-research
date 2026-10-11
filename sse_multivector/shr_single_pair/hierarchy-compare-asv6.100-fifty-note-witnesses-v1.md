@@ -652,6 +652,52 @@ justification can still add an unsupported condition to the child. The next
 proposed diagnostic should isolate that interpretation step before another
 prompt revision. No additional test or edit is implied by this result.
 
+### Approved v76 interpretation diagnostic
+
+The user authorized isolating the unsupported interpretation in the sourdough
+answer. This diagnostic preserves v76 and all Bootstrap-v96 / ASv6.100 meanings;
+it does not revise the production prompt, regenerate meanings or build a graph.
+
+The frozen schedule is eight fresh unchanged v76 responses and eight supplied
+candidate-membership probes: both orientations of 024, 025 and 034, isolated
+022 forward, and snapshot 022. The two bagel inputs are an isolated endpoint
+control and a graph-bearing ancestor check, not reciprocal snapshots. Each
+generic diagnostic imports exact inputs and review-only evidence from the pinned
+completed v76 gate. Saved comparison answers do not enter the diagnostic input.
+
+Four versioned `Compare-candidate-*-v1` templates supply deliberately selected
+hypotheses: animal-feed-only sourdough, a dog swallowing dog-only food,
+pantry-bagel preparation for human nourishment solely as non-meal snacks, and
+the design/installation of a cooking-role induction hob with an integrated
+extractor. These are experimental challenge stimuli, not production examples,
+new Bootstrap targets or a representative accuracy dataset. The appliance
+stimulus guards against rejecting information about an activity's established
+equipment role solely because it concerns a different physical kind.
+
+Each probe separately tests admission beneath the local node, the selected
+canonical node, and all supplied canonical ancestors, with a concise decisive
+basis. Human-only Food must exclude animal-only use; the generic sourdough and
+Eating meanings admit those hypotheses. Bagel preparation and Bread admit the
+non-meal snack hypothesis, whereas the meal-restricted Food dishes ancestor
+excludes it. Role-defined appliance information should remain covered under
+the unchanged Compare information-topic convention. Independent review will
+check these hypotheses and retain any disagreement rather than manufacture gold.
+
+Run ceilings total 33 actual attempts: 17 for the fresh eight-case v76 draw
+(including warmup/retries) and four per two-case candidate probe. The existing
+20,000 counter remains authoritative. Sol 6.1 medium and the main shared runner
+remain fixed. V76 retains its native cached SSE configuration; short diagnostic
+templates run uncached rather than receiving artificial cache-padding text.
+
+If v76 reproduces an error but the supplied-candidate check correctly admits
+the child and excludes the parent, that demonstrates capability in the narrower
+validation task and a failure to preserve/use that boundary during full Compare.
+It does not distinguish search from positive-coverage proof conclusively, prove
+which prompt sentence caused the error, or certify a fix. If the probe also
+fails, the unsupported interpretation persists during explicit candidate
+validation. Non-reproduction of a fresh v76 error does not erase the earlier
+witness. No automatic production edit or adoption follows from either outcome.
+
 Read-only inspection of the exact Butter witness:
 
 ```bash
