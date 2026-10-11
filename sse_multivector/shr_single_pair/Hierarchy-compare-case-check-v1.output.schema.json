@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "local": {
+      "type": "object",
+      "properties": {
+        "verdict": {"type": "string", "enum": ["fits", "outside", "unresolved"]},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "required": ["verdict", "reason"],
+      "additionalProperties": false
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "verdict": {"type": "string", "enum": ["fits", "outside", "unresolved"]},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "required": ["verdict", "reason"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["local", "canonical"],
+  "additionalProperties": false
+}

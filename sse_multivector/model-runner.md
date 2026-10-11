@@ -99,6 +99,21 @@ supplies its own response schema; this supports relation-only Compare student
 screens without altering the teachers' meaning/relation/reason validator.
 Mechanical-answer cases are refused rather than imported as input-only cases.
 
+For blind adjudication of saved Compare proposals, a `generic` dataset may
+instead declare schema 1 with a `saved_counterexamples` array. Each selection
+specifies `id`, a hash-bound `experiment` reference, `case_id`, containment
+`direction`, `field` (`answer` or `justification`), an exact unique `excerpt`
+or null for the whole field, and boolean `reverse`. Native preparation requires
+a valid receipt-bound directional answer and fixed subject/meaning inputs.
+It emits only `local` and `canonical` subject/meaning objects plus the selected
+`case` text; `reverse` swaps the two nodes. Old labels, proof claims outside the
+selected text, source evidence and reviews remain outside model input.
+The selector must exclude any old verdict embedded in the chosen text;
+exact extraction does not certify that a proposal is semantically valid.
+Frozen source files, producer receipts and complete original diagnostics remain
+bound for review. This diagnostic cannot apply hierarchy changes and uses the
+new spec's ordinary response schema, rather than the production Compare schema.
+
 For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
 collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
 Preparation validates and deduplicates the original source-bound inputs before
@@ -6735,3 +6750,15 @@ establish a sound necessity proof. V178 is not adopted; the proposed next
 diagnostic separates saved-case adjudication from counterexample construction.
 See the [V178 focused-question test](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v178-focused-question-ablation)
 for exact preserved evidence and native usage.
+The subsequent saved-case diagnostic uses experimental
+`Hierarchy-compare-case-check-v1`, rather than changing the production Compare
+prompt. Four judgments of the original fully specified laboratory-only stock
+vessel correctly fit Stockpots and escape Cookware; four commercial
+meal-ingredient judgments fit both. A shorter saved laboratory proposal leaves
+stock production versus reheating ambiguous, yielding two definitive admissions
+qualified by independent review and two appropriate unresolved admissions.
+All four of its Cookware exclusions remain supported. This points toward
+counterexample construction and whole-scope proof testing without establishing
+a causal prompt fix. Twelve fresh attempts, zero reuses/failures/retries and
+$0.03306 native API-equivalent cost are recorded in the
+[saved-case diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#saved-case-adjudication-diagnostic-v1).
