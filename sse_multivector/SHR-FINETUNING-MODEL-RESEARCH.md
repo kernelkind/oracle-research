@@ -70,10 +70,14 @@ allocation. Correct containment direction is only 12/16; all 28 `neither`
 targets and two identity controls pass. This demonstrates useful task learning,
 not complete qualification: the eight evaluation posts supply no `uncertain`
 labels, non-identity equivalence or canonical branches. Matched Qwen27/Kev27
-native decision fits are supported and tested. Qwen's first epoch reaches
-43/46 agreement (13/16 containment decisions) in a 36.73-minute phase, versus
-38/46 before adaptation. Later epochs and fresh-process verification remain
-pending, and the partial timing includes small overlapping native tests.
+native decision fits are supported and tested. Qwen progresses from 38/46 before
+adaptation to 43/46 after one epoch and **44/46 after four** (14/16 containment
+decisions); both checkpoints pass fresh-process verification. Its cumulative
+training/evaluation/checkpoint phase takes **141.37 minutes**, with **21.15 GiB**
+peak CUDA allocation, and includes small overlapping native tests. Its remaining
+two disagreements are one reciprocal Activities versus need for padel courts family.
+Near-zero TRAIN loss with one additional held-out match after epoch one is a
+development learning observation, not proof of a size plateau or a final ranking.
 Kev27 task results remain pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
