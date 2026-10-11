@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-compare-v69",
+    "path": "Hierarchy-compare-v69.md"
+  },
+  "dataset": {
+    "adapter": "hierarchy_node_pairs",
+    "path": "../../target/hierarchy-as100-b96-c48-fifty-note-v1/roots/step-001/source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "meaning": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relation": {
+          "type": "string",
+          "enum": [
+            "equivalent",
+            "local_contains_canonical",
+            "canonical_contains_local",
+            "neither",
+            "uncertain"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "meaning",
+        "relation",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "transport": "sse",
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "prompt_cache": true
+  }
+}

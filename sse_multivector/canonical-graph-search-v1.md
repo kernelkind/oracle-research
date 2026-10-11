@@ -352,3 +352,53 @@ Ignored native evidence is retained in
 The original task worktree must remain because frozen sources and receipt
 references use its absolute paths. No UI was refreshed, no agent was messaged,
 and no push was made.
+
+## Matched fifty-note trial
+
+The user authorized the larger automatic construction comparison on 2026-10-10,
+specifying **50 notes and ASv6.100**. The
+[source definition](shr_single_pair/hierarchy-graph-search-fifty-b98-c69-roots-v1.json)
+preserves all fifty original root selections and the same collected corpus.
+Every note's original ASv6.100 attribution and every collected source hash were
+checked before preparation. Bootstrap-v98 and Compare-v69 retain the exact
+prompt bytes and output schemas used by the eight-note trial. New
+[bootstrap](shr_single_pair/hierarchy-graph-search-fifty-bootstrap-v1.spec.json)
+and [comparison](shr_single_pair/hierarchy-graph-search-fifty-compare-v1.spec.json)
+specs omit the retired `runner.concurrency` option; the current shared runner
+owns dispatch scheduling for both methods.
+
+Both methods start empty and use the same automatic nomination and existing
+placement checks. The
+[selection definition](shr_single_pair/hierarchy-graph-search-fifty-selection-v1.json)
+scales the earlier four-entry-per-note screen to **200 processed entries**,
+including fifty initial roots. Inventory exhaustion or this finite cap is not
+finished-menu acceptance. Guarded16 remains the baseline; the candidate uses
+the existing opt-in graph traversal. Deferred original-parent pruning is not
+implemented. No prompt edits, selected destinations, manual placements or menu
+repairs are part of this experiment.
+
+Exact answers are reused through the retained graph-construction worktree's
+`target` history, including the earlier eight-note evidence. Fresh execution
+and original generation costs remain separate; saved source warmups do not
+establish a hypothetical fresh independent build's complete warmup cost.
+Native accounting will include observed token types, warmups and failures, and
+retain missing usage as unknown. The comparison will report graph size,
+additional and avoided comparisons, held entries, note groups/routes and the
+existing six-choice/strict-narrowing audit alongside total cost.
+
+Status: native automatic execution has begun; final fifty-note results are
+not available yet. The first preflight ran 38 checks: 36 passed and
+two failed solely because the shared queue changed parallel dispatch order.
+Their production-CLI assertions now allow permutation within a frontier while
+retaining the required next-frontier ordering; no selector behavior changed.
+All **38 checks pass** on repetition, including native cost summaries. Both
+methods share one irreversible 32,768-attempt technical counter; an entry cap
+or attempt cap remains an incomplete construction result, not acceptance.
+No paid API fallback or rented compute is used.
+
+Native artifacts remain under
+`../oracle-mvp-canonical-graph-construction-v1/target/graph-search-fifty-b98-c69-v1/`.
+The task code/spec worktree is
+`../oracle-mvp-graph-search-fifty-b98-c69-v1/`; retain it while source hashes and
+receipts depend on those paths. The initial unexecuted preparation under that
+task worktree's `target/` is not counted as inference. No UI has been refreshed.
