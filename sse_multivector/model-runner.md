@@ -6669,3 +6669,11 @@ meal purpose from stock-making or leave it unchecked. Four consistent pairs are
 wrong, so reversal counts alone miss the defect. This single-pair diagnostic does
 not establish which instruction caused it; V176 remains experimental. See the
 [orientation diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#unchanged-v176-stockpots-orientation-diagnostic).
+The authorized V177 ablation extends the mandatory positive check to all
+applicable parent requirements. Six fresh Stockpots-pair draws still find only
+two valid neither answers out of twelve; the ten failures still substitute
+culinary stock-making for meal purpose. Two fresh control draws preserve the
+positive/equivalent controls, but both Fasting forward proofs assume personhood
+while their reversals refute it. V177 is not adopted. The saved-reference timing,
+provisional controls, native 36-attempt usage and proof qualifications are recorded
+in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
