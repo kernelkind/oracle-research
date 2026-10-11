@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v93_core_scope": [
+      "../../target/compare-v93-qualification-v1/core-scope-v1"
+    ],
+    "v93_tool_scope": [
+      "../../target/compare-v93-qualification-v1/tool-scope-v1"
+    ]
+  }
+}
