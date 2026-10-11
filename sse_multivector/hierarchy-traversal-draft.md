@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v10
+# Hierarchy selection by traversal — draft v11
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -237,6 +237,57 @@ This ordering keeps consolidation's inputs current and makes its resulting
 graph available to the next placement. Its effect on elapsed time and comparison
 cost has not been measured.
 
+## Proposed synthetic-parent validation
+
+**Use the proposed synthetic topic as the incoming node in the same traversal.
+Its proposed children are claims to check, not automatic edges.**
+
+Freeze the consolidation output's title and explicit meaning before comparison.
+Supply the title as `local.subject` and the definition as `local.meaning`; each
+comparison's canonical side uses the existing node and its canonical branches.
+No Bootstrap call is needed: consolidation has already written the definition.
+Do not invent an original note or local branch for a synthetic topic.
+
+Start at the canonical roots and use the agreed comparison actions, including
+branch stopping, equivalence reuse and transitive inference. Keep the graph
+fixed for this traversal and placement, while other local-node searches
+continue on their snapshots. The comparison labels establish the relationships;
+the consolidation output does not prescribe positive answers.
+
+Before insertion, require all of the following:
+
+- When the offered siblings have a parent, traversal establishes that this
+  parent strictly contains the proposed topic. Equivalence with that parent
+  would merely add another name for the same level. Roots have no such parent
+  requirement.
+- The proposed topic strictly contains each nominated child, through a direct
+  comparison or valid inference under the agreed hierarchy assumption. A
+  pruned or unreached child remains unchecked and cannot supply this approval.
+- The established grouping covers at least two of the offered siblings and
+  fewer than the whole group. Include any additional offered siblings that
+  traversal establishes are contained; do not ignore them to manufacture a
+  useful subset.
+- The prospective graph passes the existing placement checks, reduces the
+  target group's immediate choices, and makes the new grouping edges strictly
+  narrow distinct-note sets. Count existing supporting notes and recursive
+  descendants once per note; the synthetic topic adds no invented note support.
+
+Check the prospective graph before changing the real one. Route grouped
+siblings through the proposed parent instead of retaining their redundant
+direct edges in the target group; preserve their other parent branches and
+existing ancestry. Existing equivalent nodes are reused under the agreed
+equivalence rule, retaining their fixed meanings.
+
+An `uncertain` comparison, an unsupported nominated relationship or a failed
+placement/shaping check ends this proposal without graph changes. Save the
+proposal and its comparison results for review, preserve the local-node
+placement that triggered consolidation, and continue the approved timing
+sequence. Do not rewrite the synthetic meaning during validation to force fit.
+
+This validation policy is a proposal awaiting review. It adds no separate
+semantic-review prompt or exhaustive comparison pass. Required relationships
+can reuse exact answers and the same transitive inferences as ordinary traversal.
+
 ## Proposed walk
 
 The comparison actions, shared-node rule, concurrent-search policy and
@@ -288,6 +339,7 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
+- Whether to adopt the proposed synthetic-parent validation above.
 - How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
@@ -299,5 +351,11 @@ would also contain it by transitivity, conflicting with the Meals answer.
 from this draft's agreed rules. The implementation and its historical results
 remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
+
+The fixed-meaning comparison input already accepts `local.subject` and
+`local.meaning` without original-note evidence. The constructor's
+[`_placement` function](canonical_trial.py), however, still builds new nodes
+from original note entries. The proposal above reuses the comparison contract;
+synthetic insertion is not currently implemented by this draft.
 
 No implementation changes or model calls have been made for this draft.
