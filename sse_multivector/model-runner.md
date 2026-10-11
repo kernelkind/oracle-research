@@ -1482,8 +1482,9 @@ outputs cannot satisfy lower-effort requests. Model, prompts, source wording,
 concurrency, retries and eligible prefix policy stay fixed. See the
 [reasoning-level study](distillation-review-v1/README.md#reasoning-level-comparison-approved-october-9).
 The approved prompt-development loop uses 12–16 distinct complete review inputs
-for the changed check, then further regression cases and the fixed ten-note
-workflow after that set passes. The full 60 remains very final validation.
+for the changed check, then further regression cases and the [four-note
+workflow](distillation-review-v1/README.md#regression-scope-reduced-to-four-notes-october-11)
+after that set passes. The full 60 remains very final validation.
 Lower-effort testing remains paused during DSLv4 development; the current
 ten-note xhigh run has finished generation unchanged at concurrency 16, with
 its raw native report preserved before audit reviews. The
@@ -1563,7 +1564,7 @@ numbers outside model input and original source hashes protected. New inputs
 require source-adapter preparation rather than unchanged `prepare --from`.
 Three new preparation tests pass; existing broader failures reproduce on the
 unchanged baseline. The bulk helper's obsolete concurrency setting remains a
-separate prerequisite before the fixed ten-note regression. Historical results
+separate prerequisite before the four-note regression. Historical results
 and labels remain unchanged. The preserved DSLv8 snapshot has fourteen input
 mismatches after the AS/context-input revision, so this is not a prompt-only
 paired comparison.
