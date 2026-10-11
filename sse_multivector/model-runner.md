@@ -1672,6 +1672,40 @@ and savings remain unknown because the two failed attempts lack usage. No
 source labels or prompts change. This is a development regression, not unseen
 qualification; DSLv10 remains experimental, production defaults to DSLv2, and
 lower-effort testing and the final sixty remain pending.
+The user subsequently expands this to an
+[eight-note xhigh regression](distillation-review-v1/README.md#dslv10-eight-note-regression-october-11),
+retaining R02/R15/R21/R14 and adding R01/R03/R04/R05 by frozen random order.
+Native preparation contains ten groups, 1,337 numbered checks and 77 mechanical
+positives. Matching/support retain their original worker/history bindings;
+DSLv10 retains the shared worker and timing history. Two successful retry
+receipts absent from that index pass production receipt and adapter validation,
+then native `RequestHistory.remember` registers their original ledger references.
+All 101 prior completed DSL request identities are reusable without copying or
+altering frozen evidence. Input-first assessments precede candidate inspection.
+Generation completes in 28 min 35 s at 167/940 reconciled attempts: 160
+successful fresh DSL comparisons, five eligible warmups and two recovered
+failures. Verified reuse supplies 416 historical and 131 same-run aliases;
+160 successes cover 159 new semantic inputs because an alias and a retry both
+complete one request with different sound explanations. Both full versions
+are audited. All 784 completed occurrences and 553 justified DSL stops are
+accounted for. Every mechanical proof (77), self-guard (42), stopping dependency,
+frozen source/code binding and native score assembly passes. Complete model
+records receive **380 accepts, one reject and 15 uncertainties** across 396
+versions of 395 inputs; current native occurrence reviews are 739 accept, one
+reject and 44 uncertain, including mechanical proofs.
+The definite DSLv10 error is R05 `2.2`: it accepts a humorous account of morning
+odd jobs around town beneath `Author's morning outings`, although the complete
+child permits those jobs to be done from home. The extra account, ownership and
+timing wording does not require going out; the post cannot supply it. Root and
+two independent agents agree after a concrete counterexample. The eight-note
+regression does not pass. The next recommended step is a small diagnostic of
+that error; no prompt revision, lower-effort calls or final-sixty run starts here.
+Known successful local receipts cache 7.82% of input tokens and total a catalog
+$2.289306. Net savings including warming are **−$0.020318 (−0.90%)** on that known
+subset; both failed attempts lack usage, so full cost and savings are unknown.
+The final history audit preserves R01's valid first success and registers only
+the missing recovered R05 original ledger line through production
+`RequestHistory.remember`. No frozen output or production code changes.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
