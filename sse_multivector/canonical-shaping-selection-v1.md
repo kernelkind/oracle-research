@@ -26,9 +26,12 @@ Both Food dishes proposals select Burgers and Chicken dishes instead of Bread,
 but retain the unresolved whole-child meal-role question. The pre-call criteria
 and results are recorded in
 [the remaining real-group screen](#consolidation-v11-remaining-real-group-screen).
-The user subsequently authorizes isolating the Grilling omission; the matched
-planned-scope diagnostic below keeps v11 unchanged and changes one sibling's
-meaning only in a clearly labeled synthetic control.
+The user subsequently authorizes isolating the Grilling omission. Both fresh
+draws omit Grilling from Food processing when its fixed meaning explicitly
+includes plans and select it under heat/smoke preparation when that clause is
+removed. This supports wording sensitivity without settling the activity/plans
+boundary or proving the original omission is wrong. The matched diagnostic
+below leaves v11 and all original hierarchy meanings unchanged.
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -3593,3 +3596,63 @@ assessment criteria enter the model input. The committed
 [usage selection](shr_single_pair/hierarchy-consolidation-v11-grilling-plan-usage-v1.json)
 will summarize only these two native experiments; no old inference is rerun as
 a charged baseline or treated as new data.
+
+All four fresh requests complete successfully with distinct raw HTTP 200
+references reporting GPT-6.1 Sol; actual bodies request medium reasoning. Each
+contains one user `input_text` block with no conversation link. Paired repetitions
+have identical complete inputs, prompts, request bodies, settings and source
+hashes, and all four request-producing code hashes agree. The original input
+and rendered prompt also match the earlier Food processing witness exactly.
+The synthetic condition differs only by removal of C012's planned clause and
+its planned-dinner illustration; it does not introduce an explicit prohibition
+on planning or settle what an unqualified activity topic covers.
+
+| Grilling input condition | First draw | Independent repeat | Bounded assessment |
+|---|---|---|---|
+| Original, explicitly includes plans | Food processing: Bread preparation C010 + Food smoking C011 + raw no-bake pie preparation C098; Grilling omitted | Same title and selected children, independently worded meaning | Two uncertain activity/plans completeness judgments |
+| Synthetic, planned clause removed | Heat and smoke treatment of food: Food smoking C011 + Grilling C012 | Heat- and smoke-based food preparation: same children | Two qualified agent accepts |
+
+Both original outputs define physical-form, composition or flavor transformation
+to produce food, fitting narrower inside Food preparation. Grilling's direct-heat
+process would satisfy that boundary. Whether those activity definitions also
+cover the plans explicitly included in the original Grilling topic remains open.
+Both controls explicitly allow heat **or** smoke, preserving cold as well as hot
+smoking. Bread preparation can include individual non-heating stages, while
+the complete raw pie activity does not require heat or smoke; the device and
+ingredient siblings are not treatment activities. These observations support
+the two control accepts without giving the original omission a human error label.
+
+The two repetitions show a stable direction in this bounded screen: original
+inputs omit Grilling, and clause-removed controls select it. That is evidence of
+sensitivity to the planned wording. The proposed topics change too, and four
+calls do not establish that the clause explains the historical omission or a
+general error rate. This diagnostic therefore does not justify another prompt
+edit on its own. The next useful step is to settle the activity/plans boundary
+using the exact saved Food processing and Grilling definitions, rather than
+continue unconstrained generation and treat every new scope choice as failure.
+No further test or prompt revision has begun.
+
+For the two unchanged-input proposals, native prospective note sets strictly
+narrow and seven choices would become five, but semantic completeness is still
+uncertain. The two synthetic reports explicitly withhold saved-menu shape
+quality because the supplied Grilling meaning is altered. All reports remain
+`applied: false`; no canonical meaning, note support or edge changes.
+
+The committed usage selection reproduces native ignored
+`target/canonical-shaping-selection-v1/consolidation-v11-grilling-plan-usage-v1.json`.
+Complete usage is **5,848 input tokens**, zero cached-input/write tokens, and
+**2,321 output tokens including 2,110 reasoning tokens**. Complete API-equivalent
+catalog cost is **$0.034906**. There are four fresh attempts, no reuses, warmups,
+retries, failures or missing usage. Reasoning is counted once and no incremental
+subscription cash charge or savings claim is inferred. The new ceiling is
+exhausted at **4/4**; all three earlier exhausted counters stay byte-identical.
+
+Native pre-review and post-review snapshots preserve every producer/input/usage
+field, adding only attributed agent reviews. Two accepts and two uncertainties
+are review assessments, not accuracy estimates or new human gold. V11, the
+shared writing fragment and historical Bootstrap-v104 hashes remain unchanged.
+The minimal preparation support, source definition, spec, usage selection and
+maintained findings are committed in the isolated worktree as requested.
+Thirty-seven relevant production-path consolidation, assembly and revision
+checks pass. No Compare inference, Bootstrap edit, placement, UI refresh,
+activation, runner-repository change or agent message occurs.
