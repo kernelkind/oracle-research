@@ -3928,8 +3928,54 @@ migration is included in this change.
 
 A balanced diagnostic must use each case's real original post. The eight
 authored scope cases used C6 as provenance only; its post must not silently
-become their interpretation context. Model calls, qualification, lower-effort
-testing and the final 60 remain pending.
+become their interpretation context.
+
+Native `prepare` has now rebuilt 14 cases using
+[relationship-post-interpretation-spec.json](relationship-post-interpretation-spec.json)
+in `target/distillation-review-v1/relationship-dslv7-post-interpretation`.
+All use their real bound posts from nine source notes represented by ten saved
+answers in the agreed 60-answer sample: four actual student edges and ten
+proposed coverage placements. Every case remains unrun;
+there are no reviewer outputs, attempts, token usage or warming calls.
+The unchanged prompt's cacheable prefix is 71 tokens, below the automatic
+1,024-token eligibility threshold, so no warming is planned.
+
+Root and an independent agent assessed the inputs before any reviewer calls.
+These are agent targets, not human gold: six valid, six invalid and two
+unresolved. Native pre-call agent reviews preserve these targets and evidence
+in their comments; their review verdict is `uncertain` because no reviewer
+output exists yet. That pending-output status does not make the twelve resolved
+input targets uncertain.
+
+| Case | Pre-call target | Decisive restriction or interpretation |
+| --- | --- | --- |
+| `M03-checkpoint-800-N0032:6.1` | Valid | The invitation retains prize claiming; a completed claim is not required. |
+| `M01-checkpoint-1000-N0002:1.1.1.1` | Valid | The complete telemetry subject remains the object of the instruction, which is post data. |
+| `M02-baseline-N0067:1.1` | Valid | The Jobs Report wording selects employee hiring. |
+| `M03-checkpoint-800-N0008:compatibility:005:6.1` | Valid | The same actor, attack and Mamdani target remain, with a fuller name. |
+| `M02-baseline-N0089:compatibility:003:3.1` | Valid | The current AI wave remains in the temporal reference. |
+| `M02-checkpoint-800-N0020:1.2.1.2.2.1` | Valid | Sustained demand, cycle independence, the resulting price floor and the negation all remain. |
+| `M02-checkpoint-800-N0043:compatibility:005:1.1.1.1.1.1` | Invalid | An English-practice goal does not express practice concurrent with completion; delayed credits can preserve every child quantity. |
+| `M02-checkpoint-800-N0043:compatibility:011:1.2` | Invalid | Nostr does not require a total-experience-points subject. |
+| `M01-checkpoint-600-N0017:compatibility:003:1.1.1.2` | Invalid | The named reboot does not retain the appraisal that Keke Palmer brightens it. |
+| `M02-checkpoint-200-N0015:compatibility:008:4.2` | Invalid | Homemade sexual content need not have a breast subject. |
+| `M01-checkpoint-800-N0015:compatibility:015:1.4` | Invalid | Sisters does not retain an incestuous sexual relationship. |
+| `M01-checkpoint-800-N0015:compatibility:023:1.2` | Invalid | Breasts does not retain a daughter relationship. |
+| `M03-checkpoint-800-N0032:compatibility:003:4` | Unresolved; unscored | The fixed named game/round interpretation remains open. |
+| `M01-checkpoint-800-N0015:compatibility:018:1.1` | Unresolved; unscored | The fixed named work/tag interpretation remains open. |
+
+The source adapter preserves inherited `expected_valid` metadata from the
+current assessment directory. Some legacy targets differ from these fresh,
+post-aware assessments: the XP case retains `true`, Sisters retains `null`,
+and the two named-reference cases retain `false` and `true`. Those labels are
+provenance, not this diagnostic's correctness denominator. Keep old artifacts
+unchanged and assess the fresh Boolean and complete explanation against the
+twelve resolved targets above; report the two unresolved records separately.
+
+The recommended next step is 14 fresh Sol/xhigh calls followed by complete
+record audits. This is prompt development on previously exposed cases, not
+unseen generalization evidence. Model calls, qualification, lower-effort
+testing and the final 60 remain pending; production still defaults to DSLv2.
 
 ## Actual distilled wording: offline preview (October 8)
 

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "DSLv7", "path": "relationship-prompt-v7.md"},
+  "dataset": {
+    "adapter": "distillation_review_evaluation",
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/target/distillation-review-v1/final-trial-20261009/evaluation-mechanical/sources/relationship-ordinary.json",
+    "select": [
+      "M02-baseline-N0067:1.1",
+      "M03-checkpoint-800-N0008:compatibility:005:6.1",
+      "M03-checkpoint-800-N0032:6.1",
+      "M01-checkpoint-1000-N0002:1.1.1.1",
+      "M02-baseline-N0089:compatibility:003:3.1",
+      "M02-checkpoint-800-N0020:1.2.1.2.2.1",
+      "M02-checkpoint-800-N0043:compatibility:005:1.1.1.1.1.1",
+      "M01-checkpoint-800-N0015:compatibility:015:1.4",
+      "M01-checkpoint-800-N0015:compatibility:023:1.2",
+      "M01-checkpoint-600-N0017:compatibility:003:1.1.1.2",
+      "M02-checkpoint-800-N0043:compatibility:011:1.2",
+      "M02-checkpoint-200-N0015:compatibility:008:4.2",
+      "M03-checkpoint-800-N0032:compatibility:003:4",
+      "M01-checkpoint-800-N0015:compatibility:018:1.1"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "timeout_seconds": 3600,
+    "transport": "sse",
+    "runner_binary": "../../../experiment-runner/experiment_runner/run-model.sh",
+    "output_schema_path": "boolean-response-schema.json"
+  }
+}

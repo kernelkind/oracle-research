@@ -1503,6 +1503,12 @@ Neither uncertain named-reference target is newly settled. The bulk evaluation
 preparation helper still emits a concurrency field rejected by the current
 shared runner; use native `prepare` with source-adapter specs for this small
 diagnostic. The broader regression failures reproduce on unchanged code.
+The native DSLv7 preview now contains 14 unrun cases from nine source notes in
+the agreed 60-answer sample, with real bound posts. Pre-call agent assessments
+give six valid, six invalid and two unresolved targets; inherited legacy labels
+are not the new diagnostic's scoring basis. Audit complete records against
+those targets after fresh Sol/xhigh calls. The 71-token cacheable prefix is
+ineligible for warming. No model calls have been made for this preview.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

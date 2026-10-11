@@ -400,6 +400,11 @@ rule and output contract fixed. Native preparation now supplies the bound post
 when the template requests it, for actual edges and coverage compatibility.
 Model calls and qualification remain pending. The two uncertain named-reference
 targets remain unresolved; production still defaults to DSLv2.
+The native DSLv7 diagnostic is prepared with 14 unrun cases from nine source
+notes in the agreed 60-answer sample. Independent pre-call agent assessments
+give six valid, six invalid and two unscored targets; legacy labels remain provenance. Its
+71-token prefix is ineligible for warming. The next recommendation is fresh
+Sol/xhigh calls and complete-record audits; no calls have been made.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
 mechanical rules and schemas remain fixed. The completed ten-note run retains
 its frozen concurrency of 16; the current shared runner uses automatic queue
