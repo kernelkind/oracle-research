@@ -3439,3 +3439,67 @@ nulls, separately from procedure compliance; do not manufacture a particular
 entity's properties or convert unresolved producer wording to preferred labels.
 No Bootstrap inference, hierarchy construction or external-session messages.
 Usage source: hierarchy-compare-v151-v152-controlled-usage-v1.json.
+
+All four experiments complete with104 valid comparisons in109 actual attempts,
+including four warmups and one recovered provider failure. No reuse or terminal
+failures. One failed attempt has no usage: $1.0303332 is the native known
+API-equivalent subtotal, not the unknown complete cost. Counter:17224/20000.
+No candidate is adopted. V152 has two core reversal conflicts and one reverse
+chain conflict; V151's fresh repeat has one reversal and a chain conflict in
+each orientation. Controls have no consistency conflicts in either condition.
+The earlier V151 zero-reversal draw was not stable.
+
+V152 core:21 accept/2 reject/10 qualified; controls:14 accept/0 reject/5 qualified.
+022 reverse still asserts universal ring-shaped production.071 reverse equates
+an explicit others requirement with a separately defined someone role despite
+a coherent self-directed salutation.022 forward's exact pourable-batter bagel
+witness remains qualified: generic gluten-free recognition does not establish
+that whole recipe's admission or the complete absence of dough.072's independent
+mild-meat witness and009's standalone sensory-consumption witness close the
+previous information-connection gaps in this draw. Supported nulls pass when
+decisive unknown properties or lexical boundaries are identified. The five
+control qualifications concern food/drink, personhood and nourishment. These
+are agent assessments, not human gold or established causal improvement.
+
+Independent input-only review refines008's grading: the wording fixes the author
+but no cup, date or occasion. A particular adverse use and a category of that
+author's adverse uses remain plausible. Producer diagnostics favor particularity
+but are unavailable to Compare and are not conclusive. Earlier definite property-
+invention rejections assumed the particular reading; unconditional generic-
+variant admission assumes the category reading. That disagreement remains in
+native history. The new particular-entity rule is conditional on establishing
+which entity the meaning fixes, not merely encountering a possessive. Review
+counts cannot be interpreted as accuracy improvements after this calibration.
+V151-repeat owner review and independent variant checks remain preserved in
+their native experiments; final cohort counts will follow verification.
+
+### V153/V154: information exclusion and all positive restrictions, separately
+
+V153 changes only the opening of V152's matching-answer paragraph. It separates
+whole-child admission from exclusion of the described information, requiring
+actual composition, production, evaluation and connections to roles in activities to be
+adjudicated under the parent's requirements. A shared aspect does not establish
+whole-topic coverage, and an independent associated topic does not inherit a
+qualifying role. It adds no scope exception or regression example. Since V152
+already repaired the two targeted proof gaps in one draw, this tests robustness,
+not a proven remaining failure or a guaranteed label change.
+
+V154 independently changes V152's positive prerequisite from identity/consumer
+restrictions to every applicable absent parent restriction. Tests preserve
+child requirements and check all parent alternatives and permitted connections;
+another covering alternative can admit cases lacking a restriction. Particular
+entity properties cannot be invented. The canonical paragraph's corresponding
+reference changes, with no other rules or demonstrations altered. This targets
+unsupported universal coverage after one customary or covered instance, including
+kind, method, role, purpose and state conditions. The broader procedure must not
+be applied retroactively to V152 reviews.
+
+Both exact native revisions, production-example validations, independent
+preflights and complete input/evidence/runner/source binding checks pass.
+Next stage: full52-case gates for each candidate and a fresh matched52-case V152
+repeat. Expected156 comparisons plus six warmups:162 attempts absent retries
+or reuse. Meanings and ASv6.100/Bootstrap-v96 provenance remain frozen; no
+Bootstrap inference, hierarchy construction or external messages. Review
+universal proofs, complete counterexamples, reversals and both chain directions,
+preserving qualifications and distinguishing procedure from semantic defects.
+Usage source: hierarchy-compare-v152-v154-controlled-usage-v1.json.
