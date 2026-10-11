@@ -1,0 +1,91 @@
+{
+  "type": "object",
+  "properties": {
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "enum": [
+              "local_contains_canonical",
+              "canonical_contains_local"
+            ]
+          },
+          "answer": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "justification": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "question_id",
+          "answer",
+          "justification"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "local_contains_canonical",
+              "canonical_contains_local"
+            ]
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "question"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "relation": {
+      "type": "string",
+      "enum": [
+        "equivalent",
+        "local_contains_canonical",
+        "canonical_contains_local",
+        "neither",
+        "uncertain"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "meaning": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "answers",
+    "questions",
+    "relation",
+    "reason",
+    "meaning"
+  ],
+  "additionalProperties": false
+}

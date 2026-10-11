@@ -1911,3 +1911,48 @@ It uses14 original frozen ASv6.100/B96 comparisons through native subsets,
 with unchanged meanings/schema and Sol6.1 medium. Stage caps27 and3 include
 warmups and provider retries under the existing shared20000 counter. V93 is
 experimental; target gains and control preservation require actual output review.
+
+### V93 failed gate and presentation/order contrasts
+
+V93 completes all14 outputs validly in16 fresh attempts including warmups,
+without reuse, retry, failure or missing usage. Native API-equivalent cost is
+$0.0873076, reproduced by hierarchy-compare-v93-usage-v1.json. Independent
+native review gives6 accept and8 reject, with no qualified outputs in this
+selected gate. All018/038/041/042 restriction errors remain;019 and the four
+semantic controls retain valid judgments. The107 output independently finds
+animal-feed and enjoyment-only witnesses, so the model can discover missing
+consumer/purpose conditions in some meanings while importing them into the
+familiar activity/state definitions. Universal wording alone did not fix this.
+
+The next controlled contrasts preserve original inputs and production validators:
+
+| Candidate | Contrast | Status before inference |
+|---|---|---|
+| V94 / V97 | Whole-presentation simplification from V85, retaining role/aspect and branch rules | V94 is unrun; V97 clarifies one answer per question ID before testing |
+| V95 | V93 semantics; copied meaning emitted last | Experimental ordering-only gate |
+| V96 | V95 semantics; answers emitted before questions | Experimental ordering-only gate |
+
+Independent design review finds no lost core coverage rule in the compact
+replacement. It makes production-as-information explicit but does not certify
+that every independent production definition fits a narrower product meaning.
+Its1228-token cached prefix contrasts with V93's2274 tokens; length, layout and
+procedural phrasing change together, so success cannot identify one causal
+sentence. Existing operator qualifications are preserved for broader review.
+
+V95/V96 reorder only the output instructions and the same schema property/
+required-field order. Every field definition and semantic requirement stays
+identical; the existing hierarchy_node_pairs adapter still validates the exact
+local meaning copy and both direction IDs, regardless of object field order.
+Native specs regenerate only exact frozen input subsets; input/evidence bytes
+are checked against the V93 native cases before inference. No execution code,
+Bootstrap definition, hierarchy or semantic gold changes. Raw output key order
+must match the intended treatment before interpreting the result. Meaning-last
+tests output repetition, not priming from the unchanged input; answers-first
+could generate questions to fit a committed answer and is not presumed superior.
+
+V97 tests14 cases including019 negatives. V95/V96 each test the same twelve
+cases: eight targeted restriction outputs and four explicit-scope/role controls.
+Across these three candidates,38 case outputs and six warmups require44 fresh
+first attempts if no retries occur. Native stage caps reserve provider retries
+within the persistent shared20000 allowance. Any apparent improvement requires
+independent diagnostic review and a fresh repeat before broader qualification.
