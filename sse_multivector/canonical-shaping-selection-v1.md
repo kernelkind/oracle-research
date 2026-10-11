@@ -1,13 +1,16 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized draft is
+The latest user-authorized candidate is
 [Hierarchy-consolidation-v11](shr_single_pair/Hierarchy-consolidation-v11.md).
 It changes one checking paragraph to require an explicit relationship for
 associated activities, products or participants and apply the full meaning
 to every sibling. Shared writing rules, example and output schema are unchanged.
-Its six-request Cuisine/roots/Mental states screen is authorized below; preparation
-and offline checks make no inference calls. V11 is an experimental hypothesis,
-not a demonstrated correction or an activated prompt.
+Its six-request Cuisine/roots/Mental states screen completes with four qualified
+agent accepts and two uncertain Cuisine parent-fit assessments. All six proposals
+pass prospective note-set structure and none is applied. Useful controls survive,
+but the two Prepared dishes outputs do not establish resolution of the inherited
+Cuisine boundary or a reliable improvement from v10. V11 is tested and
+experimental, not activated or approved as a full prompt.
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -59,7 +62,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v10 clear-control screen](#consolidation-v10-clear-control-screen), and
 [the broader v10 screen](#consolidation-v10-broader-screen), and
 [the remaining v10 groups](#consolidation-v10-remaining-group-screen), and
-[the v11 definition-first audit and draft](#consolidation-v11-definition-first-audit-and-draft).
+[the v11 definition-first audit and draft](#consolidation-v11-definition-first-audit-and-draft), and
+[the completed v11 screen](#consolidation-v11-focused-screen).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -3160,3 +3164,93 @@ schema and example are mechanically preserved. Before calls, the planned review
 accepts any coherent useful grouping supported by the whole fixed meanings;
 unresolved conventions remain uncertain. Making everything null is not evidence
 of successful consolidation when clear controls permit useful grouping.
+
+## Consolidation-v11 focused screen
+
+The user-authorized six Sol 6.1 medium attempts complete as six fresh valid
+HTTP 200 requests, with distinct upstream response references reporting the
+requested model. The persistent counter advances from 363 used to **369/369**.
+There are no answer reuses, warmups, retries, failures or missing usage. At most
+three requests from this screen run concurrently through the shared native
+queue. The prompt is unchanged throughout execution.
+
+Native preparations inherit complete v10 roots, Mental states and Cuisine
+inputs, settings and evidence. All original source hashes are preserved; only
+the new prompt/source-map entry changes. Each group's native `--repeat` preserves
+complete case input, full prompt, settings, dataset and sources while requesting
+a fresh independent trial. The shared production worker already matches the
+inherited worker. No historical output or review enters model input.
+
+Review inspects each new standalone meaning before its selected child list and
+checks all original siblings. It permits a different coherent useful subgroup;
+matching v10's selected IDs is not an expected answer. These are attributed agent
+assessments under the pre-call criteria, not independently validated human gold.
+
+| Complete supplied group | First draw | Independent repeat | Assessment and prospective choices |
+|---|---|---|---|
+| Roots: 7 | Beverages: Coffee C006 + Slush drinks C039 | Same title and children | Two qualified accepts; 7 to 6 |
+| Mental states C003: 6 | Mental alertness: Brain fog and mental clarity C050 + Author's sleepiness today C092 | Subjective cognitive states: same children | Two qualified accepts; 6 to 5 |
+| Cuisine C016: 6 | Prepared dishes: Pizza C054 + Cheesesteaks C066 + Risotto C073 | Same title and children | Two uncertain whole-parent-fit judgments; 6 to 4 |
+
+The root definitions require drinking and allow liquid/partially frozen
+variations. The mental definitions require experienced wakefulness or thinking
+clarity/concentration/pace. That covers both foggy and clear thinking and the
+specific sleepiness state; the other siblings do not wholly require that scope.
+The chosen mental pair differs from v10's motivational grouping without losing
+useful consolidation. All six meanings are standalone and do not separately
+define illustrative members; no clear new writing failure is established.
+
+The Cuisine first draw's exact meaning is:
+
+> Prepared dishes are finished culinary foods made by cooking or assembling ingredients.
+
+The repeat's exact meaning is:
+
+> Prepared dishes are foods made by cooking or assembling ingredients into a finished food for eating.
+
+Both select the three food kinds and exclude a broader food repertoire, a
+preparation activity and a culinary tradition. Their whole fit beneath Cuisine's
+fixed style/tradition-and-associated-dishes meaning remains qualified by the
+same inherited convention. The earlier Place-based cuisines wording does not
+recur, but two different chosen proposals do not show that v11 corrected its
+unclear boundary. No desired omission/equivalence label is forced, and no
+resolution of the disputed Bread/Food dishes convention is inferred.
+
+All six prospective groups narrow note sets strictly. Their native local
+structure checks pass, but these counts are not an applied placement or a full
+generated hierarchy. Original graph links, immutable meanings and note supports
+stay exact; all reports retain `applied: false`. The consolidation experiment
+does not edit Compare or Bootstrap, insert a proposal, change traversal policy
+or refresh the UI. No agent message is sent.
+
+The committed [usage selection](shr_single_pair/hierarchy-consolidation-v11-focused-usage-v1.json)
+reproduces native `consolidation-v11-focused-usage-v1.json` under
+`target/canonical-shaping-selection-v1/`. Complete observed usage is 8,556 input
+tokens, zero cached-input/write tokens, and 1,844 output tokens including 1,529
+reasoning tokens. Complete API-equivalent catalog cost is **$0.035552**; reasoning
+is counted once. This is not subscription cash spend or a matched savings claim.
+
+Ignored experiments are `consolidation-v11-{roots,mental,cuisine}-{first,repeat}-v1`.
+Native snapshots before and after the six agent reviews preserve complete
+inputs/prompts, outputs, parsed proposals, raw usage/metadata and receipt
+references. The v10 Cuisine reassessment similarly appends only a role-agent
+review: old rejection, outputs and provider evidence are preserved. The native
+review `current` flag means a review matches the retained output, not that it is
+the last verdict; the latest attributed verdict is stated separately here.
+
+Thirty-four pre-call consolidation, assembly and revision checks pass. Final
+main synchronization brings in native inline consolidation preparation as well
+as this worktree's saved-menu preparation. Integration commit `3815b6e7` preserves
+both routes and uses the current shared validator. An inline saved-answer test
+first reproduces the missing-menu reporting failure; inline reports now state
+that note-set checks are unavailable without a saved menu, while existing saved
+menu checks retain their results. The final 35 prompt/consolidation checks and
+33 native traversal/graph-search checks all pass. A native post-integration root
+report matches the frozen reviewed result exactly. No further provider attempt
+is made, and V10, the shared writing fragment and historical Bootstrap-v104
+hashes remain fixed.
+V11 remains an isolated tested experimental candidate with no measured repair.
+The six-attempt allowance is exhausted. Further edits should follow a reliable
+review of the exact Cuisine versus Prepared dishes boundary, or a separately
+authorized unambiguous associated-information regression; this screen does not
+justify adding another instruction to force an unsettled interpretation.
