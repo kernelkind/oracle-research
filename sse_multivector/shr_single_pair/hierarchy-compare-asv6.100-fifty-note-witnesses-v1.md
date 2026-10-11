@@ -2823,3 +2823,59 @@ retries/reuses; stage caps are 25/19 per version under the unchanged shared
 The versions remain experimental. No Bootstrap generation or hierarchy build
 occurs. Native usage source:
 hierarchy-compare-v126-v128-restriction-usage-v1.json.
+
+
+V126/V128 complete all 42 comparisons with 46 actual attempts, no reuses,
+failures, retries or missing usage; native API-equivalent cost $0.3844456.
+V126 core: 9 accept/1 reject/2 qualified. Its ordinary-variant wording accompanies
+valid coffee and all four broth-free proofs, but 041 forward still imports a
+person after rejecting only involuntary animal starvation. Greetings 070 stays
+qualified: audience is unqualified, and contact is an independent route.
+V126 controls: 5 accept/3 reject/1 qualified. Reverse019 misses a dish's eating-
+occasion participant connection. Both Food-ancestor proofs031/032 omit the
+outside-human-consumer candidate. Cloud-bread admission remains qualified.
+The initial070 reviews were superseded by appended qualifications; history was
+preserved rather than retroactively rewritten.
+
+V128 core: 7 accept/3 reject/2 qualified. All four consumer proofs pass. Broth
+imports remain in 052 reverse/053 forward;070 forward asserts human recipients
+without testing the missing restriction or all routes. Coffee's roasted versus
+unroasted lexical membership remains qualified in this independent review,
+although the real unroasted-bean preparation is verified. V128 controls: 8 accept/
+1 semantic reject; the Bread snapshot still imports flour. All Meal-route proofs
+hold. Dinner-ancestor proof accepts retain the ordinary individual-author
+qualification; an independent cross-version challenge is pending. These reviewer
+qualifications are not new negative gold or proof of a current Bootstrap failure.
+
+An independent read-only challenge of V125's14 qualifications identifies some
+inadequate proofs despite unresolved relation labels: 018 forward substitutes
+inedible ornaments for genuinely edible display bagels;022 reverse imports dough
+production despite a possible serving/preparation reading;041 forward's machine
+fuel rejection cannot establish personhood;070 forward omits whole-route checks.
+Tea's beverage/material and tea-plant/herbal readings, thought/motor knowledge,
+and morning setting/topic boundaries remain producer qualifications. Neither
+review disagreement nor reversal alone selects a semantic label. Old native
+reviews are preserved, with the independent challenge recorded separately.
+
+### V129/V131: combine observed strengths, then test an alternative-route example
+
+V129 combines V126's recognized-ordinary-variant check with V128's focused
+missing-parent-restriction question. This is explicitly a combined hypothesis,
+not a causal claim about either single mechanism or an adopted prompt.
+V131 adds one fictional full-schema demonstration: subscriber-addressed service
+alerts OR detected-fire reports contain automated fire reports with no subscriber
+recipient through the second alternative. It teaches condition locality across
+alternatives and complete-route coverage; it uses no original post or validation
+meaning. The earlier two demonstrations and all instructions remain unchanged.
+V130 is an unrun intermediate; pre-dispatch review found closed questions and a
+missing child name in its new demonstration. V131 makes both questions open-ended
+and names both nodes without changing the demonstrated scopes or relation.
+
+Both versions freeze the same12 core/nine controls from the completed V128 gate.
+Expected dispatch42 comparisons plus four warmups,46 actual attempts absent
+retry/reuse; caps25/19 per version and the persistent20000 counter unchanged.
+Exact native inputs, producer evidence, schemas and source bindings are checked;
+all examples pass the production mechanical validator and independent semantic
+review. Only a clean gate justifies fresh repeats and broader qualification.
+No Bootstrap generation, hierarchy construction or external session message.
+Native usage source: hierarchy-compare-v129-v131-combined-usage-v1.json.
