@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v91_core_gate": [
+      "../../target/compare-v91-qualification-v1/core-gate-v1"
+    ]
+  }
+}

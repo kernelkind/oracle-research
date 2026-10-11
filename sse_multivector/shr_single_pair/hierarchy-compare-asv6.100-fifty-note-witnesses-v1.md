@@ -1858,3 +1858,26 @@ responses when every condition claim, not just the relation, is assessed.
 The additional rejection is013-reverse: fresh whole chickens do not alone
 exclude the independently stated carcass/source history; other rows support
 its relation. These assessments are not human semantic gold.
+
+### V91 identity intervention and V92 framing-only ablation
+
+V91's18-case gate completes validly in19 fresh attempts including warmup,
+with no reuse, retry, failure or missing usage and $0.1037044 API-equivalent
+cost. Native usage: hierarchy-compare-v91-usage-v1.json.
+All six038/041/042 person-condition judgments remain positive; both018
+purpose judgments now also remain positive. Forward071 is unresolved while
+reverse071 chooses a permissive interpretation. This is not a target fix;
+no broader panel is run merely to repeat the same failed mechanism. Exact
+outputs and native agent assessments remain under target/compare-v91-qualification-v1.
+
+V92 replaces only `social-media posts` with `information` in V91's opening.
+The independent causal reviewer nominates this clean ablation: source-medium
+framing may supply a human default even though only meanings are supplied.
+No other instruction, topic operator, meaning, output schema or guard changes.
+The gate has six038/041/042 target orientations plus core036-forward's explicit
+person condition,107-forward's unspecified consumer,111-forward's musical
+participant role, and isolated034-forward's intended-tool/aspect control.
+All ten inputs are exact native subsets of the frozen ASv6.100/B96 panels.
+Model remains Sol6.1 medium, SSE with automatic caching and the shared attempt
+counter. Native stage caps19 and3 reserve warmup and allowed retries. This
+is a falsifiable framing hypothesis, not evidence already supporting it.
