@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v1
+# Hierarchy selection by traversal — draft v2
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -20,18 +20,40 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
 - A local node containing a canonical node also contains all that canonical
   node's descendants.
 
-## Agreed traversal rule
+## Agreed traversal rules
 
 **`neither` stops traversal down that branch. Continue with other branches.**
 
-Descendants skipped on that branch remain unchecked. The selection policy does
-not assign them comparison labels. It does not search that branch for possible
-children of the incoming local node.
+Stopping one branch does not prevent reaching a shared descendant through a
+different branch. **Compare each canonical node at most once** for this local
+node; reuse its answer if another path reaches it again.
+
+Descendants not reached through another branch remain unchecked. The selection
+policy does not assign them comparison labels. It does not search the stopped
+branch for possible children of the incoming local node.
+
+### Shared-node example
+
+```text
+Food
+├── Meals
+│   └── Breakfast (C3)
+└── Morning food
+    └── Breakfast (C3)
+```
+
+Both occurrences of C3 are the same canonical node. If the local node returns
+`neither` with Meals but `canonical_contains_local` with Morning food, stop
+at Meals and reach Breakfast through Morning food. Compare with Breakfast once.
+
+If Breakfast returns `canonical_contains_local`, that conflicts with the Meals
+answer: Meals would also contain the local node by transitivity.
 
 ## Proposed walk
 
-The `neither` rule above is agreed. The other steps below carry forward the
-current traversal behavior as a starting point for further discussion.
+The branch-stopping and shared-node rules above are agreed. The other steps
+below carry forward the current traversal behavior as a starting point for
+further discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
@@ -72,7 +94,6 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- How to handle a shared descendant reached through a different parent branch.
 - Whether equivalence should finish the entire search or only that branch.
 - Which reached node to compare next, and which comparisons to run concurrently.
 - How existing same-note exclusions and the required mapped-parent comparison
