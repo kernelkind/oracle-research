@@ -1,4 +1,5 @@
 """Complete saved-answer review preparation through the native runner."""
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -125,6 +126,47 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         report = evaluation.report(destination)
         self.assertTrue(all(row["settings"]["concurrency"] == 16 for row in report["experiments"]))
         self.assertTrue(all(row["settings"]["reasoning_effort"] == "xhigh" for row in report["experiments"]))
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_native_cli_v7_supplies_post_to_actual_edges_and_coverage_compatibility(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        teacher = subjects(("1", "Cables"), ("1.1", "2 m cable A"))
+        student = subjects(("1", "Length measurements"), ("1.1", "Cable A, two metres long"))
+        post = "Cable A is 2 m long."
+        selected = self.selection([dict(note_id="validation-a", post=post,
+                                        teacher=teacher, answer=answer(student))])
+        frozen = selected.read_bytes()
+        context = self.root / "assessment"
+        assessment.record(selected, "R01", context, teacher_meanings=[
+            dict(teacher_numbers=["1"], required=False), dict(teacher_numbers=["1.1"], required=True)],
+            reason="Complete two-metre cable wording is required.")
+        destination = self.root / "dslv7"
+        prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v7.md"
+        source = self.root / "source.json"
+        source.write_text(json.dumps(dict(schema_version=1, check="relationship",
+            selection=dict(path=str(selected), sha256=hashlib.sha256(frozen).hexdigest()),
+            assessment_directory=str(context))))
+        spec = self.root / "spec.json"
+        spec.write_text(json.dumps(dict(schema_version=1, prompt=dict(id="DSLv7", path=str(prompt)),
+            dataset=dict(adapter="distillation_review_evaluation", path=str(source)),
+            runner=dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol",
+                reasoning_effort="xhigh", runner_binary=str(self.worker()),
+                output_schema_path=str(prompt.parent / "boolean-response-schema.json")))))
+        self.native("prepare", destination, "--spec", spec)
+        relationships = json.loads(self.native("show", destination, "--json"))["cases"]
+        self.assertEqual([case["evidence"]["role"] for case in relationships],
+                         ["actual_relationship", "compatibility", "compatibility"])
+        for case in relationships:
+            self.assertEqual(case["inputs"]["POST"], post)
+            self.assertIn("<post>\n" + post + "\n</post>", case["prompt"])
+            self.assertTrue(case["prompt"].startswith("DSLv7"))
+        pairs = [json.loads(case["inputs"]["RELATIONSHIP_INPUT"]) for case in relationships]
+        self.assertEqual(pairs, [dict(parent_subject="Length measurements", child_subject="Cable A, two metres long"),
+                                dict(parent_subject="Length measurements", child_subject="2 m cable A"),
+                                dict(parent_subject="Cable A, two metres long", child_subject="2 m cable A")])
+        self.assertEqual(evaluation._DEFINITIONS["relationship"][0], "DSLv2")
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 

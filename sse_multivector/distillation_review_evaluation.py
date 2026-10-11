@@ -37,7 +37,7 @@ def _assessments(directory, bundle):
     return load_assessments(directory, bundle)
 
 
-def _cases(bundle, check, assessments):
+def _cases(bundle, check, assessments, *, include_post=False):
     cases = []
     for answer in bundle["random"]["answers"] + bundle["challenge"]["answers"]:
         if answer["errors"]:
@@ -70,7 +70,8 @@ def _cases(bundle, check, assessments):
             else:
                 evidence["role"] = "support" if check == "support" else "actual_relationship"
                 case = verdict._verdict_case(check, definition, answer["post"], students,
-                    answer["task_prompt"], evidence, None if label is None else label["valid"], teacher)
+                    answer["task_prompt"], evidence, None if label is None else label["valid"], teacher,
+                    include_post=include_post)
             cases.append(case)
         if check == "relationship":
             compatibility_labels = {frozenset(row["teacher_numbers"]): row
@@ -91,7 +92,8 @@ def _cases(bundle, check, assessments):
                         expectation_status="unresolved" if expected_valid is None else "agent_assessed",
                         expected_valid=expected_valid, expected_reason="Not independently assessed." if label is None else label["reason"])
                     case = dict(id=answer["id"] + f":compatibility:{ordinal:03}:" + number,
-                        inputs=verdict._relationship_inputs(answer["task_prompt"], heading, child), evidence=evidence)
+                        inputs=verdict._relationship_inputs(answer["task_prompt"], heading, child,
+                            post=answer["post"] if include_post else None), evidence=evidence)
                     mechanical = teacher.relationship(heading, child)
                     if mechanical is not None:
                         case["mechanical"] = mechanical
@@ -99,7 +101,7 @@ def _cases(bundle, check, assessments):
     return cases
 
 
-def prepare_source(source, base, selected=None):
+def prepare_source(source, base, selected=None, *, include_post=False):
     """Turn a verified trial selection into existing matching/verdict cases."""
     review._fields(source, {"schema_version", "selection", "check", "assessment_directory"},
                    "review evaluation source")
@@ -114,7 +116,7 @@ def prepare_source(source, base, selected=None):
         directory = engine._resolve_path(directory, "review assessment directory", Path(base))
     assessments = _assessments(directory, bundle)
     sources.update(assessments["sources"])
-    cases = _cases(bundle, check, assessments)
+    cases = _cases(bundle, check, assessments, include_post=include_post)
     identifiers = [case["id"] for case in cases]
     if selected is not None:
         engine._validate_string_array(selected, "review evaluation case selection", allow_empty=False)
@@ -161,7 +163,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     for check, (identifier, filename, schema, payload, field) in definitions.items():
         template = (directory / filename).read_text()
         ordinary, prefixes = [], {}
-        for case in _cases(bundle, check, assessments):
+        for case in _cases(bundle, check, assessments, include_post='{POST}' in template):
             if "mechanical" in case:
                 ordinary.append(case["id"])
                 continue

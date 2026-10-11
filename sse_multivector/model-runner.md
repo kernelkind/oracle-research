@@ -1492,12 +1492,17 @@ Expected judgments remain outside model input; there is no reuse, retry or
 warming. The original MILFs explanation and named-reference/list uncertainties
 remain unresolved. Synthetic success does not qualify natural-case accuracy;
 qualification and lower-effort testing remain pending.
-The user has authorized a [DSLv7 wording draft](distillation-review-v1/README.md#dslv7-post-interpretation-draft-october-10)
+The user approved the exact [DSLv7 wording](distillation-review-v1/README.md#dslv7-post-interpretation-draft-october-10)
 that supplies the original post only to interpret supplied subject wording.
-The AS parent-child passage and output contract stay fixed. Wording approval,
-native `{POST}` input support, preparation and model calls remain pending;
-the current relationship adapter does not supply the post. Production still
-defaults to DSLv2; neither uncertain named-reference target is newly settled.
+The AS parent-child passage and output contract stay fixed. Native verdict and
+evaluation adapters now supply the bound post only when the template declares
+`{POST}`; older input maps stay unchanged. Rebuild DSLv7 inputs through the
+source adapter because `prepare --from` retains the earlier post-free map.
+Model calls and qualification remain pending; production defaults to DSLv2.
+Neither uncertain named-reference target is newly settled. The bulk evaluation
+preparation helper still emits a concurrency field rejected by the current
+shared runner; use native `prepare` with source-adapter specs for this small
+diagnostic. The broader regression failures reproduce on unchanged code.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

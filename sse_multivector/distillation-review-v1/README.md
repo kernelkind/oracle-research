@@ -24,9 +24,10 @@ completed eight authored human/animal comparisons and six exact saved controls
 with unchanged DSLv6. Both audits accept all 14 verdicts and complete records.
 This shows sound scope handling on those cases; it does not repair the original
 MILFs explanation or settle the named-reference/list uncertainties.
-The user has now authorized a [DSLv7 wording draft](#dslv7-post-interpretation-draft-october-10)
-that supplies the original post for interpretation. Wording approval, native
-input support and model calls remain pending; production still defaults to DSLv2.
+The user approved the exact [DSLv7 wording](#dslv7-post-interpretation-draft-october-10)
+that supplies the original post for interpretation. Native preparation now
+supplies the bound post when the template requests it. Diagnostic generation,
+qualification and adoption remain pending; production still defaults to DSLv2.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3877,10 +3878,10 @@ validation remain pending.
 
 ## DSLv7 post interpretation draft (October 10)
 
-The user authorized drafting [DSLv7](relationship-prompt-v7.md) for review,
-following discussion of the named-work/game counterexamples. This authorizes
-the wording draft, not its adoption, adapter implementation, experiment
-preparation or model calls. Its wording has not yet been approved.
+The user approved the exact [DSLv7](relationship-prompt-v7.md) wording after
+reviewing the full DSLv6-to-DSLv7 delta. The prompt bytes are unchanged from
+that review. Wording approval does not establish reviewer qualification or
+adoption; production still defaults to DSLv2.
 
 The shared runner's native `revise` starts from unchanged, approved DSLv6 and
 records the five exact edits in [the revision receipt](relationship-prompt-v7.md.revision.json):
@@ -3905,15 +3906,30 @@ named-game case the proposed parent is the student's `Pot rollovers`, not the
 teacher's `Prize-pot rollovers`; this is not an existing student parent-child
 edge. The two uses retain the same AS parent-child test.
 
-The current native `_relationship_inputs` supplies only the AS passage and
-the two subject strings; it does not supply `{POST}`. DSLv7 therefore remains
-a wording draft and is not yet preparable through that adapter. No rendered
-experiment or model calls have been made. A future balanced diagnostic must
-use each case's real original post. The eight authored scope cases used C6 as
-provenance only; its post must not silently become their interpretation context.
-Wording review comes first, followed by separately authorized native input
-support and diagnostic preparation. Qualification, lower-effort testing and
-the final 60 remain pending.
+Native `_relationship_inputs` now accepts an optional original post. Both
+verdict source formats and the complete-answer evaluation adapter supply the
+bound post when the template declares `{POST}`, for actual student edges and
+teacher-child coverage compatibility alike. Templates without `{POST}` retain
+their exact existing input maps and rendered wording; the DSLv2 estimator and
+all mechanical rules stay unchanged. Switching inherited DSLv6 inputs with
+`prepare --from` cannot recover the absent post; DSLv7 cases must be rebuilt
+through the source-bound adapter.
+
+Two new production-path tests first failed for missing `{POST}` and now pass:
+both verdict source formats render the bound post, and native `prepare` covers
+actual edges plus compatibility in the correct direction with no inference.
+The eight relevant suites run 129 tests; 51 failure records reproduce on
+unchanged production code: 49 reject the removed `runner.concurrency` setting,
+and two lack the task worktree's pilot training fixture. Only the three new
+missing-post failure records disappear after the change. The bulk evaluation
+preparation helper still emits that rejected setting; the small diagnostic
+uses supported native `prepare` with a source-adapter spec. No scheduler
+migration is included in this change.
+
+A balanced diagnostic must use each case's real original post. The eight
+authored scope cases used C6 as provenance only; its post must not silently
+become their interpretation context. Model calls, qualification, lower-effort
+testing and the final 60 remain pending.
 
 ## Actual distilled wording: offline preview (October 8)
 

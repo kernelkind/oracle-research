@@ -378,6 +378,27 @@ class DistillationVerdictTests(unittest.TestCase):
         self.assertEqual(report["checked"], 0)
         self.assertEqual(report["unresolved_expectations"], ["A01"])
 
+    def test_relationship_v7_includes_bound_post_for_both_source_formats(self):
+        template = (PROMPTS / "relationship-prompt-v7.md").read_text()
+        for source_format in ("authored", "saved"):
+            with self.subTest(source_format=source_format):
+                if source_format == "authored":
+                    self.links()
+                    post = "2 cables: cable A is 2 m long and cable B is 3 m long. A is not longer than B."
+                else:
+                    self.actual_source("relationship")
+                    post = "Cable A is 2 m long."
+                self.path.write_text(json.dumps(self.source))
+                cases, _, _ = inputs.prepare_file(dict(adapter="distillation_verdict"),
+                                                  self.path, template)
+                for case in cases:
+                    self.assertEqual(set(case["inputs"]),
+                        {"ASV6_100_PARENT_CHILD_RULES", "POST", "RELATIONSHIP_INPUT"})
+                    self.assertEqual(case["inputs"]["POST"], post)
+                    self.assertIn("<post>\n" + post + "\n</post>", case["prompt"])
+                    self.assertNotIn("expected_valid", case["prompt"])
+                    self.assertNotIn("expected_reason", case["prompt"])
+
     def test_actual_validation_rejects_reserved_paths_and_changed_or_truncated_answers(self):
         saved, generation = self.actual_source()
         original = copy.deepcopy(self.source)
