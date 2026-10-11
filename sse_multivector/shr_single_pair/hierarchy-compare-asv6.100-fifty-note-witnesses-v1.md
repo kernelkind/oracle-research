@@ -503,6 +503,7 @@ qualified agent assessments, without human semantic gold; this does not prove
 which prompt wording caused the failures. Prompt, inputs and saved outputs
 remain unchanged.
 
+
 The user subsequently approved **neither** for the exact Preparing sourdough
 bread / Food meanings in `isolated-024-forward` and `isolated-024-reverse`.
 The approved explanation was: "Under these definitions, neither is correct in
@@ -4365,3 +4366,33 @@ draw does not establish a causal effect. V175 is not adopted. Exact inputs,
 meaning copies, rendered prompts, outputs, receipts, source/code bindings and
 worker fingerprints pass independent verification; saved generation snapshots
 remain unchanged.
+
+### V176: publish the decisive justification before the answer
+
+This independent output-order revision starts from V173. Each answer record
+must publish question_id, justification, then answer; four fictional records
+are reordered to demonstrate that sequence. Their contents, all instructions
+apart from that directive, questions, input data, graph obligations and output
+field sets remain identical. This differs from V96's whole-array ordering and
+V170's reversal of directional records. It tests visible conclusion commitment,
+not hidden reasoning order or a requested reasoning trace.
+
+Fresh matched V173/V176 screens each contain eighteen core comparisons:
+018/019/022/041/042/052/053/061 in both orientations,107/111 forward. Ten controls
+retain snapshot009/025/031/032 and both isolated009/025/029 orientations. Total
+56 comparisons plus four warmups,60 attempts absent failures/retries. This
+includes the complete018/019/022 chain, restriction-import witnesses, intended
+cooking and music positives, host connections and particular/personhood controls.
+Unrepresented chains remain untested. First verify that emitted justification
+actually precedes answer; then assess independent admission, every parent route,
+universal proofs, scope qualifications and settled consistency. A changed label
+or extra uncertainty is insufficient. Promising results require fresh confirmation
+and broader qualification; no adoption at preparation.
+
+Independent reviewers found that every saved pair input remains local-first,
+including prior directional-order ablations. Actual JSON definition-order reversal
+has not been tested and is unsupported by current native preparation. That
+hypothesis remains separate; no manual input artifacts or serialization APIs were
+added for this screen. ASv6.100/Bootstrap-v96 meanings and producer receipts stay
+frozen. No Bootstrap generation, hierarchy work, external messages or new allowance.
+Native usage source: hierarchy-compare-v176-justification-first-screen-usage-v1.json.
