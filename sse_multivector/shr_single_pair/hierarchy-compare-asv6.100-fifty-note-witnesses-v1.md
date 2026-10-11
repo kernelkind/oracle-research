@@ -771,6 +771,50 @@ require a positive coverage justification to establish the parent's required
 conditions from the child's own meaning, preserving the existing information-
 topic/activity-role rules. That proposal remains untested and unadopted.
 
+### Authorized Compare-v77 coverage-justification test
+
+The user authorized the focused revision and bounded testing. Experimental
+[Hierarchy-compare-v77](Hierarchy-compare-v77.md) was created with native
+`revise` against approved v76, pinned to its unchanged SHA256. Only the paragraph
+recording answers/justifications changes. Positive coverage must be established
+from the child's own wording or necessary implications under the existing topic
+rules; a customary use or one compatible example cannot supply a required parent
+condition. The input, five-field schema, activity-role convention and canonical
+consequence rules remain unchanged. No regression case is inserted as an example.
+
+V77 SHA256 is
+`c2bab2e48166948e305e2834547bef313ea0cfa637eec56d3a231dc81ed0ee46`.
+Native revision provenance is committed beside the prompt. Official
+[reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+was searched and fetched again: the change gives a direct requirement within
+the existing concise diagnostic, without requesting a reasoning trace. That
+guidance does not validate the semantic rule or demonstrate improvement.
+
+The first test freezes the same 15 v76 gate inputs, including their unchanged
+Bootstrap-v96 / ASv6.100 producer evidence. Native preparation is
+`target/compare-v77-fifty-note-witnesses-v1/gate-v1`, using `prepare --from`
+the completed v76 gate and overriding only the versioned prompt and current
+shared worker. Sol 6.1 medium, SSE, automatic caching, timeout and output schema
+remain fixed. New prompt identity requires fresh responses; no repeat flag is
+needed for this first draw. The cache prefix is 1,856 estimated tokens.
+
+The semantic/consistency gate requires all seven reciprocal pairs to agree,
+the user-approved exact 024/025 neither judgments, Butter's provisional neither,
+the Food/Cookware negative, all three intended positive controls, and uncertain
+for the graph-bearing bagel snapshot without changing its endpoint answers.
+Reviews must reject invented child restrictions or counterexamples that fail
+child admission or parent exclusion. Question form remains a separately checked
+diagnostic requirement; correct labels alone do not qualify the full prompt.
+
+Only if this semantic/consistency gate passes, run a fresh unchanged-v77 repeat
+of 024/025/034 in both orientations, isolated 022 forward and snapshot 022. This
+eight-case schedule matches the preceding v76 interpretation draw. It tests
+reproduction of the targeted improvements rather than treating the first draw
+as reliability evidence. The gate cap is 31 attempts; the conditional repeat
+cap is 17, including warming/retries within the existing shared 20,000 counter.
+No full 102-case trial, meaning regeneration, hierarchy build or automatic
+production adoption is scheduled by this bounded test.
+
 Read-only inspection of the exact Butter witness:
 
 ```bash
