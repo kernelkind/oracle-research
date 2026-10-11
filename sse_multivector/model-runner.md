@@ -6957,3 +6957,16 @@ the symmetric A/B development line and V179 baseline remain. Twenty fresh valid
 attempts use $0.179492 in native API-equivalent catalog usage, with zero reuse,
 warming, retry, failure or missing usage. See the
 [completed V182 evidence and review qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v182-order-diagnostic).
+
+The next authorized Compare diagnostic preserves V179 prompt bytes/ID/schema
+and all fixed A/B subjects/meanings, changing only top-level JSON presentation
+to B then A. Native prepared `hierarchy_node_pairs` sources accept optional
+`input_order: ["B", "A"]` with `input_view: "symmetric_fixed_meanings"`, including
+reprojection of a pinned already symmetric experiment. Original source input
+and producer evidence remain intact; no-option preparation preserves existing
+order. Other views and malformed orders are rejected. Production-path failing
+then passing checks cover CLI preparation, source pins and unchanged consistency.
+This is input-presentation diagnostic v1, not a revised prompt or adopted policy.
+The 20 planned fresh comparisons retain disabled explicit warming, shared native
+scheduling and the persistent attempt counter. See the
+[pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-b-first-input-presentation-diagnostic).

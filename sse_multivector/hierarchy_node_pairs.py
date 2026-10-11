@@ -666,16 +666,25 @@ def project_fixed_meanings(case):
                          'unprojected_input': original}}
 
 
-def project_symmetric_fixed_meanings(case):
+def project_symmetric_fixed_meanings(case, *, input_order=None):
     """Expose only the two fixed scopes, retaining the pinned source for audit."""
+    if input_order is not None and input_order not in (['A', 'B'], ['B', 'A']):
+        raise ValueError('input_order must be ["A", "B"] or ["B", "A"]')
     original = json.loads(case['inputs']['INPUT_JSON'])
-    if not isinstance(original, dict) or set(original) != {'local', 'canonical'}:
-        raise ValueError('symmetric_fixed_meanings requires local and canonical node inputs')
+    if not isinstance(original, dict) or set(original) not in ({'local', 'canonical'}, {'A', 'B'}):
+        raise ValueError('symmetric_fixed_meanings requires local/canonical or symmetric A/B node inputs')
+    evidence = case.get('evidence', {})
+    symmetric = set(original) == {'A', 'B'}
+    if symmetric and evidence.get('input_view') != 'symmetric_fixed_meanings':
+        raise ValueError('symmetric A/B inputs require symmetric_fixed_meanings source evidence')
     payload = {}
-    for source, target in (('local', 'A'), ('canonical', 'B')):
+    for source, target in (tuple((key, key) for key in original) if symmetric
+                           else (('local', 'A'), ('canonical', 'B'))):
         value = original[source]
         if not isinstance(value, dict):
             raise ValueError(source + ' node must be an object')
+        if symmetric and set(value) != {'subject', 'meaning'}:
+            raise ValueError('symmetric A/B nodes require only subject and meaning')
         entry = value.get('entry', value)
         if not isinstance(entry, dict):
             raise ValueError(source + ' entry must be an object')
@@ -683,11 +692,13 @@ def project_symmetric_fixed_meanings(case):
         meaning = value.get('meaning')
         if any(not isinstance(text, str) or not text.strip() for text in (subject, meaning)):
             raise ValueError(source + ' subject and fixed meaning must be nonempty text')
-        payload[target] = {'subject': subject, 'meaning': meaning}
-    evidence = case.get('evidence', {})
-    provenance = {'source_input': original}
-    if 'input_view' in evidence:
+        payload[target] = value if symmetric else {'subject': subject, 'meaning': meaning}
+    provenance = {} if symmetric else {'source_input': original}
+    if not symmetric and 'input_view' in evidence:
         provenance['source_input_view'] = evidence['input_view']
+    if input_order is not None:
+        payload = {key: payload[key] for key in input_order}
+        provenance['input_order'] = list(input_order)
     return {**case, 'inputs': {'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
             'evidence': {**evidence, **provenance, 'input_view': 'symmetric_fixed_meanings'}}
 

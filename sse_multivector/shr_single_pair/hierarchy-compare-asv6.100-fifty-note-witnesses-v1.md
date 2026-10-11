@@ -5756,6 +5756,51 @@ evaluation order remains unobservable, and input position has not been shown
 to cause the error. The Fasting change is a sampling observation, not an
 established effect of the instruction. A proposed next diagnostic would change
 which A/B meaning appears first in the input while preserving both assignments,
-scope rules and judgments. That would test presentation order separately from
-node naming; it is a recommendation only and has not been prepared or run.
-The symmetric A/B line remains the approved development direction.
+scope rules and judgments. The user subsequently authorizes that bounded
+diagnostic below. The symmetric A/B line remains the approved development direction.
+
+## V179: B-first input presentation diagnostic
+
+This authorized diagnostic prints JSON member B before member A while retaining
+the original A/B assignments. V179 instructions, prompt ID, examples, schema,
+subjects and fixed meanings remain unchanged. No prompt edit occurs, so this is
+an input-presentation diagnostic v1 rather than a new prompt version. Whether
+presentation contributes to the repeatable error remains open.
+
+Native prepared-source projection now accepts optional `input_order: ["B", "A"]`
+only with `input_view: "symmetric_fixed_meanings"`. A pinned, already symmetric
+experiment can be projected without renaming nodes or replacing its original
+source/producer evidence. The default keeps its existing serialization order.
+Malformed orders and use with other views are rejected. A production-path CLI
+test first fails because the option is unsupported, then passes after minimal
+adapter support. All 111 hierarchy adapter/snapshot/fixed-meaning/consistency
+checks and five general native preparation regressions pass. The shared runner
+itself is unchanged.
+
+Fresh reusable source definitions pin the completed V179 pair-01 and controls-01
+experiment-envelope file bytes. Native `prepare --spec --baseline --repeat`
+prepares two fresh draws of the same five pairs in both orientations: 20 planned
+comparisons. Parsed old/new input objects must be equal; serialized member order
+and rendered request hashes must differ. Each direction continues to refer to
+named A/B, never position. Source context, expectations and old answers remain
+outside model input. Original ASv6.100 and fixed Bootstrap-v96 producer receipts
+are preserved; no meaning generation or newer-Bootstrap qualification is included.
+
+The four directories are `target/compare-v179-b-first-input-v1/{pair,controls}-01`
+and `-02`. Native usage groups separate saved V179 original generation from
+newly dispatched input-order draws. Both retain Sol 6.1 medium/SSE, the same
+worker/schema and disabled explicit warming. Shared admission and the persistent
+20,000-attempt counter apply. Provider-only retry bounds reserve at most two
+attempts per case; failures and unrun cases remain unresolved. No inference
+result is claimed at this preparation checkpoint.
+
+Qualification checks complete scope proofs, child admission/parent exclusion,
+assignment-correct direction IDs, actual reported diagnostic order, reversals
+and fresh-draw stability. Stockpots' exclusively laboratory stock-making design
+witness retains the user's acceptance; other controls remain agent-qualified.
+Independent reviewers assess one draw each without prescribed labels. Required
+workflow-document history means these reviews are not blinded. Five repeated
+pairs are five underlying semantic comparisons, not twenty independent topics.
+Saved versus fresh execution leaves time/provider and sampling effects open.
+An error moving with the physically first member would support presentation
+sensitivity, not establish internal reasoning order or one proven cause.

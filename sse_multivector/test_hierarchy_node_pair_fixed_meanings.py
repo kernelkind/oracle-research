@@ -309,6 +309,86 @@ class HierarchyNodePairSymmetricMeaningTests(unittest.TestCase):
         self.assertEqual(case['evidence']['unprojected_input'],
                          json.loads(original['inputs']['INPUT_JSON']))
 
+    def test_native_input_order_preserves_completed_symmetric_scope_and_evidence(self):
+        self.symmetric_source()
+        self.project()
+        directions = ['A_contains_B', 'B_contains_A']
+        answer = {'questions': [dict(id=d, question='Can this child escape this parent?')
+                                for d in directions],
+                  'answers': [dict(question_id=d, answer='A scope counterexample.',
+                                  justification='Child admission and parent exclusion.')
+                              for d in directions],
+                  'relation': 'neither', 'reason': 'Both scopes have counterexamples.'}
+        self.cli('run', 'fixed', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        original = self.show('fixed')['cases'][0]
+        envelope = self.root / 'fixed/experiment.json'
+        self.write('ordered-source.json', {
+            'prepared_experiment': {'path': 'fixed',
+                'sha256': hashlib.sha256(envelope.read_bytes()).hexdigest()},
+            'input_view': 'symmetric_fixed_meanings', 'input_order': ['B', 'A']})
+        spec = json.loads((self.root / 'fixed-spec.json').read_text())
+        spec['dataset']['path'] = 'ordered-source.json'
+        self.write('ordered-spec.json', spec)
+        self.cli('prepare', 'b-first', '--spec', 'ordered-spec.json')
+        case = self.show('b-first')['cases'][0]
+        before = json.loads(original['inputs']['INPUT_JSON'])
+        after = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(list(after), ['B', 'A'])
+        self.assertEqual(after, before)
+        self.assertEqual(case['id'], original['id'])
+        for key, value in original['evidence'].items():
+            self.assertEqual(case['evidence'][key], value)
+        self.assertEqual(case['evidence']['input_order'], ['B', 'A'])
+        self.assertNotIn('FULL LOCAL POST', case['prompt'])
+        self.assertNotIn('Child admission', case['prompt'])
+        plan = json.loads((self.root / 'b-first/experiment.json').read_text())['plan']
+        self.assertEqual(plan['preparation']['input_order'], ['B', 'A'])
+        self.assertEqual(self.show('fixed')['cases'][0], original)
+        self.assertEqual(len(self.calls()), 2)  # Meaning fixture and saved comparison only.
+
+        # Omitting the option preserves an already ordered symmetric input.
+        ordered_envelope = self.root / 'b-first/experiment.json'
+        self.write('reproject-source.json', {
+            'prepared_experiment': {'path': 'b-first',
+                'sha256': hashlib.sha256(ordered_envelope.read_bytes()).hexdigest()},
+            'input_view': 'symmetric_fixed_meanings'})
+        spec['dataset']['path'] = 'reproject-source.json'
+        self.write('reproject-spec.json', spec)
+        self.cli('prepare', 'reprojected', '--spec', 'reproject-spec.json')
+        reprojected = self.show('reprojected')['cases'][0]
+        self.assertEqual(reprojected['inputs'], case['inputs'])
+        self.assertEqual(reprojected['evidence'], case['evidence'])
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_native_input_order_refuses_invalid_orders_and_other_views(self):
+        self.symmetric_source()
+        source = json.loads((self.root / 'fixed-source.json').read_text())
+        spec = json.loads((self.root / 'fixed-spec.json').read_text())
+        for index, order in enumerate((None, True, 'BA', [], ['A'], ['A', 'A'],
+                                       ['A', 'B', 'A'], ['B', 'C'])):
+            with self.subTest(order=order):
+                self.write('invalid-order-source.json', {**source, 'input_order': order})
+                spec['dataset']['path'] = 'invalid-order-source.json'
+                self.write('invalid-order-spec.json', spec)
+                failure = self.cli('prepare', f'invalid-order-{index}',
+                                   '--spec', 'invalid-order-spec.json', ok=False)
+                self.assertIn('input_order', failure.stderr)
+                self.assertFalse((self.root / f'invalid-order-{index}').exists())
+        self.write('other-view-source.json', {**source, 'input_view': 'fixed_meanings',
+                                              'input_order': ['B', 'A']})
+        spec['dataset']['path'] = 'other-view-source.json'
+        self.write('other-view-spec.json', spec)
+        failure = self.cli('prepare', 'other-view', '--spec', 'other-view-spec.json', ok=False)
+        self.assertIn('input_order requires symmetric_fixed_meanings', failure.stderr)
+        self.write('generic-order-source.json', {'prepared_experiment': source['prepared_experiment'],
+                                                  'input_order': ['B', 'A']})
+        spec['dataset'] = {'adapter': 'generic', 'path': 'generic-order-source.json'}
+        self.write('generic-order-spec.json', spec)
+        failure = self.cli('prepare', 'generic-order', '--spec', 'generic-order-spec.json', ok=False)
+        self.assertIn('input_order', failure.stderr)
+        self.assertIn('not supported', failure.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
     def test_symmetric_projection_requires_independent_meanings(self):
         self.original(with_meaning=False)
         source = json.loads((self.root / 'fixed-source.json').read_text())
