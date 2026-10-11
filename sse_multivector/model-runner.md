@@ -186,6 +186,19 @@ receipts and 265 quotations pass mechanical checks. No new teacher attempts,
 prompt changes, Compare labels, hierarchy build or review writes occurred;
 the saved panel is not a fresh reliability sample. V104 remains approved.
 
+The user-requested [v109 low-reasoning screen](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v109-low-reasoning-screen)
+preserves the 115-entry complete-branch inputs, prompt, schema and caching.
+All 115 low outputs validate; independent reviews flag three material boundary
+concerns rather than factual contradictions. A fresh matched four-case panel
+repeats unresolved Cooking preparation coverage at low while medium explicitly
+includes it; two pressure-canning process omissions do not repeat. The task
+uses 130 fresh attempts including four warmups and three recovered provider
+failures, with no answer reuse. Failed usage remains unknown, preventing an
+exact total cost-saving claim. The observed historical median elapsed times
+are 13.34 seconds low and 14.04 medium, not a causal speedup. Low is not adopted;
+the recommendation is to retain medium pending matched qualification. No
+Bootstrap prompt, Compare label, hierarchy or UI changed.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees

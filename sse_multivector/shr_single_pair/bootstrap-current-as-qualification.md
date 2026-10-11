@@ -3474,3 +3474,105 @@ branch certification. It supplies no justification for another Bootstrap edit.
 V104 remains approved and v109 experimental. The next useful work is to settle
 the retained relationship diagnostics with the Compare owner using these exact
 fixed meanings; no Compare calls, external message or hierarchy build began.
+
+### Bootstrap-v109 low-reasoning screen
+
+The user requested a low-reasoning Bootstrap test. Native `prepare --from`
+preserved the saved v109 complete-branch experiment's 115 cases, exact inputs,
+rendered prompts, schema, source bindings and cache prefix. Only the runner's
+reasoning effort changed from medium to low; the model stayed GPT-6.1 Sol.
+The main shared runner executed
+`target/bootstrap-v109-low-reasoning-v1/low` with automatic SSE caching and the
+existing persistent 20,000-attempt counter. No prompt, Compare input, hierarchy,
+native semantic review or UI changed. V104 remains approved; v109 remains
+experimental, and low has not been adopted.
+
+All 115 final outputs are valid and non-null. An independent integrity review
+verified every receipt and all 264 post quotations. All original subject data
+has the same verified ASv6.100 provenance as the saved medium cohort. Recorded
+provider HTTP requests match medium exactly after normalizing reasoning effort.
+Historical worker/wrapper implementations differ, although request-producing
+code identity and observed request contents agree. The first screen is a
+current low draw against historical medium, not a matched-runtime latency trial.
+
+Three independent reviewers assessed candidate meanings from the original post
+and complete tree before comparing medium. They covered all 17 trees and 300
+dependent ancestor checks, including 98 immediate links. No definite fabricated
+fact or lost named alternative was established. Supported category choices did
+not fail merely for differing from medium; Coffee assignment uncertainty and
+collection/activity containment qualifications remain unresolved.
+
+Three low meanings have material boundary concerns:
+
+- Rocket Cooking defines applying heat, then calls stove-lighting a preparatory
+  action "associated with cooking." Its resolution repeats that wording without
+  settling whether preparation belongs within the topic. Medium explicitly
+  includes preparation. This is unresolved coverage, not a certified exclusion
+  of the independently defined stove-lighting child.
+- Two stock compound plans, selected `5.1.1.3.1` and `6.1.1.1`, replace the named
+  pressure-canning process with "processing it in sealed containers under
+  pressure." Neither final meaning nor resolution explicitly retains required
+  heat. For `6.1.1.1`, the independently defined pressure-canning ancestors
+  explicitly require heat. This is a material process-boundary concern, not
+  factual proof of an unheated episode or a negative Compare label.
+
+#### Fresh matched confirmation
+
+Four cases were selected after review: the three concerns and stock `8.1.1`,
+which retained the pressure-canning name while leaving heat implicit in its
+process description. Native `--only` and `--repeat` prepared
+`low-repeat` and `medium-repeat` under the same target. Both freeze identical
+current worker, wrapper, project code, prompt, input, schema and cache bindings.
+All eight fresh definitions and two warmup receipts validate; their four
+provider request pairs differ only in reasoning effort. There are zero reuses.
+
+Both low Cooking draws leave preparatory coverage "associated" rather than
+explicitly included or excluded; both medium draws explicitly include it.
+The two process substitutions did not repeat: fresh low now expressly retains
+heating/thermal processing. The additional low control keeps "canning it under
+pressure" rather than substituting an unrelated process; omission of the word
+heat alone does not establish a changed category. These adaptive single draws
+identify a recurring writing concern, not its general frequency or proof that
+all medium meanings are stable.
+
+The independently frozen first-draw endpoints and all repeat outputs remain
+in the native experiments. Case IDs, selected numbers and record hashes are
+available through `show`; historical outputs and assessments were not rewritten.
+
+#### Execution and cost
+
+| Stage | Valid definitions | New attempts | Warmups | Failed attempts |
+|---|---:|---:|---:|---:|
+| Full low cohort | 115 | 119 | 2 | 2 |
+| Fresh low subset | 4 | 5 | 1 | 0 |
+| Fresh medium subset | 4 | 6 | 1 | 1 |
+| This task | 123 | 130 | 4 | 3 |
+
+All three provider failures recovered through native bounded retries. The
+counter advanced from 18,987 to 19,117 without reset; no cross-run answers were
+reused. The full low run's initial cap exhausted after recovery, requiring a
+native resume that also warmed again. Failed partial outputs were never scored
+as meanings or semantic negatives.
+
+The [native accounting source](hierarchy-bootstrap-v109-low-reasoning-usage-v1.json)
+produces `target/bootstrap-v109-low-reasoning-v1/usage-native-v2.json`. The full
+low run records 52,206 output tokens, including 2,117 reasoning tokens, versus
+65,302/11,303 in saved medium. Those are known subtotals: two low failed attempts
+lack usage, so complete low cost and total savings are unknown. Known
+API-equivalent subtotals are $0.9025492 for full low, $0.02939 for the fresh low
+subset, and $0.03589 for fresh medium; medium's failed retry also lacks usage.
+Saved full medium cost is $1.0427496. These estimates are not subscription
+charges, and reasoning is already included in output.
+
+Successful-case median elapsed time was 13.34 seconds for full low versus
+14.04 for saved medium. The historical runtime and backend load differ, so
+this does not establish a causal speedup. The matched subset is deliberately
+small and adaptively selected, not a performance benchmark. Integrity, source,
+native accounting and documentation checks passed; no production behavior or
+prompt changed, so no new implementation tests were required.
+
+Recommendation: retain medium pending resolution of preparatory coverage and
+further matched confirmation. Lower reasoning substantially reduces recorded
+reasoning tokens, but this panel does not demonstrate a material latency gain
+or equally explicit category boundaries. No further calls or prompt changes
+are implied by that recommendation.
