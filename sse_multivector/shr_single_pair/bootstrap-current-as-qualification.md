@@ -1511,3 +1511,118 @@ Compare calls, AS generation, hierarchy construction or UI refresh is included.
 The use of direct outcome constraints and unchanged examples follows
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
 That guidance does not establish the correct semantic boundary or qualify v109.
+
+### Completed matched qualification
+
+Both 115-entry cohorts finished through the shared runner. V104 has 114 valid
+nonnull meanings and one malformed endpoint; v109 has 115 valid nonnull meanings.
+There are no failed or unrun cases. The baseline malformed answer changes a
+nonbreaking space to an ordinary space inside its evidence quote. Its raw JSON
+is preserved but is not substituted as a validated definition. Native accounting
+therefore marks the baseline experiment incomplete despite every request having
+finished; that warning remains visible.
+
+All 115 case inputs and input hashes match across the original source, baseline
+and candidate. Both cohorts retain the same model, reasoning, transport, worker
+and response schema; only their prompt/cache prefix differs. Every rendered
+prompt hash and model binding was checked against its production record. All
+265 candidate evidence quotes are exact post substrings; one of the baseline's
+265 quotes fails that check. Quote integrity does not establish semantic support.
+
+Three reviewers assessed complete trees under the predeclared criteria and wrote
+230 native agent reviews. Every review's input/raw-output digest was checked
+using the production digest function. Root challenges and a fourth independent
+reviewer examined consequential claims. These are qualified agent assessments,
+not human gold. The paired review totals are:
+
+| Individual assessment | v104 | v109 |
+|---|---:|---:|
+| Qualified accept | 104 | 106 |
+| Confirmed subject-scope reject | 1 | 0 |
+| Semantic or source-assignment uncertainty | 9 | 9 |
+| Malformed endpoint, reviewed as uncertain | 1 | 0 |
+
+One concrete baseline scope error is absent from the candidate draw. Stock entry
+`5.1`, **Making chicken stock a couple of times a year using carcasses saved
+during butchering**, does not name an actor. V104 defines it as "the author's
+recurring cooking practice"; v109 defines "a recurring practice" with the same
+frequency/material requirements. Another maker following that practice fits the
+selected subject but not the author-only definition. Independent challenges
+confirm this category-to-instance narrowing. This is one observed correction,
+not a repeated causal effect or proof of reliable scope preservation.
+
+Two baseline definitions remain qualified rather than rejected: the selected
+green-beans ignition adds the other foods' purposes, and pantry storage adds
+after-canning and recurring-practice details. Those facts can describe an already
+identified particular event/plan rather than impose category conditions. V109
+avoids those extra clauses, but their removal alone is not a demonstrated repair.
+
+Both Food roots still choose human culinary scope. Whether that is a supported
+lexical sense or a narrowed subset of the intended AS Food category remains
+unresolved; human wording alone is neither a failure nor a gain. Three baseline
+and five candidate full-list copies leave "particular/presented dish" qualified
+between a repeatable specified recipe combination and one post-specific
+occurrence. Nostr publication and Coffee-chain business assignment remain
+source qualifications, separate from coherent conditional definitions.
+
+Rome and Jesús Molina retain named identity in both cohorts. Their source-use
+descriptions do not clearly impose proverb-only or trio-only coverage. The Rome
+candidate's diagnostic suggests separate warning signs, but its final definition
+still requires the three-item list; diagnostic wording alone is not a failure.
+
+Every original immediate and recursive ancestor relationship was inspected using
+that version's independently generated endpoints, without redefining them or
+substituting another version's meanings:
+
+| Branch assessment | v104 | v109 |
+|---|---:|---:|
+| Provisionally compatible immediate links | 93 / 98 | 95 / 98 |
+| Unresolved immediate links | 5 | 3 |
+| Provisionally compatible recursive checks | 256 / 300 | 259 / 300 |
+| Unresolved recursive checks | 44 | 41 |
+
+Thirty-five recursive checks concern the same Food root's consumer-kind versus
+application/role interpretation. Six concern whether today's identified stock
+batch and its plans fit the full recurring-practice topic when recurrence is not
+uniformly explicit in their definitions. The full post connects this particular
+batch to the practice; a counterexample involving another maker assumes a
+reusable episode-category interpretation. An independent reviewer withdrew a
+strict product/activity rejection after applying the information-topic convention;
+whole-topic coverage remains unresolved. These are two concentrated interpretation
+issues, not 41 independent failures. The three additional unresolved baseline
+checks involve its malformed cocotte endpoint. One otherwise compatible Coffee
+link in each version remains source-assignment qualified. No definite incompatible
+link is established by this panel; unresolved checks are not counted as passes.
+
+The definition-reject count and branch counts answer different questions. A
+definition can be narrower than its selected subject yet fit its generated
+ancestor. The additional candidate accepts also mix uncertainty and validation
+coverage changes; they are not an accuracy rate. This adaptive panel has only
+one full draw per version, seven baseline exact reuses and no candidate reuses.
+There is no fresh repeat establishing the observed stock correction's reliability.
+
+Native accounting, including the three-case smoke, records 228 actual attempts:
+225 meaning calls and three warmups, with eight exact reuse events. There are no
+retries or failed attempts. Fresh execution's API-equivalent cost is $2.0426476;
+the native deduplicated generation total including the original calls behind
+reuses is $2.1022876. Usage is complete. Its original-generation cache-hit rate
+is 225/230 requests (97.83%). Reasoning is already included in output; these
+estimates are not incremental subscription cash charges. The persistent shared
+counter later reads 15,273/20,000 and includes other agents' work, so its delta is
+not this stage's attempt count.
+
+Native artifacts are under
+`target/bootstrap-v109-scope-preservation-v1/{baseline,candidate}`. Archived
+native reports are `baseline-reviewed-v1.json` and `candidate-reviewed-v1.json`;
+the three receipt-bound review artifacts are `review-cooking.md`,
+`review-identity.md` and `review-risotto.md`. Native usage is
+`usage-native-v1.json`, prepared from the committed usage definition. Output,
+review and receipt artifacts remain ignored and unchanged.
+
+Thirteen relevant native revision/input/preparation tests pass; schema equality,
+unchanged examples/suffix, source-input equality and review/receipt checks pass.
+No execution code, Compare prompt, AS source, hierarchy or UI changed. V104
+remains approved and v109 experimental. The next useful qualification is a fresh
+repeat of the consequential scope witness and a focused examination of the
+remaining sense-versus-subset and fixed-episode interpretations before another
+prompt edit or adoption. No additional stage has been started.

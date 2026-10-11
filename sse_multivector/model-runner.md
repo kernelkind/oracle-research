@@ -49,10 +49,15 @@ The user subsequently approved subject-scope preservation: Bootstrap clarifies
 the supplied subject, using post/context to resolve sense rather than adding
 restrictions from its particular example. Experimental v109 implements that
 contract from approved v104. A matched complete-branch qualification of v104
-and v109 is predeclared in the Bootstrap qualification record. Independent
-generation and input/output schemas stay unchanged; exact generated endpoints
-are checked together, with source assignment separate from definition coherence
-and branch compatibility. V104 remains approved; v109 is not activated.
+and v109 is complete: 115 candidate meanings validate, compared with 114 baseline
+meanings and one exact-quote failure. Independent review finds one baseline
+author-only category restriction absent from the candidate draw. Forty-one
+candidate ancestor checks remain unresolved around two concentrated Food/stock
+interpretations; no general scope repair is established. Independent generation
+and input/output schemas stay unchanged. Source assignment, definition coherence
+and branch compatibility are assessed separately, with all 230 reviews bound to
+their exact outputs. Details, reuse and native accounting are in the Bootstrap
+qualification record. V104 remains approved; v109 is not activated.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
