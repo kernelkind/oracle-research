@@ -7213,3 +7213,31 @@ $0.072474 API-equivalent, with no reuse, warming, cache hits, retry, failure or
 missing usage; the shared counter moves 18,979 to 18,987. Ordering is not adopted,
 and no prompt or Bootstrap change follows. See the
 [completed diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-fresh-matched-order-diagnostic).
+
+The subsequent unchanged-V179 nonfood purpose diagnostic directly specifies
+three clear synthetic fixed pairs outside AS/Bootstrap producer collections and
+prompt examples. The native generic adapter prepares both A/B assignments,
+both physical member orders and two fresh draws: 24 comparisons. Two preflight
+reviewers qualify the design-purpose/sealing boundaries; two post-call reviewers
+accept all 24 labels and 48 directional proofs. Existing strict symmetric
+validation also passes. There are zero conflicts in twelve reversal checks,
+twelve input-order contrasts and twelve exact-request repeat checks. These are
+three related semantic cases tested repeatedly, not population accuracy or
+general comparison certification.
+
+Native output-specific agent reviews, generation/reviewed snapshots and usage
+remain under `target/compare-v179-nonfood-purpose-order-v1`. Actual request audit
+finds 24 distinct fresh responses, twelve repeated body identities and no answer
+reuse or conversation linkage. Ten backend prefix-cache hits occur without
+explicit warming. The native usage summary records 24 attempts, no retries,
+failures or missing usage, and $0.149514 API-equivalent catalog cost. The same
+shared counter moves 19,117 to 19,141. The generic adapter's old SHR diagnostics
+do not cover this symmetric supplied-meaning panel; no Bootstrap receipts are
+invented to qualify it. See the [complete preparation, results and limitations](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-nonfood-design-purpose-order-diagnostic).
+
+Separately, the user rejects the original ASv6.100 source edge from the
+shrimp-specific ingredient entry to its complete fifteen-ingredient collection
+after inspecting exact experimental v109 meanings and the original tree. This
+source edge is not positive Compare gold; its reverse relationship and complete
+pair label remain unapproved. Frozen producer outputs and existing v96 panels
+remain intact. See the [source-edge decision and exact receipts](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#user-rejected-v109-ingredient-source-edge).
