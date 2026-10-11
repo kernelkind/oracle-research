@@ -5,8 +5,11 @@ branch regression findings are maintained in
 [Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md).
 Bootstrap-v103's initial full-collection agent review found one
 factual-support failure and two materially ambiguous meanings.
-Two fresh diagnostic draws reproduce the business-identity error and Rome's
+Two fresh diagnostic draws reproduce the business-identity reading and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
+The original ambiguous business reading is not an established factual error
+under the later approved sense and factual-evidence rule; earlier rejection
+classifications are review history, not current semantic gold.
 A subsequent user decision classifies implicit material scope as a failure;
 the saved v103 sourdough meaning was also flagged for its consumer boundary.
 A focused 28-case reassessment preserves that witness and reviewer disagreements;
@@ -64,9 +67,10 @@ reassessment withdrew that failure claim because its own context describes the
 author's practice. The user subsequently clarified: "idc which boundaries the
 agent makes. as long as it's not contradicting the evidence". Either explicit,
 locally supported choice is acceptable; the stock baseline now has a qualified
-agent accept. Scope preference alone is not a failure. Forty-one
-candidate ancestor checks remain unresolved around two concentrated Food/stock
-interpretations; no general scope repair is established. Independent generation
+agent accept. Scope preference alone is not a failure. The initial audit left
+forty-one candidate ancestor checks qualified around two concentrated Food/stock
+interpretations; individual review corrections do not certify those links or
+establish a general scope repair. Independent generation
 and input/output schemas stay unchanged. Source assignment, definition coherence
 and branch compatibility are assessed separately, with all 230 reviews bound to
 their exact outputs. Details, reuse and native accounting are in the Bootstrap
@@ -76,8 +80,17 @@ a reliable v109 improvement. The user withdrew the subsequent Food failure claim
 matching Food titles in a synthetic AS example and a real note do not establish
 matching meanings. Evaluate each local node using its own subject, context,
 hierarchy and full post; the other example supplies no membership gold. Both
-native Food reviews now return to uncertain, preserving the mistaken rejection
-in history and all original meanings/receipts. Four repeat meanings plus four
+native Food reviews first returned to uncertain, preserving the mistaken rejection
+in history and all original meanings/receipts. The subsequent
+[remaining flagged-meaning reassessment](shr_single_pair/bootstrap-current-as-qualification.md#remaining-flagged-meanings-under-the-approved-rule)
+records six qualified agent accepts for the unchanged Food, Nostr-content and
+Coffee-chain root definitions across both cohorts. Latest counts are v104:
+113 accept / 0 reject / 2 uncertain, and v109: 114 accept / 0 reject / 1 uncertain.
+The Coffee child remains uncertain in each cohort; the baseline cocotte remains
+malformed because its evidence quote changes an original nonbreaking space.
+All 230 inputs, outputs and receipts and prior review histories were preserved;
+this reassessment made zero model calls and establishes no wording improvement
+or whole-branch certification. Four earlier repeat meanings plus four
 warmups use eight attempts,
 with no answer reuse or failures. V104 remains approved; v109 is not activated.
 
@@ -1342,11 +1355,12 @@ Use these offline commands after construction:
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved finished-menu requirements are all notes reachable,
-strictly smaller note sets on every downward edge, and no known valid improvement
-that reduces browsing decisions while preserving those constraints. Manage root
-and child choice counts on a best-effort basis; exceeding six is no longer a
-reason by itself to declare the hierarchy unfinished. The
+note IDs. The approved stopping conditions are all notes reachable individually
+and strictly smaller note sets on every downward edge. There is no additional
+requirement to find or apply every known regrouping or shortcut, or to conduct a
+final improvement review before stopping. Manage root and child choice counts
+on a best-effort basis; exceeding six is no longer a reason by itself to declare
+the hierarchy unfinished. The
 [traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
 addition leaves six or more siblings. Existing workflow code and frozen audit
 bounds remain unchanged, so saved sibling-limit violations still describe their

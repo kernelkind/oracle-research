@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v19
+# Hierarchy selection by traversal — draft v20
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -22,22 +22,29 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
 - A local node containing a canonical node also contains all that canonical
   node's descendants.
 
-## Agreed next-local-node selection
+## Agreed local-level selection order
 
 **Select local roots first, then L2, then L3, continuing one local level at a
-time across all notes. Within each level, preserve the saved note and node
-order.** L1 is the root level; each local child is one level below its parent.
+time across all notes.** L1 is the root level; each local child is one level
+below its parent.
 
-Use this order to start up to three local-node searches under the concurrent
-policy below. Apply placements in that same order, finishing triggered
-consolidation before applying the next placement.
+Processing one note's whole level before moving to another note is rejected.
+The proposed replacement is to rotate across notes, taking one local node per
+note per round at the current level. Preserve saved note order within each
+round and each note's saved node order; skip notes with no remaining nodes at
+that level. This within-level order awaits approval.
+
+Use the selected order to start up to three local-node searches under the
+concurrent policy below. Apply placements in that same order, finishing
+triggered consolidation before applying the next placement.
 
 Do not skip a local child merely because its original parent's canonical node
 represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
-This is an agreed selection order, not a stopping rule. When to stop selecting
-deeper local nodes remains open. No selection code or model calls change here.
+The local-level order and stopping conditions below are agreed. Within-level
+order and stopping-check timing remain open. No selection code or model calls
+change here.
 
 ## Agreed traversal rules
 
@@ -180,7 +187,7 @@ runner handles request concurrency.
 ## Agreed concurrent-search policy
 
 **Allow up to three active local-node searches. Apply placements one at a time,
-in the agreed local-level and saved source order.**
+in the local-node selection order.**
 
 Each search uses a fixed graph snapshot and the agreed traversal rules. A
 finished search waits for earlier selected local nodes to be placed or held.
@@ -223,7 +230,24 @@ rejected proposal leaves the group unchanged; a later qualifying addition can
 trigger another attempt.
 
 This changes the intended requirement, not the existing implementation or saved
-experiment assessments. The remaining local-node stopping rule is still open.
+experiment assessments.
+
+## Agreed stopping conditions
+
+**Stop selecting further local nodes when the finished browsing hierarchy meets
+both conditions:**
+
+- Every note is reachable individually.
+- Every downward step strictly reduces the distinct-note set.
+
+Count a node's own supporting notes and recursive canonical descendants,
+deduplicating note IDs. Grouping remains best effort under the consolidation
+trigger below. No additional final review or search for unused regroupings or
+shortcuts is required before stopping.
+
+These conditions do not claim global optimality or establish relationships for
+unchecked deeper local nodes. Stopping-check timing and handling already-active
+searches remain to be settled.
 
 ## Agreed consolidation trigger
 
@@ -378,12 +402,13 @@ It changes neither a supplied meaning nor a returned comparison label.
 
 ## Agreed walk
 
-The next-local-node selection order, comparison actions, shared-node rule,
+The local-level selection order, stopping conditions, comparison actions, shared-node rule,
 top-to-bottom order, concurrent-search policy, same-note eligibility,
 original-parent handling and consolidation rules above are agreed. The walk
-below combines them.
+below combines them; within-level selection order and stopping-check timing
+remain open.
 
-1. Select the next local node in the agreed order. Start its traversal at the
+1. Select the next local node in the selected order. Start its traversal at the
    canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
    top-to-bottom order above.
@@ -428,9 +453,10 @@ The Food relationship remains a possible placement. The final placement depends
 on the other comparisons. If Breakfast were to contain the local node, Meals
 would also contain it by transitivity, conflicting with the Meals answer.
 
-## Decision still open
+## Decisions still open
 
-- When to stop selecting deeper local nodes.
+- Whether to adopt the proposed rotation across notes within each local level.
+- When to check the stopping conditions and how to finish already-active searches.
 
 ## Current implementation
 
@@ -443,7 +469,7 @@ remain documented in
 The existing [`prepare_selection`](canonical_selective_trial.py) prioritizes
 missing note coverage, then individual-note access, then similarity-ranked
 discovery in schema 2. The approved draft instead uses local levels and saved
-source order to select the next local node.
+order within each note; the proposed rotation across notes is still open.
 
 The current selector exposes the whole queued set of eligible comparisons. It
 does not defer a queued descendant when a queued ancestor could first settle
