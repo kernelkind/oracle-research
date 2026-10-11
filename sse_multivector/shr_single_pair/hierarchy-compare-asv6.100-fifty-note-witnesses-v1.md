@@ -3796,8 +3796,8 @@ Sources rechecked2026-10-11: https://doughminer.com/page/bagels and
 https://www.goldbelly.com/restaurants/utopia-bagels/utopia-bagels-x-philadelphia-bagel-wholes-kit.
 They remain outside model input.
 
-V163 attributed native reviews are complete:core20 accept/5 proof reject/
-8 qualified; controls15 accept/1 proof reject/3 qualified. Core022 omits the
+V163 attributed native reviews initially registered:core20 accept/5 proof
+reject/8 qualified; controls15 accept/1 proof reject/3 qualified. Core022 omits the
 independent production witness or selects a reading-dependent serving witness;
 070 reverse stipulates that a sole dog cannot be an unqualified audience;
 both071 omit the independently supported someone-versus-others self-salutation
@@ -3839,3 +3839,77 @@ promising screen requires repeat and full qualification, with protected
 composition, role, actor and fixed-entity controls retained. No Bootstrap
 inference, hierarchy construction, external messages or additional allowance.
 Usage source:hierarchy-compare-v164-uncommon-variant-screen-usage-v1.json.
+
+
+Fresh V159's matched-gate native reviews are complete:core24 accept/1 proof
+reject/8 qualified; controls15 accept/1 proof reject/3 qualified. Core008 reverse
+assigns unestablished green-coffee preparation to the same particular author's
+beverage. Control029 reverse rejects an unfeeling software candidate then
+infers the particular author's personhood without establishing that necessary
+identity. No opposite labels are certified. Whole-pantry holeless-production
+and author/person qualifications remain distinct, with all original review
+history and independent disagreement preserved. Numerical counts from different
+reviewers are not a controlled semantic advantage.
+
+V164's bounded screen completed:23 valid comparisons in25 attempts, including
+two warmups, no reuse, failures, retries, missing usage or unrun cases. Native
+API-equivalent cost:$0.2739316; counter17847/20000. Core has two settled reversals
+(022/070), no complete larger-chain certificate; controls have no settled
+conflict. Independent native reviews:core6 accept/3 proof reject/5 qualified,
+controls5 accept/1 proof reject/3 qualified. Neither022 retrieves holeless
+production. Forward leaves ring shape unclosed; reverse's finished-bagel
+admission depends on the preparation reading. Both071 assert definitive
+phatic-goodwill-without-wish exclusions while conventional wish remains unclosed.
+Control009 substitutes the garnish's nonnourishing purpose for adjudication of
+its actual host-dessert connection. All four ingredient-role proofs and both
+own-animal-abstention proofs pass. No full expansion or adoption follows.
+
+Independent adversarial calibration also qualifies the previously treated
+071 self-salutation witness. Someone/them can grammatically denote the speaker,
+while others excludes the speaker, but a private morning self-wish may not
+satisfy the whole salutation/greeting kind under a supported interpersonal
+reading. That candidate cannot be treated as decisive across all readings;
+its omission alone does not certify a wrong label. V163 reverse retains a
+separate positive proof gap at wished-morning versus situational morning context.
+Original native records and any owner corrections remain append-only.
+
+### V165: test identity relationships as well as participant classes
+
+This independent two-edit mechanism starts from V159. Replace the requirement
+to put an outside-class entity in a constrained role with testing a potential
+violation of the precise identity/consumer condition, including relationships
+between participants. Update its canonical-reference wording consistently.
+The positive prerequisite otherwise stays unchanged. It must test every
+applicable absent identity/consumer restriction before approving coverage; it
+does not mandate additional searches after a direction properly remains null.
+
+The hypothesis is that outside-class wording cues human/animal differences and
+obscures speaker-relative conditions. Current071 positives turn someone into
+another person; some outputs claim no recipient restriction distinguishes the
+meanings. The old wording can already include a speaker-relative class, so this
+is a plausible search-method clarification, not a proven causal diagnosis.
+Do not presume self-salutation admission, change conventional wish/context
+readings, invent properties of particular entities, or substitute caregiver
+agency for the eater. Two independent preflights find no semantic blocker;
+potential violation avoids requiring a successful counterexample. Exact native
+revision replay and both unchanged production demonstrations pass.
+
+Planned matched12-case screen per arm:core071/070/042/008 both orientations plus
+111 forward(9cases); controls031/032 snapshots and034 isolated forward(3cases).
+V165 versus fresh V159:24 comparisons plus four warmups,28 attempts absent
+retries. Score actual restriction recognition, complete admission/exclusion or
+coverage proofs, fixed-entity/role controls and canonical consequences separately
+from labels. Only a promising screen warrants fresh matched confirmation and
+broader qualification. No Bootstrap inference, hierarchy work, external-session
+messages or additional allowance. Usage source:
+hierarchy-compare-v159-v165-relative-identity-screen-usage-v1.json.
+
+
+After the adversarial071 calibration, V163's original core owner appends two
+native corrections:071 forward is accepted for its supported nulls;071 reverse
+remains rejected solely for the unclosed situational-morning coverage proof.
+The self-case is not decisive gold. Latest core counts:21 accept/4 proof reject/
+8 qualified,33 current decisions in35 preserved history entries. Original
+outputs, receipts and pre-review snapshot bytes remain unchanged. Native
+settled contradiction counts remain zero. Preserve both prior attribution and
+the corrected scope of the finding.
