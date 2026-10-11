@@ -12,9 +12,13 @@ three checks and verifies the mechanical pipeline, but fails the complete-output
 gate: one DSL explanation expands a timing restriction, and two related
 explanations remain uncertain. Production defaults to DSLv2; lower-effort testing
 and final-sixty validation remain paused pending prompt correctness.
-The user-authorized [DSLv10 timing-scope draft](#dslv10-timing-scope-draft-october-11)
-and twelve-case diagnostic are prepared offline; exact wording review precedes
-model calls. DSLv10 is untested and production remains DSLv2.
+The subsequently approved [DSLv10 timing-scope diagnostic](#dslv10-timing-scope-diagnostic-october-11)
+passes all twelve decisions and complete explanations in both agent audits.
+The three earlier timing-scope findings are resolved on these cases; five controls and
+four authored local/shared-timing contrasts retain sound explanations. This is
+development evidence, not unseen accuracy or production adoption. DSLv10 remains
+experimental; the matching/support `on Nostr`/`with Nostr` questions from the
+four-note regression are still unresolved. Production remains DSLv2.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4468,7 +4472,8 @@ unchanged approved DSLv9. Only the version title and one existing occurrence,
 performance and timing paragraph change. There is no XP-specific example or
 new output field. The ASv6.100 quotations, every-restriction requirement, source
 interpretation boundaries, DSMv3, DSSv2, mechanical rules and production DSLv2
-default remain fixed. This is a draft, not tested or adopted wording.
+default remain fixed. At this preparation stage it was untested draft wording;
+the subsequently approved diagnostic is recorded below. It is not adopted.
 
 The replacement asks the reviewer to identify what action, state or relationship
 a modifier qualifies. Neither coordination or a shared actor nor proximity
@@ -4535,19 +4540,83 @@ the four authored cases have none. Frozen source and schema checks pass. Model
 settings remain `gpt-6.1-sol / xhigh / openai-codex / SSE`, under the automatic
 shared queue and provider-only maximum of two attempts per case. The ordinary
 template prefix is 76 tokens, below the 1,024-token threshold; there is no padding, cache
-marker, `--prompt-cache` flag or warmup. A future bounded run would use one shared
-24-attempt allowance for these twelve cases and reserve no output-token cap.
+marker, `--prompt-cache` flag or warmup. The proposed bounded run uses one shared
+24-attempt allowance for these twelve cases and reserves no output-token cap.
 
 Ignored evidence is at
 `oracle-mvp-review-dslv10-timing/target/distillation-review-v1/relationship-dslv10-timing/`:
 exact revision edits/diff, authored spec, three native preparations and input-only
 views, prospective reviews and offline verification. The task worktree is
 retained for these frozen bindings. No model is called during drafting or
-preparation. Exact wording review and semantic testing are next; broader
-four-note regression, lower efforts and final-sixty validation remain pending.
+preparation. The user subsequently approves the exact wording and diagnostic;
+results follow. Broader four-note regression, lower efforts and final-sixty
+validation remain pending.
 This scoped diagnostic follows the [official OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
 to test task-specific historical failures and controls; it does not adopt the
 separate hosted Evals platform.
+
+## DSLv10 timing-scope diagnostic (October 11)
+
+The user approves the exact [DSLv10](relationship-prompt-v10.md) wording and
+twelve-case diagnostic before calls. The three prepared groups run through the
+stable shared launcher at `gpt-6.1-sol / xhigh / openai-codex / SSE`, with one
+persistent 24-attempt allowance and automatic shared-queue admission. Twelve
+distinct fresh requests finish on their first attempts: no retries, failed
+attempts, reused answers or warmups. The eight inherited inputs and saved DSLv9
+baselines remain unchanged. Only the prompt title and approved timing paragraph
+differ from DSLv9; the four authored comparisons have no baseline.
+
+Both root and the independent auditor accept **all twelve Booleans and complete
+explanations** against the preserved input-first assessments: five true and
+seven false. Each records separate native agent reviews after preserving the
+terminal raw reports; prospective reviews remain in their history.
+
+| Group | Complete records accepted by each audit | Result |
+| --- | ---: | --- |
+| Original scope cases | 3/3 | No required timing is distributed across every earlier completion or earning action. |
+| Inherited controls | 5/5 | Claim invitation, temporal reference and complete qualified relationship remain valid; omitted practice timing and Palmer's contribution remain invalid. |
+| Authored timing contrasts | 4/4 | Local walk timing and explicit both-activities timing are distinguished, including preserved and missing restrictions. |
+
+The new original-case reasons allow practice timing to relate to the current XP
+state or a broader account without requiring every coordinated action to share
+that timing. They do not assert a uniquely narrow parse. The two Nostr cases
+also retain account-level association rather than imposing it separately on
+each earlier achievement. The negative goal-completion control still explains
+why an English-practice goal does not require actual practice while the current
+XP total is held. This resolves the three DSL explanation findings on this
+development panel. It does not settle the separate matching/support `on Nostr`
+versus `with Nostr` uncertainties or make the previous four-note run pass.
+
+The native execution span is **87.305 seconds (1 minute 27 seconds)**, including
+shared-queue waiting. All twelve request identities, receipts and output schemas
+verify; all 538 frozen source hashes and 128 frozen code hashes match. Native
+`summarize-experiments` reconciles the locked allowance at **12/24**, delta zero,
+with complete token usage and no warnings. Usage is **17,181 uncached input,
+zero cached input and 16,937 output tokens**, including **13,543 reasoning
+tokens**. The catalog estimate is **$0.203732 API-equivalent**; subscription
+provider charges are unknown. The 76-token ordinary prefix remains below the
+1,024-token threshold, so there is no explicit caching or warming, and no
+implicit cache hits are observed. Cache savings are zero.
+
+Ignored evidence remains under
+`oracle-mvp-review-dslv10-timing/target/distillation-review-v1/relationship-dslv10-timing/`:
+native plans, input-only views, prospective and output reviews, run logs,
+receipt history, the shared allowance, terminal raw/reviewed reports and native
+usage-summary spec/output. Terminal raw reports were saved before output review:
+
+| Report | SHA-256 |
+| --- | --- |
+| `scope-terminal-raw.json` | `29b2329242096860a6141df196a2f41117f8965cd77891f1c79785cb8146fbf8` |
+| `control-terminal-raw.json` | `742112ade9f273e9c531392af9f47d352566bd35fa0cc69c97586c355408cd99` |
+| `authored-terminal-raw.json` | `f9598f762d56cf5e06a4edc582f3518ef21a9cdf12ead76b57d5baabcd0aa171` |
+
+These agent assessments, previously exposed failures and easy authored controls
+are development evidence rather than independent human gold, unseen-note
+validation or a causal estimate of prompt improvement. Production continues to
+default to DSLv2. No new four-note regression, lower-effort trial or final-sixty
+run starts here. The recommended next development step is to settle the remaining
+matching/support Nostr interpretation questions before another four-note
+regression; that recommendation does not authorize calls or a prompt revision.
 
 ## Actual distilled wording: offline preview (October 8)
 

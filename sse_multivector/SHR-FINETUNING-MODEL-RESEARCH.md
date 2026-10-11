@@ -83,12 +83,15 @@ Kev27 task results remain pending. See the [learning evidence](SHR-STUDENT-PREPA
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`
 field supervised. Complete inputs fit both verified local training paths;
-full teacher answers remain semantic review evidence. Qwen's first saved epoch
-reduces held-out mean token loss from **1.4162 to 0.9712** after 94 updates;
-the training/evaluation/checkpoint phase takes **41.18 minutes**, with **24.99 GiB**
-peak CUDA allocation. Further fitting and fresh-process verification remain
-pending. Teacher-forced loss and checkpoint verification alone cannot rank
-generated meaning fidelity. See the
+full teacher answers remain semantic review evidence. Qwen completes all 376
+updates and both saved epochs pass fresh-process verification. Held-out mean
+token loss moves from **1.4162 before training**, to **0.9712 after epoch one**
+and **1.2290 after epoch four**; TRAIN loss falls from 0.9177 to 0.1300. The
+cumulative training/evaluation/checkpoint phase takes **158.30 minutes**, with
+**24.99 GiB** peak CUDA allocation. The earlier checkpoint has lower held-out
+loss; both native generation plans are prepared, but generated meaning fidelity
+remains unmeasured. Gemma26 Bootstrap fitting has started. Teacher-forced loss
+and checkpoint verification alone cannot rank generated meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
 The full case JSON alone averages 540 evaluation tokens versus 2,149 with the

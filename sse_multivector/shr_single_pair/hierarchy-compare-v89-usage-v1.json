@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v89_core_gate": [
+      "../../target/compare-v89-qualification-v1/core-gate-v1"
+    ],
+    "v89_full_gate": [
+      "../../target/compare-v89-qualification-v1/full-gate-v1"
+    ]
+  }
+}
