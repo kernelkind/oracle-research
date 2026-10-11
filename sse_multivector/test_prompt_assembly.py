@@ -272,6 +272,30 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertEqual(Path(revision['base_path']).name, baseline.name)
         self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
 
+    def test_consolidation_v9_pins_simplified_writing_without_changing_prior_prompts(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v9.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = json.loads(spec.read_text())
+        shared = [part for part in current['parts']
+                  if 'prompt_parts/' in part.get('path', '')]
+        self.assertEqual(len(shared), 1)
+        shared_text = (PROMPTS / shared[0]['path']).read_bytes()
+        prompt = (PROMPTS / current['output']['path']).read_bytes()
+        self.assertEqual(prompt.count(shared_text), 1)
+        previous = (PROMPTS / 'Hierarchy-consolidation-v8.md').read_bytes()
+        self.assertEqual(prompt.split(b'\n# Check the proposal\n', 1)[1],
+                         previous.split(b'\n# Check the proposal\n', 1)[1])
+        self.assertEqual(sha256(previous),
+                         '5bb245a302a18f3e34bee56636509bfa221b1930a8f88e57ed2b8bee8fde7b42')
+        self.assertEqual(sha256((PROMPTS / 'Hierarchy-bootstrap-v104.md').read_bytes()),
+                         'd97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0')
+        baseline = PROMPTS / 'Hierarchy-consolidation-v3.md'
+        revision = json.loads((PROMPTS / 'Hierarchy-consolidation-v9.md.revision.json').read_text())
+        self.assertEqual(revision['base_sha256'], sha256(baseline.read_bytes()))
+        self.assertEqual(Path(revision['base_path']).name, baseline.name)
+        self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -285,12 +309,14 @@ class PromptAssemblyTests(unittest.TestCase):
         for version in ('Hierarchy-consolidation-v1', 'Hierarchy-consolidation-v2',
                         'Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
                         'Hierarchy-consolidation-v5', 'Hierarchy-consolidation-v6',
-                        'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8'):
+                        'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8',
+                        'Hierarchy-consolidation-v9'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
                                                         'Hierarchy-consolidation-v5', 'Hierarchy-consolidation-v6',
-                                                        'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8')
+                                                        'Hierarchy-consolidation-v7', 'Hierarchy-consolidation-v8',
+                                                        'Hierarchy-consolidation-v9')
                                      or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')

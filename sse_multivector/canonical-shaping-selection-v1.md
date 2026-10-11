@@ -1,13 +1,14 @@
 # Selecting local entries to reduce overcrowding
 
 The latest user-authorized work drafts
-[Hierarchy-consolidation-v8](shr_single_pair/Hierarchy-consolidation-v8.md).
-It removes the redundant sibling precheck, separates consolidation's JSON-null
-behavior from shared definition wording, and revises the synthetic example to
-teach a missing restriction. The user also approved treating Bread/Food dishes
-and Cuisine boundary judgments as unsettled. Fourteen earlier agent rejects
-now have appended uncertain reassessments; original answers and review history
-are preserved. V8 has offline assembly checks, but no model trial. The prior
+[Hierarchy-consolidation-v9](shr_single_pair/Hierarchy-consolidation-v9.md).
+It simplifies the repeated definition-writing instructions into one new,
+versioned 198-word fragment. The input, containment checks, synthetic example
+and output contract are retained from v8. Historical Bootstrap and consolidation
+versions remain fixed; Bootstrap has not adopted the new wording. Bread/Food
+dishes and Cuisine boundary judgments remain unsettled. Fourteen earlier agent
+rejects have appended uncertain reassessments; original answers and review
+history are preserved. V9 has offline assembly checks, but no model trial. The prior
 audits accept both disputed proposals twice, and v7 preserves useful controls
 without resolving those boundaries. Neither semantic improvement nor a change
 in failure rate is established. Next qualify the unresolved boundaries and
@@ -21,7 +22,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the completed v6 panel](#consolidation-v6-focused-proposal-panel), and
 [the completed consolidation audit](#consolidation-audit-v1), and
 [the v7 revision and panel](#consolidation-v7-required-condition-revision-and-panel), and
-[the v8 draft and evaluation correction](#consolidation-v8-draft-and-evaluation-correction).
+[the v8 draft and evaluation correction](#consolidation-v8-draft-and-evaluation-correction), and
+[the v9 definition-writing simplification](#consolidation-v9-definition-writing-simplification).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1633,7 +1635,11 @@ task-specific wrappers. The [Consolidation-v8 manifest](shr_single_pair/Hierarch
 retains the first eight files and uses a new
 [neutral consistency fragment](shr_single_pair/prompt_parts/explicit-meaning-rules-v3/09-consistency.md):
 the exact first two sentences of the old ninth clause, without Bootstrap's
-null-meaning behavior. Historical Bootstrap and consolidation recipes remain
+null-meaning behavior. The [Consolidation-v9 manifest](shr_single_pair/Hierarchy-consolidation-v9.assembly.json)
+instead pins one [simplified definition-writing fragment](shr_single_pair/prompt_parts/explicit-meaning-rules-v4.md).
+This is new draft wording, not a byte-exact Bootstrap extraction. Only v9
+adopts it; Bootstrap-v104 and all existing consumers keep their pinned versions.
+Historical Bootstrap and consolidation recipes remain
 fixed. V3 remains the last human-approved full consolidation
 wording; authorization to draft or test later versions is not semantic qualification. The bootstrap
 recipe preserves its original clause positions and intervening bytes;
@@ -1666,7 +1672,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v8.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v9.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -1697,7 +1703,7 @@ The user-requested boundary annotations are kept in an ignored review copy:
 in the task worktree. Visible BEGIN/END markers surround the complete shared
 section. Removing them restores v3 exactly; they are not model instructions.
 
-The draft uses explicit sections, delimited input and no requested
+The initial v3 draft uses explicit sections, delimited input and no requested
 reasoning trace or examples, consistent with
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
 That guidance does not validate the consolidation semantics.
@@ -2645,3 +2651,44 @@ requests were made; the attempt counter remains **329/329**. No hierarchy or
 UI changed, and no messages were sent to another agent. The task remains in its
 isolated worktree as requested. Next review the draft and qualify clear controls
 separately from the disputed semantic diagnostics before claiming improvement.
+
+## Consolidation-v9 definition-writing simplification
+
+After identifying the repeated identity, boundary and role instructions in v8,
+the user authorized fixing them. [Hierarchy-consolidation-v9](shr_single_pair/Hierarchy-consolidation-v9.md)
+combines those instructions into one new 198-word definition-writing fragment.
+It retains coherent interpretation, identity and alternatives, required versus
+optional features, explicit roles and purposes, activity boundaries, consistent
+restrictions, non-exhaustive illustrations and required absences. Task-specific
+JSON-null behavior stays in the consolidation wrapper. This is a wording
+hypothesis, not a demonstrated semantic improvement or a Bootstrap revision.
+
+The input and useful-parent sections retain their wording. The proposal checks,
+synthetic example and output section are byte-identical to v8. No preferred Bread
+or Cuisine verdict is added. Supplied canonical meanings and historical reviews
+remain fixed; the unsettled boundaries recorded above remain open.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v9.assembly.json)
+pins the new fragment and wrappers. Native `revise` again uses last approved
+full consolidation v3 as baseline; the
+[revision receipt](shr_single_pair/Hierarchy-consolidation-v9.md.revision.json)
+records SHA-256
+`751c9d83c43fa69ca1f57042a95cc5574eed8a556e57b1547c4bb38b9baf6beb`.
+Full text is 728 whitespace-delimited words versus v8's 917; this is not a token,
+API-cost or quality measurement. The ignored preview, edits and native diff are
+under `target/canonical-shaping-selection-v1/consolidation-v9-*`.
+
+The approach follows the official guidance to
+[keep instructions simple and direct](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+and [remove repetitions one group at a time, then rerun the same evaluations](https://developers.openai.com/api/docs/guides/latest-model).
+The synthetic example is retained to teach the missing-restriction distinction.
+These recommendations motivate the draft; they do not certify its performance.
+
+The production assembly check first failed on the missing v9 manifest, then
+passed. Thirty-two relevant consolidation, assembly and revision checks pass,
+including native preparation freezing complete v9 text without inference.
+Historical v8 and Bootstrap-v104 hashes remain unchanged. Broader runner-suite
+limitations remain recorded above. No provider calls, graph or UI changes, or
+agent messages occurred; the attempt counter remains 329/329. The draft remains
+isolated as requested. Next compare v9 with v8 on the same clear controls once
+a model-trial allowance is available, keeping disputed judgments separate.
