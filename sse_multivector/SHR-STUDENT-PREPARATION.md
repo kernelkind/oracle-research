@@ -188,16 +188,17 @@ use the exact v96 standalone-meaning, factual-state and scope requirements:
 
 | Saved Bootstrap student / epoch | Accept / reject / uncertain | Median native request seconds | Peak CUDA GiB |
 | --- | ---: | ---: | ---: |
-| Qwen27 / 1 | 25 / 5 / 10 | 14.62 | 20.45 |
+| Qwen27 / 1 | 24 / 6 / 10 | 14.62 | 20.45 |
 | Qwen27 / 4 | 28 / 5 / 7 | 14.31 | 20.42 |
 | Gemma26 / 1 | 16 / 10 / 14 | 67.91 | 51.88 |
 
-Two supplementary Qwen epoch-one reviews reconcile differing reviewer criteria:
+Three supplementary Qwen epoch-one reviews reconcile differing reviewer criteria:
 nonexhaustive edible Seed-oil examples are acceptable, while merely naming
-pressure-canning omits the defining heat-under-pressure process. Both earlier
-records remain preserved. Counts select the latest bound agent review per case;
-binding-current historical reviews are not extra cases. These reconciliations
-are not output changes or measured quality gains.
+pressure-canning or stock-making omits the defining process. The original 40
+reviews and all three supplementary records remain preserved: 43 records for
+40 cases. Counts select the latest bound agent review per case; binding-current
+historical reviews are not extra cases. These reconciliations are not output
+changes or measured quality gains.
 
 Both Qwen epochs still have clear defects. Epoch four improves Risotto and
 experimentation boundaries but invents experienced harm from the author's
@@ -220,6 +221,17 @@ the v96 identity, parent-fit, composition and factual-state criteria. These
 agent judgments remain provisional; unsettled references do not establish
 refusal accuracy or final student selection.
 
+Qwen's provisional Bootstrap priority has concrete paired support: both Qwen
+epochs preserve Rosemary's herb identity, Rome's city identity and Potatoes as
+a kind where Gemma's first epoch changes those boundaries. Qwen's fourth epoch
+defines stock-making through cooking carcasses with water; Qwen's first epoch
+and Gemma's first epoch only name its preparation. Gemma's first epoch defines
+Cooking through heat, where both Qwen epochs admit other transformations.
+Both foundations retain defects: all three omit pressure-canning's process,
+and Qwen's fourth epoch and Gemma's first epoch invent experienced health harm.
+These paired differences support further qualification, not a ranking from
+review counts. Gemma's fourth epoch remains pending.
+
 All 40 Gemma receipts validate under the frozen generation runtime and canonical
 shared runner, with case IDs, complete inputs, student prompts and output schema
 matching both Qwen plans. Each is a fresh single attempt with normal termination.
@@ -237,7 +249,7 @@ The native `run/results.jsonl` / `reviews.jsonl` SHA-256 bindings are:
 
 | Directory under `broader-evaluation-v1` | Results / reviews SHA-256 |
 | --- | --- |
-| `qwen27b-epoch1-v2` | `27896178a0c730a309b475a6acd425e4054d2fd2e938e7788632e448715f8a3b` / `0c7b28b2e4c790b4c9b5cee297f14c204b25c789ad63063431feb1cda215c8b5` |
+| `qwen27b-epoch1-v2` | `27896178a0c730a309b475a6acd425e4054d2fd2e938e7788632e448715f8a3b` / `22c47240394a7efe4d51bc094736b4350d7cd70f2cdd031d74aaf9f15bc3be5a` |
 | `qwen27b-epoch4-v2` | `a9233237ca41ce9fcbe20cdcc60ea0263b977c6349a6b0047a0e522e8a12cc9b` / `893cfbe82f8b1fd12eb1904283e5b0206c677282d85e33710a5afe7439209836` |
 | `gemma26b-epoch1-v1` | `eed567abe4fa62d9dbeeb752c547ba643d7ac186e370c70de47555548b64b81f` / `1f44adbf2e54de87a08ec471cabcc109eb93fe3e7a9e54c722ece39defbf114f` |
 
