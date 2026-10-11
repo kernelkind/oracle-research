@@ -193,15 +193,33 @@ fail all three branch equivalents and both conflict-uncertainty fixtures.
 The fitting set has only one nonidentity-equivalence family, no uncertainty
 targets and no canonical branches. This evidence supports the shorter Ettin
 recipe as its provisional cost/quality lead, not final student selection or an
-encoder-capacity conclusion. Larger-student evaluation remains active; see the
+encoder-capacity conclusion.
+
+Qwen27 reaches **180/196 and 185/196 regression matches** at epochs one and
+four, with reciprocal consistency improving from 86/98 to 90/98 families.
+Epoch four matches all 16 equivalent references but also predicts three false
+equivalents; excluding the known contradictory reference family 033 gives
+184/194 agreement. Branch matches instead fall from **16/21 to 13/21**:
+both epochs recover all three equivalents, including the identity control,
+and miss both synthetic conflict-uncertainty fixtures. Corresponding isolated
+comparisons improve from 17/18 to 18/18 while compatible branch comparisons
+fall from 15/18 to 12/18; reciprocal branch consistency falls from 8/9 to 5/9.
+All six epoch-four false equivalents have a relative whose meaning is
+byte-identical to the local meaning while the selected canonical scope differs,
+consistent with confusing the selected node with a relative, without proving
+an attention mechanism. Epoch one remains relevant, and the branch-free,
+uncertainty-free fitting set prevents these results from establishing a
+capacity ceiling or final selection. Kev Compare and Gemma Bootstrap evaluation
+remain active; see the
 [native broader results and bindings](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 
 The current research priority is **Qwen27 for further Bootstrap qualification**,
 with Gemma26 retained as an alternative, and **Ettin1B, Qwen27 and Kev27 for Compare**.
-Kev27 has no measured prediction advantage over Qwen on this panel. These are
-candidate priorities, not selected final students: the development evaluation
-still needs broader independent post coverage, all five Compare labels and
-canonical branches, plus reviewed Bootstrap refusal/state/scope boundaries.
+Kev27 has no measured prediction advantage over Qwen on the earlier 46-case
+fit panel. These are candidate priorities, not selected final students: the
+development evaluation still needs broader independent post coverage and
+qualification across all five Compare labels and canonical branches, plus
+reviewed Bootstrap refusal/state/scope boundaries.
 Training volume and production student input layout remain open. The repeated
 teacher instructions in the current fit controls and Gemma's unmerged adapters
 limit direct cost forecasts for final training or serving.
