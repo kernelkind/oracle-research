@@ -2,7 +2,7 @@
 
 The latest user-authorized work is containment review of the expanded tests of approved
 Hierarchy-consolidation-v3; see [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording)
-and [the prepared containment screen](#expanded-consolidation-v3-containment-screen).
+and [the completed containment screen](#expanded-consolidation-v3-containment-screen).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1792,10 +1792,11 @@ would violate the approved strictly smaller-note-set requirement and should
 not be inserted with these children. The model has no note memberships, so
 that failure does not itself establish a prompt-wording defect.
 
-The wider screen supplies promising definition and grouping controls, not
-semantic certification. No Compare calls were made for the expanded panel.
-Next review should check the entire selected meanings, containment beneath the
-fixed parent and omission of other siblings that fit the proposed meaning.
+The wider proposal screen supplies promising definition and grouping controls,
+not semantic certification. That fourteen-call stage made no Compare calls;
+the subsequent containment screen below checks the entire selected meanings,
+containment beneath the fixed parent and omission of other siblings that fit
+the proposed meaning.
 One targeted question is whether Cuisine's Prepared dishes meanings also cover
 Turning pantry staples into chewy bagels C099: the first definition explicitly
 covers preparation variations, whereas both draws omit that activity. An
@@ -1822,8 +1823,8 @@ cache reads/writes, and **3,867 output tokens including 3,091 reasoning tokens**
 Complete API-equivalent catalog cost is **$0.076950**, not a subscription bill.
 The user's `proceed` authorized the stated fourteen-call panel: one remaining
 attempt was used under the earlier 220 cap, and the other thirteen extended
-that persistent counter to **233/233**. No additional model calls remain
-authorized by this test.
+that persistent counter to **233/233** at that checkpoint. The later forty-call
+renewal and its completed use are recorded below.
 
 Twenty-four relevant production-adapter, assembly and revision checks pass.
 Native preparation and receipt validation preserve the original source files
@@ -1836,10 +1837,10 @@ synthetic-node placement is not the current development priority.
 
 ## Expanded consolidation-v3 containment screen
 
-The user approved proceeding with containment review. The previous proposal
-allowance is exhausted at 233/233. A separate request for at most forty new
-GPT-6.1 Sol medium attempts is pending; no additional requests have been sent
-and the counter has not been changed for this stage.
+The user's subsequent `proceed` approved the prepared forty GPT-6.1 Sol medium
+comparisons. All forty completed with valid fresh receipts, zero reused answers,
+failures, retries or warmups. The persistent allowance advanced from 233/233
+to **273/273**; no further calls remain authorized.
 
 The [comparison source](shr_single_pair/hierarchy-consolidation-v3-expanded-comparison-source-v1.json)
 selects the five usable first-draw definitions, preserving the producer
@@ -1851,7 +1852,7 @@ retains the earlier screen's Compare-v75 prompt, response schema, GPT-6.1 Sol
 medium/SSE settings and complete canonical ancestor/descendant input. It does
 not activate or qualify Compare-v75 as the current hierarchy-generation prompt.
 
-The shared runner prepared
+The shared runner executed
 `target/canonical-shaping-selection-v1/consolidation-v3-expanded-compare-v75-v1`:
 
 | Saved proposal | Offered siblings plus immediate parent |
@@ -1864,7 +1865,7 @@ The shared runner prepared
 | Total | 40 |
 
 These are twelve intended-child checks, five supplied-parent checks and
-twenty-three checks for other siblings. All forty exact requests require new
+twenty-three checks for other siblings. All forty exact requests received new
 answers under the saved request identities. Preparation itself made no model
 calls. Each synthetic local input contains only its saved title and meaning;
 no fabricated original post or original local branch is added. Source hashes
@@ -1883,17 +1884,100 @@ as source-bound **agent uncertain** assessments of the saved proposals:
   omit it. Check containment without silently adding a meal restriction;
   a conflict could originate in the existing branch rather than consolidation.
 
-These concerns are not confirmed failures, new human judgments or teacher
-answers. Original proposal outputs and inference receipts remain immutable.
-The two production-adapter checks pass. The prepared source/configuration and
-review findings remain isolated in this task worktree.
+Those pre-inference concerns remain preserved alongside the later results.
+Native `review` records now also bind five post-screen **agent** assessments to
+the exact proposal inputs and outputs. Original outputs and receipts remain
+immutable. None of these assessments establishes new human gold.
 
-The planned evaluation distinguishes a rejected selected edge, an omitted
-sibling that is actually contained, and an unresolved pre-existing canonical
-branch. Expected roles remain outside model input. A compatible selected edge
-requires `local_contains_canonical`; the supplied parent requires
+| Saved proposal | Selected children | Supplied parent | Other offered siblings | Assessment under this screen |
+|---|---|---|---|---|
+| Meals | Breakfast and Dinners accepted; Food dishes' direct meaning covered, final relation uncertain | Food accepts containment | Eating contains Meals; remaining ten neither | Existing Food dishes descendants block compatible placement; this does not establish a consolidation wording failure |
+| Motivational states | Both accepted | Mental states accepts containment | All four neither | Complete successful bounded screen |
+| Prepared dishes | All three accepted | Cuisine returns neither | Bagel-making contained; Japanese food and Sorrento's cuisine neither | Parent-fit failure and missing covered sibling |
+| Dough and batter foods | Both accepted | Food dishes returns uncertain, with direct containment rejected | All four neither | Direct parent-fit failure plus an existing branch conflict |
+| Cookware | Both accepted | Cooking appliances accepts containment | Both neither | Complete successful bounded screen |
+
+The twelve selected-child directional answers all state full coverage. Eleven
+final relations are `local_contains_canonical`; Meals versus Food dishes is
+`uncertain` because its canonical descendants introduce conflicting scopes.
+Three of five supplied-parent checks accept containment, one returns `neither`,
+and one returns `uncertain`. Among twenty-three omitted-sibling checks, twenty-one
+return `neither`, one contains the proposal, and one is contained by it. The
+aggregate final relations are twelve `local_contains_canonical`, four
+`canonical_contains_local`, twenty-two `neither` and two `uncertain`.
+
+Four exact cases identify what the next consolidation revision should address
+and what it cannot repair:
+
+- **`proposal-3-C016`, Prepared dishes versus Cuisine:** the generated meaning
+  admits a finished improvised dish without a culinary style/tradition
+  association. Cuisine's fixed meaning describes a style or tradition and its
+  associated dishes. The answer explicitly says: “An improvised dish
+  unassociated with a culinary style or tradition is covered by prepared dishes
+  but not by cuisine.” This is a direct parent-fit rejection, not merely a
+  blocked implied relationship elsewhere in the graph.
+- **`proposal-3-C099`, Prepared dishes versus bagel-making:** the output says:
+  “Full coverage holds: making chewy bagels from pantry staples is a specific
+  preparation variation of a prepared culinary item.” The generated definition
+  explicitly covers preparation variations but leaves C099 out of `children`.
+  This corroborates the saved include-all concern under the unchanged comparison
+  prompt. Restricting the list to products while writing a definition that covers
+  their preparation is not a coherent solution.
+- **`proposal-4-C020`, Dough and batter foods versus Food dishes:** the answer
+  says: “A cooked dough food eaten solely as a non-meal snack is excluded by the
+  canonical node.” The proposal does not require the parent's meal role. Its
+  final `uncertain` separately identifies that the existing Bread/Pancakes
+  meanings also lack that role. Adding a meal condition to the proposal would
+  narrow those fixed children; it cannot fix this grouping while preserving
+  their entire meanings. Another compatible subgroup or null is required.
+- **`proposal-1-C020`, Meals versus Food dishes:** the direct answer says:
+  “Full coverage holds for the selected canonical meaning.” Its final
+  `uncertain` concerns Bread and Salsa descendants without a meal restriction.
+  Consolidation receives only the immediate parent and offered sibling meanings,
+  so that hidden graph conflict does not by itself justify changing its wording
+  or adding ancestor/descendant inputs. Ordinary placement remains necessary.
+
+Eating C123's `canonical_contains_local` answer for Meals is a possible further
+parent relationship, not a missing child. Canonical Cookware elsewhere remains
+a later equivalence/placement check. Neither accepted screen establishes whole
+hierarchy quality, reliable repeats, globally optimal shaping or fewer browsing
+decisions after actual insertion. Only the first-draw definitions were compared;
+the separately generated repeat definitions remain unvalidated.
+
+**Proposed next prompt change, not yet implemented:** organize the existing
+task-specific instructions so the final standalone meaning determines the
+complete child list, then check that same meaning against the supplied parent's
+entire scope. A recognizable shared category is insufficient if its final scope
+escapes that parent. If preserving whole child meanings makes the constraints
+incompatible, choose a different grouping or return null. Replace the relevant
+selection/output wording rather than append duplicate preservation rules; retain
+the hash-pinned shared Bootstrap clauses unchanged. Official
+[reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+supports direct instructions and clear delimiters without requesting reasoning
+traces. It does not establish this semantic fix; the revised wording would need
+fresh qualification on these controls, with complete comparison of changed
+definitions rather than reuse based on matching child IDs.
+
+Native evidence remains ignored under `target/canonical-shaping-selection-v1/`:
+`consolidation-v3-expanded-compare-v75-v1`, its source-bound receipts, and
+`consolidation-v3-expanded-compare-report-v1.json`. This stage reports **98,643
+input tokens**, zero cache reads/writes, and **16,278 output tokens including
+3,215 reasoning tokens**. Complete API-equivalent catalog cost is **$0.360066**.
+The [combined usage selection](shr_single_pair/hierarchy-consolidation-v3-expanded-validation-usage-v1.json)
+reproduces `consolidation-v3-expanded-validation-usage-v1.json` through native
+`summarize-experiments`: the fourteen proposal draws plus forty comparisons total
+**54 fresh attempts**, **117,783 input**, **20,145 output including 6,306 reasoning**,
+and **$0.437016**. Usage is complete with zero reuses, warmups, failures, retries
+or missing token/cost estimates. These are API-equivalent catalog amounts, not
+subscription invoices; reasoning is already counted in output.
+
+Expected roles remain outside model input. A compatible selected edge requires
+`local_contains_canonical`; the supplied parent requires
 `canonical_contains_local`. An omitted sibling returned as
 `local_contains_canonical` or `equivalent` needs review against consolidation's
 include-all requirement. An uncertain branch judgment alone does not establish
-a consolidation-wording failure. No graph, prompt text, UI or other agent's
-worktree changed, and no agent message was sent.
+a consolidation wording failure. Twenty-four production-adapter, shared assembly
+and revision checks pass; assembly reconstruction preserves approved v3 bytes.
+No graph, prompt text, UI or other agent's
+worktree changed, and no agent message was sent. The results and maintained
+findings remain isolated in this task worktree as requested.
