@@ -78,7 +78,12 @@ peak CUDA allocation, and includes small overlapping native tests. Its remaining
 two disagreements are one reciprocal Activities versus need for padel courts family.
 Near-zero TRAIN loss with one additional held-out match after epoch one is a
 development learning observation, not proof of a size plateau or a final ranking.
-Kev27 task results remain pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+Kev27's baseline is **40/46**; its first fit stops after 115 updates before a
+saved epoch. A native regression reproduces the fitter rejecting a valid finite
+zero-loss/zero-gradient example. The corrected check retains numerical failure
+checks and records their exact case/loss/norm; its regressions pass. A separate
+run remains necessary to identify the original cause and measure Kev's learned
+task result. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`

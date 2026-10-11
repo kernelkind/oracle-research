@@ -106,8 +106,9 @@ the first-checkpoint and complete-training snapshots remain preserved.
 
 Qwen27 Compare, both Bootstrap pilots and input-only Ettin Compare have
 completed fitting and fresh-process verification of both checkpoints. Kev27
-Compare is now running (PID 1872496). The verified queue shell is PID
-1529676 (coordinator 1529675), with its source-bound local receipt at
+Compare stopped after 115 updates, before a saved epoch, on the loss/gradient
+check. Its failure remains preserved; a separately bound corrected run is
+pending. The original queue shell was PID 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
 and stops the sequence on error; there is no overwrite or automatic retry.
@@ -319,8 +320,29 @@ The completed report is `compare-pilot-qwen27b-complete-report-v2.json`, SHA-256
 `cebb21ee2c9b7686e93e577934e0e5a7ff355e06ea5317e8bbd01942b98ea5a2`.
 Source/config/data bindings and all metrics match the preserved training report;
 verification changes only completion, reload status and its process identity.
-Kev27 task results remain pending. Bootstrap's pilot student target is the
-confirmed single `meaning` field, with null allowed.
+Kev27's published baseline matches **40/46**, including **38/44 nonidentity**
+cases and **10/16 containment decisions**. Its first learning run stops after
+115 updates on `nonfinite loss/gradient or zero pilot gradient`, before saving
+a checkpoint. The original report does not distinguish those conditions, so
+it does not establish numerical instability or a learned-model result. The
+preserved report is `compare-pilot-kev27b-failed-report-v1.json`, SHA-256
+`9e4a450b4ff0fbc5d5f80d742076aa024db5128e6d914716b54914c6db703b4e`.
+
+A native production-path regression reproduces an incorrect rejection of a
+confident correct example whose loss and gradient both round to zero. The
+fitter now counts these finite zero-loss updates, retaining rejection of
+nonfinite values and zero gradients with nonzero loss. Rejected updates record
+their case IDs, loss and gradient norm. The regression verifies successful
+training/fresh reload and both retained failure checks in 8.90 seconds. Existing
+native encoder, causal and pointer fit/reload regressions also pass with the
+corrected production code; CPU tests pass ten cases with three CUDA skips.
+The first new guard-test invocation omitted the required stage argument; its
+fixture error is preserved and corrected without another production change.
+The immutable `compare-pilot-native-test-runtime-v5` binds production SHA-256
+`8960c61a60172952eacc20da07b5ed2ab89963b04df87edb27e4b419ea0e6cdd`.
+An independent output is required to establish whether this corrects Kev's
+actual failure; no failure is overwritten or silently resumed. Bootstrap's
+pilot student target remains the confirmed single `meaning` field, null allowed.
 
 The encoder can also be tested with `input_format: "input_json"`: it takes the
 complete original `INPUT_JSON` from the hash-bound native collection, keeping
