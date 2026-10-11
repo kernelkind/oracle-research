@@ -1190,3 +1190,41 @@ Blanket uncertainty or losing useful positive controls is not a fix. Production
 Compare adoption additionally requires preserving and testing its approved
 counterexample-question/answer output contract; the diagnostic schema alone
 is not production qualification.
+
+### Completed v3 component ablation
+
+V3 completed all eight cases validly: nine fresh attempts including warmup,
+zero retries/reuses/failures/missing usage, eight cache hits. Native usage
+reports $0.0626004 API-equivalent cost; subscription incremental cash was zero.
+Source: `compare-condition-diagnostic-usage-v3.json`; native generation/review
+snapshots are under `target/compare-condition-diagnostic-v3/`.
+
+Independent review accepts seven outputs and rejects the snapshot diagnostic.
+All eight final labels are supported, and the three reciprocal pairs have no
+reversal. Both appliance positives now retain integrated components as aspects
+of the cooking equipment. This one matched draw supports testing removal of
+the component sentence; it is not a causal reliability estimate or standalone
+material/component certification. Native producer audit found no separately
+defined material or handle endpoint in this ASv6.100/B96 collection.
+
+Snapshot C001 still establishes intended human nourishment from food-preparation
+and bagel identity, without excluding animal-food-only preparation. Its valid
+meal-role failure and uncertain final relation do not cure that unsupported
+condition. V3 therefore fails the diagnostic gate. Native agent reviews preserve
+all non-review fields. The next controlled candidate replaces the own-meaning
+interpretation paragraph to distinguish kind identity from consumer/purpose
+requirements and prevent one node's definition from redefining another's words.
+
+### V4 independent-definition clarification
+
+V4 changes only the scope-establishment sentence: each node is interpreted
+independently; its definition does not redefine words inside another meaning;
+customary consumers or uses impose no extra requirements. This tests the
+remaining consumer-purpose inference while retaining all v3 rules and the
+same two-field diagnostic schema. Run the exact initial eight, cap 17 attempts.
+A pass requires supported C001 checks, not just its already-correct uncertain
+label, and retention of both appliance and isolated Bread positives. Then
+run the remaining seven (cap 15) and a fresh repeat of the initial eight (cap 17),
+followed by the full 102 frozen panel. All stage caps are subordinate to the
+persistent 20,000 allowance. An initial failure instead triggers a new controlled
+edit under the user's autonomous instruction. No producer meanings change.
