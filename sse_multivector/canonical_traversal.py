@@ -14,7 +14,7 @@ from . import canonical_trial as trial
 from . import experiment as workflow
 from .canonical_graph_search import GraphSearch, RELATIONS
 from .hierarchy_node_pairs import project_fixed_meanings
-from .canonical_continuation import _failure_receipts, _producer_hold
+from .canonical_receipts import _failure_receipts, _producer_hold
 
 
 POLICY = 'traversal-v24'
@@ -199,7 +199,7 @@ def _search_work(directory, state, slot):
                 return True, {}
             slot['cache'][workflow.inputs.digest(record['inputs'][answer['id']])] = deepcopy(answer)
     inputs = {}
-    search = GraphSearch(slot['snapshot'], policy=POLICY)
+    search = GraphSearch(slot['snapshot'])
     values = {}
     while search.candidates():
         ready = search.candidates()
@@ -495,7 +495,7 @@ def prepare(spec_path, directory, history_root=None):
         sources.update({str(path): trial._hash(path), str(prompt): trial._hash(prompt)})
         state[field] = value
     for name in ('canonical_traversal.py', 'canonical_graph_search.py', 'canonical_trial.py',
-                 'hierarchy_node_pairs.py', 'canonical_continuation.py', 'experiment_inputs.py',
+                 'hierarchy_node_pairs.py', 'canonical_receipts.py', 'experiment_inputs.py',
                  'experiment_extension.py'):
         path = Path(__file__).with_name(name).resolve()
         sources[str(path)] = trial._hash(path)

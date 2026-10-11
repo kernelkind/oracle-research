@@ -20,12 +20,23 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(result.returncode == 0, ok, result.stderr+result.stdout)
         return result
 
-    def prepare(self, count=4, extra_root=False):
+    def test_shared_launcher_has_one_constructor_without_retired_alternatives(self):
+        help_text = self.cli('--help').stdout
+        self.assertIn('prepare-canonical-traversal', help_text)
+        self.assertIn('advance-canonical-traversal', help_text)
+        for retired in ('prepare-canonical-trial', 'fork-canonical-trial',
+                        'prepare-canonical-child-trial', 'advance-canonical-trial',
+                        'continue-canonical-trial', 'prepare-canonical-selection-trial'):
+            with self.subTest(command=retired):
+                self.assertNotIn(retired, help_text)
+
+    def prepare(self, count=4, extra_root=False, notes=None):
         self.prompt.write_text('GENERIC PROMPT {INPUT_JSON}')
         subjects = lambda i: [dict(number='1', subject=f'Root {i}', context='Original role'),
                               dict(number='1.1', subject=f'Child {i}', context='Narrower role')]
-        notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=subjects(i))
-                 for i in range(count)]
+        if notes is None:
+            notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=subjects(i))
+                     for i in range(count)]
         if extra_root:
             notes[0]['subjects'].append(dict(number='2', subject='Second root', context='Other'))
         self.write('notes.json', dict(schema_version=1, notes=notes))
@@ -179,6 +190,10 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(len(state['nodes']), 7)
         self.assertEqual([len(c['siblings']) for c in state['consolidations']], [6, 7])
         self.assertEqual([c['outcome'] for c in state['consolidations']], ['null', 'null'])
+        audit = json.loads(self.cli('audit-canonical-trial', 'trial', '--output', 'audit.json').stdout)
+        self.assertTrue(audit['structural_constraints_met'])
+        report = json.loads((self.root/'audit.json').read_text())
+        self.assertEqual(report['choice_warnings'], [dict(kind='too_many_roots', count=7)])
         before = len(fixtures.ExperimentTests.calls(self))
         self.advance()
         self.assertEqual(len(fixtures.ExperimentTests.calls(self)), before)
@@ -273,6 +288,100 @@ class CanonicalTraversalTests(unittest.TestCase):
         (self.root/'notes.json').write_bytes(original+b'\n')
         self.cli('advance-canonical-traversal', 'trial', '--comment', 'Must reject', ok=False)
         self.assertEqual((self.root/'trial/state.json').read_bytes(), before)
+
+    def test_failed_native_meaning_is_held_and_failure_receipt_cannot_be_tampered(self):
+        self.prepare(count=2)
+        experiment = self.state()['experiments'][0]['experiment']
+        self.cli('run', experiment, env={'FAKE_RUNNER_FAIL_STAGE':'prompt'}, ok=False)
+        record = Path(experiment)/'run/results.jsonl'
+        saved = record.read_bytes()
+        state_bytes = (self.root/'trial/state.json').read_bytes()
+        rows = [json.loads(line) for line in saved.splitlines()]
+        rows[0]['stderr'] = 'Changed failure bytes'
+        record.write_text(''.join(json.dumps(row)+'\n' for row in rows))
+        self.cli('advance-canonical-traversal', 'trial', '--comment', 'Reject changed receipt', ok=False)
+        self.assertEqual((self.root/'trial/state.json').read_bytes(), state_bytes)
+        record.write_bytes(saved)
+        self.advance()
+        step = self.state()['steps'][0]
+        self.assertEqual(step['status'], 'held')
+        self.assertEqual(step['before'], step['after'])
+
+    def test_new_parent_cannot_change_a_settled_neither_relationship(self):
+        self.prepare(count=3)
+        for _ in range(12):
+            state = self.state()
+            if len(state['steps']) >= 3:
+                break
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                note = record['local']['note_id']
+                for identifier in record['inputs']:
+                    value = dict(meaning='Meaning '+note)
+                    if record['role'] == 'comparison':
+                        value.update(reason='Controlled graph fixture', relation=(
+                            'canonical_contains_local' if identifier == 'C001'
+                            else 'local_contains_canonical') if note == 'n2' else 'neither')
+                    self.cli('run', record['experiment'], '--only', identifier, env={
+                        'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(value)})
+            self.advance()
+        state = self.state()
+        self.assertEqual(len(state['steps']), 3)
+        step = state['steps'][2]
+        self.assertEqual(step['status'], 'held')
+        self.assertEqual(step['before'], step['after'])
+        witness = step['settled_relation_contradiction']
+        self.assertEqual((witness['source'], witness['other']), ('C002', 'C001'))
+        self.assertEqual(witness['previous_relation'], 'neither')
+        self.assertEqual(witness['current_relation'], 'canonical_contains_local')
+
+    def test_finished_graph_remains_usable_by_saved_review_and_shaping_tools(self):
+        self.prepare(count=3)
+        state = self.finish()
+        self.assertEqual(state['status'], 'complete')
+        source_bytes = (self.root/'trial/state.json').read_bytes()
+        shown = json.loads(self.cli('export-canonical-viewer', 'trial', '--output', 'view').stdout)
+        self.assertEqual(shown['note_count'], 3)
+        originals = json.loads((self.root/'view/notes.json').read_text())['notes']
+        self.assertEqual([n['text'] for n in originals], [f'Original post {i}' for i in range(3)])
+        self.write('shape.json', dict(schema_version=1, trial='trial',
+            roots=[n['id'] for n in state['nodes']], children={}))
+        self.cli('shape-canonical-trial', '--source', 'shape.json', '--output', 'shaped')
+        shaped = json.loads((self.root/'shaped/state.json').read_text())
+        self.assertEqual(shaped['nodes'], state['nodes'])
+        self.assertEqual((self.root/'trial/state.json').read_bytes(), source_bytes)
+
+
+def saved_traversal_fixture(test, *, equivalent=False):
+    """Create reviewed graph evidence through the standalone native constructor."""
+    notes = [dict(note_id='n1', text='First post', subjects=[
+        dict(number='1', subject='Cooking', context='Using heat'),
+        dict(number='1.1', subject='EXCLUDED CHILD', context='Child')]),
+        dict(note_id='n2', text='Second post', subjects=[
+            dict(number='2', subject='Food', context='Intended for cooking')]),
+        dict(note_id='n3', text='Third post', subjects=[
+            dict(number='3', subject='Ingredients', context='Cooking role')])]
+    CanonicalTraversalTests.prepare(test, notes=notes)
+    meanings = dict(n1='Fixed cooking meaning', n2='Fixed food meaning', n3='Independent meaning')
+    for _ in range(12):
+        state = CanonicalTraversalTests.state(test)
+        if len(state['steps']) >= 3:
+            return state
+        for record in state['experiments']:
+            if 'answers' in record:
+                continue
+            if record['role'] == 'meaning':
+                value = dict(meaning=meanings[record['local']['note_id']])
+            else:
+                note = record['local']['note_id']
+                value = dict(meaning=meanings[note], reason='Controlled graph fixture',
+                    relation=('equivalent' if equivalent else 'canonical_contains_local')
+                             if note == 'n2' else 'neither')
+            test.cli('run', record['experiment'], env={
+                'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(value)})
+        CanonicalTraversalTests.advance(test)
+    test.fail('native fixture did not process its three roots')
 
 
 if __name__ == '__main__':

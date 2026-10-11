@@ -113,9 +113,7 @@ def apply_review_hold(row, review):
 
 def graph_selection(frame):
     """Traverse using reached saved answers; leave missing comparisons pending."""
-    mapped_parent = frame['step'].get('mapped_parent')
-    search = GraphSearch(frame['rows'], eligible=frame['eligible'],
-                         required=() if mapped_parent is None else (mapped_parent,))
+    search = GraphSearch(frame['rows'])
     while search.candidates():
         available = {k: frame['known'][k]['parsed']['relation']
                      for k in search.candidates() if k in frame['known']}

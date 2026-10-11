@@ -161,20 +161,8 @@ class HierarchyNodePairsTests(unittest.TestCase):
         return source
 
     def saved_trial_source(self):
-        from sse_multivector import test_canonical_trial as roots_fixtures
-        roots_fixtures.CanonicalTrialTests.setup_trial(self, schema_version=2)
-        state_path = self.root / 'trial/state.json'
-        for case, value in (
-                ('bootstrap', {'meaning': 'Fixed cooking meaning'}),
-                ('C001', {'meaning': 'Fixed food meaning', 'relation': 'canonical_contains_local',
-                          'reason': 'Contained fixture'}),
-                ('C001', {'meaning': 'Independent meaning', 'relation': 'neither',
-                          'reason': 'Independent fixture'})):
-            state = json.loads(state_path.read_text())
-            self.cli('run', state['experiment'], env={
-                'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
-            self.cli('advance-canonical-trial', 'trial', '--meaning-case', case,
-                     '--comment', 'Reviewed fixture')
+        from sse_multivector.test_canonical_traversal import saved_traversal_fixture
+        saved_traversal_fixture(self)
         source = {'schema_version': 2, 'corpus': 'notes.json',
                   'canonical_states': {'current': {'trial': 'trial/state.json'}},
                   'pairs': [{'id': 'one', 'local': {'note_id': 'n1', 'number': '1.1'},
@@ -191,6 +179,7 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.saved_trial_source()
         state_path = self.root / 'trial/state.json'
         before = state_path.read_bytes()
+        native_calls = len(self.calls())
         self.prepare()
         cases = self.show()['cases']
         food = json.loads(cases[0]['inputs']['INPUT_JSON'])['canonical']
@@ -206,7 +195,7 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual(plan['sources'][str(state_path)], hashlib.sha256(before).hexdigest())
         self.assertNotIn('trial/state.json', cases[0]['prompt'])
         self.assertIn('canonical_trial', cases[0]['evidence'])
-        self.assertEqual(len(self.calls()), 4)
+        self.assertEqual(len(self.calls()), native_calls)
 
     def test_saved_trial_reference_requires_same_corpus_and_unchanged_sources(self):
         source = self.saved_trial_source()

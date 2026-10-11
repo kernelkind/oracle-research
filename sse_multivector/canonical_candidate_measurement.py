@@ -7,12 +7,12 @@ from pathlib import Path
 try:
     from . import canonical_trial as trial
     from . import experiment as workflow
-    from .canonical_continuation import _failure_receipts
+    from .canonical_receipts import _failure_receipts
     from .canonical_candidate_selection import evaluate_snapshots
 except ImportError:
     import canonical_trial as trial
     import experiment as workflow
-    from canonical_continuation import _failure_receipts
+    from canonical_receipts import _failure_receipts
     from canonical_candidate_selection import evaluate_snapshots
 
 

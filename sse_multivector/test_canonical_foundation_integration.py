@@ -30,7 +30,7 @@ class CanonicalFoundationIntegrationTests(unittest.TestCase):
         return result
 
     def test_canonical_preparation_command_checks_source_without_inference(self):
-        result = self.cli('prepare-canonical-trial', 'trial',
+        result = self.cli('prepare-canonical-traversal', 'trial',
                           '--spec', 'missing-trial.json', ok=False)
         self.assertNotIn('invalid choice', result.stderr)
         self.assertIn('missing-trial.json', result.stderr)
@@ -57,7 +57,7 @@ class CanonicalFoundationIntegrationTests(unittest.TestCase):
             post='Participants left comment slips. Components are packed.',
             hierarchy=dict(selected='1.1', entries=entries[:2]))))
         plan = json.loads((self.root / 'prepared/experiment.json').read_text())['plan']
-        for name in ('canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py'):
+        for name in ('canonical_trial.py', 'canonical_receipts.py', 'hierarchy_node_pairs.py'):
             path = PROJECT / 'sse_multivector' / name
             self.assertEqual(plan['code'][name], hashlib.sha256(path.read_bytes()).hexdigest())
         self.assertEqual(self.calls(), [])
