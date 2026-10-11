@@ -1636,6 +1636,15 @@ charges are unknown. Sol/xhigh/SSE and automatic queue admission stay fixed;
 the 76-token prefix is ineligible and no cache hits occur. DSLv10 remains
 experimental; matching/support Nostr questions, broader regression and
 lower-effort testing remain pending.
+The subsequent [Nostr source audit](distillation-review-v1/README.md#nostr-relationship-source-audit-october-11)
+preserves one matching and two support cases natively with exact source inputs
+and saved baselines; all three new candidates remain unrun. Initial input-only
+assessments favor the existing `null / false / false` outputs, but an independent
+challenge finds defensible contextual network/community readings. Native
+retrospective comments preserve both assessments rather than replacing the
+original unresolved labels. No definite error or prompt defect is established;
+zero model calls, prompt changes or source-label changes follow. Further checks
+must preserve those uncertainties separately from resolved accuracy counts.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
