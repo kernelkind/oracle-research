@@ -4,6 +4,8 @@
     "candidate_core": ["../../target/compare-v176-justification-first-screen-v1/candidate/core"],
     "candidate_controls": ["../../target/compare-v176-justification-first-screen-v1/candidate/controls"],
     "baseline_core": ["../../target/compare-v176-justification-first-screen-v1/baseline/core"],
-    "baseline_controls": ["../../target/compare-v176-justification-first-screen-v1/baseline/controls"]
+    "baseline_controls": ["../../target/compare-v176-justification-first-screen-v1/baseline/controls"],
+    "contract_candidate_core": ["../../target/compare-v176-justification-first-contract-v2/core"],
+    "contract_candidate_controls": ["../../target/compare-v176-justification-first-contract-v2/controls"]
   }
 }

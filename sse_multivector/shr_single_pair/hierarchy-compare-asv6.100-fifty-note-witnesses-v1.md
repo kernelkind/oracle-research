@@ -4396,3 +4396,23 @@ hypothesis remains separate; no manual input artifacts or serialization APIs wer
 added for this screen. ASv6.100/Bootstrap-v96 meanings and producer receipts stay
 frozen. No Bootstrap generation, hierarchy work, external messages or new allowance.
 Native usage source: hierarchy-compare-v176-justification-first-screen-usage-v1.json.
+
+The first matched stage completes56 valid cases in60 attempts, including four
+warmups; no failures, retries, reuse or missing usage. Native API-equivalent
+cost is$0.5671480; counter18376/20000. All28 candidate raw responses still publish
+answer before justification. The inherited response schema also publishes those
+properties in that order. The prompt-only intervention therefore did not execute
+the intended visible order; its one core and one control reversal cannot establish
+an effect of justification-first output. This is an inconclusive manipulation,
+not a qualified candidate or measured semantic improvement.
+
+A corrected contract stage preserves the exact V176 prompt and all28 case inputs,
+evidence, hashes and producer meanings. Reusable native specs bind the same
+original fixed-meaning projection sources and reorder only the answer schema's
+properties and required list. Property definitions and validation requirements
+are unchanged. Preparation uses those specs and the fresh matched V173 baseline,
+without code changes or manual case artifacts. A fresh candidate draw requires
+28 comparisons plus two warmups,30 attempts absent retries. Inspect raw output
+order before interpreting the semantic results; retained order failure makes
+this diagnostic inconclusive. The cumulative usage definition preserves both
+stages rather than hiding the unsuccessful manipulation.
