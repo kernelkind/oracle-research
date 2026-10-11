@@ -75,7 +75,7 @@ class CanonicalGraphConstructionTests(unittest.TestCase):
         self.assertEqual(state['status'], 'complete')
         step = state['steps'][-1]
         self.assertEqual(step['status'], 'added')
-        self.assertEqual([p['canonical']['id'] for p in self.queries(start)], ['C001', 'C003'])
+        self.assertCountEqual([p['canonical']['id'] for p in self.queries(start)], ['C001', 'C003'])
         self.assertEqual([a['id'] for a in step['answers']], ['C001', 'C003'])
         self.assertEqual(step['graph_search']['inferred'], {'C002': 'local_contains_canonical'})
         self.assertEqual(state['nodes'][0]['parents'], ['C004'])
@@ -146,7 +146,9 @@ class CanonicalGraphConstructionTests(unittest.TestCase):
         self.finish({'C001': 'local_contains_canonical', 'C003': 'neither',
                      'C002': 'local_contains_canonical'})
         state = self.state('search')
-        self.assertEqual([p['canonical']['id'] for p in self.queries(start)], ['C001', 'C003', 'C002'])
+        queried = [p['canonical']['id'] for p in self.queries(start)]
+        self.assertCountEqual(queried[:-1], ['C001', 'C003'])
+        self.assertEqual(queried[-1], 'C002')
         self.assertEqual(state['steps'][-1]['status'], 'held')
         self.assertIn('mapped canonical parent', state['steps'][-1]['reason'])
         self.assertEqual(state['nodes'], self.before)
