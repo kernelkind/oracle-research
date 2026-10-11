@@ -281,7 +281,9 @@ remain open.
 The current approved [prompt-development process](../../sse_multivector/distillation-review-v1/README.md#case-level-prompt-development-approved-october-10)
 starts each changed prompt on 12–16 distinct complete review inputs, including
 known failures, correct controls and earlier regressions. Once those pass, check
-further cases and the fixed ten-note workflow; reserve the original 50 random
+further cases and the
+[four-note workflow](../../sse_multivector/distillation-review-v1/README.md#regression-scope-reduced-to-four-notes-october-11);
+reserve the original 50 random
 plus ten challenge answers for very final validation. The DSLv4 ten-note run
 has finished generation unchanged; its raw native report precedes audit reviews.
 The [DSLv5 definition and counterexample revision](../../sse_multivector/distillation-review-v1/README.md#dslv5-definition-and-counterexample-draft-october-10)
@@ -341,7 +343,7 @@ targets or prior reviews. This passes the development panel, not unseen accuracy
 or production adoption. The run takes 64.714 seconds with no retries or reuse;
 the 76-token prefix is ineligible, so no caching or warming is used. Three new
 preparation tests pass; broader failures reproduce on unchanged code. Native
-bulk-runner migration and the fixed ten-note regression remain prerequisites.
+bulk-runner migration and the four-note regression remain prerequisites.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
