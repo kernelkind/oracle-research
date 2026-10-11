@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v164_core": [
+      "../../target/compare-v164-uncommon-variant-screen-v1/core"
+    ],
+    "v164_controls": [
+      "../../target/compare-v164-uncommon-variant-screen-v1/controls"
+    ]
+  }
+}
