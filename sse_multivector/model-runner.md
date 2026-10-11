@@ -1342,11 +1342,12 @@ Use these offline commands after construction:
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved finished-menu requirements are all notes reachable,
-strictly smaller note sets on every downward edge, and no known valid improvement
-that reduces browsing decisions while preserving those constraints. Manage root
-and child choice counts on a best-effort basis; exceeding six is no longer a
-reason by itself to declare the hierarchy unfinished. The
+note IDs. The approved stopping conditions are all notes reachable individually
+and strictly smaller note sets on every downward edge. There is no additional
+requirement to find or apply every known regrouping or shortcut, or to conduct a
+final improvement review before stopping. Manage root and child choice counts
+on a best-effort basis; exceeding six is no longer a reason by itself to declare
+the hierarchy unfinished. The
 [traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
 addition leaves six or more siblings. Existing workflow code and frozen audit
 bounds remain unchanged, so saved sibling-limit violations still describe their
