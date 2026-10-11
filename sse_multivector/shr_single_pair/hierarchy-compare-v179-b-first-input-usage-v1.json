@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "saved_v179_baseline": [
+      "../../target/compare-v179-examples-ablation-v2/v179-pair-01",
+      "../../target/compare-v179-examples-ablation-v2/v179-controls-01",
+      "../../target/compare-v179-examples-ablation-v2/v179-pair-02",
+      "../../target/compare-v179-examples-ablation-v2/v179-controls-02"
+    ],
+    "v179_b_first_input": [
+      "../../target/compare-v179-b-first-input-v1/pair-01",
+      "../../target/compare-v179-b-first-input-v1/controls-01",
+      "../../target/compare-v179-b-first-input-v1/pair-02",
+      "../../target/compare-v179-b-first-input-v1/controls-02"
+    ]
+  }
+}

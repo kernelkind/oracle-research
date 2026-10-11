@@ -427,6 +427,14 @@ is 0.70 percentage points and full-output loss is 2.11 points. This partial,
 exposed panel does not qualify high. Prompts and mechanical rules remain fixed;
 minimum reasoning effort, reviewer qualification and final-sixty validation
 remain open.
+The unchanged xhigh development regression subsequently finishes on
+[24 notes from the agreed sixty](../../sse_multivector/distillation-review-v1/README.md#dslv10-twenty-four-note-regression-october-11),
+retaining the previous eight and adding sixteen structurally valid random
+answers. Native parallel evaluations retain all three checks, mechanical rules,
+stopping and eligible-prefix caching. Three agents audit 1,621 complete output
+versions, confirming three support errors and keeping 45 uncertainties separate.
+All 423 prepared mechanical proofs reproduce in production. Qualification and
+minimum reasoning effort remain open; the sixty remain the final validation.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain the baseline; lower-effort qualification

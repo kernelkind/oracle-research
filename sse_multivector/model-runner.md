@@ -1293,6 +1293,11 @@ validation. No saved LG01 output is rewritten.
 
 ### Canonical hierarchy construction
 
+Give each hierarchy run a specific, unique version identifier and use it in
+reports and comparisons. Link it to the exact hierarchy output and the frozen
+inputs, prompt/model settings, construction policy and native receipts used to
+generate it. The naming format remains open.
+
 The native canonical workflow is available through the shared launcher. Oracle
 owns input adapters, construction, comparison selection, menu shaping and
 inspection; the sibling experiment-runner continues to own execution, retries,
@@ -1844,6 +1849,25 @@ subset; both failed attempts lack usage, so full cost and savings are unknown.
 The final history audit preserves R01's valid first success and registers only
 the missing recovered R05 original ledger line through production
 `RequestHistory.remember`. No frozen output or production code changes.
+
+The user subsequently expands unchanged xhigh development to
+[24 notes within the frozen sixty](distillation-review-v1/README.md#dslv10-twenty-four-note-regression-october-11).
+Retain the previous eight and add the next sixteen structurally valid random
+answers. Native per-note evaluations run alongside three eight-note evaluations
+to fill the shared 30-request queue; complete inputs, prompts and settings,
+including cache prefixes, are verified against the full preparation before
+calls. Verified request history is enabled; repeated fresh receipts remain
+accounted for. Three agents audit separate note assignments during generation.
+All 24 notes finish, with zero-new-call full assembly after one genuine missing
+history receipt is registered through production validation. The complete
+1,621-version audit confirms three support errors and retains 45 uncertainties.
+Native accounting reconciles 1,004 local attempts with the shared counter
+(delta zero); all eleven transport failures recover and no invalid receipts
+remain. Known cached input share is 13.93%, using cached input divided by
+uncached plus cached input. Known local catalog estimate is $13.1383; eleven
+failed attempts lack usage, so complete cost and net savings remain unknown.
+Reviewer qualification and minimum reasoning effort remain open.
+
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
@@ -6943,8 +6967,8 @@ with an unresolved failure. A directional evaluation-order diagnostic is
 proposed, not begun. See the
 [completed qualification and review limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v181-qualification).
 
-The subsequent authorized [V182](shr_single_pair/Hierarchy-compare-v182.md)
-diagnostic starts from V179 and changes only requested directional evaluation
+The subsequent authorized experiment tested [V182](shr_single_pair/Hierarchy-compare-v182.md).
+This diagnostic starts from V179 and changes only requested directional evaluation
 and report order, with corresponding reordering of its existing synthetic
 example diagnostics. Symmetric A/B subjects/meanings, semantic rules and schema
 remain fixed. Twenty fresh comparisons inherit the saved V179 five-pair panel,
@@ -6952,3 +6976,50 @@ both orientations and two draws. Report-order compliance is measured separately
 from semantic support; internal reasoning order is not observable. No Bootstrap
 or hierarchy work occurs. See the
 [V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).
+
+The completed V182 diagnostic follows B-first question/answer ordering in all
+20 responses but leaves both Stockpots forward errors in the same A/B
+orientation. Independent review supports 17/20 responses, versus saved V179's
+18/20; native reporting finds three versus two reversal conflicts across five
+pairs repeated twice. One Fasting forward draw adds a person restriction absent
+from its fixed meaning. The Stockpots error does not move with report order;
+internal evaluation order is unobservable. V182 is not adopted or broadened;
+the symmetric A/B development line and V179 baseline remain. Twenty fresh valid
+attempts use $0.179492 in native API-equivalent catalog usage, with zero reuse,
+warming, retry, failure or missing usage. See the
+[completed V182 evidence and review qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v182-order-diagnostic).
+
+The next authorized Compare diagnostic preserves V179 prompt bytes/ID/schema
+and all fixed A/B subjects/meanings, changing only top-level JSON presentation
+to B then A. Native prepared `hierarchy_node_pairs` sources accept optional
+`input_order: ["B", "A"]` with `input_view: "symmetric_fixed_meanings"`, including
+reprojection of a pinned already symmetric experiment. Original source input
+and producer evidence remain intact; no-option preparation preserves existing
+order. Other views and malformed orders are rejected. Production-path failing
+then passing checks cover CLI preparation, source pins and unchanged consistency.
+This is input-presentation diagnostic v1, not a revised prompt or adopted policy.
+The 20 planned fresh comparisons retain disabled explicit warming, shared native
+scheduling and the persistent attempt counter. See the
+[pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-b-first-input-presentation-diagnostic).
+
+The completed B-first input diagnostic has 20 fresh valid answers, no reuse,
+warming, retry or failure, and $0.161408 native API-equivalent catalog cost.
+Independent attributed review supports 18/20 responses, with two reversal
+conflicts, matching saved V179's counts. Both Stockpots errors move from forward
+to reverse: the unsupported meal-purpose inference follows Cookware being the
+physically first input member rather than its A/B name. All 16 controls pass.
+Actual request bodies differ from the saved baseline only by input member order;
+all outputs still report A's coverage first. Saved-versus-fresh sampling/time
+confounds prevent a causal claim, and internal reasoning order is unobservable.
+Reordering is not adopted because it relocates the error without reducing it.
+See [completed evidence, integrity checks and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-b-first-input-diagnostic).
+
+The next authorized Compare experiment is
+[Hierarchy-compare-v183](shr_single_pair/Hierarchy-compare-v183.md), a native V179
+revision adding one independent synthetic coating-tool example that distinguishes
+function from required design purpose. Instructions, old examples, symmetric
+A/B scopes and the V179 schema remain unchanged. Twenty planned fresh original
+panel requests plus four B-first Stockpots requests test whether the example
+repairs rather than relocates the failure. Fixed ASv6.100/Bootstrap-v96 producer
+evidence, disabled explicit warming and the persistent counter are preserved.
+See the [pre-call design, scaling and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v183-synthetic-function-and-purpose-example).
