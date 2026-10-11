@@ -982,6 +982,18 @@ $1.0366524. Neither is an incremental subscription cash charge; reasoning is
 already included in output. The persistent shared 20,000-attempt counter is
 not reset and includes other agents' work.
 
+Offline verification passes all 66 production-path hierarchy-node tests,
+source JSON validation, native receipt/review digest checks and the two
+shaping-nomination tests affected by synchronization with current main.
+The broader combined hierarchy/experiment suite runs 217 tests and reports
+28 failures and six skips. Its experiment checks include obsolete concurrency
+configuration, scheduler/upgrade expectations and unsupported legacy review
+flags; one plain-Python check also lacks `tiktoken`. Three representative
+failures reproduce on unchanged main with `tiktoken` available: dollar-budget
+concurrency, exponential-backoff expectations and explicit execution-upgrade
+expectations. These offline fixtures make no teacher calls. This qualification
+does not repair the broader runner suite or claim it passes.
+
 The panel does not qualify v105 as a complete solution. The next useful work is
 a focused diagnostic on kind-level versus application-specific purpose and
 named-hashtag identity, using fixed original inputs and fresh disputed-endpoint
