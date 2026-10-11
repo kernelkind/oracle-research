@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v3
+# Hierarchy selection by traversal — draft v4
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -72,11 +72,35 @@ branch remains unsearched, continue there. If Morning food returns
 rather than creating a second canonical node. Placement still goes through the
 existing constructor checks.
 
+### Local contains canonical
+
+**`local_contains_canonical` stops descent at the contained canonical node.
+Continue searching other branches.**
+
+Record the canonical node as a proposed child of the local node. The local
+also contains that canonical node's descendants by transitivity, so skip those
+comparisons. Reuse this known relationship if a descendant is reached through
+another branch.
+
+For example, suppose the existing graph is:
+
+```text
+Food
+├── Breakfast (C3)
+│   └── Pancake breakfasts (C4)
+└── Dinner (C5)
+```
+
+The incoming local node is Meals. If Meals contains Breakfast, record
+Breakfast as a proposed child. Skip comparing with Pancake breakfasts: Meals
+contains it through Breakfast. Continue with Dinner and other remaining
+branches.
+
 ## Proposed walk
 
-The `neither`, shared-node and equivalence rules above are agreed. The other
-steps below carry forward the current traversal behavior as a starting point
-for further discussion.
+The `neither`, shared-node, equivalence and `local_contains_canonical` rules
+above are agreed. The other steps below carry forward the current traversal
+behavior as a starting point for further discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
