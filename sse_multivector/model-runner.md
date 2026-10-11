@@ -1350,7 +1350,10 @@ validation. No saved LG01 output is rewritten.
 Give each hierarchy run a specific, unique version identifier and use it in
 reports and comparisons. Link it to the exact hierarchy output and the frozen
 inputs, prompt/model settings, construction policy and native receipts used to
-generate it. The naming format remains open.
+generate it. Saved versions and recorded parameters are collected in the
+[hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md). Refresh
+it with `catalogue-hierarchies` after saving an output, and report its `H0001`-style
+ID when discussing or comparing hierarchies.
 
 The standalone canonical constructor is available through the shared launcher.
 Oracle owns construction, comparison selection, consolidation and inspection;
