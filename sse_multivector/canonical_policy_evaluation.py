@@ -11,7 +11,7 @@ import tempfile
 
 from . import canonical_trial as trial
 from . import experiment as workflow
-from .canonical_continuation import _failure_receipts
+from .canonical_receipts import _failure_receipts
 from .canonical_hierarchy_audit import audit_trial
 from .canonical_hierarchy_shape import shape_trial
 

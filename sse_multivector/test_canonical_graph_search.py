@@ -1,6 +1,5 @@
 """Exercise the selector used by saved-comparison evaluation and native callers."""
 import unittest
-from itertools import combinations
 
 from sse_multivector.canonical_graph_search import GraphSearch
 
@@ -10,44 +9,42 @@ def node(identifier, *parents):
 
 
 class CanonicalGraphSearch(unittest.TestCase):
-    def test_v24_neither_stops_only_that_branch_and_keeps_unknowns_unknown(self):
+    def test_neither_stops_only_that_branch_and_keeps_unknowns_unknown(self):
         search = GraphSearch([node('Food'), node('Other'), node('Meals', 'Food'),
-                              node('Breakfast', 'Meals', 'Other')], policy='traversal-v24')
+                              node('Breakfast', 'Meals', 'Other')])
         search.record({'Food': 'canonical_contains_local', 'Other': 'canonical_contains_local'})
         self.assertEqual(search.candidates(), ['Meals'])
         search.record({'Meals': 'neither'})
         self.assertEqual(search.candidates(), ['Breakfast'])
         search.record({'Breakfast': 'neither'})
         self.assertTrue(search.result()['complete'])
-        pruned = GraphSearch([node('Meals'), node('Breakfast', 'Meals')],
-                             policy='traversal-v24')
+        pruned = GraphSearch([node('Meals'), node('Breakfast', 'Meals')])
         pruned.record({'Meals': 'neither'})
         self.assertEqual(pruned.result()['inferred'], {})
         self.assertEqual(pruned.candidates(), [])
 
-    def test_v24_shared_descendant_waits_for_unfinished_ancestor(self):
+    def test_shared_descendant_waits_for_unfinished_ancestor(self):
         search = GraphSearch([node('A'), node('B'), node('Parent', 'A'),
-                              node('Shared', 'Parent', 'B')], policy='traversal-v24')
+                              node('Shared', 'Parent', 'B')])
         search.record({'A': 'canonical_contains_local', 'B': 'canonical_contains_local'})
         self.assertEqual(search.candidates(), ['Parent'])
         search.record({'Parent': 'local_contains_canonical'})
         self.assertEqual(search.candidates(), [])
         self.assertEqual(search.result()['inferred'], {'Shared': 'local_contains_canonical'})
 
-    def test_v24_required_parent_can_be_inferred_but_cannot_reopen_pruned_branch(self):
+    def test_required_parent_can_be_inferred_but_cannot_reopen_pruned_branch(self):
         graph = [node('Parent'), node('Mapped', 'Parent')]
-        search = GraphSearch(graph, required=['Mapped'], policy='traversal-v24')
+        search = GraphSearch(graph)
         search.record({'Parent': 'local_contains_canonical'})
         self.assertEqual(search.candidates(), [])
         self.assertEqual(search.result()['inferred'], {'Mapped': 'local_contains_canonical'})
-        pruned = GraphSearch(graph, required=['Mapped'], policy='traversal-v24')
+        pruned = GraphSearch(graph)
         pruned.record({'Parent': 'neither'})
         self.assertEqual(pruned.candidates(), [])
         self.assertEqual(pruned.result()['inferred'], {})
 
-    def test_v24_uncertain_holds_search_and_accepts_already_selected_answers(self):
-        search = GraphSearch([node('A'), node('B'), node('Child', 'A')],
-                             policy='traversal-v24')
+    def test_uncertain_holds_search_and_accepts_already_selected_answers(self):
+        search = GraphSearch([node('A'), node('B'), node('Child', 'A')])
         self.assertEqual(search.candidates(), ['A', 'B'])
         search.record({'A': 'uncertain'})
         self.assertEqual(search.candidates(), [])
@@ -56,9 +53,8 @@ class CanonicalGraphSearch(unittest.TestCase):
         self.assertEqual(search.result()['queried'], ['A', 'B'])
         self.assertEqual(search.result()['inferred'], {})
 
-    def test_v24_candidates_follow_saved_node_order_after_partial_batches(self):
-        search = GraphSearch([node('A'), node('Child', 'A'), node('B')],
-                             policy='traversal-v24')
+    def test_candidates_follow_saved_node_order_after_partial_batches(self):
+        search = GraphSearch([node('A'), node('Child', 'A'), node('B')])
         search.record({'A': 'canonical_contains_local'})
         self.assertEqual(search.candidates(), ['Child', 'B'])
 
@@ -81,12 +77,6 @@ class CanonicalGraphSearch(unittest.TestCase):
             'Breakfast': 'local_contains_canonical',
             'Pancake breakfast': 'local_contains_canonical'})
 
-    def test_neither_keeps_descendants_available_for_child_relationships(self):
-        search = GraphSearch([node('Parent'), node('Child', 'Parent')])
-        search.record({'Parent': 'neither'})
-        self.assertEqual(search.candidates(), ['Child'])
-        search.record({'Child': 'local_contains_canonical'})
-        self.assertTrue(search.result()['complete'])
 
     def test_equivalence_reuses_ancestors_and_descendants(self):
         search = GraphSearch([node('Food'), node('Meals', 'Food'),
@@ -107,36 +97,9 @@ class CanonicalGraphSearch(unittest.TestCase):
         search.record({'Ingredients': 'neither'})
         self.assertEqual(search.result()['queried'].count('Ingredients'), 1)
 
-    def test_parallel_batch_answers_remain_recordable_after_an_inference(self):
-        search = GraphSearch([node('A'), node('B'), node('Parent', 'A'),
-                              node('Shared child', 'Parent', 'B')])
-        search.record({'A': 'canonical_contains_local', 'B': 'canonical_contains_local'})
-        # Both native requests were selected before either answer returned.
-        self.assertEqual(search.candidates(), ['Parent', 'Shared child'])
-        search.record({'Shared child': 'equivalent'})
-        self.assertEqual(search.candidates(), [])
-        search.record({'Parent': 'canonical_contains_local'})
-        self.assertEqual(search.result()['queried'].count('Parent'), 1)
 
-    def test_ineligible_ancestors_do_not_hide_eligible_descendants(self):
-        search = GraphSearch([node('Excluded'), node('Eligible', 'Excluded')],
-                             eligible=['Eligible'])
-        self.assertEqual(search.candidates(), ['Eligible'])
-        search.record({'Eligible': 'neither'})
-        self.assertEqual(search.result()['queried'], ['Eligible'])
 
-    def test_required_mapped_parent_is_compared_even_if_inferred(self):
-        search = GraphSearch([node('Parent'), node('Mapped', 'Parent')], required=['Mapped'])
-        search.record({'Parent': 'local_contains_canonical'})
-        self.assertEqual(search.candidates(), ['Mapped'])
-        search.record({'Mapped': 'local_contains_canonical'})
-        self.assertEqual(search.result()['queried'], ['Parent', 'Mapped'])
 
-    def test_uncertain_makes_no_containment_inference(self):
-        search = GraphSearch([node('Parent'), node('Child', 'Parent')])
-        search.record({'Parent': 'uncertain'})
-        self.assertEqual(search.result()['inferred'], {})
-        self.assertEqual(search.candidates(), ['Child'])
 
     def test_missing_answer_remains_pending_without_becoming_neither(self):
         search = GraphSearch([node('A'), node('B')])
@@ -165,30 +128,6 @@ class CanonicalGraphSearch(unittest.TestCase):
             search.record({'A': 'unknown'})
         self.assertEqual(search.result()['queried'], [])
 
-    def test_matches_exhaustive_relationships_in_a_multiple_parent_graph(self):
-        # A finite containment graph supplies an exact oracle for selection
-        # mechanics; it makes no claims about real topic meanings.
-        sets = [frozenset(s) for size in range(1, 4)
-                for s in combinations(range(3), size)]
-        graph = [node(str(i), *(str(j) for j, parent in enumerate(sets)
-                      if child < parent and len(parent) == len(child) + 1))
-                 for i, child in enumerate(sets)]
-        for size in range(1, 5):
-            for members in combinations(range(4), size):
-                local = frozenset(members)
-                expected = {str(i): ('equivalent' if local == canonical else
-                    'canonical_contains_local' if local < canonical else
-                    'local_contains_canonical' if canonical < local else 'neither')
-                    for i, canonical in enumerate(sets)}
-                with self.subTest(local=members):
-                    search = GraphSearch(graph)
-                    answers = {}
-                    while search.candidates():
-                        batch = {k: expected[k] for k in search.candidates()}
-                        answers.update(batch)
-                        search.record(batch)
-                    self.assertEqual(dict(search.result()['inferred'], **answers), expected)
-                    self.assertEqual(len(search.result()['queried']), len(set(answers)))
 
     def test_large_contained_branch_uses_one_comparison_without_recursion(self):
         graph = [node(str(i), *([str(i - 1)] if i else [])) for i in range(5000)]

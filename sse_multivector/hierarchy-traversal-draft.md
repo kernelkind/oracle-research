@@ -1,6 +1,6 @@
 # Hierarchy selection by traversal — draft v24
 
-**Status: approved design, implemented by the opt-in `traversal-v24` workflow.**
+**Status: approved design, implemented by the standalone `traversal-v24` constructor.**
 Stopping-check timing remains provisional. Comparison prompts and previously
 frozen experiments retain their existing contracts. No live model trial of this
 implementation has been run.
@@ -54,7 +54,7 @@ represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
 The selection order and stopping conditions below are agreed. Stopping-check
-timing is provisionally approved. The opt-in implementation follows these rules.
+timing is provisionally approved. The constructor follows these rules.
 
 ## Agreed traversal rules
 
@@ -240,8 +240,8 @@ a canonical-node addition leaves six or more siblings. A `null` result or a
 rejected proposal leaves the group unchanged; a later qualifying addition can
 trigger another attempt.
 
-The opt-in workflow uses this best-effort requirement. Legacy workflows and
-saved experiment assessments retain their original choice-limit checks.
+The constructor uses this best-effort requirement. Audit reports record crowded
+groups as warnings; six is not a structural completion requirement.
 
 ## Agreed stopping conditions
 
@@ -304,7 +304,7 @@ or more nodes, call consolidation again. Repeat after successful additions
 while the trigger holds; a `null` result ends attempts for that group until a
 later qualifying addition.
 
-The opt-in workflow implements this trigger.
+The constructor implements this trigger.
 
 ## Agreed consolidation timing
 
@@ -388,7 +388,7 @@ proposal and its comparison results for review, preserve the local-node
 placement that triggered consolidation, and continue the approved timing
 sequence. Do not rewrite the synthetic meaning during validation to force fit.
 
-The opt-in workflow implements this validation policy. It
+The constructor implements this validation policy. It
 adds no separate semantic-review prompt or exhaustive comparison pass. Required
 relationships can reuse exact answers and the same transitive inferences as
 ordinary traversal.
@@ -406,11 +406,10 @@ avoid comparisons; do not exclude a reached node merely because one of its
 supporting entries has the incoming note's ID.
 
 Suppose a canonical node is supported by N001 and N063, and the incoming
-local node comes from N063. The legacy filter excludes that canonical node
-unless it is the incoming node's mapped original parent. The approved rule lets
-normal traversal establish their relationship instead.
+local node comes from N063. Normal traversal compares their fixed meanings;
+the shared source note does not exclude the canonical node.
 
-The opt-in workflow removes this exclusion.
+The constructor removes this exclusion.
 Its API cost and hierarchy effects have not been measured.
 
 ## Agreed original-parent handling
@@ -430,7 +429,7 @@ unchecked, hold the incoming local node and preserve the graph. A local root
 has no mapped-parent requirement. Synthetic proposals retain their separately
 agreed target-parent and nominated-child checks.
 
-The opt-in workflow implements this original-parent handling.
+The constructor implements this original-parent handling.
 It changes neither a supplied meaning nor a returned comparison label.
 
 ## Agreed walk
@@ -530,8 +529,8 @@ Exhausting the local inventory while a stopping condition fails reports
 `exhausted`, rather than claiming completion. The workflow does not automatically
 remove existing equal-note-set intermediates.
 
-The older `--graph-search` constructor and
-[`prepare_selection`](canonical_selective_trial.py) retain their legacy behavior
-for existing callers and frozen trials. Their historical results remain in
-[canonical-graph-search-v1.md](canonical-graph-search-v1.md). `GraphSearch` uses
-the approved rules when explicitly constructed with `policy='traversal-v24'`.
+There is one constructor and one traversal behavior. `GraphSearch(nodes)` uses
+these rules directly, without policy, eligibility or forced-comparison switches.
+The former root/child/growth, shortlist and continuation construction paths have
+been removed; their implementations remain in Git history. Shared graph checks,
+receipt validation and saved-data review tools remain available.
