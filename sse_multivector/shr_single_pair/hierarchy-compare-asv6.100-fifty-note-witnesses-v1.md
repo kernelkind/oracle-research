@@ -550,14 +550,23 @@ changed together, and neither arm was repeated. The equal count of accepted
 responses in the two qualified agent reviews likewise does not establish
 accuracy parity or improvement.
 
-The most useful next proposed experiment targets the positive-coverage shortcut
-with a controlled question/justification revision: fitting one role must not
-stand in for every alternative satisfying the parent's conditions. Keep the
-information-topic positive controls and canonical ancestor counterexample as
-contrasts, so correcting overacceptance does not reproduce blanket activity/
-material rejection. This is a hypothesis and a proposed next task, not an
-authorized edit, repeat, broader trial or claim about which wording caused the
-observed errors. Producer-boundary qualifications remain separate.
+The user authorized a focused draft, [Hierarchy-compare-v76](Hierarchy-compare-v76.md),
+against approved v75. It replaces two paragraphs in the containment diagnostic:
+questions seek an admitted child case that could fail a required parent
+condition, and positive coverage justifications must account for every admitted
+child alternative and every required parent condition. The rest of the prompt,
+including the input and five-field output contracts, remains byte-identical.
+V76 is a draft, untested and not adopted. This is a semantic hypothesis, not an
+established cause or fix for the v75 errors. Its brief diagnostic requirements
+follow [official reasoning prompt guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+on direct instructions without requested reasoning traces; that guidance does
+not validate this particular containment rule.
+
+The proposed next test checks the approved sourdough/Food and Eating/Food pairs,
+the Butter reversal, information-topic positive controls and the canonical
+ancestor counterexample. Only after that bounded check passes should the full
+102-case panel be rerun. No inference was performed while drafting v76;
+producer-boundary qualifications and the frozen v75 evidence remain separate.
 
 Read-only inspection of the exact Butter witness:
 
