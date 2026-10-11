@@ -409,3 +409,27 @@ The task code/spec worktree is
 `../oracle-mvp-graph-search-fifty-b98-c69-v1/`; retain it while source hashes and
 receipts depend on those paths. The initial unexecuted preparation under that
 task worktree's `target/` is not counted as inference. No UI has been refreshed.
+
+The baseline's fifty-root phase has completed. Its saved native root audit
+reports 35 nodes, 34 strictly narrowing edges, ten roots, nine unreachable
+notes and 30 structural violations. The native root accounting reports two
+recovered failures with missing usage; the complete cost is therefore unknown,
+and any known-subtotal comparison must retain that limitation.
+
+Once the baseline roots were complete, the graph-root continuation was started
+alongside the baseline's deeper-entry construction. It can reuse all completed
+baseline root requests; each method's graph and entry order remain independent.
+The native continuation ownership lock prevents duplicate execution when the
+coordinator later revisits the completed graph-root phase. Its separate log is
+`native-cli-logs/graph-roots-overlap.log`.
+
+The first root divergence occurs at original queue index 24, a Food entry from
+note `d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492`.
+The preceding 24-root graphs are identical. Guarded16 queries Cookware C008 and
+receives `neither`, then holds the incoming entry because another positive
+answer would imply containment along the existing canonical path. Graph search
+does not query C008: its saved traversal infers `local_contains_canonical` and
+admits the entry. Both use the same independently generated local meaning.
+This is a concrete difference in observed-versus-inferred coverage, not proof
+that either semantic interpretation is correct. Final graph quality and cost
+remain pending; matching early roots does not establish final preservation.
