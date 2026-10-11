@@ -386,9 +386,19 @@ retain missing usage as unknown. The comparison will report graph size,
 additional and avoided comparisons, held entries, note groups/routes and the
 existing six-choice/strict-narrowing audit alongside total cost.
 
-Status: input preparation and offline preflight. No fifty-note inference
-results are available yet. The first preflight ran 38 checks: 36 passed and
+Status: native automatic execution has begun; final fifty-note results are
+not available yet. The first preflight ran 38 checks: 36 passed and
 two failed solely because the shared queue changed parallel dispatch order.
 Their production-CLI assertions now allow permutation within a frontier while
 retaining the required next-frontier ordering; no selector behavior changed.
-The repeated preflight and native preparation determine readiness for execution.
+All **38 checks pass** on repetition, including native cost summaries. Both
+methods share one irreversible 32,768-attempt technical counter; an entry cap
+or attempt cap remains an incomplete construction result, not acceptance.
+No paid API fallback or rented compute is used.
+
+Native artifacts remain under
+`../oracle-mvp-canonical-graph-construction-v1/target/graph-search-fifty-b98-c69-v1/`.
+The task code/spec worktree is
+`../oracle-mvp-graph-search-fifty-b98-c69-v1/`; retain it while source hashes and
+receipts depend on those paths. The initial unexecuted preparation under that
+task worktree's `target/` is not counted as inference. No UI has been refreshed.
