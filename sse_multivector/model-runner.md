@@ -57,7 +57,14 @@ interpretations; no general scope repair is established. Independent generation
 and input/output schemas stay unchanged. Source assignment, definition coherence
 and branch compatibility are assessed separately, with all 230 reviews bound to
 their exact outputs. Details, reuse and native accounting are in the Bootstrap
-qualification record. V104 remains approved; v109 is not activated.
+qualification record. Subsequent unchanged-prompt stock repeats preserve the
+generic practice in both versions, so the baseline error does not establish a
+reliable v109 improvement. Focused read-only review identifies a Food scope
+failure in both: ASv6.100 explicitly admits Dog food beneath unqualified Food,
+whereas both generated definitions restrict it to human consumption. The native
+review history retains the original uncertainties; no frozen meaning or historic
+label is rewritten. Four repeat meanings plus four warmups use eight attempts,
+with no answer reuse or failures. V104 remains approved; v109 is not activated.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at

@@ -1557,10 +1557,12 @@ after-canning and recurring-practice details. Those facts can describe an alread
 identified particular event/plan rather than impose category conditions. V109
 avoids those extra clauses, but their removal alone is not a demonstrated repair.
 
-Both Food roots still choose human culinary scope. Whether that is a supported
-lexical sense or a narrowed subset of the intended AS Food category remains
-unresolved; human wording alone is neither a failure nor a gain. Three baseline
-and five candidate full-list copies leave "particular/presented dish" qualified
+At this initial checkpoint, both Food roots choose human culinary scope. Whether
+that is a supported lexical sense or a narrowed subset of the intended AS Food
+category was unresolved; human wording alone was not scored as a failure or a
+gain. The focused reassessment below supplies the missing AS scope evidence.
+Three baseline and five candidate full-list copies leave "particular/presented
+dish" qualified
 between a repeatable specified recipe combination and one post-specific
 occurrence. Nostr publication and Coffee-chain business assignment remain
 source qualifications, separate from coherent conditional definitions.
@@ -1599,7 +1601,9 @@ definition can be narrower than its selected subject yet fit its generated
 ancestor. The additional candidate accepts also mix uncertainty and validation
 coverage changes; they are not an accuracy rate. This adaptive panel has only
 one full draw per version, seven baseline exact reuses and no candidate reuses.
-There is no fresh repeat establishing the observed stock correction's reliability.
+This initial cohort has no fresh repeat establishing the observed stock
+correction's reliability; the subsequent repeats below do not establish an
+advantage either.
 
 Native accounting, including the three-case smoke, records 228 actual attempts:
 225 meaning calls and three warmups, with eight exact reuse events. There are no
@@ -1622,7 +1626,124 @@ review and receipt artifacts remain ignored and unchanged.
 Thirteen relevant native revision/input/preparation tests pass; schema equality,
 unchanged examples/suffix, source-input equality and review/receipt checks pass.
 No execution code, Compare prompt, AS source, hierarchy or UI changed. V104
-remains approved and v109 experimental. The next useful qualification is a fresh
-repeat of the consequential scope witness and a focused examination of the
-remaining sense-versus-subset and fixed-episode interpretations before another
-prompt edit or adoption. No additional stage has been started.
+remains approved and v109 experimental. The user then authorized repeating the
+stock witness and examining Food's sense-versus-subset distinction before another
+edit. That completed stage is recorded below; fixed-episode/recurrence coverage
+remains open.
+
+### Fresh stock repeats and Food scope reassessment
+
+The user authorized this diagnostic without a new prompt edit. Bootstrap-v104
+and experimental Bootstrap-v109 remain byte-identical to their previous versions.
+There are no Compare calls, AS generation, hierarchy changes or UI updates.
+
+Two new native `prepare --from --only --repeat` experiments per version retain
+the exact stock entry `5.1`, **Making chicken stock a couple of times a year using
+carcasses saved during butchering**. The case is
+`bootstrap-2bf8ef02c91a82528e1de36c2ac9723d4b9cf1c9e2ba4f0a19e36945b8127066`.
+All four inputs have SHA-256
+`097bfd9458a47e4c9b37140b10638978fffdf01a184c6fa8cf7852a7b37aac2e`.
+Each inherits its original prompt, complete post/root tree, runner settings,
+worker/request-code binding and response schema exactly. The fresh cohorts share
+the same execution code; the two versions differ only in their prompt/cache
+prefix. No saved answer is reused or supplied as model input.
+
+An independent reviewer stated the rubric before seeing these repeat outputs:
+another maker following the same practice must qualify; recurrence, frequency,
+saved carcasses and stock production must remain; canning/storage can be optional
+but cannot become required. Today's yield and equipment cannot restrict the
+generic practice. Schema/receipt failures and descendant compatibility stay
+separate from individual scope assessment.
+
+All four new meanings validate and pass that rubric. The results are:
+
+| Actor-scope outcome | v104 | v109 |
+|---|---:|---:|
+| Original draw: author-only restriction | 1 / 1 | 0 / 1 |
+| Two fresh repeats: author-only restriction | 0 / 2 | 0 / 2 |
+| Fresh meanings preserving the stated practice | 2 / 2 | 2 / 2 |
+
+V104's original error did not recur. This preserves the original observed scope
+failure but does not establish a dependable v109 improvement or a unique wording
+mechanism. V109's third draw uses "broth" while retaining the complete chicken-stock
+subject and saved-carcass process; the reviewers found no established loss of
+stock identity. These repeats do not settle the six descendant recurrence checks.
+
+The four producer record hashes are:
+
+| Native experiment under `target/bootstrap-v109-scope-preservation-v1` | Record SHA-256 |
+|---|---|
+| `stock-baseline-draw2` | `6823bae38632b617f686a5f89d99ccae9b4d5726e131d9c9f2284c1e72c5e59f` |
+| `stock-baseline-draw3` | `6c6313583324ae13ec408b32accaa245bc328a6260a8d406696c3e0243bb4be1` |
+| `stock-candidate-draw2` | `19096776b54a41289b572960dbfdb2fe4fc55303624ae8c41e3efc538b3ada9b` |
+| `stock-candidate-draw3` | `b76c6f462db204eb3ea777a16b1a62558fe43bdbb6cc6b24218e7ff72ffc9116` |
+
+Food's consumer boundary was examined read-only against the approved AS source
+contract and the exact independently generated definitions. The selected entry is
+unqualified **Food**; its context identifies the dish title, ingredient list and
+`#foodstr`. The post provides a culinary example, not a category-wide consumer
+restriction. Crucially, [ASv6.100's generalization rule](../experiment_specs/asv6.100-hr01-post-template.txt)
+requires subject-only validity across posts/domains and prohibits context from
+supplying missing heading restrictions. Its own example explicitly places
+**Dog food beneath Food**. The inspected template retains approved SHA-256
+`0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f`.
+
+Dog-only food therefore provides a concrete category witness that the supplied AS
+Food subject admits but both human-only Bootstrap definitions exclude. Human and
+animal food are recipient-qualified subsets of the same literal food category;
+this is distinct from resolving literal food versus metaphorical "food for
+thought". Calling the narrower subset a "human culinary sense" does not itself
+justify changing the supplied category. Neither producer diagnostic identifies
+or resolves the human/animal distinction; both assume human consumption before
+asking their other questions.
+
+Under the existing approved subject-scope preservation contract, the focused
+agent assessment rejects both saved Food definitions. Two independent reviewers
+agree that this exclusion is unjustified by the selected subject/source contract;
+one phrases recipient-neutral scope as the preferred interpretation rather than
+universal lexical gold. This is a source-contract-based agent assessment, not a
+new user-approved semantic label. A deliberate human-food category would need
+an explicitly different subject or contract, rather than an incidental example
+restriction. No teacher vote or regenerated Food meaning was needed for this
+assessment.
+
+The exact Food case is
+`bootstrap-4acb29436208dbb08b34c9bbbd68c0177ecc052b956b474fc05fa93e8985bc92`.
+Baseline record `b0a9f2451ec93b7bab53a24380360f7ea6cedb6bc977c8a81f8f076b456135c2`
+was originally reused; candidate record
+`2c356c523a3bc962252a6948ddd3b426cfa930f0b6719bdc808df4821642927f` was fresh.
+Native agent reviews now mark both reject and retain the earlier uncertainty in
+review history. The original archived cohort reports and tables above remain the
+initial assessment snapshot, not a retrospectively measured prompt gain. Current
+cohort reviews are 104 accept / 2 reject / 8 semantic/source uncertainties / 1 malformed
+baseline endpoint, and 106 accept / 1 reject / 8 uncertainties for v109.
+
+V109's additional "as nourishment or as components of meals" condition remains
+qualified: a confection consumed solely for pleasure between meals distinguishes
+a required consumption purpose from a substance's nutritional capacity. Its
+diagnostic does not settle that reading. Rejecting animal-food exclusion does
+not settle kind versus application-specific food roles, certify all 35 Food
+ancestor checks, or establish a complete replacement definition. Existing frozen
+meanings are not broadened during branch review, and no physical-instance rule is
+substituted for information-topic containment.
+
+Native accounting from
+[the stock-repeat usage source](hierarchy-bootstrap-v109-stock-repeat-usage-v1.json)
+records eight actual attempts: four fresh meanings and four automatic warmups,
+zero answer reuses, retries or failures. All usage is known; API-equivalent cost
+is **$0.0847848**, with reasoning already included in output. Caching is enabled
+and three of the four meaning calls receive cache hits. Warmup overhead makes
+this tiny stage cost more than its same-token uncached-comparison estimate; no
+caching-savings claim follows. The persistent shared 20,000-attempt counter is
+retained without reset; its global delta also includes other agents.
+
+Ignored native outputs, receipt-bound reviews and usage remain in the four repeat
+directories and `stock-repeat-usage-native-v1.json`. All four fresh reviews and
+the two Food reassessments match their input/output hashes through the shared
+runner's production digest function. Rendered stock inputs/prompts remain exact,
+all fresh evidence quotes are post substrings, both prompt files retain their
+original hashes, and thirteen relevant revision/input/preparation tests pass.
+V104 stays approved and v109 experimental. The next useful prompt mechanism to
+test is distinguishing a different sense from an added subset restriction when
+defining a general subject,
+using this Food witness and the stock actor control. That next edit has not begun.
