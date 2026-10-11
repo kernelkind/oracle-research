@@ -3137,3 +3137,127 @@ synthetic source conflicts, not real-corpus failures or negative Compare labels.
 No prompt edit or adoption, Compare call or hierarchy build occurred; v104
 remains approved and v109 experimental. Retain this worktree for its source
 bindings and native receipts.
+
+### Coffee-reference single-sentence ablation: predeclared check
+
+The user authorized a targeted wording ablation on the original ambiguous case
+with the same three controls. Experimental [Bootstrap-v111](Hierarchy-bootstrap-v111.md)
+is one hash-pinned sentence replacement from unchanged v109, performed through
+native `revise`. It replaces the opening evidence sentence with:
+
+> The selected subject names the topic, its level of abstraction and its
+> expressed restrictions; it does not establish that a particular person,
+> thing or event in the post satisfies that description.
+
+Every other instruction and both examples remain byte-identical. This tests
+whether the opening use of "establishes" encourages treating an annotation's
+particular-identity claim as proven. It is a hypothesis, not an identified
+internal mechanism: the historical answer also interprets the hashtag itself
+as business evidence. The change does not prescribe a hashtag sense or null.
+V104 remains approved; neither v109 nor v111 is activated.
+
+The [native source collection](hierarchy-bootstrap-coffee-reference-ablation-v1.json)
+combines the original source-bound case with the unchanged existing synthetic
+controls. Native regeneration verifies the same ASv6.100 tree, contexts,
+selected pointer and post as each previous model input. Historical answers,
+receipts and reviews remain outside model input. Both conditions use fresh
+native draws, Sol 6.1 medium, identical schema/settings and automatic prefix
+caching. An older reused answer alone cannot attribute a difference to wording.
+
+Assess factual support and preserved uncertainty in each final meaning, keeping
+ordinary justified sense choices distinct from unsupported assertions about
+particular things. Preserve the explicit-business positive; additional nulls
+alone are not improvement. The user's original uncertainty is not preset null
+gold. The no-business control still changes both the hashtag and the object
+described as weird. The synthetic trees were generated for the original post,
+not its edited controls. If a consequential difference appears in the original,
+repeat that exact case freshly under both unchanged conditions before a prompt
+recommendation. Controls have one fresh draw per condition in this stage.
+
+The initial experiments are `target/bootstrap-coffee-reference-ablation-v1/v109`
+and `target/bootstrap-coffee-reference-ablation-v1/v111`, prepared with the
+[v109 spec](hierarchy-bootstrap-coffee-reference-ablation-v1.spec.json) and
+native `prepare --from --prompt` for v111. Each initial run is bounded to six
+new attempts, including warmup and retries. Conditional original repeats may
+use three attempts per condition, for at most eighteen newly dispatched
+attempts in this diagnostic, all charged to the existing shared counter.
+Independent reviewers examine final meanings and provenance separately.
+No Compare calls or hierarchy construction belong to this check.
+
+Official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+supports direct instructions and avoiding requested reasoning traces; it does
+not establish this particular semantic change as a fix. Native quote evidence
+and task-specific contrasting controls establish the relevant results.
+
+#### Completed matched first draw
+
+Both conditions completed all four cases with valid fresh answers. There are
+no exact reuses, retries, failures, invalid receipts or unfinished cases. An
+independent semantic reviewer assessed the outputs before inspecting either
+prompt, then a separate reviewer verified paired provenance. Six qualified
+agent accepts and two agent-uncertain judgments were saved through native
+`review`; no new user approvals were invented.
+
+| Case | Fresh v109 | Fresh v111 |
+|---|---|---|
+| Original ambiguous hashtag | Business meaning; agent uncertain | Business meaning; agent uncertain |
+| Synthetic coffee-shop visit | Null; qualified agent accept | Null; qualified agent accept |
+| Synthetic explicit business evidence | Supported business meaning; qualified agent accept | Supported business meaning; qualified agent accept |
+| Synthetic hashtag clarification | Null; qualified agent accept | Null; qualified agent accept |
+
+The exact original-case v109 meaning is:
+
+> A coffee chain—a business operating multiple coffee shops—characterized by
+> the author as weird on the day of the post.
+
+The exact original-case v111 meaning is:
+
+> A coffee-chain business, operating multiple coffee shops, that the author
+> characterizes as weird on the day of the post.
+
+Both interpret the hashtag as evidence of a coffee-chain business without
+settling business-versus-coffee-tag reference. This preserves the original
+uncertainty; it establishes neither a falsehood nor mandatory-null gold. The
+candidate's explicit chain-versus-single-venue decision does not resolve that
+different ambiguity. All evidence quotes occur in their supplied posts, and
+the controls preserve supported positive coverage and source conflicts.
+
+Every paired model-facing input is byte-identical, and each rendered prompt
+differs by exactly the tested sentence. All 76 frozen executable-code bindings
+match. Provider, model, medium reasoning, schema, worker, wrapper and request
+code identities also match. Runner configurations differ only in prompt-cache
+prefix/key, as required by the changed prompt. Each of the eight case receipts
+matches its original JSONL record through the production digest, including
+input, rendered-prompt and raw-output hashes. The candidate's frozen baseline
+contains these four freshly generated v109 answers and exact receipts.
+
+| Condition | Case | Producer record SHA-256 |
+|---|---|---|
+| v109 | Coffee-shop visit | `3faa82bc1ec5f0a4fec2c273e7b2c9dc4184872a82668dc9c831615f497fc13a` |
+| v109 | Explicit business | `cee0d441fb567657988d7a14e2cc86b1523f5d528c2310950d59c1a8676f9277` |
+| v109 | Hashtag clarification | `8451f7bb6724eff6381bc677f1fdb241e7bce1801e130ff9171c2a5aaafb5664` |
+| v109 | Original | `b49250d67c82697c2f97b3136b934685a6e247c7608ff26dab65bdf52cc82c75` |
+| v111 | Coffee-shop visit | `463e360e6c4f2c13ab4599ae76eb7d00d59d2d0238b54445095d7872245ce573` |
+| v111 | Explicit business | `887259dfe6d1227b136cd39a2f64a0935f3741fc982393415f925d172f087e4a` |
+| v111 | Hashtag clarification | `b2f486bd79b0da7eaa4b267ceb7a6f1a064c32df8b1cd23134af16c615938f64` |
+| v111 | Original | `2a185334c83e2a664c1088ffa7ab706946dcb2882e05bcce55ca1254974b71a7` |
+
+The [native accounting source](hierarchy-bootstrap-coffee-reference-ablation-usage-v1.json)
+produces `target/bootstrap-coffee-reference-ablation-v1/usage-native-v1.json`.
+It records **ten newly dispatched attempts**: eight definitions and two
+warmups. API-equivalent cost is **$0.0805732**, with complete usage and reasoning
+already included in output. Six of eight definition requests report cached
+input; warming does not guarantee cache hits. No source-generation calls were
+added because every answer in this stage is fresh. The existing persistent
+attempt counter was retained without resetting it.
+
+There is **no demonstrated correction** from this single-sentence change in
+the matched first draw. This does not prove the sentence is irrelevant in
+general or identify a uniquely responsible instruction. The predeclared
+consequential-change condition did not trigger, so no original-case repeats
+were dispatched. V111 remains an experimental diagnostic, with no adoption
+recommendation; v104 remains approved. No Compare calls or hierarchy builds
+occurred. Forty-two production-path prompt-revision and current-main traversal
+and graph-search tests passed after the routine main merge; the merge retained
+main's code-file registrations. JSON, link and diff checks cover the prompt
+and reusable preparation sources separately from semantic qualification.

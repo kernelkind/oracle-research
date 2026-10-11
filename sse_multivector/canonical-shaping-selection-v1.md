@@ -11,6 +11,8 @@ pass prospective note-set structure and none is applied. Useful controls survive
 but the two Prepared dishes outputs do not establish resolution of the inherited
 Cuisine boundary or a reliable improvement from v10. V11 is tested and
 experimental, not activated or approved as a full prompt.
+The user confirms that a generated meaning must be strictly within the supplied
+parent's fixed meaning; covering the selected children alone is insufficient.
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -3254,3 +3256,20 @@ The six-attempt allowance is exhausted. Further edits should follow a reliable
 review of the exact Cuisine versus Prepared dishes boundary, or a separately
 authorized unambiguous associated-information regression; this screen does not
 justify adding another instruction to force an unsettled interpretation.
+
+## Confirmed whole-parent containment requirement
+
+The user confirms verbatim:
+
+> yeah the model needs to be sure the generated meaning is strictly within the parent
+
+Acceptance therefore requires the proposed meaning's entire scope to fit within
+the supplied parent's fixed meaning and be narrower rather than equivalent.
+Correctly grouping the selected siblings does not establish this parent fit.
+This confirms the existing v11 check; it does not require copying the parent's
+wording, redefine any fixed meaning or settle the Cuisine judgments. V11 already
+requires null when a material ambiguity prevents establishing a valid proposal.
+
+No prompt edit or inference follows from this confirmation. A useful next test
+would isolate whole-parent containment with an unambiguous required restriction,
+rather than repeat the same instruction or force a disputed Cuisine judgment.

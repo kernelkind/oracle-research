@@ -143,6 +143,21 @@ warmup is $0.038848. This bounded result establishes evidence sensitivity with
 contexts present, not a cause for the original interpretation or a prompt fix.
 V104 remains approved; v109 remains experimental and unchanged.
 
+The [Coffee-reference single-sentence ablation](shr_single_pair/bootstrap-current-as-qualification.md#coffee-reference-single-sentence-ablation-predeclared-check)
+compares fresh v109 and experimental v111 answers on the original case and the
+same three synthetic controls. V111 only separates a subject naming a topic
+from proving a particular thing satisfies that description. Exact paired
+inputs, executable code, schema and worker identities match; only that sentence
+and its resulting cache identity differ. Eight valid fresh answers preserve the
+same uncertain original business assignment and null/supported/null controls.
+Independent review records six qualified agent accepts and two uncertainties;
+no demonstrated correction or repeat trigger follows. Ten attempts include two
+warmups, with zero reuses, retries or failures; native API-equivalent cost is
+$0.0805732 and six of eight definition calls report cache hits. V111 is not
+recommended for adoption; v104 remains approved. Forty-two production-path
+revision/current-main traversal/graph-search checks passed; no Compare calls or
+hierarchy construction occurred in this diagnostic.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
