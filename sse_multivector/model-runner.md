@@ -1484,10 +1484,6 @@ uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
 See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
 
-**V2 — FUTURE WORK:** the [hierarchy generation V2 draft](hierarchy-generation-draft-v2.md)
-records design decisions for a future version. It is not implemented or tested;
-its selection and shaping rules do not apply to the current constructor.
-
 Use these offline commands after construction:
 
 | Command | Purpose |
