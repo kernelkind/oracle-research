@@ -425,6 +425,13 @@ def add_commands(commands):
     p = commands.add_parser('advance-canonical-traversal', help='collect native answers, apply guarded placements and prepare reached comparisons; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--comment', required=True)
+    p = commands.add_parser('run-canonical-traversal', help='run native experiments and advance construction automatically until complete or blocked')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--attempt-budget', type=Path, required=True,
+                   help='existing persistent attempt allowance shared by every batch and resume')
+    p.add_argument('--comment', default='Automated traversal construction')
+    p.add_argument('--runner-upgrade-reason',
+                   help='record an explicitly reviewed construction/adapter code fix; frozen data stays unchanged')
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
@@ -588,13 +595,18 @@ def handle_command(args):
         from .hierarchy_catalogue import catalogue
         print(json.dumps(catalogue(args.source, args.registry, args.output, saved_only=args.saved_only), indent=2))
         return 0
-    if args.command in ('prepare-canonical-traversal', 'advance-canonical-traversal'):
+    if args.command in ('prepare-canonical-traversal', 'advance-canonical-traversal',
+                        'run-canonical-traversal'):
         from . import canonical_traversal
-        result = (canonical_traversal.prepare(args.spec, args.directory, args.history_root)
-                  if args.command == 'prepare-canonical-traversal' else
-                  canonical_traversal.advance(args.directory, args.comment))
+        if args.command == 'prepare-canonical-traversal':
+            result = canonical_traversal.prepare(args.spec, args.directory, args.history_root)
+        elif args.command == 'run-canonical-traversal':
+            result = canonical_traversal.run(args.directory, args.attempt_budget, args.comment,
+                                            args.runner_upgrade_reason)
+        else:
+            result = canonical_traversal.advance(args.directory, args.comment)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 0
+        return int(args.command == 'run-canonical-traversal' and result['status'] != 'complete')
     if args.command == 'summarize-experiments':
         from .experiment_usage_summary import summarize_experiments, compact_summary
         output = args.output.expanduser().resolve()

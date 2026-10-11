@@ -174,6 +174,18 @@ passed independent integrity review; nine prompt-revision tests passed.
 V112 remains experimental without an adoption recommendation. V104 remains
 approved and no Compare or hierarchy work belongs to this diagnostic.
 
+The subsequent [saved v109 whole-branch recheck](shr_single_pair/bootstrap-current-as-qualification.md#saved-v109-whole-branch-evidence-recheck)
+reviews all 115 existing meanings across 17 complete ASv6.100 trees and 300
+ancestor checks, including 98 immediate links. Three independent reviewers
+establish no new definite Bootstrap evidence or boundary failure. Ingredient
+and cookware collections beneath individual constituents, compound warning
+lists, and activity topics covering planned handling remain fixed-meaning
+containment diagnostics. These are qualified relationship questions, not
+certified failures or permissions to alter endpoints. All source bindings,
+receipts and 265 quotations pass mechanical checks. No new teacher attempts,
+prompt changes, Compare labels, hierarchy build or review writes occurred;
+the saved panel is not a fresh reliability sample. V104 remains approved.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1363,6 +1375,7 @@ from a task worktree:
 
 ```bash
 ../experiment-runner/bin/experiment-runner prepare-canonical-traversal --help
+../experiment-runner/bin/experiment-runner run-canonical-traversal --help
 ../experiment-runner/bin/experiment-runner advance-canonical-traversal --help
 ```
 
@@ -1370,10 +1383,44 @@ from a task worktree:
 saved `note_ids`, `local_schema_version`, `bootstrap_spec`, `comparison_spec`
 and `consolidation_spec`. Current data must originate from ASv6.100 or an
 explicitly approved later AS version. Prompt/schema files, corpus and constructor
-source are frozen. Run returned experiment directories through ordinary `run`,
-then call `advance-canonical-traversal` to collect validated native receipts and
-prepare the next work. Both constructor commands are offline; only `run` makes
-model calls, under the task's authorization and existing budget admission.
+source are frozen. After preparation, `run-canonical-traversal DIRECTORY
+--attempt-budget PATH` runs construction unattended: it executes prepared native
+experiments, collects their validated receipts, applies placements and prepares
+the next work until stopping conditions pass or execution is blocked. Use an
+existing persistent attempt allowance; every batch, warmup, retry and resume
+shares that counter. Preparation and explicit advancement remain offline. The
+automatic command calls the ordinary runner execution path under the task's
+authorization and existing budget admission.
+
+Up to three local searches and a consolidation batch execute concurrently;
+provider concurrency is controlled by the shared runner. Advance after each
+batch finishes, without waiting for unrelated batches. Serialize placements and
+permit only one automatic driver per construction directory. Resume by running
+the same command with the same attempt-budget path. Exact saved results are
+reused. The latest `run-summary.json` distinguishes graph status from execution
+status and records blocked experiment paths and execution errors.
+
+Native provider retries finish before their answers become construction results.
+If allowance or pause interrupts an eligible retry, keep that case unresolved
+for resume. Terminal failed or malformed answers hold the affected local entry;
+other independent work continues. Failed and interrupted reservations remain
+charged to the counter. An unfinished batch is never repeatedly relaunched by
+the same invocation. Budget exhaustion, pause or infrastructure blockage drains
+active work and returns a nonzero status with preserved partial results. Local
+inventory exhaustion without the required note access and strict narrowing also
+returns nonzero; it is not successful completion. Neither automatic execution
+nor holds introduce an approval step for individual placements.
+
+Graph state is saved atomically between advancements; each native receipt is
+saved independently. After a process crash, rerun the same command: continue
+from the saved graph and reuse completed requests. An interrupted request with
+no saved result may need another attempt, without refunding its earlier
+reservation. For an explicitly reviewed code fix, pass the existing
+`--runner-upgrade-reason TEXT` option. It records old/new constructor source
+hashes and the preserved graph hash, and forwards the reason to the native
+runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
+schemas or frozen experiment inputs. Finish active experiments before changing
+their bound source. Saved meanings, decisions and native receipts are retained.
 
 Select L1 roots first, then L2 and deeper local levels. At each level, rotate
 across notes in saved order, one entry per note per pass. Up to three searches

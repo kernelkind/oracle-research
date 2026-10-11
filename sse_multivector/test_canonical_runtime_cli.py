@@ -8,7 +8,8 @@ class CanonicalRuntimeCliTests(unittest.TestCase):
     def test_shared_launcher_exposes_selection_and_finished_menu_commands(self):
         project = Path(__file__).resolve().parents[1]
         launcher = project.parent / 'experiment-runner/bin/experiment-runner'
-        for command in ('prepare-canonical-traversal', 'advance-canonical-traversal', 'audit-canonical-trial',
+        for command in ('prepare-canonical-traversal', 'advance-canonical-traversal',
+                        'run-canonical-traversal', 'audit-canonical-trial',
                         'shape-canonical-trial', 'export-canonical-viewer',
                         'evaluate-canonical-policy-trial'):
             with self.subTest(command=command):
