@@ -6922,8 +6922,8 @@ with an unresolved failure. A directional evaluation-order diagnostic is
 proposed, not begun. See the
 [completed qualification and review limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v181-qualification).
 
-The subsequent authorized [V182](shr_single_pair/Hierarchy-compare-v182.md)
-diagnostic starts from V179 and changes only requested directional evaluation
+The subsequent authorized experiment tested [V182](shr_single_pair/Hierarchy-compare-v182.md).
+This diagnostic starts from V179 and changes only requested directional evaluation
 and report order, with corresponding reordering of its existing synthetic
 example diagnostics. Symmetric A/B subjects/meanings, semantic rules and schema
 remain fixed. Twenty fresh comparisons inherit the saved V179 five-pair panel,
@@ -6931,3 +6931,15 @@ both orientations and two draws. Report-order compliance is measured separately
 from semantic support; internal reasoning order is not observable. No Bootstrap
 or hierarchy work occurs. See the
 [V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).
+
+The completed V182 diagnostic follows B-first question/answer ordering in all
+20 responses but leaves both Stockpots forward errors in the same A/B
+orientation. Independent review supports 17/20 responses, versus saved V179's
+18/20; native reporting finds three versus two reversal conflicts across five
+pairs repeated twice. One Fasting forward draw adds a person restriction absent
+from its fixed meaning. The Stockpots error does not move with report order;
+internal evaluation order is unobservable. V182 is not adopted or broadened;
+the symmetric A/B development line and V179 baseline remain. Twenty fresh valid
+attempts use $0.179492 in native API-equivalent catalog usage, with zero reuse,
+warming, retry, failure or missing usage. See the
+[completed V182 evidence and review qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v182-order-diagnostic).

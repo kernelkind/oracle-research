@@ -5677,3 +5677,85 @@ with the first directional test would support an order hypothesis, not prove
 it; errors remaining under the same A/B orientation would leave input-order
 or semantic interpretation mechanisms open. No Bootstrap generation,
 hierarchy construction or broader panel is included in this authorization.
+
+### Completed V182 order diagnostic
+
+All four experiments complete with 20 fresh valid comparisons, zero reuse,
+warming, retry, failure or missing usage. All 20 native response IDs are distinct.
+Each request contains a single user message, empty additional instructions and
+no conversation linkage. All 20 `questions` and `answers` arrays report
+`B_contains_A` first. Inputs, settings, source receipts and the schema match
+their saved V179 baselines. Pre-review `final-generation.json` snapshots and
+native attributed reviews preserve generation outputs and receipts unchanged.
+
+The two independent reviewers support nine of ten first-draw responses and
+eight of ten second-draw responses. Root also inspects all outputs. Required
+workflow documentation exposed historical findings to both reviewers, so the
+review is independent reasoning rather than a blinded experiment. Agent
+control expectations and the user-accepted Stockpots witness keep their
+separate qualifications.
+
+| Measure | Saved V179 | Fresh V182 |
+|---|---:|---:|
+| Supported complete responses | 18/20 | 17/20 |
+| Relation errors | 2/20 | 3/20 |
+| Reversal conflicts | 2/10 | 3/10 |
+| Directional labels changed between fresh draws | 0/10 | 1/10 |
+| Uncertain responses | 0 | 0 |
+| Native API-equivalent catalog cost | $0.1643176 | $0.179492 |
+
+The ten reversal checks represent five pairs repeated twice, not ten independent
+topics. The label change between draws is `pair-041-forward`; all other labels
+repeat. Supported-response counts assess the full directional justifications
+as well as relations and do not estimate population accuracy.
+
+- **Stockpots remains wrong in the same A/B orientation.** Both `pair-01` and
+  `pair-02` `isolated-035-forward` answers still return `A_contains_B` with
+  Cookware as A, although its coverage diagnostic is now reported second.
+  The first proof substitutes food preparation for required meal purpose and
+  treats Full English Breakfast as an illustration without discharging that
+  purpose. The second explicitly asserts that culinary stock preparation is a
+  form of meal preparation. Neither makes the parent's purpose unavoidable.
+  Both reverse responses correctly give an exclusively laboratory stock-making
+  vessel despite reporting that disputed coverage direction first. These
+  vessels preserve cooking, culinary stock, large/deep form and stock-making
+  design while excluding intended meal preparation; disposal alone would not
+  establish exclusion. The other frying-pan counterexamples remain supported.
+- **Fasting varies across fresh draws.** All first-draw controls pass, but
+  `controls-02/pair-041-forward` returns `A_contains_B`. Its positive question
+  already imports the unsupported person boundary: "despite being a deliberate
+  dietary practice governing whether a person eats". The proof repeats that
+  assumption, treating the child's generic dietary-practice description as the
+  parent's person-restricted definition. The reverse response instead admits a
+  hypothetical nonperson deliberately following its own dietary abstention
+  practice, unrelated to any person's eating. That preserves the whole Fasting
+  meaning; involuntary hunger or human-managed withholding would not establish
+  deliberate abstention. The independent ketogenic negative direction passes.
+
+All 12 Salads/dressing, Coffee-equivalence and intended-grilling responses pass.
+Direction IDs and question/answer links align throughout. In the failed
+Stockpots responses the selected question leaves meal purpose unchecked;
+the failed Fasting question itself presumes that its child requires a person.
+These are diagnostic qualifications alongside unsupported positive proofs,
+not JSON validation failures. Zero uncertain responses does not imply success.
+
+Native `target/compare-v182-direction-order-v1/usage.json` separates 20 newly
+dispatched V182 attempts ($0.179492) from the 20 saved V179 original attempts
+($0.1643176). Their combined $0.3438096 is original API-equivalent catalog usage,
+not newly incurred cash spending. Candidate requests have no backend cache
+hits; explicit warming is disabled in both arms. The persistent shared counter
+reads 18,881 before this cohort and 18,911 after completion: native accounting
+establishes 20 cohort attempts, with ten further shared-counter claims outside
+this cohort. Counter differences are not experiment accounting.
+
+V182 fails qualification and is not adopted or broadened. V179 remains the
+development baseline with its unresolved Stockpots failure. The reported-order
+intervention was followed but did not move or repair that repeatable error.
+This weakens the simple first-reported-direction explanation; internal
+evaluation order remains unobservable, and input position has not been shown
+to cause the error. The Fasting change is a sampling observation, not an
+established effect of the instruction. A proposed next diagnostic would change
+which A/B meaning appears first in the input while preserving both assignments,
+scope rules and judgments. That would test presentation order separately from
+node naming; it is a recommendation only and has not been prepared or run.
+The symmetric A/B line remains the approved development direction.
