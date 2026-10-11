@@ -131,9 +131,13 @@ while unsupported event state, underdefined activity/refusal and standalone
 meaning defects remain. Median native request execution is 59.90 seconds, with
 49.07 GiB peak CUDA allocation. The unmerged packed-expert adapter path computes
 adjusted whole expert stacks per forward; these measurements do not establish
-optimized Gemma inference cost. The fourth-epoch generation remains pending.
-All five task fits and fresh checkpoint checks are complete;
-native generated-meaning evaluation and review continue through all six stages.
+optimized Gemma inference cost. Its fourth epoch also returns 21/21 valid fresh
+responses, with 14 accepted, 5 rejected and 2 uncertain agent assessments.
+Median native execution is 71.98 seconds with the same 49.07 GiB peak. It fixes
+price/location and some scope uncertainties but adds an unsupported growing
+movement and retains refusal, factual-state and standalone-meaning defects.
+All five task fits, fresh checkpoint checks, six generation stages and 126
+source-bound reviews are complete. The owned GPU worker and tunnel are stopped.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
@@ -148,6 +152,16 @@ versus 8.52. Both checkpoints pass fresh-process verification; peak allocation
 remains almost unchanged at 19.27 GiB. These measured savings and error counts
 support further qualification, not a production input-format decision. This
 branch-free panel does not predict savings or quality for a large canonical branch.
+
+The current research priority is **Qwen27 for further Bootstrap qualification**,
+with Gemma26 retained as an alternative, and **Ettin1B versus Qwen27 for Compare**.
+Kev27 has no measured prediction advantage over Qwen on this panel. These are
+candidate priorities, not selected final students: the development evaluation
+still needs broader independent post coverage, all five Compare labels and
+canonical branches, plus reviewed Bootstrap refusal/state/scope boundaries.
+Training volume and production student input layout remain open. The repeated
+teacher instructions in the current fit controls and Gemma's unmerged adapters
+limit direct cost forecasts for final training or serving.
 
 The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
 describes a post-trained dense 27B hybrid-attention model, native 262,144-token
