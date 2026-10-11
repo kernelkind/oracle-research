@@ -1241,3 +1241,192 @@ Autonomous iteration continues with a new controlled candidate. The next
 diagnosis separates intended consumer, purpose and role restrictions rather
 than accepting one bundled assertion of a typical food use. This failure does
 not establish that counterpart definition borrowing was the responsible cause.
+
+### V5 separate-condition variation
+
+V5 replaces only the variation paragraph's first sentence. Independently
+required conditions must be tested separately even within one phrase, explicitly
+including intended consumer; each variation preserves the child's kind/activity
+and other restrictions. V4 varied toppings when the relevant omitted boundary
+was human consumers. The edit targets that procedural omission, not a mandated
+Food label or a newly supplied example. The initial eight, schema and settings
+remain fixed. Dispatch cap 17; pass requires all eight supported diagnostics and
+labels. Then remaining seven cap 15 and a fresh initial-eight repeat cap 17, before
+the frozen full 102 panel. Failed stages instead lead to a controlled new version.
+All attempts remain inside the persistent 20,000 allowance.
+
+A native source-bound Food-only bagel comparison is being prepared as a separate
+diagnosis of branch influence; its checkpoint binding must validate without
+editing code or saved state. It is not a substitute for the full snapshot.
+
+### V5 initial result and bounded qualification
+
+The initial eight valid outputs preserve all supported labels and appliance
+positives. The snapshot now separates human consumers from food identity:
+animal-feed bagels preserve the child's restrictions but fail intended-human
+coverage. Independent semantic review remains required before dispatching the
+other seven and fresh initial-eight repeat. Native initial usage is nine fresh
+attempts including warmup, zero failures/retries/reuses/missing usage, eight
+cache hits and $0.075924 API-equivalent cost.
+
+A legitimate Food-only isolation is now prepared with source pointers, not
+manually assembled case inputs. Original-project offline schema2 preparation
+validates the frozen canonical policy paths; fixed-meaning projection and
+generic diagnostic preparation bind our current project. The singleton C001
+comes from verified-prefix-v3 before step 1; bagel meaning from the original
+step 098 producer. Both fixed meanings match the snapshot exactly. Preparation
+made zero calls. Source/spec chain: compare-condition-bagel-food-isolation-*.
+This panel can qualify stability across absent versus present branches. V5
+preparation/run cap 3 includes warmup/retry; it remains within the existing
+allowance and preserves the full snapshot as a separate test.
+
+### V5 cross-context condition conflict and v6 test
+
+The v5 singleton Food comparison completes validly: two fresh attempts including
+warmup, zero failures/retries/missing usage, one cache hit and $0.0147108 native
+API-equivalent cost. Both original meanings are byte-identical to the snapshot
+local and its C001 ancestor. Its endpoint relation is supported neither; the
+snapshot remains correctly uncertain because its Bread coverage requires
+incompatible ancestors. Those different labels are appropriate.
+
+The condition diagnostics are inconsistent: snapshot C001 establishes intended
+ingestion solely because bagels are prepared as food, while the singleton finds
+actual display-only bagels satisfying the same food-preparation meaning without
+intended ingestion. This is a scope-stability failure independent of which
+condition judgment should win. Consumer/nourishing-purpose failures remain
+correctly separated. No v5 remaining-controls or repeat was dispatched.
+
+V6 changes only the variation list, adding intended use alongside role, purpose
+and intended consumer. It tests the omitted intended-ingestion variation without
+a new example or semantic overhaul. Gate: exact initial eight (cap 17) plus the
+native singleton isolation (cap 3); require coherent supported conditions across
+the identical meaning pair in endpoint versus ancestor positions, and preserve
+all positive controls. A pass advances to remaining seven and fresh repeats; a
+failure triggers a new controlled candidate under the same 20,000 allowance.
+
+### V6 residual intention conflict and v7 proof test
+
+V6 completes all nine cases validly, preserving all endpoint labels and the
+correct bagel human-consumer failures across snapshot and singleton. It still
+fails stability: Eating's intended-ingestion condition is unresolved forward
+(actual consumption does not establish intention) but established reverse
+(food's ingestion role is treated as intention). The exact meanings are
+unchanged. Independent review confirms this scope conflict without prescribing
+which unresolved versus counterexample judgment must replace it. No remaining
+controls or v6 repeat was dispatched. Native usage source is
+compare-condition-diagnostic-usage-v6.json.
+
+V7 replaces only the customary-use clause in the interpretation paragraph:
+actual use or customary function cannot stand in for a required intention;
+positive intended-use proof must exclude a different or absent intention from
+the child's wording or necessary implication. Preserve explicit design-purpose
+appliance coverage. Focused gate uses Eating both directions, appliances both
+directions and the bagel snapshot (five cases, cap 11), plus the native Food-only
+bagel case (cap 3). Conditions must be coherent across orientations and branch
+positions; honest unresolved conditions are allowed when they do not undermine
+a decisive valid counterexample. A pass expands to the ten other cases and
+fresh repeats before broad qualification. All attempts remain inside 20,000.
+
+### Pre-output broader-panel qualification boundaries
+
+Two independent read-only reviews examined all 35 isolated original pairs,
+using only the frozen meanings, before another broad candidate run. These are
+provisional agent controls, not new human gold and never part of model input.
+Exact prior human judgments 024/025 remain neither.
+
+Strong candidate checks include neither for003–008,011,013–015,017–018,020–021,
+023–025 and033; human-consumption Food broader than human-nourishment Food009;
+Meals covering meal-defined Food dishes019; Bread covering bagel-making022;
+Fatigue covering the specific tiredness meanings028/030; Food dishes covering
+specific dinner lamb/broccoli031/032; Food preparation covering whole cooking
+appliances034. Each requires its actual own wording, not general subject names.
+
+Preserve open interpretations:001 eaten versus drunk;002 whether a whole Dinner
+topic supplies nourishing-eating purpose;010 Coffee's intended consumer;012
+generic Bread preparation versus explicit flour-and-water Bread;016 preparation
+as alteration;026 unknown purpose/consumer of one particular author's coffee;
+027/029 cognitive/emotional versus bodily fatigue/sleepiness;035 Cookware's
+trailing meal-preparation purpose versus Stockpots' stock-making purpose.
+Reviewers do not certify one label for these. Legitimate language ambiguity must
+not be counted as an error merely because it differs from a historical answer.
+These boundaries also limit claims from 102 witnesses: 35 unique isolated pairs
+and 32 snapshot placements are not 102 independently labeled semantic examples.
+
+### V7 diagnostic failure and v78 production-contract qualification
+
+V7's six labels are supported and bagel scope checks agree across branch
+positions. Independent review nevertheless rejects Eating forward: it declares
+mouth intake established for the whole Food scope while its own explanation
+admits other Food aspects do not satisfy that condition. Reverse correctly
+finds cultivation/preparation counterexamples. Eating reverse also retains an
+intention qualification: a wild animal's food having natural origin does not
+exclude that animal intending consumption. Neither label remains supported by
+the separate intended-human-consumer counterexample. No v7 remaining cases or
+repeat were dispatched.
+
+The auxiliary condition matrix demanded assertions for nondecisive conditions
+even after a direction was disproved. The actual user-approved Compare contract
+already asks for one decisive counterexample per rejected direction. V78 ports
+the tested interpretation/role changes into that five-field contract. It keeps
+the entire v77 Output section/schema unchanged, requires independent variations
+of roles/intended use/purpose/consumers, and stops unnecessary coverage claims
+after a decisive counterexample. Positive coverage still requires all parent
+conditions over the whole child; no guard or semantic boundary is relaxed.
+
+This is an intentional procedure/output-format change, not evidence that hidden
+scope variation disappeared. V78 must be qualified independently. Initial gate:
+all 15 original frozen cases (cap 31) plus the native Food-only isolation (cap 3).
+Require valid counterexamples, supported full-scope positives, stable reversals
+and coherent canonical consequences, with no invented intention. Then fresh
+repeat 15 (cap 31), before full 102 source-bound qualification. Source-only data,
+ASv6.100/B96 meanings, model and caching remain fixed. No Bootstrap/hierarchy
+work, new allowance or external messaging is included.
+
+### V78 initial qualification and incomplete fresh repeat
+
+Both native initial runs completed: gate-v1 has 15 valid cases and isolation-v1
+has one. Independent semantic review accepts all 16 outputs. All seven
+reciprocal pairs reverse correctly; every output copies the local meaning and
+preserves the five-field contract. The bagel endpoint remains under Bread,
+while snapshot022 returns uncertain for the meal-role ancestor conflict.
+Food-only isolation remains neither through animal-only intended consumption.
+Food/Eating and Food/sourdough retain their exact human-reviewed neither labels;
+whole cooking-appliance coverage remains positive. No unnecessary assertion
+about nondecisive intention conditions appears in the answers.
+
+Intentional --repeat runs preserve identical requests and disable answer reuse.
+Gate-repeat-v1 ends with 14 valid cases and one provider-transient terminal
+failure, isolated-031-forward, after two attempts. Isolation-repeat-v1 is valid.
+Independent review accepts all 15 valid repeat outputs, with no supported
+interpretation change from the initial draw. The interrupted lamb request has
+no valid semantic answer; its native uncertain review records that runtime
+limit. This is NOT a fully passed 15-case gate repeat. Do not retry its frozen
+case beyond the two-attempt limit or count a provider interruption as a Compare
+semantic failure. Receipts preserve the interrupted responses and missing usage.
+
+Native snapshots are gate-generation/gate-reviewed, isolation-generation/
+isolation-reviewed, gate-repeat-generation/gate-repeat-reviewed and
+isolation-repeat-generation/isolation-repeat-reviewed under
+target/compare-v78-qualification-v1. Native usage source is
+hierarchy-compare-v78-usage-v1.json; catalogue cost is API-equivalent, not an
+invoice. Its native four-experiment aggregate records 38 actual attempts,
+31 valid comparisons, three failed attempts, two retries and zero reuse.
+Known API-equivalent cost is $0.1971156; three attempts lack usage/cost, so the
+complete cost remains unknown. Initial audit verified all 18 initial attempts had distinct response
+IDs, no conversation linkage, no reuse and no failures; comparisons all read
+cache. Later runtime errors remain separately unresolved.
+
+Broader qualification proceeds because all completed semantic controls agree,
+without pretending the interrupted repeat is complete. Prepare the exact 102
+cases with --from the v75 full trial and --prompt Hierarchy-compare-v78.md. Keep
+the hierarchy_node_pairs adapter: generic import loses its native reversal and
+chain report. Do not project fixed_meanings twice. Review the 32 canonical
+snapshot consequences separately; native isolated consistency examines only 70
+cases / 35 registered pairs / 33 producer-bound endpoints. Its complete:false
+alone is not a failure. Fresh broader qualification will include lamb again;
+failed samples remain in every earlier report and are never overwritten.
+
+The initial full-v1 preparation made no calls. Current main was synchronized
+after all active runs ended, and all 66 hierarchy-node-pair tests passed on the
+combined code. Prepare a fresh full-v2 after this checkpoint so it binds that
+code. Model input bytes, meanings and producer identities must still match v75.

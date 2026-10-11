@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "condition_diagnostic_v6_initial": [
+      "../../target/compare-condition-diagnostic-v6/initial-v1"
+    ],
+    "condition_diagnostic_v6_isolation": [
+      "../../target/compare-condition-diagnostic-v6/bagel-food-isolation-v1"
+    ]
+  }
+}
