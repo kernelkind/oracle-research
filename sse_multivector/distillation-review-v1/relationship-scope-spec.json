@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "DSLv6", "path": "relationship-prompt-v6.md"},
+  "dataset": {"adapter": "distillation_verdict", "path": "relationship-scope-source.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "timeout_seconds": 3600,
+    "transport": "sse",
+    "runner_binary": "../../../experiment-runner/experiment_runner/run-model.sh",
+    "output_schema_path": "boolean-response-schema.json"
+  }
+}

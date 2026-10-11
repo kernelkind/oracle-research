@@ -1476,6 +1476,15 @@ Booleans retain those decisions; two named-reference interpretations remain
 uncertain. Both audits give complete records ten accepts, one reject and three
 uncertainties: the mothers/MILFs record still adds human-only scope. The set
 does not pass; the rule and schema stay fixed and qualification remains pending.
+The subsequent approved [controlled scope diagnostic](distillation-review-v1/README.md#dslv6-controlled-scope-diagnostic-october-10)
+completed eight authored human/animal comparisons and six exact saved natural
+controls through native fresh repeats. Both audits accept all 14 Booleans and
+complete records; controls retain saved decisions. DSLv6, Sol/xhigh, AS and
+schema stay fixed; the shared allowance reconciles at 14/28 first attempts.
+Expected judgments remain outside model input; there is no reuse, retry or
+warming. The original MILFs explanation and named-reference/list uncertainties
+remain unresolved. Synthetic success does not qualify natural-case accuracy;
+qualification and lower-effort testing remain pending.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
