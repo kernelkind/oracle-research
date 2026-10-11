@@ -17,8 +17,10 @@ omission and exposes a compound-purpose ambiguity in the parent. V104 remains
 the last approved prompt; the full-collection evidence above is exclusively v103.
 Experimental [Bootstrap-v105](Hierarchy-bootstrap-v105.md) has a separate
 [focused qualification](#bootstrap-v105-resolution-and-final-clause-qualification):
-nine accepted and one unresolved first-draw meaning after challenge, with three
-accepted fresh repeat meanings. This does not establish a reliable fix or activate v105.
+all ten first-draw meanings and four targeted fresh repeats are provisionally
+accepted after challenges. The latest
+[parent repeat and assessment reconciliation](#unchanged-v105-parent-repeat-and-assessment-reconciliation)
+preserves earlier flags as history. This does not establish a reliable fix or activate v105.
 
 ## Input and review contract
 
@@ -598,7 +600,7 @@ unconditional gold for these changed outputs. First-draw child receipts are
 `e75719b6682e501064da8f53973cfa66f0bb427af4d72c0f7929197f378234e0`
 and `471f718b015e8724b261de1f16456991e8042b18824c4af625ec6bfb32ba00e4`.
 
-The first-draw Food preparation qualification remains:
+At that checkpoint, the first-draw Food preparation qualification remained:
 
 - **Food preparation, selected `2`:** its final meaning admits "making food or
   acting on food to ready it for eating". Resolution a2 supports those distinct
@@ -668,6 +670,80 @@ approved prompt. This small
 adaptive panel does not establish a reliable fix or causal wording attribution.
 No frozen answer, original subject tree or historical comparison label was
 rewritten; no Compare calls, hierarchy builds or production activation occurred.
-The next proposed diagnostic is to repeat the unresolved parent before
+At that checkpoint, the proposed next diagnostic was to repeat the unresolved parent before
 editing again, then isolate the Resolve and Write changes if the scope issue
 persists rather than appending another rule without controlled evidence.
+
+## Unchanged v105 parent repeat and assessment reconciliation
+
+The user approved another fresh draw of the unresolved Food preparation parent,
+keeping Bootstrap-v105 unchanged. Native `prepare --from --repeat --only`
+retained the exact case, full post, ASv6.100 root tree, source evidence,
+rendered prompt and settings. The same persistent attempt counter, shared
+runner and automatic prefix caching were used. No prompt, Compare or hierarchy
+change was made. The new meaning is:
+
+> Food preparation is the activity of handling or processing food or ingredients
+> to make them ready for eating or for subsequent steps in making food,
+> including but not limited to preparing sourdough bread. Cooking is one
+> possible method.
+
+Two independent reviewers accept this final definition. Its handling/processing
+action has two explicit qualifying purposes: readiness for eating or readiness
+for further food-making steps. Resolutions a2 and a3 express the same condition.
+The definition does not require heating, completion or an actual consumer.
+The fresh receipt is
+`928cd09ae273b83ddd417a77866ac737fda91c2c0b87b84aa71af0d28d6d153d`.
+
+The reviewers also independently challenge the original v105 parent flag.
+"Making food or acting on food to ready it for eating" naturally states two
+alternatives: food production, and operations directed toward eating-readiness.
+Resolution a2 says the same. The stronger condition came from a3's narrower
+shorthand; importing it into the final's production alternative would add a
+restriction. A concrete material second membership criterion was not
+established from the final text itself. The uncertainty is withdrawn in a
+separate native agent assessment. Diagnostic disagreement is preserved without
+failing an otherwise defensible final definition. No model answer or historical
+snapshot was rewritten, and no human approval or Compare gold was invented.
+
+| Draw or assessment | Meaning draws | Latest agent assessment |
+|---|---:|---|
+| Original v105 first draw, after all challenges | 10 | Ten accept; reassessments are not new draws |
+| First targeted fresh repeat | 3 | Three accept |
+| Additional fresh parent repeat | 1 | One accept |
+
+These are 14 meanings covering ten adaptively selected entries, not 14
+independent unseen cases. The two accepted parent repeats do not erase the
+first assessment or demonstrate a measured reliability improvement. In
+particular, some apparent progress came from correcting review flags, rather
+than changing the prompt or model outputs. Historical v104 assessments remain
+unchanged; a matched review standard has not yet been reapplied to that baseline,
+so this panel does not establish a v104-to-v105 causal performance gain.
+
+Native artifacts in the retained task worktree:
+
+- `target/bootstrap-v105-consumer-controls-v1/report-reviewed-final-meanings.json`:
+  latest first-draw assessments with retained review history, SHA-256
+  `08053dafcf4468d42daec2b4330d4f8bf61fa2284e743b84982527a26a672b30`.
+- `target/bootstrap-v105-food-preparation-repeat2-v1/report-reviewed-source.json`:
+  SHA-256 `0dce60f048823d4cb33b9d43df81c70f8654fb5980a683e3c4bf0a8e01eb6e67`.
+- `target/bootstrap-v105-food-preparation-repeat2-v1/usage-all-v105-draws.json`:
+  native accounting from
+  [the extended usage source](hierarchy-bootstrap-v105-consumer-controls-usage-v2.json).
+
+This follow-up used one meaning attempt and one cache warmup, with no reuse,
+failure or retry. Both have saved usage; API-equivalent cost is $0.0115572.
+Across all three v105 experiments: 14 valid meanings, three warmups, 17 attempts,
+zero failures/retries/reuses, all 14 meaning requests with cache hits, and
+$0.1341588 complete API-equivalent cost. Subscription inference adds no
+incremental cash charge. Native summarization validates original generation
+receipts without hand-built totals. All final reviews match native input/output
+digests. The shared counter's 14,042/20,000 snapshot includes other work; this
+follow-up contributes two attempts.
+
+V104 remains the last approved prompt and v105 remains experimental. There is
+no supported prompt change to make from this follow-up alone. The recommended
+next qualification applies the same final-meaning review standard to the saved
+v104 baseline and then tests v105 on contrasting complete original branches,
+including known identity/state regressions. That can distinguish a producer
+defect from a diagnostic-only disagreement before another wording change.

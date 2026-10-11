@@ -15,11 +15,12 @@ review's preliminary nine-Food-failure count was withdrawn after challenge.
 The user approved v104; its ten-case test and three-case fresh repeat preserve
 the sourdough failure. Controls remain provisionally accepted, while the repeat
 adds a material parent-clause ambiguity. This is bounded qualification.
-Experimental v105's first draw has nine accepted and one unresolved meaning
-after challenge; its three targeted fresh repeats are accepted after independent review.
-The challenged sourdough and ingredient flags were withdrawn;
-the first-draw parent clause-scope qualification remains. V104 is still the last
-approved prompt, and no reliable v105 fix has been established.
+Experimental v105's ten initial meanings and four targeted fresh repeats are
+provisionally accepted after independent challenges. Earlier sourdough,
+ingredient and parent flags remain as review history; diagnostic disagreement
+alone does not fail a clear final meaning. Some changed counts reflect review
+corrections, not new outputs or a measured wording effect. V104 is still the
+last approved prompt, and no reliable v105 fix has been established.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate

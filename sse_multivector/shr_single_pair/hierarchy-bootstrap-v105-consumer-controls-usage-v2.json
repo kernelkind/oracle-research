@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v105_first": [
+      "../../target/bootstrap-v105-consumer-controls-v1"
+    ],
+    "v105_repeat": [
+      "../../target/bootstrap-v105-consumer-controls-repeat-v1"
+    ],
+    "v105_parent_repeat2": [
+      "../../target/bootstrap-v105-food-preparation-repeat2-v1"
+    ]
+  }
+}
