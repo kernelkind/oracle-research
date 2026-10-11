@@ -1489,8 +1489,11 @@ Refinement prioritizes the largest multi-note leaf and rotates across its notes,
 selecting highest-prominence unused descendants within the supporting original
 local branches, level by level. A leaf stops receiving refinement when it has
 one note or exhausts those descendants; notes supported at internal nodes do not
-require their own singleton node. Equal-note-set shaping remains open. This is
-intended v2 design; the current constructor does not implement it.
+require their own singleton node. For an equal-note-set parent with only one
+child, retain the child and omit the parent from the finished browsing hierarchy,
+preserving the original construction graph. Other equal-note-set cases and
+automatic shaping remain open. This is intended v2 design; the current constructor
+does not implement it.
 
 Use these offline commands after construction:
 

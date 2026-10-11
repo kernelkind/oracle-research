@@ -2,8 +2,9 @@
 
 **Status: next-generation draft; not implemented or tested.** The user approved
 guaranteed L1 selection by prominence, additional L1s for uncovered notes, and
-prominence-ordered refinement of multi-note leaves. Choosing which equal-note-set
-steps to remove remains open. The current constructor still follows the
+prominence-ordered refinement of multi-note leaves, and retaining the child when
+an equal-note-set parent has only that child. Other equal-note-set cases and
+automatic shaping remain open. The current constructor still follows the
 [standalone traversal design](hierarchy-traversal-draft.md).
 
 ## Purpose
@@ -133,9 +134,21 @@ descendants, deduplicating note IDs. Remove equal-note-set steps while preservin
 note access, fixed meanings and valid containment. Equal observed note sets do
 not establish semantic equivalence.
 
-Which nodes to retain and how to perform this removal automatically remain
-open. The selection rules alone do not resolve equal-note-set edges or establish
-that a finished hierarchy has passed this requirement.
+**Approved single-child rule:** when a parent has exactly one canonical child
+and both represent the same distinct-note set, retain the more specific child
+and omit the parent from the finished browsing hierarchy. A root's child becomes
+a browsing root. Below another retained ancestor, bypass the omitted parent
+using the existing transitive containment relationship.
+
+For example, if `Food {A, B}` has only `Vegetables {A, B}` beneath it, retain
+Vegetables. Do not merge their meanings, transfer Food's evidence into
+Vegetables, or delete Food from the original construction graph. This rule
+changes which canonical nodes appear in the finished browsing hierarchy.
+
+Equal-note-set cases involving a parent with multiple children remain open.
+Automatic shaping is not implemented. The selection rules alone do not resolve
+all equal-note-set edges or establish that a finished hierarchy has passed this
+requirement.
 
 ## Existing construction rules
 
