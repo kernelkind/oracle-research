@@ -467,10 +467,14 @@ that bounded offline audit; coverage alone is not finished-menu acceptance.
 Deeper construction is now scheduled concurrently across methods to avoid an
 idle traversal arm. The earlier sequential coordinator was stopped while the
 baseline's 60th selected-entry continuation was active. Native ownership
-locking allowed that same frozen continuation to finish and be resumed without
-redispatch; no model call was canceled. Each method still processes its own
+locking rejected the immediate resume while that process was still active;
+it does not wait for another owner. The original continuation then finished
+normally. After verifying its process had exited, construction continued from
+the completed state and the already prepared graph entry; no model call was
+canceled or redispatched. Each method still processes its own
 automatic entry order sequentially, uses the same frozen inputs and guards,
 and shares exact-request history and the irreversible attempt counter.
-`native-cli-logs/*-v2.log` retain the continued native invocations. The full
+`native-cli-logs/*-v2.log` retain the lock rejection and preparation;
+`*-v3.log` retain the resumed native invocations. The full
 200-entry comparison remains running; the root result is not substituted for
 that later result.

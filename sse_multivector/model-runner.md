@@ -8,13 +8,14 @@ factual-support failure and two materially ambiguous meanings.
 Two fresh diagnostic draws reproduce the business-identity error and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
 A subsequent user decision classifies implicit material scope as a failure;
-the saved v103 sourdough meaning also leaves its consumer boundary unresolved.
+the saved v103 sourdough meaning was also flagged for its consumer boundary.
 A focused 28-case reassessment preserves that witness and reviewer disagreements;
 missing a human qualifier alone does not establish a scope failure. The focused
 review's preliminary nine-Food-failure count was withdrawn after challenge.
-The user approved v104; its ten-case test and three-case fresh repeat preserve
-the sourdough failure. Controls remain provisionally accepted, while the repeat
-adds a material parent-clause ambiguity. This is bounded qualification.
+The user approved v104; its initial ten-case test and three-case repeat
+assessment flagged sourdough and parent scope. Applying the same final-meaning
+standard used for v105 accepts all thirteen saved v104 outputs, preserving
+earlier flags as history. That matched panel establishes no v105 failure correction.
 Experimental v105's ten initial meanings and four targeted fresh repeats are
 provisionally accepted after independent challenges. Earlier sourdough,
 ingredient and parent flags remain as review history; diagnostic disagreement
