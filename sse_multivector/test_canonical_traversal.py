@@ -379,6 +379,43 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(payload['canonical']['subject'], 'Root 0')
         self.assertEqual(state['steps'][0]['local'], dict(note_id='n0', number='1'))
 
+    def test_singleton_routes_elsewhere_do_not_finish_a_shared_leaf(self):
+        notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=[
+            dict(number='1', subject='Shared', context='Shared topic'),
+            dict(number='2', subject=f'Solo {i}', context='Independent topic')])
+            for i in range(2)]
+        self.prepare(notes=notes)
+        for _ in range(12):
+            state = self.state()
+            if state['status'] in ('complete', 'exhausted'):
+                break
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                local = record['local']
+                meaning = 'Shared' if local['number'] == '1' else 'Solo '+local['note_id']
+                for identifier in record['inputs']:
+                    value = dict(meaning=meaning)
+                    if record['role'] == 'comparison':
+                        value.update(relation='equivalent' if local['number'] == '1'
+                                     else 'neither', reason='Fixture fixed meanings')
+                    self.cli('run', record['experiment'], '--only', identifier, env={
+                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+            self.advance()
+        state = self.state()
+        self.assertEqual(state['status'], 'exhausted')
+        self.assertTrue(state['stopping']['individual_access'])
+        self.assertTrue(state['stopping']['strict_edges'])
+        self.assertFalse(state['stopping']['single_note_leaves'])
+        self.assertEqual(state['stopping']['multi_note_leaves'], [
+            dict(id='C001', note_ids=['n0', 'n1'])])
+        report = json.loads(self.cli('audit-canonical-trial', 'trial',
+                                     '--output', 'audit.json').stdout)
+        self.assertFalse(report['structural_constraints_met'])
+        audit = json.loads((self.root/'audit.json').read_text())
+        self.assertIn(dict(kind='multi_note_leaf', node='C001', note_ids=['n0', 'n1']),
+                      audit['violations'])
+
     def test_revalidation_reuses_unchanged_root_and_compares_only_new_roots(self):
         self.prepare(count=4)
         self.run_pending(lambda r: dict(meaning='Meaning '+r['local']['note_id']))
