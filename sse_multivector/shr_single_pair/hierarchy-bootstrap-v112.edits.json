@@ -1,0 +1,9 @@
+{
+  "base_sha256": "caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1",
+  "edits": [
+    {
+      "old": "When the selected subject admits competing senses or defining boundaries, make a justified choice that preserves its level of abstraction and expressed restrictions.",
+      "new": "Resolve competing senses or defining boundaries by choosing a supported interpretation that preserves the subject's level of abstraction and expressed restrictions. If choosing an interpretation would require deciding an unknown fact about a particular person, thing or event, leave that ambiguity unresolved."
+    }
+  ]
+}
