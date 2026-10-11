@@ -2540,3 +2540,83 @@ Reusable sources are the [post-only spec](hierarchy-bootstrap-coffee-grounding-p
 Frozen preparations are under `target/bootstrap-coffee-grounding-v1/`, using
 `post-only-draw1`, `post-only-draw2`, `controls-draw1` and `controls-draw2`.
 Preparation performs no inference; the user separately authorized execution.
+
+#### Coffeechain factual-evidence sensitivity: completed results
+
+All eight outputs are valid and freshly generated. The two draws use identical
+inputs, prompt, schema and settings within each condition, with distinct native
+receipts. Two independent read-only reviewers checked the outputs and
+provenance; all 17 evidence quotations match their supplied posts. Eight
+qualified **agent accepts** were saved through native `review`, preserving
+input/output hashes and receipts. These are agent assessments, not user gold.
+
+| Condition | Draw 1 | Draw 2 | Assessment |
+|---|---|---|---|
+| Exact original post, separate post-only diagnostic | Business identity unknown | Business identity unknown | Business-chain and loose coffee-tag senses remain possible |
+| Synthetic coffee-shop-visit wording; original AS tree retained | Null meaning | Null meaning | The post leaves chain affiliation unknown and describes the visit as weird |
+| Synthetic explicit multi-outlet business evidence | Particular-business meaning | Particular-business meaning | Both preserve the supported business identity and attributed characterization |
+| Synthetic hashtag-only clarification and independent shop | Null meaning | Null meaning | A chain assignment conflicts with the supplied text; a replacement subject is not manufactured |
+
+The positive control's draw-2 final meaning is:
+
+> The coffee chain described as weird today: the particular business operating
+> multiple coffee shops under the same brand that the author characterizes as
+> weird on the day of the post.
+
+The four Bootstrap nulls are visible source-link conflicts in **synthetic post
+controls**, not real-corpus Bootstrap failures or negative Compare labels.
+They do not make the original ambiguous business interpretation false. The
+original context-free v110 outputs remain separately reviewed as uncertain;
+they are historical references, not additional fresh samples in this panel.
+
+The result demonstrates factual-evidence sensitivity: v110 can refuse
+unsupported or contradicted chain assignments and retain a supported positive.
+It does **not** support blanket claims that Bootstrap blindly trusts AS
+subjects. The remaining witness is the original ambiguous hashtag: the full
+definition task settles on a particular business, while the post-only task
+preserves reference uncertainty. The post-only prompt changes the task and
+instructions as well as removing annotations, so it does not uniquely isolate
+the tree's effect or a responsible instruction. The coffee-shop-visit
+intervention also changes what is described as weird; its null cannot be
+attributed to hashtag removal alone. No preferred hashtag interpretation or
+general large-corpus guarantee follows.
+
+Native case IDs, with `controls-draw1` / `controls-draw2` as experiment suffixes:
+
+- No business cue:
+  `bootstrap-949445b9ecd8c0605feb3b86fc9563f85a148b302b8d3f740bffa2c24ed21aaf`.
+- Explicit business:
+  `bootstrap-2016de9931313532b4997cbea2d00a9d353c9978511fc7bfcbd6ef2319229b23`.
+- Explicit hashtag clarification:
+  `bootstrap-0d8a8455c758d70f319904d9674c2f19fb0c520c51a26d5408971a1d480701ed`.
+- Each post-only draw:
+  `ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852`.
+
+| Experiment suffix | Condition | Producer record SHA-256 |
+|---|---|---|
+| `post-only-draw1` | Original post | `a268ea5766acdc874f9fdcaf7ad0cd7b68804d4febb4a23e395ffd950dbebdf9` |
+| `post-only-draw2` | Original post | `279faca895e327016777ca89e1a908f911c685aaa59caf4d4035cb1fd3514ad5` |
+| `controls-draw1` | No business cue | `d66b72f8bb1965d1932ddee5913239f6bc01fc8fb2405bbde85715e7fd05d0e9` |
+| `controls-draw2` | No business cue | `ce16f9998a5d871d3c95f091baae2a6d983da60ee2b570d1f52b43d635e83290` |
+| `controls-draw1` | Explicit business | `73b7d6bd611c4a952e095bae7530f5d79a64f276ce74c07c2ab1f7ee2881b5b2` |
+| `controls-draw2` | Explicit business | `1fc0183c76789981a4f1ba705ec19d0ab63139c9f94d845b0010b750d2f53448` |
+| `controls-draw1` | Explicit hashtag clarification | `7006f4388793ca40d893b6f930e04583899e045c8a0f844735ed052736846733` |
+| `controls-draw2` | Explicit hashtag clarification | `17e279d3df2572e395395c91ce30cd1dae50294a98645014280c5bd4c9a7a18b` |
+
+Native [usage accounting](hierarchy-bootstrap-coffee-grounding-usage-v1.json),
+saved as `target/bootstrap-coffee-grounding-v1/usage-native-v1.json`, records
+**10 attempts**: eight valid case calls and two cache-prefix warmups; zero
+reuses, retries, failures, invalid receipts or unrun cases. Usage is complete;
+API-equivalent cost is **$0.04176**. All six Bootstrap case requests record
+cached input. The two short post-only requests are intentionally uncached.
+The native total includes 37,120 cached-input tokens, including warmups, and
+reasoning is already included in output usage. Subscription calls do not create
+an additional API invoice. The existing shared attempt counter was used without
+resetting it; other experiments' concurrent usage is outside this panel's cost.
+
+A useful next step is to settle how Bootstrap should represent an unresolved
+reference before writing a definition, using the original ambiguous witness.
+This is a recommendation, not an approved new uncertainty rule. No Bootstrap
+revision/adoption, Compare test, hierarchy construction or context-removal
+activation occurred in this diagnostic. Retain the worktree because native
+receipts and original source bindings refer to its absolute artifact paths.

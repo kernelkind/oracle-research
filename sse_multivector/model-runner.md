@@ -135,6 +135,15 @@ controls. It keeps Bootstrap-v110 and the original ASv6.100 subjects fixed;
 edited posts remain explicitly synthetic diagnostics, not new AS output or
 validation replacements. The separate post-only task is not a matched Bootstrap
 instruction ablation.
+Its [completed results](shr_single_pair/bootstrap-current-as-qualification.md#coffeechain-factual-evidence-sensitivity-completed-results)
+contain eight fresh valid outputs across two draws per condition: the post-only
+probe leaves the business identity unknown, explicit business evidence produces
+a supported meaning, and the other two synthetic controls produce supported
+null source conflicts. Native accounting records ten attempts, including two
+warmups, and complete API-equivalent cost of $0.04176. All six Bootstrap cases
+used cached input. These qualified agent assessments show evidence sensitivity,
+without identifying the cause of the original ambiguous assignment or adopting
+a new Bootstrap rule.
 
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
