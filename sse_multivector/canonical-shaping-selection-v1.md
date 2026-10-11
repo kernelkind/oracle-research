@@ -4162,3 +4162,59 @@ control, and the original activity/plans contrast. A returned Meals meaning
 must include C020 when that same composition scope is retained; a different
 coherent scope needs its own coverage assessment rather than a forced heading
 or answer. No new experiment, inference, graph change or UI update is begun.
+
+## Consolidation-v14 eight-call coverage screen
+
+The user replies "proceed" to the explicit eight-call recommendation: two
+independent draws each of Food, a parent-restriction control, and the planned
+and completed activity controls. This is a fresh task ceiling of **eight
+GPT-6.1 Sol medium subscription attempts**, including failures and retries. The
+earlier exhausted counters remain unchanged; no Bootstrap/Compare calls,
+hierarchy construction, prompt edit, UI update or agent communication is included.
+
+The shared runner prepares four exact one-case subsets from saved experiments:
+
+| Control | Native source | Exact case |
+|---|---|---|
+| Food | `consolidation-v13-broader-first-v1` | `food` |
+| Required online format | `consolidation-v11-online-scope-first-v1` | `unrestricted-children-under-online-parent` |
+| Activity with plans | `consolidation-v13-original-first-v1` | `with-plans` |
+| Explicit completed work | `consolidation-v13-completed-first-v1` | `completed-work-parent` |
+
+All are beneath ignored `target/canonical-shaping-selection-v1`. Native
+`prepare --from ... --only ...` changes only the template to v14 and selects
+the current shared worker; original parent/sibling data remain byte-identical.
+Ordinary SSE and medium reasoning are retained, without prefix warmups. Each
+repeat uses `prepare --from FIRST --repeat`. Each one-case run allows one new
+attempt, so it cannot spend a second attempt on recovery. At most three requests
+from this task run simultaneously. The shared native counter is initialized
+at 0/8 in `consolidation-v14-coverage-budget-v1.json`.
+All 37 relevant production-path checks pass before dispatch.
+
+Pre-call assessment criteria:
+
+- Judge each final meaning against the complete supplied parent and all sibling
+  meanings. Include every wholly covered sibling; reject any uncovered selected
+  sibling. Different coherent scopes need different complete lists.
+- In Food, Meals meanings retaining the reviewed composition scope must list
+  Food dishes C020 as well as any other wholly covered siblings. A different
+  useful scope is assessed on its own and does not establish that the exact
+  omitted-dish mechanism was exercised. Do not force an old heading or list.
+- Unrestricted course meanings under the online-only parent must return null:
+  adding the online condition would discard admitted parts of every child;
+  omitting it would extend beyond the parent.
+- In the original Food preparation group, a food-processing activity scope that
+  covers grilling and does not require performance must retain Grilling C012,
+  including its plans. A coherent different scope can legitimately exclude it
+  and leaves that particular activity control unexercised.
+- The completed-work control must find a useful narrower grouping covering
+  completed wall/ceiling painting S001/S002 and exclude planned work S003/S004.
+  Required completion remains in its meaning. Null fails this available
+  positive control. Synthetic labels are authored diagnostic expectations,
+  not new human gold for real hierarchy topics.
+
+The [native usage selection](shr_single_pair/hierarchy-consolidation-v14-coverage-usage-v1.json)
+binds all eight directories. No expected labels, source answers or reviews enter
+model input; baseline outputs remain evaluation evidence only. Proposals remain
+unapplied. The small screen can expose omissions or collateral regressions; it
+cannot establish broad accuracy or reliable improvement from two draws.
