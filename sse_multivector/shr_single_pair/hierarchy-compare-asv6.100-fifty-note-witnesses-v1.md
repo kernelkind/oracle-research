@@ -1724,3 +1724,33 @@ saved proofs citing parent examples, while other proofs assert lexical
 implications instead. The same40-case gate tests whether the wording changes
 those answers without losing positive controls. This is an untested candidate,
 not a semantic label change, and retains V85's original interpretation paragraph.
+
+### V87 gate: examples are not the common cause
+
+All40 comparisons completed validly with42 fresh attempts, no reuse, retry,
+failure or missing usage and $0.2754412 API-equivalent cost. Only018-forward
+corrects a targeted restriction error; reverse018 and both orientations of
+038/041/042 remain positive. The seven unchanged bad proofs still import
+eating purpose or personhood. This weakens the example-authority hypothesis
+as a common explanation. Core019/043 controls recover, while071 still selects
+an unresolved morning-context reading. Food/Cookware, Meals and appliance
+controls remain useful positives and negatives. Liquid-food reversal persists.
+
+Forward012 again excludes a bread-making stage because it is not finished
+food. Reverse012 supplies a different witness: flourless cloud bread lacks
+the parent Bread meaning's flour-and-water condition. Its admission as bread
+is qualified, so neither is not rejected solely by its label and no universal
+Bread/Bread preparation positive is manufactured. Two nourishment-intention
+snapshot qualifications remain. Native reviews preserve these distinctions.
+Exact snapshots and receipts are under target/compare-v87-qualification-v1;
+hierarchy-compare-v87-usage-v1.json reproduces usage.
+
+V88 returns to V85 and changes only the question procedure. Each question
+isolates one independently required parent condition, specifically the one
+least established by the child, and preserves the child's defining kind and
+other restrictions. The answer must resolve that exact variation rather than
+proving an easier condition or changing the child to another kind. A positive
+still requires every remaining condition. The existing two question IDs,
+five fields, fixed meanings and topic convention are unchanged. This tests
+condition omission directly; it does not claim to fix activity aspects or
+planned-versus-performed interpretation, and does not carry V86/V87 edits.
