@@ -1303,3 +1303,26 @@ native singleton isolation (cap 3); require coherent supported conditions across
 the identical meaning pair in endpoint versus ancestor positions, and preserve
 all positive controls. A pass advances to remaining seven and fresh repeats; a
 failure triggers a new controlled candidate under the same 20,000 allowance.
+
+### V6 residual intention conflict and v7 proof test
+
+V6 completes all nine cases validly, preserving all endpoint labels and the
+correct bagel human-consumer failures across snapshot and singleton. It still
+fails stability: Eating's intended-ingestion condition is unresolved forward
+(actual consumption does not establish intention) but established reverse
+(food's ingestion role is treated as intention). The exact meanings are
+unchanged. Independent review confirms this scope conflict without prescribing
+which unresolved versus counterexample judgment must replace it. No remaining
+controls or v6 repeat was dispatched. Native usage source is
+compare-condition-diagnostic-usage-v6.json.
+
+V7 replaces only the customary-use clause in the interpretation paragraph:
+actual use or customary function cannot stand in for a required intention;
+positive intended-use proof must exclude a different or absent intention from
+the child's wording or necessary implication. Preserve explicit design-purpose
+appliance coverage. Focused gate uses Eating both directions, appliances both
+directions and the bagel snapshot (five cases, cap 11), plus the native Food-only
+bagel case (cap 3). Conditions must be coherent across orientations and branch
+positions; honest unresolved conditions are allowed when they do not undermine
+a decisive valid counterexample. A pass expands to the ten other cases and
+fresh repeats before broad qualification. All attempts remain inside 20,000.
