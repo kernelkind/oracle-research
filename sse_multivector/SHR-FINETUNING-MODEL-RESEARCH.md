@@ -4,9 +4,13 @@
 
 Updated October 11, 2026. The authorized goal is one student choice per prompt
 and verified training readiness before freeze, followed by one planned final
-fine-tune per prompt. **Neither model is selected.** Both prompts are still
-being developed. Earlier SHR results below inform candidate priorities but
-are not measurements of the new tasks. See
+fine-tune per prompt. The completed matched pilot and broader development
+evidence support recommending **Qwen3.8-27B starting weights for Bootstrap**
+and **pinned Kev-27B v2 for relation-only Compare**. Final frozen-task fine-tuning
+and evaluation await prompt freeze; no production
+pilot adapter or epoch is selected. Both prompts are still being developed.
+Earlier SHR results below inform candidate priorities but are not measurements
+of the new tasks. See
 [current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
@@ -41,11 +45,11 @@ do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
 | --- | --- | --- | --- |
-| Qwen3.8-27B | First dense generative reference: instruction-tuned, native long context; current screen and full-vocabulary suffix training verified locally | Common-foundation reference, including direct option scoring | Scope/state errors, matched task-specific learning and production branch coverage |
+| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and production branch coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Retained for generative quality with fewer active parameters; expert adaptation and long suffix training/reload verified on GB10 | Potentially useful for many repeated decisions | Representative meaning-generation learning and semantic fidelity |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
-| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Provisional Compare foundation priority on the matched B96/C48 panels | Broader independent coverage, production branch lengths and checkpoint tradeoff |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent coverage, production branch lengths and checkpoint tradeoff |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
 | Ettin-1B encoder | Cannot generate a Bootstrap meaning | Inexpensive input-JSON candidate with measured transfer limits | Broader reviewed learning and evaluation coverage; its random head is not a published task model |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
@@ -120,8 +124,9 @@ teacher targets are unchanged; both prompts remain in development. See the
 [benchmark bindings and status](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 The human selected sequential GB10 student training for this investigation:
-one student fit at a time. The existing Bootstrap/Compare candidates remain
-eligible; final student selection remains open.
+one student fit at a time. The completed evidence now supports recommended
+starting weights Qwen3.8-27B for Bootstrap and pinned Kev27 v2 for Compare;
+final frozen-task fine-tuning and evaluation await prompt freeze.
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`
@@ -172,29 +177,40 @@ Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
-The broader fixed-v96 Bootstrap panel now has 40 fresh valid meanings from
-Gemma's first epoch, with no failures or nulls. Bound agent reviews accept
-**16, reject 10 and leave 14 uncertain**, versus Qwen's provisional 24/6/10
-and 28/5/7 at epochs one and four. Gemma broadens Rosemary to mint-family plants
-and Rome to an empire, invents experienced health harm, and retains undefined
-activity processes and joined-topic identity defects. All six provisional
+The broader fixed-v96 Bootstrap panel now has 40 fresh valid meanings per
+Gemma epoch, with no failures or nulls. Bound agent reviews give
+**16/11/13 and 22/9/9 accept/reject/uncertain**, versus Qwen's provisional
+24/6/10 and 28/5/7 at epochs one and four. Gemma's first epoch broadens Rosemary
+to mint-family plants and Rome to an empire, invents experienced health harm,
+and retains undefined activity processes and joined-topic identity defects. All six provisional
 teacher-null cases receive meanings; their unsettled references do not establish
-refusal accuracy. Median native/model execution is **67.91/67.80 seconds**,
-with **51.88 GiB** peak allocation and 230,329 input / 1,489 output tokens.
+refusal accuracy. Epoch-one/four median native execution is **67.91/82.97
+seconds**, model execution 67.80/82.85, with **51.88 GiB** peak allocation.
+Both process 230,329 input tokens; output totals are 1,489/1,799. The fourth
+epoch's native median is about **5.80 times** Qwen's measured 14.31 seconds.
 The verified unmerged expert-adapter path limits optimized serving forecasts.
 Qwen's first-epoch count includes three supplementary criterion reconciliations:
 accept the nonexhaustive edible Seed-oil definition and reject pressure-canning
 and stock-making without their defining processes. All original 40 plus three
 supplementary reviews remain preserved; counts use the latest bound review for
 each of the 40 unchanged outputs.
-Qwen's provisional Bootstrap priority has concrete paired support: both epochs
-preserve Rosemary's herb identity, Rome's city identity and Potatoes as a kind,
-and its fourth epoch defines stock-making through cooking carcasses with water.
-Gemma's first epoch instead preserves Cooking's heat requirement better than
-either Qwen epoch. Both retain defects, including pressure-canning's omitted
-process and experienced-harm invention in Qwen's fourth epoch and Gemma's first.
-Review counts alone do not rank these foundations. Gemma's fourth-epoch
-evaluation remains pending and no final student is selected.
+Gemma's first-epoch count includes one supplementary Healthy diet reconciliation
+using epoch four's standalone-content criterion: retain the valid church-learning
+and attributed value role, but reject the missing dietary definition. The original
+40 reviews plus that record remain preserved, with no output change.
+The current paired fourth-epoch comparison supports Qwen's recommended starting
+weights: it preserves Potatoes as a kind, states stock-making through cooking
+carcasses with water, defines nutritious/balanced dietary guidance, retains only the selected
+synthetic sushi eating event, and states the trial action with both equipment
+kinds in experimentation case 24. Gemma repairs its earlier Rosemary/Rome
+identity widening and Risotto definition, so those are no longer Qwen wins.
+Gemma also retains the successful rosemary-addition outcome Qwen drops; both
+give acceptable meanings for the script functions. Shared defects include
+optional Cooking heat, pressure-canning without its process and invented
+processed-food consumption/experienced harm. Whole-topic parent fit and null
+reference disputes remain uncertain. Review counts alone do not rank these
+foundations; the recommended starting weights still require final frozen-task
+training/evaluation, with no production pilot adapter or epoch selected.
 Native identities and result/review hashes are in the
 [broader evaluation record](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 
@@ -252,21 +268,24 @@ Qwen passes. Epoch one leads on isolated regressions and epoch four on branches;
 this tradeoff selects neither production pilot adapter nor checkpoint epoch.
 The 21 short single-support branch fixtures from three notes do not establish
 production branch capacity or complete hierarchy performance.
-All Compare evaluations are complete; Gemma's fourth Bootstrap epoch evaluation
-remains pending.
+All authorized Compare and focused Bootstrap evaluations are complete. The owned
+GB10 model server and tunnel were stopped; this work did not restart or delete
+the previously paused serving container. The owned worktree retains needed
+ignored artifacts and absolute native receipt paths.
 See the
 [native broader results and bindings](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 
-The current research priority is **Qwen27 for further Bootstrap qualification**,
-with Gemma26 retained as an alternative, and **Kev27 as the provisional Compare
-foundation priority**, with Qwen27 retained as the quality reference and Ettin1B
-input JSON as the inexpensive candidate with measured transfer limits.
+The recommended starting weights are **Qwen3.8-27B for Bootstrap**, with Gemma26
+retained as an alternative, and **pinned Kev-27B v2 for relation-only Compare**,
+with Qwen27 retained as the quality reference and Ettin1B input JSON as the
+inexpensive candidate with measured transfer limits.
 The earlier 46-case fit panel did not distinguish Kev and Qwen predictions;
-the broader panels now support Kev's provisional priority. These are candidate
-priorities, not selected final students: the
-development evaluation still needs broader independent post coverage and
-qualification across all five Compare labels and canonical branches, plus
-reviewed Bootstrap refusal/state/scope boundaries.
+the broader panels now support recommending Kev's starting weights. Final
+frozen-task fine-tuning and evaluation await prompt freeze; no production pilot
+adapter or epoch is selected. The completed development evidence remains limited
+in independent post coverage, five-label and canonical-branch qualification,
+and reviewed Bootstrap refusal/state/scope boundaries. These limits matter for
+final qualification under the eventual frozen prompts; this extension is complete.
 Training volume and production student input layout remain open. The repeated
 teacher instructions in the current fit controls and Gemma's unmerged adapters
 limit direct cost forecasts for final training or serving.
