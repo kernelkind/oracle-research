@@ -1293,6 +1293,11 @@ validation. No saved LG01 output is rewritten.
 
 ### Canonical hierarchy construction
 
+Give each hierarchy run a specific, unique version identifier and use it in
+reports and comparisons. Link it to the exact hierarchy output and the frozen
+inputs, prompt/model settings, construction policy and native receipts used to
+generate it. The naming format remains open.
+
 The native canonical workflow is available through the shared launcher. Oracle
 owns input adapters, construction, comparison selection, menu shaping and
 inspection; the sibling experiment-runner continues to own execution, retries,
