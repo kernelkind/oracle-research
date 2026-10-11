@@ -4018,3 +4018,52 @@ independent fresh confirmation and broader qualification before adoption. No
 Bootstrap inference, hierarchy construction, external messages or new allowance.
 Usage sources:hierarchy-compare-v167-independent-case-screen-usage-v1.json and
 hierarchy-compare-v168-without-examples-screen-usage-v1.json.
+
+Both screens completed with30 valid comparisons in32 attempts each, including
+two warmups each, no reuse, failure, retry, missing usage or unrun case. Native
+API-equivalent costs:V167 $0.3279248;V168 $0.3540668. Counter17971/20000. V167
+core has two settled reversals(018/022) and one forward chain conflict;V168 core
+has four reversals(008/018/022/041) and one forward chain conflict. Neither has a
+reverse chain conflict, and the controls have no settled conflicts.
+
+Native reviews:V167 core13 accept/2 proof reject/6 qualified, controls3 accept/
+1 proof reject/5 qualified;V168 core10 accept/5 proof reject/6 qualified,
+controls5 accept/1 proof reject/3 qualified. V167022 forward imports illustration
+coverage without testing shape;reverse adds ingredient exclusivity and leaves
+serving admission qualified. Its009 control does not close the host-food route.
+The018 forward proof now invokes a disputed food-preparation genus rather than
+repairing edibility, but opposite orientations still choose different purpose
+readings. V168022 reverse executes a shape test using inferred whole-pantry
+holeless production;exact recipe admission remains qualified. Its forward
+omits shape, both008 assign unestablished particular-beverage properties,041
+forward misses the explicit person condition,071 reverse chooses morning
+context, and025 control wrongly excludes cultivation information from a
+qualifying food-role connection. All actual copies, source/code bindings,
+outputs and receipts remain unchanged. Neither candidate is expanded or
+adopted. The results weaken first-candidate repair as the sole mechanism; they
+do not establish which lexical reading is correct or a causal benefit from
+removing examples.
+
+### V169: positive coverage needs its own proof
+
+This independent single-sentence ablation starts from V159. Replace the
+imperative to prove universal coverage after no valid counterexample with:
+Conclude full coverage only from a proof covering the child's whole scope;
+failure to find a valid counterexample does not supply that proof. All other
+instructions, examples, schema, data and graph guards remain unchanged. The
+hypothesis is positive-completion framing, not a new semantic restriction.
+Two independent preflights and native exact replay accept the change; both
+production demonstrations validate. Unsupported necessity should not be rescued
+by a failed case; legitimate lexical implications and supported positive
+controls must remain available. More nulls alone cannot qualify the candidate.
+
+Planned fresh complete52-case qualification:the33 core and19 control cases
+from the full fresh V159 gate. Fifty-two comparisons plus two warmups:54 attempts
+absent retries. This includes the complete bagel chain, all earlier matched-gate
+proof rejects and protective role, fixed-entity, composition and canonical
+guards. It remains a targeted panel, not all196 core/102 fifty-note cases.
+Assess actual necessity claims and supported reading closure alongside native
+consistency. A promising result still requires fresh matched confirmation and
+broader qualification. No Bootstrap inference, hierarchy construction, external
+messages or additional allowance. Native usage source:
+hierarchy-compare-v169-positive-proof-gate-usage-v1.json.
