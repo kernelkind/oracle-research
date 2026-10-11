@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "interpretation": {"type": "string", "minLength": 1},
+    "business_chain_established": {"type": ["boolean", "null"]},
+    "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "qualification": {"type": "string", "minLength": 1}
+  },
+  "required": ["interpretation", "business_chain_established", "evidence", "qualification"],
+  "additionalProperties": false
+}

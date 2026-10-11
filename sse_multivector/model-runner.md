@@ -129,6 +129,12 @@ All 32 meanings validate, while Coffee-chain source assignment remains uncertain
 in both conditions. Native accounting records 37 attempts, including warmups and
 one recovered failure with unknown usage. The test does not activate context
 removal or establish a general quality improvement.
+The subsequent [Coffeechain evidence-sensitivity diagnostic](shr_single_pair/bootstrap-current-as-qualification.md#coffeechain-factual-evidence-sensitivity-predeclared-diagnostic)
+uses the existing `posts` adapter and source-bound schema-4 `post_override`
+controls. It keeps Bootstrap-v110 and the original ASv6.100 subjects fixed;
+edited posts remain explicitly synthetic diagnostics, not new AS output or
+validation replacements. The separate post-only task is not a matched Bootstrap
+instruction ablation.
 
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,

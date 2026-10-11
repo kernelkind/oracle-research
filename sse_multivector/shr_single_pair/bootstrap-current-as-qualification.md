@@ -2410,5 +2410,59 @@ omission is harmless on the full collection. The optional-context prompt remains
 experimental; v104 and all original AS inputs remain unchanged. A useful next
 investigation is whether Bootstrap treats an AS subject's uncertain factual
 interpretation as established by the post, using Coffeechain as a witness.
-That investigation has not begun; no prompt edit, Compare test or hierarchy
-construction follows automatically from this result.
+The user approved that investigation; its bounded diagnostic follows. No
+production prompt edit, Compare test or hierarchy construction follows
+automatically from this result.
+
+#### Coffeechain factual-evidence sensitivity: predeclared diagnostic
+
+The earlier v105-v108 authority/parent-fit wording test already failed to
+establish a repair on this witness. Removing supplied contexts under v110 also
+left business-child assignment uncertain in two draws per condition. Both the
+business-specific AS subjects and the original hashtag remained in those inputs;
+their saved explanations cannot isolate which cue drives the interpretation.
+
+Two native diagnostic paths use Sol 6.1 medium and the existing persistent
+attempt allowance:
+
+1. A separate [post-grounding diagnostic v1](Hierarchy-post-grounding-diagnostic-v1.md)
+   receives only the exact original post through the `posts` adapter, selected
+   from the current ASv6.100 corpus. Subjects, contexts, hierarchy, prior meanings
+   and answers are outside model input. It asks what the hashtag can refer to and
+   whether the supplied text establishes a multi-outlet business. This is a
+   different task from Bootstrap, not a matched instruction ablation. Its short
+   prefix is uncached; it is not padded to meet the 1,024-token cache minimum.
+2. Unchanged [Bootstrap-v110](Hierarchy-bootstrap-v110.md) receives its exact
+   original two-entry ASv6.100 tree, selected child `1.1`, with all entry contexts
+   omitted. Existing native `post_override` support supplies three explicitly
+   synthetic edited posts: replacing `#coffeechain` with a coffee-shop visit;
+   adding explicit multi-outlet business evidence; or explicitly clarifying
+   hashtag-only usage and an independent single-location shop. Original subjects,
+   tree links, selection, schema and 4,632-token cache prefix stay fixed. The
+   override's original/replacement provenance remains outside model input.
+
+Each path has two fresh draws: two post-only outputs and six Bootstrap outputs.
+Both original context-free child outputs remain historical references and are
+not rerun. The original AS tree was generated for the original post, **not** the
+edited posts. These controls are not newly generated AS outputs, current
+validation replacements or human semantic gold. No alternative hierarchy or
+selected subject is manufactured. Original corpus and frozen experiments remain
+unchanged; native quote validation uses each actual edited Bootstrap post.
+
+Review whether the chosen meaning assigns a particular business that the text
+supports, leaves unknown or contradicts. Retain coherent supported business
+coverage in the positive control. An explicit source conflict may remain
+unresolved or yield a null; do not require a particular hashtag rewrite.
+Preserve ordinary source uncertainty rather than labeling it false. Independent
+review will examine all outputs and exact receipts. Changed input evidence and
+a separate post-only task cannot uniquely establish an internal model mechanism,
+nor make the original ambiguous interpretation demonstrably false.
+
+Reusable sources are the [post-only spec](hierarchy-bootstrap-coffee-grounding-post-only-v1.spec.json),
+[post controls](hierarchy-bootstrap-coffee-grounding-post-controls-v1.json),
+[context-free view](hierarchy-bootstrap-coffee-grounding-subjects-only-v1.json),
+[Bootstrap spec](hierarchy-bootstrap-coffee-grounding-controls-v1.spec.json) and
+[native usage source](hierarchy-bootstrap-coffee-grounding-usage-v1.json).
+Frozen preparations are under `target/bootstrap-coffee-grounding-v1/`, using
+`post-only-draw1`, `post-only-draw2`, `controls-draw1` and `controls-draw2`.
+Preparation performs no inference; the user separately authorized execution.
