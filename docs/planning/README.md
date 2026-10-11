@@ -444,10 +444,14 @@ then verifies a positive witness with the existing relationship check. Qualify
 relationships at high separately while retaining matching/support at xhigh,
 and qualify reuse of positive model verdicts with their provenance. The six-hour
 model-work target is conditional arithmetic with two hours of headroom, not a
-measured forecast. Native preparation and response validation are implemented
-for the authorized four-note xhigh development trial; accuracy and runtime
-remain unmeasured. Deployed defaults, the
-final sixty and the maximum two-percentage-point loss remain unchanged.
+measured forecast. Native preparation and response validation are implemented.
+The [four-note xhigh DCSv1 development trial](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+finishes ten searches and four warmups in approximately 75 seconds; three
+audits accept all ten complete outputs, with the sole positive witness verified
+through unchanged DSLv10 reuse. The panel contains only one missing placement;
+unseen reliability and full-evaluation runtime remain unqualified. Deployed
+defaults, the final sixty and the maximum two-percentage-point loss remain
+unchanged.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain the baseline; lower-effort qualification

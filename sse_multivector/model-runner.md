@@ -186,6 +186,19 @@ receipts and 265 quotations pass mechanical checks. No new teacher attempts,
 prompt changes, Compare labels, hierarchy build or review writes occurred;
 the saved panel is not a fresh reliability sample. V104 remains approved.
 
+The user-requested [v109 low-reasoning screen](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v109-low-reasoning-screen)
+preserves the 115-entry complete-branch inputs, prompt, schema and caching.
+All 115 low outputs validate; independent reviews flag three material boundary
+concerns rather than factual contradictions. A fresh matched four-case panel
+repeats unresolved Cooking preparation coverage at low while medium explicitly
+includes it; two pressure-canning process omissions do not repeat. The task
+uses 130 fresh attempts including four warmups and three recovered provider
+failures, with no answer reuse. Failed usage remains unknown, preventing an
+exact total cost-saving claim. The observed historical median elapsed times
+are 13.34 seconds low and 14.04 medium, not a causal speedup. Low is not adopted;
+the recommendation is to retain medium pending matched qualification. No
+Bootstrap prompt, Compare label, hierarchy or UI changed.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1392,6 +1405,13 @@ shares that counter. Preparation and explicit advancement remain offline. The
 automatic command calls the ordinary runner execution path under the task's
 authorization and existing budget admission.
 
+Compare-v179 uses symmetric fixed meanings: A is the incoming node and B is the
+selected canonical node. The constructor supplies only subject and meaning to
+this prompt, translates the two containment labels for traversal, and preserves
+native answers and receipts unchanged. The existing local/canonical schema is
+also supported. Graph contradiction checks apply to both formats; canonical
+branches do not become extra fields in v179's model input.
+
 Up to three local searches and a consolidation batch execute concurrently;
 provider concurrency is controlled by the shared runner. Advance after each
 batch finishes, without waiting for unrelated batches. Serialize placements and
@@ -1666,6 +1686,12 @@ Complete negative evidence is mechanically validated; semantic correctness and
 positive-witness verification remain separate requirements. Historical pair
 agreement is diagnostic rather than qualification. This adapter does not replace
 the deployed all-pairs evaluation or establish the eight-hour runtime target.
+Its [four-note xhigh development trial](distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+completes ten fresh searches plus four eligible warmups in approximately 75
+seconds. Three complete-output audits accept all ten decisions and reasons;
+unchanged DSLv10 verifies the sole witness through exact-input reuse. Native
+`summarize-experiments` reconciles usage and the attempt budget. These small-panel
+results do not qualify negative-search reliability or full-evaluation runtime.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

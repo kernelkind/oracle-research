@@ -3,15 +3,25 @@
 Open the [hierarchy catalogue](../../target/hierarchy-catalogue/index.html) for
 all saved versions and their recorded experimental parameters. Search by version
 ID, original experiment name, prompt, model, seed or other saved setting. Select
-two versions to inspect their parameters side by side.
+two versions to inspect their parameters side by side. The existing-output
+inventory starts **October 8, 2026 at midnight America/New_York**
+(`2026-10-08T04:00:00Z`), per the user-approved cutoff.
 
 The catalogue collects saved canonical trials, clustering hierarchies, graph
-exports and browsing outputs from the repository's retained Git worktrees.
+exports and browsing outputs saved under `target/` in the repository's retained
+Git worktrees. Older inputs can appear as provenance for a recent hierarchy;
+they do not receive hierarchy IDs through this inventory. Tracked historical
+output copies and nested source snapshots are excluded.
 Each entry includes an immutable output copy, its SHA-256, original locations,
 recorded configuration, source bindings and parameter evidence. Missing or
 changed frozen sources are displayed. Unrecorded historical defaults stay
 unknown; current defaults are never substituted. Archived geometric signature
-defaults are included only when the source matches its recorded hash.
+defaults are included only when the source matches its recorded hash. Each
+entry shows its date and the evidence used: a saved output timestamp, the latest
+owned experiment execution start, or explicitly unverified file modification
+time when no saved timestamp exists. Inherited experiment dates do not date a
+new checkpoint. The cutoff is fixed in the
+[catalogue source](../../sse_multivector/hierarchy-catalogue-source-v1.json).
 
 Each entry also has a **Generator code** section. Code and prompt files identified by
 saved hashes are preserved under the catalogue's `code/` directory. The command
@@ -21,9 +31,10 @@ file contents; it does not establish the run's overall commit. Saved commit
 identifiers are shown when recorded. Missing source files and unrecorded commits
 remain unknown. This inventory cannot recover code that a run never identified.
 
-Before a new run, record its source commit and any uncommitted source changes
-alongside the runner's frozen code hashes. Preserve that source before executing
-the experiment; the checkout's later HEAD is not evidence of the run's code.
+Before a new run, record the full Git commit hashes for both this repository and
+the shared experiment runner, plus any uncommitted source changes, alongside the
+runner's frozen code hashes. Preserve that source before executing the
+experiment; the checkout's later HEAD is not evidence of the run's code.
 
 IDs use `H0001`, `H0002`, and so on. The maintained
 [version registry](../../sse_multivector/hierarchy-versions.json) permanently
@@ -34,8 +45,8 @@ Changed output or adjacent evidence gets a new ID. Existing versions and their
 snapshots are retained. Recorded source hashes link related versions; browsing
 exports and checkpoints can therefore be referred to individually.
 
-The catalogue includes historical/deprecated subject-derived experiments. A
-recorded ASv6.100 source does not establish that a hierarchy is approved or
+Recent hierarchies derived from deprecated subjects retain that label. A recorded
+ASv6.100 source does not establish that a hierarchy is approved or
 semantically correct. Unknown subject versions are labelled explicitly. Empty
 preparations, pair-only diagnostics, smoke fixtures and synthetic storage
 benchmarks are excluded.

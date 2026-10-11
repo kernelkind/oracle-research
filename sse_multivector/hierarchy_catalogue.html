@@ -5,10 +5,10 @@
 body{font:16px system-ui,sans-serif;margin:2rem auto;padding:0 1rem;max-width:1400px;color:#202b36;background:#fafbfc}h1{margin-bottom:.4rem}p{line-height:1.5}input,select,button{font:inherit;padding:.5rem;border:1px solid #bac3cc;border-radius:4px;background:white}input{width:min(90%,600px)}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.6rem;border-bottom:1px solid #dce1e6;vertical-align:top}button,a{color:#075eaa}button{cursor:pointer}pre{font:13px ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#eef1f4;padding:1rem}small{color:#556575}details{margin:.7rem 0}summary{cursor:pointer}.panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:1.2rem}.panel{min-width:0}.warning{color:#744d06}.paths{overflow-wrap:anywhere}.selected{background:#e5effa}
 </style>
 <h1>Hierarchy versions</h1>
-<p>One ID identifies one saved hierarchy and its recorded settings. Copies share an ID. Changed outputs and independently saved experiments have separate IDs. Source files are preserved.</p>
+<p>One ID identifies one saved hierarchy and its recorded settings. Copies share an ID. Changed outputs and independently saved experiments have separate IDs. Recorded source files are preserved when available.</p>
 <p id="counts"></p>
 <label>Find a version, method or setting <input id="search" placeholder="H0001, Bootstrap-v104, seed…"></label>
-<table><thead><tr><th>Version</th><th>Original name / path</th><th>Output</th><th>Source status</th></tr></thead><tbody id="rows"></tbody></table>
+<table><thead><tr><th>Version</th><th>Original name / path</th><th>Date</th><th>Output</th><th>Source status</th></tr></thead><tbody id="rows"></tbody></table>
 <p>Choose two versions below to inspect their recorded parameters side by side.</p>
 <div class="panels"><section class="panel"><select id="left" aria-label="First hierarchy"></select><div id="leftDetail"></div></section><section class="panel"><select id="right" aria-label="Second hierarchy"></select><div id="rightDetail"></div></section></div>
 <details><summary>Inventory coverage and read errors</summary><pre id="coverage"></pre></details>
@@ -22,6 +22,7 @@ function detail(id,target){const row=all.find(r=>r.version_id===id);target.repla
  target.append(element('h2',row.version_id+' · '+row.name));
  target.append(link('Exact saved output',row.output));
  target.append(element('p',row.family+' · '+row.run_status+' · '+row.source_status));
+ if(row.generation_time)target.append(element('p',row.generation_time.timestamp+' · '+row.generation_time.basis));
  target.append(element('small','SHA-256 '+row.sha256));
  if(!row.currently_discovered)target.append(element('p','Retained version; the original location now contains a different output or is no longer available.'));
  if(row.source_versions.length)target.append(element('p','Recorded source versions: '+row.source_versions.join(', ')));
@@ -39,9 +40,9 @@ function detail(id,target){const row=all.find(r=>r.version_id===id);target.repla
  const locations=document.createElement('details');locations.className='paths';locations.append(element('summary','Original locations ('+row.locations.length+')'));for(const path of row.locations){const p=document.createElement('p');p.append(link(path,path));locations.append(p);}target.append(locations);
 }
 const searchText=new Map(all.map(r=>[r.version_id,JSON.stringify([r.version_id,r.name,r.artifact_path,r.family,r.source_status,r.parameters,r.evidence.map(e=>data.parameter_evidence[e.sha256])]).toLowerCase()]));
-function render(){const query=$('search').value.toLowerCase();$('rows').replaceChildren();for(const row of all.filter(r=>searchText.get(r.version_id).includes(query))){const tr=document.createElement('tr'),version=document.createElement('td'),button=element('button',row.version_id);button.onclick=()=>{$('left').value=row.version_id;detail(row.version_id,$('leftDetail'));$('left').scrollIntoView({behavior:'smooth'});};version.append(button);tr.append(version);const name=element('td',row.name);name.append(document.createElement('br'),element('small',row.artifact_path));tr.append(name);const output=element('td',row.family);output.append(document.createElement('br'),link('Saved file',row.output));tr.append(output,element('td',row.source_status));$('rows').append(tr);}}
-$('counts').textContent=all.length+' saved versions · generated '+data.generated_at+' · '+data.discovery_errors.length+' read errors. Parameter values come from saved records; current defaults are never substituted.';
+function render(){const query=$('search').value.toLowerCase();$('rows').replaceChildren();for(const row of all.filter(r=>searchText.get(r.version_id).includes(query))){const tr=document.createElement('tr'),version=document.createElement('td'),button=element('button',row.version_id);button.onclick=()=>{$('left').value=row.version_id;detail(row.version_id,$('leftDetail'));$('left').scrollIntoView({behavior:'smooth'});};version.append(button);tr.append(version);const name=element('td',row.name);name.append(document.createElement('br'),element('small',row.artifact_path));tr.append(name);const date=element('td',row.generation_time?row.generation_time.timestamp:'Unknown');if(row.generation_time)date.append(document.createElement('br'),element('small',row.generation_time.basis));tr.append(date);const output=element('td',row.family);output.append(document.createElement('br'),link('Saved file',row.output));tr.append(output,element('td',row.source_status));$('rows').append(tr);}}
+$('counts').textContent=all.length+' saved versions'+(data.scope?.generated_since?' · outputs since '+data.scope.generated_since:'')+' · generated '+data.generated_at+' · '+data.discovery_errors.length+' read errors. Parameter values come from saved records; current defaults are never substituted.';
 for(const side of ['left','right']){for(const row of all){const option=element('option',row.version_id+' · '+row.name);option.value=row.version_id;$(side).append(option);}$(side).onchange=()=>detail($(side).value,$(side+'Detail'));}
 if(all.length){$('left').value=all[0].version_id;$('right').value=all[Math.min(1,all.length-1)].version_id;detail($('left').value,$('leftDetail'));detail($('right').value,$('rightDetail'));}
-$('coverage').textContent=JSON.stringify({roots:data.roots,candidates_checked:data.candidates_checked,read_errors:data.discovery_errors},null,2);$('search').oninput=render;render();
+$('coverage').textContent=JSON.stringify({scope:data.scope,roots:data.roots,candidates_checked:data.candidates_checked,excluded_before_cutoff:data.excluded_before_cutoff,read_errors:data.discovery_errors},null,2);$('search').oninput=render;render();
 </script></html>
