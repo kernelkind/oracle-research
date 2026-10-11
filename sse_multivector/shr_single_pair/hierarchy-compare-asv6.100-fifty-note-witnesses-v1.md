@@ -3013,3 +3013,568 @@ cases; it is not the full196/102 qualification or a fresh repeat. Expected54
 first attempts include two warmups; caps67/39 retain the same persistent20000
 counter. All source hashes and both illustrations' production validation pass.
 Usage source: hierarchy-compare-v136-concrete-usage-v1.json.
+
+
+V136 completes52 valid comparisons in54 actual attempts, including two warmups,
+without reuse, failures, retries or missing usage. Native full API-equivalent
+catalog cost is $0.4625244. Two core reversal conflicts remain (018 and066);
+there are no complete-chain conflicts in this partial panel. Control reversals
+are absent among the five complete pairs; missing orientations remain unknown.
+The controls' latest native assessments are10 accept/6 reject/3 qualified.
+All029 omit the prescribed outside-person candidate.031 omits the outside-human
+consumer guard test;032 tests dog feed beside dinner, rejects its lost in-dinner
+role, and does not test whether correcting that role can preserve exclusion.
+Snapshot009's seasoning is actually used in a dish, but its exclusion proof does
+not resolve that dish's qualifying composition connection. These procedure/proof
+rejections do not establish opposite selected labels. All025 retain the independent
+water/food-kind qualification. The independent core challenge identifies019's
+unsupported eating-purpose imports and070's already-qualified recipient tests;
+018/022, thought, tea and morning boundaries retain producer qualifications.
+The33 final native core assessments are19 accept/5 reject/9 qualified, with
+one record per case.019 both import eating purpose;070 both bypass the prescribed
+recipient variation, while071 reverse omits a concrete morning-context test.
+071 forward's supported nulls pass review; an uncertain relation does not itself
+make the assessment uncertain. The owner retains064's tea/herbal qualifications
+alongside018/022, thought and066; the independent challenger did not establish
+a definite defect in064. Qualifications and review disagreement remain visible.
+
+### V137/V139: required missing-condition candidate versus compact presentation
+
+V137 changes one clause in V136's question-recording paragraph. The concrete
+question must attempt to lack an applicable absent parent restriction, rather
+than already satisfy it; identity/consumer priority and admission checks remain.
+This targets questions that choose qualifying listeners or ordinary drowsiness
+instead of testing the omitted recipient/person boundary. It does not establish
+that any such variation is actually admissible or any historical label is gold.
+
+V138 replaces only V137's containment-test section with a compact349-word version
+of the570-word section. Independent preflight found that explicit at-least-one
+parent-route wording had been compressed away; V139 restores it before dispatch.
+V138 and its prepared gates remain unrun intermediates. It retains independent conditions, alternative-local
+restrictions, a concrete prioritized question, independent admission/exclusion,
+all permitted connections, corrected incomplete candidates, full child coverage,
+and unresolved answers. Scope rules, canonical guards, examples, output schema
+and all supplied meanings remain unchanged. This is a presentation ablation,
+not an attribution of an outcome to one removed sentence. Earlier V97 tested a
+compact presentation before the current priority, ordinary-variant checks and
+illustrations; its results do not establish this combination's effectiveness.
+
+Both candidates freeze the identical33 core/19 controls from V136 with the
+ASv6.100/Bootstrap-v96 producer evidence unchanged. Expected first dispatch is
+104 comparisons plus four warmups,108 attempts absent retries/reuse. Stage caps
+67/39 per candidate and the persistent20000 counter bound execution. Native
+source hashes, input/evidence bytes and both illustrations are checked before
+calls. Fresh qualification beyond this panel depends on observed proof quality,
+not merely reversal totals. Neither candidate is adopted. No Bootstrap changes,
+hierarchy generation or external messages. Usage source:
+hierarchy-compare-v137-v139-matched-usage-v1.json.
+
+The current official reasoning guidance recommends clear direct instructions and
+closely aligned examples. It supports testing this simplification, not the claim
+that compactness or any particular semantic rule improves accuracy:
+https://developers.openai.com/api/docs/guides/reasoning-best-practices .
+
+
+V137/V139 complete104 valid comparisons in108 actual attempts, including four
+warmups, with no reuse, failure, retry or missing usage. Full native API-equivalent
+catalog cost is $1.0031384. Both core panels have five reversal conflicts;
+V137 has one forward chain conflict, V139 has none. V137 controls have no reversal
+conflict among five complete pairs; V139 has one (025). Missing orientations are
+still unresolved. The unchanged-input comparison and these mechanical totals do
+not prove a causal change in semantic accuracy.
+
+V137 core:20 accept/3 reject/10 qualified.019 both now supply genuine display/
+test-only bagels and preserve every child requirement while excluding an eating
+purpose.066 both correctly retain unresolved beverage/material scope.041 forward
+still omits the person test,053 forward imports broth and tests acidity instead,
+and070 forward chooses already-qualifying listeners. V137 controls:10 accept/
+6 reject/3 qualified.009's cake-composition exclusion remains unclosed;025 rejects
+cultivation while overlooking the established intended-eating role;029's failed
+non-experiencing-bot cases omit correction, and reverse029 skips identity.032
+now tests an in-dinner pleasure-only meal but omits the prior consumer test.
+031 supplies the actual pet-consumer case and retains the independent author/
+nourishment qualifications instead of being mislabeled an omission.
+
+V139 core:20 accept/5 reject/8 qualified.019 both remain sound, and reverse071's
+supported null passes.041/042 forward import humans;070 forward skips recipient,
+072 forward chooses already-food venison, and reverse022 does not present a
+concrete variant. V139 controls initially record10 accept/5 reject/4 qualified;
+the later independent-topic audit corrects016 to accept, preserving its initial
+rejection. Latest totals are11 accept/4 reject/4 qualified. All four remaining
+rejections omit identity/consumer tests (029x3 and031). All025 and032 retain
+qualifications. Independent challenge
+confirms009's nonnutritive flavored-water case closes the actual dish-composition
+route, while032 now repairs the dinner role but does not independently establish
+nourishment. These qualifications are not permission to weaken canonical guards
+or rewrite producer meanings. Neither version is adopted.
+
+### V140/V141: isolate the demonstrations rather than append another rule
+
+V140 removes only V139's complete Synthetic examples section. The instructions,
+input template, schema and frozen test meanings remain byte-identical. The prefix
+is1488 estimated tokens, so automatic warming remains eligible. This tests the
+net contribution of both demonstrations to the current combined procedure.
+
+V141 instead reverses only the local/canonical endpoints in the hair illustration.
+Both meanings and both proof cases are preserved, direction IDs and local-meaning
+copy are adjusted, the positive relation moves to canonical_contains_local, and
+the reason refers to the appropriate canonical consequence. The watch example and
+all instructions remain unchanged. This is illustration orientation and role-
+conditioned influence, not pure visible-order testing. No example comes from the
+regression posts or producer outputs.
+
+Earlier V95/V96 changed field ordering and V115 changed paragraph placement.
+V123 was watch-only and retained a fasting error; V124 was hair-only and avoided
+that semantic error in one draw. Those observations do not establish the hair
+illustration as a necessary cause. Independent preflight verifies both actual
+revisions and the reversed proofs; the new trial does not assume an effect.
+
+The same33 core/19 controls are frozen for both candidates from completed V139.
+Expected108 first attempts include104 comparisons and four warmups, with67/39
+stage caps and the unchanged persistent20000 counter. Exact inputs, producer
+receipts, source hashes, examples and runner identity are checked. Before drawing
+an orientation or omission conclusion, use fresh identical-request repeats of
+041/042/053/070 in both directions and the009/031/032 snapshots for V139 and the
+new candidates. That is11 comparisons plus two warmups per version,39 expected
+repeat attempts. Improved labels without valid proofs or increased blanket
+uncertainty do not qualify a candidate. Usage source:
+hierarchy-compare-v140-v141-example-ablation-usage-v1.json.
+
+Both complete52-case gates and all three11-case repeats finish:137 valid
+comparisons in148 actual attempts, including ten warmups, one recovered provider
+failure and its retry. There is no reuse or terminal failure. One failed attempt
+has no usage, so $1.3049988 is the known native API-equivalent subtotal; complete
+cost is unknown. The shared persistent counter reads16764/20000 at this checkpoint.
+
+V140 first core:17 accept/6 reject/10 qualified; controls:9 accept/7 reject/
+3 qualified. Its repeat core:3 accept/5 reject; controls:0 accept/3 reject.
+Removing demonstrations loses identity/consumer tests and introduces desired-kind
+and all-alternative proof errors. Yes/no question-form deviations are retained
+separately in comments, not converted into wrong-label judgments:24 first core,
+12 first controls, eight repeat core and two repeat controls.
+
+V141 first core:21 accept/4 reject/8 qualified; controls:10 accept/6 reject/
+3 qualified. First core rejects008/053 forward counterpart imports,070 forward's
+already-qualified recipient and107 forward's unclosed nourishing-food composition
+route. Five control rejections omit identity/consumer tests; the sixth incorrectly
+excludes an explicitly prepared side dish for tomorrow's meal solely because it
+has not yet been served. Repeat core:6 accept/2 reject; controls:1 accept/1 reject/
+1 qualified.042 forward again imports a human eater, while053 forward now supplies
+the water-cooked wine-role witness.070 forward still skips its recipient test;
+reverse070 now correctly preserves an audience-boundary null. First009 and016
+initial proof rejections were corrected to accept, preserving native history:
+independent vessel design and generic flour manufacture do not inherit a
+qualifying food/dish-production topic merely through a possible association.
+Latest per-case assessments determine these totals; hash-compatible historical
+records remain visible and are not multiple independent samples.
+
+V139 repeat:5 accept/3 reject/3 qualified.041/070 forward still skip their required
+identity/recipient variations;009's sweetener-in-food negative leaves the actual
+nourishing-food composition route open.031/032 visibly test nonhuman consumers,
+but author/dinner and nourishment implications remain qualified. V140/V141 first
+core reversals are seven/two respectively, with one reverse chain conflict in
+V141. Controls have two/zero reversals. Each repeat core has one reversal.
+Missing orientations remain unknown. These totals and
+the changing actual proofs do not establish a stable causal orientation effect
+or qualify either candidate. No Bootstrap or hierarchy changes follow.
+
+### V142/V144: explicit violating entity versus a named scoped illustration
+
+V142 replaces only V139's question-construction paragraph. Instead of merely
+attempting to lack a restriction, its case must put an entity outside the
+required identity/consumer class in the constrained role and state that attempted
+violation in the question. The answer must assess admission even if a necessary
+child implication is expected to rule it out. This restores an executable part
+of V104's previously successful procedure without restoring quotation bookkeeping;
+it is a combined presentation test, not a newly discovered semantic rule.
+Other absent qualifications, complete admission/exclusion, corrected candidates,
+positive coverage, unresolved judgments and canonical guards are preserved.
+
+V143 branches separately from V139, changing only the synthetic watch
+demonstration to name watch repair as an aspect of the fixed mechanical kind.
+Independent preflight identifies an unqualified-alternative reading of its bare
+inclusion sentence. V144 anchors that information explicitly to 'these watches'
+before dispatch; V143 remains an unrun intermediate. The input/copy and existing
+negative proof are adjusted consistently. The separately defined Watch repair
+scope still admits electronic timekeepers, so merely naming repair under the
+mechanical kind does not establish coverage of that whole independently defined
+scope. Both existing cases, the relation, hair illustration, instructions and
+schema stay unchanged. This is a demonstration of conditional scope, distinct
+from V87/V117's earlier instruction-only attempts; it does not add a regression
+example or predetermine a corpus label.
+
+The complete partial33 core/19 controls remain frozen from V139 for each
+candidate. Expected108 initial attempts include four warmups, with native67/39
+stage caps and the existing persistent20000 counter. Check actual proofs and
+fresh identical-request repeats before attributing any gain to either mechanism.
+No Bootstrap generation, hierarchy construction or external-session message.
+Usage source: hierarchy-compare-v142-v144-scope-cue-usage-v1.json.
+
+Both gates complete:104 valid comparisons in108 actual attempts, including four
+warmups, with no reuse, retries, failures or missing usage. Native full
+API-equivalent catalog cost is $0.9819. Persistent allowance:16872/20000 at this
+checkpoint. Neither candidate is adopted.
+
+V142 core:19 accept/6 reject/8 qualified; controls:11 accept/2 reject/6 qualified.
+The core still imports a human eater in042 forward and misses the ongoing
+recipient/audience alternatives in070 forward.018 reverse fails to correct an
+inedible prop to a genuine edible display bagel.022 forward treats ring shape as
+necessary despite recognized holeless bagels and restricts the other kind to only
+pantry staples.008 forward and066 reverse provide otherwise valid counterexamples
+but violate this version's mandatory identity-priority question procedure; those
+are procedure failures, not established wrong labels.029's control correction
+supplies a subjective experiencer but silently identifies it as a person without
+proving that requirement. Supported nulls are accepted when their decisive issue
+is demonstrated. Three core reversals and one forward chain conflict remain;
+controls have one reversal. These are consistency failures, not opposing gold.
+
+V144 core:19 accept/5 reject/9 qualified; controls:11 accept/4 reject/4 qualified.
+041/042 forward still import human participants; both070 orientations fail to
+close the recipient/audience boundary.107 forward excludes saccharin on its lack
+of nourishment without closing nourishing-food composition coverage. All029
+controls omit the identity test;031's categorical animal-feed rejection lacks a
+corrected concrete consumer case.032 supplies such a case but the particular
+author, dinner-role and nourishment implications remain qualified. Four core
+reversals and one forward chain conflict remain; controls have one reversal.
+Unresolved wording is not converted to a preferred negative. Independent device
+design and generic commodity manufacture do not inherit a qualifying consumable
+topic merely through possible association; those negative guard proofs pass.
+
+Every case has a native hash-bound owner assessment. Qualified boundaries include
+Food/water, contact/audience, particular Author/person identity and some producer
+kind restrictions. Totals mix proof, procedure and qualification assessments;
+they are not semantic accuracy estimates or evidence of a causal improvement.
+
+### V146/V148/V149: separate framing, positive prerequisites and fixed entities
+
+V146 branches from V142 and changes only its opening to refutation-first framing.
+Whole-child admission, all-parent exclusion, positive coverage, null results and
+canonical consequences are unchanged. It does not require a negative relation.
+
+V145 instead relocates the mandatory outside-identity/consumer test from every
+recorded question to every positive coverage conclusion and required positive
+canonical consequence. A complete counterexample already refutes its direction;
+further tests there add no evidence. V148 corrects V145's ambiguous 'Otherwise'
+transition before dispatch. Questions may test any applicable condition, but a
+positive justification still must explicitly test absent identity/consumer
+requirements before proving universal coverage. Both unrun intermediate and
+tested candidate definitions remain preserved. Earlier V142 procedure judgments
+retain their original contract.
+
+V147 adds a particular-entity paragraph to V142. Independent preflight finds its
+initial prohibition on any different entity too broad: a general Mental-states
+child can admit another person's state outside a particular author's parent.
+V149 scopes identity preservation to admission under a particular-entity CHILD.
+An unknown material property cannot be assigned merely to obtain a result;
+irrelevant omissions and necessarily established coverage do not force null.
+General kinds still admit qualifying different instances. This is a Compare
+interpretation test, not a producer-definition repair or a Bootstrap test.
+
+A blind review, reading only fixed inputs and instructions, identifies the
+actual029 wording as 'Author's sleepiness today', which ordinarily fixes a
+particular author/day. Replacing that author with an arbitrary hypothetical
+chimp does not demonstrate admission; meanwhile an unrelated person's mental
+state can escape that particular topic. The actual author's person identity
+remains unproved unless the wording necessarily establishes it. These are agent
+assessments, not new human gold. The generic animal-fasting and animal-ketosis
+tests remain admissible if they satisfy their whole child meanings.
+
+Next controlled stage: complete33-core/19-control gates for V146 and V148;
+V149's14-core/6-control fixed-entity and consumer/guard panel; and a fresh V142
+baseline repeat of041/042/053/070 both ways plus009/031/032 snapshots. Expected
+135 comparisons plus eight warmups:143 actual attempts absent retries or reuse.
+All native inputs, producer receipts, ASv6.100/Bootstrap-v96 qualification status,
+runner identity and diagnostic schema remain frozen. No source evidence enters
+Compare; no Bootstrap inference, hierarchy build or external message follows.
+Definitions and production-example checks precede dispatch. Independent native
+reviews inspect concrete proofs, reversals and consequences, not labels alone.
+Usage source: hierarchy-compare-v146-v149-controlled-usage-v1.json.
+
+All eight experiments complete with135 valid comparisons in144 actual attempts,
+including eight warmups, one provider failure and its successful retry. No reuse
+or terminal failures. The failed attempt has no usage: $1.26812 is the native
+known API-equivalent subtotal, not the unknown complete cost. Persistent counter:
+17016/20000. No candidate is adopted.
+
+V146 core:20 accept/3 reject/10 qualified; controls:12 accept/3 reject/4 qualified.
+019 reverse imports an eating purpose;052 reverse imports broth after a failed
+pasta candidate;107 forward dismisses an actual dessert-ingredient connection
+without closing nourishing-food composition coverage. Both animal dietary
+orientations execute sound tests. Controls wrongly exclude cultivation of
+tomatoes established as human food from Eating's qualifying-food information
+connection, and two Author controls repair software simulation by adding a
+person without proving that identity required by the fixed particular Author.
+The supported Food/water null passes. Four core reversals, no directional chain
+conflicts; no control reversals. Audience and producer boundaries remain qualified.
+
+V148 core:17 accept/4 reject/12 qualified; controls:11 accept/1 reject/7 qualified.
+019 reverse still imports eating purpose;022 reverse assumes ring-shaped coverage
+despite recognized chewy holeless bagels;041 forward does not correct imposed
+deprivation to the animal's own deliberate fasting;070 forward prequalifies a
+nonhuman audience and misses the required outside-recipient test before coverage.
+The only control reject is the same tomato-cultivation operator defect. Human-
+consumer tests and author/nourishment implications are distinguished rather than
+forcing animal alternatives into a particular dinner. Five core reversals, no
+directional chain conflicts; no control reversals. All33 core and19 controls have
+native hash-bound assessments. One controls question-form-only verdict was
+corrected with native history preserved: open-question formatting is a separate
+comment, not proof that a supported semantic judgment is wrong.
+
+V149 core:7 accept/3 reject/4 qualified; controls:0 accept/6 reject/0 qualified.
+008 reverse assigns unroasted beans to the particular author's coffee, while
+forward008 correctly leaves that property's applicability unresolved.070 forward
+still lacks whole-recipient coverage. Other defects include missed identity tests,
+an unclosed nourishing-dish composition connection in009, and031/032's asserted
+nourishment intention after a dinner-role argument. All four generic animal
+dietary controls pass. Two core reversals, no directional chain conflicts; no
+control reversals. The blind owner distinguishes missing nourishment proof more
+strictly than other cohorts' qualifications; independent cross-review retains
+that disagreement instead of turning the count difference into a candidate
+accuracy conclusion. Ambiguous defining-kind versus entity-identity classification
+does not create new rice/beverage procedure rejections.
+
+The fresh V142 baseline repeat gives core6 accept/1 reject/1 qualified and
+controls0 accept/1 procedure reject/2 qualified. Animal fasting, animal ketogenic
+regimens and ordinary water-risotto/wine-free proofs all pass.070 forward fails
+to correct an unattended-machine candidate before asserting recipient coverage.
+009's final uncertain relation is supported, but its ancillary positive Cuisine/
+Salsa consequences omit required consumer tests. A sufficient negative may stop
+testing; it does not certify unsupported positive claims the answer nevertheless
+asserts. One core reversal remains. Repair of042 in the unchanged baseline repeat
+precludes attributing a one-draw gain to a candidate's wording.
+
+### V150/V151: particular-case construction and complete-body simplification
+
+V150 changes only V149's question paragraph. A particular-entity child is tested
+through that same entity's supplied or necessary properties; a decisive unknown
+is investigated rather than assigned a hypothetical value. General children
+retain outside-class priority and admit different qualifying instances. This
+targets008 reverse's concrete invented property at question construction, not a
+new identity-preservation rule or forced null. Scope aspects, necessary implication,
+correction, all alternatives and guards remain unchanged. Independent preflight
+finds no substantive blocker; restricting tests to supplied properties must not
+be mistaken for limiting a node's entire information scope to listed facts.
+
+V151 branches independently from V148. Its complete instruction body is929 words
+versus1213, removing duplicated clauses and simplifying presentation while
+preserving both synthetic demonstrations and final input block byte-for-byte.
+No semantic obligation is intentionally dropped: independent scope, ordinary
+variants, qualifying kind/activity connections, state, every alternative,
+corrected candidates, universal positives, supported nulls and positive identity/
+consumer prerequisites for selected and canonical relationships remain explicit.
+This tests length/layout/paraphrase together, not token count alone. Earlier
+compact candidates preceded this combined contract or changed only part of it;
+V140 removed demonstrations and does not establish the effect of this revision.
+Independent preflight and both production-example validators pass.
+
+Next stage freezes V150's14-core/6-control panel from completed V149, V151's
+complete33-core/19-control gate from V148, and a fresh identical-request V149
+repeat of its20 cases. Expected92 comparisons plus six warmups:98 attempts absent
+retries/reuse, under the unchanged persistent allowance. Review particular and
+general children separately; assess new defaults, corrected candidates and every
+asserted positive consequence rather than rewarding blanket uncertainty or a
+convenient negative label. No Bootstrap inference, hierarchy construction,
+provider changes or external-session messages. Usage source:
+hierarchy-compare-v150-v151-controlled-usage-v1.json.
+
+All six experiments complete:92 valid comparisons in99 actual attempts,
+including six warmups and one failed provider attempt followed by a successful
+retry. No reuse or terminal failures. One attempt has no usage: $0.887448 is the
+native known API-equivalent subtotal, not the unknown complete cost. Persistent
+counter:17115/20000. No candidate is adopted.
+
+V151 core:19 accept/4 reject/10 qualified after two native review corrections;
+controls:11 accept/1 reject/7 qualified. Both022 orientations assume universal
+ring-shaped production despite independently recognized chewy holeless pantry-
+ingredient bagels.070 forward leaves recipient/audience coverage unclosed.
+072 forward introduces a comparison with strongly flavored meat, then dismisses
+that evaluation connection through physical-kind membership. The control009
+sweetener counterexample leaves nourishing-dish composition coverage unclosed.
+These last two reject the supplied proof, not necessarily the final relation.
+008's initially accepted generic green-coffee witness was corrected to qualified:
+generic variant admission does not establish a property of the fixed author's
+particular coffee/event. Original native assessments remain in history. No
+reversal conflicts; one chain conflict in each orientation. Neither zero
+reversals nor corrected assessment counts establish reliable improvement.
+
+V150 core:6 accept/4 reject/4 qualified; controls:0 accept/4 reject/2 qualified.
+008 reverse correctly investigates the particular coffee's unknown preparation
+and returns supported null, but forward still asserts roasting without proof.
+041 forward imports a human eater into independent general Fasting. Other rejects
+include mandatory-question omissions and the particular dinner's nourishment
+proof gap; no contrary same-dinner witness is established, and reviewer
+disagreement remains explicit. Two core reversals; no chain or control conflicts.
+
+Fresh V149 repeat core:11 accept/1 reject/2 qualified; controls:1 accept/4 reject/
+1 qualified.008 forward assigns an unestablished unroasted property to the fixed
+coffee. Controls retain diagnostic omissions and nourishment proof qualifications.
+The four general animal-diet tests pass. No reversal or chain conflicts in this
+partial panel. Every assessment is native, attributed and hash-bound; counts
+include procedure and proof judgments and are not semantic accuracy estimates.
+
+The independent operator audit finds no demonstrated valid nontransitive triple
+in the unchanged Food/preparation/tool witness. Food's human-nourishment condition
+already blocks the unrestricted preparation child. Tool information need not be
+edible, but a positive first link must cover the entire preparation topic and
+all permitted information connections. This identifies an unproved prerequisite,
+not a license to relax transitivity or import missing conditions through parents.
+
+### V152: combine the particular-question safeguard with the compact contract
+
+V152 changes only V151's question paragraph. A particular-entity child tests that
+same entity and establishes decisive properties from its supplied meaning or
+necessary implications; unknown properties cannot be assigned hypothetically.
+General children still test conditions or permitted connections while attempting
+to preserve the full child. Topic scope is not restricted to listed facts.
+V151's positive-only identity/consumer prerequisite remains: a valid negative
+does not require an unrelated diagnostic first. Both fictional demonstrations,
+schema and final input block are unchanged. Independent preflight and exact
+revision replay plus both production-example validations pass.
+
+Next stage: complete33-core/19-control V152 gates plus fresh matched V151 repeats
+of all52 inputs. Expected104 comparisons plus four warmups:108 attempts absent
+retries or reuse. Producer meanings, ASv6.100/Bootstrap-v96 qualification,
+evidence and runner identity remain fixed. Review actual proofs and supported
+nulls, separately from procedure compliance; do not manufacture a particular
+entity's properties or convert unresolved producer wording to preferred labels.
+No Bootstrap inference, hierarchy construction or external-session messages.
+Usage source: hierarchy-compare-v151-v152-controlled-usage-v1.json.
+
+All four experiments complete with104 valid comparisons in109 actual attempts,
+including four warmups and one recovered provider failure. No reuse or terminal
+failures. One failed attempt has no usage: $1.0303332 is the native known
+API-equivalent subtotal, not the unknown complete cost. Counter:17224/20000.
+No candidate is adopted. V152 has two core reversal conflicts and one reverse
+chain conflict; V151's fresh repeat has one reversal and a chain conflict in
+each orientation. Controls have no consistency conflicts in either condition.
+The earlier V151 zero-reversal draw was not stable.
+
+V152 core:21 accept/2 reject/10 qualified; controls:14 accept/0 reject/5 qualified.
+022 reverse still asserts universal ring-shaped production.071 reverse equates
+an explicit others requirement with a separately defined someone role despite
+a coherent self-directed salutation.022 forward's exact pourable-batter bagel
+witness remains qualified: generic gluten-free recognition does not establish
+that whole recipe's admission or the complete absence of dough.072's independent
+mild-meat witness and009's standalone sensory-consumption witness close the
+previous information-connection gaps in this draw. Supported nulls pass when
+decisive unknown properties or lexical boundaries are identified. The five
+control qualifications concern food/drink, personhood and nourishment. These
+are agent assessments, not human gold or established causal improvement.
+
+Independent input-only review refines008's grading: the wording fixes the author
+but no cup, date or occasion. A particular adverse use and a category of that
+author's adverse uses remain plausible. Producer diagnostics favor particularity
+but are unavailable to Compare and are not conclusive. Earlier definite property-
+invention rejections assumed the particular reading; unconditional generic-
+variant admission assumes the category reading. That disagreement remains in
+native history. The new particular-entity rule is conditional on establishing
+which entity the meaning fixes, not merely encountering a possessive. Review
+counts cannot be interpreted as accuracy improvements after this calibration.
+V151-repeat owner review and independent variant checks remain preserved in
+their native experiments; final cohort counts will follow verification.
+
+### V153/V154: information exclusion and all positive restrictions, separately
+
+V153 changes only the opening of V152's matching-answer paragraph. It separates
+whole-child admission from exclusion of the described information, requiring
+actual composition, production, evaluation and connections to roles in activities to be
+adjudicated under the parent's requirements. A shared aspect does not establish
+whole-topic coverage, and an independent associated topic does not inherit a
+qualifying role. It adds no scope exception or regression example. Since V152
+already repaired the two targeted proof gaps in one draw, this tests robustness,
+not a proven remaining failure or a guaranteed label change.
+
+V154 independently changes V152's positive prerequisite from identity/consumer
+restrictions to every applicable absent parent restriction. Tests preserve
+child requirements and check all parent alternatives and permitted connections;
+another covering alternative can admit cases lacking a restriction. Particular
+entity properties cannot be invented. The canonical paragraph's corresponding
+reference changes, with no other rules or demonstrations altered. This targets
+unsupported universal coverage after one customary or covered instance, including
+kind, method, role, purpose and state conditions. The broader procedure must not
+be applied retroactively to V152 reviews.
+
+Both exact native revisions, production-example validations, independent
+preflights and complete input/evidence/runner/source binding checks pass.
+Next stage: full52-case gates for each candidate and a fresh matched52-case V152
+repeat. Expected156 comparisons plus six warmups:162 attempts absent retries
+or reuse. Meanings and ASv6.100/Bootstrap-v96 provenance remain frozen; no
+Bootstrap inference, hierarchy construction or external messages. Review
+universal proofs, complete counterexamples, reversals and both chain directions,
+preserving qualifications and distinguishing procedure from semantic defects.
+Usage source: hierarchy-compare-v152-v154-controlled-usage-v1.json.
+
+All six experiments complete:156 valid comparisons in164 actual attempts,
+including six warmups and two recovered provider failures/retries. No reuse,
+terminal failures or unrun cases. Both failed attempts lack usage; $1.5326744 is
+the native known API-equivalent subtotal, not the unknown complete cost.
+Counter:17388/20000. V153 core has zero reversal conflicts and one reverse-chain
+witness; its controls have one reversal. V154 core has two reversals and one
+reverse-chain witness; controls have none. Fresh V152 core has three reversals
+and no chain witnesses; controls have none. These are consistency observations,
+not accuracy or evidence of stable improvement. Independent reviews and
+cross-review calibration remain native and receipt-bound.
+
+V153 core:20 accept/2 reject/11 qualified; controls:12 accept/0 reject/
+7 qualified. Both022 orientations still miss a recognized chewy holeless
+production case.072 now uses independent mild-chicken information, closing the
+earlier comparison/evaluation gap; its universal food-use implication remains
+qualified. No procedure-only rejections occur under V153's narrower duty.
+
+V154 core:16 accept/15 reject/2 qualified after calibration; controls:11 accept/
+8 reject/0 qualified verdicts. Four core answers omit or import person scope,
+both022 miss the ring-shaped restriction,071 reverse misses others versus
+someone, and107 forward leaves a drink ingredient's nourishing-composition
+connection unclosed. Seven additional core rejections concern the broader
+procedure, not established false relations. Controls include one unclosed
+sweetener proof and seven procedure-only positive omissions; their underlying
+personhood, food/drink and nourishment qualifications remain in comments.
+Total rejection counts are not semantic error rates and cannot be compared
+directly with the narrower procedure.022 forward's original accept is preserved:
+recognized holeless production survives both preparation readings, so the
+preparation/serving ambiguity alone does not justify its null. No adoption.
+
+V151's preceding fresh repeat is now fully reviewed: core22 accept/2 reject/
+9 qualified, controls12 accept/2 reject/5 qualified. Both022 core answers miss
+recognized chewy holeless bagels; the031/032 control rejections concern
+nourishment proof completeness, not an established contrary same-dinner
+witness. Reviewer disagreement is preserved. No definite procedure omission
+under V151's actual positive-only rule is established. Corrections append to
+native history rather than replacing old assessments.
+
+### V155/V157: specific property tests and visible positive proofs
+
+V155 changes only V152's ordinary-variant paragraph. A required parent
+condition absent from child wording is tested through variants of that actual
+property, rather than only a different method or feature. A familiar kind name
+alone cannot impose every descriptor in the parent's fixed definition. Whole-
+child admission remains independently necessary; this is not permission to
+invent a variant or unknown property of a fixed particular entity. This is a
+more specific rendering of an existing obligation, not new containment logic.
+
+V156 independently replaces V152's positive prerequisite with a visible
+restriction audit in the existing justification string. Identity/consumer
+conditions are tested first, followed by other applicable absent conditions;
+each has a concrete attempted violation and admission/all-parent adjudication.
+An alternative or permitted connection can cover the attempt. V157 changes only
+V156's canonical reference to name that same audit consistently; V156 and its
+two prepared batches remain unrun intermediate artifacts. No schema fields,
+synthetic examples, producer meanings or input evidence change.
+
+Relative to V152 this changes both prerequisite breadth and required visible
+recording. Relative to tested V154 it adds ordered, visible concrete-case
+adjudication under the same broad obligation. Naming conditions alone is not
+a repair: earlier condition extraction retained unsupported implications.
+Evaluate substantive candidate admission and exclusion, not formatted compliance
+alone. Independent preflights, exact revision replay, unchanged demonstration
+and input checks, both production-example validations, and full source/worker
+binding checks pass.
+
+Next stage freezes full33-core/19-control gates for each candidate:104
+comparisons plus four warmups,108 attempts absent retries/reuse. The immediately
+completed fresh V152 repeat is the comparison control; no redundant additional
+V152 draw is scheduled here. Neither candidate is adopted. Preserve the
+ASv6.100/Bootstrap-v96 qualification and all historical review disagreements;
+do not apply the broader procedure retroactively. No Bootstrap inference,
+hierarchy construction, service changes or external-session messages.
+Usage source: hierarchy-compare-v155-v157-controlled-usage-v1.json.
