@@ -1,8 +1,8 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work is the first test of approved
+The latest user-authorized work is the expanded prompt test of approved
 Hierarchy-consolidation-v3; see [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording)
-and [initial results](#initial-consolidation-v3-test).
+and [expanded results](#expanded-consolidation-v3-prompt-test).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1741,14 +1741,94 @@ produces `consolidation-v3-usage-v1.json`: **26 fresh attempts**, zero reuses,
 warmups, retries, failures or missing usage; 64,007 input tokens, zero cache
 reads/writes, and 8,994 output tokens including 2,063 reasoning tokens.
 Complete API-equivalent catalog cost is **$0.217954**, not subscription billing.
-The existing counter advances from 193/220 to **219/220**; one attempt remains.
-No allowance was increased.
+The initial test advanced the existing counter from 193/220 to **219/220**;
+one attempt remained at that checkpoint. It did not increase the allowance.
 
 Production-path checks first failed on the two missing adapters and missing
 shape report, then passed. Together with nomination, assembly and revision regression checks,
 twenty-six relevant tests pass. Full saved hierarchy traversal and an actual
 synthetic-node insertion remain unrun; this screen does not establish globally
-optimal shaping, route-depth savings or whole-hierarchy quality. The next
-candidate for that stage is Beverages, reusing these exact comparison answers
-where request identity permits. No graph, prompt version, UI or other agent's
+optimal shaping, route-depth savings or whole-hierarchy quality. The user
+subsequently prioritized broader consolidation prompt development; full
+traversal and insertion remain deferred. No graph, prompt version, UI or other agent's
 worktree was changed, and no agent message was sent.
+
+## Expanded consolidation-v3 prompt test
+
+The user approved expanding the prompt tests beyond the initial two groups,
+including groups with four or five siblings. The same completed ASv6.100
+fifty-note menu contains seven additional groups of at least four siblings.
+The [expanded source](shr_single_pair/hierarchy-consolidation-v3-expanded-source-v1.json)
+freezes all seven complete groups, their immediate parents and the unchanged
+raw/menu hashes. The [specification](shr_single_pair/hierarchy-consolidation-v3-expanded-v1.spec.json)
+uses unchanged approved Hierarchy-consolidation-v3 and GPT-6.1 Sol medium/SSE.
+There is no note-membership input, new prompt version, construction-policy
+activation or hierarchy insertion.
+
+Two independent native draws were completed for each group. The repeat was
+prepared with `--from` and `--repeat`; exact prompt text, complete case inputs,
+source hashes and model settings match. All fourteen cases have fresh valid
+receipts, rather than reused answers.
+
+| Parent and supplied choices | First draw | Independent repeat | Prospective local note-set result |
+|---|---|---|---|
+| Food C001: 13 | Meals above Breakfast C018, Food dishes C020 and Dinners C059 | Daily meals above Breakfast C018 and Dinners C059 | Both narrow; original choices fall to 11 or 12, still above six |
+| Mental states C003: 6 | Motivational states above Perceived needs C047 and Desires C076 | Same title and children, separately generated meaning | Both narrow; 6 to 5 choices |
+| Coffee C006: 6 | Further coffee above Second coffee C101 and Additional coffee C102 | Same title and children, separately generated meaning | Both fail narrowing: the proposed union and Additional coffee each contain the same two notes |
+| Cuisine C016: 6 | Prepared dishes above Pizza C054, Cheesesteaks C066 and Risotto C073 | Same title and children, separately generated meaning | Both narrow; 6 to 4 choices |
+| Food dishes C020: 6 | Dough and batter foods above Pancakes C031 and Bread C068 | Dough- and batter-based foods above the same children | Both narrow; 6 to 5 choices |
+| Eating C123: 5 | JSON null | JSON null | No proposed edges |
+| Cooking appliances C014: 4 | Cookware above Stockpots C015 and Cast-iron cookware C105 | Cooking vessels above the same children | Both narrow; 4 to 3 choices |
+
+Six of seven groups choose the same children in both draws; this includes
+Eating's repeated null. Different generated meanings remain distinct proposals
+and do not share comparison answers merely because their children match.
+Food's differing subsets are not a reversal or contradiction: Meals and Daily
+meals choose different scopes. Four groups meet the local structural check
+twice. Food's two proposals make partial progress without satisfying K = 6
+yet; `local_group_constraints_met: false` must not be read as a semantic
+failure or absence of useful improvement in that case. The Coffee proposal
+would violate the approved strictly smaller-note-set requirement and should
+not be inserted with these children. The model has no note memberships, so
+that failure does not itself establish a prompt-wording defect.
+
+The wider screen supplies promising definition and grouping controls, not
+semantic certification. No Compare calls were made for the expanded panel.
+Next review should check the entire selected meanings, containment beneath the
+fixed parent and omission of other siblings that fit the proposed meaning.
+One targeted question is whether Cuisine's Prepared dishes meanings also cover
+Turning pantry staples into chewy bagels C099: the first definition explicitly
+covers preparation variations, whereas both draws omit that activity. An
+activity/product distinction alone does not settle this. Cooking vessels and
+Cookware should also be checked against the existing canonical Cookware topic
+during any later placement; a similar title alone is not a duplicate-node
+failure in this parent-and-siblings-only prompt. Repeated null for Eating does
+not establish that no useful proposal exists. None of these observations is
+new human gold or a request to change Bootstrap/Compare.
+
+Native evidence is ignored under `target/canonical-shaping-selection-v1/`:
+`consolidation-v3-expanded-first-v1` and
+`consolidation-v3-expanded-repeat-v1`. The complete viewing snapshots are
+`consolidation-v3-expanded-first-report-v2.json` and
+`consolidation-v3-expanded-repeat-report-v1.json`; the earlier partial
+first-report-v1 remains preserved. Together with the initial two-group screen,
+these sources define nine repeatable prompt-development cases with two draws
+each. These are visible development inputs, not an untouched final test set.
+
+The shared runner's [usage selection](shr_single_pair/hierarchy-consolidation-v3-expanded-usage-v1.json)
+produces `consolidation-v3-expanded-usage-v1.json`: **14 fresh attempts**, zero
+reuses, warmups, retries, failures or missing usage; **19,140 input tokens**, zero
+cache reads/writes, and **3,867 output tokens including 3,091 reasoning tokens**.
+Complete API-equivalent catalog cost is **$0.076950**, not a subscription bill.
+The user's `proceed` authorized the stated fourteen-call panel: one remaining
+attempt was used under the earlier 220 cap, and the other thirteen extended
+that persistent counter to **233/233**. No additional model calls remain
+authorized by this test.
+
+Twenty-four relevant production-adapter, assembly and revision checks pass.
+Native preparation and receipt validation preserve the original source files
+and complete input/settings identity. This work remains isolated in the shaping
+task worktree, as requested. No graph, prompt text, UI or other agent's worktree
+changed, and no agent message was sent. The next proposed work is focused
+containment evaluation of these saved definitions before changing the prompt;
+full synthetic-node placement is not the current development priority.
