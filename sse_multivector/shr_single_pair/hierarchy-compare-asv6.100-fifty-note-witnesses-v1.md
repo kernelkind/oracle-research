@@ -2262,9 +2262,59 @@ qualifies the complete196-case ASv6.100 core and102-case fifty-note panel.
 Native preparation preserves every input, producer receipt, schema and
 setting. The broad panels nominate nine and one exact answer reuses from
 the original gate; those are not independent draws. The repeat disables
-reuse. Expected newly dispatched work is302 attempts including four warmups
-if all first requests succeed; the persistent shared counter counts actual
+reuse. Up to302 first attempts are expected including four warmups, given
+the reuses identified at preparation; further exact reuse can lower actual
+dispatches. The persistent shared counter counts actual
 attempts and enforces the existing20000 cap. Complete-chain, reversal,
 equivalence-substitution and branch consistency remain separate from
 semantic proof review. Producer qualifications remain unresolved rather
 than becoming target labels or automatic Compare errors.
+
+### V104 expanded qualification: identity gains do not solve all comparisons
+
+The fresh repeat completes all ten cases with12 fresh attempts and no reuse.
+Its native independent review gives9 accept,0 reject and1 qualified response:
+036's thought/cognition boundary remains unsettled. Both person-boundary
+orientations use complete nonhuman witnesses, and the alertness exclusions
+explicitly lack attention. Original inputs, prompt, schema, runner/code/source
+bindings match; all ten comparison response IDs and receipts are distinct.
+The original gate reviewer subsequently preserves the accept history and
+qualifies036 too. An independent challenge accepts038-reverse only if its
+justification's lack of wakefulness is read as a hypothetical stipulation;
+diminished wakefulness alone would not establish absence. Keep that precision
+qualification rather than claiming universal agreement on the original draw.
+
+V105's final native review gives7 accept,2 reject and1 qualified response.
+Besides the042-reverse omission,038-reverse infers absence of mental wakefulness
+from diminished wakefulness while explicitly retaining attention and readiness.
+Its relation alone hides that unsound witness.036 remains qualified.
+
+Both broadV104 panels complete:196 core outputs and102 fifty-note outputs,
+all mechanically valid, no terminal failures or unrun cases. The fifty-note
+panel has0 reversals across35 complete pair witnesses (34 distinct request
+pairs), and0 contradiction witnesses in either directional graph. The core
+has7 reversals (008/018/022/052/053/070/072),2 unresolved pairs and1 reverse
+directional graph contradiction. These establish comparison inconsistency
+without establishing which relation must change. The broader disagreements
+concern unstated roast, broth, food-use, recipient and preparation-method
+conditions or materially unsettled wording; correcting person tests alone
+does not establish reliable coverage of those conditions.
+
+Core061 now preserves the intended cooking topic in both orientations without
+another operator edit. Full012 likewise retains production-stage information,
+although its flour/water boundary still needs review. Core071 consistently
+selects a current-morning interpretation without closing the timing-versus-
+reference ambiguity; consistency is not proof of semantic correctness. All
+broad responses are undergoing independent complete-proof review, retaining
+producer qualifications and full-parent alternatives. No prompt adoption or
+hierarchy construction follows from these structural counts.
+
+Native aggregate hierarchy-compare-v104-expanded-usage-v1.json includes the
+first gate, repeat and broad panels:318 valid case receipts,308 fresh attempts,
+17 exact answer reuses,1 recovered provider failure and1 retry. One failed
+attempt lacks usage, so$2.2767396 is a known API-equivalent subtotal and the
+complete cost is unknown. The post-gate stage dispatched296 actual attempts;
+further exact reuse reduced work below the preparation estimate. The unchanged
+persistent shared20000 counter is15733 used at this checkpoint. Generated
+snapshots and native reviews remain ignored artifacts in the retained task
+worktree; maintained definitions/findings stay versioned.
