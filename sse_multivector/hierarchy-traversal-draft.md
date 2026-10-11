@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v13
+# Hierarchy selection by traversal — draft v14
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -144,55 +144,20 @@ The local node remains unplaced despite the positive Food answer. Stop its
 search and retain the answers for review; construction continues with other
 local nodes. This retains the current constructor's hold behavior.
 
-## Proposed comparison order within one traversal
+## Agreed comparison order within one traversal
 
-**Resolve ancestors before comparing their shared descendants. Compare
-independent reached nodes concurrently through the experiment runner.**
+**Traverse top to bottom. Compare independent reached nodes concurrently
+through the experiment runner.**
 
-1. Start with the canonical roots. They have no ancestor dependencies and can
-   be compared concurrently.
-2. Apply returned labels and exact reusable answers using the agreed traversal
-   rules before selecting further comparisons. Skip comparisons already settled
-   by valid transitive inference, subject to the unresolved required-comparison
-   policy below.
-3. For a reached node, finish any remaining traversal work on its ancestors
-   before dispatching its comparison. This includes ancestors that could still
-   be reached through unfinished branches. Do not wait for unrelated branches.
-4. Among nodes ready to compare, preserve the saved graph's node order and let
-   the experiment runner handle concurrent calls. Apply answers as they become
-   available so newly ready branches can continue.
+Start at the roots. Apply returned labels and exact reusable answers before
+sending further comparisons; skip relationships established by valid transitive
+inference, subject to the required-comparison policy still open below.
 
-An ancestor on a branch that has stopped has no remaining work along that path.
-Do not reopen the branch merely to satisfy comparison ordering. If the same
-ancestor is reachable through another unfinished branch, resolve that work
-first. An unreached ancestor acquires no comparison label; a shared descendant
-can still be compared through another open route, as already agreed.
-
-For example, suppose a hypothetical canonical graph retains both routes to
-Breakfast:
-
-```text
-Food (C1)
-├── Breakfast (C3)
-└── Meals (C2)
-    └── Breakfast (C3)
-```
-
-Food returns `canonical_contains_local`, making both Meals and Breakfast
-reachable. Compare Meals first because it is also an ancestor of Breakfast.
-If the local node contains Meals or is equivalent to it, containment of
-Breakfast follows and its comparison is skipped. If Meals contains the local
-node, Breakfast remains a comparison to make. If Meals returns `neither`, its
-branch stops, but the direct Food route still reaches Breakfast. This is two
-calls instead of three in the first case; it is an example, not a measured
-savings result.
-
-This ordering uses existing parent links rather than similarity scores or a
-model to rank comparisons. Processing those dependencies requires graph work,
-not additional model calls. It adds no request-concurrency limiter and retains
-the three-local-search policy. Effects on total calls, API cost and elapsed time
-have not been measured. The ordering is a proposal awaiting review; it does not
-settle eligibility or required mapped-parent exceptions.
+For a shared node, resolve unfinished traversal work on its ancestors first.
+An already stopped branch has no remaining work along that path and stays
+stopped. Independent branches keep moving. Among ready comparisons, preserve
+the saved graph's node order. Ordering uses existing parent links; the experiment
+runner handles request concurrency.
 
 ## Agreed concurrent-search policy
 
@@ -341,13 +306,13 @@ ordinary traversal.
 
 ## Proposed walk
 
-The comparison actions, shared-node rule, concurrent-search policy and
-consolidation rules above are agreed. The walk below combines them with the
-current root-start and eligibility behavior as a starting point for further
-discussion.
+The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
+policy and consolidation rules above are agreed. The walk below combines them;
+the eligibility decisions listed below remain open.
 
 1. Start at the canonical roots.
-2. Compare the local node with a reached, eligible canonical node.
+2. Compare the local node with a reached, eligible canonical node in the
+   top-to-bottom order above.
 3. Follow the returned label using the table below.
 4. Continue until no comparisons remain along the branches being searched,
    or an `uncertain` answer holds this local node for review.
@@ -390,7 +355,6 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Whether to adopt the proposed comparison order within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
 
@@ -404,7 +368,7 @@ remain documented in
 
 The current selector exposes the whole queued set of eligible comparisons. It
 does not defer a queued descendant when a queued ancestor could first settle
-its relationship. The proposed comparison order adds that dependency rule.
+its relationship. The draft's top-to-bottom order adds that dependency rule.
 
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
