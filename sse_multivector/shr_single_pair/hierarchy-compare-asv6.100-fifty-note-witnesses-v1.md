@@ -4122,3 +4122,60 @@ qualification. ASv6.100/Bootstrap-v96 producer meanings remain frozen. No
 Bootstrap inference, hierarchy work, external messages or new allowance.
 Native usage source:
 hierarchy-compare-v170-canonical-first-screen-usage-v1.json.
+
+V170 completed: 32 valid comparisons in 35 attempts, including two warmups and
+one recovered provider failure/retry. That failure lacks usage; $0.4242416 is
+the native known API-equivalent subtotal, not the unknown complete cost.
+No reuse, terminal failure or unrun case; counter 18060/20000. All 32 responses
+emit canonical-first questions and answers, with intact direction pairings.
+Core native reviews: 13 accept / 4 proof reject / 4 qualified. Rejects are
+022 reverse's unstated ingredient exclusivity, 053 forward's broth import,
+070 forward's unclosed variation after a covered pet case and 071 reverse's
+unclosed morning-context claim. Core has three settled reversals (018/053/070)
+and no settled chain conflict; controls have no settled conflicts. Native
+controls review: 8 accept / 0 reject / 3 qualified. The positive gold-food
+composition control survives; snapshot025 now retains a supported food/water
+null, and both isolated029 orientations preserve the same-author personhood
+uncertainty. Particular-dinner and food/drink qualifications remain. These
+single-draw changes do not establish an ordering benefit.
+
+The 018 genus-reading asymmetry remains tied to local/canonical orientation
+despite reversed record positions. An independent calibration finds no proof
+basis to pursue order as a repair. The 022 reverse closed-hole test actually
+examines shape, but pantry-recipe admission remains qualified and the added
+fresh-garlic exclusion is unsupported. This does not certify the opposite
+relation. No matched order repeat or adoption follows. Original outputs,
+receipts and pre-review snapshots remain preserved.
+
+### V171/V172: case facts and interpretation roles, separately
+
+Both candidates are independent single-passage revisions from V169, with its
+original output order. V171 precedes the existing labels/non-instance rule with
+the requirement that admission and exclusion follow compatible case facts
+rather than stipulated scope membership. This targets questions or answers
+that simply declare the disputed audience, context or communicative-role
+exclusion. Hypothetical facts remain allowed for general children; unknown
+facts about particular entities cannot be assigned. It does not guarantee
+missing-variant retrieval or repair every unsupported universal proof.
+
+V172 changes only the independently-read-meanings sentence to make its rule
+invariant to the local/canonical label. Identical meaning text moved between
+roles retains the same scope; the labels give neither interpretation priority.
+This does not identify distinct authors or events from matching descriptions,
+nor remove canonical consequences from graph metadata. V170's order result
+leaves role labels, input position and the local meaning copy as confounded
+explanations. This tests the role-invariance instruction, not a proven cause.
+
+Two independent preflights, native exact revision replay and production example
+validation pass. Each keeps every example byte, output field, source meaning
+and other rule unchanged. Planned full 33-core / 19-control gate per candidate:
+104 comparisons plus four warmups, 108 attempts absent retries. The completed
+V169 gate is the unchanged-meaning baseline. Assess actual proof closure,
+compatible readings, whole-child admission, alternate parent routes, positive
+controls, particular-entity conditions and canonical consequences. Matching
+labels, extra nulls or fewer contradictions alone do not qualify a candidate.
+
+Only promising results warrant fresh matched confirmation and broader
+qualification. ASv6.100/Bootstrap-v96 provenance remains frozen. No Bootstrap
+inference, hierarchy work, external messages or additional allowance. Usage
+source: hierarchy-compare-v171-v172-scope-mechanisms-usage-v1.json.
