@@ -2548,3 +2548,67 @@ supports clear direct instructions and task-specific constraints. It does not
 establish this position hypothesis or the semantic interpretation of named
 food kinds. The experiment, rather than that guidance, must establish any
 observed effect.
+
+The matched position test completes104 responses with109 actual attempts,
+0 reuses and one recovered provider failure/retry. The failed attempt lacks
+usage; $1.018968 is only the known API-equivalent subtotal, reproduced by
+hierarchy-compare-v115-position-usage-v1.json. Fresh V114 retains four core
+reversals018/041/042/070 and zero settled control reversals. V115 retains
+three core reversals018/042/070 and a control025 reversal. Unresolved
+directions remain separately reported. This draw does not validate the move:
+041 now tests person, but042 still selects shared deliberateness and imports
+a human consumer;029 selection also remains unreliable.
+
+Complete receipt-bound reviews give fresh V11415 accept/8 reject/10 uncertain
+core responses and13 accept/2 reject/4 uncertain controls. V115 gives13
+accept/10 reject/10 uncertain core responses and10 accept/3 reject/6 uncertain
+controls. Totals include separately identified question/procedure defects;
+they must not be interpreted as wrong-label counts. All52 reviews per version
+preserve input/output hashes, exact meanings and failed-attempt receipts.
+Flour/broth imports and source-boundary qualifications persist. V115 is not
+adopted, and the subsequent mechanism returns to V114's paragraph position.
+
+V112's completed controls give10 accept/7 reject/2 uncertain. The rejected
+proofs include inherited ingredient/meal/food-role connections and flour
+import; one reject is a person-question procedure defect. The two uncertain
+cases concern nourishing-purpose canonical ancestry, not selected Food dishes
+coverage. All19 reviews preserve the frozen data. These independent gate
+assessments do not justify combining the V112 reading safeguard with V113.
+
+### V117: examples retain the conditions they illustrate
+
+V117 refines the existing missing-condition sentence in V114: an illustrative
+example is covered under the conditions of its own alternative; its name
+does not certify a separate node's entire independently defined scope.
+Matching subjects and the counterpart's definition cannot add a condition
+to the meaning being read. This preserves real alternative branches and
+necessary language implications. V116 is an unrun intermediate draft whose
+last sentence unnecessarily referred only to a child before roles were
+assigned; V117 restores the independent guard for both meanings.
+
+The hypothesis is conditional-example interpretation, not a proven cause of
+the omissions. Some failed proofs invoke explicit example inclusion, but
+042's actual justifications do not expressly equate an example with
+unconditional coverage. Human defaults, designer/consumer confusion or stopping
+after establishing deliberate design remain competing explanations. Test
+whether actual proofs retain person restrictions; coherent labels or a
+single better draw cannot establish the mechanism.
+
+The native panel freezes18 core inputs (018/019/022/038/041/042/052/053 in
+both orientations,107/111 forward) and13 controls (012/019/025/029 snapshots
+and reversals,034 forward). An independent four-case041/042 repeat disables
+reuse. The35 comparisons plus three warmups require38 attempts absent
+reuses/retries; stage caps37/27/9 include retries under the same shared20000
+counter. All producer receipts, meanings, graph inputs, response schema and
+model/worker bindings remain unchanged. Native preparation performs no
+inference; V116 preparations remain unrun. Usage source is
+hierarchy-compare-v117-example-condition-usage-v1.json. No Bootstrap or
+hierarchy construction is changed.
+
+The frozen Food→Food preparation→Cooking appliances witness is not a clean
+instrument-only counterexample to transitivity: the broader Food meaning
+requires human consumption, while the other two generic meanings omit it.
+Kind coverage of qualifying production information must not be mistaken for
+coverage of every independently defined production activity. There is no
+new certified narrowed-vessel positive, operator-closure rule or semantic
+gold introduced by this read-only analysis.
