@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v12
+# Hierarchy selection by traversal — draft v13
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -143,6 +143,56 @@ Food — contains the local node
 The local node remains unplaced despite the positive Food answer. Stop its
 search and retain the answers for review; construction continues with other
 local nodes. This retains the current constructor's hold behavior.
+
+## Proposed comparison order within one traversal
+
+**Resolve ancestors before comparing their shared descendants. Compare
+independent reached nodes concurrently through the experiment runner.**
+
+1. Start with the canonical roots. They have no ancestor dependencies and can
+   be compared concurrently.
+2. Apply returned labels and exact reusable answers using the agreed traversal
+   rules before selecting further comparisons. Skip comparisons already settled
+   by valid transitive inference, subject to the unresolved required-comparison
+   policy below.
+3. For a reached node, finish any remaining traversal work on its ancestors
+   before dispatching its comparison. This includes ancestors that could still
+   be reached through unfinished branches. Do not wait for unrelated branches.
+4. Among nodes ready to compare, preserve the saved graph's node order and let
+   the experiment runner handle concurrent calls. Apply answers as they become
+   available so newly ready branches can continue.
+
+An ancestor on a branch that has stopped has no remaining work along that path.
+Do not reopen the branch merely to satisfy comparison ordering. If the same
+ancestor is reachable through another unfinished branch, resolve that work
+first. An unreached ancestor acquires no comparison label; a shared descendant
+can still be compared through another open route, as already agreed.
+
+For example, suppose a hypothetical canonical graph retains both routes to
+Breakfast:
+
+```text
+Food (C1)
+├── Breakfast (C3)
+└── Meals (C2)
+    └── Breakfast (C3)
+```
+
+Food returns `canonical_contains_local`, making both Meals and Breakfast
+reachable. Compare Meals first because it is also an ancestor of Breakfast.
+If the local node contains Meals or is equivalent to it, containment of
+Breakfast follows and its comparison is skipped. If Meals contains the local
+node, Breakfast remains a comparison to make. If Meals returns `neither`, its
+branch stops, but the direct Food route still reaches Breakfast. This is two
+calls instead of three in the first case; it is an example, not a measured
+savings result.
+
+This ordering uses existing parent links rather than similarity scores or a
+model to rank comparisons. Processing those dependencies requires graph work,
+not additional model calls. It adds no request-concurrency limiter and retains
+the three-local-search policy. Effects on total calls, API cost and elapsed time
+have not been measured. The ordering is a proposal awaiting review; it does not
+settle eligibility or required mapped-parent exceptions.
 
 ## Agreed concurrent-search policy
 
@@ -340,7 +390,7 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- How to order canonical comparisons within each local-node search.
+- Whether to adopt the proposed comparison order within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
 
@@ -351,6 +401,10 @@ would also contain it by transitivity, conflicting with the Meals answer.
 from this draft's agreed rules. The implementation and its historical results
 remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
+
+The current selector exposes the whole queued set of eligible comparisons. It
+does not defer a queued descendant when a queued ancestor could first settle
+its relationship. The proposed comparison order adds that dependency rule.
 
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
