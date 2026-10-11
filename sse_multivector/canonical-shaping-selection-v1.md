@@ -1,16 +1,19 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work drafts experimental
+The latest user-authorized work tests experimental
 [Hierarchy-consolidation-v6](shr_single_pair/Hierarchy-consolidation-v6.md)
 with one synthetic geometry example unrelated to the regression topics.
-The completed v5 panel still shows the whole-child and parent-fit defects;
-v6 has no model trial yet.
+The eight-request matched panel preserves promising Beverages and Mental states
+groupings, but whole-child and parent-fit defects still recur. Four bounded
+agent accepts, two direct agent rejections and two unresolved assessments do
+not qualify v6 or establish an improvement over v5.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
 the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v5 revision record](#consolidation-v5-draft),
-[the completed v5 proposal panel](#consolidation-v5-proposal-panel), and
-[the v6 example draft](#consolidation-v6-synthetic-example-draft).
+[the completed v5 proposal panel](#consolidation-v5-proposal-panel),
+[the v6 example draft](#consolidation-v6-synthetic-example-draft), and
+[the completed v6 panel](#consolidation-v6-focused-proposal-panel).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2272,10 +2275,10 @@ invoices.
 
 V5 is not established as an improvement over v4. Moving the same condition
 earlier has not made the generated definitions obey it. The user subsequently
-authorized the synthetic example draft below. The proposed targeted panel
-remains unrun: Cuisine and Food dishes alongside Beverages and Mental states,
-with two independent draws per group, would take eight new attempts. Keep
-unsupported parent restrictions separate from the later note-set check.
+authorized the synthetic example draft below and then its eight-request
+targeted panel. That completed v6 panel tests Cuisine and Food dishes alongside
+Beverages and Mental states, with two independent draws per group. Unsupported
+parent restrictions remain separate from the later note-set check.
 
 Twenty-six production-adapter, assembly and revision checks pass after syncing
 current local main. The v5 assembly hash and shared Bootstrap clauses remain
@@ -2312,12 +2315,83 @@ Historical prompts, definitions, test inputs and saved receipts are unchanged.
 The production assembly test first failed on the missing v6 manifest, then
 passed. Twenty-seven production-adapter, assembly and revision checks pass,
 including native preparation freezing the complete v6 text without inference.
-The input/output contract is unchanged. V6 is a draft, not a qualified prompt;
-no new model calls were made and the counter remains **309/309**. This task
-remains isolated in its worktree, with no hierarchy or UI changes.
+The input/output contract is unchanged. At the draft checkpoint there were no
+new model calls and the counter was **309/309**. V6 remains experimental after
+the completed panel below. This task remains isolated in its worktree, with
+no hierarchy or UI changes.
 
-**Recommended next test, not run:** the eight-attempt panel described above.
-Changing only the example while retaining complete saved inputs and settings
-will test whether it helps the two failing groups without losing useful
-Beverages and cognitive-state groupings. It needs a new bounded allowance;
-the draft does not establish that the example helps.
+## Consolidation-v6 focused proposal panel
+
+The user authorized the proposed eight-attempt panel: roots, Mental states,
+Cuisine and Food dishes, each with two independent draws. All eight GPT-6.1 Sol
+medium subscription attempts completed with valid native receipts and distinct
+upstream response references. The persistent counter reached **317/317**.
+There were no failures, retries, warmups, exact reuses or missing usage; no
+requests remain under this panel's allowance.
+
+Native `prepare --from` retained the exact complete v5 inputs, evidence and
+runner settings and changed only the consolidation prompt. Native `--repeat`
+dispatched fresh requests with identical complete v6 prompts and settings.
+The sole v5-to-v6 text change is the unrelated synthetic example; the nine
+shared Bootstrap-v104 clauses and all supplied fixed meanings are unchanged.
+Historical answers and judgments remain outside model input.
+
+| Complete supplied group | First draw | Fresh repeat | Bounded agent assessment |
+|---|---|---|---|
+| Roots: 7 | Beverages: Coffee C006, Slush drinks C039 | Beverages: same children, changed definition | Both accept |
+| Mental states: 6 | States of mental alertness: Brain fog and mental clarity C050, sleepiness C092 | Motivational states: Perceived needs C047, Desires C076 | Both accept; different useful subsets are permissible |
+| Cuisine: 6 | Italian-origin dishes: Pizza C054, Risotto C073 | Cooked dishes: those two and Cheesesteaks C066 | First uncertain; repeat rejects parent fit |
+| Food dishes: 6 | Bread-based dishes: Burgers C036, Bread C068 | Meat and meat-alternative dishes: Burgers C036, Chicken dishes C114 | First rejects whole-child coverage; repeat uncertain |
+
+The two directly observed scope problems therefore still appear:
+
+- **Food dishes, first draw:** Bread-based dishes requires foods “served or
+  eaten as a meal or part of a meal.” Selected Bread's fixed meaning only
+  requires food made by cooking flour-based dough, with no meal condition.
+  The new definition excludes part of the selected child's meaning. Neither
+  existing placement nor the proposed parent's definition can add the missing
+  condition to immutable Bread.
+- **Cuisine, repeat:** Cooked dishes requires a finished food made by cooking
+  at least one ingredient. It does not require the association with a style or
+  culinary tradition in Cuisine's fixed meaning. An improvised cooked dish
+  lacking that association still fits the proposed category.
+
+The first Cuisine proposal is promising because it explicitly requires a
+connection to Italy's culinary traditions. Risotto's fixed meaning identifies
+it as Italian, but Pizza's definition does not state origin; whole Pizza
+coverage remains unresolved rather than receiving an old comparison label.
+The second Food dishes proposal retains the meal-role requirement. Burgers'
+fixed meaning states a cooked patty served in a bun without an explicit meal
+role, so this analogous question also remains unresolved. Neither assessment
+is new human gold or an independently validated placement.
+
+All eight native prospective shape checks pass: each proposal would strictly
+narrow the affected note sets and leave both affected groups at or below six
+choices. Roots would shrink from seven to six; the other groups from six to
+five, except Cooked dishes would leave four. These structural successes do not
+repair semantic failures. Every report records `applied: false`; no hierarchy
+was generated or changed.
+
+Native `review` appended four agent accepts, two rejects and two uncertain
+assessments without changing saved answers or receipts. The two direct defects
+occur in two of the four target-group draws; the other two draws are unresolved.
+This is not a two-of-eight accuracy estimate or a validated improvement over
+v5, whose corresponding four draws all received direct scope rejections.
+The synthetic example has not reliably resolved either mechanism.
+
+The ignored experiments are `consolidation-v6-focused-roots-first-v1`,
+`consolidation-v6-focused-roots-repeat-v1`, `consolidation-v6-focused-first-v1`
+and `consolidation-v6-focused-repeat-v1` under
+`target/canonical-shaping-selection-v1/`. Their `*-report-v1.json` snapshots
+preserve exact pre-review outputs, and native `show` retains the bound reviews.
+The committed [usage selection](shr_single_pair/hierarchy-consolidation-v6-usage-v1.json)
+reproduces native `consolidation-v6-usage-v1.json`: **14,438 input tokens**,
+zero cache reads/writes, **2,714 output tokens including 2,211 reasoning tokens**,
+and complete **$0.056016 API-equivalent catalog cost**. Reasoning is already
+included in output; this is not subscription billing or a caching experiment.
+
+Twenty-seven production-adapter, assembly and revision checks pass after
+syncing current local main. All eight receipt identities and matched controls
+were checked offline. Prompt text remains unchanged from the v6 draft; no
+Compare calls, graph insertions, UI changes or agent messages occurred. The
+consolidation task remains isolated as requested.
