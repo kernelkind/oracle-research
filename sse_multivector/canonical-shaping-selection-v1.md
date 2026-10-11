@@ -836,3 +836,112 @@ python3 sse_multivector/canonical_shaping_selection.py \
 
 Use the project's NumPy-enabled Python environment if the system Python lacks
 NumPy. Generated nominations are ignored artifacts, not semantic gold.
+
+## Retained-root trial: Coffee + Slush drinks
+
+The next user-authorized trial tested an actual retained browsing pair on the
+same frozen ASv6.100/B96/C48 fifty-note baseline. Coffee C006 and Slush drinks
+C039 were two of its seven menu roots. An unused original **Drinking** root
+was nominated, then sent through ordinary independent meaning generation and
+local-versus-canonical graph traversal. No destination or positive relation
+was supplied to the model.
+
+### Selection and original evidence
+
+The selected local entry is number `8` in note
+`26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2`:
+
+- Heading: **Drinking**.
+- Context: `“I don’t drink……wine” explicitly concerns drinking, with wine
+  singled out by the pause.`
+- Original post: `I have to say I was rather impressed with dinner tonight.
+  Lamb with steamed seasoned broccoli and baby potatoes really hit the spot.
+  Though wine was available with the lamb I don’t drink……wine. 😈
+  https://image.nostr.build/3a6a6b04d2263cfc5286255200859abab75efe502ae43fd664a25b93428e168c.png`
+
+Neither selected canonical root shares this note. Apply native eligibility
+before ranking original entries. The weaker of the two heading-to-heading
+cosines puts Drinking fourth among both eligible original entries and distinct
+headings: Coffee **0.4430**, Slush drinks **0.4375**, weaker match **0.4375**.
+The eligible pool contains 1,261 entries and 561 headings. The first four
+headings are Coffee, Coffee chains, Ice cream and Drinking. Selecting the
+plausible broader entry from that shortlist was an agent assessment; this is
+not an implemented automatic decision about which nominee to try.
+
+This extends the available-parent investigation beyond the Plant foods
+retrieval control. Root choices have no canonical parent heading whose original
+local branches could supply the priority pool, so this trial uses the wider
+heading-pair search. No new SSE encodings were made.
+
+### Native placement and menu result
+
+Bootstrap-v96 established:
+
+> Drinking is the activity of consuming beverages by mouth, including but not
+> limited to wine. The topic covers that activity and people's stated choices
+> or abstention concerning beverage consumption.
+
+Compare-v48 returned `local_contains_canonical` for both C006 and C039.
+The ordinary traversal completed four comparison phases, queried 86 eligible
+canonical nodes and inferred nine descendant relationships from existing
+containment. It added **Drinking C125** as a root with no hold. These are native
+model judgments, not new human gold.
+
+The separate menu replaces the Coffee and Slush drinks root choices with
+Drinking, which has those two children. All 70 previous menu headings, immutable
+meanings, supporting entries and represented note sets are preserved. All
+other existing menu edges are retained. Drinking's original supporting note
+also remains attached to Drinking; no support is transferred to another node.
+
+| Measure | Frozen baseline | Drinking menu |
+|---|---:|---:|
+| Root choices | 7 | **6** |
+| Nodes / edges | 70 / 74 | 71 / 76 |
+| Reachable and individually isolatable notes | 50 | 50 |
+| Strictly narrowing edges | 74 | 76 |
+| Equal-note-set edges | 0 | 0 |
+| Structural violations | 3 | **2** |
+| Mean shortest individual selections | 2.68 | 2.80 |
+| Maximum shortest individual selections | 4 | 4 |
+
+This fixes the root-choice violation without creating another structural
+violation. It adds one selection for six notes; the other 44 shortest routes
+are unchanged. Food C001 still has 13 children and Food preparation C005 still
+has seven. The complete hierarchy is therefore not finished. The result is a
+qualified shaping improvement under the approved six-choice limit, not a
+reduction in every route length or proof of semantic accuracy/global optimality.
+
+### Accounting, preparation and retained evidence
+
+The trial made **92 fresh subscription attempts**: one meaning, 86 comparisons
+and five cache warmups. There were no failures, retries or exact reuses. Native
+usage is complete: 98,574 uncached input tokens, 100,224 cached input tokens,
+zero reported cache-write tokens and 9,328 output tokens, including 809
+reasoning tokens. API-equivalent saved-catalog cost is **$0.3004504**;
+subscription cash charge is zero. This is the cost of one parent insertion,
+not an operational-policy savings estimate against a matched full rebuild.
+The shared 220-attempt allowance is reconciled at **189 used / 31 remaining**,
+including the earlier 97-attempt Cooking trial.
+
+The frozen baseline's original project code validates its saved shortlist
+policy. The shared runner prepares growth with that project, then the native
+`fork-canonical-trial --graph-search` switches the separate trial to traversal.
+New compatible specs retain the exact B96/C48 prompts, schemas and all other
+settings, omitting only the obsolete configurable concurrency field. The
+shared runner supplies its internal fair queue. Failed preliminary preparation
+sent no provider requests; its original source definition is retained as v1.
+The successful source definition is `hierarchy-shaping-drinking-v2.json`.
+
+Maintained sources are under `sse_multivector/shr_single_pair/`:
+`hierarchy-shaping-drinking-v2.json`, `hierarchy-shaping-b96-bootstrap-v1.spec.json`,
+`hierarchy-shaping-c48-compare-v1.spec.json`,
+`hierarchy-shaping-drinking-menu-v1.json` and
+`hierarchy-shaping-drinking-usage-v1.json`. The usage source includes both
+trials so the persistent shared attempt counter reconciles without resetting.
+Ignored native evidence is under `target/canonical-shaping-selection-v1/`:
+`drinking-prepared-v2`, `drinking-traversal-v1`, `drinking-menu-v1` and
+`drinking-usage-v1.json`. Receipts and baseline source bytes remain unchanged.
+
+The reusable selection, native graph construction and menu-shaping suites
+passed 39 tests at this checkpoint. No prompt, production selection policy,
+other agent's hierarchy or review UI was changed.
