@@ -4179,3 +4179,62 @@ Only promising results warrant fresh matched confirmation and broader
 qualification. ASv6.100/Bootstrap-v96 provenance remains frozen. No Bootstrap
 inference, hierarchy work, external messages or additional allowance. Usage
 source: hierarchy-compare-v171-v172-scope-mechanisms-usage-v1.json.
+
+Both gates completed: 104 valid comparisons in 110 attempts, including four
+warmups and two recovered provider failures/retries. Both failures lack usage;
+$1.0044388 is the native known API-equivalent subtotal, not the unknown complete
+cost. No reuse, terminal failure or unrun case; counter 18170/20000. All input,
+output, receipt, source and code bindings remain intact.
+
+V171 core: 20 accept / 4 proof reject / 9 qualified; controls: 8 accept /
+7 proof reject / 4 qualified. Core rejects are both 022 scope proofs, 064
+forward's categorical desire exclusion and 071 reverse's unclosed morning
+context claim. Controls leave host/combination/intended-production routes open
+or infer personhood after failed unfeeling-account cases. Some defects concern
+repair/coverage obligations rather than an established opposite label. Both
+070 nulls now preserve recipient ambiguity; 107 specifies a nonnourishing host
+as well as its nonnutritive ingredient. Those local gains do not qualify the
+whole candidate. No settled reversals or chains remain, despite substantive
+proof gaps; uncertainty and incomplete settled coverage are preserved.
+
+V172 core: 23 accept / 3 proof reject / 7 qualified; controls: 15 accept /
+2 proof reject / 2 qualified. Core rejects are 008 reverse's invented particular
+coffee property, 022 reverse's unclosed production/shape claim and 071 forward's
+unclosed morning-context claim. Controls reject two personhood conclusions
+after failed unfeeling-system admission; particular dinner ancestor inferences
+remain qualified. The sound animal, broth-free ingredient, canceled-plan and
+ensemble controls survive. One settled 018 reversal remains, with no settled
+chain conflict. Role-invariance wording does not remove its orientation-specific
+genus reading, and isolated029's settled-versus-null difference persists.
+
+Neither candidate is adopted or combined; a single draw does not establish
+causal effects. Original outputs and review qualifications remain preserved.
+
+### V173: questions record a search; answers construct a case
+
+This independent revision starts from V169. For a general child, its question
+asks what information admitted by the child could violate a named applicable
+parent requirement while escaping all alternatives and permitted connections.
+Concrete case construction moves to the matching answer. The four fictional
+example questions change accordingly; their inputs, concrete answers, proofs,
+relations and reasons are byte-identical. Particular-entity safeguards and all
+other proof/guard duties remain unchanged. Six exact native edits, two
+independent preflights and production demonstration validation pass.
+
+This differs from V163's delayed selection of a concrete diagnostic case.
+V173 tests committing to a case in the question itself. Earlier questions
+sometimes already require the disputed parent purpose or investigate physical
+instance status rather than an absent kind restriction. A vague abstract
+question is not a repair: the output must identify the relevant condition and
+adjudicate an actual potential case in its answer. Failed admission still
+does not prove universal coverage; proper nulls require no extra search.
+
+Planned fresh 33-core / 19-control gate against completed V169: 52 comparisons
+plus two warmups, 54 attempts absent retries. Evaluate question targets,
+independent whole-child admission, all-parent exclusion, valid positives,
+canonical consequences and supported readings separately from labels. An
+informative gain requires fresh matched confirmation and broader qualification.
+This changes observable diagnostics, not hidden reasoning order. Producer
+meanings and ASv6.100/Bootstrap-v96 provenance stay frozen; no Bootstrap calls,
+hierarchy work, external messages or additional allowance. Usage source:
+hierarchy-compare-v173-search-question-gate-usage-v1.json.

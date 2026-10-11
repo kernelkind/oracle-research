@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v173_core": [
+      "../../target/compare-v173-search-question-gate-v1/core"
+    ],
+    "v173_controls": [
+      "../../target/compare-v173-search-question-gate-v1/controls"
+    ]
+  }
+}
