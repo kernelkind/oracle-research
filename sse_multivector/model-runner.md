@@ -27,6 +27,13 @@ V105's subsequent complete-branch qualification has 115 valid meanings from
 one factual-support reject and one uncertain meaning. Thirty-five relationships
 to the risotto Food root remain unresolved; individual acceptance does not certify
 whole-branch compatibility. V104 remains approved and v105 experimental.
+The latest unchanged-v105 eight-case diagnostic has two fresh draws: 16 valid
+meanings, 12 qualified agent accepts, two repeated business-identity rejects
+and two uncertain Nostr food-domain meanings. Food branch checks retain an
+information-kind versus application-specific purpose disagreement; they are
+not certified failures. The stage uses 18 attempts including two warmups, with
+no exact reuses, retries or prompt changes. Details and receipt-bound findings
+are in the Bootstrap qualification record.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate
