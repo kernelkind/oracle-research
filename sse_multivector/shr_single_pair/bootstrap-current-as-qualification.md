@@ -3,14 +3,18 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Bootstrap broad: BBv6 draft
+## Bootstrap broad: BBv7 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
 criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
+[BBv7](Hierarchy-bootstrap-broad-v7.md) is the current development draft,
+reviewed offline but untested by the model. Its
+[independent component-scope change](#bbv7-independent-component-scope)
+addresses the unclosed trio target boundary without choosing a required answer.
+[BBv6](Hierarchy-bootstrap-broad-v6.md) was tested
 on the [focused stock case below](#bbv6-general-activity-versus-particular-participant),
 its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
 the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
@@ -23,7 +27,7 @@ incompatibility classification was withdrawn after challenge.
 BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
-BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
+BBv2 through BBv7 are direct, hash-pinned revisions of unchanged v109 through
 the shared runner's offline `revise` command.
 [BBv1](Hierarchy-bootstrap-broad-v1.md) used v104; it remains preserved as the
 initial draft, rather than serving as the corrected baseline. This does not
@@ -469,13 +473,61 @@ other authorized agents' work, so its delta is not this repeat's call count.
 It was not reset.
 
 BBv6 remains unchanged and not generally qualified. No Compare calls, hierarchy
-build, UI refresh or prompt activation occurred. The next proposed prompt
-experiment would separately resolve the scope of each person or thing within
-a compound subject, then expressly state whether its target is a particular
-identified thing or a qualifying category. Generalizing one part should not
-silently decide another part's scope. This is an untested mechanism hypothesis,
-not a required particular-target answer or authorization to edit; no new
-version or follow-on model calls have begun.
+build, UI refresh or prompt activation occurred. The subsequent authorized
+[BBv7 draft](#bbv7-independent-component-scope) separately resolves the scope of
+each person or thing within a compound subject. No follow-on model calls have
+begun; the repeat does not establish that this wording change will work.
+
+### BBv7 independent component scope
+
+The user authorized drafting the next BB revision after the unchanged trio
+repeat. [BBv7](Hierarchy-bootstrap-broad-v7.md) makes exactly three instruction
+substitutions against BBv6:
+
+- Consider the activity or response, its participants and what it concerns
+  separately; decide whether each describes a category or identifies a
+  particular person, thing, collection or occurrence.
+- Ask separate questions about material choices that can change independently.
+- Express each chosen distinction between particular identity and category
+  scope in the final meaning itself.
+
+Generalizing who experiences enthusiasm therefore cannot silently determine
+which ensemble the enthusiasm concerns. The draft does not require either a
+particular-ensemble or a general-ensemble answer. It retains the broadest
+supported-scope objective, subject identity and expressed restrictions, factual
+uncertainty, and the rule to define the selected topic rather than every concept
+it mentions. Material ambiguities determine which questions are needed; the
+prompt does not mandate a fixed diagnostic checklist for every activity.
+
+The input and four-field output contracts and both AS-generated synthetic
+examples are byte-identical to BBv6. No trio witness or validation answer was
+added to the examples. The native revision receipt reconstructs BBv7 directly
+from unchanged Bootstrap-v109, whose SHA-256 remains
+`caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1`.
+BBv7 SHA-256 is
+`9c6e986cf1782736420499cb48923183001b0a2147b36b2d20cd549dc9e08281`.
+The unchanged BBv6 hash and exactly three substitutions were also verified.
+
+Two independent read-only agent audits found no material instruction or
+example inconsistency. Feedback remains a broad response category; the
+photographic-negative example separately preserves portrait content and the
+identified collection. Neither audit establishes effectiveness on the harder
+observer-versus-ensemble witness. Both example outputs pass the production
+meaning validator, including exact post quotes and paired ambiguity IDs;
+selected pointers and hierarchy parent closure pass. All nine existing native
+prompt-revision tests pass.
+
+[Official reasoning-model guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+supports direct instructions and precise constraints without requested reasoning
+traces. It does not establish this semantic mechanism. BBv7 is a draft, not an
+activated or model-qualified prompt. This step made zero model calls and no
+Compare, hierarchy or UI changes.
+
+The recommended next test is the exact trio parent/child pair under BBv7, with
+independent review of whether its target boundary is actually closed. Include
+broad-category and named-identity controls. Keep source-parent compatibility
+separate from scope faithfulness and do not force earlier relation labels.
+That test has not begun.
 
 ## Existing Bootstrap qualification
 
