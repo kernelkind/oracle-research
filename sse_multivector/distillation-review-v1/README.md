@@ -31,6 +31,14 @@ beneath Payments. Preflight catches and corrects external uncertain-edge
 omissions before their affected inputs run. DCSv1 and full runtime remain
 unqualified.
 
+The [focused payment diagnostic](#payment-type-disagreement-diagnostic-october-11)
+repeats the exact disputed pair: DCSv1 again selects Payments, while unchanged
+DSLv10 reverses its earlier rejection and accepts. Four surrounding controls
+pass complete-output audit. A trusted training Payments/price edge supplies
+the interpretation evidence for accepting the gas-fee pair; the earlier DSL
+category exclusion is too narrow. Fresh agreement itself establishes neither
+correctness nor repeat reliability.
+
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
@@ -5832,7 +5840,103 @@ and the source-bound corrected preparation under
 Both experiment worktrees stay frozen; integration uses a separate checkout.
 This trial establishes neither unseen accuracy nor the eight-hour full-corpus
 target. Prompts, reasoning levels and the final sixty-answer validation remain
-unchanged. Resolve the payment-type disagreement before further expansion.
+unchanged. The subsequent focused diagnostic below adjudicates the payment
+interpretation; the reviewer's verdict instability remains to address.
+
+## Payment-type disagreement diagnostic (October 11)
+
+The user authorizes investigating the exact gas-fee/Payments disagreement before
+expanding the panel. Source-first independent assessment and prompt/input audit
+find the same parent-child direction, original post and ordered teacher rows in
+both requests. Both prompts quote the same AS rule and permit type meanings
+without requiring a completed payment. The disputed boundary is whether a
+network-fee level preserves the broad payment category, rather than a missing
+post, reversed comparison or expressed occurrence restriction.
+
+Two exact fresh requests use native `prepare --from --only --repeat` with
+unchanged **DCSv1** and **DSLv10**, preserving all input bytes, rendered wording,
+settings, schemas, cache identities and source bindings. The original DCS prefix
+is eligible at 1,203 estimated tokens and remains cached. The DSL request keeps
+its original uncached configuration. Four separate authored DSLv10 controls
+have independently assessed expectations frozen before calls; they are not
+saved teacher/student generations, and post support is unassessed.
+
+| Parent | Child | Pre-call expectation | Fresh verdict / full-output assessment |
+| --- | --- | --- | --- |
+| Cables | Cable lengths | Valid; explicit ASv6.100 example | True / accepted |
+| Payments | Low payment amounts for blockchain processing | Valid; preserves explicit payment type without a completed event | True / accepted |
+| Payments | Fast growth on Base L2 | Invalid; shared domain does not preserve payment type | False / accepted |
+| Payments made on Base L2 | Low gas fees on Base L2 | Invalid; the expressed payment occurrence is absent | False / accepted |
+
+The exact original child remains `Fast growth and low gas fees on Base L2 in the
+market snapshot of Persisto's 2026-07-03 05:40 UTC report`, beneath `Payments`.
+DCS again returns candidate `15`. Fresh DSL returns **true**, reversing its
+earlier exact-input **false**. Its new explanation interprets gas fees as amounts
+paid or payable for computation, whereas the earlier explanation separates
+charges/rates from payment subject matter. Neither explanation requires proof
+of a completed payment. This is demonstrated exact-input judgment instability;
+the two-call history is not an estimate of its population error rate.
+
+The input-only assessment initially favors validity, while both new exact
+outputs receive provisional attributed uncertain reviews. The four controls
+test surrounding distinctions but cannot establish fee/category equivalence.
+A subsequent source-only lookup therefore inspects actual immediate edges in
+the **1,000 trusted training answers**, leaving validation/test files unopened.
+It finds this directly relevant ASv6.100 precedent at training line **703**:
+
+| Teacher number | Subject | Context |
+| --- | --- | --- |
+| 10 | Payments | The price, payment instruction, and post-payment reply instruction establish payment subjects. |
+| 10.1 | 2 USDT price for the author's quick code-review service | “2 USDT quick code review” states the amount charged. |
+
+The exact ASv6.100 prompt is present in that training row. Two independent
+readers and the root verify the direct edge and source bindings. Training note:
+`80c4d216a15350af9a4bfdb2d11d3ed52693c557057bfdd13b8a7a9a6852f4d1`.
+Source is canonical `target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl`.
+File SHA256 is `f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681`;
+teacher-answer SHA256 is `05e49e9c5e515bfa3998112596d5fd1537de7140ee8dddc8e462217b698a6039`;
+line SHA256 excluding newline is `991c79812ad1bc238b3e4f12529b50429df3ef51af519252767a6dbcac4fbcd0`.
+No direct gas-fee precedent appears in this bounded training scan; absence
+establishes no negative verdict and an exact lexical match is not required.
+
+The trusted edge establishes that **Payments can include a payable service
+price/amount charged**, without borrowing the post's payment instructions or
+asserting an executed transfer. The
+[Ethereum gas definition](https://ethereum.org/developers/docs/gas/) establishes
+gas fees as payment amounts for computation. The exact gas-fee child preserves
+this payment category; low amount, Base L2, growth and the dated report add
+restrictions without removing it. ASv6.100's explicit Cable lengths/Cables
+example also permits property wording retaining its object's type.
+
+On that source evidence, the root and independent assessments adjudicate the
+**exact pair valid** and accept both new complete outputs. The earlier DSL
+exclusion of charges/rates is too narrow for this established payment meaning:
+it is a substantive category error, separately from the demonstrated verdict
+flip. This conclusion follows trusted precedent plus semantic interpretation,
+not model votes or a new blanket exemption for fees. Native final agent
+acceptances are appended to both exact experiments, preserving provisional
+uncertainty. Both historical and final records remain current by their hash
+bindings; no review-precedence policy changes. All four controls have current
+agent acceptances. Earlier frozen reviews and the four-note trial's saved
+22 accepted/two unresolved aggregate remain intact; this subsequent case
+adjudication resolves the payment interpretation while NGP remains uncertain.
+These are agent assessments, not new human gold or broad qualification.
+
+Native `summarize-experiments` validates all three completed groups: **seven
+fresh calls**, six verdicts and one DCS warmup, with no retries, failures, reuse
+or missing usage. The generation span is **58.39 seconds**. Cached input is
+5,632 of 12,840 tokens (**43.86%**, including warmup); only the DCS verdict has a
+comparison cache hit. Fresh API-equivalent estimate is **$0.0848892**, with
+estimated net caching savings **$0.0047688 (5.32%)**, including warming. These
+are subscription API-equivalent estimates, not cash charges. Native shared
+queue capacity remains thirty; no external concurrency setting is introduced.
+
+Artifacts remain ignored under
+`oracle-mvp-review-payments-diagnostic/target/distillation-review-v1/payments-diagnostic/`.
+No prompt, semantic rule, review precedence, reasoning default or final-test
+scope changes. The proposed next step is to supply this trusted payment/price
+example to both prompts and rerun the focused checks; that edit is not yet
+approved or applied. Do not seek correctness through further unchanged votes.
 
 ## Actual distilled wording: offline preview (October 8)
 
