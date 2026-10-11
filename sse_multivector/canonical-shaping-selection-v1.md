@@ -1,12 +1,13 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work audits the two saved scope failures from
-experimental [Hierarchy-consolidation-v6](shr_single_pair/Hierarchy-consolidation-v6.md).
-Both independent audits accept both proposals, disagreeing with the recorded
-agent rejections. Their brief explanations do not address the disputed meal
-and culinary-tradition conditions. A separate auditing task therefore does
-not automatically correct generation. The diagnostic below motivates a v7
-required-condition revision, rather than another example or a Compare change.
+The latest user-authorized work tests experimental
+[Hierarchy-consolidation-v7](shr_single_pair/Hierarchy-consolidation-v7.md)
+after four neutral audits of the two agent-rejected v6 proposals. The audits
+accept both proposals in both draws. V7's explicit required-condition check
+still generates the disputed Bread and Cuisine groupings in both draws, while
+preserving Beverages and Mental states controls. No improvement is established.
+The next useful decision is qualification of the disputed semantic boundaries,
+starting with Bread's meal role, before another prompt revision.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
 the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
@@ -14,7 +15,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the completed v5 proposal panel](#consolidation-v5-proposal-panel),
 [the v6 example draft](#consolidation-v6-synthetic-example-draft), and
 [the completed v6 panel](#consolidation-v6-focused-proposal-panel), and
-[the completed consolidation audit](#consolidation-audit-v1).
+[the completed consolidation audit](#consolidation-audit-v1), and
+[the v7 revision and panel](#consolidation-v7-required-condition-revision-and-panel).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1616,8 +1618,9 @@ The pinned assembly manifests for the approved references are
 and [Consolidation-v3](shr_single_pair/Hierarchy-consolidation-v3.assembly.json).
 Both reference the exact same nine shared files in the same order. The
 experimental [Consolidation-v4 manifest](shr_single_pair/Hierarchy-consolidation-v4.assembly.json),
-[Consolidation-v5 manifest](shr_single_pair/Hierarchy-consolidation-v5.assembly.json)
-and [Consolidation-v6 manifest](shr_single_pair/Hierarchy-consolidation-v6.assembly.json)
+[Consolidation-v5 manifest](shr_single_pair/Hierarchy-consolidation-v5.assembly.json),
+[Consolidation-v6 manifest](shr_single_pair/Hierarchy-consolidation-v6.assembly.json)
+and [Consolidation-v7 manifest](shr_single_pair/Hierarchy-consolidation-v7.assembly.json)
 also preserve those exact shared files and separators, changing only their
 task-specific wrappers. V3 remains the last human-approved full consolidation
 wording; authorization to draft or test later versions is not semantic qualification. The bootstrap
@@ -1651,7 +1654,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v6.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v7.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -2454,11 +2457,97 @@ representative failures reproduce with the committed baseline test definitions;
 this task has not repaired or claimed a passing full runner suite. The new
 adapter's preparation, receipt binding and native execution checks pass.
 
-The next v7 hypothesis is that a containing meaning's required conditions must
+The v7 hypothesis below is that a containing meaning's required conditions must
 already hold throughout the contained meaning. Naming a child as an included
-kind cannot exempt it from those conditions. This is a wording hypothesis to
-test under the approved follow-up, not a new graph guard or semantic gold.
+kind cannot exempt it from those conditions. This is a tested wording hypothesis,
+not a new graph guard or semantic gold.
 It follows the official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 in using explicit success criteria, direct instructions and a brief decision
 explanation without requesting a reasoning trace. That guidance does not
 establish this particular semantic rule or prove that it fixes the failures.
+
+## Consolidation-v7 required-condition revision and panel
+
+The approved follow-up drafts and tests
+[Hierarchy-consolidation-v7](shr_single_pair/Hierarchy-consolidation-v7.md).
+The four audits above do not support the hypothesis that focused auditing
+reliably recognizes violations missed during generation. V7 therefore targets
+the interpretation of required conditions, changing only `Check the proposal`:
+every condition in the proposed meaning must already follow from each child's
+entire meaning, and every condition in the supplied parent must follow from
+the entire proposed meaning. Conditions may follow from topic identity without
+matching words. Customary uses, associations, included names and existing
+placement cannot supply missing conditions or waive required ones.
+
+The input/output contract, sibling-eligibility stage, synthetic example and
+all nine shared Bootstrap-v104 clauses remain unchanged. The
+[assembly manifest](shr_single_pair/Hierarchy-consolidation-v7.assembly.json)
+reuses v6's exact parts except the versioned after-wrapper. Native `revise`
+uses last human-approved v3 as the baseline, with its
+[revision receipt](shr_single_pair/Hierarchy-consolidation-v7.md.revision.json).
+The full v7 SHA-256 is
+`43e98314b418f517c211e8b1d307aeb319ba8c6d29c603fc3c96a0835553dcf5`.
+The assembly test first failed on the missing v7 manifest, then passed with
+the complete version and provenance. Historical prompt bytes remain fixed.
+
+Eight fresh GPT-6.1 Sol medium requests test the same four complete v6 groups
+twice. Native preparation retains inputs, evidence and runner settings;
+`--repeat` dispatches independent requests with identical full v7 prompts.
+All eight validate with distinct upstream receipts; there are no retries,
+reuses, warmups or missing usage. The persistent counter reaches **329/329**,
+including the four audits and eight follow-up requests authorized in this
+iteration. Source and prompt text stay frozen during execution.
+
+| Complete supplied group | First draw | Fresh repeat | Bound agent review |
+|---|---|---|---|
+| Roots: 7 | Beverages: Coffee C006, Slush drinks C039 | Same children, changed definition | Two accepts |
+| Mental states: 6 | Subjective cognitive states: Brain fog and mental clarity C050, sleepiness C092 | Motivational states: Perceived needs C047, Desires C076 | Two accepts; alternative useful subsets |
+| Cuisine: 6 | Cooked dishes: Pizza C054, Cheesesteaks C066, Risotto C073 | Bread-based dishes: Pizza and Cheesesteaks | Two disputed parent-fit rejections |
+| Food dishes: 6 | Bread-based foods: Burgers C036, Bread C068 | Bread-based dishes: same children | Two disputed whole-child rejections |
+
+Both Food dishes outputs impose a meal role on unrestricted Bread. The first
+also explicitly illustrates its category with “bread itself”; the revised
+instruction against exempting named children from conditions has not removed
+this output. Neither Cuisine definition states the tradition association
+required under the recorded agent interpretation of its supplied parent.
+These four rejections apply the same criteria as the prior panels. Native
+reviews explicitly preserve the disagreement with the neutral audit and do
+not promote the expectations to human gold.
+
+All eight prospective shape checks pass with strict note-set narrowing and
+at most six choices in both affected groups. Roots would shrink seven to six;
+other groups six to five, except the first Cooked dishes grouping leaves four.
+Every proposal remains unapplied. Structural success does not resolve these
+semantic disagreements or establish hierarchy quality.
+
+V7 has four bounded agent accepts and four disputed rejections, compared with
+v6's four accepts, two rejections and two uncertain assessments. Two draws per
+group cannot establish a reliability change; the changed counts include
+different proposed topics. No improvement is demonstrated, and neither
+another copied scope rule nor a separate audit has resolved the targeted
+mechanisms. Before v8, qualify whether the Food dishes meal condition is a
+required role for membership or a characterization of the food kind. The
+Bread example makes that distinction concrete; the hierarchy containment
+assumption and fixed original meanings remain unchanged.
+
+The ignored native experiments are `consolidation-v7-focused-roots-first-v2`,
+`consolidation-v7-focused-roots-repeat-v2`, `consolidation-v7-focused-first-v2`
+and `consolidation-v7-focused-repeat-v2` under
+`target/canonical-shaping-selection-v1/`. Version-one directories were prepared
+but never run; preparation was repeated after syncing changed main code,
+preserving all inputs and settings without spending extra attempts. Exact
+`*-report-v1.json` snapshots preserve pre-review outputs; native `show` retains
+the source-bound assessments. The committed
+[usage selection](shr_single_pair/hierarchy-consolidation-v7-usage-v1.json)
+reproduces native `consolidation-v7-usage-v1.json`: **15,422 input tokens**,
+zero cache reads/writes, **3,540 output tokens including 3,078 reasoning tokens**,
+and complete **$0.066244 API-equivalent cost**. The audit's separate subtotal
+is $0.014484; neither is subscription billing.
+
+Thirty relevant consolidation, assembly and revision checks pass after the
+main sync. The broader-suite limitations recorded above remain unresolved;
+this is not a claim that the full runner suite passes. Prompt definitions,
+receipt identities, matched controls and usage source paths were checked.
+No Compare requests, graph changes, UI updates or agent messages occurred.
+The task remains isolated as requested; v7 is tested and experimental, not
+human-approved or activated.
