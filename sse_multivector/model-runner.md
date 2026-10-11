@@ -9,6 +9,9 @@ Two fresh diagnostic draws reproduce the business-identity error and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
 A subsequent user decision classifies implicit material scope as a failure;
 the saved v103 sourdough meaning also leaves its consumer boundary unresolved.
+A focused 28-case reassessment preserves that witness and reviewer disagreements;
+missing a human qualifier alone does not establish a scope failure. The focused
+review's preliminary nine-Food-failure count was withdrawn after challenge.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate
@@ -1489,6 +1492,12 @@ Expected judgments remain outside model input; there is no reuse, retry or
 warming. The original MILFs explanation and named-reference/list uncertainties
 remain unresolved. Synthetic success does not qualify natural-case accuracy;
 qualification and lower-effort testing remain pending.
+The user has authorized a [DSLv7 wording draft](distillation-review-v1/README.md#dslv7-post-interpretation-draft-october-10)
+that supplies the original post only to interpret supplied subject wording.
+The AS parent-child passage and output contract stay fixed. Wording approval,
+native `{POST}` input support, preparation and model calls remain pending;
+the current relationship adapter does not supply the post. Production still
+defaults to DSLv2; neither uncertain named-reference target is newly settled.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

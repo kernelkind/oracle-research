@@ -24,6 +24,9 @@ completed eight authored human/animal comparisons and six exact saved controls
 with unchanged DSLv6. Both audits accept all 14 verdicts and complete records.
 This shows sound scope handling on those cases; it does not repair the original
 MILFs explanation or settle the named-reference/list uncertainties.
+The user has now authorized a [DSLv7 wording draft](#dslv7-post-interpretation-draft-october-10)
+that supplies the original post for interpretation. Wording approval, native
+input support and model calls remain pending; production still defaults to DSLv2.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3865,14 +3868,52 @@ explanation remains rejected. The original named-reference/list uncertainties
 are unchanged. Synthetic success does not qualify natural-note or unseen-note
 accuracy. No additional scope patch is justified by these results alone.
 
-The recommended next step is to establish the named-reference interpretation
-against ASv6.100 and the two existing uncertain named-work/game cases, then
-present the proposed rule and exact examples for approval before more model calls.
-Another unchanged trial cannot decide whether a counterexample may alter facts
-of a fixed named work or game. This is a recommendation, not newly authorized
-research or implementation. Production still defaults to DSLv2. Prompt
-adoption, qualification, list interpretation, broader regression,
-lower-effort testing and final-60 validation remain pending.
+The user subsequently authorized the post-aware DSLv7 wording draft below for
+review before any new model calls. This does not establish the two uncertain
+named-reference targets or a policy for changing facts about fixed named works
+or games. Production still defaults to DSLv2. Prompt adoption, qualification,
+list interpretation, broader regression, lower-effort testing and final-60
+validation remain pending.
+
+## DSLv7 post interpretation draft (October 10)
+
+The user authorized drafting [DSLv7](relationship-prompt-v7.md) for review,
+following discussion of the named-work/game counterexamples. This authorizes
+the wording draft, not its adoption, adapter implementation, experiment
+preparation or model calls. Its wording has not yet been approved.
+
+The shared runner's native `revise` starts from unchanged, approved DSLv6 and
+records the five exact edits in [the revision receipt](relationship-prompt-v7.md.revision.json):
+the title, verbatim AS reference-interpretation excerpts with a bounded wrapper,
+treating the added post as data, requiring the counterexample to fit the child
+under the same interpretation, and the original-post placeholder. The AS
+parent-child passage and Boolean/reason output contract stay unchanged.
+The excerpts are checked byte-for-byte against the trusted ASv6.100 source;
+AS is not re-audited.
+
+The proposed boundary is to use the post to interpret words, phrases and
+references already present in either subject. It cannot supply an absent
+restriction or narrow the domain or instance beyond what the wording denotes.
+Evidence must cite the post wording used for interpretation; an invalid pair's
+counterexample must fit the complete child under that interpretation. The
+draft does not settle the uncertain named-reference targets. Both remain
+outside correctness denominators until independently established.
+
+DSL is also used for coverage placement, where a distilled-model subject is
+the proposed parent and a required teacher subject is the child. In the
+named-game case the proposed parent is the student's `Pot rollovers`, not the
+teacher's `Prize-pot rollovers`; this is not an existing student parent-child
+edge. The two uses retain the same AS parent-child test.
+
+The current native `_relationship_inputs` supplies only the AS passage and
+the two subject strings; it does not supply `{POST}`. DSLv7 therefore remains
+a wording draft and is not yet preparable through that adapter. No rendered
+experiment or model calls have been made. A future balanced diagnostic must
+use each case's real original post. The eight authored scope cases used C6 as
+provenance only; its post must not silently become their interpretation context.
+Wording review comes first, followed by separately authorized native input
+support and diagnostic preparation. Qualification, lower-effort testing and
+the final 60 remain pending.
 
 ## Actual distilled wording: offline preview (October 8)
 
