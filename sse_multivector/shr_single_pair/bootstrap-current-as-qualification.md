@@ -1429,6 +1429,16 @@ restrictions. Post, context and original hierarchy resolve its sense and
 references; details of an illustrated use do not automatically restrict the
 whole category. Defining features of the chosen sense remain permissible.
 
+After the matched qualification, the user explicitly clarified that this is the
+scope of the selected **local node**, interpreted using its own subject, context,
+original hierarchy and post. Matching titles in different posts or prompt
+examples do not establish matching meanings. A category illustrated in one
+example cannot supply membership requirements for a different note's node merely
+because both are called Food. Context can establish materially different local
+scopes; category breadth and its defining boundaries must be assessed within each
+local input. This clarification does not make descendants an exhaustive member
+list or remove the requirement for a standalone explicit meaning.
+
 Independent meaning generation and the existing input/output schema remain
 unchanged. No generated parent meaning is added to the input. Full branch checks
 already inspect exact independently generated parent and child meanings; they
@@ -1455,6 +1465,8 @@ test. Earlier native reviews remain preserved. The conflicting v104 parent-fit
 and free-abstraction instructions are directly observable; their removal does
 not prove which generated Food sense is right. The smoke uses two fresh
 answers, one exact reuse and one cache warmup, with three actual attempts.
+The later user correction below withdraws the cross-example Dog food inference;
+that example is not evidence of this risotto node's membership.
 
 ### Predeclared matched evaluation
 
@@ -1498,6 +1510,11 @@ before results are reported. Saved reviews are agent assessments, not human
 gold. Historical judgments remain source-bound evidence rather than mandatory
 labels for revised definitions. This remains an adaptive development panel,
 not an unseen benchmark or a general reliability estimate.
+
+For subsequent reviews, the user clarified that "admitted by the subject" means
+the selected subject interpreted in its own local evidence. A title in another
+note or prompt example is not a fixed definition of this node. This is a later
+evaluation correction, not a criterion retroactively declared before inference.
 
 Execution stays on the main shared stable launcher from this task worktree,
 Sol 6.1 medium/SSE, automatic prefix caching and the shared fair queue (at most
@@ -1560,7 +1577,8 @@ avoids those extra clauses, but their removal alone is not a demonstrated repair
 At this initial checkpoint, both Food roots choose human culinary scope. Whether
 that is a supported lexical sense or a narrowed subset of the intended AS Food
 category was unresolved; human wording alone was not scored as a failure or a
-gain. The focused reassessment below supplies the missing AS scope evidence.
+gain. The subsequent cross-example reassessment below was withdrawn after the
+user clarified that matching titles do not establish matching local meanings.
 Three baseline and five candidate full-list copies leave "particular/presented
 dish" qualified
 between a repeatable specified recipe combination and one post-specific
@@ -1678,52 +1696,50 @@ The four producer record hashes are:
 | `stock-candidate-draw2` | `19096776b54a41289b572960dbfdb2fe4fc55303624ae8c41e3efc538b3ada9b` |
 | `stock-candidate-draw3` | `b76c6f462db204eb3ea777a16b1a62558fe43bdbb6cc6b24218e7ff72ffc9116` |
 
-Food's consumer boundary was examined read-only against the approved AS source
-contract and the exact independently generated definitions. The selected entry is
-unqualified **Food**; its context identifies the dish title, ingredient list and
-`#foodstr`. The post provides a culinary example, not a category-wide consumer
-restriction. Crucially, [ASv6.100's generalization rule](../experiment_specs/asv6.100-hr01-post-template.txt)
-requires subject-only validity across posts/domains and prohibits context from
-supplying missing heading restrictions. Its own example explicitly places
-**Dog food beneath Food**. The inspected template retains approved SHA-256
-`0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f`.
+The initial focused Food reassessment incorrectly transferred membership from
+a separate synthetic example in ASv6.100 to this risotto note. The example has
+Dog food beneath its Food heading; the risotto post has no dog subject. Both
+Bootstrap versions define this note's Food node with human-consumption scope.
+The review treated those two headings as one global category and therefore
+rejected the generated definitions. No new Food generation or prompt edit
+occurred in that diagnostic.
 
-Dog-only food therefore provides a concrete category witness that the supplied AS
-Food subject admits but both human-only Bootstrap definitions exclude. Human and
-animal food are recipient-qualified subsets of the same literal food category;
-this is distinct from resolving literal food versus metaphorical "food for
-thought". Calling the narrower subset a "human culinary sense" does not itself
-justify changing the supplied category. Neither producer diagnostic identifies
-or resolves the human/animal distinction; both assume human consumption before
-asking their other questions.
+The user explicitly rejected that evaluation inference:
 
-Under the existing approved subject-scope preservation contract, the focused
-agent assessment rejects both saved Food definitions. Two independent reviewers
-agree that this exclusion is unjustified by the selected subject/source contract;
-one phrases recipient-neutral scope as the preferred interpretation rather than
-universal lexical gold. This is a source-contract-based agent assessment, not a
-new user-approved semantic label. A deliberate human-food category would need
-an explicitly different subject or contract, rather than an incidental example
-restriction. No teacher vote or regenerated Food meaning was needed for this
-assessment.
+> No this is wrong. the AS's 'Food' category is materially different from that note's Food node. if the example had an explicit meaning it would be narrowed to dog food. This is a big lesson for you. do not make the same mistake again.
+
+**Evaluation rule:** establish the scope of each selected local node from its
+own subject, context, original hierarchy and full post. A shared title does not
+establish a shared explicit meaning. An AS prompt example can illustrate the
+generation task, but cannot act as membership gold for another note's node.
+Do not transfer category boundaries, counterexamples or expected relationships
+between such nodes without independently establishing matching meanings.
+
+The claimed human-only Food failure is withdrawn. This is an evaluation error,
+not a demonstrated prompt defect or data-integrity failure. The user correction
+permits materially different local scopes; it does not certify every clause of
+either current Food definition or settle their independently fixed branch links.
 
 The exact Food case is
 `bootstrap-4acb29436208dbb08b34c9bbbd68c0177ecc052b956b474fc05fa93e8985bc92`.
 Baseline record `b0a9f2451ec93b7bab53a24380360f7ea6cedb6bc977c8a81f8f076b456135c2`
 was originally reused; candidate record
 `2c356c523a3bc962252a6948ddd3b426cfa930f0b6719bdc808df4821642927f` was fresh.
-Native agent reviews now mark both reject and retain the earlier uncertainty in
-review history. The original archived cohort reports and tables above remain the
-initial assessment snapshot, not a retrospectively measured prompt gain. Current
-cohort reviews are 104 accept / 2 reject / 8 semantic/source uncertainties / 1 malformed
-baseline endpoint, and 106 accept / 1 reject / 8 uncertainties for v109.
+Native agent reviews now mark both uncertain, retaining the withdrawn reject
+and earlier uncertainty in review history. This does not invent a user accept
+label. The original archived cohort reports and tables above remain the initial
+assessment snapshot, not a retrospectively measured prompt gain. Current cohort
+reviews return to 104 accept / 1 reject / 9 semantic/source uncertainties /
+1 malformed baseline endpoint, and 106 accept / 0 reject / 9 uncertainties for
+v109. Changed review counts are an evaluation correction, not new model outputs.
 
 V109's additional "as nourishment or as components of meals" condition remains
 qualified: a confection consumed solely for pleasure between meals distinguishes
 a required consumption purpose from a substance's nutritional capacity. Its
-diagnostic does not settle that reading. Rejecting animal-food exclusion does
-not settle kind versus application-specific food roles, certify all 35 Food
-ancestor checks, or establish a complete replacement definition. Existing frozen
+diagnostic does not settle that reading. These questions require this node's own
+evidence; animal-food membership from the AS example cannot settle them. The
+correction does not certify all 35 Food ancestor checks or establish a complete
+replacement definition. Existing frozen
 meanings are not broadened during branch review, and no physical-instance rule is
 substituted for information-topic containment.
 
@@ -1743,7 +1759,9 @@ the two Food reassessments match their input/output hashes through the shared
 runner's production digest function. Rendered stock inputs/prompts remain exact,
 all fresh evidence quotes are post substrings, both prompt files retain their
 original hashes, and thirteen relevant revision/input/preparation tests pass.
-V104 stays approved and v109 experimental. The next useful prompt mechanism to
-test is distinguishing a different sense from an added subset restriction when
-defining a general subject,
-using this Food witness and the stock actor control. That next edit has not begun.
+V104 stays approved and v109 experimental. The previous proposal to drive a
+scope-preservation edit from the cross-example Food rejection is withdrawn.
+Before another edit, any remaining Food concern must be established from this
+note's own evidence and its exact independently generated branch meanings. The
+stock repeat findings are unchanged. No prompt change or new inference follows
+from this evaluation correction.
