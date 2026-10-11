@@ -2236,3 +2236,35 @@ subject strings. Its output passes the production five-field validator.
 AllV100 instructions remain unchanged. TestingV104 andV105 on the same ten
 original requests separates obligatory condition isolation from a participant
 demonstration instead of accumulating both mechanisms in one candidate.
+
+### V104 first gate: the targeted procedure executes
+
+V104 andV105 each complete ten valid outputs in12 fresh attempts including
+two warmups, without reuse, failure, retry or missing usage. Native
+API-equivalent costs are$0.0738280 and$0.0849980 respectively, reproduced by
+their maintained usage sources. V104's first native independent review gives
+10 accept,0 reject and0 qualified responses. Both042 questions isolate the
+consumer restriction and both veterinary-regimen witnesses preserve the
+whole child meaning. The required design purpose does not assert successful
+ketosis, and human prescription does not make the consumer human. Both038
+dog witnesses and019 non-eating-purpose witnesses remain supported;036/107/
+111/034 controls preserve their complete scopes and permitted connections.
+
+This is one draw, not stable accuracy certification. Some other questions
+still quote compound descriptions even though their decisive semantic proofs
+are valid. V105 corrects042-forward but retains the old deliberateness-only
+positive in042-reverse; a teaching example alone is not a stable fix and
+introduces a reversal. Native independent review of that branch is retained
+separately; neither candidate is adopted on this gate alone.
+
+The next frozenV104 stage intentionally repeats all ten gate requests and
+qualifies the complete196-case ASv6.100 core and102-case fifty-note panel.
+Native preparation preserves every input, producer receipt, schema and
+setting. The broad panels nominate nine and one exact answer reuses from
+the original gate; those are not independent draws. The repeat disables
+reuse. Expected newly dispatched work is302 attempts including four warmups
+if all first requests succeed; the persistent shared counter counts actual
+attempts and enforces the existing20000 cap. Complete-chain, reversal,
+equivalence-substitution and branch consistency remain separate from
+semantic proof review. Producer qualifications remain unresolved rather
+than becoming target labels or automatic Compare errors.
