@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "saved_v179_baseline": [
+      "../../target/compare-v179-examples-ablation-v2/v179-pair-01",
+      "../../target/compare-v179-examples-ablation-v2/v179-controls-01",
+      "../../target/compare-v179-examples-ablation-v2/v179-pair-02",
+      "../../target/compare-v179-examples-ablation-v2/v179-controls-02"
+    ],
+    "v182_direction_order": [
+      "../../target/compare-v182-direction-order-v1/pair-01",
+      "../../target/compare-v182-direction-order-v1/controls-01",
+      "../../target/compare-v182-direction-order-v1/pair-02",
+      "../../target/compare-v182-direction-order-v1/controls-02"
+    ]
+  }
+}

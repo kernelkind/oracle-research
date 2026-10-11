@@ -6921,3 +6921,13 @@ usage. V181 is not adopted or broadened; V179 remains the development baseline
 with an unresolved failure. A directional evaluation-order diagnostic is
 proposed, not begun. See the
 [completed qualification and review limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v181-qualification).
+
+The subsequent authorized [V182](shr_single_pair/Hierarchy-compare-v182.md)
+diagnostic starts from V179 and changes only requested directional evaluation
+and report order, with corresponding reordering of its existing synthetic
+example diagnostics. Symmetric A/B subjects/meanings, semantic rules and schema
+remain fixed. Twenty fresh comparisons inherit the saved V179 five-pair panel,
+both orientations and two draws. Report-order compliance is measured separately
+from semantic support; internal reasoning order is not observable. No Bootstrap
+or hierarchy work occurs. See the
+[V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).

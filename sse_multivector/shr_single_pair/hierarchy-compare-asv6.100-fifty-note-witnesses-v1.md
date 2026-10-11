@@ -5625,3 +5625,55 @@ scope rules, examples and schema fixed. This could distinguish evaluation-order
 effects from input-order effects; neither cause is established here. That
 diagnostic is a recommendation only, with no preparation, edit or new calls
 authorized by this result.
+
+## V182: directional evaluation and report order
+
+The user approves the proposed order diagnostic and explicitly requires
+continuing the symmetric A/B prompt line. Experimental
+[Hierarchy-compare-v182](Hierarchy-compare-v182.md) uses V179 as its development
+baseline, rather than carrying forward V181's failed semantic reminder.
+Native `revise` adds one instruction to evaluate `B_contains_A` first and
+report it before `A_contains_B` in `questions` and `answers`. Each existing
+synthetic example's two diagnostic arrays is reordered accordingly. All
+example subjects, meanings, questions, justifications, answers and relations
+remain unchanged. A/B inputs still contain only `subject` and `meaning`;
+scope rules and the four-field V179 schema are unchanged.
+
+This is an order intervention, not a one-direction task or a new containment
+convention. The saved V179 Stockpots answer fails when Cookware is A and its
+coverage diagnostic is reported first, but passes when it is B and that
+diagnostic is reported second.
+Changing requested evaluation/report order without changing A/B inputs tests
+whether that difference responds to order instructions. Actual diagnostic
+record order is observable; internal evaluation order is not. Instruction
+wording and aligned example ordering form one intervention, so this panel
+cannot separate their individual effects. Saved baseline rather than concurrent
+fresh baseline also leaves time and sampling effects open.
+
+Preparation inherits the four completed V179 V2 experiments through native
+`prepare --from`, overriding only the prompt/version and requesting `--repeat`.
+The same five original ASv6.100 pairs in both orientations, repeated twice,
+yield 20 planned fresh comparisons. Every explicit meaning and producer
+receipt remains fixed Bootstrap-v96 evidence for this controlled panel;
+it does not certify newer Bootstrap versions. Both arms retain subscription
+Sol 6.1 medium/SSE, the shared worker, unchanged schema and disabled explicit
+warming. Shared scheduling and the persistent 20,000-attempt counter apply.
+Provider-only retry bounds allow at most two attempts per case; stage caps
+reserve that allowance and retries count against the same counter. The four
+new directories are `target/compare-v182-direction-order-v1/{pair,controls}-01`
+and `-02`. The native usage definition separates preserved V179 generation
+from newly dispatched V182 attempts. No inference result is claimed here.
+
+Qualification checks requested question/answer order, valid directional
+diagnostics, complete counterexample admission/exclusion, necessary full-scope
+proofs, and reversals. Independent reviewers inspect one draw each using only
+exact A/B inputs and parsed outputs, without prescribed labels, producer
+context or prompt templates. Required workflow documentation exposes
+historical aggregate findings, so these reviews are not blinded to that history.
+Stockpots' laboratory-only design witness retains its user acceptance; other
+control expectations remain agent qualifications. Results must distinguish
+order compliance, semantic support and repeated-label stability. Errors moving
+with the first directional test would support an order hypothesis, not prove
+it; errors remaining under the same A/B orientation would leave input-order
+or semantic interpretation mechanisms open. No Bootstrap generation,
+hierarchy construction or broader panel is included in this authorization.
