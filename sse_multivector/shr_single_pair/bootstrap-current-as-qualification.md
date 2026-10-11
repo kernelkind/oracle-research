@@ -11,10 +11,13 @@ allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
 [BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
-on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
-and its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
-plus the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
-but not generally qualified. BBv5's four-case panel and unchanged repeat remain evidence.
+on the [focused stock case below](#bbv6-general-activity-versus-particular-participant),
+its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
+the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
+and the [three complete-branch checks](#unchanged-bbv6-complete-branch-check),
+but not generally qualified. The branch check finds one incompatible identity
+boundary and leaves several information-coverage implications unresolved.
+BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
 BBv2 through BBv6 are direct, hash-pinned revisions of unchanged v109 through
@@ -305,9 +308,100 @@ $0.0065464 for Jesús Molina, excluding earlier producer generation; these are
 not subscription invoices. No Compare calls, hierarchy build, prompt revision
 or activation occurred. Native data remains ignored in the retained worktree.
 
-Next proposed qualification: a small set of complete original ASv6.100 branches
-under unchanged BBv6, reviewing supported breadth and independently generated
-parent/child compatibility separately. This has not started.
+#### Unchanged BBv6 complete-branch check
+
+The user authorized the proposed small complete-branch qualification. The
+shared runner prepared and completed
+`target/bootstrap-broad-v6-complete-branches-v1` in the BB worktree. It selects
+every entry in three original ASv6.100 root trees from
+`oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate`:
+
+| Original selected root | Entries | Immediate links | Recursive ancestor implications |
+|---|---:|---:|---:|
+| Cooking, stock post, `5` | 8 | 7 | 20 |
+| Mental states, `5` | 3 | 2 | 2 |
+| Jesús Molina, `2` | 3 | 2 | 3 |
+| Total | 14 | 11 | 25 |
+
+Every selected pointer occurs once per tree. Full posts, complete trees, input
+hashes and evidence match the source collection exactly. Unchanged BBv6
+(`a73328f633b4caacb583fe3770a6c4b8103871355d18b9fa200037161c727e28`),
+GPT-6.1 Sol medium, output schema, SSE transport and cache prefix match the
+previous BBv6 tests. Ordinary v109 answers remain baseline metadata outside
+model input. No generated parent meaning was supplied to another producer.
+
+The coordinating agent and two independent read-only reviewers examined all
+14 final meanings and all 25 ancestor implications. Native receipt-bound agent
+reviews record **13 qualified individual accepts and one uncertain trio
+definition**. These are not human gold or a 13/14 branch success rate:
+individually supported meanings can still establish incompatible scopes.
+
+| Branch | Individual meanings | Fixed-meaning branch assessment |
+|---|---|---|
+| Mental states | The root remains a general psychological category. Its children describe the author's distraction and figurative experience of thinking not working normally, without inventing a clinical diagnosis. | Both immediate implications are compatible. This does not independently qualify every possible category boundary. |
+| Jesús Molina | The person root retains general identity. The trio preserves an unspecified association; whether its particular-ensemble restriction is necessary remains uncertain. The enthusiasm category broadens beyond the author's own reaction. | One incompatible identity boundary, detailed below. The two implications to the person root remain qualified: an association alone does not settle whole-topic inclusion. |
+| Stock Cooking | The root explicitly requires heat. Descendants preserve the recurring practice, particular batch, planned preservation/storage and estimated yield. All eight are individually supported. | Cooking episodes fit the heat-based activity. The batch descendants concern the same identified batch. Coverage of products and subsequent handling by Cooking or the recurring activity remains unresolved; the tree is not certified as 20 compatible implications. |
+
+The concrete trio mismatch is between independently fixed meanings:
+
+- Parent `2.1`: **“The new-generation jazz trio associated with Jesús Molina is
+  the particular three-musician jazz ensemble connected with him and described
+  as representing a new generation in jazz.”**
+- Child `2.1.1`: **“Enthusiasm for a new-generation jazz trio associated with
+  Jesús Molina is excitement or admiration directed toward a three-musician
+  jazz ensemble characterized as belonging to a new generation and connected
+  with the musician Jesús Molina.”**
+
+The parent chooses one particular ensemble. The child admits enthusiasm for
+any ensemble satisfying its stated conditions. Admiration for a different
+qualifying Molina-associated trio fits the child but not that particular parent.
+Broadening the observer beyond the author does not require broadening the
+target ensemble. The mismatch establishes incompatible selected boundaries,
+not which definition must change. The parent's broader diagnostic alternative
+also fails to expressly retain Molina association; that omission does not prove
+that the parent must be broadened. Original AS ancestry is evidence to examine,
+not permission to force a definition or a relation label.
+
+In the stock branch, the strongest unresolved implication is Cooking `5` above
+planned pantry storage `5.1.1.3`. Cooking's resolution says storage alone does
+not qualify; the child describes intended placement and keeping of this batch.
+A cooked-stock target does not automatically establish coverage of the entire
+storage topic. Conversely, a child's omission of another known fact about the
+same identified batch does not itself prove a scope conflict. Product, activity
+and combined-action relationships require an information-topic interpretation;
+this review does not impose a blanket literal-instance rule or a completed-action
+restriction. Plans remain plans throughout these outputs.
+
+Key current records below are in this experiment's `run/results.jsonl`:
+
+| Case ID | Record SHA-256 |
+|---|---|
+| `bootstrap-08fa4fbc12d593658267ee4143c64665ceab7b3a1b6edea8bfd7296e22c094de` — Cooking | `268549dc7931c8de3e2c9e25a2828dfe7b376f90cdadc87dd878ae71fc595664` |
+| `bootstrap-b5f85981185f3f2c69193c2416ba3a33b28ec4ef0f6203a5602a24d2c20e2404` — pantry plan | `d45038e6008224666a36c309ff296790337d11f52dd6476de1a8bf18ca56fb7d` |
+| `bootstrap-4d093cebbca84c917bc6401355d4b4ddeaec8f9d660a1851a22e6aae2227d6da` — trio | `7603676cca7ca6e2cf9b6e5fc5067526c170c444453c7f415adce920421a5769` |
+| `bootstrap-4f4e1f65f56589569c2d4a2b9410b63c0d80a045aa5cbb53a3e5e00e6f8f7f09` — enthusiasm | `e24c3e3683c9c6f21611f08f7ca38a50a5f1e26db3a3b5c6847ca9d4231bb9c5` |
+
+All 14 answers validate and are non-null; evidence quotes are verbatim substrings
+of their own posts and ambiguity/resolution IDs match. There were **12 fresh
+outputs, two exact answer reuses and one fresh cache warmup: 13 new attempts**,
+without retries or failures. The recurring stock activity reuses
+`target/bootstrap-broad-v6-stock-repeat-v1`, original record
+`958f48a2f863f7f07606a9dc95a0d8a2e7b531fc51fc3dc87174f02c831a64c1`;
+the person root reuses `target/bootstrap-broad-v6-jesus-v1`, original record
+`78a01c5f4a9c99f38b8b93218509f7930c93aa9d59191b5851cfd9a318819409`.
+These reused outputs are not independent new draws.
+
+Every fresh substantive request records a cache hit. Native new-attempt usage
+is 7,944 uncached input tokens, 63,232 cached input tokens and 6,887 output
+tokens; the 1,658 reasoning tokens are included in output. Known API-equivalent
+cost is **$0.0910812**, including warmup and excluding original charged generation
+behind the two reuses. No attempt lacks usage. This is not a subscription invoice.
+
+No Compare calls, hierarchy build, UI update, prompt edit or activation occurred.
+Native artifacts and reviews remain ignored in the retained worktree. The next
+proposed diagnostic is a fresh identical-input repeat of the disputed trio
+parent and child before editing, checking target identity separately from the
+observer. This has not started; the stock coverage qualifications remain open.
 
 ## Existing Bootstrap qualification
 
