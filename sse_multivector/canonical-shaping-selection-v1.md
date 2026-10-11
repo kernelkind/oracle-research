@@ -1,5 +1,9 @@
 # Selecting local entries to reduce overcrowding
 
+The latest user-authorized work is a draft synthetic-parent prompt with shared
+definition-writing text; see [the draft and assembly contract](#synthetic-parent-draft-and-shared-definition-wording).
+It is isolated for review and has not changed the active construction policy.
+
 The user approved selecting promising unused local entries when a canonical
 group has too many children. A nomination still follows ordinary local versus
 canonical graph traversal. Selection does not establish containment, placement,
@@ -1537,7 +1541,90 @@ counterexample does not specify a case ID and therefore depends on dispatch
 order. Those broad suites are not reported as passing; their runner migration
 and order-sensitive tests were left outside this experiment's scope.
 
-The most useful next diagnostic is to test nomination using the saved fixed
-meanings and the same containment contract as ordinary comparison. Reuse the
-two saved outcomes; do not bootstrap the whole shortlist merely to run this
-control. That follow-up has not begun, and no selection policy is activated.
+The subsequent user decision permits proposing a synthetic parent when the
+original local entries do not supply a useful consolidation topic. The user
+requested the first prompt draft, sharing applicable bootstrap wording, and
+coordination with the bootstrap agent. This replaces the earlier proposed
+nomination diagnostic as the immediate next work. No new selection policy has
+been activated.
+
+## Synthetic parent draft and shared definition wording
+
+**Hierarchy-consolidation-v1 is a draft, not an approved or tested model prompt.**
+The user authorized its preparation in the shaping task worktree only, with
+coordination with the other research session. No inference,
+bootstrap revision, construction change, review UI refresh or main integration
+is part of this draft task.
+
+The [complete draft](shr_single_pair/Hierarchy-consolidation-v1.md) receives
+the siblings' current parent and all recursive ancestors, preserving parent
+IDs, plus every sibling's ID, title and fixed explicit meaning. For a root
+group the parent is null and ancestors are empty. It proposes one new topic
+with a title, explicit meaning and at least two intended child IDs, or JSON
+null. It searches for any useful subset across the whole sibling group. A
+proposal containing every sibling only adds a level and is excluded. The
+proposal must still undergo ordinary comparison to establish actual placement;
+this task does not implement that path for synthetic inputs.
+
+The user approved keeping shared instructions in a versioned file and
+assembling full prompt files before preparation. The shared file is
+[explicit-meaning-rules-v1](shr_single_pair/prompt_parts/explicit-meaning-rules-v1.md):
+119 words copied verbatim from the approved
+[Bootstrap-v104](shr_single_pair/Hierarchy-bootstrap-v104.md) definition-writing
+paragraph. Post-specific evidence instructions, ambiguity output fields and
+examples remain in the bootstrap wrapper. Consolidation has its own input,
+proposal and output instructions; no bootstrap field is required merely to
+reuse definition-writing text.
+
+The two pinned assembly manifests are
+[Bootstrap-v104](shr_single_pair/Hierarchy-bootstrap-v104.assembly.json) and
+[Consolidation-v1](shr_single_pair/Hierarchy-consolidation-v1.assembly.json).
+Each records the prompt version, every source part's path and SHA-256, their
+order, and the full output's path and SHA-256. Paths are relative to the
+manifest. [prompt_assembly.py](prompt_assembly.py) concatenates exact bytes;
+it does not interpret template variables or add separators. Each wrapper owns
+its surrounding whitespace, including a mid-paragraph space or a final blank
+separator when necessary for exact reconstruction. Git's default whitespace
+check reports those two intentional wrapper endings; the assembled prompts and
+remaining source pass the check. Missing or changed parts, a wrong assembled hash,
+and a differing existing output are errors. Existing matching outputs are
+checked without rewriting them.
+
+Use the assembled Markdown file with the shared runner's existing `prepare`
+command. The runner still freezes full text; it does not resolve includes or
+read shared parts during execution. Assembly is a source-authoring operation,
+not an alternative experiment preparation or execution path.
+
+From the task worktree:
+
+```bash
+python3 sse_multivector/prompt_assembly.py check \
+  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.assembly.json
+python3 sse_multivector/prompt_assembly.py build \
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v1.assembly.json
+```
+
+After a shared instruction changes, create a new shared-file version and new
+versions of every prompt adopting it, with newly pinned manifests and reviewed
+full assembled text. Old prompt versions, manifests and prepared experiments
+remain fixed. Advancing only one consumer is explicit: its manifest selects
+the new shared version while other consumers retain the old one.
+
+The bootstrap reconstruction's SHA-256 is
+`d97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0`,
+identical to the pre-existing v104 file. The shared text's SHA-256 is
+`0a243de2ac9013212f8b35317f6ad0b52b4757c467f81f54d9ab9ff4cb46c7ff`.
+The fail-first CLI test initially failed because assembly support was absent.
+Seven offline production-path checks now pass, including refusal of source
+drift or output overwrite, exact v104 reconstruction, identical shared wording
+in both prompts, and native generic `prepare` freezing the assembled prompt
+without inference. These checks establish assembly behavior, not semantic
+quality or API acceptance of a consolidation output schema. No schema or
+production activation is introduced in this draft.
+
+The draft uses short explicit sections, delimited input and no requested
+reasoning trace or examples, consistent with
+[official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+That guidance does not validate the consolidation semantics. The next step is
+user review of the draft, followed by a separately authorized small test using
+the saved Food preparation sibling group and a root group.
