@@ -7,7 +7,10 @@ the activity unless its meaning explicitly requires that it happened. It adds
 one checking paragraph; shared meaning-writing rules, example and output remain
 unchanged. V12 is preserved with an unintended missing paragraph break; v13
 corrects that formatting without rewriting v12. V13 passes offline checks but
-has not been model-tested or activated. See [the draft record](#consolidation-v13-activity-topic-draft).
+has not been activated. The user subsequently authorizes the four-attempt
+activity-scope screen below; results are not yet established.
+See [the draft record](#consolidation-v13-activity-topic-draft) and
+[the registered screen](#consolidation-v13-activity-scope-screen).
 
 The preceding tested candidate is
 [Hierarchy-consolidation-v11](shr_single_pair/Hierarchy-consolidation-v11.md).
@@ -3765,3 +3768,70 @@ The useful next test would check the original full Food preparation sibling
 group and a synthetic contrast whose parent explicitly requires performance,
 retaining the existing restriction controls. That test is proposed, not begun;
 no reliable improvement is claimed from this draft alone.
+
+## Consolidation-v13 activity-scope screen
+
+The user replies "proceed" to testing the original sibling group alongside an
+explicit performance restriction. This authorizes this bounded screen, not a
+hierarchy rebuild, another prompt revision or a Compare/Bootstrap experiment.
+The ceiling is **four fresh GPT-6.1 Sol medium subscription attempts**, including
+any failure or retry, with at most two requests from this task running at once.
+Native budget initialization creates
+`target/canonical-shaping-selection-v1/consolidation-v13-activity-scope-budget-v1.json`
+at 0/4. All earlier exhausted counters remain unchanged. Ordinary SSE is used;
+no prefix warmup or additional caching setting is enabled.
+
+There are two complete inputs, each tested twice independently:
+
+1. **Original Food preparation C005 group.** Native `prepare --from` preserves
+   the `with-plans` case from `consolidation-v11-grilling-plan-first-v1` and
+   changes only the prompt to v13 with the current shared worker. All seven
+   siblings, their fixed meanings and the supplied parent remain unchanged.
+   The original input SHA-256 is
+   `3eef12b0893d52209908f65cb70e64cb952d046004d3d160cca05df8330d8e1e`.
+   The unchanged ASv6.100 graph and saved menu hashes are verified offline.
+2. **Synthetic completed-work restriction.** The
+   [authored source](shr_single_pair/hierarchy-consolidation-completed-activity-source-v1.json)
+   offers completed interior wall painting and completed interior ceiling
+   painting, plus plans to paint cabinets and plans to paint exterior doors.
+   Its parent defines Completed home painting as painting home surfaces or
+   fixtures **with the painting finished**. Both planned meanings explicitly
+   permit nonperformance. A useful narrower category such as completed interior
+   painting is available. The input SHA-256 is
+   `971b16849167eddc93a22eb1f4a450160e5e3f51474e495ca36d38a921ba90f5`.
+   These are authored test topics, not canonical nodes or additions to a graph.
+
+The second draw of each input uses native `prepare --from ... --repeat` to
+preserve its complete input/settings and bypass saved-answer reuse. Each
+one-case run uses `--max-new-attempts 1` and the same four-attempt persistent
+counter. No request is dispatched before the criteria below are recorded.
+
+Pre-call assessment criteria:
+
+- Assess every proposed final meaning against the supplied parent's entire
+  fixed meaning and every complete sibling meaning. All selected children
+  must fit; all supplied siblings wholly covered by the proposal must be listed.
+  Any coherent, useful narrower grouping is allowed; no old title is required.
+- In the original case, physical/chemical food-processing topics that cover
+  grilling and do not explicitly require performed processing must include
+  Grilling C012, including its plans. A valid proposal with a different scope,
+  such as bakery preparation, is not an omission error and may leave the exact
+  earlier processing witness untested.
+- The synthetic restriction case must propose a narrower, useful meaning
+  wholly inside completed home painting and cover S001 and S002. It must
+  exclude S003 and S004 because their full meanings do not require painting to
+  happen, much less finish. Null does not meet this positive control; a coherent
+  narrower grouping exists. The proposal's title need not match the example
+  heading above, which is outside model input.
+- Keep unresolved real-food boundary questions separate from this reviewed
+  activity/plans contract. A changed output alone does not establish progress.
+  Native note-set checks remain prospective, and the synthetic case has no
+  saved-menu shape claim. Every proposal remains unapplied.
+
+The [native spec](shr_single_pair/hierarchy-consolidation-v13-completed-activity-v1.spec.json)
+and [usage selection](shr_single_pair/hierarchy-consolidation-v13-activity-scope-usage-v1.json)
+retain source and accounting provenance. All 37 relevant consolidation,
+assembly and revision checks pass before inference. An initial test invocation
+used a nonexistent class name; after selecting the actual production-path test
+methods, the complete relevant suite passes. No production source changes are
+needed to prepare either input.
