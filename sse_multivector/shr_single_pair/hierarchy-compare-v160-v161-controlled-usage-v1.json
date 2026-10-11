@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v160_core": [
+      "../../target/compare-v160-direction-proof-gate-v1/core"
+    ],
+    "v160_controls": [
+      "../../target/compare-v160-direction-proof-gate-v1/controls"
+    ],
+    "v161_core": [
+      "../../target/compare-v161-direction-proof-gate-v1/core"
+    ],
+    "v161_controls": [
+      "../../target/compare-v161-direction-proof-gate-v1/controls"
+    ]
+  }
+}

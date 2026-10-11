@@ -3645,3 +3645,66 @@ Next stage: V159's full33-core/19-control gate and a fresh matched V155 repeat,
 requested, but remains unrun while targeted stability is checked. No additional
 spending allowance, Bootstrap inference, hierarchy construction or external
 messages. Usage source: hierarchy-compare-v155-v159-controlled-usage-v1.json.
+
+All four V159/fresh-V155 experiments completed:104 valid comparisons in108 actual
+attempts, including four warmups, no reuse, failures, retries or missing usage.
+Native API-equivalent cost:$0.9923848; persistent counter17604/20000. V159 has
+one settled core reversal and no chain witnesses; its controls have none.
+Fresh V155 has two settled core reversals and one control reversal, no chains.
+Uncertain-versus-settled orientation differences are reported separately from
+settled contradiction witnesses. Neither candidate is adopted.
+
+Fresh V155 core:21 accept/3 proof reject/9 qualified; controls:11 accept/2 reject/
+6 qualified. The ring-shape fix did not repeat: both022 miss a recognized chewy
+holeless production witness, including one that survives both preparation
+readings.071 reverse asserts a conventional-wish exclusion without closing that
+reading, despite an uncertain final relation. Broth-free ingredient-role proofs
+and all six animal-role controls persist. Control009 leaves actual garnish
+composition unclosed;025 reverse fails to establish the corrected whole-child
+food-kind implication. No opposite labels are imposed by these proof defects.
+
+V159 core attribution is still being recorded; its owner identifies a missed
+robust022 production witness,070 recipient qualifiers leaking into unrestricted
+contact initiation,071 selection of a convenient context reading, and018
+continuing from a failed inedible-display candidate without closing eating
+purpose. These are distinct proof mechanisms, not forced opposite labels.
+
+V159 controls:13 accept/1 proof reject/5 qualified.009 isolated forward treats
+an actual garnish role as mere association and does not close nourishing-food
+composition coverage.025 retains the independent food/drink-kind qualification;
+particular author, dinner nourishment and supported unknown-property nulls
+remain separate. Native output, receipt and source hashes are preserved.
+
+### V160/V161: separate stable readings from alternative-local requirements
+
+V160 replaces only V159's material-reading clause. Both directional tests and
+canonical consequences use the same supported readings. A result is settled
+only if established under all materially supported readings; different valid
+counterexamples may refute different readings. An ambiguous first candidate
+does not force null when an independent decisive counterexample survives. This
+clarifies the existing ambiguity contract, targeting022 and071 without forcing
+a particular scope or an opposite label. Canonical uncertainty still affects
+relation/reason without erasing a settled selected answer.
+
+V161 branches independently from V159 and expands only the alternative-local
+condition sentence. Each requirement stays with the alternative or permitted
+connection imposing it, throughout questions, answers and canonical tests. It
+targets qualifier leakage in070, not a new broad positive audit. Qualifying-kind
+connections retain the referent's conditions: a component need not itself have
+the whole kind's properties, but its information must concern that qualifying
+kind. Shared conditions can apply to multiple alternatives when wording or
+necessary implication establishes this.
+
+Both native exact revisions, independent logical preflights and production-
+example validations pass. Examples, schema, all52 inputs and producer evidence,
+worker identity and request-producing code are unchanged. Every frozen source
+hash matches. The current official reasoning guidance supports clear outcome
+constraints and matched task-specific evaluations, not either semantic fix:
+https://developers.openai.com/api/docs/guides/reasoning-best-practices
+
+Next stage: full33-core/19-control gates for each separate candidate,104
+comparisons plus four warmups:108 attempts absent retries/reuse. V159's completed
+gate and fresh V155 repeat remain the controls; another baseline repeat is
+deferred until an improvement merits confirmation. ASv6.100/Bootstrap-v96
+meanings stay frozen. No Bootstrap inference, hierarchy work, external messages
+or changed allowance. Usage source:hierarchy-compare-v160-v161-controlled-usage-v1.json.
