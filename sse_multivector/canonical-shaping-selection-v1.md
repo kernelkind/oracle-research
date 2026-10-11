@@ -13,6 +13,10 @@ Cuisine boundary or a reliable improvement from v10. V11 is tested and
 experimental, not activated or approved as a full prompt.
 The user confirms that a generated meaning must be strictly within the supplied
 parent's fixed meaning; covering the selected children alone is insufficient.
+The subsequent unchanged-v11 online-course restriction test meets all three
+registered expectations in both fresh draws: six qualified agent accepts.
+It demonstrates the clear parent check on these inputs, without settling the
+Cuisine boundary or demonstrating a wording improvement.
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -65,7 +69,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the broader v10 screen](#consolidation-v10-broader-screen), and
 [the remaining v10 groups](#consolidation-v10-remaining-group-screen), and
 [the v11 definition-first audit and draft](#consolidation-v11-definition-first-audit-and-draft), and
-[the completed v11 screen](#consolidation-v11-focused-screen).
+[the completed v11 screen](#consolidation-v11-focused-screen), and
+[the matched parent-restriction test](#consolidation-v11-unambiguous-online-course-restriction-test).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -3313,3 +3318,62 @@ arrays. V11 retains SHA256
 Thirty-five consolidation/assembly/revision and 31 current traversal/search
 checks pass after main synchronization. Main's retirement of the old constructor
 does not change this test's inputs or v11. No request-producing code is edited.
+
+### Completed online-course restriction test
+
+Both native draws finish with three valid fresh responses apiece. All six meet
+the registered semantic criteria and receive attributed role-agent accepts.
+The exact outputs are the same in both draws:
+
+| Case | Final response in both draws | Whole-meaning assessment |
+|---|---|---|
+| Online children under Online courses | Online mathematics courses, selecting Algebra S001 and Geometry S002 | Keeps the parent's entire online-format requirement and narrows its subject scope to mathematics |
+| Unrestricted children under Online courses | JSON null | Avoids either adding a missing online restriction to the children or exceeding the parent |
+| The same unrestricted children as roots | Mathematics courses, selecting Algebra S001 and Geometry S002 | Groups usefully without inventing the absent format requirement |
+
+The exact online proposal meaning is:
+
+> Online mathematics courses are courses that teach mathematics, with all teaching and student participation taking place online.
+
+The exact root proposal meaning is:
+
+> Mathematics courses are courses that teach mathematics, including but not limited to algebra and geometry.
+
+Algebra and Geometry fit wholly within the mathematics scope. The unrestricted
+History and Music course kinds are not wholly mathematical; all covered supplied
+siblings are selected. The online proposal is narrower than Online courses
+because that parent also admits non-mathematical courses. The contrast rules out
+an all-null response strategy and shows that existing placement does not supply
+an absent child restriction in this screen.
+
+All six upstream response references are distinct, report HTTP 200 and Sol 6.1,
+and retain one ordinary user text input with medium reasoning requested and no
+conversation linkage. Each repeated case has an identical saved request body
+and request hash. Independent requests can produce identical text; these are
+six attempts, not answer reuse. Reviews append only attributed assessments,
+preserving generation fields, immutable receipts and raw provider usage.
+
+Native [usage selection](shr_single_pair/hierarchy-consolidation-v11-online-scope-usage-v1.json)
+produces the ignored `consolidation-v11-online-scope-usage-v1.json`. Complete
+usage is **6,832 input tokens**, **176 output tokens**, and zero reported cached
+input, cache writes and reasoning tokens. The raw response usage explicitly
+reports zero reasoning tokens; medium was requested, not silently replaced.
+Complete API-equivalent catalog cost is **$0.015424**. There are no warmups,
+reuses, retries, failures or missing usage. The new task counter is **6/6**;
+the historical 369/369 counter is unchanged.
+
+Ignored native directories are `consolidation-v11-online-scope-{first,repeat}-v1`
+under `target/canonical-shaping-selection-v1/`, with immutable before-review
+and reviewed snapshots beside them. No saved menu or note sets are supplied,
+so native reports explicitly leave note-set shape checks unavailable; no
+placement, graph quality or semantic certification of real groups is claimed.
+
+The result supports keeping v11's existing whole-parent rule. It establishes no
+need to repeat that instruction or add another example, and does not resolve
+the real Cuisine associated-dishes boundary. A useful next step is checking the
+remaining real groups with clear review criteria, rather than editing wording
+that passes this matched restriction test. That step is proposed, not begun.
+After the final main sync, all 35 relevant consolidation/prompt checks pass
+again; the 31 previously passed current traversal/search checks have unchanged
+construction source. The post-sync native aggregate preserves generation usage,
+cost and receipt attribution exactly. The task remains isolated as requested.
