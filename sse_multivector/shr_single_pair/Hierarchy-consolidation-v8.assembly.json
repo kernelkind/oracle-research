@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "prompt_id": "Hierarchy-consolidation-v8",
+  "output": {
+    "path": "Hierarchy-consolidation-v8.md",
+    "sha256": "5bb245a302a18f3e34bee56636509bfa221b1930a8f88e57ed2b8bee8fde7b42"
+  },
+  "parts": [
+    {
+      "path": "prompt_sources/Hierarchy-consolidation-v8.before.md",
+      "sha256": "782c04ae2f1e3031a28ebe36067140b9927653bc92c59f4b610399533c4cb892"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/01-identity.md",
+      "sha256": "8e8354f08b19993f415f76a1dd7cdc935f48999402adc70af2e3242f28f6feba"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/02-roles.md",
+      "sha256": "6ebf1ee7c6082a5fdf372e2342ecfaf3a581090ae03b5f7c309cd0de5304dbac"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/03-alternatives.md",
+      "sha256": "a83e2cfac95c96307ae1deaebdfbd56ee0f41d095b5ec5fdc0cda7e6d97ede32"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/04-activities.md",
+      "sha256": "c698474ca843129103e896b13d4d0d150c8e988b4fb6e9cde2cd51c272a281dc"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/05-boundaries.md",
+      "sha256": "50b62f996f131d5305ebf3dcdcaf743e03813acfdb6f05d89172ca6da2b90f34"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/06-definition.md",
+      "sha256": "0a243de2ac9013212f8b35317f6ad0b52b4757c467f81f54d9ab9ff4cb46c7ff"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/07-variations.md",
+      "sha256": "39e66ded2d87074b709d61d769487185bfb4020875ef196b48b160ad36da0924"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/08-qualifiers.md",
+      "sha256": "298921be024b1d67b08d2416103678b21b29563c93144292fe3d6d8285e413c1"
+    },
+    {
+      "text": "\n\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v3/09-consistency.md",
+      "sha256": "f18dee25bbb0c37854b84dc3fe27c591471a0b8dce9b20cd9d76caf0eb6606c8"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-consolidation-v8.after.md",
+      "sha256": "f86bf56dc95d5336706c0e8642d3362f2c06ae5b456e5d9b98522ff47091455b"
+    }
+  ]
+}

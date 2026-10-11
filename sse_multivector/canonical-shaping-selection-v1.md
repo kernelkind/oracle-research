@@ -1,13 +1,17 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work tests experimental
-[Hierarchy-consolidation-v7](shr_single_pair/Hierarchy-consolidation-v7.md)
-after four neutral audits of the two agent-rejected v6 proposals. The audits
-accept both proposals in both draws. V7's explicit required-condition check
-still generates the disputed Bread and Cuisine groupings in both draws, while
-preserving Beverages and Mental states controls. No improvement is established.
-The next useful decision is qualification of the disputed semantic boundaries,
-starting with Bread's meal role, before another prompt revision.
+The latest user-authorized work drafts
+[Hierarchy-consolidation-v8](shr_single_pair/Hierarchy-consolidation-v8.md).
+It removes the redundant sibling precheck, separates consolidation's JSON-null
+behavior from shared definition wording, and revises the synthetic example to
+teach a missing restriction. The user also approved treating Bread/Food dishes
+and Cuisine boundary judgments as unsettled. Fourteen earlier agent rejects
+now have appended uncertain reassessments; original answers and review history
+are preserved. V8 has offline assembly checks, but no model trial. The prior
+audits accept both disputed proposals twice, and v7 preserves useful controls
+without resolving those boundaries. Neither semantic improvement nor a change
+in failure rate is established. Next qualify the unresolved boundaries and
+test the draft against clear controls without treating disputes as error gold.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
 the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
@@ -16,7 +20,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v6 example draft](#consolidation-v6-synthetic-example-draft), and
 [the completed v6 panel](#consolidation-v6-focused-proposal-panel), and
 [the completed consolidation audit](#consolidation-audit-v1), and
-[the v7 revision and panel](#consolidation-v7-required-condition-revision-and-panel).
+[the v7 revision and panel](#consolidation-v7-required-condition-revision-and-panel), and
+[the v8 draft and evaluation correction](#consolidation-v8-draft-and-evaluation-correction).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1601,7 +1606,9 @@ clauses totaling 385 words, all copied verbatim from approved
 - [Consistent restrictions and an unresolved meaning](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/09-consistency.md).
 
 Post-specific evidence instructions, original local-branch interpretation,
-ambiguity/output-field dependencies and examples remain bootstrap-specific.
+and examples remain bootstrap-specific. The old shared consistency clause
+also imported Bootstrap's instruction to return a null meaning; v8 below
+removes that task-specific behavior from the shared writing text.
 The shared clauses govern the proposed parent's meaning; supplied canonical
 meanings stay fixed. The consolidation output instructions specify JSON null
 when a coherent meaning cannot be established, rather than an object with a
@@ -1622,7 +1629,12 @@ experimental [Consolidation-v4 manifest](shr_single_pair/Hierarchy-consolidation
 [Consolidation-v6 manifest](shr_single_pair/Hierarchy-consolidation-v6.assembly.json)
 and [Consolidation-v7 manifest](shr_single_pair/Hierarchy-consolidation-v7.assembly.json)
 also preserve those exact shared files and separators, changing only their
-task-specific wrappers. V3 remains the last human-approved full consolidation
+task-specific wrappers. The [Consolidation-v8 manifest](shr_single_pair/Hierarchy-consolidation-v8.assembly.json)
+retains the first eight files and uses a new
+[neutral consistency fragment](shr_single_pair/prompt_parts/explicit-meaning-rules-v3/09-consistency.md):
+the exact first two sentences of the old ninth clause, without Bootstrap's
+null-meaning behavior. Historical Bootstrap and consolidation recipes remain
+fixed. V3 remains the last human-approved full consolidation
 wording; authorization to draft or test later versions is not semantic qualification. The bootstrap
 recipe preserves its original clause positions and intervening bytes;
 the consolidation recipe places them together in its definition section. The
@@ -1654,7 +1666,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v7.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v8.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -1666,7 +1678,7 @@ the new shared version while other consumers retain the old one.
 The bootstrap reconstruction's SHA-256 is
 `d97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0`,
 identical to the pre-existing v104 file. The nine shared-file hashes are pinned
-in both current assembly manifests. V1's 119-word definition excerpt is the
+in both approved-reference assembly manifests. V1's 119-word definition excerpt is the
 unchanged sixth shared clause; the v1 output still hashes to
 `6a93d4d2a06c20b3a46ffd9758144cd280f7f0017153eb18a43cae72b2947965`.
 The initial CLI test failed because assembly support was absent. The expansion
@@ -1927,16 +1939,18 @@ return `neither`, one contains the proposal, and one is contained by it. The
 aggregate final relations are twelve `local_contains_canonical`, four
 `canonical_contains_local`, twenty-two `neither` and two `uncertain`.
 
-Four exact cases identify what the next consolidation revision should address
-and what it cannot repair:
+Four exact cases preserve the original comparison findings and review
+hypotheses. Their meal-role and Cuisine-association interpretations remain
+disputed under the later user-approved evaluation correction; comparison
+answers are model observations, not independently established semantic gold:
 
 - **`proposal-3-C016`, Prepared dishes versus Cuisine:** the generated meaning
   admits a finished improvised dish without a culinary style/tradition
   association. Cuisine's fixed meaning describes a style or tradition and its
   associated dishes. The answer explicitly says: “An improvised dish
   unassociated with a culinary style or tradition is covered by prepared dishes
-  but not by cuisine.” This is a direct parent-fit rejection, not merely a
-  blocked implied relationship elsewhere in the graph.
+  but not by cuisine.” This records a direct model parent-fit rejection rather
+  than a blocked implication; whether the counterexample is valid remains open.
 - **`proposal-3-C099`, Prepared dishes versus bagel-making:** the output says:
   “Full coverage holds: making chewy bagels from pantry staples is a specific
   preparation variation of a prepared culinary item.” The generated definition
@@ -1949,8 +1963,9 @@ and what it cannot repair:
   canonical node.” The proposal does not require the parent's meal role. Its
   final `uncertain` separately identifies that the existing Bread/Pancakes
   meanings also lack that role. Adding a meal condition to the proposal would
-  narrow those fixed children; it cannot fix this grouping while preserving
-  their entire meanings. Another compatible subgroup or null is required.
+  narrow those fixed children under the original required-role interpretation.
+  Whether the meal wording characterizes a kind or requires that role throughout
+  the topic remains unresolved.
 - **`proposal-1-C020`, Meals versus Food dishes:** the direct answer says:
   “Full coverage holds for the selected canonical meaning.” Its final
   `uncertain` concerns Bread and Salsa descendants without a meal restriction.
@@ -2086,24 +2101,26 @@ twelve also reduce their local choice count to six or fewer. Food's two partial
 reductions and Coffee's two failures remain distinct. These are unchanged native
 offline shape checks, not actual placements or semantic approvals.
 
-**V4 has not resolved the demonstrated scope problems.** Native source-bound
-agent reviews identify two direct problems in the new definitions, preserving
-the distinction from unrun Compare judgments and human gold:
+**V4 continued generating the disputed scope groupings.** Initial native
+agent reviews rejected two proposals under the recorded scope interpretation.
+Both now have appended uncertain reassessments; these are boundary concerns
+rather than established semantic failures:
 
 - **Food dishes, first draw:** the proposed meaning says “prepared foods made
   by cooking dough or batter, eaten as a meal or part of a meal.” Its selected
   Bread meaning remains “Bread is a food made by baking or otherwise cooking
   flour-based dough, with varieties including but not limited to sourdough
-  bread.” Neither that meaning nor the Pancakes meaning requires the meal role.
-  The v3 screen already identified non-meal foods admitted by those fixed
-  meanings. V4 therefore trades the old proposal's missing parent restriction
-  for a proposed parent that excludes part of its selected children. It still
-  violates whole-child coverage; no original canonical meaning was changed.
+  bread.” Neither that meaning nor the Pancakes meaning explicitly states the
+  meal role. The v3 model screen treats non-meal foods as counterexamples.
+  Under that interpretation, the proposal excludes part of its selected
+  children's meanings; the neutral audits later accept the analogous grouping.
+  The boundary remains open, and no original canonical meaning was changed.
 - **Cuisine, fresh repeat:** the output defines Prepared dishes as “foods made
   by cooking or assembling ingredients into distinct preparations for eating.”
-  Cuisine still requires a style or tradition and its associated dishes. This
-  definition retains the old unassociated-improvised-dish counterexample to
-  parent fit. The first draw instead proposes Italian-origin dishes with an
+  Cuisine describes a style or tradition and its associated dishes. The initial
+  assessment applies the old unassociated-improvised-dish counterexample to
+  parent fit; the scope of associated dishes remains disputed. The first draw
+  instead proposes Italian-origin dishes with an
   explicit culinary-tradition connection, a promising alternative requiring
   independent comparison. The repeat no longer explicitly includes preparation
   variations, so the old bagel-making containment label cannot be transferred
@@ -2123,9 +2140,9 @@ Other recorded agent concerns remain unresolved:
   comparisons. The model still receives no note memberships, so this does not
   establish a consolidation wording failure.
 
-Native `review` appended these assessments without changing outputs or receipts.
-The review rejects the two direct scope problems and the two Coffee insertions;
-the other concerns are uncertain. No new fixed-meaning Compare calls have been
+Native `review` initially rejected the two scope concerns and the two Coffee
+insertions. The scope rejects now have uncertain reassessments, preserving
+the initial reviews; Coffee's note-set violations remain separate. No new fixed-meaning Compare calls have been
 made for v4. The promising new groupings, repeated positive-looking controls
 and repeated null do not establish improved end-hierarchy quality. No hierarchy,
 UI, shared Bootstrap clause or v4 prompt text changed, and no agent message
@@ -2153,7 +2170,7 @@ checkpoint. V4 remains experimental.
 
 The user authorized proceeding with
 [Hierarchy-consolidation-v5](shr_single_pair/Hierarchy-consolidation-v5.md)
-to address the observed scope defects directly in consolidation. V5 checks
+to investigate the recorded scope concerns directly in consolidation. V5 checks
 every supplied sibling against the supplied parent's entire fixed meaning
 before choosing a grouping. Only siblings whose whole meanings fit are
 available. Existing placement cannot supply a restriction missing from a fixed
@@ -2161,13 +2178,14 @@ meaning; fewer than two compatible siblings requires JSON null. When the
 siblings are roots, there is no supplied-parent constraint.
 
 This changes the order of the task rather than adding another preservation
-rule at the end. A meal-restricted parent cannot justify selecting a broader
-Bread or Pancakes meaning and adding a meal restriction to the new parent.
+rule at the end. Under the initial required-role interpretation, a meal-restricted
+parent cannot justify selecting broader Bread or Pancakes meanings and adding
+a meal restriction to the new parent.
 The final check still requires the proposed meaning to fit wholly beneath the
 supplied parent and be narrower rather than equivalent. Whole-child coverage,
 the complete child list, a useful proper subset and null behavior remain in
 place. The panel below tests this mechanism hypothesis; the revision itself
-does not establish that either observed defect is resolved.
+does not establish that either boundary concern is resolved.
 
 The shared runner's native `revise` again uses last approved v3 as its baseline.
 The [revision receipt](shr_single_pair/Hierarchy-consolidation-v5.md.revision.json)
@@ -2227,24 +2245,26 @@ note-set narrowing, and twelve also leave at most six choices in both affected
 groups. Food's partial reductions and Coffee's structural failures remain
 distinct; none of these checks establishes semantic correctness or placement.
 
-**The two scope mechanisms persist in both v5 draws.** Source-bound native
-agent reviews record four direct semantic rejections:
+**The disputed scope groupings occur in both v5 draws.** Initial source-bound
+agent reviews recorded four rejects under the required-condition interpretation;
+all four now have uncertain reassessments:
 
 - **Food dishes:** both definitions select Bread C068 but require serving or
   eating as a meal or part of a meal. The fixed Bread definition requires
   cooking flour-based dough and has no meal condition. The new parents exclude
-  some of their selected child's meaning, even though v5 tells the model to
-  check this before selecting it. A parent's existing placement still cannot
+  some of their selected child's meaning under that interpretation. The
+  alternative food-kind reading remains unsettled. Existing placement cannot
   supply the missing condition.
 - **Cuisine:** Bread-based dishes requires a bread or baked-dough base holding
   other ingredients; Cooked dishes requires a cooked component. Neither final
   meaning requires association with a style or culinary tradition. Both retain
-  the earlier improvised-food counterexample to whole-parent fit. This is a
-  new agent assessment of the exact new definitions, supported by the v3
-  mechanism screen; old Compare labels are not copied onto v5 outputs.
+  the earlier improvised-food counterexample under the initial interpretation.
+  This is an assessment of the exact new definitions, not a copied Compare
+  label; the model's neutral audits later disagree with the same boundary.
 
-The six native rejections include these four scope findings and the two
-structural Coffee failures. Five bounded agent accepts cover both Beverages
+The original six native rejections comprised these four scope findings and the
+two structural Coffee failures. The scope findings are now uncertain; Coffee's
+strict note-set violations remain rejected. Five bounded agent accepts cover both Beverages
 definitions, both cognitive-state definitions and Bakery food preparation.
 They are promising input-only assessments, not independently validated
 placements or new human gold. Seven uncertain assessments retain these limits:
@@ -2278,7 +2298,7 @@ Reasoning is already counted in output; catalog amounts are not subscription
 invoices.
 
 V5 is not established as an improvement over v4. Moving the same condition
-earlier has not made the generated definitions obey it. The user subsequently
+earlier did not resolve the disagreement over its interpretation. The user subsequently
 authorized the synthetic example draft below and then its eight-request
 targeted panel. That completed v6 panel tests Cuisine and Food dishes alongside
 Beverages and Mental states, with two independent draws per group. Unsupported
@@ -2344,21 +2364,22 @@ Historical answers and judgments remain outside model input.
 |---|---|---|---|
 | Roots: 7 | Beverages: Coffee C006, Slush drinks C039 | Beverages: same children, changed definition | Both accept |
 | Mental states: 6 | States of mental alertness: Brain fog and mental clarity C050, sleepiness C092 | Motivational states: Perceived needs C047, Desires C076 | Both accept; different useful subsets are permissible |
-| Cuisine: 6 | Italian-origin dishes: Pizza C054, Risotto C073 | Cooked dishes: those two and Cheesesteaks C066 | First uncertain; repeat rejects parent fit |
-| Food dishes: 6 | Bread-based dishes: Burgers C036, Bread C068 | Meat and meat-alternative dishes: Burgers C036, Chicken dishes C114 | First rejects whole-child coverage; repeat uncertain |
+| Cuisine: 6 | Italian-origin dishes: Pizza C054, Risotto C073 | Cooked dishes: those two and Cheesesteaks C066 | Both uncertain |
+| Food dishes: 6 | Bread-based dishes: Burgers C036, Bread C068 | Meat and meat-alternative dishes: Burgers C036, Chicken dishes C114 | Both uncertain |
 
-The two directly observed scope problems therefore still appear:
+The two scope concerns therefore still appear under the initial interpretation:
 
 - **Food dishes, first draw:** Bread-based dishes requires foods “served or
   eaten as a meal or part of a meal.” Selected Bread's fixed meaning only
   requires food made by cooking flour-based dough, with no meal condition.
-  The new definition excludes part of the selected child's meaning. Neither
+  Under the required-role reading, it excludes part of the child's meaning. Neither
   existing placement nor the proposed parent's definition can add the missing
   condition to immutable Bread.
 - **Cuisine, repeat:** Cooked dishes requires a finished food made by cooking
   at least one ingredient. It does not require the association with a style or
   culinary tradition in Cuisine's fixed meaning. An improvised cooked dish
-  lacking that association still fits the proposed category.
+  lacking that association still fits the proposed category under that reading;
+  the breadth of Cuisine's associated-dishes scope remains disputed.
 
 The first Cuisine proposal is promising because it explicitly requires a
 connection to Italy's culinary traditions. Risotto's fixed meaning identifies
@@ -2373,15 +2394,15 @@ All eight native prospective shape checks pass: each proposal would strictly
 narrow the affected note sets and leave both affected groups at or below six
 choices. Roots would shrink from seven to six; the other groups from six to
 five, except Cooked dishes would leave four. These structural successes do not
-repair semantic failures. Every report records `applied: false`; no hierarchy
+settle semantic judgments. Every report records `applied: false`; no hierarchy
 was generated or changed.
 
-Native `review` appended four agent accepts, two rejects and two uncertain
-assessments without changing saved answers or receipts. The two direct defects
-occur in two of the four target-group draws; the other two draws are unresolved.
-This is not a two-of-eight accuracy estimate or a validated improvement over
-v5, whose corresponding four draws all received direct scope rejections.
-The synthetic example has not reliably resolved either mechanism.
+Native `review` initially appended four accepts, two rejects and two uncertain
+assessments. The rejects now have uncertain reassessments, yielding four
+accepts and four uncertain current assessments. Saved answers and receipts
+are unchanged. Neither the initial count nor the corrected count is an
+accuracy estimate or a validated improvement over v5. The synthetic example
+has not demonstrably resolved the disputed interpretations.
 
 The ignored experiments are `consolidation-v6-focused-roots-first-v1`,
 `consolidation-v6-focused-roots-repeat-v1`, `consolidation-v6-focused-first-v1`
@@ -2403,7 +2424,7 @@ consolidation task remains isolated as requested.
 ## Consolidation-audit-v1
 
 The user approved four diagnostic requests before another wording edit: audit
-the two saved v6 scope failures twice each using unchanged meanings. Experimental
+the two initially rejected v6 proposals twice each using unchanged meanings. Experimental
 [Hierarchy-consolidation-audit-v1](shr_single_pair/Hierarchy-consolidation-audit-v1.md)
 receives the complete original `parent` and `siblings`, plus the exact saved
 `proposal`. It returns `covers_children`, `fits_parent`, `valid` and a brief
@@ -2437,8 +2458,8 @@ Neither Cuisine explanation requires the tradition association in the supplied
 parent definition. These are disagreements with the recorded bounded agent
 assessments, not independently established human errors or direct access to
 the model's internal process. The hypothesis that generation alone fails while
-focused auditing reliably recognizes the violations is not supported by this
-screen. Required-condition interpretation remains the useful next target.
+focused auditing reliably agrees with the agent's rejection criteria is not
+supported by this screen. Required-condition interpretation remains unresolved.
 
 The native first-draw and repeat artifacts are `consolidation-audit-v1-first-v1`
 and `consolidation-audit-v1-repeat-v1` under
@@ -2464,7 +2485,7 @@ not a new graph guard or semantic gold.
 It follows the official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 in using explicit success criteria, direct instructions and a brief decision
 explanation without requesting a reasoning trace. That guidance does not
-establish this particular semantic rule or prove that it fixes the failures.
+establish this particular semantic rule or resolve the disputed boundaries.
 
 ## Consolidation-v7 required-condition revision and panel
 
@@ -2502,17 +2523,17 @@ iteration. Source and prompt text stay frozen during execution.
 |---|---|---|---|
 | Roots: 7 | Beverages: Coffee C006, Slush drinks C039 | Same children, changed definition | Two accepts |
 | Mental states: 6 | Subjective cognitive states: Brain fog and mental clarity C050, sleepiness C092 | Motivational states: Perceived needs C047, Desires C076 | Two accepts; alternative useful subsets |
-| Cuisine: 6 | Cooked dishes: Pizza C054, Cheesesteaks C066, Risotto C073 | Bread-based dishes: Pizza and Cheesesteaks | Two disputed parent-fit rejections |
-| Food dishes: 6 | Bread-based foods: Burgers C036, Bread C068 | Bread-based dishes: same children | Two disputed whole-child rejections |
+| Cuisine: 6 | Cooked dishes: Pizza C054, Cheesesteaks C066, Risotto C073 | Bread-based dishes: Pizza and Cheesesteaks | Two uncertain parent-fit assessments |
+| Food dishes: 6 | Bread-based foods: Burgers C036, Bread C068 | Bread-based dishes: same children | Two uncertain whole-child assessments |
 
 Both Food dishes outputs impose a meal role on unrestricted Bread. The first
 also explicitly illustrates its category with “bread itself”; the revised
 instruction against exempting named children from conditions has not removed
 this output. Neither Cuisine definition states the tradition association
 required under the recorded agent interpretation of its supplied parent.
-These four rejections apply the same criteria as the prior panels. Native
-reviews explicitly preserve the disagreement with the neutral audit and do
-not promote the expectations to human gold.
+The four initial rejections applied the same criteria as the prior panels.
+All now have appended uncertain reassessments. Native reviews preserve the
+disagreement and history without promoting the expectations to human gold.
 
 All eight prospective shape checks pass with strict note-set narrowing and
 at most six choices in both affected groups. Roots would shrink seven to six;
@@ -2520,15 +2541,14 @@ other groups six to five, except the first Cooked dishes grouping leaves four.
 Every proposal remains unapplied. Structural success does not resolve these
 semantic disagreements or establish hierarchy quality.
 
-V7 has four bounded agent accepts and four disputed rejections, compared with
-v6's four accepts, two rejections and two uncertain assessments. Two draws per
-group cannot establish a reliability change; the changed counts include
-different proposed topics. No improvement is demonstrated, and neither
-another copied scope rule nor a separate audit has resolved the targeted
-mechanisms. Before v8, qualify whether the Food dishes meal condition is a
-required role for membership or a characterization of the food kind. The
-Bread example makes that distinction concrete; the hierarchy containment
-assumption and fixed original meanings remain unchanged.
+V7 and v6 each currently have four bounded agent accepts and four uncertain
+assessments. Their initial rejection counts used an unsettled interpretation
+and do not establish failure rates. Two draws per group cannot establish a
+reliability change, and different useful topics may select different subsets.
+No improvement is demonstrated. Whether Food dishes' meal condition requires
+a role throughout its contents or characterizes the food kind remains open.
+The v8 draft below simplifies the instructions while retaining this dispute;
+the hierarchy containment assumption and fixed original meanings remain unchanged.
 
 The ignored native experiments are `consolidation-v7-focused-roots-first-v2`,
 `consolidation-v7-focused-roots-repeat-v2`, `consolidation-v7-focused-first-v2`
@@ -2551,3 +2571,77 @@ receipt identities, matched controls and usage source paths were checked.
 No Compare requests, graph changes, UI updates or agent messages occurred.
 The task remains isolated as requested; v7 is tested and experimental, not
 human-approved or activated.
+
+## Consolidation-v8 draft and evaluation correction
+
+The user approved fixing the four findings from the prompt audit and requested
+a draft. [Hierarchy-consolidation-v8](shr_single_pair/Hierarchy-consolidation-v8.md)
+implements that request; it has not been trialed or approved as a complete
+prompt. Its input remains the immediate parent or null and the complete sibling
+group, with fixed titles and meanings. Its output remains JSON null or exactly
+`title`, `meaning` and `children`. Ordinary comparison still owns placement.
+
+The redundant sibling-versus-existing-parent precheck is removed. A single
+proposal-check section states whole-child coverage, whole and strictly narrower
+parent fit, and the complete child list with at least two members and fewer
+than the full group. Under the existing containment assumption, these checks
+also establish selected-child fit beneath the existing parent. Repeated
+constraints elsewhere in the wrappers are removed without choosing a preferred
+Bread or Cuisine interpretation.
+
+The first eight shared definition files remain hash-identical. The new neutral
+consistency fragment is a byte-exact prefix of the old ninth file and appears
+once in both the preserved Bootstrap-v104 text and v8. Only the Bootstrap-specific
+instruction to return a null meaning is omitted. Consolidation's whole-response
+JSON-null policy now appears solely in its output section, including unresolved
+material ambiguity. Historical shared files, Bootstrap prompts and reconstruction
+recipes are unchanged; no new Bootstrap consumer or agent consultation is added.
+
+The synthetic example retains Blue shapes, the same four siblings and the same
+Blue polygons output. Squares' definition no longer says it may have any color.
+The explanation now teaches that the absent blue restriction cannot be supplied
+by existing placement. No corpus entry or regression answer is copied into the
+example, and no extra example is added.
+
+The fourth correction concerns evaluation, not an instruction to force a
+particular grouping. The user agreed that the meal-role and Cuisine-association
+interpretations remain unsettled. Native `review` appended role-agent uncertain
+reassessments to fourteen previous rejects:
+
+| Prior panel | Corrected cases | Number |
+|---|---|---:|
+| v3 expanded first | Cuisine and Food dishes | 2 |
+| v4 expanded first / repeat | Food dishes first; Cuisine repeat | 2 |
+| v5 expanded first / repeat | Cuisine and Food dishes in both | 4 |
+| v6 focused first / repeat | Food dishes first; Cuisine repeat | 2 |
+| v7 focused first / repeat | Cuisine and Food dishes in both | 4 |
+
+The original verdicts remain in native review history. Earlier Compare outputs
+and counterexamples are retained as model observations, not semantic gold.
+Coffee's strict note-set violations and separate child-list completeness
+concerns are not reclassified by this boundary correction. V6 and v7 now each
+have four qualified agent accepts and four uncertain current assessments;
+neither panel supplies a verified semantic failure rate. No new human verdict
+on an individual proposal is inferred. Offline checks confirm v6/v7 answers,
+parsed outputs, receipts, input hashes, raw metadata and usage are unchanged.
+
+The new [assembly manifest](shr_single_pair/Hierarchy-consolidation-v8.assembly.json)
+pins the new wrappers, neutral consistency fragment and all unchanged shared
+parts. The shared runner's native `revise` uses last approved v3 as its baseline;
+the [revision receipt](shr_single_pair/Hierarchy-consolidation-v8.md.revision.json)
+records full v8 SHA-256
+`5bb245a302a18f3e34bee56636509bfa221b1930a8f88e57ed2b8bee8fde7b42`.
+V8 is 917 whitespace-delimited words versus v7's 1,195; this is a text-length
+comparison, not a token, API-cost or quality measurement. The ignored preview,
+edits and native full-context diff remain under
+`target/canonical-shaping-selection-v1/consolidation-v8-*`.
+
+The new production assembly check first failed on the missing v8 manifest.
+Thirty-one relevant consolidation, assembly and revision checks pass after
+syncing current main, including native preparation freezing complete v8 text
+without inference and preserving historical v3/v7/v104 hashes. Existing broader
+runner-suite limitations remain documented above. No model, warmup or Compare
+requests were made; the attempt counter remains **329/329**. No hierarchy or
+UI changed, and no messages were sent to another agent. The task remains in its
+isolated worktree as requested. Next review the draft and qualify clear controls
+separately from the disputed semantic diagnostics before claiming improvement.
