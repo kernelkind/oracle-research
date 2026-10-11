@@ -5325,10 +5325,10 @@ boundary without prescribing a repair-and-variation sequence. The two existing
 synthetic examples are adapted to the symmetric contract; no validation case
 is added as an example.
 
-This is an untested draft, not a causal result or hierarchy adoption. The native
-comparison adapter and V176 output schema still implement the earlier
-local/canonical contract; they are unchanged and cannot execute V179 as-is.
-Pair-preparation/schema adaptation is a separate next step before testing.
+At draft creation, the native comparison adapter and V176 output schema still
+implement the earlier local/canonical contract and cannot execute V179 as-is.
+The subsequent authorized adaptation and test are recorded below. Draft
+creation is not a causal result or hierarchy adoption.
 Bootstrap, frozen meanings, historical labels and hierarchy state are unchanged.
 Graph consistency still requires separate evaluation; pair-only input does not
 certify the consequences of insertion. No teacher calls are made for this draft.
@@ -5341,3 +5341,53 @@ semantic quality. A future test should retain the exact Stockpots/Cookware
 meanings and identity/consumer, positive/equivalent and state controls, then
 broaden qualification if the changed contract holds up. This bundled draft
 cannot isolate the contribution of each wording change by itself.
+
+## V179 / V180 examples ablation: preparation
+
+The user authorizes native A/B preparation and validation, followed by a
+controlled 40-comparison test. V179 retains its two synthetic examples;
+experimental [V180](Hierarchy-compare-v180.md) removes only that complete
+example section through native `revise` from V179. Instruction wording, output
+schema, model and frozen pair inputs otherwise match. Neither arm regenerates
+meanings or builds a hierarchy. This comparison tests the examples' contribution,
+not the cause of improvement over the differently structured V178 task.
+
+The opt-in `symmetric_fixed_meanings` view projects original or already projected
+native local/canonical pairs to exactly `A` / `B`, each with `subject` and
+`meaning`. Original source inputs, producer receipts and review metadata remain
+in preparation evidence, outside model input. The V179 schema requires the four
+diagnostic fields and A/B direction names. Native validation enforces unique
+direction IDs, nonempty text and null-answer uncertainty. Historical adapters,
+schemas, experiments and source meanings remain unchanged. Native consistency
+reporting supports A/B reversals and chains; it does not apply graph-placement
+guards to pair-only requests or treat failed/unrun/uncertain answers as settled.
+
+Five original pairs are tested in both orientations, twice independently per
+arm: 5 pairs × 2 orientations × 2 draws × 2 arms = 40 comparisons. Native
+preparation uses `--repeat`, so reused answers are not new draws. Two saved-source
+groups yield eight native experiments; warmups, retries and failures count
+against the existing 20,000-attempt allowance and are reported separately.
+The persistent source is `hierarchy-selective-sprint-v1/attempt-budget.json` in
+the Bootstrap research worktree; its counter is 18,815 at initial inspection.
+Shared-runner fair scheduling controls concurrency. Both arms use subscription
+GPT-6.1 Sol medium, SSE and the same output schema and worker identity.
+
+Pre-call audit verifies 20 endpoint occurrences against ten exact Bootstrap-v96
+producer meanings and ASv6.100 subject strings. All receipt digests resolve to
+native records; both orientations preserve meanings exactly. This deliberately
+frozen development panel does not certify newer Bootstrap versions.
+
+| Pair and native IDs | Pre-call qualified expectation | Decisive qualification |
+|---|---|---|
+| Stockpots/Cookware, `isolated-035-forward/reverse` | Neither | Complete laboratory stock-making vessel fits Stockpots and lacks meal purpose; the shorter saved wording retains its making/reheating ambiguity. |
+| Salads/Salad dressing, `pair-002-forward/reverse` | A contains B forward; B contains A reverse | Salads expressly includes condiments in the dressing role; independent dressing-free salads escape the reverse scope. |
+| Coffee, `pair-010-forward/reverse` | Equivalent | Both definitions require brewing; ownership, morning consumption and half-and-half are absent. |
+| Dietary practices/Fasting, `pair-041-forward/reverse` | Neither | An outside-human example must preserve deliberate abstention; feed withholding or involuntary starvation does not establish it. |
+| Cooking/planned grilling, `pair-061-forward/reverse` | A contains B forward; B contains A reverse | The intended activity connection qualifies without asserting execution; independent indoor boiling escapes the reverse. |
+
+The Stockpots boundary includes a user-accepted counterexample. The other four
+controls remain independently reviewed agent expectations, not new human gold.
+Fresh relation, question focus, case admission/exclusion and necessity proof
+are assessed separately. A shared covered case does not prove universal
+coverage, and consistent wrong answers do not pass. Version labels and old
+expected answers are omitted from independent output review.

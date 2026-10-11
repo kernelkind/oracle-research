@@ -6812,9 +6812,27 @@ The subsequent user-approved design produces experimental draft
 metadata or canonical-consequence judgments. Its four-field output removes the
 local-meaning copy and uses `A_contains_B` / `B_contains_A`. The draft simplifies
 counterexample and necessary-coverage diagnostics while retaining fixed-scope,
-information-topic, identity/consumer and state rules. The current comparison
-adapter and V176 schema still use the earlier local/canonical contract; they
-are unchanged, so V179 requires native input/schema adaptation before execution.
-No inference or hierarchy adoption accompanies this draft. Details and
+information-topic, identity/consumer and state rules. At draft creation the
+comparison adapter and V176 schema use the earlier local/canonical contract.
+No inference or hierarchy adoption accompanies that draft. Details and
 qualification limits are in the
 [V179 draft record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-symmetric-pair-draft).
+
+The subsequent authorized native adaptation adds opt-in node-pair
+`input_view: "symmetric_fixed_meanings"` for receipt-bound prepared sources.
+Both original and fixed-meaning local/canonical inputs project to identical
+`A` and `B` objects containing only `subject` and `meaning`; original inputs and
+producer provenance remain outside model input. Four-field output validation
+uses the A/B direction names, requires each diagnostic ID exactly once and
+preserves null-answer uncertainty. Existing local/canonical paths are unchanged.
+Native pair consistency supports symmetric reversals and chains without
+requiring the removed meaning copy or applying canonical placement guards.
+
+The authorized examples ablation compares V179 with experimental V180, which
+removes only its synthetic-example section. Five fixed ASv6.100/Bootstrap-v96
+pairs, both orientations and two fresh draws yield 40 comparison requests.
+Preparation uses `--repeat`, Sol 6.1 medium/SSE, the shared worker and the same
+V179 schema; warmups and retries also consume the existing persistent allowance.
+Shared internal scheduling handles concurrency. See the
+[ablation preparation and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-preparation)
+before treating provisional control labels as accuracy targets.

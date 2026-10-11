@@ -666,26 +666,59 @@ def project_fixed_meanings(case):
                          'unprojected_input': original}}
 
 
-def validate(raw, *, diagnostics=False, meaning=None):
+def project_symmetric_fixed_meanings(case):
+    """Expose only the two fixed scopes, retaining the pinned source for audit."""
+    original = json.loads(case['inputs']['INPUT_JSON'])
+    if not isinstance(original, dict) or set(original) != {'local', 'canonical'}:
+        raise ValueError('symmetric_fixed_meanings requires local and canonical node inputs')
+    payload = {}
+    for source, target in (('local', 'A'), ('canonical', 'B')):
+        value = original[source]
+        if not isinstance(value, dict):
+            raise ValueError(source + ' node must be an object')
+        entry = value.get('entry', value)
+        if not isinstance(entry, dict):
+            raise ValueError(source + ' entry must be an object')
+        subject = entry.get('subject')
+        meaning = value.get('meaning')
+        if any(not isinstance(text, str) or not text.strip() for text in (subject, meaning)):
+            raise ValueError(source + ' subject and fixed meaning must be nonempty text')
+        payload[target] = {'subject': subject, 'meaning': meaning}
+    evidence = case.get('evidence', {})
+    provenance = {'source_input': original}
+    if 'input_view' in evidence:
+        provenance['source_input_view'] = evidence['input_view']
+    return {**case, 'inputs': {'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
+            'evidence': {**evidence, **provenance, 'input_view': 'symmetric_fixed_meanings'}}
+
+
+def validate(raw, *, diagnostics=False, meaning=None, symmetric=False):
     """Validate the approved output mechanics without judging its semantics."""
     value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
-    fields = {'meaning', 'relation', 'reason'} | ({'questions', 'answers'} if diagnostics else set())
+    if symmetric and not diagnostics:
+        raise ValueError('symmetric Compare requires questions and answers')
+    fields = {'relation', 'reason'} | (set() if symmetric else {'meaning'})
+    fields |= {'questions', 'answers'} if diagnostics else set()
     if not isinstance(value, dict) or set(value) != fields:
-        raise ValueError('expected meaning, questions, answers, relation, and reason' if diagnostics
-                         else 'expected meaning, relation, and reason')
-    if not isinstance(value['relation'], str) or value['relation'] not in RELATIONS:
+        raise ValueError('expected questions, answers, relation, and reason' if symmetric else
+                         'expected meaning, questions, answers, relation, and reason' if diagnostics else
+                         'expected meaning, relation, and reason')
+    directions = ({'A_contains_B', 'B_contains_A'} if symmetric else
+                  {'local_contains_canonical', 'canonical_contains_local'})
+    relations = {'equivalent', 'neither', 'uncertain'} | directions
+    if not isinstance(value['relation'], str) or value['relation'] not in relations:
         raise ValueError('unknown hierarchy comparison relation')
-    if value['meaning'] is None:
-        if value['relation'] != 'uncertain':
-            raise ValueError('null local meaning requires uncertain')
-    elif not isinstance(value['meaning'], str) or not value['meaning'].strip():
-        raise ValueError('meaning must be nonempty text or null')
+    if not symmetric:
+        if value['meaning'] is None:
+            if value['relation'] != 'uncertain':
+                raise ValueError('null local meaning requires uncertain')
+        elif not isinstance(value['meaning'], str) or not value['meaning'].strip():
+            raise ValueError('meaning must be nonempty text or null')
     if not isinstance(value['reason'], str) or not value['reason'].strip():
         raise ValueError('reason must be nonempty text')
     if diagnostics:
-        if not isinstance(meaning, str) or value['meaning'] != meaning:
+        if not symmetric and (not isinstance(meaning, str) or value['meaning'] != meaning):
             raise ValueError('Compare answer must copy the fixed local meaning exactly')
-        directions = {'local_contains_canonical', 'canonical_contains_local'}
         for key, identifier, fields in (
                 ('questions', 'id', {'id', 'question'}),
                 ('answers', 'question_id', {'question_id', 'answer', 'justification'})):

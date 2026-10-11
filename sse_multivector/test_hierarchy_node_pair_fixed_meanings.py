@@ -233,5 +233,131 @@ class HierarchyNodePairFixedMeaningTests(unittest.TestCase):
                 self.validate(bad)
 
 
+class HierarchyNodePairSymmetricMeaningTests(unittest.TestCase):
+    setUp = HierarchyNodePairFixedMeaningTests.setUp
+    write = HierarchyNodePairFixedMeaningTests.write
+    cli = HierarchyNodePairFixedMeaningTests.cli
+    prepare = HierarchyNodePairFixedMeaningTests.prepare
+    show = HierarchyNodePairFixedMeaningTests.show
+    calls = HierarchyNodePairFixedMeaningTests.calls
+    source = HierarchyNodePairFixedMeaningTests.source
+    local_source = HierarchyNodePairFixedMeaningTests.local_source
+    saved_meaning_source = HierarchyNodePairFixedMeaningTests.saved_meaning_source
+    original = HierarchyNodePairFixedMeaningTests.original
+    project = HierarchyNodePairFixedMeaningTests.project
+
+    @staticmethod
+    def schema():
+        schema = HierarchyNodePairFixedMeaningTests.schema()
+        del schema['properties']['meaning']
+        schema['required'].remove('meaning')
+        directions = ['A_contains_B', 'B_contains_A']
+        schema['properties']['relation']['enum'] = ['equivalent', *directions, 'neither', 'uncertain']
+        schema['properties']['questions']['items']['properties']['id']['enum'] = directions
+        schema['properties']['answers']['items']['properties']['question_id']['enum'] = directions
+        return schema
+
+    def symmetric_source(self, *, projected=False):
+        original = self.original()
+        if projected:
+            spec = json.loads((self.root / 'fixed-spec.json').read_text())
+            spec['runner']['output_schema'] = HierarchyNodePairFixedMeaningTests.schema()
+            self.write('legacy-fixed-source.json', json.loads((self.root / 'fixed-source.json').read_text()))
+            spec['dataset']['path'] = 'legacy-fixed-source.json'
+            self.write('legacy-fixed-spec.json', spec)
+            self.cli('prepare', 'legacy-fixed', '--spec', 'legacy-fixed-spec.json')
+            directory = 'legacy-fixed'
+        else:
+            directory = 'original'
+        envelope = self.root / directory / 'experiment.json'
+        self.write('fixed-source.json', {
+            'prepared_experiment': {'path': directory,
+                'sha256': hashlib.sha256(envelope.read_bytes()).hexdigest()},
+            'input_view': 'symmetric_fixed_meanings'})
+        return original, directory
+
+    def test_symmetric_native_projection_strips_graph_and_keeps_receipts(self):
+        original, directory = self.symmetric_source()
+        self.project()
+        case = self.show('fixed')['cases'][0]
+        before = json.loads(original['inputs']['INPUT_JSON'])
+        self.assertEqual(json.loads(case['inputs']['INPUT_JSON']), {
+            'A': {'subject': before['local']['entry']['subject'],
+                  'meaning': before['local']['meaning']},
+            'B': {key: before['canonical'][key] for key in ('subject', 'meaning')}})
+        self.assertEqual(case['evidence']['source_input'], before)
+        self.assertEqual(case['evidence']['local_meaning_from'],
+                         original['evidence']['local_meaning_from'])
+        self.assertEqual(case['evidence']['input_view'], 'symmetric_fixed_meanings')
+        for private in ('FULL LOCAL POST', 'Local entry context', 'REVIEW ONLY',
+                        'parents', 'ancestors', 'descendants', 'C0', 'C1', 'C2', 'C4'):
+            self.assertNotIn(private, case['prompt'])
+        plan = json.loads((self.root / 'fixed/experiment.json').read_text())['plan']
+        self.assertEqual(plan['preparation']['input_view'], 'symmetric_fixed_meanings')
+        self.assertIn(str(self.root / directory / 'experiment.json'), plan['sources'])
+        self.assertFalse(plan['preparation']['application_allowed'])
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_symmetric_native_projection_accepts_existing_fixed_meanings(self):
+        original, _ = self.symmetric_source(projected=True)
+        self.project()
+        case = self.show('fixed')['cases'][0]
+        legacy = self.show('legacy-fixed')['cases'][0]
+        self.assertEqual(case['evidence']['source_input'],
+                         json.loads(legacy['inputs']['INPUT_JSON']))
+        self.assertEqual(case['evidence']['source_input_view'], 'fixed_meanings')
+        self.assertEqual(case['evidence']['unprojected_input'],
+                         json.loads(original['inputs']['INPUT_JSON']))
+
+    def test_symmetric_projection_requires_independent_meanings(self):
+        self.original(with_meaning=False)
+        source = json.loads((self.root / 'fixed-source.json').read_text())
+        source['input_view'] = 'symmetric_fixed_meanings'
+        self.write('fixed-source.json', source)
+        failure = self.project(ok=False)
+        self.assertIn('fixed meaning must be nonempty', failure.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_symmetric_projection_does_not_require_recursive_graph_fields(self):
+        self.original(schema_version=1)
+        source = json.loads((self.root / 'fixed-source.json').read_text())
+        source['input_view'] = 'symmetric_fixed_meanings'
+        self.write('fixed-source.json', source)
+        self.project()
+        self.assertEqual(set(json.loads(self.show('fixed')['cases'][0]['inputs']['INPUT_JSON'])),
+                         {'A', 'B'})
+
+    def test_symmetric_four_field_output_on_native_runner_and_strict_validation(self):
+        self.symmetric_source()
+        self.project()
+        directions = ['A_contains_B', 'B_contains_A']
+        value = {'questions': [dict(id=d, question='Can the child escape this parent?')
+                               for d in directions],
+                 'answers': [dict(question_id=d, answer='A concrete counterexample.',
+                                 justification='Whole-child admission and parent exclusion.')
+                             for d in directions],
+                 'relation': 'neither', 'reason': 'Both directions have counterexamples.'}
+        self.cli('run', 'fixed', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+        case = self.show('fixed')['cases'][0]
+        self.assertEqual(case['status'], 'valid')
+        self.assertEqual(case['parsed'], value)
+        invalid = [dict(value, meaning='Removed output'),
+                   dict(value, relation='local_contains_canonical')]
+        for field, identifier in (('questions', 'id'), ('answers', 'question_id')):
+            duplicate = json.loads(json.dumps(value))
+            duplicate[field][1][identifier] = duplicate[field][0][identifier]
+            invalid.append(duplicate)
+        unresolved = json.loads(json.dumps(value))
+        unresolved['answers'][0]['answer'] = None
+        invalid.append(unresolved)
+        for bad in invalid:
+            with self.subTest(answer=bad), self.assertRaises(ValueError):
+                experiment_inputs.validate({'adapter': 'hierarchy_node_pairs'}, case,
+                                           json.dumps(bad), self.schema())
+        unresolved['relation'] = 'uncertain'
+        self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_node_pairs'}, case,
+            json.dumps(unresolved), self.schema())['parsed'], unresolved)
+
+
 if __name__ == '__main__':
     unittest.main()

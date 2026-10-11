@@ -13,8 +13,9 @@ from pathlib import Path
 
 REVERSED = {'equivalent': 'equivalent', 'neither': 'neither',
             'local_contains_canonical': 'canonical_contains_local',
-            'canonical_contains_local': 'local_contains_canonical'}
-VERSION = 'hierarchy-node-pair-consistency-v2'
+            'canonical_contains_local': 'local_contains_canonical',
+            'A_contains_B': 'B_contains_A', 'B_contains_A': 'A_contains_B'}
+VERSION = 'hierarchy-node-pair-consistency-v3'
 
 
 def _reference(case):
@@ -45,7 +46,8 @@ def _unresolved_reason(case):
     if not case.get('receipt'):
         return 'missing_compare_receipt'
     parsed = case.get('parsed') or {}
-    if parsed.get('meaning') != json.loads(case['inputs']['INPUT_JSON'])['local'].get('meaning'):
+    payload = json.loads(case['inputs']['INPUT_JSON'])
+    if set(payload) != {'A', 'B'} and parsed.get('meaning') != payload['local'].get('meaning'):
         return 'returned_local_meaning_differs'
     if parsed.get('relation') not in REVERSED:
         return parsed.get('relation') or 'missing_relation'
@@ -68,7 +70,7 @@ def _direction(rows):
             adjacency[local].append((canonical, identifier, False))
             adjacency[canonical].append((local, identifier, False))
         elif relation != 'neither':
-            parent, child = ((local, canonical) if relation == 'local_contains_canonical'
+            parent, child = ((local, canonical) if relation in ('local_contains_canonical', 'A_contains_B')
                              else (canonical, local))
             adjacency[parent].append((child, identifier, True))
     for edges in adjacency.values():
@@ -110,7 +112,7 @@ def _direction(rows):
             witness = path(local, canonical, strict=True) or path(canonical, local, strict=True)
             kind = 'equivalence_conflict'
         else:
-            parent, child = ((local, canonical) if relation == 'local_contains_canonical'
+            parent, child = ((local, canonical) if relation in ('local_contains_canonical', 'A_contains_B')
                              else (canonical, local))
             witness, kind = path(child, parent), 'cycle_conflict'
         if witness:
@@ -126,23 +128,30 @@ def summarize(cases):
     pairs, directions, endpoints, skipped = {}, {'forward': [], 'reverse': []}, set(), []
     for case in cases:
         payload = json.loads(case['inputs']['INPUT_JSON'])
-        canonical = payload['canonical']
         evidence = case.get('evidence', {})
-        original_canonical = (evidence.get('unprojected_input', {}).get('canonical', {})
-                              if evidence.get('input_view') == 'fixed_meanings' else canonical)
+        symmetric = set(payload) == {'A', 'B'}
+        local, canonical = ((payload['A'], payload['B']) if symmetric else
+                            (payload['local'], payload['canonical']))
+        if symmetric:
+            original_canonical = evidence.get('unprojected_input', evidence.get('source_input', {})).get(
+                'canonical', {})
+        else:
+            original_canonical = (evidence.get('unprojected_input', {}).get('canonical', {})
+                                  if evidence.get('input_view') == 'fixed_meanings' else canonical)
         metadata = evidence.get('review', {})
         role = metadata.get('comparison_role')
         pair_id = metadata.get('reversal_pair')
         if evidence.get('input_view') == 'meanings':
             reason = 'meaning_only_projection'
-        elif (any(canonical.get(key) for key in ('parents', 'ancestors', 'descendants'))
-                or len(original_canonical.get('entries', [])) != 1):
+        elif not symmetric and (any(canonical.get(key) for key in ('parents', 'ancestors', 'descendants'))
+                                or len(original_canonical.get('entries', [])) != 1):
             reason = 'canonical_branch_snapshot'
         elif role not in ('isolated-forward', 'isolated-reverse') or not pair_id:
             reason = 'missing_isolated_pair_metadata'
         else:
-            local = _endpoint(evidence.get('local_meaning_from'), payload['local'].get('meaning'))
-            other = _endpoint(evidence.get('canonical_meaning_from', {}).get(canonical['id']),
+            local = _endpoint(evidence.get('local_meaning_from'), local.get('meaning'))
+            canonical_id = original_canonical.get('id') if symmetric else canonical['id']
+            other = _endpoint(evidence.get('canonical_meaning_from', {}).get(canonical_id),
                               canonical.get('meaning'))
             reason = None if local and other else 'missing_fixed_meaning_producer_receipt'
         if reason:
