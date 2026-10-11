@@ -113,6 +113,10 @@ fit times; owned benchmark workers have exited. The fitter and
 teacher targets are unchanged; both prompts remain in development. See the
 [benchmark bindings and status](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
+The human selected sequential GB10 student training for this investigation:
+one student fit at a time. The existing Bootstrap/Compare candidates remain
+eligible; final student selection remains open.
+
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`
 field supervised. Complete inputs fit both verified local training paths;
