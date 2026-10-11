@@ -4342,3 +4342,26 @@ qualification; no prompt is adopted at this preparation checkpoint.
 ASv6.100/Bootstrap-v96 meanings, inputs and producer receipts remain fixed. No
 Bootstrap calls, hierarchy work, external messages or new allowance. Native usage
 source: hierarchy-compare-v175-outcome-contract-usage-v1.json.
+
+V175 completed: 52 valid comparisons in 54 attempts, including two warmups;
+no failures, retries, reuse or missing usage. Native API-equivalent cost is
+$0.4521864; persistent counter 18316/20000. Core review: 16 accept / 5 proof
+reject / 12 qualified. Both 019 answers import an eating purpose from pantry
+food and bagel preparation. Forward 041 and 042 import person/human consumer
+conditions; forward 052 imports broth through the parent's scoped illustration.
+The reciprocal animal and water-risotto witnesses remain supported. Four settled
+reversals (018/041/042/052), zero settled chain conflicts and only ten settled
+reciprocal core pairs remain. The 022 reverse production/ring necessity stays
+qualified rather than receiving a rejection for an omitted procedure.
+
+Controls: 11 accept / 2 proof reject / 6 qualified. Snapshot025 excludes wheat
+cultivation despite its food's established intended Eating role; isolated009
+forward leaves a nourishing-host ingredient connection unclosed. Neither reject
+certifies the opposite label. Personhood, particular dinner consumers and universal
+drink coverage remain qualified. Four settled control pairs have no conflicts.
+No rejection penalizes the deleted repair/checklist obligations. Removing those
+obligations has not resolved the substantive interpretation errors, and this
+draw does not establish a causal effect. V175 is not adopted. Exact inputs,
+meaning copies, rendered prompts, outputs, receipts, source/code bindings and
+worker fingerprints pass independent verification; saved generation snapshots
+remain unchanged.
