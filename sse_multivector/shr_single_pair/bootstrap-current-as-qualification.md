@@ -2913,11 +2913,117 @@ judgments. No wording effect or v109 advantage is established by this audit.
 The latest individual native counts remain v104: 113 accept / 0 reject /
 2 uncertain, and v109: 114 accept / 0 reject / 1 uncertain.
 
-Next recommended Bootstrap work is a focused independent repeat of Food,
+The user subsequently authorized focused independent repeats of Food,
 Risotto, Ingredients for mushroom risotto with shrimp and Food-related content
 on Nostr, checking whether the final definitions clearly choose kind-level or
 use-specific membership conditions. Either evidence-consistent choice is
 permitted; no old positive label or consumer preference is a required target.
-That repeat has not been prepared or run. Do not edit solely because a reviewer
+The [completed repeats below](#unchanged-v109-food-boundary-repeats) retain the
+experimental v109 prompt. Do not edit solely because a reviewer
 can imagine another plausible boundary, or infer a responsible prompt sentence
 from this saved-output reassessment.
+
+### Unchanged v109 Food-boundary repeats
+
+Two intentional fresh draws are complete under
+`target/bootstrap-v109-food-boundary-repeats-v1/{draw-1,draw-2}`. Artifact
+paths in this section are relative to
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1`.
+Native `prepare --from` selected four cases from the existing v109 candidate with
+`--only` and `--repeat`; it preserved their exact inputs and matching historical
+baselines. No new AS data, prompt edit, Compare call or hierarchy build occurred.
+The original source is ASv6.100. V104 remains approved; v109 remains experimental.
+
+Both draws retain the exact v109 rendered prompts, original full post, 36-entry
+root tree, selected pointers and source evidence. Model, reasoning, response
+schema and cache prefix/key also match: GPT-6.1 Sol medium, SSE, 4,597 estimated
+prefix tokens. Prompt text SHA-256 is
+`caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1`.
+The updated shared runner executes both draws with the same pinned executable;
+its complete worker/code digest differs from the historical candidate, while
+model-facing request-code and response-schema digests remain identical. This is
+not a byte-identical rerun of the entire historical executable.
+
+One subagent reviewed each draw independently; a third verified request identity
+and receipts. All eight results are valid, nonnull, first-attempt fresh answers,
+with distinct response IDs and receipt hashes. Production receipt digests match
+the original JSONL records. Requests contain the frozen prefix and current input,
+without earlier responses, conversation history or tools. Fresh request contexts
+are established; statistical independence of provider sampling is not proven.
+Historical outputs were available as native baselines but were not fed to the
+model or substituted for new answers.
+
+The predeclared review target was explicit kind-level versus individual-use
+conditions, supported identity/role/state boundaries, alignment with resolutions
+and preserved unknown facts. There was no preferred consumer boundary. Each
+draw's endpoints were assessed together under one inclusion interpretation;
+definitions from different draws were not spliced into a branch.
+
+| Selected entry | Draw 1 producer record SHA-256 | Draw 2 producer record SHA-256 |
+|---|---|---|
+| Food `1` | `ac77aeee9d106546e24775c6b54971198d748a459ad217a2675f5d37a0bc0eb5` | `cad6dc5e596abbfe0f8ad3019f184e466a2bd68681e7e3480630efc404449a8f` |
+| Risotto `1.1` | `32e54a34adb9398df5afa9ec822c969b3bc732ca5c89d606fad7c510d2a5035d` | `ff2c4c02e59a52390c95f692f3eb0c9d974c5dc66d668845e0297b07ec8966f3` |
+| Ingredients `1.1.1.1.1` | `7e7e739a99c6e70c641453e81311d0a0946d05f66acb9e138d0edaa414cf8b19` | `b693dd78537a3bcffce85e4268426ed0f3e6dbacb026181f4d50add4778603b1` |
+| Food-related content on Nostr `1.2` | `ffa3c80e86b7c88fc21ad11116f7a8a1d84daed4a041d5e8e406d526edf9def2` | `79ae45899dff735ede3031bc0ebce18c48f509397fbfa36a6fb4b4ccaa94ebef` |
+
+Receipts are in each draw's `run/results.jsonl`; exact outputs, ambiguity
+resolutions and source inputs are available through native `show --case` with
+the four case IDs already recorded in the preceding Food-branch evidence.
+The Risotto case ID is
+`bootstrap-5fa9e10f69c1a8b95c57dcf3075945f32125aba19ba8255b3687222250cde203`;
+the ingredient case ID is
+`bootstrap-36935a57bda6e81ee6f2dd3e707dda5b9ffbc05bb2bd419814fc2d4e7c0bad4b`.
+
+Both Food outputs explicitly choose human consumption. Draw 1 says:
+
+> Food is substances intended for human consumption as something to eat or drink, including but not limited to culinary ingredients and prepared dishes.
+
+Draw 2 says:
+
+> Food is substances intended for human eating or drinking, including but not limited to prepared dishes and culinary ingredients used to make them. The topic encompasses descriptions and presentations of these foods.
+
+The named Risotto definitions retain a rice-and-broth cooking process; draw 2
+also expressly attributes creaminess to released rice starch. Both ingredient
+definitions require a component to be used or intended for the mushroom-and-
+shrimp risotto role, keeping the fifteen-item list illustrative. Both Nostr
+definitions require content shared on Nostr concerning food; draw 2 explicitly
+makes `#foodstr` optional. They define a qualifying content category rather than
+assert that this particular post was published on Nostr. No actual cooking,
+eating or publication occurrence is established by these definitions.
+
+No definite source contradiction was found. The reconciled native individual
+assessment is four qualified agent accepts per draw, bound to the exact fresh
+outputs. This is not an accuracy estimate or whole-branch certification.
+The draw-2 reviewer initially suggested uncertain for Nostr by comparing it with
+the independently generated human-only Food scope, then withdrew that suggestion:
+without that separate parent definition the same output is a justified standalone
+meaning. The initial suggestion was not written as a native verdict. Preserve
+its reason here as a review correction, not a model failure.
+
+The targeted interpretation question persists in both draws. Food does not
+expressly say whether intended human consumption characterizes a culinary kind
+or must be established for every particular use. Risotto preserves a culinary
+kind without separately spelling out its consumer; the ingredient meanings
+specify a dish role but leave that consumer interpretation implicit. Nostr's
+unqualified food wording does not expressly select the independently chosen
+root's human-food sense. These are residual interpretation qualifications, not
+demonstrated admitted counterexamples or unsupported facts about the post.
+Accepting Food-to-Risotto and Risotto-to-ingredients under a culinary-kind
+interpretation still entails their shortcut. A stricter individual-use reading
+must qualify the original Food-to-Risotto link too. No fresh Compare labels or
+complete-branch generation were obtained here.
+
+Native [usage source](hierarchy-bootstrap-v109-food-boundary-repeat-usage-v1.json)
+and ignored `usage.json` account for ten actual attempts: eight definitions and
+two warmups, with zero reuse, retries, failures or missing usage. Complete
+API-equivalent cost is $0.1075436, including warmups; this is catalog pricing,
+not a subscription invoice. Six of eight definition calls report cache hits.
+Native estimated net cache savings are $0.0592904 (35.54%), including warming
+overhead; this is not a matched uncached experiment. The shared persistent
+attempt counter was retained. Its total also includes other agents' work.
+
+Recommended next step is to settle the common inclusion interpretation using
+these fixed meanings before more repeats or a prompt edit. The repeated outputs
+do not establish a responsible prompt sentence, a v109 improvement, or a need
+to force human-consumption wording into every child. Another plausible scope
+alone remains insufficient to reject a standalone meaning.

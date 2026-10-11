@@ -70,15 +70,17 @@ checks establish capacity and checkpoint integrity, not learning quality.
 
 ### Broader saved-checkpoint evaluation
 
-The first completed Compare passes evaluate the original Ettin checkpoints
+The completed Compare passes evaluate the original Ettin and Qwen checkpoints
 without updates on the matched 196-case regression and 21-case branch panels.
 
-| Ettin variant / epoch | Regression reference matches | Branch reference matches | Regression forward seconds |
+| Compare variant / epoch | Regression reference matches | Branch reference matches | Regression forward seconds |
 | --- | ---: | ---: | ---: |
-| Full instructions / 1 | 37/196 | 0/21 | 31.61 |
-| Full instructions / 4 | 106/196 | 16/21 | 31.07 |
-| Input JSON / 1 | 39/196 | 2/21 | 6.13 |
-| Input JSON / 4 | 119/196 | 16/21 | 5.68 |
+| Ettin full instructions / 1 | 37/196 | 0/21 | 31.61 |
+| Ettin full instructions / 4 | 106/196 | 16/21 | 31.07 |
+| Ettin input JSON / 1 | 39/196 | 2/21 | 6.13 |
+| Ettin input JSON / 4 | 119/196 | 16/21 | 5.68 |
+| Qwen27 / 1 | 180/196 | 16/21 | 610.38 |
+| Qwen27 / 4 | 185/196 | 13/21 | 606.27 |
 
 These are provisional teacher matches, not gold accuracy. At epoch four the
 shorter variant gains 21 regression matches and loses eight relative to full
@@ -89,7 +91,7 @@ and 0/16 without; canonical-containment matches improve from 36/71 to 43/71,
 while local-containment matches fall from 50/72 to 47/72. `Neither` improves
 from 19/37 to 29/37.
 
-Both epoch-four variants pass all 16 strict-containment branch fixtures and
+Both epoch-four Ettin variants pass all 16 strict-containment branch fixtures and
 fail all three equivalents, including identical producer endpoints, and both
 synthetic conflict cases requiring `uncertain`. The shorter variant therefore
 has the stronger measured regression cost/quality result but adds no branch
@@ -106,7 +108,29 @@ for the regression passes, distinct from the earlier training peaks.
 Model loading is excluded from the forward timings; one seed and differently
 fitted checkpoints do not isolate input format as a causal effect.
 
-All four native reports are complete with zero updates and zero training
+Qwen improves regression teacher agreement from 180/196 to 185/196 and
+reciprocal consistency from 86/98 to 90/98 families. Its epoch-four equivalent
+recall is 16/16, with three additional false-equivalent predictions. Excluding
+the known contradictory reference family 033 gives 184/194 agreement; the
+unmodified report retains all 196 cases. Regression references contain no
+`uncertain` cases.
+
+Branch agreement instead falls from 16/21 to 13/21, or 15/20 to 12/20 excluding
+the identity control. Both epochs match all three true equivalents, including
+that control, and fail both synthetic conflicts requiring `uncertain`.
+On the corresponding 18 isolated comparisons, agreement rises from 17/18 to
+18/18, while their compatible branch comparisons fall from 15/18 to 12/18.
+Reciprocal branch consistency falls from 8/9 to 5/9 families. All six epoch-four
+false-equivalent branch predictions have an ancestor or descendant meaning
+byte-identical to the local meaning while the selected canonical scope differs.
+This pattern is consistent with confusing the selected node with a relative;
+it does not establish an attention mechanism. Branch references contain no
+`neither` cases. Epoch one remains relevant: the regression gain does not
+establish an epoch-four preference across both panels, a capacity ceiling or
+final student selection. The fitting set contains no canonical branches or
+uncertainty targets.
+
+All six native reports are complete with zero updates and zero training
 examples seen. They live under
 `target/bootstrap-compare-student-v1/broader-evaluation-v1/compare-results/`:
 
@@ -116,8 +140,10 @@ examples seen. They live under
 | `ettin-full-branches` | `f959d790c790ff735dd50905c505c190cfa4c04cdebed54ecafb6d283dfe18d4` |
 | `ettin-input-json-regressions` | `4ca839ccceff2fbf4bdfc8945eded7139fc8d70de4301e32a60a4533c1f009ca` |
 | `ettin-input-json-branches` | `7dd51684267a1e532c737aef956e4a75ecf10ce868464f0de043bd6b90618749` |
+| `qwen27b-regressions` | `442ed7e44a170b2013fa1588c21fc338b5fcd6df59e1c01e9900a916b05afd85` |
+| `qwen27b-branches` | `a241c7632cdc99bf226f8184c0c73d1526a37d15e6ac7157ab870ab04cab1395` |
 
-Qwen/Kev Compare and the remaining Bootstrap generations are still underway
+Kev Compare and the Gemma Bootstrap generations are still underway
 or queued. Final student selection remains open.
 
 The focused Bootstrap Qwen passes are complete on the same 40 cases, with
