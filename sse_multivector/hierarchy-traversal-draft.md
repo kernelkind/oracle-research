@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v22
+# Hierarchy selection by traversal — draft v23
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -22,17 +22,22 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
 - A local node containing a canonical node also contains all that canonical
   node's descendants.
 
-## Agreed next-local-node selection
+## Agreed local-level selection order
 
 **Select local roots first, then L2, then L3, continuing one local level at a
 time across all notes.** L1 is the root level; each local child is one level
 below its parent.
 
-**Rotate across notes, taking one local node per note per round at the current
-level.** Preserve saved note order within each round and each note's saved node
-order. Take the next unprocessed node at that level from each note; skip notes
-with none remaining. Move to the next local level once the current level is
-exhausted across all notes, unless the stopping conditions end selection first.
+Processing one note's whole level before moving to another note is rejected.
+**The proposed replacement is to rotate across notes, taking one local node per
+note per round at the current level.** A round means one pass through the notes.
+Preserve saved note order within each pass and each note's saved node order.
+Take the next unprocessed node at that level from each note; skip notes with
+none remaining. Move to the next local level once the current level is exhausted
+across all notes, unless the stopping conditions end selection first.
+
+This rotation is a proposal awaiting approval. It sets selection order, not
+execution batches; searches can overlap without waiting for a pass to finish.
 
 Use the selected order to start up to three local-node searches under the
 concurrent policy below. Apply placements in that same order, finishing
@@ -42,8 +47,9 @@ Do not skip a local child merely because its original parent's canonical node
 represents one note. The local child may have useful relationships elsewhere
 in the canonical graph, so it remains eligible for ordinary traversal.
 
-The selection order and stopping conditions below are agreed. Stopping-check
-timing is provisionally approved. No selection code or model calls change here.
+The local-level order and stopping conditions below are agreed. Stopping-check
+timing is provisionally approved; within-level order remains open. No selection
+code or model calls change here.
 
 ## Agreed traversal rules
 
@@ -420,13 +426,13 @@ It changes neither a supplied meaning nor a returned comparison label.
 
 ## Agreed walk
 
-The local-node selection order, stopping conditions, comparison actions,
+The local-level selection order, stopping conditions, comparison actions,
 shared-node rule, top-to-bottom order, concurrent-search policy, same-note
 eligibility, original-parent handling and consolidation rules above are agreed.
 The walk below combines them with the provisionally approved stopping-check
-timing.
+timing; within-level selection order remains open.
 
-1. Select the next local node in the agreed order. Start its traversal at the
+1. Select the next local node in the selected order. Start its traversal at the
    canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
    top-to-bottom order above.
@@ -474,6 +480,10 @@ The Food relationship remains a possible placement. The final placement depends
 on the other comparisons. If Breakfast were to contain the local node, Meals
 would also contain it by transitivity, conflicting with the Meals answer.
 
+## Decision still open
+
+- Whether to adopt the proposed rotation across notes within each local level.
+
 ## Current implementation
 
 [canonical_graph_search.py](canonical_graph_search.py) currently descends after
@@ -484,8 +494,8 @@ remain documented in
 
 The existing [`prepare_selection`](canonical_selective_trial.py) prioritizes
 missing note coverage, then individual-note access, then similarity-ranked
-discovery in schema 2. The approved draft instead rotates across notes within
-each local level, using the saved note order per round and node order per note.
+discovery in schema 2. The approved draft instead uses local levels and saved
+order within each note; rotation across notes remains a proposal.
 
 The current selector exposes the whole queued set of eligible comparisons. It
 does not defer a queued descendant when a queued ancestor could first settle
