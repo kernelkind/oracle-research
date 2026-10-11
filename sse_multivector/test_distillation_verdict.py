@@ -41,10 +41,9 @@ class DistillationVerdictTests(unittest.TestCase):
         return inputs.prepare_file(dataset, self.path,
                                    (PROMPTS / (name + "-prompt-v1.md")).read_text())
 
-    def actual_source(self, check="support", *, teacher=None):
+    def actual_source(self, check="support", *, teacher=None, post="Cable A is 2 m long."):
         root = self.path.parent
         task = (ROOT / "subject-prompt-goal-v1/asv6.100/ASv6.100.md").read_text()
-        post = "Cable A is 2 m long."
         messages = [dict(role="user", content=task + "\n\n<post>\n" + post + "\n</post>")]
         if teacher is None:
             teacher = [dict(number="1", context="Cables.", subject="Cables"),
@@ -398,6 +397,55 @@ class DistillationVerdictTests(unittest.TestCase):
                     self.assertIn("<post>\n" + post + "\n</post>", case["prompt"])
                     self.assertNotIn("expected_valid", case["prompt"])
                     self.assertNotIn("expected_reason", case["prompt"])
+
+    def test_relationship_contexts_preserve_bound_meanings_without_a_mechanical_verdict(self):
+        teacher = [dict(number="6", subject="Mothers", context="#moms names mothers."),
+            dict(number="9", subject="MILFs",
+                 context="#milf denotes the sexual category of sexually desirable mothers."),
+            dict(number="9.1", subject="MILFs as a tag for Example Film",
+                 context="#milf is a category attached to Example Film."),
+            dict(number="10", subject="Awards", context="Unrelated award information.")]
+        saved, generation = self.actual_source("relationship", teacher=teacher,
+                                               post="Example Film #moms #milf")
+        student = json.loads(generation["answer"]["raw"])
+        student["subjects"][0]["subject"] = "Mothers"
+        student["subjects"][1]["subject"] = "MILFs as a tag for Example Film"
+        generation["answer"]["raw"] = json.dumps(student)
+        saved.write_text(json.dumps(generation))
+        self.source["cases"][0]["generation"]["sha256"] = hashlib.sha256(saved.read_bytes()).hexdigest()
+        self.path.write_text(json.dumps(self.source))
+        template = (PROMPTS / "relationship-prompt-v9.md").read_text()
+        cases, protected, _ = inputs.prepare_file(dict(adapter="distillation_verdict"), self.path, template)
+        case = cases[0]
+        self.assertEqual(json.loads(case["inputs"]["TEACHER_CONTEXTS"]),
+                         [{key: row[key] for key in ("subject", "context")} for row in teacher[:3]])
+        self.assertEqual(case["evidence"]["teacher_context_numbers"], ["6", "9", "9.1"])
+        self.assertNotIn("mechanical", case)
+        self.assertIn(str(saved), protected)
+        self.assertNotIn("Unrelated award information.", case["prompt"])
+        self.assertNotIn("expected_valid", case["prompt"])
+        task = (ROOT / "subject-prompt-goal-v1/asv6.100/ASv6.100.md").read_text()
+        wording = next(paragraph for paragraph in task.split("\n\n")
+                       if paragraph.startswith("Make each `subject` concise,"))
+        self.assertTrue(case["inputs"]["ASV6_100_PARENT_CHILD_RULES"].startswith(wording + "\n\n"))
+
+    def test_relationship_contexts_are_opt_in_for_both_source_formats(self):
+        template = (PROMPTS / "relationship-prompt-v8.md").read_text()
+        for source_format in ("authored", "saved"):
+            with self.subTest(source_format=source_format):
+                self.links() if source_format == "authored" else self.actual_source("relationship")
+                self.path.write_text(json.dumps(self.source))
+                legacy, _, _ = inputs.prepare_file(dict(adapter="distillation_verdict"), self.path, template)
+                new, _, _ = inputs.prepare_file(dict(adapter="distillation_verdict"), self.path,
+                    (PROMPTS / "relationship-prompt-v9.md").read_text())
+                for old, case in zip(legacy, new):
+                    self.assertNotIn("TEACHER_CONTEXTS", old["inputs"])
+                    self.assertNotIn("teacher_context_numbers", old["evidence"])
+                    self.assertEqual(case["inputs"]["RELATIONSHIP_INPUT"], old["inputs"]["RELATIONSHIP_INPUT"])
+                    self.assertEqual(case["inputs"]["POST"], old["inputs"]["POST"])
+                    self.assertTrue(case["inputs"]["ASV6_100_PARENT_CHILD_RULES"].endswith(
+                        "\n\n" + old["inputs"]["ASV6_100_PARENT_CHILD_RULES"]))
+                    self.assertIsInstance(json.loads(case["inputs"]["TEACHER_CONTEXTS"]), list)
 
     def test_actual_validation_rejects_reserved_paths_and_changed_or_truncated_answers(self):
         saved, generation = self.actual_source()

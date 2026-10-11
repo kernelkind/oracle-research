@@ -37,7 +37,7 @@ def _assessments(directory, bundle):
     return load_assessments(directory, bundle)
 
 
-def _cases(bundle, check, assessments, *, include_post=False):
+def _cases(bundle, check, assessments, *, include_post=False, include_teacher_contexts=False):
     cases = []
     for answer in bundle["random"]["answers"] + bundle["challenge"]["answers"]:
         if answer["errors"]:
@@ -71,7 +71,7 @@ def _cases(bundle, check, assessments, *, include_post=False):
                 evidence["role"] = "support" if check == "support" else "actual_relationship"
                 case = verdict._verdict_case(check, definition, answer["post"], students,
                     answer["task_prompt"], evidence, None if label is None else label["valid"], teacher,
-                    include_post=include_post)
+                    include_post=include_post, include_teacher_contexts=include_teacher_contexts)
             cases.append(case)
         if check == "relationship":
             compatibility_labels = {frozenset(row["teacher_numbers"]): row
@@ -91,9 +91,13 @@ def _cases(bundle, check, assessments, *, include_post=False):
                         teacher_numbers=group["teacher_numbers"], teacher_representative_number=representative,
                         expectation_status="unresolved" if expected_valid is None else "agent_assessed",
                         expected_valid=expected_valid, expected_reason="Not independently assessed." if label is None else label["reason"])
+                    contexts = (teacher.interpretation_entries(heading, child, child_number=representative)
+                                if include_teacher_contexts else None)
+                    if contexts is not None:
+                        evidence["teacher_context_numbers"] = [row["number"] for row in contexts]
                     case = dict(id=answer["id"] + f":compatibility:{ordinal:03}:" + number,
                         inputs=verdict._relationship_inputs(answer["task_prompt"], heading, child,
-                            post=answer["post"] if include_post else None), evidence=evidence)
+                            post=answer["post"] if include_post else None, teacher_contexts=contexts), evidence=evidence)
                     mechanical = teacher.relationship(heading, child)
                     if mechanical is not None:
                         case["mechanical"] = mechanical
@@ -101,7 +105,7 @@ def _cases(bundle, check, assessments, *, include_post=False):
     return cases
 
 
-def prepare_source(source, base, selected=None, *, include_post=False):
+def prepare_source(source, base, selected=None, *, include_post=False, include_teacher_contexts=False):
     """Turn a verified trial selection into existing matching/verdict cases."""
     review._fields(source, {"schema_version", "selection", "check", "assessment_directory"},
                    "review evaluation source")
@@ -116,7 +120,8 @@ def prepare_source(source, base, selected=None, *, include_post=False):
         directory = engine._resolve_path(directory, "review assessment directory", Path(base))
     assessments = _assessments(directory, bundle)
     sources.update(assessments["sources"])
-    cases = _cases(bundle, check, assessments, include_post=include_post)
+    cases = _cases(bundle, check, assessments, include_post=include_post,
+                   include_teacher_contexts=include_teacher_contexts)
     identifiers = [case["id"] for case in cases]
     if selected is not None:
         engine._validate_string_array(selected, "review evaluation case selection", allow_empty=False)
@@ -163,7 +168,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     for check, (identifier, filename, schema, payload, field) in definitions.items():
         template = (directory / filename).read_text()
         ordinary, prefixes = [], {}
-        for case in _cases(bundle, check, assessments, include_post='{POST}' in template):
+        for case in _cases(bundle, check, assessments, include_post='{POST}' in template,
+                           include_teacher_contexts='{TEACHER_CONTEXTS}' in template):
             if "mechanical" in case:
                 ordinary.append(case["id"])
                 continue

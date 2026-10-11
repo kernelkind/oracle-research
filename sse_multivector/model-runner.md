@@ -1533,13 +1533,23 @@ fresh first attempts retain the twelve frozen targets; the two originally
 unscored cases stay unscored. Both audits give twelve accepted complete records,
 one rejected explanation and one uncertainty. The winnerless-round verdict
 changes to false, but its classification example only changes what is discussed;
-the MILF tag's lexical scope remains unresolved. Native receipts and preserved
+the MILF tag's lexical scope was unresolved in that review. Native receipts and preserved
 inputs pass; the allowance reconciles at 14/28 with no reuse, retry or warming.
 Usage is 17,185 input, zero cached and 24,365 output tokens including reasoning,
 estimated at $0.278020 by the catalog; provider charges remain unknown.
-The set does not pass. The next recommendation is to settle the fixed-reference
-counterexample requirement before another revision or repeat. No proof-rule
-change is adopted; AS, schema and model settings stay fixed. Qualification,
+The set does not pass under its existing proof requirement. The subsequent deep
+audit led to the user-authorized
+[DSLv9 drafting step](distillation-review-v1/README.md#dslv9-evidence-requirements-draft-october-11).
+It restores AS's subject-wording guidance, makes counterexamples optional and
+supplies selected teacher contexts only for interpreting existing words. Exact
+wording awaits review; no DSLv9 inference or production adoption has occurred.
+Native adapters copy at most two selected teacher ancestor paths, keeping source
+numbers outside model input and original source hashes protected. New inputs
+require source-adapter preparation rather than unchanged `prepare --from`.
+Three new preparation tests pass; existing broader failures reproduce on the
+unchanged baseline. The bulk helper's obsolete concurrency setting remains a
+separate prerequisite. Historical results and labels remain unchanged.
+AS, schema and model settings stay fixed. Qualification,
 broader regression, lower-effort testing and final 60 remain pending; production
 defaults to DSLv2.
 The current shared runner uses automatic queue admission; inherited concurrency

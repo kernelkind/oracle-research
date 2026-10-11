@@ -65,6 +65,10 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'canonical_shaping_nomination':
+        cases = prepare_shaping_nominations(source, path.parent, sources)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
+            application_allowed=False, purpose='Nomination only; normal traversal owns placement.')
     if dataset['adapter'] == 'compare_student_inputs':
         from . import compare_student_inputs
         cases, protected, preparation = compare_student_inputs.prepare(source, path.parent)
@@ -165,7 +169,8 @@ def prepare_file(dataset, path, template, load_report=None):
         except ImportError:
             import distillation_verdict
         cases, protected, preparation = distillation_verdict.prepare_source(
-            source, path.parent, dataset.get('select'), include_post='{POST}' in template)
+            source, path.parent, dataset.get('select'), include_post='{POST}' in template,
+            include_teacher_contexts='{TEACHER_CONTEXTS}' in template)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_matching':
@@ -185,7 +190,8 @@ def prepare_file(dataset, path, template, load_report=None):
     if dataset['adapter'] == 'distillation_review_evaluation':
         from . import distillation_review_evaluation
         cases, protected, preparation = distillation_review_evaluation.prepare_source(
-            source, path.parent, dataset.get('select'), include_post='{POST}' in template)
+            source, path.parent, dataset.get('select'), include_post='{POST}' in template,
+            include_teacher_contexts='{TEACHER_CONTEXTS}' in template)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_review':
@@ -743,6 +749,123 @@ def prepare_hierarchy_construction(source, selected=None):
                  evidence=dict(scheduling_post=post, nodes=evidence,
                                source_posts=base['inputs']['posts'], source=source['source']))
             for post, ids in sorted(queries.items()) if selected is None or post in selected]
+
+
+def prepare_shaping_nominations(source, base, sources):
+    """Gather whole sibling groups and bounded original locals from saved SSE rankings."""
+    from . import canonical_trial as trial
+    engine._expect_fields(source, 'shaping nomination', {'schema_version', 'max_candidates', 'selections'})
+    if (source['schema_version'] != 1 or type(source['max_candidates']) is not int
+            or not 1 <= source['max_candidates'] <= 32):
+        raise ValueError('shaping nomination requires schema 1 and at most 32 candidates')
+
+    def read_bound(path, expected):
+        path = Path(path).resolve()
+        if engine._sha256_file(path) != expected:
+            raise ValueError('shaping nomination source changed: ' + str(path))
+        if str(path) in sources and sources[str(path)] != expected:
+            raise ValueError('conflicting shaping nomination source: ' + str(path))
+        sources[str(path)] = expected
+        return json.loads(path.read_bytes())
+
+    if not isinstance(source['selections'], list) or not source['selections']:
+        raise ValueError('shaping nomination selections must be nonempty')
+    cases = []
+    for selection in source['selections']:
+        engine._expect_fields(selection, 'shaping selection', {'id', 'nomination'})
+        engine._expect_string(selection['id'], 'shaping selection id')
+        reference = selection['nomination']
+        engine._expect_fields(reference, 'nomination reference', {'path', 'sha256'})
+        path = engine._resolve_path(reference['path'], 'nomination', base)
+        report = read_bound(path, reference['sha256'])
+        if report['schema_version'] != 1 or report['max_choices'] != 6:
+            raise ValueError('expected whole-group SSE nomination schema 1 with K=6')
+        protected = report['sources']
+        for name, expected in protected.items():
+            if engine._sha256_file(Path(name)) != expected:
+                raise ValueError('shaping nomination source changed: ' + name)
+            if name in sources and sources[name] != expected:
+                raise ValueError('conflicting shaping nomination source: ' + name)
+            sources[name] = expected
+        for name in ('state', 'menu'):
+            if report[name] not in protected:
+                raise ValueError('shaping nomination is missing a protected ' + name)
+        state = read_bound(report['state'], protected[report['state']])
+        menu = read_bound(report['menu'], protected[report['menu']])
+        if (state['status'] != 'complete' or menu['status'] != 'shaped_candidate'
+                or state['corpus'] != menu['corpus'] or state['corpus'] not in protected):
+            raise ValueError('shaping nomination requires a frozen completed graph and menu')
+        corpus = read_bound(state['corpus'], protected[state['corpus']])
+        raw = {node['id']: node for node in state['nodes']}
+        nodes = {node['id']: node for node in menu['nodes']}
+        raw_ancestors, ancestors = trial._ancestors(state['nodes']), trial._ancestors(menu['nodes'])
+        for identifier, node in nodes.items():
+            if (identifier not in raw or any(node[key] != raw[identifier][key]
+                    for key in ('subject', 'meaning', 'entries'))
+                    or set(node['parents']) - raw_ancestors[identifier]):
+                raise ValueError('shaping menu changed original canonical evidence or relationships')
+        parent = report['parent']
+        if parent is not None and parent not in nodes:
+            raise ValueError('unknown shaping parent')
+        siblings = [node for node in menu['nodes'] if
+            (not node['parents'] if parent is None else parent in node['parents'])]
+        if len(siblings) <= 6 or set(report['siblings']) != {n['id'] for n in siblings}:
+            raise ValueError('shaping nomination must contain the whole overcrowded sibling group')
+        notes = {note['note_id']: note for note in corpus['notes']}
+        entries = {(note['note_id'], row['number']): row
+                   for note in corpus['notes'] for row in note['subjects']}
+        mapping = {(entry['note_id'], entry['number']): node['id']
+                   for node in state['nodes'] for entry in node['entries']}
+        processed = {(step['local']['note_id'], step['local']['number']) for step in state['steps']}
+        selected_notes = {entry['note_id'] for entry in state['roots']}
+        all_note_ids = sorted(selected_notes | {entry['note_id'] for node in menu['nodes']
+                                               for entry in node['entries']})
+        note_ids = {nid: f'N{i+1:03d}' for i, nid in enumerate(all_note_ids)}
+        local_entries, offered, seen_subjects = [], {}, set()
+        for rank, candidate in enumerate(report['ranked'], 1):
+            local = candidate['local']
+            key = local['note_id'], local['number']
+            if key not in entries or entries[key]['subject'] != candidate['subject']:
+                raise ValueError('shaping candidate differs from its original local entry')
+            if key in processed or key[0] not in selected_notes:
+                raise ValueError('shaping candidate is already processed or outside selected notes')
+            mapped = mapping.get((key[0], key[1].rsplit('.', 1)[0])) if '.' in key[1] else None
+            allowed = sorted({n['id'] for n in trial._eligible(state, local, mapped)}
+                             & {n['id'] for n in siblings})
+            if len(allowed) < 2 or candidate['subject'] in seen_subjects:
+                continue
+            seen_subjects.add(candidate['subject'])
+            branch = []
+            parts = key[1].split('.')
+            for depth in range(1, len(parts)):
+                ancestor = entries.get((key[0], '.'.join(parts[:depth])))
+                if ancestor is None:
+                    raise ValueError('incomplete original local ancestor branch')
+                branch.append({field: ancestor[field] for field in ('subject', 'context')})
+            identifier = f'L{len(local_entries)+1:03d}'
+            local_entries.append(dict(id=identifier, note_id=note_ids[key[0]],
+                **{field: entries[key][field] for field in ('subject', 'context')},
+                ancestors=branch, eligible_siblings=allowed))
+            offered[identifier] = dict(local=local, sse_rank=rank)
+            if len(local_entries) == source['max_candidates']:
+                break
+        footprints = {nid: {entry['note_id'] for entry in node['entries']}
+                      for nid, node in nodes.items()}
+        order = TopologicalSorter({nid: node['parents'] for nid, node in nodes.items()}).static_order()
+        for child in reversed(list(order)):
+            for ancestor in nodes[child]['parents']:
+                footprints[ancestor].update(footprints[child])
+        def canonical(node):
+            return dict(id=node['id'], subject=node['subject'], meaning=node['meaning'],
+                        parents=node['parents'], note_ids=sorted(note_ids[n] for n in footprints[node['id']]))
+        payload = dict(max_choices=6, parent=None if parent is None else canonical(nodes[parent]),
+            ancestors=[] if parent is None else [canonical(nodes[n]) for n in sorted(ancestors[parent])],
+            siblings=[canonical(n) for n in sorted(siblings, key=lambda n: n['id'])],
+            local_entries=local_entries, posts=[dict(id=note_ids[n], text=notes[n]['text'])
+                for n in sorted({offered[row['id']]['local']['note_id'] for row in local_entries})])
+        cases.append(dict(id=selection['id'], inputs=dict(INPUT_JSON=json.dumps(payload, ensure_ascii=False)),
+            evidence=dict(nomination=str(path), offered=offered, note_ids=note_ids)))
+    return cases
 
 
 def prepare_parent_candidates(source, selected=None):
@@ -1330,6 +1453,23 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'canonical_shaping_nomination':
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        engine._expect_fields(value, 'shaping nomination output', {'candidate_id', 'children', 'reason'})
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        offered = {row['id']: row for row in payload['local_entries']}
+        children = engine._validate_string_array(value['children'], 'children', allow_empty=True)
+        engine._expect_string(value['reason'], 'nomination reason')
+        selected = value['candidate_id']
+        if selected is None:
+            if children:
+                raise ValueError('a null nomination cannot select children')
+        elif (not isinstance(selected, str) or selected not in offered
+                or len(set(children)) != len(children) or not 2 <= len(children) <= payload['max_choices']
+                or len(children) >= len(payload['siblings'])
+                or set(children) - set(offered[selected]['eligible_siblings'])):
+            raise ValueError('invalid, duplicate or unsupplied shaping nominee or children')
+        result['parsed'] = value
     if adapter == 'compare_student_inputs':
         from . import compare_student_inputs
         answer = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)

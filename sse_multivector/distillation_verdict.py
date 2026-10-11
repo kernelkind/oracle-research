@@ -16,9 +16,10 @@ except ImportError:
     import extraction_pipeline as engine
 
 
-def prepare_source(source, base, selected=None, *, include_post=False):
+def prepare_source(source, base, selected=None, *, include_post=False, include_teacher_contexts=False):
     if isinstance(source, dict) and type(source.get("schema_version")) is int and source["schema_version"] == 2:
-        return _prepare_generations(source, base, selected, include_post=include_post)
+        return _prepare_generations(source, base, selected, include_post=include_post,
+                                    include_teacher_contexts=include_teacher_contexts)
     review._fields(source, {"schema_version", "check", "review_source", "cases"}, "verdict source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("expected verdict source schema_version 1")
@@ -80,7 +81,7 @@ def prepare_source(source, base, selected=None, *, include_post=False):
             indexes[reference_key] = review._TeacherIndex(payload["teacher"])
         cases.append(_verdict_case(check, definition, payload["post"], students, task,
                                    evidence, number not in invalid, indexes[reference_key],
-                                   include_post=include_post))
+                                   include_post=include_post, include_teacher_contexts=include_teacher_contexts))
     return cases, protected, dict(check=check, qualification_case_ids=[d["id"] for d in definitions])
 
 
@@ -92,7 +93,7 @@ def _support_inputs(task, post, subject):
                 SUPPORT_INPUT=json.dumps(dict(post=post, student_subject=subject), ensure_ascii=False))
 
 
-def _relationship_inputs(task, parent, child, *, post=None):
+def _relationship_inputs(task, parent, child, *, post=None, teacher_contexts=None):
     start = "Judge each parent-child pair using only its `subject` strings across possible posts in any domain."
     end = "The post's domain, `context` and other entries cannot supply a missing heading restriction."
     if task.count(start) != 1 or task.count(end) != 1 or task.index(start) > task.index(end):
@@ -101,11 +102,21 @@ def _relationship_inputs(task, parent, child, *, post=None):
                      RELATIONSHIP_INPUT=json.dumps(dict(parent_subject=parent, child_subject=child), ensure_ascii=False))
     if post is not None:
         variables["POST"] = post
+    if teacher_contexts is not None:
+        paragraphs = [paragraph for paragraph in task.split("\n\n")
+                      if paragraph.startswith("Make each `subject` concise,")]
+        if len(paragraphs) != 1:
+            raise ValueError("ASv6.100 subject-wording guidance boundary differs")
+        variables["ASV6_100_PARENT_CHILD_RULES"] = (
+            paragraphs[0] + "\n\n" + variables["ASV6_100_PARENT_CHILD_RULES"])
+        rows = [dict(subject=row["subject"], context=row["context"]) for row in teacher_contexts]
+        rows = list({(row["subject"], row["context"]): row for row in rows}.values())
+        variables["TEACHER_CONTEXTS"] = json.dumps(rows, ensure_ascii=False)
     return variables
 
 
 def _verdict_case(check, definition, post, students, task, evidence, expected_valid, teacher,
-                  *, include_post=False):
+                  *, include_post=False, include_teacher_contexts=False):
     number = definition["student_number"]
     if check == "support":
         subject = definition.get("student_subject", students[number])
@@ -116,8 +127,12 @@ def _verdict_case(check, definition, post, students, task, evidence, expected_va
         if parent_number not in students:
             raise ValueError("relationship control needs an actual immediate parent")
         evidence["parent_number"] = parent_number
+        contexts = (teacher.interpretation_entries(students[parent_number], students[number])
+                    if include_teacher_contexts else None)
+        if contexts is not None:
+            evidence["teacher_context_numbers"] = [row["number"] for row in contexts]
         variables = _relationship_inputs(task, students[parent_number], students[number],
-                                         post=post if include_post else None)
+                                         post=post if include_post else None, teacher_contexts=contexts)
         mechanical = teacher.relationship(students[parent_number], students[number])
     evidence["expected_valid"] = expected_valid
     case = dict(id=definition["id"], inputs=variables, evidence=evidence)
@@ -126,7 +141,7 @@ def _verdict_case(check, definition, post, students, task, evidence, expected_va
     return case
 
 
-def _prepare_generations(source, base, selected, *, include_post):
+def _prepare_generations(source, base, selected, *, include_post, include_teacher_contexts):
     review._fields(source, {"schema_version", "check", "dataset_manifest", "cases"}, "saved verdict source")
     check = source["check"]
     if check not in {"support", "relationship"}:
@@ -180,7 +195,7 @@ def _prepare_generations(source, base, selected, *, include_post):
             indexes[saved["note_id"]] = review._TeacherIndex(saved["teacher"])
         cases.append(_verdict_case(check, definition, saved["post"], students,
             saved["task_prompt"], evidence, definition["expected_valid"], indexes[saved["note_id"]],
-            include_post=include_post))
+            include_post=include_post, include_teacher_contexts=include_teacher_contexts))
     return cases, protected, dict(check=check, qualification_case_ids=[d["id"] for d in definitions])
 
 
