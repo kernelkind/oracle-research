@@ -1499,3 +1499,30 @@ an exclusion from one parent alternative is not an exclusion from its entire
 meaning. Retain each alternative's restrictions and the topic-role convention;
 do not turn descriptive aspects into unrelated unrestricted topics. Qualification
 must preserve graph guards and earlier consumer/intention negatives.
+
+### V80 alternatives gate: eighteen accepted, one diagnostic rejected
+
+Gate-v1 produced nineteen valid judgments with twenty fresh attempts including
+warmup, no failures, reuse or missing usage. Both independent reviewers accept
+eighteen diagnostics. Isolated019 now consistently covers Food dishes through
+Meals' eating-occasion alternative; isolated011 rejects display-only bread
+preparation through the absent meal role, rather than physical-kind mismatch.
+Food consumer/purpose restrictions, appliance positives and graph guards survive.
+
+Snapshot019's final uncertain remains defensible, but its stated counterexample
+does not establish the consequence it claims. Pancakes for non-meal snacking
+can fall outside Food dishes' meal boundary while remaining inside Meals'
+eating-occasion scope. The answer incorrectly transfers exclusion under one
+parent to another. Display-only Bread could support the hold; that does not
+validate the actual saved diagnostic. Native review rejects the diagnostic.
+
+Native snapshots are target/compare-v80-qualification-v1/gate-{generation,reviewed}.json;
+receipts are gate-v1. Native hierarchy-compare-v80-usage-v1.json gives known
+API-equivalent cost $0.1325448. Full-v1 was prepared but remains unrun because
+the gate failed; it must not be reported as qualification. No Bootstrap producer
+or expected label changed.
+
+V81 will separately make each canonical consequence a complete fixed-meaning
+comparison, and require any reused counterexample to be excluded by the actual
+proposed parent's entire scope. Keep the v80 parent-alternative change and the
+five-field output. Test the same nineteen-case gate before broader execution.
