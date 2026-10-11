@@ -433,7 +433,11 @@ targets or prior reviews. This passes the development panel, not unseen accuracy
 or production adoption. The run takes 64.714 seconds with no retries or reuse;
 the 76-token prefix is ineligible, so no caching or warming is used. Three new
 preparation tests pass; broader failures reproduce on unchanged code. Native
-bulk-runner migration and the four-note regression remain prerequisites.
+bulk-runner migration is now tested; the
+[four-note native regression](../../sse_multivector/distillation-review-v1/README.md#four-note-native-preparation-october-11)
+uses R02, R15, R21 and R14, all three checks, original sealed sources, verified
+saved-request reuse and automatic queue admission. Its generation and complete
+output audit remain pending.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,

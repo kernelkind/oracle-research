@@ -8,7 +8,8 @@ The exact wording and bounded diagnostic were approved. Its
 [fourteen-case Sol/xhigh trial](#dslv9-approved-diagnostic-october-11) passes all
 fourteen verdicts and complete explanations in both agent audits. This is
 development regression evidence, not unseen accuracy or production adoption.
-Production defaults to DSLv2; the known bulk-runner migration remains open.
+Production defaults to DSLv2. Native preparation now supports the scoped
+[four-note regression](#four-note-native-preparation-october-11).
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4296,11 +4297,44 @@ next prerequisites. Lower-reasoning trials and the final sixty remain pending.
 The user reduces the next complete-workflow regression from ten notes to
 **four distinct notes**, because the ten-note iteration took too long. Select
 from the existing ten-note pool within the agreed sample; exact selection and
-native preparation remain pending. All three checks and their approved semantic
+native preparation were pending at this scope decision. All three checks and their approved semantic
 rules stay in scope, using DSMv3, DSSv2 and experimental DSLv9 at Sol/xhigh.
 The completed ten-note results remain evidence, not the
 next run size. The original **50 random plus ten challenge answers** remain the
 very final validation. This scope correction performs no model calls.
+
+## Four-note native preparation (October 11)
+
+The next regression selects R02 (`M01-checkpoint-1000-N0002`), R15
+(`M01-checkpoint-400-N0049`), R21 (`M02-baseline-N0089`) and R14
+(`M02-checkpoint-800-N0043`) from the existing ten-note pool. Their inputs cover
+instructions, monetary quantities, temporal restrictions and a seven-level XP
+hierarchy. Selection uses source inputs rather than reviewer outputs. The
+original sixty-answer selection and its assessments remain sealed and unchanged.
+
+Native `prepare-distillation-review-evaluation --answer-id ID`, repeated four
+times, freezes only those answers and scopes subsequent reports. Omitting the
+flag retains the complete selection. Preparation no longer emits the removed
+runner concurrency setting; the shared host queue controls admission. An
+optional `--relationship-history-root` retains verified DSLv9 request history
+separately from the original matching/support history. Worker bindings and
+strict request identity remain intact; no receipt copying or repeat calls are
+needed to join unchanged results.
+
+The source projection contains 454 numbered checks, including 25 mechanical
+proofs. Native lookup verifies 29 matching, 29 support and four relationship
+requests as reusable. Before adaptive stopping there are at most 208 new DSL
+requests and two eligible natural-prefix warmups. These are preparation bounds,
+not actual dispatch counts or accuracy. All three checks use DSMv3, DSSv2 and
+experimental DSLv9 at Sol/xhigh over subscription SSE. Independent input-only
+assessments precede candidate-output audit; legacy labels remain provenance.
+
+Six focused preparation tests and 33 native regression tests pass. A separately
+reproduced unchanged-baseline test fails when attempt exhaustion combines with
+stopped queued dispatch; its error policy is outside this migration. The real
+regression reserves the complete provider-retry allowance rather than relying
+on that exhausted-budget path. Broader baseline fixture failures remain
+recorded in the ignored test logs. No production prompt default changes.
 
 ## Actual distilled wording: offline preview (October 8)
 

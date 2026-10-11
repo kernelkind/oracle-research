@@ -1436,8 +1436,8 @@ candidate-independent assessment.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use
-their frozen concurrency and share a new-attempt allowance. The original
-selection sets concurrency 8; preparation accepts an override. New schema-2
+the shared host queue and share a new-attempt allowance. Historical selection
+concurrency remains metadata; new preparation emits no concurrency control. New schema-2
 evaluations stop questions that cannot change the score: absent full matches, placements
 already containing a match, a known compatible uncovered placement, and incoming
 edges of unsupported subjects. Matching-self compatibility guards remain
@@ -1593,9 +1593,11 @@ against separate source assessments, not legacy qualification labels alone.
 `prepare-distillation-review-evaluation --reasoning-effort high|medium|low|xhigh`
 freezes an override in the native request settings without changing the source
 selection. Without the flag, the selection's effort is retained.
-`--concurrency N` freezes a positive execution concurrency override, retaining
-the selection's value when omitted. Concurrency is outside semantic request
-identity, so compatible saved results remain reusable across this change.
+Repeat `prepare-distillation-review-evaluation --answer-id ID` to freeze only
+the named answers and scope the report, preserving their complete native cases
+and original source bindings. Unknown or duplicate IDs fail before output
+creation; omitting the flag retains the full selection. The removed
+`--concurrency` preparation flag is not supported by the current shared runner.
 `--relationship-prompt PATH --relationship-prompt-id ID` binds an alternate
 relationship template during the same native preparation. Both flags are
 required together; natural-prefix grouping and generated specs use that
@@ -1607,9 +1609,14 @@ other checks retain `--runner-binary` or the default. Worker identity remains
 part of semantic request identity. This allows unchanged completed checks to
 retain their original worker binding while a new relationship trial uses the
 current worker, without modifying receipts or relaxing reuse validation.
+`--relationship-history-root PATH` selects saved-request history only for
+relationship checks; matching and support retain `--history-root`. Omitting
+the override preserves the existing common history. See the
+[four-note preparation](distillation-review-v1/README.md#four-note-native-preparation-october-11)
+for the scoped regression and verified original-worker reuse.
 Repeat
 `run-distillation-review-evaluation --answer-id ID` to dispatch a nested subset
-of stable source answer IDs; reports still contain all 60 answers, with
+of stable source answer IDs; reports retain the prepared answer scope, with
 unselected answers pending. Unknown or duplicate IDs fail before dispatch.
 Omitting `--answer-id` retains the complete-answer workflow. For fixed diagnostic
 inputs, prefer a small native preparation as above; selecting dispatch inside a

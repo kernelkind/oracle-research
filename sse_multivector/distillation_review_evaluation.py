@@ -137,16 +137,29 @@ def validate(case, raw):
             else verdict.validate(case, raw))
 
 
+def _answer_subset(bundle, answer_ids):
+    if answer_ids is None:
+        return bundle
+    if (not isinstance(answer_ids, list) or not answer_ids
+            or any(not isinstance(identifier, str) or not identifier.strip() for identifier in answer_ids)):
+        raise ValueError("answer_ids must be a nonempty array of nonempty strings")
+    known = {answer["id"] for cohort in ("random", "challenge") for answer in bundle[cohort]["answers"]}
+    if len(answer_ids) != len(set(answer_ids)) or set(answer_ids) - known:
+        raise ValueError("unknown or duplicate answer_ids")
+    wanted = set(answer_ids)
+    return dict(bundle, **{cohort: dict(bundle[cohort], answers=[
+        answer for answer in bundle[cohort]["answers"] if answer["id"] in wanted])
+        for cohort in ("random", "challenge")})
+
+
 def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None,
-            reasoning_effort=None, relationship_prompt=None, relationship_prompt_id=None, concurrency=None,
-            relationship_runner_binary=None):
+            reasoning_effort=None, relationship_prompt=None, relationship_prompt_id=None,
+            relationship_runner_binary=None, answer_ids=None, relationship_history_root=None):
     """Freeze native check groups; preparation never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
     if reasoning_effort is not None and reasoning_effort not in ("xhigh", "high", "medium", "low"):
         raise ValueError("reasoning_effort must be xhigh, high, medium or low")
-    if concurrency is not None and (type(concurrency) is not int or concurrency < 1):
-        raise ValueError("concurrency must be a positive integer")
     if (relationship_prompt is None) != (relationship_prompt_id is None):
         raise ValueError("--relationship-prompt and --relationship-prompt-id must be supplied together")
     definitions = dict(_DEFINITIONS)
@@ -160,6 +173,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
         raise ValueError("review evaluation output already exists")
     reference = dict(path=str(selection_path), sha256=engine._sha256_file(selection_path))
     bundle, _ = _selection(reference, selection_path.parent)
+    scoped = _answer_subset(bundle, answer_ids)
     if assessment_directory is not None:
         assessment_directory = str(Path(assessment_directory).expanduser().resolve())
     assessments = _assessments(assessment_directory, bundle)
@@ -168,7 +182,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     for check, (identifier, filename, schema, payload, field) in definitions.items():
         template = (directory / filename).read_text()
         ordinary, prefixes = [], {}
-        for case in _cases(bundle, check, assessments, include_post='{POST}' in template,
+        for case in _cases(scoped, check, assessments, include_post='{POST}' in template,
                            include_teacher_contexts='{TEACHER_CONTEXTS}' in template):
             if "mechanical" in case:
                 ordinary.append(case["id"])
@@ -198,11 +212,9 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
         experiment.write(source, dict(schema_version=1, selection=reference, check=check,
                                       assessment_directory=assessment_directory))
         runner = {key: bundle["settings"][key] for key in (
-            "provider", "model", "reasoning_effort", "transport", "concurrency")}
+            "provider", "model", "reasoning_effort", "transport")}
         if reasoning_effort is not None:
             runner["reasoning_effort"] = reasoning_effort
-        if concurrency is not None:
-            runner["concurrency"] = concurrency
         runner["auth_file"] = None
         runner["timeout_seconds"] = 3600
         runner["output_schema_path"] = str(directory / schema)
@@ -216,8 +228,11 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
             dataset=dict(adapter="distillation_review_evaluation", path=str(source), select=group["cases"]),
             runner=runner))
         destination = output / "experiments" / group["name"]
+        history = history_root
+        if check == "relationship" and relationship_history_root is not None:
+            history = relationship_history_root
         arguments = ["prepare", str(destination), "--spec", str(spec), "--history-root",
-                     str(Path(history_root).resolve() if history_root is not None else output)]
+                     str(Path(history).resolve() if history is not None else output)]
         if group["prefix"] is not None:
             prefix_path = output / "prefixes" / (group["name"] + ".txt")
             prefix_path.parent.mkdir(exist_ok=True)
@@ -232,6 +247,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     frozen = dict(schema_version=2, selection=reference, assessment_directory=assessment_directory,
                   assessment_sources=assessments["sources"],
                   experiments=experiments, inference_calls=0)
+    if answer_ids is not None:
+        frozen["answer_ids"] = answer_ids
     experiment.write(output / "evaluation.json", frozen)
     experiment.write(output / "evaluation.complete.json", {"evaluation.json": engine._sha256_file(output / "evaluation.json")})
     return dict(frozen, output=str(output), summary=report(output)["summary"])
@@ -253,6 +270,7 @@ def report(output):
     if assessments["sources"] != frozen["assessment_sources"]:
         raise ValueError("review assessment snapshot changed")
     sources.update(assessments["sources"])
+    bundle = _answer_subset(bundle, frozen.get("answer_ids"))
     cases, experiments = {}, []
     for entry in frozen["experiments"]:
         path = Path(entry["path"])
