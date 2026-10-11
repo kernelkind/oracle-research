@@ -6612,3 +6612,17 @@ witnesses and unique request pairs are reported separately; unresolved and
 failed cases remain unresolved. These checks establish consistency, not semantic
 correctness. Counterexamples, whole-scope positive justifications and canonical
 consequences still require attributed review.
+
+The saved 196-request ASv6.100 core and 102-request fifty-note collection are
+Compare development data, not an untouched accuracy benchmark. Input validity,
+provisional accuracy candidates, material ambiguities and canonical guard
+fixtures are separated in the
+[input-validity audit](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#input-validity-audit-before-further-compare-edits).
+Frozen provisional expectations may be stale; preserve their original records
+without enforcing them as current targets. Keep semantic label errors, invalid
+proofs, diagnostic omissions and unresolved meanings separate. A reversal with
+ambiguous meanings establishes instability, not exclusive responsibility of the
+Compare prompt. Agent agreement and zero contradiction counts do not certify gold.
+On the latest matched V173/V176 panel, both versions match the 21 provisional
+accuracy targets. Its other 31 cases require ambiguity, missing-proof or graph
+qualification; their old review counts must not be presented as accuracy rates.
