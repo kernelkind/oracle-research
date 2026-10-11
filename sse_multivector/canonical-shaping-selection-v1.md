@@ -3273,3 +3273,43 @@ requires null when a material ambiguity prevents establishing a valid proposal.
 No prompt edit or inference follows from this confirmation. A useful next test
 would isolate whole-parent containment with an unambiguous required restriction,
 rather than repeat the same instruction or force a disputed Cuisine judgment.
+
+## Consolidation-v11 unambiguous online-course restriction test
+
+After the recommendation above, the user replies “proceed”. This bounded test
+keeps v11 and its shared writing rules unchanged. Three synthetic course cases
+are prepared through the current native inline consolidation adapter, with two
+fresh draws and a self-imposed six-attempt limit including retries and failures.
+The prior 369/369 counter stays unchanged; the new task uses a separate native
+six-attempt counter. No warming, Compare, Bootstrap, placement or UI work is
+included. Subscription calls have no incremental cash charge.
+
+The [reusable cases](shr_single_pair/hierarchy-consolidation-online-scope-v1.json)
+and [specification](shr_single_pair/hierarchy-consolidation-v11-online-scope-v1.spec.json)
+offer Algebra, Geometry, History and Music courses. Online courses requires
+all teaching and student participation to take place online. The cases are
+constructed test data, not source-post evidence or AS-derived hierarchy nodes.
+They are not added to the prompt as examples and contain no expected answers.
+
+Pre-call semantic criteria are:
+
+| Case | Fixed input distinction | Expected behavior |
+|---|---|---|
+| Online children under Online courses | All four child meanings require online teaching and participation | A useful non-null subgroup whose entire meaning retains that required format; online mathematics courses covering Algebra and Geometry is one available grouping |
+| Unrestricted children under Online courses | None of the four child meanings requires the online format | Null: adding that format would discard admitted parts of every child, while omitting it would extend beyond the parent |
+| The same unrestricted children as roots | The complete sibling data is identical to the second case; only parent becomes null | A useful non-null subgroup without inventing an online restriction; mathematics courses covering Algebra and Geometry is one available grouping |
+
+Evaluate meanings semantically, not by matching a title, exact wording or a
+preferred pair. Every selected child's full scope must fit; every supplied
+sibling wholly covered must be selected. A non-null proposal must group at least
+two and fewer than all four siblings. A different coherent useful group can pass.
+An all-null result fails the two positive controls. These construction-based
+agent expectations are registered before generation; they are not new human
+labels for the real Cuisine cases or a population-accuracy claim.
+
+Native preparation verifies the matched parent and exact second/third sibling
+arrays. V11 retains SHA256
+`e388dca5ff6d498f29b3fd0051d7af77922344b20e61ed01796ebb20d3419461`.
+Thirty-five consolidation/assembly/revision and 31 current traversal/search
+checks pass after main synchronization. Main's retirement of the old constructor
+does not change this test's inputs or v11. No request-producing code is edited.
