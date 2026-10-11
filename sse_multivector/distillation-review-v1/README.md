@@ -39,6 +39,13 @@ the interpretation evidence for accepting the gas-fee pair; the earlier DSL
 category exclusion is too narrow. Fresh agreement itself establishes neither
 correctness nor repeat reliability.
 
+The subsequently authorized [trusted payment example trial](#trusted-payment-example-prompt-trial-october-11)
+adds the same short precedent to experimental DCSv2 and DSLv11. All six
+complete outputs pass independent audit, including the payment pair and
+positive/negative controls. Generation takes 49.47 seconds with one recovered
+provider retry. This focused pass does not establish broader accuracy or
+consistency; production defaults remain unchanged.
+
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
@@ -5968,6 +5975,51 @@ The unchanged prior prompts' fresh six-case diagnostic already passes these
 current expectations, while the older false receipt demonstrates the category
 error. This new trial can test focused regression, not establish an accuracy
 gain over the passing fresh baseline or resolve broader reviewer consistency.
+
+### Completed trial
+
+All six fresh complete outputs pass independent source-grounded agent audit:
+DCSv2 returns candidate **15**, DSLv11 accepts the original gas-fee pair, and
+the controls remain **true, true, false, false**. DSLv11 explicitly uses the
+trusted price example to interpret the broad payment category; it does not
+borrow an x402 relationship or assert a completed transfer. The negative
+controls continue to reject network growth alone and preserve the distinction
+introduced by Payments **made**. The DCS explanation also retains that
+distinction. Native current attributed acceptances bind complete decisions
+and reasons, not just matching Booleans.
+
+All six exact input maps, input hashes and original evidence retain parity
+with the prior trial. Settings stay Sol/xhigh/SSE with the same schemas and
+timeouts. Native preparation recomputes DCS's eligible prefix from 1,203 to
+**1,285 tokens** and binds a new key; DSL stays uncached. Native revision
+receipt verification reconstructs each complete new prompt from its pinned
+base, with only the version and example edits; placeholders and cache markers
+retain exact parity. Frozen code, prompt and receipt bindings pass final native
+inspection. The generation checkout is `e1a5c5a9`; later documentation does not
+alter that generation commit or its prompt definitions.
+
+Native `summarize-experiments` records **eight fresh attempts**: six successful
+verdicts, one DCS warmup and one failed cable-control request recovered through
+the runner's existing automatic retry. The failure is a temporary HTTP/2 socket
+closure, not a semantic error. No results are reused, and no case remains
+failed or unfinished. The generation span is **49.47 seconds**; final-verdict
+service time averages 29.69 seconds. The failed attempt has no token usage,
+so total API-equivalent cost, overall cache fraction and aggregate net caching
+savings are **unknown**, rather than zero. Known successful/warmup usage is
+12,262 uncached plus 1,152 cached input tokens and 6,198 output tokens, including
+5,258 reasoning tokens. The known API-equivalent subtotal is **$0.0866192**.
+DCS alone has complete usage: its single verdict receives a cache hit, but
+warming adds **$0.0029972** in net estimated cost for this one-case experiment.
+These estimates are not subscription cash charges or causal speed comparisons.
+
+Prompts and native artifacts remain bound to
+`oracle-mvp-review-payments-example/target/distillation-review-v1/payments-example/`.
+This worktree is retained for its frozen experiment paths. DCSv2/DSLv11 are
+tested on this exposed diagnostic only; deployed defaults, mechanical rules,
+review precedence, minimum reasoning qualification and the final sixty-answer
+test remain unchanged. NGP/Investments is the remaining uncertain case from
+the prior four-note trial. Its source interpretation should be settled before
+using that case to score a broader regression.
 
 ## Actual distilled wording: offline preview (October 8)
 
