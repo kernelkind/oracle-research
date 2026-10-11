@@ -10,7 +10,9 @@ criterion is the broadest coherent explicit meaning the selected node's evidence
 allows, with clearly defined boundaries. This is a scope-selection objective;
 it does not introduce browsing preferences or hierarchy-shaping requirements.
 
-[BBv5](Hierarchy-bootstrap-broad-v5.md) is the current untested draft. The user
+[BBv5](Hierarchy-bootstrap-broad-v5.md) is the current development draft, tested
+on the [four-case panel below](#bbv5-four-case-development-check) but not qualified.
+The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
 BBv2 through BBv5 are direct, hash-pinned revisions of unchanged v109 through
 the shared runner's offline `revise` command.
@@ -57,11 +59,111 @@ This is an agent assessment of the written prompt, not model qualification or
 new human gold. The adjacent revision receipts pin each baseline, exact edits
 and resulting prompt hash. Nine native revision tests, nested example-schema
 and exact-quote checks pass. Input/output contracts and final definition-writing rules remain unchanged
-from v109; factual-evidence safeguards are retained. No model calls have
-been made for this draft. The
+from v109; factual-evidence safeguards are retained. Drafting and written
+consistency audits used no model calls; the subsequent focused trial is recorded
+below. The
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 supports direct instructions and clear delimiters; it does not establish BB's
 semantic correctness.
+
+### BBv5 four-case development check
+
+The user authorized a matched test, then reduced its scope to a smaller subset.
+Four original ASv6.100 entries were selected before execution: Mental states,
+the recurring chicken-stock practice, Jesús Molina and Rome. Each request retains
+the complete original selected-root tree and full post. The criterion is the
+broadest coherent meaning supported by that node's own evidence, preserving
+identity, expressed restrictions and unknown instance facts. Historical judgments,
+matching titles in other notes and the synthetic AS examples supply no gold.
+
+The native experiment is
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-bootstrap-broad-v1/target/bootstrap-broad-v5-focused-v1`.
+It was prepared through the shared runner's `prepare --from --only`, taking four
+cases and their saved v109 baseline answers from
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate`.
+The four template inputs, input hashes and original evidence are exactly equal
+to that source. Only the prompt condition changes; model, medium effort, output
+schema and SSE caching are retained. The v109 answers are preserved historical
+samples, not four fresh baseline draws or new candidate exact reuses.
+
+Two independent read-only reviewers, `bb_instruction_audit` and
+`bb_example_audit`, examined all four matched outputs from their original
+evidence. The coordinating agent agreed with the following assessments and
+recorded them using native `review --role agent`. These are provisional agent
+assessments, not user-approved meanings or relation labels.
+
+| Selected topic | Saved v109 versus BBv5 | BBv5 assessment |
+|---|---|---|
+| Mental states | Both retain a broad, non-exhaustive mental-state category and avoid diagnosing the writer. | Accept on the tested distinction; no demonstrated broadening. Both use person-related wording, leaving nonhuman membership unexamined rather than certifying its exclusion. |
+| Making chicken stock a couple of times a year using carcasses saved during butchering | V109 defines a generic recurring practice. BBv5 adds **the author's recurring practice**, although the selected subject names no actor. Another maker following the stated source and frequency fits the supported broader interpretation. | Reject under the BB breadth criterion. Source and frequency remain preserved; the actor restriction causes the narrowing. |
+| Jesús Molina | Both identify the named individual and append a trio association without inventing his precise role. Neither clearly distinguishes whole-person information from professional-role coverage. | Uncertain. The descriptive phrases do not alone prove narrowing; the consequential coverage boundary remains unclear. |
+| Rome | Both resolutions choose the city generally, but both final meanings append its rhetorical application. BBv5 additionally says **invoked here**. | Reject for the explicit standalone/no-post-reference instruction violation. The appended application leaves scope clarity unresolved; it does not establish proverb-only membership. |
+
+There is no demonstrated broadening win in this single matched draw. The stock
+output establishes an unnecessary restriction under the current BB objective;
+it does not isolate a responsible prompt sentence or establish a reliable
+v109-versus-BB difference. The named-topic qualifications remain separate from
+that explicit narrowing and from Rome's output-instruction violation. No prompt
+edit, Compare inference, hierarchy construction or current-prompt activation
+followed this test.
+
+The native case IDs and candidate receipt hashes bind these findings to the
+single preserved output for each selected entry:
+
+| Topic / original selection | Native case ID | Candidate record SHA-256 |
+|---|---|---|
+| Mental states / `5` | `bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e` | `58031adad6208cd9b3f0798d2692db33b084c617e4cd213a90f6372a6b75eda5` |
+| Recurring stock-making / `5.1` | `bootstrap-2bf8ef02c91a82528e1de36c2ac9723d4b9cf1c9e2ba4f0a19e36945b8127066` | `630c5fb4c58679a6f7323de4102bfc500f4fe9672ebbecdc3a90de166044c6d6` |
+| Jesús Molina / `2` | `bootstrap-230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` | `a89cc41a69c13c588bf65ef531b42d0f058a8acb7c19056d8d00cc4d7d1039c9` |
+| Rome / `5` | `bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5` | `72051addd2ccfd11e3a84e7055d6fc177e61be4f6ddea91e5242230033e0b7b4` |
+
+All four answers are mechanically valid. Ambiguity/resolution IDs match and
+all evidence quotes are exact post substrings. The native report records five
+new GPT-6.1 Sol medium subscription attempts: four answers and one cache warmup,
+with no failures, retries or candidate answer reuses. Three of four substantive
+requests show cache reads. Known candidate API-equivalent cost is $0.0499912,
+including warmup; this excludes the original v109 generation and is not a
+subscription invoice or a matched cost comparison. Shared queue admission was
+temporarily limited by recovery; no execution policy was changed. Nine native
+revision tests also pass. Native artifacts and reviewed receipts remain in the
+task worktree; no raw experiment data is committed.
+
+The user approved the proposed unchanged stock repeat. Its result follows.
+Retain the named-topic ambiguities as separate qualifications rather than
+scoring incidental descriptions as proven coverage restrictions.
+
+#### Unchanged BBv5 stock repeat
+
+Native `prepare --from --only --repeat` created
+`target/bootstrap-broad-v5-stock-repeat-v1` in the BB worktree. Its sole case is
+the same recurring stock-making entry `5.1`. The complete input, original
+evidence, rendered prompt, model, output schema and cache settings match the
+first BBv5 draw exactly. The prior answer is baseline metadata, not input to
+the new request. Explicit repeat preparation prevents exact-answer reuse.
+
+The fresh answer again defines **the author's recurring practice**. Its
+resolution also says the activity is undertaken by the author. Neither BBv5
+draw identifies generic-practice versus author-specific scope as an ambiguity;
+both instead examine canning/storage and equipment/yield. Thus the unnecessary
+actor restriction recurs in two independently generated BBv5 answers. This is
+bounded evidence of the observed failure, not a reliability estimate or proof
+that a particular sentence causes it. Both draws preserve the selected
+frequency and saved-carcass restrictions.
+
+The repeat receipt's record SHA-256 is
+`5c97aec63c312e57745a3436337436740ca5461a33aa1adf1651608cd8bd8829`.
+Native agent review rejects it under the BB breadth criterion. One fresh
+GPT-6.1 Sol medium attempt completed, with no retry, failure, answer reuse or
+additional warmup. The one-attempt cap gives the substantive request priority
+over warming while retaining the existing cache prefix; observed cached input
+is 5,504 tokens. Native API-equivalent cost is $0.0087944, excluding earlier
+generation. Prompt text remains unchanged.
+
+The next proposed edit should address the distinction between the post's
+particular actor or occurrence and conditions defining the selected topic,
+while preserving genuinely particular identities expressed by the subject.
+Test it against the same stock input before broadening qualification. This
+proposal is not an applied prompt change or a new started test.
 
 ## Existing Bootstrap qualification
 

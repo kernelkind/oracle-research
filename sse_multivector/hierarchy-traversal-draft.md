@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v2
+# Hierarchy selection by traversal — draft v3
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -49,11 +49,34 @@ at Meals and reach Breakfast through Morning food. Compare with Breakfast once.
 If Breakfast returns `canonical_contains_local`, that conflicts with the Meals
 answer: Meals would also contain the local node by transitivity.
 
+### Equivalence
+
+**`equivalent` stops only the matched branch. Continue searching other branches.**
+
+Reuse the matched canonical node and its known ancestor and descendant
+relationships. Finding an equivalent node does not establish that every useful
+parent has already been found elsewhere in the graph.
+
+For example, suppose the existing graph is:
+
+```text
+Food
+├── Meals
+│   └── Breakfast (C3)
+└── Morning food
+```
+
+An incoming local node is equivalent to Breakfast (C3). If the Morning food
+branch remains unsearched, continue there. If Morning food returns
+`canonical_contains_local`, it becomes another proposed parent of C3. Reuse C3
+rather than creating a second canonical node. Placement still goes through the
+existing constructor checks.
+
 ## Proposed walk
 
-The branch-stopping and shared-node rules above are agreed. The other steps
-below carry forward the current traversal behavior as a starting point for
-further discussion.
+The `neither`, shared-node and equivalence rules above are agreed. The other
+steps below carry forward the current traversal behavior as a starting point
+for further discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
@@ -94,7 +117,6 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Whether equivalence should finish the entire search or only that branch.
 - Which reached node to compare next, and which comparisons to run concurrently.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.

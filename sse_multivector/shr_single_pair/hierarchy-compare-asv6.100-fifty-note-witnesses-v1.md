@@ -4810,16 +4810,30 @@ Producer receipts, frozen source/code hashes and reused-answer origins verify.
 
 The user was shown both exact meanings, V176's Cookware-contains-Stockpots
 conclusion, its diagnostic question and the disputed meal-purpose inference.
-The verbatim response was: **"i think it's fine"**. Native review records a user
-acceptance for `isolated-035-forward`. Treat the presented relationship as
-accepted; do not classify it as a confirmed wrong-label failure or prioritize
-changing the prompt to reverse it.
+The initial verbatim response was: **"i think it's fine"**. That acceptance
+remains in native review history.
 
-The preceding independent agent proof assessment and measured reversal remain
-preserved as evidence. The user response does not specify a universal reading of
-meal-purpose clauses or approve the unpresented reverse output. It does not alter
-the frozen meanings, pre-call targets, model outputs, original agent review
-counts or usage. Compare's contrary reverse output remains an inconsistency
-against the accepted relationship. No further model calls or prompt edits occur.
+After inspection of the reverse diagnostic, the user explicitly accepted the
+missing meal-purpose counterexample question: **"technically this was correct
+unfortunately."** The user also approved the saved laboratory-only culinary-stock
+vessel witness: **"this too"**. This closes the disputed boundary for this case:
+the vessel meets Stockpots' definition but lacks the meal-preparation purpose in
+the supplied Cookware definition. The independent shallow frying pan establishes
+the opposite noncontainment direction. **Neither** therefore follows for these
+exact fixed meanings; this is the consequence of the approved counterexample,
+not a verbatim user label or a universal rule about cookware.
+
+Native user reviews now reject `isolated-035-forward` and accept
+`isolated-035-reverse`, superseding the initial acceptance while preserving its
+history. The forward answer is an established containment failure under the
+user-reviewed reading; the reverse answer is correct. The failure is approving
+coverage after rejecting a child-invalid textile-dye vessel and assuming the
+untested meal-purpose condition, rather than constructing the admitted stock
+variant that tests it.
+
+The frozen meanings, original pre-call targets, outputs, agent review counts,
+reversal measurement and usage remain unchanged. Preserve the new expected
+relation separately; do not retrospectively recalculate the original target-match
+score as a prompt improvement. No further model calls or prompt edits occur.
 An untouched, coverage-diverse holdout is still needed before a general accuracy
 claim.
