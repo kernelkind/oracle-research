@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v92_core_framing": [
+      "../../target/compare-v92-qualification-v1/core-framing-v1"
+    ],
+    "v92_tool_framing": [
+      "../../target/compare-v92-qualification-v1/tool-framing-v1"
+    ]
+  }
+}

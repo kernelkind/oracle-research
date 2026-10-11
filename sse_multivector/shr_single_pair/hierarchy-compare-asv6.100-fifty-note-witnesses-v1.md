@@ -1881,3 +1881,33 @@ All ten inputs are exact native subsets of the frozen ASv6.100/B96 panels.
 Model remains Sol6.1 medium, SSE with automatic caching and the shared attempt
 counter. Native stage caps19 and3 reserve warmup and allowed retries. This
 is a falsifiable framing hypothesis, not evidence already supporting it.
+
+### V92 framing result and V93 unspecified-condition scope test
+
+All ten V92 cases complete validly in12 fresh attempts including two warmups,
+without reuse, retry, failure or missing usage. Native API-equivalent cost is
+$0.0726076; hierarchy-compare-v92-usage-v1.json reproduces accounting.
+Only038-reverse generates a nonhuman alertness witness. The other five targeted
+person-condition judgments remain positive, so this single changed orientation
+does not establish a reliable framing cause. The four designated controls
+retain their expected coverage relations. Independent native review records5 accept and5 reject responses; the
+sole accepted target is038-reverse, alongside all four controls. These are
+agent assessments, not human semantic gold. V91's completed native18 review gives7 accept,
+8 reject and3 qualified responses; these are agent assessments, not human gold.
+
+V93 returns to V85 and replaces only the ambiguity sentence. It defines scope
+as all described information for every case satisfying the meaning's wording
+and necessary implications; a condition neither stated nor implied may vary,
+and a customary case cannot supply it. Absence alone is distinguished from
+ambiguity in the wording itself. This is a substantive membership rule rather
+than another counterexample-question format. It does not expand a participant
+topic to all information about that participant, erase lexical implications,
+force negative labels or remove valid role/aspect connections. Canonical-conflict
+rules and unresolved coverage remain unchanged.
+
+The controlled gate includes the six person targets,018 both purpose targets,
+019 both narrower-bagel negatives, and036/107/111 plus isolated034 controls.
+It uses14 original frozen ASv6.100/B96 comparisons through native subsets,
+with unchanged meanings/schema and Sol6.1 medium. Stage caps27 and3 include
+warmups and provider retries under the existing shared20000 counter. V93 is
+experimental; target gains and control preservation require actual output review.
