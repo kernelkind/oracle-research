@@ -3202,7 +3202,10 @@ HD15 cycle policy without changing cross-post selection, cutoffs or saved baseli
 have a specific, unique version identifier so runs can be referred to
 unambiguously. Report it with the exact hierarchy output and experimental
 parameters, linking the existing frozen inputs, configuration and native
-receipts used to generate that hierarchy. The naming format remains open.
+receipts used to generate that hierarchy. Saved outputs use `H0001`, `H0002`,
+and so on in the [hierarchy catalogue](../recommendation-engine/hierarchy-runs.md),
+which collects their recorded experimental parameters in one place. Copies
+share an ID; changed outputs and independently saved experiments remain distinct.
 
 **NEv2 user review (September 25):** Coffee, Food, and morning-greetings merges
 accepted ("the other 3 look fine"); Beef / Beef products remains rejected.

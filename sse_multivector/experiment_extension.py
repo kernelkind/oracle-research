@@ -413,6 +413,11 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('catalogue-hierarchies', help='version saved hierarchies and collect recorded parameters; no inference')
+    p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--registry', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--saved-only', action='store_true', help='rebuild the catalogue from retained records without discovering new outputs')
     p = commands.add_parser('prepare-canonical-traversal', help='prepare the approved L1-first traversal policy; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--spec', type=Path, required=True)
@@ -573,6 +578,10 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command == 'catalogue-hierarchies':
+        from .hierarchy_catalogue import catalogue
+        print(json.dumps(catalogue(args.source, args.registry, args.output, saved_only=args.saved_only), indent=2))
+        return 0
     if args.command in ('prepare-canonical-traversal', 'advance-canonical-traversal'):
         from . import canonical_traversal
         result = (canonical_traversal.prepare(args.spec, args.directory, args.history_root)
