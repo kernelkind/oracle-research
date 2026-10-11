@@ -1258,3 +1258,24 @@ All attempts remain inside the persistent 20,000 allowance.
 A native source-bound Food-only bagel comparison is being prepared as a separate
 diagnosis of branch influence; its checkpoint binding must validate without
 editing code or saved state. It is not a substitute for the full snapshot.
+
+### V5 initial result and bounded qualification
+
+The initial eight valid outputs preserve all supported labels and appliance
+positives. The snapshot now separates human consumers from food identity:
+animal-feed bagels preserve the child's restrictions but fail intended-human
+coverage. Independent semantic review remains required before dispatching the
+other seven and fresh initial-eight repeat. Native initial usage is nine fresh
+attempts including warmup, zero failures/retries/reuses/missing usage, eight
+cache hits and $0.075924 API-equivalent cost.
+
+A legitimate Food-only isolation is now prepared with source pointers, not
+manually assembled case inputs. Original-project offline schema2 preparation
+validates the frozen canonical policy paths; fixed-meaning projection and
+generic diagnostic preparation bind our current project. The singleton C001
+comes from verified-prefix-v3 before step 1; bagel meaning from the original
+step 098 producer. Both fixed meanings match the snapshot exactly. Preparation
+made zero calls. Source/spec chain: compare-condition-bagel-food-isolation-*.
+This panel can qualify stability across absent versus present branches. V5
+preparation/run cap 3 includes warmup/retry; it remains within the existing
+allowance and preserves the full snapshot as a separate test.

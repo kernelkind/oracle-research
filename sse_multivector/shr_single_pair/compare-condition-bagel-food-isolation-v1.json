@@ -1,0 +1,28 @@
+{
+  "schema_version": 2,
+  "corpus": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json",
+  "canonical_states": {
+    "food-alone": {
+      "trial": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/verified-prefix-v3/state.json",
+      "before_step": 1
+    }
+  },
+  "pairs": [
+    {
+      "id": "bagel-food-isolated",
+      "local": {
+        "note_id": "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/isolation-children-v1/step-098/meaning/experiment",
+        "case": "bootstrap"
+      },
+      "canonical": {"state": "food-alone", "id": "C001"},
+      "review": {
+        "purpose": "Isolate the saved bagel meaning against the unchanged Food ancestor meaning using its original singleton canonical snapshot.",
+        "expectation_status": "Unlabelled diagnostic; saved comparisons are not semantic gold."
+      }
+    }
+  ]
+}
