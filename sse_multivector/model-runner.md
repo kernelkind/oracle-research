@@ -7016,3 +7016,19 @@ panel requests plus four B-first Stockpots requests test whether the example
 repairs rather than relocates the failure. Fixed ASv6.100/Bootstrap-v96 producer
 evidence, disabled explicit warming and the persistent counter are preserved.
 See the [pre-call design, scaling and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v183-synthetic-function-and-purpose-example).
+
+The completed V183 experiment has 24 fresh valid comparisons, zero reuse,
+warming, retries, failures or missing usage. Attributed independent review
+supports 21/24 complete responses, with three reversal conflicts and one
+directional label changing between draws. The standard A-first panel stays at
+18/20 supported, while B-first Stockpots improves from two to three of four
+supported responses without repeat stability. All 16 tested controls pass.
+Stock-making still acquires an unsupported meal purpose, including in an
+answer whose question explicitly tests that requirement. V183 fails its
+qualification gate and is not adopted or broadened; V179 remains the shorter
+development baseline and the A/B contract remains fixed. Native usage separates
+$0.1804176 for 20 new A-first attempts and $0.0385164 for four new B-first
+attempts from saved baseline generation. The shared counter moves 18,935 to
+18,959. See the [completed qualification and evidence limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v183-purpose-example-qualification).
+An independent check of the specific saved unsupported implication is proposed,
+not prepared or run; no Bootstrap or hierarchy work follows from this result.
