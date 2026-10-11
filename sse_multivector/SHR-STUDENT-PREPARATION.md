@@ -84,23 +84,29 @@ do not establish semantic meaning quality. The complete source-bound report is
 SHA-256 `b601a49c1877840945425797c561eecfd5f9f0a95b179a0116b48fb619dd3cbc`.
 The earlier epoch-one and complete-training snapshots remain preserved.
 
-Gemma26 Bootstrap's first checkpoint follows **94 updates / one epoch**.
-Held-out mean token loss falls from **2.8927 to 1.1682**, with mean TRAIN loss
-1.5005. Optimizer steps take **27.91 minutes**; the cumulative phase including
-evaluation and checkpoint saving takes **29.72 minutes**, with **52.54 GiB**
-peak CUDA allocation. The 305.18-second load and baseline evaluation precede
-that phase. Its 78,059,520 trainable adapter parameters include both packed
-expert projections. Further fitting, fresh-process verification and generated
-meaning quality remain pending. Cross-model token losses do not directly rank
-semantic quality: their tokenizers and completion likelihoods differ. The
-preserved first-checkpoint report is
-`target/bootstrap-compare-student-v1/bootstrap-pilot-gemma26b-epoch1-report-v1.json`,
-SHA-256 `49e4ef6d50866a8d15daacf246c941be47464f68a8a1d431bafe4625dac622dd`.
+Gemma26 Bootstrap completes **376 updates / four epochs**, supervising 18,360
+completion/turn-end tokens. Its baseline held-out mean token loss is **2.8927**.
 
-Qwen27 Compare and Bootstrap have completed fitting and fresh-process
-verification of both checkpoints. The GB10 sequence has started Bootstrap
-Gemma26 (PID 1768470), then fits/verifies input-only Ettin Compare and Kev27
-Compare, in that order. The verified queue shell is PID
+| Saved epoch | Mean TRAIN loss | Held-out mean token loss | Cumulative optimizer / phase minutes | Peak CUDA GiB | Fresh reload |
+| --- | ---: | ---: | ---: | ---: | --- |
+| 1 | 1.5005 | 1.1682 | 27.91 / 29.72 | 52.54 | Pass |
+| 4 | 0.3176 | 1.3720 | 111.79 / 115.38 | 52.54 | Pass |
+
+The 305.18-second load and baseline evaluation precede the phase. Its
+78,059,520 trainable adapter parameters include both packed expert projections.
+Training PID 1768470 and verification PID 1868098 are distinct; both saved
+checkpoints pass native score/loss and exact adapter-weight reload checks,
+preserving bindings, metrics and file hashes. Both Bootstrap models have lower
+held-out token loss at epoch one than epoch four; native generation must assess
+what that means for their generated meanings. Different tokenizers prevent
+direct cross-model loss ranking. The complete report is
+`target/bootstrap-compare-student-v1/bootstrap-pilot-gemma26b-complete-report-v1.json`,
+SHA-256 `4518c0e9d0fc723bb6ced9a3d404512f12acf46f94293cb614c6c51d09a382e3`;
+the first-checkpoint and complete-training snapshots remain preserved.
+
+Qwen27 Compare, both Bootstrap pilots and input-only Ettin Compare have
+completed fitting and fresh-process verification of both checkpoints. Kev27
+Compare is now running (PID 1872496). The verified queue shell is PID
 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
@@ -119,13 +125,14 @@ allowance and one local request at a time. The separate immutable generation
 runtime inherits the fit's source snapshot and the exact stable launcher and
 local worker scripts; existing running snapshots are untouched. Native
 generation and semantic review remain pending until the GPU fitting sequence
-finishes. Native preparation and `show` now also validate both Qwen epoch plans:
-their 21 complete case prompts, inputs and evidence are identical to the
-published baseline, no teacher answers are copied, and their model configs bind
-the actual verified adapter hashes. Adapter paths resolve from the owned GB10
-`target` directory. Two earlier preparations rejected absolute-path model
+finishes. Native preparation and `show` now also validate both models' epoch
+plans: all six plans have the same 21 complete case prompts, inputs and evidence;
+no teacher answers are copied, and checkpoint model configs bind the actual
+verified adapter hashes. All six configs are staged and hash-verified on GB10
+under `target/bootstrap-meaning-generation-configs-v1`. Adapter paths resolve
+from the owned GB10 `target` directory. Two earlier preparations rejected absolute-path model
 identifiers before inference; original configurations and the rejection receipt
-remain preserved. Gemma epoch plans await its verified saved checkpoints.
+remain preserved. No generation request has run yet.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
@@ -332,8 +339,31 @@ native encoder integration pass; that integration fits and separately reloads
 both formats with the same targets and confirms the smaller input. The latter
 took 30.87 seconds while Qwen's pilot was active, so Qwen's eventual elapsed
 phase time is not an isolated throughput benchmark. `compare-targets-v4` is
-byte-identical to v3 and binds the new preparation code. The full input-only
-Ettin pilot is prepared but has not run.
+byte-identical to v3 and binds the new preparation code.
+
+The input-only Ettin fit completes **180 updates / 720 TRAIN decisions** and
+passes fresh-process verification of both saved epochs. Its random head starts
+at 29/46 teacher agreement, which is not published task competence; epoch one
+matches the 28/46 majority control. Epoch four reaches **41/46**, with **40/44
+nonidentity matches**, **12/16 correctly directed containment decisions**, all
+28 neither targets and one of two identity controls. Compared with the full
+state's 42/46, exactly two predictions change: one correct identity becomes
+`local_contains_canonical`, and one already-wrong nonidentity prediction changes
+from `equivalent` to `local_contains_canonical`. The four nonidentity error IDs
+and their match count remain unchanged.
+
+Epoch one's phase takes **90.14 seconds**; the four-epoch cumulative phase
+takes **259.18 seconds (4.32 minutes)**, versus 11.20 minutes with instructions.
+Peak CUDA allocation is **19.27 GiB**, nearly unchanged from 19.29 GiB for full
+state. Mean epoch-four TRAIN loss is 0.3564. Batch-four evaluation takes
+**2.15 seconds for 46 cases**, versus 8.52 seconds for full state; these are
+forward evaluation times with weights already loaded. The 20.85-second model
+load precedes training. Training PID 1870943 and verification PID 1872096 are
+distinct. The complete source-bound report is
+`target/bootstrap-compare-student-v1/compare-pilot-ettin1b-input-json-complete-report-v1.json`,
+SHA-256 `e77d387ea61eb454239eeeaf661aa3769ea5f7054bac19c3cb2ef1b5636a1dfc`.
+One seed and eight evaluation posts do not establish equivalent input-format
+quality or production branch coverage.
 
 Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
 every support post, source entry, producer answer, reciprocal family and branch
