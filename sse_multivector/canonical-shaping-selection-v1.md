@@ -1,11 +1,12 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work is the experimental
-[Hierarchy-consolidation-v4 draft](shr_single_pair/Hierarchy-consolidation-v4.md),
-addressing the completed v3 screen's parent-fit and omitted-child findings.
+The latest user-authorized work tests experimental
+[Hierarchy-consolidation-v4](shr_single_pair/Hierarchy-consolidation-v4.md)
+on the same nine complete sibling groups, with two independent draws each.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
-and [the v4 revision record](#consolidation-v4-draft).
+the [v4 revision record](#consolidation-v4-draft), and
+[the completed v4 proposal panel](#consolidation-v4-proposal-panel).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2024,12 +2025,124 @@ missing, then passed with the versioned assembly and native revision receipt.
 Twenty-five production-adapter, assembly and revision checks pass, including
 shared-byte equality to v3, preserved v3/v104 hashes, and native preparation
 freezing the complete v4 prompt without inference. These checks establish
-mechanical integrity, not model judgment quality. No new model calls were made;
-the persistent counter remains **273/273**. V4 is an untested experimental draft
-and has not changed the active constructor or any hierarchy.
+mechanical integrity, not model judgment quality. Drafting made no new model
+calls; the persistent counter was **273/273** at that checkpoint. The proposal
+panel below subsequently tests the unchanged experimental v4 draft. It has not
+changed the active constructor or any hierarchy.
 
-Next qualification should reuse the nine original complete groups with passing,
-null and structural-negative controls. New generated meanings need their own
-fixed-meaning comparisons; matching child IDs do not justify reusing a different
-definition's answers. Additional calls require a renewed allowance. The draft
-and its reusable sources remain isolated in this task worktree as requested.
+The proposal qualification below reuses the nine original complete groups with
+passing, null and structural-negative controls. New generated meanings still
+need their own fixed-meaning comparisons; matching child IDs do not justify
+reusing a different definition's answers. The draft and its reusable sources
+remain isolated in this task worktree as requested.
+
+## Consolidation-v4 proposal panel
+
+The user approved proceeding with the saved-group test. The announced panel
+was eighteen GPT-6.1 Sol medium attempts: two independent draws on each of the
+same nine groups. The persistent allowance advanced from 273/273 to
+**291/291** and all eighteen attempts produced valid native receipts. There
+were no failures, retries, warmups, reused answers or missing usage. No further
+calls remain authorized by this panel.
+
+Preparation used native `--from` against the two v3 first-draw experiments,
+changing only the prompt to v4. The complete case inputs, review evidence and
+model/settings objects match those baselines. Native `--repeat` prepared the
+two fresh-repeat experiments with identical v4 text, complete inputs and
+settings. Earlier proposal answers and labels remain outside model input.
+All four runs used the shared runner and its managed queue; no source changed
+while they were active.
+
+| Supplied group | V4 first draw | V4 fresh repeat | Prospective local note-set check |
+|---|---|---|---|
+| Food preparation: 7 | Bakery food preparation above Bread preparation C010 and raw pie-making C098 | Food processing above those two and Food smoking C011 | Both narrow and leave six or five choices |
+| Roots: 7 | Beverages above Coffee C006 and Slush drinks C039 | Same children, separately generated meaning | Both narrow; seven to six choices |
+| Food: 13 | Meals above Breakfast C018 and Dinners C059 | Daily meals above the same children | Both narrow but leave twelve choices, still above six |
+| Mental states: 6 | Motivational states above Perceived needs C047 and Desires C076 | Same children, separately generated meaning | Both narrow; six to five choices |
+| Coffee: 6 | Follow-on coffee above Second coffee C101 and Additional coffee C102 | Further coffee above the same children | Both fail: the proposed union equals C102's two-note set |
+| Cuisine: 6 | Italian-origin dishes above Pizza C054 and Risotto C073 | Prepared dishes above Pizza C054, Cheesesteaks C066 and Risotto C073 | Both narrow; six to five or four choices |
+| Food dishes: 6 | Dough and batter foods above Pancakes C031 and Bread C068 | Meat and meat-alternative dishes above Burgers C036 and Chicken dishes C114 | Both narrow; six to five choices |
+| Eating: 5 | JSON null | JSON null | No proposed edges |
+| Cooking appliances: 4 | Heat-generating cooking appliances above the author's rocket stove C083 and Induction hobs C107 | Same children, separately generated meaning | Both narrow; four to three choices |
+
+Six of nine groups select the same children across the two draws, including
+Eating's repeated null. Different valid topics can choose different subsets;
+this agreement is not a semantic accuracy or reliability estimate. Of sixteen
+non-null proposals, fourteen pass prospective strict note-set narrowing;
+twelve also reduce their local choice count to six or fewer. Food's two partial
+reductions and Coffee's two failures remain distinct. These are unchanged native
+offline shape checks, not actual placements or semantic approvals.
+
+**V4 has not resolved the demonstrated scope problems.** Native source-bound
+agent reviews identify two direct problems in the new definitions, preserving
+the distinction from unrun Compare judgments and human gold:
+
+- **Food dishes, first draw:** the proposed meaning says “prepared foods made
+  by cooking dough or batter, eaten as a meal or part of a meal.” Its selected
+  Bread meaning remains “Bread is a food made by baking or otherwise cooking
+  flour-based dough, with varieties including but not limited to sourdough
+  bread.” Neither that meaning nor the Pancakes meaning requires the meal role.
+  The v3 screen already identified non-meal foods admitted by those fixed
+  meanings. V4 therefore trades the old proposal's missing parent restriction
+  for a proposed parent that excludes part of its selected children. It still
+  violates whole-child coverage; no original canonical meaning was changed.
+- **Cuisine, fresh repeat:** the output defines Prepared dishes as “foods made
+  by cooking or assembling ingredients into distinct preparations for eating.”
+  Cuisine still requires a style or tradition and its associated dishes. This
+  definition retains the old unassociated-improvised-dish counterexample to
+  parent fit. The first draw instead proposes Italian-origin dishes with an
+  explicit culinary-tradition connection, a promising alternative requiring
+  independent comparison. The repeat no longer explicitly includes preparation
+  variations, so the old bagel-making containment label cannot be transferred
+  to it.
+
+Other recorded agent concerns remain unresolved:
+
+- The second Food dishes proposal also requires a meal role; fixed Burgers
+  specifies a patty served in a bun, so its whole coverage needs checking.
+- Food processing may be equivalent to its Food preparation parent rather than
+  narrower. It also omits Grilling, whose complete meaning includes plans as
+  well as cooking; test both questions rather than assume coverage.
+- Meals and Daily meals now omit Food dishes. Their changed scopes and the
+  earlier graph conflict prevent copying the v3 judgment or claiming that this
+  omission is corrected.
+- Coffee remains structurally ineligible for insertion regardless of semantic
+  comparisons. The model still receives no note memberships, so this does not
+  establish a consolidation wording failure.
+
+Native `review` appended these assessments without changing outputs or receipts.
+The review rejects the two direct scope problems and the two Coffee insertions;
+the other concerns are uncertain. No new fixed-meaning Compare calls have been
+made for v4. The promising new groupings, repeated positive-looking controls
+and repeated null do not establish improved end-hierarchy quality. No hierarchy,
+UI, shared Bootstrap clause or v4 prompt text changed, and no agent message
+was sent.
+
+The ignored native experiments are `consolidation-v4-first-v1`,
+`consolidation-v4-repeat-v1`, `consolidation-v4-expanded-first-v1` and
+`consolidation-v4-expanded-repeat-v1`, all under
+`target/canonical-shaping-selection-v1/`. Their `*-report-v1.json` snapshots
+and native receipts preserve exact outputs. The
+[usage selection](shr_single_pair/hierarchy-consolidation-v4-usage-v1.json)
+reproduces `consolidation-v4-usage-v1.json` using `summarize-experiments`:
+**27,124 input tokens**, zero cache reads/writes, **6,056 output tokens including
+4,877 reasoning tokens**, and complete **$0.114808 API-equivalent catalog cost**.
+This is not subscription billing; reasoning is already counted in output.
+
+**Recommended next diagnostic, not run or separately authorized:** nine focused
+Compare-v75 checks with the exact new meanings and unchanged original graph:
+
+| Saved v4 proposal | Canonical checks | Purpose |
+|---|---|---|
+| First Food dishes: Dough and batter foods | Pancakes C031; Bread C068 | Check whether the added meal role loses whole-child coverage |
+| First Cuisine: Italian-origin dishes | Cuisine C016 | Check the proposed origin-based alternative beneath the fixed parent |
+| Repeated Cuisine: Prepared dishes | Cuisine C016 | Check the recurring parent-fit defect |
+| Repeated Food dishes: Meat and meat-alternative dishes | Burgers C036 | Check the suspected transferred meal restriction |
+| Repeated Food preparation: Food processing | Food preparation C005; Grilling C012 | Distinguish equivalence from strict narrowing and check a possible omission |
+| First roots: Beverages | Coffee C006; Gardening C004 | Preserve contrasting positive and negative controls |
+
+This diagnostic addresses the specific scope mechanisms before another prompt
+edit. Its outputs must distinguish direct directional answers from inherited
+canonical-branch conflicts, as in the v3 screen. It is not full qualification
+of every new proposal. Twenty-five production-adapter, assembly and revision
+checks pass; v4 remains experimental and this task remains isolated as requested.
