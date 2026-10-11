@@ -18,8 +18,14 @@ registered expectations in both fresh draws: six qualified agent accepts.
 It demonstrates the clear parent check on these inputs, without settling the
 Cuisine boundary or demonstrating a wording improvement.
 The user next authorizes testing unchanged v11 on the six remaining real
-sibling groups. The pre-call criteria and separate twelve-attempt ceiling are
-recorded in [the remaining real-group screen](#consolidation-v11-remaining-real-group-screen).
+sibling groups. All twelve fresh calls complete: seven qualified agent accepts,
+two structural Coffee rejects and three uncertain scope/completeness judgments.
+One Food preparation repeat proposes Food processing but omits Grilling;
+whether its activity meaning covers the child's explicit plans remains open.
+Both Food dishes proposals select Burgers and Chicken dishes instead of Bread,
+but retain the unresolved whole-child meal-role question. The pre-call criteria
+and results are recorded in
+[the remaining real-group screen](#consolidation-v11-remaining-real-group-screen).
 
 The preceding test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
@@ -3432,3 +3438,86 @@ Pre-call assessment criteria:
 These are predeclared agent-review criteria, not new human pair labels or an
 accuracy benchmark. The committed usage selection is
 [hierarchy-consolidation-v11-remaining-real-usage-v1.json](shr_single_pair/hierarchy-consolidation-v11-remaining-real-usage-v1.json).
+
+The screen completes all twelve fresh attempts with no warmups, reuses, retries,
+failures or missing usage. All twelve raw receipts have distinct HTTP 200
+upstream references reporting GPT-6.1 Sol. The frozen settings and actual request
+bodies both request medium reasoning; the separate SDK
+`provider_thinking_level` field is null, so it is not used as provider confirmation.
+Each request contains one user `input_text` block with no conversation link.
+First/repeat bodies match exactly for every case; their request-producing code
+hashes agree. Complete original inputs, evidence and source hashes match the
+v10 sources, with v11's prompt hash the only new source-map entry.
+
+| Complete supplied group | First draw | Independent repeat | Attributed agent assessment |
+|---|---|---|---|
+| Food preparation C005: 7 | Bakery food preparation: Bread preparation C010 + raw no-bake pie preparation C098 | Food processing: Bread preparation C010 + Food smoking C011 | First qualified accept; repeat uncertain completeness |
+| Food C001: 13 | Meals: Breakfast C018 + Food dishes C020 + Dinners C059 | Meals: Breakfast C018 + Dinners C059 | Two qualified accepts; different meanings explain different children |
+| Cooking appliances C014: 4 | Cooking vessels: Stockpots C015 + Cast-iron cookware C105 | Same title and children | Two qualified accepts |
+| Eating C123: 5 | JSON null | JSON null | Two qualified null accepts; no exhaustive impossibility claim |
+| Coffee C006: 6 | Further coffee: Second coffee C101 + Additional coffee C102 | Same title and children | Two structural rejects; semantic checks provisionally pass |
+| Food dishes C020: 6 | Meat and meat-alternative dishes: Burgers C036 + Chicken dishes C114 | Same title and children | Two uncertain whole-child meal-role judgments |
+
+Food's first Meals meaning explicitly includes dishes served or eaten as meals
+or parts of meals, covering C020. The repeat instead requires a complete eating
+occasion or its full food serving. C020's entire scope includes parts of meals,
+so omitting it in that repeat is appropriate. Changing the selected children
+alongside changing the proposed definition does not itself establish inconsistency.
+Both definitions retain the selected meals' plans and associated information.
+
+The Food preparation repeat writes:
+
+> Food processing is the activity of altering the physical or chemical
+> properties of ingredients to produce food or dishes, rather than merely
+> arranging them.
+
+This is narrower than its supplied parent. Omitted Grilling C012 cooks food
+with direct heat, which matches the physical-changing process, but its entire
+fixed topic also explicitly covers plans to grill. The proposal does not state
+whether those plans belong. Preserve this as a possible omitted covered child,
+not a confirmed pass or a definite failure whose direction has been settled.
+The no-bake pie's fixed definition does not independently establish its exact
+processing steps. The first bakery proposal explicitly preserves individual
+stages and both baked and no-bake forms; its ordinary bakery-food identity
+interpretation remains qualified rather than new human gold.
+
+Both Food dishes proposals stay inside the supplied parent's meal restriction.
+They avoid selecting Bread and choose Burgers and Chicken dishes. Burgers'
+fixed definition establishes a cooked-patty sandwich served in a bun without
+independently stating service or eating as a meal or part of one. Whether that
+role follows from the food kind remains the unresolved convention. Repeating
+the proposal does not settle it; no extra restriction is imported from placement.
+
+All eight nonnull proposals outside Coffee have strictly narrowing prospective
+note sets. Food preparation would reduce seven choices to six; Cooking
+appliances four to three; Food thirteen to eleven or twelve; Food dishes six
+to five. Food's remaining count above six is useful partial progress, not a
+semantic failure. Coffee would reduce six to five but both new parents have
+the same two-note set as Additional coffee C102, so that child step would not
+narrow. This remains a structural limitation of the proposed grouping rather
+than a demonstrated prompt error: note counts are not supplied to the model.
+Every structural report retains `applied: false`; no graph or meaning changes.
+
+The native usage selection reproduces ignored
+`target/canonical-shaping-selection-v1/consolidation-v11-remaining-real-usage-v1.json`.
+Complete usage is **17,470 input tokens**, zero cached-input/write tokens, and
+**4,057 output tokens including 3,475 reasoning tokens**. Complete API-equivalent
+catalog cost is **$0.075510**; reasoning is charged once. These are subscription
+attempts, not an incremental cash charge or a measured policy/prompt saving.
+The new counter is exhausted at **12/12** and both previous exhausted counters
+remain byte-identical.
+
+Native pre-review and post-review `*-report-v1.json` snapshots retain exact
+inputs, prompts, outputs, parsed answers, receipts, metadata and usage; only
+attributed reviews change. Seven accepts, two structural rejects and three
+uncertainties are agent assessments, not accuracy counts. All nine original
+real groups now have two v11 draws; the six synthetic online-course requests
+remain a separate panel. Thirty-five relevant consolidation, assembly and
+revision checks pass on the current-main combination. V11, shared writing
+rules and historical Bootstrap-v104 bytes remain unchanged. The work remains
+isolated as requested, with no Compare calls, Bootstrap changes, placement,
+UI refresh, activation or agent messages.
+
+The most useful next diagnostic is to isolate whether Grilling's planned scope
+accounts for its omission from Food processing before deciding on another prompt
+edit. That test has not begun and is not included in this exhausted ceiling.
