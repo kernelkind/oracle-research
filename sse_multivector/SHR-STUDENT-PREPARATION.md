@@ -84,19 +84,40 @@ do not establish semantic meaning quality. The complete source-bound report is
 SHA-256 `b601a49c1877840945425797c561eecfd5f9f0a95b179a0116b48fb619dd3cbc`.
 The earlier epoch-one and complete-training snapshots remain preserved.
 
-Qwen27 Compare and Bootstrap have completed fitting and fresh-process
-verification of both checkpoints. The GB10 sequence has started Bootstrap
-Gemma26 (PID 1768470), then fits/verifies input-only Ettin Compare and Kev27
-Compare, in that order. The verified queue shell is PID
-1529676 (coordinator 1529675), with its source-bound local receipt at
+Gemma26 Bootstrap completes **376 updates / four epochs**, supervising 18,360
+completion/turn-end tokens. Its baseline held-out mean token loss is **2.8927**.
+
+| Saved epoch | Mean TRAIN loss | Held-out mean token loss | Cumulative optimizer / phase minutes | Peak CUDA GiB | Fresh reload |
+| --- | ---: | ---: | ---: | ---: | --- |
+| 1 | 1.5005 | 1.1682 | 27.91 / 29.72 | 52.54 | Pass |
+| 4 | 0.3176 | 1.3720 | 111.79 / 115.38 | 52.54 | Pass |
+
+The 305.18-second load and baseline evaluation precede the phase. Its
+78,059,520 trainable adapter parameters include both packed expert projections.
+Training PID 1768470 and verification PID 1868098 are distinct; both saved
+checkpoints pass native score/loss and exact adapter-weight reload checks,
+preserving bindings, metrics and file hashes. Both Bootstrap models have lower
+held-out token loss at epoch one than epoch four; native generation must assess
+what that means for their generated meanings. Different tokenizers prevent
+direct cross-model loss ranking. The complete report is
+`target/bootstrap-compare-student-v1/bootstrap-pilot-gemma26b-complete-report-v1.json`,
+SHA-256 `4518c0e9d0fc723bb6ced9a3d404512f12acf46f94293cb614c6c51d09a382e3`;
+the first-checkpoint and complete-training snapshots remain preserved.
+
+Qwen27 Compare, both Bootstrap pilots and input-only Ettin Compare have
+completed fitting and fresh-process verification of both checkpoints. Kev27's
+separately bound v2 run has also completed and verified both saved epochs.
+Its original 115-update failure remains preserved. All five planned task fits
+and their integrity checks are complete. The original queue
+shell was PID 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
 and stops the sequence on error; there is no overwrite or automatic retry.
-Full-model jobs run sequentially. Generated-meaning evaluation and semantic
+Full-model jobs ran sequentially. Generated-meaning evaluation and semantic
 review follow the saved checkpoints; the queue itself performs only fits and
 fresh-process integrity checks.
 
-Both published-checkpoint generation baselines are prepared, with no inference,
+Both published-checkpoint generation baselines are prepared
 under `target/bootstrap-compare-student-v1/bootstrap-meaning-generation-evaluation-v1`.
 Native `generic` preparation selects the same 21 qualified evaluation IDs from
 the preserved teacher input plan. Complete rendered prompts and evidence match
@@ -105,14 +126,140 @@ the single-field meaning/null schema, greedy generation, a 512-token response
 allowance and one local request at a time. The separate immutable generation
 runtime inherits the fit's source snapshot and the exact stable launcher and
 local worker scripts; existing running snapshots are untouched. Native
-generation and semantic review remain pending until the GPU fitting sequence
-finishes. Native preparation and `show` now also validate both Qwen epoch plans:
-their 21 complete case prompts, inputs and evidence are identical to the
-published baseline, no teacher answers are copied, and their model configs bind
-the actual verified adapter hashes. Adapter paths resolve from the owned GB10
-`target` directory. Two earlier preparations rejected absolute-path model
+generation follows the completed GPU fitting sequence. Native preparation and
+`show` also validate both models' epoch
+plans: all six plans have the same 21 complete case prompts, inputs and evidence;
+no teacher answers are copied, and checkpoint model configs bind the actual
+verified adapter hashes. All six configs are staged and hash-verified on GB10
+under `target/bootstrap-meaning-generation-configs-v1`. Adapter paths resolve
+from the owned GB10 `target` directory. Two earlier preparations rejected absolute-path model
 identifiers before inference; original configurations and the rejection receipt
-remain preserved. Gemma epoch plans await its verified saved checkpoints.
+remain preserved. Qwen27's baseline and both saved-epoch generations each complete
+21 fresh native attempts with 21 valid responses, no failures and no reuse.
+Each consumes 106,527 input tokens; baseline/epoch-one/epoch-four output totals
+are 727/896/924. All three Qwen stages are complete. Gemma's baseline also
+completes 21 fresh attempts, with 9 valid and 12 failed responses. Both saved
+Gemma epochs complete 21 fresh attempts each, all valid with no failures or
+reuse. All six stages and all 126 source-bound agent reviews are complete;
+only Gemma's baseline has contract failures. The inference worker stopped. These owned-GB10 calls incur no provider charge.
+
+Source-bound native agent reviews compare each meaning to the complete post,
+selected tree and Bootstrap-v96 rules, with teacher answers as provisional
+references rather than gold. The current assessment is:
+
+| Student and generation | Native valid / 21 | Accept | Reject | Uncertain |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen27 published baseline | 21 | 6 | 14 | 1 |
+| Qwen27 saved epoch 1 | 21 | 15 | 4 | 2 |
+| Qwen27 saved epoch 4 | 21 | 16 | 3 | 2 |
+| Gemma26 published baseline | 9 | 2 | 18 | 1 |
+| Gemma26 saved epoch 1 | 21 | 13 | 4 | 4 |
+| Gemma26 saved epoch 4 | 21 | 14 | 5 | 2 |
+
+Qwen's improvement mainly preserves broad root scope instead of replacing roots
+with their illustrated descendants. Remaining Qwen first-epoch errors include
+inventing PuffPuffPaint's activity or tool identity instead of returning null,
+underspecifying support for the military proposal, and referring to an unnamed
+post inside a meaning that must stand alone. Price availability and an omitted
+location referent remain uncertain. These are agent judgments on 21 entries
+from eight development posts, not independent gold accuracy or final selection.
+Epoch four repairs the Activities root, location reference and standalone
+Kubrick allegation, but adds unsupported pixel-art methods to the invitation.
+Its expanded closure definition leaves the role of the complete reason list
+uncertain. The one-entry acceptance gain is weak selection evidence and does
+not make later training uniformly better. Its median native batch-one request
+takes 13.19 seconds, with 18.70 GiB peak CUDA allocation; this is the current
+worker path on these inputs, not production throughput.
+Native `reviews.jsonl` files bind every judgment to its input/output hashes.
+Baseline/epoch-one `run/results.jsonl` SHA-256 values are
+`99098f4a137c87c0e857e9c707748dd215e0ebd3d5335fc97f4e4242cc294d51` /
+`646c8099402869e8cf610a28e3c3269f5e04ed9f2547d2a9b9421343c79d0a87`;
+their current review hashes are
+`f2af5c2cd4b75b6085de416b51ef6fccb5329646c52edd6d2d56edde1077d2e0` /
+`c40d0010fbff8647d1c57d4d7c889912301fe6199b70aa96f3ebecf633c1a048`.
+Epoch-four result/review SHA-256 values are
+`9330dd293268139cbecae5a5adb49c226e2ace283607ca8b40391b83c78d19b7` /
+`e02c7d17bca3f2126e14924a1401c9136af2837e59a5cea0b5069d47a2af1914`.
+
+Gemma26's baseline failures are saved HTTP-200 model responses rejected by the
+native JSON contract, not missing GPU answers. They return plain definitions,
+strings or raw null rather than the required object. There is no response
+repair or retry. Among all 21 outputs, native agent review accepts 2, rejects
+18 and leaves 1 uncertain; the 12 contract failures are rejected even when
+their underlying meaning or refusal is plausible. Raw null correctly refuses
+PuffPuffPaint's unresolved identity but also incorrectly refuses Activities;
+the valid invitation-to-London output wrongly returns null. Other errors repeat
+the selected label or omit its stated boundaries. The run consumes 107,196
+input / 430 output tokens, with median native batch-one execution of 4.45
+seconds and 47.36 GiB peak CUDA allocation. Shorter outputs and contract failures
+prevent interpreting this as a matched successful-generation speed comparison.
+Baseline result/review hashes are
+`829fcedcb7f87302918f0d0b037e7726988e477bb178166708c64100911bbed3` /
+`4e6c79410edee2deb6b481ed0e5fbe05876200ed72ca17f3fd8a10a30b81b7f2`.
+
+The first three Gemma26 epoch-one requests return valid objects but take
+53.55/45.74/89.63 seconds. The current generation loader keeps adapters
+unmerged. In installed PEFT 0.21, `ParamWrapper._activate_lora` temporarily
+parametrizes packed expert weights; `_LoraFactorsProxy.forward` forms adjusted
+whole expert stacks with `torch.baddbmm` during each model forward. This is a
+possible source of the observed decode overhead, not a profiled causal
+attribution or optimized Gemma speed ceiling. The inspected installed
+`peft/tuners/lora/layer.py` SHA-256 is
+`052d8fbd12774150315a4043ed66ef1648fb5ceabd0cbde3fced8fc718502c1b`.
+Folding fixed expert adapters before inference has not been implemented or
+measured; frozen current evaluations retain their existing loader and settings.
+
+Gemma26 epoch-one generation consumes 107,196 input / 782 output tokens,
+with median native request execution of 59.90 seconds and 49.07 GiB peak CUDA
+allocation. Native source-based agent review accepts 13 meanings, rejects 4
+and leaves 4 uncertain. Clear remaining defects require flag-posting as support,
+assert that the specific town hall was televised, return a non-null restatement
+without defining PuffPuffPaint's process, or refer to an unnamed post in the
+Kubrick definition. Uncertain cases concern price, the U.S. governor boundary,
+an omitted location identifier and the expanded closure reason list. Result/review
+hashes are
+`4eb4d84cc410e27327bff5905a4385667444ffe24625b3652f8606b9197955e5` /
+`fde4f7212917f87185f15d7f0b07fff56136fff327bd5e758042ca588ab348fe`.
+
+Gemma26 epoch-four generation consumes 107,196 input / 910 output tokens,
+with median native request execution of 71.98 seconds and 49.07 GiB peak CUDA
+allocation. It resolves earlier price, governor-country, location-reference and
+closure-list uncertainties, but still requires flag-posting as support, claims
+the town hall was televised, fails the activity refusal and references an
+unnamed post in the Kubrick meaning. It newly attributes a growing movement to
+the London chai transformation. The collective Activities boundary and adding
+the descendant's alleged Kubrick confirmation to the parent belief remain
+uncertain. Native review accepts 14, rejects 5 and leaves 2 uncertain. Result/review
+hashes are
+`3f829b10f40f002e4fe6b2929ac5fd7cbaf6aa585eef1c5e32efdf6308760921` /
+`088b46bdb70da9b7dd60f6bf5399dcc3e01054d980b0d0792c697c93c5760e1d`.
+
+Qwen27 is the stronger Bootstrap candidate for further qualification on this
+provisional panel. Gemma26 learns the output format and trains faster here,
+but supplies no measured quality lead and its unmerged serving path is slower.
+Neither is selected. For Compare, Ettin1B remains the inexpensive candidate and
+Qwen27 the larger quality reference; Kev27 supplies no prediction advantage on
+the current 46-case panel. A broader development evaluation needs all five
+Compare labels, nonidentity equivalence, canonical branches and independent
+posts, alongside reviewed Bootstrap null, factual-state and scope cases. This
+is a recommendation for subsequent qualification, not a new experiment or final
+training decision. Final training volume and student input layout remain open;
+the complete teacher instructions used for these controls repeat substantial
+work per example. Their current fit/request times are not a final-training or
+production-throughput forecast.
+
+No owned fit, verification or generation job remains active. The worktree stays
+because frozen experiment/source bindings and unique checkpoint/receipt artifacts
+use its absolute paths; all completed source changes are locally committed and
+landed on main. Preserved baseline failures and superseded run receipts remain
+ignored artifacts.
+
+The PuffPuffPaint refusal judgment remains provisional: Bootstrap permits
+general knowledge to identify known names. An external name check found
+[an organizer's cannabis/painting event](https://cannatainmentevents.com/trippy-canvas/)
+but did not establish a uniquely identified
+online application or its process for this supplied post. Those general-name
+sources are not additional input facts or replacement teacher targets.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
@@ -120,8 +267,9 @@ The learning report separates optimizer time, loading, teacher-forced evaluation
 and checkpoint phase time. Fresh-process verification checks saved file hashes,
 exact adapter weights through the existing loader, and native scores/loss.
 Teacher-forced loss is a training diagnostic, not semantic meaning accuracy.
-Generated outputs still require native runner receipts and source-bound review
-of topic boundaries, factual state, null decisions and ancestor compatibility.
+Generated outputs have native runner receipts and source-bound agent reviews
+of topic boundaries, factual state, null decisions and ancestor compatibility;
+human qualification remains separate.
 Twenty-five focused CPU tests pass (three explicit CUDA tests skipped) against
 the bound runner snapshot. The native CUDA test exercises both causal NF4 and
 packed-expert NF4 adapters, agrees with complete masked causal loss in the real
@@ -299,8 +447,61 @@ The completed report is `compare-pilot-qwen27b-complete-report-v2.json`, SHA-256
 `cebb21ee2c9b7686e93e577934e0e5a7ff355e06ea5317e8bbd01942b98ea5a2`.
 Source/config/data bindings and all metrics match the preserved training report;
 verification changes only completion, reload status and its process identity.
-Kev27 task results remain pending. Bootstrap's pilot student target is the
-confirmed single `meaning` field, with null allowed.
+Kev27's published baseline matches **40/46**, including **38/44 nonidentity**
+cases and **10/16 containment decisions**. Its first learning run stops after
+115 updates on `nonfinite loss/gradient or zero pilot gradient`, before saving
+a checkpoint. The original report does not distinguish those conditions, so
+it does not establish numerical instability or a learned-model result. The
+preserved report is `compare-pilot-kev27b-failed-report-v1.json`, SHA-256
+`9e4a450b4ff0fbc5d5f80d742076aa024db5128e6d914716b54914c6db703b4e`.
+
+A native production-path regression reproduces an incorrect rejection of a
+confident correct example whose loss and gradient both round to zero. The
+fitter now counts these finite zero-loss updates, retaining rejection of
+nonfinite values and zero gradients with nonzero loss. Rejected updates record
+their case IDs, loss and gradient norm. The regression verifies successful
+training/fresh reload and both retained failure checks in 8.90 seconds. Existing
+native encoder, causal and pointer fit/reload regressions also pass with the
+corrected production code; CPU tests pass ten cases with three CUDA skips.
+The first new guard-test invocation omitted the required stage argument; its
+fixture error is preserved and corrected without another production change.
+The immutable `compare-pilot-native-test-runtime-v5` binds production SHA-256
+`8960c61a60172952eacc20da07b5ed2ab89963b04df87edb27e4b419ea0e6cdd`.
+The independently preserved `compare-pilot-kev27b-v2` run, on byte-identical
+targets and unchanged settings, completes its first **180 updates** with **18
+finite zero-loss/zero-gradient updates**, no reported error and mean TRAIN loss
+**0.2797**. Teacher agreement improves to **44/46**, **42/44 nonidentity** and
+**14/16 containment**. All 46 predictions exactly match Qwen27's epoch-four
+predictions, including the same two `neither` disagreements in the Activities /
+padel-courts family. Kev's first-epoch phase takes **2,979.26 seconds (49.65
+minutes)**, with **23.78 GiB** peak CUDA allocation; loading and baseline
+evaluation precede it. Later epochs and fresh-process reload were pending in
+that first-checkpoint report.
+The original failed run does not retain its exact loss/norm, so that condition
+cannot be retrospectively verified. The preserved first-checkpoint report is
+`compare-pilot-kev27b-epoch1-report-v2.json`, SHA-256
+`808746c9991faba4f426cf0343988f9da12235578fbdc57a253e5a34268d2a08`.
+`compare-targets-v5` retains the same data hash and binds the corrected code;
+the launch receipt is `kev27-learning-recovery-v2.json`. Bootstrap's pilot
+student target remains the confirmed single `meaning` field, null allowed.
+
+Kev27 v2 completes all **720 updates / TRAIN decisions**, including **78 finite
+zero-loss/zero-gradient updates**. Epoch four's mean TRAIN loss is **0.0723**,
+but all 46 evaluation predictions remain exactly unchanged from epoch one and
+equal to Qwen27's epoch-four predictions. Both saved epochs reach **44/46**
+teacher agreement, **42/44 nonidentity** and **14/16 containment**, preserving
+all neither and identity targets. The cumulative phase takes **11,472.52 seconds
+(191.21 minutes)**, with **23.78 GiB** peak CUDA allocation; the 326.73-second
+load and baseline evaluation precede it. Fresh verification PID **2073260**,
+distinct from training PID **1919728**, passes hashes and numerical reloads for
+both epochs. Training metrics, configuration/data/code bindings and checkpoint
+hashes remain unchanged. The complete report is
+`compare-pilot-kev27b-complete-report-v2.json`, SHA-256
+`7a959bb01da4aa76850bd2ec399a7367eb2aa7d1dd5a746718d1a8080d7f2758`;
+the epoch-one, complete-training and failed-v1 reports remain preserved. This
+small shared panel demonstrates no quality advantage over Qwen; it does not
+establish a capacity ceiling or qualify either model for all five labels and
+canonical branches.
 
 The encoder can also be tested with `input_format: "input_json"`: it takes the
 complete original `INPUT_JSON` from the hash-bound native collection, keeping
@@ -319,8 +520,31 @@ native encoder integration pass; that integration fits and separately reloads
 both formats with the same targets and confirms the smaller input. The latter
 took 30.87 seconds while Qwen's pilot was active, so Qwen's eventual elapsed
 phase time is not an isolated throughput benchmark. `compare-targets-v4` is
-byte-identical to v3 and binds the new preparation code. The full input-only
-Ettin pilot is prepared but has not run.
+byte-identical to v3 and binds the new preparation code.
+
+The input-only Ettin fit completes **180 updates / 720 TRAIN decisions** and
+passes fresh-process verification of both saved epochs. Its random head starts
+at 29/46 teacher agreement, which is not published task competence; epoch one
+matches the 28/46 majority control. Epoch four reaches **41/46**, with **40/44
+nonidentity matches**, **12/16 correctly directed containment decisions**, all
+28 neither targets and one of two identity controls. Compared with the full
+state's 42/46, exactly two predictions change: one correct identity becomes
+`local_contains_canonical`, and one already-wrong nonidentity prediction changes
+from `equivalent` to `local_contains_canonical`. The four nonidentity error IDs
+and their match count remain unchanged.
+
+Epoch one's phase takes **90.14 seconds**; the four-epoch cumulative phase
+takes **259.18 seconds (4.32 minutes)**, versus 11.20 minutes with instructions.
+Peak CUDA allocation is **19.27 GiB**, nearly unchanged from 19.29 GiB for full
+state. Mean epoch-four TRAIN loss is 0.3564. Batch-four evaluation takes
+**2.15 seconds for 46 cases**, versus 8.52 seconds for full state; these are
+forward evaluation times with weights already loaded. The 20.85-second model
+load precedes training. Training PID 1870943 and verification PID 1872096 are
+distinct. The complete source-bound report is
+`target/bootstrap-compare-student-v1/compare-pilot-ettin1b-input-json-complete-report-v1.json`,
+SHA-256 `e77d387ea61eb454239eeeaf661aa3769ea5f7054bac19c3cb2ef1b5636a1dfc`.
+One seed and eight evaluation posts do not establish equivalent input-format
+quality or production branch coverage.
 
 Compare input preparation follows qualified, fixed Bootstrap meanings. Keep
 every support post, source entry, producer answer, reciprocal family and branch

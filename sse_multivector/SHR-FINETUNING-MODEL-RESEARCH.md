@@ -2,7 +2,7 @@
 
 ## Bootstrap and Compare selection
 
-Updated October 10, 2026. The authorized goal is one student choice per prompt
+Updated October 11, 2026. The authorized goal is one student choice per prompt
 and verified training readiness before freeze, followed by one planned final
 fine-tune per prompt. **Neither model is selected.** Both prompts are still
 being developed. Earlier SHR results below inform candidate priorities but
@@ -78,7 +78,21 @@ peak CUDA allocation, and includes small overlapping native tests. Its remaining
 two disagreements are one reciprocal Activities versus need for padel courts family.
 Near-zero TRAIN loss with one additional held-out match after epoch one is a
 development learning observation, not proof of a size plateau or a final ranking.
-Kev27 task results remain pending. See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+Kev27's baseline is **40/46**; its first fit stops after 115 updates before a
+saved epoch. A native regression reproduces the fitter rejecting a valid finite
+zero-loss/zero-gradient example. The corrected check retains numerical failure
+checks and records their exact case/loss/norm; its regressions pass. A separate
+run on unchanged examples/settings now completes its first epoch with 18 finite
+zero-loss/zero-gradient updates and **44/46 teacher agreement**, exactly the
+same 46 predictions as Qwen27's fourth epoch. Its first-epoch phase takes
+**49.65 minutes**, with **23.78 GiB** peak allocation. It now completes all 720
+updates, including 78 finite zero-loss/zero-gradient updates, with both saved
+epochs verified in a distinct fresh process. Epoch four preserves exactly the
+same 46 predictions; its cumulative phase takes **191.21 minutes**, with the
+same peak allocation. Mean TRAIN loss falls to 0.0723. This supplies no quality
+advantage over Qwen on this panel, and does not establish a model-size ceiling.
+The original failure's exact values were not saved.
+See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`
@@ -89,16 +103,65 @@ token loss moves from **1.4162 before training**, to **0.9712 after epoch one**
 and **1.2290 after epoch four**; TRAIN loss falls from 0.9177 to 0.1300. The
 cumulative training/evaluation/checkpoint phase takes **158.30 minutes**, with
 **24.99 GiB** peak CUDA allocation. The earlier checkpoint has lower held-out
-loss; both native generation plans are prepared, but generated meaning fidelity
-remains unmeasured. Gemma26 Bootstrap fitting has started. Teacher-forced loss
-and checkpoint verification alone cannot rank generated meaning fidelity. See the
+loss; native baseline and both saved-epoch generations now each return 21/21
+valid responses with no failures or reuse. Source-based agent reviews accept
+6/21 baseline, 15/21 first-epoch and 16/21 fourth-epoch meanings (14/4/3
+rejected, 1/2/2 uncertain). Most of
+the gain preserves broad root scope; unresolved activity identity and standalone
+membership definitions still fail. These provisional judgments on eight posts
+are not gold accuracy. Epoch four repairs some cases and introduces an invented
+pixel-art method in another; its one-entry gain is weak selection evidence.
+Gemma26
+completes the same four passes and both saved epochs
+pass fresh-process verification. Its held-out loss moves from **2.8927**, to
+**1.1682 after epoch one**, and **1.3720 after epoch four**; TRAIN loss falls
+from 1.5005 to 0.3176. Its cumulative phase takes **115.38 minutes**, with
+**52.54 GiB** peak CUDA allocation. Different tokenizers prevent direct
+cross-model loss ranking. Both models' baseline and epoch generation plans are
+prepared and their configuration hashes verified on GB10. Gemma's published
+baseline completes 21 fresh attempts but passes the single-field JSON contract
+on only 9; its 12 plain-text/string/raw-null failures remain preserved without
+repair or retry. Source-based agent review accepts 2/21, rejects 18 and leaves
+1 uncertain, including contract failures in rejection. Raw refusal is appropriate
+for PuffPuffPaint but misplaced for the broad Activities root. Its
+first-epoch generation now passes the JSON contract on all 21 fresh attempts,
+with no failures or reuse. Agent review accepts 13 meanings, rejects 4 and leaves
+4 uncertain. This confirms learned formatting and useful scope definitions,
+while unsupported event state, underdefined activity/refusal and standalone
+meaning defects remain. Median native request execution is 59.90 seconds, with
+49.07 GiB peak CUDA allocation. The unmerged packed-expert adapter path computes
+adjusted whole expert stacks per forward; these measurements do not establish
+optimized Gemma inference cost. Its fourth epoch also returns 21/21 valid fresh
+responses, with 14 accepted, 5 rejected and 2 uncertain agent assessments.
+Median native execution is 71.98 seconds with the same 49.07 GiB peak. It fixes
+price/location and some scope uncertainties but adds an unsupported growing
+movement and retains refusal, factual-state and standalone-meaning defects.
+All five task fits, fresh checkpoint checks, six generation stages and 126
+source-bound reviews are complete. The owned GPU worker and tunnel are stopped.
+Teacher-forced loss and checkpoint verification alone cannot rank generated
+meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
 The full case JSON alone averages 540 evaluation tokens versus 2,149 with the
-teacher instructions, with every supplied case field retained. A tested encoder
-input-only pilot is prepared to measure whether learned decision rules can
-replace that repeated constant text. Quality is not yet measured, and this
-branch-free panel does not predict the reduction for a large canonical branch.
+teacher instructions, with every supplied case field retained. Ettin's completed
+input-only fit reaches **41/46 teacher agreement**, versus 42/46 with instructions;
+both match **40/44 nonidentity cases** and 12/16 containment decisions. The input-only
+fit misses one identity control. Its cumulative phase takes **4.32 minutes**,
+versus 11.20, and batch-four forward evaluation takes **2.15 seconds for 46 cases**,
+versus 8.52. Both checkpoints pass fresh-process verification; peak allocation
+remains almost unchanged at 19.27 GiB. These measured savings and error counts
+support further qualification, not a production input-format decision. This
+branch-free panel does not predict savings or quality for a large canonical branch.
+
+The current research priority is **Qwen27 for further Bootstrap qualification**,
+with Gemma26 retained as an alternative, and **Ettin1B versus Qwen27 for Compare**.
+Kev27 has no measured prediction advantage over Qwen on this panel. These are
+candidate priorities, not selected final students: the development evaluation
+still needs broader independent post coverage, all five Compare labels and
+canonical branches, plus reviewed Bootstrap refusal/state/scope boundaries.
+Training volume and production student input layout remain open. The repeated
+teacher instructions in the current fit controls and Gemma's unmerged adapters
+limit direct cost forecasts for final training or serving.
 
 The [official Qwen3.8 card](https://huggingface.co/Qwen/Qwen3.8-27B)
 describes a post-trained dense 27B hybrid-attention model, native 262,144-token
@@ -128,7 +191,10 @@ fixes the all-linear router inclusion by explicitly excluding router projections
 as required by this loader's existing frozen-router contract. The initial full
 Gemma26 capacity attempt stopped before optimization on that check. The corrected
 run adapts 78.06M parameters at 8,192/13,312 tokens in 27.30/49.80 seconds per
-update, with 54.21/57.65 GiB peak CUDA allocation; fresh-process reload is pending.
+update, with 54.21/57.65 GiB peak CUDA allocation. The saved synthetic checkpoint
+passes fresh-process weight/score reload
+verification, in PID 1482840 distinct from training PID 1445286, and finite
+inference at both lengths.
 This improves its execution evidence, not its measured task quality. The same explicit coverage is not
 implemented for the sparse Qwen candidate. PEFT's
 [LoRA documentation](https://huggingface.co/docs/peft/v0.21.0/package_reference/lora#targeting-nnparameter-directly)

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v112_readings": ["../../target/compare-v112-qualification-v1/core", "../../target/compare-v112-qualification-v1/controls"],
+    "v113_routes": ["../../target/compare-v113-qualification-v1/core", "../../target/compare-v113-qualification-v1/controls"]
+  }
+}

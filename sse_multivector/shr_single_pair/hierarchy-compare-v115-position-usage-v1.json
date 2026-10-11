@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v114_repeat_core": ["../../target/compare-v114-repeat-position-v1/core"],
+    "v114_repeat_controls": ["../../target/compare-v114-repeat-position-v1/controls"],
+    "v115_core": ["../../target/compare-v115-position-v1/core"],
+    "v115_controls": ["../../target/compare-v115-position-v1/controls"]
+  }
+}

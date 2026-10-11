@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v102_core": [
+      "../../target/compare-v102-qualification-v1/core-binding-v1"
+    ],
+    "v102_tool": [
+      "../../target/compare-v102-qualification-v1/tool-binding-v1"
+    ]
+  }
+}

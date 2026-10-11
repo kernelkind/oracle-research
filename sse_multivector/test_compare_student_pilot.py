@@ -126,6 +126,72 @@ class CompareStudentPilotTests(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get('RUN_COMPARE_PILOT_GPU_TESTS') == '1', 'explicit CUDA integration run')
 class CompareStudentPilotGPUIntegrationTests(unittest.TestCase):
+    def test_finite_zero_loss_and_gradient_do_not_abort_a_confident_correct_example(self):
+        import torch
+        from tokenizers import Tokenizer, models, pre_tokenizers
+        from transformers import ModernBertConfig, ModernBertForSequenceClassification, PreTrainedTokenizerFast
+        from sse_multivector.distillation_run import write_json, read_json
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            backend = Tokenizer(models.WordLevel({'<pad>': 0, '<unk>': 1, 'Plants': 2}, unk_token='<unk>'))
+            backend.pre_tokenizer = pre_tokenizers.WhitespaceSplit()
+            tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend, pad_token='<pad>', unk_token='<unk>')
+            tokenizer.save_pretrained(root/'base')
+            model = ModernBertForSequenceClassification(ModernBertConfig(vocab_size=3,
+                hidden_size=32, intermediate_size=64, num_hidden_layers=2, num_attention_heads=4,
+                max_position_embeddings=256, num_labels=5, pad_token_id=0,
+                bos_token_id=2, eos_token_id=2, cls_token_id=2, sep_token_id=2))
+            with torch.no_grad():
+                model.classifier.weight.zero_()
+                model.classifier.bias.zero_()
+                model.classifier.bias[0] = 1000.
+            model.save_pretrained(root/'base')
+            self.targets(root)
+            write_json(root/'config.json', dict(model=str(root/'base'), revision='a'*40,
+                max_length=256, epochs=[1, 2], batch_size=1, learning_rate=.001, seed=17,
+                memory_budget_gib=8, reserve_gib=8))
+            command = [sys.executable, '-m', 'sse_multivector.compare_student_pilot', 'train',
+                '--config', str(root/'config.json'), '--data', str(root/'data'), '--output', str(root/'fit')]
+            for stage in ('train', 'verify'):
+                result = subprocess.run(command+['--stage', stage], text=True, capture_output=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+            report = read_json(root/'fit/report.json')
+            self.assertTrue(report['complete'])
+            self.assertEqual(report['updates'], 2)
+            self.assertEqual(report['zero_loss_updates'], 2)
+            self.assertTrue(all(c['mean_epoch_loss'] == 0. and c['reload_matches']
+                                for c in report['checkpoints']))
+            from unittest.mock import patch
+            from sse_multivector import compare_student_pilot as pilot
+            original = ModernBertForSequenceClassification.from_pretrained
+            for failure in ('nonfinite_gradient', 'zero_gradient_with_nonzero_loss'):
+                with self.subTest(failure=failure):
+                    if failure == 'zero_gradient_with_nonzero_loss':
+                        with torch.no_grad():
+                            model.classifier.bias.zero_()
+                        model.save_pretrained(root/'base')
+
+                    def load_with_invalid_gradient(*args, **kwargs):
+                        loaded = original(*args, **kwargs)
+                        for parameter in loaded.parameters():
+                            parameter.register_hook(lambda gradient: torch.full_like(
+                                gradient, float('nan') if failure == 'nonfinite_gradient' else 0.))
+                        return loaded
+
+                    output = root/failure
+                    with patch.object(ModernBertForSequenceClassification, 'from_pretrained',
+                                      side_effect=load_with_invalid_gradient):
+                        with self.assertRaisesRegex(ValueError, 'nonfinite loss/gradient or zero gradient'):
+                            pilot.train(root/'config.json', root/'data', output, 'train')
+                    failed = read_json(output/'report.json')
+                    self.assertFalse(failed['complete'])
+                    self.assertEqual(failed['updates'], 0)
+                    self.assertEqual(failed['failed_update']['case_ids'], ['train-fixture'])
+                    self.assertEqual(failed['failed_update']['gradient_norm'],
+                                     'nan' if failure == 'nonfinite_gradient' else 0.)
+                    if failure == 'zero_gradient_with_nonzero_loss':
+                        self.assertGreater(failed['failed_update']['loss'], 0.)
+
     def test_native_option_and_pointer_fits_reload_their_real_adapters_and_head(self):
         import torch
         from tokenizers.pre_tokenizers import ByteLevel

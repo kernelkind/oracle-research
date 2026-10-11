@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v104_stock_repeats": [
+      "../../target/bootstrap-v109-scope-preservation-v1/stock-baseline-draw2",
+      "../../target/bootstrap-v109-scope-preservation-v1/stock-baseline-draw3"
+    ],
+    "v109_stock_repeats": [
+      "../../target/bootstrap-v109-scope-preservation-v1/stock-candidate-draw2",
+      "../../target/bootstrap-v109-scope-preservation-v1/stock-candidate-draw3"
+    ]
+  }
+}

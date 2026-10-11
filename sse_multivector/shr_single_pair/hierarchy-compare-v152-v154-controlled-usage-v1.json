@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v153_core": ["../../target/compare-v153-information-connection-gate-v1/core"],
+    "v153_controls": ["../../target/compare-v153-information-connection-gate-v1/controls"],
+    "v154_core": ["../../target/compare-v154-all-restrictions-gate-v1/core"],
+    "v154_controls": ["../../target/compare-v154-all-restrictions-gate-v1/controls"],
+    "v152_repeat_core": ["../../target/compare-v152-full-gate-repeat-v1/core"],
+    "v152_repeat_controls": ["../../target/compare-v152-full-gate-repeat-v1/controls"]
+  }
+}
