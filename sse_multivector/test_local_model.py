@@ -38,7 +38,7 @@ class LocalModelTests(unittest.TestCase):
         spec = {'schema_version': 1, 'prompt': {'id': 'fixture-v1', 'path': 'prompt.txt'},
             'dataset': {'adapter': 'generic', 'path': 'cases.json'}, 'runner': {
                 'provider': 'local', 'transport': 'http', 'auth_file': None,
-                'model': 'fixture/immutable', 'reasoning_effort': 'off', 'concurrency': 1,
+                'model': 'fixture/immutable', 'reasoning_effort': 'off',
                 'runner_binary': str(Path(__file__).with_name('run-local-model.sh')),
                 'max_output_tokens': 128, 'timeout_seconds': 5,
                 'output_schema': {'type': 'object', 'additionalProperties': False,
@@ -128,6 +128,34 @@ class LocalModelTests(unittest.TestCase):
                     'http://127.0.0.1:1234/path']:
             with self.assertRaises(ValueError):
                 endpoint(url)
+
+    def test_read_only_admission_reports_fixed_capacity_for_normalized_endpoint(self):
+        worker = Path(__file__).with_name('run-local-model.sh')
+        def metadata(url):
+            result = subprocess.run([str(worker), 'admission'],
+                env={**self.environment, 'LOCAL_MODEL_URL': url}, text=True,
+                capture_output=True, timeout=5)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertNotIn(url, result.stdout)
+            return json.loads(result.stdout)
+        url = self.environment['LOCAL_MODEL_URL']
+        first = metadata(url)
+        self.assertEqual(first['capacity'], 1)
+        self.assertEqual(set(first), {'scope', 'capacity'})
+        self.assertRegex(first['scope'], '^[a-f0-9]{64}$')
+        self.assertEqual(metadata(url + '/'), first)
+        self.assertEqual(metadata(f'http://127.0.0.1:0{self.server.server_port}'), first)
+        self.assertNotEqual(metadata('http://127.0.0.1:1234')['scope'], first['scope'])
+        for alias in ['localhost', '127.1', '127.000.000.001']:
+            invalid = subprocess.run([str(worker), 'admission'],
+                env={**self.environment, 'LOCAL_MODEL_URL': f'http://{alias}:{self.server.server_port}'},
+                text=True, capture_output=True, timeout=5)
+            self.assertNotEqual(invalid.returncode, 0)
+            self.assertIn('explicit HTTP loopback', invalid.stderr)
+        identity = subprocess.run([str(worker), '--identity'], env=self.environment,
+            text=True, capture_output=True, check=True, timeout=5)
+        self.assertIs(json.loads(identity.stdout)['endpoint_admission'], True)
+        self.assertEqual(self.received, [])
 
 
 if __name__ == '__main__':
