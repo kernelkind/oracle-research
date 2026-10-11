@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v15
+# Hierarchy selection by traversal — draft v16
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -304,7 +304,7 @@ adds no separate semantic-review prompt or exhaustive comparison pass. Required
 relationships can reuse exact answers and the same transitive inferences as
 ordinary traversal.
 
-## Proposed eligibility and original-parent rules
+## Agreed same-note eligibility
 
 **A canonical node sharing the incoming local node's source note remains
 eligible for normal traversal.**
@@ -318,8 +318,13 @@ supporting entries has the incoming note's ID.
 
 Suppose a canonical node is supported by N001 and N063, and the incoming
 local node comes from N063. The current filter excludes that canonical node
-unless it is the incoming node's mapped original parent. This proposal lets
+unless it is the incoming node's mapped original parent. The approved rule lets
 normal traversal establish their relationship instead.
+
+Removal of the exclusion is approved draft design, not an implemented change.
+Its API cost and hierarchy effects have not been measured.
+
+## Proposed original-parent handling
 
 **Retain the original-parent placement requirement, accepting a relationship
 established by normal traversal or valid inference.**
@@ -336,16 +341,14 @@ unchecked, hold the incoming local node and preserve the graph. A local root
 has no mapped-parent requirement. Synthetic proposals retain their separately
 agreed target-parent and nominated-child checks.
 
-These eligibility and original-parent rules are proposals awaiting review.
-They change neither a supplied meaning nor a returned comparison label.
-Removing the exclusion may increase comparisons for some nodes; its API cost
-and hierarchy effects have not been measured.
+This original-parent handling remains a proposal awaiting review. It changes
+neither a supplied meaning nor a returned comparison label.
 
 ## Proposed walk
 
 The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
-policy and consolidation rules above are agreed. The walk below combines them;
-the eligibility decisions listed below remain open.
+policy, same-note eligibility and consolidation rules above are agreed. The
+walk below combines them; original-parent handling remains open.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
@@ -392,7 +395,7 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Whether to adopt the proposed eligibility and original-parent rules above.
+- Whether to adopt the proposed original-parent handling above.
 
 ## Current implementation
 
@@ -410,8 +413,9 @@ its relationship. The draft's top-to-bottom order adds that dependency rule.
 supporting entry from the incoming note, except its mapped original parent.
 The graph selector requires that parent to be directly compared even when a
 relationship is inferred or ordinary traversal would not reach it. Placement
-requires a containing or equivalent answer. The proposed rules remove the
-same-note filter and forced comparison while retaining the required parent fit.
+requires a containing or equivalent answer. The approved draft removes the
+same-note filter. The original-parent proposal removes the forced comparison
+while retaining the required parent fit.
 
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
