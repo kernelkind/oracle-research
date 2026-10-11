@@ -354,8 +354,11 @@ counts; save observations locally without opening test content.
 
 ## 5. Score and compare — locally, after the rental
 
-Measure output reliability mechanically. The agreed semantic review uses
-**GPT-6.1 Sol / xhigh** through the existing subscription transport. Review
+Measure output reliability mechanically. Current semantic review defaults use
+**GPT-6.1 Sol / xhigh** through the existing subscription transport. The
+[approved eight-hour direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11)
+qualifies matching/support at xhigh and relationship checks at high separately;
+it does not yet change deployed defaults. Review
 findings for each note and model version refer to the complete post, frozen
 ASv6.100, trusted teacher answer, candidate hierarchy and mechanical exact
 subject matches. Model/checkpoint identities stay outside semantic requests.
@@ -528,14 +531,42 @@ minimum reasoning effort remain open; the sixty remain the final validation.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
-mechanical rules and schemas remain fixed. The completed ten-note run retains
-its frozen concurrency of 16; the current shared runner uses automatic queue
-admission for future dispatch. Lower-effort qualification remains pending. Native
+implemented mechanical rules and schemas remain fixed. The completed ten-note
+run retains its frozen concurrency of 16; the current shared runner uses automatic
+queue admission for future dispatch. Lower-effort qualification remains pending. Native
 selected preparations shrink the
 case plan and subsequent reports while retaining full production inputs and
 baseline receipts. Audit explanations as well as decisions; keep ambiguities
 explicit and disclose development exposure. This is separate from the sealed
 pilot test split. See the [process and prepared reference](../../sse_multivector/distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
+
+**Eight-hour direction approved October 11:** retain all **1,800 validation
+outputs**, all three semantic checks and required-meaning coverage at every
+compatible subject occurrence. Model generation must fit within **eight hours**,
+assuming resolved backoff and at most 30 concurrent requests. The six-hour
+model-work target leaves two hours of headroom; it is not a measured forecast.
+The final fifty random plus ten challenge answers and accepted maximum
+two-percentage-point correctness loss remain unchanged.
+The user approves **DCSv1** wording for a four-note xhigh trial: search uncovered student subjects
+for one compatible placement of an already-matched required teacher meaning,
+then verify any positive witness with the existing relationship check. A
+negative search must establish that every supplied candidate is incompatible.
+Its numbered evidence must account for every candidate; candidate membership
+does not certify the semantic reasons. Test the new search at xhigh first,
+against independently audited pair evidence on four existing notes, keeping
+that comparison separate from high qualification for single-pair DSLv10.
+Retain actual-edge judgments and matched-subject consistency checks. Separately
+qualify high for relationships and reuse of positive semantic premises for
+support/relationship judgments, retaining model-dependent provenance. Do not
+propagate negative support verdicts. The
+[four-note xhigh DCSv1 trial](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+finishes ten fresh searches and four eligible warmups in approximately 75
+seconds. Three full-output audits accept nine negatives and one missing-placement
+witness; unchanged DSLv10 verifies the witness through exact-input reuse with
+zero new calls. The small, development-exposed panel has only one positive
+case. Generalization, remaining required-meaning contexts and the full runtime
+remain open; production stays DSLv2. See the
+[evidence and qualification direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11).
 
 **Mechanical decisions approved October 9:** all three checks use mechanical
 results wherever trusted inputs settle the question. An exact teacher subject
@@ -569,7 +600,8 @@ leaving 36,838 semantic occurrences and 9,820 distinct input questions per check
 Relationships settle 1,841 of 33,817 occurrences, leaving 31,976 semantic
 occurrences and 16,670 distinct inputs. The total is 36,310 distinct remaining
 questions under fixed prompts/settings, before saved-answer reuse, warmups and
-retries. The [native report and method](../../sse_multivector/distillation-review-v1/README.md#complete-validation-workload-preview-october-9)
+retries. This historical count excludes coverage-placement comparisons and is
+not the complete-evaluation workload. The [native report and method](../../sse_multivector/distillation-review-v1/README.md#complete-validation-workload-preview-october-9)
 retain per-note/version/model denominators. Mixed reference identity headers are
 checked before decoding only evaluation content; reserved files and checkpoint
 weights are not opened. This counts work without preparing reviewer requests,
@@ -585,8 +617,10 @@ The 59 current-prompt verdicts project 15.050 million output tokens, including
 reasoning once, and 15.34 hours with eight continuously occupied slots. Small
 selected samples, mixed message roles and partial slot occupancy prevent treating
 this as measured batch wall time; warmups, throttling, retries and review work
-are additional. Current automatic template prefixes are below the caching
-threshold; separate natural-prefix opportunities promise no hits and adopt no
+are additional. This historical estimate excludes coverage-placement questions
+and does not estimate the complete evaluation. Current automatic template
+prefixes are below the caching threshold; separate natural-prefix opportunities
+promise no hits and adopt no
 cache change. This adds no inference, scoring, qualification or A21 adjudication.
 
 **Coverage-matching qualification scope agreed October 8:** target required

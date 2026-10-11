@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "a_first_fresh": [
+      "../../target/compare-v179-matched-input-order-v1/a-first-01",
+      "../../target/compare-v179-matched-input-order-v1/a-first-02"
+    ],
+    "b_first_fresh": [
+      "../../target/compare-v179-matched-input-order-v1/b-first-01",
+      "../../target/compare-v179-matched-input-order-v1/b-first-02"
+    ]
+  }
+}

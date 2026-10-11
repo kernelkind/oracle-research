@@ -3261,3 +3261,320 @@ occurred. Forty-two production-path prompt-revision and current-main traversal
 and graph-search tests passed after the routine main merge; the merge retained
 main's code-file registrations. JSON, link and diff checks cover the prompt
 and reusable preparation sources separately from semantic qualification.
+
+### Coffee-reference interpretation-choice ablation: predeclared check
+
+The user authorized testing whether the category-choice instruction overrides
+preserving unknown facts about particular people, things and events.
+Experimental Bootstrap-v112 replaces only the first sentence of v109's
+interpretation-choice paragraph with:
+
+> Resolve competing senses or defining boundaries by choosing a supported
+> interpretation that preserves the subject's level of abstraction and
+> expressed restrictions. If choosing an interpretation would require deciding
+> an unknown fact about a particular person, thing or event, leave that
+> ambiguity unresolved.
+
+This changes when the choice instruction applies, without changing its
+surrounding instructions or examples. It tests a wording interaction; it does
+not establish a model mechanism. V104 remains approved. V109, v111 and v112
+remain experimental, and v112 is derived from unchanged v109 rather than
+accumulating the previous unproven v111 change.
+
+Prepare fresh matched v109/v112 draws from the unchanged four-case
+[source collection](hierarchy-bootstrap-coffee-reference-ablation-v1.json),
+using the shared runner, Sol 6.1 medium and automatic caching. Preserve the
+original ASv6.100 tree and exact inputs. The three edited posts remain
+synthetic controls whose tree was generated for the original post. In
+particular, the coffee-shop-visit control changes both the hashtag and what is
+called weird; it cannot isolate hashtag removal.
+
+Evaluate the difference between defining a business sense and establishing
+that this particular post refers to such a business. Another plausible sense
+alone does not require null, and the user's original uncertainty does not
+prescribe null gold. Preserve the explicit-business positive and inspect
+whether a final meaning adds unsupported facts or preserves uncertainty.
+Returning null merely because another reading is possible is not a repair.
+If the original materially changes, repeat that case freshly under both
+unchanged conditions before recommending a prompt change. One first draw per
+control is a limited check, not a reliability estimate.
+
+Targets are `target/bootstrap-coffee-choice-ablation-v1/v109` and `v112`.
+Each first run admits at most six new attempts; conditional original repeats
+admit at most three per condition, for at most eighteen total attempts in this
+diagnostic. All warmups, retries and failures count against the persistent
+shared counter. Independent reviewers examine outputs and provenance. No
+Compare calls, hierarchy build or prompt activation belongs to this check.
+
+#### Completed interpretation-choice first draw
+
+Both conditions produced four valid fresh meanings. Independent blinded review
+finds no demonstrated improvement or regression. The original remains agent
+uncertain in both conditions; each synthetic control has a qualified agent
+accept in both. All eight reviews are saved through native `review`, separately
+from the user's historical uncertainty. No new user judgment was inferred.
+
+| Case | Fresh v109 | Fresh v112 |
+|---|---|---|
+| Original ambiguous hashtag | Business meaning; agent uncertain | Business meaning; agent uncertain |
+| Synthetic coffee-shop visit | Null; qualified accept | Null; qualified accept |
+| Synthetic explicit business evidence | Supported particular business; qualified accept | Supported particular business; qualified accept |
+| Synthetic hashtag clarification | Null; qualified accept | Null; qualified accept |
+
+The original v109 meaning is:
+
+> A coffee chain—a business operating multiple coffee shops under a shared
+> brand—characterized by the author as weird on the day of the post.
+
+The original v112 meaning is:
+
+> The coffee-shop chain—a business operating multiple coffee shops—referred
+> to by #coffeechain and characterized by the author as weird on the day of
+> the post.
+
+V112 makes particular identity more explicit, but v109's resolutions already
+required the particular chain. Neither settles business reference versus
+coffee-topic-tag use. This establishes neither a factual falsehood nor required
+null, and neither original meaning asserts venue-chain affiliation or a business
+name. Quotes match their supplied posts and diagnostics align with final
+meanings. The predeclared material-change trigger was not met; no repeats ran.
+
+The original-case receipts are respectively
+`0fe984d19c25210cd55deea0cc4eb1198009f15c8dc1f7a1a1a77696755594da`
+and `c53042771a05fd2b51c4f2df0dbbaf29f10a37f37f852f8d28f06561f874244e`,
+bound to each condition's `run/results.jsonl`. Independent integrity review
+verified all eight definition receipts and both warmup receipts through the
+shared production digest, including raw/parsed outputs and request hashes.
+All paired model-facing inputs, executable bindings, schema, worker and medium
+reasoning settings match. The candidate's four frozen baseline copies match
+the fresh v109 outputs and receipts exactly. The single-sentence replacement
+and source ASv6.100 provenance were verified separately; source and synthetic
+qualifications remain unchanged.
+
+The [native accounting source](hierarchy-bootstrap-coffee-choice-ablation-usage-v1.json)
+produces `target/bootstrap-coffee-choice-ablation-v1/usage-native-v1.json`:
+**ten fresh attempts**, eight valid definitions and two warmups, zero reuses,
+retries, failures, invalid receipts or unfinished cases. Complete native
+API-equivalent cost is **$0.0741512**: $0.0279388 for v109 and $0.0462124 for
+v112. Reasoning is already included in output. Definition cache hits are
+four of four for v109 and three of four for v112; this is not a uniform-cache
+cost comparison or evidence of a semantic quality difference. The persistent
+shared attempt counter was preserved. Nine production-path prompt-revision
+tests and exact revision/input/JSON/diff checks passed.
+
+This one-draw panel does not identify a uniquely responsible instruction or
+prove the choice rule irrelevant. Together with the earlier opening-sentence
+test, it supplies no demonstrated repair of the unresolved Coffee assignment.
+V112 remains experimental, with no adoption recommendation; v104 remains
+approved. Further wording changes should target a demonstrated evidence conflict
+rather than treat this unresolved reading as predetermined failure gold.
+
+### Saved v109 whole-branch evidence recheck
+
+After the two Coffee wording diagnostics found no demonstrated repair, the user
+authorized returning to whole-branch tests focused on definite evidence
+conflicts. Three independent reviewers re-examined the unchanged complete v109
+cohort in `target/bootstrap-v109-scope-preservation-v1/candidate`. Native `show`
+exported it to `target/bootstrap-v109-whole-branch-evidence-review-v1/native.json`.
+This is a saved-output recheck, not a new teacher draw or an unseen benchmark.
+No prompt, schema, producer input, output, receipt or native review was changed.
+
+The [existing complete-branch collection](hierarchy-bootstrap-asv6.100-complete-branches-v1.json)
+contains 115 entries from 17 complete original trees and 13 distinct posts.
+The three source corpus/provenance hashes match their recorded bindings, and
+all four producer experiments' prompt IDs and exact template bytes match the
+recorded approved ASv6.100 hash. Synthetic posts remain explicitly identified
+as synthetic. All 115 Bootstrap receipts match their original native
+records; all 265 evidence quotations occur verbatim in the supplied posts.
+Every original entry has one independently fixed meaning, and every selected
+root tree has complete coverage. Model inputs contain only the original post,
+original tree and selected pointer, with no historical judgments or generated
+ancestor definitions.
+
+| Review partition | Trees | Meanings | Immediate links | Ancestor checks |
+|---|---:|---:|---:|---:|
+| Food / risotto | 1 | 36 | 35 | 176 |
+| Cooking, preservation, storage and planned/served controls | 8 | 45 | 37 | 71 |
+| Bread, Rosemary, Mental states, Jesús, Rome, Coffee, Amusement and metal handles | 8 | 34 | 26 | 53 |
+| Total | 17 | 115 | 98 | 300 |
+
+The 98 immediate links are included in the 300 ancestor checks; these are
+dependent fixed-endpoint assessments, not 398 independent observations or model
+comparisons. Reviewers ignored historical assessments initially and examined
+each selected subject using its own context, complete tree and post. The
+coordinator verified coverage and inspected consequential endpoint definitions.
+Later user approvals of different Food/Risotto draws were not transferred to
+these saved outputs.
+
+No new definite evidence contradiction, lost named alternative, or incompatible
+explicit role/state/process boundary was established. Planned canning and
+storage remain planned; expected yields remain estimates. Broad categories do
+not collapse to their illustrated members. The known Coffee-child assignment
+remains uncertain at its original user-bound receipt; the recheck does not
+prescribe null or transfer that judgment to another draw. Existing individual
+native reviews and their history remain unchanged.
+
+#### Retained fixed-meaning relationship diagnostics
+
+These cases remain useful regressions for the common containment convention.
+Their individual definitions are supported; that does not certify their
+relationships. Do not broaden a parent, delete part of a child, or choose a
+different definition while checking a link.
+
+- **Complete ingredient collection beneath one ingredient.** Fifteen immediate
+  relationships have this form. The Shrimp parent is "Shrimp as a food ingredient
+  in mushroom risotto with shrimp: shrimp serving as a component of a risotto
+  dish containing mushrooms and shrimp." The child retains all fifteen named
+  ingredients together. It is information necessarily concerning shrimp in
+  that role, but is not physically a shrimp. Whole-topic containment requires
+  one consistent convention, rather than switching between information and
+  physical-kind membership.
+- **Complete cookware collection beneath one constituent item.** The metal
+  handle definitions preserve both cookware items and the steel-or-brass
+  alternatives. A collection's information relationship to its constituent
+  does not justify erasing the other item or the other material.
+- **Complete warning list beneath its workout-plan component.** The Rome
+  branch retains all three warning-list items and the proverb reference. Its
+  relationship to the component is likewise an information-topic question,
+  not permission to delete the food or people components.
+- **Food storage and explicitly planned pantry storage.** The parent says
+  "Food storage is keeping food in a place or container for later use, including
+  but not limited to pantry storage." The child explicitly describes the
+  author's intended placement and keeping of today's stock batch. The parent
+  does not expressly require an already completed storage episode; adding that
+  requirement would manufacture a conflict. Whether the topic covers plans
+  must follow the same convention used for other activity topics.
+- **Stock Cooking and later planned handling of its batch.** The Cooking root
+  defines applying heat to food or ingredients. The descendant defines planned
+  pantry storage of the identified stock batch. Both preserve supported facts;
+  whether the entire later-handling topic is contained by the production topic
+  is unresolved comparison scope, not a demonstrated claim that storage occurred.
+
+Exact retained endpoints, all in the same native v109 experiment:
+
+| Endpoint | Case ID suffix after `bootstrap-` | Record SHA-256 |
+|---|---|---|
+| Shrimp ingredient | `7f1f344745caf68fd75dd332ff959c80c98f4c8b6f558e4702ebb973eb5b3e21` | `5417e6cfd457d67a7d59d7082ce88a2599f4a1b9d8c8ef4c7538ee407eefb78e` |
+| Its complete ingredient collection | `fce575812893a49dc58c09ef7f310ef66728f46a80475b4045b551e97cdb8e0e` | `cf95678a919e572619b5a911987931a21d7c6134ecb8e04a529298b1bbe23c84` |
+| Food storage | `5011944235c2986dcd05715c3a4585dda652567200c7d7dcd27c077c376ce13b` | `1db77185177402967412b5f0327a0240ac27fd35f34f97939234363299f0c3fc` |
+| Planned pantry storage beneath Food storage | `b314c715b2878b7010c8e919f524845eb5dce70a7a46709c0ced4c538da396eb` | `0f05ed32eb9e920e05d139224e63933b47ba533225267d0839581c4c4855bb65` |
+| Stock Cooking | `08fa4fbc12d593658267ee4143c64665ceab7b3a1b6edea8bfd7296e22c094de` | `9501020aeae3cdd15136371123a987b76d0c4168712c98d4873ae8cedc8c8000` |
+| Planned pantry handling beneath stock Cooking | `b5f85981185f3f2c69193c2416ba3a33b28ec4ef0f6203a5602a24d2c20e2404` | `37473aad8bf6610cfd57d8a00bbc1864aefed787e218895ff66893a849bfa472` |
+
+Food's culinary sense is locally supported. Omitting the word human in a
+descendant does not alone admit animal-feed cases, and a stricter interpretation
+cannot be applied only to a shortcut after accepting its connecting chain.
+Jesús's ASv6.100 tree has no Music ancestor, so this local recheck does not
+certify a Music relationship or settle whole-person versus musician-role scope.
+
+This stage dispatched **zero new teacher attempts**. All 115 outputs are saved
+answers rather than fresh or newly reused execution results. It establishes
+no wording effect, fresh-draw stability estimate, semantic gold, or complete
+branch certification. It supplies no justification for another Bootstrap edit.
+V104 remains approved and v109 experimental. The next useful work is to settle
+the retained relationship diagnostics with the Compare owner using these exact
+fixed meanings; no Compare calls, external message or hierarchy build began.
+
+### Bootstrap-v109 low-reasoning screen
+
+The user requested a low-reasoning Bootstrap test. Native `prepare --from`
+preserved the saved v109 complete-branch experiment's 115 cases, exact inputs,
+rendered prompts, schema, source bindings and cache prefix. Only the runner's
+reasoning effort changed from medium to low; the model stayed GPT-6.1 Sol.
+The main shared runner executed
+`target/bootstrap-v109-low-reasoning-v1/low` with automatic SSE caching and the
+existing persistent 20,000-attempt counter. No prompt, Compare input, hierarchy,
+native semantic review or UI changed. V104 remains approved; v109 remains
+experimental, and low has not been adopted.
+
+All 115 final outputs are valid and non-null. An independent integrity review
+verified every receipt and all 264 post quotations. All original subject data
+has the same verified ASv6.100 provenance as the saved medium cohort. Recorded
+provider HTTP requests match medium exactly after normalizing reasoning effort.
+Historical worker/wrapper implementations differ, although request-producing
+code identity and observed request contents agree. The first screen is a
+current low draw against historical medium, not a matched-runtime latency trial.
+
+Three independent reviewers assessed candidate meanings from the original post
+and complete tree before comparing medium. They covered all 17 trees and 300
+dependent ancestor checks, including 98 immediate links. No definite fabricated
+fact or lost named alternative was established. Supported category choices did
+not fail merely for differing from medium; Coffee assignment uncertainty and
+collection/activity containment qualifications remain unresolved.
+
+Three low meanings have material boundary concerns:
+
+- Rocket Cooking defines applying heat, then calls stove-lighting a preparatory
+  action "associated with cooking." Its resolution repeats that wording without
+  settling whether preparation belongs within the topic. Medium explicitly
+  includes preparation. This is unresolved coverage, not a certified exclusion
+  of the independently defined stove-lighting child.
+- Two stock compound plans, selected `5.1.1.3.1` and `6.1.1.1`, replace the named
+  pressure-canning process with "processing it in sealed containers under
+  pressure." Neither final meaning nor resolution explicitly retains required
+  heat. For `6.1.1.1`, the independently defined pressure-canning ancestors
+  explicitly require heat. This is a material process-boundary concern, not
+  factual proof of an unheated episode or a negative Compare label.
+
+#### Fresh matched confirmation
+
+Four cases were selected after review: the three concerns and stock `8.1.1`,
+which retained the pressure-canning name while leaving heat implicit in its
+process description. Native `--only` and `--repeat` prepared
+`low-repeat` and `medium-repeat` under the same target. Both freeze identical
+current worker, wrapper, project code, prompt, input, schema and cache bindings.
+All eight fresh definitions and two warmup receipts validate; their four
+provider request pairs differ only in reasoning effort. There are zero reuses.
+
+Both low Cooking draws leave preparatory coverage "associated" rather than
+explicitly included or excluded; both medium draws explicitly include it.
+The two process substitutions did not repeat: fresh low now expressly retains
+heating/thermal processing. The additional low control keeps "canning it under
+pressure" rather than substituting an unrelated process; omission of the word
+heat alone does not establish a changed category. These adaptive single draws
+identify a recurring writing concern, not its general frequency or proof that
+all medium meanings are stable.
+
+The independently frozen first-draw endpoints and all repeat outputs remain
+in the native experiments. Case IDs, selected numbers and record hashes are
+available through `show`; historical outputs and assessments were not rewritten.
+
+#### Execution and cost
+
+| Stage | Valid definitions | New attempts | Warmups | Failed attempts |
+|---|---:|---:|---:|---:|
+| Full low cohort | 115 | 119 | 2 | 2 |
+| Fresh low subset | 4 | 5 | 1 | 0 |
+| Fresh medium subset | 4 | 6 | 1 | 1 |
+| This task | 123 | 130 | 4 | 3 |
+
+All three provider failures recovered through native bounded retries. The
+counter advanced from 18,987 to 19,117 without reset; no cross-run answers were
+reused. The full low run's initial cap exhausted after recovery, requiring a
+native resume that also warmed again. Failed partial outputs were never scored
+as meanings or semantic negatives.
+
+The [native accounting source](hierarchy-bootstrap-v109-low-reasoning-usage-v1.json)
+produces `target/bootstrap-v109-low-reasoning-v1/usage-native-v2.json`. Native
+artifacts and source-relative accounting remain in the retained
+`oracle-mvp-shr-pair-correctness-v1` worktree. The full low run records 52,206
+output tokens, including 2,117 reasoning tokens, versus
+65,302/11,303 in saved medium. Those are known subtotals: two low failed attempts
+lack usage, so complete low cost and total savings are unknown. Known
+API-equivalent subtotals are $0.9025492 for full low, $0.02939 for the fresh low
+subset, and $0.03589 for fresh medium; medium's failed retry also lacks usage.
+Saved full medium cost is $1.0427496. These estimates are not subscription
+charges, and reasoning is already included in output.
+
+Successful-case median elapsed time was 13.34 seconds for full low versus
+14.04 for saved medium. The historical runtime and backend load differ, so
+this does not establish a causal speedup. The matched subset is deliberately
+small and adaptively selected, not a performance benchmark. Integrity, source,
+native accounting and documentation checks passed; no production behavior or
+prompt changed, so no new implementation tests were required.
+
+Recommendation: retain medium pending resolution of preparatory coverage and
+further matched confirmation. Lower reasoning substantially reduces recorded
+reasoning tokens, but this panel does not demonstrate a material latency gain
+or equally explicit category boundaries. No further calls or prompt changes
+are implied by that recommendation.

@@ -1,23 +1,30 @@
 """Native, resumable construction using the approved traversal-v24 policy.
 
-Preparation and advancement are offline. Run the returned experiments through
-the shared runner; it owns request admission, caching, retries and accounting.
+Preparation and advancement are offline. The run command executes their loop
+through the shared runner, which owns admission, caching, retries and accounting.
 Three local searches may overlap; graph changes are serialized and guarded.
 """
 from collections import deque
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from contextvars import copy_context
 from copy import deepcopy
 from graphlib import TopologicalSorter
 from pathlib import Path
 import json
+import fcntl
+import sys
 
 from . import canonical_trial as trial
 from . import experiment as workflow
 from .canonical_graph_search import GraphSearch, RELATIONS
-from .hierarchy_node_pairs import project_fixed_meanings
+from .hierarchy_node_pairs import project_fixed_meanings, project_symmetric_fixed_meanings, validate
 from .canonical_receipts import _failure_receipts, _producer_hold
 
 
 POLICY = 'traversal-v24'
+_CODE_FILES = ('canonical_traversal.py', 'canonical_graph_search.py', 'canonical_trial.py',
+               'hierarchy_node_pairs.py', 'canonical_receipts.py', 'experiment_inputs.py',
+               'experiment_extension.py')
 
 
 def validate_consolidation(raw, payload):
@@ -114,18 +121,26 @@ def _experiment(directory, state, role, spec, source, *, adapter='generic', loca
 
 def _collect(state):
     """Validate native receipts on every advancement, including saved answers."""
+    from experiment_runner.scheduling import snapshot
     for record in state['experiments']:
+        if 'answers' not in record:
+            _, config, _ = workflow.load(record['experiment'])
+            if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
+                # A failed attempt may still be awaiting its native provider retry.
+                continue
         cases = workflow.report(record['experiment'], include_request_preview=False)['cases']
         if {c['id']: c['inputs'] for c in cases} != record['inputs']:
             raise ValueError('traversal experiment input changed')
         answers = [dict(id=c['id'], output=c.get('parsed'), receipt=c.get('receipt'),
                         status=c['status'], experiment=record['experiment']) for c in cases]
-        if (any(c['status'] == 'invalid_receipt' for c in cases)
-                or _failure_receipts(record['experiment'], cases) is None):
+        failures = _failure_receipts(record['experiment'], cases)
+        if any(c['status'] == 'invalid_receipt' for c in cases) or failures is None:
             raise ValueError('invalid traversal receipt')
         if 'answers' in record and answers != record['answers']:
             raise ValueError('saved traversal answers changed')
-        if not any(c['status'] == 'unrun' for c in cases):
+        retryable = any(workflow.engine.provider_retry_delay(failure) is not None
+                        for failure in failures)
+        if not any(c['status'] == 'unrun' for c in cases) and not retryable:
             record['answers'] = answers
             if record['role'] in ('meaning', 'consolidation'):
                 record['producer_hold'] = _producer_hold(record['experiment'], cases)
@@ -156,12 +171,27 @@ def _payload(slot, canonical):
     original = dict(local=dict(entry=dict(subject=slot['subject']), meaning=slot['meaning']),
                     canonical=canonical)
     case = dict(id=canonical['id'], inputs={'INPUT_JSON': json.dumps(original, ensure_ascii=False)})
-    return project_fixed_meanings(case)['inputs']
+    project = project_symmetric_fixed_meanings if slot.get('symmetric') else project_fixed_meanings
+    return project(case)['inputs']
+
+
+def _symmetric(state):
+    return 'A_contains_B' in state['comparison_spec']['runner']['output_schema'][
+        'properties']['relation']['enum']
+
+
+def _comparison_output(slot, output):
+    if slot.get('symmetric'):
+        validate(json.dumps(output), diagnostics=True, symmetric=True)
+        return dict(output, meaning=slot['meaning'], relation={
+            'A_contains_B': 'local_contains_canonical',
+            'B_contains_A': 'canonical_contains_local'}.get(output['relation'], output['relation']))
+    return output
 
 
 def _new_search(directory, state, row, ordinal):
     slot = dict(**deepcopy(row), ordinal=ordinal, snapshot=deepcopy(state['nodes']),
-                cache={}, experiments=[], meaning=None)
+                cache={}, experiments=[], meaning=None, symmetric=_symmetric(state))
     source = dict(schema_version=state['local_schema_version'], corpus=state['corpus'],
                   nodes=[dict(id='meaning', local=row['local'], review={})])
     slot['producer'] = _experiment(directory, state, 'meaning', state['bootstrap_spec'],
@@ -192,7 +222,11 @@ def _search_work(directory, state, slot):
         if 'answers' not in record:
             return False, {}
         for answer in record['answers']:
-            output = answer['output'] or {}
+            try:
+                output = _comparison_output(slot, answer['output'] or {})
+            except ValueError:
+                slot['hold'] = 'invalid comparison diagnostics; manual review required'
+                return True, {}
             if (answer['status'] != 'valid' or output.get('relation') not in RELATIONS
                     or 'meaning' in output and output['meaning'] != slot['meaning']):
                 slot['hold'] = 'invalid comparison or changed fixed meaning; manual review required'
@@ -211,8 +245,8 @@ def _search_work(directory, state, slot):
         cached = {identifier: answer for identifier, answer in saved.items() if answer is not None}
         if cached:
             for identifier, answer in cached.items():
-                values[identifier] = dict(answer['output'], meaning=slot['meaning'])
-            search.record({identifier: answer['output']['relation'] for identifier, answer in cached.items()})
+                values[identifier] = dict(_comparison_output(slot, answer['output']), meaning=slot['meaning'])
+            search.record({identifier: values[identifier]['relation'] for identifier in cached})
             continue
         cases = [dict(id=identifier, inputs=_payload(slot, inputs[identifier]),
                       evidence=dict(local=slot.get('local'), snapshot_sha256=workflow.inputs.digest(slot['snapshot']),
@@ -366,7 +400,7 @@ def _consolidate(directory, state, comment):
         else:
             active['slot'] = dict(local=None, subject=output['title'], meaning=output['meaning'],
                 nominated=output['children'], producer=active['producer'], cache={}, experiments=[],
-                snapshot=active['snapshot'])
+                snapshot=active['snapshot'], symmetric=_symmetric(state))
     if 'slot' in active:
         complete, values = _search_work(directory, state, active['slot'])
         if not complete:
@@ -416,7 +450,7 @@ def _schedule(directory, state, comment):
     return summary(state)
 
 
-def _stop_dispatch(state):
+def _stop_dispatch(state, reason='traversal stopping conditions met'):
     """Use the runner's existing pause contract; admitted calls may finish."""
     from experiment_runner.scheduling import snapshot, pause
     for record in state['experiments']:
@@ -425,9 +459,9 @@ def _stop_dispatch(state):
         _, config, _ = workflow.load(record['experiment'])
         if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
             try:
-                pause(config.run_directory, reason='traversal stopping conditions met')
+                pause(config.run_directory, reason=reason)
             except ValueError:
-                if snapshot(config.run_directory)['state'] not in ('paused', 'finished'):
+                if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
                     raise
 
 
@@ -488,15 +522,14 @@ def prepare(spec_path, directory, history_root=None):
         if field == 'consolidation_spec' and schema is not None:
             raise ValueError('consolidation_spec must omit output_schema; its adapter validates null or proposal')
         if field == 'comparison_spec' and set(schema.get('properties', {}).get(
-                'relation', {}).get('enum', [])) != RELATIONS:
-            raise ValueError('comparison_spec must use local-versus-canonical relation labels')
+                'relation', {}).get('enum', [])) not in (RELATIONS,
+                    {'equivalent', 'A_contains_B', 'B_contains_A', 'neither', 'uncertain'}):
+            raise ValueError('comparison_spec must use local/canonical or symmetric A/B relation labels')
         prompt = workflow.resolve(value['prompt']['path'], path.parent)
         value['prompt']['path'] = str(prompt)
         sources.update({str(path): trial._hash(path), str(prompt): trial._hash(prompt)})
         state[field] = value
-    for name in ('canonical_traversal.py', 'canonical_graph_search.py', 'canonical_trial.py',
-                 'hierarchy_node_pairs.py', 'canonical_receipts.py', 'experiment_inputs.py',
-                 'experiment_extension.py'):
+    for name in _CODE_FILES:
         path = Path(__file__).with_name(name).resolve()
         sources[str(path)] = trial._hash(path)
     if directory.exists():
@@ -519,3 +552,105 @@ def advance(directory, comment):
             workflow.write(directory/'state.json', state)
             return summary(state)
         return _schedule(directory, state, comment)
+
+
+def _resume_sources(directory, reason):
+    """Record an explicitly reviewed code fix; frozen data remains unchanged."""
+    if reason is None:
+        return
+    if not isinstance(reason, str) or not reason.strip():
+        raise ValueError('runner upgrade reason must be nonempty text')
+    with workflow.locked(directory):
+        state = workflow.read(directory/'state.json')
+        allowed = {str(Path(__file__).with_name(name).resolve()) for name in _CODE_FILES}
+        before, after = {}, {}
+        for path, digest in state['sources'].items():
+            current = trial._hash(path)
+            if current != digest:
+                if path not in allowed:
+                    raise ValueError('trial source changed: '+path)
+                before[path], after[path] = digest, current
+        if after:
+            from experiment_runner.scheduling import snapshot
+            for record in state['experiments']:
+                _, config, _ = workflow.load(record['experiment'])
+                if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
+                    raise ValueError('finish active experiments before a construction code upgrade')
+            state.setdefault('source_upgrades', []).append(dict(
+                reason=reason, before=before, after=after, index=state['index'],
+                graph_sha256=workflow.inputs.digest(state['nodes'])))
+            state['sources'].update(after)
+        check_state(state)
+        if after:
+            workflow.write(directory/'state.json', state)
+
+
+def run(directory, attempt_budget, comment='Automated traversal construction',
+        runner_upgrade_reason=None):
+    """Run native batches and advance after each completion until stopped.
+
+    Four batch coordinators allow three local searches and consolidation to
+    overlap. They do not set provider concurrency; the shared runner does that.
+    Each batch is launched at most once per invocation, including partial runs.
+    """
+    directory, attempt_budget = Path(directory).resolve(), Path(attempt_budget).resolve()
+    budget = workflow.engine.PersistentAttemptBudget(attempt_budget)
+    budget.remaining()  # Validate the existing allowance before any dispatch.
+    with (directory/'.traversal-run.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise ValueError('traversal execution is already active') from error
+        settings = dict(attempt_budget=str(attempt_budget))
+        trial._save_once(directory/'execution-settings.json', settings)
+        _resume_sources(directory, runner_upgrade_reason)
+        active, attempted, errors = {}, set(), {}
+        result = advance(directory, comment)
+        stopped = False
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            try:
+                while True:
+                    terminal = result['status'] in ('complete', 'exhausted')
+                    if not terminal and not stopped:
+                        for experiment in result['experiments']:
+                            if experiment not in attempted and len(active) < 4:
+                                context = copy_context()
+                                future = pool.submit(context.run, workflow.run, Path(experiment),
+                                    attempt_budget_path=attempt_budget, include_request_preview=False,
+                                    runner_upgrade_reason=runner_upgrade_reason)
+                                active[future] = experiment
+                                attempted.add(experiment)
+                    if not active:
+                        break
+                    finished, _ = wait(active, return_when=FIRST_COMPLETED)
+                    completed = []
+                    for future in finished:
+                        experiment = active.pop(future)
+                        completed.append(experiment)
+                        try:
+                            future.result()
+                        except (workflow.engine.RunnerError, ValueError, OSError) as error:
+                            errors[experiment] = str(error)
+                    result = advance(directory, comment)
+                    # Successful partial results are collected. Do not repeatedly
+                    # relaunch unfinished cases after pause, exhausted allowance or
+                    # infrastructure failure. Resume explicitly with this command.
+                    if set(completed) & set(result['experiments']):
+                        stopped = True
+                    print('Traversal: '+json.dumps({k: result[k] for k in
+                        ('status', 'index', 'canonical_nodes', 'held')}), file=sys.stderr)
+            finally:
+                if active:
+                    for future in active:
+                        future.cancel()
+                    _stop_dispatch(workflow.read(directory/'state.json'),
+                                   reason='traversal execution stopped')
+        # All admitted calls have drained. Collect their receipts without changing
+        # a completed graph; unfinished batches remain available for native resume.
+        result = advance(directory, comment)
+        result['execution_status'] = (result['status'] if result['status'] != 'constructing'
+            else 'attempt_budget_exhausted' if budget.remaining() == 0 else 'blocked')
+        result['blocked_experiments'] = result['experiments'] if stopped else []
+        result['errors'] = [dict(experiment=path, error=error) for path, error in errors.items()]
+        workflow.write(directory/'run-summary.json', result)
+        return result

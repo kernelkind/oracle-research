@@ -5,14 +5,93 @@ new hierarchy. The user authorized adding the failures identified in the
 [fresh fifty-note findings](hierarchy-as100-fifty-note-findings-v1.md) to the
 Compare regression set. The original construction used unchanged Bootstrap-v96
 and Compare-v48. Compare-v69 and approved-for-qualification Compare-v75 completed
-the initial experimental trials. The latest experimental V176 failed fresh
-confirmation and is not adopted. Its subsequent
+the initial experimental trials. Experimental V183 retains reversal conflicts
+and is not adopted; V179 remains the symmetric A/B development baseline. V176's
+subsequent
 [qualified-subset test](#qualified-subset-test-of-unchanged-v176) retains two
 settled reversals and additional input qualifications. The
 [input-validity audit](#input-validity-audit-before-further-compare-edits) separates
 provisional accuracy candidates, ambiguous meanings and consistency fixtures
 before further edits. Original results, producer receipts and actual user
 decisions remain preserved below; review counts are not accuracy rates.
+
+## Current Cookware / Stockpots qualification
+
+The user reopened the interpretation after the V183 review: **"both state that
+they are DESIGNED for these things"** and **"it really ammounts to whether stock
+is considered food"**. The user then agreed that the demonstrated problem is
+incompatible relationships for unchanged definitions, while which label is wrong
+has not been established, and authorized correcting the evaluation records.
+Neither `neither` nor Cookware containment is a current semantic target for this
+exact pair. This qualification does not require the model to return `uncertain`;
+it qualifies our evaluation expectation.
+
+A read-only producer audit verifies the exact Bootstrap-v96 meanings and native
+receipts used by `isolated-035-forward/reverse`:
+
+- Cookware: original `verified-prefix-v3/step-007/meaning/experiment`, receipt
+  `d3a81ab5c56f073e61b8dbc2319846fdb5183978e52737f31b964de0804b1e43`.
+  Its resolution says: "Qualifying vessels are designed for cooking food; their
+  intended cooking applications may include the Full English Breakfast or other
+  meals." The named breakfast is explicitly illustrative. The producer does not
+  separately settle whether the final phrase "for preparing meals" restricts
+  every qualifying design or describes its culinary application.
+- Stockpots: original `verified-prefix-v3/step-014/meaning/experiment`, receipt
+  `9e5dc52d3dc93697fe4c80bdc712f35fd55c138d9ce164326e3476aa4e8d74cb`.
+  It resolves stock-making design versus actual use for the illustrated batch;
+  it does not separately settle the food/meal implication now disputed. Actual
+  use or disposal alone cannot establish a different design purpose.
+
+Both frozen producer templates are Bootstrap-v96, SHA-256
+`599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845`, with verified
+ASv6.100 source provenance. Their final strings exactly match the Compare inputs.
+Source evidence and producer diagnostics remain outside those model inputs and
+cannot supply additional restrictions. No meaning or prompt is rewritten.
+
+Earlier native accept/reject counts, forced `neither` targets and laboratory
+exclusion claims below describe the historical review under the now-reopened
+reading. They are not current semantic error counts or evidence of a reliable
+purpose-inference fix. Original outputs, user decisions, agent reviews, receipts,
+usage and frozen targets remain preserved. Current agent reviews qualify the
+exact pair as unresolved without rewriting user-role review history. Reversal
+conflicts and response changes remain observable independently of a gold label.
+
+The native correction appends agent qualifications to 66 exact-pair responses
+across 33 experiments and eight laboratory-case diagnostic responses across
+four experiments. The original review history remains intact; four commercial
+stockpot diagnostics are unchanged. Every affected experiment retains native
+`scope-qualification-before.json` and `scope-qualified.json` snapshots. Frozen
+inputs, producer receipts, generation bytes and consistency reports are unchanged:
+the exact-pair outputs still contain 44 Cookware-containment labels, 22 `neither`
+labels and 18 reversal conflicts across 33 paired draws. These overlapping
+development draws are not independent semantic cases. Correction requires no
+inference.
+
+For the subsequent development panels, separate the four control pairs from
+this one unresolved semantic pair:
+
+| Panel | Supported control responses | Control errors | Unresolved Stockpots responses | Emitted reversal conflicts |
+|---|---:|---:|---:|---:|
+| V179, A-first | 16 | 0 | 4 | 2/10 |
+| V180, A-first | 12 | 4 | 4 | 3/10 |
+| V181, A-first | 14 | 2 | 4 | 4/10 |
+| V182, A-first | 15 | 1 | 4 | 3/10 |
+| V179, B-first | 16 | 0 | 4 | 2/10 |
+| V183, A-first plus B-first Stockpots | 16 | 0 | 8 | 3/12 |
+
+These are repeated development comparisons, not independent accuracy samples.
+V183's former 21/24 support count is historical; its eight Stockpots responses
+are currently unresolved. All 16 tested controls still pass, and its three
+reversal conflicts and one changed label between draws remain unchanged. The
+original all-supported/no-conflict/repeat-stability gate still does not pass.
+
+The existing matched meanings show order-associated instability: V179's positive
+Cookware relationship follows its physical first position in the saved/fresh
+input-order comparison, while V182's requested report-order change leaves the
+original pattern. That does not establish which semantic answer is correct,
+internal reasoning order or a causal physical-position effect. A fresh matched
+order-only comparison is warranted before another prompt change; another test
+presuming stock-making cannot imply meal preparation is not.
 
 ## Frozen selection
 
@@ -4547,11 +4626,13 @@ A separate reviewer challenged the current panel's hardest inputs without
 consulting its outputs. The coordinator retains disagreements instead of
 promoting reviewer consensus to truth.
 
-The133 paired families split into82 provisional accuracy candidates,
-37 materially ambiguous families and14 consistency-only families. After removing
-the three repeated meaning pairs, there are79 distinct accuracy candidates,
-37 ambiguous pairs and14 consistency-only pairs. The corresponding source case
-counts are164/74/28. All32 canonical snapshots remain a separate graph-evidence
+The original133-family audit recorded82 provisional accuracy candidates,
+37 materially ambiguous families and14 consistency-only families. The current
+qualification moves isolated035 to ambiguous:81/38/14 registered families and,
+after removing three repeated meaning pairs,78/38/14 distinct pairs. The
+corresponding current source-case counts are162/76/28; the original164/74/28
+catalogue and frozen target selection remain historical evidence. All32 canonical
+snapshots remain a separate graph-evidence
 panel rather than being added to the isolated accuracy denominator. Classification
 does not imply that the meanings match a post's correct Bootstrap scope; that
 separate producer assessment is outside this Compare audit.
@@ -4566,7 +4647,7 @@ cases. Gaps in numbering are absent nominations, not failed or omitted audit wor
 | Core001–040 | 002,005,006,007,009,010,013,014,016,017,019,020,023,024,025,028,029,032,033,034,038,039,040 | 001,008,018,021,026,036 | 003,004,015,022 |
 | Core041–080 | 041,042,043,044,045,046,047,056,059,060,061,064,065,066,067,068,074,076,077,078,079,080 | 048,049,050,051,052,053,054,055,057,058,062,063,069,070,071,072,073,075 | — |
 | Core081–116 | 085,088,089,090,091,092,094,096,098,107,108,109,111,112,113,114,116 | 101,102,105,106 | 082,083,095,099 |
-| Fifty-note isolated001–035 | 003,004,005,006,007,008,009,010,012,014,015,024,026,028,030,031,032,033,034,035 | 001,013,017,018,019,020,025,027,029 | 002,011,016,021,022,023 |
+| Fifty-note isolated001–035 | 003,004,005,006,007,008,009,010,012,014,015,024,026,028,030,031,032,033,034 | 001,013,017,018,019,020,025,027,029,035 | 002,011,016,021,022,023 |
 
 Proposed forward labels below are deliberate input-review assessments, not
 native human labels or replacements for frozen expectations. They still require
@@ -4579,10 +4660,14 @@ support provisional uncertain targets without inventing another entity.
 | Core001–040 | 002,005,013,017,023,024,028,029,034,039,040 | — | 009,010,014 | 006,007,016,019,020,025,032,033,038 | — |
 | Core041–080 | 059,060,061,076,077,078 | 068 | 074 | 041,042,043,044,045,046,047,056,065,067,079,080 | 064,066 |
 | Core081–116 | 085,088,089,090,091,092,094,096,098,109,111,112 | — | — | 107,108,113,114,116 | — |
-| Fifty-note isolated001–035 | 009,034,035 | 028,030,031,032 | — | 003,004,005,006,007,008,010,012,014,015,024,033 | 026 |
+| Fifty-note isolated001–035 | 009,034 | 028,030,031,032 | — | 003,004,005,006,007,008,010,012,014,015,024,033 | 026 |
 
 Important qualifications, which must remain attached to the IDs:
 
+- **Isolated035:** the food/meal implication and the scope of "for preparing
+  meals" remain unresolved. The previously proposed containment and subsequent
+  laboratory-based `neither` are historical judgments, not current targets.
+  Preserve reciprocal consistency checks without prescribing either label.
 - **Core018/021:** the food-preparation genus may entail eating purpose, or name
   a broader activity admitting edible display/testing output. The explicit
   eating-purpose parent must not inherit its answer from an illustration.
@@ -4806,7 +4891,7 @@ receipts. Their protected generation-snapshot hashes remain respectively
 and `dc516f4b6edd019df1e25bc5efaa24956610265ac63b6a523ba23ac0908b231a`.
 Producer receipts, frozen source/code hashes and reused-answer origins verify.
 
-### Subsequent user review of Cookware / Stockpots
+### Historical user review of Cookware / Stockpots
 
 The user was shown both exact meanings, V176's Cookware-contains-Stockpots
 conclusion, its diagnostic question and the disputed meal-purpose inference.
@@ -4816,25 +4901,26 @@ remains in native review history.
 After inspection of the reverse diagnostic, the user explicitly accepted the
 missing meal-purpose counterexample question: **"technically this was correct
 unfortunately."** The user also approved the saved laboratory-only culinary-stock
-vessel witness: **"this too"**. This closes the disputed boundary for this case:
-the vessel meets Stockpots' definition but lacks the meal-preparation purpose in
-the supplied Cookware definition. The independent shallow frying pan establishes
-the opposite noncontainment direction. **Neither** therefore follows for these
-exact fixed meanings; this is the consequence of the approved counterexample,
-not a verbatim user label or a universal rule about cookware.
+vessel witness: **"this too"**. At that review, the coordinator interpreted this
+as closing the boundary and derived **neither** from the laboratory vessel and
+shallow frying-pan witnesses. This was a derived label, not a verbatim user label
+or universal rule about cookware. The later
+[current qualification](#current-cookware--stockpots-qualification) reopens that
+reading; neither the laboratory admission/exclusion nor its derived label is
+current semantic gold.
 
 Native user reviews now reject `isolated-035-forward` and accept
 `isolated-035-reverse`, superseding the initial acceptance while preserving its
-history. The forward answer is an established containment failure under the
-user-reviewed reading; the reverse answer is correct. The failure is approving
-coverage after rejecting a child-invalid textile-dye vessel and assuming the
-untested meal-purpose condition, rather than constructing the admitted stock
-variant that tests it.
+history. The coordinator classified the forward answer as a containment failure
+under that reading and the reverse as correct. Those semantic classifications
+are now qualified; the emitted reciprocal relationship conflict remains. Current
+agent uncertainty reviews preserve the original user-role records rather than
+rewriting those earlier decisions.
 
 The frozen meanings, original pre-call targets, outputs, agent review counts,
-reversal measurement and usage remain unchanged. Preserve the new expected
-relation separately; do not retrospectively recalculate the original target-match
-score as a prompt improvement. No further model calls or prompt edits occur.
+reversal measurement and usage remain unchanged. The earlier derived expectation
+is retained as history, not current gold; its review correction is not a prompt
+improvement. No inference was required for that correction.
 An untouched, coverage-diverse holdout is still needed before a general accuracy
 claim.
 
@@ -5379,14 +5465,15 @@ frozen development panel does not certify newer Bootstrap versions.
 
 | Pair and native IDs | Pre-call qualified expectation | Decisive qualification |
 |---|---|---|
-| Stockpots/Cookware, `isolated-035-forward/reverse` | Neither | Complete laboratory stock-making vessel fits Stockpots and lacks meal purpose; the shorter saved wording retains its making/reheating ambiguity. |
+| Stockpots/Cookware, `isolated-035-forward/reverse` | Unresolved current expectation; originally Neither | Whether stock-making necessarily supplies food/meal design purpose remains qualified. Preserve the original target and compare reciprocal relations without enforcing it. |
 | Salads/Salad dressing, `pair-002-forward/reverse` | A contains B forward; B contains A reverse | Salads expressly includes condiments in the dressing role; independent dressing-free salads escape the reverse scope. |
 | Coffee, `pair-010-forward/reverse` | Equivalent | Both definitions require brewing; ownership, morning consumption and half-and-half are absent. |
 | Dietary practices/Fasting, `pair-041-forward/reverse` | Neither | An outside-human example must preserve deliberate abstention; feed withholding or involuntary starvation does not establish it. |
 | Cooking/planned grilling, `pair-061-forward/reverse` | A contains B forward; B contains A reverse | The intended activity connection qualifies without asserting execution; independent indoor boiling escapes the reverse. |
 
-The Stockpots boundary includes a user-accepted counterexample. The other four
-controls remain independently reviewed agent expectations, not new human gold.
+The Stockpots counterexample has historical user acceptance, subsequently
+reopened as recorded in the current qualification. The other four controls
+remain independently reviewed agent expectations, not new human gold.
 Fresh relation, question focus, case admission/exclusion and necessity proof
 are assessed separately. A shared covered case does not prove universal
 coverage, and consistent wrong answers do not pass. Version labels and old
@@ -5413,6 +5500,12 @@ changed to make these checks pass. Baseline evidence is retained in
 `target/symmetric-adapter-baseline-f983f6b1-tests.log`.
 
 ## V179 / V180 examples ablation: results
+
+The semantic review totals and purpose-leap assessment in this section are
+historical under the subsequently reopened Stockpots expectation. The
+[current qualification](#current-cookware--stockpots-qualification) separates
+control assessments from unresolved Stockpots labels; emitted consistency and
+usage observations below remain unchanged.
 
 All eight V2 native experiments complete with 40 fresh valid comparisons,
 zero reuse, warming, retry, failure or missing usage. Every request has one
@@ -5497,7 +5590,7 @@ V179 is the better-supported development candidate on this small panel, but
 the samples do not establish a reliable population effect of examples.
 Removing examples neither fixes Stockpots nor preserves all controls.
 Retain the existing examples for subsequent development and isolate the
-remaining purpose-necessity failure before broad qualification. Do not add
+remaining reciprocal inconsistency before broad qualification. Do not add
 this validation witness as an example, claim the prompt is fixed, regenerate
 meanings to erase the disagreement or adopt either version for hierarchy
 construction on the basis of this panel. The A/B simplification and removal
@@ -5539,8 +5632,9 @@ directories are `target/compare-v181-required-boundaries-v1/{pair,controls}-01`
 and `-02`. The maintained usage source separates saved V179 generation from
 new V181 attempts. No inference result is claimed at preparation.
 
-Success requires supported Stockpots counterexamples in both orientations and
-preserved positive, equivalent, consumer and intended-state controls, with
+The historical pre-call gate required supported Stockpots counterexamples in
+both orientations (an expectation now withdrawn) and preserved positive,
+equivalent, consumer and intended-state controls, with
 valid questions and directional justifications. Correct labels with unsupported
 proofs do not pass. Broader fixed-meaning qualification follows only if this
 panel holds up; even complete success would not establish general reliability.
@@ -5709,7 +5803,7 @@ topics. The label change between draws is `pair-041-forward`; all other labels
 repeat. Supported-response counts assess the full directional justifications
 as well as relations and do not estimate population accuracy.
 
-- **Stockpots remains wrong in the same A/B orientation.** Both `pair-01` and
+- **Stockpots retains the same relation pattern.** Both `pair-01` and
   `pair-02` `isolated-035-forward` answers still return `A_contains_B` with
   Cookware as A, although its coverage diagnostic is now reported second.
   The first proof substitutes food preparation for required meal purpose and
@@ -5836,12 +5930,13 @@ control qualifications remain agent assessments.
 | Uncertain responses | 0 | 0 |
 | Native API-equivalent catalog cost | $0.1643176 | $0.161408 |
 
-The two wrong relations move to `isolated-035-reverse` in both fresh draws.
+The two positive Cookware containment relations move to `isolated-035-reverse`
+in both fresh draws. Which semantic relation is correct remains qualified.
 All 16 control responses pass, including four Fasting responses. Every new
 question and answer array still reports `A_contains_B` before `B_contains_A`,
 and all direction IDs and subject assignments align. The Stockpots pattern is:
 
-| Input member order | A | B | Relation in both draws | Review |
+| Input member order | A | B | Relation in both draws | Historical review |
 |---|---|---|---|---|
 | Saved A, B | Cookware | Stockpots | A contains B | Unsupported |
 | Saved A, B | Stockpots | Cookware | Neither | Supported |
@@ -5859,7 +5954,7 @@ meals"; second draw says stock-making necessarily holds food during heat cooking
 Frying-pan exclusions remain supported in all four responses. This is a scope
 inference failure, not an A/B assignment or JSON/schema error.
 
-Across these saved and fresh V179 draws the unsupported positive follows
+Across these saved and fresh V179 draws the positive Cookware relationship follows
 Cookware being the physically first input member, regardless of its A/B name.
 V182's separate reported-direction-order intervention had left the error in its
 original orientation. Together these observations support input-presentation
@@ -5877,12 +5972,16 @@ have backend cache hits. Shared counter moves from 18,911 to 18,931, consistent
 with this cohort's native 20 attempts. There are 1,069 attempts remaining at that
 read; the shared counter may subsequently change through other authorized work.
 
-This presentation change is not adopted: it moves the error without improving
-semantic support or reversal consistency. The A/B line remains the development
+This presentation change is not adopted: it preserves the reciprocal conflict.
+The semantic support comparison is now qualified. The A/B line remains the development
 contract, and V179 remains the development baseline with the unresolved Stockpots
 failure. No Bootstrap generation, hierarchy build or broader panel is performed.
 
 ## V183: synthetic function and purpose example
+
+The following pre-call semantic gate is historical: the current qualification
+withdraws its prescribed laboratory exclusion. The observed consistency and
+repeat-stability failures still prevent adoption.
 
 The user authorizes the proposed single-example experiment. Experimental
 [Hierarchy-compare-v183](Hierarchy-compare-v183.md) is a native revision of V179
@@ -5934,11 +6033,11 @@ attempts count and unresolved cases stay unresolved.
 
 Qualification requires supported full diagnostics and relations for all 24
 responses, no settled reversal conflict in the 12 pair/draw checks, and no
-changed relation between the two fresh draws of a fixed request. Every Stockpots
-request must preserve the accepted laboratory-only stock-making counterexample
-or provide another admitted complete witness, rather than relocate the error
-to the other input order. Stockpots' exclusion is user-reviewed; other controls
-remain agent-qualified. Two independent reviewers inspect one draw each, with
+changed relation between the two fresh draws of a fixed request. The original semantic gate required every Stockpots request to preserve the
+laboratory-only stock-making counterexample or provide another admitted complete
+witness. That laboratory exclusion was derived from the earlier user review
+and is now reopened; it is not the current semantic gate. Other controls remain
+agent-qualified. Two independent reviewers inspect one draw each, with
 historical workflow exposure disclosed. Saved-versus-fresh time/provider effects
 and sampling remain confounds; a clean development result would not certify
 population accuracy, newer Bootstrap outputs or the entire regression set.
@@ -5946,6 +6045,12 @@ No Bootstrap change, hierarchy construction, broader panel or new call allowance
 is included.
 
 ### Completed V183 purpose-example qualification
+
+The support/error counts and laboratory scope assessments below record the
+historical review under the reopened Stockpots expectation; they are not current
+semantic correctness measures. Current assessment has 16 supported controls and
+eight unresolved Stockpots responses. Reversal/repeat observations, generation
+integrity and usage remain unchanged; see the current qualification above.
 
 All six experiments complete with 24 fresh valid comparisons, no answer reuse,
 explicit warming, retry, failure or missing usage. Two independent reviewers
@@ -5972,7 +6077,7 @@ represents that many independent semantic topics. The standard A-first panel
 is unchanged in support: both Stockpots forward errors persist and all 16
 controls pass. B-first controls are not tested with V183. Stockpots labels are:
 
-| Input member order | A | B | Draw 1 | Draw 2 |
+| Input member order | A | B | Draw 1, historical review | Draw 2, historical review |
 |---|---|---|---|---|
 | A, B | Cookware | Stockpots | A contains B, unsupported | A contains B, unsupported |
 | A, B | Stockpots | Cookware | Neither, supported | Neither, supported |
@@ -6015,16 +6120,105 @@ not adopted or broadened. One additional supported answer in the B-first subset
 does not establish a reliable repair: its reverse label now changes between
 draws, while the usual panel retains both errors. Saved-versus-fresh time/provider
 effects and sampling remain open; no causal or population-accuracy claim follows.
-V179 remains the shorter development baseline with the unresolved Stockpots
-failure, and the symmetric A/B line is retained.
+V179 remains the shorter development baseline with unresolved Stockpots scope
+and observed reversal conflicts, and the symmetric A/B line is retained.
 
-Further examples and another condition-extraction matrix are not recommended
-on this evidence. Earlier condition diagnostics already expose unsupported
-implications, and one V183 question already isolates meal purpose. The proposed
-next diagnostic independently tests the saved claim that stock-making design
-necessarily entails meal-preparation design, using unchanged A/B meanings,
-both physical input orders and two fresh draws, without supplying the laboratory
-witness or an expected label. This would test whether a separate proof check
-can reject the existing unsupported implication, not identify one causal prompt
-sentence or establish a scalable production validator. It is a recommendation
-only: no diagnostic source or prompt is prepared and no further calls are made.
+The proposed next proof-check diagnostic assumed stock-making cannot imply
+meal preparation. The user has reopened that premise, so it is not pursued.
+Another example or condition-extraction matrix is not justified by current
+semantic gold. Further work targets the observed reciprocal/order inconsistency
+using unchanged A/B definitions, without requiring either disputed label.
+
+## Fresh matched V179 input-order diagnostic
+
+This diagnostic holds the exact ASv6.100/Bootstrap-v96 subjects and meanings,
+Compare-v179 prompt, output schema and runner settings fixed. It crosses both
+A/B assignments with both physical JSON member orders, then repeats each request
+once: **2 assignments × 2 member orders × 2 fresh draws = 8 requests**. It uses
+no semantic gold label for Stockpots and does not alter Bootstrap or construct
+a hierarchy. No new prompt version is created because its bytes are unchanged.
+
+Native `prepare --from ... --repeat` creates `a-first-01`, `b-first-01`,
+`a-first-02` and `b-first-02` under
+`target/compare-v179-matched-input-order-v1`, with two original cases each.
+Both orders are freshly prepared and executed under the same current code and
+settings; the only intended rendered-request difference is JSON member order.
+Before dispatch, verify producer identities, prompt/schema/worker bindings,
+disabled explicit warming, and identical repeated request bodies. Use the
+shared runner, Sol 6.1 medium, its shared admission queue and the existing
+20,000-attempt counter. Each run has a four-attempt ceiling, allowing at most
+one temporary-provider retry per case; actual attempts, including failures,
+remain authoritative. No answer reuse or conversation linkage is intended.
+
+Measure four reversal checks (one per order and draw), four physical-order
+comparisons (one per assignment and draw), and four repeat checks (one per
+assignment and order). Normalize labels to the named subjects before comparing;
+physical position must not be confused with A/B identity. Inspect whether
+diagnostics preserve design, food and meal boundaries without using producer
+diagnostics to add restrictions. Independent reviews must keep disputed semantic
+labels unresolved. Failed or unrun requests remain unresolved.
+
+This removes the earlier saved-versus-fresh contrast from the matched comparison;
+two draws still cannot establish population accuracy or isolate internal
+reasoning. The native
+[usage source](hierarchy-compare-v179-matched-input-order-usage-v1.json) accounts
+for the eight fresh requests separately by member order. Existing control results
+are not fresh controls for this diagnostic. No ordering policy or prompt revision
+is adopted solely because one presentation emits a convenient label.
+
+### Completed fresh matched order diagnostic
+
+All eight requests complete with valid fresh outputs: no reuse, explicit warming,
+retry, failure or missing usage. The four native `final-generation.json` snapshots
+preserve the original answers before review. Both fresh draws reproduce the same
+pattern:
+
+| Physical member order | A | B | Draw 1 | Draw 2 |
+|---|---|---|---|---|
+| A, B | Cookware | Stockpots | A contains B | A contains B |
+| A, B | Stockpots | Cookware | Neither | Neither |
+| B, A | Cookware | Stockpots | Neither | Neither |
+| B, A | Stockpots | Cookware | B contains A | B contains A |
+
+There are **4/4 reversal conflicts**, **4/4 relationship changes with physical
+member order**, and **0/4 label changes between identical fresh repeats**.
+Cookware containment is emitted exactly when Cookware appears physically first,
+independently of its A/B name. Both orders are fresh under matched settings, so
+the previous saved-versus-fresh comparison is no longer the explanation for this
+result. This is a reproducible order-associated scope instability on one pair,
+not population accuracy or observation of internal reasoning.
+
+An independent post-call audit verifies the actual recorded provider bodies:
+four request identities are each repeated twice, with eight distinct response
+IDs and receipts. Repeated bodies are exact; corresponding cross-order bodies
+differ only by input member order. Model, medium effort, schema, worker, wrapper
+and request-producing code are unchanged. Each body contains one user message,
+empty additional instructions and no conversation or previous-response linkage.
+Producer references and final meaning strings remain exact. The recorded requests
+rule out answer reuse, conversation linkage and changed prompt bytes as
+explanations for this test.
+
+Two independent reviewers inspect one draw each; their workflow familiarity is
+disclosed, and neither prescribes a relationship label. All four Stockpots-to-
+Cookware proofs in each draw retain a shallow frying-pan counterexample. The
+opposite direction changes its treatment of meal purpose: containment answers
+either assert stock-making necessarily prepares meals or establish food/heat
+design without separately establishing meal purpose. `Neither` answers require
+meal-preparation design and propose vessels designed exclusively for nonmeal
+stock-making. These proposals distinguish design from actual use, but their
+exclusion still depends on the disputed boundary. The unchanged strings therefore
+receive incompatible treatments of that boundary. All eight overall semantic
+reviews remain qualified; neither choosing containment nor choosing `neither`
+is a demonstrated repair. Eight native agent `uncertain` reviews register that
+qualification with output-specific comments. Native `final-reviewed.json`
+snapshots preserve unchanged generation fields, frozen hashes, receipts and
+complete consistency reports; review registration makes no model calls.
+
+Native `usage.json` records eight actual attempts and **$0.072474 API-equivalent
+catalog cost**, including reasoning in output. Explicit warming and backend cache
+hits are both zero. The persistent shared counter moves from 18,979 to 18,987,
+leaving 1,013 at that read; concurrent work may subsequently change it. No
+Bootstrap, hierarchy or prompt change occurs. V179 remains an experimental
+development baseline, and reordering is not adopted: both presentations retain
+the reversal conflict. Further Compare work should address stable interpretation
+of unchanged definitions without imposing this pair's unresolved label.

@@ -22,11 +22,11 @@ throughout preparation, training, baselines, checkpoints and the final test.
 are still collecting evaluation responses. Pilot training data is complete;
 model selection is in progress, not accepted. The pilot-specific label teacher
 was approved independently of the still-open release teacher selection.
-Semantic review happens outside the GPU rental. The agreed reviewer is
+Semantic review happens outside the GPU rental. The current reviewer defaults to
 GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
 drafts its prompt, report format and qualification cases. October 8 qualification
 completed with 28 complete reports and one interrupted report, failing known
-semantic and cross-version checks. Subsequent runs use the user-directed
+semantic and cross-version checks. Subsequent runs used the user-directed
 concurrency 8 with existing backoff. Bulk review has not run.
 Source preparation, report checks and scoring
 are implemented offline; DSRv1 includes a concrete preview before model calls.
@@ -435,6 +435,23 @@ stopping and eligible-prefix caching. Three agents audit 1,621 complete output
 versions, confirming three support errors and keeping 45 uncertainties separate.
 All 423 prepared mechanical proofs reproduce in production. Qualification and
 minimum reasoning effort remain open; the sixty remain the final validation.
+The user subsequently approves the
+[eight-hour review direction](../../sse_multivector/distillation-review-v1/README.md#eight-hour-review-direction-approved-october-11)
+for all **1,800 validation outputs**, assuming resolved backoff and at most
+30 concurrent requests. The approved **DCSv1** wording searches uncovered student subjects
+for one compatible placement of an already-matched required teacher meaning,
+then verifies a positive witness with the existing relationship check. Qualify
+relationships at high separately while retaining matching/support at xhigh,
+and qualify reuse of positive model verdicts with their provenance. The six-hour
+model-work target is conditional arithmetic with two hours of headroom, not a
+measured forecast. Native preparation and response validation are implemented.
+The [four-note xhigh DCSv1 development trial](../../sse_multivector/distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+finishes ten searches and four warmups in approximately 75 seconds; three
+audits accept all ten complete outputs, with the sole positive witness verified
+through unchanged DSLv10 reuse. The panel contains only one missing placement;
+unseen reliability and full-evaluation runtime remain unqualified. Deployed
+defaults, the final sixty and the maximum two-percentage-point loss remain
+unchanged.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain the baseline; lower-effort qualification
@@ -476,7 +493,7 @@ contradiction checks and explicit skipped evidence. Complete scores do not imply
 complete diagnostics or reviewer qualification. The measured conditional workload
 is 5,201 distinct requests rather than 11,764, before future stopping, warmups and
 retries; this is not a runtime or accuracy estimate. Original selections, sealed
-references and receipts remain intact. The user now authorizes completing xhigh,
+references and receipts remain intact. The user then authorized completing xhigh,
 then a small lower-effort comparison and nested expansion to all 60 answers.
 The accepted correctness loss is at most 2 percentage points versus xhigh; step
 back up a level if performance degrades. Reviewer decisions need source evidence,

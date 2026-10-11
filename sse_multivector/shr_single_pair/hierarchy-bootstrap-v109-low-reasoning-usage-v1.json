@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "saved_medium": [
+      "../../target/bootstrap-v109-scope-preservation-v1/candidate"
+    ],
+    "low": [
+      "../../target/bootstrap-v109-low-reasoning-v1/low"
+    ],
+    "fresh_medium_subset": [
+      "../../target/bootstrap-v109-low-reasoning-v1/medium-repeat"
+    ],
+    "fresh_low_subset": [
+      "../../target/bootstrap-v109-low-reasoning-v1/low-repeat"
+    ]
+  }
+}

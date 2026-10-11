@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v109_first_draw": ["../../target/bootstrap-coffee-choice-ablation-v1/v109"],
+    "v112_first_draw": ["../../target/bootstrap-coffee-choice-ablation-v1/v112"]
+  }
+}

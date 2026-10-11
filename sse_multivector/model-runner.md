@@ -158,6 +158,47 @@ recommended for adoption; v104 remains approved. Forty-two production-path
 revision/current-main traversal/graph-search checks passed; no Compare calls or
 hierarchy construction occurred in this diagnostic.
 
+The subsequent [interpretation-choice ablation](shr_single_pair/bootstrap-current-as-qualification.md#coffee-reference-interpretation-choice-ablation-predeclared-check)
+tests experimental v112 against unchanged v109 on the same original and three
+synthetic controls. Only the choice sentence changes: choosing a category
+interpretation must not settle an unknown fact about a particular example.
+Fresh matched runs retain exact source inputs, medium reasoning and automatic
+caching. The original is not predetermined-null gold; supported business
+coverage must survive. Both conditions completed four valid fresh meanings:
+the original remains uncertain and the three controls remain qualified accepts.
+Independent blinded review finds no demonstrated improvement or regression,
+and no material change triggered repeats. Ten attempts include two warmups;
+native API-equivalent cost is $0.0741512 with seven of eight definition cache
+hits, no reuses, failures or retries. All receipts and exact paired bindings
+passed independent integrity review; nine prompt-revision tests passed.
+V112 remains experimental without an adoption recommendation. V104 remains
+approved and no Compare or hierarchy work belongs to this diagnostic.
+
+The subsequent [saved v109 whole-branch recheck](shr_single_pair/bootstrap-current-as-qualification.md#saved-v109-whole-branch-evidence-recheck)
+reviews all 115 existing meanings across 17 complete ASv6.100 trees and 300
+ancestor checks, including 98 immediate links. Three independent reviewers
+establish no new definite Bootstrap evidence or boundary failure. Ingredient
+and cookware collections beneath individual constituents, compound warning
+lists, and activity topics covering planned handling remain fixed-meaning
+containment diagnostics. These are qualified relationship questions, not
+certified failures or permissions to alter endpoints. All source bindings,
+receipts and 265 quotations pass mechanical checks. No new teacher attempts,
+prompt changes, Compare labels, hierarchy build or review writes occurred;
+the saved panel is not a fresh reliability sample. V104 remains approved.
+
+The user-requested [v109 low-reasoning screen](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v109-low-reasoning-screen)
+preserves the 115-entry complete-branch inputs, prompt, schema and caching.
+All 115 low outputs validate; independent reviews flag three material boundary
+concerns rather than factual contradictions. A fresh matched four-case panel
+repeats unresolved Cooking preparation coverage at low while medium explicitly
+includes it; two pressure-canning process omissions do not repeat. The task
+uses 130 fresh attempts including four warmups and three recovered provider
+failures, with no answer reuse. Failed usage remains unknown, preventing an
+exact total cost-saving claim. The observed historical median elapsed times
+are 13.34 seconds low and 14.04 medium, not a causal speedup. Low is not adopted;
+the recommendation is to retain medium pending matched qualification. No
+Bootstrap prompt, Compare label, hierarchy or UI changed.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1334,7 +1375,10 @@ validation. No saved LG01 output is rewritten.
 Give each hierarchy run a specific, unique version identifier and use it in
 reports and comparisons. Link it to the exact hierarchy output and the frozen
 inputs, prompt/model settings, construction policy and native receipts used to
-generate it. The naming format remains open.
+generate it. Saved versions and recorded parameters are collected in the
+[hierarchy catalogue](../docs/recommendation-engine/hierarchy-runs.md). Refresh
+it with `catalogue-hierarchies` after saving an output, and report its `H0001`-style
+ID when discussing or comparing hierarchies.
 
 The standalone canonical constructor is available through the shared launcher.
 Oracle owns construction, comparison selection, consolidation and inspection;
@@ -1344,6 +1388,7 @@ from a task worktree:
 
 ```bash
 ../experiment-runner/bin/experiment-runner prepare-canonical-traversal --help
+../experiment-runner/bin/experiment-runner run-canonical-traversal --help
 ../experiment-runner/bin/experiment-runner advance-canonical-traversal --help
 ```
 
@@ -1351,10 +1396,51 @@ from a task worktree:
 saved `note_ids`, `local_schema_version`, `bootstrap_spec`, `comparison_spec`
 and `consolidation_spec`. Current data must originate from ASv6.100 or an
 explicitly approved later AS version. Prompt/schema files, corpus and constructor
-source are frozen. Run returned experiment directories through ordinary `run`,
-then call `advance-canonical-traversal` to collect validated native receipts and
-prepare the next work. Both constructor commands are offline; only `run` makes
-model calls, under the task's authorization and existing budget admission.
+source are frozen. After preparation, `run-canonical-traversal DIRECTORY
+--attempt-budget PATH` runs construction unattended: it executes prepared native
+experiments, collects their validated receipts, applies placements and prepares
+the next work until stopping conditions pass or execution is blocked. Use an
+existing persistent attempt allowance; every batch, warmup, retry and resume
+shares that counter. Preparation and explicit advancement remain offline. The
+automatic command calls the ordinary runner execution path under the task's
+authorization and existing budget admission.
+
+Compare-v179 uses symmetric fixed meanings: A is the incoming node and B is the
+selected canonical node. The constructor supplies only subject and meaning to
+this prompt, translates the two containment labels for traversal, and preserves
+native answers and receipts unchanged. The existing local/canonical schema is
+also supported. Graph contradiction checks apply to both formats; canonical
+branches do not become extra fields in v179's model input.
+
+Up to three local searches and a consolidation batch execute concurrently;
+provider concurrency is controlled by the shared runner. Advance after each
+batch finishes, without waiting for unrelated batches. Serialize placements and
+permit only one automatic driver per construction directory. Resume by running
+the same command with the same attempt-budget path. Exact saved results are
+reused. The latest `run-summary.json` distinguishes graph status from execution
+status and records blocked experiment paths and execution errors.
+
+Native provider retries finish before their answers become construction results.
+If allowance or pause interrupts an eligible retry, keep that case unresolved
+for resume. Terminal failed or malformed answers hold the affected local entry;
+other independent work continues. Failed and interrupted reservations remain
+charged to the counter. An unfinished batch is never repeatedly relaunched by
+the same invocation. Budget exhaustion, pause or infrastructure blockage drains
+active work and returns a nonzero status with preserved partial results. Local
+inventory exhaustion without the required note access and strict narrowing also
+returns nonzero; it is not successful completion. Neither automatic execution
+nor holds introduce an approval step for individual placements.
+
+Graph state is saved atomically between advancements; each native receipt is
+saved independently. After a process crash, rerun the same command: continue
+from the saved graph and reuse completed requests. An interrupted request with
+no saved result may need another attempt, without refunding its earlier
+reservation. For an explicitly reviewed code fix, pass the existing
+`--runner-upgrade-reason TEXT` option. It records old/new constructor source
+hashes and the preserved graph hash, and forwards the reason to the native
+runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
+schemas or frozen experiment inputs. Finish active experiments before changing
+their bound source. Saved meanings, decisions and native receipts are retained.
 
 Select L1 roots first, then L2 and deeper local levels. At each level, rotate
 across notes in saved order, one entry per note per pass. Up to three searches
@@ -1380,6 +1466,11 @@ verdict takes precedence over the latest agent verdict. A current rejection or
 uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
 See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
+
+The [next-generation hierarchy draft v2](hierarchy-generation-draft-v2.md)
+specifies PPv35 selection of every L1 scoring at least 50, or only the highest
+L1 per note when none qualifies. Every selected L1 must be processed before
+stopping. This is intended design; the current constructor does not implement it.
 
 Use these offline commands after construction:
 
@@ -1581,6 +1672,26 @@ not confidence bounds. Input-text sizes exclude provider instructions, message
 framing and schema overhead. Current automatic prefixes are below threshold;
 separate natural-prefix opportunities do not select a cache mode or guarantee
 hits. See the [current estimate and complete Nix command](distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9).
+
+The experimental `prepare-distillation-coverage-search EVALUATION --output DIR`
+command prepares approved **DCSv1** searches from completed native matching
+and actual relationship checks. Repeated `--answer-id` flags select existing
+answers. Preparation binds the existing selection, teacher-meaning assessments,
+receipts and premise snapshots; it performs no inference. It omits no-match
+and already-covered work, preserves matching-self guards, retains children
+behind invalid, unrun or explicitly disputed edges, and shares exact candidate
+wording/context duplicates. Ordinary `run`, `show` and `review` operate on the
+returned experiments. Eligible repeated prefixes use `--prompt-cache`.
+Complete negative evidence is mechanically validated; semantic correctness and
+positive-witness verification remain separate requirements. Historical pair
+agreement is diagnostic rather than qualification. This adapter does not replace
+the deployed all-pairs evaluation or establish the eight-hour runtime target.
+Its [four-note xhigh development trial](distillation-review-v1/README.md#dcsv1-four-note-coverage-search-trial-october-11)
+completes ten fresh searches plus four eligible warmups in approximately 75
+seconds. Three complete-output audits accept all ten decisions and reasons;
+unchanged DSLv10 verifies the sole witness through exact-input reuse. Native
+`summarize-experiments` reconciles usage and the attempt budget. These small-panel
+results do not qualify negative-search reliability or full-evaluation runtime.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -6843,43 +6954,52 @@ V176 is not adopted. Details and native usage are in the
 [qualified-subset findings](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#qualified-subset-test-of-unchanged-v176).
 The user initially accepted Cookware containing Stockpots, then approved the
 laboratory-only culinary-stock counterexample after inspecting the reverse
-diagnostic. Under these exact meanings, neither follows: the forward containment
-is incorrect and the reverse answer is correct. Preserve both user decisions,
-the original provisional targets and all measured results; the review correction
-is not a prompt improvement.
+diagnostic. The user subsequently reopened that interpretation by highlighting
+the two design purposes and whether stock is food. Neither containment nor
+`neither` is a current semantic target for this exact pair. Preserve all user
+decisions, original provisional targets, emitted answers and measured results.
+Current agent uncertainty qualifies earlier reviews without rewriting them;
+this is an evaluation correction, not a prompt improvement. See the
+[current pair qualification](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#current-cookware--stockpots-qualification).
 Six fresh repeats of this exact pair find the accepted counterexample in 0/6
-Cookware-local requests and 2/6 Stockpots-local requests. All other answers infer
-meal purpose from stock-making or leave it unchecked. Four consistent pairs are
-wrong, so reversal counts alone miss the defect. This single-pair diagnostic does
-not establish which instruction caused it; V176 remains experimental. See the
+Cookware-local requests and 2/6 Stockpots-local requests. These are historical
+counterexample-admission observations under the disputed meal-purpose reading,
+not current correctness counts. Two reciprocal conflicts remain measured;
+the four consistent pairs have unresolved semantic correctness. This diagnostic
+does not establish which instruction caused the instability; V176 remains
+experimental. See the
 [orientation diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#unchanged-v176-stockpots-orientation-diagnostic).
 The authorized V177 ablation extends the mandatory positive check to all
-applicable parent requirements. Six fresh Stockpots-pair draws still find only
-two valid neither answers out of twelve; the ten failures still substitute
-culinary stock-making for meal purpose. Two fresh control draws preserve the
+applicable parent requirements. Six fresh Stockpots-pair draws produce two
+neither answers and ten containment answers; all twelve now require scope
+qualification, while two reversal conflicts remain. Two fresh control draws preserve the
 positive/equivalent controls, but both Fasting forward proofs assume personhood
 while their reversals refute it. V177 is not adopted. The saved-reference timing,
 provisional controls, native 36-attempt usage and proof qualifications are recorded
 in the [V177 ablation](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v177-mandatory-restriction-check-ablation).
 V178 starts from V176 and focuses each question on one absent parent requirement,
-retaining the identity prerequisite. Six fresh Stockpots draws find only one
-correct neither answer out of twelve; all sixteen control answers have supported
-relationships. One failed answer asks specifically about meal purpose but tests
-a commercial stock-making case that retains it. Question focus alone does not
-establish a sound necessity proof. V178 is not adopted; the proposed next
+retaining the identity prerequisite. Six fresh Stockpots draws produce one
+neither answer and eleven containment answers, with one reciprocal conflict;
+their semantic labels are currently unresolved. All sixteen control answers
+have supported relationships. A question tests meal purpose using a commercial
+stock-making case that retains it; a covered case alone cannot prove universal
+coverage. V178 is not adopted; the subsequent
 diagnostic separates saved-case adjudication from counterexample construction.
 See the [V178 focused-question test](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v178-focused-question-ablation)
 for exact preserved evidence and native usage.
 The subsequent saved-case diagnostic uses experimental
 `Hierarchy-compare-case-check-v1`, rather than changing the production Compare
 prompt. Four judgments of the original fully specified laboratory-only stock
-vessel correctly fit Stockpots and escape Cookware; four commercial
+vessel were judged to fit Stockpots and escape Cookware under the now-disputed
+meal-purpose reading; those four complete answers are currently qualified.
+Four commercial
 meal-ingredient judgments fit both. A shorter saved laboratory proposal leaves
 stock production versus reheating ambiguous, yielding two definitive admissions
 qualified by independent review and two appropriate unresolved admissions.
-All four of its Cookware exclusions remain supported. This points toward
-counterexample construction and whole-scope proof testing without establishing
-a causal prompt fix. Twelve fresh attempts, zero reuses/failures/retries and
+Its four Cookware exclusions are now qualified too, without erasing the separate
+stock-making/reheating issue. This no longer establishes a correct laboratory
+exclusion or a production proof-generation failure. Twelve fresh attempts,
+zero reuses/failures/retries and
 $0.03306 native API-equivalent cost are recorded in the
 [saved-case diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#saved-case-adjudication-diagnostic-v1).
 
@@ -6923,12 +7043,13 @@ to native accounting; no artificial padding is added.
 
 The completed V2 ablation has 40 fresh valid comparisons, no warming, reuse,
 retry, failure or missing usage. Native API-equivalent catalog cost totals
-$0.301204. Attributed semantic review supports 18/20 V179 responses and 15/20
-V180 responses; native reversal reporting finds two and three conflicts,
-respectively, across five pairs repeated twice. Both versions still make the
-Stockpots meal-purpose leap. Removing examples also loses person-restriction
-and intended-activity controls. V179 remains the preferred development
-candidate for isolating that purpose inference, not a qualified hierarchy
+$0.301204. Earlier attributed review recorded 18/20 V179 and 15/20 V180 supports
+under the withdrawn Stockpots expectation. Current assessment supports all 16
+V179 controls and 12/16 V180 controls, with all four Stockpots responses in each
+arm unresolved. Native reversal reporting still finds two and three conflicts,
+respectively, across five pairs repeated twice. Removing examples loses
+person-restriction and intended-activity controls. V179 remains the preferred
+development candidate for addressing reciprocal inconsistency, not a qualified hierarchy
 prompt. Exact witnesses, review qualifications and accounting are in the
 [ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).
 
@@ -6943,9 +7064,10 @@ included. This tests an attention hypothesis about purpose requirements,
 not a new containment convention. See the
 [V181 qualification record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v181-challenge-all-applicable-absent-parent-restrictions).
 
-The completed V181 panel fails qualification: 16/20 supported responses and
-four reversal conflicts, versus saved V179's 18/20 and two conflicts. Stockpots'
-meal-purpose leap persists in both forward draws, and both Fasting forward
+The completed V181 panel fails qualification: four reversal conflicts, versus
+saved V179's two. Its historical 16/20 support count assumes the withdrawn
+Stockpots expectation; current assessment has 14 supported controls, two Fasting
+errors and four unresolved Stockpots responses. Both Fasting forward
 draws now import a person restriction absent from its fixed meaning. Reverse
 answers find supported counterexamples under the same definitions. All other
 controls pass. Twenty fresh valid attempts use $0.1711924 in native
@@ -6966,11 +7088,12 @@ or hierarchy work occurs. See the
 [V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).
 
 The completed V182 diagnostic follows B-first question/answer ordering in all
-20 responses but leaves both Stockpots forward errors in the same A/B
-orientation. Independent review supports 17/20 responses, versus saved V179's
-18/20; native reporting finds three versus two reversal conflicts across five
+20 responses but leaves both Stockpots forward containment outputs in the same
+A/B orientation. Earlier review's 17/20 support count is historical; current
+assessment has 15 supported controls, one Fasting error and four unresolved
+Stockpots responses. Native reporting still finds three versus two reversal conflicts across five
 pairs repeated twice. One Fasting forward draw adds a person restriction absent
-from its fixed meaning. The Stockpots error does not move with report order;
+from its fixed meaning. The Stockpots relation pattern does not move with report order;
 internal evaluation order is unobservable. V182 is not adopted or broadened;
 the symmetric A/B development line and V179 baseline remain. Twenty fresh valid
 attempts use $0.179492 in native API-equivalent catalog usage, with zero reuse,
@@ -6992,17 +7115,18 @@ scheduling and the persistent attempt counter. See the
 
 The completed B-first input diagnostic has 20 fresh valid answers, no reuse,
 warming, retry or failure, and $0.161408 native API-equivalent catalog cost.
-Independent attributed review supports 18/20 responses, with two reversal
-conflicts, matching saved V179's counts. Both Stockpots errors move from forward
-to reverse: the unsupported meal-purpose inference follows Cookware being the
-physically first input member rather than its A/B name. All 16 controls pass.
+Earlier attributed review supports 18/20 responses under the withdrawn Stockpots
+expectation. Current assessment has 16 supported controls and four unresolved
+Stockpots responses, while two reversal conflicts remain. The positive Cookware
+containment outputs move from forward to reverse, following its physical first
+position rather than its A/B name. Their semantic correctness is unresolved.
 Actual request bodies differ from the saved baseline only by input member order;
 all outputs still report A's coverage first. Saved-versus-fresh sampling/time
 confounds prevent a causal claim, and internal reasoning order is unobservable.
-Reordering is not adopted because it relocates the error without reducing it.
+Reordering is not adopted because it preserves the reciprocal conflict.
 See [completed evidence, integrity checks and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-b-first-input-diagnostic).
 
-The next authorized Compare experiment is
+The V183 preparation used
 [Hierarchy-compare-v183](shr_single_pair/Hierarchy-compare-v183.md), a native V179
 revision adding one independent synthetic coating-tool example that distinguishes
 function from required design purpose. Instructions, old examples, symmetric
@@ -7013,17 +7137,36 @@ evidence, disabled explicit warming and the persistent counter are preserved.
 See the [pre-call design, scaling and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v183-synthetic-function-and-purpose-example).
 
 The completed V183 experiment has 24 fresh valid comparisons, zero reuse,
-warming, retries, failures or missing usage. Attributed independent review
-supports 21/24 complete responses, with three reversal conflicts and one
-directional label changing between draws. The standard A-first panel stays at
-18/20 supported, while B-first Stockpots improves from two to three of four
-supported responses without repeat stability. All 16 tested controls pass.
-Stock-making still acquires an unsupported meal purpose, including in an
-answer whose question explicitly tests that requirement. V183 fails its
+warming, retries, failures or missing usage. Its original 21/24 support count
+assumes the withdrawn Stockpots expectation. Current assessment supports all 16
+controls, with eight Stockpots responses unresolved. Three reversal conflicts
+and one directional label changing between draws remain unchanged. This is no
+longer evidence of a purpose-inference improvement or failure by either label.
+V183 fails its
 qualification gate and is not adopted or broadened; V179 remains the shorter
 development baseline and the A/B contract remains fixed. Native usage separates
 $0.1804176 for 20 new A-first attempts and $0.0385164 for four new B-first
 attempts from saved baseline generation. The shared counter moves 18,935 to
 18,959. See the [completed qualification and evidence limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v183-purpose-example-qualification).
-An independent check of the specific saved unsupported implication is proposed,
-not prepared or run; no Bootstrap or hierarchy work follows from this result.
+The proposed independent proof check presumed the disputed meal-purpose
+interpretation and is not pursued. No Bootstrap or hierarchy work follows.
+
+The matched diagnostic freshly compares both physical input orders under
+unchanged Compare-v179: two A/B assignments, two member orders and two draws,
+eight requests in total. The Stockpots semantic expectation remains unresolved;
+reversal, physical-order and repeat consistency are measured separately. Native
+preparation preserves exact ASv6.100/Bootstrap-v96 definitions and disables answer
+reuse and explicit warming. All four experiments share current code/settings and
+the persistent 20,000-attempt counter. See the
+[pre-call design and limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fresh-matched-v179-input-order-diagnostic).
+
+Its eight fresh valid outputs reproduce the same pattern in both draws:
+Cookware containment when Cookware is physically first, `neither` when it is
+second. Four paired reversal checks conflict, all four physical-order comparisons
+change relation, and all four exact repeated requests retain their labels. Both
+presentations are fresh under matched settings; the observation still does not
+certify either semantic label or identify internal reasoning. Native cost is
+$0.072474 API-equivalent, with no reuse, warming, cache hits, retry, failure or
+missing usage; the shared counter moves 18,979 to 18,987. Ordering is not adopted,
+and no prompt or Bootstrap change follows. See the
+[completed diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-fresh-matched-order-diagnostic).

@@ -493,18 +493,47 @@ would also contain it by transitivity, conflicting with the Meals answer.
 ## Current implementation
 
 [canonical_traversal.py](canonical_traversal.py) implements this policy through
-the shared experiment runner's `prepare-canonical-traversal` and
-`advance-canonical-traversal` commands. Both are offline. Preparation starts up
-to three local searches; advancement collects native answers, applies guarded
-placements in selection order and prepares the reached comparisons. Run the
-returned experiment directories using the runner's ordinary `run` command.
+the shared experiment runner's `prepare-canonical-traversal`,
+`run-canonical-traversal` and `advance-canonical-traversal` commands. Preparation
+and explicit advancement are offline. Preparation starts up to three local
+searches; advancement collects native answers, applies guarded placements in
+selection order and prepares the reached comparisons. The run command performs
+this loop automatically using ordinary native runner execution, with one
+existing persistent attempt budget shared across all batches and resumes.
+It advances when each batch completes, allowing other searches and consolidation
+to remain in flight. Graph mutations stay serialized, and a second automatic
+driver for the same directory is refused.
+
+Terminal failed or malformed results hold their local entry while other work
+continues. Native eligible retries remain unresolved until they finish; an
+allowance or pause that interrupts a retry preserves it for resume. Never
+relaunch an unfinished batch repeatedly within one invocation. Execution
+blockage drains active work, records errors and pending experiment paths in
+`run-summary.json`, and returns nonzero without claiming a finished hierarchy.
+Resume with the same run command and attempt-budget path. Every failed,
+interrupted or retry reservation counts; successful receipts and exact reuse
+remain intact. Individual placements need no interactive approval.
+
+After a crash, resume from the atomically saved graph and native receipts with
+the same run command. Requests interrupted before their result was saved may
+need another attempt; their reservations remain counted. An explicitly reviewed
+code fix can resume with `--runner-upgrade-reason TEXT`: record changed code
+hashes alongside the unchanged graph hash and use the native execution-upgrade
+audit. This does not permit changing frozen posts, prompts, schemas or inputs,
+and is refused while native experiments remain active. Existing meanings,
+decisions and completed receipts are preserved.
 
 The preparation spec contains `schema_version: 1`, `corpus`, saved `note_ids`
 in selection order, `local_schema_version` (1, 3 or 4), `bootstrap_spec`,
 `comparison_spec` and `consolidation_spec`. Prompt and schema paths resolve
 relative to their original specs and are frozen. Bootstrap and comparison
-specs require JSON output schemas. Comparison uses local/canonical labels and
-the fixed-meaning input with recursive canonical ancestors and descendants.
+specs require JSON output schemas. The configured comparison schema selects
+either the local/canonical format or the symmetric A/B format. For Compare-v179,
+A is the incoming local or synthetic node and B is the selected canonical node;
+each receives only its subject and immutable meaning. Translate A/B containment
+labels for traversal and graph checks without changing the raw native answers.
+Local/canonical prompts retain their recursive canonical ancestor and descendant
+input. Graph checks remain active in both formats.
 Consolidation uses the `canonical_consolidation` project adapter, which validates
 either JSON null or `title`, `meaning` and a proper subset of sibling IDs. Its
 spec omits a runner output schema because the runner requires an object at the

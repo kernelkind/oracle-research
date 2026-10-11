@@ -93,9 +93,14 @@ def _settled_relation_contradiction(state, target, ancestors, *, equivalent=Fals
             other = answer['id']
             output = answer.get('output')
             previous = output.get('relation') if output else None
+            symmetric = isinstance(output, dict) and set(output) == {
+                'questions', 'answers', 'relation', 'reason'}
+            if symmetric:
+                previous = {'A_contains_B': 'local_contains_canonical',
+                            'B_contains_A': 'canonical_contains_local'}.get(previous, previous)
             if (answer.get('status') != 'valid' or previous not in reverse
                     or not (answer.get('receipt') or {}).get('record_sha256')
-                    or output.get('meaning') != step['selected_meaning']
+                    or not symmetric and output.get('meaning') != step['selected_meaning']
                     or other not in current or other == source
                     or before.get(other, {}).get('meaning') != current[other]['meaning']):
                 continue
