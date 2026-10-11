@@ -4067,3 +4067,58 @@ consistency. A promising result still requires fresh matched confirmation and
 broader qualification. No Bootstrap inference, hierarchy construction, external
 messages or additional allowance. Native usage source:
 hierarchy-compare-v169-positive-proof-gate-usage-v1.json.
+
+V169 completed: 52 valid comparisons in 54 attempts, including two warmups;
+no reuse, failure, retry, missing usage or unrun case. Native API-equivalent
+cost: $0.5051776; counter 18025/20000. Independent native reviews: core
+21 accept / 3 proof reject / 9 qualified; controls 14 accept / 2 proof reject /
+3 qualified. Core rejects are 070 reverse's unestablished audience exclusion,
+071 reverse's unclosed morning-context/conventional-wish reading and 107
+forward's unclosed nourishing-host connection. Controls reject snapshot025's
+physical-action exclusion of a qualifying cultivation aspect and isolated029
+reverse's failed unfeeling-account admission followed by unproved personhood.
+Two settled reversals remain (018/070); no complete chain conflict is settled.
+
+Both 022 preparation-versus-production nulls are supported. No extra variant
+search is required after those proper nulls, and disappearing chain conflicts
+through unresolved answers do not prove accuracy. An independent read-only
+calibration confirms opposite 018 purpose readings and 071's interpretation
+gap without prescribing opposite labels. All copies, native outputs, receipts
+and source/code bindings remain unchanged. V169 is not adopted: proof framing
+does not close the remaining audience, kind/aspect and identity arguments.
+
+### V170: reverse published directional record order
+
+V170 derives from V169 and changes only serialization order: require
+`canonical_contains_local` before `local_contains_canonical` in both diagnostic
+arrays, and reverse the complete records in both fictional demonstrations.
+Every record value, pairing, meaning, rule, output field and input suffix is
+preserved. Native exact revision replay and production example validation pass.
+This jointly tests instruction and demonstration order, not hidden reasoning
+order. It also leaves local-first input and the local meaning copy unchanged.
+
+Read-only audits of six earlier draws find all 24 inspected 018/022 outputs
+reported local-parent first. Five draws approve Food preparation over Bagel
+making forward and refute it reverse; V163 is an exception. V159's two fresh
+draws reproduce that orientation pattern, while their 022 readings differ.
+Order, local/canonical prominence, scoped illustrations and sampling remain
+competing explanations. Ambiguous genus readings qualify individual labels,
+but do not settle the observed consistency defect.
+
+Planned bounded screen: the same 21 core and nine control inputs as V166,
+plus both isolated029 orientations to retain the V169 positive-proof failure.
+The just-completed V169 gate is the unchanged-meaning baseline. Thirty-two
+comparisons plus two warmups require 34 attempts absent retries. Before
+interpreting outcomes, verify the required order was actually emitted. Score
+necessary-condition claims, whole-child admission, actual missing-property
+tests, canonical consequences and consistency separately from relation labels.
+An order-following change must repeat in a fresh matched comparison before a
+causal claim; mere label changes or extra nulls do not qualify it. Supported
+022 nulls need no extra variant search. Audience, conventional-wish and morning
+context qualifications remain open unless their readings are closed.
+
+Only an informative screen warrants matched confirmation and broader
+qualification. ASv6.100/Bootstrap-v96 producer meanings remain frozen. No
+Bootstrap inference, hierarchy work, external messages or new allowance.
+Native usage source:
+hierarchy-compare-v170-canonical-first-screen-usage-v1.json.
