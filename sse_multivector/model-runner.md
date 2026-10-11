@@ -1400,6 +1400,11 @@ uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
 See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
 
+The [next-generation hierarchy draft v2](hierarchy-generation-draft-v2.md)
+specifies PPv35 selection of every L1 scoring at least 50, or only the highest
+L1 per note when none qualifies. Every selected L1 must be processed before
+stopping. This is intended design; the current constructor does not implement it.
+
 Use these offline commands after construction:
 
 | Command | Purpose |
