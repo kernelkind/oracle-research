@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "max_candidates": 20,
+  "selections": [
+    {
+      "id": "roots",
+      "nomination": {
+        "path": "../../target/canonical-shaping-selection-v1/whole-roots-v2.json",
+        "sha256": "1d078c8219a6681bdcbc90076f818eec42a22d245ab4c479f75fd55ccf26f51c"
+      }
+    },
+    {
+      "id": "food-preparation",
+      "nomination": {
+        "path": "../../target/canonical-shaping-selection-v1/whole-food-preparation-v2.json",
+        "sha256": "943678caee660dbbef05ddd0273e1f7ecfe6374756fede314dc7ac4bb6b46417"
+      }
+    }
+  ]
+}

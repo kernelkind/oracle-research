@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "candidate_id": {"type": ["string", "null"]},
+    "children": {"type": "array", "items": {"type": "string"}},
+    "reason": {"type": "string"}
+  },
+  "required": ["candidate_id", "children", "reason"],
+  "additionalProperties": false
+}
