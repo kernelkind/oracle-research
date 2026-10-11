@@ -1598,6 +1598,20 @@ framing and schema overhead. Current automatic prefixes are below threshold;
 separate natural-prefix opportunities do not select a cache mode or guarantee
 hits. See the [current estimate and complete Nix command](distillation-review-v1/README.md#validation-review-token-and-runtime-estimate-october-9).
 
+The experimental `prepare-distillation-coverage-search EVALUATION --output DIR`
+command prepares approved **DCSv1** searches from completed native matching
+and actual relationship checks. Repeated `--answer-id` flags select existing
+answers. Preparation binds the existing selection, teacher-meaning assessments,
+receipts and premise snapshots; it performs no inference. It omits no-match
+and already-covered work, preserves matching-self guards, retains children
+behind invalid, unrun or explicitly disputed edges, and shares exact candidate
+wording/context duplicates. Ordinary `run`, `show` and `review` operate on the
+returned experiments. Eligible repeated prefixes use `--prompt-cache`.
+Complete negative evidence is mechanically validated; semantic correctness and
+positive-witness verification remain separate requirements. Historical pair
+agreement is diagnostic rather than qualification. This adapter does not replace
+the deployed all-pairs evaluation or establish the eight-hour runtime target.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,
