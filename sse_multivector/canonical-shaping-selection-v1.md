@@ -945,3 +945,11 @@ Ignored native evidence is under `target/canonical-shaping-selection-v1/`:
 The reusable selection, native graph construction and menu-shaping suites
 passed 39 tests at this checkpoint. No prompt, production selection policy,
 other agent's hierarchy or review UI was changed.
+
+The post-integration rerun exposed an existing order-sensitive assertion in
+`test_uncertain_root_holds_child_before_unvisited_mapped_parent`: both roots
+were requested, but their logged request order was reversed. The existing test
+failed with `PYTHONHASHSEED=0` and passed with `PYTHONHASHSEED=1`. It now checks
+the same exact two-root multiset, matching the neighboring mapped-parent test;
+its hold reason, unchanged graph and unvisited-descendant checks remain intact.
+No production traversal behavior was changed.

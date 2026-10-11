@@ -164,7 +164,7 @@ class CanonicalGraphConstructionTests(unittest.TestCase):
         self.assertEqual(state['steps'][-1]['status'], 'held')
         self.assertEqual(state['steps'][-1]['reason'], 'uncertain meaning or relationship')
         self.assertEqual(state['nodes'], self.before)
-        self.assertEqual([p['canonical']['id'] for p in self.queries(start)], ['C001', 'C003'])
+        self.assertCountEqual([p['canonical']['id'] for p in self.queries(start)], ['C001', 'C003'])
         self.assertFalse(state['steps'][-1]['graph_search']['complete'])
 
 
