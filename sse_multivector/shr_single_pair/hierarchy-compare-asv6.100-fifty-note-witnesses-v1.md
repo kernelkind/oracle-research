@@ -652,6 +652,125 @@ justification can still add an unsupported condition to the child. The next
 proposed diagnostic should isolate that interpretation step before another
 prompt revision. No additional test or edit is implied by this result.
 
+### Approved v76 interpretation diagnostic
+
+The user authorized isolating the unsupported interpretation in the sourdough
+answer. This diagnostic preserves v76 and all Bootstrap-v96 / ASv6.100 meanings;
+it does not revise the production prompt, regenerate meanings or build a graph.
+
+The frozen schedule is eight fresh unchanged v76 responses and eight supplied
+candidate-membership probes: both orientations of 024, 025 and 034, isolated
+022 forward, and snapshot 022. The two bagel inputs are an isolated endpoint
+control and a graph-bearing ancestor check, not reciprocal snapshots. Each
+generic diagnostic imports exact inputs and review-only evidence from the pinned
+completed v76 gate. Saved comparison answers do not enter the diagnostic input.
+
+Four versioned `Compare-candidate-*-v1` templates supply deliberately selected
+hypotheses: animal-feed-only sourdough, a dog swallowing dog-only food,
+pantry-bagel preparation for human nourishment solely as non-meal snacks, and
+the design/installation of a cooking-role induction hob with an integrated
+extractor. These are experimental challenge stimuli, not production examples,
+new Bootstrap targets or a representative accuracy dataset. The appliance
+stimulus guards against rejecting information about an activity's established
+equipment role solely because it concerns a different physical kind.
+
+Each probe separately tests admission beneath the local node, the selected
+canonical node, and all supplied canonical ancestors, with a concise decisive
+basis. Human-only Food must exclude animal-only use; the generic sourdough and
+Eating meanings admit those hypotheses. Bagel preparation and Bread admit the
+non-meal snack hypothesis, whereas the meal-restricted Food dishes ancestor
+excludes it. Role-defined appliance information should remain covered under
+the unchanged Compare information-topic convention. Independent review will
+check these hypotheses and retain any disagreement rather than manufacture gold.
+
+Run ceilings total 33 actual attempts: 17 for the fresh eight-case v76 draw
+(including warmup/retries) and four per two-case candidate probe. The existing
+20,000 counter remains authoritative. Sol 6.1 medium and the main shared runner
+remain fixed. V76 retains its native cached SSE configuration; short diagnostic
+templates run uncached rather than receiving artificial cache-padding text.
+
+If v76 reproduces an error but the supplied-candidate check correctly admits
+the child and excludes the parent, that demonstrates capability in the narrower
+validation task and a failure to preserve/use that boundary during full Compare.
+It does not distinguish search from positive-coverage proof conclusively, prove
+which prompt sentence caused the error, or certify a fix. If the probe also
+fails, the unsupported interpretation persists during explicit candidate
+validation. Non-reproduction of a fresh v76 error does not erase the earlier
+witness. No automatic production edit or adoption follows from either outcome.
+
+### Completed v76 interpretation diagnostic
+
+Native experiments are preserved in `target/compare-v76-interpretation-v1/`:
+`fresh-v76`, `sourdough`, `eating`, `bagels`, and `appliance`. The registered
+schedule completed all 16 responses with 17 actual attempts, including one
+v76 warmup. There were no reuses, retries, failures or missing usage. Native
+`summarize-experiments` reports **$0.0699044** API-equivalent known cost through
+`compare-v76-interpretation-usage-v1.json`; subscription incremental cash is
+zero. The unchanged shared counter was 13,976/20,000 when inspected; these
+17 attempts are attributed from native receipts, not counter subtraction.
+All eight v76 comparisons reported cache hits. Diagnostic calls were
+deliberately uncached, not an uncached-v76 performance comparison.
+
+Independent preflight verified every input/evidence byte against the gate,
+4,468 source hashes, five generated configs and 191 code bindings. All 17
+response IDs, including warmup, are distinct and absent from the earlier gate.
+Each request had one HTTP attempt, with no prior response/conversation ID or
+assistant history. The repeated v76 prompt hash remains unchanged. New results
+are independent draws; cached instructions do not make them shared conversations.
+
+The fresh v76 draw has two reviewed failures:
+
+- **024 forward:** it again asserts human nourishment as a requirement of the
+  sourdough activity. Reverse now finds a display-only counterexample and
+  returns neither. The error changed orientation; it did not disappear.
+- **Snapshot 022:** endpoint Bread/bagel containment remains supported, but
+  its reason again inserts meal use to clear the Food dishes ancestor. The
+  selected endpoint answers can remain settled while the relation is uncertain.
+
+Eating now returns the approved neither in both orientations; both appliance
+controls and isolated Bread/bagel containment remain positive. Three complete
+reciprocal pairs yield one reversal witness, for 024. Isolated bagel reverse was
+not scheduled, and the graph snapshot is not a reciprocal case. These bounded
+draw counts are not a reliability estimate. Independent review accepts six
+v76 responses and rejects two. Several positive-direction questions remain
+general coverage probes rather than named concrete counterexample candidates;
+accepted relations do not certify their question form.
+
+The supplied animal-feed sourdough and dog-only consumption candidates are
+correctly admitted by their activity meanings and excluded by human-only Food
+in both orientations. The bagel probes correctly admit snack-only preparation
+at both endpoints; the graph snapshot separately admits it beneath Food and
+excludes it beneath meal-restricted Food dishes. All required nodes are checked
+exactly once, including both snapshot ancestors. These six responses receive
+independent accept reviews.
+
+The two appliance probes instead reject Food preparation membership. Independent
+qualification leaves those outcomes uncertain: the abbreviated diagnostic
+omitted v76's explicit established-equipment-role rule and used a narrower
+activity-only convention. V76 itself retained the role-based positive in both
+orientations. This is an exposed diagnostic semantic confound, not evidence
+that the production Compare prompt failed those appliance comparisons.
+
+**Finding:** the model can recognize the disputed exclusions when given concrete
+candidates, yet the full v76 task still asserts unsupported conditions while
+justifying full coverage or clearing ancestors. That supports targeting positive
+coverage justification and consequence checking rather than attributing every
+failure to an inability to understand the words. It does not conclusively
+separate counterexample discovery from coverage proof or identify a responsible
+prompt sentence. The diagnostic also changes output task, instruction length
+and message placement: cached v76 uses developer/user messages, while uncached
+probes use a user message. No production improvement is claimed from that
+multi-factor comparison, and the shorter diagnostic is not a replacement prompt.
+
+All 16 outputs have attributed native agent reviews. Generation and reviewed
+snapshots preserve original input, evidence, output, parsed values, usage and
+receipts; no old answers were supplied to new calls. V76 and producer meanings
+were not edited; no Bootstrap work, hierarchy construction, external message or
+conditional full-panel run occurred. The next proposed controlled change is to
+require a positive coverage justification to establish the parent's required
+conditions from the child's own meaning, preserving the existing information-
+topic/activity-role rules. That proposal remains untested and unadopted.
+
 Read-only inspection of the exact Butter witness:
 
 ```bash

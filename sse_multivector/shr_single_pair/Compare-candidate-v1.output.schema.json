@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "checks": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "properties": {
+          "node": {"type": "string", "minLength": 1},
+          "admitted": {"type": ["boolean", "null"]},
+          "basis": {"type": "string", "minLength": 1}
+        },
+        "required": ["node", "admitted", "basis"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["checks"],
+  "additionalProperties": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "fresh_v76": ["../../target/compare-v76-interpretation-v1/fresh-v76"],
+    "candidate_validation": [
+      "../../target/compare-v76-interpretation-v1/sourdough",
+      "../../target/compare-v76-interpretation-v1/eating",
+      "../../target/compare-v76-interpretation-v1/bagels",
+      "../../target/compare-v76-interpretation-v1/appliance"
+    ]
+  }
+}

@@ -10,6 +10,9 @@ scope; review of the amusement qualifier remains disputed. A subsequent user
 decision classifies implicit material scope as a failure; the saved v103
 sourdough meaning also fails that criterion. Details are below.
 Approval does not activate a production prompt.
+The user subsequently approved drafting a controlled revision. The
+[v104 draft](#bootstrap-v104-consumer-and-product-role-draft) is untested;
+v103 remains the last approved prompt.
 
 ## Input and review contract
 
@@ -417,3 +420,38 @@ meaning. Keep broad positive controls and distinguish a kind's intended use
 from an actual episode's purpose. No wording change has been isolated by this
 read-only audit; no prompt edit, new generation, Compare call or hierarchy build
 was performed.
+
+## Bootstrap-v104 consumer and product role draft
+
+The user approved the proposed next step: draft a revision targeting genuinely
+ambiguous consumer/product roles while preserving clear broad definitions.
+Native `revise` created [Bootstrap-v104](Hierarchy-bootstrap-v104.md) against
+the unchanged approved v103 baseline, with
+[exact revision provenance](Hierarchy-bootstrap-v104.md.revision.json).
+Two independent read-only reviewers challenged the wording before publication.
+
+Only the second paragraph of Identify category ambiguities changes. It asks
+for qualifying participant, material or product roles to be stated directly
+when they change membership, distinguishing a kind's intended use from a
+particular example's purpose. It also permits broad positive membership
+conditions without an exhaustive list of participants or uses. Material
+ambiguities must arise from competing input-supported interpretations, rather
+than the possibility of adding another restriction. Supported context can
+still establish a role; the revision does not prescribe human-only scope or
+assert an unknown consumer.
+
+Input/output contracts, factual-support rules, other instructions, both
+approved synthetic examples and the cache boundary remain byte-identical to
+v103. The saved sourdough failure motivates the hypothesis but does not
+establish which instruction caused it or that this replacement resolves it.
+The [official reasoning prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+supports brief, direct instructions; it does not independently validate this
+semantic rule.
+
+V104 is a draft, not an approved or activated prompt. No model calls, fresh
+meanings, comparison tests or hierarchy construction were performed for this
+draft. Before broader qualification, the proposed next test compares the two
+saved sourdough preparation entries with explicit and broad Food controls and
+activity/kind controls under unchanged original inputs. Reviews must preserve
+coherent broad meanings and distinguish unresolved material scope from mere
+breadth. The user must approve that next step before execution.

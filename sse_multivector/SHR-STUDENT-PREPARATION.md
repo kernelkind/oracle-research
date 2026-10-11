@@ -65,10 +65,10 @@ Actual complete-token inventories on the reviewed data are:
 | Qwen27 | 501,255 / 6,905 | 107,478 / 5,224 | 4,568 / 168 |
 | Gemma26 | 503,798 / 6,922 | 108,143 / 5,265 | 4,590 / 172 |
 
-The GB10 sequence is queued behind completion and fresh-process verification of
-the active Qwen27 Compare fit. It then fits/verifies Bootstrap Qwen27, Bootstrap
-Gemma26, input-only Ettin Compare, and Kev27 Compare, in that order. No queued
-Bootstrap model has started at this checkpoint. The verified queue shell is PID
+Qwen27 Compare has completed fitting and fresh-process verification of both
+checkpoints. The GB10 sequence has started Bootstrap Qwen27 (PID 1620383), then
+fits/verifies Bootstrap Gemma26, input-only Ettin Compare, and Kev27 Compare,
+in that order. The verified queue shell is PID
 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
@@ -169,7 +169,7 @@ It establishes candidate relationships before using accepted containment to
 prepare branch examples; it is not a production-branch benchmark or complete
 task coverage. Its **Compare-v48** teachers retain the original three-field
 meaning/relation/reason contract, with the local meaning checked for exact copy.
-The student remains relation-only. Compare-v75 subsequently landed on local main
+The student remains relation-only. Compare-v75 and v76 subsequently landed on local main
 with separate containment questions and answers/justifications in its teacher
 output, and fixed meanings/branch placement as its task inputs. This C48 pilot
 retains its complete original inputs, including post/entry context; it is not a
@@ -253,11 +253,28 @@ padel courts in both directions, plus Tea versus the London chai invitation;
 all three are predicted neither. The first epoch's phase including evaluation
 and checkpoint writing takes **2,203.80 seconds**, with **21.15 GiB** peak CUDA
 allocation. Small native tests overlapped this phase, so its time is not an
-isolated throughput measurement. Later epochs and fresh-process verification
-remain pending; this partial checkpoint is not a verified final result or model
-choice. Its copied report is `compare-pilot-qwen27b-epoch1-report-v2.json` under
+isolated throughput measurement. Its preserved partial report is
+`compare-pilot-qwen27b-epoch1-report-v2.json` under
 the same target root, SHA-256
 `8d0ae82cac1abee2237ec64cdb5cd50afd0119a2c3f618b74381d67cd1d98e36`.
+
+Epoch four reaches **44/46 teacher agreement**, **42/44** excluding identity
+controls, with **14/16 directed containment decisions** and unchanged agreement
+on all 28 neither targets and both identity controls. The two remaining
+disagreements are one reciprocal Activities versus need for padel courts family, both
+predicted neither. This is one boundary, not two independent semantic failures;
+the provisional teacher labels are not human gold. All 720 TRAIN decisions were
+supervised in 720 updates. Mean epoch-four training loss is **1.03e-6**, while
+held-out agreement improves by only one decision after epoch one. This small
+panel does not establish a model-size plateau or complete task qualification.
+The cumulative training/evaluation/checkpoint phase takes **8,482.42 seconds
+(141.37 minutes)**, excluding 352.52 seconds of loading, with **21.15 GiB** peak
+CUDA allocation. Both checkpoints pass hash and numerical reload checks in
+fresh verification PID **1489295**, distinct from training PID **1489298**.
+The completed report is `compare-pilot-qwen27b-complete-report-v2.json`, SHA-256
+`cebb21ee2c9b7686e93e577934e0e5a7ff355e06ea5317e8bbd01942b98ea5a2`.
+Source/config/data bindings and all metrics match the preserved training report;
+verification changes only completion, reload status and its process identity.
 Kev27 task results remain pending. Bootstrap's pilot student target is the
 confirmed single `meaning` field, with null allowed.
 
