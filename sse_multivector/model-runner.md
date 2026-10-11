@@ -1517,9 +1517,24 @@ assigns unestablished facts to the fixed work. This is not a pass or established
 12/12 correctness. The 71-token prefix is ineligible; no warming, reuse or retry
 occurred, and the allowance reconciles at 14/28. Native usage is 14,959 input,
 zero cached and 28,903 output tokens (including reasoning), estimated at
-$0.318948 by the catalog; provider charges are unknown. The next recommendation
-is to settle the named-reference boundary before more inference; DSLv7, AS,
-schema and model settings stay fixed, with no new interpretation adopted.
+$0.318948 by the catalog; provider charges are unknown. Its recommendation to
+settle the named-reference boundary led to the user-authorized
+[DSLv8 revision and test](distillation-review-v1/README.md#dslv8-reference-boundary-diagnostic-october-10).
+DSLv8 interprets existing wording without restoring omitted posted facts through
+identity, and prohibits invented fixed-work/game counterexamples. Fourteen
+fresh first attempts retain the twelve frozen targets; the two originally
+unscored cases stay unscored. Both audits give twelve accepted complete records,
+one rejected explanation and one uncertainty. The winnerless-round verdict
+changes to false, but its classification example only changes what is discussed;
+the MILF tag's lexical scope remains unresolved. Native receipts and preserved
+inputs pass; the allowance reconciles at 14/28 with no reuse, retry or warming.
+Usage is 17,185 input, zero cached and 24,365 output tokens including reasoning,
+estimated at $0.278020 by the catalog; provider charges remain unknown.
+The set does not pass. The next recommendation is to settle the fixed-reference
+counterexample requirement before another revision or repeat. No proof-rule
+change is adopted; AS, schema and model settings stay fixed. Qualification,
+broader regression, lower-effort testing and final 60 remain pending; production
+defaults to DSLv2.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

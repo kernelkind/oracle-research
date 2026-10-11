@@ -407,9 +407,19 @@ witness invents unestablished fixed-work facts. The set does not pass, and
 12/12 target agreement is not established correctness. Legacy labels remain
 provenance; no targets were changed after outputs. The 71-token prefix is
 ineligible; there was no warming, reuse or retry, and the allowance ends at
-14/28. The next recommendation is to settle the named-reference boundary before
-more inference. No new interpretation or prompt revision is adopted;
-qualification remains pending and production defaults to DSLv2.
+14/28. That recommendation led to the user-authorized
+[DSLv8 revision and diagnostic](../../sse_multivector/distillation-review-v1/README.md#dslv8-reference-boundary-diagnostic-october-10).
+DSLv8 uses the post to interpret existing wording without restoring omitted
+facts through reference identity. Fourteen fresh first attempts retain all
+twelve frozen targets; the two originally unscored cases remain unscored.
+Both output audits give twelve accepts, one rejected explanation and one
+uncertainty. The rollover verdict now excludes the omitted posted action, but
+its counterexample only changes what is discussed. The MILF tag's lexical scope
+remains unresolved. All native receipts and preserved inputs pass; allowance
+usage is 14/28 with no reuse, retry or warming. The development set does not pass.
+The next recommendation is to settle the fixed-reference counterexample
+requirement before another revision or repeat; no proof-rule change is adopted.
+Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,
 mechanical rules and schemas remain fixed. The completed ten-note run retains
 its frozen concurrency of 16; the current shared runner uses automatic queue
