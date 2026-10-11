@@ -1279,3 +1279,27 @@ made zero calls. Source/spec chain: compare-condition-bagel-food-isolation-*.
 This panel can qualify stability across absent versus present branches. V5
 preparation/run cap 3 includes warmup/retry; it remains within the existing
 allowance and preserves the full snapshot as a separate test.
+
+### V5 cross-context condition conflict and v6 test
+
+The v5 singleton Food comparison completes validly: two fresh attempts including
+warmup, zero failures/retries/missing usage, one cache hit and $0.0147108 native
+API-equivalent cost. Both original meanings are byte-identical to the snapshot
+local and its C001 ancestor. Its endpoint relation is supported neither; the
+snapshot remains correctly uncertain because its Bread coverage requires
+incompatible ancestors. Those different labels are appropriate.
+
+The condition diagnostics are inconsistent: snapshot C001 establishes intended
+ingestion solely because bagels are prepared as food, while the singleton finds
+actual display-only bagels satisfying the same food-preparation meaning without
+intended ingestion. This is a scope-stability failure independent of which
+condition judgment should win. Consumer/nourishing-purpose failures remain
+correctly separated. No v5 remaining-controls or repeat was dispatched.
+
+V6 changes only the variation list, adding intended use alongside role, purpose
+and intended consumer. It tests the omitted intended-ingestion variation without
+a new example or semantic overhaul. Gate: exact initial eight (cap 17) plus the
+native singleton isolation (cap 3); require coherent supported conditions across
+the identical meaning pair in endpoint versus ancestor positions, and preserve
+all positive controls. A pass advances to remaining seven and fresh repeats; a
+failure triggers a new controlled candidate under the same 20,000 allowance.
