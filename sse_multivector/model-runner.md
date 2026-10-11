@@ -1779,6 +1779,21 @@ verification reuses, no retries or failures, and 28.27% fresh cached input.
 Prompts, effort settings, review precedence and final qualification remain
 unchanged; the full-evaluation runtime is still unqualified.
 
+The [focused payment diagnostic](distillation-review-v1/README.md#payment-type-disagreement-diagnostic-october-11)
+uses native exact fresh DCSv1/DSLv10 repeats and four pre-assessed authored
+DSLv10 controls. DCS again selects Payments; unchanged DSL flips its earlier
+rejection to acceptance. All four control decisions and explanations pass,
+and a source-only trusted training Payments/price edge subsequently supplies
+the category interpretation for accepting both exact outputs. The earlier
+DSL charge/rate exclusion is too narrow. Final agent acceptances are appended
+without discarding provisional uncertainty or changing review precedence.
+Native accounting
+validates seven fresh calls including one eligible DCS warmup, no reuse,
+retry or failure, and a 58.39-second generation span. Prompts and source
+bindings remain unchanged; no new semantic rule or prompt edit is adopted,
+and further votes do not supply semantic ground truth. Supplying the trusted
+example to both prompts is proposed for review before another focused test.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,
