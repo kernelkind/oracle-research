@@ -171,19 +171,34 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertEqual(sha256((PROMPTS / 'Hierarchy-consolidation-v1.md').read_bytes()),
                          '6a93d4d2a06c20b3a46ffd9758144cd280f7f0017153eb18a43cae72b2947965')
 
+    def test_parent_only_consolidation_preserves_shared_rules(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v3.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        previous = json.loads((PROMPTS / 'Hierarchy-consolidation-v2.assembly.json').read_text())
+        current = json.loads(spec.read_text())
+        self.assertEqual(previous['parts'][1:], current['parts'][1:])
+        prompt = (PROMPTS / 'Hierarchy-consolidation-v3.md').read_text()
+        self.assertNotIn('ancestor', prompt)
+        self.assertNotIn('`parents`', prompt)
+        self.assertIn('must be narrower than its fixed meaning.', prompt)
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
         call_log = self.root / 'calls.json'
         cases = self.root / 'cases.json'
-        inputs = json.dumps({'parent': None, 'ancestors': [], 'siblings': [
+        data = {'parent': None, 'ancestors': [], 'siblings': [
             {'id': 'C1', 'title': 'Coffee', 'meaning': 'Brewed coffee beverages.'},
             {'id': 'C2', 'title': 'Tea', 'meaning': 'Tea beverages.'},
             {'id': 'C3', 'title': 'Gardening', 'meaning': 'Cultivating plants in a garden.'},
-        ]})
-        cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
-        for version in ('Hierarchy-consolidation-v1', 'Hierarchy-consolidation-v2'):
+        ]}
+        for version in ('Hierarchy-consolidation-v1', 'Hierarchy-consolidation-v2',
+                        'Hierarchy-consolidation-v3'):
             with self.subTest(version=version):
+                inputs = json.dumps({key: value for key, value in data.items()
+                                     if version != 'Hierarchy-consolidation-v3' or key != 'ancestors'})
+                cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')
                 prompt = PROMPTS / (version + '.md')
                 spec.write_text(json.dumps({

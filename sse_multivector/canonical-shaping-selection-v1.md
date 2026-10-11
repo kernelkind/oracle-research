@@ -1550,17 +1550,19 @@ been activated.
 
 ## Synthetic parent draft and shared definition wording
 
-**Hierarchy-consolidation-v2 is the current draft, not an approved or tested
+**Hierarchy-consolidation-v3 is the current draft, not an approved or tested
 model prompt.**
-The user authorized its preparation in the shaping task worktree only, with
-coordination with the other research session. No inference,
+The user authorized its preparation in the shaping task worktree only.
+The previously authorized bootstrap-agent consultation is closed; the user
+instructed this task to stop messaging that agent. No inference,
 bootstrap revision, construction change, review UI refresh or main integration
 is part of this draft task.
 
-The [complete v2 draft](shr_single_pair/Hierarchy-consolidation-v2.md) receives
-the siblings' current parent and all recursive ancestors, preserving parent
-IDs, plus every sibling's ID, title and fixed explicit meaning. For a root
-group the parent is null and ancestors are empty. It proposes one new topic
+The [complete v3 draft](shr_single_pair/Hierarchy-consolidation-v3.md) receives
+only the siblings' immediate parent and the siblings, each with an ID, title
+and fixed explicit meaning. For a root group the parent is null. The user
+explicitly removed recursive ancestors from this input; ancestor checks and
+parent-ID relationship fields are also removed. It proposes one new topic
 with a title, explicit meaning and at least two intended child IDs, or JSON
 null. It searches for any useful subset across the whole sibling group. A
 proposal containing every sibling only adds a level and is excluded. The
@@ -1592,10 +1594,13 @@ null meaning. Repeated definition rules outside the shared section were removed.
 Input and grouping rules retain v1's behavior. The shared runner's native
 `revise` produced v2 and its exact
 [revision record](shr_single_pair/Hierarchy-consolidation-v2.md.revision.json).
+The native `revise` command subsequently produced v3's parent-only input and
+[revision record](shr_single_pair/Hierarchy-consolidation-v3.md.revision.json).
+Its shared definition clauses remain byte-for-byte identical to v2.
 
 The current pinned assembly manifests are
 [Bootstrap-v104 with expanded shared clauses](shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json)
-and [Consolidation-v2](shr_single_pair/Hierarchy-consolidation-v2.assembly.json).
+and [Consolidation-v3](shr_single_pair/Hierarchy-consolidation-v3.assembly.json).
 Both reference the exact same nine shared files in the same order. The
 bootstrap recipe preserves its original clause positions and intervening bytes;
 the consolidation recipe places them together in its definition section. The
@@ -1627,7 +1632,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v2.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v3.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -1644,7 +1649,8 @@ unchanged sixth shared clause; the v1 output still hashes to
 `6a93d4d2a06c20b3a46ffd9758144cd280f7f0017153eb18a43cae72b2947965`.
 The initial CLI test failed because assembly support was absent. The expansion
 check first failed on the missing v2 manifest; the literal-separator check first
-failed on its unsupported part shape. Ten assembly checks and nine existing
+failed on its unsupported part shape. The parent-only check first failed on
+the missing v3 manifest. Eleven assembly checks and nine existing
 revision checks now pass, including refusal of source drift or output overwrite,
 exact v104 reconstruction through both recipes, identical shared clauses in
 both consumers, and native generic `prepare` freezing each consolidation
@@ -1653,9 +1659,9 @@ quality or API acceptance of a consolidation output schema. No schema or
 production activation is introduced in this draft.
 
 The user-requested boundary annotations are kept in an ignored review copy:
-`target/canonical-shaping-selection-v1/Hierarchy-consolidation-v2-annotated.md`
+`target/canonical-shaping-selection-v1/Hierarchy-consolidation-v3-annotated.md`
 in the task worktree. Visible BEGIN/END markers surround the complete shared
-section. Removing them restores v2 exactly; they are not model instructions.
+section. Removing them restores v3 exactly; they are not model instructions.
 
 The draft uses explicit sections, delimited input and no requested
 reasoning trace or examples, consistent with
