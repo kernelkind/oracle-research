@@ -1579,7 +1579,7 @@ Three reviewers assessed complete trees under the predeclared criteria and wrote
 230 native agent reviews. Every review's input/raw-output digest was checked
 using the production digest function. Root challenges and a fourth independent
 reviewer examined consequential claims. These are qualified agent assessments,
-not human gold. The paired review totals are:
+not human gold. The initial paired review totals were:
 
 | Individual assessment | v104 | v109 |
 |---|---:|---:|
@@ -1588,20 +1588,23 @@ not human gold. The paired review totals are:
 | Semantic or source-assignment uncertainty | 9 | 9 |
 | Malformed endpoint, reviewed as uncertain | 1 | 0 |
 
-One concrete baseline scope error is absent from the candidate draw. Stock entry
-`5.1`, **Making chicken stock a couple of times a year using carcasses saved
-during butchering**, does not name an actor. V104 defines it as "the author's
-recurring cooking practice"; v109 defines "a recurring practice" with the same
-frequency/material requirements. Another maker following that practice fits the
-selected subject but not the author-only definition. Independent challenges
-confirm this category-to-instance narrowing. This is one observed correction,
-not a repeated causal effect or proof of reliable scope preservation.
+The initial review classified stock entry `5.1`, **Making chicken stock a couple
+of times a year using carcasses saved during butchering**, as one baseline scope
+error absent from the candidate draw. V104 defines it as "the author's recurring
+cooking practice"; v109 defines "a recurring practice" with the same
+frequency/material requirements. The rejection assumed that omitting an actor
+from the subject required other makers to qualify. The subsequent node-local
+reassessment below withdraws that definite failure classification: this entry's
+own context and post explicitly describe the author's practice. The difference
+is an actor-scope choice requiring review, not a demonstrated prompt correction.
 
-Two baseline definitions remain qualified rather than rejected: the selected
+Two baseline definitions were initially qualified rather than rejected: the selected
 green-beans ignition adds the other foods' purposes, and pantry storage adds
 after-canning and recurring-practice details. Those facts can describe an already
 identified particular event/plan rather than impose category conditions. V109
 avoids those extra clauses, but their removal alone is not a demonstrated repair.
+The later node-local reassessment accepts both particular-event/plan meanings
+and supersedes those uncertainties without changing either output.
 
 At this initial checkpoint, both Food roots choose human culinary scope. Whether
 that is a supported lexical sense or a narrowed subset of the intended AS Food
@@ -1648,8 +1651,8 @@ definition can be narrower than its selected subject yet fit its generated
 ancestor. The additional candidate accepts also mix uncertainty and validation
 coverage changes; they are not an accuracy rate. This adaptive panel has only
 one full draw per version, seven baseline exact reuses and no candidate reuses.
-This initial cohort has no fresh repeat establishing the observed stock
-correction's reliability; the subsequent repeats below do not establish an
+This initial cohort has no fresh repeat establishing the stock actor-scope
+choice's stability; the subsequent repeats below do not establish an
 advantage either.
 
 Native accounting, including the three-case smoke, records 228 actual attempts:
@@ -1700,7 +1703,9 @@ another maker following the same practice must qualify; recurrence, frequency,
 saved carcasses and stock production must remain; canning/storage can be optional
 but cannot become required. Today's yield and equipment cannot restrict the
 generic practice. Schema/receipt failures and descendant compatibility stay
-separate from individual scope assessment.
+separate from individual scope assessment. The subsequent node-local
+reassessment withdraws the unconditional other-maker requirement; its
+predeclared existence is preserved here without treating it as semantic gold.
 
 All four new meanings validate and pass that rubric. The results are:
 
@@ -1710,9 +1715,10 @@ All four new meanings validate and pass that rubric. The results are:
 | Two fresh repeats: author-only restriction | 0 / 2 | 0 / 2 |
 | Fresh meanings preserving the stated practice | 2 / 2 | 2 / 2 |
 
-V104's original error did not recur. This preserves the original observed scope
-failure but does not establish a dependable v109 improvement or a unique wording
-mechanism. V109's third draw uses "broth" while retaining the complete chicken-stock
+V104's author-only wording did not recur. Because its failure classification
+was subsequently withdrawn, these results show actor-scope variation rather than
+a measured correction. They do not establish a dependable v109 improvement or
+a unique wording mechanism. V109's third draw uses "broth" while retaining the complete chicken-stock
 subject and saved-carcass process; the reviewers found no established loss of
 stock identity. These repeats do not settle the six descendant recurrence checks.
 
@@ -1794,3 +1800,85 @@ Before another edit, any remaining Food concern must be established from this
 note's own evidence and its exact independently generated branch meanings. The
 stock repeat findings are unchanged. No prompt change or new inference follows
 from this evaluation correction.
+
+### Node-local evaluation reassessment after the integrity audit
+
+The user authorized reassessing suspect judgments, correcting review selection
+and surfacing consequential unresolved cases before further prompt edits. Three
+read-only audits reconstructed all 344 current development inputs and 115
+complete-branch inputs from their own ASv6.100 corpora and native receipts. No
+post/tree mismatch, subject/context/post override, stale-AS origin or expected
+answer in model input was found. The four synthetic development posts have
+actual ASv6.100 producers and remain identified as synthetic controls. Provenance
+does not certify the semantic correctness of every AS assignment or meaning.
+
+The audit confirmed evaluation contamination in the Food judgments and their
+development rationale: the cross-example inference was present before
+experimental v109's edit. Approved v104 predates it. Earlier v104/v105 verdict
+reversals on unchanged outputs independently show that review changes must not
+be reported as prompt improvements. No prompt revision follows from this audit.
+
+Stock entry `5.1` is the next withdrawn definite rejection. Its selected context
+is "The author describes making chicken stock a couple of times a year." Its
+post says "We save carcasses when we butcher and a couple of times a year do
+this." The saved v104 resolution consistently chooses the author's recurring
+practice. That choice cannot be rejected solely because the subject omits an
+actor. Whether the node should instead cover other makers following the same
+practice remains an explicit user-review question; neither scope is certified
+by the different Food example or the other version's output.
+
+A new native agent `uncertain` review supersedes the stock rejection while
+preserving its history, exact output and producer record
+`5d961bd3397caccce17799dfe6c30e33642ad4706ea624b713dacb19eb607e49`.
+That withdrawal alone changes the counts to 104 accept / 0 reject / 11 uncertain
+for v104, including its one malformed endpoint, and leaves v109 at 106 accept /
+0 reject / 9 uncertain. Subsequent independent node-local review also clears two
+v104 particular-event/plan concerns and eight ingredient-collection concerns
+(three v104 and five v109). Their resolutions and final meanings consistently
+choose the particular event, planned batch storage or source-specific collection
+supported by their own post. The old review required a broader reusable category
+without establishing that requirement from this local evidence. The ingredient
+collections retain all named ingredients together; they do not admit independent
+ingredient alternatives. Ten new native qualified accepts preserve the earlier
+uncertainties in history.
+
+Current latest-verdict counts are **109 accept / 0 reject / 6 uncertain** for
+v104, including its malformed endpoint, and **111 accept / 0 reject /
+4 uncertain** for v109. These are changed agent assessments, not new model
+outputs, human approval or a measured improvement. The independently fixed
+branch checks remain qualified; no endpoint is redefined to force compatibility.
+
+The Coffee-chain child remains uncertain with a corrected rationale. Its root
+defines a general business category, while the child assigns a particular
+multi-outlet business to the post's hashtag. The latter is not merely a
+conditional category definition; the post does not establish outlet count or
+venue affiliation. Both exact child outputs receive new native uncertainty
+comments preserving the older assessment history.
+
+The consequential questions to surface one at a time are:
+
+| Local entry | Remaining question |
+|---|---|
+| Stock `5.1`, recurring stock-making | Does this selected node cover the author's recurring practice or other makers following the same practice? Both saved definitions explicitly choose a supported scope; no actor-neutral expectation is gold. |
+| Risotto `1`, Food | Does intended consumption characterize the culinary kinds covered, or have to hold for each particular application described? The human culinary interpretation is supported locally; the separate dog-food example cannot settle this condition. |
+| Coffee-chain `1.1`, described as weird today | What should Bootstrap return when the selected AS subject/context proposes a particular business that the original post does not establish? A coherent root definition does not establish that child's factual assignment. |
+| Jesús Molina `2` and Rome `5` | Does profession/proverb wording identify the named entity or restrict the information covered? Interpret each output from its own evidence; punctuation or another note's matching name cannot establish the boundary. |
+| Rome `5.1.1.1`, complete warning-sign list | Does the final list definition require the full joint description, while its resolution describes separately admitted signs? Review actual information coverage before declaring a branch conflict; diagnostic wording alone does not fail a clear final meaning. |
+
+These questions are review qualifications, not new user labels, mandatory
+replacement meanings or a reason to rewrite the current prompts. The first
+presentation uses stock `5.1`, its original post and complete local branch.
+
+Review selection must distinguish an input/output-bound record from the newest
+decision: `current: true` certifies matching hashes, not supersession. Native
+flagged-case and student-input selection use the latest verdict per role with
+user precedence. Hierarchy continuation was found to scan any bound negative,
+including a withdrawn one. The separate source correction selects the latest
+bound verdict per role, preserving user precedence and independent checks of
+receiving and reused-source receipts. Original histories and producer receipts
+remain unchanged. Its native CLI regression reproduced the failure before the
+fix; all 45 continuation tests and the eight new tests after main synchronization
+pass. The broader 258-test run has 21 failures and six skips, including shared
+runner concurrency and ordered-response expectations. Representative failures
+reproduce on unchanged main; the entire broader suite is not claimed clean or
+every remaining failure separately proven pre-existing.

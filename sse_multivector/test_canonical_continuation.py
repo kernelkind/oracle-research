@@ -301,6 +301,70 @@ elif stage == "takeaway":'''))
         self.assertIn('producer review', self.state()['steps'][0]['reason'])
         self.assertEqual(len(self.state()['nodes']), 2)
 
+    def test_latest_producer_accept_supersedes_rejection_without_erasing_history(self):
+        self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
+        self.answer({'meaning': 'Reviewed meaning'})
+        experiment = self.state()['experiment']
+        for verdict, comment in [('reject', 'Original assessment'),
+                                 ('accept', 'Corrected assessment')]:
+            self.cli('review', experiment, '--case', 'bootstrap', '--role', 'agent',
+                     '--verdict', verdict, '--comment', comment)
+        history = (Path(experiment) / 'reviews.jsonl').read_bytes()
+        self.shared()
+        self.continue_trial(env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"meaning":"Other meaning"}'})
+        self.assertEqual(self.state()['steps'][0]['status'], 'added')
+        self.assertEqual(len(self.state()['nodes']), 3)
+        self.assertEqual((Path(experiment) / 'reviews.jsonl').read_bytes(), history)
+
+    def test_latest_producer_uncertainty_supersedes_accept(self):
+        self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
+        self.answer({'meaning': 'Reviewed meaning'})
+        for verdict, comment in [('accept', 'Original assessment'),
+                                 ('uncertain', 'Current boundary needs review')]:
+            self.cli('review', self.state()['experiment'], '--case', 'bootstrap', '--role', 'agent',
+                     '--verdict', verdict, '--comment', comment)
+        self.shared()
+        self.continue_trial(env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"meaning":"Other meaning"}'})
+        step = self.state()['steps'][0]
+        self.assertEqual(step['status'], 'held')
+        self.assertIn('agent producer review uncertain', step['reason'])
+        self.assertIn('Current boundary needs review', step['reason'])
+
+    def test_latest_user_accept_precedes_later_agent_rejection(self):
+        self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
+        self.answer({'meaning': 'Reviewed meaning'})
+        for role, verdict in [('user', 'reject'), ('user', 'accept'), ('agent', 'reject')]:
+            self.cli('review', self.state()['experiment'], '--case', 'bootstrap', '--role', role,
+                     '--verdict', verdict, '--comment', 'Offline precedence fixture')
+        self.shared()
+        self.continue_trial(env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"meaning":"Other meaning"}'})
+        self.assertEqual(self.state()['steps'][0]['status'], 'added')
+        self.assertEqual(len(self.state()['nodes']), 3)
+
+    def test_latest_user_uncertainty_precedes_later_agent_accept(self):
+        self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
+        self.answer({'meaning': 'Reviewed meaning'})
+        for role, verdict in [('user', 'reject'), ('user', 'uncertain'), ('agent', 'accept')]:
+            self.cli('review', self.state()['experiment'], '--case', 'bootstrap', '--role', role,
+                     '--verdict', verdict, '--comment', 'Offline precedence fixture')
+        self.shared()
+        self.continue_trial(env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"meaning":"Other meaning"}'})
+        step = self.state()['steps'][0]
+        self.assertEqual(step['status'], 'held')
+        self.assertIn('user producer review uncertain', step['reason'])
+
+    def test_current_user_rejection_precedes_later_agent_accept(self):
+        self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
+        self.answer({'meaning': 'Reviewed meaning'})
+        for role, verdict in [('user', 'reject'), ('agent', 'accept')]:
+            self.cli('review', self.state()['experiment'], '--case', 'bootstrap', '--role', role,
+                     '--verdict', verdict, '--comment', 'Offline precedence fixture')
+        self.shared()
+        self.continue_trial(env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"meaning":"Other meaning"}'})
+        step = self.state()['steps'][0]
+        self.assertEqual(step['status'], 'held')
+        self.assertIn('user producer review reject', step['reason'])
+
     def test_stale_output_bound_review_does_not_hold_the_new_output(self):
         self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
         self.answer({'meaning': 'Reviewed meaning'})
@@ -315,7 +379,7 @@ elif stage == "takeaway":'''))
         self.assertEqual(self.state()['steps'][0]['status'], 'added')
         self.assertEqual(len(self.state()['nodes']), 3)
 
-    def test_reused_meaning_keeps_exact_source_producer_rejection(self):
+    def reused_producer(self):
         self.dynamic_runner()
         self.setup_trial(same_note=True, schema_version=2, independent_meanings=True)
         config = json.loads((self.root / 'trial.json').read_text())
@@ -325,7 +389,11 @@ elif stage == "takeaway":'''))
         self.cli('prepare-canonical-trial', 'producer', '--spec', 'producer.json')
         producer = json.loads((self.root / 'producer/state.json').read_text())
         self.cli('run', producer['experiment'])
-        self.cli('review', producer['experiment'], '--case', 'bootstrap', '--role', 'agent',
+        return producer['experiment']
+
+    def test_reused_meaning_keeps_exact_source_producer_rejection(self):
+        producer = self.reused_producer()
+        self.cli('review', producer, '--case', 'bootstrap', '--role', 'agent',
                  '--verdict', 'reject', '--comment', 'Known missing cooking-purpose limit')
         self.shared()
         self.continue_trial()
@@ -334,6 +402,54 @@ elif stage == "takeaway":'''))
         self.assertEqual(step['status'], 'held')
         self.assertIn('Known missing cooking-purpose limit', step['reason'])
         self.assertEqual(len(self.state()['nodes']), 2)
+
+    def test_reused_source_latest_accept_supersedes_rejection(self):
+        producer = self.reused_producer()
+        for verdict in ('reject', 'accept'):
+            self.cli('review', producer, '--case', 'bootstrap', '--role', 'agent',
+                     '--verdict', verdict, '--comment', 'Corrected source assessment')
+        history = (Path(producer) / 'reviews.jsonl').read_bytes()
+        self.shared()
+        self.continue_trial()
+        step = self.state()['steps'][1]
+        self.assertTrue(step['answers'][0]['reused'])
+        self.assertEqual(step['status'], 'added')
+        self.assertEqual(len(self.state()['nodes']), 3)
+        self.assertEqual((Path(producer) / 'reviews.jsonl').read_bytes(), history)
+
+    def test_receiving_accept_does_not_override_reused_source_rejection(self):
+        producer = self.reused_producer()
+        self.cli('review', producer, '--case', 'bootstrap', '--role', 'agent',
+                 '--verdict', 'reject', '--comment', 'Current source rejection')
+        self.cli('run', self.state()['experiment'])
+        self.advance('bootstrap')
+        receiving = self.state()['experiment']
+        self.cli('run', receiving)
+        self.cli('review', receiving, '--case', 'bootstrap', '--role', 'user',
+                 '--verdict', 'accept', '--comment', 'Offline receiving assessment')
+        self.shared()
+        self.continue_trial()
+        step = self.state()['steps'][1]
+        self.assertTrue(step['answers'][0]['reused'])
+        self.assertEqual(step['status'], 'held')
+        self.assertIn('Current source rejection', step['reason'])
+
+    def test_reused_source_accept_does_not_override_receiving_uncertainty(self):
+        producer = self.reused_producer()
+        self.cli('review', producer, '--case', 'bootstrap', '--role', 'user',
+                 '--verdict', 'accept', '--comment', 'Offline source assessment')
+        self.cli('run', self.state()['experiment'])
+        self.advance('bootstrap')
+        receiving = self.state()['experiment']
+        self.cli('run', receiving)
+        self.cli('review', receiving, '--case', 'bootstrap', '--role', 'agent',
+                 '--verdict', 'uncertain', '--comment', 'Current receiving uncertainty')
+        self.shared()
+        self.continue_trial()
+        step = self.state()['steps'][1]
+        self.assertTrue(step['answers'][0]['reused'])
+        self.assertEqual(step['status'], 'held')
+        self.assertIn('Current receiving uncertainty', step['reason'])
 
     def test_mapped_parent_exception_is_compared_even_with_single_note_parent(self):
         self.dynamic_runner()
