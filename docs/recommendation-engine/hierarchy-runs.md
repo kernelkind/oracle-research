@@ -1,17 +1,40 @@
 # Official hierarchy runs and experimental parameters
 
 This Markdown file is the register of official hierarchy runs and their
-experimental parameters. **HR04** is the approved 12-note run being prepared;
+experimental parameters. **HR04** is the completed 12-note run;
 **HR03** is the completed 50-note baseline. Each run's raw build, browsing menu
 and export share its ID.
 
 ## HR04 — ASv6.100 12-note hierarchy
 
-Approved October 11, 2026. Execution has not started. The run uses the current
+Approved and completed October 11, 2026. The run uses the current
 standalone constructor, including restricted refinement, single-note leaves and
 deeper-heading retention. The
 [run definition](../../sse_multivector/hierarchy-runs/hr04/traversal.spec.json)
 records the complete note IDs in their selection order.
+
+### Result
+
+| Measurement | Saved result |
+| --- | --- |
+| Construction / execution status | complete / complete |
+| Notes represented and individually accessible | 12 of 12 |
+| Raw graph and browsing menu | 14 nodes, 9 edges, 5 roots |
+| Maximum child choices | 6 |
+| Structural audit | Passed; all 9 edges strictly narrow note sets, every leaf contains one note, no violations |
+| Selected local entries | 14, all L1 roots; two searches retained without placement after stopping |
+| Consolidation proposals | 3: two placed, one held because required containment was not established |
+| Held local entries | 0 |
+| Native attempts | 153 of 500: 45 warmups and 108 ordinary attempts |
+| Valid model answers | 107; one provider failure recovered by retry, no terminal failures |
+| Exact answer reuses | 0 |
+| Known API-equivalent cost subtotal | $0.7431476; complete total unknown because the recovered failed attempt has no usage |
+
+The run stopped during L1. It did not need deeper refinement or removal of
+equal-note-set steps, so it does not establish their behavior with live model
+judgments. The structural audit does not grade meanings or relationships; its
+`done` field deliberately remains false. Saved teacher judgments and the held
+proposal remain unchanged.
 
 ### Inputs and construction
 
@@ -61,20 +84,52 @@ ceiling preserves partial work and reports unfinished construction.
 
 ### Git provenance and retained artifacts
 
-Preparation starts from source base
-`dd7c5173735eb52dfd4b62c7f02a326c1784d483`; its only change from the proposed
-`81fe043938a66c379d0f0077cbb81ea885d1b97e` is documentation. Before execution,
-record the actual full Oracle generation commit, source status and frozen code
-hashes in the run's `code-provenance.json`. The isolated shared-runner source
-commit is `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`.
+| Generation provenance | Recorded value |
+| --- | --- |
+| Oracle generation commit | `17ea0b74959106090de110d2971e6797eff73c11` |
+| Shared-runner generation commit | `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7` |
+| Uncommitted source changes at generation | None in either isolated worktree |
+
+The [frozen preparation record](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/prepared-provenance.json)
+contains the commits, selected note IDs, complete settings, frozen constructor
+hashes and initial native plan bindings. Later documentation commits do not
+change these generation commits. Resume from the retained task worktree with
+the same attempt-budget path; its frozen source remains unchanged.
 
 The run worktree is `oracle-mvp-hierarchy-hr04-twelve-note-v1`; artifacts remain
 under `target/hierarchy-hr04-twelve-note-v1/`. Its saved AS corpus SHA-256 is
 `18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a`, identical to
 HR03's bound subject corpus. The prepared definition separately binds the exact
 12-note selection. Preserve the raw graph, menu, execution summary, attempt
-ledger, native receipts and source provenance there. Register immutable output
-hashes after execution ends; do not bind this ID to a changing live state.
+ledger, native receipts and source provenance there. The final graph and menu
+are copied into `final/` and bound by immutable output hashes in the official
+register. Retain both the Oracle and runner worktrees for native frozen paths.
+
+| Saved artifact | File |
+| --- | --- |
+| Raw hierarchy | [HR04 raw state](../../target/hierarchy-catalogue/outputs/HR04.json) |
+| Browsing menu | [HR04 menu](../../target/hierarchy-catalogue/outputs/HR04-related-1.json) |
+| Complete parameters and evidence | [HR04 record](../../target/hierarchy-catalogue/records/HR04.json) |
+| Structural audit | [Saved audit](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/final/audit.json) |
+| Native usage and allowance reconciliation | [Saved usage](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/final/usage.json) |
+| Final source and output provenance | [Saved provenance](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/final/code-provenance.json) |
+| Exact generator source snapshots | [43-file source archive](../../../oracle-mvp-hierarchy-hr04-twelve-note-v1/target/hierarchy-hr04-twelve-note-v1/code-snapshot/manifest.json) |
+
+### SHA-256 bindings
+
+| Input, source or output | SHA-256 |
+| --- | --- |
+| Run definition and note order | `a83792329bcd13ca6598ad32c0144bba6c915baa634254cc392659642c1848ad` |
+| Bootstrap-v109 prompt | `caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1` |
+| Compare-v179 prompt | `49d936bd6d5e251bcc1317f34a87fd71c25eb1e63f972e5ec8824b81f73eb9ed` |
+| Consolidation-v4 prompt | `144e23d89c65910f0851d4163ac7dff1baee248ebf5dab5c8779c843f9aae7c6` |
+| Bootstrap response schema | `5806c8c66ce8a8a9b13fb9f5ff6445eb79bb918cf15925a17fd9354a1877809c` |
+| Compare response schema | `9bdea40731448a9ef7b73372743cc258c5f6dc9419377c1d6c563d9dd12bc522` |
+| Shared-runner fingerprint | `67a3688360b285fa4de34c08f2009df12708246143163e7a35d7ea04301cc0b8` |
+| Request-code fingerprint | `15429b548cf904622a33bdad86c20d523da097c1956cc736ebbb2a513ded9018` |
+| Source archive manifest | `182ed08a12b76ac6dcb5e8ebcbfc113e938b14a8851aec0fb86f76cdc9790099` |
+| Raw hierarchy | `f482553bd90d76b9b4eeac77ec0662419dd3387465d1dbc67d046c034cce19b7` |
+| Browsing menu | `86bd1e43fe30aafbbfdb1c1f0b87f9bebe7b6cd81f6f608c5524d6a2cc95599a` |
 
 ## HR03 — ASv6.100 50-note hierarchy
 

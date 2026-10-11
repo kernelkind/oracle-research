@@ -82,11 +82,17 @@ def _premise_audits(references, base, protected):
     return audits
 
 
+def _bound_premise_audits(row, audits):
+    """Return external assessments bound to this exact input and output."""
+    output_hash = hashlib.sha256(row["output"].encode()).hexdigest()
+    bound = audits.get((row["evidence"]["check"], row["input_sha256"], output_hash), [])
+    return output_hash, bound
+
+
 def _accepted_premise(row, audits):
     if row["status"] != "valid":
         return None
-    output_hash = hashlib.sha256(row["output"].encode()).hexdigest()
-    bound = audits.get((row["evidence"]["check"], row["input_sha256"], output_hash), [])
+    output_hash, bound = _bound_premise_audits(row, audits)
     reviews = [item for item in row.get("reviews", []) if item.get("current") is True]
     if any(item.get("verdict") in {"reject", "uncertain"} for item in reviews + bound):
         return None
@@ -179,6 +185,10 @@ def _cases(report, assessments, audits=None):
             actual = {row["evidence"]["student_number"]: row
                 for row in answer["checks"]["relationship"]
                 if row["evidence"]["role"] == "actual_relationship"}
+            disputed_actual = {number for number, row in actual.items()
+                if row["status"] == "valid" and row["parsed"]["valid"] is True
+                and any(item.get("verdict") in {"reject", "uncertain"}
+                    for item in row.get("reviews", []) + _bound_premise_audits(row, audits)[1])}
             accepted_matching = _accepted_matching(teacher, matching, answer["checks"]["relationship"], audits)
             for ordinal, group in enumerate(groups, 1):
                 if not group["required"]:
@@ -229,7 +239,7 @@ def _cases(report, assessments, audits=None):
                     edge = actual.get(number)
                     if (parent in uncovered and edge is not None and edge["status"] == "valid"
                             and edge["parsed"]["valid"] is True
-                            and not any(row.get("verdict") in {"reject", "uncertain"} for row in edge.get("reviews", []))):
+                            and number not in disputed_actual):
                         omitted.append(dict(student_number=number, parent_number=parent, edge_case_id=edge["id"],
                             rule="valid_actual_edge_retains_ancestor_candidate",
                             semantic_status="Conditional on the accepted actual-edge verdict and fixed interpretations."))

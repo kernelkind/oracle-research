@@ -24,6 +24,21 @@ accepted, with seven saved DSLv10 witness responses reused and no new semantic
 error found. Generation takes approximately 72 seconds. These exposed controls
 establish repeat consistency, not broad qualification.
 
+The [four additional-note trial](#dcsv1-four-additional-notes-october-11)
+completes 24 new coverage searches: 22 complete outputs are accepted and two
+remain unresolved, including a search/verification disagreement over gas fees
+beneath Payments. Preflight catches and corrects external uncertain-edge
+omissions before their affected inputs run. DCSv1 and full runtime remain
+unqualified.
+
+The [focused payment diagnostic](#payment-type-disagreement-diagnostic-october-11)
+repeats the exact disputed pair: DCSv1 again selects Payments, while unchanged
+DSLv10 reverses its earlier rejection and accepts. Four surrounding controls
+pass complete-output audit. A trusted training Payments/price edge supplies
+the interpretation evidence for accepting the gas-fee pair; the earlier DSL
+category exclusion is too narrow. Fresh agreement itself establishes neither
+correctness nor repeat reliability.
+
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
@@ -5729,6 +5744,199 @@ and cache-prefix parity. This small development-exposed repeat leaves unseen
 negative-search reliability, per-check reasoning qualification, interpretation
 uncertainties and the eight-hour full-evaluation target open. The final sixty
 are not rerun.
+
+## DCSv1 four additional notes (October 11)
+
+The user approves four more notes from the frozen sixty, testing new coverage
+inputs with the current mechanical reductions and unchanged DCSv1 at Sol/xhigh.
+These answers have prior matching/actual-edge receipts from the completed
+24-note panel, but none has supplied a previous DCS search. All three exact-hash
+complete-output premise audits are bound before preparation.
+
+| Saved answer | Domain | Residual searches | Candidates before audit correction |
+| --- | --- | ---: | ---: |
+| `M03-checkpoint-200-N0033` | Agent Trust Layer, AI agents and payments | 9 | 14–18 |
+| `M03-checkpoint-800-N0008` | Noem, ICE shooting and Mamdani | 8 | 3–10 |
+| `M02-checkpoint-600-N0036` | NGP battery investment and AI power demand | 5 | 2–7 |
+| `M01-checkpoint-1000-N0060` | Axios hijacking and possible computer compromise | 2 | 5–7 |
+
+Pre-call source-first assessments expect null on twenty-two cases. Noem `015`
+retains uncertainty over whether the newspaper type preserves Sources. NGP
+`002` retains root uncertainty over whether an investment-business type
+preserves broad Investments. Baseline verdicts are diagnostic, not gold.
+These are agent assessments, not human-confirmed labels; any post-call label
+correction must remain explicit.
+
+Preparation preflight finds a violation of the existing approved omission rule:
+three Agent Trust Layer actual edges (`3.1`, `4.1`, `7.1`) have exact-hash
+external uncertainty, but the candidate filter consults only native reviews.
+Five inputs depend on those omissions: `002`, `008`, `009`, `012`, `017`.
+Nineteen unaffected searches proceed in frozen native groups while a separate
+worktree corrects the filter to retain disputed descendants. The five affected
+inputs require fresh preparation and source-first assessment before calls.
+The current preflight verifies all 82 positive self guards, 92 other accepted
+omitted edges, exact wording/context aliases and source/post bindings.
+Prompts and semantic criteria remain unchanged.
+
+### Corrected preparation and completed trial
+
+The filter now uses the existing exact input/output/check audit binding for
+actual student edges as well as matching premises. Hash-bound rejected or
+uncertain external assessments, including decision/explanation error flags,
+prevent descendant omission. The original native-review veto, including stale
+review conservatism, is preserved. Otherwise-positive edges do not acquire a
+new requirement for an explicit acceptance. Disputes are indexed once per answer.
+The minimal native-CLI regression first fails for rejected and uncertain edges;
+the corrected implementation and identity/error-flag controls pass with the
+related regressions: **20 tests total**. Source fix: `75ab47c0`.
+
+All three disputed edges remain represented. Across the four notes, all **82
+self guards** and **92 remaining unique omitted edges** have accepted evidence.
+All 246 original candidate wordings, ordered contexts and posts retain parity.
+Four affected inputs restore uncertain occurrences through exact aliases;
+only Agent Trust Layer `017` changes its rendered input, from 18 to **19
+candidates**. The other 23 inputs, settlements and self guards stay identical.
+Final totals are 247 candidates, 154 alias occurrences and 518 omitted occurrences.
+The five corrected inputs receive independent source-first reassessment before
+their calls; unsafe original preparations make no calls.
+
+All **24 searches** complete on first attempts: 22 return null and two return
+witnesses. Final independent full-output assessment accepts **22** and leaves
+**two unresolved**, with no established model error. The 21 unchanged clear
+pre-call null expectations pass; New York Times beneath Sources is resolved as
+a valid newspaper/information-source type without importing attribution to a
+particular story. NGP `002` remains uncertain about a private-equity firm's
+intrinsic investment-business type beneath Investments.
+
+Both witnesses receive unchanged DSLv10 checks through **two exact saved-response
+reuses and zero new verification calls**. Sources/New York Times returns true.
+Agent Trust Layer `009` returns Payments for the low-gas-fee Base L2 report
+subject, but the reused verifier returns false: it distinguishes network
+charges/rates from payment subject matter without requiring a completed payment.
+The search's payment-type argument is supported by the
+[Ethereum gas definition](https://ethereum.org/developers/docs/gas/), which
+describes gas fees as payment for computation. That definition is interpretation
+evidence, not a new restriction or an automatic AS verdict. The charge/rate
+versus payment interpretation remains unresolved; disagreement is not itself
+proof of which model response is wrong. Rejecting this witness operationally
+does not prove every other candidate invalid. Earlier expectations and all
+provisional assessments/acceptances remain in the native review history.
+
+Native accounting reconciles **29/104 attempts**: 24 fresh searches and five
+eligible warmups, no retries or failures. The first nineteen generate in
+97.21 seconds and the corrected five in 78.64 seconds; a 58.73-second gap for
+the corrected preparation separates them. The full generation clock span is
+**234.58 seconds**, with 175.85 seconds in those two generation phases.
+Mean search service time is 38.23 seconds; maximum admission wait is 0.311
+seconds. Fresh cached input is **15,232 of 53,881 tokens (28.27%)**; thirteen
+searches receive hits. Fresh API-equivalent cost is $0.4923852 and estimated
+net caching savings are $0.0051168 (1.03%), including warmups. Historical
+verification generation is separate from these fresh API-equivalent estimates.
+
+Native experiments, reviews, scheduling and usage reports remain ignored under
+`oracle-mvp-review-coverage-new-four/target/distillation-review-v1/coverage-new-four/`
+and the source-bound corrected preparation under
+`oracle-mvp-review-coverage-edge-audits/target/distillation-review-v1/coverage-edge-audits/`.
+Both experiment worktrees stay frozen; integration uses a separate checkout.
+This trial establishes neither unseen accuracy nor the eight-hour full-corpus
+target. Prompts, reasoning levels and the final sixty-answer validation remain
+unchanged. The subsequent focused diagnostic below adjudicates the payment
+interpretation; the reviewer's verdict instability remains to address.
+
+## Payment-type disagreement diagnostic (October 11)
+
+The user authorizes investigating the exact gas-fee/Payments disagreement before
+expanding the panel. Source-first independent assessment and prompt/input audit
+find the same parent-child direction, original post and ordered teacher rows in
+both requests. Both prompts quote the same AS rule and permit type meanings
+without requiring a completed payment. The disputed boundary is whether a
+network-fee level preserves the broad payment category, rather than a missing
+post, reversed comparison or expressed occurrence restriction.
+
+Two exact fresh requests use native `prepare --from --only --repeat` with
+unchanged **DCSv1** and **DSLv10**, preserving all input bytes, rendered wording,
+settings, schemas, cache identities and source bindings. The original DCS prefix
+is eligible at 1,203 estimated tokens and remains cached. The DSL request keeps
+its original uncached configuration. Four separate authored DSLv10 controls
+have independently assessed expectations frozen before calls; they are not
+saved teacher/student generations, and post support is unassessed.
+
+| Parent | Child | Pre-call expectation | Fresh verdict / full-output assessment |
+| --- | --- | --- | --- |
+| Cables | Cable lengths | Valid; explicit ASv6.100 example | True / accepted |
+| Payments | Low payment amounts for blockchain processing | Valid; preserves explicit payment type without a completed event | True / accepted |
+| Payments | Fast growth on Base L2 | Invalid; shared domain does not preserve payment type | False / accepted |
+| Payments made on Base L2 | Low gas fees on Base L2 | Invalid; the expressed payment occurrence is absent | False / accepted |
+
+The exact original child remains `Fast growth and low gas fees on Base L2 in the
+market snapshot of Persisto's 2026-07-03 05:40 UTC report`, beneath `Payments`.
+DCS again returns candidate `15`. Fresh DSL returns **true**, reversing its
+earlier exact-input **false**. Its new explanation interprets gas fees as amounts
+paid or payable for computation, whereas the earlier explanation separates
+charges/rates from payment subject matter. Neither explanation requires proof
+of a completed payment. This is demonstrated exact-input judgment instability;
+the two-call history is not an estimate of its population error rate.
+
+The input-only assessment initially favors validity, while both new exact
+outputs receive provisional attributed uncertain reviews. The four controls
+test surrounding distinctions but cannot establish fee/category equivalence.
+A subsequent source-only lookup therefore inspects actual immediate edges in
+the **1,000 trusted training answers**, leaving validation/test files unopened.
+It finds this directly relevant ASv6.100 precedent at training line **703**:
+
+| Teacher number | Subject | Context |
+| --- | --- | --- |
+| 10 | Payments | The price, payment instruction, and post-payment reply instruction establish payment subjects. |
+| 10.1 | 2 USDT price for the author's quick code-review service | “2 USDT quick code review” states the amount charged. |
+
+The exact ASv6.100 prompt is present in that training row. Two independent
+readers and the root verify the direct edge and source bindings. Training note:
+`80c4d216a15350af9a4bfdb2d11d3ed52693c557057bfdd13b8a7a9a6852f4d1`.
+Source is canonical `target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl`.
+File SHA256 is `f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681`;
+teacher-answer SHA256 is `05e49e9c5e515bfa3998112596d5fd1537de7140ee8dddc8e462217b698a6039`;
+line SHA256 excluding newline is `991c79812ad1bc238b3e4f12529b50429df3ef51af519252767a6dbcac4fbcd0`.
+No direct gas-fee precedent appears in this bounded training scan; absence
+establishes no negative verdict and an exact lexical match is not required.
+
+The trusted edge establishes that **Payments can include a payable service
+price/amount charged**, without borrowing the post's payment instructions or
+asserting an executed transfer. The
+[Ethereum gas definition](https://ethereum.org/developers/docs/gas/) establishes
+gas fees as payment amounts for computation. The exact gas-fee child preserves
+this payment category; low amount, Base L2, growth and the dated report add
+restrictions without removing it. ASv6.100's explicit Cable lengths/Cables
+example also permits property wording retaining its object's type.
+
+On that source evidence, the root and independent assessments adjudicate the
+**exact pair valid** and accept both new complete outputs. The earlier DSL
+exclusion of charges/rates is too narrow for this established payment meaning:
+it is a substantive category error, separately from the demonstrated verdict
+flip. This conclusion follows trusted precedent plus semantic interpretation,
+not model votes or a new blanket exemption for fees. Native final agent
+acceptances are appended to both exact experiments, preserving provisional
+uncertainty. Both historical and final records remain current by their hash
+bindings; no review-precedence policy changes. All four controls have current
+agent acceptances. Earlier frozen reviews and the four-note trial's saved
+22 accepted/two unresolved aggregate remain intact; this subsequent case
+adjudication resolves the payment interpretation while NGP remains uncertain.
+These are agent assessments, not new human gold or broad qualification.
+
+Native `summarize-experiments` validates all three completed groups: **seven
+fresh calls**, six verdicts and one DCS warmup, with no retries, failures, reuse
+or missing usage. The generation span is **58.39 seconds**. Cached input is
+5,632 of 12,840 tokens (**43.86%**, including warmup); only the DCS verdict has a
+comparison cache hit. Fresh API-equivalent estimate is **$0.0848892**, with
+estimated net caching savings **$0.0047688 (5.32%)**, including warming. These
+are subscription API-equivalent estimates, not cash charges. Native shared
+queue capacity remains thirty; no external concurrency setting is introduced.
+
+Artifacts remain ignored under
+`oracle-mvp-review-payments-diagnostic/target/distillation-review-v1/payments-diagnostic/`.
+No prompt, semantic rule, review precedence, reasoning default or final-test
+scope changes. The proposed next step is to supply this trusted payment/price
+example to both prompts and rerun the focused checks; that edit is not yet
+approved or applied. Do not seek correctness through further unchanged votes.
 
 ## Actual distilled wording: offline preview (October 8)
 
