@@ -1362,9 +1362,14 @@ final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
 [traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
-addition leaves six or more siblings. Existing workflow code and frozen audit
-bounds remain unchanged, so saved sibling-limit violations still describe their
-original evaluation. The constructor does not solve menu optimization
+addition leaves six or more siblings. Its stopping-check timing is provisionally
+approved: check after each placement and all triggered consolidation against the
+current hierarchy and the whole selected corpus. When both conditions pass,
+stop dispatching new searches and comparison calls, save the answers of calls
+already dispatched, and preserve the graph and unfinished searches for later
+resumption. Existing workflow code and frozen audit bounds remain unchanged, so
+saved sibling-limit violations still describe their original evaluation. The
+constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 
