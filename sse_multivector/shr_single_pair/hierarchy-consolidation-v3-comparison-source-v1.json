@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "proposals": [
+    {
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-canonical-shaping-selection-v1/target/canonical-shaping-selection-v1/consolidation-v3-first-v1",
+        "sha256": "881d72b2f8ac6113aaf7e5b3b934631c02cfb19e29c8b558418bd89bba0c01fe"
+      },
+      "case": "food-preparation"
+    },
+    {
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-canonical-shaping-selection-v1/target/canonical-shaping-selection-v1/consolidation-v3-first-v1",
+        "sha256": "881d72b2f8ac6113aaf7e5b3b934631c02cfb19e29c8b558418bd89bba0c01fe"
+      },
+      "case": "roots"
+    },
+    {
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-canonical-shaping-selection-v1/target/canonical-shaping-selection-v1/consolidation-v3-repeat-v1",
+        "sha256": "c87eb5a385db6889dbeeaceb45d77cfe97a5c76ec475912c420a92ae83d33641"
+      },
+      "case": "roots"
+    }
+  ]
+}

@@ -16,6 +16,104 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def consolidation_spec(self, parent=None):
+        self.prompt.write_text('GENERIC PROMPT: propose a parent. {INPUT_JSON}')
+        nodes = [dict(id=f'C{i}', subject=f'Topic {i}', meaning=f'Meaning {i}',
+                      parents=[] if parent is None else [parent],
+                      entries=[dict(note_id=f'n{i}', number='1')]) for i in range(7)]
+        if parent is not None:
+            nodes.append(dict(id=parent, subject='Preparation', meaning='Preparing food.',
+                              parents=[], entries=[dict(note_id='p', number='1')]))
+        raw = self.write('raw.json', dict(status='complete', nodes=nodes))
+        menu = self.write('menu.json', dict(status='shaped_candidate', nodes=nodes))
+        source = dict(schema_version=1,
+            state=dict(path='raw.json', sha256=hashlib.sha256(raw.read_bytes()).hexdigest()),
+            menu=dict(path='menu.json', sha256=hashlib.sha256(menu.read_bytes()).hexdigest()),
+            selections=[dict(id='group', parent=parent)])
+        self.write('consolidation-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_consolidation', path='consolidation-source.json')
+        self.write('spec.json', spec)
+
+    def test_consolidation_prepares_parent_only_and_validates_native_answers(self):
+        self.consolidation_spec(parent='P')
+        self.prepare()
+        case = self.show('E1', '--case', 'group')
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(set(payload), {'parent', 'siblings'})
+        self.assertEqual(payload['parent'], dict(id='P', title='Preparation', meaning='Preparing food.'))
+        self.assertEqual(payload['siblings'][0], dict(id='C0', title='Topic 0', meaning='Meaning 0'))
+        self.assertEqual(len(payload['siblings']), 7)
+        self.assertEqual(self.calls(), [])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"title":"Equipment","meaning":"Equipment used in preparation.","children":["C0","C1"]}'})
+        self.assertEqual(self.show('E1', '--case', 'group')['status'], 'valid')
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_consolidation_roots_null_and_invalid_groups_preserve_sources(self):
+        from sse_multivector import experiment_inputs as inputs
+        self.consolidation_spec()
+        self.prepare()
+        case = self.show('E1', '--case', 'group')
+        self.assertIsNone(json.loads(case['inputs']['INPUT_JSON'])['parent'])
+        dataset = dict(adapter='canonical_consolidation')
+        self.assertIsNone(inputs.validate(dataset, case, 'null', None)['parsed'])
+        for children in (['C0'], ['C0', 'C0'], ['C0', 'unknown'], [f'C{i}' for i in range(7)]):
+            with self.subTest(children=children), self.assertRaises(ValueError):
+                inputs.validate(dataset, case, json.dumps(dict(title='Topic', meaning='Meaning',
+                                                               children=children)), None)
+        self.write('raw.json', {})
+        failure = self.cli('prepare', 'E2', '--spec', self.spec, ok=False)
+        self.assertIn('consolidation source changed', failure.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_consolidation_pairs_bind_saved_meaning_and_existing_graph(self):
+        self.consolidation_spec(parent='P')
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"title":"Equipment","meaning":"Equipment used in preparation.","children":["C0","C1"]}'})
+        envelope = self.root/'E1/experiment.json'
+        source = dict(schema_version=1, proposals=[dict(experiment=dict(path='E1',
+            sha256=hashlib.sha256(envelope.read_bytes()).hexdigest()), case='group')])
+        self.write('pair-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_consolidation_pairs', path='pair-source.json')
+        pair_spec = self.write('pair-spec.json', spec)
+        self.cli('prepare', 'pairs', '--spec', pair_spec)
+        shown = self.show('pairs')
+        self.assertEqual(len(shown['cases']), 8)
+        case = shown['cases'][0]
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(payload['local'], dict(subject='Equipment', meaning='Equipment used in preparation.'))
+        self.assertIn('ancestors', payload['canonical'])
+        self.assertIn('descendants', payload['canonical'])
+        self.assertEqual(len(self.calls()), 1, 'pair preparation makes no calls')
+        from sse_multivector import experiment_inputs as inputs
+        with self.assertRaisesRegex(ValueError, 'copy'):
+            inputs.validate(spec['dataset'], case,
+                '{"meaning":"Rewritten","relation":"neither","reason":"Test."}', None)
+
+    def test_consolidation_report_rejects_an_equal_note_set_step(self):
+        self.consolidation_spec()
+        for name in ('raw.json', 'menu.json'):
+            graph = json.loads((self.root/name).read_text())
+            graph['nodes'][1]['entries'] = [dict(note_id='n0', number='2')]
+            self.write(name, graph)
+        source = json.loads((self.root/'consolidation-source.json').read_text())
+        for field, name in (('state', 'raw.json'), ('menu', 'menu.json')):
+            source[field]['sha256'] = hashlib.sha256((self.root/name).read_bytes()).hexdigest()
+        self.write('consolidation-source.json', source)
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"title":"Equipment","meaning":"Equipment used in preparation.","children":["C0","C1"]}'})
+        shape = self.show()['consolidation_shapes'][0]
+        self.assertEqual(shape['choices_before'], 7)
+        self.assertEqual(shape['choices_after'], 6)
+        self.assertEqual(shape['equal_note_set_children'], ['C0', 'C1'])
+        self.assertFalse(shape['local_group_constraints_met'])
+        self.assertFalse(shape['applied'])
+        self.assertEqual(len(self.calls()), 1)
+
     def shaping_nomination_spec(self):
         self.prompt.write_text('GENERIC PROMPT: choose an existing local parent. {INPUT_JSON}')
         corpus = dict(notes=[dict(note_id='source', text='A cup of wine. DATA ONLY.',

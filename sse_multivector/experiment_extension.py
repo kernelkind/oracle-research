@@ -891,7 +891,51 @@ def code_files(dataset):
                   'distillation_matching.py', 'distillation_verdict.py']
     return {name: directory / name for name in names if (directory / name).exists()}
 
+def consolidation_shapes(plan, cases):
+    """Check proposed grouping against saved note sets without changing a graph."""
+    from graphlib import TopologicalSorter
+    summaries, menus = [], {}
+    for case in cases:
+        summary = dict(case=case['id'], status=case['status'], applied=False)
+        if case['status'] != 'valid' or case.get('parsed') is None:
+            summaries.append(summary)
+            continue
+        path = case['evidence']['menu']
+        if path not in menus:
+            if engine._sha256_file(Path(path)) != plan['sources'][path]:
+                raise ValueError('consolidation menu changed during shape review')
+            nodes = {node['id']: node for node in read(Path(path))['nodes']}
+            notes = {key: {entry['note_id'] for entry in node['entries']}
+                     for key, node in nodes.items()}
+            order = list(TopologicalSorter({key: node['parents'] for key, node in nodes.items()}).static_order())
+            for child in reversed(order):
+                for parent in nodes[child]['parents']:
+                    notes[parent].update(notes[child])
+            menus[path] = notes
+        notes = menus[path]
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        children = case['parsed']['children']
+        represented = set().union(*(notes[child] for child in children))
+        equal = [child for child in children if notes[child] == represented]
+        parent = payload['parent']
+        equal_parent = parent is not None and represented == notes[parent['id']]
+        before = len(payload['siblings'])
+        after = before - len(children) + 1
+        summary.update(title=case['parsed']['title'], choices_before=before, choices_after=after,
+            new_parent_choices=len(children), proposed_note_count=len(represented),
+            child_note_counts={child: len(notes[child]) for child in children},
+            equal_note_set_children=equal, equal_note_set_parent=equal_parent,
+            local_group_constraints_met=not equal and not equal_parent and after < before
+                                        and after <= 6 and len(children) <= 6,
+            qualification='Prospective local grouping only; not full traversal, semantic approval '
+                          'or a generated hierarchy. Existing branches are unchanged.')
+        summaries.append(summary)
+    return summaries
+
+
 def enrich_report(result, plan, cases):
+    if result['adapter'] == 'canonical_consolidation':
+        result['consolidation_shapes'] = consolidation_shapes(plan, cases)
     diagnostics = (relation_diagnostics(cases)
                    if result['adapter'] in {'generic', 'subject_pairs'}
                    and (plan.get('preparation') or {}).get('source_adapter') != 'hierarchy_node_pairs'

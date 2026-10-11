@@ -65,6 +65,14 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'canonical_consolidation':
+        cases = prepare_consolidations(source, path.parent, read)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
+            application_allowed=False, purpose='Synthetic proposal only; normal traversal owns placement.')
+    if dataset['adapter'] == 'canonical_consolidation_pairs':
+        cases = prepare_consolidation_pairs(source, path.parent, read, load_report, sources)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
+            application_allowed=False, purpose='Validate proposed edges; full placement is separate.')
     if dataset['adapter'] == 'canonical_shaping_nomination':
         cases = prepare_shaping_nominations(source, path.parent, sources)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
@@ -749,6 +757,128 @@ def prepare_hierarchy_construction(source, selected=None):
                  evidence=dict(scheduling_post=post, nodes=evidence,
                                source_posts=base['inputs']['posts'], source=source['source']))
             for post, ids in sorted(queries.items()) if selected is None or post in selected]
+
+
+def prepare_consolidations(source, base, read):
+    """Gather unchanged canonical meanings for complete sibling groups."""
+    from . import canonical_trial as trial
+    engine._expect_fields(source, 'consolidation source', {'schema_version', 'state', 'menu', 'selections'})
+    if type(source['schema_version']) is not int or source['schema_version'] != 1:
+        raise ValueError('consolidation requires schema 1')
+
+    def bound(reference):
+        engine._expect_fields(reference, 'consolidation reference', {'path', 'sha256'})
+        path = engine._resolve_path(reference['path'], 'consolidation reference', base)
+        if engine._sha256_file(path) != reference['sha256']:
+            raise ValueError('consolidation source changed: ' + str(path))
+        return read(path), path
+
+    state, state_path = bound(source['state'])
+    menu, menu_path = bound(source['menu'])
+    if state['status'] != 'complete' or menu['status'] != 'shaped_candidate':
+        raise ValueError('consolidation requires a completed graph and saved menu')
+    raw = {node['id']: node for node in state['nodes']}
+    nodes = {node['id']: node for node in menu['nodes']}
+    if len(raw) != len(state['nodes']) or len(nodes) != len(menu['nodes']):
+        raise ValueError('duplicate consolidation canonical ID')
+    raw_ancestors = trial._ancestors(state['nodes'])
+    trial._ancestors(menu['nodes'])
+    for identifier, node in nodes.items():
+        if (identifier not in raw or any(node[key] != raw[identifier][key]
+                for key in ('subject', 'meaning', 'entries'))
+                or set(node['parents']) - raw_ancestors[identifier]):
+            raise ValueError('consolidation menu changed original meanings or relationships')
+
+    def supplied(node):
+        engine._expect_string(node['subject'], 'canonical title')
+        engine._expect_string(node['meaning'], 'canonical meaning')
+        return dict(id=node['id'], title=node['subject'], meaning=node['meaning'])
+
+    if not isinstance(source['selections'], list) or not source['selections']:
+        raise ValueError('consolidation selections must be nonempty')
+    cases = []
+    for selection in source['selections']:
+        engine._expect_fields(selection, 'consolidation selection', {'id', 'parent'})
+        parent = selection['parent']
+        if parent is not None and (not isinstance(parent, str) or parent not in nodes):
+            raise ValueError('unknown consolidation parent')
+        siblings = [node for node in menu['nodes'] if
+                    (not node['parents'] if parent is None else parent in node['parents'])]
+        if not 3 <= len(siblings) <= 512:
+            raise ValueError('consolidation requires between three and 512 siblings')
+        payload = dict(parent=None if parent is None else supplied(nodes[parent]),
+                       siblings=[supplied(node) for node in sorted(siblings, key=lambda n: n['id'])])
+        cases.append(dict(id=selection['id'], inputs=dict(INPUT_JSON=json.dumps(payload, ensure_ascii=False)),
+            evidence=dict(state=str(state_path), menu=str(menu_path), parent=parent,
+                          application_allowed=False)))
+    return cases
+
+
+def prepare_consolidation_pairs(source, base, read, load_report, sources):
+    """Compare saved proposals unchanged against their offered nodes and parent."""
+    from . import canonical_trial as trial
+    engine._expect_fields(source, 'consolidation comparisons', {'schema_version', 'proposals'})
+    if (type(source['schema_version']) is not int or source['schema_version'] != 1
+            or not isinstance(source['proposals'], list) or not source['proposals']):
+        raise ValueError('consolidation comparisons require schema 1 and nonempty proposals')
+    if load_report is None:
+        raise ValueError('consolidation comparisons require validated experiment reports')
+    cases = []
+    for index, item in enumerate(source['proposals'], 1):
+        engine._expect_fields(item, 'saved proposal', {'experiment', 'case'})
+        engine._expect_fields(item['experiment'], 'proposal experiment', {'path', 'sha256'})
+        directory = engine._resolve_path(item['experiment']['path'], 'proposal experiment', base)
+        envelope = directory / 'experiment.json'
+        if engine._sha256_file(envelope) != item['experiment']['sha256']:
+            raise ValueError('consolidation proposal experiment changed')
+        plan = read(envelope)['plan']
+        if plan['dataset']['adapter'] != 'canonical_consolidation':
+            raise ValueError('expected a native consolidation experiment')
+        for path, expected in {**plan['sources'], **{
+                str(directory / name): sha for name, sha in plan['files'].items()}}.items():
+            if engine._sha256_file(Path(path)) != expected:
+                raise ValueError('consolidation producer source changed: ' + path)
+            if path in sources and sources[path] != expected:
+                raise ValueError('conflicting consolidation producer source: ' + path)
+            sources[path] = expected
+        report = load_report(directory)
+        rows = [row for row in report['cases'] if row['id'] == item['case']]
+        if len(rows) != 1 or rows[0]['status'] != 'valid' or not rows[0].get('receipt'):
+            raise ValueError('consolidation comparison requires a valid saved proposal')
+        saved = rows[0]
+        proposal = saved.get('parsed')
+        if proposal is None:
+            raise ValueError('a null proposal has no comparisons')
+        validate(plan['dataset'], saved, saved['output'], None)
+        receipt_path = Path(saved['receipt']['results_path']).resolve()
+        sources[str(receipt_path)] = engine._sha256_file(receipt_path)
+        offered = json.loads(saved['inputs']['INPUT_JSON'])
+        state = read(Path(saved['evidence']['state']))
+        nodes = {node['id']: node for node in state['nodes']}
+        ancestors = trial._ancestors(state['nodes'])
+
+        def node(identifier):
+            return {key: nodes[identifier][key] for key in ('id', 'subject', 'meaning', 'parents')}
+
+        targets = offered['siblings'] + ([offered['parent']] if offered['parent'] is not None else [])
+        for target in targets:
+            identifier = target['id']
+            if (identifier not in nodes or target['title'] != nodes[identifier]['subject']
+                    or target['meaning'] != nodes[identifier]['meaning']):
+                raise ValueError('proposal target differs from original canonical meaning')
+            canonical = {**node(identifier),
+                'ancestors': [node(key) for key in sorted(ancestors[identifier])],
+                'descendants': [node(key) for key in sorted(nodes) if identifier in ancestors[key]]}
+            payload = dict(local=dict(subject=proposal['title'], meaning=proposal['meaning']),
+                           canonical=canonical)
+            cases.append(dict(id=f'proposal-{index}-{identifier}',
+                inputs=dict(INPUT_JSON=json.dumps(payload, ensure_ascii=False)),
+                evidence=dict(proposal_experiment=str(directory), proposal_case=item['case'],
+                    proposal_receipt=saved['receipt'], canonical_id=identifier,
+                    intended_child=identifier in proposal['children'],
+                    supplied_parent=offered['parent'] is not None and identifier == offered['parent']['id'],
+                    application_allowed=False)))
+    return cases
 
 
 def prepare_shaping_nominations(source, base, sources):
@@ -1453,6 +1583,25 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'canonical_consolidation':
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        if value is not None:
+            engine._expect_fields(value, 'consolidation output', {'title', 'meaning', 'children'})
+            engine._expect_string(value['title'], 'consolidation title')
+            engine._expect_string(value['meaning'], 'consolidation meaning')
+            children = engine._validate_string_array(value['children'], 'children', allow_empty=False)
+            offered = {node['id'] for node in json.loads(case['inputs']['INPUT_JSON'])['siblings']}
+            if (len(set(children)) != len(children) or not 2 <= len(children) < len(offered)
+                    or set(children) - offered):
+                raise ValueError('invalid, duplicate or unsupplied consolidation children')
+        result['parsed'] = value
+    if adapter == 'canonical_consolidation_pairs':
+        from . import hierarchy_node_pairs
+        meaning = json.loads(case['inputs']['INPUT_JSON'])['local']['meaning']
+        diagnostics = isinstance(schema, dict) and 'questions' in schema.get('properties', {})
+        result['parsed'] = hierarchy_node_pairs.validate(raw, diagnostics=diagnostics, meaning=meaning)
+        if result['parsed']['meaning'] != meaning:
+            raise ValueError('Compare answer must copy the fixed local meaning exactly')
     if adapter == 'canonical_shaping_nomination':
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         engine._expect_fields(value, 'shaping nomination output', {'candidate_id', 'children', 'reason'})

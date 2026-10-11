@@ -1,8 +1,9 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work is a draft synthetic-parent prompt with shared
-definition-writing text; see [the draft and assembly contract](#synthetic-parent-draft-and-shared-definition-wording).
-It is isolated for review and has not changed the active construction policy.
+The latest user-authorized work is the first test of approved
+Hierarchy-consolidation-v3; see [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording)
+and [initial results](#initial-consolidation-v3-test).
+It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
 group has too many children. A nomination still follows ordinary local versus
@@ -1550,13 +1551,13 @@ been activated.
 
 ## Synthetic parent draft and shared definition wording
 
-**Hierarchy-consolidation-v3 is the current draft, not an approved or tested
-model prompt.**
-The user authorized its preparation in the shaping task worktree only.
+**Hierarchy-consolidation-v3 is user-approved and has completed its initial
+proposal and comparison screen. It has not been adopted into construction.**
+The user initially authorized its preparation in the shaping task worktree only,
+then approved the prompt and the initial test described below.
 The previously authorized bootstrap-agent consultation is closed; the user
-instructed this task to stop messaging that agent. No inference,
-bootstrap revision, construction change, review UI refresh or main integration
-is part of this draft task.
+instructed this task to stop messaging that agent. No bootstrap revision,
+construction change, review UI refresh or main integration is part of this task.
 
 The [complete v3 draft](shr_single_pair/Hierarchy-consolidation-v3.md) receives
 only the siblings' immediate parent and the siblings, each with an ID, title
@@ -1666,6 +1667,88 @@ section. Removing them restores v3 exactly; they are not model instructions.
 The draft uses explicit sections, delimited input and no requested
 reasoning trace or examples, consistent with
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
-That guidance does not validate the consolidation semantics. The next step is
-user review of the draft, followed by a separately authorized small test using
-the saved Food preparation sibling group and a root group.
+That guidance does not validate the consolidation semantics.
+
+## Initial consolidation-v3 test
+
+The user approved four GPT-6.1 Sol medium proposal calls: the saved Food
+preparation group and seven roots, with two independent draws for each.
+The shared runner prepared the second draw with `--from` and `--repeat`;
+input text, model and reasoning settings match, and all four outputs have fresh
+native receipts. No source post, local nominee list, SSE ranking or expected
+answer enters the consolidation input.
+
+The reusable `canonical_consolidation` adapter gathers the whole sibling group
+from pinned raw/menu sources, preserves original canonical titles, meanings and
+support, and supplies only `parent` and `siblings`. It validates JSON null or
+exactly `title`, `meaning` and distinct supplied `children` IDs selecting a
+proper subset of at least two. Preparation does not infer or change a graph.
+[The source](shr_single_pair/hierarchy-consolidation-v3-source-v1.json) and
+[first-draw specification](shr_single_pair/hierarchy-consolidation-v3-first-v1.spec.json)
+freeze both seven-choice groups.
+
+| Group | First draw | Independent repeat |
+|---|---|---|
+| Food preparation C005 | Cooking equipment above Cookware C008 and Cooking appliances C014 | JSON null |
+| Roots | Beverages above Coffee C006 and Slush drinks C039 | Beverages above the same two nodes, with a different fixed definition |
+
+The `canonical_consolidation_pairs` adapter then preserves each of the three
+non-null returned definitions verbatim and prepares comparisons against every
+offered sibling, plus the supplied parent when present. It verifies the saved
+proposal's native receipt and source hashes, supplies the original raw graph's
+full recursive canonical ancestor/descendant meanings, and requires exact
+meaning-copy outputs. It does not invent a source post for a synthetic topic.
+The unchanged **Compare-v75** fixed-meaning prompt is used for this bounded
+validation; this is not a claim that it replaces the fifty-note graph's original
+Compare-v48 construction or qualifies newer experimental Compare versions.
+[The comparison source](shr_single_pair/hierarchy-consolidation-v3-comparison-source-v1.json)
+and [specification](shr_single_pair/hierarchy-consolidation-v3-comparison-v1.spec.json)
+record that choice.
+
+All twenty-two comparison requests are valid. Both Beverages definitions contain
+Coffee and Slush drinks and return neither against the other five roots.
+Cooking equipment contains the two proposed children, returns neither against
+the other five siblings, and is contained by Food preparation. Required
+canonical consequences were included in each request. These are model judgments
+under fixed meanings, not new human gold or complete graph traversal.
+
+The native `show` report now includes `consolidation_shapes`, an offline check
+of deduplicated supporting-note sets plus recursive descendants. It changes no
+hierarchy and labels every result `applied: false`:
+
+- **Beverages passes the local structural check.** It represents seven notes;
+  Coffee represents six and Slush drinks one. Both proposed downward edges
+  narrow the note set. Replacing those two roots with their parent would reduce
+  root choices from seven to six; the new parent would offer two choices.
+- **Cooking equipment fails the local structural check.** Cookware represents
+  two notes, both already included in Cooking appliances' four-note set. The
+  proposed parent's union is four notes too. Its edge to Cooking appliances
+  would not narrow the note set, despite reducing Food preparation's immediate
+  choices from seven to six. Do not apply this grouping under the approved
+  strict-narrowing requirement.
+
+A semantically valid grouping need not improve browsing. The immediate useful
+process change is to screen note-set narrowing before paying for comparisons.
+The consolidation model was not given note memberships, so this structural
+failure does not by itself identify a wording defect. The null repeat also does
+not establish whether no alternative useful grouping exists.
+
+Native evidence remains ignored under `target/canonical-shaping-selection-v1/`:
+`consolidation-v3-first-v1`, `consolidation-v3-repeat-v1`, and
+`consolidation-v3-compare-v75-v1`, with `*-report-v1.json` viewing snapshots.
+The shared runner's [usage selection](shr_single_pair/hierarchy-consolidation-v3-usage-v1.json)
+produces `consolidation-v3-usage-v1.json`: **26 fresh attempts**, zero reuses,
+warmups, retries, failures or missing usage; 64,007 input tokens, zero cache
+reads/writes, and 8,994 output tokens including 2,063 reasoning tokens.
+Complete API-equivalent catalog cost is **$0.217954**, not subscription billing.
+The existing counter advances from 193/220 to **219/220**; one attempt remains.
+No allowance was increased.
+
+Production-path checks first failed on the two missing adapters and missing
+shape report, then passed. Together with nomination, assembly and revision regression checks,
+twenty-six relevant tests pass. Full saved hierarchy traversal and an actual
+synthetic-node insertion remain unrun; this screen does not establish globally
+optimal shaping, route-depth savings or whole-hierarchy quality. The next
+candidate for that stage is Beverages, reusing these exact comparison answers
+where request identity permits. No graph, prompt version, UI or other agent's
+worktree was changed, and no agent message was sent.

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "state": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json",
+    "sha256": "853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae"
+  },
+  "menu": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-v2/state.json",
+    "sha256": "4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c"
+  },
+  "selections": [
+    {
+      "id": "food-preparation",
+      "parent": "C005"
+    },
+    {
+      "id": "roots",
+      "parent": null
+    }
+  ]
+}
