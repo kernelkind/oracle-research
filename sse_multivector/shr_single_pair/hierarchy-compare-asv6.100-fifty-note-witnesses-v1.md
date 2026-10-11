@@ -2702,3 +2702,68 @@ was fetched again: keep instructions direct, avoid requested reasoning traces,
 and consider closely aligned input/output examples after zero-shot attempts.
 This supports testing the two alternatives; it does not establish either fix
 or excuse demonstrations copied from validation data.
+
+The V119/V121 matched gates complete all 62 comparisons with 66 actual attempts,
+no reuses/retries/failures or missing usage. Full native API-equivalent cost is
+$0.6391916; this is a catalog estimate, not incremental subscription cash.
+V119 reviews: core 10 accept/2 reject/6 uncertain, controls 6 accept/5 reject/
+2 uncertain. All broth and flour witnesses improve, but reduced mental-state
+degrees do not establish an absent requirement, pantry use does not mean
+exclusive pantry ingredients, and beverage labels do not exclude the defined
+mouth/swallow action. Other rejections explicitly concern quote/priority
+procedures, not certified contrary relation labels. Bagel purpose and author/
+person closure remain qualified.
+
+V121 reviews: core 13 accept/1 reject/4 uncertain; controls 7 accept/2 reject/
+4 uncertain. No definite semantic rejection was identified in this bounded
+first draw. The three definite rejects concern mandatory starting-question
+execution or priority; 022 forward additionally combines question conditions
+within a qualified case. The admitted animal consumers, broth-free ingredients,
+flourless preparation, meal alternatives and appliance roles pass actual-proof
+review. All 31 selected labels are reversal/chain-consistent, with one supported
+snapshot guard hold; consistency is not independent scope certification.
+Exact requests, receipts and independent-review disagreements are preserved.
+
+### V125: eliminate question bookkeeping, retain visible scope tests
+
+The counterexample questions and separate diagnostic answers are user
+requirements. Exactly one quoted condition and a mandatory variation tied to
+that quotation were research devices. V122 replaces only V121's two search/
+recording paragraphs. It removes that output bookkeeping while requiring the
+justification to identify and resolve applicable missing identity/consumer
+restrictions before other conditions. Full child admission, all parent routes,
+necessary implications, canonical consequences and the five-field schema remain
+unchanged. Optional quotes in the retained demonstrations remain permitted.
+Incorrect questions, missing identity proofs and unsupported complete-coverage
+claims remain errors; eliminating a formatting requirement is not proof that
+semantic omissions are fixed.
+
+Pre-dispatch review found V122 attached further-qualification priority only to
+a failed identity/consumer test, omitting the explicit no-identity fallback.
+V125 restores that fallback and clarifies that a proposed candidate still needs
+admission testing; it does not require inventing a valid counterexample when
+containment holds. V122 and its prepared experiments remain unrun. V125 is the
+corrected question-procedure intervention, not a semantic-boundary change.
+
+The V125 fresh expanded gate has the original 33 core and 19 protected controls.
+It intentionally disables reuse and includes the prior 31 inputs plus 21
+additional state, intention, greeting, beverage and branch controls. V121's
+equivalent expanded preparations remain unrun because its output contract did
+not pass. These preparations do not change or certify any producer meaning.
+
+In parallel, V123 retains only the watch demonstration from V121; V124 retains
+only hair cutting. Their instructions otherwise stay byte-identical to V121;
+the illustration disclaimer changes only singular/plural wording. Each tests
+the same 12 exact inputs: 041/042/052/053 in both directions, Bread snapshot and
+both isolated directions, and the appliance-role control. This isolates the
+two demonstrations without introducing V125's procedure change. No single
+draw can establish the unique cause of an improvement or dependable accuracy.
+
+Expected dispatch: 52 expanded comparisons and two 12-case ablations, plus six
+warmups across their native core/control panels: 82 attempts absent retries/
+reuses. Stage caps are 67/39 for V125 and 17/9 for each ablation; the shared
+20000 counter remains unchanged. Sources, inputs, evidence, schema and worker
+bindings are checked before execution. Prompts and prepared plans are frozen
+before inference, and review ownership is exclusive per native experiment.
+No Bootstrap generation, hierarchy work or external agent message is involved.
+Usage source: hierarchy-compare-v123-v125-question-example-usage-v1.json.
