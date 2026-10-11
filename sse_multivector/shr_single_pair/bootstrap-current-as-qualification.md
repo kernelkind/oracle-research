@@ -27,6 +27,12 @@ reviews 115 meanings from 17 complete ASv6.100 trees: 113 individual accepts,
 one factual-support reject and one uncertain meaning. Thirty-five relationships
 to the risotto Food root remain scope-qualified. Individual acceptance does not
 establish whole-branch compatibility or a measured gain over v104.
+The latest [unchanged-v105 scope and identity repeats](#completed-unchanged-v105-scope-and-identity-diagnostic)
+produce 16 valid fresh meanings: qualified agent reviews record 12 accepts,
+two factual-support rejects and two uncertain meanings. The business-identity
+failure recurs in both draws. Food relationships retain a consequential
+information-topic interpretation disagreement; they are not certified failures.
+V104 remains approved, v105 remains experimental, and no prompt changed in this stage.
 
 ## Input and review contract
 
@@ -1070,3 +1076,141 @@ through [the diagnostic usage source](hierarchy-bootstrap-v105-scope-identity-us
 This small adaptive repeat panel does not estimate general reliability or
 attribute failure to a particular sentence. No prompt edit is justified merely
 by repeating a failure already subject to an explicit instruction.
+
+## Completed unchanged-v105 scope and identity diagnostic
+
+Two fresh draws of the eight predeclared cases completed through the main shared
+runner. All original posts, ASv6.100 trees, selected pointers, rendered prompts
+and runner/cache settings match their baseline requests. Both draws have eight
+valid non-null meanings, no reuses, failures, malformed answers or retries.
+Bootstrap-v105's prompt SHA-256 remains
+`3c851548f70d9e6cf4ad5ff3bf0bef312abc2dafeb6b2e8334a3ea9f7f612bd8`.
+V104 remains the last approved prompt. No Compare call, hierarchy build, prompt
+edit, activation or external coordination occurred in this diagnostic.
+
+Three independent read-only reviewers assessed every selected output. Native
+output-bound agent reviews record six accepts, one reject and one uncertain
+meaning in each draw. These are qualified individual assessments, not human
+gold or a whole-branch pass:
+
+| Entry | Draw 1 | Draw 2 | Qualification |
+|---|---|---|---|
+| Food | accept | accept | Explicit human-consumption intention; information-kind versus particular-use coverage still needs a common interpretation. |
+| Risotto | accept | accept | Clear recipe-defined kind; no consumer restriction is stated. A broader definition alone is not an ambiguity failure. |
+| Ingredients | accept | accept | Explicit dish-specific ingredient role and nonexhaustive list; no human consumer is stated. |
+| Dry white wine ingredient | accept | accept | Wine identity and required ingredient role retained; actual incorporation or direct drinking is not required. |
+| Food-related content on Nostr | uncertain | uncertain | Human culinary food versus nourishment for other animals remains unsettled. |
+| Coffee chains root | accept | accept | Standalone business definition only; this post's assignment to that category remains unresolved. |
+| Coffee chain described as weird today | reject | reject | Asserts a particular multi-outlet business unsupported by the post. |
+| Amusement control | accept | accept | Attributes the post's coffee-chain framing and preserves its supported amused reaction. |
+
+### Repeated business-identity failure
+
+The original post says "Weird #coffeechain today" and "Rave at a coffee shop lol",
+followed by a video URL. It does not establish that a multi-outlet business is
+involved. Both fresh child definitions nevertheless assert such a business.
+Draw 2 defines "A coffee chain—a business operating multiple coffee shops under
+a shared brand—that the author characterizes as weird or unusual on the day of
+the post." Its diagnostic resolves chain versus single shop using the selected
+subject and parent, without considering whether the hashtag establishes that
+commercial identity. General knowledge can define a coffee-chain kind; it
+cannot establish this particular factual assignment.
+
+Both root definitions are coherent business categories, but their definition-only
+accepts do not certify this post's assignment. The amusement meanings instead
+attribute the framing, without establishing affiliation. That control comes from
+a different original ASv6.100 tree and must not be spliced into the business tree.
+Draw 1's business child omits its independently defined parent's explicit shared-brand
+condition. The conventional interpretation of "coffee chain" may supply that
+condition; preserve the qualification rather than silently importing it.
+
+The actual recurrence is established; its causal wording is not. Selected-subject
+authority, ancestor fit and factual-evidence rules are plausible interacting
+mechanisms, not isolated causes from these unchanged repeats.
+
+### Human-purpose scope remains conditionally incompatible
+
+Both Food roots explicitly require intended human consumption and include
+information about such food and ingredients. The independently generated
+Risotto meanings define a rice/broth dish; Ingredients and Wine preserve their
+required role in making that dish without expressly choosing a human consumer.
+These are clear broader child definitions, not automatically ambiguous meanings.
+
+The substantive scope probe is the specified risotto prepared solely as animal
+feed, with the specified wine as an ingredient. The written recipe and ingredient
+criteria can admit it. Under a direct application-specific reading of Food's
+human-intention condition, the parent excludes it. This is a hypothetical scope
+probe, not a claim about the actual post or a new comparison label.
+
+One reviewer calls the three links provisionally incompatible under that direct
+reading. Another retains a consequential uncertainty: does information about a
+conventionally human-food kind remain covered when a particular preparation has
+another intended use? The independently accepted Food roots do not settle that
+information-topic convention. "Dish", "food" and "culinary" alone do not establish
+application-specific human intention. Preserve the disagreement rather than
+certifying the conditional counterexample as an unconditional failure.
+
+Nostr's final definitions simply refer to "food"; content about cattle-only
+fodder separates human-food and broader nourishment readings. Both draws leave
+that domain boundary unsettled. This does not establish the same ambiguity in
+every recipe-defined dish or ingredient.
+
+Eight selected original ancestor relationships were examined under each of four
+parent/child draw combinations, without choosing favorable endpoints. These are
+32 dependent read-only checks of fixed meanings, not 32 model comparisons or
+independent observations. Conservative accounting is:
+
+- 16 Food checks remain unresolved: three conditional-purpose links and one
+  food-domain link in each endpoint combination.
+- 12 Risotto/Ingredients/Wine checks are provisionally compatible information-topic
+  narrowing; an ingredient need not be a physical instance of its dish.
+- Four coffee business checks are blocked by unsupported child assignment;
+  the two combinations using the draw-1 child also retain the brand qualification.
+
+The prior 35 unresolved Food links remain historical qualifications. These
+selected repeats do not convert them into 35 ambiguous producer errors or
+establish a complete-branch repair.
+
+### Frozen evidence, accounting and next recommendation
+
+Native artifacts remain under
+`target/bootstrap-v105-scope-identity-diagnostic-v1/{draw1,draw2}`. Each has the
+original `run/results.jsonl`, `report-before-review.json` and separately saved
+`report-reviewed-v1.json`. Reviews bind the exact input/output digests; outputs
+and production receipt hashes are unchanged by review. All 36 evidence quotes
+are exact contiguous substrings of their source posts.
+
+| Artifact | SHA-256 |
+|---|---|
+| Draw 1 experiment envelope | `76c2bc72a3349e9befd503b44fdaaa71618e9a8fa9abff5797f0b17bc688e345` |
+| Draw 2 experiment envelope | `64ea58e3644279073134fcceef6f05a64c1745fa5bb48a01a2e059be68e186dd` |
+| Draw 1 reviewed report | `1f95d15d6cdc16a78e87c8c20eab580865a3f529c209de00751bf362834fea82` |
+| Draw 2 reviewed report | `fcae7d9bc5969e8c0dbb122c1a1816546e20c6deb0aec29f9dcbd7e525001299` |
+| Draw 1 rejected business-child receipt | `493d783b8fa128ff1a4910578203f88fcab7e2ef6ef3fadcf4dac6cdb5193f98` |
+| Draw 2 rejected business-child receipt | `16debd94f864a6b8cea47ad463c1c82da0aabdb28e7e6ea62034e14e4ef9386d` |
+
+The predeclared [usage source](hierarchy-bootstrap-v105-scope-identity-usage-v1.json)
+produces `target/bootstrap-v105-scope-identity-diagnostic-v1/usage-native-v1.json`,
+SHA-256 `66100b8c869985243b5507aa0dd610cb0241234f57d82fff2ee13551896afb88`.
+Sixteen fresh meaning calls plus two cache warmups use 18 actual attempts, with
+no retries or exact reuses. All 16 meaning calls report cached-input usage.
+Complete native API-equivalent generation cost is $0.104748 for this stage;
+earlier baseline generation is outside this usage group. This is not an
+incremental subscription cash charge, and reasoning is already included in
+output. The persistent counter snapshot is 14,387/20,000, including other agents;
+only these 18 attempts are attributable to this stage.
+
+Four targeted production-path tests pass for schema-4 local input, native
+source-bound collection preparation and diagnostic producer requirements.
+Receipt/input/output/review binding checks and artifact hashes also pass;
+the final documentation received an independent read-only count and scope audit.
+No execution code changed. The broader legacy-suite limitation recorded above
+remains; this stage does not claim that suite passes.
+
+The next useful recommendation is a controlled test of the selected-subject and
+ancestor-fit instructions against the factual-evidence instruction for the
+business-identity failure. Before counting Food branch errors or adding consumer
+qualifiers, settle whether a parent purpose condition governs a food kind or
+each particular use discussed. More unchanged repeats cannot resolve that
+interpretation disagreement. No additional wording change or inference stage
+has begun; v105 remains experimental without a measured reliable fix.
