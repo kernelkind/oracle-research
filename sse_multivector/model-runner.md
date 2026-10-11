@@ -1458,8 +1458,9 @@ The approved traversal draft now requires restricted refinement after note
 coverage: deeper selections come only from notes represented by leaves
 containing multiple notes. The finished hierarchy must remove redundant steps
 with equal parent/child note sets and retain individual access with one note per
-leaf. The constructor does not yet implement these updates; do not report its
-existing stopping check as satisfying them. Separate required L1 processing in
+leaf. The constructor and structural audit now check single-note leaves, even
+when the same notes are individually accessible elsewhere. Restricted refinement
+and automatic redundant-step removal remain unimplemented. Separate required L1 processing in
 the prominence draft is unchanged. The retained-node choice for redundant steps
 remains to be worked through before implementing automatic removal.
 
@@ -1500,15 +1501,16 @@ Count a node's own supporting notes and recursive descendants, deduplicating
 note IDs. The approved finished-hierarchy conditions are all notes reachable
 individually,
 one distinct note per canonical leaf, and strictly smaller note sets on every
-downward edge. The current constructor checks individual access and strict edges
-only; its completion does not establish the new leaf requirement. There is no
+downward edge. The current constructor checks individual access, single-note
+leaves and strict edges. Exhausted local inventory with a multi-note leaf reports
+unfinished construction. There is no
 additional requirement to find or apply every known regrouping or shortcut, or to conduct a
 final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
 [constructor](hierarchy-traversal-draft.md) calls consolidation after an addition
 leaves six or more siblings. Its stopping-check timing remains provisional:
-check individual note access and strict note-set narrowing after each placement
+check individual note access, single-note leaves and strict note-set narrowing after each placement
 and all triggered consolidation against the whole selected corpus. When both
 pass, stop dispatching new searches/comparisons and save already-dispatched
 answers without further graph changes. The constructor does not solve menu optimization

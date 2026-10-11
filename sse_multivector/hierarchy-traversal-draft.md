@@ -1,7 +1,8 @@
 # Hierarchy selection by traversal — draft v25
 
 **Status: approved traversal baseline implemented by the standalone
-`traversal-v24` constructor; the v25 shaping and refinement updates below are
+`traversal-v24` constructor, including the v25 single-note-leaf stopping check.
+Restricted refinement and automatic redundant-step removal below remain
 approved design, not yet implemented.** Stopping-check timing remains
 provisional. Comparison prompts and previously frozen experiments retain their
 existing contracts. The limited three-note trial is recorded below.
@@ -286,7 +287,10 @@ containment when reconnecting the retained nodes. Equal observed note sets do
 not establish equivalent meanings; do not merge meanings or transfer local
 support merely because note sets match. Choosing which node to retain and
 handling its other branches still require a concrete worked example. Automatic
-removal and the new leaf-completion check are not yet implemented.
+removal is not yet implemented. The constructor and structural audit now require
+every leaf to contain one distinct note. Individual access elsewhere does not
+waive an unfinished multi-note leaf; exhausted inventory reports unresolved
+construction rather than completion.
 
 These conditions do not claim global optimality or establish relationships for
 unchecked deeper local nodes.
@@ -312,9 +316,9 @@ concurrent-search rules. When both pass:
 
 On later resumption, reuse exact unchanged answers and check a search against
 the then-current graph before placement, as required by the concurrent-search
-policy. The current constructor implements this timing for the earlier
-individual-access and strict-edge checks. It does not yet require every leaf to contain one note
-or automatically remove redundant steps. The limited trial below does not
+policy. The current constructor implements this timing for individual access,
+strict edges and single-note leaves. It does not yet automatically remove
+redundant steps. The limited trial below does not
 establish general hierarchy quality.
 
 ## Agreed consolidation trigger

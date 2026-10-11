@@ -282,7 +282,11 @@ def _stopping(state):
     isolated = {next(iter(notes)) for notes in represented.values() if len(notes) == 1}
     equal = [dict(parent=parent, child=child) for parent, kids in children.items()
              for child in kids if not represented[child] < represented[parent]]
+    multi = [dict(id=identifier, note_ids=sorted(notes))
+             for identifier, notes in represented.items() if not children[identifier] and len(notes) > 1]
     return dict(individual_access=set(state['note_ids']) <= isolated, strict_edges=not equal,
+                single_note_leaves=all(len(notes) == 1 for identifier, notes in represented.items()
+                                       if not children[identifier]), multi_note_leaves=multi,
                 missing_individual=sorted(set(state['note_ids'])-isolated), equal_note_edges=equal)
 
 
@@ -423,7 +427,8 @@ def _schedule(directory, state, comment):
             continue
         if state.pop('check_stopping', False):
             state['stopping'] = _stopping(state)
-            if state['stopping']['individual_access'] and state['stopping']['strict_edges']:
+            if (state['stopping']['individual_access'] and state['stopping']['strict_edges']
+                    and state['stopping']['single_note_leaves']):
                 state['status'] = 'complete'
                 _stop_dispatch(state)
                 break
