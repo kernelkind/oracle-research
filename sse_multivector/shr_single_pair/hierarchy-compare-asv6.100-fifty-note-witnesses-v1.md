@@ -2049,3 +2049,29 @@ accessible establish behavioral possibility, not that category membership
 Both are lexical scope qualifications; neither prior positives nor provisional
 negatives settle them. Earlier reviews are preserved, with this later challenge
 recorded separately. Removing a contradiction does not establish accuracy.
+
+Independent native V99 review records5 accept,5 reject and4 qualified uncertain
+outputs:038/042 both and019-reverse are rejected;018/041 both are qualified;
+019-forward and the four designated controls are accepted. All14 exact meaning
+copies and native receipts pass. This later qualification does not rewrite
+prior-version reviews or input bytes.
+
+### V100: counterexample construction instead of a yes/no coverage question
+
+V100 changes only V97's question-generation paragraph. Each diagnostic asks
+which admitted child case violates one quoted independent parent condition;
+it requires a concrete candidate and separate admission/exclusion checks. It
+does not presume a witness exists: an inadmissible candidate still requires
+full coverage proof or an unresolved answer. There are no synthetic examples
+in this contrast. Scope rules, canonical implications, meanings, field order
+and production schema remain unchanged.
+
+The ten-case gate contains038/042/019 both directions and036/107/111 plus isolated
+034 controls. The lexical qualifications018/041 remain in the broader frozen
+collection; excluding them from this mechanism gate does not resolve or discard
+them. Native caps19 and3 include warmups and recovery under the existing shared
+20000 counter. Review must first establish that atomic questions and concrete
+candidates were actually produced. Better labels without valid proofs, or
+loss of activity-role/aspect positives, do not qualify the prompt. This contrast
+can test candidate construction versus abstract classification, but cannot by
+itself separate that mechanism from reduced lexical priming.
