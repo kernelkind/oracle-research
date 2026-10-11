@@ -198,6 +198,22 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertEqual(Path(revision['base_path']).name, baseline.name)
         self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
 
+    def test_consolidation_v5_preserves_shared_rules_and_approved_baseline(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v5.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = json.loads(spec.read_text())
+        for version in ('v3', 'v4'):
+            previous = json.loads((PROMPTS / f'Hierarchy-consolidation-{version}.assembly.json').read_text())
+            self.assertEqual(previous['parts'][1:-1], current['parts'][1:-1])
+            self.assertEqual(sha256((PROMPTS / previous['output']['path']).read_bytes()),
+                             previous['output']['sha256'])
+        baseline = PROMPTS / 'Hierarchy-consolidation-v3.md'
+        revision = json.loads((PROMPTS / 'Hierarchy-consolidation-v5.md.revision.json').read_text())
+        self.assertEqual(revision['base_sha256'], sha256(baseline.read_bytes()))
+        self.assertEqual(Path(revision['base_path']).name, baseline.name)
+        self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -209,10 +225,12 @@ class PromptAssemblyTests(unittest.TestCase):
             {'id': 'C3', 'title': 'Gardening', 'meaning': 'Cultivating plants in a garden.'},
         ]}
         for version in ('Hierarchy-consolidation-v1', 'Hierarchy-consolidation-v2',
-                        'Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4'):
+                        'Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
+                        'Hierarchy-consolidation-v5'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
-                                     if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4')
+                                     if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
+                                                        'Hierarchy-consolidation-v5')
                                      or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')

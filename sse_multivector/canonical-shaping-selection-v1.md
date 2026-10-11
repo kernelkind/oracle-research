@@ -1,12 +1,13 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work tests experimental
-[Hierarchy-consolidation-v4](shr_single_pair/Hierarchy-consolidation-v4.md)
-on the same nine complete sibling groups, with two independent draws each.
+The latest user-authorized work drafts experimental
+[Hierarchy-consolidation-v5](shr_single_pair/Hierarchy-consolidation-v5.md)
+to check whole-sibling fit beneath the supplied parent before choosing a grouping.
+It has offline integrity checks but no model trial yet.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
-the [v4 revision record](#consolidation-v4-draft), and
-[the completed v4 proposal panel](#consolidation-v4-proposal-panel).
+the [completed v4 proposal panel](#consolidation-v4-proposal-panel), and
+[the v5 revision record](#consolidation-v5-draft).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1608,9 +1609,10 @@ The pinned assembly manifests for the approved references are
 and [Consolidation-v3](shr_single_pair/Hierarchy-consolidation-v3.assembly.json).
 Both reference the exact same nine shared files in the same order. The
 experimental [Consolidation-v4 manifest](shr_single_pair/Hierarchy-consolidation-v4.assembly.json)
-also preserves those exact shared files and separators, changing only its
+and [Consolidation-v5 manifest](shr_single_pair/Hierarchy-consolidation-v5.assembly.json)
+also preserve those exact shared files and separators, changing only their
 task-specific wrappers. V3 remains the last human-approved full consolidation
-wording; authorization to draft v4 is not semantic qualification. The bootstrap
+wording; authorization to draft or test later versions is not semantic qualification. The bootstrap
 recipe preserves its original clause positions and intervening bytes;
 the consolidation recipe places them together in its definition section. The
 original bootstrap recipe, shared v1 file and consolidation v1 remain fixed.
@@ -1641,7 +1643,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v4.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v5.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -2129,20 +2131,59 @@ reproduces `consolidation-v4-usage-v1.json` using `summarize-experiments`:
 4,877 reasoning tokens**, and complete **$0.114808 API-equivalent catalog cost**.
 This is not subscription billing; reasoning is already counted in output.
 
-**Recommended next diagnostic, not run or separately authorized:** nine focused
-Compare-v75 checks with the exact new meanings and unchanged original graph:
+The proposed nine-check Compare diagnostic was not prepared or run. After the
+user clarified that this task is consolidation, the next authorized action
+became the v5 prompt revision below. Ordinary comparison still validates actual
+placement later; this task has not changed the Compare prompt or its workflow.
+Twenty-five production-adapter, assembly and revision checks passed at the v4
+checkpoint. V4 remains experimental.
 
-| Saved v4 proposal | Canonical checks | Purpose |
-|---|---|---|
-| First Food dishes: Dough and batter foods | Pancakes C031; Bread C068 | Check whether the added meal role loses whole-child coverage |
-| First Cuisine: Italian-origin dishes | Cuisine C016 | Check the proposed origin-based alternative beneath the fixed parent |
-| Repeated Cuisine: Prepared dishes | Cuisine C016 | Check the recurring parent-fit defect |
-| Repeated Food dishes: Meat and meat-alternative dishes | Burgers C036 | Check the suspected transferred meal restriction |
-| Repeated Food preparation: Food processing | Food preparation C005; Grilling C012 | Distinguish equivalence from strict narrowing and check a possible omission |
-| First roots: Beverages | Coffee C006; Gardening C004 | Preserve contrasting positive and negative controls |
+## Consolidation-v5 draft
 
-This diagnostic addresses the specific scope mechanisms before another prompt
-edit. Its outputs must distinguish direct directional answers from inherited
-canonical-branch conflicts, as in the v3 screen. It is not full qualification
-of every new proposal. Twenty-five production-adapter, assembly and revision
-checks pass; v4 remains experimental and this task remains isolated as requested.
+The user authorized proceeding with
+[Hierarchy-consolidation-v5](shr_single_pair/Hierarchy-consolidation-v5.md)
+to address the observed scope defects directly in consolidation. V5 checks
+every supplied sibling against the supplied parent's entire fixed meaning
+before choosing a grouping. Only siblings whose whole meanings fit are
+available. Existing placement cannot supply a restriction missing from a fixed
+meaning; fewer than two compatible siblings requires JSON null. When the
+siblings are roots, there is no supplied-parent constraint.
+
+This changes the order of the task rather than adding another preservation
+rule at the end. A meal-restricted parent cannot justify selecting a broader
+Bread or Pancakes meaning and adding a meal restriction to the new parent.
+The final check still requires the proposed meaning to fit wholly beneath the
+supplied parent and be narrower rather than equivalent. Whole-child coverage,
+the complete child list, a useful proper subset and null behavior remain in
+place. This is an untested mechanism hypothesis, not evidence that v5 has
+resolved either observed defect.
+
+The shared runner's native `revise` again uses last approved v3 as its baseline.
+The [revision receipt](shr_single_pair/Hierarchy-consolidation-v5.md.revision.json)
+and [assembly manifest](shr_single_pair/Hierarchy-consolidation-v5.assembly.json)
+pin the complete v5 text to SHA-256
+`e1a284fc33bbbd121ed34229f4a1cadd7e4a2d8fa1641286a82ba0a43cb502d9`.
+Only the task-specific wrappers change; all nine shared Bootstrap-v104 clauses,
+their order and separator bytes remain identical to v3 and v4. Historical
+prompts, Bootstrap and saved experiment identities are unchanged.
+
+Input remains the immediate `parent` or null and the complete `siblings`
+group. Output remains null or exactly `title`, `meaning` and distinct
+`children` IDs. No ancestor inputs, note memberships, hierarchy/UI changes,
+Compare edits or messages to other agents were added.
+
+The new production assembly test first failed because the v5 manifest was
+missing, then passed with the versioned source and revision receipt. Native
+preparation also freezes the full assembled v5 text without inference.
+Twenty-six production-adapter, assembly and revision checks pass. These checks
+establish mechanical integrity, not semantic quality. There were no model
+calls in this revision; the persistent counter remains **291/291**. The task
+remains isolated in this worktree as requested.
+
+**Recommended next test, not run:** use the same nine complete sibling groups
+with two independent v5 draws each. Keeping inputs and settings fixed allows
+inspection of whether parent-incompatible siblings are excluded without losing
+useful root and other compatible groupings. Retain null and structural-negative
+controls, and assess the final definitions rather than transferring labels from
+earlier, different meanings. A new bounded eighteen-attempt allowance would be
+needed for this panel.
