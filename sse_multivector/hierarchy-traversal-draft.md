@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v7
+# Hierarchy selection by traversal — draft v8
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -174,6 +174,31 @@ When a local node is placed or held, its slot becomes available for another
 selected local node.
 
 Elapsed time and API cost for this policy have not been measured.
+
+## Agreed consolidation trigger
+
+**After every canonical-node addition, call the consolidation prompt for each
+of the added node's sibling groups containing six or more nodes, including the
+added node itself.**
+
+For a node with a parent, its sibling group is that parent's immediate children.
+For a root, the sibling group is all canonical roots. A node with multiple
+parents belongs to a sibling group under each parent.
+
+The prompt proposes a synthetic parent to group some of the siblings. A
+proposal still needs normal validation before it can change the graph. If the
+prompt returns `null`, leave the group unchanged and continue construction.
+Try that group again after a later node addition meets the same trigger; do not
+retry immediately just because it still contains six or more nodes.
+
+**Adding a synthetic parent follows exactly the same trigger.** Count the
+synthetic node together with its own siblings. If that group still contains six
+or more nodes, call consolidation again. Repeat after successful additions
+while the trigger holds; a `null` result ends attempts for that group until a
+later qualifying addition.
+
+This is an agreed construction rule for the draft, not an implemented change.
+How consolidation fits between the serialized placements remains to be drafted.
 
 ## Proposed walk
 
