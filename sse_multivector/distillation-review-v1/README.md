@@ -34,6 +34,14 @@ unestablished facts to a fixed named work. A formerly resolved Keke Palmer case
 now has full-record uncertainty about carrying posted facts through a named
 reference. Target agreement does not establish correctness; the set does not
 pass. Qualification and adoption remain pending; production defaults to DSLv2.
+The user subsequently authorized the [DSLv8 reference-boundary revision and
+test](#dslv8-reference-boundary-diagnostic-october-10). Fourteen fresh Sol/xhigh
+calls retain all twelve frozen assessed targets; the two originally unscored
+cases remain unscored. Both complete-output audits give **twelve accepts, one
+rejected explanation and one uncertainty**. The rollover verdict now excludes
+the omitted posted action, but its counterexample only changes what is
+discussed. The MILF tag's lexical scope remains unresolved. This development
+set does not pass; broader regression and lower-effort testing remain pending.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -4022,12 +4030,104 @@ is API-equivalent usage pricing, not a confirmed subscription cash charge.
 Saved request durations range from 26.535 to 103.945 seconds; exact experiment
 wall duration is not stored.
 
-The development set does not pass. The useful next step is to settle which
-posted predicates a named reference preserves on the existing game/work cases
-before further inference. No prompt revision or new interpretation rule has
-been adopted. This is prompt development on previously exposed cases, not
-unseen generalization evidence. Qualification, lower-effort testing and the
-final 60 remain pending; production still defaults to DSLv2.
+At DSLv7 completion, the development set did not pass. The recommendation was
+to settle which posted predicates a named reference preserves on the existing
+game/work cases before further inference. The user subsequently authorized
+the DSLv8 boundary and test below. These are previously exposed development
+cases, not unseen generalization evidence. Qualification, lower-effort testing
+and the final 60 remain pending; production still defaults to DSLv2.
+
+## DSLv8 reference boundary diagnostic (October 10)
+
+The user authorized implementing the proposed reference boundary and testing
+the resulting [DSLv8 draft](relationship-prompt-v8.md). This authorizes the
+revision and diagnostic, not production adoption or reviewer qualification.
+The trusted ASv6.100 source, quoted parent-child rule, input placeholders,
+Boolean/reason schema and mechanical decisions stay unchanged.
+
+The boundary uses the post to identify referents and interpret wording already
+present in each subject. It does not rebuild the subject from the referent's
+complete posted description or restore an omitted action, evaluation or
+relationship merely through identity. Ordinary synonymy and type meanings
+remain admissible. The AS example separately returning `New RavenWorks app`
+and `Help from the new RavenWorks app` supports this distinction; AS is not
+re-audited. Counterexamples retain the identified referent and all expressed
+child restrictions without substituting another same-named entity or inventing
+fixed-work plots or game facts. Merely changing what a post discusses is not
+proof of parent failure.
+
+Native `revise` records four exact edits against unchanged DSLv7 in
+[the revision receipt](relationship-prompt-v8.md.revision.json): the version,
+the hierarchy-building label on the verbatim AS excerpts, the interpretation
+boundary and counterexample integrity. The DSLv8 SHA-256 is
+`0bdea5f4436f9a607acac553f51d598f61fa0372c694d89928b1654c17094b29`.
+
+Native `prepare --from` reuses the exact fourteen DSLv7 inputs and evidence,
+including their real original posts and all fourteen saved output baselines.
+No source cases, expected-label metadata, schema or model settings are changed.
+The original six true and six false pre-call targets remain fixed, with the
+named-round and MILF/Mothers cases unscored. Native pre-call reviews record
+these agent assessments before inference; they are not human gold. Inherited
+legacy qualification labels remain provenance, not the correctness denominator.
+An independent prompt/input audit confirmed that the clarification should
+retain sense disambiguation, fuller names and meanings inside clauses.
+
+The retained `../oracle-mvp-review-dslv5-draft` worktree holds the ignored
+artifact root `target/distillation-review-v1/relationship-dslv8-reference-boundary/`.
+Its native experiment is `trial/`. `pre-call-report.json` verifies zero calls;
+`pre-run-report.json` preserves attributed input reviews;
+`terminal-raw-report.json` preserves results before output reviews; and
+`reviewed-report.json` includes current reviews and original-generation costs.
+The run uses **gpt-6.1-sol / xhigh / subscription SSE** with automatic shared
+queue admission. All fourteen were initially admitted together. The unchanged
+71-token default prefix is below the 1,024-token eligibility threshold, so no
+prefix caching or warming is prepared. No paid-provider fallback is used.
+
+All **14 fresh calls** finish on first attempts, with fourteen valid native
+receipts and schema-valid outputs, no failures, retries, answer reuse or warmups.
+The persistent allowance and fourteen distinct claims reconcile at **14/28
+used**. Frozen inputs, evidence, baseline outputs, request settings, response
+model identities, revision hashes and verbatim AS excerpts pass verification.
+No execution-code changes were needed; native preparation and execution are
+the integration checks for this prompt-only change.
+
+All twelve original assessed targets are retained: **12/12 target agreement**,
+not an independently adjudicated accuracy estimate. The sole Boolean change
+from DSLv7 is the originally unscored winnerless-round case, from true to false.
+Root and a separate output auditor agree on **twelve accepted complete records,
+one rejected explanation and one uncertainty**. The auditor reads only inputs
+and outputs, excluding expectations, baselines and prior reviews. Native agent
+reviews preserve the result without implying human approval.
+
+| Case | DSLv8 output | Complete-record assessment |
+| --- | --- | --- |
+| `M01-checkpoint-600-N0017:compatibility:003:1.1.1.2` | `false` | Accept: the reboot retains all its qualifications but omits Palmer's beneficial contribution. A different appraisal preserves the same work without inventing plot or cast facts. |
+| `M03-checkpoint-800-N0032:compatibility:003:4` | `false` | Reject the explanation: the outcome-classification example can describe the same round whose pot rolled over. It demonstrates omitted wording, not a complete-child witness establishing parent failure. The false judgment follows the approved meaning boundary, but the case stays unscored and does not pass the existing proof requirement. |
+| `M01-checkpoint-800-N0015:compatibility:018:1.1` | `false` | Uncertain: the explanation permits a mature-woman sense of MILF without motherhood. It preserves the fixed work and does not invent performer or plot facts, but that lexical scope is not independently established for this occurrence. The original target stays unscored. |
+
+The other eleven complete records are accepted. Hiring retains employment in
+the post-supported labor sense; Mamdani's fuller name retains the same target;
+the AI wave, demand/floor relationship and telemetry object remain preserved.
+The stopped-practice counterexample retains the completed daily goal, progress
+and current XP while explicitly failing current practice. Homemade content
+does not silently acquire the named work or the other tags' anatomy subject.
+
+Native usage is **17,185 input tokens, zero cached input or cache writes, and
+24,365 output tokens including 20,282 reasoning tokens**. The catalog
+API-equivalent estimate is **$0.278020**, with mean/median/p95 request estimates
+of $0.019859 / $0.015705 / $0.037338. Provider-reported charges are unavailable
+for all fourteen calls; this is not confirmed subscription cash billing.
+Saved request durations range from 27.549 to 176.835 seconds; exact experiment
+wall duration is not stored. Cache share and estimated savings are zero.
+
+The development set still does not pass. The clarification removes the
+observed restoration of posted facts through identity, but does not establish
+causal improvement or unseen accuracy. The next recommendation is to settle
+what evidence can establish an invalid fixed-reference pair under the mandatory
+counterexample requirement, rather than launch another revision or repeat.
+The tag's lexical scope remains a separate open interpretation. No proof-rule
+change is adopted. Broader regression, qualification, lower-effort testing and
+the final 60 remain pending; production still defaults to DSLv2.
 
 ## Actual distilled wording: offline preview (October 8)
 
