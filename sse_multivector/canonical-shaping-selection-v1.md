@@ -1,8 +1,11 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work is containment review of the expanded tests of approved
-Hierarchy-consolidation-v3; see [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording)
-and [the completed containment screen](#expanded-consolidation-v3-containment-screen).
+The latest user-authorized work is the experimental
+[Hierarchy-consolidation-v4 draft](shr_single_pair/Hierarchy-consolidation-v4.md),
+addressing the completed v3 screen's parent-fit and omitted-child findings.
+See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
+[the completed containment screen](#expanded-consolidation-v3-containment-screen),
+and [the v4 revision record](#consolidation-v4-draft).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -1599,11 +1602,15 @@ The native `revise` command subsequently produced v3's parent-only input and
 [revision record](shr_single_pair/Hierarchy-consolidation-v3.md.revision.json).
 Its shared definition clauses remain byte-for-byte identical to v2.
 
-The current pinned assembly manifests are
+The pinned assembly manifests for the approved references are
 [Bootstrap-v104 with expanded shared clauses](shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json)
 and [Consolidation-v3](shr_single_pair/Hierarchy-consolidation-v3.assembly.json).
 Both reference the exact same nine shared files in the same order. The
-bootstrap recipe preserves its original clause positions and intervening bytes;
+experimental [Consolidation-v4 manifest](shr_single_pair/Hierarchy-consolidation-v4.assembly.json)
+also preserves those exact shared files and separators, changing only its
+task-specific wrappers. V3 remains the last human-approved full consolidation
+wording; authorization to draft v4 is not semantic qualification. The bootstrap
+recipe preserves its original clause positions and intervening bytes;
 the consolidation recipe places them together in its definition section. The
 original bootstrap recipe, shared v1 file and consolidation v1 remain fixed.
 The additional bootstrap recipe is an extraction change, not a Bootstrap
@@ -1633,7 +1640,7 @@ From the task worktree:
 python3 sse_multivector/prompt_assembly.py check \
   sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v3.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v4.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -1944,14 +1951,14 @@ hierarchy quality, reliable repeats, globally optimal shaping or fewer browsing
 decisions after actual insertion. Only the first-draw definitions were compared;
 the separately generated repeat definitions remain unvalidated.
 
-**Proposed next prompt change, not yet implemented:** organize the existing
-task-specific instructions so the final standalone meaning determines the
+**Revision focus implemented in the subsequent experimental v4 draft:** organize
+the task-specific instructions so the final standalone meaning determines the
 complete child list, then check that same meaning against the supplied parent's
 entire scope. A recognizable shared category is insufficient if its final scope
 escapes that parent. If preserving whole child meanings makes the constraints
-incompatible, choose a different grouping or return null. Replace the relevant
-selection/output wording rather than append duplicate preservation rules; retain
-the hash-pinned shared Bootstrap clauses unchanged. Official
+incompatible, choose a different grouping or return null. V4 replaces the relevant
+selection/output wording and retains the hash-pinned shared Bootstrap clauses
+unchanged. Official
 [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 supports direct instructions and clear delimiters without requesting reasoning
 traces. It does not establish this semantic fix; the revised wording would need
@@ -1981,3 +1988,48 @@ and revision checks pass; assembly reconstruction preserves approved v3 bytes.
 No graph, prompt text, UI or other agent's
 worktree changed, and no agent message was sent. The results and maintained
 findings remain isolated in this task worktree as requested.
+
+## Consolidation-v4 draft
+
+The user explicitly authorized drafting
+[Hierarchy-consolidation-v4](shr_single_pair/Hierarchy-consolidation-v4.md)
+after the forty-comparison screen. The shared runner's native `revise` uses
+last approved v3 as its baseline and preserves an exact
+[revision receipt](shr_single_pair/Hierarchy-consolidation-v4.md.revision.json).
+The new [assembly manifest](shr_single_pair/Hierarchy-consolidation-v4.assembly.json)
+pins the final prompt and the two new task-specific wrappers. All nine shared
+Bootstrap-v104 clauses, their order and their separator bytes are unchanged.
+The final v4 SHA-256 is
+`144e23d89c65910f0851d4163ac7dff1baee248ebf5dab5c8779c843f9aae7c6`.
+
+V4 moves the complete child-list and parent-fit requirements into a check of
+the final standalone meaning. It checks every offered sibling, including the
+activities and uses explicitly covered by that sibling's meaning, and includes
+all siblings whose entire meanings fit. The supplied parent's fixed meaning
+must cover the proposed meaning in full; existing placement cannot add a
+restriction missing from a sibling. If fitting beneath that parent would narrow
+a selected sibling, the grouping is invalid and another topic or null is needed.
+This targets the saved bagel omission and Cuisine/meal-role problems without
+adding case-specific examples or changing the shared definition-writing rules.
+
+Input remains immediate `parent` or null plus the complete `siblings` group.
+Output remains null or exactly `title`, `meaning` and distinct `children` IDs,
+with at least two children and fewer than the complete group. The proposal
+still requires ordinary comparison before placement. There are no ancestor or
+descendant inputs, note-membership inputs, shaping-policy changes or fabricated
+restrictions. Existing graph conflicts remain outside this prompt's evidence.
+
+The new production assembly check first failed because the v4 manifest was
+missing, then passed with the versioned assembly and native revision receipt.
+Twenty-five production-adapter, assembly and revision checks pass, including
+shared-byte equality to v3, preserved v3/v104 hashes, and native preparation
+freezing the complete v4 prompt without inference. These checks establish
+mechanical integrity, not model judgment quality. No new model calls were made;
+the persistent counter remains **273/273**. V4 is an untested experimental draft
+and has not changed the active constructor or any hierarchy.
+
+Next qualification should reuse the nine original complete groups with passing,
+null and structural-negative controls. New generated meanings need their own
+fixed-meaning comparisons; matching child IDs do not justify reusing a different
+definition's answers. Additional calls require a renewed allowance. The draft
+and its reusable sources remain isolated in this task worktree as requested.

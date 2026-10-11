@@ -183,6 +183,21 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertNotIn('`parents`', prompt)
         self.assertIn('must be narrower than its fixed meaning.', prompt)
 
+    def test_consolidation_v4_preserves_shared_rules_and_approved_baseline(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v4.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        previous = json.loads((PROMPTS / 'Hierarchy-consolidation-v3.assembly.json').read_text())
+        current = json.loads(spec.read_text())
+        self.assertEqual(previous['parts'][1:-1], current['parts'][1:-1])
+        baseline = PROMPTS / 'Hierarchy-consolidation-v3.md'
+        self.assertEqual(sha256(baseline.read_bytes()),
+                         'da792812ee72c958df9b1fc1e5c8792a8c2172ded90eff52862e17f3939d8990')
+        revision = json.loads((PROMPTS / 'Hierarchy-consolidation-v4.md.revision.json').read_text())
+        self.assertEqual(revision['base_sha256'], sha256(baseline.read_bytes()))
+        self.assertEqual(Path(revision['base_path']).name, baseline.name)
+        self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -194,10 +209,11 @@ class PromptAssemblyTests(unittest.TestCase):
             {'id': 'C3', 'title': 'Gardening', 'meaning': 'Cultivating plants in a garden.'},
         ]}
         for version in ('Hierarchy-consolidation-v1', 'Hierarchy-consolidation-v2',
-                        'Hierarchy-consolidation-v3'):
+                        'Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
-                                     if version != 'Hierarchy-consolidation-v3' or key != 'ancestors'})
+                                     if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4')
+                                     or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')
                 prompt = PROMPTS / (version + '.md')
