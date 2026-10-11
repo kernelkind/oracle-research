@@ -1392,6 +1392,13 @@ shares that counter. Preparation and explicit advancement remain offline. The
 automatic command calls the ordinary runner execution path under the task's
 authorization and existing budget admission.
 
+Compare-v179 uses symmetric fixed meanings: A is the incoming node and B is the
+selected canonical node. The constructor supplies only subject and meaning to
+this prompt, translates the two containment labels for traversal, and preserves
+native answers and receipts unchanged. The existing local/canonical schema is
+also supported. Graph contradiction checks apply to both formats; canonical
+branches do not become extra fields in v179's model input.
+
 Up to three local searches and a consolidation batch execute concurrently;
 provider concurrency is controlled by the shared runner. Advance after each
 batch finishes, without waiting for unrelated batches. Serialize placements and

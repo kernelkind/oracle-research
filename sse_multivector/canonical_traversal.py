@@ -17,7 +17,7 @@ import sys
 from . import canonical_trial as trial
 from . import experiment as workflow
 from .canonical_graph_search import GraphSearch, RELATIONS
-from .hierarchy_node_pairs import project_fixed_meanings
+from .hierarchy_node_pairs import project_fixed_meanings, project_symmetric_fixed_meanings, validate
 from .canonical_receipts import _failure_receipts, _producer_hold
 
 
@@ -171,12 +171,27 @@ def _payload(slot, canonical):
     original = dict(local=dict(entry=dict(subject=slot['subject']), meaning=slot['meaning']),
                     canonical=canonical)
     case = dict(id=canonical['id'], inputs={'INPUT_JSON': json.dumps(original, ensure_ascii=False)})
-    return project_fixed_meanings(case)['inputs']
+    project = project_symmetric_fixed_meanings if slot.get('symmetric') else project_fixed_meanings
+    return project(case)['inputs']
+
+
+def _symmetric(state):
+    return 'A_contains_B' in state['comparison_spec']['runner']['output_schema'][
+        'properties']['relation']['enum']
+
+
+def _comparison_output(slot, output):
+    if slot.get('symmetric'):
+        validate(json.dumps(output), diagnostics=True, symmetric=True)
+        return dict(output, meaning=slot['meaning'], relation={
+            'A_contains_B': 'local_contains_canonical',
+            'B_contains_A': 'canonical_contains_local'}.get(output['relation'], output['relation']))
+    return output
 
 
 def _new_search(directory, state, row, ordinal):
     slot = dict(**deepcopy(row), ordinal=ordinal, snapshot=deepcopy(state['nodes']),
-                cache={}, experiments=[], meaning=None)
+                cache={}, experiments=[], meaning=None, symmetric=_symmetric(state))
     source = dict(schema_version=state['local_schema_version'], corpus=state['corpus'],
                   nodes=[dict(id='meaning', local=row['local'], review={})])
     slot['producer'] = _experiment(directory, state, 'meaning', state['bootstrap_spec'],
@@ -207,7 +222,11 @@ def _search_work(directory, state, slot):
         if 'answers' not in record:
             return False, {}
         for answer in record['answers']:
-            output = answer['output'] or {}
+            try:
+                output = _comparison_output(slot, answer['output'] or {})
+            except ValueError:
+                slot['hold'] = 'invalid comparison diagnostics; manual review required'
+                return True, {}
             if (answer['status'] != 'valid' or output.get('relation') not in RELATIONS
                     or 'meaning' in output and output['meaning'] != slot['meaning']):
                 slot['hold'] = 'invalid comparison or changed fixed meaning; manual review required'
@@ -226,8 +245,8 @@ def _search_work(directory, state, slot):
         cached = {identifier: answer for identifier, answer in saved.items() if answer is not None}
         if cached:
             for identifier, answer in cached.items():
-                values[identifier] = dict(answer['output'], meaning=slot['meaning'])
-            search.record({identifier: answer['output']['relation'] for identifier, answer in cached.items()})
+                values[identifier] = dict(_comparison_output(slot, answer['output']), meaning=slot['meaning'])
+            search.record({identifier: values[identifier]['relation'] for identifier in cached})
             continue
         cases = [dict(id=identifier, inputs=_payload(slot, inputs[identifier]),
                       evidence=dict(local=slot.get('local'), snapshot_sha256=workflow.inputs.digest(slot['snapshot']),
@@ -381,7 +400,7 @@ def _consolidate(directory, state, comment):
         else:
             active['slot'] = dict(local=None, subject=output['title'], meaning=output['meaning'],
                 nominated=output['children'], producer=active['producer'], cache={}, experiments=[],
-                snapshot=active['snapshot'])
+                snapshot=active['snapshot'], symmetric=_symmetric(state))
     if 'slot' in active:
         complete, values = _search_work(directory, state, active['slot'])
         if not complete:
@@ -503,8 +522,9 @@ def prepare(spec_path, directory, history_root=None):
         if field == 'consolidation_spec' and schema is not None:
             raise ValueError('consolidation_spec must omit output_schema; its adapter validates null or proposal')
         if field == 'comparison_spec' and set(schema.get('properties', {}).get(
-                'relation', {}).get('enum', [])) != RELATIONS:
-            raise ValueError('comparison_spec must use local-versus-canonical relation labels')
+                'relation', {}).get('enum', [])) not in (RELATIONS,
+                    {'equivalent', 'A_contains_B', 'B_contains_A', 'neither', 'uncertain'}):
+            raise ValueError('comparison_spec must use local/canonical or symmetric A/B relation labels')
         prompt = workflow.resolve(value['prompt']['path'], path.parent)
         value['prompt']['path'] = str(prompt)
         sources.update({str(path): trial._hash(path), str(prompt): trial._hash(prompt)})
