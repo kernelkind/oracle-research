@@ -6485,7 +6485,9 @@ restarts from the saved graph before one original entry, retaining its independe
 generated meaning and answer history without changing the source trial. Only
 `run`, `continue-canonical-trial` or an explicit `--run-next` dispatches requests.
 See [graph-search selection](canonical-graph-search-v1.md) for the tested native
-commands, saved ASv6.100 qualification and remaining full-build measurement.
+commands and saved ASv6.100 evidence. The scalability experiment failed and
+was terminated by the user before the fifty-note construction finished. No
+graph-search construction remains active; the default stays guarded16.
 
 ### Fixed-meaning Compare qualification
 
