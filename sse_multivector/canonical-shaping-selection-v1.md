@@ -3,12 +3,15 @@
 The latest user-authorized test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
 It restores one instruction from v8: “Define the selected topic, not every
-concept it mentions.” All other v9 prompt bytes remain unchanged. Four fresh
-GPT-6.1 Sol medium requests test roots and Mental states in two independent
-draws each. All four have qualified agent accepts and pass prospective local
-grouping checks; no proposal is applied. Each meaning defines only the proposed
-topic. This small positive-control screen does not establish the omitted rule's
-effect, broader accuracy or a resolution of the disputed Bread/Cuisine cases.
+concept it mentions.” All other v9 prompt bytes remain unchanged. The latest
+eight fresh GPT-6.1 Sol medium requests test Food preparation, Food, Cooking
+appliances and Eating in two independent draws each. Six non-null proposals
+receive bounded agent accepts; Eating returns reasonable nulls twice. Each
+non-null proposal narrows its prospective note sets, although Food still leaves
+twelve choices. No proposal is applied. The earlier four-request roots and
+Mental states screen also remains preserved. These visible development cases
+do not establish broader accuracy, the restored instruction's causal effect,
+or a resolution of the disputed Bread/Cuisine cases.
 The preceding matched v8/v9 panel has sixteen fresh valid GPT-6.1 Sol medium requests,
 two draws for each of four complete sibling groups. Each prompt has four
 qualified agent accepts on the clear controls and four uncertain disputed
@@ -35,7 +38,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the v9 definition-writing simplification](#consolidation-v9-definition-writing-simplification), and
 [the matched v8/v9 panel](#consolidation-v8v9-matched-panel), and
 [the v10 targeted restoration](#consolidation-v10-topic-definition-rule-restoration), and
-[the v10 clear-control screen](#consolidation-v10-clear-control-screen).
+[the v10 clear-control screen](#consolidation-v10-clear-control-screen), and
+[the broader v10 screen](#consolidation-v10-broader-screen).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2886,6 +2890,93 @@ revision checks pass after syncing current main. Broader runner-suite limitation
 remain recorded above. No Compare calls, Bootstrap edits, graph changes,
 UI refresh or agent messages occur. The work remains isolated as requested.
 V10 is tested and experimental, not approved as a full prompt or activated.
-Next broaden the clear controls, including a group with no useful valid parent,
-before considering adoption. Disputed scope judgments remain a separate review
-problem, and this four-attempt allowance is exhausted.
+The subsequently authorized broader screen below adds the other saved groups
+and the historical null diagnostic. Disputed scope judgments remain a separate
+review problem, and this four-attempt allowance is exhausted.
+
+## Consolidation-v10 broader screen
+
+The user authorized broadening the controls, including expected-null cases.
+The screen is bounded to eight additional GPT-6.1 Sol medium subscription
+attempts: two independent draws on four complete original ASv6.100 sibling
+groups. The persistent counter advances from 349 used to **357/357**. All eight
+have fresh valid native receipts and distinct HTTP 200 upstream references
+reporting GPT-6.1 Sol. There are no reuses, warmups, retries, failures or missing
+usage. The native shared queue admits at most four requests from this screen
+concurrently; no service limit is changed.
+
+Native `prepare --from` inherits the v5 first-draw inputs and settings, changes
+only the prompt to unchanged v10, and uses `--only` to preserve each selected
+group in full. Food preparation has seven siblings, Food thirteen, Cooking
+appliances four and Eating five. All original source hashes, complete inputs,
+input digests and review evidence match; the v10 prompt hash is the only new
+source-map entry. The initial blanket source-map equality assertion was too
+strict because it also compared that new prompt entry. The corrected comparison
+confirms that no original source changes. Native `--repeat` requests independent
+second draws with byte-identical complete prompts, cases and settings. The
+ordinary SSE request format and saved response schema remain fixed; historical
+answers and assessments do not enter model input.
+
+Eating is a provisional null diagnostic, not a certified negative. Its earlier
+repeated nulls do not establish that no valid useful parent exists. Any new
+non-null proposal would be assessed on its meaning rather than rejected for
+differing from those old answers. Bread/Food dishes and Cuisine remain outside
+this screen because their expected scope judgments are unsettled.
+
+| Complete supplied group | First draw | Independent repeat | Bounded assessment |
+|---|---|---|---|
+| Food preparation C005: 7 | Bakery and dessert preparation: Bread preparation C010 + raw no-bake pie preparation C098 | Bakery food preparation: same children | Two qualified accepts |
+| Food C001: 13 | Daily meals: Breakfast C018 + Dinners C059 | Meals of the day: same children | Two qualified accepts; partial choice reduction |
+| Cooking appliances C014: 4 | Cooking vessels: Stockpots C015 + Cast-iron cookware C105 | Same title and children | Two qualified accepts |
+| Eating C123: 5 | JSON null | JSON null | Two qualified null accepts; no exhaustive impossibility claim |
+
+The bakery definitions retain individual preparation stages and explicitly allow
+no-bake methods. Classification of the named raw matcha-cashew pie as a bakery
+food or dessert is an ordinary topic-identity interpretation, not independently
+validated human gold. The meal definitions require a day/waking-period timing
+or main-meal role, retain planned dinners and the supplied associated information,
+and exclude sibling topics that do not wholly require that role. They do not
+reuse the earlier broader generic Meals definition. Cooking vessels preserves
+container identity; it adds no heat-generation or power requirement that would
+exclude the chosen vessels. Its immediate supplied parent defines devices
+designed to cook food. This assessment does not validate an existing ancestor
+branch or settle equivalence with another canonical node.
+
+Eating's null is reasonable because the food-kind and dietary-information
+siblings extend beyond the supplied consuming activity, while only the named
+enjoyment of eating clearly supplies a matching activity or experience. No
+evident two-child subgroup is established by this review. This is an attributed
+agent assessment, not human gold or proof that all possible proposals fail.
+All six non-null meanings define the proposed topic without separately defining
+its illustrative members. No clear new wording failure is established in this
+screen; passing it does not prove that the restored instruction fixed the
+separate Bread-definition issue.
+
+All six non-null proposals have strictly narrowing prospective note sets.
+Food preparation would shrink seven choices to six and Cooking appliances four
+to three. Food would shrink thirteen to twelve. Its native
+`local_group_constraints_met: false` reflects the remaining count above six,
+not an equal-note-set edge or a semantic failure. Six is now a best-effort goal,
+and this result makes useful partial progress. All reports retain
+`applied: false`; no hierarchy, edge, immutable meaning or note support changes.
+
+The committed [usage selection](shr_single_pair/hierarchy-consolidation-v10-broader-usage-v1.json)
+reproduces native `consolidation-v10-broader-usage-v1.json` under
+`target/canonical-shaping-selection-v1/`. Complete usage is 11,742 input tokens,
+zero cached-input/write tokens, and 2,643 output tokens including 2,252 reasoning
+tokens. Complete API-equivalent catalog cost is **$0.049914**. Reasoning is
+counted once; no subscription charge or matched policy/prompt saving is inferred.
+
+Ignored experiments are `consolidation-v10-broader-{first,repeat}-v1` and
+`consolidation-v10-broader-preparation-{first,repeat}-v1`. Native
+`*-report-v1.json` snapshots precede the eight role-agent reviews; post-review
+snapshots preserve exact outputs, parsed answers, receipts, raw metadata, usage,
+input hashes and prompts. Thirty-three relevant consolidation, assembly and
+revision checks pass after syncing current main; broader runner-suite limitations
+remain recorded above. No Compare calls, Bootstrap edits, graph changes,
+UI refresh or agent messages occur. V10 remains tested and experimental in the
+isolated worktree, without activation or full-prompt human approval.
+The eight-attempt allowance is exhausted. Next assess these proposals through
+ordinary placement in a separate saved-graph trial and measure the resulting
+browsing choices, rather than make another wording change without a demonstrated
+failure. That placement/integration trial has not begun.
