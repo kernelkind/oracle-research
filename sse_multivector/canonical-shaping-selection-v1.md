@@ -4,14 +4,20 @@ The latest user-authorized test uses
 [Hierarchy-consolidation-v10](shr_single_pair/Hierarchy-consolidation-v10.md).
 It restores one instruction from v8: “Define the selected topic, not every
 concept it mentions.” All other v9 prompt bytes remain unchanged. The latest
-eight fresh GPT-6.1 Sol medium requests test Food preparation, Food, Cooking
-appliances and Eating in two independent draws each. Six non-null proposals
-receive bounded agent accepts; Eating returns reasonable nulls twice. Each
-non-null proposal narrows its prospective note sets, although Food still leaves
-twelve choices. No proposal is applied. The earlier four-request roots and
-Mental states screen also remains preserved. These visible development cases
-do not establish broader accuracy, the restored instruction's causal effect,
-or a resolution of the disputed Bread/Cuisine cases.
+six fresh GPT-6.1 Sol medium requests complete two independent draws on Coffee,
+Cuisine and Food dishes. Definition-writing checks provisionally pass on all
+six; neither Bread output adds a separate Bread definition. Agent review flags
+one omitted covered sibling: Place-based cuisines explicitly includes
+geographically associated dishes but omits the fixed Italian rice dish Risotto.
+Both Coffee proposals retain the known equal-note-set step through Additional
+coffee. The other Cuisine proposal and both Food dishes proposals remain
+qualified by unsettled containment conventions. These are separate review
+measures, not three certified semantic prompt failures. No proposal is applied.
+The earlier four-request clear-control and eight-request broader screens remain
+preserved. V10 now has eighteen fresh requests: two per each of the nine frozen
+real sibling groups. These visible development cases do not establish broader
+accuracy, the restored instruction's causal effect, or a resolution of the
+disputed Bread/Cuisine cases.
 The preceding matched v8/v9 panel has sixteen fresh valid GPT-6.1 Sol medium requests,
 two draws for each of four complete sibling groups. Each prompt has four
 qualified agent accepts on the clear controls and four uncertain disputed
@@ -39,7 +45,8 @@ the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
 [the matched v8/v9 panel](#consolidation-v8v9-matched-panel), and
 [the v10 targeted restoration](#consolidation-v10-topic-definition-rule-restoration), and
 [the v10 clear-control screen](#consolidation-v10-clear-control-screen), and
-[the broader v10 screen](#consolidation-v10-broader-screen).
+[the broader v10 screen](#consolidation-v10-broader-screen), and
+[the remaining v10 groups](#consolidation-v10-remaining-group-screen).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2976,7 +2983,97 @@ revision checks pass after syncing current main; broader runner-suite limitation
 remain recorded above. No Compare calls, Bootstrap edits, graph changes,
 UI refresh or agent messages occur. V10 remains tested and experimental in the
 isolated worktree, without activation or full-prompt human approval.
-The eight-attempt allowance is exhausted. Next assess these proposals through
-ordinary placement in a separate saved-graph trial and measure the resulting
-browsing choices, rather than make another wording change without a demonstrated
-failure. That placement/integration trial has not begun.
+The eight-attempt allowance is exhausted. The subsequent user-authorized screen
+below completes the three remaining frozen groups before any placement trial.
+That placement/integration trial has not begun.
+
+## Consolidation-v10 remaining-group screen
+
+The user authorized the proposed six-call regression: Coffee C006, Cuisine
+C016 and Food dishes C020, each with six original ASv6.100 siblings, in two
+independent draws. The native persistent counter advances from 357 used to
+**363/363**. All six requests have valid fresh native receipts with distinct
+HTTP 200 upstream references reporting GPT-6.1 Sol. There are no reuses,
+warmups, retries, failures or missing usage. At most three of this screen's
+requests run concurrently through the shared runner queue.
+
+Native `prepare --from` selects all three complete groups from the saved v5
+first draw and changes only the prompt to unchanged v10. Complete inputs,
+input digests, evidence, original source hashes and ordinary SSE/Sol medium
+settings match. The shared production worker is explicitly selected and already
+matches the inherited worker. The second preparation uses `--repeat`; complete
+cases, rendered prompts, settings and source hashes match the first exactly,
+while all three provider calls are fresh independent trials. Old answers and
+assessments remain outside model input.
+
+| Complete supplied group | First draw | Independent repeat | Bounded agent assessment |
+|---|---|---|---|
+| Coffee C006: 6 | Further coffee: Second coffee C101 + Additional coffee C102 | Same title and selected children; independently worded meaning | Both structurally rejected; writing checks provisionally pass |
+| Cuisine C016: 6 | Prepared dishes: Pizza C054 + Cheesesteaks C066 + Risotto C073 | Place-based cuisines: Japanese food C052 + Sorrento's cuisine C108 | First parent fit uncertain; repeat rejected for omitted Risotto |
+| Food dishes C020: 6 | Cooked food dishes: Pancakes C031 + Burgers C036 + Bread C068 + Risotto C073 | Dough and batter foods: Pancakes C031 + Bread C068 | Both whole-child judgments uncertain; writing checks provisionally pass |
+
+The six native role-agent reviews therefore contain three rejects and three
+uncertain verdicts. Separate their reasons: two rejects concern the prospective
+note-set structure and one flags an incomplete child list. They are not new
+human gold, a measured accuracy estimate, or evidence that every different
+interpretation is wrong.
+
+The Cuisine repeat's exact proposed meaning is:
+
+> Place-based cuisines are culinary traditions or food repertoires identified
+> by their association with particular geographic places. They encompass those
+> places' traditional and contemporary dishes, food products, flavors and
+> food-preparation practices.
+
+Its `children` contains only C052 and C108. The supplied C073 meaning explicitly
+begins “Risotto is an Italian rice dish” and retains its cooking process and
+variations. Under the proposal's own associated-dishes scope, that Italian dish
+is also covered. Omitting it conflicts with the existing instruction to list
+all covered supplied siblings. This agent judgment does not rely on guessing
+a geographic restriction for Pizza or Cheesesteaks. The other Cuisine output's
+relationship to the parent retains the earlier unresolved convention about
+finished dishes versus styles/traditions and their associated dishes.
+
+Both Food dishes outputs define only their selected topic: the separate Bread
+definition observed in v9 does not recur. All six definitions name coherent
+topics without separately defining illustrative concepts. This bounded writing
+assessment does not establish that the one restored sentence caused the result.
+The meal role remains unresolved: the proposed meanings require serving or
+eating as a meal, whereas Bread's supplied definition establishes a food kind
+without independently requiring that particular use. Preserve that uncertainty
+rather than classify the historical concern as certified failure. The first
+proposal's omission of Chicken dishes is not established error: its fixed
+meaning does not explicitly require cooking. The recipes and preparation
+information in other fixed child meanings remains part of whole-child review.
+
+Coffee would reduce six choices to five, but the proposed parent represents the
+same two-note set as Additional coffee C102. Its downward step to C102 would
+not narrow notes. This repeats the known structural limitation; note memberships
+are not supplied to the model, and equal observed sets do not prove semantic
+equivalence. Both Cuisine and both Food dishes proposals have strictly narrowing
+prospective note sets: Cuisine would leave four or five choices and Food dishes
+three or five. All native reports retain `applied: false`; none of these counts
+is a generated hierarchy or a certified semantic placement.
+
+The committed [usage selection](shr_single_pair/hierarchy-consolidation-v10-remaining-usage-v1.json)
+reproduces native `consolidation-v10-remaining-usage-v1.json` under
+`target/canonical-shaping-selection-v1/`. Complete usage is 8,246 input tokens,
+zero cached-input/write tokens, and 1,982 output tokens including 1,638 reasoning
+tokens. Complete API-equivalent catalog cost is **$0.036312**. Reasoning is
+counted once; no subscription cash charge or matched savings claim is inferred.
+
+Ignored experiments are `consolidation-v10-remaining-{first,repeat}-v1`. Native
+`*-report-v1.json` snapshots precede review, and post-review snapshots preserve
+complete inputs, prompts, outputs, parsed answers, receipts, raw metadata and
+usage. Thirty-three relevant consolidation, assembly and revision checks pass
+after syncing current main. V10 and the historical Bootstrap-v104 hashes remain
+unchanged. No Compare calls, Bootstrap edits, graph changes, UI refresh or agent
+messages occur. Work remains isolated as requested; v10 is tested and
+experimental rather than activated or approved as a full prompt.
+
+The six-attempt allowance is exhausted. All nine frozen real groups have now
+been tested with v10. The useful next review is the omitted Risotto under the
+exact Place-based cuisines definition before choosing a targeted repeat or
+prompt revision. The existing all-covered-siblings instruction already requires
+this behavior; this screen alone does not identify which wording would fix it.
+No additional trial or prompt edit is authorized by that recommendation.
