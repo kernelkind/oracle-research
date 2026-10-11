@@ -6663,3 +6663,9 @@ diagnostic. Under these exact meanings, neither follows: the forward containment
 is incorrect and the reverse answer is correct. Preserve both user decisions,
 the original provisional targets and all measured results; the review correction
 is not a prompt improvement.
+Six fresh repeats of this exact pair find the accepted counterexample in 0/6
+Cookware-local requests and 2/6 Stockpots-local requests. All other answers infer
+meal purpose from stock-making or leave it unchecked. Four consistent pairs are
+wrong, so reversal counts alone miss the defect. This single-pair diagnostic does
+not establish which instruction caused it; V176 remains experimental. See the
+[orientation diagnostic](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#unchanged-v176-stockpots-orientation-diagnostic).
