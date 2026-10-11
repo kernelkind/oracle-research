@@ -123,12 +123,16 @@ baseline completes 21 fresh attempts but passes the single-field JSON contract
 on only 9; its 12 plain-text/string/raw-null failures remain preserved without
 repair or retry. Source-based agent review accepts 2/21, rejects 18 and leaves
 1 uncertain, including contract failures in rejection. Raw refusal is appropriate
-for PuffPuffPaint but misplaced for the broad Activities root. Its saved-epoch
-generations are running or pending; published format failures do not establish
-post-fit failure. The first three epoch-one requests pass the JSON contract but
-take 53.55/45.74/89.63 seconds. The unmerged packed-expert adapter path computes
+for PuffPuffPaint but misplaced for the broad Activities root. Its
+first-epoch generation now passes the JSON contract on all 21 fresh attempts,
+with no failures or reuse. Agent review accepts 13 meanings, rejects 4 and leaves
+4 uncertain. This confirms learned formatting and useful scope definitions,
+while unsupported event state, underdefined activity/refusal and standalone
+meaning defects remain. Median native request execution is 59.90 seconds, with
+49.07 GiB peak CUDA allocation. The unmerged packed-expert adapter path computes
 adjusted whole expert stacks per forward; these measurements do not establish
-optimized Gemma inference cost. All five task fits and fresh checkpoint checks are complete;
+optimized Gemma inference cost. The fourth-epoch generation remains pending.
+All five task fits and fresh checkpoint checks are complete;
 native generated-meaning evaluation and review continue through all six stages.
 Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the

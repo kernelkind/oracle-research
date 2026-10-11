@@ -138,8 +138,9 @@ remain preserved. Qwen27's baseline and both saved-epoch generations each comple
 21 fresh native attempts with 21 valid responses, no failures and no reuse.
 Each consumes 106,527 input tokens; baseline/epoch-one/epoch-four output totals
 are 727/896/924. All three Qwen stages are complete. Gemma's baseline also
-completes 21 fresh attempts, with 9 valid and 12 failed responses; its two
-saved-epoch stages remain prepared, with first-epoch generation running.
+completes 21 fresh attempts, with 9 valid and 12 failed responses. Its first-epoch
+generation also completes 21 fresh attempts, all valid with no failures or reuse;
+only its fourth-epoch generation remains, with that worker loading.
 These owned-GB10 calls incur no provider charge.
 
 Source-bound native agent reviews compare each meaning to the complete post,
@@ -204,6 +205,25 @@ attribution or optimized Gemma speed ceiling. The inspected installed
 `052d8fbd12774150315a4043ed66ef1648fb5ceabd0cbde3fced8fc718502c1b`.
 Folding fixed expert adapters before inference has not been implemented or
 measured; frozen current evaluations retain their existing loader and settings.
+
+Gemma26 epoch-one generation consumes 107,196 input / 782 output tokens,
+with median native request execution of 59.90 seconds and 49.07 GiB peak CUDA
+allocation. Native source-based agent review accepts 13 meanings, rejects 4
+and leaves 4 uncertain. Clear remaining defects require flag-posting as support,
+assert that the specific town hall was televised, return a non-null restatement
+without defining PuffPuffPaint's process, or refer to an unnamed post in the
+Kubrick definition. Uncertain cases concern price, the U.S. governor boundary,
+an omitted location identifier and the expanded closure reason list. Result/review
+hashes are
+`4eb4d84cc410e27327bff5905a4385667444ffe24625b3652f8606b9197955e5` /
+`fde4f7212917f87185f15d7f0b07fff56136fff327bd5e758042ca588ab348fe`.
+
+The PuffPuffPaint refusal judgment remains provisional: Bootstrap permits
+general knowledge to identify known names. An external name check found
+[an organizer's cannabis/painting event](https://cannatainmentevents.com/trippy-canvas/)
+but did not establish a uniquely identified
+online application or its process for this supplied post. Those general-name
+sources are not additional input facts or replacement teacher targets.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
