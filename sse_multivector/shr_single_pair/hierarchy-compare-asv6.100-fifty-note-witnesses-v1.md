@@ -1526,3 +1526,15 @@ V81 will separately make each canonical consequence a complete fixed-meaning
 comparison, and require any reused counterexample to be excluded by the actual
 proposed parent's entire scope. Keep the v80 parent-alternative change and the
 five-field output. Test the same nineteen-case gate before broader execution.
+
+V81 source-free preparation also preserves the separate 196-request / 98-pair
+ASv6.100 panel. Its new pinned source/specification are
+hierarchy-compare-asv6.100-b96-v81-qualified-source-v1.json and
+hierarchy-compare-asv6.100-b96-v81-qualified-v1.spec.json. Native fixed_meanings
+projection preserves all original meaning bytes and Bootstrap-v96 producer
+receipts, moving source evidence to review-only data. Plain --from the old
+v69-qualified trial would retain obsolete inputs and output schema and is not
+used. All 196 original case IDs and the current five-field schema are verified.
+These are independent historical B96 producer fixtures, not latest Bootstrap
+certification. Their empty canonical branches complement rather than replace
+the fifty-note consequence panel. Preparation makes no inference calls.
