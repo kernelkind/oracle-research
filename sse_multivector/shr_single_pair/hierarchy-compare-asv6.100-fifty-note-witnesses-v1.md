@@ -1956,3 +1956,30 @@ Across these three candidates,38 case outputs and six warmups require44 fresh
 first attempts if no retries occur. Native stage caps reserve provider retries
 within the persistent shared20000 allowance. Any apparent improvement requires
 independent diagnostic review and a fresh repeat before broader qualification.
+
+### Presentation and ordering results: no qualification candidate
+
+All38 outputs in the three contrasts complete validly in44 fresh attempts,
+including six warmups, with no reuse, retry, failure or missing usage. Native
+API-equivalent costs are $0.0733744 for V95, $0.0764644 for V96 and $0.0985924
+for V97. Corresponding hierarchy-compare-v95/v96/v97-usage-v1.json sources
+reproduce native accounting. Every raw JSON field order matches its intended
+treatment, and every fixed local meaning copy is exact.
+
+Independent native review yields4 accept/8 reject for V95,5 accept/7 reject
+for V96 and8 accept/6 reject for V97. V95 corrects none of the eight targeted
+restriction outputs. V96 corrects018-reverse only. V97 corrects018-reverse
+with genuine edible bagels made solely for display and038-reverse with a dog's
+mental wakefulness, attention and readiness. Its reciprocal orientations still
+approve containment, producing two reversal conflicts. The six unchanged
+V97 target proofs still infer eating purpose or person identity. All designated
+explicit-scope, participant and appliance-role/aspect controls remain supported.
+These are agent diagnostic assessments, not additional human gold.
+
+Therefore moving the meaning copy last or generating answers first does not
+establish a useful fix. The compact task retains useful controls and exposes
+more valid counterexamples, but two successes in one draw are insufficient
+for qualification. No candidate is adopted, no difficult topic is removed,
+and no relation is changed merely to match a historical label. The next
+mechanism considered is demonstrating the comparison method through fully
+synthetic examples, without using validation subjects, posts or expectations.
