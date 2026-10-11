@@ -3,8 +3,9 @@
 **Approved direction:** qualify a
 [focused coverage search and per-check reasoning settings](#eight-hour-review-direction-approved-october-11)
 for the full 1,800-output evaluation within eight hours of model generation.
-The new **DCSv1** prompt is a draft awaiting review; no new model calls or
-implementation follow from this drafting step. Current defaults and the final
+The **DCSv1** wording is approved for a four-note xhigh development trial.
+Native source-bound preparation and output validation are implemented; its
+accuracy and runtime are not yet measured. Current defaults and the final
 sixty-answer validation remain unchanged.
 
 **Current development result:** xhigh generation finishes on
@@ -5288,8 +5289,8 @@ latency is **14.865 s at high versus 37.145 s at xhigh**. All 92 completed high
 relationship outputs pass full-output audit, but four exposed notes do not
 qualify high. Matching/support failures from that trial remain failures.
 
-Draft **DCSv1** in [coverage-search-prompt-v1.md](coverage-search-prompt-v1.md)
-for user review before calls. For one required teacher meaning with a complete
+The user approves **DCSv1** in [coverage-search-prompt-v1.md](coverage-search-prompt-v1.md)
+for a four-note development trial. For one required teacher meaning with a complete
 student match, search the currently uncovered student subjects for one
 compatible placement. Return `evidence` (numbered reasons) followed by
 `witness_student_number` (a string or `null`). A positive witness receives the existing
@@ -5300,14 +5301,16 @@ consistency checks separate. No complete match already establishes failed
 coverage; it requires no search.
 
 For a negative result, the evidence must name every supplied candidate exactly
-once; for a positive result, it must name only the witness. A future native
-validator can check that identity and completeness, but cannot certify the
+once; for a positive result, it must name only the witness. The native
+validator checks that identity and completeness, but cannot certify the
 semantic reasons. Keep per-candidate trusted interpretation rows. An uncovered
 node may be omitted only when a retained uncovered ancestor reaches it through
 positively valid student edges under consistent interpretations. Invalid,
 skipped or unresolved edges create separate candidates. Numbering alone is
-not a valid relationship. This preparation and validation are not implemented
-by the draft.
+not a valid relationship. Preparation also shares one candidate across exact
+subject-and-context duplicates, retaining the numbered aliases in evidence.
+The [experimental adapter](../distillation_coverage_search.py) implements
+these rules without changing the deployed complete-answer evaluation.
 
 First compare DCSv1 at xhigh against independently audited pair evidence on four
 existing notes; keep reasoning effort fixed while testing the new task shape.
@@ -5330,11 +5333,11 @@ their provenance; it is not a new trusted-input mechanical proof. Do not
 propagate negative support verdicts, which would amplify the certified
 `Intelligence` rejection. Two endpoint matches alone do not prove a link.
 
-Exact prompt wording, negative-search reliability, mixed-effort qualification,
+Negative-search reliability, mixed-effort qualification,
 46 remaining posts' required-meaning contexts and the full runtime estimate
 remain open. Production stays DSLv2 and the deployed effort defaults remain
-unchanged. This step drafts the prompt and records the approved direction;
-it performs no model calls or implementation changes.
+unchanged. The original drafting step made no model calls; the approved
+four-note trial tests the wording and native preparation before expansion.
 
 ## Actual distilled wording: offline preview (October 8)
 
