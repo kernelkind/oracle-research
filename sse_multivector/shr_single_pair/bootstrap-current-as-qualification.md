@@ -3,6 +3,33 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
+## Approved sense and factual-evidence rule
+
+The user approved these rules verbatim, replying **“agree”**:
+
+- Bootstrap may choose a justified sense or category boundary consistent with the post.
+- It must preserve unknown facts about particular people, things and events.
+- Return null when establishing the meaning requires an unjustified factual assumption.
+
+Interpretation can use the selected subject, original hierarchy, context and
+ordinary language knowledge; factual claims must remain justified by that node's
+own evidence. A post need not contain a dictionary definition. The existence of
+another plausible interpretation alone does not require a null meaning or make
+the chosen interpretation erroneous. Defining a general kind does not itself
+establish that a particular thing in the post belongs to it.
+
+The [Coffeechain diagnostic](#coffeechain-factual-evidence-sensitivity-completed-results)
+therefore remains a qualified reference-interpretation witness, not an
+established factual error. Its original child meanings choose a particular
+business reading but do not explicitly assert that the rave venue belongs to
+that business. Do not add that affiliation claim when assessing them. Neither
+the business sense nor the alternative hashtag sense becomes human semantic
+gold through this approval.
+
+This records the interpretation and review contract. Prompt versions, schemas,
+source data, producer receipts and historical reviews remain unchanged;
+approval of the rule does not activate a prompt or authorize a new experiment.
+
 ## Bootstrap broad: BBv7 draft
 
 The user authorized a separate Bootstrap broad line, abbreviated BB. Its
@@ -2666,9 +2693,12 @@ reasoning is already included in output usage. Subscription calls do not create
 an additional API invoice. The existing shared attempt counter was used without
 resetting it; other experiments' concurrent usage is outside this panel's cost.
 
-A useful next step is to settle how Bootstrap should represent an unresolved
-reference before writing a definition, using the original ambiguous witness.
-This is a recommendation, not an approved new uncertainty rule. No Bootstrap
-revision/adoption, Compare test, hierarchy construction or context-removal
-activation occurred in this diagnostic. Retain the worktree because native
-receipts and original source bindings refer to its absolute artifact paths.
+Following review of this witness, the user approved the
+[sense and factual-evidence rule](#approved-sense-and-factual-evidence-rule)
+above. A useful next step is to assess the remaining flagged meanings for
+concrete contradictions or unjustified factual claims using their own evidence,
+keeping scope preference and ordinary interpretive uncertainty separate.
+That further audit has not begun. No Bootstrap revision/adoption, Compare test,
+hierarchy construction or context-removal activation occurred in this diagnostic.
+Retain the worktree because native receipts and original source bindings refer
+to its absolute artifact paths.

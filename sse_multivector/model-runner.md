@@ -45,6 +45,14 @@ API-equivalent cost is $0.4660116, with complete cost unknown due to missing
 failed-warmup usage. V104 remains the last approved prompt.
 This does not activate a production prompt or modify earlier frozen experiments.
 
+Bootstrap definition and review follow the user-approved
+[sense and factual-evidence rule](shr_single_pair/bootstrap-current-as-qualification.md#approved-sense-and-factual-evidence-rule):
+choose a justified interpretation consistent with the post, preserve unknown
+instance facts, and return null when establishing the meaning requires an
+unjustified factual assumption. Another plausible interpretation alone does not
+establish an error or require null. This decision changes no frozen prompt,
+schema, source input, output or receipt.
+
 The user subsequently approved subject-scope preservation: Bootstrap clarifies
 the supplied subject, using post/context to resolve sense rather than adding
 restrictions from its particular example. Experimental v109 implements that
