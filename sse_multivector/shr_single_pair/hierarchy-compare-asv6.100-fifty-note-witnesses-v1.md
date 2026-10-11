@@ -4837,3 +4837,110 @@ relation separately; do not retrospectively recalculate the original target-matc
 score as a prompt improvement. No further model calls or prompt edits occur.
 An untouched, coverage-diverse holdout is still needed before a general accuracy
 claim.
+
+## Unchanged V176 Stockpots orientation diagnostic
+
+After accepting the laboratory-only stock counterexample, the user authorized a
+focused diagnostic of the orientation-dependent search. Before dispatch, prepare
+six independent two-case repeats of the exact `isolated-035-forward` and
+`isolated-035-reverse` requests from the completed qualified-subset experiment.
+The native directories are `target/compare-v176-stockpots-orientation-v1/draw-01`
+through `draw-06`. Preparation uses `--from`, both case IDs and `--repeat`;
+there are twelve fresh comparison requests, not reused answers.
+
+V176, its justification-first schema, both original Bootstrap-v96 meanings,
+empty canonical branches, Sol 6.1 medium, SSE and caching stay identical. The
+user-reviewed counterexample establishes neither for this pair, while original
+pre-call provisional targets remain preserved outside model input. Evaluate
+relation and diagnostic separately: does the admitted case retain stock-making
+design while escaping meal purpose, does a positive proof establish that purpose,
+or does an answer explicitly leave the clause's interpretation unresolved?
+Uncertainty is reported separately and does not count as successful rejection.
+
+Each two-case run has a five-attempt ceiling including automatic warming and
+provider retries. All six share the existing persistent 20,000-attempt counter,
+which is 18,663 before this diagnostic. The planned twelve comparisons and six
+warmups require eighteen attempts absent failures. No prompt edits, Bootstrap
+calls, hierarchy work, external messages or new spending allowance are included.
+The native usage source is
+`hierarchy-compare-v176-stockpots-orientation-usage-v1.json`.
+
+These repeats can distinguish an observed orientation association from unstable
+outputs within one orientation; they cannot causally separate local/canonical
+roles, input order and directional answer order. Actual JSON definition-order
+reversal is not supported by the current native adapter. Do not infer which
+particular instruction caused the result from label differences alone. This is
+a diagnostic of one known development pair, not a general accuracy or holdout
+test. The design follows [OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+on variable outputs, scoped evaluation and human-calibrated assessments.
+
+### Completed fresh draws
+
+All twelve comparisons validate, with twelve distinct provider response IDs and
+no reused answers. Exact input strings, meaning copies, prompt, response schema
+and runner settings match the original pair. All emitted answer records preserve
+justification-before-answer order. The six `final-generation.json` native
+snapshots were preserved before any attributed review.
+
+| Draw | Cookware local, Stockpots canonical | Stockpots local, Cookware canonical |
+|---|---|---|
+| 01 | Cookware contains Stockpots | Neither |
+| 02 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 03 | Cookware contains Stockpots | Neither |
+| 04 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 05 | Cookware contains Stockpots | Cookware contains Stockpots |
+| 06 | Cookware contains Stockpots | Cookware contains Stockpots |
+
+Only two answers match the user-reviewed neither relationship; ten return
+containment. Native consistency detects reversals in draws 01 and 03. Four
+internally consistent pairs nevertheless return the incorrect relationship.
+The reverse orientation produces both outcomes under identical requests, so
+orientation alone does not establish a deterministic cause. The observed 0/6
+versus 2/6 successful searches on one pair does not establish a general effect.
+
+Both successful answers ask specifically about meal-preparation purpose and
+construct a culinary-research stockpot that simmers food solely for analysis.
+They preserve the whole child and distinguish purpose from potential suitability.
+All ten positive answers instead infer meal purpose from culinary stock-making,
+or leave it unchecked while establishing food and heat. Three of their questions
+omit meal purpose; seven combine it with shared food/heat/design conditions.
+Merely including the requirement in the question therefore does not establish
+that its answer tests it. Rejecting a nonfood or dye-only vessel does not close
+the admitted culinary-stock variant.
+
+The concrete observed mechanism is substituting customary use or potential meal
+use for the required design purpose. A question focused on the missing purpose
+coincides with the two correct outputs; this correlation does not prove that
+question wording caused the success. V176 already forbids customary-function
+substitution and asks for restriction-specific variants. Its additional mandatory
+positive check singles out identity and consumer restrictions, so extending that
+check to all applicable parent requirements is a focused wording hypothesis,
+not a demonstrated fix. No new prompt version is created in this diagnostic.
+
+Native usage is complete: eighteen attempts (twelve comparisons and six warmups),
+zero failures/retries/reuses/missing usage, and $0.111594 API-equivalent catalog
+cost including warmups. All twelve comparisons have cache hits. The shared
+counter moves from 18,663 to 18,681, retaining its 20,000 limit. The usage source
+produces `target/compare-v176-stockpots-orientation-usage-v1.json` through native
+`summarize-experiments`; these estimates are not subscription billing. Reasoning
+is included in output, not charged twice.
+
+Independent review registers two agent accepts and ten rejects, with no unresolved
+assessments under the user's adjudicated reading. The accepted outputs are draw
+01 reverse and draw 03 reverse; all ten positive labels also have invalid
+full-coverage proofs. These are new agent assessments calibrated to the user's
+counterexample approval, not twelve human labels or newly certified general gold.
+Native `final-reviewed.json` snapshots retain unchanged non-review case fields,
+and every assessment binds to the current input/output. All six zero-review
+generation snapshots keep their protected hashes. Verification covers 887 unique
+source bindings, 39 code bindings, six runner configs, twelve distinct output
+receipts and 24 producer-receipt references. Original witness inputs, outputs
+and pre-call targets remain unchanged.
+
+The recommended next ablation replaces the identity/consumer-only mandatory
+positive prerequisite with a test of every applicable parent restriction absent
+from the child's explicit wording, requiring an actual necessary implication
+when that variation is rejected. Keep the rest of V176 unchanged and retain
+positive controls, so producing blanket neither or uncertainty cannot count as
+success. This is a proposal for a separate version and controlled test; the
+present diagnostic changes neither prompt nor meanings.
