@@ -5,8 +5,11 @@ branch regression findings are maintained in
 [Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md).
 Bootstrap-v103's initial full-collection agent review found one
 factual-support failure and two materially ambiguous meanings.
-Two fresh diagnostic draws reproduce the business-identity error and Rome's
+Two fresh diagnostic draws reproduce the business-identity reading and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
+The original ambiguous business reading is not an established factual error
+under the later approved sense and factual-evidence rule; earlier rejection
+classifications are review history, not current semantic gold.
 A subsequent user decision classifies implicit material scope as a failure;
 the saved v103 sourdough meaning was also flagged for its consumer boundary.
 A focused 28-case reassessment preserves that witness and reviewer disagreements;
@@ -64,9 +67,10 @@ reassessment withdrew that failure claim because its own context describes the
 author's practice. The user subsequently clarified: "idc which boundaries the
 agent makes. as long as it's not contradicting the evidence". Either explicit,
 locally supported choice is acceptable; the stock baseline now has a qualified
-agent accept. Scope preference alone is not a failure. Forty-one
-candidate ancestor checks remain unresolved around two concentrated Food/stock
-interpretations; no general scope repair is established. Independent generation
+agent accept. Scope preference alone is not a failure. The initial audit left
+forty-one candidate ancestor checks qualified around two concentrated Food/stock
+interpretations; individual review corrections do not certify those links or
+establish a general scope repair. Independent generation
 and input/output schemas stay unchanged. Source assignment, definition coherence
 and branch compatibility are assessed separately, with all 230 reviews bound to
 their exact outputs. Details, reuse and native accounting are in the Bootstrap
@@ -76,8 +80,17 @@ a reliable v109 improvement. The user withdrew the subsequent Food failure claim
 matching Food titles in a synthetic AS example and a real note do not establish
 matching meanings. Evaluate each local node using its own subject, context,
 hierarchy and full post; the other example supplies no membership gold. Both
-native Food reviews now return to uncertain, preserving the mistaken rejection
-in history and all original meanings/receipts. Four repeat meanings plus four
+native Food reviews first returned to uncertain, preserving the mistaken rejection
+in history and all original meanings/receipts. The subsequent
+[remaining flagged-meaning reassessment](shr_single_pair/bootstrap-current-as-qualification.md#remaining-flagged-meanings-under-the-approved-rule)
+records six qualified agent accepts for the unchanged Food, Nostr-content and
+Coffee-chain root definitions across both cohorts. Latest counts are v104:
+113 accept / 0 reject / 2 uncertain, and v109: 114 accept / 0 reject / 1 uncertain.
+The Coffee child remains uncertain in each cohort; the baseline cocotte remains
+malformed because its evidence quote changes an original nonbreaking space.
+All 230 inputs, outputs and receipts and prior review histories were preserved;
+this reassessment made zero model calls and establishes no wording improvement
+or whole-branch certification. Four earlier repeat meanings plus four
 warmups use eight attempts,
 with no answer reuse or failures. V104 remains approved; v109 is not activated.
 
@@ -6857,3 +6870,14 @@ disabled in BOTH arms and fresh `target/compare-v179-examples-ablation-v2`
 directories. The initial V1 preparations make no calls and are not results.
 This preserves matched message structure and leaves any backend cache usage
 to native accounting; no artificial padding is added.
+
+The completed V2 ablation has 40 fresh valid comparisons, no warming, reuse,
+retry, failure or missing usage. Native API-equivalent catalog cost totals
+$0.301204. Attributed semantic review supports 18/20 V179 responses and 15/20
+V180 responses; native reversal reporting finds two and three conflicts,
+respectively, across five pairs repeated twice. Both versions still make the
+Stockpots meal-purpose leap. Removing examples also loses person-restriction
+and intended-activity controls. V179 remains the preferred development
+candidate for isolating that purpose inference, not a qualified hierarchy
+prompt. Exact witnesses, review qualifications and accounting are in the
+[ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).

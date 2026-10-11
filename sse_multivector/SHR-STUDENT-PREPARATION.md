@@ -68,6 +68,58 @@ Published-checkpoint behavior can support a choice of starting weights; it
 cannot establish a ranking after an unperformed fine-tune. Synthetic execution
 checks establish capacity and checkpoint integrity, not learning quality.
 
+### Broader saved-checkpoint evaluation
+
+The first completed Compare passes evaluate the original Ettin checkpoints
+without updates on the matched 196-case regression and 21-case branch panels.
+
+| Ettin variant / epoch | Regression reference matches | Branch reference matches | Regression forward seconds |
+| --- | ---: | ---: | ---: |
+| Full instructions / 1 | 37/196 | 0/21 | 31.61 |
+| Full instructions / 4 | 106/196 | 16/21 | 31.07 |
+| Input JSON / 1 | 39/196 | 2/21 | 6.13 |
+| Input JSON / 4 | 119/196 | 16/21 | 5.68 |
+
+These are provisional teacher matches, not gold accuracy. At epoch four the
+shorter variant gains 21 regression matches and loses eight relative to full
+instructions. It improves reciprocal consistency from 62/98 to 86/98 families,
+but consistent wrong answers remain: equivalent Greetings definitions become
+`neither` in both directions. Equivalent matches are only 1/16 with instructions
+and 0/16 without; canonical-containment matches improve from 36/71 to 43/71,
+while local-containment matches fall from 50/72 to 47/72. `Neither` improves
+from 19/37 to 29/37.
+
+Both epoch-four variants pass all 16 strict-containment branch fixtures and
+fail all three equivalents, including identical producer endpoints, and both
+synthetic conflict cases requiring `uncertain`. The shorter variant therefore
+has the stronger measured regression cost/quality result but adds no branch
+qualification. The reviewed fitting set contains ten equivalent targets:
+eight identity controls and two directions of one nonidentity family. It has
+no uncertainty targets or canonical branches. The broader failures establish
+transfer limits of this small recipe, not an encoder-capacity ceiling.
+
+The input-JSON regression pass processes 67,588 tokens, maximum 632 per case,
+versus 382,952 / 2,241 with instructions: 82.35% fewer total tokens and a
+5.47-times faster batch-four forward pass. Branch totals/maxima are
+9,595/531 versus 43,384/2,140. Inference allocation peaks are 4.03/4.45 GiB
+for the regression passes, distinct from the earlier training peaks.
+Model loading is excluded from the forward timings; one seed and differently
+fitted checkpoints do not isolate input format as a causal effect.
+
+All four native reports are complete with zero updates and zero training
+examples seen. They live under
+`target/bootstrap-compare-student-v1/broader-evaluation-v1/compare-results/`:
+
+| Report directory | `report.json` SHA-256 |
+| --- | --- |
+| `ettin-full-regressions` | `13032c6663532c99c2156bae7a0bac788428554ea7e3479ea160f9f856a1c0b0` |
+| `ettin-full-branches` | `f959d790c790ff735dd50905c505c190cfa4c04cdebed54ecafb6d283dfe18d4` |
+| `ettin-input-json-regressions` | `4ca839ccceff2fbf4bdfc8945eded7139fc8d70de4301e32a60a4533c1f009ca` |
+| `ettin-input-json-branches` | `7dd51684267a1e532c737aef956e4a75ecf10ce868464f0de043bd6b90618749` |
+
+Qwen/Kev Compare and the remaining Bootstrap generations are still underway
+or queued. Final student selection remains open.
+
 ### Meaning-only Bootstrap learning preparation
 
 `bootstrap_student_pilot.py` derives **94 TRAIN / 21 evaluation** targets from
