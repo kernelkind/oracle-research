@@ -1647,8 +1647,8 @@ reconcile at 12/24 allowed attempts, with no retries, reuse or warmups. Usage is
 13,543 reasoning. The catalog API-equivalent estimate is $0.203732; provider
 charges are unknown. Sol/xhigh/SSE and automatic queue admission stay fixed;
 the 76-token prefix is ineligible and no cache hits occur. DSLv10 remains
-experimental; matching/support Nostr questions, broader regression and
-lower-effort testing remain pending.
+experimental; matching/support Nostr questions and lower-effort testing remain
+pending.
 The subsequent [Nostr source audit](distillation-review-v1/README.md#nostr-relationship-source-audit-october-11)
 preserves one matching and two support cases natively with exact source inputs
 and saved baselines; all three new candidates remain unrun. Initial input-only
@@ -1658,6 +1658,20 @@ retrospective comments preserve both assessments rather than replacing the
 original unresolved labels. No definite error or prompt defect is established;
 zero model calls, prompt changes or source-label changes follow. Further checks
 must preserve those uncertainties separately from resolved accuracy counts.
+The subsequently authorized
+[DSLv10 four-note regression](distillation-review-v1/README.md#dslv10-four-note-regression-october-11)
+finishes all three checks in 22 min 51 s with 98 fresh DSL judgments, two
+warmups and two recovered failed attempts. Native budget accounting reconciles
+at 102/418 attempts; 61 historical successful requests are reused. All 156
+resolved distinct model records pass both complete-output audits; three Nostr
+records remain unresolved. All 25 mechanical proofs, 174 justified skips,
+20 matching-self guards, frozen sources and score assembly pass inspection.
+Known successful receipts cache 11.80% of input tokens and save a net catalog
+$0.0129392 after warming; dedicated warmed groups lose $0.0089488. Full-run cost
+and savings remain unknown because the two failed attempts lack usage. No
+source labels or prompts change. This is a development regression, not unseen
+qualification; DSLv10 remains experimental, production defaults to DSLv2, and
+lower-effort testing and the final sixty remain pending.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

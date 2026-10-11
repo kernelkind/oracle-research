@@ -365,8 +365,8 @@ Both agent audits accept all decisions and complete explanations: the earlier
 scope findings are resolved on these cases and all controls pass. Native source, receipt and
 accounting checks pass; twelve fresh first attempts take 1 min 27 s, with no
 retries, reuse, warming or cache hits. DSLv10 remains experimental. The separate
-matching/support Nostr questions remain unresolved; another four-note regression
-and final-sixty validation have not started.
+matching/support Nostr questions remain unresolved; the final-sixty validation
+remains pending.
 The subsequent [Nostr source audit](../../sse_multivector/distillation-review-v1/README.md#nostr-relationship-source-audit-october-11)
 makes no calls or prompt changes. The three saved conservative judgments already
 match initial input assessments, but an independent contextual-reading challenge
@@ -374,10 +374,22 @@ warrants retaining their unresolved status. No definite reviewer error or
 instruction defect is established; these are not correctness targets settled
 by agreement. Historical outputs and labels stay fixed, with uncertainties
 reported separately from resolved judgments in further development checks.
+The subsequently authorized
+[DSLv10 four-note regression](../../sse_multivector/distillation-review-v1/README.md#dslv10-four-note-regression-october-11)
+completes the same four answers and all three checks in 22 min 51 s. It uses
+98 fresh relationship judgments, two warmups and two recovered failed attempts;
+61 successful historical requests supply unchanged matching, support and three
+DSL records. Root and independent agent audits accept all 156 resolved distinct
+model decisions and their full explanations; three distinct Nostr judgments
+remain unresolved. All 25 mechanical proofs and score-assembly checks pass.
+This passes the resolved development regression, without establishing unseen
+accuracy or settling Nostr. Historical labels remain fixed. The next recommended
+step is a small balanced lower-reasoning trial; no lower-effort calls or final
+sixty-note validation start in this regression.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
-paused. The completed ten-note run retains its frozen concurrency of 16; the
+pending. The completed ten-note run retains its frozen concurrency of 16; the
 current shared runner uses automatic queue admission for future dispatch.
 Native small preparations retain inputs, receipts, schemas and baseline
 outputs without full evaluation rebuilds.
