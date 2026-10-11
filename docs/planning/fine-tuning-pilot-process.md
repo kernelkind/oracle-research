@@ -474,8 +474,16 @@ model decisions and their full explanations; three distinct Nostr judgments
 remain unresolved. All 25 mechanical proofs and score-assembly checks pass.
 This passes the resolved development regression, without establishing unseen
 accuracy or settling Nostr. Historical labels remain fixed. The next recommended
-step is a small balanced lower-reasoning trial; no lower-effort calls or final
+step was a small balanced lower-reasoning trial; no lower-effort calls or final
 sixty-note validation start in this regression.
+The user subsequently expands the same workflow to
+[eight notes at xhigh](../../sse_multivector/distillation-review-v1/README.md#dslv10-eight-note-regression-october-11):
+retain the four answers and add the first four other valid answers in the frozen
+random order (R01, R03, R04, R05). Prompts, mechanical rules, verified reuse,
+eligible caching and original source assessments remain fixed. Input-first
+review precedes candidate inspection; interpretation uncertainties remain
+separate. The eight-note preparation is complete and assessment is in progress;
+lower-effort testing, qualification and final-sixty validation remain pending.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,

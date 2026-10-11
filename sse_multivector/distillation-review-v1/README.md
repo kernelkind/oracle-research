@@ -13,11 +13,16 @@ definite error or prompt defect for them. The earlier DSLv9 timing finding does
 not recur in the audited DSLv10 outputs. Production remains DSLv2. This is
 development regression evidence, not unseen accuracy or production adoption;
 lower-effort qualification and final-sixty validation remain pending.
+The user subsequently expands this development regression to
+[eight notes at xhigh](#dslv10-eight-note-regression-october-11), retaining all
+three checks and the existing prompts. Preparation is complete; input-first
+assessments precede verified joining and fresh calls.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
-then run broader regression checks on **four notes** once that set passes,
-under the [reduced regression scope](#regression-scope-reduced-to-four-notes-october-11).
+then run broader regression checks once that set passes. The earlier
+[four-note scope](#regression-scope-reduced-to-four-notes-october-11) is subsequently
+expanded to [eight notes at xhigh](#dslv10-eight-note-regression-october-11).
 The agreed **50 random plus ten challenge answers** remain the very
 final validation. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
@@ -4811,10 +4816,46 @@ The task worktree remains because their frozen bindings depend on its paths.
 **Result:** the resolved four-note regression passes; the three Nostr questions
 remain unresolved, outside resolved correctness denominators. This panel is
 development-exposed and does not establish unseen extrapolation or a confidence
-interval. The next recommended step is a small balanced lower-reasoning trial
+interval. The then-recommended step is a small balanced lower-reasoning trial
 using these same approved prompts and audited source cases, preserving complete
 reasons and the agreed two-percentage-point tolerance. It does not start here;
 the final 50 random plus ten challenge answers remain reserved for final validation.
+
+## DSLv10 eight-note regression (October 11)
+
+The user directs increasing the complete-workflow regression to **eight notes
+at xhigh**. Retain R02, R15, R21 and R14 and add **R01, R03, R04 and R05**, the first
+four other structurally valid answers in the original frozen random order. The
+eight original notes are distinct and cover all three distilled-model families;
+no reviewer output or expected correctness label selects the additions.
+Their frozen answer IDs are `M03-checkpoint-800-N0032`, `M02-baseline-N0067`,
+`M03-checkpoint-1000-N0029` and `M01-checkpoint-200-N0024`. This is development
+regression exposure, not a new unseen sample or the final sixty-note validation.
+
+DSMv3, DSSv2, approved experimental DSLv10, trusted ASv6.100, original selection
+and sealed assessments, schemas, Sol/xhigh/subscription SSE, native mechanical
+rules and score stopping remain unchanged. Production remains DSLv2. Two
+independent agents assess the added notes from native input-only views before
+joined or fresh candidate inspection. Audit complete decisions and explanations,
+including reused results; preserve the three earlier Nostr uncertainties and
+any newly identified interpretation uncertainty separately from resolved accuracy.
+
+Native preparation under
+`oracle-mvp-review-dslv10-eight-note/target/distillation-review-v1/dslv10-eight-note/`
+contains ten groups and 1,337 numbered checks: 146 matching, 146 support and
+1,045 relationships, including 77 mechanical positives. Matching/support keep
+the archived worker and canonical history root; relationships retain the shared
+worker and timing-diagnostic history root. The native index lacked two original
+successful retry receipts from the four-note run. Production receipt/adapter
+validation and `RequestHistory.remember` register their original ledger lines
+without copying outputs or changing frozen evidence. All 101 completed prior DSL
+request identities are now reusable. Reuse is preserved evidence, not a fresh
+consistency sample. Warm only eligible repeated natural prefixes with remaining
+new work; the native shared queue controls admission.
+
+Preparation and source-only assessment are in progress; no lower-effort calls,
+prompt revision, production adoption or final-sixty run is authorized by this
+scope expansion. Qualification remains pending.
 
 ## Actual distilled wording: offline preview (October 8)
 

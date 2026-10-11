@@ -1672,6 +1672,17 @@ and savings remain unknown because the two failed attempts lack usage. No
 source labels or prompts change. This is a development regression, not unseen
 qualification; DSLv10 remains experimental, production defaults to DSLv2, and
 lower-effort testing and the final sixty remain pending.
+The user subsequently expands this to an
+[eight-note xhigh regression](distillation-review-v1/README.md#dslv10-eight-note-regression-october-11),
+retaining R02/R15/R21/R14 and adding R01/R03/R04/R05 by frozen random order.
+Native preparation contains ten groups, 1,337 numbered checks and 77 mechanical
+positives. Matching/support retain their original worker/history bindings;
+DSLv10 retains the shared worker and timing history. Two successful retry
+receipts absent from that index pass production receipt and adapter validation,
+then native `RequestHistory.remember` registers their original ledger references.
+All 101 prior completed DSL request identities are reusable without copying or
+altering frozen evidence. Input-first assessments precede candidate inspection.
+Preparation is complete; no lower-effort calls or final-sixty run starts here.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
