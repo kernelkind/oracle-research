@@ -85,6 +85,24 @@ class HierarchyNodePairNativeConsistencyTests(unittest.TestCase):
                          'missing_fixed_meaning_producer_receipt')
         self.assertEqual(self.calls(), [])
 
+    def test_native_symmetric_show_keeps_pair_inputs_without_branch_guards(self):
+        self.prepare_original()
+        envelope = self.root / 'original/experiment.json'
+        self.write('symmetric-source.json', {'prepared_experiment': {
+            'path': 'original', 'sha256': hashlib.sha256(envelope.read_bytes()).hexdigest()},
+            'input_view': 'symmetric_fixed_meanings'})
+        spec = json.loads((self.root / 'original-spec.json').read_text())
+        spec['dataset']['path'] = 'symmetric-source.json'
+        self.write('symmetric-spec.json', spec)
+        self.cli('prepare', 'symmetric', '--spec', 'symmetric-spec.json')
+        report = json.loads(self.cli('show', 'symmetric', '--json').stdout)
+        self.assertEqual(json.loads(report['cases'][0]['inputs']['INPUT_JSON']), {
+            'A': {'subject': 'Alpha', 'meaning': 'Fixed Alpha'},
+            'B': {'subject': 'Beta', 'meaning': 'Fixed Beta'}})
+        self.assertEqual(report['node_pair_consistency']['skipped_cases'], [{
+            'case_id': 'pair-forward', 'reason': 'missing_fixed_meaning_producer_receipt'}])
+        self.assertEqual(self.calls(), [])
+
 
 class HierarchyNodePairConsistencyTests(unittest.TestCase):
     """Upstream-validated report fixtures exercise the real production scorer."""
@@ -232,6 +250,50 @@ class HierarchyNodePairConsistencyTests(unittest.TestCase):
         producers['C1'] = {**producers['C1'], 'case': 'Different producer'}
         with self.assertRaisesRegex(ValueError, 'endpoint identities differ'):
             self.summarize(rows)
+
+    def test_symmetric_reversals_and_transitivity_ignore_removed_graph_evidence(self):
+        from sse_multivector.hierarchy_node_pairs import project_symmetric_fixed_meanings
+        rows = self.cases([('ab', 'A', 'B', 'local_contains_canonical'),
+            ('bc', 'B', 'C', 'local_contains_canonical'), ('ac', 'A', 'C', 'neither')])
+        symmetric = []
+        for row in rows:
+            row['evidence']['unprojected_input']['canonical']['parents'] = ['OldParent']
+            projected = project_symmetric_fixed_meanings(row)
+            del projected['parsed']['meaning']
+            projected['parsed']['relation'] = {
+                'local_contains_canonical': 'A_contains_B',
+                'canonical_contains_local': 'B_contains_A'}.get(
+                    row['parsed']['relation'], row['parsed']['relation'])
+            symmetric.append(projected)
+        result = self.summarize(symmetric)
+        self.assertEqual(result['eligible_cases'], 6)
+        self.assertEqual(result['reversals']['complete_pairs'], 3)
+        self.assertEqual(result['reversals']['conflicts'], [])
+        for direction in ('forward', 'reverse'):
+            self.assertEqual(result['directions'][direction]['conflicts'][0]['kind'],
+                             'transitivity_conflict')
+        symmetric[1]['parsed']['relation'] = 'neither'
+        conflict = self.summarize(symmetric)['reversals']['conflicts'][0]
+        self.assertEqual(conflict['forward']['relation'], 'A_contains_B')
+        self.assertEqual(conflict['reverse']['relation'], 'neither')
+
+    def test_symmetric_uncertainty_failures_and_missing_receipts_stay_unresolved(self):
+        from sse_multivector.hierarchy_node_pairs import project_symmetric_fixed_meanings
+        rows = self.cases([('ab', 'A', 'B', 'uncertain'),
+                           ('ac', 'A', 'C', 'unrun', 'failed'),
+                           ('ad', 'A', 'D', 'neither')])
+        symmetric = [project_symmetric_fixed_meanings(row) for row in rows]
+        for row in symmetric:
+            if row.get('parsed'):
+                del row['parsed']['meaning']
+        symmetric[-1]['receipt'] = None
+        result = self.summarize(symmetric)
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['reversals']['complete_pairs'], 0)
+        self.assertEqual(len(result['reversals']['unresolved_pairs']), 3)
+        self.assertEqual({case['unresolved_reason'] for direction in result['directions'].values()
+                          for case in direction['unresolved_cases']},
+                         {'uncertain', 'unrun', 'failed', 'missing_compare_receipt'})
 
 
 if __name__ == '__main__':

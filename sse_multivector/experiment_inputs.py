@@ -83,8 +83,8 @@ def prepare_file(dataset, path, template, load_report=None):
         fixed_meanings = dataset['adapter'] == 'hierarchy_node_pairs'
         fields = {'prepared_experiment'} | ({'input_view'} if fixed_meanings else set())
         engine._expect_fields(source, 'prepared input source', fields)
-        if fixed_meanings and source['input_view'] != 'fixed_meanings':
-            raise ValueError('prepared node pairs input_view must be fixed_meanings')
+        if fixed_meanings and source['input_view'] not in ('fixed_meanings', 'symmetric_fixed_meanings'):
+            raise ValueError('prepared node pairs input_view must be fixed_meanings or symmetric_fixed_meanings')
         reference = source['prepared_experiment']
         engine._expect_fields(reference, 'prepared experiment reference', {'path', 'sha256'})
         directory = engine._resolve_path(reference['path'], 'prepared experiment', path.parent)
@@ -115,8 +115,11 @@ def prepare_file(dataset, path, template, load_report=None):
             source_prompt_id=plan['prompt']['id'], application_allowed=False)
         if fixed_meanings:
             from . import hierarchy_node_pairs
-            cases = [hierarchy_node_pairs.project_fixed_meanings(case) for case in cases]
-            preparation['input_view'] = 'fixed_meanings'
+            projection = (hierarchy_node_pairs.project_symmetric_fixed_meanings
+                          if source['input_view'] == 'symmetric_fixed_meanings' else
+                          hierarchy_node_pairs.project_fixed_meanings)
+            cases = [projection(case) for case in cases]
+            preparation['input_view'] = source['input_view']
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     saved_counterexamples = dataset['adapter'] == 'generic' and 'saved_counterexamples' in source
     if saved_counterexamples or dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes',
@@ -1494,8 +1497,11 @@ def validate(dataset, case, raw, schema):
         else:
             properties = schema.get('properties', {}) if isinstance(schema, dict) else {}
             diagnostics = bool({'questions', 'answers'} & properties.keys())
-            meaning = json.loads(case['inputs']['INPUT_JSON'])['local'].get('meaning')
-            result['parsed'] = node_pairs.validate(raw, diagnostics=diagnostics, meaning=meaning)
+            payload = json.loads(case['inputs']['INPUT_JSON'])
+            symmetric = set(payload) == {'A', 'B'}
+            meaning = None if symmetric else payload['local'].get('meaning')
+            result['parsed'] = node_pairs.validate(
+                raw, diagnostics=diagnostics, meaning=meaning, symmetric=symmetric)
     if adapter == 'distillation_verdict':
         try:
             from . import distillation_verdict
