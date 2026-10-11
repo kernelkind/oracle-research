@@ -65,22 +65,29 @@ Actual complete-token inventories on the reviewed data are:
 | Qwen27 | 501,255 / 6,905 | 107,478 / 5,224 | 4,568 / 168 |
 | Gemma26 | 503,798 / 6,922 | 108,143 / 5,265 | 4,590 / 172 |
 
-Qwen27 Bootstrap's first saved checkpoint follows **94 updates / one epoch**.
-Held-out mean token loss falls from **1.4162 to 0.9712**, with mean TRAIN loss
-0.9177. Optimizer steps take **38.54 minutes**; the cumulative phase including
-evaluation and checkpoint saving takes **41.18 minutes**, with **24.99 GiB**
-peak CUDA allocation. These are teacher-forced losses, not generated-meaning
-scores. Epochs two through four, fresh-process verification and native semantic
-generation evaluation remain pending. The preserved epoch-one report is
-`target/bootstrap-compare-student-v1/bootstrap-pilot-qwen27b-epoch1-report-v1.json`,
-SHA-256 `01923ac79d8eabec4bc4d1be224d16c118eb7cb60c5bf9fac835a64c82678a93`;
-its saved adapter SHA-256 is
-`b0d4f3d0feace381b68331816a2601c9bee1a318ca7c343ee4be0054d5479048`.
+Qwen27 Bootstrap completes **376 updates / four epochs**, supervising 18,272
+completion/turn-end tokens. Its baseline held-out mean token loss is **1.4162**.
 
-Qwen27 Compare has completed fitting and fresh-process verification of both
-checkpoints. The GB10 sequence has started Bootstrap Qwen27 (PID 1620383), then
-fits/verifies Bootstrap Gemma26, input-only Ettin Compare, and Kev27 Compare,
-in that order. The verified queue shell is PID
+| Saved epoch | Mean TRAIN loss | Held-out mean token loss | Cumulative optimizer / phase minutes | Peak CUDA GiB | Fresh reload |
+| --- | ---: | ---: | ---: | ---: | --- |
+| 1 | 0.9177 | 0.9712 | 38.54 / 41.18 | 24.99 | Pass |
+| 4 | 0.1300 | 1.2290 | 153.05 / 158.30 | 24.99 | Pass |
+
+The phase includes evaluation and checkpoint saving; the 341.25-second model
+load and baseline evaluation precede it. Training PID 1620383 and verification
+PID 1729907 are distinct. Both checkpoints pass native score/loss and exact
+adapter-weight reload checks, with bindings, metrics and saved file hashes
+unchanged. TRAIN loss improves while held-out loss worsens after epoch one;
+this supports comparing both generated checkpoints. These teacher-forced losses
+do not establish semantic meaning quality. The complete source-bound report is
+`target/bootstrap-compare-student-v1/bootstrap-pilot-qwen27b-complete-report-v1.json`,
+SHA-256 `b601a49c1877840945425797c561eecfd5f9f0a95b179a0116b48fb619dd3cbc`.
+The earlier epoch-one and complete-training snapshots remain preserved.
+
+Qwen27 Compare and Bootstrap have completed fitting and fresh-process
+verification of both checkpoints. The GB10 sequence has started Bootstrap
+Gemma26 (PID 1768470), then fits/verifies input-only Ettin Compare and Kev27
+Compare, in that order. The verified queue shell is PID
 1529676 (coordinator 1529675), with its source-bound local receipt at
 `target/bootstrap-compare-student-v1/student-learning-queue-v1.json` and remote
 `target/student-learning-queue-v1.log`. Each job has a distinct preserved output
@@ -99,8 +106,13 @@ allowance and one local request at a time. The separate immutable generation
 runtime inherits the fit's source snapshot and the exact stable launcher and
 local worker scripts; existing running snapshots are untouched. Native
 generation and semantic review remain pending until the GPU fitting sequence
-finishes. Epoch checkpoint plans will additionally bind their actual saved
-adapter hashes after verification.
+finishes. Native preparation and `show` now also validate both Qwen epoch plans:
+their 21 complete case prompts, inputs and evidence are identical to the
+published baseline, no teacher answers are copied, and their model configs bind
+the actual verified adapter hashes. Adapter paths resolve from the owned GB10
+`target` directory. Two earlier preparations rejected absolute-path model
+identifiers before inference; original configurations and the rejection receipt
+remain preserved. Gemma epoch plans await its verified saved checkpoints.
 
 Both fit their 13,312-token configured limits. The source-bound inventory is
 `target/bootstrap-compare-student-v1/bootstrap-meaning-token-profile-v1.json`.
