@@ -50,16 +50,18 @@ the supplied subject, using post/context to resolve sense rather than adding
 restrictions from its particular example. Experimental v109 implements that
 contract from approved v104. A matched complete-branch qualification of v104
 and v109 is complete: 115 candidate meanings validate, compared with 114 baseline
-meanings and one exact-quote failure. Independent review finds one baseline
-author-only category restriction absent from the candidate draw. Forty-one
+meanings and one exact-quote failure. Initial review flagged a baseline
+author-only stock-making scope absent from the candidate draw; node-local
+reassessment withdrew that failure claim because its own context describes the
+author's practice. That actor-scope choice remains pending user review. Forty-one
 candidate ancestor checks remain unresolved around two concentrated Food/stock
 interpretations; no general scope repair is established. Independent generation
 and input/output schemas stay unchanged. Source assignment, definition coherence
 and branch compatibility are assessed separately, with all 230 reviews bound to
 their exact outputs. Details, reuse and native accounting are in the Bootstrap
 qualification record. Subsequent unchanged-prompt stock repeats preserve the
-generic practice in both versions, so the baseline error does not establish a
-reliable v109 improvement. The user withdrew the subsequent Food failure claim:
+generic practice in both versions; these actor-scope variations do not establish
+a reliable v109 improvement. The user withdrew the subsequent Food failure claim:
 matching Food titles in a synthetic AS example and a real note do not establish
 matching meanings. Evaluate each local node using its own subject, context,
 hierarchy and full post; the other example supplies no membership gold. Both
