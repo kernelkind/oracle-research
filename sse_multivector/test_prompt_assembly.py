@@ -79,6 +79,25 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertIn('assembled prompt SHA-256', result.stderr)
         self.assertFalse(self.destination.exists())
 
+    def test_literal_separators_preserve_layout_without_extra_source_files(self):
+        separator = '\n\n'
+        self.manifest['parts'].insert(1, {'text': separator})
+        expected = self.parts[0] + separator.encode() + self.parts[1]
+        self.manifest['output']['sha256'] = sha256(expected)
+        self.write_spec()
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.destination.read_bytes(), expected)
+        self.assertEqual(self.invoke('check').returncode, 0)
+
+    def test_invalid_literal_text_fails_before_creating_output(self):
+        self.manifest['parts'].insert(1, {'text': 42})
+        self.write_spec()
+        result = self.invoke()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('literal prompt text must be a string', result.stderr)
+        self.assertFalse(self.destination.exists())
+
     def test_existing_prompt_is_never_overwritten(self):
         self.destination.write_bytes(b'Existing frozen version')
         for command in ('build', 'check'):
@@ -116,6 +135,42 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertEqual(sha256(bootstrap),
                          'd97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0')
 
+    def test_expanded_rules_are_shared_with_the_unchanged_bootstrap_reference(self):
+        for name in ('Hierarchy-consolidation-v2.assembly.json',
+                     'Hierarchy-bootstrap-v104.shared-v2.assembly.json'):
+            result = self.invoke('check', PROMPTS / name)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        specs = [json.loads((PROMPTS / name).read_text()) for name in (
+            'Hierarchy-consolidation-v2.assembly.json',
+            'Hierarchy-bootstrap-v104.shared-v2.assembly.json')]
+        shared_parts = [[p for p in s['parts'] if '/explicit-meaning-rules-v2/' in p.get('path', '')]
+                        for s in specs]
+        self.assertEqual(shared_parts[0], shared_parts[1])
+        bootstrap = (PROMPTS / 'Hierarchy-bootstrap-v104.md').read_bytes()
+        consolidation = (PROMPTS / 'Hierarchy-consolidation-v2.md').read_bytes()
+        shared = []
+        for part in shared_parts[0]:
+            text = (PROMPTS / part['path']).read_bytes()
+            self.assertEqual(bootstrap.count(text), 1)
+            self.assertEqual(consolidation.count(text), 1)
+            shared.append(text)
+        rules = b'\n'.join(shared)
+        for instruction in (
+            b'Retain the selected name to preserve identity.',
+            b'Do not discard an alternative or part',
+            b'Distinguish defining features from optional variations.',
+            b'required actions, methods, roles, purposes or states',
+            b'"typically" or "usually"',
+            b'Apply each chosen restriction consistently',
+            b'choices cannot form one coherent meaning, return a null meaning.',
+        ):
+            self.assertIn(instruction, rules)
+        self.assertNotIn(b'resolutions', rules)
+        self.assertEqual(sha256(bootstrap),
+                         'd97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0')
+        self.assertEqual(sha256((PROMPTS / 'Hierarchy-consolidation-v1.md').read_bytes()),
+                         '6a93d4d2a06c20b3a46ffd9758144cd280f7f0017153eb18a43cae72b2947965')
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -127,27 +182,30 @@ class PromptAssemblyTests(unittest.TestCase):
             {'id': 'C3', 'title': 'Gardening', 'meaning': 'Cultivating plants in a garden.'},
         ]})
         cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
-        spec = self.root / 'native.spec.json'
-        prompt = PROMPTS / 'Hierarchy-consolidation-v1.md'
-        spec.write_text(json.dumps({
-            'schema_version': 1,
-            'prompt': {'id': 'Hierarchy-consolidation-v1', 'path': str(prompt)},
-            'dataset': {'adapter': 'generic', 'path': str(cases)},
-            'runner': {'provider': 'openai-codex', 'model': 'fixture/model',
-                       'reasoning_effort': 'off',
-                       'runner_binary': str(runner_root / 'tests/fixtures/fake-runner.py')},
-        }))
-        result = subprocess.run(
-            [str(launcher), 'prepare', str(self.root / 'prepared'), '--spec', str(spec)],
-            cwd=self.root, env={**os.environ, 'FAKE_RUNNER_LOG': str(call_log)},
-            capture_output=True, text=True, timeout=30,
-        )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertFalse(call_log.exists(), 'preparation must not run inference')
-        plan = json.loads((self.root / 'prepared' / 'experiment.json').read_text())['plan']
-        self.assertEqual(plan['prompt']['text'], prompt.read_bytes().decode())
-        self.assertEqual(plan['cases'][0]['prompt'],
-                         prompt.read_bytes().decode().replace('{INPUT_JSON}', inputs))
+        for version in ('Hierarchy-consolidation-v1', 'Hierarchy-consolidation-v2'):
+            with self.subTest(version=version):
+                spec = self.root / (version + '.spec.json')
+                prompt = PROMPTS / (version + '.md')
+                spec.write_text(json.dumps({
+                    'schema_version': 1,
+                    'prompt': {'id': version, 'path': str(prompt)},
+                    'dataset': {'adapter': 'generic', 'path': str(cases)},
+                    'runner': {'provider': 'openai-codex', 'model': 'fixture/model',
+                               'reasoning_effort': 'off',
+                               'runner_binary': str(runner_root / 'tests/fixtures/fake-runner.py')},
+                }))
+                destination = self.root / ('prepared-' + version)
+                result = subprocess.run(
+                    [str(launcher), 'prepare', str(destination), '--spec', str(spec)],
+                    cwd=self.root, env={**os.environ, 'FAKE_RUNNER_LOG': str(call_log)},
+                    capture_output=True, text=True, timeout=30,
+                )
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertFalse(call_log.exists(), 'preparation must not run inference')
+                plan = json.loads((destination / 'experiment.json').read_text())['plan']
+                self.assertEqual(plan['prompt']['text'], prompt.read_bytes().decode())
+                self.assertEqual(plan['cases'][0]['prompt'],
+                                 prompt.read_bytes().decode().replace('{INPUT_JSON}', inputs))
 
 
 if __name__ == '__main__':

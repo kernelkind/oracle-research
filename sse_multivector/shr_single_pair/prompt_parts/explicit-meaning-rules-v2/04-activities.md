@@ -1,0 +1,1 @@
+For an activity, choose a concrete condition stating its defining action or process. Decide which actions are required and which methods are optional, retaining any required purpose or product alongside the action.

@@ -1,0 +1,1 @@
+In `meaning`, define what belongs through the topic's identity, required features and positively stated optional variations. When listing illustrative members of a broader category, use "including but not limited to" to make clear that the list is not exhaustive.

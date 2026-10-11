@@ -1550,13 +1550,14 @@ been activated.
 
 ## Synthetic parent draft and shared definition wording
 
-**Hierarchy-consolidation-v1 is a draft, not an approved or tested model prompt.**
+**Hierarchy-consolidation-v2 is the current draft, not an approved or tested
+model prompt.**
 The user authorized its preparation in the shaping task worktree only, with
 coordination with the other research session. No inference,
 bootstrap revision, construction change, review UI refresh or main integration
 is part of this draft task.
 
-The [complete draft](shr_single_pair/Hierarchy-consolidation-v1.md) receives
+The [complete v2 draft](shr_single_pair/Hierarchy-consolidation-v2.md) receives
 the siblings' current parent and all recursive ancestors, preserving parent
 IDs, plus every sibling's ID, title and fixed explicit meaning. For a root
 group the parent is null and ancestors are empty. It proposes one new topic
@@ -1566,26 +1567,51 @@ proposal containing every sibling only adds a level and is excluded. The
 proposal must still undergo ordinary comparison to establish actual placement;
 this task does not implement that path for synthetic inputs.
 
-The user approved keeping shared instructions in a versioned file and
-assembling full prompt files before preparation. The shared file is
-[explicit-meaning-rules-v1](shr_single_pair/prompt_parts/explicit-meaning-rules-v1.md):
-119 words copied verbatim from the approved
-[Bootstrap-v104](shr_single_pair/Hierarchy-bootstrap-v104.md) definition-writing
-paragraph. Post-specific evidence instructions, ambiguity output fields and
-examples remain in the bootstrap wrapper. Consolidation has its own input,
-proposal and output instructions; no bootstrap field is required merely to
-reuse definition-writing text.
+The user approved keeping shared instructions in versioned files and assembling
+full prompt files before preparation. V1 shared only 119 words. After the user
+asked whether that was sufficient, the approved expansion produces nine shared
+clauses totaling 385 words, all copied verbatim from approved
+[Bootstrap-v104](shr_single_pair/Hierarchy-bootstrap-v104.md):
 
-The two pinned assembly manifests are
-[Bootstrap-v104](shr_single_pair/Hierarchy-bootstrap-v104.assembly.json) and
-[Consolidation-v1](shr_single_pair/Hierarchy-consolidation-v1.assembly.json).
+- [Identity and defining features](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/01-identity.md).
+- [Required roles and intended use](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/02-roles.md).
+- [Preserving alternatives and parts](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/03-alternatives.md).
+- [Required actions versus optional methods](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/04-activities.md).
+- [Choosing coherent boundaries](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/05-boundaries.md).
+- [Writing the standalone definition](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/06-definition.md).
+- [Optional variations and illustrative examples](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/07-variations.md).
+- [Required absences and frequency qualifiers](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/08-qualifiers.md).
+- [Consistent restrictions and an unresolved meaning](shr_single_pair/prompt_parts/explicit-meaning-rules-v2/09-consistency.md).
+
+Post-specific evidence instructions, original local-branch interpretation,
+ambiguity/output-field dependencies and examples remain bootstrap-specific.
+The shared clauses govern the proposed parent's meaning; supplied canonical
+meanings stay fixed. The consolidation output instructions specify JSON null
+when a coherent meaning cannot be established, rather than an object with a
+null meaning. Repeated definition rules outside the shared section were removed.
+Input and grouping rules retain v1's behavior. The shared runner's native
+`revise` produced v2 and its exact
+[revision record](shr_single_pair/Hierarchy-consolidation-v2.md.revision.json).
+
+The current pinned assembly manifests are
+[Bootstrap-v104 with expanded shared clauses](shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json)
+and [Consolidation-v2](shr_single_pair/Hierarchy-consolidation-v2.assembly.json).
+Both reference the exact same nine shared files in the same order. The
+bootstrap recipe preserves its original clause positions and intervening bytes;
+the consolidation recipe places them together in its definition section. The
+original bootstrap recipe, shared v1 file and consolidation v1 remain fixed.
+The additional bootstrap recipe is an extraction change, not a Bootstrap
+meaning-generation revision or activation; its complete output remains v104.
 Each records the prompt version, every source part's path and SHA-256, their
 order, and the full output's path and SHA-256. Paths are relative to the
-manifest. [prompt_assembly.py](prompt_assembly.py) concatenates exact bytes;
-it does not interpret template variables or add separators. Each wrapper owns
+manifest. Literal parts such as `{"text": "\n\n"}` declare separators without
+creating empty source files; the assembled output hash pins that exact text.
+[prompt_assembly.py](prompt_assembly.py) concatenates exact file and literal
+bytes; it does not interpret template variables or add implicit separators.
+Each wrapper owns
 its surrounding whitespace, including a mid-paragraph space or a final blank
 separator when necessary for exact reconstruction. Git's default whitespace
-check reports those two intentional wrapper endings; the assembled prompts and
+check reports intentional wrapper endings; the assembled prompts and
 remaining source pass the check. Missing or changed parts, a wrong assembled hash,
 and a differing existing output are errors. Existing matching outputs are
 checked without rewriting them.
@@ -1599,9 +1625,9 @@ From the task worktree:
 
 ```bash
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.shared-v2.assembly.json
 python3 sse_multivector/prompt_assembly.py build \
-  sse_multivector/shr_single_pair/Hierarchy-consolidation-v1.assembly.json
+  sse_multivector/shr_single_pair/Hierarchy-consolidation-v2.assembly.json
 ```
 
 After a shared instruction changes, create a new shared-file version and new
@@ -1612,17 +1638,26 @@ the new shared version while other consumers retain the old one.
 
 The bootstrap reconstruction's SHA-256 is
 `d97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0`,
-identical to the pre-existing v104 file. The shared text's SHA-256 is
-`0a243de2ac9013212f8b35317f6ad0b52b4757c467f81f54d9ab9ff4cb46c7ff`.
-The fail-first CLI test initially failed because assembly support was absent.
-Seven offline production-path checks now pass, including refusal of source
-drift or output overwrite, exact v104 reconstruction, identical shared wording
-in both prompts, and native generic `prepare` freezing the assembled prompt
-without inference. These checks establish assembly behavior, not semantic
+identical to the pre-existing v104 file. The nine shared-file hashes are pinned
+in both current assembly manifests. V1's 119-word definition excerpt is the
+unchanged sixth shared clause; the v1 output still hashes to
+`6a93d4d2a06c20b3a46ffd9758144cd280f7f0017153eb18a43cae72b2947965`.
+The initial CLI test failed because assembly support was absent. The expansion
+check first failed on the missing v2 manifest; the literal-separator check first
+failed on its unsupported part shape. Ten assembly checks and nine existing
+revision checks now pass, including refusal of source drift or output overwrite,
+exact v104 reconstruction through both recipes, identical shared clauses in
+both consumers, and native generic `prepare` freezing each consolidation
+version without inference. These checks establish assembly behavior, not semantic
 quality or API acceptance of a consolidation output schema. No schema or
 production activation is introduced in this draft.
 
-The draft uses short explicit sections, delimited input and no requested
+The user-requested boundary annotations are kept in an ignored review copy:
+`target/canonical-shaping-selection-v1/Hierarchy-consolidation-v2-annotated.md`
+in the task worktree. Visible BEGIN/END markers surround the complete shared
+section. Removing them restores v2 exactly; they are not model instructions.
+
+The draft uses explicit sections, delimited input and no requested
 reasoning trace or examples, consistent with
 [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
 That guidance does not validate the consolidation semantics. The next step is

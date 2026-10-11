@@ -1,0 +1,2 @@
+ Before finalizing, check whether the same wording could express materially different membership conditions suggested by the selected subject and its evidence. If it could, record that difference as an ambiguity, choose a justified condition, and revise the meaning to distinguish those readings. A list of methods does not settle whether an action is required. The meaning alone must express each chosen boundary.
+

@@ -38,6 +38,11 @@ def assemble(spec_path, command):
         raise ValueError('assembly needs a nonempty list of parts')
     pieces = []
     for record in spec['parts']:
+        if isinstance(record, dict) and set(record) == {'text'}:
+            if not isinstance(record['text'], str):
+                raise ValueError('literal prompt text must be a string')
+            pieces.append(record['text'].encode('utf-8'))
+            continue
         path = pinned_file(record, spec_path.parent)
         if path == output:
             raise ValueError('assembled prompt cannot be its own source')

@@ -1,0 +1,1 @@
+Do not discard an alternative or part solely to make the topic fit its parent.
