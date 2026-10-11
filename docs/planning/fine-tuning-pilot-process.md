@@ -447,9 +447,16 @@ testing remains paused; the final sixty remain pending.
 The user subsequently authorizes a
 [DSLv10 timing-scope draft](../../sse_multivector/distillation-review-v1/README.md#dslv10-timing-scope-draft-october-11).
 It replaces one explanatory paragraph and prepares twelve native cases offline:
-three exact scope failures, five accepted controls and four authored local/shared
+three prior scope findings, five accepted controls and four authored local/shared
 timing contrasts. Independent input review agrees on five valid and seven
-invalid targets. Wording review precedes model calls; DSLv10 remains untested.
+invalid targets. The user subsequently approves the wording and
+[twelve-case diagnostic](../../sse_multivector/distillation-review-v1/README.md#dslv10-timing-scope-diagnostic-october-11).
+Both agent audits accept all decisions and complete explanations: the earlier
+scope findings are resolved on these cases and all controls pass. Native source, receipt and
+accounting checks pass; twelve fresh first attempts take 1 min 27 s, with no
+retries, reuse, warming or cache hits. DSLv10 remains experimental. The separate
+matching/support Nostr questions remain unresolved; another four-note regression
+and final-sixty validation have not started.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,

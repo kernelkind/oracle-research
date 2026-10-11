@@ -1612,8 +1612,18 @@ and four authored local/shared timing contrasts. The eight inherited inputs and
 baselines remain exact; authored inputs use the existing generic adapter and
 production AS-excerpt function, with no adapter or output-schema changes.
 Independent input assessment agrees on five true and seven false targets. All
-twelve candidates are unrun; wording review precedes calls. Sol/xhigh/SSE and
-automatic queue admission stay fixed; the short template prefix is not warmed.
+twelve candidates were unrun at preparation. The user subsequently approves
+the exact wording and [diagnostic](distillation-review-v1/README.md#dslv10-timing-scope-diagnostic-october-11).
+Both agent audits accept all twelve decisions and complete explanations, with
+no remaining DSL timing finding on this panel. Native source, receipt and
+accounting checks pass. Twelve fresh first attempts take 87.305 seconds and
+reconcile at 12/24 allowed attempts, with no retries, reuse or warmups. Usage is
+17,181 uncached input, zero cached input and 16,937 output tokens, including
+13,543 reasoning. The catalog API-equivalent estimate is $0.203732; provider
+charges are unknown. Sol/xhigh/SSE and automatic queue admission stay fixed;
+the 76-token prefix is ineligible and no cache hits occur. DSLv10 remains
+experimental; matching/support Nostr questions, broader regression and
+lower-effort testing remain pending.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
