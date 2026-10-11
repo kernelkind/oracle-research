@@ -1785,3 +1785,34 @@ condition, instead of asking an abstract negation of the definition. Its answer
 must still resolve that exact candidate and a positive must establish all other
 conditions. The same40 frozen inputs, meanings, schema and controls qualify
 whether candidate discovery improves; no validation examples enter the prompt.
+
+### V89: concrete candidates do not reliably target the omitted condition
+
+The40-case gate completes validly in42 fresh attempts including warmups,
+no retry/reuse/failure/missing usage and $0.3414484 API-equivalent cost.
+Only018-reverse corrects the eight targeted restriction errors. The concrete
+alertness candidate varies emotional neutrality; the fasting candidate varies
+recurrence; the ketogenic candidate varies incidental versus designed intake.
+These scenarios leave the missing person condition untested. Forward018 still
+equates a food-preparation label with intended eating, while reverse preserves
+display-only genuine bagels. Repeated question wording changes therefore do
+not establish a fix. Native usage: hierarchy-compare-v89-usage-v1.json.
+
+V88's full-panel independent review also qualifies the previous flour-based
+bagel proofs: sprouted-grain bagels can be described without added flour.
+These are newly exposed lexical/ingredient boundaries, not silently changed
+meanings or a requirement to keep old Bread positives. Its22 reviews comprise
+11 accept,4 reject and7 qualified. Flourless sprouted-grain bread supports
+V88's reverse012 counterexample; the forward stage diagnostic remains wrong.
+This illustrates why diagnostic validity and label validity stay separate.
+
+Condition diagnostic V8 imports V89's exact18 core inputs through the existing
+native generic prepared-experiment adapter. Its node definitions and entire
+fixed-meaning/topic preamble are byte-identical to V89. It retains diagnostic
+V7's separate required-condition procedure and two-field condition-matrix schema.
+The older condition panels did not include these missing-person witnesses.
+This controlled test separates condition attribution from the question task;
+procedure and schema both change, so it cannot identify one causal sentence.
+It is not production Compare adoption and adds no adapter, constructor,
+Bootstrap, hierarchy or service changes. Prior answers and labels stay outside
+model input. Stage cap37 includes warmup/retries under the shared20000 counter.
