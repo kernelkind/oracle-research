@@ -1,10 +1,14 @@
-# Hierarchy generation — draft v2
+# Hierarchy generation V2 — FUTURE WORK
 
-**Status: next-generation draft; not implemented or tested.** The user approved
-guaranteed L1 selection by prominence, additional L1s for uncovered notes, and
-prominence-ordered refinement of multi-note leaves, and retaining the child when
-an equal-note-set parent has only that child. Other equal-note-set cases and
-automatic shaping remain open. The current constructor still follows the
+**Status: V2 — FUTURE WORK. Design draft; not implemented or tested.** This
+document records decisions for a future version, not the current generation
+algorithm. Landing this document in `main` does not activate V2.
+
+For V2, the user approved guaranteed L1 selection by prominence, additional L1s
+for uncovered notes, prominence-ordered refinement of multi-note leaves, and
+retaining the child when an equal-note-set parent has only that child. Other
+equal-note-set cases and automatic shaping remain open. The current constructor
+still follows the
 [standalone traversal design](hierarchy-traversal-draft.md).
 
 ## Purpose

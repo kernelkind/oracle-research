@@ -1481,19 +1481,9 @@ uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
 See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
 
-The [next-generation hierarchy draft v2](hierarchy-generation-draft-v2.md)
-specifies PPv35 selection of every L1 scoring at least 50, or only the highest
-L1 per note when none qualifies. Every selected L1 must be processed before
-stopping. After that pass, remaining L1s are tried only for uncovered notes.
-Refinement prioritizes the largest multi-note leaf and rotates across its notes,
-selecting highest-prominence unused descendants within the supporting original
-local branches, level by level. A leaf stops receiving refinement when it has
-one note or exhausts those descendants; notes supported at internal nodes do not
-require their own singleton node. For an equal-note-set parent with only one
-child, retain the child and omit the parent from the finished browsing hierarchy,
-preserving the original construction graph. Other equal-note-set cases and
-automatic shaping remain open. This is intended v2 design; the current constructor
-does not implement it.
+**V2 — FUTURE WORK:** the [hierarchy generation V2 draft](hierarchy-generation-draft-v2.md)
+records design decisions for a future version. It is not implemented or tested;
+its selection and shaping rules do not apply to the current constructor.
 
 Use these offline commands after construction:
 
