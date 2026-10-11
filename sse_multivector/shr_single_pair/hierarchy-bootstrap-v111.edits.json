@@ -1,0 +1,9 @@
+{
+  "base_sha256": "caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1",
+  "edits": [
+    {
+      "old": "The selected subject establishes the topic, its level of abstraction and its expressed restrictions.",
+      "new": "The selected subject names the topic, its level of abstraction and its expressed restrictions; it does not establish that a particular person, thing or event in the post satisfies that description."
+    }
+  ]
+}

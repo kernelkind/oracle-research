@@ -5944,3 +5944,87 @@ and sampling remain confounds; a clean development result would not certify
 population accuracy, newer Bootstrap outputs or the entire regression set.
 No Bootstrap change, hierarchy construction, broader panel or new call allowance
 is included.
+
+### Completed V183 purpose-example qualification
+
+All six experiments complete with 24 fresh valid comparisons, no answer reuse,
+explicit warming, retry, failure or missing usage. Two independent reviewers
+register 11 accepts/one rejection for the first draw and ten accepts/two
+rejections for the second; root inspects all responses. Historical workflow
+exposure makes these reviews unblinded. Stockpots' laboratory-only design witness
+remains user-accepted; the four control pairs retain agent-qualified expectations.
+Native `final-generation.json` and `final-reviewed.json` snapshots preserve the
+unchanged generation bytes, receipts and attributed reviews.
+
+| Measure | Saved V179 | Fresh V183 |
+|---|---:|---:|
+| Supported A-first panel responses | 18/20 | 18/20 |
+| Supported B-first Stockpots responses | 2/4 | 3/4 |
+| Supported complete responses | 20/24 | 21/24 |
+| Relation errors | 4/24 | 3/24 |
+| Reversal conflicts | 4/12 | 3/12 |
+| Directional labels changing between two draws | 0/12 | 1/12 |
+| Uncertain responses | 0 | 0 |
+
+Each reversal denominator counts one pair under one presentation in one draw;
+each repeat denominator counts one directional request repeated twice. Neither
+represents that many independent semantic topics. The standard A-first panel
+is unchanged in support: both Stockpots forward errors persist and all 16
+controls pass. B-first controls are not tested with V183. Stockpots labels are:
+
+| Input member order | A | B | Draw 1 | Draw 2 |
+|---|---|---|---|---|
+| A, B | Cookware | Stockpots | A contains B, unsupported | A contains B, unsupported |
+| A, B | Stockpots | Cookware | Neither, supported | Neither, supported |
+| B, A | Cookware | Stockpots | Neither, supported | Neither, supported |
+| B, A | Stockpots | Cookware | Neither, supported | B contains A, unsupported |
+
+The unsupported positives still infer meal purpose from stock-making design.
+In `pair-01` forward, the proof says "Preparing culinary stock is food preparation
+for meals." In `pair-02` forward, the question explicitly challenges Cookware's
+meal-preparation requirement, but the proof says stock-making "necessarily
+involves holding food during heat-based cooking for meal preparation." Identifying
+the missing restriction therefore does not suffice to justify it. In
+`b-first-pair-02` reverse, the proof establishes food/heat vessel requirements
+and treats the Full English Breakfast example as nonexclusive, without proving
+the broader meal-purpose requirement. Nonexclusive meal examples do not remove
+that requirement. These are unsupported scope implications, not direction-ID
+or subject-assignment errors. The five supported Stockpots responses supply
+complete exclusive nonmeal stock-making design witnesses and supported meal-pan
+exclusions in the opposite direction.
+
+Twenty-four distinct response IDs and 12 exact repeated request identities
+establish independent draws without conversation linkage. Actual request bodies
+match each corresponding baseline except for the added example. Original input
+values, member order, ASv6.100/Bootstrap-v96 producer evidence, worker and
+request-producing code, wrapper and schema digests remain fixed. All outputs
+still report `A_contains_B` before `B_contains_A`; diagnostics and subject
+assignments align. Native reviews leave generation fields and receipts intact.
+
+Native `target/compare-v183-purpose-example-v1/usage.json` separates $0.1804176
+for 20 new A-first attempts and $0.0385164 for four new B-first Stockpots attempts
+from $0.1643176 and $0.0334772 for the corresponding saved original generations.
+Its $0.4167288 aggregate includes 24 saved and 24 new attempts, not 48 fresh
+calls or cash spending. Reasoning usage is included in output. Shared admission
+uses 30; the persistent counter moves from 18,935 before dispatch to 18,959
+afterward, matching the native 24 new attempts. There are 1,041 remaining at
+that read; concurrent authorized work may subsequently change the counter.
+
+V183 fails the predeclared all-supported/no-conflict/stable-repeat gate and is
+not adopted or broadened. One additional supported answer in the B-first subset
+does not establish a reliable repair: its reverse label now changes between
+draws, while the usual panel retains both errors. Saved-versus-fresh time/provider
+effects and sampling remain open; no causal or population-accuracy claim follows.
+V179 remains the shorter development baseline with the unresolved Stockpots
+failure, and the symmetric A/B line is retained.
+
+Further examples and another condition-extraction matrix are not recommended
+on this evidence. Earlier condition diagnostics already expose unsupported
+implications, and one V183 question already isolates meal purpose. The proposed
+next diagnostic independently tests the saved claim that stock-making design
+necessarily entails meal-preparation design, using unchanged A/B meanings,
+both physical input orders and two fresh draws, without supplying the laboratory
+witness or an expected label. This would test whether a separate proof check
+can reject the existing unsupported implication, not identify one causal prompt
+sentence or establish a scalable production validator. It is a recommendation
+only: no diagnostic source or prompt is prepared and no further calls are made.
