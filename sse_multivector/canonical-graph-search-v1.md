@@ -1,8 +1,17 @@
 # Graph-search selection
 
-The user approved replacing global shortlist selection with graph traversal,
+The user approved testing graph traversal in place of global shortlist selection,
 trusting the comparison model's returned labels. Selection owns which local–
 canonical comparisons to request; prompt development belongs to its own effort.
+
+**Status: failed scalability experiment; work terminated by the user.** The
+eight-note construction increased original-call API-equivalent cost by 9.5123%.
+The incomplete fifty-note test did not establish lower cost or preserved
+hierarchy quality. Its scheduling remained dependent on the chat session,
+causing avoidable idle gaps. The user rejected that process and the duplicate
+baseline, then ended the work. No construction or automation work remains
+active. The selector remains an opt-in experimental implementation; it is not
+an adopted replacement for guarded16.
 
 [The selector](canonical_graph_search.py), its saved-comparison evaluator and
 opt-in native constructor integration are implemented. `--graph-search` selects
@@ -381,14 +390,15 @@ Exact answers are reused through the retained graph-construction worktree's
 `target` history, including the earlier eight-note evidence. Fresh execution
 and original generation costs remain separate; saved source warmups do not
 establish a hypothetical fresh independent build's complete warmup cost.
-Native accounting will include observed token types, warmups and failures, and
-retain missing usage as unknown. The comparison will report graph size,
+Native checkpoint accounting includes observed token types, warmups and failures,
+and retains missing usage as unknown. The intended full comparison covered graph size,
 additional and avoided comparisons, held entries, note groups/routes and the
 existing six-choice/strict-narrowing audit alongside total cost.
 
-Status: native automatic execution has begun; final fifty-note results are
-not available yet. The first preflight ran 38 checks: 36 passed and
-two failed solely because the shared queue changed parallel dispatch order.
+Status: the user terminated this failed experiment before completion; there
+will be no final fifty-note result from this run. The first preflight ran
+38 checks: 36 passed and two failed solely because the shared queue changed
+parallel dispatch order.
 Their production-CLI assertions now allow permutation within a frontier while
 retaining the required next-frontier ordering; no selector behavior changed.
 All **38 checks pass** on repetition, including native cost summaries. Both
@@ -464,8 +474,10 @@ raw graph has fifteen roots, up to sixteen children, five equal-note-set edges
 and fourteen structural violations. `baseline-entry100-audit.json` retains
 that bounded offline audit; coverage alone is not finished-menu acceptance.
 
-Deeper construction is now scheduled concurrently across methods to avoid an
-idle traversal arm. The earlier sequential coordinator was stopped while the
+Deeper construction was scheduled concurrently across methods. The coordinator
+still depended on this chat session advancing and introduced idle gaps; one
+observed gap before fresh requests was approximately 7.5 minutes. The earlier
+sequential coordinator was stopped while the
 baseline's 60th selected-entry continuation was active. Native ownership
 locking rejected the immediate resume while that process was still active;
 it does not wait for another owner. The original continuation then finished
@@ -475,6 +487,42 @@ canceled or redispatched. Each method still processes its own
 automatic entry order sequentially, uses the same frozen inputs and guards,
 and shares exact-request history and the irreversible attempt counter.
 `native-cli-logs/*-v2.log` retain the lock rejection and preparation;
-`*-v3.log` retain the resumed native invocations. The full
-200-entry comparison remains running; the root result is not substituted for
-that later result.
+`*-v3.log` retain the resumed native invocations. The 200-entry comparison was
+not completed. The root result is a partial measurement, not a final result.
+
+### Failure and cleanup
+
+The user required uninterrupted automated construction, rejected running a
+duplicate baseline when a saved fifty-note hierarchy was already available,
+and then instructed this task to stop and be marked as a failure. The
+chat-driven coordinator was terminated. Active native continuations finished
+their current selected entries; neither arm started another entry. Process
+inspection confirmed that no matching construction job remained running.
+
+| Saved stopping checkpoint | Guarded16 duplicate baseline | Graph traversal |
+| --- | ---: | ---: |
+| Original entries processed | 131 | 65 |
+| Canonical nodes | 97 | 47 |
+| Held entries | 26 | 12 |
+| Latest saved trial | `baseline-selection-081` | `graph-selection-015` |
+
+The shared irreversible attempt counter retains **3,621 charged claims**. It
+was not reset or refunded. Saved requests, responses, receipts, intermediate
+graphs and logs remain unchanged. Complete fifty-note cost and quality
+preservation are unestablished; the higher root-stage known subtotal and its
+missing-usage limitation remain as measured evidence above.
+
+The existing ASv6.100 fifty-note benchmark is
+`../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/`.
+Its completed raw trial is `regrouping-roots-v1`, using Bootstrap-v96 and
+Compare-v48. It shares the fifty original root selectors and corpus with this
+test, but its prompts and construction history differ. It remains saved
+historical evidence; this cancelled task does not claim an isolated policy-cost
+percentage against it.
+
+No automated cross-selection command was implemented. The unused automation
+worktree contained no task source changes and was removed. The two frozen
+experiment worktrees named above remain because source hashes, receipts and
+saved evidence use their absolute paths. All earlier task changes are already
+integrated into main. No prompt changes, UI refresh, agent-session messages or
+push were performed during closeout. This task must not automatically resume.

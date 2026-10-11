@@ -1000,3 +1000,73 @@ named-hashtag identity, using fixed original inputs and fresh disputed-endpoint
 repeats before changing wording. Preserve the separate individual and branch
 assessment standards; do not improve counts by rewriting frozen meanings,
 forcing historical labels, or dropping difficult entries.
+
+## Predeclared unchanged-v105 scope and identity diagnostic
+
+The user authorized the focused diagnostic proposed after complete-branch
+qualification. Bootstrap-v105 remains unchanged and experimental; v104 remains
+approved. This stage makes no Compare calls or hierarchy changes.
+
+Before inference, three read-only reviewers distinguish an ambiguous definition
+from a clear broader child meaning and from an unsupported source assignment.
+In particular, Food's resolution says that a substance qualifies "in its role"
+and does not treat every use of an ingredient as food-related. That is evidence
+for an intended-use condition, not proof that every descendant is ambiguous.
+The previous 35 unresolved links remain historical qualifications to reassess,
+rather than predetermined failures for this diagnostic.
+
+Two fresh draws use the following eight exact native cases from
+`target/bootstrap-v105-complete-branches-v1`. Its experiment envelope SHA-256 is
+`1f5b0fcf9938f40f7be8fa2009c42434e149931b85a9a5f3281aa98fd4831c39`.
+Both preparations use `--from` that completed source, `--repeat` and the same
+eight native case selections.
+Original full posts, complete ASv6.100 root trees, inputs, settings, v105 prompt
+and cache identity remain fixed. Earlier answers are baselines, not model input.
+
+| Entry | Original number | Native case ID suffix after `bootstrap-` |
+|---|---|---|
+| Risotto Food root | `1` | `4acb29436208dbb08b34c9bbbd68c0177ecc052b956b474fc05fa93e8985bc92` |
+| Risotto | `1.1` | `5fa9e10f69c1a8b95c57dcf3075945f32125aba19ba8255b3687222250cde203` |
+| Ingredients | `1.1.1.1.1` | `36935a57bda6e81ee6f2dd3e707dda5b9ffbc05bb2bd419814fc2d4e7c0bad4b` |
+| Dry white wine as an ingredient | `1.1.1.1.1.11` | `e2e773beaac3546b1cde0c95e47fd0c4f2c85d1981669bb1463b732f4f7bb6ed` |
+| Food-related content on Nostr | `1.2` | `113ea08b087533fe5fc88f7105faaa7ab23140507a2417173f05ece267c9d3a2` |
+| Coffee chains root | `1` | `07e181e89a6505355db1ee59722fca1ad57baa49f7a72c8bccf9c0f4bd2f4005` |
+| Coffee chain described as weird today | `1.1` | `4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411` |
+| Amusement at the weird coffee-chain situation | `4.1` | `23ca6add8e936f3e74fbc8bfde36ebd22fcdb6d3753b554ba02e29203f8a3c22` |
+
+The predeclared review criteria are:
+
+- A materially ambiguous final definition needs two readings licensed by its
+  wording and original evidence, with an information item included by one and
+  excluded by the other. Merely adding an imaginable narrower condition does
+  not establish ambiguity.
+- Assess category-definition correctness and supported assignment to this post
+  separately. The hashtag and single coffee shop do not establish a particular
+  multi-outlet business or commercial affiliation. A general business definition
+  can be coherent while its assignment remains uncertain. No mandatory hashtag
+  interpretation or older Coffeechain judgment is gold.
+- A branch incompatibility needs two independently clear fixed meanings and
+  child-covered information excluded by the parent. An unsettled endpoint keeps
+  the relationship unresolved. Do not import a generated parent as a glossary
+  or broaden it to make a child fit.
+- Probe whether human intention qualifies a particular use or identifies a
+  food kind. A recipe-defined risotto prepared solely for an animal and Nostr
+  content about cattle-only fodder distinguish consequential readings; these
+  are scope probes, not facts about the source post. Wine used in human-dinner
+  risotto must not require drinking that wine directly or an achieved meal.
+  An ingredient's industrial use must not erase a required culinary role.
+- Preserve the amusement control's supported attributed framing. A factual
+  safeguard returning null remains visible as lost coverage, rather than a
+  successful grounded definition.
+- Different scopes across fresh draws are variability, not contradictions
+  among unchanged meanings. Review every output and the selected fixed ancestor
+  combinations without choosing convenient endpoints. Diagnostic shorthand
+  alone does not fail an otherwise clear final definition.
+
+Execution uses the main shared stable launcher from this isolated task worktree,
+automatic caching/fair scheduling and the existing persistent 20,000-attempt
+counter. Fresh attempts, warmups, failures and exact reuses are accounted natively
+through [the diagnostic usage source](hierarchy-bootstrap-v105-scope-identity-usage-v1.json).
+This small adaptive repeat panel does not estimate general reliability or
+attribute failure to a particular sentence. No prompt edit is justified merely
+by repeating a failure already subject to an explicit instruction.
