@@ -1,8 +1,80 @@
 # Official hierarchy runs and experimental parameters
 
 This Markdown file is the register of official hierarchy runs and their
-experimental parameters. The current official run is **HR03**. Its raw build,
-browsing menu and export share that ID.
+experimental parameters. **HR04** is the approved 12-note run being prepared;
+**HR03** is the completed 50-note baseline. Each run's raw build, browsing menu
+and export share its ID.
+
+## HR04 — ASv6.100 12-note hierarchy
+
+Approved October 11, 2026. Execution has not started. The run uses the current
+standalone constructor, including restricted refinement, single-note leaves and
+deeper-heading retention. The
+[run definition](../../sse_multivector/hierarchy-runs/hr04/traversal.spec.json)
+records the complete note IDs in their selection order.
+
+### Inputs and construction
+
+| Parameter | Selected value |
+| --- | --- |
+| Notes | First 12 notes in HR03's frozen 50-note selection, in the same order |
+| Subject prompt | ASv6.100; reuse HR03's saved subject trees |
+| Local subject entries | 416, including 72 local roots |
+| Bootstrap prompt | [Hierarchy-bootstrap-v109](../../sse_multivector/shr_single_pair/Hierarchy-bootstrap-v109.md) |
+| Compare prompt | [Hierarchy-compare-v179](../../sse_multivector/shr_single_pair/Hierarchy-compare-v179.md), symmetric A/B fixed meanings |
+| Consolidation prompt | [Hierarchy-consolidation-v4](../../sse_multivector/hierarchy-runs/hr04/Hierarchy-consolidation-v4.md), unchanged from the three-note trial |
+| Constructor | `traversal-v24`, including landed refinement change `c5cc28d31455403292dd012e862aa871d06e0241` |
+| Local schema version | 4 |
+| Initial graph | Empty |
+| Selection | L1 roots first, then deeper levels; rotate one local entry per note per pass in saved order |
+| Refinement after coverage | Deeper entries only from notes represented in leaves containing multiple notes |
+| Active local searches | At most 3; placements in selection order |
+| Consolidation trigger | An addition leaves 6 or more siblings, including roots; best effort |
+| Redundant browsing steps | Bypass equal-note-set parents, retaining deeper headings and preserving the raw graph |
+| Completion | All notes individually accessible, one note per browsing leaf, strictly smaller note sets on downward edges |
+
+The selected notes cover rocket-stove cooking, lamb dinner, shrimp risotto,
+cranberry sourdough, cast-iron cookware, chicken stock, preserved beets,
+matcha-cashew pie, meal planning, beef stew, sourdough preparation and smoked
+brisket. Their saved AS outputs are reused; meanings and comparisons use the
+native runner and retain any exact answer reuse with its original receipt.
+
+### Model execution and attempt allowance
+
+| Parameter | Selected value |
+| --- | --- |
+| Provider | `openai-codex`, subscription |
+| Model | `gpt-6.1-sol` |
+| Reasoning effort | medium |
+| Transport | SSE |
+| Prompt cache | Enabled, with automatic warming |
+| Shared provider queue | Maximum 30 requests across experiments |
+| Bootstrap timeout | 600 seconds |
+| Compare/consolidation timeout | 1,800 seconds |
+| Output-token limit | No explicit limit |
+| Seed / temperature | Unspecified; no overrides |
+| Persistent attempt ceiling | 500 total, including warmups, retries and every resume |
+
+The exact Bootstrap, Compare and consolidation settings are saved alongside the
+run definition. The same persistent allowance is used throughout. Reaching its
+ceiling preserves partial work and reports unfinished construction.
+
+### Git provenance and retained artifacts
+
+Preparation starts from source base
+`dd7c5173735eb52dfd4b62c7f02a326c1784d483`; its only change from the proposed
+`81fe043938a66c379d0f0077cbb81ea885d1b97e` is documentation. Before execution,
+record the actual full Oracle generation commit, source status and frozen code
+hashes in the run's `code-provenance.json`. The isolated shared-runner source
+commit is `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`.
+
+The run worktree is `oracle-mvp-hierarchy-hr04-twelve-note-v1`; artifacts remain
+under `target/hierarchy-hr04-twelve-note-v1/`. Its saved AS corpus SHA-256 is
+`18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a`, identical to
+HR03's bound subject corpus. The prepared definition separately binds the exact
+12-note selection. Preserve the raw graph, menu, execution summary, attempt
+ledger, native receipts and source provenance there. Register immutable output
+hashes after execution ends; do not bind this ID to a changing live state.
 
 ## HR03 — ASv6.100 50-note hierarchy
 
