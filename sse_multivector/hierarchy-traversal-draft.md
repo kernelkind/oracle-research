@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v17
+# Hierarchy selection by traversal — draft v18
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -21,6 +21,23 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
   canonical node's ancestors.
 - A local node containing a canonical node also contains all that canonical
   node's descendants.
+
+## Agreed next-local-node selection
+
+**Select local roots first, then L2, then L3, continuing one local level at a
+time across all notes. Within each level, preserve the saved note and node
+order.** L1 is the root level; each local child is one level below its parent.
+
+Use this order to start up to three local-node searches under the concurrent
+policy below. Apply placements in that same order, finishing triggered
+consolidation before applying the next placement.
+
+Do not skip a local child merely because its original parent's canonical node
+represents one note. The local child may have useful relationships elsewhere
+in the canonical graph, so it remains eligible for ordinary traversal.
+
+This is an agreed selection order, not a stopping rule. When to stop selecting
+deeper local nodes remains open. No selection code or model calls change here.
 
 ## Agreed traversal rules
 
@@ -163,7 +180,7 @@ runner handles request concurrency.
 ## Agreed concurrent-search policy
 
 **Allow up to three active local-node searches. Apply placements one at a time,
-in the original local-node selection order.**
+in the agreed local-level and saved source order.**
 
 Each search uses a fixed graph snapshot and the agreed traversal rules. A
 finished search waits for earlier selected local nodes to be placed or held.
@@ -347,11 +364,13 @@ It changes neither a supplied meaning nor a returned comparison label.
 
 ## Agreed walk
 
-The comparison actions, shared-node rule, top-to-bottom order, concurrent-search
-policy, same-note eligibility, original-parent handling and consolidation rules
-above are agreed. The walk below combines them.
+The next-local-node selection order, comparison actions, shared-node rule,
+top-to-bottom order, concurrent-search policy, same-note eligibility,
+original-parent handling and consolidation rules above are agreed. The walk
+below combines them.
 
-1. Start at the canonical roots.
+1. Select the next local node in the agreed order. Start its traversal at the
+   canonical roots.
 2. Compare the local node with a reached, eligible canonical node in the
    top-to-bottom order above.
 3. Follow the returned label using the table below.
@@ -395,6 +414,10 @@ The Food relationship remains a possible placement. The final placement depends
 on the other comparisons. If Breakfast were to contain the local node, Meals
 would also contain it by transitivity, conflicting with the Meals answer.
 
+## Decision still open
+
+- When to stop selecting deeper local nodes.
+
 ## Current implementation
 
 [canonical_graph_search.py](canonical_graph_search.py) currently descends after
@@ -402,6 +425,11 @@ would also contain it by transitivity, conflicting with the Meals answer.
 from this draft's agreed rules. The implementation and its historical results
 remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
+
+The existing [`prepare_selection`](canonical_selective_trial.py) prioritizes
+missing note coverage, then individual-note access, then similarity-ranked
+discovery in schema 2. The approved draft instead uses local levels and saved
+source order to select the next local node.
 
 The current selector exposes the whole queued set of eligible comparisons. It
 does not defer a queued descendant when a queued ancestor could first settle
