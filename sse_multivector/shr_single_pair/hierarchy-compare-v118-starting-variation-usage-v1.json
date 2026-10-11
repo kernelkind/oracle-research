@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v118_core": ["../../target/compare-v118-starting-variation-v1/core"],
+    "v118_controls": ["../../target/compare-v118-starting-variation-v1/controls"],
+    "v118_identity_fresh": ["../../target/compare-v118-starting-variation-v1/identity-fresh"]
+  }
+}

@@ -2612,3 +2612,37 @@ Kind coverage of qualifying production information must not be mistaken for
 coverage of every independently defined production activity. There is no
 new certified narrowed-vessel positive, operator-closure rule or semantic
 gold introduced by this read-only analysis.
+
+V117 completes35 valid comparisons with39 actual attempts, no exact reuses,
+one recovered provider failure/retry and one missing-usage attempt. Its known
+API-equivalent subtotal is $0.3562456; the complete cost remains unknown.
+Receipt-bound reviews give10 accept/3 reject/5 uncertain for18 core responses
+and5 accept/3 reject/5 uncertain for13 controls. Core052/053 reverses still
+import broth through the dish name, while their forwards supply valid
+water-cooked witnesses. Controls012 snapshot/forward still import the narrow
+flour-and-water definition. Core022 reverse and control029 forward are
+separately identified procedure defects, not certified wrong relation labels.
+Both042 consumer checks pass in the main panel; independent repeat review is
+recorded separately. The core has two reversal conflicts052/053 and two
+overlapping bagel-chain witnesses. Neither consistency nor a better consumer
+draw establishes general semantic reliability or causal attribution.
+
+### V118: a starting question does not end the coverage search
+
+V118 changes only V117's question/answer procedure. The quoted condition
+directs the starting search; if that variation is inadmissible or covered,
+the answer continues with other requirements. A final counterexample may
+escape by a different condition. Identity/consumer priority, all parent
+alternatives, topic connections, fixed meanings and five output fields remain
+unchanged. This resolves the tension between requiring one initial condition
+and requiring whole-scope coverage; it does not teach an expected relation.
+
+Native preparation freezes the same18 core and13 control cases. A four-case
+identity-fresh panel explicitly disables reuse to check whether the person
+search survives; the unused identity-repeat preparation remains unrun.
+All inputs, evidence, producer receipts, schema and provider/model/worker
+bindings are checked against V117. Expected dispatch is38 attempts including
+three warmups, absent retries/reuses; caps37/27/9 retain the same persistent
+20000 counter. Review distinguishes wrong proof, procedure-only defect and
+unclear fixed meanings. No Bootstrap meanings or hierarchy are changed.
+Usage source: hierarchy-compare-v118-starting-variation-usage-v1.json.
