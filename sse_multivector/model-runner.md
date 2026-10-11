@@ -6856,3 +6856,14 @@ disabled in BOTH arms and fresh `target/compare-v179-examples-ablation-v2`
 directories. The initial V1 preparations make no calls and are not results.
 This preserves matched message structure and leaves any backend cache usage
 to native accounting; no artificial padding is added.
+
+The completed V2 ablation has 40 fresh valid comparisons, no warming, reuse,
+retry, failure or missing usage. Native API-equivalent catalog cost totals
+$0.301204. Attributed semantic review supports 18/20 V179 responses and 15/20
+V180 responses; native reversal reporting finds two and three conflicts,
+respectively, across five pairs repeated twice. Both versions still make the
+Stockpots meal-purpose leap. Removing examples also loses person-restriction
+and intended-activity controls. V179 remains the preferred development
+candidate for isolating that purpose inference, not a qualified hierarchy
+prompt. Exact witnesses, review qualifications and accounting are in the
+[ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).
