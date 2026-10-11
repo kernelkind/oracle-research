@@ -170,6 +170,60 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / "calls.json").exists())
 
+    def test_native_v9_contexts_follow_the_bound_coverage_occurrence_and_preserve_unknown_pairs(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        child = "MILFs as a tag for Example Film"
+        teacher = [dict(number="10", subject="Tags", context="Category tags."),
+            dict(number="10.1", subject=child, context="#milf is a category attached to Example Film."),
+            dict(number="6", subject="Mothers", context="#moms names mothers."),
+            dict(number="9", subject="MILFs",
+                 context="#milf denotes the sexual category of sexually desirable mothers."),
+            dict(number="9.1", subject=child, context="#milf is a category attached to Example Film.")]
+        student = subjects(("1", "Mothers"), ("1.1", child),
+                           ("2", "Film reviews"), ("2.1", "Positive film reviews"))
+        selected = self.selection([dict(note_id="validation-a", post="Example Film #moms #milf",
+                                        teacher=teacher, answer=answer(student))])
+        frozen = selected.read_bytes()
+        context = self.root / "assessment"
+        assessment.record(selected, "R01", context, teacher_meanings=[
+            dict(teacher_numbers=["10"], required=False), dict(teacher_numbers=["6"], required=False),
+            dict(teacher_numbers=["9"], required=False),
+            dict(teacher_numbers=["9.1", "10.1"], required=True)], reason="Frozen fixture meaning groups.")
+        prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v9.md"
+        source = self.root / "source.json"
+        source.write_text(json.dumps(dict(schema_version=1, check="relationship",
+            selection=dict(path=str(selected), sha256=hashlib.sha256(frozen).hexdigest()),
+            assessment_directory=str(context))))
+        spec = self.root / "spec.json"
+        spec.write_text(json.dumps(dict(schema_version=1, prompt=dict(id="DSLv9", path=str(prompt)),
+            dataset=dict(adapter="distillation_review_evaluation", path=str(source)),
+            runner=dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol", reasoning_effort="xhigh",
+                runner_binary=str(self.worker()), output_schema_path=str(prompt.parent / "boolean-response-schema.json")))))
+        self.native("prepare", self.root / "dslv9", "--spec", spec)
+        rows = json.loads(self.native("show", self.root / "dslv9", "--json"))["cases"]
+        placement = next(row for row in rows if row["evidence"]["role"] == "compatibility"
+                         and row["evidence"]["heading_number"] == "1")
+        self.assertEqual(placement["evidence"]["teacher_representative_number"], "9.1")
+        self.assertEqual(placement["evidence"]["teacher_context_numbers"], ["6", "9", "9.1"])
+        self.assertEqual(json.loads(placement["inputs"]["TEACHER_CONTEXTS"]),
+                         [{key: row[key] for key in ("subject", "context")} for row in teacher[2:]])
+        self.assertEqual(json.loads(placement["inputs"]["RELATIONSHIP_INPUT"]),
+                         dict(parent_subject="Mothers", child_subject=child))
+        self.assertNotEqual(placement.get("origin"), "mechanical")
+        unknown = next(row for row in rows if row["evidence"]["role"] == "actual_relationship"
+                       and row["evidence"]["student_number"] == "2.1")
+        self.assertEqual(json.loads(unknown["inputs"]["TEACHER_CONTEXTS"]), [])
+        self.assertEqual(json.loads(unknown["inputs"]["RELATIONSHIP_INPUT"]),
+                         dict(parent_subject="Film reviews", child_subject="Positive film reviews"))
+        for row in rows:
+            self.assertNotIn("expected_valid", row["prompt"])
+            self.assertNotIn("Frozen fixture meaning groups.", row["prompt"])
+            self.assertTrue(row["prompt"].startswith("DSLv9"))
+        self.assertEqual(evaluation._DEFINITIONS["relationship"][0], "DSLv2")
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_concurrency_override_rejects_invalid_values_before_creating_output(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         selected = self.selection()

@@ -138,6 +138,7 @@ class _TeacherIndex:
 
     def __init__(self, teacher):
         self.catalog, self.by_subject, self.by_number, self.numbers = [], {}, {}, {}
+        self.contexts = {}
         subjects = {}
         for entry in teacher:
             wording, number = entry["subject"], entry["number"]
@@ -150,6 +151,7 @@ class _TeacherIndex:
             self.by_number[number] = identifier
             self.numbers[identifier].append(number)
             subjects[number] = wording
+            self.contexts[number] = entry["context"]
         self.subjects = subjects
         self.relationships = {}
         for number, child in subjects.items():
@@ -157,6 +159,33 @@ class _TeacherIndex:
             if parent:
                 pair = subjects[parent], child
                 self.relationships.setdefault(pair, []).append(dict(parent=parent, child=number))
+
+    def interpretation_entries(self, parent, child, *, child_number=None):
+        """Copy selected exact-wording source paths; infer no meaning or verdict.
+
+        Use the existing catalog representative unless coverage already binds a
+        particular child occurrence. The two paths grow with hierarchy depth,
+        rather than expanding every duplicate branch or the complete answer.
+        """
+        if child_number is not None and self.subjects.get(child_number) != child:
+            raise ValueError("teacher interpretation child differs from its bound occurrence")
+        seeds = []
+        for subject, bound in ((parent, None), (child, child_number)):
+            identifier = self.by_subject.get(subject)
+            if identifier is not None:
+                seeds.append(bound if bound is not None else self.numbers[identifier][0])
+        numbers, seen = [], set()
+        for seed in seeds:
+            path = []
+            while seed:
+                path.append(seed)
+                seed = seed.rpartition(".")[0]
+            for number in reversed(path):
+                if number not in seen:
+                    seen.add(number)
+                    numbers.append(number)
+        return [dict(number=number, subject=self.subjects[number], context=self.contexts[number])
+                for number in numbers]
 
     @staticmethod
     def _result(output, rule, **evidence):

@@ -325,10 +325,18 @@ twelve frozen targets; the two originally unscored cases remain unscored.
 Both output audits give twelve accepts, one rejected explanation and one
 uncertainty. The rollover verdict now excludes the omitted posted action, but
 its counterexample only changes what is discussed. The MILF tag's lexical scope
-remains unresolved. All native receipts and preserved inputs pass; allowance
+was unresolved in that review. All native receipts and preserved inputs pass; allowance
 usage is 14/28 with no reuse, retry or warming. The development set does not pass.
-The next recommendation is to settle the fixed-reference counterexample
-requirement before another revision or repeat; no proof-rule change is adopted.
+The subsequent deep audit found the trusted maternal interpretation missing
+from DSL inputs and a compulsory-counterexample requirement that obscures
+missing restrictions. The user authorized the
+[DSLv9 draft](../../sse_multivector/distillation-review-v1/README.md#dslv9-evidence-requirements-draft-october-11):
+restore AS's subject-wording guidance, supply selected trusted source contexts
+for interpreting existing words, and make counterexamples optional. Its exact
+wording awaits review; no DSLv9 model calls or adoption have occurred. Three new
+preparation tests pass; broader failures reproduce on unchanged code. The known
+bulk-runner concurrency migration remains a separate prerequisite. Historical
+DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
 paused. The completed ten-note run retains its frozen concurrency of 16; the
