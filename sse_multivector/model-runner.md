@@ -34,6 +34,15 @@ information-kind versus application-specific purpose disagreement; they are
 not certified failures. The stage uses 18 attempts including two warmups, with
 no exact reuses, retries or prompt changes. Details and receipt-bound findings
 are in the Bootstrap qualification record.
+The subsequent matched v105-v108 authority/parent-fit diagnostic completes 64
+fresh meanings. Each condition has 14 qualified accepts and two uncertain
+business-child assignments; all controls survive, with no demonstrated grounded
+repair. Review distinguishes conditional category definitions from claims that
+an entity exists; the concern is justified assignment to this post. The refined
+assessment is not a numerical prompt improvement. V106-v108 remain experimental.
+Execution uses 73 attempts including one recovered warmup failure; known native
+API-equivalent cost is $0.4660116, with complete cost unknown due to missing
+failed-warmup usage. V104 remains the last approved prompt.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate
