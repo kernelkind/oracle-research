@@ -413,6 +413,13 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('prepare-canonical-traversal', help='prepare the approved L1-first traversal policy; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--spec', type=Path, required=True)
+    p.add_argument('--history-root', type=Path)
+    p = commands.add_parser('advance-canonical-traversal', help='collect native answers, apply guarded placements and prepare reached comparisons; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--comment', required=True)
     p = commands.add_parser('prepare-canonical-trial', help='prepare a roots-only canonical trial; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--spec', type=Path, required=True)
@@ -617,6 +624,13 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command in ('prepare-canonical-traversal', 'advance-canonical-traversal'):
+        from . import canonical_traversal
+        result = (canonical_traversal.prepare(args.spec, args.directory, args.history_root)
+                  if args.command == 'prepare-canonical-traversal' else
+                  canonical_traversal.advance(args.directory, args.comment))
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
     if args.command == 'continue-canonical-trial':
         try:
             from .canonical_continuation import continue_trial
@@ -875,7 +889,7 @@ def code_files(dataset):
         names += ['bootstrap_student_inputs.py', 'compare_student_inputs.py']
     if dataset['adapter'] == 'hierarchy_node_pairs':
         names += ['hierarchy_node_pair_consistency.py']
-    names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py', 'canonical_graph_policy.py', 'canonical_graph_search.py']
+    names += ['canonical_trial.py', 'canonical_continuation.py', 'hierarchy_node_pairs.py', 'canonical_graph_policy.py', 'canonical_graph_search.py', 'canonical_traversal.py']
     names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_selective_trial.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
@@ -900,7 +914,11 @@ def consolidation_shapes(plan, cases):
         if case['status'] != 'valid' or case.get('parsed') is None:
             summaries.append(summary)
             continue
-        path = case['evidence']['menu']
+        path = case.get('evidence', {}).get('menu')
+        if path is None:
+            summary['qualification'] = 'No saved menu supplied; note-set shape checks are unavailable.'
+            summaries.append(summary)
+            continue
         if path not in menus:
             if engine._sha256_file(Path(path)) != plan['sources'][path]:
                 raise ValueError('consolidation menu changed during shape review')

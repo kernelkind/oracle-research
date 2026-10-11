@@ -66,8 +66,9 @@ def prepare_file(dataset, path, template, load_report=None):
     source = read(path)
     preparation = None
     if dataset['adapter'] == 'canonical_consolidation':
-        cases = prepare_consolidations(source, path.parent, read)
-        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
+        prepared = source if 'cases' in source else dict(
+            cases=prepare_consolidations(source, path.parent, read))
+        return prepare({**dataset, 'adapter': 'generic'}, prepared, template), sources, dict(
             application_allowed=False, purpose='Synthetic proposal only; normal traversal owns placement.')
     if dataset['adapter'] in {'canonical_consolidation_pairs', 'canonical_consolidation_review'}:
         pairwise = dataset['adapter'] == 'canonical_consolidation_pairs'
@@ -1607,17 +1608,8 @@ def validate(dataset, case, raw, schema):
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
     if adapter == 'canonical_consolidation':
-        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
-        if value is not None:
-            engine._expect_fields(value, 'consolidation output', {'title', 'meaning', 'children'})
-            engine._expect_string(value['title'], 'consolidation title')
-            engine._expect_string(value['meaning'], 'consolidation meaning')
-            children = engine._validate_string_array(value['children'], 'children', allow_empty=False)
-            offered = {node['id'] for node in json.loads(case['inputs']['INPUT_JSON'])['siblings']}
-            if (len(set(children)) != len(children) or not 2 <= len(children) < len(offered)
-                    or set(children) - offered):
-                raise ValueError('invalid, duplicate or unsupplied consolidation children')
-        result['parsed'] = value
+        from .canonical_traversal import validate_consolidation
+        result['parsed'] = validate_consolidation(raw, json.loads(case['inputs']['INPUT_JSON']))
     if adapter == 'canonical_consolidation_pairs':
         from . import hierarchy_node_pairs
         meaning = json.loads(case['inputs']['INPUT_JSON'])['local']['meaning']

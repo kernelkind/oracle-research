@@ -20,6 +20,10 @@ def _hash(path):
 
 
 def _check(state):
+    if state.get('traversal_policy'):
+        from .canonical_traversal import check_state
+        check_state(state)
+        return
     for path, digest in state['sources'].items():
         if _hash(path) != digest:
             raise ValueError('trial source changed: ' + path)
@@ -461,7 +465,7 @@ def prepare_child_trial(base_trial, directory, note_ids=None, comparison_policy=
     return _prepare(directory, state)
 
 
-def _placement(state, local, meaning, values):
+def _placement(state, local, meaning, values, *, subject=None):
     """Build and check a prospective graph without changing the frozen state."""
     nodes = deepcopy(state['nodes'])
     equivalent = [identifier for identifier, answer in values.items()
@@ -469,12 +473,15 @@ def _placement(state, local, meaning, values):
     target = equivalent[0] if len(equivalent) == 1 else f"C{state['index'] + 1:03}"
     if equivalent:
         node = next(n for n in nodes if n['id'] == target)
-        if local not in node['entries']:
+        if local is not None and local not in node['entries']:
             node['entries'].append(local)
     else:
-        note = next(n for n in workflow.read(state['corpus'])['notes'] if n['note_id'] == local['note_id'])
-        entry = next(s for s in note['subjects'] if s['number'] == local['number'])
-        node = dict(id=target, subject=entry['subject'], meaning=meaning, entries=[local], parents=[])
+        if subject is None:
+            note = next(n for n in workflow.read(state['corpus'])['notes'] if n['note_id'] == local['note_id'])
+            entry = next(s for s in note['subjects'] if s['number'] == local['number'])
+            subject = entry['subject']
+        node = dict(id=target, subject=subject, meaning=meaning,
+                    entries=[] if local is None else [local], parents=[])
         nodes.append(node)
     by_id = {n['id']: n for n in nodes}
     for identifier, answer in values.items():

@@ -5881,3 +5881,66 @@ This presentation change is not adopted: it moves the error without improving
 semantic support or reversal consistency. The A/B line remains the development
 contract, and V179 remains the development baseline with the unresolved Stockpots
 failure. No Bootstrap generation, hierarchy build or broader panel is performed.
+
+## V183: synthetic function and purpose example
+
+The user authorizes the proposed single-example experiment. Experimental
+[Hierarchy-compare-v183](Hierarchy-compare-v183.md) is a native revision of V179
+adding one fictional nonfood example. Existing instructions, examples, A/B input
+contract, output schema and settings remain unchanged. No input-presentation
+policy is adopted. Whether the added example repairs purpose inference remains
+open until fresh qualification.
+
+The added comparison separates tools designed to apply coatings for improving
+appearance from tools designed to spray liquid coatings through a nozzle.
+An exclusively insulating-purpose sprayer preserves the latter's whole scope
+without the former's decorative purpose. An exclusively decorative bristle brush
+preserves the former without a spraying design or sprayer connection. Neither
+exclusion rests on current nonuse, hidden placement or failure to be a physical
+instance; both retain the information-connection convention. The example does
+not prohibit information about producing a qualifying kind. It contains no
+validation subjects, posts or generated meanings. Independent reviews assess
+the example before inference, and exact native revision replay plus all six
+JSON input/output blocks validate the declared contracts.
+
+This addresses a more specific hypothesis than the failed V177/V181 reminders
+or V178 focused questions: a child's immediate function can be retained without
+an inferred purpose for that function. The observed order sensitivity does not
+establish this mechanism. Official
+[reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+supports direct instructions and aligned examples where needed, rather than
+requesting reasoning traces; it does not establish that this example will help.
+V179/V180 already supplies a zero/few-shot development comparison. The new
+example adds 2,334 UTF-8 bytes to a constant-size instruction prefix, with no
+corpus-size-dependent input or execution step. Native usage will account for
+the increased rendered input, not only call count.
+
+Native `prepare --from --prompt --prompt-id --repeat` inherits the same five
+ASv6.100 pairs in both orientations, twice, from completed V179 experiments.
+Twenty planned fresh A-first comparisons retain the frozen Bootstrap-v96
+meanings and producer receipts. Four additional fresh Stockpots comparisons
+inherit the completed B-first input diagnostic, preserving both orientations
+and two draws. This totals 24 planned fresh requests, not 24 distinct topics.
+B-first controls are not rerun, so this stage does not qualify their response
+to the changed example. Saved baseline is reused as evidence, not fresh samples.
+
+Directories are `target/compare-v183-purpose-example-v1/{pair,controls}-01`,
+`-02`, and `b-first-pair-01`, `-02`. The native usage definition separates saved
+A-first baseline, saved B-first Stockpots generation, and the two candidate
+groups. Sol 6.1 medium/SSE, unchanged shared worker/schema, disabled explicit
+warming, shared admission and the persistent 20,000-attempt counter apply.
+Provider-only retry caps reserve at most two attempts per case; retry/failure
+attempts count and unresolved cases stay unresolved.
+
+Qualification requires supported full diagnostics and relations for all 24
+responses, no settled reversal conflict in the 12 pair/draw checks, and no
+changed relation between the two fresh draws of a fixed request. Every Stockpots
+request must preserve the accepted laboratory-only stock-making counterexample
+or provide another admitted complete witness, rather than relocate the error
+to the other input order. Stockpots' exclusion is user-reviewed; other controls
+remain agent-qualified. Two independent reviewers inspect one draw each, with
+historical workflow exposure disclosed. Saved-versus-fresh time/provider effects
+and sampling remain confounds; a clean development result would not certify
+population accuracy, newer Bootstrap outputs or the entire regression set.
+No Bootstrap change, hierarchy construction, broader panel or new call allowance
+is included.

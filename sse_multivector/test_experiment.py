@@ -50,6 +50,30 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(self.show('E1', '--case', 'group')['status'], 'valid')
         self.assertEqual(len(self.calls()), 1)
 
+    def test_consolidation_inline_traversal_prepares_and_reports_saved_answer(self):
+        self.prompt.write_text('GENERIC PROMPT: propose a parent. {INPUT_JSON}')
+        payload = dict(parent=None, siblings=[dict(id=f'C{i}', title=f'Topic {i}',
+            meaning=f'Meaning {i}') for i in range(6)])
+        source = self.write('inline-consolidation.json', dict(cases=[dict(id='roots',
+            inputs={'INPUT_JSON': json.dumps(payload)})]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_consolidation', path=source.name)
+        self.write('spec.json', spec)
+        self.prepare()
+        case = self.show('E1', '--case', 'roots')
+        self.assertEqual(json.loads(case['inputs']['INPUT_JSON']), payload)
+        self.assertEqual(case['prompt'], 'GENERIC PROMPT: propose a parent. '+json.dumps(payload))
+        self.assertEqual(self.calls(), [])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(dict(
+            title='Group', meaning='Group meaning', children=['C0', 'C1']))})
+        report = self.show('E1')
+        self.assertEqual(report['cases'][0]['status'], 'valid')
+        shape = report['consolidation_shapes'][0]
+        self.assertFalse(shape['applied'])
+        self.assertNotIn('local_group_constraints_met', shape)
+        self.assertIn('No saved menu', shape['qualification'])
+        self.assertEqual(len(self.calls()), 1)
+
     def test_consolidation_roots_null_and_invalid_groups_preserve_sources(self):
         from sse_multivector import experiment_inputs as inputs
         self.consolidation_spec()

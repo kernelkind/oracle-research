@@ -57,8 +57,11 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
         if (not isinstance(row['parents'], list) or len(set(row['parents'])) != len(row['parents'])
                 or not all(isinstance(p, str) for p in row['parents'])):
             raise ValueError('invalid canonical parents')
-        if not row['entries'] or not isinstance(row['entries'], list):
+        if not isinstance(row['entries'], list) or not row['entries'] and not row.get('synthetic'):
             raise ValueError('canonical node requires supporting entries')
+        if row.get('synthetic'):
+            from .canonical_traversal import check_synthetic
+            check_synthetic(row)
         seen = set()
         for entry in row['entries']:
             if not isinstance(entry, dict) or set(entry) != {'note_id', 'number'}:
