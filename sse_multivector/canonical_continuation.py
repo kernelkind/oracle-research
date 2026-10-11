@@ -78,10 +78,15 @@ def _producer_hold(experiment, cases):
                     raise engine.RunnerError('reused producer review is not bound to the source receipt')
                 reviewed.append((origin, shown))
         for origin, shown in reviewed:
-            for review in shown.get('reviews', []):
-                if review.get('current') and review['verdict'] in ('reject', 'uncertain'):
-                    return (f"automatic hold: current input/output-bound {review['role']} producer "
-                            f"review {review['verdict']} at {origin}/{shown['id']}: {review['comment']}")
+            # Native `current` marks matching input/output hashes, not the
+            # newest decision. Later verdicts supersede earlier ones per role;
+            # a user verdict takes precedence over the latest agent verdict.
+            latest = {r['role']: r for r in shown.get('reviews', [])
+                      if r.get('current') and r['verdict'] != 'comment'}
+            review = latest.get('user', latest.get('agent'))
+            if review and review['verdict'] in ('reject', 'uncertain'):
+                return (f"automatic hold: current input/output-bound {review['role']} producer "
+                        f"review {review['verdict']} at {origin}/{shown['id']}: {review['comment']}")
     return None
 
 

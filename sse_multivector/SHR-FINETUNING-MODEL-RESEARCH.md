@@ -92,7 +92,20 @@ same 46 predictions; its cumulative phase takes **191.21 minutes**, with the
 same peak allocation. Mean TRAIN loss falls to 0.0723. This supplies no quality
 advantage over Qwen on this panel, and does not establish a model-size ceiling.
 The original failure's exact values were not saved.
+Kev remains eligible for broader Compare evaluation: its first-epoch checkpoint
+reaches the shared 44/46 result in 49.65 phase minutes, while Qwen's measured
+fourth-epoch checkpoint takes 141.37 minutes. Qwen's intervening checkpoints
+were not measured. Equal predictions on this small panel are insufficient to
+exclude Kev; four-epoch duration alone misses its earlier convergence.
 See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+
+A matched GB10 concurrency benchmark is running with existing reviewed Compare
+cases: one epoch each of Qwen27 and Ettin1B `input_json`, sequentially and with
+staggered concurrent loading. Total pair wall time and sampled system-memory
+headroom will determine whether this overlap helps; no benefit has yet been
+measured. The fitter and teacher targets are unchanged. This measurement does
+not start broader supervision or freeze either prompt. See the
+[benchmark bindings and status](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
 Bootstrap's matched Qwen27/Gemma26 pilots now have 94 training and 21 separate
 evaluation targets, including null meanings, with only the confirmed `meaning`

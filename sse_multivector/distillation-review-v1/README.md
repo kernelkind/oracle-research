@@ -1,29 +1,18 @@
 # Distillation semantic review — process and evidence
 
-**Current development result:** [DSLv9](relationship-prompt-v9.md) implements the
-user-approved [audit correction](#dslv9-evidence-requirements-draft-october-11). It restores AS's
-subject-wording guidance, makes hypothetical counterexamples optional and
-receives selected trusted teacher contexts for interpreting existing words.
-The exact wording and bounded diagnostic were approved. Its
-[fourteen-case Sol/xhigh trial](#dslv9-approved-diagnostic-october-11) passes all
-fourteen verdicts and complete explanations in both agent audits. The subsequent
-[four-note regression](#four-note-native-regression-october-11) completes all
-three checks and verifies the mechanical pipeline, but fails the complete-output
-gate: one DSL explanation expands a timing restriction, and two related
-explanations remain uncertain. Production defaults to DSLv2; lower-effort testing
-and final-sixty validation remain paused pending prompt correctness.
-The subsequently approved [DSLv10 timing-scope diagnostic](#dslv10-timing-scope-diagnostic-october-11)
-passes all twelve decisions and complete explanations in both agent audits.
-The three earlier timing-scope findings are resolved on these cases; five controls and
-four authored local/shared-timing contrasts retain sound explanations. This is
-development evidence, not unseen accuracy or production adoption. DSLv10 remains
-experimental; the matching/support `on Nostr`/`with Nostr` questions from the
-four-note regression are still unresolved. The subsequent
-[input-only and challenged Nostr audit](#nostr-relationship-source-audit-october-11)
-finds no definite reviewer error or instruction defect: the three saved
-conservative decisions agree with the initial input judgments, but contextual
-network/community readings remain defensible. No prompt changes or new calls
-follow that audit. Production remains DSLv2.
+**Current development result:** approved experimental [DSLv10](relationship-prompt-v10.md)
+passes the resolved complete-output checks in the
+[four-note regression](#dslv10-four-note-regression-october-11), following its
+[twelve-case timing diagnostic](#dslv10-timing-scope-diagnostic-october-11).
+All three checks complete with the original sealed inputs, mechanical rules,
+verified saved-request reuse and eligible caching. Root and the independent
+assessor assigned to each note accept all 156 resolved model decisions and full
+explanations. The three matching/support Nostr judgments remain uncertain;
+the [source audit](#nostr-relationship-source-audit-october-11) establishes no
+definite error or prompt defect for them. The earlier DSLv9 timing finding does
+not recur in the audited DSLv10 outputs. Production remains DSLv2. This is
+development regression evidence, not unseen accuracy or production adoption;
+lower-effort qualification and final-sixty validation remain pending.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -66,8 +55,9 @@ calls retain all twelve frozen assessed targets; the two originally unscored
 cases remain unscored. Both complete-output audits give **twelve accepts, one
 rejected explanation and one uncertainty**. The rollover verdict now excludes
 the omitted posted action, but its counterexample only changes what is
-discussed. The MILF tag's lexical scope was unresolved in that review. This development
-set does not pass; broader regression and lower-effort testing remain pending.
+discussed. The MILF tag's lexical scope was unresolved in that review. This
+failed development gate led to the subsequent DSLv9 and DSLv10 work documented
+below; lower-effort qualification remains pending.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -4711,12 +4701,120 @@ plans and their inherited baselines, native assessment histories and final audit
 reports. The task worktree remains for these frozen bindings. This is not a new
 generation trial and does not change the reserved final-sixty selection.
 
-The next recommended step is a four-note regression with approved experimental
-DSLv10, retaining these source uncertainties separately and auditing the
-remaining resolved decisions and explanations. It would verify the timing
-revision over complete answers, without treating these ambiguous cases as
-passed or failed. No regression, lower-effort run or new prompt work starts in
-this audit; broader qualification remains pending.
+The user subsequently authorizes the following four-note DSLv10 regression,
+retaining these source uncertainties separately. The source audit itself makes
+no calls or prompt changes; broader qualification remains pending.
+
+## DSLv10 four-note regression (October 11)
+
+The user authorizes all three approved checks over the same **R02, R15, R21 and
+R14** answers. Native `prepare-distillation-review-evaluation --answer-id`
+preserves the original selection and sealed assessments and changes only the
+relationship prompt binding to approved experimental DSLv10. DSMv3, DSSv2,
+trusted ASv6.100, schemas and `gpt-6.1-sol / xhigh / openai-codex / SSE` remain
+fixed. Production defaults remain DSLv2. No lower-effort calls, prompt revision
+or final-sixty run is part of this turn.
+
+Five native groups contain **454 numbered checks**: 56 matching, 56 support and
+342 relationships. The 25 mechanical positives reproduce independently from
+trusted teacher strings and paths. Matching/support preserve their archived
+worker identity and find original receipts under the canonical history root;
+DSLv10 uses the shared worker and prior timing-diagnostic history. An initial
+preparation looked only in the previous regression's reused wrappers and found
+no DSM/DSS originals. It is retained unused; the corrected preparation and all
+input assessments finish before fresh calls. No outputs are copied manually.
+
+Native zero-call joining reuses 29 matching and 29 support originals and three
+DSLv10 timing originals. Five DSL identities were initially reusable; two become
+unneeded after score stopping and are never joined. The initial 207-question
+fresh upper bound plus two warmups reserves **418 total attempts**, including
+one provider-only retry each. Joining and stopping reduce the immediate bound
+to 99 fresh relationship questions plus two warmups; further stopping avoids
+one more question. The executed native coordinator completes all four answers
+with **98 fresh successful DSL judgments, two warmups and two recovered provider
+failures**, reconciling **102/418** attempts. No new matching/support calls occur.
+The two failures are a terminated HTTP/2 stream and a Codex processing-error
+event; each receives its sole permitted successful retry. Their usage remains
+unknown. Automatic shared-queue admission, backoff and recovery remain enabled.
+Native scheduling takes **22 min 50.76 s** from the first scheduling observation
+to final wave completion.
+
+Before candidate inspection, two independent agents assess the inputs for their
+assigned notes. They disclose historical exposure and retain the three Nostr
+uncertainties. Root and each note's assessor subsequently inspect every completed
+decision and **full explanation**, including reused answers. Equal-input aliases
+have identical complete output bytes. All **159 distinct model records** are
+covered: **156 resolved accepts and three uncertainties**. The 25 mechanical
+records pass independently. Native post-reviews cover all **280 completed
+numbered occurrences**: 271 accepts and nine uncertain aliases of those three
+Nostr inputs. These are agent assessments, not user decisions or new gold.
+
+The complete-output audit finds **no definite Boolean or explanation error**.
+Practice timing stays attached to the current total-having state where required;
+it is not imposed on every earlier completion or earning action. A challenged
+phrase saying practice "accompanies this accomplishment" can describe the
+reported completion state or association; the complete restriction record does
+not assert simultaneous earlier actions. It is accepted after full-context review.
+The wording and three original Nostr source uncertainties remain unchanged.
+
+Two preserved legacy qualification labels still disagree with the source audit:
+`Cost` matches general `Prices` in the supplied post sense, and `current` in
+`Current wave of artificial intelligence` expresses a temporal relationship to
+the reference present. For the latter, one assessor initially predicts false,
+then refines the input interpretation during the run **before inspecting that
+candidate**, after root supplies the alternate reading. The active runner refuses
+a review write; the later native comment records both the original assessment
+and this timing explicitly. The candidate's complete reason independently states
+the present-time relationship and excludes importing the post's `well before`.
+Frozen labels remain untouched; label agreement is not the correctness measure.
+
+Native stopping skips **174 relationship occurrences** without assigning a
+semantic verdict: 144 `no_full_match`, 19 `match_beneath_heading`, seven
+`unsupported_child` and four `uncovered_compatible_heading`. All required score
+dependencies and 20 positive matching-self guards remain covered, including four
+mechanical and 16 semantic guards.
+The conditional distilled-answer scores are unchanged from the prior regression:
+
+| Answer | Post/relationship correctness | Teacher coverage |
+| --- | --- | --- |
+| R02 | 14/14 | 3/3 |
+| R15 | 9/9 | 4/4 |
+| R21 | 10/10 | 2/4 |
+| R14 | 16/23 | 2/8 |
+
+These are distilled-answer scores, not reviewer accuracy. R14 remains conditional
+on the three unresolved source judgments. Native evaluation completion is true;
+the generic usage summary retains `complete=false` because intentionally skipped
+cases remain raw unrun entries. No skipped question becomes an accepted answer.
+
+Both eligible natural prefixes (1,302 and 1,344 estimated tokens) warm once. All
+four prefix comparisons hit cache; ordinary calls add implicit hits. Known local usage is
+**120,596 uncached plus 16,128 cached input**, **93,559 output including 75,509
+reasoning**, with a **$1.1783948 catalog API-equivalent subtotal**. Two failures lack
+usage, so full cost and savings are unknown; subscription charges are unknown.
+Production receipt accounting on the 100 known successful local attempts reports
+14 hits among 98 comparisons, **11.80% of known input cached**, and **$0.0129392
+(1.0861%) net savings including both warmups**. The warmed groups alone lose
+$0.0089488 after overhead; implicit hits account for the positive known-subset
+total. This is an estimate from saved pricing, not an uncached paired experiment.
+
+Native source, code, receipt, attempt, mechanical and score audits pass: all
+1,332 source entries and 225 code entries stay hash-bound. The terminal raw report
+is preserved **before formal output reviews**, SHA-256
+`964513db3d563b61e2f0203bbc046b29d91cea697a36ee96916b599ce30f52ae`.
+Ignored native evidence lives under
+`oracle-mvp-review-dslv10-four-note/target/distillation-review-v1/dslv10-four-note/`:
+both preparations, input-only views and assessments, intermediate and terminal
+raw reports, original receipts, native review histories and usage summaries.
+The task worktree remains because their frozen bindings depend on its paths.
+
+**Result:** the resolved four-note regression passes; the three Nostr questions
+remain unresolved, outside resolved correctness denominators. This panel is
+development-exposed and does not establish unseen extrapolation or a confidence
+interval. The next recommended step is a small balanced lower-reasoning trial
+using these same approved prompts and audited source cases, preserving complete
+reasons and the agreed two-percentage-point tolerance. It does not start here;
+the final 50 random plus ten challenge answers remain reserved for final validation.
 
 ## Actual distilled wording: offline preview (October 8)
 

@@ -50,16 +50,18 @@ the supplied subject, using post/context to resolve sense rather than adding
 restrictions from its particular example. Experimental v109 implements that
 contract from approved v104. A matched complete-branch qualification of v104
 and v109 is complete: 115 candidate meanings validate, compared with 114 baseline
-meanings and one exact-quote failure. Independent review finds one baseline
-author-only category restriction absent from the candidate draw. Forty-one
+meanings and one exact-quote failure. Initial review flagged a baseline
+author-only stock-making scope absent from the candidate draw; node-local
+reassessment withdrew that failure claim because its own context describes the
+author's practice. That actor-scope choice remains pending user review. Forty-one
 candidate ancestor checks remain unresolved around two concentrated Food/stock
 interpretations; no general scope repair is established. Independent generation
 and input/output schemas stay unchanged. Source assignment, definition coherence
 and branch compatibility are assessed separately, with all 230 reviews bound to
 their exact outputs. Details, reuse and native accounting are in the Bootstrap
 qualification record. Subsequent unchanged-prompt stock repeats preserve the
-generic practice in both versions, so the baseline error does not establish a
-reliable v109 improvement. The user withdrew the subsequent Food failure claim:
+generic practice in both versions; these actor-scope variations do not establish
+a reliable v109 improvement. The user withdrew the subsequent Food failure claim:
 matching Food titles in a synthetic AS example and a real note do not establish
 matching meanings. Evaluate each local node using its own subject, context,
 hierarchy and full post; the other example supplies no membership gold. Both
@@ -1230,6 +1232,15 @@ The adapters and construction guards validate the supplied output schema, meanin
 source hashes and receipts. Mechanical acceptance does not establish semantic
 accuracy; automatic continuation keeps its semantic review status explicit.
 
+Automatic continuation selects the latest input/output-bound verdict per role,
+with a user verdict taking precedence over an agent verdict. Native review
+`current` records matching hashes, so an earlier rejection on the same unchanged
+output remains in history but does not override a later acceptance. An effective
+reject or uncertain verdict still holds the incoming entry. For exact reused
+answers, the receiving experiment and the original producer receipt are checked
+separately: an acceptance at one does not erase an effective rejection or
+uncertainty at the other. Receipts, outputs and review history remain unchanged.
+
 `prepare-canonical-selection-trial` takes a completed raw schema-2 trial and a
 schema-2 selection definition with `max_choices`, `max_entries`,
 `local_candidate_limit`, `comparison_policy` and optional `history_root`.
@@ -1636,8 +1647,8 @@ reconcile at 12/24 allowed attempts, with no retries, reuse or warmups. Usage is
 13,543 reasoning. The catalog API-equivalent estimate is $0.203732; provider
 charges are unknown. Sol/xhigh/SSE and automatic queue admission stay fixed;
 the 76-token prefix is ineligible and no cache hits occur. DSLv10 remains
-experimental; matching/support Nostr questions, broader regression and
-lower-effort testing remain pending.
+experimental; matching/support Nostr questions and lower-effort testing remain
+pending.
 The subsequent [Nostr source audit](distillation-review-v1/README.md#nostr-relationship-source-audit-october-11)
 preserves one matching and two support cases natively with exact source inputs
 and saved baselines; all three new candidates remain unrun. Initial input-only
@@ -1647,6 +1658,20 @@ retrospective comments preserve both assessments rather than replacing the
 original unresolved labels. No definite error or prompt defect is established;
 zero model calls, prompt changes or source-label changes follow. Further checks
 must preserve those uncertainties separately from resolved accuracy counts.
+The subsequently authorized
+[DSLv10 four-note regression](distillation-review-v1/README.md#dslv10-four-note-regression-october-11)
+finishes all three checks in 22 min 51 s with 98 fresh DSL judgments, two
+warmups and two recovered failed attempts. Native budget accounting reconciles
+at 102/418 attempts; 61 historical successful requests are reused. All 156
+resolved distinct model records pass both complete-output audits; three Nostr
+records remain unresolved. All 25 mechanical proofs, 174 justified skips,
+20 matching-self guards, frozen sources and score assembly pass inspection.
+Known successful receipts cache 11.80% of input tokens and save a net catalog
+$0.0129392 after warming; dedicated warmed groups lose $0.0089488. Full-run cost
+and savings remain unknown because the two failed attempts lack usage. No
+source labels or prompts change. This is a development regression, not unseen
+qualification; DSLv10 remains experimental, production defaults to DSLv2, and
+lower-effort testing and the final sixty remain pending.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
