@@ -482,8 +482,13 @@ retain the four answers and add the first four other valid answers in the frozen
 random order (R01, R03, R04, R05). Prompts, mechanical rules, verified reuse,
 eligible caching and original source assessments remain fixed. Input-first
 review precedes candidate inspection; interpretation uncertainties remain
-separate. The eight-note preparation is complete and assessment is in progress;
-lower-effort testing, qualification and final-sixty validation remain pending.
+separate. Generation and complete-output audit are in progress. The expanded
+audit finds a definite DSLv10 error: R05's humorous account of morning odd jobs
+around town does not preserve the parent's morning outings, since those jobs
+can be done from home. This fails even granting ownership of the described day.
+The unchanged run continues to establish the complete result; the eight-note
+regression does not pass. Lower-effort testing, qualification and final-sixty
+validation remain pending.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh, subscription SSE, trusted ASv6.100,

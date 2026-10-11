@@ -15,8 +15,11 @@ development regression evidence, not unseen accuracy or production adoption;
 lower-effort qualification and final-sixty validation remain pending.
 The user subsequently expands this development regression to
 [eight notes at xhigh](#dslv10-eight-note-regression-october-11), retaining all
-three checks and the existing prompts. Preparation is complete; input-first
-assessments precede verified joining and fresh calls.
+three checks and the existing prompts. Generation and complete-output audit are
+in progress. The expanded audit finds one definite DSLv10 error: R05's humorous
+account of morning odd jobs around town does not require the author's morning
+outings. The eight-note regression therefore does not pass; finishing the
+unchanged run will establish the complete result.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4853,9 +4856,28 @@ request identities are now reusable. Reuse is preserved evidence, not a fresh
 consistency sample. Warm only eligible repeated natural prefixes with remaining
 new work; the native shared queue controls admission.
 
-Preparation and source-only assessment are in progress; no lower-effort calls,
-prompt revision, production adoption or final-sixty run is authorized by this
-scope expansion. Qualification remains pending.
+Source-only assessments precede verified joining and fresh generation. The
+original four answers join with zero new calls and retain identical complete
+outputs and stopping evidence. Generation and complete-output audit remain in
+progress; no lower-effort calls, prompt revision, production adoption or
+final-sixty run is authorized by this scope expansion.
+
+The interim full-output audit identifies a substantive error in R05 `2.2`:
+parent `Author's morning outings`; child `Author's humorous comment on the
+specificity of the account of a fairly big day with all sorts of activities,
+including many odd jobs around town in the morning`. DSLv10 returns true,
+claiming that the included odd jobs preserve being out and about. Small tasks
+for several town businesses, such as a menu, spreadsheet and flyer, can be done
+from home while fitting the child's complete wording. Even granting the
+author's ownership of the recounted day, its jobs and morning timing, going out
+is missing. The post's separate `Out and about in the morning` cannot restore
+that restriction. This does not require outings to be recreational or the
+child's main subject. Root, the assigned independent assessor and a separate
+challenger agree on rejection after considering this witness.
+The assessor originally favored false, briefly retained wording uncertainty
+after inspecting the true candidate, and then resolved it through that concrete
+witness. Original assessments and qualification labels remain fixed. The
+expanded regression does not pass; qualification remains pending.
 
 ## Actual distilled wording: offline preview (October 8)
 

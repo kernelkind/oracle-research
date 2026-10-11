@@ -1682,7 +1682,15 @@ receipts absent from that index pass production receipt and adapter validation,
 then native `RequestHistory.remember` registers their original ledger references.
 All 101 prior completed DSL request identities are reusable without copying or
 altering frozen evidence. Input-first assessments precede candidate inspection.
-Preparation is complete; no lower-effort calls or final-sixty run starts here.
+Generation and complete-output audit are in progress. The expanded audit finds
+one definite DSLv10 error: R05 `2.2` accepts a humorous account of morning odd
+jobs around town beneath `Author's morning outings`, although the complete
+child permits those jobs to be done from home. The extra account, ownership and
+timing wording does not require going out; the post cannot supply it. Root and
+two independent agents agree after a concrete counterexample. The unchanged
+run continues to establish its complete result, but the eight-note regression
+does not pass. No prompt revision, lower-effort calls or final-sixty run starts
+here.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
