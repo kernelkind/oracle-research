@@ -238,8 +238,11 @@ Qwen27 is the stronger Bootstrap candidate for further qualification on this
 provisional panel. Gemma26 learns the output format and trains faster here,
 but supplies no measured quality lead and its unmerged serving path is slower.
 Neither is selected. For Compare, Ettin1B remains the inexpensive candidate and
-Qwen27 the larger quality reference; Kev27 supplies no prediction advantage on
-the current 46-case panel. A broader development evaluation needs all five
+Qwen27 the larger quality reference. Kev27 remains a candidate for broader
+evaluation: its first epoch already matches Qwen27's fourth-epoch predictions
+in 49.65 versus 141.37 phase minutes. The equal 46-case predictions do not
+justify removing Kev, and Qwen's intermediate epochs were not measured.
+A broader development evaluation needs all five
 Compare labels, nonidentity equivalence, canonical branches and independent
 posts, alongside reviewed Bootstrap null, factual-state and scope cases. This
 is a recommendation for subsequent qualification, not a new experiment or final
@@ -248,7 +251,33 @@ the complete teacher instructions used for these controls repeat substantial
 work per example. Their current fit/request times are not a final-training or
 production-throughput forecast.
 
-No owned fit, verification or generation job remains active. The worktree stays
+The completed model-selection pilots and generated-meaning reviews remain
+preserved. A separately authorized GB10 concurrency measurement is now active;
+it uses the existing native Compare fitter without training-code changes.
+Qwen27 and Ettin1B's `input_json` path each fit one full epoch on the same
+180 TRAIN / 46 development-evaluation bank under sequential and concurrent
+conditions. Model-specific settings, seeds and case order are identical across
+conditions. Loading is staggered: the concurrent Ettin job starts after Qwen's
+native baseline is published, ensuring actual workload overlap. Per-process
+`/usr/bin/time -v`, pair start/end timestamps and two-second `free -b` samples
+measure completion time and shared system memory; checkpoint reload checks
+follow separately. The sequential control is running; no concurrency advantage
+is measured yet. This short Ettin overlap will not establish arbitrary-job
+scaling or justify fitting all candidates simultaneously.
+
+The source-bound artifacts are under `target/concurrency-benchmark-v1/`.
+The immutable `compare-pilot-native-test-runtime-v5` and `compare-targets-v5`
+retain data SHA-256
+`3b4478d917f722421f840b9436a3c51aae99816a6ee8ffa2de84642d79dcbb8c`.
+One-epoch Qwen/Ettin config SHA-256 values are
+`e576fb3bb10a8fb23aed81fdf04e94f7f8c85a876368a6d57ee30e24bc175ff6` /
+`1180065f01780003fccfee3a7927898ee275f4b0e6d14e27c2851008f6955dd7`.
+The initial launch failed before loading weights because the frozen shared
+runner path was omitted; its logs are preserved. Corrected conditions have
+distinct `sequential-v2` / `concurrent-v2` output paths. No new teacher labels,
+provider calls, final-test access or model selection are part of this benchmark.
+
+The worktree stays
 because frozen experiment/source bindings and unique checkpoint/receipt artifacts
 use its absolute paths; all completed source changes are locally committed and
 landed on main. Preserved baseline failures and superseded run receipts remain
