@@ -9,9 +9,10 @@ The approved **DCSv1** wording completes a
 outputs, two errors and two uncertainties**. Unchanged DSLv10 verification
 catches the invalid positive witness; a false negative remains. Native
 source-bound preparation and output validation are implemented, but DCSv1
-remains unqualified. Accepted complete matching plus trusted teacher paths
-could settle four of these searches, including that false negative; this reuse
-is a recommendation, not implemented behavior. Current defaults and the final
+remains unqualified. The subsequently approved
+[conditional matching/path reuse](#conditional-matchingpath-reuse-october-11)
+settles four of these searches, including that false negative, during native
+offline preparation. Current defaults and the final
 sixty-answer validation remain unchanged.
 
 **Current development result:** xhigh generation finishes on
@@ -5534,9 +5535,65 @@ placement and leaves 34 searches. The recommended next step is to implement
 and test this reuse with exact provenance before further model calls. It is
 conditional reuse of positive semantic premises: an erroneous match could
 propagate, and uncertain matching records are excluded. This reuse is not yet
-implemented or newly authorized by the diagnosis. No new panel, prompt change
+implemented or newly authorized by the diagnosis at the end of that trial.
+The user subsequently approves the implementation described below. No new panel, prompt change
 or lower-effort trial starts from this result. Negative-search reliability,
 interpretation context completeness and the eight-hour target remain open.
+
+## Conditional matching/path reuse (October 11)
+
+The user approves implementing and testing the conditional reuse recommended
+by the four-note challenge. The experimental coverage adapter now substitutes
+an **accepted complete-meaning match** into an actual trusted teacher ancestor
+path. If the required teacher subject belongs beneath that ancestor and the
+matched student occurrence is uncovered, preparation records the compatible
+placement without a DCS or DSL model call. This implements positive placement
+reuse only: missing matches or paths establish no negative result.
+
+The matching premise must have a current native full-output acceptance or an
+existing complete-output audit bound to its exact input/output hashes. Any
+current rejection or uncertainty prevents reuse. Repeated `--premise-audit`
+arguments bind existing audit JSONL files and their hashes; explicit
+non-judgment `skip` records do not become acceptances. Target self guards remain
+positive and accepted, and available ancestor-match self guards must also be
+positive and accepted. Unrun or disputed guards retain the search. Evidence
+copies the matching receipt, audit path/hash/line or current native reviews,
+mechanical guard proofs, and every numbered teacher path occurrence with its
+subject and context. Matching and guard indexes are built once per answer;
+each meaning group filters its own uncovered occurrences before walking the
+actual teacher paths. No subject correspondence is guessed.
+
+Native offline preparation of the same four development answers binds the
+existing `audit-b.jsonl` at SHA-256
+`ab8144294c62114af5593293f208ea6f44548e48da318cf2aa4591e70c913da5`:
+
+| Saved answer | Previous searches | Searches after reuse |
+| --- | ---: | ---: |
+| `M01-checkpoint-600-N0017` | 6 | 4 |
+| `M01-baseline-N0076` | 8 | 6 |
+| `M01-checkpoint-200-N0054` | 13 | 13 |
+| `M02-checkpoint-200-N0015` | 11 | 11 |
+| **Total** | **38** | **34** |
+
+The four conditional settlements are television `005`/`007` and NFT
+`003`/`005`. All **89 existing self guards**, remaining case IDs, input strings,
+input hashes and rendered reviewer prompts retain exact parity. Both accepted
+ancestor matching receipts and each recorded teacher path/context are checked
+against the frozen originals. The television `007` placement no longer needs
+the search that missed it. Its separate required-child matching uncertainty
+remains unresolved; this path proves compatibility, not complete matching.
+
+The minimal native production-path test first fails with one search where zero
+is required, then passes after implementation. Thirteen adapter regressions
+cover provenance, unaudited/disputed/null matches, stale approvals, disconnected
+and duplicate teacher occurrences, false/unrun guards, exact-output audit
+binding and changed audit bytes, alongside the previous preparation tests.
+Three related native evaluation regressions also pass: **16 tests total**.
+This verification makes **zero model calls**. Final artifacts remain ignored under
+`oracle-mvp-review-coverage-teacher-path/target/distillation-review-v1/coverage-teacher-path-four-note/final-code/`.
+The deployed evaluation and DSLv2 defaults remain unchanged. DCSv1, the
+remaining interpretation contexts, lower reasoning efforts and the eight-hour
+runtime target remain unqualified; the final sixty are not rerun.
 
 ## Actual distilled wording: offline preview (October 8)
 

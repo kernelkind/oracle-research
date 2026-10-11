@@ -478,6 +478,8 @@ def add_commands(commands):
     p.add_argument('--answer-id', action='append', help='prepare only this frozen answer ID; repeat for a subset')
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
+    p.add_argument('--premise-audit', type=Path, action='append',
+                   help='bind an existing complete-output audit JSONL for conditional reuse; repeat for multiple audits')
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path)
@@ -648,7 +650,8 @@ def handle_command(args):
     elif args.command == 'prepare-distillation-coverage-search':
         from . import distillation_coverage_search
         result = distillation_coverage_search.prepare(args.evaluation, args.output,
-            answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root)
+            answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root,
+            premise_audits=args.premise_audit)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
