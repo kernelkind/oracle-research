@@ -4284,3 +4284,61 @@ original receipts and producer boundaries remain frozen. No Bootstrap generation
 hierarchy work, external messages or additional allowance. A promising screen
 requires fresh confirmation and broader qualification before adoption. Usage
 source: hierarchy-compare-v174-aspect-connection-screen-usage-v1.json.
+
+V173's completed controls review records 16 accept / 0 reject / 3 qualified.
+Plain-water Eating coverage and one particular dinner's human/nourishment
+consequences remain qualified. Three sleepiness comparisons have supported
+personhood nulls. The snapshot019 guard has sufficient salsa/pancake conflicts;
+its ancillary unserved-Burgers claim is not separately certified. No settled
+control reversals remain. This does not establish a causal improvement.
+
+V174 completed: 36 valid comparisons in 38 attempts, including two warmups;
+no failures, retries, reuse or missing usage. Native API-equivalent cost is
+$0.4011824; persistent counter 18262/20000. Core: 16 accept / 2 proof reject /
+7 qualified. Rejects are 022 reverse's unproved production/ring necessity and
+066 forward's assignment of unknown dry-leaf form to the particular desired tea.
+Controls: 6 accept / 1 proof reject / 4 qualified. Snapshot025 explicitly
+cultivates tomatoes intended for eating, then excludes that qualifying connection
+because the plants/equipment do not eat. This rejects the proof, not a certified
+opposite relation. Food/drink, human/nourishment, audience, self-salutation and
+food-sense boundaries remain qualified.
+
+072 forward now uses independent mild-chicken information rather than a comparison
+with gamey meat. Its food-genus positive and reverse's nonfood-meat example remain
+qualified, yielding one settled 072 reversal. No settled chains remain in either
+orientation. 066's new candidate does not test the old linguistic-aspect claim,
+so this draw cannot attribute repair to the new rule. Particular-property nulls
+and protective participant controls survive. No adoption; complete source/code,
+output and receipt verification passes.
+
+### V175: directional proof outcomes instead of a repair checklist
+
+This independent two-edit revision starts from V173, not V174. It keeps the
+questions and information-connection convention, replacing the matching-answer
+repair sequence, positive-test checklist and closure instructions with three
+outcomes: an independently admitted/all-parent-excluded concrete case, a proof
+of complete child coverage, or a null identifying a decisive unresolved boundary.
+A rejected or covered candidate cannot prove universal coverage. The canonical
+paragraph references these results instead of the removed outside-class
+prerequisite; every ancestor/descendant obligation and decisive basis remain.
+
+This tests procedural burden, not token count alone or a new semantic definition.
+V151 shortened the complete body but retained correction and prerequisite duties;
+V167 changed only repair. V175 removes compulsory repair, per-condition attempt
+recording and outside-class witness prerequisites while retaining the underlying
+proof obligations. Procedure-only omissions cannot be scored as errors under the
+new contract. Unsupported universal claims and actual admission/exclusion gaps
+remain errors. Particular entities cannot acquire hypothetical properties.
+
+Exact native revision replay, production examples, independent preflight and
+twenty relevant checks pass. Planned full fresh 33-core / 19-control panel against
+completed V173: 52 comparisons plus two warmups, 54 attempts absent retries.
+Assess concrete and universal proofs, justified nulls, protected settled results,
+reversals, chains and canonical consequences. Fewer procedural rejects alone do
+not establish a gain. Retained unsupported ring closure falsifies the proposed
+overload repair. Promising results require fresh matched confirmation and broader
+qualification; no prompt is adopted at this preparation checkpoint.
+
+ASv6.100/Bootstrap-v96 meanings, inputs and producer receipts remain fixed. No
+Bootstrap calls, hierarchy work, external messages or new allowance. Native usage
+source: hierarchy-compare-v175-outcome-contract-usage-v1.json.
