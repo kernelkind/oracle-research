@@ -4416,3 +4416,29 @@ without code changes or manual case artifacts. A fresh candidate draw requires
 order before interpreting the semantic results; retained order failure makes
 this diagnostic inconclusive. The cumulative usage definition preserves both
 stages rather than hiding the unsuccessful manipulation.
+
+The corrected stage completes28 valid cases in30 attempts, including two
+warmups, with no failures/retries/reuse/missing usage. All56 answer records now
+publish justification before answer. Its native API-equivalent cost is$0.2845628;
+the cumulative two-stage total is90 attempts and$0.8517108, counter18406/20000.
+Independent controls review:6 accept/0 proof reject/4 qualified. Snapshot025
+and both isolated025 judgments retain the independent food/drink boundary;
+snapshot032 assumes particular human/nourishment properties. Both029 and
+snapshot031 retain supported nulls. One settled isolated025 reversal remains.
+Core review preliminarily records15 accept/0 proof reject/3 qualified, with zero
+settled reversals/chains. Actual closed-hole production now tests the ring
+requirement; display-only bagels, animal consumers, water-risotto, intended cooking,
+music and independent enjoyment-only consumption have supported proofs. Final
+native core registration remains pending at this checkpoint. These draws do not
+establish causality or reliability; the unresolved control conflict blocks adoption.
+
+Next: a fresh matched V173/V176 full33-core/19-control panel for both versions,
+104 comparisons plus four warmups,108 attempts absent failures/retries. This
+repeats the28 screened cases and includes24 additional target cases per version;
+it is not the196/102 broader qualification. Inputs, meanings and comparison rules
+remain unchanged; only the V176 prompt/example/schema output order differs.
+Verify actual raw ordering, complete proofs, justified nulls, protected positives,
+reversals, chains and canonical consequences. Persistent conflicts or renewed
+imports falsify reliable repair; do not append another order instruction.
+Broader qualification requires a promising confirmed result. Native usage source:
+hierarchy-compare-v176-matched-confirmation-usage-v1.json.
