@@ -6881,3 +6881,14 @@ and intended-activity controls. V179 remains the preferred development
 candidate for isolating that purpose inference, not a qualified hierarchy
 prompt. Exact witnesses, review qualifications and accounting are in the
 [ablation results](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-results).
+
+The next authorized experimental candidate, [V181](shr_single_pair/Hierarchy-compare-v181.md),
+replaces only V179's focused identity/consumer challenge with a challenge of
+all applicable absent parent restrictions. It preserves union coverage,
+particular-entity safeguards, examples and the V179 schema. Twenty fresh
+comparisons inherit the four completed V179 V2 baselines via native
+`prepare --from`, with `--repeat` and disabled explicit warming. Meanings and
+ASv6.100 producer receipts remain fixed; no Bootstrap or hierarchy work is
+included. This tests an attention hypothesis about purpose requirements,
+not a new containment convention. See the
+[V181 qualification record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v181-challenge-all-applicable-absent-parent-restrictions).

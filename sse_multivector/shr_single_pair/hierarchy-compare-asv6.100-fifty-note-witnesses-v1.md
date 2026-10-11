@@ -5503,3 +5503,44 @@ meanings to erase the disagreement or adopt either version for hierarchy
 construction on the basis of this panel. The A/B simplification and removal
 of the former search procedure were bundled in V179; this ablation does not
 identify their effects relative to V178.
+
+## V181: challenge all applicable absent parent restrictions
+
+The user authorizes one focused replacement in experimental
+[Hierarchy-compare-v181](Hierarchy-compare-v181.md), then 20 fresh comparisons
+against the preserved V179 baseline. Native `revise` from V179 changes only
+the pre-positive challenge: it explicitly considers all applicable parent
+restrictions absent from the child's wording, including role, purpose,
+intended use and state alongside identity and consumer. A candidate must
+preserve every child requirement and escape every parent alternative and
+permitted information connection. Positive conclusions still require the
+existing necessary whole-scope coverage rule. Particular-entity uncertainty,
+performer/recipient distinctions, both synthetic examples and output schema
+are unchanged.
+
+This is an attention hypothesis, not a changed meaning of containment. V179
+already states the general coverage requirement but explicitly challenges only
+identity and consumer before a positive conclusion. Its two Stockpots forward
+draws assume meal purpose while the reverse draws find a laboratory-only
+counterexample for the identical meanings. Generalizing that focused challenge
+may prevent the unsupported purpose implication; the edit does not establish
+that selective emphasis caused it. Independent pre-call review verifies exact
+single-edit replay, union coverage and unchanged particular-entity safeguards.
+
+Native `prepare --from` inherits each completed V179 V2 experiment's inputs,
+settings and saved baseline, with V181 as the prompt override. `--repeat`
+requests independent outputs: five original pairs × two orientations × two
+draws = 20 fresh comparisons. Both arms retain Sol 6.1 medium/SSE, the V179
+four-field schema and disabled explicit warming. Existing shared scheduling,
+native provider retry bounds and the persistent 20,000-attempt counter apply.
+All meanings and source receipts remain frozen ASv6.100/Bootstrap-v96 evidence;
+no Bootstrap generation or hierarchy construction occurs. The four new native
+directories are `target/compare-v181-required-boundaries-v1/{pair,controls}-01`
+and `-02`. The maintained usage source separates saved V179 generation from
+new V181 attempts. No inference result is claimed at preparation.
+
+Success requires supported Stockpots counterexamples in both orientations and
+preserved positive, equivalent, consumer and intended-state controls, with
+valid questions and directional justifications. Correct labels with unsupported
+proofs do not pass. Broader fixed-meaning qualification follows only if this
+panel holds up; even complete success would not establish general reliability.
