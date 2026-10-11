@@ -1816,3 +1816,45 @@ procedure and schema both change, so it cannot identify one causal sentence.
 It is not production Compare adoption and adds no adapter, constructor,
 Bootstrap, hierarchy or service changes. Prior answers and labels stay outside
 model input. Stage cap37 includes warmup/retries under the shared20000 counter.
+
+### Condition diagnostic V8: extracted wording still receives unsupported proof
+
+The18-case diagnostic completes validly in19 fresh attempts including warmup,
+without reuse, retry, failure or missing usage, at $0.1244036 API-equivalent
+cost. Native usage is reproduced by compare-condition-diagnostic-v8-usage-v1.json;
+exact generation and review evidence remains under
+ target/compare-condition-diagnostic-v8/core-v1.
+
+Every parent/child quotation is exact across120 condition rows. This is not
+proof that the conditions hold. Forward018 explicitly extracts `for eating`
+but equates a food-preparation label with that purpose; reverse018 preserves
+an edible display-only counterexample. Both orientations of038/041/042
+extract the person's condition inside a compound phrase yet establish it from
+mental properties or eating actions. Both043 correctly reject containment but
+also assert the same unsupported person implication in their matrix. Therefore
+relation correctness and condition-diagnostic correctness are assessed separately.
+The22 production/flour boundary and71 morning-context boundary remain qualified.
+The distinct output procedure did not fix the seven targeted relation errors;
+no condition matrix is adopted into production merely because its fields validate.
+
+V90 returns to V85 and changes only the independent-meaning interpretation
+paragraph's missing-restriction sentence. It separates whom or what information
+concerns from the properties/actions described, and tests those properties/actions
+for an entity outside a parent's stated identity or kind restriction. An unspecified
+entity does not inherit that restriction. This tests a semantic-entailment mechanism,
+not another counterexample-question paraphrase. The first gate retains V89's18
+exact core inputs; the22 full controls follow only if targeted person-condition
+judgments improve. Purpose, activity-aspect and stage operators remain separate
+mechanisms. All fixed producer meanings, output fields, canonical guards and
+model settings remain unchanged; no validation examples are added. V90 is an
+experimental candidate, not adoption or a new semantic gold label.
+
+The independent design review qualifies V90's sentence to retain legitimate
+necessary identity implications from the child's own wording. V91 adds only
+`by itself` to that sentence; V90 remains an unrun draft. No inference was
+performed with V90. V91 uses the same18-case gate and unchanged production
+schema. The diagnostic V8 agent review gives4 accept,10 reject and4 qualified
+responses when every condition claim, not just the relation, is assessed.
+The additional rejection is013-reverse: fresh whole chickens do not alone
+exclude the independently stated carcass/source history; other rows support
+its relation. These assessments are not human semantic gold.
