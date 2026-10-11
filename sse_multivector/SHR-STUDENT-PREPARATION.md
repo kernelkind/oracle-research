@@ -178,35 +178,60 @@ examples seen. They live under
 | `kev27b-regressions` | `f268f149ceb415cddbcc892cb810d417df9e79d290fa3edcae7c4e261b54b1ef` |
 | `kev27b-branches` | `356b22396ef04d86ac286c692593667b462de6727cb559b90cd173dcc33ef8b6` |
 
-All Compare evaluations are complete. The Gemma Bootstrap generations remain
-underway or queued. Final student selection remains open.
+All Compare evaluations and Gemma's first Bootstrap epoch evaluation are
+complete. Gemma's fourth-epoch evaluation remains pending. Final student
+selection remains open.
 
-The focused Bootstrap Qwen passes are complete on the same 40 cases, with
+The completed focused Bootstrap passes use the same 40 cases, with
 40 fresh valid responses each, no failures and no null meanings. Native reviews
 use the exact v96 standalone-meaning, factual-state and scope requirements:
 
-| Saved Qwen epoch | Accept / reject / uncertain | Median native request seconds | Peak CUDA GiB |
+| Saved Bootstrap student / epoch | Accept / reject / uncertain | Median native request seconds | Peak CUDA GiB |
 | --- | ---: | ---: | ---: |
-| 1 | 25 / 5 / 10 | 14.62 | 20.45 |
-| 4 | 28 / 5 / 7 | 14.31 | 20.42 |
+| Qwen27 / 1 | 25 / 5 / 10 | 14.62 | 20.45 |
+| Qwen27 / 4 | 28 / 5 / 7 | 14.31 | 20.42 |
+| Gemma26 / 1 | 16 / 10 / 14 | 67.91 | 51.88 |
 
-Two supplementary epoch-one reviews reconcile differing reviewer criteria:
+Two supplementary Qwen epoch-one reviews reconcile differing reviewer criteria:
 nonexhaustive edible Seed-oil examples are acceptable, while merely naming
 pressure-canning omits the defining heat-under-pressure process. Both earlier
 records remain preserved. Counts select the latest bound agent review per case;
 binding-current historical reviews are not extra cases. These reconciliations
 are not output changes or measured quality gains.
 
-Both epochs still have clear defects. Epoch four improves Risotto and
+Both Qwen epochs still have clear defects. Epoch four improves Risotto and
 experimentation boundaries but invents experienced harm from the author's
 personal assessment, loses the stated successful rosemary-addition outcome,
 and supplies an unsupported Coffeechain interpretation. Cooking remains broad
 enough to make heat optional. The six provisional teacher-null cases all
 receive meanings; one epoch-four conjunctive interpretation is defensible and
 five remain disputed. Their existing teacher reviews are uncertain, so this
-panel does not establish refusal accuracy. Gemma's matched generations remain
-queued, and the independent provisional reviews do not establish an epoch
-ranking by their raw acceptance difference.
+panel does not establish refusal accuracy. The independent provisional reviews
+do not establish an epoch ranking by their raw acceptance difference.
+
+Gemma's first epoch also returns meanings for all six provisional teacher-null
+cases. Its ten rejected meanings broaden Rosemary to mint-family plants and
+Rome to the ancient empire, invent experienced harm from the author's processed
+food assessment, import a specific stove-use condition into Potatoes, and leave
+stock-making or pressure-canning processes undefined. The joined ingredient
+list collapses into Shrimp as an ingredient, and the joined rocket-stove/heater
+topic admits additional equipment. Fourteen meanings remain uncertain under
+the v96 identity, parent-fit, composition and factual-state criteria. These
+agent judgments remain provisional; unsettled references do not establish
+refusal accuracy or final student selection.
+
+All 40 Gemma receipts validate under the frozen generation runtime and canonical
+shared runner, with case IDs, complete inputs, student prompts and output schema
+matching both Qwen plans. Each is a fresh single attempt with normal termination.
+Saved receipts record 230,329 input / 1,489 output tokens, maxima 10,685 / 68,
+median model execution 67.80 seconds and native request execution 67.91 seconds.
+The generation config SHA-256 is
+`92b98c0c1fc83f44636ff0c82b877112ee2d7af1d99062e9e0622bb6d25bb5e5`;
+its epoch-one adapter weights match the original fit SHA-256
+`737d28c78e20cabdeef546091d18dbf3dac1cab31d6e076392f6c911c08d285c`.
+The verified loader retains unmerged packed-expert adapters, so these timings
+do not establish optimized Gemma inference cost. Gemma's fourth epoch remains
+pending.
 
 The native `run/results.jsonl` / `reviews.jsonl` SHA-256 bindings are:
 
@@ -214,6 +239,7 @@ The native `run/results.jsonl` / `reviews.jsonl` SHA-256 bindings are:
 | --- | --- |
 | `qwen27b-epoch1-v2` | `27896178a0c730a309b475a6acd425e4054d2fd2e938e7788632e448715f8a3b` / `0c7b28b2e4c790b4c9b5cee297f14c204b25c789ad63063431feb1cda215c8b5` |
 | `qwen27b-epoch4-v2` | `a9233237ca41ce9fcbe20cdcc60ea0263b977c6349a6b0047a0e522e8a12cc9b` / `893cfbe82f8b1fd12eb1904283e5b0206c677282d85e33710a5afe7439209836` |
+| `gemma26b-epoch1-v1` | `eed567abe4fa62d9dbeeb752c547ba643d7ac186e370c70de47555548b64b81f` / `1f44adbf2e54de87a08ec471cabcc109eb93fe3e7a9e54c722ece39defbf114f` |
 
 ### Meaning-only Bootstrap learning preparation
 

@@ -172,6 +172,21 @@ Teacher-forced loss and checkpoint verification alone cannot rank generated
 meaning fidelity. See the
 [meaning-only preparation](SHR-STUDENT-PREPARATION.md#meaning-only-bootstrap-learning-preparation).
 
+The broader fixed-v96 Bootstrap panel now has 40 fresh valid meanings from
+Gemma's first epoch, with no failures or nulls. Bound agent reviews accept
+**16, reject 10 and leave 14 uncertain**, versus Qwen's provisional 25/5/10
+and 28/5/7 at epochs one and four. Gemma broadens Rosemary to mint-family plants
+and Rome to an empire, invents experienced health harm, and retains undefined
+activity processes and joined-topic identity defects. All six provisional
+teacher-null cases receive meanings; their unsettled references do not establish
+refusal accuracy. Median native/model execution is **67.91/67.80 seconds**,
+with **51.88 GiB** peak allocation and 230,329 input / 1,489 output tokens.
+The verified unmerged expert-adapter path limits optimized serving forecasts.
+These exposed diagnostics preserve Qwen's provisional Bootstrap priority;
+Gemma's fourth-epoch evaluation remains pending and no final student is selected.
+Native identities and result/review hashes are in the
+[broader evaluation record](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
+
 The full case JSON alone averages 540 evaluation tokens versus 2,149 with the
 teacher instructions, with every supplied case field retained. Ettin's completed
 input-only fit reaches **41/46 teacher agreement**, versus 42/46 with instructions;
@@ -226,7 +241,8 @@ Qwen passes. Epoch one leads on isolated regressions and epoch four on branches;
 this tradeoff selects neither production pilot adapter nor checkpoint epoch.
 The 21 short single-support branch fixtures from three notes do not establish
 production branch capacity or complete hierarchy performance.
-All Compare evaluations are complete; Gemma Bootstrap evaluation remains active.
+All Compare evaluations are complete; Gemma's fourth Bootstrap epoch evaluation
+remains pending.
 See the
 [native broader results and bindings](SHR-STUDENT-PREPARATION.md#broader-saved-checkpoint-evaluation).
 
