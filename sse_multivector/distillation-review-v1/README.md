@@ -5934,9 +5934,40 @@ queue capacity remains thirty; no external concurrency setting is introduced.
 Artifacts remain ignored under
 `oracle-mvp-review-payments-diagnostic/target/distillation-review-v1/payments-diagnostic/`.
 No prompt, semantic rule, review precedence, reasoning default or final-test
-scope changes. The proposed next step is to supply this trusted payment/price
-example to both prompts and rerun the focused checks; that edit is not yet
-approved or applied. Do not seek correctness through further unchanged votes.
+scope changes. The user subsequently authorizes supplying this trusted
+payment/price example to both prompts and rerunning the focused checks;
+the bounded trial is recorded below. Do not seek correctness
+through further unchanged votes.
+
+## Trusted payment example prompt trial (October 11)
+
+The user authorizes adding the trusted payment/price example to both prompts
+and repeating the same focused six judgments. Native `revise` creates
+[DCSv2](coverage-search-prompt-v2.md) and
+[DSLv11](relationship-prompt-v11.md) with pinned base hashes and revision
+receipts. Apart from version IDs, each adds the same short teacher-example
+block outside the verbatim AS quotation. No other wording, input placeholders,
+response schemas or cache boundaries change. The exact new block is presented
+in conversation before inference. These are experimental versions for this
+bounded test, not replacements for deployed defaults.
+
+Fresh native preparations inherit the completed payment diagnostic's three
+groups: the original sixteen-candidate DCS search, the exact DSL witness pair
+and four authored DSL controls. Complete posts, subject strings, ordered
+teacher contexts, evidence and xhigh settings remain frozen. `--repeat` ensures
+six new verdict requests rather than answer reuse; an eligible new DCS prefix
+warms automatically. The original DSL configuration remains uncached.
+
+Pre-call expectations are fixed from the existing source adjudication:
+DCS returns Payments/candidate `15`; the exact DSL pair is true; the controls
+are true, true, false and false in their existing order. Inherited exact DSL
+evidence still records the earlier false expectation. That metadata is retained
+as history, not used as the current correctness label. The trusted price
+example is a training answer; no reserved final-test wording is opened.
+The unchanged prior prompts' fresh six-case diagnostic already passes these
+current expectations, while the older false receipt demonstrates the category
+error. This new trial can test focused regression, not establish an accuracy
+gain over the passing fresh baseline or resolve broader reviewer consistency.
 
 ## Actual distilled wording: offline preview (October 8)
 
