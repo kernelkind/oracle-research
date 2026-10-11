@@ -7,8 +7,9 @@ equivalence or a preferred answer.
 
 **Current investigation: derive general shaping rules from toy examples.**
 The user explicitly clarified that improving these particular menus is a means
-of discovering the rules, rather than the end goal. Plant foods retrieval and
-the Cooking/Drinking placements provide contrasting examples. Title-pair
+of discovering the rules, rather than the end goal. Plant foods retrieval,
+Cooking/Drinking placements, held Food nominees and the Coffee shortcut
+provide contrasting examples. Title-pair
 similarity and original source branches have been screened offline; proposed
 priorities remain unactivated. New shaping rules below are proposals, not
 approved changes to construction or its guards. Missing parent topics remain
@@ -1084,3 +1085,126 @@ This is a draft to review, not a complete optimization objective. The ordering
 of competing improvements and the acceptable depth cost remain open. The
 existing semantic, immutable-meaning, note-coverage and uncertainty requirements
 remain in force; no change to those requirements is inferred from this study.
+
+## Overlapping sibling notes: checks for the draft shaping rules
+
+This continuation uses the same ASv6.100 / B96 / C48 fifty-note source. It
+makes zero provider calls and zero encodings; the allowance remains 189 used
+of 220. The examples develop selection rules, not a repair or adoption of
+this particular menu. No semantic judgments, canonical meanings, constructor
+guards, prompts or production selection behavior change.
+
+### Fewer choices can add an unnecessary selection
+
+Coffee C006 already has six immediate choices. Second coffee C101 is both a
+direct choice and a child of Additional coffee C102. The saved containments
+therefore permit either route:
+
+```text
+Coffee C006
+├── Second coffee C101                    [one note]
+└── Additional coffee C102                [two notes]
+    └── Second coffee C101                [the same canonical node]
+```
+
+The native `shape-canonical-trial` command produced a separate menu from
+`shr_single_pair/hierarchy-shaping-coffee-shortcut-v1.json`, removing only
+the direct C006 → C101 edge. It preserved the original 70 nodes, their
+headings, meanings and supporting entries, every represented note set, and
+all other menu edges. Every selected edge has a native saved containment
+witness; the audit completed and reports the remaining violations below.
+
+| Measure | Frozen baseline | Remove direct Second coffee choice |
+|---|---:|---:|
+| Coffee's immediate choices | 6 | 5 |
+| Choices beyond six across all groups | 9 | 9 |
+| Selections to isolate the Second coffee note | 2 | 3 |
+| Total shortest selections across 50 individual notes | 134 | 135 |
+| Retained nodes / edges | 70 / 74 | 70 / 73 |
+| Non-narrowing edges | 0 | 0 |
+| Reachable and individually isolatable notes | 50 | 50 |
+
+Only note `862486d8ab23753c39aa9484b1beb52b51e59369f91eb037f2898c5ed9b1f75e`
+has a longer shortest route: C006 → C101 becomes C006 → C102 → C101.
+All other individual shortest lengths remain unchanged. The seven-root,
+thirteen-choice Food and seven-choice Food preparation problems remain.
+Neither menu satisfies the final requirements.
+
+**Draft selection implication:** target overcrowded groups. Do not select
+another grouping merely to reduce an already acceptable choice count when
+the change only adds selections. The result supports keeping valid direct
+shortcuts while they fit within K; it does not measure the reading cost of
+five versus six options or prove that every shortcut is useful.
+
+Evidence is retained in ignored
+`target/canonical-shaping-selection-v1/coffee-shortcut-menu-v1/{state,audit}.json`.
+The first command against the current project adapter stopped before creating
+output because its comparison policy differed from the frozen trial. Using
+the same shared runner with `--project-root` selecting the original source
+project preserved that frozen contract and completed the shape. No policy
+hash, frozen source or model receipt was altered.
+
+### Count distinct notes, not the sum of child counts
+
+The baseline menu contains these overlapping sibling pairs:
+
+| Sibling pair | Left / right notes | Shared notes | Distinct union |
+|---|---:|---:|---:|
+| Cookware C008 / Cooking appliances C014 | 2 / 4 | 2 | 4 |
+| Dinners C059 / Avocados C062 | 4 / 1 | 1 | 4 |
+| Cuisine C016 / Food dishes C020 | 6 / 7 | 2 | 11 |
+
+For Cookware and Cooking appliances, all two observed Cookware notes also
+appear under Cooking appliances. Their fixed meanings still distinguish
+vessels holding food during heat-based cooking from devices designed to cook
+food. Their note-set overlap supplies no new canonical containment. The
+previous diagnostic found no available unused Cooking equipment local topic;
+none is invented or added here.
+
+Avocados' single support note is also Dinners' own support note. The fixed
+Avocados meaning concerns edible avocado fruits; Dinners concerns evening or
+main meals, their composition and related preferences. The one shared note
+does not turn those meanings into equivalent topics or establish a parent
+relationship. Selection must retain both the topics and the normal semantic
+comparison rather than deriving an edge from note-set inclusion.
+
+For Cuisine and Food dishes, the combined observed coverage is eleven notes,
+not thirteen. A group can reduce two visible choices to one even when their
+notes overlap. Counting covered notes by addition would exaggerate the group
+size; penalizing every overlap would exclude potentially useful groups.
+No new parent or semantic answer is asserted for any of these three pairs.
+
+### A nominated parent's own support matters
+
+For a proposed parent, count the distinct union of its original supporting
+notes and all retained descendants. Its note set is not necessarily just the
+union of the two siblings used to nominate it. The earlier native Drinking
+trial demonstrates this: Coffee contributes six notes, Slush drinks one, and
+the original Drinking support adds a different eighth note.
+
+As arithmetic diagnostics only, if a new parent groups just Cookware and
+Cooking appliances and adds no other distinct note, it represents four
+notes. Its edge to Cooking appliances would then be four → four. Likewise,
+a parent grouping just Dinners and Avocados without another note would yield
+four → four above Dinners. Both fail strict narrowing with those child
+headings retained. If the parent's own support or another valid child adds
+a different note, that conclusion can change. Its placement and all affected
+note sets must be checked after normal traversal; pair overlap alone is not
+a reason to exclude the nominee beforehand.
+
+**Draft rule addition:** evaluate the actual resulting branch, counting
+original support and recursive notes once. Require strict narrowing on every
+retained edge, assess choice limits across affected groups, and record the
+added selections. Do not substitute disjoint sibling notes, summed child
+counts or fewer choices alone for these checks. These additions remain draft
+selection guidance; this investigation introduces no automatic policy.
+
+The reusable menu definition is tracked; generated evidence is ignored.
+Protected corpus, raw-state and baseline-menu SHA-256 values match the earlier
+record. Source comparison confirms that only the named shortcut is removed,
+all 70 original node payloads are unchanged except parent lists, and all
+represented note sets are identical. The native audit retains all 50 notes
+and reports 73 strictly narrowing edges, zero equal-note-set edges and the
+same three baseline structural violations. Individual and topic routes remain
+structural measurements, not semantic certification or a complete model of
+which note groups a user will request.
