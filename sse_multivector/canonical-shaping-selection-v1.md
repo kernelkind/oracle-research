@@ -5,7 +5,13 @@ group has too many children. A nomination still follows ordinary local versus
 canonical graph traversal. Selection does not establish containment, placement,
 equivalence or a preferred answer.
 
-**Current investigation: derive general shaping rules from toy examples.**
+**Current investigation: select a useful parent for any subset of an
+overcrowded sibling group.** The user clarified that the input is the whole
+group, including roots; choosing a particular pair first is optional. Pair
+examples are evidence for this broader selection problem. The latest offline
+whole-group screen rejects estimating containment membership from a cosine
+cutoff; its note-set check cannot fix incorrect predicted membership.
+
 The user explicitly clarified that improving these particular menus is a means
 of discovering the rules, rather than the end goal. Plant foods retrieval,
 Cooking/Drinking placements, held Food nominees and the Coffee shortcut
@@ -1068,15 +1074,15 @@ so use the completed menu audit rather than just this local formula.
 
 ### Draft process suggested by the examples
 
-1. Start with an overcrowded browsing group and a plausible pair of its
-   children. Use available original local entries to nominate a broader topic;
+1. Start with the whole overcrowded browsing group. Use available original
+   local entries to nominate a broader topic for any useful subset of children;
    retain prior construction status and normal comparison eligibility.
 2. Send the selected local entry through ordinary graph traversal. A similarity
    score or original local ancestry never supplies the canonical relationship.
    Keep blocked candidates separate from candidates that were never found.
 3. Evaluate all affected groups together. Prefer a reduction in choices beyond
    K, preserve strictly smaller note sets at each downward step, and measure
-   added selections. The new parent need not contain only the selected pair.
+   added selections. The new parent may contain more than two children.
 4. Once choice limits are satisfied, favor fewer selections using already valid
    relationships. The approved shortcut rule remains relevant: direct choices
    may remain when there is room, rather than forcing every route through a
@@ -1278,14 +1284,18 @@ identify the group whose option count needs reducing.
 
 The combined examples suggest the following draft selection process:
 
-1. Pick a pair of immediate choices actually displayed in an overcrowded
-   group, including roots. Keep raw-only retrieval controls separate.
-2. Retrieve several eligible original entries by weaker pair-heading similarity.
+1. Inspect all immediate choices actually displayed in the overcrowded group,
+   including roots. Find a useful parent for any subset of them; a fixed pair
+   is an optional investigation, not a prerequisite. Keep raw-only retrieval
+   controls separate.
+2. Retrieve several eligible original entries. The existing second-strongest
+   sibling cosine and the pair-heading screen supply experimental resemblance
+   cues, without establishing broader scope.
    Use original branches as additional retrieval evidence, retaining a wider
    fallback. Keep original entry identities and prior held/tried status visible.
    No fixed shortlist size, threshold or automatic semantic filter is validated.
 3. Send the selected original entry through ordinary traversal. Its eventual
-   children may extend beyond the nominated pair. Neither rank nor source
+   children may extend beyond the initially anticipated subset. Neither rank nor source
    ancestry supplies the relationship or a predicted number of children.
 4. Assess the completed menu using actual valid placements: distinct-note
    narrowing, choices beyond K across affected groups, preserved coverage and
@@ -1300,3 +1310,125 @@ possible sibling pairs or a corpus-scale retrieval benchmark. A larger system
 should retrieve bounded candidates from existing vectors and source indexes;
 this investigation does not propose exhaustive pair enumeration or repeated
 full-corpus scans for every placement.
+
+## Whole-group branch and estimated-shape screen
+
+The user approved testing original-branch retrieval and an estimated grouping
+benefit against the saved Drinking success and Cooking failure. This offline
+screen uses all seven retained roots, all seven Food preparation C005 children,
+and all thirteen Food C001 children. It considers all 1,386 unused original
+entries, retaining their distinct identities and native same-note/mapped-parent
+eligibility. It enumerates no sibling pairs and makes zero teacher calls or
+encodings. The allowance remains 189 used / 31 remaining. No ranking code or
+automatic constructor policy was added: the estimate fails the known screen.
+
+### Concrete estimates tested
+
+Two source representations were inspected separately through the existing
+production `_scores` and `_local_ancestor_scores` functions:
+
+- The candidate's standalone heading versus each canonical sibling's heading.
+- The best proper original descendant heading versus each sibling heading,
+  keeping every match within the candidate's own note and source branch.
+
+For sensitivity inspection, count eligible siblings with cosine at least a
+cutoff. The known two cases use 0.3, 0.4, 0.5, 0.6 and 0.7; the full candidate
+pools use 0.3, 0.4 and 0.5. These values are diagnostic choices, not a calibrated
+threshold, confidence measure or containment rule. Fewer than two matches
+does not propose a grouping. Source branches and standalone headings remain
+separate routes; the heading route shows the fallback needed when a source
+branch supplies poor matches.
+
+For N visible siblings and m estimated matches, the estimated reduction in
+choices beyond six is:
+
+`max(0, N−6) − max(0, N−m+1−6) − max(0, m−6)`.
+
+This assumes those m direct choices are replaced by one new parent with m
+children. It is an arithmetic estimate, not a generated menu. Candidate own
+support and the represented child notes are deduplicated. Discard an estimate
+if its parent note set equals a proposed child's set, or, in a non-root group,
+equals the existing parent's set after adding the candidate's support. Rank
+the remaining positive estimates by that reduction, then the second-strongest
+eligible similarity and stable original-entry identity. No value enters a
+comparison prompt or overrides ordinary traversal.
+
+### The estimate misses the decisive relationship
+
+| Known nominee / representation | Cutoff | Estimated children | Estimated reduction beyond six | Saved outcome |
+|---|---:|---:|---:|---|
+| Drinking / heading | 0.3 or 0.4 | 2 | 1 | Actual root reduction is 1. |
+| Drinking / heading | 0.5, 0.6 or 0.7 | 0 | No nomination | Misses the useful nominee. |
+| Drinking / proper descendants | All five cutoffs | 0 | No nomination | Misses the useful nominee. |
+| Cooking / heading | 0.3 or 0.4 | 6 | 1 | Actual overcrowding reduction is 0; one equal-note-set edge appears. |
+| Cooking / heading | 0.5 / 0.6 / 0.7 | 5 / 4 / 3 | 1 | Same bad estimate despite changing the cutoff. |
+| Cooking / proper descendants | 0.3 | 5 | 1 | Still predicts useful grouping. |
+| Cooking / proper descendants | 0.4, 0.5, 0.6 or 0.7 | 0 | No nomination | Exclusion is not evidence that useful alternatives improve. |
+
+Drinking's heading scores 0.4430 against Coffee and 0.4375 against Slush
+drinks. Its proper descendant **Author not drinking wine** scores only 0.2969
+and 0.2994 against those same headings. That source-specific example does not
+recover the broader topic's two accepted relationships. Requiring several
+distinct original descendant witnesses would also exclude this successful
+candidate: it has only this one proper descendant.
+
+Cooking's heading scores only **0.1337 against Rosemary**, although its saved
+traversal contains Rosemary C070 as well as all six other displayed children.
+At 0.3 or 0.4 the estimate therefore predicts six children, with nine distinct
+notes before adding the candidate's own note. Its proposed parent has ten
+notes, whereas Food preparation would have eleven after that support is added.
+Every predicted edge passes the note-set narrowing check. Actual placement
+also groups Rosemary's distinct note, bringing the new parent to eleven;
+Food preparation → Cooking is then eleven → eleven. The decisive failure
+comes from missing one predicted relationship, not arithmetic or duplicate
+counting. A correct narrowing check cannot repair an incorrect membership set.
+
+### Whole-group rankings remain weak
+
+At cutoffs 0.3 and 0.4, Drinking is **eleventh among distinct headings** and
+thirteenth among entries in the root-group heading ranking, rather than fourth
+in the earlier preselected Coffee + Slush drinks pair. The whole-group search
+also considers resemblance to other root combinations. Its first five headings
+at both cutoffs are Plant foods, Plant-based diet, Chocolate consumption,
+Outdoor grilling and Michael Pollan's Food Rules recommendation to eat mostly
+plant foods. None was traversed in this screen; their predicted benefit is not
+a positive semantic or shaping label.
+
+Cooking remains first in its whole-group heading ranking at all three tested
+full-pool cutoffs, even after the estimated note-set check. Source-descendant
+ranking instead promotes Charcoal grills, the author's rocket stove, J-tubes,
+People and Food. At 0.3, Cooking falls to heading rank 168; at 0.4 and 0.5 it
+does not propose a group. These replacements are also untested, not demonstrated
+improvements.
+
+Food's thirteen-choice group shows the structural score's additional weakness.
+Grouping six, seven or eight choices all gives the largest estimated reduction,
+five. At 0.4 the heading route consequently promotes Food appeal, Foodies,
+Food quantities, Healthy dinners and Meat eaters; the descendant route promotes
+Healthy dinners, Meal planning, Beginning activities, Shrimp tempura sushi and
+the author's particular dinner. The arithmetic rewards an estimated count in
+that range even though similarity has not established the containment direction.
+No rejection or false-positive label is assigned to these untried entries.
+
+**Finding:** do not activate this cosine-count estimate as a way to choose
+which nomination improves shape. Original branches remain retrieval evidence,
+and the exact note-set/choice checks remain useful after actual placement.
+The proposed pre-placement membership estimate fails the known Cooking case
+and loses the known Drinking case on the branch route. This is evidence against
+this concrete estimate, not proof that every use of SSE or original branches
+is inadequate, nor a comparison-prompt failure.
+
+The remaining task is selecting an original local parent likely to contain
+any useful subset of the whole oversized sibling group. The source heading,
+context and original ancestors may supply information about broader scope that
+cosine alone does not express. A bounded semantic nomination screen is a possible
+next investigation; it is not implemented, tested, or authorized by this result.
+Ordinary traversal and actual end-hierarchy checks would remain decisive.
+
+Verification reused the production vector normalization, source-branch
+aggregation and native eligibility paths. Original corpus, raw-state and
+baseline-menu hashes match the earlier protected record; actual Drinking and
+Cooking outcomes remain the native saved audits. All calculations above are
+separate estimates, not model answers or new canonical edges. There are no new
+source functions, experiment cases, model receipts, hierarchy changes or UI
+refreshes to integrate.
