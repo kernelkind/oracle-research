@@ -1579,14 +1579,23 @@ Native adapters copy at most two selected teacher ancestor paths, keeping source
 numbers outside model input and original source hashes protected. New inputs
 require source-adapter preparation rather than unchanged `prepare --from`.
 Three new preparation tests pass; existing broader failures reproduce on the
-unchanged baseline. The bulk helper's obsolete concurrency setting remains a
-separate prerequisite before the four-note regression. Historical results
+unchanged baseline. The bulk helper's obsolete concurrency setting is removed
+by the scoped native migration. Historical results
 and labels remain unchanged. The preserved DSLv8 snapshot has fourteen input
 mismatches after the AS/context-input revision, so this is not a prompt-only
 paired comparison.
-AS, schema and model settings stay fixed. Qualification,
-broader regression, lower-effort testing and final 60 remain pending; production
-defaults to DSLv2.
+The subsequent [four-note regression](distillation-review-v1/README.md#four-note-native-regression-october-11)
+completes all three checks in 15 min 7 s with 99 fresh judgments, two warmups and
+two recovered stream interruptions. Mechanical, source, receipt and score
+audits pass. One DSL explanation incorrectly expands a timing restriction and
+two related explanations remain uncertain, so the complete-output gate fails
+despite no identified definite Boolean error. Three reused matching/support
+inputs retain `on Nostr`/`with Nostr` uncertainty. Known cached input share is
+10.832%; dedicated warming loses $0.0139376 after its overhead. Including ordinary
+implicit cache hits, known-receipt net savings are $0.0064912 (0.534%); full-run
+cost/savings and subscription charges remain unknown. AS, schema and model
+settings stay fixed. Qualification, lower-effort testing and final 60 remain
+pending; production defaults to DSLv2.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

@@ -6,10 +6,12 @@ subject-wording guidance, makes hypothetical counterexamples optional and
 receives selected trusted teacher contexts for interpreting existing words.
 The exact wording and bounded diagnostic were approved. Its
 [fourteen-case Sol/xhigh trial](#dslv9-approved-diagnostic-october-11) passes all
-fourteen verdicts and complete explanations in both agent audits. This is
-development regression evidence, not unseen accuracy or production adoption.
-Production defaults to DSLv2. Native preparation now supports the scoped
-[four-note regression](#four-note-native-preparation-october-11).
+fourteen verdicts and complete explanations in both agent audits. The subsequent
+[four-note regression](#four-note-native-regression-october-11) completes all
+three checks and verifies the mechanical pipeline, but fails the complete-output
+gate: one DSL explanation expands a timing restriction, and two related
+explanations remain uncertain. Production defaults to DSLv2; lower-effort testing
+and final-sixty validation remain paused pending prompt correctness.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4219,9 +4221,9 @@ teacher contexts absent from DSLv8. Drafting itself performed no inference. The
 subsequent bounded diagnostic uses the unchanged fourteen-case identities and
 retains prior outputs as a baseline snapshot. Previously used cases and portions
 of the final sixty do not establish independent unseen accuracy. The known bulk
-preparation helper still emits the rejected concurrency setting and requires its
-own scoped migration before the complete four-note workflow can run. Broader
-regression, lower-effort testing and the final-sixty run remain pending.
+preparation helper emitted the rejected concurrency setting at this drafting
+stage; the subsequent [scoped migration](#four-note-native-preparation-october-11)
+removes it. Lower-effort testing and the final-sixty run remain pending.
 
 ## DSLv9 approved diagnostic (October 11)
 
@@ -4289,8 +4291,8 @@ baseline snapshot; its allowance remains 14/28.
 
 This panel passes the development gate. It does not establish extrapolation to
 unseen answers or qualification of the complete review workflow. Production
-remains DSLv2; native bulk-runner migration and the four-note regression are
-next prerequisites. Lower-reasoning trials and the final sixty remain pending.
+remains DSLv2. The subsequent native migration and four-note regression are
+recorded below; lower-reasoning trials and the final sixty remain pending.
 
 ## Regression scope reduced to four notes (October 11)
 
@@ -4335,6 +4337,123 @@ stopped queued dispatch; its error policy is outside this migration. The real
 regression reserves the complete provider-retry allowance rather than relying
 on that exhausted-budget path. Broader baseline fixture failures remain
 recorded in the ignored test logs. No production prompt default changes.
+
+## Four-note native regression (October 11)
+
+The authorized four-note run completes all three checks with unchanged DSMv3,
+DSSv2 and experimental DSLv9 at `gpt-6.1-sol / xhigh / openai-codex / SSE`.
+All four answers finish without pending requests or terminal failures. The
+original sixty-answer selection, source assessments and prior outputs remain
+unchanged. No lower-effort run or production adoption follows this result.
+
+**The complete-output gate fails.** Root and independent agent audits agree
+that one of the 101 distinct completed DSL records has a false explanation,
+although its negative Boolean is correct. Two related explanations remain
+uncertain. No definite DSL Boolean error is identified; this is an assessment
+of selected agent-reviewed outputs, not an independently adjudicated accuracy
+estimate or evidence of extrapolation.
+
+The rejected case is
+`M02-checkpoint-800-N0043:compatibility:001:1.1.1.1.1.1`. Its child is
+`English language`; its parent is:
+
+```text
+Author's 100% completion of today's 100 XP goal with 143 XP earned against the 100 XP goal and now having 144 XP total while practicing English
+```
+
+The explanation says `while practicing English` requires English practice
+accompanying the described achievement and XP state. That expands the timing
+restriction: the terminal phrase qualifies **now having 144 XP total**, not the
+earlier completion and earnings. The child still omits the parent's XP and
+completion details, so the negative verdict remains correct. The related
+`compatibility:001:1.1.1.1.1.1.1` and
+`compatibility:011:1.1.1.1.1.1.1` explanations refer to the timing of undefined
+“progress”; they could mean the current total or the earlier achievement and
+therefore remain uncertain.
+
+Independent input-only assessment precedes candidate inspection, with twelve
+native pre-call reviews covering each answer/check. The auditor subsequently
+encountered legacy expected labels while locating cases and disclosed that
+exposure; the prospective judgments had already been preserved and were not
+revised. Root and independent audits examine complete explanations. Ten native
+independent post-audit records preserve the whole-note outcomes, the three DSL
+scope findings and three matching/support uncertainties. A separate root native
+review records the same definite explanation rejection. These are agent reviews,
+not user approvals or human gold, and make no model calls.
+
+Three reused distinct checks remain uncertain over `Learning on Nostr` versus
+trusted `Learning with Nostr`: one matching input and two support inputs. The
+support uncertainty affects seven student occurrences, including five copies
+of the complete XP wording. The native distilled-answer scores below are
+conditional on those saved judgments; they are not reviewer accuracy:
+
+| Answer | Correctness | Coverage |
+| --- | ---: | ---: |
+| R02 — `M01-checkpoint-1000-N0002` | 14/14 | 3/3 |
+| R15 — `M01-checkpoint-400-N0049` | 9/9 | 4/4 |
+| R21 — `M02-baseline-N0089` | 10/10 | 2/4 |
+| R14 — `M02-checkpoint-800-N0043` | 16/23 | 2/8 |
+
+Legacy expected labels also disagree with monetary `Cost` matching `Prices`
+and `Current AI wave` fitting beneath `Temporal relationships`. Both current
+decisions are accepted by the complete-output audit: the monetary context fixes
+the first meaning, and `current` explicitly relates the wave to the present.
+Frozen labels remain provenance; their native mismatch flags do not establish
+reviewer errors. R21 still loses complete `well before` wording and a complete
+matched current-wave node beneath its temporal parent.
+
+Mechanical and accounting audits pass. Of 454 numbered checks, 280 receive valid
+decisions and 174 DSL occurrences are explicitly skipped: 144 lack a full match,
+19 are already beneath a matched parent, seven have unsupported children and
+four have an uncovered compatible parent. All 25 mechanical witnesses and all
+20 full-match selfguards are verified directly against trusted strings and
+numbered relationships. Scores are independently recomputed. All 45 code hashes
+per plan and 279 unique frozen plan-source hashes match; 270 raw-report source
+hashes also match. No mechanical, skip, receipt or score-assembly fault is found.
+
+The native allowance reconciles at **103/420 new attempts**: 99 successful fresh
+DSL judgments, two natural-prefix warmups and two interrupted first attempts.
+Both interruptions are classified as provider-transient stream termination and
+recover on the second attempt. Sixty distinct successful historical semantic
+requests are reused: 29 matching, 29 support and two DSL. The remaining eligible
+historical DSL identities become unnecessary through stopping. The report's 156
+reuse records count numbered aliases, including 52 aliases of answers generated
+earlier in this run; they are not 156 historical calls.
+
+Main execution takes **906.599 seconds (15 minutes 7 seconds)**. Observed case
+concurrency peaks at 18, with the shared queue reaching 30. Fourteen ordinary
+adaptive waves run; the last eight admit only one or two fresh questions each
+and take 274.712 seconds including intervening gaps. Early admission waits reach
+128.886 seconds. The two eligible prefix groups run sequentially for 83.429
+seconds. Both narrow adaptive waves and shared queue constraints contribute;
+the logs do not support attributing the whole duration to either alone.
+
+Known usage is 116,954 uncached input, 14,208 cached input and 97,405 output
+tokens, including 78,257 reasoning tokens. Cached tokens are **10.832%** of the
+131,162 known total input tokens; thirteen comparisons record cache hits. The
+known catalog estimate is **$1.2093788 API-equivalent**, with full cost and
+provider charges unknown because interrupted attempts lack usage and the
+subscription provider does not report charges. Dedicated warming costs exceed their
+cache savings by **$0.0139376**. Including ordinary implicit hits, the known
+receipt subset saves **$0.0064912 (0.534%)** against its observed-token uncached
+estimate. Complete-run savings remain unknown; this is not a causal uncached
+comparison or an invoice.
+
+Ignored evidence is retained in the frozen task worktree
+`oracle-mvp-review-four-note-regression/target/distillation-review-v1/four-note-regression/`:
+native evaluation and receipts, input previews, persistent allowance, test logs,
+pre-call and reuse-preflight reports, `terminal-raw.json`, and reviewed/final
+reports. The raw report is saved before output reviews and retains SHA-256
+`830920818c1b10d25d79b0902f7e90eca60f26d736ea9a620e44db5668db952c`.
+Original worker/history bindings and both retained experiment worktrees are
+needed to inspect this evidence. Six focused preparation tests and 33 native
+regression tests pass; the separately reproduced baseline budget-stop error and
+missing/obsolete fixture failures remain recorded rather than concealed.
+
+The next proposed development step is a focused timing-scope correction and
+small diagnostic before another four-note regression. That prompt revision is
+not implemented or approved by this run. Lower-reasoning trials and the final
+sixty remain pending; production continues to use DSLv2.
 
 ## Actual distilled wording: offline preview (October 8)
 
