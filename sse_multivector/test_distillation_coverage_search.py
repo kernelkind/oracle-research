@@ -218,6 +218,52 @@ class DistillationCoverageSearchTests(unittest.TestCase):
                     self.assertEqual(omitted[0]["student_number"], "1.1")
                     self.assertIn("Conditional", omitted[0]["semantic_status"])
 
+    def test_exact_external_edge_disputes_retain_descendant_candidates(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker = self.baseline("edge-dispute", edge_valid=True)
+        original = evaluation.report(baseline)
+        edge = next(row for row in original["random"]["answers"][0]["checks"]["relationship"]
+                    if row["evidence"]["role"] == "actual_relationship")
+        for verdict in ("uncertain", "reject"):
+            with self.subTest(verdict=verdict):
+                audit = self.root / (verdict + "-edge-audit.jsonl")
+                audit.write_text(json.dumps(dict(check="relationship", input_sha256=edge["input_sha256"],
+                    output_sha256=hashlib.sha256(edge["output"].encode()).hexdigest(),
+                    verdict=verdict, reason="This exact actual-edge output remains disputed.")) + "\n")
+                prepared = json.loads(fixture.native("prepare-distillation-coverage-search", baseline,
+                    "--output", self.root / (verdict + "-edge-coverage"), "--premise-audit", audit,
+                    "--runner-binary", worker))
+                native = json.loads(fixture.native("show", prepared["experiments"][0]["path"], "--json"))
+                case = native["cases"][0]
+                self.assertEqual(case["evidence"]["candidate_student_numbers"], ["1", "1.1"])
+                self.assertEqual(case["evidence"]["omitted_descendants"], [])
+
+    def test_external_edge_audits_require_matching_identity_and_complete_acceptance(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker = self.baseline("edge-audit-controls", edge_valid=True)
+        original = evaluation.report(baseline)
+        edge = next(row for row in original["random"]["answers"][0]["checks"]["relationship"]
+                    if row["evidence"]["role"] == "actual_relationship")
+        for name, overrides, expected in (
+                ("accepted", dict(verdict="accept"), ["1"]),
+                ("other-input", dict(input_sha256="0" * 64), ["1"]),
+                ("other-output", dict(output_sha256="0" * 64), ["1"]),
+                ("other-check", dict(check="support"), ["1"]),
+                ("decision-error", dict(verdict="accept", decision_error=True), ["1", "1.1"]),
+                ("explanation-error", dict(verdict="accept", explanation_error=True), ["1", "1.1"])):
+            with self.subTest(name=name):
+                row = dict(check="relationship", input_sha256=edge["input_sha256"],
+                    output_sha256=hashlib.sha256(edge["output"].encode()).hexdigest(),
+                    verdict="uncertain", reason="Complete source-bound actual-edge assessment.")
+                row.update(overrides)
+                audit = self.root / (name + "-edge-audit.jsonl")
+                audit.write_text(json.dumps(row) + "\n")
+                prepared = json.loads(fixture.native("prepare-distillation-coverage-search", baseline,
+                    "--output", self.root / (name + "-edge-coverage"), "--premise-audit", audit,
+                    "--runner-binary", worker))
+                native = json.loads(fixture.native("show", prepared["experiments"][0]["path"], "--json"))
+                self.assertEqual(native["cases"][0]["evidence"]["candidate_student_numbers"], expected)
+
     def test_native_frozen_search_rejects_changed_premise_snapshot(self):
         from sse_multivector import distillation_coverage_search as coverage
         fixture, baseline, worker = self.baseline("changed", edge_valid=True)
