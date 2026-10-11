@@ -959,3 +959,74 @@ or justify production adoption. No validation examples are added to the prompt.
 Official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 supports direct instructions and concise requested diagnostics rather than
 reasoning traces; it does not establish the semantic convention or this fix.
+
+### Completed condition diagnostic v1
+
+The initial eight cases completed validly: **nine actual attempts** including
+one warmup, no retries, failures, reuses or missing usage. All eight comparisons
+reported cache hits. Native API-equivalent cost, including warmup, was
+**$0.0555016**; subscription incremental cash remained zero. The shared
+persistent counter was preserved; these calls are attributed by receipts, not
+by subtracting a counter concurrently used by other agents. The separate native
+usage source is `compare-condition-diagnostic-usage-v1.json`; its output is
+`target/compare-condition-diagnostic-v1/usage-v1.json`.
+
+Independent semantic review accepts five outputs and rejects three. Six of
+eight final labels are supported, but one of those six has an incorrect
+condition record. These counts are bounded agent assessments with exact human
+judgments preserved where available, not a human-gold accuracy estimate:
+
+| Cases | Result | Assessment |
+| --- | --- | --- |
+| 024, both orientations | Food contains sourdough preparation | Reject: both conflict with the user's exact neither judgment by inventing intended human nourishment. |
+| 025, both orientations | Neither | Accept: cattle-only/horse-only consumption defeats human-nourishment Food; the optional preferences sentence is not made a human-eater requirement. |
+| 022 isolated forward | Bread contains bagel preparation | Accept: preparation concerns cooked flour-based dough; no human-consumer or meal restriction is present in this isolated Bread meaning. |
+| 034, both orientations | Food preparation contains cooking appliances | Accept: the established cooking role and listed device aspects survive the information-topic convention. |
+| Snapshot 022/C068 | Uncertain | Correct final label and meal counterexample, but reject the diagnostic's unsupported human-nourishment implication at Food ancestor C001. |
+
+The repeated semantic mistake is now explicit. Both sourdough directions quote
+the parent's intended-human-nourishment condition and quote the child's
+`making bread`, then claim:
+
+> Bread is a food intended for people to eat for nourishment.
+
+The child wording establishes the bread-making activity and fermentation
+method, not this required intended consumer or purpose. The exact previously
+reviewed animal-feed-only preparation remains admitted. Exact quotation and a
+separate condition record do not establish the asserted necessary implication.
+The snapshot similarly asserts human nourishment from bagel preparation;
+both independent reviewers reject that inference. This additional snapshot
+objection is an agent assessment, not new human gold.
+
+The diagnostic does correctly expose the meal boundary missed by v77. It quotes
+Food dishes' `served or eaten as a meal or part of a meal`, finds snack-only
+bagel preparation and returns uncertain, preserving endpoint Bread coverage.
+This is one successful draw for that boundary, not a demonstrated durable fix.
+The three complete reciprocal pairs are label-consistent, including the
+consistently incorrect sourdough positive. Consistency alone does not establish
+correctness. The isolated/snapshot contrast is not a reversal pair.
+
+**The initial gate fails. Neither the remaining seven cases nor the fresh
+eight-case repeat was prepared or run.** Condition diagnostic v1 remains
+experimental. Structured attribution exposed unsupported semantic inference
+but did not prevent it, so it is not adopted as the production Compare schema.
+No Bootstrap prompt or meaning, adapter, constructor or hierarchy changed.
+
+Technical audits verify all 68 non-null parent/child quotation checks, 18 unique
+node-pair checks, required endpoint/ancestor consequences and internal relation
+derivations. All eight exact inputs and review-only evidence remain identical
+to v77. The complete 4,971-byte semantic preamble is unchanged. All 896 source,
+one config and 38 executable-code bindings match before and after execution.
+Nine response IDs are distinct and disjoint from the 49 earlier relevant
+responses; every HTTP attempt count is one and requests contain no conversation
+linkage, prior answer or assistant history. Attributed native reviews preserve
+every non-review case field. Generation and reviewed snapshots are
+`initial-complete-generation.json` and `initial-reviewed.json` under
+`target/compare-condition-diagnostic-v1/`.
+
+The useful next proposed change is to test required purposes or roles by asking
+whether they can change while the child's defining kind or activity remains
+true, before treating a usual purpose as necessary. Keep the established
+activity/tool-role convention and positive controls. This needs a controlled
+prompt test; the present multi-field diagnostic does not identify one causal
+instruction or authorize a further edit merely by recording that suggestion.
