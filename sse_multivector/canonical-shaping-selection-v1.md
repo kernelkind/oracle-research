@@ -1,6 +1,15 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized candidate is
+The latest user-authorized draft is
+[Hierarchy-consolidation-v13](shr_single_pair/Hierarchy-consolidation-v13.md).
+It clarifies that an activity topic includes information about plans to perform
+the activity unless its meaning explicitly requires that it happened. It adds
+one checking paragraph; shared meaning-writing rules, example and output remain
+unchanged. V12 is preserved with an unintended missing paragraph break; v13
+corrects that formatting without rewriting v12. V13 passes offline checks but
+has not been model-tested or activated. See [the draft record](#consolidation-v13-activity-topic-draft).
+
+The preceding tested candidate is
 [Hierarchy-consolidation-v11](shr_single_pair/Hierarchy-consolidation-v11.md).
 It changes one checking paragraph to require an explicit relationship for
 associated activities, products or participants and apply the full meaning
@@ -3703,7 +3712,56 @@ is the precise user-reviewed comparison.
 This documentation records the decision without changing saved inputs,
 receipts, native reviews, prompt bytes, canonical meanings, graph edges or UI.
 All experiment ceilings remain exhausted; this review makes no model calls.
-V11 remains the experimental prompt. The suggested next step is a versioned
-consolidation draft clarifying that an activity topic can include information
-about plans to perform that activity unless its meaning explicitly requires
-performance. That draft and any tests require their own authorization.
+V11 remains the tested experimental prompt. The user subsequently authorizes
+the versioned draft below; that approval does not authorize further inference.
+
+## Consolidation-v13 activity-topic draft
+
+The user replies "proceed" to drafting a version that clarifies the approved
+activity/plans boundary. The task remains isolated in the existing worktree.
+No proposal is applied, and no hierarchy, canonical meaning, model review,
+Bootstrap prompt, shared writing fragment or runner source changes.
+
+[Hierarchy-consolidation-v13](shr_single_pair/Hierarchy-consolidation-v13.md)
+adds exactly this checking paragraph to v11:
+
+> An activity topic includes information about plans to perform that activity
+> unless its meaning explicitly requires the activity to have happened. Plans
+> do not establish that the activity happened.
+
+The rule concerns information about the same defined activity. It does not
+make associated topics children automatically or remove required roles,
+purposes, actions or states. The example and JSON output remain byte-identical;
+no food example or expected test answer is added. A newly proposed narrower
+meaning can still legitimately exclude a sibling if its stated requirements
+exclude that sibling's entire scope.
+
+The existing production assembly check was extended before creating the draft
+and failed on the missing versioned manifest. The initial v12 assembly then
+failed preservation of the preceding paragraph break. Rather than rewriting
+those prompt bytes, v12 is retained as the untested intermediate draft. V13
+restores that break and differs from v11 only by the paragraph quoted above.
+All 28 assembly and native-revision tests pass, including production shared-CLI
+preparation that freezes complete prompt bytes without inference. These checks
+establish assembly and preparation integrity, not semantic effectiveness.
+
+The production `prompt_assembly.py build` verifies the pinned components.
+Native shared-runner `revise` records the full delta from last-approved v3,
+whose SHA-256 remains
+`da792812ee72c958df9b1fc1e5c8792a8c2172ded90eff52862e17f3939d8990`.
+V13 SHA-256 is
+`baa849577fdfd0f9b46f035192681e8d8dca4db6163bc2b1ed430a33b946e644`.
+The shared fragment remains
+`d3abcd9495e98c98e747b2bd160868ecb5287be8270e23482184e44e773fc92e`;
+all historical prompt and receipt bytes remain unchanged.
+
+The drafting approach follows official advice to use brief, direct instructions
+and avoid requesting a reasoning trace. The semantic rule comes from the user
+decision above, not from that advice.
+[OpenAI reasoning best practices](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+
+No model calls are made and all exhausted experiment counters remain unchanged.
+The useful next test would check the original full Food preparation sibling
+group and a synthetic contrast whose parent explicitly requires performance,
+retaining the existing restriction controls. That test is proposed, not begun;
+no reliable improvement is claimed from this draft alone.
