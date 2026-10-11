@@ -1381,3 +1381,52 @@ and coherent canonical consequences, with no invented intention. Then fresh
 repeat 15 (cap 31), before full 102 source-bound qualification. Source-only data,
 ASv6.100/B96 meanings, model and caching remain fixed. No Bootstrap/hierarchy
 work, new allowance or external messaging is included.
+
+### V78 initial qualification and incomplete fresh repeat
+
+Both native initial runs completed: gate-v1 has 15 valid cases and isolation-v1
+has one. Independent semantic review accepts all 16 outputs. All seven
+reciprocal pairs reverse correctly; every output copies the local meaning and
+preserves the five-field contract. The bagel endpoint remains under Bread,
+while snapshot022 returns uncertain for the meal-role ancestor conflict.
+Food-only isolation remains neither through animal-only intended consumption.
+Food/Eating and Food/sourdough retain their exact human-reviewed neither labels;
+whole cooking-appliance coverage remains positive. No unnecessary assertion
+about nondecisive intention conditions appears in the answers.
+
+Intentional --repeat runs preserve identical requests and disable answer reuse.
+Gate-repeat-v1 ends with 14 valid cases and one provider-transient terminal
+failure, isolated-031-forward, after two attempts. Isolation-repeat-v1 is valid.
+Independent review accepts all 15 valid repeat outputs, with no supported
+interpretation change from the initial draw. The interrupted lamb request has
+no valid semantic answer; its native uncertain review records that runtime
+limit. This is NOT a fully passed 15-case gate repeat. Do not retry its frozen
+case beyond the two-attempt limit or count a provider interruption as a Compare
+semantic failure. Receipts preserve the interrupted responses and missing usage.
+
+Native snapshots are gate-generation/gate-reviewed, isolation-generation/
+isolation-reviewed, gate-repeat-generation/gate-repeat-reviewed and
+isolation-repeat-generation/isolation-repeat-reviewed under
+target/compare-v78-qualification-v1. Native usage source is
+hierarchy-compare-v78-usage-v1.json; catalogue cost is API-equivalent, not an
+invoice. Its native four-experiment aggregate records 38 actual attempts,
+31 valid comparisons, three failed attempts, two retries and zero reuse.
+Known API-equivalent cost is $0.1971156; three attempts lack usage/cost, so the
+complete cost remains unknown. Initial audit verified all 18 initial attempts had distinct response
+IDs, no conversation linkage, no reuse and no failures; comparisons all read
+cache. Later runtime errors remain separately unresolved.
+
+Broader qualification proceeds because all completed semantic controls agree,
+without pretending the interrupted repeat is complete. Prepare the exact 102
+cases with --from the v75 full trial and --prompt Hierarchy-compare-v78.md. Keep
+the hierarchy_node_pairs adapter: generic import loses its native reversal and
+chain report. Do not project fixed_meanings twice. Review the 32 canonical
+snapshot consequences separately; native isolated consistency examines only 70
+cases / 35 registered pairs / 33 producer-bound endpoints. Its complete:false
+alone is not a failure. Fresh broader qualification will include lamb again;
+failed samples remain in every earlier report and are never overwritten.
+
+The initial full-v1 preparation made no calls. Current main was synchronized
+after all active runs ended, and all 66 hierarchy-node-pair tests passed on the
+combined code. Prepare a fresh full-v2 after this checkpoint so it binds that
+code. Model input bytes, meanings and producer identities must still match v75.
