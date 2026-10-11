@@ -1596,3 +1596,26 @@ not establish that all biography has musical scope. Preserve completed-state
 checks and test broader original ASv6.100 meanings rather than declaring that
 boundary already solved. The broader V82 preparations remain unrun after its
 failed consistency gate.
+
+### V83 gate: the role clarification does not remove the reversal
+
+The nineteen-case gate completed with twenty fresh attempts including warmup,
+no failures/reuse/missing usage and $0.1503476 known API-equivalent cost.
+Pair025 still reverses: Eating rejects Food's cultivation aspect in forward
+orientation, while the reverse answer covers Food through its explicitly
+intended consumption role. The other seven reciprocal pairs match. An
+independent reviewer accepts eighteen diagnostics under the provisional common
+role convention and rejects isolated025-forward. Historical human neither
+remains disputed and unchanged. This is not an adopted semantic change.
+
+Native generation snapshot is target/compare-v83-qualification-v1/gate-generation.json;
+receipts are gate-v1. Full-v1 and as100-core-v1 remain unrun preparations.
+
+V84 changes only the order requested for the two directional questions and
+answers: canonical_contains_local first. It retains v83 semantics, exact local
+meaning copy, inputs and five-field schema. A fresh matched eight-case v83/v84
+experiment uses pairs025,034,019,006 in both orientations. Actual output order,
+labels and counterexample validity must all be checked; an observed change
+would indicate order sensitivity, not prove internal reasoning order. A
+meaning-position intervention is separate and must not be combined with this
+test. No Bootstrap outputs or historical labels are altered.
