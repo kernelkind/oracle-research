@@ -15,6 +15,10 @@ Its [focused qualification](#bootstrap-v104-consumer-and-product-role-qualificat
 does not clear the sourdough failure; an unchanged fresh repeat reproduces the
 omission and exposes a compound-purpose ambiguity in the parent. V104 remains
 the last approved prompt; the full-collection evidence above is exclusively v103.
+Experimental [Bootstrap-v105](Hierarchy-bootstrap-v105.md) has a separate
+[focused qualification](#bootstrap-v105-resolution-and-final-clause-qualification):
+nine accepted and one unresolved first-draw meaning after challenge, with three
+accepted fresh repeat meanings. This does not establish a reliable fix or activate v105.
 
 ## Input and review contract
 
@@ -539,3 +543,131 @@ qualifying condition in resolutions and expressing it independently in every
 affected final clause, rather than another domain-specific example. The two
 sourdough interpretations and clear broad controls remain visible; no frozen
 output, earlier review or comparison label is rewritten to manufacture a pass.
+
+## Bootstrap-v105 resolution and final-clause qualification
+
+The user authorized the proposed v105 edit and focused testing. Native `revise`
+created [experimental Bootstrap-v105](Hierarchy-bootstrap-v105.md) against
+approved v104, preserving the exact changes in
+[its revision receipt](Hierarchy-bootstrap-v105.md.revision.json).
+Two read-only reviewers challenged the draft. The Resolve paragraph now asks
+for a qualifying role, purpose or state to be chosen together with the action
+or product it qualifies. The final Write paragraph asks each independently
+admitted alternative to state its conditions, repeating a shared condition
+when its scope would otherwise be unclear. These two paragraph replacements
+test one proposed resolution-to-expression contract; they do not isolate the
+effect of either individual paragraph or sentence.
+
+All other prompt bytes, including both approved synthetic examples, are
+unchanged. Input/output contracts and the cache boundary are preserved. V105
+SHA-256 is `3c851548f70d9e6cf4ad5ff3bf0bef312abc2dafeb6b2e8334a3ea9f7f612bd8`.
+The official prompting guidance cited above supports clear instructions; it
+does not certify this semantic mechanism or the candidate's quality.
+
+The first experiment inherits the same ten ASv6.100 cases used for v104.
+Original input bytes, source evidence, case identities, dataset, output schema,
+provider, model, effort, transport and worker are unchanged; only the prompt
+and its cache identity change. The independent meaning generation uses
+GPT-6.1 Sol medium through main's shared runner and automatic caching. The
+shared scheduling policy allows up to 30 concurrent requests. The static cache
+prefix is 4,667 tokens. This selected development panel is not an unseen test
+or a fresh matched v104 sample.
+
+Three subagents review the first draw. An intentional native `--repeat` then
+generates the same two sourdough entries and their Food preparation parent
+with identical inputs, evidence, prompt and settings, without answer reuse.
+Two reviewers independently challenge those repeated endpoints. Each assessment
+is saved through native `review --role agent` and bound to exact input/output
+digests; there are no new human output approvals. Parent and child endpoints
+are kept within their own draw, rather than spliced to manufacture compatibility.
+
+| Draw | Valid meanings | Latest output-bound agent assessments |
+|---|---:|---|
+| v105 first, before ingredient-scope challenge | 10 | Eight accept, two uncertain |
+| Same v105 first outputs, after challenge | 10 | Nine accept, one uncertain; not new model draws |
+| v105 targeted fresh repeat | 3 | Three accept |
+
+The initial first-draw reviewer rejected sourdough entry `2.1` and qualified
+entry `1.1.1`. Independent challenge showed that both definitions explicitly
+choose production of the bread kind. For `2.1`, "food-making" labels an activity
+whose defining action is working ingredients or dough toward producing bread;
+its resolution also says making sourdough bread defines membership. An actual
+eating-purpose requirement would add a restriction. The reviewer withdrew
+both flags. Historical v104 findings remain recorded, but they are not
+unconditional gold for these changed outputs. First-draw child receipts are
+`e75719b6682e501064da8f53973cfa66f0bb427af4d72c0f7929197f378234e0`
+and `471f718b015e8724b261de1f16456991e8042b18824c4af625ec6bfb32ba00e4`.
+
+The first-draw Food preparation qualification remains:
+
+- **Food preparation, selected `2`:** its final meaning admits "making food or
+  acting on food to ready it for eating". Resolution a2 supports those distinct
+  alternatives, but a3 says readying food for eating defines the activity.
+  Whether eating-readiness applies to both alternatives remains unsettled.
+  Receipt: `62ea309c2592dca5220ea1cb210783f46acc5c5998d9cdbee0cb7ddcf8778e64`.
+
+The reviewer initially qualified **Risotto Food, selected `1`**, then withdrew
+that uncertainty on challenge. Its final definition starts with substances
+intended for human eating or drinking and uses "including" to name dishes and
+preparation ingredients within that category. The opening condition coherently
+applies to those included kinds. Treating preparation-only inputs as a separate
+admission route would override that condition. Resolution a2 is broader, but
+diagnostic disagreement alone does not fail this coherent final meaning. No
+removed/discarded ingredient relationship is certified. The original uncertainty
+and the qualified acceptance are both retained as native review history for
+unchanged receipt
+`f585b2a17b2498be0c375dadfdaee7646663249f41e67f6a20f3b2c628c0139f`.
+
+In the repeat, both sourdough definitions directly choose carrying out stages
+of bread production. The parent consistently chooses "producing food or making
+it ready to eat" in its final meaning and all three resolutions. Production is
+an expressly admitted alternative, not an omitted actual eating-purpose
+condition. Two reviewers accept all three repeated meanings. This resolves
+the demonstrated expression issue in this draw; the first-draw parent qualification
+remains visible. Repeat receipts for `2.1`, `1.1.1` and parent `2`, respectively:
+`557449597aab1b1ecc7f7e9c5de951e4bed2bd32d70f0eb511290037f4beecdb`,
+`fcbb5436f25cb34416dc3f7e36243ffebe1e8862de71f884e4643ed07533fb78`,
+`cfd7d0628a153b6440043b64a2bf0bf8976ad95a9434cd1f6304011b7591e60a`.
+
+All seven first-draw controls are provisionally accepted after challenge.
+Consumer-neutral Food remains broadly defined, while rocket-stove Food independently chooses
+human consumption. Stock Food expressly applies its human-nourishment condition
+to both direct consumption and ingredients in other food. Butter retains its
+dairy-food kind, Eating meat its broad consumption action, and stock Cooking
+its heat-based transformation plus associated preservation/storage plans.
+These supported independent scope choices are not equivalent to all earlier
+definitions. The controls have not been repeated, and no full branch or Compare
+qualification follows from their individual acceptance.
+
+Native artifacts in the retained task worktree:
+
+- `target/bootstrap-v105-consumer-controls-v1/report-reviewed-source.json`:
+  preserved pre-ingredient-challenge assessment, SHA-256
+  `2878aacfd8c5381e1b5b366f7b41509475e0df785aecc76247e40e6ad9c0f3b7`.
+- `target/bootstrap-v105-consumer-controls-v1/report-reviewed-after-challenge.json`:
+  latest assessment and retained review history, SHA-256
+  `6b4043d5ab86623374803065df4d0778f6d79cde4bc3a0df2848f65c5cedb41a`.
+- `target/bootstrap-v105-consumer-controls-repeat-v1/report-reviewed-source.json`:
+  SHA-256 `f3b24a44851509e2828244e0596d698bf7e53578ad1b37227554bdfacca1872f`.
+- `target/bootstrap-v105-consumer-controls-v1/usage-both-draws.json`, produced
+  by native `summarize-experiments` from
+  [the maintained accounting source](hierarchy-bootstrap-v105-consumer-controls-usage-v1.json).
+
+Accounting: 13 valid fresh meanings and two cache warmups, 15 attempts total,
+zero reuses, failures or retries, and complete saved usage. All 13 meaning
+requests have cache hits. Native API-equivalent cost is $0.1226016; estimated
+net cache savings including warmups are 43.40%, not a matched uncached trial or
+a subscription charge. Subscription inference adds no incremental cash charge.
+The persistent shared counter's 14,031/20,000 snapshot includes other authorized
+work; this panel contributes 15 attempts and does not reset that counter.
+
+Nine existing production-path revision tests and 18 accounting tests passed,
+native accounting validated both experiments, and all 13 reviews match native
+input/output digests. V105 remains experimental, and v104 remains the last
+approved prompt. This small
+adaptive panel does not establish a reliable fix or causal wording attribution.
+No frozen answer, original subject tree or historical comparison label was
+rewritten; no Compare calls, hierarchy builds or production activation occurred.
+The next proposed diagnostic is to repeat the unresolved parent before
+editing again, then isolate the Resolve and Write changes if the scope issue
+persists rather than appending another rule without controlled evidence.
