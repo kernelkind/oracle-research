@@ -5756,6 +5756,128 @@ evaluation order remains unobservable, and input position has not been shown
 to cause the error. The Fasting change is a sampling observation, not an
 established effect of the instruction. A proposed next diagnostic would change
 which A/B meaning appears first in the input while preserving both assignments,
-scope rules and judgments. That would test presentation order separately from
-node naming; it is a recommendation only and has not been prepared or run.
-The symmetric A/B line remains the approved development direction.
+scope rules and judgments. The user subsequently authorizes that bounded
+diagnostic below. The symmetric A/B line remains the approved development direction.
+
+## V179: B-first input presentation diagnostic
+
+This authorized diagnostic prints JSON member B before member A while retaining
+the original A/B assignments. V179 instructions, prompt ID, examples, schema,
+subjects and fixed meanings remain unchanged. No prompt edit occurs, so this is
+an input-presentation diagnostic v1 rather than a new prompt version. Whether
+presentation contributes to the repeatable error remains open.
+
+Native prepared-source projection now accepts optional `input_order: ["B", "A"]`
+only with `input_view: "symmetric_fixed_meanings"`. A pinned, already symmetric
+experiment can be projected without renaming nodes or replacing its original
+source/producer evidence. The default keeps its existing serialization order.
+Malformed orders and use with other views are rejected. A production-path CLI
+test first fails because the option is unsupported, then passes after minimal
+adapter support. All 111 hierarchy adapter/snapshot/fixed-meaning/consistency
+checks and five general native preparation regressions pass. The shared runner
+itself is unchanged.
+
+Fresh reusable source definitions pin the completed V179 pair-01 and controls-01
+experiment-envelope file bytes. Native `prepare --spec --baseline --repeat`
+prepares two fresh draws of the same five pairs in both orientations: 20 planned
+comparisons. Parsed old/new input objects must be equal; serialized member order
+and rendered request hashes must differ. Each direction continues to refer to
+named A/B, never position. Source context, expectations and old answers remain
+outside model input. Original ASv6.100 and fixed Bootstrap-v96 producer receipts
+are preserved; no meaning generation or newer-Bootstrap qualification is included.
+
+The four directories are `target/compare-v179-b-first-input-v1/{pair,controls}-01`
+and `-02`. Native usage groups separate saved V179 original generation from
+newly dispatched input-order draws. Both retain Sol 6.1 medium/SSE, the same
+worker/schema and disabled explicit warming. Shared admission and the persistent
+20,000-attempt counter apply. Provider-only retry bounds reserve at most two
+attempts per case; failures and unrun cases remain unresolved. No inference
+result is claimed at this preparation checkpoint.
+
+Qualification checks complete scope proofs, child admission/parent exclusion,
+assignment-correct direction IDs, actual reported diagnostic order, reversals
+and fresh-draw stability. Stockpots' exclusively laboratory stock-making design
+witness retains the user's acceptance; other controls remain agent-qualified.
+Independent reviewers assess one draw each without prescribed labels. Required
+workflow-document history means these reviews are not blinded. Five repeated
+pairs are five underlying semantic comparisons, not twenty independent topics.
+Saved versus fresh execution leaves time/provider and sampling effects open.
+An error moving with the physically first member would support presentation
+sensitivity, not establish internal reasoning order or one proven cause.
+
+### Completed B-first input diagnostic
+
+All four experiments complete: 20 fresh valid comparisons, no answer reuse,
+explicit warming, retry, failure or missing usage. Twenty distinct response IDs
+and ten identical repeated request identities establish two fresh draws. Actual
+request bodies match the corresponding saved V179 bodies except for the JSON
+member-order substitution. They retain one user message, empty additional
+instructions and no conversation linkage. Worker, request-producing code,
+wrapper and schema digests match the saved baseline. Native source projection
+preserves exact A/B scopes, producer receipts and original evidence; its new
+adapter code never enters the model input. Native baseline comparisons report
+`input_mismatch`, correctly reflecting serialization differences rather than
+a semantic quality verdict.
+
+Each independent reviewer registers nine accepts and one rejection. Root
+inspects all 20 responses. These reviews are not blinded: required workflow
+documentation and preceding reviews exposed historical findings. All generation
+fields and receipts remain unchanged after review, verified against native
+`final-generation.json` snapshots; `final-reviewed.json` preserves attribution.
+Stockpots' laboratory-only design witness is user-accepted, while the other
+control qualifications remain agent assessments.
+
+| Measure | Saved V179, A-first input | Fresh V179, B-first input |
+|---|---:|---:|
+| Supported complete responses | 18/20 | 18/20 |
+| Relation errors | 2/20 | 2/20 |
+| Reversal conflicts | 2/10 | 2/10 |
+| Directional labels changed between fresh draws | 0/10 | 0/10 |
+| Uncertain responses | 0 | 0 |
+| Native API-equivalent catalog cost | $0.1643176 | $0.161408 |
+
+The two wrong relations move to `isolated-035-reverse` in both fresh draws.
+All 16 control responses pass, including four Fasting responses. Every new
+question and answer array still reports `A_contains_B` before `B_contains_A`,
+and all direction IDs and subject assignments align. The Stockpots pattern is:
+
+| Input member order | A | B | Relation in both draws | Review |
+|---|---|---|---|---|
+| Saved A, B | Cookware | Stockpots | A contains B | Unsupported |
+| Saved A, B | Stockpots | Cookware | Neither | Supported |
+| Fresh B, A | Cookware | Stockpots | Neither | Supported |
+| Fresh B, A | Stockpots | Cookware | B contains A | Unsupported |
+
+With B-first input, both forward questions isolate meal purpose and both answers
+construct a large/deep cooking vessel designed exclusively to produce culinary
+stock for laboratory testing, with no meal-preparation purpose. Those cases
+preserve the whole Stockpots meaning and escape Cookware's meal restriction.
+Both reverse questions also identify meal purpose, but their proofs incorrectly
+make it unavoidable: first draw says "Preparing stock is food preparation for
+meals"; second draw says stock-making necessarily holds food during heat cooking
+"for meal preparation". Neither fixed Stockpots definition entails that purpose.
+Frying-pan exclusions remain supported in all four responses. This is a scope
+inference failure, not an A/B assignment or JSON/schema error.
+
+Across these saved and fresh V179 draws the unsupported positive follows
+Cookware being the physically first input member, regardless of its A/B name.
+V182's separate reported-direction-order intervention had left the error in its
+original orientation. Together these observations support input-presentation
+sensitivity and weaken a simple reporting-order explanation. They do not reveal
+internal reasoning order or prove a single cause: the baseline is saved rather
+than simultaneously rerun, and time/provider and sampling effects remain open.
+Five pairs repeated twice are five underlying comparisons, not twenty independent
+semantic samples. No population accuracy or causal effect estimate is claimed.
+
+Native `target/compare-v179-b-first-input-v1/usage.json` separates $0.161408 for
+20 new attempts from $0.1643176 for the 20 original saved attempts. Combined
+$0.3257256 is original API-equivalent catalog usage, not newly incurred cash
+spending. Explicit warming stays disabled; five of 20 new requests nevertheless
+have backend cache hits. Shared counter moves from 18,911 to 18,931, consistent
+with this cohort's native 20 attempts. There are 1,069 attempts remaining at that
+read; the shared counter may subsequently change through other authorized work.
+
+This presentation change is not adopted: it moves the error without improving
+semantic support or reversal consistency. The A/B line remains the development
+contract, and V179 remains the development baseline with the unresolved Stockpots
+failure. No Bootstrap generation, hierarchy build or broader panel is performed.

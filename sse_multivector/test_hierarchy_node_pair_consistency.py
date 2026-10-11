@@ -101,6 +101,23 @@ class HierarchyNodePairNativeConsistencyTests(unittest.TestCase):
             'B': {'subject': 'Beta', 'meaning': 'Fixed Beta'}})
         self.assertEqual(report['node_pair_consistency']['skipped_cases'], [{
             'case_id': 'pair-forward', 'reason': 'missing_fixed_meaning_producer_receipt'}])
+        symmetric_envelope = self.root / 'symmetric/experiment.json'
+        self.write('ordered-source.json', {'prepared_experiment': {
+            'path': 'symmetric',
+            'sha256': hashlib.sha256(symmetric_envelope.read_bytes()).hexdigest()},
+            'input_view': 'symmetric_fixed_meanings', 'input_order': ['B', 'A']})
+        spec['dataset']['path'] = 'ordered-source.json'
+        self.write('ordered-spec.json', spec)
+        self.cli('prepare', 'ordered', '--spec', 'ordered-spec.json')
+        ordered = json.loads(self.cli('show', 'ordered', '--json').stdout)
+        payload = json.loads(ordered['cases'][0]['inputs']['INPUT_JSON'])
+        self.assertEqual(list(payload), ['B', 'A'])
+        self.assertEqual(payload, json.loads(report['cases'][0]['inputs']['INPUT_JSON']))
+        self.assertNotEqual(ordered['cases'][0]['input_sha256'],
+                            report['cases'][0]['input_sha256'])
+        self.assertEqual(ordered['cases'][0]['evidence']['source_input'],
+                         report['cases'][0]['evidence']['source_input'])
+        self.assertEqual(ordered['node_pair_consistency'], report['node_pair_consistency'])
         self.assertEqual(self.calls(), [])
 
 
@@ -294,6 +311,28 @@ class HierarchyNodePairConsistencyTests(unittest.TestCase):
         self.assertEqual({case['unresolved_reason'] for direction in result['directions'].values()
                           for case in direction['unresolved_cases']},
                          {'uncertain', 'unrun', 'failed', 'missing_compare_receipt'})
+
+    def test_symmetric_input_order_preserves_producer_bound_consistency(self):
+        from sse_multivector.hierarchy_node_pairs import project_symmetric_fixed_meanings
+        rows = self.cases([('ab', 'A', 'B', 'local_contains_canonical'),
+                           ('bc', 'B', 'C', 'local_contains_canonical'),
+                           ('ac', 'A', 'C', 'neither')])
+        symmetric = [project_symmetric_fixed_meanings(row) for row in rows]
+        for row in symmetric:
+            del row['parsed']['meaning']
+            row['parsed']['relation'] = {
+                'local_contains_canonical': 'A_contains_B',
+                'canonical_contains_local': 'B_contains_A'}.get(
+                    row['parsed']['relation'], row['parsed']['relation'])
+        ordered = [project_symmetric_fixed_meanings(row, input_order=['B', 'A'])
+                   for row in symmetric]
+        for before, after in zip(symmetric, ordered):
+            self.assertEqual(json.loads(after['inputs']['INPUT_JSON']),
+                             json.loads(before['inputs']['INPUT_JSON']))
+            self.assertEqual(list(json.loads(after['inputs']['INPUT_JSON'])), ['B', 'A'])
+            for field in ('local_meaning_from', 'canonical_meaning_from', 'source_input'):
+                self.assertEqual(after['evidence'][field], before['evidence'][field])
+        self.assertEqual(self.summarize(ordered), self.summarize(symmetric))
 
 
 if __name__ == '__main__':
