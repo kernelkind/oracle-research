@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "saved_v179_a_first_baseline": [
+      "../../target/compare-v179-examples-ablation-v2/v179-pair-01",
+      "../../target/compare-v179-examples-ablation-v2/v179-controls-01",
+      "../../target/compare-v179-examples-ablation-v2/v179-pair-02",
+      "../../target/compare-v179-examples-ablation-v2/v179-controls-02"
+    ],
+    "saved_v179_b_first_stockpots": [
+      "../../target/compare-v179-b-first-input-v1/pair-01",
+      "../../target/compare-v179-b-first-input-v1/pair-02"
+    ],
+    "v183_a_first": [
+      "../../target/compare-v183-purpose-example-v1/pair-01",
+      "../../target/compare-v183-purpose-example-v1/controls-01",
+      "../../target/compare-v183-purpose-example-v1/pair-02",
+      "../../target/compare-v183-purpose-example-v1/controls-02"
+    ],
+    "v183_b_first_stockpots": [
+      "../../target/compare-v183-purpose-example-v1/b-first-pair-01",
+      "../../target/compare-v183-purpose-example-v1/b-first-pair-02"
+    ]
+  }
+}

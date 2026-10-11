@@ -7001,3 +7001,13 @@ all outputs still report A's coverage first. Saved-versus-fresh sampling/time
 confounds prevent a causal claim, and internal reasoning order is unobservable.
 Reordering is not adopted because it relocates the error without reducing it.
 See [completed evidence, integrity checks and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-b-first-input-diagnostic).
+
+The next authorized Compare experiment is
+[Hierarchy-compare-v183](shr_single_pair/Hierarchy-compare-v183.md), a native V179
+revision adding one independent synthetic coating-tool example that distinguishes
+function from required design purpose. Instructions, old examples, symmetric
+A/B scopes and the V179 schema remain unchanged. Twenty planned fresh original
+panel requests plus four B-first Stockpots requests test whether the example
+repairs rather than relocates the failure. Fixed ASv6.100/Bootstrap-v96 producer
+evidence, disabled explicit warming and the persistent counter are preserved.
+See the [pre-call design, scaling and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v183-synthetic-function-and-purpose-example).
