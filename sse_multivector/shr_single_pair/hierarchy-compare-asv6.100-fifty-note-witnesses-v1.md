@@ -3776,3 +3776,66 @@ invalid counterexamples and qualified readings remain distinct. The broader
 196/102 panels stay unrun until a candidate merits qualification. No Bootstrap
 inference, hierarchy work, external messages or additional allowance.
 Usage source:hierarchy-compare-v159-v163-controlled-usage-v1.json.
+
+
+The V163/fresh-V159 stage completed:104 valid comparisons in108 actual attempts,
+including four warmups, no reuses, failures, retries, missing usage or unrun
+cases. Native API-equivalent cost:$1.0444120; persistent counter17822/20000.
+V163 has zero settled reversal or chain witnesses in both gates. Fresh V159 has
+one settled018 reversal and one forward chain witness; controls have none.
+Proof review is still being attributed; absence of settled contradictions is
+not adoption. V163022 still omits the independently recognized holeless
+production test, and its directions choose different serving/production
+readings. Preserve null/settled differences as interpretation qualifications.
+
+Independent supplier calibration confirms actual chewy holeless bagels and
+actual holeless boiled/baked production. The whole-basic-ingredient recipe
+remains a plausible generic construction, not a verified supplier formula.
+These facts constrain proof review without creating a prescribed model label.
+Sources rechecked2026-10-11: https://doughminer.com/page/bagels and
+https://www.goldbelly.com/restaurants/utopia-bagels/utopia-bagels-x-philadelphia-bagel-wholes-kit.
+They remain outside model input.
+
+V163 attributed native reviews are complete:core20 accept/5 proof reject/
+8 qualified; controls15 accept/1 proof reject/3 qualified. Core022 omits the
+independent production witness or selects a reading-dependent serving witness;
+070 reverse stipulates that a sole dog cannot be an unqualified audience;
+both071 omit the independently supported someone-versus-others self-salutation
+test. Controls009 leaves the reported drink's nourishing-food composition
+connection unclosed, despite separate descendant objections supporting the
+final uncertain relation. Both041 own-animal-abstention proofs and all052/053
+ingredient-role proofs pass. Particular-author and other producer boundary
+qualifications remain recorded. All current native output/copy/source/receipt
+hashes are verified. This candidate is not adopted.
+
+The fresh-baseline reviewers retain022 as qualified because the generic
+all-basic recipe is supported inference rather than a verified supplier
+formula; the independent calibration and V163 owner classify the shape
+necessity/missed test as a proof failure. Preserve that review disagreement,
+and do not claim a calibrated numerical semantic improvement from different
+reviewer counts. No opposite relation or supplier recipe is introduced as gold.
+
+### V164: search recognized uncommon variants
+
+An independent one-phrase ablation from V159 replaces recognized ordinary
+variants with recognized variants (including uncommon forms). The universal
+coverage rule already quantifies all admitted cases. Ordinary could mean common
+and suppress a valid uncommon form; the change tests that search restriction,
+not a new containment semantics. Defining kind/activity, every stated
+restriction, necessary implications, particular identities and all canonical
+consequences remain binding. A novel name alone cannot establish admission;
+an uncommon veterinary setting cannot supply the eater's deliberate action.
+No examples, schema, inputs or producer evidence change.
+
+Native exact revision and unchanged-example production validations pass.
+Planned bounded screen:core pairs008/022/041/052/053/070/071 in both orientations
+(14cases); controls snapshot009/019/025/031/032 and isolated009/025 in both
+orientations(9cases). Twenty-three comparisons plus two warmups:25 attempts
+absent retries. The just-completed fresh V159 exact inputs are the comparison
+control; no additional baseline calls. The subset does not establish complete
+broader chains or semantic accuracy. If variant retrieval/admission does not
+improve, do not expand this candidate solely because a label changes. A
+promising screen requires repeat and full qualification, with protected
+composition, role, actor and fixed-entity controls retained. No Bootstrap
+inference, hierarchy construction, external messages or additional allowance.
+Usage source:hierarchy-compare-v164-uncommon-variant-screen-usage-v1.json.
