@@ -2934,3 +2934,37 @@ producer evidence, sources, worker/model/schema and the two mechanical example
 outputs are checked before dispatch. No Bootstrap generation, hierarchy build,
 service changes or external messages. Usage source:
 hierarchy-compare-v133-guard-usage-v1.json.
+
+V133 completes all ten comparisons in12 actual attempts, no reuses, failures,
+retries or missing usage. Native full API-equivalent estimate: $0.1019832.
+Core reviews:3 accept/1 reject/2 qualified. 041 forward rejects incidental animal
+non-eating and caretaker withholding, then imports a human practitioner without
+testing deliberate animal refusal; reverse041 and both042 independently admit
+complete animal cases. Both070 proofs retain the audience-role qualification;
+reverse adds an ongoing-contact pet case but stipulating no audience does not
+settle the meaning of audience. Native core has two reversal conflicts.
+Controls:1 accept/1 reject/2 qualified. Both031/032 now resolve concrete dog/pet
+feed tests in `reason`, repairing the guard diagnostic omission; author/person
+and separate nourishment-intention implications remain qualified. Snapshot012
+passes. Reverse019's positive Meals coverage checks both alternatives, but its
+future prepared-soup negative witness relies on not-yet-served state without
+discharging the permitted kind-production connection. That proof rejection does
+not establish an opposite relation. Earlier raw-apple proof is not borrowed to
+certify this different witness.
+
+### V134: distinguish a failed candidate from impossible admission
+
+V134 replaces only V133's rejected-variation paragraph. When a proposed case
+violates a child requirement, test whether satisfying it preserves exclusion
+from every parent alternative and permitted topic connection. Independently
+evaluate the corrected case against the entire child meaning; reject only from
+child wording or a necessary implication. An incomplete failed candidate does
+not establish full coverage. This hypothesis targets the observed move from
+rejecting non-deliberate examples to asserting a required practitioner identity;
+it does not preselect an animal label or settle dietary-practice semantics.
+
+The same six core/four controls remain frozen. Expected dispatch12 attempts
+including two warmups, caps13/9, persistent20000 counter unchanged. Both
+illustrations pass the production validator, and exact inputs, evidence and
+source hashes match V133. The five-field contract and explicit guard checks
+remain unchanged. Usage source: hierarchy-compare-v134-candidate-usage-v1.json.
