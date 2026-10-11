@@ -1736,6 +1736,16 @@ remaining reviewer inputs unchanged. It verifies matching receipts, audit
 bindings and actual teacher paths without inference. Separate required-child
 matching uncertainties remain unresolved. DCSv1 and full runtime remain unqualified.
 
+Coverage preparation hashes each distinct receipt results file and manifest
+once per snapshot binding pass, after native report verification. The hashes
+are local to that snapshot; inherited source bindings do not replace fresh
+reads, and the final preparation source recheck remains enforced. The
+[four-note offline benchmark](distillation-review-v1/README.md#coverage-preparation-receipt-hashing-october-11)
+reduces the slowest preparation from 13.25 to 7.61 seconds with exact case-input,
+rendered-prompt, evidence and protected-source parity. Eighteen targeted tests
+pass, including changed-receipt rejection. No inference or review criteria
+change; the full-evaluation runtime target remains unqualified.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,

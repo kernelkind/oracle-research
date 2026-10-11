@@ -12,7 +12,9 @@ source-bound preparation and output validation are implemented, but DCSv1
 remains unqualified. The subsequently approved
 [conditional matching/path reuse](#conditional-matchingpath-reuse-october-11)
 settles four of these searches, including that false negative, during native
-offline preparation. Current defaults and the final
+offline preparation. [Receipt hashing reuse](#coverage-preparation-receipt-hashing-october-11)
+reduces the slowest four-note preparation from 13.25 to 7.61 seconds while
+preserving every reviewer input and evidence record. Current defaults and the final
 sixty-answer validation remain unchanged.
 
 **Current development result:** xhigh generation finishes on
@@ -5594,6 +5596,47 @@ This verification makes **zero model calls**. Final artifacts remain ignored und
 The deployed evaluation and DSLv2 defaults remain unchanged. DCSv1, the
 remaining interpretation contexts, lower reasoning efforts and the eight-hour
 runtime target remain unqualified; the final sixty are not rerun.
+
+## Coverage preparation receipt hashing (October 11)
+
+The user approves removing repeated receipt-file hashing from coverage
+preparation. After the native evaluation report independently verifies the
+saved results, `_snapshot` now hashes each distinct receipt results file and
+manifest once during its binding pass. A dictionary local to that snapshot
+retains fresh checksums and preserves the original order of source bindings.
+Inherited expected hashes do not substitute for reading the receipt files.
+Subsequent snapshots read them again, and preparation still rechecks every
+protected source before writing its completion record.
+
+The same four development answers are prepared offline through the stable
+launcher, with four independent commands run in parallel:
+
+| Saved answer | Before, seconds | After, seconds |
+| --- | ---: | ---: |
+| `M01-checkpoint-600-N0017` | 6.52 | 5.03 |
+| `M01-baseline-N0076` | 5.68 | 4.32 |
+| `M01-checkpoint-200-N0054` | 13.25 | 7.61 |
+| `M02-checkpoint-200-N0015` | 7.42 | 4.61 |
+| **Sum of command wall times** | **32.87** | **21.57** |
+
+The slowest command is approximately **42% faster**; summed command wall times
+fall **34.4%**. The final parallel batch directly measures 7.613 seconds; the
+before batch is approximated by its longest command. This is one before/after
+measurement on the same host, without controlling filesystem cache state. It
+measures offline preparation, not model generation or full-evaluation runtime.
+
+All **34 searches, four conditional settlements and 89 positive self guards**
+retain exact parity, including complete native case inputs, rendered prompts,
+input hashes, evidence, protected source checksums and preparation judgments.
+Native plans bind the changed adapter code; the project extension is unchanged.
+The new hash-count test first fails on repeated receipt reads, then passes.
+Receipt mutation after native preparation is still rejected by the final source
+recheck. Fifteen coverage regressions and three related native evaluation
+regressions pass: **18 tests total**. This task makes **zero model calls**.
+Ignored native evidence remains under
+`oracle-mvp-review-coverage-receipt-hashes/target/distillation-review-v1/coverage-receipt-hashes/{before,after-final}/`.
+Prompts, semantic criteria, reasoning settings, reviewer qualification and the
+final sixty-answer validation retain their existing status.
 
 ## Actual distilled wording: offline preview (October 8)
 
