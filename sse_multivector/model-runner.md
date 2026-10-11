@@ -1230,6 +1230,15 @@ The adapters and construction guards validate the supplied output schema, meanin
 source hashes and receipts. Mechanical acceptance does not establish semantic
 accuracy; automatic continuation keeps its semantic review status explicit.
 
+Automatic continuation selects the latest input/output-bound verdict per role,
+with a user verdict taking precedence over an agent verdict. Native review
+`current` records matching hashes, so an earlier rejection on the same unchanged
+output remains in history but does not override a later acceptance. An effective
+reject or uncertain verdict still holds the incoming entry. For exact reused
+answers, the receiving experiment and the original producer receipt are checked
+separately: an acceptance at one does not erase an effective rejection or
+uncertainty at the other. Receipts, outputs and review history remain unchanged.
+
 `prepare-canonical-selection-trial` takes a completed raw schema-2 trial and a
 schema-2 selection definition with `max_choices`, `max_entries`,
 `local_candidate_limit`, `comparison_policy` and optional `history_root`.
