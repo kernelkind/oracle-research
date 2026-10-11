@@ -3209,3 +3209,83 @@ stage caps and the existing persistent20000 counter. Check actual proofs and
 fresh identical-request repeats before attributing any gain to either mechanism.
 No Bootstrap generation, hierarchy construction or external-session message.
 Usage source: hierarchy-compare-v142-v144-scope-cue-usage-v1.json.
+
+Both gates complete:104 valid comparisons in108 actual attempts, including four
+warmups, with no reuse, retries, failures or missing usage. Native full
+API-equivalent catalog cost is $0.9819. Persistent allowance:16872/20000 at this
+checkpoint. Neither candidate is adopted.
+
+V142 core:19 accept/6 reject/8 qualified; controls:11 accept/2 reject/6 qualified.
+The core still imports a human eater in042 forward and misses the ongoing
+recipient/audience alternatives in070 forward.018 reverse fails to correct an
+inedible prop to a genuine edible display bagel.022 forward treats ring shape as
+necessary despite recognized holeless bagels and restricts the other kind to only
+pantry staples.008 forward and066 reverse provide otherwise valid counterexamples
+but violate this version's mandatory identity-priority question procedure; those
+are procedure failures, not established wrong labels.029's control correction
+supplies a subjective experiencer but silently identifies it as a person without
+proving that requirement. Supported nulls are accepted when their decisive issue
+is demonstrated. Three core reversals and one forward chain conflict remain;
+controls have one reversal. These are consistency failures, not opposing gold.
+
+V144 core:19 accept/5 reject/9 qualified; controls:11 accept/4 reject/4 qualified.
+041/042 forward still import human participants; both070 orientations fail to
+close the recipient/audience boundary.107 forward excludes saccharin on its lack
+of nourishment without closing nourishing-food composition coverage. All029
+controls omit the identity test;031's categorical animal-feed rejection lacks a
+corrected concrete consumer case.032 supplies such a case but the particular
+author, dinner-role and nourishment implications remain qualified. Four core
+reversals and one forward chain conflict remain; controls have one reversal.
+Unresolved wording is not converted to a preferred negative. Independent device
+design and generic commodity manufacture do not inherit a qualifying consumable
+topic merely through possible association; those negative guard proofs pass.
+
+Every case has a native hash-bound owner assessment. Qualified boundaries include
+Food/water, contact/audience, particular Author/person identity and some producer
+kind restrictions. Totals mix proof, procedure and qualification assessments;
+they are not semantic accuracy estimates or evidence of a causal improvement.
+
+### V146/V148/V149: separate framing, positive prerequisites and fixed entities
+
+V146 branches from V142 and changes only its opening to refutation-first framing.
+Whole-child admission, all-parent exclusion, positive coverage, null results and
+canonical consequences are unchanged. It does not require a negative relation.
+
+V145 instead relocates the mandatory outside-identity/consumer test from every
+recorded question to every positive coverage conclusion and required positive
+canonical consequence. A complete counterexample already refutes its direction;
+further tests there add no evidence. V148 corrects V145's ambiguous 'Otherwise'
+transition before dispatch. Questions may test any applicable condition, but a
+positive justification still must explicitly test absent identity/consumer
+requirements before proving universal coverage. Both unrun intermediate and
+tested candidate definitions remain preserved. Earlier V142 procedure judgments
+retain their original contract.
+
+V147 adds a particular-entity paragraph to V142. Independent preflight finds its
+initial prohibition on any different entity too broad: a general Mental-states
+child can admit another person's state outside a particular author's parent.
+V149 scopes identity preservation to admission under a particular-entity CHILD.
+An unknown material property cannot be assigned merely to obtain a result;
+irrelevant omissions and necessarily established coverage do not force null.
+General kinds still admit qualifying different instances. This is a Compare
+interpretation test, not a producer-definition repair or a Bootstrap test.
+
+A blind review, reading only fixed inputs and instructions, identifies the
+actual029 wording as 'Author's sleepiness today', which ordinarily fixes a
+particular author/day. Replacing that author with an arbitrary hypothetical
+chimp does not demonstrate admission; meanwhile an unrelated person's mental
+state can escape that particular topic. The actual author's person identity
+remains unproved unless the wording necessarily establishes it. These are agent
+assessments, not new human gold. The generic animal-fasting and animal-ketosis
+tests remain admissible if they satisfy their whole child meanings.
+
+Next controlled stage: complete33-core/19-control gates for V146 and V148;
+V149's14-core/6-control fixed-entity and consumer/guard panel; and a fresh V142
+baseline repeat of041/042/053/070 both ways plus009/031/032 snapshots. Expected
+135 comparisons plus eight warmups:143 actual attempts absent retries or reuse.
+All native inputs, producer receipts, ASv6.100/Bootstrap-v96 qualification status,
+runner identity and diagnostic schema remain frozen. No source evidence enters
+Compare; no Bootstrap inference, hierarchy build or external message follows.
+Definitions and production-example checks precede dispatch. Independent native
+reviews inspect concrete proofs, reversals and consequences, not labels alone.
+Usage source: hierarchy-compare-v146-v149-controlled-usage-v1.json.
