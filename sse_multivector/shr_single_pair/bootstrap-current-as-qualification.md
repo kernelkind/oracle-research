@@ -13,6 +13,7 @@ it does not introduce browsing preferences or hierarchy-shaping requirements.
 [BBv6](Hierarchy-bootstrap-broad-v6.md) is the current development draft, tested
 on the [focused stock case below](#bbv6-general-activity-versus-particular-participant)
 and its [fresh repeat and person-specific control](#unchanged-bbv6-stock-repeat-and-person-specific-control),
+plus the [two named-topic checks](#unchanged-bbv6-named-topic-checks),
 but not generally qualified. BBv5's four-case panel and unchanged repeat remain evidence.
 The user
 corrected the baseline to [Bootstrap-v109](Hierarchy-bootstrap-v109.md).
@@ -262,9 +263,51 @@ schema and cache settings. Native receipts and exact post quotes validate.
 No prompt edit, Compare inference, hierarchy build or
 activation occurred.
 
-Next proposed check: evaluate the unresolved named-topic boundaries for Rome
-and Jesús Molina under unchanged BBv6 before considering another revision.
-Those tests have not started.
+The user approved the proposed named-topic checks. Their results follow.
+
+#### Unchanged BBv6 named-topic checks
+
+The shared runner prepared `target/bootstrap-broad-v6-rome-v1` and
+`target/bootstrap-broad-v6-jesus-v1` in the BB worktree. Each inherits its exact
+post, complete original root tree, selected pointer, input hash and evidence
+from the saved v109 ASv6.100 collection. BBv6, medium effort, schema, SSE
+transport and cache prefix match the earlier BBv6 tests. Each answer is fresh;
+saved v109 answers remain baseline metadata outside model input. No source
+entry, post, prompt or supplied meaning was edited.
+
+The coordinating agent and independent read-only reviewer `bb_example_audit`
+give both outputs **qualified accepts** for the focused breadth criterion:
+
+| Selected topic | Resolution and final meaning | Qualification |
+|---|---|---|
+| Rome, root `5` | Resolution chooses the city generally and explicitly treats construction/proverbial use as nonlimiting. The meaning identifies Italy's capital and appends its proverbial use. | The appended use is unnecessary but does not demonstrate exclusion of other information about Rome. BBv5's explicit **here** wording is absent in this draw. |
+| Jesús Molina, root `2` | Resolution covers information about the individual generally. The meaning identifies the jazz pianist and musician, then says his activities and associations **include** the described trio. | The ancillary association and unnamed trio remain imprecise; neither expressly imposes musician-role-only or trio-only coverage. His exact role in the trio is not invented. |
+
+Do not equate an appended descriptive fact with a demonstrated membership
+restriction. These judgments use each node's own original evidence; they are
+not new human gold or proof that the final definitions are ideal. Earlier
+named-topic uncertainty remains in the BBv5 record. Broad interpretations
+already appeared in those earlier resolutions, so these single-draw accepts
+do not establish a BBv6 wording repair or a causal effect of its participant
+paragraph. Unnecessary application details remain a definition-quality concern.
+
+| Topic | Native case ID | Record SHA-256 |
+|---|---|---|
+| Rome | `bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5` | `84badd14f822a22768ca566561724a846574fdb161c713adc57f26d3bf3e40ae` |
+| Jesús Molina | `bootstrap-230c330dcb874652d5b7ec59af034755a2372e2163a99e062eb3442f823e71f7` | `78a01c5f4a9c99f38b8b93218509f7930c93aa9d59191b5851cfd9a318819409` |
+
+Both answers validate; native agent reviews preserve these qualifications and
+bind them to their exact receipts. Post quotes are verbatim substrings and
+ambiguity/resolution IDs match. Each experiment uses one fresh subscription
+attempt, with no retry, failure, answer reuse or warmup. Both record 4,864
+cached-input tokens. Native API-equivalent costs are $0.0067524 for Rome and
+$0.0065464 for Jesús Molina, excluding earlier producer generation; these are
+not subscription invoices. No Compare calls, hierarchy build, prompt revision
+or activation occurred. Native data remains ignored in the retained worktree.
+
+Next proposed qualification: a small set of complete original ASv6.100 branches
+under unchanged BBv6, reviewing supported breadth and independently generated
+parent/child compatibility separately. This has not started.
 
 ## Existing Bootstrap qualification
 
