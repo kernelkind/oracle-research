@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v6
+# Hierarchy selection by traversal — draft v7
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -8,8 +8,10 @@ the constructor, comparison prompt or existing experiments.
 Place one selected local node in the canonical hierarchy with fewer comparisons.
 Each comparison is local versus canonical, using the existing compare prompt.
 
-The local node's explicit meaning and the canonical graph stay fixed during
-the search. Canonical nodes retain their immutable meanings. Selection trusts
+The local node's explicit meaning stays fixed. Each traversal uses a fixed
+snapshot of the canonical graph. Other local nodes may be placed while that
+traversal runs; its results must be checked against the updated graph before
+placement. Canonical nodes retain their immutable meanings. Selection trusts
 the returned comparison labels.
 
 The hierarchy assumption is: **each canonical node has a fixed meaning, and
@@ -25,8 +27,10 @@ each parent contains its child's entire meaning.** This supplies two shortcuts:
 **`neither` stops traversal down that branch. Continue with other branches.**
 
 Stopping one branch does not prevent reaching a shared descendant through a
-different branch. **Compare each canonical node at most once** for this local
-node; reuse its answer if another path reaches it again.
+different branch. **Compare each canonical node at most once while the
+comparison inputs remain unchanged** for this local node; reuse its answer if
+another path reaches it again. Changed inputs before placement are handled by
+the concurrent-search policy below.
 
 Descendants not reached through another branch remain unchecked. The selection
 policy does not assign them comparison labels. It does not search the stopped
@@ -140,6 +144,37 @@ The local node remains unplaced despite the positive Food answer. Stop its
 search and retain the answers for review; construction continues with other
 local nodes. This retains the current constructor's hold behavior.
 
+## Agreed concurrent-search policy
+
+**Allow up to three active local-node searches. Apply placements one at a time,
+in the original local-node selection order.**
+
+Each search uses a fixed graph snapshot and the agreed traversal rules. A
+finished search waits for earlier selected local nodes to be placed or held.
+Before placing its result:
+
+1. Check the search against the current canonical graph, including earlier
+   placements made since its snapshot was taken.
+2. Reuse exact saved comparisons whose inputs remain unchanged.
+3. Compare with newly added canonical nodes where traversal requires it, and
+   repeat required comparisons whose canonical inputs changed.
+4. Keep the graph fixed during these checks and application of this placement.
+   Other local-node searches can continue using their own snapshots.
+5. Apply the placement through the existing constructor checks, or preserve
+   the graph and hold the local node when those checks prevent placement.
+
+For example, three local nodes search concurrently. The first becomes
+canonical. Before placing the second, account for the new canonical node and
+changed comparison inputs. Before placing the third, account for both earlier
+placements. Every comparison remains local versus canonical.
+
+The experiment runner controls model-request concurrency. The traversal policy
+limits active local-node searches; it adds no separate comparison-call limiter.
+When a local node is placed or held, its slot becomes available for another
+selected local node.
+
+Elapsed time and API cost for this policy have not been measured.
+
 ## Proposed walk
 
 All five comparison actions and the shared-node rule above are agreed. The
@@ -151,8 +186,9 @@ point for further discussion.
 3. Follow the returned label using the table below.
 4. Continue until no comparisons remain along the branches being searched,
    or an `uncertain` answer holds this local node for review.
-5. If the local node is not held, use the resulting relationships for placement,
-   retaining the existing constructor's placement checks.
+5. If the local node is not held, wait for its placement turn and check its
+   results against the updated graph as specified above. Use the resulting
+   relationships for placement, retaining the existing constructor's checks.
 
 | Returned label | Traversal action |
 | --- | --- |
@@ -186,15 +222,16 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Which reached node to compare next, and which comparisons to run concurrently.
+- How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
 
 ## Current implementation
 
 [canonical_graph_search.py](canonical_graph_search.py) currently descends after
-`neither`. That differs from this draft's agreed rule. The implementation and
-its historical results remain documented in
+`neither`, and the constructor processes one local node at a time. These differ
+from this draft's agreed rules. The implementation and its historical results
+remain documented in
 [canonical-graph-search-v1.md](canonical-graph-search-v1.md).
 
 No implementation changes or model calls have been made for this draft.
