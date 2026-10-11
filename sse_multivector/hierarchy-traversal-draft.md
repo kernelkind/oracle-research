@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v11
+# Hierarchy selection by traversal — draft v12
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -237,7 +237,7 @@ This ordering keeps consolidation's inputs current and makes its resulting
 graph available to the next placement. Its effect on elapsed time and comparison
 cost has not been measured.
 
-## Proposed synthetic-parent validation
+## Agreed synthetic-parent validation
 
 **Use the proposed synthetic topic as the incoming node in the same traversal.
 Its proposed children are claims to check, not automatic edges.**
@@ -284,9 +284,10 @@ proposal and its comparison results for review, preserve the local-node
 placement that triggered consolidation, and continue the approved timing
 sequence. Do not rewrite the synthetic meaning during validation to force fit.
 
-This validation policy is a proposal awaiting review. It adds no separate
-semantic-review prompt or exhaustive comparison pass. Required relationships
-can reuse exact answers and the same transitive inferences as ordinary traversal.
+This validation policy is agreed draft design, not an implemented change. It
+adds no separate semantic-review prompt or exhaustive comparison pass. Required
+relationships can reuse exact answers and the same transitive inferences as
+ordinary traversal.
 
 ## Proposed walk
 
@@ -339,7 +340,6 @@ would also contain it by transitivity, conflicting with the Meals answer.
 
 ## Decisions still open
 
-- Whether to adopt the proposed synthetic-parent validation above.
 - How to order canonical comparisons within each local-node search.
 - How existing same-note exclusions and the required mapped-parent comparison
   should interact with branch stopping.
@@ -355,7 +355,7 @@ remain documented in
 The fixed-meaning comparison input already accepts `local.subject` and
 `local.meaning` without original-note evidence. The constructor's
 [`_placement` function](canonical_trial.py), however, still builds new nodes
-from original note entries. The proposal above reuses the comparison contract;
+from original note entries. The design above reuses the comparison contract;
 synthetic insertion is not currently implemented by this draft.
 
 No implementation changes or model calls have been made for this draft.
