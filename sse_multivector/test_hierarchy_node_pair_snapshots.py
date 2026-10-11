@@ -28,6 +28,9 @@ class HierarchyNodePairSnapshotTests(unittest.TestCase):
         self.historical_source()
         state_path = self.root / 'trial/state.json'
         original = state_path.read_bytes()
+        self.cli('prepare', 'before-baseline', '--spec', self.spec)
+        self.cli('run', 'before-baseline', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(
+            dict(meaning='Fixed food meaning', relation='canonical_contains_local', reason='Fixture'))})
         calls = len(self.calls())
         self.prepare()
         case = self.show()['cases'][0]
@@ -139,16 +142,8 @@ class HierarchyNodePairSnapshotTests(unittest.TestCase):
         self.assertFalse((self.root / 'bad-history').exists())
 
     def test_before_step_excludes_support_from_later_equivalence(self):
-        from sse_multivector import test_canonical_trial as roots
-        roots.CanonicalTrialTests.setup_trial(self, schema_version=2, root_order=[
-            {'note_id': 'n1', 'number': '1'}, {'note_id': 'n2', 'number': '2'}])
-        for case, answer in (
-                ('bootstrap', {'meaning': 'Fixed cooking meaning'}),
-                ('C001', {'meaning': 'Fixed food meaning', 'relation': 'equivalent',
-                          'reason': 'Equivalent fixture'})):
-            state = json.loads((self.root / 'trial/state.json').read_text())
-            self.cli('run', state['experiment'], env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
-            self.cli('advance-canonical-trial', 'trial', '--meaning-case', case, '--comment', 'Reviewed fixture')
+        from sse_multivector.test_canonical_traversal import saved_traversal_fixture
+        saved_traversal_fixture(self, equivalent=True)
         self.write('source.json', {'schema_version': 2, 'corpus': 'notes.json',
                    'canonical_states': {'before': {'trial': 'trial/state.json', 'before_step': 1},
                                         'final': {'trial': 'trial/state.json'}},

@@ -1,14 +1,8 @@
-"""Opt-in comparison shortlist followed by its complete eligible implications.
-
-Retrieval nominates comparisons only. Omitted unrelated relationships remain
-unknown, and every implied eligible relationship needs a native answer.
-"""
+"""Read and validate saved shortlist comparison evidence; no construction."""
 import hashlib
 from pathlib import Path
-
-from . import canonical_selection_ranking as ranking
 from . import experiment as workflow
-
+from . import canonical_selection_ranking as ranking
 
 MAX_CANONICAL_ROWS = 512
 
@@ -45,38 +39,6 @@ def load_policy(path):
                 raise ValueError('saved comparison policy source changed: ' + filename)
     return dict(schema_version=1, path=str(path), limit=source['limit'],
                 subject_probe=None if probe is None else str(probe), sources=sources)
-
-
-
-def prepare_policy(state, path=None):
-    """Attach a frozen policy and validate saved heading coverage before inference."""
-    config = load_policy(path) if path is not None else state.get('comparison_policy')
-    if config is None:
-        return
-    selection = state.get('candidate_selection')
-    if (state['schema_version'] != 2 or not state.get('independent_meanings')
-            or (selection and selection.get('schema_version') != 2) or 'shape' in state):
-        raise ValueError('comparison policy requires a raw independent-meaning trial without browsing selection')
-    if state.get('comparison_policy') and state['comparison_policy'] != config:
-        raise ValueError('cannot replace a frozen canonical comparison policy')
-    state['comparison_policy'] = config
-    state['sources'].update(config['sources'])
-    if config['subject_probe'] is None:
-        return
-    from . import canonical_trial as trial
-    corpus = {note['note_id']: note for note in workflow.read(state['corpus'])['notes']}
-    for queued in trial.execution_queue(state)[state['index']:]:
-        local = queued['local']
-        subjects = corpus[local['note_id']]['subjects']
-        entry = next(row for row in subjects if row['number'] == local['number'])
-        ancestors = [row['subject'] for row in subjects
-                     if local['number'].startswith(row['number'] + '.')]
-        eligible = trial._eligible(state, local, queued['mapped_parent'])
-        if len(eligible) > MAX_CANONICAL_ROWS:
-            raise ValueError('canonical comparison requires at most 512 candidates')
-        ranking.rank_candidates(entry['subject'], '',
-            [{key: node[key] for key in ('id', 'subject', 'meaning')} for node in eligible],
-            subject_probe=config['subject_probe'], query_ancestors=ancestors)
 
 
 def _binding(state, local, mapped_parent, eligible, meaning):
@@ -122,51 +84,6 @@ def check_state(state):
             raise ValueError('canonical verification includes an ineligible or repeated comparison')
 
 
-def select(state, local, mapped_parent, meaning, eligible):
-    if len(eligible) > MAX_CANONICAL_ROWS:
-        raise ValueError('canonical comparison requires at most 512 candidates')
-    key = str(state['index'])
-    records = state.setdefault('comparison_policy_steps', {})
-    if key not in records:
-        note = next(row for row in workflow.read(state['corpus'])['notes']
-                    if row['note_id'] == local['note_id'])
-        entry = next(row for row in note['subjects'] if row['number'] == local['number'])
-        ancestors = [row['subject'] for row in note['subjects']
-                     if local['number'].startswith(row['number'] + '.')]
-        order, provenance = ranking.rank_candidates(entry['subject'], meaning['meaning'],
-            [{k: node[k] for k in ('id', 'subject', 'meaning')} for node in eligible],
-            subject_probe=state['comparison_policy']['subject_probe'], query_ancestors=ancestors)
-        if any(state['sources'].get(path) != digest
-               for path, digest in provenance['sources'].items()):
-            raise ValueError('comparison retrieval used an unfrozen source')
-        if mapped_parent is not None:
-            order = [mapped_parent] + [identifier for identifier in order if identifier != mapped_parent]
-        queried = order[:state['comparison_policy']['limit']]
-        plan = dict(schema_version=1, binding=_binding(state, local, mapped_parent, eligible, meaning),
-                    queried=queried, omitted=[node['id'] for node in eligible if node['id'] not in queried],
-                    omitted_relation='unknown', provenance=provenance)
-        records[key] = dict(plan=plan, sha256=workflow.inputs.digest(plan), phase='shortlist',
-                            comparison_phases=[], guard_expected={})
-    check_state(state)
-    record = records[key]
-    queried = record['plan']['queried'] if record['phase'] == 'shortlist' else list(record['guard_expected'])
-    by_id = {node['id']: node for node in eligible}
-    return [by_id[identifier] for identifier in queried]
-
-
-def bind_experiment(state, experiment):
-    record = state['comparison_policy_steps'][str(state['index'])]
-    phase = dict(phase=record['phase'], experiment=str(experiment),
-                 queried=(record['plan']['queried'] if record['phase'] == 'shortlist'
-                          else list(record['guard_expected'])))
-    phases = record['comparison_phases']
-    if phases and phases[-1]['phase'] == phase['phase']:
-        if phases[-1] != phase:
-            raise ValueError('canonical comparison experiment differs from frozen phase')
-    else:
-        phases.append(phase)
-
-
 def checked_cases(state, current_cases=None):
     """Re-read all phase receipts before application, preserving their origin."""
     check_state(state)
@@ -199,7 +116,7 @@ def checked_cases(state, current_cases=None):
         if any(row['status'] == 'invalid_receipt' for row in rows):
             raise ValueError('invalid canonical comparison phase receipt')
         if any(row['status'] == 'failed' for row in rows):
-            from .canonical_continuation import _failure_receipts
+            from .canonical_receipts import _failure_receipts
             if _failure_receipts(Path(phase['experiment']), rows) is None:
                 raise ValueError('invalid canonical comparison failure receipt')
         if phase['experiment'] != state['experiment'] and any(row['status'] != 'valid' for row in rows):
@@ -233,29 +150,3 @@ def _implied(record, nodes, target):
         if relation is not None:
             expected[identifier] = relation
     return expected
-
-
-def start_verification(state, nodes, target, cases):
-    """Freeze only unqueried eligible positive implications of the proposal."""
-    record = state['comparison_policy_steps'][str(state['index'])]
-    if record['phase'] != 'shortlist':
-        return False
-    expected = _implied(record, nodes, target)
-    if not expected:
-        return False
-    answers = [{'id': row['id'], 'output': row.get('parsed'), 'receipt': row.get('receipt')}
-               for row in cases]
-    record.update(phase='verification', guard_expected=expected, shortlist_answers=answers,
-                  verification_sha256=workflow.inputs.digest(dict(
-                      plan_sha256=record['sha256'], expected=expected, shortlist_answers=answers)))
-    return True
-
-
-def verification_hold(state, cases):
-    record = state['comparison_policy_steps'][str(state['index'])]
-    for case in cases:
-        expected = record['guard_expected'].get(case['id'])
-        if expected is not None and case['status'] == 'valid' and case['parsed']['relation'] != expected:
-            return (f"verification contradiction at {case['id']}: graph implies {expected}, "
-                    f"answer says {case['parsed']['relation']}; manual review required")
-    return None

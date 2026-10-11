@@ -1321,80 +1321,50 @@ reports and comparisons. Link it to the exact hierarchy output and the frozen
 inputs, prompt/model settings, construction policy and native receipts used to
 generate it. The naming format remains open.
 
-The native canonical workflow is available through the shared launcher. Oracle
-owns input adapters, construction, comparison selection, menu shaping and
-inspection; the sibling experiment-runner continues to own execution, retries,
-caching and provider transport. No separate hierarchy execution engine is
-installed. Read command help from the canonical checkout:
+The standalone canonical constructor is available through the shared launcher.
+Oracle owns construction, comparison selection, consolidation and inspection;
+the experiment runner owns execution, retries, caching and provider transport.
+There is one construction algorithm, with no legacy policy switch. Read help
+from a task worktree:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-../experiment-runner/bin/experiment-runner prepare-canonical-trial --help
-../experiment-runner/bin/experiment-runner prepare-canonical-selection-trial --help
-../experiment-runner/bin/experiment-runner continue-canonical-trial --help
+../experiment-runner/bin/experiment-runner prepare-canonical-traversal --help
+../experiment-runner/bin/experiment-runner advance-canonical-traversal --help
 ```
 
-`prepare-canonical-trial` accepts a schema-2 source naming `corpus`, selected
-original `roots` (`note_id` and `number`), `bootstrap_spec`, `comparison_spec`
-and `independent_meanings: true`. Bootstrap-v96 uses
-`local_schema_version: 4`, which supplies the selected entry in its complete
-original root hierarchy together with the post. Start with one selected original
-root per note; `--base-trial` appends unused original roots to a completed raw
-construction, including additional roots from existing notes.
-`--history-root` freezes the directory searched for exact native answer reuse.
-Current data must originate from ASv6.100 or an explicitly approved later AS
-version. Pre-ASv6.100 inputs and downstream results remain deprecated.
+`prepare-canonical-traversal` accepts a schema-1 definition containing `corpus`,
+saved `note_ids`, `local_schema_version`, `bootstrap_spec`, `comparison_spec`
+and `consolidation_spec`. Current data must originate from ASv6.100 or an
+explicitly approved later AS version. Prompt/schema files, corpus and constructor
+source are frozen. Run returned experiment directories through ordinary `run`,
+then call `advance-canonical-traversal` to collect validated native receipts and
+prepare the next work. Both constructor commands are offline; only `run` makes
+model calls, under the task's authorization and existing budget admission.
 
-Each incoming local entry first receives an independently generated explicit
-meaning. Comparison then copies that meaning unchanged against canonical nodes
-whose meanings are already fixed. Supplied local posts and original hierarchy
-evidence remain separate from canonical graph evidence. Bootstrap-v96 and
-Compare-v48 are the exact evaluated versions linked from the
-[fresh fifty-note findings](shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md);
-this integration changes neither prompt nor treats its saved outcomes as gold.
-The adapters and construction guards validate the supplied output schema, meaning-copy contract,
-source hashes and receipts. Mechanical acceptance does not establish semantic
-accuracy; automatic continuation keeps its semantic review status explicit.
+Select L1 roots first, then L2 and deeper local levels. At each level, rotate
+across notes in saved order, one entry per note per pass. Up to three searches
+can overlap on fixed graph snapshots; placements follow selection order.
+Before placement, account for graph changes and reuse only exact unchanged
+comparisons. Sharing a note does not exclude a canonical comparison. Mapped
+original-parent containment may follow from traversal or transitive inference;
+an unchecked or contradicted requirement holds the local entry without reopening
+a pruned branch.
 
-Automatic continuation selects the latest input/output-bound verdict per role,
-with a user verdict taking precedence over an agent verdict. Native review
-`current` records matching hashes, so an earlier rejection on the same unchanged
-output remains in history but does not override a later acceptance. An effective
-reject or uncertain verdict still holds the incoming entry. For exact reused
-answers, the receiving experiment and the original producer receipt are checked
-separately: an acceptance at one does not erase an effective rejection or
-uncertainty at the other. Receipts, outputs and review history remain unchanged.
+Each selected local node receives an independently generated immutable meaning.
+Every comparison is local versus canonical with the fixed meanings and recursive
+canonical branch evidence. `neither` stops that branch; `uncertain` holds the
+local entry. Containment and equivalence reuse established ancestor/descendant
+relationships. Prospective placement retains cycle, returned-relation and
+settled-answer checks. A canonical addition leaving six or more siblings triggers
+consolidation. A proposed synthetic title/meaning must pass ordinary traversal
+and grouping checks; null or rejection leaves the triggering placement intact.
+Complete triggered consolidation before applying the next local placement.
 
-`prepare-canonical-selection-trial` takes a completed raw schema-2 trial and a
-schema-2 selection definition with `max_choices`, `max_entries`,
-`local_candidate_limit`, `comparison_policy` and optional `history_root`.
-Coverage and individual-note isolation take priority; otherwise canonical topics
-rotate as discovery queries for unused original entries. This selects work,
-not semantic relationships. Deeper entries remain eligible even if their
-original parent was held or their original branch currently represents one
-note. Raw crowding does not imply the finished menu needs more construction.
-`max_entries` bounds processed original entries, not provider attempts.
-
-The comparison policy is a separate schema-1 definition with `limit` and
-optional `subject_probe`. Text and saved SSE nominate candidates; they never
-establish containment or equivalence. The mapped original parent is included
-when eligible. The local meaning and before graph stay fixed through both the
-initial shortlist and every required verification of omitted relationships
-that a positive placement would imply. Equivalence checks both directions.
-Contradiction or uncertainty holds the entry without applying the proposal.
-Invalid receipts refuse application; incomplete verification stays pending.
-Untested unrelated relationships
-remain unknown. Existing same-note exclusions, mapped-parent exception,
-cycle checks and settled-relationship guards continue to apply.
-
-Prepared phases run with the shared launcher's `run` command. Advance a reviewed
-phase with `advance-canonical-trial`; `--concurrency` affects subsequent prepared
-experiments. `continue-canonical-trial` provides bounded automatic continuation:
-`--max-nodes` freezes the incoming-entry range, `--max-new-attempts` is a
-persistent stage cap including retries, and `--attempt-budget` names an existing
-shared counter. Resume with identical limits; never reset spent counters.
-An unrun verification remains pending when a cap is reached. Inference still
-requires the task's existing authorization and budget admission.
+Producer reviews remain bound to native input/output hashes. The latest user
+verdict takes precedence over the latest agent verdict. A current rejection or
+uncertainty at a receiving experiment or an exact reused producer holds the
+entry. Output mechanics and graph checks do not establish semantic accuracy.
+See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
 
 Use these offline commands after construction:
 
@@ -1415,22 +1385,12 @@ requirement to find or apply every known regrouping or shortcut, or to conduct a
 final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
-[traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
-addition leaves six or more siblings. Its stopping-check timing is provisionally
-approved: check after each placement and all triggered consolidation against the
-current hierarchy and the whole selected corpus. When both conditions pass,
-stop dispatching new searches and comparison calls, save the answers of calls
-already dispatched, and preserve the graph and unfinished searches for later
-resumption. The opt-in `prepare-canonical-traversal` and
-`advance-canonical-traversal` commands implement these rules; both are offline,
-with returned experiments executed through ordinary `run`. They rotate across
-notes within each original local level, allow three overlapping local searches,
-serialize guarded placements and finish triggered consolidation before the next
-placement. Their specs and null-or-object consolidation adapter are documented
-in the linked design. Existing legacy constructor behavior and frozen audit
-bounds remain unchanged, so saved sibling-limit violations still describe their
-original evaluation. The
-constructor does not solve menu optimization
+[constructor](hierarchy-traversal-draft.md) calls consolidation after an addition
+leaves six or more siblings. Its stopping-check timing remains provisional:
+check individual note access and strict note-set narrowing after each placement
+and all triggered consolidation against the whole selected corpus. When both
+pass, stop dispatching new searches/comparisons and save already-dispatched
+answers without further graph changes. The constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 
@@ -6813,22 +6773,12 @@ fixtures. Do not rerun model calls merely to add a preparation capability.
 
 ### Canonical graph-search comparisons
 
-`prepare-canonical-trial`, `prepare-canonical-child-trial` and
-`fork-canonical-trial` accept opt-in `--graph-search`. The constructor starts at
-canonical roots, prepares the next comparisons from returned relationship labels,
-and applies one placement after traversal. Native exact reuse and receipt checks
-cover every phase; graph-derived relationships remain separate from model outputs.
-Each phase retains the same graph and independently fixed local meaning. Existing
-same-note eligibility, required mapped-parent and placement checks still apply.
-
-`fork-canonical-trial SOURCE --output DEST --at-step INDEX --graph-search`
-restarts from the saved graph before one original entry, retaining its independently
-generated meaning and answer history without changing the source trial. Only
-`run`, `continue-canonical-trial` or an explicit `--run-next` dispatches requests.
-See [graph-search selection](canonical-graph-search-v1.md) for the tested native
-commands and saved ASv6.100 evidence. The scalability experiment failed and
-was terminated by the user before the fifty-note construction finished. No
-graph-search construction remains active; the default stays guarded16.
+`GraphSearch(nodes)` implements the agreed traversal directly, with no legacy
+mode, same-note filter, ranking shortlist or forced mapped-parent comparison.
+The [standalone constructor](hierarchy-traversal-draft.md) uses it for ordinary
+local nodes and synthetic consolidation proposals. Historical scalability
+measurements remain in [the graph-search findings](canonical-graph-search-v1.md);
+they used the former traversal and do not measure the current constructor.
 
 ### Fixed-meaning Compare qualification
 

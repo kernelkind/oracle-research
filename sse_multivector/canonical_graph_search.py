@@ -1,8 +1,7 @@
 """Select local-versus-canonical comparisons by traversing a fixed graph.
 
 Comparison labels are trusted. Positive containment propagates through existing
-edges. The traversal-v24 policy prunes neither and holds uncertain; the legacy
-policy preserves frozen trials' former traversal. No ranking, inference
+edges. Traversal prunes neither and holds uncertain. No ranking, inference
 transport, prompt changes or fabricated model answers belong in this selector.
 """
 from graphlib import CycleError, TopologicalSorter
@@ -20,10 +19,7 @@ class GraphSearch:
     callers keep graph/meaning/receipt bindings and placement checks themselves.
     """
 
-    def __init__(self, nodes, *, eligible=None, required=(), policy='legacy'):
-        if policy not in ('legacy', 'traversal-v24'):
-            raise ValueError('unknown graph-search policy')
-        self.policy = policy
+    def __init__(self, nodes):
         self._held = False
         self.parents = {}
         for node in nodes:
@@ -40,10 +36,6 @@ class GraphSearch:
             self.order = tuple(TopologicalSorter(self.parents).static_order())
         except CycleError as error:
             raise ValueError('canonical cycle') from error
-        self.eligible = set(self.parents if eligible is None else eligible)
-        self.required = set(required)
-        if self.eligible - self.parents.keys() or self.required - self.eligible:
-            raise ValueError('eligible and required comparisons must identify canonical nodes')
         self.children = {k: [] for k in self.parents}
         for identifier, parents in self.parents.items():
             for parent in parents:
@@ -69,40 +61,25 @@ class GraphSearch:
             stack.extend(branches[other])
 
     def candidates(self):
-        """Return each currently reachable eligible node once, without a cap."""
+        """Return each currently reachable node once, without a cap."""
         if self._held:
             return []
         while True:
-            skipped = [k for k in self._queue if k not in self.eligible
-                       or k in self._inferred and (self.policy != 'legacy' or k not in self.required)]
+            skipped = [k for k in self._queue if k in self._inferred]
             if not skipped:
                 break
             for identifier in skipped:
                 del self._queue[identifier]
                 self._visited.add(identifier)
-                if (identifier not in self.eligible
-                        or self._inferred[identifier] == 'canonical_contains_local'):
+                if self._inferred[identifier] == 'canonical_contains_local':
                     self._expand(identifier)
-        if self._queue:
-            if self.policy == 'traversal-v24':
-                blocked = {}
-                for identifier in self.order:
-                    blocked[identifier] = any(p in self._queue or blocked[p]
-                                              for p in self.parents[identifier])
-                ready = [k for k in self.parents if k in self._queue and not blocked[k]]
-            else:
-                ready = list(self._queue)
-            self._selected.update(ready)
-            return ready
-        if self.policy == 'traversal-v24':
-            return []
-        # Preserve native requirements, such as comparing the mapped original
-        # parent, even when its relationship followed from an earlier answer.
-        for identifier in self.parents:
-            if identifier in self.required and identifier not in self._answers:
-                self._queue[identifier] = None
-        self._selected.update(self._queue)
-        return list(self._queue)
+        blocked = {}
+        for identifier in self.order:
+            blocked[identifier] = any(p in self._queue or blocked[p]
+                                      for p in self.parents[identifier])
+        ready = [k for k in self.parents if k in self._queue and not blocked[k]]
+        self._selected.update(ready)
+        return ready
 
     def record(self, labels):
         """Consume a batch from the exposed frontier, never a speculative pair."""
@@ -119,7 +96,7 @@ class GraphSearch:
                 self._infer(identifier, 'canonical_contains_local', self.parents)
             if relation in ('local_contains_canonical', 'equivalent'):
                 self._infer(identifier, 'local_contains_canonical', self.children)
-            elif relation == 'canonical_contains_local' or self.policy == 'legacy':
+            elif relation == 'canonical_contains_local':
                 self._expand(identifier)
             elif relation == 'uncertain':
                 self._held = True
@@ -128,7 +105,6 @@ class GraphSearch:
         pending = self.candidates()
         result = dict(queried=list(self._answers), pending=pending, complete=not pending,
                     inferred={k: v for k, v in self._inferred.items()
-                              if k in self.eligible and k not in self._answers})
-        if self.policy == 'traversal-v24':
-            result['held'] = self._held
+                              if k not in self._answers})
+        result['held'] = self._held
         return result

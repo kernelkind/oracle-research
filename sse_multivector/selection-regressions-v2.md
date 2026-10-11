@@ -51,8 +51,9 @@ not be attached to this ASv6.100 suite.
 
 [`--method graph-search`](canonical-graph-search-v1.md) traverses the canonical
 graph using reached saved comparison labels instead of a ranked shortlist. It
-needs no vectors and has no shortlist cap. The same eligible/mapped-parent and
-native placement checks remain in force; unsaved frontier comparisons stay
+needs no vectors and has no shortlist cap. The current traversal uses every reached canonical node, stops a branch on
+`neither`, and holds on `uncertain`; mapped-parent fit is checked at placement.
+Unsaved frontier comparisons stay
 pending and prevent an overall savings claim. The active constructor has not
 yet adopted this selector.
 

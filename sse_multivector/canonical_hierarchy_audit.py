@@ -95,17 +95,17 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
     for root in roots:
         charge(len(represented[root]))
         reachable_notes.update(represented[root])
-    violations = []
+    violations, choice_warnings = [], []
     if len(roots) > max_choices:
-        violations.append({'kind': 'too_many_roots', 'count': len(roots)})
+        choice_warnings.append({'kind': 'too_many_roots', 'count': len(roots)})
     missing = sorted(selected - reachable_notes)
     if missing:
         violations.append({'kind': 'unreachable_notes', 'note_ids': missing})
     equal_edges, proper_edges = [], []
     for parent in order:
         if len(children[parent]) > max_choices:
-            violations.append({'kind': 'too_many_children', 'node': parent,
-                               'count': len(children[parent])})
+            choice_warnings.append({'kind': 'too_many_children', 'node': parent,
+                                    'count': len(children[parent])})
         if children[parent] and len(represented[parent]) == 1:
             violations.append({'kind': 'single_note_parent', 'node': parent})
         for child in children[parent]:
@@ -193,7 +193,7 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
                              'Intended meaningful topic groups are unspecified; labels are not graded.'},
         'semantic_assessment': {'graded': False,
             'qualification': 'This structural audit does not establish semantic validity or completion.'},
-        'violations': violations}
+        'violations': violations, 'choice_warnings': choice_warnings}
     canonical_trial._check(state)
     if state_path.read_bytes() != state_bytes or corpus_path.read_bytes() != corpus_bytes:
         raise ValueError('canonical audit source changed while auditing')
