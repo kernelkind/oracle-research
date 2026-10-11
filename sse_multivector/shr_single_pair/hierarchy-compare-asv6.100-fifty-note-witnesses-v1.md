@@ -1326,3 +1326,58 @@ bagel case (cap 3). Conditions must be coherent across orientations and branch
 positions; honest unresolved conditions are allowed when they do not undermine
 a decisive valid counterexample. A pass expands to the ten other cases and
 fresh repeats before broad qualification. All attempts remain inside 20,000.
+
+### Pre-output broader-panel qualification boundaries
+
+Two independent read-only reviews examined all 35 isolated original pairs,
+using only the frozen meanings, before another broad candidate run. These are
+provisional agent controls, not new human gold and never part of model input.
+Exact prior human judgments 024/025 remain neither.
+
+Strong candidate checks include neither for003–008,011,013–015,017–018,020–021,
+023–025 and033; human-consumption Food broader than human-nourishment Food009;
+Meals covering meal-defined Food dishes019; Bread covering bagel-making022;
+Fatigue covering the specific tiredness meanings028/030; Food dishes covering
+specific dinner lamb/broccoli031/032; Food preparation covering whole cooking
+appliances034. Each requires its actual own wording, not general subject names.
+
+Preserve open interpretations:001 eaten versus drunk;002 whether a whole Dinner
+topic supplies nourishing-eating purpose;010 Coffee's intended consumer;012
+generic Bread preparation versus explicit flour-and-water Bread;016 preparation
+as alteration;026 unknown purpose/consumer of one particular author's coffee;
+027/029 cognitive/emotional versus bodily fatigue/sleepiness;035 Cookware's
+trailing meal-preparation purpose versus Stockpots' stock-making purpose.
+Reviewers do not certify one label for these. Legitimate language ambiguity must
+not be counted as an error merely because it differs from a historical answer.
+These boundaries also limit claims from 102 witnesses: 35 unique isolated pairs
+and 32 snapshot placements are not 102 independently labeled semantic examples.
+
+### V7 diagnostic failure and v78 production-contract qualification
+
+V7's six labels are supported and bagel scope checks agree across branch
+positions. Independent review nevertheless rejects Eating forward: it declares
+mouth intake established for the whole Food scope while its own explanation
+admits other Food aspects do not satisfy that condition. Reverse correctly
+finds cultivation/preparation counterexamples. Eating reverse also retains an
+intention qualification: a wild animal's food having natural origin does not
+exclude that animal intending consumption. Neither label remains supported by
+the separate intended-human-consumer counterexample. No v7 remaining cases or
+repeat were dispatched.
+
+The auxiliary condition matrix demanded assertions for nondecisive conditions
+even after a direction was disproved. The actual user-approved Compare contract
+already asks for one decisive counterexample per rejected direction. V78 ports
+the tested interpretation/role changes into that five-field contract. It keeps
+the entire v77 Output section/schema unchanged, requires independent variations
+of roles/intended use/purpose/consumers, and stops unnecessary coverage claims
+after a decisive counterexample. Positive coverage still requires all parent
+conditions over the whole child; no guard or semantic boundary is relaxed.
+
+This is an intentional procedure/output-format change, not evidence that hidden
+scope variation disappeared. V78 must be qualified independently. Initial gate:
+all 15 original frozen cases (cap 31) plus the native Food-only isolation (cap 3).
+Require valid counterexamples, supported full-scope positives, stable reversals
+and coherent canonical consequences, with no invented intention. Then fresh
+repeat 15 (cap 31), before full 102 source-bound qualification. Source-only data,
+ASv6.100/B96 meanings, model and caching remain fixed. No Bootstrap/hierarchy
+work, new allowance or external messaging is included.
