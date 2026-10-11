@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "proposal_first_draw": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v5-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v5-expanded-first-v1"
+    ],
+    "proposal_fresh_repeat": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v5-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v5-expanded-repeat-v1"
+    ]
+  }
+}

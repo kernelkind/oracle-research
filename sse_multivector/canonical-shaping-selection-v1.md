@@ -1,13 +1,14 @@
 # Selecting local entries to reduce overcrowding
 
-The latest user-authorized work drafts experimental
+The latest user-authorized work tests experimental
 [Hierarchy-consolidation-v5](shr_single_pair/Hierarchy-consolidation-v5.md)
-to check whole-sibling fit beneath the supplied parent before choosing a grouping.
-It has offline integrity checks but no model trial yet.
+on the same nine sibling groups in two independent draws. The early check has
+not resolved the recurring whole-child and parent-fit defects.
 See [the shared wording contract](#synthetic-parent-draft-and-shared-definition-wording),
 [the completed containment screen](#expanded-consolidation-v3-containment-screen),
-the [completed v4 proposal panel](#consolidation-v4-proposal-panel), and
-[the v5 revision record](#consolidation-v5-draft).
+the [completed v4 proposal panel](#consolidation-v4-proposal-panel),
+[the v5 revision record](#consolidation-v5-draft), and
+[the completed v5 proposal panel](#consolidation-v5-proposal-panel).
 It remains isolated and has not changed the active construction policy.
 
 The user approved selecting promising unused local entries when a canonical
@@ -2155,8 +2156,8 @@ Bread or Pancakes meaning and adding a meal restriction to the new parent.
 The final check still requires the proposed meaning to fit wholly beneath the
 supplied parent and be narrower rather than equivalent. Whole-child coverage,
 the complete child list, a useful proper subset and null behavior remain in
-place. This is an untested mechanism hypothesis, not evidence that v5 has
-resolved either observed defect.
+place. The panel below tests this mechanism hypothesis; the revision itself
+does not establish that either observed defect is resolved.
 
 The shared runner's native `revise` again uses last approved v3 as its baseline.
 The [revision receipt](shr_single_pair/Hierarchy-consolidation-v5.md.revision.json)
@@ -2175,15 +2176,107 @@ Compare edits or messages to other agents were added.
 The new production assembly test first failed because the v5 manifest was
 missing, then passed with the versioned source and revision receipt. Native
 preparation also freezes the full assembled v5 text without inference.
-Twenty-six production-adapter, assembly and revision checks pass. These checks
+Twenty-six production-adapter, assembly and revision checks passed. These checks
 establish mechanical integrity, not semantic quality. There were no model
-calls in this revision; the persistent counter remains **291/291**. The task
-remains isolated in this worktree as requested.
+calls in the revision; the persistent counter was **291/291** at that checkpoint.
+The subsequent panel tests unchanged v5 under the new bounded allowance.
 
-**Recommended next test, not run:** use the same nine complete sibling groups
-with two independent v5 draws each. Keeping inputs and settings fixed allows
-inspection of whether parent-incompatible siblings are excluded without losing
-useful root and other compatible groupings. Retain null and structural-negative
-controls, and assess the final definitions rather than transferring labels from
-earlier, different meanings. A new bounded eighteen-attempt allowance would be
-needed for this panel.
+## Consolidation-v5 proposal panel
+
+The user authorized the same nine complete groups with two independent draws:
+at most eighteen GPT-6.1 Sol medium subscription attempts. The persistent
+counter advanced to **309/309**. All eighteen attempts completed with valid
+native receipts, distinct upstream response references and reported
+`gpt-6.1-sol`. There were no failures, retries, warmups, exact reuses, missing
+usage or remaining requests. No allowance remains from this panel.
+
+Native `prepare --from` used the v4 first-draw experiments as baselines and
+changed only the consolidation prompt. Complete inputs, source evidence and
+runner settings match v4. Native `--repeat` requested fresh independent draws
+with identical complete v5 prompts and settings. Four experiments ran through
+the shared runner's managed queue; no bound source changed during execution.
+Historical outputs and judgments remained outside model input.
+
+| Supplied group | V5 first draw | V5 fresh repeat | Prospective note-set check |
+|---|---|---|---|
+| Food preparation: 7 | Food processing: Bread preparation C010, Food smoking C011, raw pie-making C098 | Bakery food preparation: C010 and C098 | Both narrow; seven to five or six choices |
+| Roots: 7 | Beverages: Coffee C006 and Slush drinks C039 | Same children, new definition | Both narrow; seven to six |
+| Food: 13 | Meals: Breakfast C018 and Dinners C059 | Meals: those two and Food dishes C020 | Both narrow; thirteen to twelve or eleven, still above six |
+| Mental states: 6 | Subjective cognitive functioning: Brain fog and mental clarity C050, sleepiness C092 | Cognitive functioning states: same children | Both narrow; six to five |
+| Coffee: 6 | Coffee identified relative to other coffee: Second coffee C101, Additional coffee C102 | Further coffee: same children | Both fail: the new union equals C102's two-note set |
+| Cuisine: 6 | Bread-based dishes: Pizza C054 and Cheesesteaks C066 | Cooked dishes: those two and Risotto C073 | Both narrow; six to five or four |
+| Food dishes: 6 | Bread-based dishes: Burgers C036 and Bread C068 | Bread-based foods: same children | Both narrow; six to five |
+| Eating: 5 | JSON null | JSON null | No proposed edges |
+| Cooking appliances: 4 | Stoves: rocket stove C083 and Induction hobs C107 | Heat-generating cooking appliances: same children | Both narrow; four to three |
+
+Six groups retain the same child lists across draws, including Eating's null.
+Different definitions and valid broader topics can yield different lists, so
+this is not an accuracy estimate. Native prospective shape checks give the
+same aggregate as v4: fourteen of sixteen non-null proposals have strict
+note-set narrowing, and twelve also leave at most six choices in both affected
+groups. Food's partial reductions and Coffee's structural failures remain
+distinct; none of these checks establishes semantic correctness or placement.
+
+**The two scope mechanisms persist in both v5 draws.** Source-bound native
+agent reviews record four direct semantic rejections:
+
+- **Food dishes:** both definitions select Bread C068 but require serving or
+  eating as a meal or part of a meal. The fixed Bread definition requires
+  cooking flour-based dough and has no meal condition. The new parents exclude
+  some of their selected child's meaning, even though v5 tells the model to
+  check this before selecting it. A parent's existing placement still cannot
+  supply the missing condition.
+- **Cuisine:** Bread-based dishes requires a bread or baked-dough base holding
+  other ingredients; Cooked dishes requires a cooked component. Neither final
+  meaning requires association with a style or culinary tradition. Both retain
+  the earlier improvised-food counterexample to whole-parent fit. This is a
+  new agent assessment of the exact new definitions, supported by the v3
+  mechanism screen; old Compare labels are not copied onto v5 outputs.
+
+The six native rejections include these four scope findings and the two
+structural Coffee failures. Five bounded agent accepts cover both Beverages
+definitions, both cognitive-state definitions and Bakery food preparation.
+They are promising input-only assessments, not independently validated
+placements or new human gold. Seven uncertain assessments retain these limits:
+
+- Food processing may be equivalent to Food preparation; complete Grilling
+  coverage, including plans, remains unresolved.
+- The first Meals definition covers food for an occasion as a whole; the
+  repeat explicitly includes components. That wording can explain different
+  child lists. Whole fit and prior inherited graph conflicts remain open.
+- The new Stoves and Heat-generating cooking appliances definitions need
+  independent checking for identity, full scope and proper narrowing.
+- Eating's repeated null does not prove that no useful grouping exists.
+
+All eighteen assessments were appended through native `review` with role
+`agent`. Outputs and receipts are immutable; the `*-report-v1.json` snapshots
+were saved before these reviews, and current native `show` retains the bound
+reviews. No new Compare requests, Compare prompt edits, v5 text changes,
+graph insertions, UI updates or agent messages occurred.
+
+The ignored experiments are `consolidation-v5-first-v1`,
+`consolidation-v5-repeat-v1`, `consolidation-v5-expanded-first-v1` and
+`consolidation-v5-expanded-repeat-v1` beneath
+`target/canonical-shaping-selection-v1/`. The committed
+[usage selection](shr_single_pair/hierarchy-consolidation-v5-usage-v1.json)
+reproduces native `consolidation-v5-usage-v1.json`. It reports **26,348 input
+tokens**, **1,280 cached input tokens**, zero cache writes, and **7,297 output
+tokens including 6,103 reasoning tokens**. Complete API-equivalent catalog
+cost is **$0.125794**. One ordinary request reports cached input; no explicit
+cache setting or warmup was added, and this is not a caching experiment.
+Reasoning is already counted in output; catalog amounts are not subscription
+invoices.
+
+V5 is not established as an improvement over v4. Moving the same condition
+earlier has not made the generated definitions obey it. **Recommended next
+prompt experiment, not drafted or run:** teach the constraint with a short,
+purposeful worked contrast, then test Cuisine and Food dishes alongside
+Beverages and Mental states. Two independent draws on these four complete
+groups would take eight new attempts. Preserve the shared Bootstrap clauses
+and fixed meanings, and keep unsupported parent restrictions separate from
+the later note-set check. This remains a consolidation prompt proposal, not
+authorization for a v6 edit or more calls. The task stays isolated as requested.
+
+Twenty-six production-adapter, assembly and revision checks pass after syncing
+current local main. The v5 assembly hash and shared Bootstrap clauses remain
+unchanged; the prompt remains experimental.
