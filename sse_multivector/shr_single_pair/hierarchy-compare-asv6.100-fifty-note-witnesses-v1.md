@@ -1164,3 +1164,29 @@ appliance pair alongside separately defined material/component controls.
 Removal must not silently give those separate topics the finished equipment's
 role. This is a causal hypothesis, not a demonstrated responsible sentence or
 authorization for another edit merely because the suggestion is recorded.
+
+### Autonomous condition-diagnostic iteration and v3 ablation
+
+The user explicitly authorized continuing testing, evaluation and editing until
+the current failures are fixed. All attempts remain inside the shared 20,000
+Sol 6.1 medium allowance. Each version changes a stated mechanism, preserves
+these ASv6.100/Bootstrap-v96 producer meanings, and records failed outputs rather
+than rewriting them. Bootstrap, hierarchy construction and external messaging
+remain outside this work.
+
+V3 removes only the sentence prohibiting transfer of equipment use to a
+material/component. Its initial eight cases are identical to v2; schema and
+settings are unchanged. The ablation tests whether that sentence contributes to
+the appliance reversal. It does not by itself qualify separately selected
+material/component topics. Consumer-purpose diagnostics must also pass.
+
+Dispatch cap: 17 attempts including warmup/retries. Independently review
+condition necessity, whole-child counterexamples, reversals and canonical
+consequences. A failed gate triggers diagnosis and a new version, rather than
+repeating or broadening the failed candidate blindly. An initial pass expands
+to the other seven controls and fresh repeated requests, then the full frozen
+102-case panel. Native producer-bound material controls are sought separately.
+Blanket uncertainty or losing useful positive controls is not a fix. Production
+Compare adoption additionally requires preserving and testing its approved
+counterexample-question/answer output contract; the diagnostic schema alone
+is not production qualification.
