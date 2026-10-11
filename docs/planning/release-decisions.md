@@ -3198,6 +3198,12 @@ HD15 cycle policy without changing cross-post selection, cutoffs or saved baseli
 
 #### Recording and replaying hierarchy decisions
 
+**Hierarchy run identifiers — approved October 11:** every hierarchy run must
+have a specific, unique version identifier so runs can be referred to
+unambiguously. Report it with the exact hierarchy output and experimental
+parameters, linking the existing frozen inputs, configuration and native
+receipts used to generate that hierarchy. The naming format remains open.
+
 **NEv2 user review (September 25):** Coffee, Food, and morning-greetings merges
 accepted ("the other 3 look fine"); Beef / Beef products remains rejected.
 These four case decisions do not settle the provisional merge/link rules or

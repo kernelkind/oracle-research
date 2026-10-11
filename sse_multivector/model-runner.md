@@ -106,6 +106,58 @@ not 35 producer failures or a measured prompt improvement. Conditional chain
 implications are not fresh Compare answers; Nostr's independent food-sense
 boundary remains separately qualified.
 
+The [unchanged v109 Food-boundary repeats](shr_single_pair/bootstrap-current-as-qualification.md#unchanged-v109-food-boundary-repeats)
+are complete: two fresh four-entry draws, eight valid nonnull definitions and
+two warmups, zero answer reuse, retries or failures. Native API-equivalent cost
+including warmups is $0.1075436; six of eight definition calls report cache hits.
+The current shared runner preserved exact model-facing inputs, prompt, schema
+and cache identity, with fresh request contexts. Its complete historical worker
+digest changed, so this is not an unchanged-executable repeat. Independent
+reviews found no definite source contradiction; all eight final standalone
+verdicts are qualified agent accepts, not an accuracy measure. The draw-2 Nostr
+review initially imported a separately generated parent scope and withdrew that
+uncertain suggestion. Kind-level versus individual-use consumer interpretation
+and Food-to-Nostr compatibility remain qualified. No Compare calls, hierarchy
+build or prompt edit occurred; v104 remains approved and v109 experimental.
+The user subsequently quoted the exact draw-1 Food and Risotto definitions and
+approved them as written, replying "this is fine". Two native user accepts bind
+that approval to those producer receipts. It supplies no pair label or answer
+to the animal-only hypothetical, and approves neither the other outputs nor
+v109 activation. This witness currently establishes no Bootstrap error to edit.
+The user also reviewed the exact original v109 Coffee-chain child and judged
+its assignment to a particular multi-outlet business uncertain, replying
+"it's uncertain". A native user-uncertain review binds that judgment to the
+candidate receipt; it does not prescribe null or a preferred hashtag meaning.
+
+The subsequent [v109 Coffee-reference controls](shr_single_pair/bootstrap-current-as-qualification.md#unchanged-v109-coffee-reference-controls)
+retain the original ASv6.100 subjects, contexts and complete tree while changing
+only the post in three explicitly synthetic controls. All three fresh answers
+are valid and receive qualified agent accepts: null for the unsupported business
+assignment, a supported particular-business meaning with explicit evidence, and
+null for the contradicted assignment. The original answer is one exact reuse,
+not a fresh draw, and retains its separately recorded user uncertainty.
+Four newly dispatched attempts include one warmup; all three definition calls
+report cache hits, with no retries or failures. Native API-equivalent fresh cost
+is $0.0206752; generation tracing including the reused original and its source
+warmup is $0.038848. This bounded result establishes evidence sensitivity with
+contexts present, not a cause for the original interpretation or a prompt fix.
+V104 remains approved; v109 remains experimental and unchanged.
+
+The [Coffee-reference single-sentence ablation](shr_single_pair/bootstrap-current-as-qualification.md#coffee-reference-single-sentence-ablation-predeclared-check)
+compares fresh v109 and experimental v111 answers on the original case and the
+same three synthetic controls. V111 only separates a subject naming a topic
+from proving a particular thing satisfies that description. Exact paired
+inputs, executable code, schema and worker identities match; only that sentence
+and its resulting cache identity differ. Eight valid fresh answers preserve the
+same uncertain original business assignment and null/supported/null controls.
+Independent review records six qualified agent accepts and two uncertainties;
+no demonstrated correction or repeat trigger follows. Ten attempts include two
+warmups, with zero reuses, retries or failures; native API-equivalent cost is
+$0.0805732 and six of eight definition calls report cache hits. V111 is not
+recommended for adoption; v104 remains approved. Forty-two production-path
+revision/current-main traversal/graph-search checks passed; no Compare calls or
+hierarchy construction occurred in this diagnostic.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1279,80 +1331,55 @@ validation. No saved LG01 output is rewritten.
 
 ### Canonical hierarchy construction
 
-The native canonical workflow is available through the shared launcher. Oracle
-owns input adapters, construction, comparison selection, menu shaping and
-inspection; the sibling experiment-runner continues to own execution, retries,
-caching and provider transport. No separate hierarchy execution engine is
-installed. Read command help from the canonical checkout:
+Give each hierarchy run a specific, unique version identifier and use it in
+reports and comparisons. Link it to the exact hierarchy output and the frozen
+inputs, prompt/model settings, construction policy and native receipts used to
+generate it. The naming format remains open.
+
+The standalone canonical constructor is available through the shared launcher.
+Oracle owns construction, comparison selection, consolidation and inspection;
+the experiment runner owns execution, retries, caching and provider transport.
+There is one construction algorithm, with no legacy policy switch. Read help
+from a task worktree:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-../experiment-runner/bin/experiment-runner prepare-canonical-trial --help
-../experiment-runner/bin/experiment-runner prepare-canonical-selection-trial --help
-../experiment-runner/bin/experiment-runner continue-canonical-trial --help
+../experiment-runner/bin/experiment-runner prepare-canonical-traversal --help
+../experiment-runner/bin/experiment-runner advance-canonical-traversal --help
 ```
 
-`prepare-canonical-trial` accepts a schema-2 source naming `corpus`, selected
-original `roots` (`note_id` and `number`), `bootstrap_spec`, `comparison_spec`
-and `independent_meanings: true`. Bootstrap-v96 uses
-`local_schema_version: 4`, which supplies the selected entry in its complete
-original root hierarchy together with the post. Start with one selected original
-root per note; `--base-trial` appends unused original roots to a completed raw
-construction, including additional roots from existing notes.
-`--history-root` freezes the directory searched for exact native answer reuse.
-Current data must originate from ASv6.100 or an explicitly approved later AS
-version. Pre-ASv6.100 inputs and downstream results remain deprecated.
+`prepare-canonical-traversal` accepts a schema-1 definition containing `corpus`,
+saved `note_ids`, `local_schema_version`, `bootstrap_spec`, `comparison_spec`
+and `consolidation_spec`. Current data must originate from ASv6.100 or an
+explicitly approved later AS version. Prompt/schema files, corpus and constructor
+source are frozen. Run returned experiment directories through ordinary `run`,
+then call `advance-canonical-traversal` to collect validated native receipts and
+prepare the next work. Both constructor commands are offline; only `run` makes
+model calls, under the task's authorization and existing budget admission.
 
-Each incoming local entry first receives an independently generated explicit
-meaning. Comparison then copies that meaning unchanged against canonical nodes
-whose meanings are already fixed. Supplied local posts and original hierarchy
-evidence remain separate from canonical graph evidence. Bootstrap-v96 and
-Compare-v48 are the exact evaluated versions linked from the
-[fresh fifty-note findings](shr_single_pair/hierarchy-as100-fifty-note-findings-v1.md);
-this integration changes neither prompt nor treats its saved outcomes as gold.
-The adapters and construction guards validate the supplied output schema, meaning-copy contract,
-source hashes and receipts. Mechanical acceptance does not establish semantic
-accuracy; automatic continuation keeps its semantic review status explicit.
+Select L1 roots first, then L2 and deeper local levels. At each level, rotate
+across notes in saved order, one entry per note per pass. Up to three searches
+can overlap on fixed graph snapshots; placements follow selection order.
+Before placement, account for graph changes and reuse only exact unchanged
+comparisons. Sharing a note does not exclude a canonical comparison. Mapped
+original-parent containment may follow from traversal or transitive inference;
+an unchecked or contradicted requirement holds the local entry without reopening
+a pruned branch.
 
-Automatic continuation selects the latest input/output-bound verdict per role,
-with a user verdict taking precedence over an agent verdict. Native review
-`current` records matching hashes, so an earlier rejection on the same unchanged
-output remains in history but does not override a later acceptance. An effective
-reject or uncertain verdict still holds the incoming entry. For exact reused
-answers, the receiving experiment and the original producer receipt are checked
-separately: an acceptance at one does not erase an effective rejection or
-uncertainty at the other. Receipts, outputs and review history remain unchanged.
+Each selected local node receives an independently generated immutable meaning.
+Every comparison is local versus canonical with the fixed meanings and recursive
+canonical branch evidence. `neither` stops that branch; `uncertain` holds the
+local entry. Containment and equivalence reuse established ancestor/descendant
+relationships. Prospective placement retains cycle, returned-relation and
+settled-answer checks. A canonical addition leaving six or more siblings triggers
+consolidation. A proposed synthetic title/meaning must pass ordinary traversal
+and grouping checks; null or rejection leaves the triggering placement intact.
+Complete triggered consolidation before applying the next local placement.
 
-`prepare-canonical-selection-trial` takes a completed raw schema-2 trial and a
-schema-2 selection definition with `max_choices`, `max_entries`,
-`local_candidate_limit`, `comparison_policy` and optional `history_root`.
-Coverage and individual-note isolation take priority; otherwise canonical topics
-rotate as discovery queries for unused original entries. This selects work,
-not semantic relationships. Deeper entries remain eligible even if their
-original parent was held or their original branch currently represents one
-note. Raw crowding does not imply the finished menu needs more construction.
-`max_entries` bounds processed original entries, not provider attempts.
-
-The comparison policy is a separate schema-1 definition with `limit` and
-optional `subject_probe`. Text and saved SSE nominate candidates; they never
-establish containment or equivalence. The mapped original parent is included
-when eligible. The local meaning and before graph stay fixed through both the
-initial shortlist and every required verification of omitted relationships
-that a positive placement would imply. Equivalence checks both directions.
-Contradiction or uncertainty holds the entry without applying the proposal.
-Invalid receipts refuse application; incomplete verification stays pending.
-Untested unrelated relationships
-remain unknown. Existing same-note exclusions, mapped-parent exception,
-cycle checks and settled-relationship guards continue to apply.
-
-Prepared phases run with the shared launcher's `run` command. Advance a reviewed
-phase with `advance-canonical-trial`; `--concurrency` affects subsequent prepared
-experiments. `continue-canonical-trial` provides bounded automatic continuation:
-`--max-nodes` freezes the incoming-entry range, `--max-new-attempts` is a
-persistent stage cap including retries, and `--attempt-budget` names an existing
-shared counter. Resume with identical limits; never reset spent counters.
-An unrun verification remains pending when a cap is reached. Inference still
-requires the task's existing authorization and budget admission.
+Producer reviews remain bound to native input/output hashes. The latest user
+verdict takes precedence over the latest agent verdict. A current rejection or
+uncertainty at a receiving experiment or an exact reused producer holds the
+entry. Output mechanics and graph checks do not establish semantic accuracy.
+See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
 
 Use these offline commands after construction:
 
@@ -1373,15 +1400,12 @@ requirement to find or apply every known regrouping or shortcut, or to conduct a
 final improvement review before stopping. Manage root and child choice counts
 on a best-effort basis; exceeding six is no longer a reason by itself to declare
 the hierarchy unfinished. The
-[traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
-addition leaves six or more siblings. Its stopping-check timing is provisionally
-approved: check after each placement and all triggered consolidation against the
-current hierarchy and the whole selected corpus. When both conditions pass,
-stop dispatching new searches and comparison calls, save the answers of calls
-already dispatched, and preserve the graph and unfinished searches for later
-resumption. Existing workflow code and frozen audit bounds remain unchanged, so
-saved sibling-limit violations still describe their original evaluation. The
-constructor does not solve menu optimization
+[constructor](hierarchy-traversal-draft.md) calls consolidation after an addition
+leaves six or more siblings. Its stopping-check timing remains provisional:
+check individual note access and strict note-set narrowing after each placement
+and all triggered consolidation against the whole selected corpus. When both
+pass, stop dispatching new searches/comparisons and save already-dispatched
+answers without further graph changes. The constructor does not solve menu optimization
 automatically. A structural audit is neither semantic certification nor proof
 of optimality. Keep finished menus out of subsequent raw-trial preparation.
 
@@ -1823,6 +1847,25 @@ subset; both failed attempts lack usage, so full cost and savings are unknown.
 The final history audit preserves R01's valid first success and registers only
 the missing recovered R05 original ledger line through production
 `RequestHistory.remember`. No frozen output or production code changes.
+
+The user subsequently expands unchanged xhigh development to
+[24 notes within the frozen sixty](distillation-review-v1/README.md#dslv10-twenty-four-note-regression-october-11).
+Retain the previous eight and add the next sixteen structurally valid random
+answers. Native per-note evaluations run alongside three eight-note evaluations
+to fill the shared 30-request queue; complete inputs, prompts and settings,
+including cache prefixes, are verified against the full preparation before
+calls. Verified request history is enabled; repeated fresh receipts remain
+accounted for. Three agents audit separate note assignments during generation.
+All 24 notes finish, with zero-new-call full assembly after one genuine missing
+history receipt is registered through production validation. The complete
+1,621-version audit confirms three support errors and retains 45 uncertainties.
+Native accounting reconciles 1,004 local attempts with the shared counter
+(delta zero); all eleven transport failures recover and no invalid receipts
+remain. Known cached input share is 13.93%, using cached input divided by
+uncached plus cached input. Known local catalog estimate is $13.1383; eleven
+failed attempts lack usage, so complete cost and net savings remain unknown.
+Reviewer qualification and minimum reasoning effort remain open.
+
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).
@@ -6745,22 +6788,12 @@ fixtures. Do not rerun model calls merely to add a preparation capability.
 
 ### Canonical graph-search comparisons
 
-`prepare-canonical-trial`, `prepare-canonical-child-trial` and
-`fork-canonical-trial` accept opt-in `--graph-search`. The constructor starts at
-canonical roots, prepares the next comparisons from returned relationship labels,
-and applies one placement after traversal. Native exact reuse and receipt checks
-cover every phase; graph-derived relationships remain separate from model outputs.
-Each phase retains the same graph and independently fixed local meaning. Existing
-same-note eligibility, required mapped-parent and placement checks still apply.
-
-`fork-canonical-trial SOURCE --output DEST --at-step INDEX --graph-search`
-restarts from the saved graph before one original entry, retaining its independently
-generated meaning and answer history without changing the source trial. Only
-`run`, `continue-canonical-trial` or an explicit `--run-next` dispatches requests.
-See [graph-search selection](canonical-graph-search-v1.md) for the tested native
-commands and saved ASv6.100 evidence. The scalability experiment failed and
-was terminated by the user before the fifty-note construction finished. No
-graph-search construction remains active; the default stays guarded16.
+`GraphSearch(nodes)` implements the agreed traversal directly, with no legacy
+mode, same-note filter, ranking shortlist or forced mapped-parent comparison.
+The [standalone constructor](hierarchy-traversal-draft.md) uses it for ordinary
+local nodes and synthetic consolidation proposals. Historical scalability
+measurements remain in [the graph-search findings](canonical-graph-search-v1.md);
+they used the former traversal and do not measure the current constructor.
 
 ### Fixed-meaning Compare qualification
 
@@ -6922,8 +6955,8 @@ with an unresolved failure. A directional evaluation-order diagnostic is
 proposed, not begun. See the
 [completed qualification and review limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v181-qualification).
 
-The subsequent authorized [V182](shr_single_pair/Hierarchy-compare-v182.md)
-diagnostic starts from V179 and changes only requested directional evaluation
+The subsequent authorized experiment tested [V182](shr_single_pair/Hierarchy-compare-v182.md).
+This diagnostic starts from V179 and changes only requested directional evaluation
 and report order, with corresponding reordering of its existing synthetic
 example diagnostics. Symmetric A/B subjects/meanings, semantic rules and schema
 remain fixed. Twenty fresh comparisons inherit the saved V179 five-pair panel,
@@ -6931,3 +6964,66 @@ both orientations and two draws. Report-order compliance is measured separately
 from semantic support; internal reasoning order is not observable. No Bootstrap
 or hierarchy work occurs. See the
 [V182 pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v182-directional-evaluation-and-report-order).
+
+The completed V182 diagnostic follows B-first question/answer ordering in all
+20 responses but leaves both Stockpots forward errors in the same A/B
+orientation. Independent review supports 17/20 responses, versus saved V179's
+18/20; native reporting finds three versus two reversal conflicts across five
+pairs repeated twice. One Fasting forward draw adds a person restriction absent
+from its fixed meaning. The Stockpots error does not move with report order;
+internal evaluation order is unobservable. V182 is not adopted or broadened;
+the symmetric A/B development line and V179 baseline remain. Twenty fresh valid
+attempts use $0.179492 in native API-equivalent catalog usage, with zero reuse,
+warming, retry, failure or missing usage. See the
+[completed V182 evidence and review qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v182-order-diagnostic).
+
+The next authorized Compare diagnostic preserves V179 prompt bytes/ID/schema
+and all fixed A/B subjects/meanings, changing only top-level JSON presentation
+to B then A. Native prepared `hierarchy_node_pairs` sources accept optional
+`input_order: ["B", "A"]` with `input_view: "symmetric_fixed_meanings"`, including
+reprojection of a pinned already symmetric experiment. Original source input
+and producer evidence remain intact; no-option preparation preserves existing
+order. Other views and malformed orders are rejected. Production-path failing
+then passing checks cover CLI preparation, source pins and unchanged consistency.
+This is input-presentation diagnostic v1, not a revised prompt or adopted policy.
+The 20 planned fresh comparisons retain disabled explicit warming, shared native
+scheduling and the persistent attempt counter. See the
+[pre-call design and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179-b-first-input-presentation-diagnostic).
+
+The completed B-first input diagnostic has 20 fresh valid answers, no reuse,
+warming, retry or failure, and $0.161408 native API-equivalent catalog cost.
+Independent attributed review supports 18/20 responses, with two reversal
+conflicts, matching saved V179's counts. Both Stockpots errors move from forward
+to reverse: the unsupported meal-purpose inference follows Cookware being the
+physically first input member rather than its A/B name. All 16 controls pass.
+Actual request bodies differ from the saved baseline only by input member order;
+all outputs still report A's coverage first. Saved-versus-fresh sampling/time
+confounds prevent a causal claim, and internal reasoning order is unobservable.
+Reordering is not adopted because it relocates the error without reducing it.
+See [completed evidence, integrity checks and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-b-first-input-diagnostic).
+
+The next authorized Compare experiment is
+[Hierarchy-compare-v183](shr_single_pair/Hierarchy-compare-v183.md), a native V179
+revision adding one independent synthetic coating-tool example that distinguishes
+function from required design purpose. Instructions, old examples, symmetric
+A/B scopes and the V179 schema remain unchanged. Twenty planned fresh original
+panel requests plus four B-first Stockpots requests test whether the example
+repairs rather than relocates the failure. Fixed ASv6.100/Bootstrap-v96 producer
+evidence, disabled explicit warming and the persistent counter are preserved.
+See the [pre-call design, scaling and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v183-synthetic-function-and-purpose-example).
+
+The completed V183 experiment has 24 fresh valid comparisons, zero reuse,
+warming, retries, failures or missing usage. Attributed independent review
+supports 21/24 complete responses, with three reversal conflicts and one
+directional label changing between draws. The standard A-first panel stays at
+18/20 supported, while B-first Stockpots improves from two to three of four
+supported responses without repeat stability. All 16 tested controls pass.
+Stock-making still acquires an unsupported meal purpose, including in an
+answer whose question explicitly tests that requirement. V183 fails its
+qualification gate and is not adopted or broadened; V179 remains the shorter
+development baseline and the A/B contract remains fixed. Native usage separates
+$0.1804176 for 20 new A-first attempts and $0.0385164 for four new B-first
+attempts from saved baseline generation. The shared counter moves 18,935 to
+18,959. See the [completed qualification and evidence limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-v183-purpose-example-qualification).
+An independent check of the specific saved unsupported implication is proposed,
+not prepared or run; no Bootstrap or hierarchy work follows from this result.

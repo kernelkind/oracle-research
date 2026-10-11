@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v109_food_boundary_repeats": [
+      "../../target/bootstrap-v109-food-boundary-repeats-v1/draw-1",
+      "../../target/bootstrap-v109-food-boundary-repeats-v1/draw-2"
+    ]
+  }
+}

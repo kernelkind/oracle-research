@@ -2462,6 +2462,19 @@ asserts that the rave venue belongs to the business. This is a qualified
 interpretation, not a demonstrated falsehood or a mandatory null. The existing
 native uncertainty comments and older assessment history are preserved.
 
+The user subsequently reviewed the exact v109 child meaning, original full post
+and two-entry ASv6.100 tree, and replied verbatim: **"it's uncertain"**. Native
+`review --role user --verdict uncertain` binds that factual-assignment judgment
+to candidate case
+`bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411`
+and producer record
+`6109a01a900e426a12e19ecd971b1e5359a5ca10cb479bf838461e244041e527`.
+The unresolved point is identifying a particular multi-outlet business from
+this post. It is not a verdict that the venue is affiliated with that business,
+a proved falsehood, a mandatory-null expectation or a preferred hashtag sense.
+No user verdict was copied to v104 or other producers. Input, meaning, diagnostics
+and receipt remain unchanged; this review made no model calls or prompt edits.
+
 The remaining review concerns are evidence support or genuinely unresolved
 meaning, rather than preferences between clear, supported boundaries:
 
@@ -2913,11 +2926,338 @@ judgments. No wording effect or v109 advantage is established by this audit.
 The latest individual native counts remain v104: 113 accept / 0 reject /
 2 uncertain, and v109: 114 accept / 0 reject / 1 uncertain.
 
-Next recommended Bootstrap work is a focused independent repeat of Food,
+The user subsequently authorized focused independent repeats of Food,
 Risotto, Ingredients for mushroom risotto with shrimp and Food-related content
 on Nostr, checking whether the final definitions clearly choose kind-level or
 use-specific membership conditions. Either evidence-consistent choice is
 permitted; no old positive label or consumer preference is a required target.
-That repeat has not been prepared or run. Do not edit solely because a reviewer
+The [completed repeats below](#unchanged-v109-food-boundary-repeats) retain the
+experimental v109 prompt. Do not edit solely because a reviewer
 can imagine another plausible boundary, or infer a responsible prompt sentence
 from this saved-output reassessment.
+
+### Unchanged v109 Food-boundary repeats
+
+Two intentional fresh draws are complete under
+`target/bootstrap-v109-food-boundary-repeats-v1/{draw-1,draw-2}`. Artifact
+paths in this section are relative to
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1`.
+Native `prepare --from` selected four cases from the existing v109 candidate with
+`--only` and `--repeat`; it preserved their exact inputs and matching historical
+baselines. No new AS data, prompt edit, Compare call or hierarchy build occurred.
+The original source is ASv6.100. V104 remains approved; v109 remains experimental.
+
+Both draws retain the exact v109 rendered prompts, original full post, 36-entry
+root tree, selected pointers and source evidence. Model, reasoning, response
+schema and cache prefix/key also match: GPT-6.1 Sol medium, SSE, 4,597 estimated
+prefix tokens. Prompt text SHA-256 is
+`caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1`.
+The updated shared runner executes both draws with the same pinned executable;
+its complete worker/code digest differs from the historical candidate, while
+model-facing request-code and response-schema digests remain identical. This is
+not a byte-identical rerun of the entire historical executable.
+
+One subagent reviewed each draw independently; a third verified request identity
+and receipts. All eight results are valid, nonnull, first-attempt fresh answers,
+with distinct response IDs and receipt hashes. Production receipt digests match
+the original JSONL records. Requests contain the frozen prefix and current input,
+without earlier responses, conversation history or tools. Fresh request contexts
+are established; statistical independence of provider sampling is not proven.
+Historical outputs were available as native baselines but were not fed to the
+model or substituted for new answers.
+
+The predeclared review target was explicit kind-level versus individual-use
+conditions, supported identity/role/state boundaries, alignment with resolutions
+and preserved unknown facts. There was no preferred consumer boundary. Each
+draw's endpoints were assessed together under one inclusion interpretation;
+definitions from different draws were not spliced into a branch.
+
+| Selected entry | Draw 1 producer record SHA-256 | Draw 2 producer record SHA-256 |
+|---|---|---|
+| Food `1` | `ac77aeee9d106546e24775c6b54971198d748a459ad217a2675f5d37a0bc0eb5` | `cad6dc5e596abbfe0f8ad3019f184e466a2bd68681e7e3480630efc404449a8f` |
+| Risotto `1.1` | `32e54a34adb9398df5afa9ec822c969b3bc732ca5c89d606fad7c510d2a5035d` | `ff2c4c02e59a52390c95f692f3eb0c9d974c5dc66d668845e0297b07ec8966f3` |
+| Ingredients `1.1.1.1.1` | `7e7e739a99c6e70c641453e81311d0a0946d05f66acb9e138d0edaa414cf8b19` | `b693dd78537a3bcffce85e4268426ed0f3e6dbacb026181f4d50add4778603b1` |
+| Food-related content on Nostr `1.2` | `ffa3c80e86b7c88fc21ad11116f7a8a1d84daed4a041d5e8e406d526edf9def2` | `79ae45899dff735ede3031bc0ebce18c48f509397fbfa36a6fb4b4ccaa94ebef` |
+
+Receipts are in each draw's `run/results.jsonl`; exact outputs, ambiguity
+resolutions and source inputs are available through native `show --case` with
+the four case IDs already recorded in the preceding Food-branch evidence.
+The Risotto case ID is
+`bootstrap-5fa9e10f69c1a8b95c57dcf3075945f32125aba19ba8255b3687222250cde203`;
+the ingredient case ID is
+`bootstrap-36935a57bda6e81ee6f2dd3e707dda5b9ffbc05bb2bd419814fc2d4e7c0bad4b`.
+
+Both Food outputs explicitly choose human consumption. Draw 1 says:
+
+> Food is substances intended for human consumption as something to eat or drink, including but not limited to culinary ingredients and prepared dishes.
+
+Draw 2 says:
+
+> Food is substances intended for human eating or drinking, including but not limited to prepared dishes and culinary ingredients used to make them. The topic encompasses descriptions and presentations of these foods.
+
+The named Risotto definitions retain a rice-and-broth cooking process; draw 2
+also expressly attributes creaminess to released rice starch. Both ingredient
+definitions require a component to be used or intended for the mushroom-and-
+shrimp risotto role, keeping the fifteen-item list illustrative. Both Nostr
+definitions require content shared on Nostr concerning food; draw 2 explicitly
+makes `#foodstr` optional. They define a qualifying content category rather than
+assert that this particular post was published on Nostr. No actual cooking,
+eating or publication occurrence is established by these definitions.
+
+No definite source contradiction was found. The reconciled native individual
+assessment is four qualified agent accepts per draw, bound to the exact fresh
+outputs. This is not an accuracy estimate or whole-branch certification.
+The draw-2 reviewer initially suggested uncertain for Nostr by comparing it with
+the independently generated human-only Food scope, then withdrew that suggestion:
+without that separate parent definition the same output is a justified standalone
+meaning. The initial suggestion was not written as a native verdict. Preserve
+its reason here as a review correction, not a model failure.
+
+The targeted interpretation question persists in both draws. Food does not
+expressly say whether intended human consumption characterizes a culinary kind
+or must be established for every particular use. Risotto preserves a culinary
+kind without separately spelling out its consumer; the ingredient meanings
+specify a dish role but leave that consumer interpretation implicit. Nostr's
+unqualified food wording does not expressly select the independently chosen
+root's human-food sense. These are residual interpretation qualifications, not
+demonstrated admitted counterexamples or unsupported facts about the post.
+Accepting Food-to-Risotto and Risotto-to-ingredients under a culinary-kind
+interpretation still entails their shortcut. A stricter individual-use reading
+must qualify the original Food-to-Risotto link too. No fresh Compare labels or
+complete-branch generation were obtained here.
+
+Native [usage source](hierarchy-bootstrap-v109-food-boundary-repeat-usage-v1.json)
+and ignored `usage.json` account for ten actual attempts: eight definitions and
+two warmups, with zero reuse, retries, failures or missing usage. Complete
+API-equivalent cost is $0.1075436, including warmups; this is catalog pricing,
+not a subscription invoice. Six of eight definition calls report cache hits.
+Native estimated net cache savings are $0.0592904 (35.54%), including warming
+overhead; this is not a matched uncached experiment. The shared persistent
+attempt counter was retained. Its total also includes other agents' work.
+
+The repeated outputs do not establish a responsible prompt sentence, a v109
+improvement, or a need to force human-consumption wording into every child.
+Another plausible scope alone remains insufficient to reject a standalone
+meaning. The subsequent user review below accepts the two presented definitions;
+the hypothetical does not supply a new negative regression expectation.
+
+#### User acceptance of the exact draw-1 definitions
+
+The user quoted the complete Food and Risotto definitions from draw 1, then
+replied verbatim: **"this is fine"**. Native `review --role user --verdict accept`
+records this approval against those two exact outputs and their producer receipts
+listed above. Inputs, meanings, resolutions and receipts remain unchanged;
+prior qualified agent assessments are preserved.
+
+This approves the standalone definitions as written. It does not establish a
+Food/Risotto pair label or the membership of the proposed animal-only risotto
+example. The user did not choose between including and excluding that
+hypothetical; do not infer either choice from approval of the definitions.
+The ingredient and Nostr outputs, draw-2 definitions and v109 prompt activation
+are outside this approval. No fresh model calls or prompt edits occurred.
+
+The additional read-only review found no demonstrated admitted counterexample
+or missing Bootstrap instruction: v109 already asks whether a condition concerns
+a kind or a particular example when that distinction is material. Retained
+culinary names and roles carry meaning; omitted repetition of a consumer word
+does not automatically broaden them. Keep branch inclusion qualifications
+separate from these user-approved standalone definitions. This witness does not
+currently justify a Bootstrap edit; prioritize remaining evidence-qualified
+cases rather than requiring another decision about an imagined use.
+
+### Unchanged v109 Coffee-reference controls
+
+Following the user's original Coffee-chain uncertainty judgment, the user
+authorized checking the existing business and hashtag controls with unchanged
+Bootstrap-v109. The original answer is a native exact reuse from
+`target/bootstrap-v109-scope-preservation-v1/candidate`; it is **not** a fresh
+draw. Three new calls use the existing synthetic post interventions, now with
+the original ASv6.100 subjects and contexts retained. Each has the same complete
+two-entry tree and selected pointer `1.1`; only `local.post` changes.
+
+Native preparation and independent integrity checks establish byte-identical
+v109 prompt, model-facing original input, schema, model, medium reasoning and
+cache identity. The prompt SHA-256 remains
+`caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1`.
+The original tree was generated for the original post, **not** these edited
+posts. Retaining its annotations deliberately tests whether they can override
+the changed factual evidence; this is not newly generated AS data or a
+replacement real-corpus validation set.
+
+| Native case | Final meaning | Qualified agent assessment |
+|---|---|---|
+| `no-business-cue` | Null | Preserves unknown chain affiliation and distinguishes a weird visit from a business characterized as weird |
+| `business-confirmed` | Particular multi-outlet business | Preserves the explicitly supported business and dated characterization without inventing its name |
+| `hashtag-clarified` | Null | Preserves the source conflict with explicit hashtag-only usage and an independent single-location shop |
+
+The supported positive's exact meaning is:
+
+> The coffee chain described as weird today: the particular business operating
+> multiple coffee shops under the same brand that the author characterizes as
+> weird on the day of the post, and of which the mentioned shop is one outlet.
+
+All three answers are valid, freshly generated and independently reviewed.
+Diagnostics and final meanings agree; all seven evidence quotations match
+contiguous excerpts of their supplied posts. Native qualified **agent accepts**
+preserve the inputs, outputs and receipts. No new user semantic judgments were
+invented or transferred to these controls. The original child's business
+assignment remains user-uncertain at its original producer receipt.
+
+Native experiments are `target/bootstrap-v109-coffee-reference-v1/original`
+and `target/bootstrap-v109-coffee-reference-v1/controls`. Controls' producer
+record SHA-256 values are:
+
+| Case | Producer record SHA-256 |
+|---|---|
+| `no-business-cue` | `ea5f5d3a54dcb63f5ce8f087e3b2307f51693be41634b9028f74347f778051e9` |
+| `business-confirmed` | `4c2214d500022f8d306344dc8d712f0eb566ea4361868f86b0fe3a2b355fa7f9` |
+| `hashtag-clarified` | `633dd489ff0cd79c6f20cef5ef5eb42e23374d0f8cf9253f953c02aa9e7b200f` |
+
+The [reusable v109 spec](hierarchy-bootstrap-v109-coffee-grounding-controls-v1.spec.json)
+uses the existing [synthetic post-control source](hierarchy-bootstrap-coffee-grounding-post-controls-v1.json)
+directly, retaining contexts. The
+[native accounting source](hierarchy-bootstrap-v109-coffee-reference-usage-v1.json)
+produces `target/bootstrap-v109-coffee-reference-v1/usage-native-v1.json`.
+It records **four newly dispatched attempts**: three definitions and one prefix
+warmup, with one exact answer reuse and no retries, failures, invalid receipts
+or unfinished cases. All three fresh definitions report cached input. Fresh
+API-equivalent cost is **$0.0206752**. Native original-generation tracing,
+including the reused original answer and its source warmup, totals **$0.038848**
+across six original calls. Usage is complete; reasoning is included in output.
+The existing shared attempt counter was retained without resetting it.
+
+These results establish bounded factual-evidence sensitivity with contexts
+present. They do not make the original business interpretation false, resolve
+the user's uncertainty, or isolate a responsible instruction. The no-business
+intervention changes both the hashtag wording and what is called weird; its
+null is not attributable to hashtag removal alone. Earlier context-free v110
+controls also changed the prompt, so they do not provide a one-factor context
+ablation. Each current control has only one fresh draw. The two nulls remain
+synthetic source conflicts, not real-corpus failures or negative Compare labels.
+No prompt edit or adoption, Compare call or hierarchy build occurred; v104
+remains approved and v109 experimental. Retain this worktree for its source
+bindings and native receipts.
+
+### Coffee-reference single-sentence ablation: predeclared check
+
+The user authorized a targeted wording ablation on the original ambiguous case
+with the same three controls. Experimental [Bootstrap-v111](Hierarchy-bootstrap-v111.md)
+is one hash-pinned sentence replacement from unchanged v109, performed through
+native `revise`. It replaces the opening evidence sentence with:
+
+> The selected subject names the topic, its level of abstraction and its
+> expressed restrictions; it does not establish that a particular person,
+> thing or event in the post satisfies that description.
+
+Every other instruction and both examples remain byte-identical. This tests
+whether the opening use of "establishes" encourages treating an annotation's
+particular-identity claim as proven. It is a hypothesis, not an identified
+internal mechanism: the historical answer also interprets the hashtag itself
+as business evidence. The change does not prescribe a hashtag sense or null.
+V104 remains approved; neither v109 nor v111 is activated.
+
+The [native source collection](hierarchy-bootstrap-coffee-reference-ablation-v1.json)
+combines the original source-bound case with the unchanged existing synthetic
+controls. Native regeneration verifies the same ASv6.100 tree, contexts,
+selected pointer and post as each previous model input. Historical answers,
+receipts and reviews remain outside model input. Both conditions use fresh
+native draws, Sol 6.1 medium, identical schema/settings and automatic prefix
+caching. An older reused answer alone cannot attribute a difference to wording.
+
+Assess factual support and preserved uncertainty in each final meaning, keeping
+ordinary justified sense choices distinct from unsupported assertions about
+particular things. Preserve the explicit-business positive; additional nulls
+alone are not improvement. The user's original uncertainty is not preset null
+gold. The no-business control still changes both the hashtag and the object
+described as weird. The synthetic trees were generated for the original post,
+not its edited controls. If a consequential difference appears in the original,
+repeat that exact case freshly under both unchanged conditions before a prompt
+recommendation. Controls have one fresh draw per condition in this stage.
+
+The initial experiments are `target/bootstrap-coffee-reference-ablation-v1/v109`
+and `target/bootstrap-coffee-reference-ablation-v1/v111`, prepared with the
+[v109 spec](hierarchy-bootstrap-coffee-reference-ablation-v1.spec.json) and
+native `prepare --from --prompt` for v111. Each initial run is bounded to six
+new attempts, including warmup and retries. Conditional original repeats may
+use three attempts per condition, for at most eighteen newly dispatched
+attempts in this diagnostic, all charged to the existing shared counter.
+Independent reviewers examine final meanings and provenance separately.
+No Compare calls or hierarchy construction belong to this check.
+
+Official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+supports direct instructions and avoiding requested reasoning traces; it does
+not establish this particular semantic change as a fix. Native quote evidence
+and task-specific contrasting controls establish the relevant results.
+
+#### Completed matched first draw
+
+Both conditions completed all four cases with valid fresh answers. There are
+no exact reuses, retries, failures, invalid receipts or unfinished cases. An
+independent semantic reviewer assessed the outputs before inspecting either
+prompt, then a separate reviewer verified paired provenance. Six qualified
+agent accepts and two agent-uncertain judgments were saved through native
+`review`; no new user approvals were invented.
+
+| Case | Fresh v109 | Fresh v111 |
+|---|---|---|
+| Original ambiguous hashtag | Business meaning; agent uncertain | Business meaning; agent uncertain |
+| Synthetic coffee-shop visit | Null; qualified agent accept | Null; qualified agent accept |
+| Synthetic explicit business evidence | Supported business meaning; qualified agent accept | Supported business meaning; qualified agent accept |
+| Synthetic hashtag clarification | Null; qualified agent accept | Null; qualified agent accept |
+
+The exact original-case v109 meaning is:
+
+> A coffee chain—a business operating multiple coffee shops—characterized by
+> the author as weird on the day of the post.
+
+The exact original-case v111 meaning is:
+
+> A coffee-chain business, operating multiple coffee shops, that the author
+> characterizes as weird on the day of the post.
+
+Both interpret the hashtag as evidence of a coffee-chain business without
+settling business-versus-coffee-tag reference. This preserves the original
+uncertainty; it establishes neither a falsehood nor mandatory-null gold. The
+candidate's explicit chain-versus-single-venue decision does not resolve that
+different ambiguity. All evidence quotes occur in their supplied posts, and
+the controls preserve supported positive coverage and source conflicts.
+
+Every paired model-facing input is byte-identical, and each rendered prompt
+differs by exactly the tested sentence. All 76 frozen executable-code bindings
+match. Provider, model, medium reasoning, schema, worker, wrapper and request
+code identities also match. Runner configurations differ only in prompt-cache
+prefix/key, as required by the changed prompt. Each of the eight case receipts
+matches its original JSONL record through the production digest, including
+input, rendered-prompt and raw-output hashes. The candidate's frozen baseline
+contains these four freshly generated v109 answers and exact receipts.
+
+| Condition | Case | Producer record SHA-256 |
+|---|---|---|
+| v109 | Coffee-shop visit | `3faa82bc1ec5f0a4fec2c273e7b2c9dc4184872a82668dc9c831615f497fc13a` |
+| v109 | Explicit business | `cee0d441fb567657988d7a14e2cc86b1523f5d528c2310950d59c1a8676f9277` |
+| v109 | Hashtag clarification | `8451f7bb6724eff6381bc677f1fdb241e7bce1801e130ff9171c2a5aaafb5664` |
+| v109 | Original | `b49250d67c82697c2f97b3136b934685a6e247c7608ff26dab65bdf52cc82c75` |
+| v111 | Coffee-shop visit | `463e360e6c4f2c13ab4599ae76eb7d00d59d2d0238b54445095d7872245ce573` |
+| v111 | Explicit business | `887259dfe6d1227b136cd39a2f64a0935f3741fc982393415f925d172f087e4a` |
+| v111 | Hashtag clarification | `b2f486bd79b0da7eaa4b267ceb7a6f1a064c32df8b1cd23134af16c615938f64` |
+| v111 | Original | `2a185334c83e2a664c1088ffa7ab706946dcb2882e05bcce55ca1254974b71a7` |
+
+The [native accounting source](hierarchy-bootstrap-coffee-reference-ablation-usage-v1.json)
+produces `target/bootstrap-coffee-reference-ablation-v1/usage-native-v1.json`.
+It records **ten newly dispatched attempts**: eight definitions and two
+warmups. API-equivalent cost is **$0.0805732**, with complete usage and reasoning
+already included in output. Six of eight definition requests report cached
+input; warming does not guarantee cache hits. No source-generation calls were
+added because every answer in this stage is fresh. The existing persistent
+attempt counter was retained without resetting it.
+
+There is **no demonstrated correction** from this single-sentence change in
+the matched first draw. This does not prove the sentence is irrelevant in
+general or identify a uniquely responsible instruction. The predeclared
+consequential-change condition did not trigger, so no original-case repeats
+were dispatched. V111 remains an experimental diagnostic, with no adoption
+recommendation; v104 remains approved. No Compare calls or hierarchy builds
+occurred. Forty-two production-path prompt-revision and current-main traversal
+and graph-search tests passed after the routine main merge; the merge retained
+main's code-file registrations. JSON, link and diff checks cover the prompt
+and reusable preparation sources separately from semantic qualification.

@@ -65,6 +65,9 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'canonical_consolidation':
+        return prepare({**dataset, 'adapter': 'generic'}, source, template), sources, dict(
+            application_allowed=False, purpose='Proposed grouping; ordinary traversal validates placement.')
     if dataset['adapter'] == 'canonical_shaping_nomination':
         cases = prepare_shaping_nominations(source, path.parent, sources)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
@@ -82,9 +85,14 @@ def prepare_file(dataset, path, template, load_report=None):
     if dataset['adapter'] in {'generic', 'hierarchy_node_pairs'} and 'prepared_experiment' in source:
         fixed_meanings = dataset['adapter'] == 'hierarchy_node_pairs'
         fields = {'prepared_experiment'} | ({'input_view'} if fixed_meanings else set())
+        if fixed_meanings and 'input_order' in source:
+            fields.add('input_order')
         engine._expect_fields(source, 'prepared input source', fields)
         if fixed_meanings and source['input_view'] not in ('fixed_meanings', 'symmetric_fixed_meanings'):
             raise ValueError('prepared node pairs input_view must be fixed_meanings or symmetric_fixed_meanings')
+        if 'input_order' in source and (source['input_view'] != 'symmetric_fixed_meanings'
+                                      or source['input_order'] is None):
+            raise ValueError('input_order requires symmetric_fixed_meanings and an A/B order array')
         reference = source['prepared_experiment']
         engine._expect_fields(reference, 'prepared experiment reference', {'path', 'sha256'})
         directory = engine._resolve_path(reference['path'], 'prepared experiment', path.parent)
@@ -115,11 +123,14 @@ def prepare_file(dataset, path, template, load_report=None):
             source_prompt_id=plan['prompt']['id'], application_allowed=False)
         if fixed_meanings:
             from . import hierarchy_node_pairs
-            projection = (hierarchy_node_pairs.project_symmetric_fixed_meanings
-                          if source['input_view'] == 'symmetric_fixed_meanings' else
-                          hierarchy_node_pairs.project_fixed_meanings)
-            cases = [projection(case) for case in cases]
+            if source['input_view'] == 'symmetric_fixed_meanings':
+                cases = [hierarchy_node_pairs.project_symmetric_fixed_meanings(
+                    case, input_order=source.get('input_order')) for case in cases]
+            else:
+                cases = [hierarchy_node_pairs.project_fixed_meanings(case) for case in cases]
             preparation['input_view'] = source['input_view']
+            if 'input_order' in source:
+                preparation['input_order'] = source['input_order']
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     saved_counterexamples = dataset['adapter'] == 'generic' and 'saved_counterexamples' in source
     if saved_counterexamples or dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes',
@@ -1460,6 +1471,9 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'canonical_consolidation':
+        from .canonical_traversal import validate_consolidation
+        result['parsed'] = validate_consolidation(raw, json.loads(case['inputs']['INPUT_JSON']))
     if adapter == 'canonical_shaping_nomination':
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         engine._expect_fields(value, 'shaping nomination output', {'candidate_id', 'children', 'reason'})

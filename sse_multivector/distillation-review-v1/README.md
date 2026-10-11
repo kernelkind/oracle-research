@@ -1,6 +1,13 @@
 # Distillation semantic review — process and evidence
 
-**Current development result:** the completed
+**Current development result:** xhigh generation finishes on
+[24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
+retaining the previous eight and adding sixteen structurally valid random
+answers. Three agents audit complete decisions and reasons during generation
+and independently confirm three support errors. Unresolved interpretations
+stay separate. Reviewer qualification and minimum reasoning effort remain open.
+
+**Earlier development result:** the completed
 [eight-note xhigh regression](#dslv10-eight-note-regression-october-11) with
 approved experimental [DSLv10](relationship-prompt-v10.md) remains unqualified.
 All three checks finish: 784 completed occurrences and 553 justified relationship
@@ -38,7 +45,8 @@ change is justified by that disputed case alone.
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
 then run broader regression checks once that set passes. The earlier
 [four-note scope](#regression-scope-reduced-to-four-notes-october-11) is subsequently
-expanded to [eight notes at xhigh](#dslv10-eight-note-regression-october-11).
+expanded to [eight](#dslv10-eight-note-regression-october-11) and then
+[24 notes at xhigh](#dslv10-twenty-four-note-regression-october-11).
 The agreed **50 random plus ten challenge answers** remain the very
 final validation. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
@@ -5152,6 +5160,105 @@ case reviews, fresh confirmation groups and `terminal-usage.json`. Complete
 response aliases, receipt validation, native stopping state, frozen source
 bindings and locked attempt accounting pass inspection. Frozen legacy target
 agreement and score agreement are not used as adjudicated correctness.
+
+## DSLv10 twenty-four-note regression (October 11)
+
+The user authorizes expanding the xhigh development regression to **24 notes
+within the agreed sixty**, prioritizing execution speed. Select the first 24
+structurally valid answers in the frozen random order: R01–R27 excluding the
+invalid R09/R24/R25 generations. This retains all eight prior answers and adds
+sixteen distinct notes without consulting reviewer outputs or correctness
+labels. Invalid outputs remain part of the original sixty-answer selection.
+
+All three checks retain DSMv3/DSSv2/experimental DSLv10, trusted ASv6.100,
+complete original inputs, schemas, native mechanical rules, source assessments
+and Sol/xhigh/subscription SSE. Production remains DSLv2. This is additional
+development exposure, not unseen qualification or the final-sixty validation.
+
+The frozen 24-note preparation contains **7,314 numbered checks**: 507 matching,
+507 support and 6,300 relationships. All **423 prepared mechanical proofs**
+reproduce through production `_TeacherIndex`: 170 exact subject matches,
+54 identical pairs, 84 exact teacher edges and 115 teacher ancestor paths.
+Preflight finds 194 distinct matching and 194 support inputs, all reusable;
+relationships have 2,961 possible distinct inputs, 264 reusable before stopping.
+The 2,697 possible new relationship inputs are an upper bound before the native
+coverage stopping rules. The persistent shared allowance is **5,436 attempts**,
+two attempts for each possible new request or eligible warmup:
+`2 × (2,697 + 21) = 5,436`, including retry room.
+
+The initial full coordinator is stopped after six new attempts because it
+serializes prefix groups. Saved receipts remain intact. Three native eight-note
+evaluations run concurrently; sixteen added-note native evaluations supplement
+them to keep the shared queue at its 30-request limit. Each preparation verifies
+complete inputs, prompts and runner settings, including cache prefixes, against
+the frozen full plan before calls. Native request-history locks and verified
+reuse are enabled; all runs share one attempt counter. The saved receipts also
+contain repeated fresh successes for an identical rendered request. These are
+retained and accounted for rather than treated as free reuse; every successful
+full output version is audited. No runner change is made during this baseline.
+The final full evaluation joins verified results without new inference.
+Its first join exposes one missing history reference for Noem
+(`Shootings` → `Kristi Noem`), although both independent executions succeeded.
+The genuine shard-C retry receipt passes production identity/receipt checks
+and is registered through `RequestHistory.remember`; no output or target is
+changed and no new model call is made. The initial partial snapshot is preserved.
+Independent notes retain the same native selection, stopping and score assembly.
+Only repeated natural prefixes meeting native eligibility are warmed.
+
+Three Sol/xhigh agents first record source interpretations without candidate
+inspection, then audit complete decisions and explanations as they finish,
+including historical reuse and every successful output version. Mechanical
+proofs and conditional skips are tracked separately. Across all successful
+versions, including historical reuse, the audit covers **1,621 full model outputs
+for 1,613 distinct inputs**: 1,573 accepted, three rejected and 45 uncertain.
+The repeated successful versions are counted explicitly, not as independent
+sample notes or free reuse. Preserved uncertainties
+and new interpretation questions stay outside certified correctness counts;
+frozen legacy qualification targets remain provenance rather than audit gold.
+The audit independently confirms three reused support errors. On R11,
+`Design ideas` and `Desktop-setup ideas` introduce relationships from separate
+hashtags alone, contrary to the supplied AS co-mention rule. On R07, rejecting
+`Intelligence` ignores its information sense: the title identifies an intelligence
+report and the body supplies reported agent-infrastructure and market information.
+An independent input-only review confirms each error; frozen labels are unchanged.
+Unresolved source meanings remain separate, including interpretation of named
+Agent Trust Layer offerings, the scope of `#girls`, and inherited Nostr/event
+questions. One identical rendered Agent Trust Layer request has successful
+versions with opposite Boolean verdicts; both stay uncertain rather than
+forcing a correctness label. Resolved decisions with uncertain explanations
+are also reported separately. No prompt revision or lower-effort call starts here.
+
+Ignored evidence is under
+`oracle-mvp-review-xhigh-24-note/target/distillation-review-v1/xhigh-24-note/`:
+the complete frozen evaluation, `shards/`, `notes/`, shared attempt counter,
+input-first source notes and attributed output-version audit ledgers,
+`history-recovery-c.json`, `evaluation-final-raw-complete.json` and native
+`usage-final.json`. The final project report has **24 complete answers, zero
+pending checks**: 3,424 model-judged occurrences, 423 mechanical proofs and
+3,467 conditional skips account for all 7,314 prepared occurrences. Each final
+model input/output hash is present in its assigned auditor ledger; successful
+versions subsequently skipped by the final dependency state remain audited.
+
+Native accounting reconciles all **1,004 local attempts** with the shared
+5,436 allowance: counter delta zero, no malformed or invalid receipts and all
+11 local transport failures recovered (ten terminated streams and one HTTP
+503, including two failed warmups). It retains eight repeated rendered primary
+requests with multiple fresh successes. Known local usage is 1,252,960 uncached
+input tokens, 202,752 cached input tokens and 1,061,211 output tokens, including
+853,228 reasoning tokens. Cached share of known total input is **13.93%**,
+`202,752 / (1,252,960 + 202,752)`. The known local catalog estimate is **$13.1383**
+across 993 usage-known attempts; full cost is unknown because eleven failed
+attempts lack usage. Subscription charges are not inferred from this estimate.
+
+The native deduplicated generation union includes **1,667 original calls**,
+adding 663 historical source receipts. Its 1,621 successful comparison calls
+reconcile with the complete output-version audit. Known catalog estimate is
+$18.3219 and known cached-input share is 12.96%; fifteen source calls lack
+usage/cost, so full totals and net cache savings remain unknown. Native raw-group
+`complete=false` reflects retained unrun cases that the project stopping rules
+skip; project execution is complete. Qualification, prompt correctness and the
+minimum reasoning effort remain open. No lower-effort run or prompt change is
+started by this expansion.
 
 ## Actual distilled wording: offline preview (October 8)
 
