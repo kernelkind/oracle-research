@@ -128,10 +128,42 @@ temporarily limited by recovery; no execution policy was changed. Nine native
 revision tests also pass. Native artifacts and reviewed receipts remain in the
 task worktree; no raw experiment data is committed.
 
-Before another edit, repeat the unchanged stock case to determine whether its
-source-actor restriction persists. Retain the named-topic ambiguities as
-separate qualifications rather than scoring incidental descriptions as proven
-coverage restrictions. This is a suggested next test, not a started repeat.
+The user approved the proposed unchanged stock repeat. Its result follows.
+Retain the named-topic ambiguities as separate qualifications rather than
+scoring incidental descriptions as proven coverage restrictions.
+
+#### Unchanged BBv5 stock repeat
+
+Native `prepare --from --only --repeat` created
+`target/bootstrap-broad-v5-stock-repeat-v1` in the BB worktree. Its sole case is
+the same recurring stock-making entry `5.1`. The complete input, original
+evidence, rendered prompt, model, output schema and cache settings match the
+first BBv5 draw exactly. The prior answer is baseline metadata, not input to
+the new request. Explicit repeat preparation prevents exact-answer reuse.
+
+The fresh answer again defines **the author's recurring practice**. Its
+resolution also says the activity is undertaken by the author. Neither BBv5
+draw identifies generic-practice versus author-specific scope as an ambiguity;
+both instead examine canning/storage and equipment/yield. Thus the unnecessary
+actor restriction recurs in two independently generated BBv5 answers. This is
+bounded evidence of the observed failure, not a reliability estimate or proof
+that a particular sentence causes it. Both draws preserve the selected
+frequency and saved-carcass restrictions.
+
+The repeat receipt's record SHA-256 is
+`5c97aec63c312e57745a3436337436740ca5461a33aa1adf1651608cd8bd8829`.
+Native agent review rejects it under the BB breadth criterion. One fresh
+GPT-6.1 Sol medium attempt completed, with no retry, failure, answer reuse or
+additional warmup. The one-attempt cap gives the substantive request priority
+over warming while retaining the existing cache prefix; observed cached input
+is 5,504 tokens. Native API-equivalent cost is $0.0087944, excluding earlier
+generation. Prompt text remains unchanged.
+
+The next proposed edit should address the distinction between the post's
+particular actor or occurrence and conditions defining the selected topic,
+while preserving genuinely particular identities expressed by the subject.
+Test it against the same stock input before broadening qualification. This
+proposal is not an applied prompt change or a new started test.
 
 ## Existing Bootstrap qualification
 
