@@ -99,6 +99,18 @@ supplies its own response schema; this supports relation-only Compare student
 screens without altering the teachers' meaning/relation/reason validator.
 Mechanical-answer cases are refused rather than imported as input-only cases.
 
+For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
+collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
+Preparation validates and deduplicates the original source-bound inputs before
+removing only each supplied hierarchy entry's `context`. Post, selected number,
+entry order, numbers and subjects stay fixed. Original case IDs remain stable;
+projected inputs receive new request hashes, so a contextual answer is not reused
+as a context-free answer. Review evidence retains original inputs and both local
+input digests. Original source validation and output quote validation still apply;
+this does not change the default input format or permit hierarchy application.
+The first prepared two-condition panel is documented in
+[Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md#controlled-context-ablation-prepared).
+
 For Bootstrap distillation pilots, `bootstrap_student_inputs` accepts hash-bound
 `registry`, `manifest`, `split_manifest` and `posts` references, a fixed `seed`,
 `train_notes`, `evaluation_notes`, `entries_per_note` and `role` (`train` or

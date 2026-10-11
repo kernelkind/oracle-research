@@ -26,6 +26,12 @@ teacher validator. Bootstrap's pilot student returns only `meaning` (string or
 null); the full teacher answer remains review evidence. The final distilled
 output contract remains open until prompt freeze.
 
+The user approved broader evaluation of the existing checkpoints with exactly
+**Bootstrap-v96 / Compare-v48**, including v96-produced meanings for every
+Compare input. Preserve that pair across instructions, teacher references and
+semantic reviews. A newer prompt pair needs its own matched experiment; this
+extension does not select final models or authorize final training.
+
 The useful distinction is the actual supervised output and complete input,
 not the old SHR/SP model ranking. A common foundation with two adapters is
 possible; different foundations are equally possible. Neither is an approved

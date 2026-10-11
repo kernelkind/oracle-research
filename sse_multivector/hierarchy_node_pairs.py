@@ -37,11 +37,19 @@ def _local_collection(source, *, base, read, load_report):
         fields.add('experiments')
     if 'local_schema_version' in source:
         fields.add('local_schema_version')
+    if 'input_view' in source:
+        fields.add('input_view')
     _fields(source, 'local node collection', fields)
     local_schema_version = source.get('local_schema_version')
     if 'local_schema_version' in source and (type(local_schema_version) is not int
                                              or local_schema_version != 4):
         raise ValueError('collection local_schema_version must be 4')
+    input_view = source.get('input_view')
+    if 'input_view' in source:
+        if input_view != 'subjects_only':
+            raise ValueError('collection input_view must be subjects_only')
+        if local_schema_version != 4:
+            raise ValueError('subjects_only requires collection local_schema_version 4')
     if not isinstance(source['review'], dict) or 'expected' in source['review']:
         raise ValueError('collection review must be an object without expected targets')
     if not isinstance(source['sources'], list) or not source['sources']:
@@ -163,10 +171,27 @@ def _local_collection(source, *, base, read, load_report):
                  'failure_kind': row.get('failure_kind'),
                  'reviews': row.get('reviews', []),
                  'expectations': row.get('expectations', []), 'evidence': row['evidence']})
-    return cases, {'version': 'hierarchy-local-nodes-v2', 'cases': len(cases),
+    preparation = {'version': 'hierarchy-local-nodes-v2', 'cases': len(cases),
                    'historical_witnesses': sum(len(case['evidence']['review']['historical_witnesses'])
                                                for case in cases),
                    'application_allowed': False}
+    if input_view == 'subjects_only':
+        # Validate and deduplicate original inputs first. Their identities remain
+        # stable across views; the projected payload gets its own request digest.
+        preparation['input_view'] = input_view
+        for case in cases:
+            original = json.loads(case['inputs']['INPUT_JSON'])
+            local = original['local']
+            projected = {'local': {'post': local['post'], 'hierarchy': {
+                'selected': local['hierarchy']['selected'],
+                'entries': [{key: entry[key] for key in ('number', 'subject')}
+                            for entry in local['hierarchy']['entries']]}}}
+            case['inputs']['INPUT_JSON'] = json.dumps(projected, ensure_ascii=False)
+            case['evidence'].update(
+                input_view=input_view, original_input=original,
+                original_input_sha256=case['evidence']['local_input_sha256'],
+                local_input_sha256=hashlib.sha256(engine._canonical_json_bytes(projected)).hexdigest())
+    return cases, preparation
 
 
 def create_meaning_diagnostic_source(source, *, base, read, load_report):
