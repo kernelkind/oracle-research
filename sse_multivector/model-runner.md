@@ -1342,11 +1342,12 @@ Use these offline commands after construction:
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
 Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved finished-menu requirements are all notes reachable,
-strictly smaller note sets on every downward edge, and no known valid improvement
-that reduces browsing decisions while preserving those constraints. Manage root
-and child choice counts on a best-effort basis; exceeding six is no longer a
-reason by itself to declare the hierarchy unfinished. The
+note IDs. The approved stopping conditions are all notes reachable individually
+and strictly smaller note sets on every downward edge. There is no additional
+requirement to find or apply every known regrouping or shortcut, or to conduct a
+final improvement review before stopping. Manage root and child choice counts
+on a best-effort basis; exceeding six is no longer a reason by itself to declare
+the hierarchy unfinished. The
 [traversal draft](hierarchy-traversal-draft.md) retains consolidation after an
 addition leaves six or more siblings. Existing workflow code and frozen audit
 bounds remain unchanged, so saved sibling-limit violations still describe their
@@ -6849,3 +6850,10 @@ V179 schema; warmups and retries also consume the existing persistent allowance.
 Shared internal scheduling handles concurrency. See the
 [ablation preparation and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-preparation)
 before treating provisional control labels as accuracy targets.
+
+V180's 947-token prefix is below the explicit caching minimum. The actual
+examples ablation therefore uses the V2 specs with explicit prefix caching
+disabled in BOTH arms and fresh `target/compare-v179-examples-ablation-v2`
+directories. The initial V1 preparations make no calls and are not results.
+This preserves matched message structure and leaves any backend cache usage
+to native accounting; no artificial padding is added.
