@@ -737,7 +737,7 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                     self.root/('long-data-'+kind)/'manifest.json')
                 result = subprocess.run(long_command, env=evaluation_environment, text=True, capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertRegex(result.stderr, 'exceeds configured maximum|exceeds.*limit|overlength|too long')
+                self.assertRegex(result.stderr, 'exceeds configured maximum|exceeds.*limit|overlength|too long|state exceeds 4096 tokens')
                 self.assertFalse((self.root/('long-evaluated-'+kind)).exists())
                 frozen_code.write_bytes(original_source)
 
