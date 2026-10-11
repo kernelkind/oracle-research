@@ -1732,7 +1732,8 @@ frequency/material requirements. The rejection assumed that omitting an actor
 from the subject required other makers to qualify. The subsequent node-local
 reassessment below withdraws that definite failure classification: this entry's
 own context and post explicitly describe the author's practice. The difference
-is an actor-scope choice requiring review, not a demonstrated prompt correction.
+is a supported actor-scope choice, not a demonstrated prompt correction. The
+user's subsequent clarification below accepts either evidence-consistent choice.
 
 Two baseline definitions were initially qualified rather than rejected: the selected
 green-beans ignition adds the other foods' purposes, and pantry storage adds
@@ -1959,9 +1960,8 @@ is "The author describes making chicken stock a couple of times a year." Its
 post says "We save carcasses when we butcher and a couple of times a year do
 this." The saved v104 resolution consistently chooses the author's recurring
 practice. That choice cannot be rejected solely because the subject omits an
-actor. Whether the node should instead cover other makers following the same
-practice remains an explicit user-review question; neither scope is certified
-by the different Food example or the other version's output.
+actor. The different Food example and the other version's output cannot require
+this node to cover other makers following the same practice.
 
 A new native agent `uncertain` review supersedes the stock rejection while
 preserving its history, exact output and producer record
@@ -1978,7 +1978,18 @@ collections retain all named ingredients together; they do not admit independent
 ingredient alternatives. Ten new native qualified accepts preserve the earlier
 uncertainties in history.
 
-Current latest-verdict counts are **109 accept / 0 reject / 6 uncertain** for
+After seeing the exact stock meanings and their original evidence, the user
+clarified, verbatim: **"idc which boundaries the agent makes. as long as it's not
+contradicting the evidence"**. Evaluation therefore accepts any clear boundary
+consistent with this local node's evidence; it does not require a preferred
+actor, role or category scope. Meanings must still settle consequential boundaries
+and avoid unsupported claims about particular things. A new native qualified
+agent accept supersedes the stock uncertainty, preserving all earlier reviews,
+the original output and the producer receipt. This applies the user's rule to
+that output; it does not invent a full-output user verdict or certify its branch
+relationships. No prompt change or model call was made.
+
+Current latest-verdict counts are **110 accept / 0 reject / 5 uncertain** for
 v104, including its malformed endpoint, and **111 accept / 0 reject /
 4 uncertain** for v109. These are changed agent assessments, not new model
 outputs, human approval or a measured improvement. The independently fixed
@@ -1991,19 +2002,22 @@ conditional category definition; the post does not establish outlet count or
 venue affiliation. Both exact child outputs receive new native uncertainty
 comments preserving the older assessment history.
 
-The consequential questions to surface one at a time are:
+The remaining review concerns are evidence support or genuinely unresolved
+meaning, rather than preferences between clear, supported boundaries:
 
 | Local entry | Remaining question |
 |---|---|
-| Stock `5.1`, recurring stock-making | Does this selected node cover the author's recurring practice or other makers following the same practice? Both saved definitions explicitly choose a supported scope; no actor-neutral expectation is gold. |
 | Risotto `1`, Food | Does intended consumption characterize the culinary kinds covered, or have to hold for each particular application described? The human culinary interpretation is supported locally; the separate dog-food example cannot settle this condition. |
 | Coffee-chain `1.1`, described as weird today | What should Bootstrap return when the selected AS subject/context proposes a particular business that the original post does not establish? A coherent root definition does not establish that child's factual assignment. |
-| Jesús Molina `2` and Rome `5` | Does profession/proverb wording identify the named entity or restrict the information covered? Interpret each output from its own evidence; punctuation or another note's matching name cannot establish the boundary. |
-| Rome `5.1.1.1`, complete warning-sign list | Does the final list definition require the full joint description, while its resolution describes separately admitted signs? Review actual information coverage before declaring a branch conflict; diagnostic wording alone does not fail a clear final meaning. |
 
-These questions are review qualifications, not new user labels, mandatory
-replacement meanings or a reason to rewrite the current prompts. The first
-presentation uses stock `5.1`, its original post and complete local branch.
+The Coffee-chain child is the clearest remaining factual-support concern, not a
+demonstrated contradiction in the post. Independently reviewed Jesús Molina and
+Rome meanings retain supported named identities; no boundary preference needs
+user resolution. The Rome warning-sign meaning clearly describes the complete
+three-item list. Diagnostic wording alone does not establish an error in that
+final meaning. These findings do not certify every branch relationship or clear
+the malformed baseline cocotte endpoint. Remaining qualifications are not new
+user labels, mandatory replacement meanings or a reason to rewrite the prompts.
 
 Review selection must distinguish an input/output-bound record from the newest
 decision: `current: true` certifies matching hashes, not supersession. Native
