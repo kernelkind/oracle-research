@@ -1228,3 +1228,16 @@ run the remaining seven (cap 15) and a fresh repeat of the initial eight (cap 17
 followed by the full 102 frozen panel. All stage caps are subordinate to the
 persistent 20,000 allowance. An initial failure instead triggers a new controlled
 edit under the user's autonomous instruction. No producer meanings change.
+
+### Completed v4 independent-definition clarification
+
+All eight outputs are valid: nine attempts including warmup, zero failures,
+retries, reuses or missing usage; eight cache hits; $0.06164 native API-equivalent
+cost. The supported final labels and restored appliance reversal are retained.
+Snapshot C001 still declares intended human nourishment necessary solely from
+food preparation of bagels. Thus the clarification fails its targeted gate; no
+remaining-controls stage or repeat of v4 is authorized by its conditional plan.
+Autonomous iteration continues with a new controlled candidate. The next
+diagnosis separates intended consumer, purpose and role restrictions rather
+than accepting one bundled assertion of a typical food use. This failure does
+not establish that counterpart definition borrowing was the responsible cause.
