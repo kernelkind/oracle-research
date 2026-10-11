@@ -33,6 +33,13 @@ two factual-support rejects and two uncertain meanings. The business-identity
 failure recurs in both draws. Food relationships retain a consequential
 information-topic interpretation disagreement; they are not certified failures.
 V104 remains approved, v105 remains experimental, and no prompt changed in this stage.
+The subsequent [controlled authority/parent-fit test](#completed-subject-authority-and-parent-fit-wording-diagnostic)
+has 64 valid fresh outputs across v105-v108 and two draws per condition.
+Every condition has 14 qualified accepts and two uncertain business-child
+assignments; none has a demonstrated grounded repair or control loss. Review
+distinguishes a coherent conditional category from asserting an entity exists.
+That assessment refinement is not a numerical prompt improvement. V106-v108
+remain experimental; v104 remains the last approved prompt.
 
 ## Input and review contract
 
@@ -1292,3 +1299,131 @@ step requires its own review of these results, not automatic adoption.
 The design follows [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
 on clear, direct constraints and consistent examples. That guidance does not
 certify these semantic replacements or their expected outcomes.
+
+## Completed subject-authority and parent-fit wording diagnostic
+
+All eight predeclared experiments completed: four conditions, two fresh draws
+and eight identical original inputs each. All 64 meanings are valid and non-null;
+none is reused, malformed, failed or unrun. The original source posts and complete
+ASv6.100 trees, selected pointers, output schema and model settings match the
+baseline. Only the declared prompt blocks differ. Native revision provenance
+reconstructs every candidate exactly from approved v104; output instructions,
+the two synthetic examples and input placeholder are byte-identical to v105.
+
+Three independent read-only reviewers examined the coffee outputs and controls.
+Native input/output-bound agent assessments record the same qualified results
+for every condition:
+
+| Condition, both draws | Qualified accepts | Uncertain | Rejects | Null coverage | Grounded coffee-child repair |
+|---|---:|---:|---:|---:|---|
+| v105 reference | 14 | 2 | 0 | 0 | Not established |
+| v106 authority replacement | 14 | 2 | 0 | 0 | Not established |
+| v107 parent-fit replacement | 14 | 2 | 0 | 0 | Not established |
+| v108 combined replacements | 14 | 2 | 0 | 0 | Not established |
+
+The 56 accepts comprise 40 controls, eight amusement meanings and eight business
+root definitions. The root accepts certify definition coherence only, retaining
+the unresolved assignment to the actual post. The eight uncertain outcomes are
+all business children. These are provisional agent assessments, not human gold,
+reliability estimates or certification of complete original branches.
+
+### No demonstrated wording fix; refine the source-support claim
+
+All eight child meanings select coffee-business scope. None examines whether the
+post's hashtag names a topic/tag rather than establishes a business-chain sense.
+Most diagnostics instead decide enduring weirdness versus a day-specific
+description. V106 draw 2 records no ambiguity and says the hashtag identifies
+"the business as a coffee chain". Omitting the multi-outlet gloss in several
+other answers does not establish a different, justified interpretation.
+
+The final definitions can describe conditional categories. They do not all
+logically assert that a particular business exists. Review therefore qualifies
+the stronger earlier failure explanation: the recurring concern is whether
+business-chain scope is justified for this post, separately from the coherence
+of the category being defined. A strict source-assignment rejection remains a
+possible assessment of that concern; these matched reviews conservatively use
+uncertain for the grounded selected meaning. Previous outputs, rejection records
+and reasons remain unchanged. Reduced rejection counts here reflect assessment
+precision, not evidence of a prompt repair.
+
+V108 draw 2 correctly withholds the shop's affiliation with the chain. This is
+a local improvement in its justification, not resolution of business versus
+hashtag/topic identity or a demonstrated effect across both draws. All eight
+amusement meanings retain the supported reaction and attributed framing. No
+preferred hashtag/community interpretation has been certified as semantic gold.
+
+The two instruction-block interventions establish no reliable advantage on
+these endpoints. They do not prove the blocks harmless generally, attribute the
+outcome to a particular sentence, or establish an internal mechanism. No v106-v108
+condition is adopted or activated; v104 remains approved.
+
+### Controls and independent branch checks
+
+All 40 control meanings provisionally preserve their supported identity and
+scope: Mental states remains broader than its illustrated instances; Jesús
+Molina retains individual identity without an invented precise ensemble role;
+pantry storage stays planned with expected/approximate yield; handles and cocottes
+retain both steel and brass alternatives. The named person's profession can
+identify him without certifying musical-role-only information coverage. No Music
+relationship is tested or inferred from those accepts.
+
+All 16 material parent/cocotte endpoint combinations are provisionally compatible
+under information-topic narrowing, with four combinations per condition. These
+are dependent read-only checks, not new model comparisons. A cocotte's required
+handle supplies the narrower subject matter without requiring the vessel to be
+a physical instance of a handle. No convenient endpoint selection is used.
+
+The Food disagreement remains separate. A read-only reviewer proposes that
+Bootstrap must distinguish conventional human-food kinds from particular uses
+intended for people, while Compare honors whichever condition is chosen. That
+proposal does not settle the current meanings or establish a mandatory human
+qualifier for recipe-defined children. Neither possible reading is new gold;
+the original qualified Food results remain unchanged.
+
+### Frozen receipts and native accounting
+
+Artifacts remain under
+`target/bootstrap-v106-v108-authority-parent-v1/v{105,106,107,108}-draw{1,2}`.
+Each directory retains the experiment envelope, production JSONL receipts,
+`report-before-review.json` and separately saved `report-reviewed-v1.json`.
+All 64 input/output/receipt bindings remain unchanged by review; production
+digest checks verify every current agent review. All 115 evidence quotes are
+exact contiguous substrings of their original posts.
+
+| Condition/draw | Business-child production record SHA-256 |
+|---|---|
+| v105/1 | `abd43d7601bffc39fe81801e2296bfedae9bbb2d1cea724daba4fecc14700bae` |
+| v105/2 | `3c0e07e316f5af9ba9a5677bd2c5da484d516dc4d9e1210171a21e96092452c4` |
+| v106/1 | `204c06604e11f392eff905fbe0db0200be40cc41bfe21d156ebf93806ebde7ad` |
+| v106/2 | `4d3502450d357355165d59bf2b87e2f32a8cf8a6ea78d08815c6cf68b4bfbd9f` |
+| v107/1 | `56ee41071ed7ad186908139f71c298d70f97fec67fa6a905507990bc967ca37b` |
+| v107/2 | `20946efa661338d083d37d92bcfe524d7515eb41626c3e7270988150c95056ab` |
+| v108/1 | `ce5f2775f4f77cf6c316cef0196f9cdf3706b987ff27e1f6f2cd14c60b93854b` |
+| v108/2 | `d1576fc18feba5ffdc3e2fe8d16062982cf4295e4b071e1ddfde948dc90193af` |
+
+The native usage report is `target/bootstrap-v106-v108-authority-parent-v1/usage-native-v1.json`,
+SHA-256 `bcb303ce68b17afe55bbb64da9f0918ca5fa64b0ea8841d455a3ffd7591915c4`.
+Actual execution used 73 attempts: 64 first-attempt meanings, eight successful
+prefix warmups and one failed warmup attempt recovered by the provider-only retry.
+All retry/warmup attempts count against the persistent allowance; no paid fallback,
+counter reset or retry override occurred. There are no exact answer reuses.
+Sixty-one of 64 meaning requests report cached-input usage. The known native
+API-equivalent subtotal is $0.4660116; one failed warmup lacks usage, so complete
+cost and cache savings remain unknown. Reasoning is already included in output.
+This is not an incremental subscription cash charge. The counter was 14,447
+before launch and 14,520 at completed accounting, matching these 73 attempts;
+later snapshots also include other agents' work.
+
+Nine native revision tests and four production-path input/preparation tests pass,
+along with exact source/render/schema/cache checks and receipt/review hashes.
+The broader legacy-suite limitations recorded above remain; no execution code
+changed in this stage. Native revisions and the predeclared protocol were
+committed and landed before inference; no active experiment binding was edited.
+
+The next useful test would target identification of a term used as a name/tag
+versus its ordinary descriptive sense, within the existing ambiguity section.
+Keep these source inputs and framing controls fixed, without prescribing a
+hashtag interpretation or inserting this case into the examples. Because the
+current source-assignment contract remains qualified, inspect the exact witness
+with the user before treating a conditional business definition as definite
+semantic failure. No further prompt revision or inference stage has begun.
