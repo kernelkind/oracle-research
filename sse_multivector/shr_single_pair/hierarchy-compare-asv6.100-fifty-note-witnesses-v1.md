@@ -5391,3 +5391,23 @@ Fresh relation, question focus, case admission/exclusion and necessity proof
 are assessed separately. A shared covered case does not prove universal
 coverage, and consistent wrong answers do not pass. Version labels and old
 expected answers are omitted from independent output review.
+
+Initial cached preparation succeeds for V179 but refuses V180's 947-token
+fixed prefix against the runner's 1,024-token minimum. It makes no inference.
+The four prepared V179 directories in `target/compare-v179-examples-ablation-v1`
+remain unused; cached V1 specs retain the reproduction of that preparation
+diagnostic. Fresh V2 specs disable explicit prefix caching for BOTH arms, keeping
+request message structure matched without padding instructions or examples.
+The actual cohort uses `target/compare-v179-examples-ablation-v2` and its V2 native
+usage source. Any backend-reported cached tokens remain actual usage, rather
+than evidence of configured warming.
+
+All 101 hierarchy preparation, validation and consistency tests pass on the
+combined main result. Three generic/schema/report checks and the relevant UI
+rerun also pass. An isolated unchanged baseline `f983f6b1`, with the same shared
+runner and Python runtime, reproduces 18 failures and one error in the wider
+legacy experiment harness: removed concurrency settings, scheduler/backoff/auth
+expectations, receipt upgrades and missing tiktoken. The initial UI failure
+passes fresh baseline and current reruns. No unrelated runner behavior is
+changed to make these checks pass. Baseline evidence is retained in
+`target/symmetric-adapter-baseline-f983f6b1-tests.log`.

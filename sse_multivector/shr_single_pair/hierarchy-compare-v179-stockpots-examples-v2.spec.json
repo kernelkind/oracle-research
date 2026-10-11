@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "Hierarchy-compare-v179", "path": "Hierarchy-compare-v179.md"},
+  "dataset": {"adapter": "hierarchy_node_pairs", "path": "hierarchy-compare-symmetric-stockpots-source-v1.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "timeout_seconds": 1800,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "prompt_cache": false,
+    "output_schema_path": "Hierarchy-compare-v179.output.schema.json"
+  }
+}

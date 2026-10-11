@@ -6849,3 +6849,10 @@ V179 schema; warmups and retries also consume the existing persistent allowance.
 Shared internal scheduling handles concurrency. See the
 [ablation preparation and qualifications](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v179--v180-examples-ablation-preparation)
 before treating provisional control labels as accuracy targets.
+
+V180's 947-token prefix is below the explicit caching minimum. The actual
+examples ablation therefore uses the V2 specs with explicit prefix caching
+disabled in BOTH arms and fresh `target/compare-v179-examples-ablation-v2`
+directories. The initial V1 preparations make no calls and are not results.
+This preserves matched message structure and leaves any backend cache usage
+to native accounting; no artificial padding is added.
