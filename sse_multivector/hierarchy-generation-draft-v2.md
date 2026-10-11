@@ -71,13 +71,21 @@ must be recorded, and any triggered consolidation must finish.
 ## Later levels and stopping
 
 This revision applies the prominence threshold to **L1 only**. It does not add a
-prominence filter to L2 or deeper levels or change their existing selection
-order. Once all selected L1s and their triggered consolidation have finished:
+prominence filter to L2 or deeper levels. Their later selection follows the
+approved refinement restriction in the traversal design. Once all selected L1s
+and their triggered consolidation have finished:
 
-- Stop if every note is individually reachable and every downward canonical
-  edge strictly reduces the distinct-note set.
-- Otherwise, continue with L2 and deeper levels under the existing traversal
-  design, checking the browsing conditions after placements and consolidation.
+- Stop if every note is individually reachable, each canonical leaf represents
+  one distinct note, and every downward edge strictly reduces the note set.
+- If every note is represented but some leaves contain multiple notes, select
+  deeper local nodes only from the notes in those leaves, preserving the saved
+  level and rotation order. A note individually reachable on another branch
+  still qualifies when it belongs to a leaf containing multiple notes.
+- While notes remain uncovered, continue under the initial traversal selection
+  rules. This does not waive the required processing of every selected L1.
+- Remove equal-note-set steps from the finished hierarchy while preserving note
+  access, fixed meanings and valid containment. The retained-node choice and
+  automatic removal remain to be worked through before implementation.
 
 A held L1 does not waive individual note access. If construction exhausts its
 eligible local entries while the browsing conditions remain unmet, report that
