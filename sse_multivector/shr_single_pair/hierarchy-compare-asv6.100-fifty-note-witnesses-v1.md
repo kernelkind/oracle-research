@@ -3073,3 +3073,66 @@ The current official reasoning guidance recommends clear direct instructions and
 closely aligned examples. It supports testing this simplification, not the claim
 that compactness or any particular semantic rule improves accuracy:
 https://developers.openai.com/api/docs/guides/reasoning-best-practices .
+
+
+V137/V139 complete104 valid comparisons in108 actual attempts, including four
+warmups, with no reuse, failure, retry or missing usage. Full native API-equivalent
+catalog cost is $1.0031384. Both core panels have five reversal conflicts;
+V137 has one forward chain conflict, V139 has none. V137 controls have no reversal
+conflict among five complete pairs; V139 has one (025). Missing orientations are
+still unresolved. The unchanged-input comparison and these mechanical totals do
+not prove a causal change in semantic accuracy.
+
+V137 core:20 accept/3 reject/10 qualified.019 both now supply genuine display/
+test-only bagels and preserve every child requirement while excluding an eating
+purpose.066 both correctly retain unresolved beverage/material scope.041 forward
+still omits the person test,053 forward imports broth and tests acidity instead,
+and070 forward chooses already-qualifying listeners. V137 controls:10 accept/
+6 reject/3 qualified.009's cake-composition exclusion remains unclosed;025 rejects
+cultivation while overlooking the established intended-eating role;029's failed
+non-experiencing-bot cases omit correction, and reverse029 skips identity.032
+now tests an in-dinner pleasure-only meal but omits the prior consumer test.
+031 supplies the actual pet-consumer case and retains the independent author/
+nourishment qualifications instead of being mislabeled an omission.
+
+V139 core:20 accept/5 reject/8 qualified.019 both remain sound, and reverse071's
+supported null passes.041/042 forward import humans;070 forward skips recipient,
+072 forward chooses already-food venison, and reverse022 does not present a
+concrete variant. V139 controls are still undergoing final native registration;
+no provisional tally is counted as completed qualification. Independent challenge
+confirms009's nonnutritive flavored-water case closes the actual dish-composition
+route, while032 now repairs the dinner role but does not independently establish
+nourishment. These qualifications are not permission to weaken canonical guards
+or rewrite producer meanings. Neither version is adopted.
+
+### V140/V141: isolate the demonstrations rather than append another rule
+
+V140 removes only V139's complete Synthetic examples section. The instructions,
+input template, schema and frozen test meanings remain byte-identical. The prefix
+is1488 estimated tokens, so automatic warming remains eligible. This tests the
+net contribution of both demonstrations to the current combined procedure.
+
+V141 instead reverses only the local/canonical endpoints in the hair illustration.
+Both meanings and both proof cases are preserved, direction IDs and local-meaning
+copy are adjusted, the positive relation moves to canonical_contains_local, and
+the reason refers to the appropriate canonical consequence. The watch example and
+all instructions remain unchanged. This is illustration orientation and role-
+conditioned influence, not pure visible-order testing. No example comes from the
+regression posts or producer outputs.
+
+Earlier V95/V96 changed field ordering and V115 changed paragraph placement.
+V123 was watch-only and retained a fasting error; V124 was hair-only and avoided
+that semantic error in one draw. Those observations do not establish the hair
+illustration as a necessary cause. Independent preflight verifies both actual
+revisions and the reversed proofs; the new trial does not assume an effect.
+
+The same33 core/19 controls are frozen for both candidates from completed V139.
+Expected108 first attempts include104 comparisons and four warmups, with67/39
+stage caps and the unchanged persistent20000 counter. Exact inputs, producer
+receipts, source hashes, examples and runner identity are checked. Before drawing
+an orientation or omission conclusion, use fresh identical-request repeats of
+041/042/053/070 in both directions and the009/031/032 snapshots for V139 and the
+new candidates. That is11 comparisons plus two warmups per version,39 expected
+repeat attempts. Improved labels without valid proofs or increased blanket
+uncertainty do not qualify a candidate. Usage source:
+hierarchy-compare-v140-v141-example-ablation-usage-v1.json.
