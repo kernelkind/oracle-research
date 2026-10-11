@@ -1,6 +1,7 @@
 """Exercise saved hierarchy discovery through the production shared launcher."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import sqlite3
 import subprocess
@@ -61,6 +62,102 @@ class HierarchyCatalogue(unittest.TestCase):
             rebuilt, = self.run_catalogue(root, source, ['--saved-only'])['hierarchies']
             self.assertEqual(rebuilt['version_id'], 'H0001')
             self.assertEqual(rebuilt['locations'], updated['locations'])
+
+    def test_cutoff_uses_owned_execution_time_and_collects_step_settings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact, payload, source = self.fixture(root)
+            spec = json.loads(source.read_text())
+            spec.update(generated_since='2026-10-08T00:00:00-04:00', areas=['target'],
+                        exclude=['**/sse_multivector/**'])
+            source.write_text(json.dumps(spec))
+            for name, started in [('saved-run', '2026-10-08T04:00:00+00:00'),
+                                  ('old-run', '2026-10-08T03:59:59+00:00')]:
+                state = artifact.parent.parent / name / 'state.json'
+                experiment = state.parent / 'step-000/experiment'
+                experiment.mkdir(parents=True)
+                settings = {'started_at_utc': started, 'concurrency': 4,
+                            'prepared_concurrency': 4, 'warm_cache': True}
+                (experiment / 'execution-settings.jsonl').write_text(json.dumps(settings) + '\n')
+                (experiment / 'report.json').write_text(json.dumps({'execution_settings': [settings]}))
+                (experiment / 'runner-config.json').write_text(json.dumps({'model': 'step-model'}))
+                state.write_text(json.dumps({**payload, 'steps': [
+                    {'index': 0, 'experiment': str(experiment), 'status': 'added',
+                     'before': [{'meaning': 'large saved graph body'}]}]}))
+            # A recently copied source snapshot is not a new hierarchy.
+            copied = artifact.parent.parent / 'source-snapshot/sse_multivector/state.json'
+            copied.parent.mkdir(parents=True)
+            copied.write_bytes(artifact.read_bytes())
+            data = self.run_catalogue(root, source)
+            row, = data['hierarchies']
+            self.assertEqual(row['name'], 'saved-run')
+            self.assertEqual(row['generation_time']['basis'], 'saved execution start')
+            self.assertEqual(row['generation_time']['timestamp'], '2026-10-08T04:00:00+00:00')
+            self.assertNotIn('before', row['parameters']['steps'][0])
+            saved = [data['parameter_evidence'][e['sha256']] for e in row['evidence']]
+            self.assertTrue(any(d.get('model') == 'step-model' for d in saved))
+            self.assertTrue(any(d.get('execution_settings', [{}])[0].get('concurrency') == 4 for d in saved))
+
+    def test_cutoff_labels_mechanical_output_mtime_and_honors_saved_timestamp(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact, payload, source = self.fixture(root)
+            spec = json.loads(source.read_text())
+            spec['generated_since'] = '2026-10-08T00:00:00-04:00'
+            source.write_text(json.dumps(spec))
+            artifact.write_text(json.dumps({**payload, 'generated_at': '2026-10-07T20:00:00-04:00'}))
+            self.assertEqual(self.run_catalogue(root, source)['hierarchies'], [])
+            artifact.write_text(json.dumps(payload))
+            os.utime(artifact, (1791475200, 1791475200))
+            row, = self.run_catalogue(root, source)['hierarchies']
+            self.assertEqual(row['generation_time']['basis'], 'file modification time (unverified)')
+
+    def test_graph_search_phase_settings_remain_bound_to_the_checkpoint(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact, payload, source = self.fixture(root)
+            experiment = artifact.parent / 'step-001/graph-search-000/experiment'
+            experiment.mkdir(parents=True)
+            started = '2026-10-09T12:00:00+00:00'
+            (experiment / 'execution-settings.jsonl').write_text(json.dumps({'started_at_utc': started}) + '\n')
+            (experiment / 'runner-config.json').write_text(json.dumps({'model': 'graph-search-model'}))
+            receipt = {'results_path': str(experiment / 'results.jsonl'), 'record_sha256': 'a' * 64}
+            payload['graph_search_steps'] = {'1': {
+                'binding': {'meaning': {'experiment': str(experiment), 'case': 'C001', 'receipt': receipt}},
+                'phases': [{'experiment': str(experiment), 'answers': ['discard response body']}],
+            }}
+            artifact.write_text(json.dumps(payload))
+            data = self.run_catalogue(root, source)
+            row, = data['hierarchies']
+            self.assertEqual(row['generation_time']['timestamp'], started)
+            self.assertEqual(row['parameters']['graph_search_steps']['1']['binding']['meaning']['receipt'], receipt)
+            self.assertTrue(any(data['parameter_evidence'][e['sha256']].get('model') == 'graph-search-model'
+                                for e in row['evidence']))
+
+    def test_selection_ranking_bodies_are_not_experimental_parameters(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            artifact, payload, source = self.fixture(root)
+            selection = artifact.with_name('selection.json')
+            selection.write_text(json.dumps({'candidate_selection': {'top_k': 16, 'method': 'saved-method'},
+                                              'ranking': [{'method': 'saved-ranking', 'scores': {'N001': 0.9},
+                                                           'text_scores': {'N001': 0.8}, 'sse_scores': {'N001': 0.7},
+                                                           'subject_vectors': {'dimensions': 768, 'note_batch_size': 8},
+                                                           'ancestor_query_policy': {'top_k': 16}}],
+                                              'row_count': 1, 'rows': [{'selected_token_ids': [1, 2, 3]}],
+                                              'selected': {'note_id': 'N001', 'number': '1'}}))
+            payload['selection_report'] = str(selection)
+            artifact.write_text(json.dumps(payload))
+            data = self.run_catalogue(root, source)
+            row, = data['hierarchies']
+            document = data['parameter_evidence'][row['evidence'][0]['sha256']]
+            self.assertEqual(document['ranking'], [{'method': 'saved-ranking',
+                             'subject_vectors': {'dimensions': 768, 'note_batch_size': 8},
+                             'ancestor_query_policy': {'top_k': 16}}])
+            self.assertNotIn('rows', document)
+            self.assertEqual(document['row_count'], 1)
+            self.assertEqual(document['candidate_selection']['top_k'], 16)
+            self.assertEqual(document['selected'], {'note_id': 'N001', 'number': '1'})
 
     def test_independent_saved_runs_are_distinct_and_empty_preparation_is_excluded(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -213,6 +310,34 @@ class HierarchyCatalogue(unittest.TestCase):
             self.assertIn('git_blob', generator['recovered_from'])
             self.assertEqual((root / 'catalogue' / generator['snapshot']).read_bytes(), original)
             self.assertEqual(row['generator_code']['commit_status'], 'unknown: not recorded')
+
+
+    def test_basename_code_hash_recovers_project_and_shared_runner_git_sources(self):
+        for source_directory in ('sse_multivector', 'experiment_runner'):
+            with self.subTest(source_directory=source_directory), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                artifact, payload, source = self.fixture(root)
+                repository = root / ('original' if source_directory == 'sse_multivector' else 'experiment-runner')
+                code = repository / source_directory / 'saved_generator.py'
+                code.parent.mkdir(parents=True)
+                original = b'def generate():\n    return "original hierarchy"\n'
+                code.write_bytes(original)
+                subprocess.run(['git', 'init', '-q', str(repository)], check=True)
+                subprocess.run(['git', '-C', str(repository), 'add', str(code.relative_to(repository))], check=True)
+                message = root / 'commit-message.txt'
+                message.write_text('Save original generator\n')
+                subprocess.run(['git', '-C', str(repository), '-c', 'user.name=Catalogue test',
+                                '-c', 'user.email=catalogue@example.invalid', 'commit', '-q', '-F', str(message)], check=True)
+                code.write_text('def generate():\n    return "later hierarchy"\n')
+                payload['code'] = {code.name: hashlib.sha256(original).hexdigest()}
+                artifact.write_text(json.dumps(payload))
+                row, = self.run_catalogue(root, source)['hierarchies']
+                generator, = row['generator_code']['files']
+                self.assertEqual(generator['status'], 'preserved')
+                self.assertEqual((root / 'catalogue' / generator['snapshot']).read_bytes(), original)
+                self.assertEqual(generator['recovered_from']['repository'], str(repository))
+                self.assertIn('git_blob', generator['recovered_from'])
+                self.assertEqual(row['generator_code']['commit_status'], 'unknown: not recorded')
 
 
 if __name__ == '__main__':

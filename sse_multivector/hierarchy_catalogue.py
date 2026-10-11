@@ -4,7 +4,7 @@ Original experiments are read only. IDs bind output bytes, their relative source
 path, and adjacent parameter evidence; a copied checkout is not another run.
 """
 import ast
-from collections import Counter
+from collections import Counter, deque
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -13,6 +13,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+import sys
 import tempfile
 
 
@@ -25,6 +26,7 @@ SIDECARS = {
     'sources.json', 'validated-source.json', 'application.json', 'measurement.json',
     'bounded-build.json', 'packaging-manifest.json', 'native-fuzzy.json',
     'execution-plan.json', 'title-reports.json', 'decision-report.json',
+    'report.json', 'code-provenance.json',
 }
 # These contain graph/corpus/model-output data rather than experimental settings.
 DATA_FIELDS = {
@@ -44,6 +46,8 @@ DATA_FIELDS = {
     'remapped_internal_comparisons', 'equivalent_answers', 'original_node_to_combined',
     'pairs', 'guides', 'unresolved_guides', 'skipped_guides',
     'alias_inspections_by_query', 'candidates_by_query',
+    'runs', 'results', 'requests', 'comparison_policy_steps',
+    'scores', 'text_scores', 'sse_scores', 'rows', 'query_headings', 'query_canonical_id',
 }
 SECRET_FIELDS = {'api_key', 'access_token', 'refresh_token', 'password', 'authorization'}
 HEX = re.compile(r'^[0-9a-f]{64}$')
@@ -81,6 +85,9 @@ def parameters(value):
         for key, item in value.items():
             if key.lower() in SECRET_FIELDS:
                 continue
+            if key in {'steps', 'graph_search_steps'}:
+                result[key] = step_parameters(item)
+                continue
             if key in DATA_FIELDS and isinstance(item, (dict, list, str)) and not (
                     isinstance(item, dict) and 'path' in item):
                 continue
@@ -93,6 +100,20 @@ def parameters(value):
         if len(value) > 100 and all(isinstance(v, (int, float, list)) for v in value):
             return {'values_omitted': len(value)}
         return [parameters(v) for v in value]
+    return value
+
+
+def step_parameters(value):
+    """Keep the experiment bindings for applied steps, without old graph bodies."""
+    fields = {'index', 'local', 'note_id', 'number', 'status', 'experiment',
+              'comparison_experiments', 'comparison_phases', 'local_meaning_from',
+              'meaning_case', 'case', 'receipt', 'binding', 'meaning', 'phases',
+              'phase', 'policy', 'name', 'results_path', 'record_sha256', 'record_index'}
+    if isinstance(value, dict):
+        return {k: step_parameters(v) for k, v in value.items() if (k in fields or k.isdigit())
+                and not (k == 'meaning' and isinstance(v, str))}
+    if isinstance(value, list):
+        return [step_parameters(v) for v in value]
     return value
 
 
@@ -139,8 +160,9 @@ def source_roots(source):
     return sorted(set(roots), key=str)
 
 
-def discover(root, destination):
-    areas = [str(root / area) for area in ('target', 'sse_multivector') if (root / area).is_dir()]
+def discover(root, destination, spec):
+    areas = [str(root / area) for area in spec.get('areas', ['target', 'sse_multivector'])
+             if (root / area).is_dir()]
     if not areas:
         return
     command = ['rg', '--files', '--hidden', '--no-ignore', '-0']
@@ -150,6 +172,8 @@ def discover(root, destination):
                     'fixtures', 'tests', '*smoke*', '*persistent-cost*', '*browser-test*',
                     'hierarchy-catalogue'):
         command.extend(['-g', f'!**/{pattern}/**'])
+    for pattern in spec.get('exclude', []):
+        command.extend(['-g', '!' + pattern])
     found = subprocess.run(command + areas, capture_output=True)
     if found.returncode not in (0, 1):
         raise ValueError(found.stderr.decode())
@@ -158,6 +182,63 @@ def discover(root, destination):
             path = Path(name.decode())
             if destination not in path.parents:
                 yield path
+
+
+def dated(value):
+    """Require an explicit timezone rather than guessing one for old records."""
+    if not isinstance(value, str):
+        return None
+    try:
+        timestamp = datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except ValueError:
+        return None
+    return timestamp.astimezone(timezone.utc) if timestamp.tzinfo else None
+
+
+def generation_time(path, data):
+    for key in ('generated_at', 'generated_at_utc', 'completed_at', 'completed_at_utc',
+                'created_at', 'created_at_utc'):
+        timestamp = dated(data.get(key))
+        if timestamp is not None:
+            return {'timestamp': timestamp.isoformat(), 'basis': 'saved ' + key,
+                    'evidence': str(path)}
+    # A checkpoint may inherit older steps. Only executions owned by this
+    # output directory date its generation; upstream inputs do not.
+    experiments = set()
+
+    def owned(value):
+        if isinstance(value, dict):
+            for key, item in value.items():
+                names = item if key == 'comparison_experiments' and isinstance(item, list) else [item]
+                if key in {'experiment', 'comparison_experiments'}:
+                    for name in names:
+                        if isinstance(name, str):
+                            candidate = Path(name)
+                            candidate = candidate if candidate.is_absolute() else path.parent / candidate
+                            if path.parent in candidate.resolve().parents:
+                                experiments.add(candidate)
+                owned(item)
+        elif isinstance(value, list):
+            for item in value:
+                owned(item)
+
+    owned(step_parameters(data.get('steps', [])))
+    owned(step_parameters(data.get('graph_search_steps', [])))
+    starts = []
+    for experiment in sorted(experiments):
+        record = experiment / 'execution-settings.jsonl'
+        if record.is_file():
+            for line in record.read_text().splitlines():
+                saved = json.loads(line)
+                timestamp = dated(saved.get('started_at_utc'))
+                if timestamp is not None:
+                    starts.append((timestamp, str(record)))
+    if starts:
+        timestamp, origin = max(starts)
+        return {'timestamp': timestamp.isoformat(), 'basis': 'saved execution start',
+                'evidence': origin}
+    return {'timestamp': datetime.fromtimestamp(path.stat().st_mtime, timezone.utc).isoformat(),
+            'basis': 'file modification time (unverified)', 'evidence': str(path)}
 
 
 class Evidence:
@@ -212,7 +293,7 @@ class Evidence:
         return sorted(result)
 
     def collect(self, path, root, direct, store):
-        queue = list(self.adjacent(path, root))
+        queue = deque(self.adjacent(path, root))
         seen, evidence, bindings, unknown = set(), [], {}, []
 
         def reference(name, expected=None, parent=path.parent):
@@ -241,10 +322,13 @@ class Evidence:
         def references(value, parent):
             if isinstance(value, dict):
                 for key, item in value.items():
-                    if key == 'path' or key.endswith('_path') or key in {'corpus', 'base_trial', 'history_root',
+                    if key == 'path' or key.endswith('_path') or key in {'corpus', 'base_trial',
                             'experiment', 'preparation', 'source_model', 'source_experiment', 'subject_probe',
                             'probe_path', 'trial', 'selection_report'}:
                         reference(item, value.get('sha256') if key == 'path' else None, parent)
+                    if key == 'comparison_experiments' and isinstance(item, list):
+                        for name in item:
+                            reference(name, parent=parent)
                     if isinstance(item, str) and HEX.fullmatch(item) and ('/' in key or key.endswith('.json')):
                         reference(key, item, parent)
                     references(item, parent)
@@ -254,7 +338,7 @@ class Evidence:
 
         references(direct, path.parent)
         while queue:
-            candidate = queue.pop(0).resolve()
+            candidate = queue.popleft().resolve()
             if candidate in seen or candidate == path:
                 continue
             seen.add(candidate)
@@ -362,42 +446,53 @@ class CodeSources:
         if key in self.resolved:
             return self.resolved[key]
         candidates = [path]
+        # Native plans record module basenames rather than their source paths.
+        # Search the project's and shared runner's known module directories;
+        # only an exact saved hash can establish a match.
+        for root in self.roots:
+            candidates += [root / 'sse_multivector' / path.name,
+                           root.parent / 'experiment-runner' / 'experiment_runner' / path.name]
         relative = None
         for root in self.roots:
             if root in path.parents:
                 relative = path.relative_to(root)
                 candidates += [other / relative for other in self.roots]
                 break
+        candidates = list(dict.fromkeys(candidates))
         raw, origin = None, None
         for candidate in candidates:
             if candidate.is_file() and self.evidence.sha(candidate) == expected:
                 raw, origin = candidate.read_bytes(), {'path': str(candidate)}
                 break
         if raw is None:
-            parent = path.parent
-            while not parent.exists() and parent != parent.parent:
-                parent = parent.parent
-            repository = subprocess.run(['git', '-C', str(parent), 'rev-parse', '--show-toplevel'],
-                                        capture_output=True, text=True)
-            if repository.returncode == 0:
+            for candidate in candidates:
+                parent = candidate.parent
+                while not parent.exists() and parent != parent.parent:
+                    parent = parent.parent
+                repository = subprocess.run(['git', '-C', str(parent), 'rev-parse', '--show-toplevel'],
+                                            capture_output=True, text=True)
+                if repository.returncode != 0:
+                    continue
                 repo = Path(repository.stdout.strip())
-                if repo in path.parents:
-                    relative = str(path.relative_to(repo))
-                    common = subprocess.check_output(['git', '-C', str(repo), 'rev-parse', '--git-common-dir'], text=True).strip()
-                    history_key = (str((repo / common).resolve()), relative)
-                    if history_key not in self.history:
-                        objects = subprocess.check_output(['git', '-C', str(repo), 'rev-list', '--objects', '--all', '--', relative], text=True)
-                        blobs = {line.split(' ', 1)[0] for line in objects.splitlines()
-                                 if line.endswith(' ' + relative)}
-                        matches = {}
-                        for blob in blobs:
-                            content = subprocess.check_output(['git', '-C', str(repo), 'cat-file', 'blob', blob])
-                            matches[hashlib.sha256(content).hexdigest()] = blob
-                        self.history[history_key] = matches
-                    blob = self.history[history_key].get(expected)
-                    if blob:
-                        raw = subprocess.check_output(['git', '-C', str(repo), 'cat-file', 'blob', blob])
-                        origin = {'repository': str(repo), 'git_blob': blob}
+                if repo not in candidate.parents:
+                    continue
+                relative = str(candidate.relative_to(repo))
+                common = subprocess.check_output(['git', '-C', str(repo), 'rev-parse', '--git-common-dir'], text=True).strip()
+                history_key = (str((repo / common).resolve()), relative)
+                if history_key not in self.history:
+                    objects = subprocess.check_output(['git', '-C', str(repo), 'rev-list', '--objects', '--all', '--', relative], text=True)
+                    blobs = {line.split(' ', 1)[0] for line in objects.splitlines()
+                             if line.endswith(' ' + relative)}
+                    matches = {}
+                    for blob in blobs:
+                        content = subprocess.check_output(['git', '-C', str(repo), 'cat-file', 'blob', blob])
+                        matches[hashlib.sha256(content).hexdigest()] = blob
+                    self.history[history_key] = matches
+                blob = self.history[history_key].get(expected)
+                if blob:
+                    raw = subprocess.check_output(['git', '-C', str(repo), 'cat-file', 'blob', blob])
+                    origin = {'repository': str(repo), 'git_blob': blob, 'path': relative}
+                    break
         if raw is not None and hashlib.sha256(raw).hexdigest() == expected:
             destination.parent.mkdir(exist_ok=True)
             destination.write_bytes(raw)
@@ -452,6 +547,10 @@ class CodeSources:
 
 def catalogue(source, registry, output, *, saved_only=False):
     source, registry, output = source.resolve(), registry.resolve(), output.resolve()
+    spec = json.loads(source.read_text())
+    cutoff = dated(spec.get('generated_since'))
+    if 'generated_since' in spec and cutoff is None:
+        raise ValueError('generated_since must be an ISO timestamp with a timezone')
     roots = source_roots(source)
     for root in roots:
         if output == root or root in output.parents and output.parts[len(root.parts)] != 'target':
@@ -469,13 +568,16 @@ def catalogue(source, registry, output, *, saved_only=False):
     current = {}
     errors = []
     candidates = 0
+    excluded = 0
     if saved_only:
         prior = json.loads((output / 'catalogue.json').read_text())
         current = {row['identity']: row for row in prior['hierarchies'] if row['currently_discovered']}
         errors, candidates = prior['discovery_errors'], prior['candidates_checked']
+        excluded = prior.get('excluded_before_cutoff', 0)
     with tempfile.TemporaryDirectory(dir=output) as temporary:
         for root in ([] if saved_only else roots):
-            for path in sorted(discover(root, output)):
+            print(f'Cataloguing saved outputs: {root.name}', file=sys.stderr, flush=True)
+            for path in sorted(discover(root, output, spec)):
                 candidates += 1
                 relative = str(path.relative_to(root))
                 try:
@@ -485,16 +587,28 @@ def catalogue(source, registry, output, *, saved_only=False):
                             continue
                         artifact, stats = snapshot
                         data, family = {'sqlite_counts': stats}, 'Local SQLite'
+                        timing = generation_time(path, data)
                     else:
                         artifact = path
                         raw = path.read_bytes()
                         sha = hashlib.sha256(raw).hexdigest()
                         if sha not in payloads:
                             data = json.loads(raw)
-                            payloads[sha] = (classify(data), parameters(data))
+                            family = classify(data)
+                            if family is None:
+                                continue
+                            timing = generation_time(path, data)
+                            if cutoff and dated(timing['timestamp']) < cutoff:
+                                excluded += 1
+                                continue
+                            payloads[sha] = (family, parameters(data))
                         family, data = payloads[sha]
                         if family is None:
                             continue
+                        timing = generation_time(path, data)
+                    if cutoff and dated(timing['timestamp']) < cutoff:
+                        excluded += 1
+                        continue
                     if path.suffix == '.sqlite':
                         sha = digest(artifact)
                     direct = parameters(data)
@@ -533,7 +647,8 @@ def catalogue(source, registry, output, *, saved_only=False):
                     row = {**versions[identity], 'name': name, 'source_status': status,
                            'subject_versions': subject_versions, 'run_status': data.get('status', 'saved'),
                            'output': str(snapshot_path.relative_to(output)), 'locations': [str(path)],
-                           'parameters': direct, 'evidence': refs, 'bindings': bindings, 'unknown': unknown}
+                           'generation_time': timing, 'parameters': direct, 'evidence': refs,
+                           'bindings': bindings, 'unknown': unknown}
                     current[identity] = row
                 except (OSError, ValueError, sqlite3.Error) as error:
                     errors.append({'path': str(path), 'error': str(error)})
@@ -575,6 +690,8 @@ def catalogue(source, registry, output, *, saved_only=False):
     result = {'schema_version': 1, 'generated_at': datetime.now(timezone.utc).isoformat(),
               'roots': [str(r) for r in roots], 'hierarchies': rows, 'discovery_errors': errors,
               'candidates_checked': candidates,
+              'scope': {k: spec[k] for k in ('generated_since', 'areas', 'exclude') if k in spec},
+              'excluded_before_cutoff': excluded,
               'parameter_evidence': documents}
     write(output / 'catalogue.json', result)
     template = Path(__file__).with_name('hierarchy_catalogue.html').read_text()
@@ -582,4 +699,5 @@ def catalogue(source, registry, output, *, saved_only=False):
     (output / 'index.html').write_text(template.replace('__CATALOGUE__', payload))
     write(registry, {'schema_version': 1, 'versions': sorted(versions.values(), key=lambda r: r['version_id'])})
     return {'hierarchies': len(rows), 'currently_discovered': len(current), 'copies': sum(len(r['locations']) - 1 for r in current.values()),
-            'families': dict(Counter(r['family'] for r in rows)), 'errors': errors, 'catalogue': str(output / 'index.html'), 'inference_calls': 0}
+            'families': dict(Counter(r['family'] for r in rows)), 'excluded_before_cutoff': excluded,
+            'errors': errors, 'catalogue': str(output / 'index.html'), 'inference_calls': 0}
