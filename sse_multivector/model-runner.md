@@ -9,6 +9,9 @@ Two fresh diagnostic draws reproduce the business-identity error and Rome's
 unclear final scope; the amusement qualifier's failure status remains disputed.
 A subsequent user decision classifies implicit material scope as a failure;
 the saved v103 sourdough meaning also leaves its consumer boundary unresolved.
+A focused 28-case reassessment preserves that witness and reviewer disagreements;
+missing a human qualifier alone does not establish a scope failure. The focused
+review's preliminary nine-Food-failure count was withdrawn after challenge.
 This does not activate a production prompt or modify earlier frozen experiments.
 
 Execution and transport are owned by the separate

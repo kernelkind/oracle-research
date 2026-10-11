@@ -326,7 +326,8 @@ Its diagnostics settle preparation stages and the time-spending purpose, but
 do not choose the consumer boundary. Specifying an intended bread product does
 not settle whether scope requires human consumption, permits other consumers,
 or depends on a particular occurrence's consumption purpose. The independently
-generated **Food preparation** parent also leaves the consumer boundary open.
+generated **Food preparation** parent also does not name a consumer; the focused
+reassessment below does not classify that omission alone as a failure.
 This is a current Bootstrap explicitness failure without prescribing which
 supported boundary should replace it or asserting an actual consumer.
 
@@ -344,3 +345,75 @@ rescoring has occurred under this clarified criterion. V96 and v103 use
 different original trees for this post, so this inspection is not a controlled
 prompt-only comparison. No prompt, output, receipt or relation label changed,
 and no new model calls were made.
+
+## Focused consumer-scope reassessment
+
+The user approved rechecking related saved definitions before another prompt
+revision. Three parallel read-only reviews inspected 28 current v103 outputs
+through the shared runner's native `show`, with a subsequent independent
+challenge to the initial classifications. Inputs, outputs, receipts and the
+full-collection snapshot above remain unchanged. The selection is every case
+in that snapshot whose selected subject exactly matches one of these groups:
+
+| Selected subjects | Cases | Review findings |
+|---|---:|---|
+| Food | 13 | Four explicit human-consumption controls; nine initially flagged consumer omissions, whose categorical failure count was withdrawn after challenge |
+| Bread, Sourdough bread, Preparing sourdough bread, Food preparation | 8 | One retained sourdough failure, one unresolved analogous preparation flag, and six qualified broad readings; the initial eight-failure total was withdrawn |
+| Eating meat, Eating practices, Butter, Cooking | 7 | Qualified acceptance of broad activity or kind definitions after withdrawing two unsupported failure/dispute claims |
+
+These are focused agent assessments, not new human labels or a complete
+rescoring of the 344 meanings. The initial cohort counts remain historical
+assessment figures. Neither a broad definition nor disagreement with a
+separately generated human-only Food definition establishes a producer error.
+
+The challenge identified an overclassification: missing the word "human" is
+not sufficient evidence of ambiguity. Food defined as "material intended to be
+eaten for nourishment" can coherently admit animal feed through its positive
+criterion. The red-flags Food case
+`bootstrap-772d436fd035cc145ee3197fea590ddea58d29758c30ffe5ee5897fa4c5f0857`
+and rocket-stove Food case
+`bootstrap-bb82eaaf8febe3cc67657362d2072a4d78f17930d64a24bbc05ee601e97672de`
+support that broad reading. A human-only interpretation would add a restriction.
+The first review's nine-Food-failure total is therefore withdrawn, rather than
+converted into regression gold. This does not settle every potential ambiguity
+in those nine outputs or reverse the approved sourdough finding.
+
+Similarly, "ways of organizing food intake through choices" can admit both
+self-directed diets and caretaker-organized feeding. Its omission of a human
+actor does not alone prove ambiguity. For stock Cooking, an unrelated heating
+experiment was not a valid counterexample: it need not satisfy the stated
+purpose "to prepare food". The reviewer withdrew the Eating-practices failure
+and stock-Cooking dispute. Butter's dairy-kind definition does not establish a
+particular cooking use or require the dinner's butter to be eaten directly.
+
+The four explicit consumer-domain controls are Food from the chicken-stock,
+risotto, cranberry/rosemary bread, and original pizza/sushi posts. They state
+human consumption affirmatively without asserting that eating occurred. The
+planned and served sushi definitions also preserve their state distinctions;
+their broader consumer reading is a separate question. Pollan's generic
+"material eaten" wording does not by itself establish an invented completed
+consumption event.
+
+A useful counterexample must distinguish two reasonable readings of the
+written meaning, or expose a chosen restriction lost from the final definition.
+Showing that a broader affirmative criterion admits more cases only demonstrates
+its scope. This distinction guides reassessment; it does not require every
+definition to list every conceivable participant or purpose.
+
+Preparing sourdough bread at selected number `1.1.1`, native case
+`bootstrap-b3c126a2f54bc362dc4288323cc0579476ccfd35d7c2f23bc7835dd5b1428998`,
+remains an unresolved analogous flag. Its stages-of-making definition does not
+expressly settle the food-role versus episode-purpose distinction, but the
+challenge did not establish a definite additional failure. Record SHA-256 is
+`b89a723b9a39c4dc02e7f3394729187a6b7d76d9227eab16d39a01aac6d0a7c7`.
+The five Bread/Sourdough kind definitions and Food preparation root permit
+coherent broad readings; their original failure flags were qualified rather
+than certified. A separately generated human Food parent raises branch-alignment
+questions but cannot supply a missing human restriction to those definitions.
+
+The next proposed Bootstrap work is a controlled revision targeting genuinely
+implicit product/consumer-role boundaries and their expression in the final
+meaning. Keep broad positive controls and distinguish a kind's intended use
+from an actual episode's purpose. No wording change has been isolated by this
+read-only audit; no prompt edit, new generation, Compare call or hierarchy build
+was performed.
