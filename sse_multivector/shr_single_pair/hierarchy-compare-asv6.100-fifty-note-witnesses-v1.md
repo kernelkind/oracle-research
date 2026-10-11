@@ -2353,3 +2353,41 @@ insufficient if its proof drops a child requirement or imports a counterpart's
 definition. Independent proof review and a fresh repeat of any proposed fix
 precede broader qualification or adoption. Neither Bootstrap nor hierarchy
 construction changes in this Compare-only investigation.
+
+V104's complete native proof review records169 accept,2 reject and25 uncertain
+core responses; its fifty-note review records82 accept,10 reject and10
+uncertain. Every case has a current receipt-bound review, and all196/102
+original input/output hashes remain unchanged. The concrete failures concern
+parent alternatives, inherited role/aspect coverage and invalid counterexample
+admission; unresolved lexical boundaries are separate. These are agent
+assessments of this draw, not independent human gold or an accuracy estimate.
+
+V107 completes all48 cases with50 fresh attempts,0 reuses,0 failures/retries
+and complete usage. Native API-equivalent cost is$0.5156544, reproduced by
+hierarchy-compare-v107-usage-v1.json. Initial independent review finds that042
+both orientations regress to shared deliberateness and skip person/consumer
+coverage. Additional-requirement priority alone did not preserve V104's
+successful identity procedure. Other actual outputs correctly inspect the
+Meals eating-occasion alternative and preserve qualified preparation aspects;
+the complete proof assessments remain in the native artifacts.
+
+### V110: retain identity priority and test other qualifications conditionally
+
+V110 retains V104's entire successful priority paragraph byte-for-byte. Only
+when that identity/consumer selection rule does not apply does a further
+unshared parent qualification take priority over a shared kind or action.
+Its answer must establish a necessary language implication independently;
+a shared name cannot import the counterpart's definition. The fallback
+trigger is explicit so a failed identity variation cannot replace the
+required identity question. V108 andV109 are unrun intermediate drafts;
+V110 resolves their conditional/attachment precision before inference.
+
+The native gate contains33 core cases and the same19 fifty-note controls.
+Four additional core controls contrast tea/hot-tea with an expressed wish
+about that beverage: a categorical rejection of the beverage connection must
+be assessed against the same connection accepted elsewhere. All meanings,
+source receipts, graph inputs, response schema and model/worker settings
+remain frozen. Native caps67/39 count retries and warming under the existing
+shared20000 allowance. If there are no reuses or retries,52 comparisons and
+two warmups require54 attempts. No operator or canonical guard changes are
+introduced; complete proof review and a fresh repeat remain required.
