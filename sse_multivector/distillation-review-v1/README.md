@@ -2,24 +2,30 @@
 
 **Current development result:** the completed
 [eight-note xhigh regression](#dslv10-eight-note-regression-october-11) with
-approved experimental [DSLv10](relationship-prompt-v10.md) **does not pass**.
+approved experimental [DSLv10](relationship-prompt-v10.md) remains unqualified.
 All three checks finish: 784 completed occurrences and 553 justified relationship
-skips. Root and the independent assessor assigned to each note accept 380
-distinct full model records, reject one and retain 15 as uncertain. These are
+skips. The original root and independent assessments record 380 accepted
+distinct full model records, one rejection and 15 uncertainties. These are
 396 output versions for 395 semantic inputs, including one recovered retry
 whose request also received another successful response. All 77 mechanical
-proofs pass. The definite DSL error accepts an account of morning odd jobs
-around town beneath `Author's morning outings`, although the jobs can be done
-from home. Production remains DSLv2; reviewer qualification and lower-effort
-qualification remain pending.
+proofs pass. A subsequent independent source-first audit challenges the lone
+rejection: its home-work witness may change the meaning of `around town`, and
+the account's actor relationship remains disputed. That output is now unresolved,
+not an established error. The current assessment retains 380 accepts and
+16 uncertainties; the saved eight-note audit remains unchanged.
+Production remains DSLv2; reviewer qualification and lower-effort qualification
+remain pending.
 
 The preceding [four-note regression](#dslv10-four-note-regression-october-11)
 passes its 156 resolved complete model records following the
 [twelve-case timing diagnostic](#dslv10-timing-scope-diagnostic-october-11).
 Its three Nostr matching/support records remain uncertain and are carried
 unchanged into the expanded run. Both panels are development-exposed;
-they do not establish unseen accuracy. The next recommended step is a small
-diagnostic of the outings failure before any lower-effort or final-sixty run.
+they do not establish unseen accuracy. The authorized small
+unchanged-DSLv10 [outings diagnostic](#dslv10-outings-diagnostic-october-11)
+completes: all eight clear authored controls pass, the simple original remains
+sound false, and the rich original repeats true but remains disputed. No prompt
+change is justified by that disputed case alone.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4875,27 +4881,30 @@ not independent model draws. Completed occurrences total **784 = 707 model +
 stops: 483 `no_full_match`, 36 `match_beneath_heading`, 27
 `uncovered_compatible_heading` and seven `unsupported_child`.
 
-The complete-output audit identifies a substantive error in R05 `2.2`:
+The initial complete-output audit rejects R05 `2.2`:
 parent `Author's morning outings`; child `Author's humorous comment on the
 specificity of the account of a fairly big day with all sorts of activities,
 including many odd jobs around town in the morning`. DSLv10 returns true,
-claiming that the included odd jobs preserve being out and about. Small tasks
-for several town businesses, such as a menu, spreadsheet and flyer, can be done
-from home while fitting the child's complete wording. Even granting the
-author's ownership of the recounted day, its jobs and morning timing, going out
-is missing. The post's separate `Out and about in the morning` cannot restore
-that restriction. This does not require outings to be recreational or the
-child's main subject. Root, the assigned independent assessor and a separate
-challenger agree on rejection after considering this witness.
+claiming that the included odd jobs preserve being out and about. The initial
+rejection uses small tasks for several town businesses, such as a menu,
+spreadsheet and flyer, done from home as a purported witness fitting the
+complete child without outings. Root, the assigned independent assessor and
+a separate challenger initially agree on rejection after considering it.
 The assessor originally favored false, briefly retained wording uncertainty
 after inspecting the true candidate, and then resolved it through that concrete
 witness. Original assessments and qualification labels remain fixed. The
-expanded regression does not pass; qualification remains pending.
+subsequent independent source-first audit challenges that witness: replacing
+the location of the work with the location of its clients may change the
+established meaning of `around town`. The author of the comment versus the
+actor in the recounted account is also unresolved. Agent agreement alone does
+not settle these readings. The original raw report, sealed expected-false
+label and review history remain unchanged; the current assessment treats this
+record as uncertain. Qualification remains pending.
 
 Root and the assigned independent assessor audit every completed decision and
 its full explanation, including verified earlier evidence and both retry
 versions. Among **395 distinct semantic inputs / 396 full model records**, the
-agent assessments are **380 accept, one reject and 15 uncertain**:
+original saved agent assessments are **380 accept, one reject and 15 uncertain**:
 
 | Check | Full model records | Accept | Reject | Uncertain |
 | --- | ---: | ---: | ---: | ---: |
@@ -4966,13 +4975,109 @@ The evidence worktree remains because these bindings depend on its absolute
 paths. Documentation integrates through a separate worktree so changing main
 does not alter frozen experiment sources.
 
-**Result:** the eight-note development regression does not pass because of the
-outings error. The recommended next step is a small balanced diagnostic of that
-failure using preserved meanings and omitted travel restrictions before lower
+**Current interpretation:** the sole historical rejection is challenged, so
+no definite reviewer error is established by this run. Its 380 accepted full
+records remain accepted; 16 full records are now unresolved in the current
+assessment, including the challenged rejection. This is not a qualification
+pass. The authorized next step is a small balanced diagnostic with DSLv10
+unchanged, using clear travel, actor and timing contrasts before lower
 reasoning levels. No prompt revision, production adoption, lower-effort calls
 or final-sixty validation is performed in this scope expansion. The final
 50 random plus ten challenge answers and agreed two-percentage-point tolerance
 remain reserved for later qualification.
+
+## DSLv10 outings diagnostic (October 11)
+
+The user authorizes the small diagnostic recommended after the eight-note run.
+Before further calls, two fresh independent Sol/xhigh agents examine the source
+and ASv6.100 rules without candidate answers. Both challenge the home-work
+counterexample behind R05 `2.2`: `jobs around town` may locate the work itself,
+whereas remote work for town businesses locates its clients. The source may
+establish an outward sense, but whether that sense entails an outing is not
+settled. Resolving `the account` to the author's own-day account also does not
+unambiguously establish the author as performer of every included activity.
+These are interpretation boundaries, not grounds to alter trusted ASv6.100.
+The earlier claim of a definite error is withdrawn. Its original sealed false
+expectation, true output, rejected review and raw audit remain preserved.
+
+Keep DSLv10 unchanged and freeze eight distinct authored controls from
+[relationship-outings-source.json](relationship-outings-source.json) using
+[relationship-outings-spec.json](relationship-outings-spec.json). All share one
+synthetic post that explicitly supports the author's morning shop trips,
+morning tasks performed from home for local businesses, evening trips, the
+neighbor's morning trips, and evening comments on each account. The parent is
+`Author's morning outings`. The contrasts vary whether the child preserves
+travel, actor and timing requirements; the shared post fixes the author and
+neighbor identities. AS excerpts, teacher rows, prompt, model and runtime
+remain fixed. Two independent source-first audits confirm all eight
+prospective labels before inference; these are agent assessments, not human
+gold. Expectations remain evidence outside the rendered reviewer input.
+
+| Contrast | Expected and returned | Full explanation audit |
+| --- | --- | --- |
+| Author leaves home in morning for shop visits | true | Accept |
+| Author performs morning tasks from home for town businesses | false | Accept |
+| Comment contains account of author's morning shop departure | true | Accept |
+| Comment contains account of author's morning tasks from home | false | Accept |
+| Evening comment contains author's morning outings | true | Accept |
+| Evening comment contains author's evening outings | false | Accept |
+| Comment contains author's morning outings | true | Accept |
+| Comment contains neighbor's morning outings | false | Accept |
+
+Native `prepare --from --only --repeat` also selects only the original `2.1`
+and `2.2` with exact complete inputs, saved baselines and request settings.
+Their fresh decisions repeat false and true respectively. The simple false
+decision and its sufficient actor argument pass complete-output audit: jobs
+`for the author` do not require that author to perform their outings. The
+reason's source-adjacency inference is unnecessary to that argument. The rich
+true decision remains uncertain at both interpretation boundaries above.
+Repetition does not resolve correctness. Keep both originals separate from
+authored-control accuracy. Two earlier sound positive controls join through
+verified native reuse with zero new calls: out-and-about beneath morning
+outings, and invitation to claim beneath `Claims`. Their full explanations
+also pass. The first has teacher interpretation rows unlike the original pair;
+it is regression evidence, not a controlled test of those rows' effect.
+
+Root and both independent assessors audit every complete output and reason:
+**eight of eight authored controls pass; eleven complete records are accepted
+and one original remains uncertain** across all twelve diagnostic cases.
+The minor `away from home` gloss in two home-task reasons is not a universal
+parent restriction; neither conclusion depends on it. No material Boolean or
+explanation error is established. This narrowly supports handling explicit
+travel, comment/account embedding, action timing and actor differences; it
+does not settle `odd jobs around town` or establish unseen accuracy. Task-specific
+historical cases and balanced positive/negative controls follow official
+[evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+and [grader guidance](https://developers.openai.com/api/docs/guides/graders).
+
+All calls use gpt-6.1-sol/xhigh, subscription SSE, the shared stable launcher
+and native automatic queue. The persistent allowance reconciles at **11/22**:
+ten successful fresh judgments and one eligible original-prefix warmup, with
+no failures or retries. The original 1,349-token prefix/key is preserved;
+both comparisons hit cache, reading 2,304 tokens. The authored default prefix
+is only 76 estimated tokens, so it uses ordinary requests and no warmup.
+The two saved controls consume no calls. Native usage reports complete saved
+catalog estimates of **$0.1867664 for new work**, including warming. Original
+comparison reads save $0.0043776, less than the $0.011144 warmup: net savings
+are **−$0.0067664**, not a cost improvement. Saved-pricing estimates do not
+establish subscription charges or a paired uncached comparison.
+
+Ignored native preparations, prospective and final attributed reviews,
+complete receipts, raw terminal reports and `terminal-usage.json` remain under
+`oracle-mvp-review-dslv10-outings/target/distillation-review-v1/relationship-dslv10-outings/`.
+The raw authored report is SHA-256
+`cc2f53b936cf2b3be3686634b21b5a6abcee2fcd7b4e292da8401c33b42a2686`.
+The evidence worktree remains for absolute frozen bindings. Source/code hashes,
+receipt validation and budget claims pass native verification. No production
+code, prompt, schema, mechanical rule or historical output changes.
+
+**Result:** retain DSLv10; this disputed original alone does not justify a
+prompt revision. Reviewer qualification remains pending, production remains
+DSLv2, and lower-effort calls and the final sixty are not run here. The next
+recommended step is a high-versus-xhigh comparison on the four-note audited
+panel, scoring resolved judgments against the same source assessments and
+reporting uncertainties separately. The agreed two-percentage-point tolerance
+remains a later full assessed-set criterion; a small panel cannot establish it.
 
 ## Actual distilled wording: offline preview (October 8)
 

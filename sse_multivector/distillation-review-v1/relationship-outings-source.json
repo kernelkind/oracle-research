@@ -1,0 +1,172 @@
+{
+  "cases": [
+    {
+      "id": "outings-bare-preserved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author leaving home in the morning to visit several shops around town\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": true,
+        "expected_reason": "The author goes out in the morning; all parent restrictions are retained."
+      }
+    },
+    {
+      "id": "outings-bare-local-work",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author doing several small tasks from home in the morning for businesses around town\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": false,
+        "expected_reason": "Author and morning timing are retained, but work from home does not preserve an outing. Client locality is not worker travel."
+      }
+    },
+    {
+      "id": "outings-rich-preserved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author's humorous comment on the specificity of an account of the author leaving home in the morning to visit several shops around town\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": true,
+        "expected_reason": "The complete author, outing and morning relationship remains explicit inside the account being commented on."
+      }
+    },
+    {
+      "id": "outings-rich-local-work",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author's humorous comment on the specificity of an account of the author doing several small tasks from home in the morning for businesses around town\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": false,
+        "expected_reason": "The account retains the author and morning work from home; it does not retain outings. The separate source outings cannot restore them."
+      }
+    },
+    {
+      "id": "outings-comment-time-preserved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author's humorous evening comment on the specificity of an account of the author's morning outings\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": true,
+        "expected_reason": "Evening qualifies the comment, while the embedded author outings explicitly retain morning timing."
+      }
+    },
+    {
+      "id": "outings-comment-time-changed",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author's humorous evening comment on the specificity of an account of the author's evening outings\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": false,
+        "expected_reason": "The embedded outings retain the author but replace morning with evening. The source separately stating morning outings cannot restore them."
+      }
+    },
+    {
+      "id": "outings-actor-preserved",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author's humorous comment on the specificity of an account of the author's morning outings\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": true,
+        "expected_reason": "The account explicitly concerns morning outings by the author, preserving the complete parent inside the comment."
+      }
+    },
+    {
+      "id": "outings-actor-changed",
+      "inputs": {
+        "ASV6_100_PARENT_CHILD_RULES": "Make each `subject` concise, understandable without the post, `context` or other entries, and faithful to its meaning, negation and relationships. Name both comparison sides when provided. A heading names its subject at its level of generality; it need not retell the post's assertion about it. Broader headings may omit instance details; complete source subjects retain those details in their own specific headings.\n\nJudge each parent-child pair using only its `subject` strings across possible posts in any domain. The child itself must preserve every parent restriction: type, purpose, modifier, action, negation and relationship. If another post could fit the child but fail to fit the parent, broaden the parent or preserve the supported restriction in the child. A usual purpose does not restrict every instance; a purpose-qualified heading cannot contain an unrestricted item heading. The post's domain, `context` and other entries cannot supply a missing heading restriction.",
+        "RELATIONSHIP_INPUT": "{\"parent_subject\": \"Author's morning outings\", \"child_subject\": \"Author's humorous comment on the specificity of an account of the neighbor's morning outings\"}",
+        "POST": "I left home this morning to visit several shops around town, then returned home later that same morning and did several small tasks for businesses around town before noon. I left home again this evening. My neighbor went out this morning too. This evening I jokingly called each account hilariously vague: my morning trips, my evening trips, my neighbor's morning trips, and the tasks I did from home.",
+        "TEACHER_CONTEXTS": "[]"
+      },
+      "evidence": {
+        "check": "relationship",
+        "role": "authored_outings_control",
+        "origin": "Authored semantic control; no distilled-model output or user gold.",
+        "task_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-review-dslv10-outings/sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md",
+          "sha256": "76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d"
+        },
+        "expectation_status": "agent_assessed",
+        "expected_valid": false,
+        "expected_reason": "The neighbor performs the outings; the author makes the comment. Morning outings by the author are not preserved."
+      }
+    }
+  ]
+}
