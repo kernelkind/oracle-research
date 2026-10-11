@@ -18,7 +18,12 @@ The three earlier timing-scope findings are resolved on these cases; five contro
 four authored local/shared-timing contrasts retain sound explanations. This is
 development evidence, not unseen accuracy or production adoption. DSLv10 remains
 experimental; the matching/support `on Nostr`/`with Nostr` questions from the
-four-note regression are still unresolved. Production remains DSLv2.
+four-note regression are still unresolved. The subsequent
+[input-only and challenged Nostr audit](#nostr-relationship-source-audit-october-11)
+finds no definite reviewer error or instruction defect: the three saved
+conservative decisions agree with the initial input judgments, but contextual
+network/community readings remain defensible. No prompt changes or new calls
+follow that audit. Production remains DSLv2.
 
 **Current development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
@@ -4614,9 +4619,104 @@ These agent assessments, previously exposed failures and easy authored controls
 are development evidence rather than independent human gold, unseen-note
 validation or a causal estimate of prompt improvement. Production continues to
 default to DSLv2. No new four-note regression, lower-effort trial or final-sixty
-run starts here. The recommended next development step is to settle the remaining
-matching/support Nostr interpretation questions before another four-note
-regression; that recommendation does not authorize calls or a prompt revision.
+run starts here. The user subsequently authorizes examining the remaining
+matching/support Nostr interpretation questions; the source audit follows.
+
+## Nostr relationship source audit (October 11)
+
+The user authorizes investigating the remaining `on Nostr` versus `with Nostr`
+questions. This is a retrospective source audit, with **zero model calls** and
+no prompt, schema, source-label, mechanical-rule or production-default changes.
+ASv6.100 and its teacher wording remain trusted. The source post is:
+
+```text
+I'm 100% through today's 100 XP goal (143/100 XP) and now have 144 XP total on https://piyali.app practicing English! #LearnWithNostr
+```
+
+The trusted catalog includes `Learning with Nostr`. The student uses `Learning
+on Nostr` twice and, five times, this complete description:
+
+```text
+Author's 100% completion of today's 100 XP goal with 143 XP earned against the 100 XP goal and now having 144 XP total while practicing English, associated with learning on Nostr
+```
+
+These are **three distinct saved judgments across nine numbered checks**:
+
+| Check and representative case suffix | Occurrences | Saved decision | Audit status |
+| --- | ---: | --- | --- |
+| DSMv3, `:3.1`, `Learning on Nostr` | 2 | `teacher_id: null` | Unresolved |
+| DSSv2, `:3.1`, `Learning on Nostr` | 2 | `valid: false` | Unresolved |
+| DSSv2, `:1.1.1.1.1.1.1`, complete XP description | 5 | `valid: false` | Unresolved |
+
+Every full ID begins `M02-checkpoint-800-N0043`. All three source expectation
+statuses were already `unresolved` before this audit. The provisional matching
+ID is null; both expected support Booleans are null, meaning unresolved rather
+than false. The original three calls were made in `final-trial-20261009` and
+reused in the four-note regression. Nine aliases are not nine independent draws.
+
+Root and two independent input-first assessments initially favor the saved
+`null / false / false` decisions: `on Nostr` can add an environment or medium
+relationship that the broader `with Nostr` association does not require.
+Neither the opaque app URL nor outside facts about that app can establish the
+extra relationship from the supplied post. The matching and generic-support
+reasons directly state this distinction. The composite-support reason accepts
+the XP/practice details and disputes the added Nostr description, invoking AS's
+hashtag guidance. It does not expressly deny the trusted `Learning with Nostr`
+subject, although it does not explain the disputed reference interpretation.
+
+An independent input-only challenge identifies a defensible alternative:
+`on Nostr` can mean learning through or using its network/community, rather than
+lessons physically hosted there. `With Nostr` can likewise mean using it, and
+the hashtag accompanies an actual English-practice report. AS permits
+relationships that are **stated or reasonably implied**, and supported ambiguous
+interpretations; absence of strict logical entailment is not enough to reject
+one. The long description's `associated with` is also weaker than asserting
+that every XP action occurred on the network. The initial assessor separately
+accepts that this linguistic challenge warrants uncertainty while retaining its
+earlier conservative judgments as history. Agreement among the initial
+assessments does not resolve the challenge by vote.
+
+[Cambridge's grammar guidance](https://dictionary.cambridge.org/grammar/british-grammar/with)
+includes the using sense of `with`. An app developer's
+[public Nostr notes](https://nostr.com/nprofile1qqs2kgtvqjhmdy8qagrfg9f88qqud7m5d8pgm6xpq8jfavp3cq8794cpr9mhxue69uhhqun9d45h2mfwwpexjmtpdshxuet59uprw72z)
+use the hashtag for learning reports and discuss Nostr-based language-learning
+software. That external usage makes the network interpretation plausible; it
+does not identify the intended reference in this frozen post or establish
+its app's properties as subject evidence. Neither source was supplied to the
+saved reviewers. No universal preposition rule or new post fact is adopted.
+
+**Result:** no definite Boolean or explanation error is established. These three
+source judgments and complete explanations remain uncertain, outside resolved
+reviewer-correctness denominators. The prior distilled-answer scores remain
+conditional on the saved decisions; this audit does not certify them. Existing
+DSMv3 and DSSv2 rules already require complete relationships and reasonable post
+support, so no instruction defect justifies a prompt revision. Fresh repeats
+could measure consistency, but cannot establish the disputed source meaning.
+
+Native `prepare --from --only` freezes one matching case and two support cases
+with their exact inputs and saved baselines. Candidate states remain unrun:
+zero attempts, mechanical answers or reused candidate results. Nine native
+agent records preserve the original input-only assessments, independent
+counter-review and root's saved-output audit, explicitly retrospective and not
+gold or new pre-call labels for the historical calls. The root source audit
+references inherited baselines; those records do not accept fresh candidates.
+Original inputs, outputs, receipt histories and expectation statuses remain
+unchanged. The four-note raw report retains SHA-256
+`830920818c1b10d25d79b0902f7e90eca60f26d736ea9a620e44db5668db952c`.
+
+Ignored evidence is retained under
+`oracle-mvp-review-nostr-boundary/target/distillation-review-v1/nostr-boundary/`:
+input-only native views, three exact saved-case reports, the two prepared audit
+plans and their inherited baselines, native assessment histories and final audit
+reports. The task worktree remains for these frozen bindings. This is not a new
+generation trial and does not change the reserved final-sixty selection.
+
+The next recommended step is a four-note regression with approved experimental
+DSLv10, retaining these source uncertainties separately and auditing the
+remaining resolved decisions and explanations. It would verify the timing
+revision over complete answers, without treating these ambiguous cases as
+passed or failed. No regression, lower-effort run or new prompt work starts in
+this audit; broader qualification remains pending.
 
 ## Actual distilled wording: offline preview (October 8)
 

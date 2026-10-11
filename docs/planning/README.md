@@ -367,6 +367,13 @@ accounting checks pass; twelve fresh first attempts take 1 min 27 s, with no
 retries, reuse, warming or cache hits. DSLv10 remains experimental. The separate
 matching/support Nostr questions remain unresolved; another four-note regression
 and final-sixty validation have not started.
+The subsequent [Nostr source audit](../../sse_multivector/distillation-review-v1/README.md#nostr-relationship-source-audit-october-11)
+makes no calls or prompt changes. The three saved conservative judgments already
+match initial input assessments, but an independent contextual-reading challenge
+warrants retaining their unresolved status. No definite reviewer error or
+instruction defect is established; these are not correctness targets settled
+by agreement. Historical outputs and labels stay fixed, with uncertainties
+reported separately from resolved judgments in further development checks.
 Historical DSLv8 outputs, reviews and targets remain unchanged.
 Qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
