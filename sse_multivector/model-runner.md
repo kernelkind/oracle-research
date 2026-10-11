@@ -1498,17 +1498,25 @@ The AS parent-child passage and output contract stay fixed. Native verdict and
 evaluation adapters now supply the bound post only when the template declares
 `{POST}`; older input maps stay unchanged. Rebuild DSLv7 inputs through the
 source adapter because `prepare --from` retains the earlier post-free map.
-Model calls and qualification remain pending; production defaults to DSLv2.
-Neither uncertain named-reference target is newly settled. The bulk evaluation
+The approved diagnostic has completed; qualification remains pending and
+production defaults to DSLv2. Neither originally uncertain named-reference
+target is newly settled. The bulk evaluation
 preparation helper still emits a concurrency field rejected by the current
 shared runner; use native `prepare` with source-adapter specs for this small
 diagnostic. The broader regression failures reproduce on unchanged code.
-The native DSLv7 preview now contains 14 unrun cases from nine source notes in
-the agreed 60-answer sample, with real bound posts. Pre-call agent assessments
-give six valid, six invalid and two unresolved targets; inherited legacy labels
-are not the new diagnostic's scoring basis. Audit complete records against
-those targets after fresh Sol/xhigh calls. The 71-token cacheable prefix is
-ineligible for warming. No model calls have been made for this preview.
+The native DSLv7 diagnostic completed fourteen fresh first attempts from nine
+source notes in the agreed 60-answer sample, with real bound posts. Booleans
+agree with 12/12 frozen pre-call targets, with two originally unscored; inherited
+legacy labels remain provenance. Both output audits give eleven accepts, two
+uncertainties and one rejected explanation. The Keke Palmer record adds new
+named-reference uncertainty despite target agreement; the Family Ties witness
+assigns unestablished facts to the fixed work. This is not a pass or established
+12/12 correctness. The 71-token prefix is ineligible; no warming, reuse or retry
+occurred, and the allowance reconciles at 14/28. Native usage is 14,959 input,
+zero cached and 28,903 output tokens (including reasoning), estimated at
+$0.318948 by the catalog; provider charges are unknown. The next recommendation
+is to settle the named-reference boundary before more inference; DSLv7, AS,
+schema and model settings stay fixed, with no new interpretation adopted.
 The current shared runner uses automatic queue admission; inherited concurrency
 fields remain metadata. See the
 [case-level process and prepared reference](distillation-review-v1/README.md#case-level-prompt-development-approved-october-10).

@@ -308,13 +308,18 @@ The user approved the exact [DSLv7 wording](../../sse_multivector/distillation-r
 using the original post to interpret supplied wording, with the AS parent-child
 rule and output contract fixed. Native preparation now supplies the bound post
 when the template requests it, for actual edges and coverage compatibility.
-Model calls and qualification remain pending. The two uncertain named-reference
-targets remain unresolved; production still defaults to DSLv2.
-The native DSLv7 diagnostic is prepared with 14 unrun cases from nine source
-notes in the agreed 60-answer sample. Independent pre-call agent assessments
-give six valid, six invalid and two unscored targets; legacy labels remain provenance. Its
-71-token prefix is ineligible for warming. The next recommendation is fresh
-Sol/xhigh calls and complete-record audits; no calls have been made.
+The approved DSLv7 diagnostic completed fourteen fresh Sol/xhigh first attempts
+from nine source notes in the agreed 60-answer sample. Booleans agree with all
+twelve frozen pre-call targets; two remain unscored. Both output audits give
+eleven accepts, two uncertainties and one rejected explanation. Keke Palmer's
+record adds named-reference uncertainty despite target agreement; Family Ties'
+witness invents unestablished fixed-work facts. The set does not pass, and
+12/12 target agreement is not established correctness. Legacy labels remain
+provenance; no targets were changed after outputs. The 71-token prefix is
+ineligible; there was no warming, reuse or retry, and the allowance ends at
+14/28. The next recommendation is to settle the named-reference boundary before
+more inference. No new interpretation or prompt revision is adopted;
+qualification remains pending and production defaults to DSLv2.
 Sol/xhigh and subscription SSE remain fixed; lower-effort testing remains
 paused. The completed ten-note run retains its frozen concurrency of 16; the
 current shared runner uses automatic queue admission for future dispatch.

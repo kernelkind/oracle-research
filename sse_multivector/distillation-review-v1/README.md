@@ -26,8 +26,14 @@ This shows sound scope handling on those cases; it does not repair the original
 MILFs explanation or settle the named-reference/list uncertainties.
 The user approved the exact [DSLv7 wording](#dslv7-post-interpretation-draft-october-10)
 that supplies the original post for interpretation. Native preparation now
-supplies the bound post when the template requests it. Diagnostic generation,
-qualification and adoption remain pending; production still defaults to DSLv2.
+supplies the bound post when the template requests it. The approved 14-case
+diagnostic completed on first attempts. Booleans agree with all twelve frozen
+pre-call targets; complete records receive **eleven accepts, one reject and two
+uncertainties** from both agent audits. The rejected explanation assigns
+unestablished facts to a fixed named work. A formerly resolved Keke Palmer case
+now has full-record uncertainty about carrying posted facts through a named
+reference. Target agreement does not establish correctness; the set does not
+pass. Qualification and adoption remain pending; production defaults to DSLv2.
 
 **Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
 evidence records** pass both agent audits in the
@@ -3935,19 +3941,21 @@ Native `prepare` has now rebuilt 14 cases using
 in `target/distillation-review-v1/relationship-dslv7-post-interpretation`.
 All use their real bound posts from nine source notes represented by ten saved
 answers in the agreed 60-answer sample: four actual student edges and ten
-proposed coverage placements. Every case remains unrun;
-there are no reviewer outputs, attempts, token usage or warming calls.
+proposed coverage placements. The experiment resides in the retained
+`../oracle-mvp-review-dslv5-draft` worktree; artifact paths in this section are
+relative to that root. The user authorized this 14-case run after the preview.
 The unchanged prompt's cacheable prefix is 71 tokens, below the automatic
-1,024-token eligibility threshold, so no warming is planned.
+1,024-token eligibility threshold; no warming was performed.
 
 Root and an independent agent assessed the inputs before any reviewer calls.
 These are agent targets, not human gold: six valid, six invalid and two
 unresolved. Native pre-call agent reviews preserve these targets and evidence
-in their comments; their review verdict is `uncertain` because no reviewer
-output exists yet. That pending-output status does not make the twelve resolved
-input targets uncertain.
+in their comments; their `uncertain` review verdict recorded that no reviewer
+output existed then. They remain preserved as input assessments and are no
+longer current output reviews. The following table records those frozen
+pre-call targets, not adjudicated correctness after the trial.
 
-| Case | Pre-call target | Decisive restriction or interpretation |
+| Case | Frozen pre-call target | Decisive restriction or interpretation |
 | --- | --- | --- |
 | `M03-checkpoint-800-N0032:6.1` | Valid | The invitation retains prize claiming; a completed claim is not required. |
 | `M01-checkpoint-1000-N0002:1.1.1.1` | Valid | The complete telemetry subject remains the object of the instruction, which is post data. |
@@ -3968,14 +3976,58 @@ The source adapter preserves inherited `expected_valid` metadata from the
 current assessment directory. Some legacy targets differ from these fresh,
 post-aware assessments: the XP case retains `true`, Sisters retains `null`,
 and the two named-reference cases retain `false` and `true`. Those labels are
-provenance, not this diagnostic's correctness denominator. Keep old artifacts
-unchanged and assess the fresh Boolean and complete explanation against the
-twelve resolved targets above; report the two unresolved records separately.
+provenance, not this diagnostic's correctness denominator. Old artifacts and
+pre-call targets remain unchanged. Boolean agreement against the twelve
+pre-call targets is reported separately from complete-output assessment, with
+the two originally unresolved cases outside that agreement denominator.
 
-The recommended next step is 14 fresh Sol/xhigh calls followed by complete
-record audits. This is prompt development on previously exposed cases, not
-unseen generalization evidence. Model calls, qualification, lower-effort
-testing and the final 60 remain pending; production still defaults to DSLv2.
+### DSLv7 diagnostic results
+
+All **14 fresh calls** completed successfully on first attempts through the
+native runner at **gpt-6.1-sol / xhigh / SSE**. There were no failures, provider
+retries, reused answers or warmups. The persistent allowance and its claims
+reconcile at **14/28 used**. `terminal-raw-report.json` preserves the native
+report before output reviews; `reviewed-report.json` includes current reviews
+and verified original-generation accounting. All fourteen original receipts,
+distinct request identities and frozen input bindings pass native validation.
+
+Every Boolean agrees with its frozen target: **12/12 target agreement**, with
+two cases originally unscored. This is not 12/12 established correctness. Root
+and a separate output auditor agree on **eleven accepted complete records, two
+uncertainties and one rejected explanation**. The output auditor read inputs
+and outputs without pre-call targets, source expectations or prior reviews.
+Fourteen native agent output reviews record those assessments and their
+evidence without implying user review or human gold.
+
+| Flagged case | Output | Complete-record audit |
+| --- | --- | --- |
+| `M03-checkpoint-800-N0032:compatibility:003:4` | `true` | Uncertain: the explanation carries the posted pot rollover through the specifically identified winnerless-round reference. Whether reference interpretation permits that remains unsettled; its pre-call target stays unscored. |
+| `M01-checkpoint-600-N0017:compatibility:003:1.1.1.2` | `false` | Uncertain despite pre-call agreement: a different appraisal of the same named reboot plausibly fits the child, but the explanation excludes its posted Palmer-brightening predicate while the game explanation carries a posted predicate through its reference. The prompt does not clearly settle that boundary. Preserve the frozen target and report this new uncertainty rather than removing the case after observing its output. |
+| `M01-checkpoint-800-N0015:compatibility:018:1.1` | `false` | Reject the explanation; Boolean remains unresolved: the counterexample assigns only mature adult sisters, childless performers and no maternal characters to the fixed Family Ties work without establishing that those facts fit the named reference. The tag-meaning observation alone does not prove complete-child fit. Its pre-call target stays unscored. |
+
+The other eleven records preserve or reject the expressed restrictions with
+sound evidence. In particular, the XP counterexample completes English practice
+at 143 XP, then receives a separate 1 XP after practice stops: it preserves the
+child's qualified goal and all quantities while failing the parent's expressed
+concurrence between practice and a current 144 XP total. Claiming, telemetry
+instructions and the current AI wave retain their complete parent meanings
+without an added performance or main-subject requirement.
+
+Native usage is **14,959 input tokens, zero cached input or cache writes, and
+28,903 output tokens including 25,206 reasoning tokens**. The catalog estimate
+is **$0.318948**, with mean/median/p95 request estimates of
+$0.022782 / $0.017448 / $0.048884. Cache share and estimated savings are zero.
+Provider-reported charges are unavailable for all fourteen calls; the estimate
+is API-equivalent usage pricing, not a confirmed subscription cash charge.
+Saved request durations range from 26.535 to 103.945 seconds; exact experiment
+wall duration is not stored.
+
+The development set does not pass. The useful next step is to settle which
+posted predicates a named reference preserves on the existing game/work cases
+before further inference. No prompt revision or new interpretation rule has
+been adopted. This is prompt development on previously exposed cases, not
+unseen generalization evidence. Qualification, lower-effort testing and the
+final 60 remain pending; production still defaults to DSLv2.
 
 ## Actual distilled wording: offline preview (October 8)
 
