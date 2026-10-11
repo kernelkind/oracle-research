@@ -2143,3 +2143,34 @@ order are unchanged. Native caps19 and3 count all dispatches against the same
 persistent allowance. Its1355-token prefix is eligible for automatic caching;
 backend hits are measured separately. Independent proof review and fresh-repeat
 qualification are required before any broad accuracy claim or adoption.
+
+V102 completes all10 outputs in12 fresh attempts including warmups, without
+reuse, failure, retry or missing usage.042 both still select shared deliberateness
+and approve containment without establishing person scope.038-reverse regresses
+to an unsupported positive while038-forward retains a valid dog counterexample;
+the native reversal check reports038.019 both and107/111/034 retain supported
+judgments;036's unconscious-perception witness needs the same thought-scope
+qualification. Condition attachment alone is not a qualified fix. Native
+accounting is reproduced by hierarchy-compare-v102-usage-v1.json.
+
+### V103: test-order priority with a fresh V100 comparison
+
+V103 returns to V100 and adds only an explicit condition-selection order. If
+the parent expressly restricts identity or consumer without a matching explicit
+child restriction, test that first using something outside the restriction.
+Keep every child requirement and permitted topic connection. Necessary
+implications can still exclude the variation; absence of matching wording
+does not establish a negative. This targets choosing an already shared
+condition instead of the missing restriction, rather than another general
+identity warning or a supplied validation witness. Independent review finds
+no semantic blocker to the controlled contrast.
+
+The same ten ordinary requests are prepared for V103 and an intentional fresh
+V100 repeat, preserving complete inputs, producer evidence, schema and settings.
+Twenty outputs plus four warmups require24 first attempts if there is no retry.
+Each core/tool native cap is19/3 under the persistent shared counter. V103's
+1397-token prefix uses automatic caching. The observable procedure check is
+whether042 actually tests the person/consumer condition before deliberateness.
+The fresh baseline helps distinguish changed execution from sampling variation;
+one matched gate cannot establish a stable improvement rate. No adoption or
+broader hierarchy generation follows from a successful draw alone.
