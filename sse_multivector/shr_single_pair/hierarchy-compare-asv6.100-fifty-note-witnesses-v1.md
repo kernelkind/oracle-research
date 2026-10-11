@@ -4806,12 +4806,20 @@ receipts. Their protected generation-snapshot hashes remain respectively
 and `dc516f4b6edd019df1e25bc5efaa24956610265ac63b6a523ba23ac0908b231a`.
 Producer receipts, frozen source/code hashes and reused-answer origins verify.
 
-The most useful next diagnostic is the Stockpots meal-purpose test after fixing
-that disputed clause's reading explicitly. The current positive proof tests a
-child-invalid vessel, then assumes an untested parent purpose. Separate whether
-Compare fails to check that missing restriction from whether the original prose
-supports different attachments. Preserve the original case and its provisional
-target; any clarified-input contrasts are separate diagnostic cases, not repairs
-to this score. No new prompt version or further experiment is authorized by this
-recommendation. An untouched, coverage-diverse holdout is still needed before a
-general accuracy claim.
+### Subsequent user review of Cookware / Stockpots
+
+The user was shown both exact meanings, V176's Cookware-contains-Stockpots
+conclusion, its diagnostic question and the disputed meal-purpose inference.
+The verbatim response was: **"i think it's fine"**. Native review records a user
+acceptance for `isolated-035-forward`. Treat the presented relationship as
+accepted; do not classify it as a confirmed wrong-label failure or prioritize
+changing the prompt to reverse it.
+
+The preceding independent agent proof assessment and measured reversal remain
+preserved as evidence. The user response does not specify a universal reading of
+meal-purpose clauses or approve the unpresented reverse output. It does not alter
+the frozen meanings, pre-call targets, model outputs, original agent review
+counts or usage. Compare's contrary reverse output remains an inconsistency
+against the accepted relationship. No further model calls or prompt edits occur.
+An untouched, coverage-diverse holdout is still needed before a general accuracy
+claim.
