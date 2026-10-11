@@ -1,4 +1,4 @@
-# Hierarchy selection by traversal — draft v5
+# Hierarchy selection by traversal — draft v6
 
 **Status: algorithm draft.** This records the discussion; it does not change
 the constructor, comparison prompt or existing experiments.
@@ -121,18 +121,38 @@ if Dinner returns `neither`, stop that branch. If Breakfast has no children,
 it becomes a proposed direct parent. Meals and Food remain ancestors through
 Breakfast.
 
+### Uncertain
+
+**`uncertain` stops the search for this local node and holds it for review.
+Preserve the existing graph and continue processing other local nodes.**
+
+Save the comparison answers and uncertainty reason for review. The uncertain
+answer supplies no relationship for traversal or placement.
+
+For example:
+
+```text
+Food — contains the local node
+└── Meals — uncertain
+```
+
+The local node remains unplaced despite the positive Food answer. Stop its
+search and retain the answers for review; construction continues with other
+local nodes. This retains the current constructor's hold behavior.
+
 ## Proposed walk
 
-The containment, `neither`, shared-node and equivalence rules above are agreed.
-The other steps below carry forward the current traversal behavior as a
-starting point for further discussion.
+All five comparison actions and the shared-node rule above are agreed. The
+other steps below carry forward the current traversal behavior as a starting
+point for further discussion.
 
 1. Start at the canonical roots.
 2. Compare the local node with a reached, eligible canonical node.
 3. Follow the returned label using the table below.
-4. Continue until no comparisons remain along the branches being searched.
-5. Use the resulting relationships for placement, retaining the existing
-   constructor's placement checks.
+4. Continue until no comparisons remain along the branches being searched,
+   or an `uncertain` answer holds this local node for review.
+5. If the local node is not held, use the resulting relationships for placement,
+   retaining the existing constructor's placement checks.
 
 | Returned label | Traversal action |
 | --- | --- |
@@ -140,7 +160,7 @@ starting point for further discussion.
 | `local_contains_canonical` | Record the canonical node as a possible child. Stop descending there; containment of its descendants follows from the existing graph. |
 | `equivalent` | Use the existing canonical node. Its ancestor and descendant relationships apply. Stop descending there and continue other branches. |
 | `neither` | Stop descending this branch. Continue other branches. |
-| `uncertain` | Retain the current constructor's hold behavior: preserve the graph and flag the local node for review. |
+| `uncertain` | Stop this local node's search, preserve the graph and hold it for review. Continue processing other local nodes. |
 
 ## Food / Meals example
 
