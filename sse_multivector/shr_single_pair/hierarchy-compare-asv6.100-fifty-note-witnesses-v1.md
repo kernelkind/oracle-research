@@ -556,17 +556,101 @@ questions seek an admitted child case that could fail a required parent
 condition, and positive coverage justifications must account for every admitted
 child alternative and every required parent condition. The rest of the prompt,
 including the input and five-field output contracts, remains byte-identical.
-V76 is a draft, untested and not adopted. This is a semantic hypothesis, not an
+The user approved v76 for testing. Its completed bounded gate failed; v76 is
+not adopted. This is a semantic hypothesis, not an
 established cause or fix for the v75 errors. Its brief diagnostic requirements
 follow [official reasoning prompt guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
 on direct instructions without requested reasoning traces; that guidance does
 not validate this particular containment rule.
 
-The proposed next test checks the approved sourdough/Food and Eating/Food pairs,
-the Butter reversal, information-topic positive controls and the canonical
-ancestor counterexample. Only after that bounded check passes should the full
-102-case panel be rerun. No inference was performed while drafting v76;
-producer-boundary qualifications and the frozen v75 evidence remain separate.
+The approved first test freezes 15 cases before inference: both orientations of
+isolated pairs `014`, `024`, `025`, `006`, `022`, `031`, and `034`, plus
+`snapshot-022-c068`. Sourdough/Food and Eating/Food must return the user-approved
+neither. Butter/preparation and Food/Cookware are independently assessed
+negative controls. Bread/bagel-making, Food dishes/served dinner lamb, and Food
+preparation/role-defined Cooking appliances are independently assessed positive
+controls under the existing information-topic convention. The bagel/Bread
+snapshot must preserve endpoint coverage while flagging its Food dishes
+ancestor's unsupported meal requirement. These controls are not new human gold.
+
+The gate requires all seven reciprocal pairs to agree, retained positive
+controls, actual counterexample questions and valid whole-scope justifications,
+and the unresolved ancestor consequence to be reported. Blanket rejection or
+uncertainty is not a pass. The gate has no equivalence outcome, so it does not
+qualify equivalence substitution. Only after this gate passes will the full
+102-case panel be run, reusing exact gate requests rather than regenerating
+them. Both stages use unchanged ASv6.100/v96 producer meanings, v75 baselines,
+Sol 6.1 medium, cached SSE, and main's shared runner with its automatic
+30-request global queue. The existing persistent 20,000-attempt counter is
+preserved; the per-stage attempt ceilings are 31 for the gate and 175 for the
+remaining full panel, including warmup and provider retries. No inference was
+performed while drafting v76; producer-boundary qualifications and the frozen
+v75 evidence remain separate.
+
+### Completed v76 bounded gate
+
+Native experiment: `target/compare-v76-fifty-note-witnesses-v1/gate-v1` in the
+Compare qualification worktree. It was prepared through shared `prepare --from`
+against the original completed v75 experiment, with the 15 IDs above and the
+v76 template override. There was no manual input assembly or meaning generation.
+An independent preflight verified all 15 input strings/hashes and complete
+producer evidence against v75, the unchanged five-field schema and Sol medium
+settings, all 888 source bindings and 39 current code bindings. V76's cached
+prefix is 1,806 estimated tokens. Shared runner 1.6.1 controlled scheduling;
+the inherited historical concurrency field did not control dispatch.
+
+All **15 responses were valid**, with no failed or unrun cases. Execution used
+**16 actual attempts**: 15 fresh comparisons and one cache warmup. There were
+no retries, exact reuses or missing usage. Native API-equivalent total was
+**$0.0886328**, including warmup; subscription incremental cash was zero.
+Fourteen of 15 comparisons reported cache hits. The existing shared counter
+remained in place at 13,959/20,000 when inspected; actual attempt attribution
+comes from the experiment's receipts, not a shared-counter subtraction.
+
+The seven reciprocal pairs have **two reversal failures**: `isolated-024`
+and `isolated-025`. Butter's pair now returns neither in both orientations.
+All three positive-control pairs retain their intended containment, and the
+Food/Cookware negative remains neither. These are one-draw observations, not
+reliability estimates or proof that either changed paragraph caused improvement.
+
+Independent fixed-meaning review accepted 12 responses and rejected three:
+
+- `isolated-024-reverse`: the question explicitly targets preparation outside
+  human nourishment, but the positive answer asserts that bread is intended
+  for human nourishment. The child meaning does not require that purpose;
+  animal-feed-only sourdough still defeats containment. The forward response
+  finds that counterexample and returns the user-approved neither.
+- `isolated-025-forward`: the positive question and answer still test generic
+  food consumption rather than the parent's intended-human-nourishment
+  requirement. The reversed response admits dog-food-only consumption and
+  returns the user-approved neither.
+- `snapshot-022-c068`: its endpoint answers correctly allow bagel-preparation
+  information beneath Bread, but its reason adds that bagels are eaten as a
+  meal or part of one. That unsupported restriction bypasses the Food dishes
+  ancestor. The branch consequence remains unresolved and requires uncertain,
+  without changing the settled endpoint answers.
+
+The eight negative/positive control outputs were independently accepted under
+the prompt's information-topic convention. One diagnostic qualification is
+preserved: `isolated-034-reverse` uses a general device/aspect boundary question
+rather than naming a concrete candidate. Its coverage proof does account for
+the appliance role and all listed aspects. These agent assessments are not new
+human gold or an accuracy score; semantic failures and reversal witnesses
+overlap rather than constituting extra independent errors.
+
+Every response now has one attributed native agent review. Separate native
+generation and reviewed reports are saved as
+`target/compare-v76-fifty-note-witnesses-v1/gate-generation.json` and
+`gate-reviewed.json`. Review verification preserved all original input,
+evidence, output, parsed-answer, usage and producer/response receipt fields.
+There were no prompt, producer, adapter or constructor changes during execution.
+
+**V76 fails the preregistered gate. The conditional 102-case trial was not
+prepared or run.** The boundary-specific question in 024 reverse demonstrates
+that a better question alone does not ensure a faithful answer: the positive
+justification can still add an unsupported condition to the child. The next
+proposed diagnostic should isolate that interpretation step before another
+prompt revision. No additional test or edit is implied by this result.
 
 Read-only inspection of the exact Butter witness:
 
