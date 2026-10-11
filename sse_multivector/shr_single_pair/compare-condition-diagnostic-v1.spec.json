@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "Compare-condition-diagnostic-v1", "path": "Compare-condition-diagnostic-v1.md"},
+  "dataset": {"adapter": "generic", "path": "compare-condition-diagnostic-source-v1.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "prompt_cache": true,
+    "timeout_seconds": 1800,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "output_schema_path": "Compare-condition-diagnostic-v1.output.schema.json"
+  }
+}

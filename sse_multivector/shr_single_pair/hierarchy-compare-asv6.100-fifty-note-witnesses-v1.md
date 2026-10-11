@@ -897,3 +897,65 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v
 The qualification and older disambiguation worktrees remain necessary because
 native source/producer references and receipts bind their artifact paths. They
 are retained for reproduction; no new construction or execution is implied.
+
+### Condition diagnostic v1: preregistered bounded test
+
+The user authorized the proposed explicit condition diagnostic after v77's
+failed gate. This is a separate experimental task/schema, not a production
+Compare edit or adoption. `Compare-condition-diagnostic-v1.md` is natively
+revised from the tested v77: its complete node definitions, fixed-scope rules,
+information-topic convention, activity-role rules and state distinctions remain
+byte-identical. The procedure/output now records each required parent phrase,
+supporting child phrase or necessary implication, and established,
+counterexample or unresolved status. Required canonical consequences use the
+same records. Optional/descriptive statements must not become mandatory child
+conditions. The two-field schema is deliberately separate from the production
+five-field Compare contract; no adapter, constructor or Bootstrap change is
+needed or authorized by this experiment.
+
+The generic native prepared-experiment import pins the v77 gate envelope at
+`b99490e3d0913cc16e8eadd650112aefc9a9d08ed2be26600ba0ee323ecbfe4b`.
+Its exact ASv6.100/Bootstrap-v96 meanings and source-free `INPUT_JSON` remain
+fixed; original producer receipts and assessment evidence remain review-only.
+This is historical producer qualification data, not certification of latest
+Bootstrap. No saved answer or expected relationship enters model input.
+
+The staged schedule is fixed before inference:
+
+1. Initial eight: 024 and 025 in both orientations, 034 in both orientations,
+   isolated 022 forward, and snapshot 022/C068. Each direction must settle the
+   actual required boundary without adding child restrictions; the appliance
+   and isolated bagel positives must survive. Snapshot 022 must retain endpoint
+   coverage but identify the unmet meal condition of Food dishes and return
+   uncertain. Stage cap: 17 actual attempts including warmup/retries.
+2. Only if all eight labels and condition records pass independent review,
+   run the other seven fixed v77-gate cases: 006 both, 014 both, 022 reverse
+   and 031 both. Stage cap: 15 attempts.
+3. Only if all 15 pass, repeat the initial eight with native `--repeat` in a
+   fresh experiment using the identical diagnostic prompt and settings.
+   Stage cap: 17 attempts. Repeated requests must have distinct response IDs
+   and no conversation linkage; cache hits do not imply answer reuse.
+
+Maximum dispatch allowance for this protocol is 49 attempts, within the existing
+persistent 20,000 counter. Independent cases continue within a dispatched stage;
+a failure stops dependent stages, rather than selecting favorable responses.
+Shared runner, subscription Sol 6.1 medium, SSE and automatic prefix caching
+remain fixed. Current shared queue chooses concurrency automatically (30 at
+preparation); no private execution or fresh spending allowance is introduced.
+
+Native schema validation is not semantic validation. Review must separately
+check exact phrase quotations, both endpoint directions, completeness of required
+ancestor/descendant checks, permissive versus required clauses, every child
+alternative, valid admitted-but-excluded counterexamples and relation consistency.
+Necessary topic implications may establish coverage without a literal matching
+phrase; physical kind mismatch alone may not reject an established activity-role
+topic. Existing human judgments are retained with their exact scope; other
+controls are provisional agent assessments, not human gold.
+
+This structured-output experiment tests whether explicit condition attribution
+exposes unsupported inference. It changes procedure and schema together, so an
+improved draw would not identify one causal sentence, prove stable reliability,
+or justify production adoption. No validation examples are added to the prompt.
+Official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+supports direct instructions and concise requested diagnostics rather than
+reasoning traces; it does not establish the semantic convention or this fix.
