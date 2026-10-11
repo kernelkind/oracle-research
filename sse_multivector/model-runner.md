@@ -174,6 +174,18 @@ passed independent integrity review; nine prompt-revision tests passed.
 V112 remains experimental without an adoption recommendation. V104 remains
 approved and no Compare or hierarchy work belongs to this diagnostic.
 
+The subsequent [saved v109 whole-branch recheck](shr_single_pair/bootstrap-current-as-qualification.md#saved-v109-whole-branch-evidence-recheck)
+reviews all 115 existing meanings across 17 complete ASv6.100 trees and 300
+ancestor checks, including 98 immediate links. Three independent reviewers
+establish no new definite Bootstrap evidence or boundary failure. Ingredient
+and cookware collections beneath individual constituents, compound warning
+lists, and activity topics covering planned handling remain fixed-meaning
+containment diagnostics. These are qualified relationship questions, not
+certified failures or permissions to alter endpoints. All source bindings,
+receipts and 265 quotations pass mechanical checks. No new teacher attempts,
+prompt changes, Compare labels, hierarchy build or review writes occurred;
+the saved panel is not a fresh reliability sample. V104 remains approved.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
