@@ -2879,3 +2879,16 @@ all examples pass the production mechanical validator and independent semantic
 review. Only a clean gate justifies fresh repeats and broader qualification.
 No Bootstrap generation, hierarchy construction or external session message.
 Native usage source: hierarchy-compare-v129-v131-combined-usage-v1.json.
+
+
+Independent cross-version challenge confirms V128's031/032 ancestor proofs omit
+exactly the concrete consumer-candidate diagnostic rejected in V126. The V128
+owner appended procedure-only rejects while preserving initial accepts and
+plausible selected relations. Latest-per-case V128-control assessments are now
+6 accept/3 reject: one semantic proof defect plus two procedure-only defects.
+This is review correction, not a changed producer output or new opposite-label
+gold. Native `current:true` means input/output-hash compatibility; appending a
+correction to unchanged bytes leaves both records hash-current. Assessment totals
+here use the latest owner record per case, and preserve prior records as history.
+Do not mistake multiple hash-compatible historical records for multiple samples
+or count every such record as an independent current verdict.
