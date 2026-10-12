@@ -2,8 +2,10 @@
 
 **Status: approved V2 design, implemented as `hierarchy-generation-v2`.
 HR09 completed construction with 24/24 notes; HR08 exhausted selection with
-23/24. HR10 resumed from a provider-blocked 48/50-note checkpoint using its
-same frozen source, prompts and attempt counter. No hierarchy-quality
+23/24. The user stopped HR10 after resume at 4,088/10,000 attempts, retaining
+48/50 notes and 136/164 guaranteed entries settled. Its frozen source, prompts
+and attempt counter are preserved; final stop accounting and review UI are being
+prepared. No hierarchy-quality
 qualification is claimed.** V2
 replaces the previous selection implementation through the existing shared-runner
 commands. The FUTURE WORK label denotes pending qualification with real model

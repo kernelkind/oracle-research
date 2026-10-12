@@ -1736,13 +1736,20 @@ minimal browsing depth. Offline tests exercise V2 through the native workflow.
 The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
 have saved their initial L1 meanings. HR08 has exhausted eligible selection at
 2,603/3,000 attempts, retaining a partial 23/24-note hierarchy and a review UI;
-HR09 completed with 24/24 notes at 2,646/3,000 attempts. HR10 stopped with
+HR09 completed with 24/24 notes at 2,646/3,000 attempts. HR10's historical
+pre-resume checkpoint stopped with
 execution `blocked` and graph `constructing` at 2,635/10,000 attempts after
 two provider failures in a comparison cache warmup, retaining 48/50 notes.
 The user authorized native HR10 resume using the same frozen source, prompts
 and persistent counter. A new native warmup and the pending comparison
-succeeded at 2,637 attempts; construction continues. The register preserves
-the stopped checkpoint, its review UI and usage reports separately.
+succeeded at 2,637 attempts. The user subsequently stopped HR10 at
+4,088/10,000 attempts, retaining 140 raw nodes, 48/50 notes and 136/164 guaranteed
+entries settled. The driver exited 130; execution is `user_stopped` and the
+graph remains `constructing` in `guaranteed_l1`. The old native run summary
+still describes the historical provider blockage and does not describe this
+user stop. The register preserves the pre-resume checkpoint, its review UI and
+usage reports separately; final user-stop catalogue, audit, UI and accounting
+are being prepared.
 A tested native eligibility fix runs the
 short PPv35 prefix uncached while retaining caching for eligible prompts.
 Reviewed continuation can bind stopped construction to a separate isolated
