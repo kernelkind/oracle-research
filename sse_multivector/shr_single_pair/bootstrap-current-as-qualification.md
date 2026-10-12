@@ -3972,6 +3972,6 @@ including four warmups and one recovered failure/retry. Its usage is unknown;
 $0.181612 is the known API-equivalent subtotal, not the complete cost. Eight
 completed definitions report cached input. The runner uses an isolated checkout
 byte-identical to current shared-runner main; all model settings and inputs are
-preserved. Forty-three focused checks and independent receipt/output/input/quote
+preserved. Forty-four focused checks and independent receipt/output/input/quote
 checks pass. Neither candidate is activated; no Compare inference, hierarchy
 build, source-data change or replacement attempt cap occurs.

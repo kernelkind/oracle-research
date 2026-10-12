@@ -174,8 +174,10 @@ API-equivalent subtotal is **$0.181612**, not a complete cost or a reported
 subscription cash charge. Eight completed definition requests report cached
 input; the other four report none. Prefix eligibility is not a hit guarantee.
 
-Twenty-three prompt-revision/saved-comparison checks and twenty prompt-assembly
-checks pass. Exact-replacement checks preserve all other prompt bytes. Native
+Twenty-three prompt-revision/saved-comparison checks pass. The initial twenty
+prompt-assembly checks pass; after synchronizing current main's consolidation
+changes, all twenty-one assembly checks pass on the combined task source.
+Exact-replacement checks preserve all other prompt bytes. Native
 validation and independent reviews verify inputs, receipt/output hashes and
 exact post quotations. Historical legacy-suite limitations remain reported;
 these checks are not a claim that the entire legacy integration suite passes.
