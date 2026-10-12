@@ -5,6 +5,18 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
+**HR06** and **HR07** preserve the two earlier ASv6.48 builds the user reviewed.
+They were registered later, so ID order is not generation order. The intervening
+16-note builds are not official entries.
+
+| Run | Notes | Subject prompt | Bootstrap / Compare |
+| --- | --- | --- | --- |
+| HR06 | 8 | ASv6.48 | v88 / v36 |
+| HR07 | 50 | ASv6.48 | v96 / v48 |
+| HR03 | 50 | ASv6.100 | v96 / v48 |
+| HR04 | 12 | ASv6.100 | v109 / v179 |
+| HR05 | 24 | ASv6.100 | v109 / v179 |
+
 ## HR05 — ASv6.100 24-note hierarchy
 
 Approved as a rerun of HR04 with 24 notes and completed October 11, 2026. The
@@ -400,6 +412,222 @@ remain available. Unrecorded historical settings stay unknown.
 | Raw hierarchy | `853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae` |
 | Browsing menu | `4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c` |
 | Browser export | `763ddd9c614581529653dcd1dcd342a3145ccd9beb9f194655448ee5f4f69060` |
+
+## HR07 — ASv6.48 50-note hierarchy
+
+Generated and reviewed October 10, 2026, before HR03. The user reviewed the saved
+menu and said "wow, this hierarchy is great." This is the earlier ASv6.48 build,
+with different subject outputs from HR03 despite identical Bootstrap-v96 and
+Compare-v48 prompt bytes. **ASv6.48-derived data is deprecated; this entry is
+historical comparison evidence.**
+
+### Inputs and construction
+
+| Parameter | Recorded value |
+| --- | --- |
+| Notes | 50; previous 16 original root pointers, then the first 34 unseen note IDs in saved corpus order |
+| Exact selection | [50-note root definition](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-roots-v1.json) |
+| Subject prompt | ASv6.48; reuse saved `sh200-generation-v1` outputs |
+| Subject entries / local roots | 1,346 / 315 |
+| Bootstrap | [Hierarchy-bootstrap-v96](../../target/hierarchy-catalogue/code/599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845.md) |
+| Compare | [Hierarchy-compare-v48](../../target/hierarchy-catalogue/code/b225da8653af04dfbe41fc8ff9e4f9d8bf780df527e27ee3e2d088c0e7eb23af.md) |
+| Initial graph | Empty; earlier 16-note graph not inherited |
+| Meanings / local schema | Independent fixed meanings / version 4 |
+| Root producers / placements | 50 root meanings generated together, then sequential placement with exact reuse |
+| Comparison selection | `guarded16`, limit 16, with complete omitted-implication verification |
+| Local candidate limit | 32 |
+| Selective entry bound | 160 for the selective stage; later authorized growth brought total processed entries to 181 |
+| Choice limit | 6 roots or children in the finished menu |
+| Construction definitions | [Selection settings](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-selection-v1.json); per-phase settings and caps retained in the complete record |
+| Menu recipe | [Shape-v2](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-shape-v2.json); preserve fixed meanings and witnessed ancestry |
+
+### Model execution and attempt allowance
+
+| Parameter | Recorded value |
+| --- | --- |
+| Provider / model / effort | `openai-codex` subscription / `gpt-6.1-sol` / medium |
+| Transport | SSE |
+| Prepared concurrency | 32 |
+| Actual execution concurrency | 32 for 180 Bootstrap and 186 Compare batches; 8 for 13 Bootstrap batches |
+| Prompt cache | Enabled; automatic static-prefix warming |
+| Cache prefix | Template; `o200k_base` tokenizer; minimum 1,024 tokens |
+| Bootstrap / Compare timeout | 600 seconds |
+| Output-token limit | No explicit limit |
+| Seed / temperature | Unknown; not recorded |
+| Shared attempt allowance | 20,000 for the existing sprint, including warmups, failures, retries and continuations; not reset for this run |
+| Historical shared-counter endpoints | 3,594 before; 6,679 after; later work is outside this run's usage |
+
+### Result and review
+
+| Measurement | Saved result |
+| --- | --- |
+| Raw graph | 146 nodes, 158 edges, 20 roots, maximum 24 children |
+| Original entries processed | 181: 146 additions, 16 equivalences, 19 holds; 14 holds concern relationship contradictions |
+| Reviewed menu | 76 nodes, 87 strictly narrowing edges, 6 roots, maximum 6 children |
+| Individual note access | 50 of 50; 15 notes need 2 topic choices, 30 need 3, 5 need 4; mean 2.8 |
+| Structural audit | Passed; no violations; semantic grading remains separate |
+| Provider attempts | 3,085: 204 warmups and 2,881 ordinary attempts |
+| Model answers / reuse | 3,075 valid case occurrences, including 201 exact reuses; no terminal failures or unrun cases |
+| Recovered failures | 7, each missing usage/cost |
+| Known API-equivalent cost subtotal | $9.1301216; full cost unknown; not a subscription charge |
+| Unused valid prefetched receipts | 35; charged producer work remains included in usage |
+
+The positive user review accepts the displayed menu, not every raw relationship.
+Food exposes 24 of its 34 raw-graph notes; the other 10 remain reachable elsewhere.
+The original judgments and holds are preserved. The audit's `done` remains false
+because it does not grade semantic completion. The old native cost-statistics
+section reports zero warmups; exact receipt-line verification establishes the
+204/2,881 breakdown above without rewriting that original report.
+
+### Git provenance and saved outputs
+
+| Provenance | Recorded value |
+| --- | --- |
+| Oracle / shared-runner generation commits | Unknown; not recorded |
+| Uncommitted source changes at generation | Unknown; not recorded |
+| Source-preparation commit | `839d62d8ad935dc2ef6554c2e37ac9029abe3df6`; preparation/support, not a recorded execution HEAD |
+| Bootstrap prompt source commit | `f098d3afc6e0d274dfae95276c466562e54bbcbe`; prompt definition only |
+| Compare prompt source commit | `15ddf7df062da98105f71849af25f3d31c63eed5`; prompt definition only |
+
+Generator files are preserved only when their bytes match native saved hashes.
+The [complete HR07 record](../../target/hierarchy-catalogue/records/HR07.json)
+contains the exact source snapshots, all construction-stage caps, model settings,
+native receipts and input bindings. Some source paths now contain newer code;
+their recovered historical snapshots retain the recorded bytes. The separate
+[catalogue provenance](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/code-provenance.json)
+was added after generation and does not replace original receipts or outputs.
+
+| Saved artifact | File |
+| --- | --- |
+| Raw hierarchy | [HR07 raw state](../../target/hierarchy-catalogue/outputs/HR07.json) |
+| User-reviewed menu | [HR07 menu](../../target/hierarchy-catalogue/outputs/HR07-related-1.json) |
+| Original review UI export | [HR07 viewer hierarchy](../../target/hierarchy-catalogue/outputs/HR07-related-2.json) |
+| Native usage | [Original usage](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/fifty-note-final-usage-v1.json) |
+| Structural audit | [Original audit](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/finished-menu-v2/audit.json) |
+| Review and qualifications | [Original findings](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-findings.md) |
+
+## HR06 — ASv6.48 8-note hierarchy
+
+Generated and reviewed October 9, 2026. The user reviewed the saved menu and said
+"LGTM. Now do 16 notes". HR06 records that accepted eight-note output and its
+three-note base. The later 16-note extension has no separate official ID.
+**ASv6.48-derived data is deprecated; this entry is historical comparison evidence.**
+
+### Inputs and construction
+
+| Parameter | Recorded value |
+| --- | --- |
+| Notes | 8; retain the original 3 notes, then add the 5 roots in the saved growth definition |
+| Exact selection | [Eight-note growth definition](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-growth-v1.json) |
+| Subject prompt / entries | Reuse saved ASv6.48 outputs / 323 entries |
+| Bootstrap | [Hierarchy-bootstrap-v88](../../target/hierarchy-catalogue/code/aa65ea9139e599fcdda89dc23741c3cd2f856cf42e59d51e6f68957e5526d0e0.md) |
+| Compare | [Hierarchy-compare-v36](../../target/hierarchy-catalogue/code/10ba4da63ff9afd11eb996d58cf719381c9e61f6cb2df31e928778fadc081ee9.md) |
+| Initial graph | 9 entries from the empty-start three-note build; add 5 original roots and 4 selected entries |
+| Meanings / local schema | Independent fixed meanings / version 4 |
+| Comparison selection | `guarded16`, limit 16; complete omitted-implication and settled-relationship checks |
+| Same-note comparisons | Excluded except mapped-parent implication checks |
+| Local candidate / selective entry limit | 32 / 32 |
+| Choice limit | 6 roots or children in the finished menu |
+| Selective settings | [Original selection](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-three-note-v88-selection-v1.json) |
+| Menu recipe | [Eight-note shape](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-shape-v1.json) |
+
+### Model execution and attempt allowance
+
+| Parameter | Recorded value |
+| --- | --- |
+| Provider / model / effort | `openai-codex` subscription / `gpt-6.1-sol` / medium |
+| Transport | SSE |
+| Prepared / actual concurrency | 32 / 32 |
+| Bootstrap / Compare timeout | 600 seconds |
+| Output-token limit | No explicit limit |
+| Seed / temperature | Unknown; not recorded |
+| Prompt cache | No explicit setting in saved plans; zero warmups and reported cache reads/writes |
+| Shared attempt allowance | 20,000 for the existing sprint; inherited shared counter, not an independent allowance |
+| Saved shared-counter endpoint | 1,735 used; 18,265 remaining; includes unrelated earlier sprint work |
+| Base phase attempt caps | 30 per roots/selective phase; 40 for the two dinner-child additions |
+| Eight-note extension caps | 150 for the five new roots; 50 for each of four selected additions |
+
+### Result and review
+
+| Measurement | Saved result |
+| --- | --- |
+| Raw graph | 17 nodes, 16 edges, 4 roots |
+| Original entries processed | 18: 17 additions, one equivalence, zero holds |
+| User-reviewed menu | 13 nodes, 9 strictly narrowing edges, 6 roots, maximum 5 children |
+| Individual note access | 8 of 8; 3 notes need 1 topic choice, 5 need 2 |
+| Structural audit | Passed; no violations; no omitted-node verification phase was needed |
+| Full three-to-eight-note lineage | 153 new attempts and 7 exact reuses; 160 valid case occurrences |
+| Eight-note extension alone | 118 new attempts and 2 exact reuses |
+| Failures / retries / unrun cases | 0 / 0 / 0 |
+| Newly dispatched API-equivalent cost | $0.907694 for the full lineage; $0.690570 for the extension |
+| Generation cost including original reused producers | $1.008628; complete saved API estimate, not a subscription charge |
+
+The original Cooking heat-boundary concern remains, along with Food and ingredient
+scope-review candidates. The menu omits intermediates and an unresolved Food to
+Cooking ingredients link while retaining their original raw judgments. Meals
+and Food-storage shared views were not recovered. The user review accepts this
+menu; the structural audit does not grade meanings, and its `done` remains false.
+
+### Git provenance and saved outputs
+
+| Provenance | Recorded value |
+| --- | --- |
+| Oracle / shared-runner generation commits | Unknown; not recorded |
+| Uncommitted source changes at generation | Unknown; not recorded |
+| Matching three-note source commit | `20c87769661c9910979a87c4598187e17ea3a500`; all 53 recorded Oracle Python files match |
+| Matching eight-note source commit | `8a08529c22c96856e7e4343874101e7e608d63c0`; all 53 recorded Oracle Python files match |
+| Matching runner source commit | `c3742c8e488a2154bbde7748813d9ce68c649cda`; all 8 recorded runner Python files match |
+
+These matching commits identify preserved file contents, not the execution-time
+Git HEAD or dirty state. The [complete HR06 record](../../target/hierarchy-catalogue/records/HR06.json)
+contains exact generator snapshots, native plans, phase caps and receipts. The
+separate [catalogue provenance](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-04/code-provenance.json)
+was added after generation; original artifacts remain unchanged.
+
+| Saved artifact | File |
+| --- | --- |
+| Raw hierarchy | [HR06 raw state](../../target/hierarchy-catalogue/outputs/HR06.json) |
+| User-reviewed menu | [HR06 menu](../../target/hierarchy-catalogue/outputs/HR06-related-1.json) |
+| Original review UI export | [HR06 viewer hierarchy](../../target/hierarchy-catalogue/outputs/HR06-related-2.json) |
+| Native usage | [Original usage](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/usage.json) |
+| Structural audit | [Original audit](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/menu/audit.json) |
+| Human review and qualifications | [Original record](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/README.md#bootstrap-v88-eight-note-construction-user-reviewed-menu) |
+
+### Shared historical inputs for HR06 and HR07
+
+Both runs reused subject outputs and standalone subject vectors from the same
+saved 200-note corpus; neither reran subject extraction or vector encoding.
+
+| Input parameter | Recorded value |
+| --- | --- |
+| Original subject producer | ASv6.48, `openai-codex`, `gpt-6.1-sol`, medium |
+| Original AS transport / concurrency / timeout | Websocket / 16 / 1,800 seconds |
+| Subject-vector model / device | `sentence-transformers/sentence-t5-base` / CPU |
+| Vector scope | Saved 200-note probe; 4,370 unique headings |
+| Note batch size / dimensions / maximum length | 8 / 768 / 512 |
+| Encoding / pooling | Standalone full subject wording / `selected-contextual-token-mean-linear-relu-linear-v1` |
+| Python / PyTorch / Transformers / Tokenizers | 3.13.12 / 2.13.0+cpu / 4.57.1 / 0.22.2 |
+| Vector receipt and runtime bindings | [Original worker receipt](../../../oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/worker-receipt.json) |
+
+| Shared input or runtime binding | SHA-256 |
+| --- | --- |
+| Saved subjects | `1f87b7c853beef38d2701f6cef6a3fc4957a93c547f34f7f80caa6919e6d0a07` |
+| Original ASv6.48 template | `5329a4dbbd9787803bfc6dcd8020a720caaa156f36548a9cdff85ee29288d4ff` |
+| Subject-vector checkpoint | `ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d` |
+| Subject-vector model tree | `bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d` |
+| Vector container image | `a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa` |
+| Vector worker | `4e1446e3f48f2989a4b441994b81cf05d409d4b196e7d55155f9202e2b6b4f53` |
+| Saved vector data | `66f59bcfc065eae45c80db02b7104b5a697abf7dea04ffdab44904317196b402` |
+| Hierarchy runner fingerprint | `3e246132e01f45d06c61cc55e048b4ad3d390feee826e2550068956a2bc7bcf9` |
+
+| Run output | SHA-256 |
+| --- | --- |
+| HR06 raw hierarchy | `a8a508e4282169dbc9ffc8615bfb647115f6c4671408e60edd3006a13f18a547` |
+| HR06 reviewed menu | `c71e24ac3fe4c088a9ea9a3da809dc989a8e592e13a7a90ae1ca3f5febc2ee54` |
+| HR06 original UI export | `8d9707570f93d2d959e3e3eb1e6bce83fbfc24f38da5b314e7bbb9b4b0e1db92` |
+| HR07 raw hierarchy | `fd3e5b8e3831a7952dc66de0686a1383c3fb1e9ff07dcbbc1fdb275740cc22f8` |
+| HR07 reviewed menu | `3d90dde150b2028e4f86b8a288ef2c8caa4f267e0a40e8e24e47dd400932a731` |
+| HR07 original UI export | `6cec4a3ef21287260aed1ad0625045528ae17355291c21f2b72a5fc14c8678cd` |
 
 ## Registering future runs
 

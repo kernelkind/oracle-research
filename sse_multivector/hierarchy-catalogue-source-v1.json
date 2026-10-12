@@ -600,6 +600,1247 @@
         },
         "parameter_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/HR05/code-provenance.json"
       }
+    },
+    {
+      "version_id": "HR06",
+      "name": "ASv6.48 8-note hierarchy \u2014 Bootstrap-v88 / Compare-v36 (user-reviewed historical run)",
+      "root": "../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1",
+      "artifact_path": "target/hierarchy-v88-eight-note-v1/selection-04/state.json",
+      "sha256": "a8a508e4282169dbc9ffc8615bfb647115f6c4671408e60edd3006a13f18a547",
+      "related_outputs": [
+        {
+          "label": "User-reviewed browsing menu",
+          "path": "target/hierarchy-v88-eight-note-v1/menu/state.json",
+          "sha256": "c71e24ac3fe4c088a9ea9a3da809dc989a8e592e13a7a90ae1ca3f5febc2ee54"
+        },
+        {
+          "label": "User-reviewed review UI export",
+          "path": "target/hierarchy-v88-eight-note-review-v1/hierarchy.json",
+          "sha256": "8d9707570f93d2d959e3e3eb1e6bce83fbfc24f38da5b314e7bbb9b4b0e1db92"
+        }
+      ],
+      "code_provenance": {
+        "repository_generation_commit": null,
+        "runner_generation_commit": null,
+        "uncommitted_source_changes_at_generation": "unknown: not recorded",
+        "preserved_source_commits": [
+          "20c87769661c9910979a87c4598187e17ea3a500",
+          "8a08529c22c96856e7e4343874101e7e608d63c0"
+        ],
+        "preserved_source_commit_role": "Hash-verified contents of 53 Oracle Python files for each base/extension cohort; these are matching source commits, not recorded execution HEADs.",
+        "preserved_runner_commit": "c3742c8e488a2154bbde7748813d9ce68c649cda",
+        "preserved_runner_commit_role": "Hash-verified contents of eight runner Python modules; execution-time runner HEAD was not recorded.",
+        "runner_fingerprint_sha256": "3e246132e01f45d06c61cc55e048b4ad3d390feee826e2550068956a2bc7bcf9",
+        "code_hash_evidence": [
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/dinner-children/step-007/experiment/experiment.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/roots/step-009/experiment/experiment.json"
+        ],
+        "runner_fingerprint_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/roots/step-009/experiment/run/manifest.json",
+        "code_cohorts": {
+          "three_note_base": {
+            "experiments": 17,
+            "preserved_oracle_commit": "20c87769661c9910979a87c4598187e17ea3a500",
+            "hash_verified_oracle_files": 53,
+            "preserved_runner_commit": "c3742c8e488a2154bbde7748813d9ce68c649cda",
+            "hash_verified_runner_files": 8
+          },
+          "eight_note_additions": {
+            "experiments": 18,
+            "preserved_oracle_commit": "8a08529c22c96856e7e4343874101e7e608d63c0",
+            "hash_verified_oracle_files": 53,
+            "preserved_runner_commit": "c3742c8e488a2154bbde7748813d9ce68c649cda",
+            "hash_verified_runner_files": 8
+          }
+        },
+        "catalogue_provenance": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-04/code-provenance.json",
+          "sha256": "800629bedcdd606b8f81c78974c9a9603ef621703ae6114d284ecb9bdf710539"
+        }
+      },
+      "experimental_parameters": {
+        "construction": {
+          "bootstrap_prompt": "Hierarchy-bootstrap-v88",
+          "comparison_prompt": "Hierarchy-compare-v36",
+          "prompt_sha256": {
+            "Hierarchy-compare-v36": "10ba4da63ff9afd11eb996d58cf719381c9e61f6cb2df31e928778fadc081ee9",
+            "Hierarchy-bootstrap-v88": "aa65ea9139e599fcdda89dc23741c3cd2f856cf42e59d51e6f68957e5526d0e0"
+          },
+          "response_schema_sha256": {
+            "Hierarchy-compare-v36": "aff01dfa90c7d3b1a05cf61d091bf05cba6a4855c3d57b051559d88d0eb3ad85",
+            "Hierarchy-bootstrap-v88": "f7d6e8849b0864185a30be1972f23c691db2666824173beae6bd6ba1de3aad42"
+          },
+          "comparison_policy": "guarded16",
+          "comparison_limit": 16,
+          "local_candidate_limit": 32,
+          "max_entries": 32,
+          "max_choices": 6,
+          "independent_meanings": true,
+          "local_schema_version": 4,
+          "initial_graph": "Nine entries from the empty-start three-note build; continue with five additional original roots and four selected entries to finish eight notes.",
+          "same_note_policy": "Same-note exclusion except mapped-parent implication checks",
+          "placement_checks": "Immutable meanings/before graph, complete omitted-implication and settled-relationship checks",
+          "verification_phases_used": 0,
+          "history_root": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target",
+          "configs": [
+            {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-three-note-v88-roots-v1.json",
+              "sha256": "26bb6601faf86a1c36408942213a04f8e610a3fb189ffc60ca34f4ecc4e27e95"
+            },
+            {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-three-note-v88-bootstrap-v1.spec.json",
+              "sha256": "1b719e9face8871d9d2ec9658f4c5d2683efaecf86d49925711d276edcbb6f21"
+            },
+            {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-compare-v36.spec.json",
+              "sha256": "7958d1b14f7b05c9047c9f22991a27159baa58d46eeb8bbcfffc116fa6dd925e"
+            },
+            {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-three-note-v88-selection-v1.json",
+              "sha256": "992c07a73d470047ced2291f57385db9a95523d844390f3e636a244d06435c9a"
+            },
+            {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-guarded-comparison-v1.json",
+              "sha256": "1437c26e3933655458afbdec102099c3392377c5cecbf538e45f5e9e675b1c59"
+            },
+            {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-growth-v1.json",
+              "sha256": "627c21b49945cdff79f9bf9b9a7ff8079d4b427856dfa80e3255a3922ac54287"
+            }
+          ]
+        },
+        "model_execution": {
+          "concurrency": 32,
+          "max_output_tokens": null,
+          "model": "gpt-6.1-sol",
+          "provider": "openai-codex",
+          "reasoning_effort": "medium",
+          "timeout_seconds": 600,
+          "transport": "sse",
+          "prepared_concurrency": 32,
+          "execution_concurrency": 32,
+          "seed": "unknown: not recorded",
+          "temperature": "unknown: not recorded",
+          "prompt_cache": "No explicit setting/key in saved native plans/manifests",
+          "warmup_attempts": 0,
+          "cached_input_tokens_reported": 0,
+          "cache_write_tokens_reported": 0,
+          "subscription_inference": true
+        },
+        "attempt_allowance": {
+          "limit": 20000,
+          "scope": "Shared hierarchy/prompt sprint; all new/failed/retry/warmup attempts count; exact reuse consumes zero new attempts",
+          "counter_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/hierarchy-selective-sprint-v1/attempt-budget.json",
+          "hr06_lineage_attempts": 153,
+          "three_note_base_attempts": 35,
+          "eight_note_extension_attempts": 118,
+          "shared_remaining_saved_at_completion": 18265,
+          "shared_used_saved_at_completion": 1735,
+          "per_phase_limits": [
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/dinner-children/continuation/plan.json",
+                "sha256": "b1fa251538d8e568b7ef20d0d711e32e72bce410bdde51b096069efee3c41bed"
+              },
+              "start_index": 7,
+              "end_index": 9,
+              "max_nodes": 2,
+              "max_new_attempts": 40,
+              "attempts_used": 13
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/roots/continuation/plan.json",
+                "sha256": "23710b254732102046b8d5cda3ae38d931957dd249abf95eac1dcfa382372b64"
+              },
+              "start_index": 0,
+              "end_index": 3,
+              "max_nodes": 3,
+              "max_new_attempts": 30,
+              "attempts_used": 3
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/selection-01/continuation/plan.json",
+                "sha256": "abfe25a55f1b3ca374cedb3e55e8a3cb7ec7549baecdb0c5065e4b08b329197d"
+              },
+              "start_index": 3,
+              "end_index": 4,
+              "max_nodes": 1,
+              "max_new_attempts": 30,
+              "attempts_used": 4
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/selection-02/continuation/plan.json",
+                "sha256": "ddd08baa232b7c5e7342dfa80b48e03e6cc60bac92e245293b8382b3f9bc37c2"
+              },
+              "start_index": 4,
+              "end_index": 5,
+              "max_nodes": 1,
+              "max_new_attempts": 30,
+              "attempts_used": 5
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/selection-03/continuation/plan.json",
+                "sha256": "9fe6484571304ef37f939d482d95822403585bd0fc3662d40fcaee20aa28cd52"
+              },
+              "start_index": 5,
+              "end_index": 6,
+              "max_nodes": 1,
+              "max_new_attempts": 30,
+              "attempts_used": 6
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-three-note-v1/selection-04/continuation/plan.json",
+                "sha256": "d0cb94fbd7b56afae86bcdc60c88c607d5050b43243ddc8c582d0252b93cfe26"
+              },
+              "start_index": 6,
+              "end_index": 7,
+              "max_nodes": 1,
+              "max_new_attempts": 30,
+              "attempts_used": 4
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/roots/continuation/plan.json",
+                "sha256": "5042d8575b609e2f1c54ca8f8e8b9c45c4bb2375535541929e267daf597e6220"
+              },
+              "start_index": 9,
+              "end_index": 14,
+              "max_nodes": 5,
+              "max_new_attempts": 150,
+              "attempts_used": 57
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-01/continuation/plan.json",
+                "sha256": "e282c98d2ca867b395877ffa866aae6dd6e36f50f083c6dbdf3d90fc1fd00b43"
+              },
+              "start_index": 14,
+              "end_index": 15,
+              "max_nodes": 1,
+              "max_new_attempts": 50,
+              "attempts_used": 14
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-02/continuation/plan.json",
+                "sha256": "77228e5f9d93e56bfe6cceb92c1876812b2e8b2c31c4418339046e56e2abda58"
+              },
+              "start_index": 15,
+              "end_index": 16,
+              "max_nodes": 1,
+              "max_new_attempts": 50,
+              "attempts_used": 15
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-03/continuation/plan.json",
+                "sha256": "24a405ca62984dc9e17127a35a55abf255baa6359157dece4a97bbce44c4601b"
+              },
+              "start_index": 16,
+              "end_index": 17,
+              "max_nodes": 1,
+              "max_new_attempts": 50,
+              "attempts_used": 16
+            },
+            {
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-04/continuation/plan.json",
+                "sha256": "7afed3ece53b833939f4085b4d8e91d476cea720005aa156c02e3d1a8ff39b7f"
+              },
+              "start_index": 17,
+              "end_index": 18,
+              "max_nodes": 1,
+              "max_new_attempts": 50,
+              "attempts_used": 16
+            }
+          ]
+        },
+        "subject_vectors": {
+          "probe": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors",
+          "loaded_vectors": 4370,
+          "model": "sentence-transformers/sentence-t5-base",
+          "device": "cpu",
+          "note_batch_size": 8,
+          "dimensions": 768,
+          "max_length": 512,
+          "pooling": "selected-contextual-token-mean-linear-relu-linear-v1",
+          "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+          "model_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+          "container_image": "sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+          "python_version": "3.13.12",
+          "packages": {
+            "tokenizers": "0.22.2",
+            "torch": "2.13.0+cpu",
+            "transformers": "4.57.1"
+          },
+          "worker_sha256": "4e1446e3f48f2989a4b441994b81cf05d409d4b196e7d55155f9202e2b6b4f53",
+          "receipt": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/worker-receipt.json",
+            "sha256": "38199c7f44ad7e204a60187869c2ccd892c7e8bc9848428af0eb3d7397f1487d"
+          },
+          "inputs_sha256": "2dfbd4ed9fc00b39c99ed0225add3abc194a1d9d1db35342d410a59b24774c1d",
+          "request_sha256": "c0e887113332a906eb927dd28eb171b90066bfa0ee4c7176a4f94168b481013f",
+          "vectors_sha256": "66f59bcfc065eae45c80db02b7104b5a697abf7dea04ffdab44904317196b402",
+          "new_encodings_for_this_build": 0
+        },
+        "browsing_menu": {
+          "recipe": "sse_multivector/shr_single_pair/hierarchy-eight-note-v88-shape-v1.json",
+          "recipe_sha256": "6ca15c13b5b1a8cb84100af6c36a1de89752e3cce2ca867c154a3d7c502d1ef1",
+          "roots": [
+            "C001",
+            "C014",
+            "C011",
+            "C013",
+            "C004",
+            "C007"
+          ],
+          "children": {
+            "C001": [
+              "C005",
+              "C006",
+              "C008",
+              "C015",
+              "C017"
+            ],
+            "C014": [
+              "C016",
+              "C018"
+            ],
+            "C011": [
+              "C015",
+              "C017"
+            ]
+          },
+          "max_choices": 6,
+          "qualification": "Omissions preserve raw graph and meanings; equal-note wrappers and Food\u2192Cooking ingredients omitted pending scope review; not negative judgments/equivalences."
+        },
+        "result": {
+          "execution_status": "complete",
+          "processed_entries": 18,
+          "raw_nodes": 17,
+          "raw_metrics": {
+            "nodes": 17,
+            "edges": 16,
+            "roots": 4,
+            "max_children": 4,
+            "proper_subset_edges": 13,
+            "equal_note_set_edges": 3
+          },
+          "added": 17,
+          "equivalent": 1,
+          "held": 0,
+          "menu_metrics": {
+            "nodes": 13,
+            "edges": 9,
+            "roots": 6,
+            "max_children": 5,
+            "proper_subset_edges": 9,
+            "equal_note_set_edges": 0
+          },
+          "selected_notes": 8,
+          "reachable_notes": 8,
+          "individual_topic_choices": {
+            "1": 3,
+            "2": 5
+          },
+          "structural_constraints_met": true,
+          "structural_violations": [],
+          "audit_done": false,
+          "group_task_coverage": {
+            "status": "unknown",
+            "qualification": "Only existing multi-note nodes and their observed note sets are tested. Intended meaningful topic groups are unspecified; labels are not graded."
+          },
+          "semantic_assessment": {
+            "graded": false,
+            "qualification": "This structural audit does not establish semantic validity or completion."
+          },
+          "human_review": "LGTM. Now do 16 notes",
+          "human_review_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/README.md#bootstrap-v88-eight-note-construction-user-reviewed-menu",
+          "limitations": [
+            "Inherited Cooking heat-boundary ambiguity remains.",
+            "Food nourishment/enjoyment boundary, Cooking ingredients interpretation and Pies membership remain scope-review candidates.",
+            "Meals and Food-storage shared views were not recovered."
+          ]
+        },
+        "native_usage": {
+          "source": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-usage-v1.json",
+            "sha256": "ef19eb0c5311e2279727fe80302f3b39452c7e9e2cfb3aa012e19e1063e9134f"
+          },
+          "report": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/usage.json",
+            "sha256": "f0a71a509f2f98e2d72ab4560992da9d4319ffa1831ed187036eab5800185695"
+          },
+          "scope": "Full three-to-eight-note lineage; includes original generation behind seven exact reuses. Later expansions and diagnostics are excluded.",
+          "groups": {
+            "three_note_base": {
+              "experiments": 17,
+              "cases": 40,
+              "attempts": 35,
+              "reused": 5,
+              "failed_attempts": 0,
+              "retry_attempts": 0,
+              "known_catalog_cost_estimate_usd": 0.217124
+            },
+            "eight_note_additions": {
+              "experiments": 18,
+              "cases": 120,
+              "attempts": 118,
+              "reused": 2,
+              "failed_attempts": 0,
+              "retry_attempts": 0,
+              "known_catalog_cost_estimate_usd": 0.6905699999999999
+            }
+          },
+          "totals": {
+            "experiments": 35,
+            "imported_experiments": 0,
+            "cases": 160,
+            "attempts": 153,
+            "reused": 7,
+            "failed_attempts": 0,
+            "recovered_failed_attempts": 0,
+            "retry_attempts": 0,
+            "attempts_without_usage": 0,
+            "attempts_without_cost_estimate": 0,
+            "known_catalog_cost_estimate_usd": 0.9076939999999999,
+            "valid": 160,
+            "empty": 0,
+            "malformed": 0,
+            "invalid_receipt": 0,
+            "failed": 0,
+            "unrun": 0,
+            "known_input_tokens": 355212,
+            "known_cached_input_tokens": 0,
+            "known_cache_write_tokens": 0,
+            "known_output_tokens": 19727,
+            "known_reasoning_tokens": 2135,
+            "catalog_cost_estimate_usd": 0.9076939999999999
+          },
+          "generation_usage": {
+            "input_tokens": 388609,
+            "cached_input_tokens": 0,
+            "cache_write_tokens": 0,
+            "output_tokens": 23141,
+            "reasoning_tokens": 2816,
+            "attempts_without_usage": 0,
+            "catalog_cost_estimate_usd": 1.0086280000000003,
+            "attempts_without_cost_estimate": 0,
+            "provider_reported_cost_usd": null,
+            "attempts_without_provider_cost": 160,
+            "known_catalog_cost_estimate_usd": 1.0086280000000003,
+            "known_provider_reported_cost_usd": 0,
+            "cost_statistics": {
+              "basis": "saved_catalog_estimates",
+              "requests": 160,
+              "requests_without_cost": 0,
+              "comparison_requests": 160,
+              "warmup_requests": 0,
+              "comparison_requests_without_usage": 0,
+              "cache_hit_requests": 0,
+              "comparison_requests_without_uncached_cost": 0,
+              "cache_hit_rate_percent": 0.0,
+              "total_cost_usd": 1.008628,
+              "mean_request_cost_usd": 0.006303925,
+              "median_request_cost_usd": 0.005211,
+              "p95_request_cost_usd": 0.014766000000000001,
+              "uncached_comparison_cost_usd": 1.008628,
+              "net_cache_savings_usd": 0.0,
+              "net_cache_savings_percent": 0.0
+            },
+            "original_calls": 160,
+            "source_calls_added": 7,
+            "failed_calls": 0,
+            "usage_complete": true,
+            "reasoning_included_in_output": true
+          },
+          "complete": true,
+          "usage_complete": true,
+          "warnings": [],
+          "cost_basis": "Saved API-equivalent catalogue estimates; not incremental subscription charges."
+        },
+        "review_ui": {
+          "hierarchy": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-review-v1/hierarchy.json",
+            "sha256": "8d9707570f93d2d959e3e3eb1e6bce83fbfc24f38da5b314e7bbb9b4b0e1db92"
+          },
+          "full_notes": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-review-v1/notes.json",
+            "sha256": "3b5fee03800793770223f257228809bbe8f59a33c074bbcc4f7f90fa90fd0986"
+          },
+          "schema_version": 2,
+          "hierarchy_id": "menu",
+          "menu_nodes": 13,
+          "export_nodes_including_synthetic_root": 14,
+          "notes": 8,
+          "full_note_texts_match_original": true,
+          "viewer_build_git_commit": "unknown: not recorded",
+          "viewer_launch_flags": "unknown: not recorded"
+        },
+        "parameter_evidence": [
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-04/state.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/menu/state.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-review-v1/hierarchy.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/menu/audit.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/usage.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-usage-v1.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-growth-v1.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-three-note-v88-selection-v1.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-eight-note-v88-shape-v1.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/SP/experiment.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subjects/provenance.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/worker-receipt.json",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-v88-eight-note-v1/selection-04/code-provenance.json"
+        ],
+        "dataset": {
+          "notes": 8,
+          "subject_prompt": "ASv6.48",
+          "subject_data_status": "deprecated historical evidence",
+          "subject_reuse": "Saved sh200-generation-v1 ASv6.48 outputs, no subject extraction rerun",
+          "subjects_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subjects/subjects.json",
+          "subjects_sha256": "1f87b7c853beef38d2701f6cef6a3fc4957a93c547f34f7f80caa6919e6d0a07",
+          "subject_entries": 323,
+          "note_ids": [
+            "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+            "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+            "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+            "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+            "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556"
+          ],
+          "original_subject_generation": {
+            "prompt_id": "ASv6.48",
+            "prompt_sha256": "5329a4dbbd9787803bfc6dcd8020a720caaa156f36548a9cdff85ee29288d4ff",
+            "producer_plan": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/SP/experiment.json",
+              "sha256": "3b9c030319fe32a29977a6bb559401fb7921d9dd7d74d0be4ae3be52abccce16"
+            },
+            "model_execution": {
+              "provider": "openai-codex",
+              "model": "gpt-6.1-sol",
+              "reasoning_effort": "medium",
+              "timeout_seconds": 1800,
+              "concurrency": 16,
+              "transport": "websocket",
+              "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/sse_multivector/run-model.sh"
+            },
+            "collection_provenance": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subjects/provenance.json",
+              "sha256": "093ad8e04a2594416ed487d9124bf9e5b0ba646ec3e63ff33e0d761391af9b5d"
+            }
+          }
+        }
+      }
+    },
+    {
+      "version_id": "HR07",
+      "name": "ASv6.48 50-note hierarchy \u2014 Bootstrap-v96 / Compare-v48 (user-reviewed historical run)",
+      "root": "../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1",
+      "artifact_path": "target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/state.json",
+      "sha256": "fd3e5b8e3831a7952dc66de0686a1383c3fb1e9ff07dcbbc1fdb275740cc22f8",
+      "related_outputs": [
+        {
+          "label": "User-reviewed browsing menu (finished-menu-v2)",
+          "path": "target/hierarchy-b96-c48-fifty-note-v1/finished-menu-v2/state.json",
+          "sha256": "3d90dde150b2028e4f86b8a288ef2c8caa4f267e0a40e8e24e47dd400932a731"
+        },
+        {
+          "label": "User-reviewed UI export (review-ui-v1)",
+          "path": "target/hierarchy-b96-c48-fifty-note-v1/review-ui-v1/hierarchy.json",
+          "sha256": "6cec4a3ef21287260aed1ad0625045528ae17355291c21f2b72a5fc14c8678cd"
+        }
+      ],
+      "code_provenance": {
+        "repository_generation_commit": null,
+        "runner_generation_commit": null,
+        "uncommitted_source_changes_at_generation": "unknown: not recorded",
+        "source_preparation_commit": "839d62d8ad935dc2ef6554c2e37ac9029abe3df6",
+        "source_preparation_commit_role": "Recorded source preparation and bounded-inventory support commit; not a recorded execution HEAD.",
+        "bootstrap_prompt_source_commit": "f098d3afc6e0d274dfae95276c466562e54bbcbe",
+        "comparison_prompt_source_commit": "15ddf7df062da98105f71849af25f3d31c63eed5",
+        "imported_prompt_commit_role": "Prompt-definition commits only; not generator/shared-runner execution HEAD.",
+        "bootstrap_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/Hierarchy-bootstrap-v96.md",
+          "sha256": "599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845"
+        },
+        "comparison_prompt": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/Hierarchy-compare-v48.md",
+          "sha256": "b225da8653af04dfbe41fc8ff9e4f9d8bf780df527e27ee3e2d088c0e7eb23af"
+        },
+        "saved_runner_sha256": "3e246132e01f45d06c61cc55e048b4ad3d390feee826e2550068956a2bc7bcf9",
+        "runner_version": "oracle-model-runner/1",
+        "native_code_profiles": [
+          {
+            "native_plan": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/root-meanings/experiment.json",
+              "sha256": "b92b25028088a5b55c7bbf71a2a0171ecc6e31aa4c2280f0023ddad4c4831651"
+            },
+            "native_experiments": 1,
+            "recorded_modules": 61
+          },
+          {
+            "native_plan": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/candidate-meanings/experiment.json",
+              "sha256": "068af6e106bd37dd4fc9ec722ac418c88f2d192b96884331be2777b12f6a2fe4"
+            },
+            "native_experiments": 378,
+            "recorded_modules": 61
+          }
+        ],
+        "construction_source_hashes": {
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-roots-v1.json": "7fb95bcac22be0cb8da43cb714e60811317fa5a2be0178c715c7c75464520eb9",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subjects/subjects.json": "1f87b7c853beef38d2701f6cef6a3fc4957a93c547f34f7f80caa6919e6d0a07",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-bootstrap-v1.spec.json": "505cce73dd47760878b9f534b268e8b6952a5be7ccec60d2aab73b1e8df01424",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/Hierarchy-bootstrap-v96.md": "599e811307cfd3feac290ec91b0c763f1900cc244fccc4756d8255027a050845",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-c48-compare-v1.spec.json": "5df4584748f091da80758cdcae1a7171bdea420419c1fcaa023596459e7812ff",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/Hierarchy-compare-v48.md": "b225da8653af04dfbe41fc8ff9e4f9d8bf780df527e27ee3e2d088c0e7eb23af",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-guarded-comparison-v1.json": "1437c26e3933655458afbdec102099c3392377c5cecbf538e45f5e9e675b1c59",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/canonical_comparison_policy.py": "328fbe52d487fbb3c549b614086cd60a2987fff34fb5a8605f82da631312286e",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/canonical_selection_ranking.py": "d9d20a05611f4f1c70687a915bcc962111a341d411c39b10a2820f95469105c5",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/inputs.json": "2dfbd4ed9fc00b39c99ed0225add3abc194a1d9d1db35342d410a59b24774c1d",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-request.json": "c0e887113332a906eb927dd28eb171b90066bfa0ee4c7176a4f94168b481013f",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/worker-receipt.json": "38199c7f44ad7e204a60187869c2ccd892c7e8bc9848428af0eb3d7397f1487d",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/raw-vectors.f32le": "66f59bcfc065eae45c80db02b7104b5a697abf7dea04ffdab44904317196b402",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/subject_matching_probe.py": "9a8efa8a0db07a9dd92d577bb65b41c18fef28cc88a43e984a78cfcf7b73b552",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/ancestor_cosine_probe.py": "4f49776d4f32c295fdd7a7dd346c7995d8cb21b060379049041632ff062ce61a",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/worker.py": "eccf48810ca4f43724f7e197d71c25e456d62ed510ba13f8cf40e90127a580fc",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-selection-v1.json": "e9459b54c1ff1c1688eec204b7d14f8a6e40032886340626d88ced9fe68fae32",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/roots/state.json": "15ee41f7efdb499463232e17ed741df423be612a496633f0a853aea4469a7a8a",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/canonical_selective_trial.py": "b08be4111ab2c71133f1542074a708d6c7bf53c63a48cf0406945720fb82fbba",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-01/selection.json": "213aad65dd6956bbe92fcc14b9a9ecad115ad8566d2db6d7d9ca83f9411f0cd2",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-01/state.json": "25d0f5f06af20fa269ed94ba51b597ea1d5a89211cf1b71ed995ff6258c3a218",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-02/selection.json": "d97021a0cf11d3b6ec0c8a91c45c5ea4c1f0a3dc4971b0824ca903402de7ebde",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-reviewed-growth-v1.json": "a83c03a6b21068d509559daff8c6577b0ec86670b36388bda9fa04c7935d213d",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-02/state.json": "d034f9fb6ac51f247910eeb2b173280e8bf614f994a3e67b9ade6ef1cb7c79e9",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/reviewed-growth-01/state.json": "2d41472433337eb8890e635dddc6ede9f613f9babe144579b905435e544e6442",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-browsing-growth-v1.json": "97c8332002a049c723ef23dd9d249a65292d3cd53b93daa1aa26b39aa2b2da25",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/coverage-children-02/state.json": "90fb22368605b720e8f37f5440bee8b6ec1b302ac2e583d6f39326ec26792f77",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/browsing-growth-01/state.json": "4fcc53c298a0053ca8c17513c717128b65aa68789189301718989c0bfafee286",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/browsing-children-01/state.json": "894dfd329d103634b3627b48f910327fcf9babb40d1c78c9a06dea554aa7d85e",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-regrouping-growth-v2.json": "ab7fa6ec00c87ae19fb74853b12b517d5c700d16bb28516ddfd788ceee994df7",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/isolation-children-01/state.json": "26d424f4bd45cc514b95092575ac2f4ca16b9fa120d5173eb57027d45245590b",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/regrouping-growth-01/state.json": "edcaf174de15e0573c57ab63a00d8341819e38b23434e23df00c4bb114670c1d",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/access-children-02/state.json": "89c818b6459b8d6c975615f464c34ddff171003dc01792a7e997ce15081fc0a1",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-03/selection.json": "ad56d0024cf0a208098fb0ca5d2091be43496feb62df45a4ab84078d33682d0a",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-03/state.json": "eff9cb2275d85407c7ab3a5042b0ca8778f81b12e701918ae983b44a5a865f72",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-04/selection.json": "cc923223c64783cae9e70e9415190382b58983f60fc9bf7ed6c528eb8214dfeb",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-04/state.json": "181948c968bbc62cd8578ca0f65c90ca04c7b0a2341480f4a85ae9d6382150f1",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-05/selection.json": "44b19670ad2658279f52e997e66acbffb5eb7effba85da18a8e963e817f99f31",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-05/state.json": "cc2ef99cd5b595e07b95796c4cff7013789d68b336f5e246effd6095e217e34e",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-06/selection.json": "ff03491033b01e3d3569c9b3535b52d5883d7b1704d05a95d5f0daf01798b066",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-06/state.json": "87fa3328c6b83550032c3dd056380c42cfa70d90a0484ab3bd3596c58dd4428e"
+        },
+        "evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-findings.md",
+        "native_final_plan": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/step-180/experiment/experiment.json",
+          "sha256": "2a2ed52dc7833a61697543aba218ab60a4e0d6d6263e878fb1c2172c9084909c"
+        },
+        "native_final_manifest": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/step-180/experiment/run/manifest.json",
+          "sha256": "9d2c1cb00416cc965d34ca99c9791b2688559a7e57d9e03a2ecb3da1eed473c0"
+        },
+        "catalogue_provenance": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/code-provenance.json",
+          "sha256": "15a0b323782e30f72e580959f319b8dee8cf5a92829178d71a5fc0f80875ce38"
+        }
+      },
+      "experimental_parameters": {
+        "construction": {
+          "start": "empty canonical graph; earlier sixteen-note graph not inherited",
+          "bootstrap_prompt": "Hierarchy-bootstrap-v96",
+          "comparison_prompt": "Hierarchy-compare-v48",
+          "independent_meanings": true,
+          "local_schema_version": 4,
+          "comparison_policy": "guarded16",
+          "comparison_limit": 16,
+          "comparison_policy_definition": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-guarded-comparison-v1.json",
+            "sha256": "1437c26e3933655458afbdec102099c3392377c5cecbf538e45f5e9e675b1c59"
+          },
+          "complete_omitted_implication_verification": true,
+          "local_candidate_limit": 32,
+          "max_entries": 160,
+          "max_entries_role": "Selective-stage bound, not semantic stopping rule or call allowance; authorized growth phases brought final processed total to 181.",
+          "max_choices": 6,
+          "selection_definition": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-selection-v1.json",
+            "sha256": "e9459b54c1ff1c1688eec204b7d14f8a6e40032886340626d88ced9fe68fae32"
+          },
+          "selection_history_root": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target",
+          "parallel_root_generation": 50,
+          "sequential_placement": true,
+          "stages": [
+            {
+              "stage": "access-children-02",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/access-children-02/continuation/plan.json",
+                "sha256": "d97f8b876b34210a545397081c50edd28130ffe160eeaef51d2de64eee0652a5"
+              },
+              "start_index": 138,
+              "end_index": 156,
+              "max_nodes": 18,
+              "max_new_attempts": 2000,
+              "attempts_used": 296
+            },
+            {
+              "stage": "browsing-children-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/browsing-children-01/continuation/plan.json",
+                "sha256": "1150832a5fc90549e5338777a80e39ab9b3914facf589f6e70cf988f9890601c"
+              },
+              "start_index": 84,
+              "end_index": 98,
+              "max_nodes": 14,
+              "max_new_attempts": 1500,
+              "attempts_used": 238
+            },
+            {
+              "stage": "browsing-growth-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/browsing-growth-01/continuation/plan.json",
+                "sha256": "97ebb0d3dbf2880a17653c509aaf0ef3d9a55726eb5afd6092a8ed91f9c0dac6"
+              },
+              "start_index": 72,
+              "end_index": 84,
+              "max_nodes": 12,
+              "max_new_attempts": 2000,
+              "attempts_used": 191
+            },
+            {
+              "stage": "coverage-children-02",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/coverage-children-02/continuation/plan.json",
+                "sha256": "fff03ac03c9df3ed93365f6890afdca2e5eed9d5262a23394b5a146d91b00ab5"
+              },
+              "start_index": 60,
+              "end_index": 72,
+              "max_nodes": 12,
+              "max_new_attempts": 1500,
+              "attempts_used": 205
+            },
+            {
+              "stage": "isolation-children-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/isolation-children-01/continuation/plan.json",
+                "sha256": "6bdd9598ef72c4e5212e8fe1668e01ce5681d82e9d744e0a5388c5e1c94c9b91"
+              },
+              "start_index": 98,
+              "end_index": 129,
+              "max_nodes": 31,
+              "max_new_attempts": 3000,
+              "attempts_used": 515
+            },
+            {
+              "stage": "menu-access-children-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/continuation/plan.json",
+                "sha256": "48dd559c943a32fc511152882d3e9dd7906f2383e29825ad122601fd4cd62cd0"
+              },
+              "start_index": 160,
+              "end_index": 181,
+              "max_nodes": 21,
+              "max_new_attempts": 2000,
+              "attempts_used": 359
+            },
+            {
+              "stage": "regrouping-growth-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/regrouping-growth-01/continuation/plan.json",
+                "sha256": "45f47a8bdd6dc9cbf96003ccbfe8cd1ba56ab0897bdc527372aaf8d0d0a08944"
+              },
+              "start_index": 129,
+              "end_index": 138,
+              "max_nodes": 9,
+              "max_new_attempts": 2000,
+              "attempts_used": 156
+            },
+            {
+              "stage": "reviewed-growth-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/reviewed-growth-01/continuation/plan.json",
+                "sha256": "7e3d6f1f670fd83327d68f06d4b26ef10d3859f222a4f33a6d20b9ad3757a1f4"
+              },
+              "start_index": 52,
+              "end_index": 60,
+              "max_nodes": 8,
+              "max_new_attempts": 1000,
+              "attempts_used": 138
+            },
+            {
+              "stage": "roots",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/roots/continuation/plan.json",
+                "sha256": "e9fab7eb4e320d71e494817a6f8aab90d0ed6d1da90722fb475dd8a24ceb2f45"
+              },
+              "start_index": 0,
+              "end_index": 50,
+              "max_nodes": 50,
+              "max_new_attempts": 3000,
+              "attempts_used": 671
+            },
+            {
+              "stage": "selection-01",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-01/continuation/plan.json",
+                "sha256": "5110a2099062d31815186d06ae9cf907d3abb5fd5017e9cec1794854bb3c235b"
+              },
+              "start_index": 50,
+              "end_index": 51,
+              "max_nodes": 1,
+              "max_new_attempts": 512,
+              "attempts_used": 17
+            },
+            {
+              "stage": "selection-02",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-02/continuation/plan.json",
+                "sha256": "d5d1a52bf8bde4076c0b1fac0ab8fa58e0c268aa2630ff694330745c2bb08664"
+              },
+              "start_index": 51,
+              "end_index": 52,
+              "max_nodes": 1,
+              "max_new_attempts": 512,
+              "attempts_used": 17
+            },
+            {
+              "stage": "selection-03",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-03/continuation/plan.json",
+                "sha256": "6437e018cd2afd5cf65ae6c8350728801452e36e04ae1e46308a6d2dd1c94034"
+              },
+              "start_index": 156,
+              "end_index": 157,
+              "max_nodes": 1,
+              "max_new_attempts": 100,
+              "attempts_used": 17
+            },
+            {
+              "stage": "selection-04",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-04/continuation/plan.json",
+                "sha256": "e678b0d90e6b3c417379667cedef532d0a2b8aa8bfcf6003f696b5f2075101b7"
+              },
+              "start_index": 157,
+              "end_index": 158,
+              "max_nodes": 1,
+              "max_new_attempts": 100,
+              "attempts_used": 17
+            },
+            {
+              "stage": "selection-05",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-05/continuation/plan.json",
+                "sha256": "a5bda0eb00bb7b7a68763c4bcb086702433cc900105716b8f3c7588963e8f0a3"
+              },
+              "start_index": 158,
+              "end_index": 159,
+              "max_nodes": 1,
+              "max_new_attempts": 100,
+              "attempts_used": 17
+            },
+            {
+              "stage": "selection-06",
+              "plan": {
+                "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/selection-06/continuation/plan.json",
+                "sha256": "2b1d96bc75ac16719f33b0018d5966d1538c4299fdae419e8b42288f2416a196"
+              },
+              "start_index": 159,
+              "end_index": 160,
+              "max_nodes": 1,
+              "max_new_attempts": 100,
+              "attempts_used": 17
+            }
+          ],
+          "complete_original_tree_under_selected_root": true,
+          "unknown_unqueried_relationships": "remain unknown",
+          "held_entries": "preserved; not negative semantic gold"
+        },
+        "model_execution": {
+          "provider": "openai-codex",
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "transport": "sse",
+          "prepared_concurrency": 32,
+          "execution_concurrency_profiles": [
+            {
+              "prompt": "Hierarchy-bootstrap-v96",
+              "concurrency": 8,
+              "native_experiments": 13
+            },
+            {
+              "prompt": "Hierarchy-bootstrap-v96",
+              "concurrency": 32,
+              "native_experiments": 180
+            },
+            {
+              "prompt": "Hierarchy-compare-v48",
+              "concurrency": 32,
+              "native_experiments": 186
+            }
+          ],
+          "warm_cache": true,
+          "automatic_prefix_warmup": "automatic-prefix-warmup-v1",
+          "cache_prefix_tokenizer": "o200k_base",
+          "cache_minimum_prefix_tokens": 1024,
+          "prefix_source": "template",
+          "timeout_seconds": 600,
+          "max_output_tokens": null,
+          "seed": "unknown: not recorded",
+          "temperature": "unknown: not recorded",
+          "bootstrap_schema_sha256": "f7d6e8849b0864185a30be1972f23c691db2666824173beae6bd6ba1de3aad42",
+          "compare_schema_sha256": "aff01dfa90c7d3b1a05cf61d091bf05cba6a4855c3d57b051559d88d0eb3ad85",
+          "first_saved_execution_at_utc": "2026-10-10T04:16:12.493778+00:00",
+          "last_saved_execution_at_utc": "2026-10-10T06:48:07.530386+00:00",
+          "time_boundary_role": "Saved execution-settings timestamps, not claimed final UI/completion timestamps."
+        },
+        "attempt_allowance": {
+          "limit": 20000,
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/hierarchy-selective-sprint-v1/attempt-budget.json",
+          "shared": true,
+          "used_before_run": 3594,
+          "used_after_run": 6679,
+          "run_attempts": 3085,
+          "includes": [
+            "warmups",
+            "retries",
+            "failed calls",
+            "unused charged producers",
+            "all continuations"
+          ],
+          "reset": false,
+          "refunded": false,
+          "endpoint_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-findings.md#full-provenance-and-provider-attempt-accounting",
+          "endpoint_qualification": "Historical endpoints from maintained accounting; current shared counter contains subsequent runs."
+        },
+        "subject_vectors": {
+          "reused": true,
+          "scope": "Saved 200-note probe, 4370 unique headings, reused to rank this 50-note construction.",
+          "encoding": "standalone-subject-full-text",
+          "model": "sentence-transformers/sentence-t5-base",
+          "device": "cpu",
+          "note_batch_size": 8,
+          "unique_subject_texts": 4370,
+          "dimensions": 768,
+          "max_length": 512,
+          "pooling": "selected-contextual-token-mean-linear-relu-linear-v1",
+          "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+          "model_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+          "container_image": "sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+          "python_version": "3.13.12",
+          "packages": {
+            "tokenizers": "0.22.2",
+            "torch": "2.13.0+cpu",
+            "transformers": "4.57.1"
+          },
+          "worker_sha256": "4e1446e3f48f2989a4b441994b81cf05d409d4b196e7d55155f9202e2b6b4f53",
+          "input": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/inputs.json",
+            "sha256": "2dfbd4ed9fc00b39c99ed0225add3abc194a1d9d1db35342d410a59b24774c1d"
+          },
+          "request": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-request.json",
+            "sha256": "c0e887113332a906eb927dd28eb171b90066bfa0ee4c7176a4f94168b481013f"
+          },
+          "receipt": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/worker-receipt.json",
+            "sha256": "38199c7f44ad7e204a60187869c2ccd892c7e8bc9848428af0eb3d7397f1487d"
+          },
+          "raw_vectors": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subject-vectors/worker-result/raw-vectors.f32le",
+            "sha256": "66f59bcfc065eae45c80db02b7104b5a697abf7dea04ffdab44904317196b402"
+          },
+          "mask_vector_policy": "not_required_for_subject_vectors_v1"
+        },
+        "browsing_menu": {
+          "recipe": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-shape-v2.json",
+          "recipe_sha256": "26dad3929de34ac933565b099a6b16aa8de9037cc7c15278a8a73778a87ec06f",
+          "max_choices": 6,
+          "root_ids": [
+            "C002",
+            "C008",
+            "C010",
+            "C041",
+            "C007",
+            "C035"
+          ],
+          "root_labels": [
+            "Food preparation",
+            "Food",
+            "Mental states",
+            "Beverages",
+            "Gardening",
+            "Humor"
+          ],
+          "policy": "Select existing canonical nodes and witnessed ancestry; fixed meanings preserved; no invented relationships. Omissions are neither merges nor negative judgments.",
+          "audit": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/finished-menu-v2/audit.json",
+            "sha256": "7d2d67fec5f107ad20881b437e64a4cf0346ebb1fc5baec0924180714b5c7752"
+          },
+          "food_view": {
+            "raw_notes": 34,
+            "displayed_notes": 24,
+            "lost_food_routes": 10,
+            "notes_reachable_elsewhere": true
+          }
+        },
+        "review_ui": {
+          "requested": true,
+          "viewer": "sse-subject-navigation",
+          "existing_hierarchy_id": "finished-menu-v2",
+          "new_version_id": "HR07",
+          "export": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/review-ui-v1/hierarchy.json",
+            "sha256": "6cec4a3ef21287260aed1ad0625045528ae17355291c21f2b72a5fc14c8678cd"
+          },
+          "full_original_notes": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/review-ui-v1/notes.json",
+            "sha256": "d434f78645d94c972755e930c8ae6bee79f6d25d54c7e8a4aaac8dac436e61d6"
+          },
+          "export_metadata": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/review-ui-export-v1.json",
+            "sha256": "395470079a9a6d3fd9fc14018dcc7de251af8b072a161db27973de82d7baa36c"
+          },
+          "saved_viewer_check": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/review-ui-check-v1.txt",
+            "sha256": "ed22efbbbef95cd47c880e1fceaed986bf376485905eda1158a98998349b5670"
+          },
+          "source_notes_sha256": "d434f78645d94c972755e930c8ae6bee79f6d25d54c7e8a4aaac8dac436e61d6",
+          "source_menu_state_sha256": "3d90dde150b2028e4f86b8a288ef2c8caa4f267e0a40e8e24e47dd400932a731",
+          "canonical_nodes": 76,
+          "display_records": 77,
+          "notes": 50,
+          "review": "wow, this hierarchy is great.",
+          "review_evidence": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-findings.md",
+          "review_scope": "Acceptance of displayed candidate; no case-by-case raw-edge semantic certification.",
+          "binary_build_commit": "unknown: not recorded"
+        },
+        "result": {
+          "raw_graph": {
+            "nodes": 146,
+            "edges": 158,
+            "roots": 20,
+            "max_children": 24,
+            "processed_original_entries": 181,
+            "additions": 146,
+            "equivalences": 16,
+            "holds": 19,
+            "relationship_contradiction_holds": 14
+          },
+          "menu": {
+            "nodes": 76,
+            "edges": 87,
+            "roots": 6,
+            "max_children": 6,
+            "proper_subset_edges": 87,
+            "equal_note_set_edges": 0
+          },
+          "individual_note_access": {
+            "notes": 50,
+            "all_within_choice_limit": true,
+            "shortest_topic_selections_distribution": {
+              "2": 15,
+              "3": 30,
+              "4": 5
+            },
+            "total_topic_selections": 140,
+            "mean_topic_selections": 2.8
+          },
+          "structural_constraints_met": true,
+          "audit_done": false,
+          "semantic_assessment": {
+            "graded": false,
+            "qualification": "This structural audit does not establish semantic validity or completion."
+          },
+          "group_task_coverage": {
+            "status": "unknown",
+            "qualification": "Only existing multi-note nodes and their observed note sets are tested. Intended meaningful topic groups are unspecified; labels are not graded."
+          },
+          "unused_prefetch_receipts": 35,
+          "prefetched_valid_receipt_rows": 212,
+          "unapplied_uncertain_prefetch_cases": [
+            "D01",
+            "I14",
+            "A16",
+            "P28"
+          ]
+        },
+        "execution_status": "complete",
+        "attempts_used": 3085,
+        "native_usage": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/fifty-note-final-usage-v1.json",
+          "sha256": "98a221c05e7d6527ea427080845516c031dd8e7bd1046c0daef63bb6ee0f7c54",
+          "source_inventory": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/fifty-note-final-usage-source-v1.json",
+            "sha256": "aeed63db677cb4476746358be87a389984a9c0eafa58c72732b3030eea40bccc"
+          },
+          "totals": {
+            "experiments": 379,
+            "imported_experiments": 0,
+            "cases": 3075,
+            "attempts": 3085,
+            "reused": 201,
+            "failed_attempts": 7,
+            "recovered_failed_attempts": 7,
+            "retry_attempts": 7,
+            "attempts_without_usage": 7,
+            "attempts_without_cost_estimate": 7,
+            "known_catalog_cost_estimate_usd": 9.1301216,
+            "valid": 3075,
+            "empty": 0,
+            "malformed": 0,
+            "invalid_receipt": 0,
+            "failed": 0,
+            "unrun": 0,
+            "known_input_tokens": 2335245,
+            "known_cached_input_tokens": 4790016,
+            "known_cache_write_tokens": 0,
+            "known_output_tokens": 398063,
+            "known_reasoning_tokens": 56493,
+            "catalog_cost_estimate_usd": null
+          },
+          "generation_usage": {
+            "input_tokens": 2335245,
+            "cached_input_tokens": 4790016,
+            "cache_write_tokens": 0,
+            "output_tokens": 398063,
+            "reasoning_tokens": 56493,
+            "attempts_without_usage": 7,
+            "catalog_cost_estimate_usd": null,
+            "attempts_without_cost_estimate": 7,
+            "provider_reported_cost_usd": null,
+            "attempts_without_provider_cost": 3085,
+            "known_catalog_cost_estimate_usd": 9.130121600000022,
+            "known_provider_reported_cost_usd": 0,
+            "original_calls": 3085,
+            "source_calls_added": 0,
+            "failed_calls": 7,
+            "usage_complete": false,
+            "reasoning_included_in_output": true
+          },
+          "complete": true,
+          "usage_complete": false,
+          "stage_groups": 27,
+          "native_experiments_by_prompt": {
+            "Hierarchy-bootstrap-v96": 193,
+            "Hierarchy-compare-v48": 186
+          },
+          "provider_attempt_breakdown_verified_from_exact_source_lines": {
+            "warmups": 204,
+            "ordinary": 2881,
+            "failed": 7,
+            "source_lines_sha256_verified": 3085
+          },
+          "old_cost_statistics_qualification": "Saved old summary reports warmup_requests=0 due classifying cache-warmup keys as ordinary. Correct separately verified source-line counts are 204 warmups + 2,881 ordinary attempts.",
+          "cost_role": "Known catalogue API-equivalent subtotal, not subscription charge. Full cost unknown because 7 failed calls lack usage/cost. Original calls behind reuses counted once; no additional external source calls.",
+          "provider_invoice_total": null,
+          "reasoning_included_in_output": true
+        },
+        "parameter_evidence": "Frozen raw/menu/UI state, 379 native plans and execution settings, exact receipt-line hashes, construction and menu definitions, original AS/vector receipts, and later catalogue provenance.",
+        "dataset": {
+          "notes": 50,
+          "note_ids": [
+            "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+            "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+            "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+            "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+            "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+            "78157049a8a2d52d31043febab1a3dfcd06dbc0e8834678557097e1122b7a165",
+            "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "c68026e7c9e1f97913aa4044eea86d60c22ce1d8469b315ebb8a124149235525",
+            "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+            "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+            "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+            "fbd3796768e2bb12f215dd5d15a4e7377f6c9ce7849c01e6de166cafffd29a25",
+            "e0f4c41291e1f3185c07579131eb92c0feb77057b12e93e51bb9eceec500b24f",
+            "38862a72602118a848694796950dd35f2bb48770c085735f6a9d1abdb0f7fe8c",
+            "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+            "a9b49c0a356d9db7971a58444d9f498523bcad1ab98035a3474f22ec63c45970",
+            "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+            "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+            "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+            "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+            "896b0a29be94953a577d7181b8fa069fded2bea588bc1ef4d13caef9ce174cd1",
+            "612fa3c5bdabd571a01591f3e02bd6a53a80f536a6c0102c243686e162ee291f",
+            "bd357fcf78f3674020b3108adef73f3190890e5053015b26d4812f6cf5c2d201",
+            "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+            "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+            "d8c979a95c694844c8852080c11945744aadfffc54b5ceda47243ab80a247f85",
+            "f7ed481e9a564c95bf788dbcf34e0c098b32e7e5dffe2c841f769fb8cbc4f5e0",
+            "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+            "4bb3dd6e32fd53e58f6a274621f94a90411065d469fe4fc2fc0d26c0834b273d",
+            "862486d8ab23753c39aa9484b1beb52b51e59369f91eb037f2898c5ed9b1f75e",
+            "0ec1ce444c865e4c141d6b4c7560fba67e513dcf10934fe366e9ad76038d4627",
+            "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+            "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+            "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+            "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+            "37f44e1fec8dc1d2bbb5f7594d387e151bc348c380311e0e8c98e5200893ffdd",
+            "76e19c3e48e6b8fe12972fb23296b50c2c2fd24ed81e8d2cdaf0a4ebdee3037f",
+            "46ed60cb0d3a5873d3a11f65515c366b03934cd4e25ded6732c819d2a2d493d0",
+            "ada943cfb5b2d76764fc4dbf3785f507e88bf7aef558a1700a389bd9c30498d5",
+            "0752790819c72c567930527b06079723259fd08e26084bd0633d53fcbca27531",
+            "89cdcfbbebaf021b74ddd2a16ceaf592f674487657268e4c8c52c80f70ff2d8c",
+            "bb440af90858516c7aa1cc9d54df9c4a5b507671606f44137d02561733ed3a6b",
+            "8a025f696155d00efc9bc4d313ee5933e90b10a1ff1c2783f5a6b3e3a3590926",
+            "14e6162b966f97f85b6ff1f68d81573dac5cdbc22431f1fc2928f27e6234b7be",
+            "143fee7643620ece551e713d05f7a1d60315fb181b3df2d00c1a0453d4ba6e13",
+            "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1"
+          ],
+          "note_selection": "Previous sixteen root pointers, then first thirty-four unseen IDs in saved corpus array order, selecting first numbered root for each new note.",
+          "root_source": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/sse_multivector/shr_single_pair/hierarchy-fifty-note-b96-c48-roots-v1.json",
+            "sha256": "7fb95bcac22be0cb8da43cb714e60811317fa5a2be0178c715c7c75464520eb9"
+          },
+          "subject_prompt": "ASv6.48",
+          "subject_reuse": "50 exact saved outputs from historical 200-note corpus; no AS generation during hierarchy construction.",
+          "subject_entries": 1346,
+          "local_roots": 315,
+          "subjects": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/subjects/subjects.json",
+            "sha256": "1f87b7c853beef38d2701f6cef6a3fc4957a93c547f34f7f80caa6919e6d0a07"
+          },
+          "subjects_sha256": "1f87b7c853beef38d2701f6cef6a3fc4957a93c547f34f7f80caa6919e6d0a07",
+          "data_status": "deprecated ASv6.48; historical evidence",
+          "deprecation_evidence": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-b96-c48-fifty-note-v1/DEPRECATED-AS-DATA.json",
+            "sha256": "5a9c1e520ff1471f98e53bc16c6301eaaa9f78def42b80b3e39f8240c66e7b78"
+          },
+          "subject_generation": {
+            "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/SP",
+            "native_plan": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/SP/experiment.json",
+              "sha256": "3b9c030319fe32a29977a6bb559401fb7921d9dd7d74d0be4ae3be52abccce16"
+            },
+            "manifest": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/target/sh200-generation-v1/SP/run/manifest.json",
+              "sha256": "2a733cb1d6d2de0f67c4e29ec2c05a70a77f80454ce65fbb6e4a2ec3cd97854c"
+            },
+            "prompt_template": {
+              "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalable-hierarchy-v12/sse_multivector/experiment_specs/asv6.48-post-template.txt",
+              "sha256": "5329a4dbbd9787803bfc6dcd8020a720caaa156f36548a9cdff85ee29288d4ff"
+            },
+            "provider": "openai-codex",
+            "model": "gpt-6.1-sol",
+            "reasoning_effort": "medium",
+            "transport": "websocket",
+            "concurrency": 16,
+            "timeout_seconds": 1800,
+            "max_output_tokens": null,
+            "response_schema_sha256": "4be41f55c8d78a656dd311143acaa9eb652b1bd098f348a5bcb0b023b3c55767",
+            "original_generation_git": "unknown: not recorded"
+          }
+        }
+      }
     }
   ]
 }
