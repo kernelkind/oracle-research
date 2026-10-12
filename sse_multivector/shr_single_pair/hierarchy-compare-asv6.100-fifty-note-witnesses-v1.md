@@ -6503,3 +6503,802 @@ the scope of stock explicit. Use separately labeled diagnostic copies under
 unchanged V179, retaining the original producer strings and evaluation panel
 untouched. This can distinguish ambiguous clause scope from presumed lexical
 implications; it is proposed, not prepared or executed here.
+
+## V185 whole instruction-core qualification
+
+### Frozen preparation and gates
+
+The subsequent user-authorized whole-prompt audit replaces the previously
+suggested input ablation as the next experiment. Experimental
+[Compare-v185](Hierarchy-compare-v185.md) rewrites V179's instructional core
+around one operational containment rule, with explicit binding of parent
+requirements to the thing or activity supplying the information connection.
+It consolidates repeated checks; it does not add a new output procedure.
+The A/B subject-and-meaning contract, four-field output instructions, schema,
+two synthetic examples and final input section remain unchanged. Instruction
+words fall from 754 to 662; total words from 1,261 to 1,169. Native
+[revision provenance](Hierarchy-compare-v185.md.revision.json) pins V179 and
+records this package intervention. V185 SHA256 is
+`abbc60964a81ca2eb40d8c0dc0c130edef3c711a19ad60db0d6efe82ccfa41c2`.
+
+Independent semantic preflight retained all parent restrictions, identity,
+role, intention, state and whole-alternative coverage. Five fresh synthetic
+pairs were designed without seeing the candidate instructions and qualified
+by two independent agent assessments before inference. They cover a kind's
+repair, an activity's intended tools, particular identity versus a kind,
+partially overlapping alternatives and incompatible states at one explicitly
+shared reference instant. Their labels remain provisional agent expectations,
+not user gold. They are outside the prompt examples and all producer-bound
+regression collections. No AS or Bootstrap generation occurs.
+
+The [A-first](hierarchy-compare-whole-core-controls-a-first-v1.json) and
+[B-first](hierarchy-compare-whole-core-controls-b-first-v1.json) generic sources
+combine these five pairs with the three unchanged nonfood purpose controls.
+Each includes both semantic orientations; only physical JSON member order
+changes between sources. Expectations, proofs and synthetic qualifications
+stay outside `INPUT_JSON`. The historical Stockpots/Cookware pair retains its
+exact ASv6.100 / Bootstrap-v96 endpoints through native `prepare --from` of
+the saved matched-order experiments. Its correct label remains unresolved:
+we evaluate interpretation, reversal and order consistency without prescribing
+a positive, negative or null answer.
+
+The first screen prepares eight native experiments under
+`target/compare-v185-whole-core-v1/{v179,v185}/{stockpots,controls}`. Each
+family has `a-first-01` and `b-first-01`; the Stockpots directories each have
+two cases, the controls directories sixteen. This is nine semantic pairs
+times two A/B assignments times two physical member orders times two prompt
+arms: **72 planned fresh calls**, 36 per arm. All use intentional `--repeat`,
+Sol 6.1 medium, SSE, the same worker and schema, and no explicit prefix warmup.
+The shared runner's automatic queue supplies capacity; no concurrency field
+is added. The existing persistent 20,000-attempt counter bounds all calls and
+provider retries, with at most two lifetime attempts per case. It reads 19,205
+before preparation; this is not a new allowance. Native
+[usage aggregation](hierarchy-compare-v179-v185-whole-core-usage-v1.json)
+separates arms and families. Request/cache/body and native receipt checks remain
+required; a cache read is not an answer reuse or a conversational context.
+
+The candidate must pass strict symmetric directional validation, all clear
+semantic controls without unsupported uncertainty, and both directional proof
+reviews. Consistency checks cover all reversals and physical-order contrasts,
+separately for Stockpots and clear controls. A candidate failing this screen
+does not receive repetitions merely to search for a favorable draw. Only a
+surviving unchanged candidate warrants fresh confirmation, then broader frozen
+real-data qualification before adoption. Stable labels alone do not establish
+semantic correctness. This package comparison can establish a candidate
+difference, not which removed sentence caused it; any successful package would
+need targeted add-back diagnostics before such a causal claim.
+
+Official reasoning guidance supports clear, direct instructions and concise
+auditable diagnostic conclusions instead of requested reasoning traces;
+evaluation guidance identifies position bias and recommends clear rubrics and
+human alignment. Neither endorses this particular containment convention or
+guarantees the rewrite will work. The chosen Sol-medium workload must supply
+that evidence. Sources: [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+and [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#llm-as-a-judge-and-model-graders).
+
+### Completed first screen
+
+All eight native experiments finish with **72 fresh valid first attempts**,
+36 per arm. Existing production `hierarchy_node_pairs.validate` accepts every
+response under `diagnostics=True, symmetric=True`. No provider retry, failure,
+unrun request, exact answer reuse, explicit warmup or missing usage occurs.
+The same persistent counter moves from 19,205 to 19,277. Native `usage.json`
+reports **$0.4713536 API-equivalent catalog cost**, including reasoning in
+output; this is not subscription billing. Twenty-four backend cache reads
+are distinct from answer reuse or conversational context.
+
+| First-screen measure | Fresh V179 | Experimental V185 |
+|---|---:|---:|
+| Clear-control expected labels | 32/32 | 32/32 |
+| Clear-control reversal conflicts | 0/16 | 0/16 |
+| Clear-control physical-order changes | 0/16 | 0/16 |
+| Stockpots reversal conflicts | 1/2 | 2/2 |
+| Stockpots physical-order changes | 1/2 | 2/2 |
+
+V185 again concludes Cookware contains Stockpots when Cookware is physically
+first, and `neither` when it is second. Its first-position positive proofs
+infer meal preparation from stock preparation; its second-position negative
+proofs admit an experimental stock-preparation design without that intention.
+The two unchanged definitions do not justify changing interpretation according
+to position. Fresh V179 has three `neither` results and one containment result,
+so it also fails consistency. Four responses per arm on one disputed pair
+cannot establish general worsening or a reliable error rate. The expected
+Stockpots relation remains unresolved; these counts identify inconsistent
+interpretation rather than certifying which semantic answer must change.
+
+The candidate fails the declared consistency gate. No second draw, broader
+panel or adoption follows from this screen. The package preserves clear
+label behavior but has not repaired the original failure. It does not prove
+that clarity, brevity, question generation or any removed individual sentence
+causes the residual error. Original endpoints and all frozen producer panels
+remain untouched.
+
+Seventy-three existing production-path node-pair tests pass. An initial test
+invocation also named a nonexistent additional module; the corrected command
+runs the actual supported node-pair suite alone. The read-only output audit
+uses the existing validator's returned parsed result and exceptions, not an
+invented `valid` flag. No production code or test APIs are changed.
+
+Independent semantic reviews accept all **64 clear-control responses**, including
+all 128 directional questions, answers and proofs. Repair and tool information
+remain covered without requiring physical instance membership or performed
+action; identity counterexamples do not assign unknown Lumen properties;
+alternative and state exclusions retain the whole supplied requirements.
+Three identity responses use battery-capacity wording with a justification
+identifying the distinct qualifying battery-powered lamp. Review accepts the
+combined evidence while recording this minor standalone wording qualification.
+The reviewers projected input and output, without reading candidate instructions
+or expected-label fields. Directory names still exposed version identifiers,
+so this is not a fully arm-blinded study. After completing its V185 judgments,
+one reviewer saw the already-completed H5 design summary through an agent-status
+call; it was not available before those judgments. The delegated V179 review
+remained independently blinded to that summary.
+
+A separate Stockpots review distinguishes five conditional `neither` arguments
+from three conditional containment arguments. If Cookware universally requires
+meal-preparation design and Stockpots does not, the experimental designs supply
+valid separating cases. The three positives instead infer meal intention from
+stock or food preparation without independently establishing that implication.
+If the meal clause only illustrates unrestricted food-preparation design, the
+experimental cases do not escape the parent. These conditional assessments
+do not resolve the user's original label. V185's `b-first-01`,
+`isolated-035-reverse` also leaves its shallow-pan counterexample's meal-design
+admission under-established on the restrictive reading; frying eggs is not an
+explicit intention proof in this response. We do not transfer favorable
+interpretations from other outputs to repair that evidence.
+
+Native output-specific agent reviews accept the 64 controls and mark the eight
+original Stockpots cases uncertain with these qualifications. Their original
+model labels are preserved. This review verdict does not require the model to
+return `uncertain`; it records unresolved semantic gold. `final-generation.json`
+and native `final-reviewed.json` preserve original outputs and receipts;
+reviews do not alter any nonreview case field. No homemade evaluation artifacts
+or producer receipts are substituted for the native record.
+
+The next warranted diagnostic is now a controlled boundary test under an
+unchanged prompt: separately distinguish universal meal-design intention from
+an illustrative meal application, then explicit meal intention from food
+identity in Stockpots. Retain the original producer strings and disputed gold
+untouched. Test one boundary at a time in both assignments and member orders.
+That can determine whether the residual comparison failure survives genuinely
+closed scopes before another instruction rewrite. It is a recommendation,
+not prepared or run here. No Bootstrap coordination, hierarchy generation or
+additional allowance is implied.
+
+The independent native identity audit verifies all 72 actual request bodies and
+receipt-to-result links. Model, effort, endpoint, worker, SSE settings, ordered
+schema and frozen executable code match across arms; 905 recorded source-file
+hashes remain unchanged. The only arm-specific body change is the instruction
+prefix before `# Output`. Order variants change only top-level JSON member
+order; all 36 within-arm reversal comparisons exchange the exact endpoints.
+All eight Stockpots cases retain original baseline inputs and evidence, both
+Bootstrap-v96 producer meanings/receipts, and the original ASv6.100 post/tree
+provenance. Seventy-two production receipt validations, request/output hashes
+and unique response IDs pass. Each actual body contains exactly one user
+prompt, empty instructions, `store:false` and no conversation linkage. Native
+generation and review records remain unchanged; no source or proof blocker
+explains away the observed comparison inconsistency.
+
+## Fixed-V179 meal-design boundary diagnostic
+
+### Frozen design
+
+After the failed V185 screen, the user authorizes testing explicit meal-design
+intention versus food identity under **unchanged Compare-v179**. No Compare
+prompt, Bootstrap prompt, producer meaning or hierarchy is changed. The exact
+original Cookware/Stockpots case remains a descriptive control, inherited
+through native `prepare --from`; its correct label remains unresolved.
+
+Four directly supplied diagnostic copies close the disputed boundaries. Both
+parent copies keep the same food-holding/heat-cooking design and qualifying
+cocotte/frying-pan illustrations. Both expressly count edible culinary stock
+as food regardless of intended consumption. Their final clause differs only
+by `must` versus `need not` require meal preparation as a design purpose.
+Both child copies explicitly retain food, holding, heat cooking and stock
+preparation, the same food-identity sentence and a laboratory-design purpose.
+Their final clause differs only by `also` versus `not` include meal preparation
+as a design purpose. A dual laboratory-and-meal design is coherent; actual use
+or consumption is not substituted for design intention. Hypothetical permitted
+designs supply counterexamples without asserting actual instances exist.
+
+Two independent read-only preflight assessments qualify the exact closed
+matrix: meal-included Stockpots fit either parent; meal-excluded Stockpots fit
+only the unrestricted parent. Direct parent-copy comparison requires the
+unrestricted copy to contain the required copy; direct child-copy comparison
+is neither. The classifications are provisional agent semantic controls,
+not human gold or certified Bootstrap outputs. Physical exclusion between
+designs is not itself the definition of information-topic containment: both
+directional proofs must also exclude permitted information connections.
+
+The full 3-by-3 cross of original/required/unrestricted parents and
+original/meal-included/meal-excluded children has nine conditions. Add the
+two direct same-subject contrasts: eleven semantic pairs total. Six fully
+synthetic conditions are closed semantic anchors. The original and four
+one-original bridges are descriptive with null expected labels; they must not
+select the original interpretation by majority vote. Even the apparently
+positive original-parent/meal-included-child bridge is kept outside the
+closed-anchor gate. Direct same-subject failure would establish failure to
+honor the supplied definitions, not prove that names caused it.
+
+The [A-first](hierarchy-compare-meal-design-boundary-a-first-v1.json) and
+[B-first](hierarchy-compare-meal-design-boundary-b-first-v1.json) generic sources
+carry twenty diagnostic cases each: ten conditions in both A/B mappings.
+The exact original two cases in each order are inherited separately. All
+copies use the original native JSON serialization; native preparation must
+assemble identical instructions, schema and request convention across
+adapters, apart from supplied endpoint descriptions and controlled order.
+Expectations, source qualifications and original provenance remain outside
+model input. No generated parent meaning, post, local tree or old label enters
+the requests.
+
+The first block prepares four native directories under
+`target/compare-v179-meal-design-boundary-v1/{original,diagnostic}`, with
+`a-first-01` and `b-first-01`: **44 planned fresh calls**. All use intentional
+`--repeat`, Sol 6.1 medium/SSE, the same worker and four-field schema, unchanged
+V179/examples, no explicit warming and the shared automatic queue. The existing
+persistent 20,000-attempt counter reads 19,277 before preparation; provider
+retries/failures count, with at most two lifetime attempts per case. Native
+[first-block usage](hierarchy-compare-v179-meal-design-boundary-first-screen-usage-v1.json)
+and [conditional aggregate](hierarchy-compare-v179-meal-design-boundary-usage-v1.json)
+preserve separate original/diagnostic accounting.
+
+Only if all six closed anchors pass labels, directional proof review, strict
+validation, reversal and member-order checks does an unchanged second fresh
+block follow: another 44 calls, **88 total absent retries**. The disputed
+original/bridge labels are evaluated descriptively rather than used as gold
+gates. Native request/receipt and independent-context checks remain required.
+The result can distinguish following explicit design clauses from unstable
+comparison of closed scopes. It cannot certify the original relation or name
+the original reversal's causal word: moving to a diagnostic copy changes
+several lexical facts. Within the closed matrix, food identity and laboratory
+purpose are fixed while meal-design intention is controlled.
+
+### Completed two-block diagnostic
+
+The first block passes its gate: all 24 closed-anchor responses match their
+provisional expectations, and independent review supports both proofs and
+questions in all 24. Original/bridge outcomes remain descriptive. The
+unchanged second block is prepared natively with `--from ...-01 --repeat`;
+prompt, cases, runner, schema and each adapter's code bindings are identical
+between draws. Its 24 closed-anchor responses also match and pass fresh
+independent review. Both blocks therefore complete with **88 valid responses**,
+including **48/48 supported closed-anchor responses and 96 directional proofs**.
+
+| Response family | Responses | Reversal conflicts | Member-order changes | Repeat changes |
+|---|---:|---:|---:|---:|
+| Six closed semantic anchors | 48 | 0/24 | 0/24 | 0/24 |
+| Four one-original bridges | 32 | 0/16 | 0/16 | 0/16 |
+| Exact original Cookware/Stockpots pair | 8 | 3/4 | 3/4 | 1/4 |
+
+Every diagnostic-copy condition gives the same normalized label in all eight
+presentations/draws. Required Cookware rejects meal-excluded Stockpots while
+unrestricted Cookware contains them; both parents contain meal-included
+Stockpots. Unrestricted Cookware contains the required variant, and the two
+opposite Stockpots purpose variants are neither despite identical subjects.
+This is evidence that V179 can follow the explicit meal-design distinction
+while retaining food identity and laboratory purpose. It is not broad Compare
+qualification or certification of these manually supplied scopes as producer
+definitions.
+
+All four bridges are stable: original Cookware contains meal-included
+Stockpots; original Cookware versus meal-excluded Stockpots is neither;
+required Cookware versus original Stockpots is neither; unrestricted Cookware
+contains original Stockpots. The labels alone do not adjudicate an original
+meaning. The latter two proofs still rely on an interpretation of the
+original Stockpots wording. Likewise, rejection beneath original Cookware
+assumes its meal clause imposes a universal design requirement. Closing either
+endpoint stabilizes these observations, but several lexical facts change in
+moving to a copy, so this does not isolate the original causal word.
+
+The untouched original has five `neither` and three Cookware-containment
+responses. Its positive proofs promote stock preparation to meal preparation;
+negative proofs admit exclusively experimental food-stock designs without
+meal intention. Both meanings and the instructions remain identical between
+these readings. No model nulls are emitted. Original semantic gold remains
+unresolved; the observed contradiction is not repaired by stable copies,
+majority vote or selecting whichever original label resembles an anchor.
+
+Native aggregate usage records **91 actual attempts**, including three
+recovered provider failures, zero answer reuse or warming and no terminal
+failed/unrun cases. The shared counter moves **19,277 to 19,368**, leaving 632
+at this read. All three failed body streams are classified by the production
+runner as temporary HTTP/2 internal stream errors after HTTP 200, with socket
+termination and no completed answer; the same cases succeed on attempt two.
+Each failed attempt remains charged to the counter and has unknown usage.
+The **$0.610562 API-equivalent cost is a known subtotal**, not an exact total
+or subscription charge. Native usage preserves the three unknowns rather
+than pricing them at zero. Provider retries remain within two lifetime
+attempts per case; no service investigation, paid-resource change or external
+message is initiated.
+
+Existing strict symmetric directional validation accepts all 88 responses.
+The request-generating code, schema, V179 instructions/examples and native
+JSON serialization match between real controls and generic copies. An initial
+overstrict plan-code assertion detects only the extra
+`hierarchy_node_pair_consistency.py` bound by the original adapter; that is a
+post-generation evaluator, absent from the generic adapter, not a request
+difference. All shared code hashes match. Current source meanings remain
+unchanged, and original Bootstrap-v96 / ASv6.100 receipts are not attached to
+diagnostic copies as if those copies had been generated.
+
+The final independent provenance audit validates all 91 dispatched bodies,
+88 successful receipts and generation-snapshot bindings. Each body carries
+one exact user prompt, empty instructions, `store:false` and no conversation
+linkage. Completed response IDs are unique; all 904 bound source hashes match.
+All 44 member-order contrasts change only JSON member order and all 44
+reversal comparisons exchange the exact endpoints. Recovered attempts repeat
+identical bodies. Native original producer receipts and ASv6.100 inputs remain
+intact. Backend cache reads do not create conversation linkage.
+
+Separate original/bridge proof review checks all 40 responses across both
+draws. The 32 bridges retain the explicit food and design clauses consistently.
+Their qualifications remain conditional where an original endpoint supplies
+the interpretation: eight unrestricted-parent/original-child positives rely
+on the culinary-food reading of original stock. Among the eight exact
+original outputs, five negative proofs conditionally separate experimental
+designs; three positives have meal-purpose proof gaps under the universal
+meal-design interpretation. Two positive original outputs also under-establish
+their independent frying-pan witness's meal intention. These assessments do
+not yield an accuracy percentage against original gold.
+
+Native reviews accept the 48 closed-anchor responses and preserve uncertainty
+for all 40 original/bridge responses. Original model relations remain unchanged.
+Native `final-generation.json` and `final-reviewed.json` verify all nonreview
+fields and receipts are preserved. No homemade comparison or review artifacts
+replace the supported workflow.
+
+The practical finding is narrower than a Compare fix: these closed definitions
+are handled consistently under unchanged V179, while the original combination
+retains unstable interpretation. Another instruction reminder is not justified
+by this evidence. The next useful qualification would use separately frozen,
+current producer meanings whose relevant boundaries have been independently
+settled, then test reversals and complete chains without forcing old labels.
+This recommendation is not prepared or run here. The present source copies
+must not be silently promoted to producer definitions or human gold.
+
+## User-reviewed HR04 C003 poison admission
+
+After inspecting the exact HR04 C003/C004 inputs and native producer/comparison
+receipts, the user accepts the poisoned-drink witness as exposing insufficient
+closure of C003's explicit meaning. The [primary Food-boundary record](bootstrap-hr04-food-boundaries-v1.md#historical-distinction)
+preserves their verbatim judgment. For this exact component clause, Compare
+should not invent a missing restriction to exclude the accepted witness.
+The earlier Bootstrap-versus-Compare interpretation concern is settled only
+for that admission. The ceremonial-gold witness, whole pair relation, other
+Food definitions and general comparison reliability remain open. No prompt,
+frozen input, native output, comparison schema or hierarchy is changed, and
+this review is not transferred to fresh producer definitions.
+
+## Independently frozen Bootstrap-v109 scope screen
+
+This panel tests unchanged Compare-v179 against exact meanings from one completed
+Bootstrap-v109 producer experiment, `bootstrap-v109-scope-preservation-v1/candidate`,
+whose original subjects derive from ASv6.100. It does not regenerate meanings or
+turn original AS ancestry into containment gold. The native canonical
+`meaning_from` resolver binds each endpoint to its original selected entry,
+full post/tree, valid producer output and receipt, using the same validation as
+`local_meaning_from`. Both producer references remain outside model input.
+
+The [v1 source](hierarchy-compare-b109-closed-scope-source-v1.json) is an unrun
+preliminary preparation. Independent preflight withdraws five provisional
+labels before the [v2 screen](hierarchy-compare-v179-b109-closed-scope-v2.spec.json).
+After response review, the grips versus handholds pair also loses its provisional
+positive expectation. The final
+[v3 source](hierarchy-compare-b109-closed-scope-source-v3.json) therefore has
+**ten provisionally labeled pairs and fifteen unresolved probes**, all in both
+A/B orientations. None of these labels is new human gold. Earlier source
+versions retain their pre-call judgments rather than rewriting the record to
+match responses.
+
+All fifty first-draw answers validate. The twenty responses for the final ten
+controls match their provisional labels and pass independent directional-proof
+review. Among the fifteen probes, five pairs have conflicting reversals:
+`rocket-root-potatoes`, `rocket-root-substitution`,
+`sourdough-food-preparation`, `mental-states-attention`, and
+`metal-handles-alternatives`. A reverse-orientation equivalence-substitution
+witness also remains qualified. These establish inconsistency of fixed endpoints,
+not which individual interpretation is right.
+
+The original v2 metadata omitted the native checker's isolated-pair tags, so its
+empty consistency result did not check these reversals. A new v3 preparation
+adds only the required outside-input `comparison_role` and `reversal_pair`
+metadata and collects **fifty exact receipt reuses, zero new attempts**. Its
+native checker covers all twenty-five pairs. Model-facing inputs and original
+outputs remain unchanged. Artifacts are under
+`target/compare-v179-b109-closed-scope-v{2,3}`; the v3 completed receipt collection
+is `draw1-receipts`.
+
+The Mental states/author probe compares a person-mind condition with the
+particular author's unfocused attention. V179's first forward answer substitutes
+a nonperson animal author, while its reverse assumes a person. A fresh exact
+two-case repeat again invents an elephant author in one direction and assumes
+the author is a person in the other. The particular referent and unknown-property
+treatment need qualification; the complete pair label remains unresolved.
+The metal-handles probe separately contrasts required handholds with grips:
+a machine-only grip explicitly lacking a handhold is a candidate separating
+case. Its former positive expectation is not retained as negative gold for the
+newer response.
+
+The fifty-case first draw uses 51 attempts including one warmup, with no failures,
+retries or missing usage, and $0.2582132 native API-equivalent cost. The two-case
+author repeat adds three attempts including its warmup. Exact receipt collection
+is not an additional draw. All use Sol 6.1 medium/SSE, automatic prefix caching,
+the shared runner and the persistent sprint counter.
+
+### Experimental Compare-v186: particular-entity rule
+
+[Compare-v186](Hierarchy-compare-v186.md) replaces only V179's unqualified
+permission for unstated conditions to vary. General kinds retain that permission;
+unknown properties of a particular entity or event may not be chosen either
+to construct a counterexample or to prove coverage. The examples, four-field
+schema, A/B-only inputs and other rules stay identical. The native
+[edit source](hierarchy-compare-v186-fixed-entity.edits.json) and revision receipt
+preserve the baseline hash and exact change.
+
+The first fresh targeted draw uses the twenty unchanged control inputs plus
+the author probe in both orientations. All twenty-two answers validate;
+all twenty control labels survive, and all eleven reversal pairs agree. Both
+author answers are now positive and no longer invent an animal. Nevertheless,
+their proofs assert that the particular author is a person without separately
+closing the disputed class-membership inference. Independent review preserves
+both the ordinary person-author reading and the broader-originator qualification;
+the positives are not established semantic failures or accepted human gold.
+**V186 is not adopted and receives no broader confirmation run on the strength
+of consistent labels alone.**
+
+Native artifacts are `target/compare-v186-fixed-entity-v1/draw1`; the run uses
+23 fresh attempts including one warmup, zero answer reuse, retries, failures or
+missing usage, and $0.1426876 native API-equivalent cost. The persistent counter
+reaches 19,454/20,000. This small screen does not address general-kind purpose
+or non-food proof gaps, and supplies no broad comparison qualification.
+
+## Separate HR05 fixed-input qualification
+
+HR05's exact original comparison inputs remain a separate panel, with their own
+Bootstrap-v109 and Consolidation-v4 provenance. They are not spliced into the
+independently frozen producer screen above. Food/Bread and Equipment/Lunch boxes
+raise universal-proof questions: a food-kind assertion must establish the
+specific nourishment purpose where required; an intended food container must
+establish the conditions of an applicable Equipment alternative. The reach of
+its non-food and designed-task qualifiers remains a grammatical review issue.
+These are review
+questions, not predetermined negative labels. Named-brand unknown properties,
+general restaurant hypotheses and intended versus suitable nourishment supply
+contrasting controls. Historical HR05 labels alone are not semantic gold.
+
+### User-reviewed C035/MrBeast classification
+
+The user settles the exact `batch-00092/experiment`, case `C025`, comparison:
+
+> ok ig compare was fine here. it was the expl meaning that was wrong for c035.
+
+C035's supplied Material resources meaning admits organisms suitable as means
+for practical tasks. The saved positive proof covers Jimmy Donaldson's specified
+video-creation role under that definition. The user classifies the problem as
+the **C035 explicit meaning**, not a Compare rejection requirement. C035 was
+produced by Consolidation-v4, not Bootstrap. Preserve the exact positive comparison
+receipt `38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38`
+as a reviewed control; this is not approval of the parent meaning, hierarchy
+placement, or a general resource/person relationship. No historical meaning
+or graph is repaired here.
+
+### Completed HR05 matched screen
+
+The [source](hierarchy-compare-hr05-fixed-scopes-source-v1.json) selects six exact
+original comparisons and their reversals. Every selector pins both the experiment
+envelope and the actual original result record. Native preparation preserves
+forward input bytes and swaps complete A/B nodes for the reverse; no old answer,
+producer diagnostic, source context or expected label enters model input.
+Five pairs retain null expectations. The sixth is the exact reviewed MrBeast
+positive, not approval of its parent definition.
+
+[V179](hierarchy-compare-hr05-v179-fixed-scopes-v1.spec.json) and
+[V186](hierarchy-compare-hr05-v186-fixed-scopes-v1.spec.json) each complete twelve
+fresh valid responses. The native checker covers all cases without skipped
+bindings. V179 has one conflict among six settled reversal pairs, on Equipment/
+Lunch boxes. V186 has one conflict among five settled pairs, on Food intention/
+suitability; the remaining brand pair returns uncertainty in both orientations.
+All four MrBeast responses preserve the user-approved relationship.
+
+Both orientations below are normalized to the original source's A/B assignment;
+these are **observations, not accuracy scores**:
+
+| Original pair | V179 forward / reversed | V186 forward / reversed |
+|---|---|---|
+| Food / Bread | A contains B / A contains B | A contains B / A contains B |
+| Equipment / Lunch boxes | neither / A contains B | neither / neither |
+| Commercial entities / Buster + Punch | A contains B / A contains B | uncertain / uncertain |
+| Chinese takeout restaurants / Commercial entities | neither / neither | B contains A / B contains A |
+| Nourishment-intended Food / Nourishment-suitable Food | neither / neither | neither / B contains A |
+| Material resources / MrBeast | A contains B / A contains B | A contains B / A contains B |
+
+The strongest new fixed-scope witness is V186's intention/suitability pair.
+Its forward response admits a safe edible, nutritionally inert preparation
+mistakenly intended to nourish. The reverse asserts that the identical intended
+scope necessarily establishes suitability as nourishment. These incompatible
+necessity claims establish a Compare consistency failure independently of which
+complete label is approved. The reverse proof does not establish the missing
+implication. Preserve the exact pair as a diagnostic; do not choose a semantic
+target merely to make the reversal agree.
+
+V179's Lunch boxes forward similarly admits an edible container while its
+reverse asserts all qualifying containers are non-food. V186's two negatives
+are consistent, but not a certified correction: the phrase "tools, apparatus,
+and other non-food physical articles designed..." permits competing readings
+of which alternatives bear those restrictions. An edible tool/apparatus must
+also be excluded before the counterexample proves noncontainment. The parent
+grammar and complete semantic label remain qualified.
+
+All four Bread positives infer nourishment intention from the ordinary food
+kind without separately closing purpose versus nutritional capability. The
+restaurant responses likewise choose different ordinary-kind commerce readings;
+charitable provision and the word "customers" need qualification. Matching
+labels do not certify either family's proof. V179's brand positive relies on
+actual commercial offerings not separately stated in the supplied named-brand
+definition; V186 follows the unknown-property reading in this draw. That
+behavioral change certifies neither the brand's semantic label nor a general
+reliability improvement.
+
+Two independent semantic reviews agree on the concrete contradictions and
+preserve these qualifications. The native checker scopes saved endpoints to
+their original comparison receipt and original role; it intentionally does not
+join coincident wording from separate cases into producer-certified chains.
+No cross-source chain result or Bootstrap/hierarchy repair is claimed.
+**V186 remains experimental and is not adopted.** V179 remains the development
+baseline, with its own demonstrated conflicts retained.
+
+Native generation snapshots are
+`target/compare-hr05-fixed-scopes-v1/{v179,v186}-native.json`; corresponding
+experiment directories retain full inputs, diagnostics and receipts. Actual
+request audit validates all twenty-four receipts and twenty-six distinct response
+IDs including warmups. Both arms have identical case inputs, schema, model,
+medium effort, worker and code bindings; each matched prompt differs only by
+V186's one-rule replacement and resulting cache prefix/key. Requests contain
+the fixed developer prefix and variable user input, with `store:false` and no
+recorded conversation linkage. All source and historical receipt pins match.
+
+The [native aggregate source](hierarchy-compare-hr05-fixed-scopes-usage-v1.json)
+produces `target/compare-hr05-fixed-scopes-v1/usage.json`: **26 actual attempts**,
+including two warmups, zero reuse/retries/failures/missing usage, and
+**$0.1855808 API-equivalent catalog cost**, not a subscription charge. Fourteen
+of twenty-four comparison responses report cache hits. The shared counter reads
+19,532/20,000 after this run; intervening other-agent admissions are not counted
+as this panel's calls. No additional prompt revision, fresh confirmation,
+Bootstrap inference or hierarchy construction follows from this screen.
+
+## Compare-v187: necessary coverage conditions
+
+The user authorizes a rapid edit/test/review loop with independent subagents.
+[Experimental V187](Hierarchy-compare-v187.md) is a single Full coverage
+paragraph replacement from the V179 development baseline; it does not carry
+forward V186's separately unqualified particular-entity revision. Each applicable
+parent condition needs a child condition or necessary implication. Intention
+alone does not establish actual capability, suitability or success; sharing a
+kind name alone cannot supply additional restrictions. The A/B input, four
+output fields, schema and existing examples remain byte-identical.
+
+The [six synthetic controls](hierarchy-compare-intention-capability-controls-v1.json)
+use independently specified device scopes: intention I, current capability C,
+and their intersection IC. I/C is provisionally neither; I/IC and C/IC have
+strict containment. Both orientations are included. Counterexamples must preserve
+current state and exclusive purpose and exclude permitted information connections;
+merely switching off a device or omitting an intention is insufficient. These
+are reviewed agent controls, not AS/Bootstrap outputs, human gold, or prompt
+examples. No original source post or producer receipt is fabricated.
+
+The first gate comprises the unchanged twelve native HR05 cases inherited
+from the saved V179 run and six new generic controls: **eighteen candidate
+comparisons**, plus two eligible automatic warmups. The saved V179 HR05 baseline
+is reused; it is not rerun. No matched synthetic V179 draw is claimed.
+Native preparations and generation remain in the task worktree under
+`target/compare-v187-intention-capability-v1/{hr05,controls}`. Both use the shared
+runner, Sol 6.1 medium/SSE, automatic caching and the existing persistent 20,000
+attempt counter. Stage caps reserve provider retries; they are not new allowances.
+
+Predeclared passing criteria are valid complete generation; six supported control
+labels and directional proofs; the two exact user-approved MrBeast positives;
+no HR05 reversal conflict; and no demonstrated unsupported necessity claim,
+dropped parent alternative, or invented particular-entity fact. Real probes keep
+null semantic expectations. Warranted uncertainty remains qualified rather than
+being counted as a correction, and clear controls cannot be cleared by returning
+uncertain/neither indiscriminately. Generic controls have manual independent
+semantic/reversal review and the existing strict production comparison validator;
+the native receipt-bound checker covers HR05, without invented producer identities
+for synthetic cases.
+
+A failing candidate receives no broader confirmation. Revise one demonstrated
+mechanism in a new version and repeat the small gate. A promising candidate needs
+an unchanged fresh confirmation and broader frozen-input regressions before an
+adoption recommendation. Keep source cohorts separate, preserve original
+meanings/receipts and count all dispatched attempts including warmups and failures.
+The [native first-gate usage source](hierarchy-compare-v187-intention-capability-gate-usage-v1.json)
+keeps HR05 and synthetic groups separate. No Bootstrap edit/inference, hierarchy
+construction, UI refresh or outgoing owner message is part of this work.
+
+### V187 first-gate failure and V188 local contrast
+
+V187 completes all eighteen valid responses. All six synthetic labels and both
+MrBeast positives survive. The HR05 intention/suitability and Equipment labels
+are reciprocal in this draw, but Food/Bread has a new reversal conflict:
+the forward treats the child word "food" as necessarily supplying nourishing
+intention, while the reverse admits ceremonial bread explicitly lacking it.
+This is incompatible necessity selection for an unchanged meaning, not proof
+of which complete label is correct. V187 fails and receives no repeat or broad
+qualification. The two camera control witnesses retain a precision qualification
+about actual detection versus mere image capture; no autonomous-classification
+requirement is added. Equipment's grammar and intention-to-design claim remain
+qualified, and the brand proofs still import actual product offerings beyond
+the fixed string. No failed probe is made semantic gold.
+
+Two independent reviews and native receipt/request audit validate the inputs,
+twenty distinct responses including warmups, strict output checks and unchanged
+baseline bindings. Native usage is twenty attempts, zero reuse/retries/failures/
+missing usage, twelve comparison cache hits and $0.1394824 API-equivalent cost.
+The shared counter subsequently reads 19,931/20,000; other agents' admissions
+are included there, not in this gate's twenty calls.
+
+[Experimental V188](Hierarchy-compare-v188.md) preserves V187's coverage paragraph
+and changes only the kind-interpretation sentence for the local contrast. It
+requires interpreting a term within its own meaning, without borrowing the other
+node's definition or treating customary function/capability as a required
+intention. This tests two related explanations for the Bread failure; it does
+not prove either word caused it or force ceremonial-Bread admission. The native
+full revision remains against V179, with the retained V187 change explicitly
+recorded. Schema, A/B input and examples remain unchanged. The same eighteen-case
+gate and passing criteria apply under the remaining shared allowance; no new
+cap or reset is introduced.
+
+### V188 gate: reciprocal labels, remaining particular-fact proof gap
+
+The unchanged eighteen-case gate completes with eighteen valid responses:
+all six provisional synthetic labels and both exact user-approved MrBeast
+positives survive, and the native HR05 checker finds zero reversal conflicts
+among six complete pairs. Food/Bread and intention/suitability now use reciprocal
+intention-based readings. This is one draw, not proof of causal wording,
+semantic gold for the real probes, or an adoption recommendation.
+
+Two independent reviewers accept the six controls and MrBeast proofs. Both
+identify the remaining brand proof issue: coverage is established by adding
+particular lighting, hardware or commercial design-goods offerings absent from
+the fixed "London design brand" meaning. These might be true external facts,
+but are contingent rather than necessary implications of that fixed string.
+The predeclared proof-quality gate is therefore not cleared. Equipment's
+coordinated non-food modifier and the restaurant commerce reading remain
+qualifications, not newly forced labels. Native agent reviews preserve the
+ten real-probe uncertainties and eight accepted control/preservation cases.
+
+Native exports are `target/compare-v188-intention-capability-v1/{hr05,controls}-native.json`;
+the native aggregate `usage.json` records twenty actual attempts including two
+warmups, zero reuse/retries/failures/missing usage, eleven comparison cache hits,
+and $0.1374472 API-equivalent catalog cost, not subscription billing. All eighteen
+responses pass the existing strict symmetric production validator. Preparation
+audits verify exact V179 HR05 inputs/evidence, unchanged synthetic definitions,
+ASv6.100 provenance, task source bindings and no expectation leakage. Thirty-eight
+native revision/saved-comparison/consistency tests pass on combined local main.
+
+### V189: particular unknown properties in coverage proofs
+
+[Experimental V189](Hierarchy-compare-v189.md) retains V188 and adds the exact
+generic-versus-particular distinction previously isolated in V186. General
+kinds permit varying unstated conditions; a particular entity's property absent
+from its meaning and necessary implications remains unknown, rather than being
+chosen for either a counterexample or coverage proof. The native full revision
+records all three changes against V179; the local V188 contrast changes only
+this distinction. A/B input, schema, examples and frozen test meanings remain
+unchanged. No preferred brand label is prescribed, and the supplied human
+identity/occupation implications in MrBeast must survive.
+
+The same eighteen-case gate and prior passing criteria apply. There is no new
+allowance: the shared counter reads 19,957/20,000 before this preparation, including
+other agents' admissions. A failing candidate receives no fresh repeat; a
+promising candidate still needs repeat and broader qualification within the
+remaining cap. Missing qualification stays incomplete rather than being treated
+as adoption. No Bootstrap or hierarchy work is performed here.
+
+### V189 result and V190 compatible-role contrast
+
+V189 completes eighteen valid comparisons and preserves all six synthetic
+controls and both approved MrBeast positives. The brand proof now records its
+missing commercial-offering condition as unresolved in both orientations,
+without importing actual offerings. This is qualified missing-fact handling,
+not semantic certification or indiscriminate uncertainty.
+
+The gate still fails: Equipment/Lunch boxes has a reversal conflict. Forward
+coverage derives non-food identity and design from portable containment and
+intended lunch-food use. Reverse admits an edible bread container preserving
+that same role. Independent review identifies a presumed exclusion: a required
+functional role does not itself rule out a compatible additional kind, role or
+property. Equipment's modifier interpretation remains unresolved; the conflict
+does not establish which complete pair label is correct. V189 receives no
+repeat or broad qualification.
+
+Native exports and aggregate are under
+`target/compare-v189-intention-capability-v1`: twenty attempts including two
+warmups, eighteen valid responses, zero reuse/retries/failures/missing usage,
+seventeen comparison cache hits and $0.1188740 API-equivalent catalog cost.
+The strict production validator accepts all eighteen output structures;
+the receipt-bound checker has five settled complete pairs, one conflicting
+pair and one unresolved brand pair. These are mechanical scope checks, not
+six independently certified semantic labels.
+
+[Experimental V190](Hierarchy-compare-v190.md) retains V189 and adds only:
+"A required role alone does not exclude a compatible additional role or
+property." This tests presumed exclusivity without a lunch-container exception
+or preferred label. The same eighteen-case gate, frozen meanings, A/B schema
+and examples remain. The full native revision records the composed changes
+against V179. At preparation the shared counter is 19,977/20,000; no cap reset
+or extra allowance is introduced. Any unrun or insufficiently repeated
+qualification remains unresolved. Straightforward criteria and concise proof
+diagnostics follow [official reasoning prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively);
+that guidance does not establish this semantic hypothesis.
+
+### V190 failure and bounded V191 question diagnostic
+
+V190 returns all eighteen valid comparisons; six synthetic controls and both
+MrBeast positives survive. Brand remains qualified uncertainty in both
+orientations. Equipment retains the same reversal: forward calls every lunch
+box non-food and covers it; reverse admits a wholly edible container. The
+compatible-role sentence therefore does not remove this failure in this draw.
+The forward question is generic escape from Equipment; reverse explicitly
+tests its non-food requirement. Neither the question contrast nor these draws
+prove a sole causal mechanism or settle Equipment's coordinated modifier scope.
+
+Native V190 usage records twenty-one attempts including two warmups and one
+recovered failure/retry. One failed attempt lacks usage: $0.1286900 is only the
+known API-equivalent subtotal, and complete cost remains unknown. The shared
+counter reads 19,998/20,000. V190 receives no repeat or broad qualification.
+The earlier V189 erythritol counterexample retains a separate consumer-scope
+qualification: an all-consumer nourishment exclusion is not established by
+ordinary human nutritional use. No new semantic expectation is inferred.
+
+[Experimental V191](Hierarchy-compare-v191.md) retains V190 and replaces only
+the question instruction. It asks for a specific parent requirement or
+information connection, prefers a requirement not explicitly guaranteed by
+the child, and binds the answer to that same question boundary. Necessary
+implications remain permitted under the existing coverage rules. This is a
+general diagnostic criterion, not a lunch-box example or compelled counterexample.
+
+Only the two frozen Equipment orientations will be dispatched. The complete
+eighteen-case gate is prepared unchanged, with all other cases deliberately
+unrun under the existing cap. Each invocation has a one-attempt stage limit;
+the native runner prioritizes its comparison without a warmup when only one
+attempt is available. Prompt caching remains enabled and request construction
+is unchanged; no cache setting or worker is substituted to fit the budget.
+Two outputs cannot establish full gate passage, fresh confirmation, broader
+qualification or adoption. The shared counter is never reset or increased.
+
+### Final V191 diagnostic and allowance stop
+
+Both fresh Equipment orientations return neither. The forward now explicitly
+asks whether the lunch-container meaning necessarily establishes the non-food
+requirement; its answer preserves the lunch-container role while admitting
+edible material. Reverse tests that same boundary. The native checker reports
+one settled complete pair with no reversal conflict, while the other five
+HR05 pairs and all six synthetic controls remain unrun. This is a specific
+question/proof improvement in one draw, not causal proof, resolved Equipment
+gold, fresh confirmation or full prompt qualification. The non-food modifier's
+reach across tools/apparatus/articles remains a linguistic qualification.
+
+Final native exports are
+`target/compare-v191-intention-capability-v1/{hr05,controls}-native.json`;
+the version aggregate records two valid attempts, no warmups/reuse/retries/
+failures/missing usage, zero cache hits and $0.0202260 API-equivalent cost.
+Caching stays enabled; no attempt allowance remains for warming or retries.
+All sixteen deliberately unrun cases remain visible, rather than being
+backfilled with a previous version's answer.
+
+The [whole-loop native usage source](hierarchy-compare-v187-v191-gate-usage-v1.json)
+produces `target/compare-v191-intention-capability-v1/sprint-usage.json`: eighty-three
+actual attempts, eight warmups, seventy-four valid comparisons, zero exact
+answer reuses, and one recovered retry whose failed attempt lacks usage.
+$0.5447196 is only the known API-equivalent subtotal. Complete cost and aggregate
+completion remain unknown/incomplete; neither missing usage nor unrun cases
+are counted as free success. Shared allowance reads exactly 20,000/20,000.
+No further inference is authorized under that exhausted allowance.
+
+V179 remains the approved development baseline with its known failures. V187–V191
+are preserved experimental candidates; V191's remaining gate, unchanged fresh
+repeat and broader frozen-input qualification are incomplete. No Bootstrap
+meaning, original producer output, hierarchy, UI or owner message is changed.
+The task worktree is retained because native receipts, pinned producer paths
+and frozen experiment source bindings require it.

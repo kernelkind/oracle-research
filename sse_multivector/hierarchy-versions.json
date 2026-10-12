@@ -7,6 +7,34 @@
       "artifact_path": "target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json",
       "sha256": "853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae",
       "family": "Canonical"
+    },
+    {
+      "version_id": "HR04",
+      "identity": "b7c7512b6ea5031a4a70af05c8a5cb127ac4ff7d38b5de28c0028ca1f79575d7",
+      "artifact_path": "target/hierarchy-hr04-twelve-note-v1/final/state.json",
+      "sha256": "f482553bd90d76b9b4eeac77ec0662419dd3387465d1dbc67d046c034cce19b7",
+      "family": "Canonical"
+    },
+    {
+      "version_id": "HR05",
+      "identity": "d87ac1e138f3c47a34a3f195d8f79d3f9cb320d341998e366a2062b5664e9752",
+      "artifact_path": "target/hierarchy-hr05-twenty-four-note-v1/HR05/state.json",
+      "sha256": "2c660067560b80055fafd33a97d9fa49ef5861b5daae829f8f9edc9b52abd8e3",
+      "family": "Canonical"
+    },
+    {
+      "version_id": "HR06",
+      "identity": "61a267a2e322f0399b2f2d4686f479d502772c4dbe1c9eefeea2f14410b33fac",
+      "artifact_path": "target/hierarchy-v88-eight-note-v1/selection-04/state.json",
+      "sha256": "a8a508e4282169dbc9ffc8615bfb647115f6c4671408e60edd3006a13f18a547",
+      "family": "Canonical"
+    },
+    {
+      "version_id": "HR07",
+      "identity": "354f54f5c4c2f40598c7e378a7cff5d4668698a4812d9df4d050bb5f7afca4e3",
+      "artifact_path": "target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/state.json",
+      "sha256": "fd3e5b8e3831a7952dc66de0686a1383c3fb1e9ff07dcbbc1fdb275740cc22f8",
+      "family": "Canonical"
     }
   ]
 }

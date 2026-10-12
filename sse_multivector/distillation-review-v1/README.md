@@ -3,6 +3,14 @@
 **Approved direction:** qualify a
 [focused coverage search and per-check reasoning settings](#eight-hour-review-direction-approved-october-11)
 for the full 1,800-output evaluation within eight hours of model generation.
+The payment-specific example versions are **withdrawn**; unchanged DCSv1 and
+DSLv10 remain the experimental baselines. The [fresh development trial](#fresh-development-after-example-withdrawal-october-11)
+uses different validation posts. The original sixty-answer selection is
+retained as development/regression and workload evidence; its exposure during
+prompt development prevents a claim of unseen-note accuracy. Reserved pilot
+test data remains unopened. A separately reserved assessment is needed for
+independent final accuracy; no replacement final selection is drawn here.
+
 The approved **DCSv1** wording completes a
 [four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):
 38 searches generate in approximately 118 seconds, with **34 accepted complete
@@ -23,6 +31,32 @@ is corrected after independent reassessment. All twelve complete outputs are
 accepted, with seven saved DSLv10 witness responses reused and no new semantic
 error found. Generation takes approximately 72 seconds. These exposed controls
 establish repeat consistency, not broad qualification.
+
+The [four additional-note trial](#dcsv1-four-additional-notes-october-11)
+completes 24 new coverage searches: 22 complete outputs are accepted and two
+remain unresolved, including a search/verification disagreement over gas fees
+beneath Payments. Preflight catches and corrects external uncertain-edge
+omissions before their affected inputs run. DCSv1 and full runtime remain
+unqualified.
+
+The [focused payment diagnostic](#payment-type-disagreement-diagnostic-october-11)
+repeats the exact disputed pair: DCSv1 again selects Payments, while unchanged
+DSLv10 reverses its earlier rejection and accepts. Four surrounding controls
+pass complete-output audit. A trusted training Payments/price edge supplies
+the interpretation evidence for accepting the gas-fee pair; the earlier DSL
+category exclusion is too narrow. Fresh agreement itself establishes neither
+correctness nor repeat reliability.
+
+The subsequently authorized [trusted payment example trial](#trusted-payment-example-prompt-trial-october-11)
+adds the same short precedent to experimental DCSv2 and DSLv11. All six
+complete outputs pass independent audit, including the payment pair and
+positive/negative controls. Generation takes 49.47 seconds with one recovered
+provider retry. This focused pass does not establish broader accuracy or
+consistency; production defaults remain unchanged.
+The user subsequently withdraws these example-bearing versions: the unchanged
+baseline already passed the same six cases, so no benefit was demonstrated.
+The frozen trial is retained as regression evidence, not as the current prompt
+direction or an independent accuracy test.
 
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -5729,6 +5763,712 @@ and cache-prefix parity. This small development-exposed repeat leaves unseen
 negative-search reliability, per-check reasoning qualification, interpretation
 uncertainties and the eight-hour full-evaluation target open. The final sixty
 are not rerun.
+
+## DCSv1 four additional notes (October 11)
+
+The user approves four more notes from the frozen sixty, testing new coverage
+inputs with the current mechanical reductions and unchanged DCSv1 at Sol/xhigh.
+These answers have prior matching/actual-edge receipts from the completed
+24-note panel, but none has supplied a previous DCS search. All three exact-hash
+complete-output premise audits are bound before preparation.
+
+| Saved answer | Domain | Residual searches | Candidates before audit correction |
+| --- | --- | ---: | ---: |
+| `M03-checkpoint-200-N0033` | Agent Trust Layer, AI agents and payments | 9 | 14–18 |
+| `M03-checkpoint-800-N0008` | Noem, ICE shooting and Mamdani | 8 | 3–10 |
+| `M02-checkpoint-600-N0036` | NGP battery investment and AI power demand | 5 | 2–7 |
+| `M01-checkpoint-1000-N0060` | Axios hijacking and possible computer compromise | 2 | 5–7 |
+
+Pre-call source-first assessments expect null on twenty-two cases. Noem `015`
+retains uncertainty over whether the newspaper type preserves Sources. NGP
+`002` retains root uncertainty over whether an investment-business type
+preserves broad Investments. Baseline verdicts are diagnostic, not gold.
+These are agent assessments, not human-confirmed labels; any post-call label
+correction must remain explicit.
+
+Preparation preflight finds a violation of the existing approved omission rule:
+three Agent Trust Layer actual edges (`3.1`, `4.1`, `7.1`) have exact-hash
+external uncertainty, but the candidate filter consults only native reviews.
+Five inputs depend on those omissions: `002`, `008`, `009`, `012`, `017`.
+Nineteen unaffected searches proceed in frozen native groups while a separate
+worktree corrects the filter to retain disputed descendants. The five affected
+inputs require fresh preparation and source-first assessment before calls.
+The current preflight verifies all 82 positive self guards, 92 other accepted
+omitted edges, exact wording/context aliases and source/post bindings.
+Prompts and semantic criteria remain unchanged.
+
+### Corrected preparation and completed trial
+
+The filter now uses the existing exact input/output/check audit binding for
+actual student edges as well as matching premises. Hash-bound rejected or
+uncertain external assessments, including decision/explanation error flags,
+prevent descendant omission. The original native-review veto, including stale
+review conservatism, is preserved. Otherwise-positive edges do not acquire a
+new requirement for an explicit acceptance. Disputes are indexed once per answer.
+The minimal native-CLI regression first fails for rejected and uncertain edges;
+the corrected implementation and identity/error-flag controls pass with the
+related regressions: **20 tests total**. Source fix: `75ab47c0`.
+
+All three disputed edges remain represented. Across the four notes, all **82
+self guards** and **92 remaining unique omitted edges** have accepted evidence.
+All 246 original candidate wordings, ordered contexts and posts retain parity.
+Four affected inputs restore uncertain occurrences through exact aliases;
+only Agent Trust Layer `017` changes its rendered input, from 18 to **19
+candidates**. The other 23 inputs, settlements and self guards stay identical.
+Final totals are 247 candidates, 154 alias occurrences and 518 omitted occurrences.
+The five corrected inputs receive independent source-first reassessment before
+their calls; unsafe original preparations make no calls.
+
+All **24 searches** complete on first attempts: 22 return null and two return
+witnesses. Final independent full-output assessment accepts **22** and leaves
+**two unresolved**, with no established model error. The 21 unchanged clear
+pre-call null expectations pass; New York Times beneath Sources is resolved as
+a valid newspaper/information-source type without importing attribution to a
+particular story. NGP `002` remains uncertain about a private-equity firm's
+intrinsic investment-business type beneath Investments.
+
+Both witnesses receive unchanged DSLv10 checks through **two exact saved-response
+reuses and zero new verification calls**. Sources/New York Times returns true.
+Agent Trust Layer `009` returns Payments for the low-gas-fee Base L2 report
+subject, but the reused verifier returns false: it distinguishes network
+charges/rates from payment subject matter without requiring a completed payment.
+The search's payment-type argument is supported by the
+[Ethereum gas definition](https://ethereum.org/developers/docs/gas/), which
+describes gas fees as payment for computation. That definition is interpretation
+evidence, not a new restriction or an automatic AS verdict. The charge/rate
+versus payment interpretation remains unresolved; disagreement is not itself
+proof of which model response is wrong. Rejecting this witness operationally
+does not prove every other candidate invalid. Earlier expectations and all
+provisional assessments/acceptances remain in the native review history.
+
+Native accounting reconciles **29/104 attempts**: 24 fresh searches and five
+eligible warmups, no retries or failures. The first nineteen generate in
+97.21 seconds and the corrected five in 78.64 seconds; a 58.73-second gap for
+the corrected preparation separates them. The full generation clock span is
+**234.58 seconds**, with 175.85 seconds in those two generation phases.
+Mean search service time is 38.23 seconds; maximum admission wait is 0.311
+seconds. Fresh cached input is **15,232 of 53,881 tokens (28.27%)**; thirteen
+searches receive hits. Fresh API-equivalent cost is $0.4923852 and estimated
+net caching savings are $0.0051168 (1.03%), including warmups. Historical
+verification generation is separate from these fresh API-equivalent estimates.
+
+Native experiments, reviews, scheduling and usage reports remain ignored under
+`oracle-mvp-review-coverage-new-four/target/distillation-review-v1/coverage-new-four/`
+and the source-bound corrected preparation under
+`oracle-mvp-review-coverage-edge-audits/target/distillation-review-v1/coverage-edge-audits/`.
+Both experiment worktrees stay frozen; integration uses a separate checkout.
+This trial establishes neither unseen accuracy nor the eight-hour full-corpus
+target. Prompts, reasoning levels and the final sixty-answer validation remain
+unchanged. The subsequent focused diagnostic below adjudicates the payment
+interpretation; the reviewer's verdict instability remains to address.
+
+## Payment-type disagreement diagnostic (October 11)
+
+The user authorizes investigating the exact gas-fee/Payments disagreement before
+expanding the panel. Source-first independent assessment and prompt/input audit
+find the same parent-child direction, original post and ordered teacher rows in
+both requests. Both prompts quote the same AS rule and permit type meanings
+without requiring a completed payment. The disputed boundary is whether a
+network-fee level preserves the broad payment category, rather than a missing
+post, reversed comparison or expressed occurrence restriction.
+
+Two exact fresh requests use native `prepare --from --only --repeat` with
+unchanged **DCSv1** and **DSLv10**, preserving all input bytes, rendered wording,
+settings, schemas, cache identities and source bindings. The original DCS prefix
+is eligible at 1,203 estimated tokens and remains cached. The DSL request keeps
+its original uncached configuration. Four separate authored DSLv10 controls
+have independently assessed expectations frozen before calls; they are not
+saved teacher/student generations, and post support is unassessed.
+
+| Parent | Child | Pre-call expectation | Fresh verdict / full-output assessment |
+| --- | --- | --- | --- |
+| Cables | Cable lengths | Valid; explicit ASv6.100 example | True / accepted |
+| Payments | Low payment amounts for blockchain processing | Valid; preserves explicit payment type without a completed event | True / accepted |
+| Payments | Fast growth on Base L2 | Invalid; shared domain does not preserve payment type | False / accepted |
+| Payments made on Base L2 | Low gas fees on Base L2 | Invalid; the expressed payment occurrence is absent | False / accepted |
+
+The exact original child remains `Fast growth and low gas fees on Base L2 in the
+market snapshot of Persisto's 2026-07-03 05:40 UTC report`, beneath `Payments`.
+DCS again returns candidate `15`. Fresh DSL returns **true**, reversing its
+earlier exact-input **false**. Its new explanation interprets gas fees as amounts
+paid or payable for computation, whereas the earlier explanation separates
+charges/rates from payment subject matter. Neither explanation requires proof
+of a completed payment. This is demonstrated exact-input judgment instability;
+the two-call history is not an estimate of its population error rate.
+
+The input-only assessment initially favors validity, while both new exact
+outputs receive provisional attributed uncertain reviews. The four controls
+test surrounding distinctions but cannot establish fee/category equivalence.
+A subsequent source-only lookup therefore inspects actual immediate edges in
+the **1,000 trusted training answers**, leaving validation/test files unopened.
+It finds this directly relevant ASv6.100 precedent at training line **703**:
+
+| Teacher number | Subject | Context |
+| --- | --- | --- |
+| 10 | Payments | The price, payment instruction, and post-payment reply instruction establish payment subjects. |
+| 10.1 | 2 USDT price for the author's quick code-review service | “2 USDT quick code review” states the amount charged. |
+
+The exact ASv6.100 prompt is present in that training row. Two independent
+readers and the root verify the direct edge and source bindings. Training note:
+`80c4d216a15350af9a4bfdb2d11d3ed52693c557057bfdd13b8a7a9a6852f4d1`.
+Source is canonical `target/distillation-pilot-v1/pilot-data-asv6.100-20261004/prepared/train.jsonl`.
+File SHA256 is `f166371c5051b2ea95eb9591510544ade59ef8b1ef3b94826ed4baab92d1e681`;
+teacher-answer SHA256 is `05e49e9c5e515bfa3998112596d5fd1537de7140ee8dddc8e462217b698a6039`;
+line SHA256 excluding newline is `991c79812ad1bc238b3e4f12529b50429df3ef51af519252767a6dbcac4fbcd0`.
+No direct gas-fee precedent appears in this bounded training scan; absence
+establishes no negative verdict and an exact lexical match is not required.
+
+The trusted edge establishes that **Payments can include a payable service
+price/amount charged**, without borrowing the post's payment instructions or
+asserting an executed transfer. The
+[Ethereum gas definition](https://ethereum.org/developers/docs/gas/) establishes
+gas fees as payment amounts for computation. The exact gas-fee child preserves
+this payment category; low amount, Base L2, growth and the dated report add
+restrictions without removing it. ASv6.100's explicit Cable lengths/Cables
+example also permits property wording retaining its object's type.
+
+On that source evidence, the root and independent assessments adjudicate the
+**exact pair valid** and accept both new complete outputs. The earlier DSL
+exclusion of charges/rates is too narrow for this established payment meaning:
+it is a substantive category error, separately from the demonstrated verdict
+flip. This conclusion follows trusted precedent plus semantic interpretation,
+not model votes or a new blanket exemption for fees. Native final agent
+acceptances are appended to both exact experiments, preserving provisional
+uncertainty. Both historical and final records remain current by their hash
+bindings; no review-precedence policy changes. All four controls have current
+agent acceptances. Earlier frozen reviews and the four-note trial's saved
+22 accepted/two unresolved aggregate remain intact; this subsequent case
+adjudication resolves the payment interpretation while NGP remains uncertain.
+These are agent assessments, not new human gold or broad qualification.
+
+Native `summarize-experiments` validates all three completed groups: **seven
+fresh calls**, six verdicts and one DCS warmup, with no retries, failures, reuse
+or missing usage. The generation span is **58.39 seconds**. Cached input is
+5,632 of 12,840 tokens (**43.86%**, including warmup); only the DCS verdict has a
+comparison cache hit. Fresh API-equivalent estimate is **$0.0848892**, with
+estimated net caching savings **$0.0047688 (5.32%)**, including warming. These
+are subscription API-equivalent estimates, not cash charges. Native shared
+queue capacity remains thirty; no external concurrency setting is introduced.
+
+Artifacts remain ignored under
+`oracle-mvp-review-payments-diagnostic/target/distillation-review-v1/payments-diagnostic/`.
+No prompt, semantic rule, review precedence, reasoning default or final-test
+scope changes. The user subsequently authorizes supplying this trusted
+payment/price example to both prompts and rerunning the focused checks;
+the bounded trial is recorded below. Do not seek correctness
+through further unchanged votes.
+
+## Trusted payment example prompt trial (October 11)
+
+**Withdrawn after this trial.** The user approves removing the payment-specific
+example and testing the general AS instructions on fresh development cases.
+The four withdrawn prompt/revision files are removed from the current checkout;
+their frozen generation worktree and receipts remain intact. Historical
+source links below point to that retained worktree. The prior unchanged six-case
+repeat and this six-case trial both passed, so the example has no demonstrated
+benefit. Training examples remain a legitimate development technique; this
+decision does not adopt a ban on examples.
+
+The user authorizes adding the trusted payment/price example to both prompts
+and repeating the same focused six judgments. Native `revise` creates
+[DCSv2](../../../oracle-mvp-review-payments-example/sse_multivector/distillation-review-v1/coverage-search-prompt-v2.md) and
+[DSLv11](../../../oracle-mvp-review-payments-example/sse_multivector/distillation-review-v1/relationship-prompt-v11.md) with pinned base hashes and revision
+receipts. Apart from version IDs, each adds the same short teacher-example
+block outside the verbatim AS quotation. No other wording, input placeholders,
+response schemas or cache boundaries change. The exact new block is presented
+in conversation before inference. These are experimental versions for this
+bounded test, not replacements for deployed defaults.
+
+Fresh native preparations inherit the completed payment diagnostic's three
+groups: the original sixteen-candidate DCS search, the exact DSL witness pair
+and four authored DSL controls. Complete posts, subject strings, ordered
+teacher contexts, evidence and xhigh settings remain frozen. `--repeat` ensures
+six new verdict requests rather than answer reuse; an eligible new DCS prefix
+warms automatically. The original DSL configuration remains uncached.
+
+Pre-call expectations are fixed from the existing source adjudication:
+DCS returns Payments/candidate `15`; the exact DSL pair is true; the controls
+are true, true, false and false in their existing order. Inherited exact DSL
+evidence still records the earlier false expectation. That metadata is retained
+as history, not used as the current correctness label. The trusted price
+example is a training answer; no reserved final-test wording is opened.
+The unchanged prior prompts' fresh six-case diagnostic already passes these
+current expectations, while the older false receipt demonstrates the category
+error. This new trial can test focused regression, not establish an accuracy
+gain over the passing fresh baseline or resolve broader reviewer consistency.
+
+### Completed trial
+
+All six fresh complete outputs pass independent source-grounded agent audit:
+DCSv2 returns candidate **15**, DSLv11 accepts the original gas-fee pair, and
+the controls remain **true, true, false, false**. DSLv11 explicitly uses the
+trusted price example to interpret the broad payment category; it does not
+borrow an x402 relationship or assert a completed transfer. The negative
+controls continue to reject network growth alone and preserve the distinction
+introduced by Payments **made**. The DCS explanation also retains that
+distinction. Native current attributed acceptances bind complete decisions
+and reasons, not just matching Booleans.
+
+All six exact input maps, input hashes and original evidence retain parity
+with the prior trial. Settings stay Sol/xhigh/SSE with the same schemas and
+timeouts. Native preparation recomputes DCS's eligible prefix from 1,203 to
+**1,285 tokens** and binds a new key; DSL stays uncached. Native revision
+receipt verification reconstructs each complete new prompt from its pinned
+base, with only the version and example edits; placeholders and cache markers
+retain exact parity. Frozen code, prompt and receipt bindings pass final native
+inspection. The generation checkout is `e1a5c5a9`; later documentation does not
+alter that generation commit or its prompt definitions.
+
+Native `summarize-experiments` records **eight fresh attempts**: six successful
+verdicts, one DCS warmup and one failed cable-control request recovered through
+the runner's existing automatic retry. The failure is a temporary HTTP/2 socket
+closure, not a semantic error. No results are reused, and no case remains
+failed or unfinished. The generation span is **49.47 seconds**; final-verdict
+service time averages 29.69 seconds. The failed attempt has no token usage,
+so total API-equivalent cost, overall cache fraction and aggregate net caching
+savings are **unknown**, rather than zero. Known successful/warmup usage is
+12,262 uncached plus 1,152 cached input tokens and 6,198 output tokens, including
+5,258 reasoning tokens. The known API-equivalent subtotal is **$0.0866192**.
+DCS alone has complete usage: its single verdict receives a cache hit, but
+warming adds **$0.0029972** in net estimated cost for this one-case experiment.
+These estimates are not subscription cash charges or causal speed comparisons.
+
+Prompts and native artifacts remain bound to
+`oracle-mvp-review-payments-example/target/distillation-review-v1/payments-example/`.
+This worktree is retained for its frozen experiment paths. DCSv2/DSLv11 are
+tested on this exposed diagnostic only; deployed defaults, mechanical rules,
+review precedence, minimum reasoning qualification and the final sixty-answer
+test remain unchanged. NGP/Investments is the remaining uncertain case from
+the prior four-note trial. Its source interpretation should be settled before
+using that case to score a broader regression.
+
+## Fresh development after example withdrawal (October 11)
+
+The user authorizes withdrawing the added example and testing unchanged general
+AS instructions on fresh development cases, then requests an independent audit
+against current prompt-engineering practices. The example-free experimental
+baselines remain [DCSv1](coverage-search-prompt-v1.md) and
+[DSLv10](relationship-prompt-v10.md), with their prior bytes unchanged. Deployed
+defaults, mechanical rules, schemas, reasoning settings and review precedence
+remain unchanged. The payment-example generation worktree stays frozen.
+
+The independent audit finds that relevant training examples are standard prompt
+development, while zero-shot instructions should be tested first. Here both
+variants passed the exposed six, so the extra example has no measured benefit.
+The decisive limitation is adaptive reuse of development data, rather than the
+training split label of the inserted example. References:
+[OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices),
+[OpenAI graders guidance](https://developers.openai.com/api/docs/guides/graders),
+[evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+and [primary adaptive-analysis research](https://arxiv.org/abs/1411.2664).
+
+The same audit finds that DCSv1/DSLv10 already distinguish broad type meaning
+from an explicitly required occurrence; the earlier payment flip does not by
+itself establish a missing instruction. DCS negative/null errors require
+particular attention because positive witnesses receive a separate pair
+check, while enumerating every rejected candidate establishes record
+completeness rather than semantic correctness. Explanations still require
+complete-output audit; a schema cannot certify their reasoning. DSLv10's
+evidence-before-decision instruction and the shared schema's `valid`-before-
+`reason` order are a contract issue to investigate, not a demonstrated cause
+or an authorized schema change. Finally, candidate counts and repeated context
+affect tokens, service time and auditing effort even when call count falls.
+These findings authorize no additional prompt, schema or workflow changes.
+
+The original sixty-answer selection contains **54 distinct validation posts**.
+All sixty have matching/support development results; relationship development
+and prompt revisions also used this panel. Neither the whole sixty nor a
+remaining answer subset is certified untouched by counting unrun DCS cases.
+Keep its frozen identities and receipts as regression/process evidence. A
+fresh reviewer-development sample and a later independent final assessment
+have different roles; this task does not resample or open reserved pilot tests.
+
+Read-only selection identifies **19 validation posts** outside the original
+panel's note IDs and all maintained saved-generation development definitions.
+Four varied posts supply eight initial actual student parent-child pairs and
+two additional negative pairs from other saved versions of the same posts,
+for **ten** requests. Selection is a purposive development diagnostic, not a
+representative accuracy sample. Pre-call labels are six true, two false and
+two unresolved; no output is used to choose or label them. Existing
+`distillation_verdict` schema-2 preparation verifies saved generation hashes,
+AS provenance, actual immediate edges, original posts and trusted context rows.
+Pre-call independent assessments are frozen separately from model answers;
+unresolved cases retain null expectations rather than forced labels. This
+bounded DSLv10 test probes the AS relationship rule shared with DCSv1. It does
+not exercise DCS candidate search or complete coverage preparation: no pristine
+matching/self-guard snapshots outside the old panel were found, and their
+prerequisites are not fabricated. No prompt wording is changed in response to
+these new cases.
+
+### Completed fresh DSLv10 trial
+
+| Case | Actual parent → child | Frozen expectation | Model verdict | Complete-output assessment |
+| --- | --- | --- | --- | --- |
+| N13a | Test notes → Test note from the author's new identity | True | True | Accepted |
+| N13b | Nostr → Greeting to Nostr | True | True | Accepted |
+| N25a | Santa hats → The author's Santa hat | True | True | Accepted |
+| N25b | Time required for acquisition → The author's eventual acquisition of a Santa hat after some time | True | True | Accepted |
+| N47a | Cloudflare's claim that they implemented Matrix on Cloudflare workers → Cloudflare's false claim that they implemented Matrix on Cloudflare workers | True | True | Accepted |
+| N47b | Implementation of Matrix on Cloudflare workers → Non-implementation of Matrix on Cloudflare workers | Unresolved | True | Uncertain |
+| N75a | Bitcoin treasury companies → Bitcoin treasury companies characterized as clowns | True | True | Accepted |
+| N75b | Clowns → Bitcoin treasury companies characterized as clowns | Unresolved | True | Uncertain |
+| N25c | Author's current possession of a Santa hat → Some time taken by the author to acquire a Santa hat | False | False | Accepted |
+| N47c | Social-media engagement metrics → 38 points | False | False | Accepted |
+
+All **eight resolved expectations** pass independent complete-output audit;
+the two pre-call uncertainties remain separate, with no established model
+error or post-call label correction. N47b retains the activity-topic versus
+negated-action boundary; N75b retains the figurative characterization's referent
+and type boundary. The model's true verdicts do not establish their gold labels.
+The negative cases correctly reject loss of **current possession** and loss of
+the **social-media engagement** qualification. No hypothetical change to the
+fixed author's facts is needed. All ten outputs have current attributed native
+agent reviews: eight acceptances and two uncertainties. These are agent
+assessments, not user-confirmed gold or a population accuracy estimate.
+
+The four source posts are validation indices **13, 25, 47 and 75**. The first
+eight pairs retain exact inputs and input hashes from their unlabeled native
+preparation; the two negative cases come from other saved versions of the
+same four posts. Note IDs overlap neither the original panel's 54 notes nor
+the 39 notes in maintained saved-generation development definitions. The
+ignored exposure proof binds both exclusion sources and their hashes. Native
+preparation verifies all ten real immediate edges and complete source inputs;
+none is mechanical or reused. The final definition freezes six true, two false
+and two unresolved labels before inference. Earlier prototype preparations
+make zero calls and are excluded from accounting.
+
+The single used experiment, `dsl-final`, completes **ten fresh calls** with no
+retries, failures, warming, cache hits or missing usage. The default natural
+prefix is **76 tokens**, below the 1,024-token warming threshold, so explicit
+prefix caching is disabled. Native run duration is **106.45 seconds**; all ten
+requests are admitted within 76 ms, with maximum worker admission wait of
+108 ms. Mean model service is 39.03 seconds and median 27.66 seconds; the
+longest case is the unresolved N47b. Observed work is 13,813 input tokens and
+13,684 output tokens including 11,950 reasoning tokens. Complete native
+API-equivalent estimate is **$0.164466**, not subscription cash charges.
+
+Generation sources are frozen at `cd01aaa4` in
+`oracle-mvp-review-fresh-development`; artifacts remain ignored under
+`target/distillation-review-v1/fresh-development/`, including the final source,
+native reviews, exposure proof and one-group usage summary. The worktree is
+retained for source bindings. DCSv1/DSLv10 hashes and all production code remain
+unchanged. This small, purpose-selected sample tests the shared relationship
+rule only; it qualifies neither DCS null-search reliability, broader accuracy,
+minimum reasoning effort nor full-evaluation runtime. The subsequent native
+coverage diagnostic below adds genuine matching/self-guard prerequisites and
+complete-output audit of every null.
+
+### Native coverage diagnostic with genuine prerequisites
+
+The user approves the next small DCSv1 negative-search trial. Native sampling
+freezes two answers with seed `fresh-dcs-20261011-495` and a separate positive
+answer with seed `fresh-dcs-positive-20261011-82`; counts are respectively
+two and one random answers, with no hard cohort. Seeds are selected from saved
+source structure, without reviewer outputs. These are purposive development
+cases. All selected posts exclude the original sixty's 54 note IDs and the
+39 notes in maintained prior-source definitions. The initial N75 answer is
+source-assessed but receives no calls: Trust/Trustworthiness remains uncertain
+and it provides no resolved positive placement control. N13 was exposed to
+the preceding DSL trial; N53 was absent from that four-post trial. Neither
+selection is a representative or independently reserved accuracy sample.
+
+Pre-call native assessments retain every distinct trusted teacher subject as
+required, grouping only identical wording. Production evaluation preparation
+binds actual saved generations, ASv6.100, complete posts and context rows.
+Generic native `run` executes complete matching and only necessary self guards;
+support and unrelated relationship comparisons remain unrun. Unrun actual
+edges cannot license descendant omission. All model premises used by the
+selected searches receive full-output agent audit before coverage snapshots
+are frozen; exact trusted wording supplies mechanical premises.
+
+| Saved answer | Genuine prerequisites | Selected DCS result | Independent full-output audit |
+| --- | --- | --- | --- |
+| `M02-checkpoint-800-N0013` | Eleven complete matching occurrences: six mechanical, three fresh distinct calls and two duplicate reuses. Eight positive self guards: six mechanical, one fresh distinct call and one duplicate reuse. | Seven null searches; the eighth required meaning, the complete greeting, settles `no_full_match`. | All seven decisions and all 44 candidate rejection reasons accepted. |
+| `M01-checkpoint-200-N0053` | Eighteen complete matching occurrences: seven mechanical, eight fresh distinct calls and three duplicate reuses. Target Songs match/self guard are exact mechanical positives. | Teacher Songs has its only full match at student `2`; DCS returns student `1`, Music, as the missing compatible placement. | Correct witness and explanation accepted; separate unchanged DSLv10 accepts Music → Songs. |
+
+The second answer supplies the positive control absent from the first sample.
+General Songs occurs separately from Music; Music's descendants name particular
+song/action meanings rather than an equal-meaning Songs copy. Music has no
+teacher match, and no uncovered candidate supplies a trusted mechanical
+relationship for Songs, so this search survives earlier settlement rules.
+Its other fifteen teacher compatibility sets remain unscored; Tours and News
+matching interpretations retain their pre-call uncertainties. Only the Songs
+DCS case is dispatched. The pre-assessed witness verifier runs concurrently
+in a separate native experiment. Original prerequisite results and reviews
+remain frozen, and both coverage snapshots validate after all audits.
+
+All **eight selected DCS decisions and complete explanations pass** independent
+agent audit: seven correct nulls and one positive, also verified by DSLv10.
+Native accounting records **22 fresh attempts**: eleven matching calls, one
+semantic self guard, eight searches, one witness verifier and one prefix
+warmup. Six duplicate occurrence reuses add no calls. There are no failures,
+retries or missing usage. Input is **27,185 tokens**; output is **12,167**,
+including **8,981 reasoning tokens**. Complete API-equivalent cost is
+**$0.17604**, with no subscription cash charge. The accounting report retains
+70 deliberately unrun comparisons in the original self-guard experiment and
+therefore marks that broader experiment incomplete; it does not certify a
+complete three-check evaluation.
+
+The seven-case DCS prefix is eligible at 1,067 tokens and warmed, but receives
+**zero cached tokens**. Warming adds $0.00495 to the estimate, producing net
+savings of **−2.89%** across the trial. The one-case positive prefix is eligible
+at 1,177 tokens; its one-attempt allowance prioritizes the comparison and
+skips warming. Native scheduling records **150.743 seconds** in the union of
+run invocation intervals and **724.576 seconds** from the first run's start to
+the last finish; source selection, assessment and audit between stages explain
+the difference. Those intervals do not include preparation before the first
+run or final documentation work.
+
+Artifacts, native reviews, exposure proof, immutable selections and usage
+summary remain ignored under
+`oracle-mvp-review-fresh-dcs/target/distillation-review-v1/fresh-dcs/`.
+Generation source is `c662a7ab`; subsequent main synchronization leaves bound
+review code and prompt bytes unchanged. Retain this worktree for source
+references. DCSv1/DSLv10, schemas,
+production defaults and review precedence remain unchanged. This bounded
+test finds no search error; one resolved positive cannot establish a low
+false-null rate on diverse data, minimum reasoning effort or full-run timing.
+The following high comparison reuses these frozen mixed controls, preserving
+uncertainties and complete-output scoring.
+
+### High comparison on the frozen coverage controls
+
+The user approves the faster comparison after asking to reduce iteration
+overhead. Native `prepare --from --reasoning-effort high --repeat` reuses the
+seven negative DCS inputs, the positive Songs/Music input and its DSLv10
+verifier. Exact case IDs, inputs, prompt bytes and model retain parity with
+xhigh; original premise snapshots, source expectations and results stay
+frozen. All three new groups run concurrently through the shared queue.
+
+Independent complete-output audit accepts **all nine high verdicts**: seven
+correct nulls and their 44 candidate explanations, the Music witness, and the
+positive DSL verdict. There is **no observed substantive degradation** on
+these controls. Only DCS and this one DSL pair are retested; matching premises
+remain the frozen xhigh/mechanical results. This is development evidence,
+with one positive search, rather than a minimum-effort qualification across
+all checks or diverse data.
+
+| Native matched accounting | Xhigh | High |
+| --- | ---: | ---: |
+| Fresh attempts, including one warmup | 10 | 10 |
+| Input tokens | 16,257 | 16,257 |
+| Cached input tokens | 0 | 0 |
+| Output tokens, including reasoning | 6,937 | 3,003 |
+| Reasoning tokens, already in output | 4,487 | 634 |
+| API-equivalent cost | $0.101884 | $0.062544 |
+
+High costs **38.61% less** for these exact requests; neither run has retries,
+failures, reuse or missing usage. The concurrent high run span is **23.106
+seconds**, including warming. The xhigh groups were run in separate stages,
+so their overall elapsed span is not a controlled latency comparison. Eligible
+seven-case caching still produces no hits; its high warmup adds $0.00370.
+The one-case positive skips warming under the same allowance policy.
+
+Native groups, attributed reviews, scheduling evidence and matched native
+usage summaries remain ignored under `fresh-dcs/high/` and its parent in the
+retained task worktree. Documentation verification and source bindings pass;
+prompts, schemas and production defaults stay unchanged. The following medium
+comparison uses the same frozen controls before any panel expansion.
+
+### Medium comparison on the frozen coverage controls
+
+The user approves medium on the same nine cases. Native fresh preparations
+inherit the high groups, preserving exact inputs, prompts, schemas, model,
+source judgments and cache policy; only reasoning effort changes. The three
+groups run concurrently. Independent full-output audit accepts **all nine
+verdicts**, including every one of the 44 null-candidate reasons. No
+substantive decision or explanation degradation is observed versus high or
+xhigh on this panel.
+
+Native accounting records **ten fresh attempts**, including one warmup, with
+no reuse, retries, failures or missing usage. Input remains **16,257 tokens**;
+output is **2,316 tokens**, including **41 reasoning tokens**. API-equivalent
+cost is **$0.055674**, **45.36% below matched xhigh** and **10.98% below high**.
+The concurrent run span is **19.054 seconds**, including warming. Cached
+input remains zero; the warmup adds $0.00289. Native results, current agent
+reviews and usage evidence remain ignored under `fresh-dcs/medium/` and its
+parent in the retained task worktree.
+
+Medium passes these limited controls.
+Matching premises still use xhigh/mechanical results; broader matching,
+support and diverse-data qualification remain open. Prompts, schemas and
+production defaults stay unchanged. The following low comparison completes
+the planned effort descent on these same frozen cases.
+
+### Low comparison on the frozen coverage controls
+
+The user approves low on the same nine cases. Native fresh preparations
+inherit the medium groups with exact input, prompt, schema, model, source
+judgment and cache-policy parity; only reasoning effort changes. Three groups
+run concurrently. Independent full-output audit accepts **all nine verdicts**
+and all **44 null-candidate explanations**, without substantive degradation
+versus xhigh, high or medium.
+
+Native accounting records **ten fresh attempts**, including one warmup, with
+no reuse, retries, failures or missing usage. Input remains **16,257 tokens**;
+output is **2,243 tokens**, including **42 reasoning tokens**. API-equivalent
+cost is **$0.054944**, **46.07% below matched xhigh** and **1.31% below medium**.
+The concurrent run span is **18.087 seconds**, including warming. Cached
+input remains zero; the warmup adds $0.00290. Native results, current agent
+reviews and usage evidence remain ignored under `fresh-dcs/low/` and its
+parent in the retained task worktree.
+
+Low is the lowest passing effort tested on this small panel. Its small
+additional saving versus medium does not establish equivalent reliability
+on harder cases. Matching premises still use xhigh/mechanical results;
+matching, post support and broader relationship/search qualification remain
+open. Prompts, schemas and production defaults stay unchanged. The following
+four-note diagnostic expands the selected placement and restriction checks.
+
+### Four-note expansion and step back to medium
+
+The user approves a four-note trial with harder positive and negative cases.
+To keep iteration bounded, native preparation reuses existing audited xhigh
+DCSv1/DSLv10 inputs and source judgments from four complete saved answers;
+this is a **targeted 20-judgment regression**, not a complete evaluation of
+every subject in those answers. The original sixty are development-exposed,
+and no new selection or reserved-test content is introduced.
+
+| Saved answer | Selected coverage searches | Additional DSL checks |
+| --- | --- | --- |
+| `M01-checkpoint-200-N0054` | Five ETF meanings with a valid Markets witness. | Five exact witness pairs. |
+| `M02-checkpoint-200-N0015` | Sisters beneath Girls and women. | Its witness pair and actual Body parts → The body edge, expected false because the child omits the part-of restriction. |
+| `M01-checkpoint-600-N0017` | Two negatives and Peacock streaming service beneath Television. | Exact Peacock/Television witness pair. |
+| `M01-baseline-N0076` | Three NFT-related negative searches. | None. |
+
+Exact source case IDs, inputs, prompt bytes, schemas and model retain parity.
+The twelve searches have **seven established positive and five negative
+judgments**; seven DSL witnesses are true and the actual whole-body edge is
+false. Peacock's corrected positive interpretation was established before
+this trial. Older false/null expectation metadata and provisional uncertainty
+remain preserved; automatic agreement with that metadata is not the semantic
+score. Existing native matching/self-guard snapshots remain frozen at xhigh
+or mechanical results. Matching and post support are not retested here.
+
+Low passes **19/20** full-output audits: **11/12 searches** and **8/8 DSL
+checks**. It incorrectly returns null for Peacock streaming service despite
+the valid Television candidate. Its explanation adds a requirement for
+specific television content or activities and uses film offerings to exclude
+the fixed TV-distribution service. The simultaneous low DSL correctly accepts
+that pair; that agreement does not itself settle truth. The already-established
+source interpretation supplies the error judgment. One weak non-review-post
+illustration in another otherwise-sound rejection is caveated in native review,
+with its valid missing-review-subject restriction retained as the basis.
+
+The **five-percentage-point loss** exceeds the user's approved two-point
+allowance, so further low expansion stops. Under the standing step-up policy,
+the exact same twenty cases run at medium immediately. Independent complete
+output audit accepts **20/20**, including the corrected Television witness;
+the weak illustration remains caveated. This is the lowest passing effort on
+this expanded panel, not a general reliability or deployment qualification.
+
+| Native accounting | Low | Medium |
+| --- | ---: | ---: |
+| Fresh attempts, including three warmups | 23 | 23 |
+| Input tokens | 35,442 | 35,442 |
+| Cached input tokens | 4,096 | 4,096 |
+| Output tokens, including reasoning | 4,948 | 5,738 |
+| Reasoning tokens, already in output | 819 | 1,790 |
+| API-equivalent cost | $0.1207736 | $0.1286736 |
+| Concurrent run span, including warming | 27.871 s | 26.054 s |
+
+Eight independent groups run together at each level. Both runs have no
+retries, failures, reuse or missing usage. Four of twenty comparison requests
+receive cache hits; warmup overhead still yields negative net savings of
+$0.0011036 at low and $0.0021636 at medium. Single-case groups prioritize the
+comparison and skip warming. Both levels' outputs, current native reviews,
+scheduling and usage summaries remain ignored under `fresh-dcs/low-four/`,
+`fresh-dcs/medium-four/` and their parent in the retained worktree. All protected
+source hashes pass. Prompts, schemas, review precedence and production defaults
+stay unchanged. The following trial tests matching and post support at medium
+on these same four answers before increasing note count.
+
+### Medium matching and support on the same four answers
+
+The user approves DSMv3 matching and DSSv2 post support at medium on the same
+ETF, family, television and NFT answers. Native preparation preserves all
+244 occurrences, exact inputs, prompt bytes, schemas, model and cache settings.
+Without `--repeat`, **58 trusted mechanical decisions** require no inference;
+the other 186 occurrences use **90 distinct semantic calls** and **96 duplicate
+reuses**. Independent groups run concurrently through the shared queue.
+
+Frozen source audits supply expectations, including the established corrections
+for financial Speculation and digital Posting. Original expectation metadata
+remains unchanged: raw agreement with its obsolete null labels is not the
+correctness score. Five distinct matching interpretations remain unresolved:
+family Girls and women/Girls, two television review-scope inputs, and NFT
+Digital. They are excluded from the resolved-decision denominator at every
+effort. YouTube matching has a resolved null decision but retains a separate
+platform/media explanation uncertainty.
+
+| Medium check | Resolved semantic decisions correct | Unresolved interpretations |
+| --- | ---: | ---: |
+| Matching | 39/40 | 5 |
+| Post support | 45/45 | 0 |
+
+Medium incorrectly returns null for television **Posting**, reasoning that
+Post sharing adds a narrower restriction. The frozen source interpretation
+already establishes their same general digital activity in this context;
+DSMv3 permits using the post to interpret the supplied wording. Matching's
+**2.5-percentage-point loss** exceeds the approved two-point allowance. Under
+the standing step-up policy, expansion at medium stops for matching and the
+same five matching groups run at high. Support retains its passing medium
+evidence. No prompt or source-label change is introduced.
+
+Native medium reviews cover all ninety distinct semantic outputs: **83 accept,
+one reject and six uncertain**. Five uncertainties concern interpretations;
+the sixth concerns the correct YouTube null explanation. All mechanical
+proofs, duplicate output identities and protected source bindings pass.
+The nine groups finish in **24.625 seconds**, with **91 fresh attempts**
+including one eligible family-matching warmup and no retries, failures or
+missing usage. Native accounting records 70,061 input tokens, 13,824 cached
+input tokens and 5,221 output tokens including 1,106 reasoning tokens.
+API-equivalent cost is **$0.1937144**; twelve comparison requests receive
+cache hits. Net savings including warming are **$0.0230096 (10.62%)**.
+Support has no eligible warmed prefix and receives no cached tokens.
+
+Artifacts and exact-output-bound reviews remain ignored beneath
+`fresh-dcs/medium-matching-support/`, with native usage reports in its parent.
+This is a development regression on four exposed answers, not unseen-data
+accuracy or a complete coverage/relationship rerun. Production defaults stay
+unchanged; frozen references require retaining the task worktree.
+
+### High matching step-up on the same four answers
+
+Only matching steps up. Native `--from` preparations retain the same 122
+occurrences, DSMv3, exact inputs, mechanical proofs and cache policy. All
+**40 resolved semantic matching decisions are correct** at high; the five
+pre-existing interpretation uncertainties remain unscored. Posting now matches
+T11 Post sharing, with a sound general-activity explanation and no added
+content or destination restriction. Financial Speculation retains its accepted
+T10 match. No source labels or original audit records are rewritten.
+
+Full-output reviews are **37 accept and eight uncertain, with no rejects**.
+Besides the five interpretation uncertainties, three correct NFT null
+decisions retain explanation-only caveats: YouTube/platform versus media,
+YouTube URLs/links versus media, and an unestablished video-presence premise
+for YouTube video links. The latter two were accepted at medium; high is not
+uniformly better on explanations. These caveats remain visible and are not
+converted into passing full-record audits or false decision errors.
+
+All five groups complete concurrently in **25.040 seconds**. The 29 mechanical
+occurrences use no inference, and 48 duplicate occurrences reuse exact fresh
+outputs. Native accounting records **46 attempts**, including one eligible
+warmup, with no retries, failures or missing usage: 38,798 input tokens,
+8,064 cached input tokens, and 4,076 output tokens including 1,865 reasoning
+tokens. API-equivalent cost is **$0.1191624**; seven comparison requests have
+cache hits. Net savings including warming are **$0.0118556 (9.05%)**.
+Protected source bindings and exact input/output review hashes pass.
+
+Ignored experiments, reviews and native usage summaries remain under
+`fresh-dcs/high-matching/` and its parent. Together these trials leave **high
+matching and medium post support** as candidates for expansion, alongside
+the earlier targeted medium DCSv1/DSLv10 evidence. They do not establish a
+global minimum effort or unseen-data accuracy. The next useful test runs the
+complete review process on these four answers at those candidate efforts
+before increasing note count; coverage and relationships have so far been
+retested only on selected judgments. Prompts, schemas and production defaults
+remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 

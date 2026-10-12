@@ -693,13 +693,19 @@ implicit is a Bootstrap failure. The final meaning must express the chosen
 boundary. This does not predetermine a narrow or broad choice, or establish
 unknown facts about a particular consumer or occurrence.
 
-The [full reusable selection](hierarchy-bootstrap-asv6.100-regressions-v3.json)
+The [original reusable selection v3](hierarchy-bootstrap-asv6.100-regressions-v3.json)
 contains 344 selected entries from 38 posts and 122 root trees, with 222 immediate
 and 384 recursive selected-ancestor checks. It is a development collection,
 not an unseen reliability benchmark or complete selection of every local entry.
 Source corpora, model answers and receipts stay ignored in retained task
 worktrees; relative source paths are resolved there. No subject extraction or
 canonical construction is needed to rerun the saved collection.
+
+The [current selection v4](hierarchy-bootstrap-asv6.100-regressions-v4.json)
+retains those inputs and adds the two exact HR04 Food roots, giving 346 distinct
+inputs from the same 38 posts. The [retained C003 regression](bootstrap-hr04-food-boundaries-v1.md#retained-meaning-quality-regression)
+keeps its accepted historical poison admission outside Bootstrap input. That
+partial approval is not an expected fresh meaning or whole-pair label.
 
 ## Completed activity-boundary diagnostics
 
@@ -3578,3 +3584,233 @@ further matched confirmation. Lower reasoning substantially reduces recorded
 reasoning tokens, but this panel does not demonstrate a material latency gain
 or equally explicit category boundaries. No further calls or prompt changes
 are implied by that recommendation.
+
+### HR04 C003/C004 Food boundary diagnostic
+
+The user approved investigating whether these two Food definitions deliberately
+choose different categories. The [retained regression and findings](bootstrap-hr04-food-boundaries-v1.md)
+use their exact ASv6.100 full posts/root trees, unchanged Bootstrap-v109 and
+medium reasoning. Three fresh draws per entry produce six valid definitions
+in nine attempts including automatic warmups, with no reuses or failures.
+All actual provider requests exactly match their original HR04 counterparts.
+
+The historical C003 nourishment-or-component condition recurs in zero of three
+fresh draws. All six meanings admit broad human food covering prepared items
+and ingredients. No definite evidence conflict was established; edibility and
+culinary-role expression still vary. The user subsequently accepted the poison
+witness as exposing a scope-closure gap in the exact old C003 meaning; its
+stated component clause admits the case. Compare should not repair an unstated
+restriction to exclude it. The ceremonial-gold witness and whole old pair's
+relation remain unreviewed, and no judgment transfers to the fresh meanings.
+The [primary record](bootstrap-hr04-food-boundaries-v1.md#historical-distinction)
+preserves the user's verbatim judgment and its limits. Native fresh API-equivalent
+cost is $0.0477292 with complete usage. No Bootstrap edit, Compare test,
+hierarchy change or UI update occurred. The useful next draft would preserve
+chosen-kind conditions consistently through final wording without prescribing
+one Food boundary or assuming matching subjects must merge.
+
+### Bootstrap-v113 definition-writing draft
+
+After the HR04 Food diagnostic, the user authorized a focused draft carrying
+chosen kinds and defining conditions consistently into the final meaning.
+[Bootstrap-v113](Hierarchy-bootstrap-v113.md) is a direct, hash-pinned native
+revision of working baseline v109. It changes only the first paragraph under
+`Write the meaning`: its opening preserves each admitted kind's identity and
+defining conditions through rewording, and prohibits substituting a broader
+kind or adding new membership conditions. The redundant later sentence about
+descriptive features replacing identity is removed from that paragraph.
+
+This targets faithful expression of a chosen kind, rather than prescribing a
+Food, edibility, consumer or nourishment boundary. Two independent read-only
+reviews found the draft compatible with material alternatives, person roles,
+activity processes, unknown instance facts and legitimate empty resolutions.
+The following limits on defining nested concepts and activity technical
+features remain in place. Every other prompt byte, including both examples
+and the input/output instructions, is identical to v109. This is a written
+contract review, not evidence that the wording repairs the model's behavior.
+
+Nine native prompt-revision tests and exact paragraph/hash checks pass.
+Offline preparation of the existing two-case HR04 regression preserves both
+input strings, model, medium effort and schema. Automatic caching remains
+eligible at 4,600 estimated prefix tokens. The prepared trial is
+`target/bootstrap-v113-definition-draft-v1/prepared` in the retained correctness
+worktree, with both cases unrun. No teacher calls, prompt adoption, Compare
+changes or hierarchy work occurred. The versioned full-file review is v109
+against v113; approval and subsequent matched testing remain separate.
+
+### Bootstrap-v114 boundary-selection and expression draft
+
+The user authorized a broader edit after reviewing why faithful expression
+alone cannot repair a boundary already chosen too broadly. The historical
+HR04 C003 resolution itself admits nourishment **or** components of something
+eaten or drunk. Merely preserving that condition can preserve the accepted
+poisoned-drink counterexample. [Bootstrap-v114](Hierarchy-bootstrap-v114.md)
+therefore revises the ambiguity, resolution and definition-writing sections
+together, directly from working baseline v109. V113 remains the separate
+expression-only draft for a future controlled comparison.
+
+V114 distinguishes conditions shared by every admitted kind from conditions
+specific to an alternative. A role, use or component relationship must specify
+the qualifying kind as well as the relationship. Before recording the final
+conditions, it checks for information admitted outside the chosen interpretation
+and information wrongly excluded within it. The final definition must express
+the same conditions without relying on diagnostics to supply missing scope.
+These checks do not prescribe a universal Food boundary or require definitions
+with the same subject to be equivalent.
+
+Two independent written reviews identified a risk in checking whether every
+physical member of a named kind qualifies: a role-specific topic can legitimately
+exclude some members of the broader kind. The created version instead checks
+the information covered by the chosen interpretation. Original restrictions,
+jointly required parts, named alternatives, unknown instance facts and null
+meanings remain supported. The input, factual-evidence instructions, four-field
+output schema and both synthetic examples are byte-identical to v109.
+
+Nine native revision tests, exact replacement checks and revision hashes pass.
+Native offline preparation retains the two original HR04 inputs, model, medium
+reasoning and schema; the 4,689-token prefix is locally cache-eligible. Both
+cases remain unrun in `target/bootstrap-v114-boundary-draft-v1/prepared` in the
+retained correctness worktree. No model calls, adoption, Compare edits or
+hierarchy construction occurred. The self-check is an untested hypothesis,
+not an independent verifier or a guarantee of unambiguous scope.
+
+The next proposed qualification compares v109, v113 and v114 on the two Food
+witnesses and four nonfood controls. Independent reviewers should assess final
+meanings before reading diagnostics, preserving original evidence and judging
+both unintended inclusion and lost legitimate coverage. That proposal has not
+been prepared or run beyond the two-case offline mechanical check above.
+
+### Bootstrap-v115 shared-condition example draft
+
+The user approved refining the Feedback example to teach v114's shared-condition
+rule. [Bootstrap-v115](Hierarchy-bootstrap-v115.md) is a hash-pinned native
+revision of v114, changing only the anonymity resolution's answer and brief
+justification. Anonymous and identified responses retain the same communicated
+views, evaluations or suggestions about an activity or experience. A slip or
+spoken remark qualifies through that content, rather than its form alone.
+
+Both example inputs, the Feedback final meaning, the glass-negative example,
+all instructions and the output contract are byte-identical to v114. A read-only
+review found no unsupported post claims or changed final scope. Nine native
+revision tests, exact two-string replacement/hash checks, parsed example outputs
+and all evidence quotations pass. Native offline preparation retains both
+HR04 inputs and medium settings, with a locally cache-eligible 4,712-token prefix.
+Both cases remain unrun in `target/bootstrap-v115-example-draft-v1/prepared`.
+No model calls, qualification, adoption,
+Compare changes or hierarchy construction occurred. V114 remains available to
+isolate the effect of this example change in subsequent matched testing.
+
+### Bootstrap-v116 direct answer and official-guidance audit
+
+The user found that v115's anonymity resolution described feedback without
+directly answering whether anonymity is required. The authorized
+[Bootstrap-v116 draft](Hierarchy-bootstrap-v116.md) changes only that answer:
+it first says feedback may be anonymous or identified, then preserves the shared
+content condition. All instructions, both inputs, final meanings and other
+example fields remain byte-identical to v115. No broader prompt change is
+approved by this audit.
+
+The audit uses the fetched official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+and [prompt-engineering guidance](https://developers.openai.com/api/docs/guides/prompt-engineering).
+Their relevant recommendations are direct instructions, clear delimiters,
+closely aligned examples, concrete output requirements and measured evaluations.
+They do not establish this task's semantic boundaries or prove the proposed
+scope checks improve generation. Two independent read-only reviewers assessed
+the complete prompt against those recommendations.
+
+The Markdown sections and XML delimiters separate rules, examples and input.
+The four-field JSON contract specifies null and empty-array behavior, exact
+post quotations and concise diagnostics rather than a reasoning trace. Both
+examples preserve valid selected entries, complete root trees and the intended
+output schema. All six evidence quotations are exact post excerpts. The
+examples teach different mechanisms: broader category interpretation and
+preserving restrictions despite a grouped descendant.
+
+Two wording risks remain hypotheses, not demonstrated model failures:
+
+- Line 22 prohibits adding method details, while lines 36/48 require defining
+  actions and methods. The existing distinction between defining features and
+  further restrictions helps, but explicitly limiting the prohibition to
+  non-defining details would make the instruction clearer.
+- Lines 16/28/34/38 repeat identity and scope-preservation rules. They could be
+  consolidated for brevity. The condition-selection check at line 40 and
+  standalone-expression check at line 50 serve different purposes and should
+  survive any simplification.
+
+Qualification should also exercise empty diagnostics and null meanings using
+saved regressions; neither example demonstrates those modes. The 21-entry
+Feedback tree adds fixed-prefix input, but it is a complete approved source
+tree and no observed failure implicates its length. Do not prune it or add
+repetitive examples on the strength of this audit alone. Model identity and
+settings must remain bound in future native trials; prompt review is not
+empirical qualification.
+
+Nine native revision tests and exact single-string replacement/hash, schema,
+tree and quotation checks pass. Native offline preparation retains both HR04
+inputs and medium settings; the 4,719-token prefix is locally cache-eligible.
+Both cases remain unrun in `target/bootstrap-v116-guidance-audit-v1/prepared`.
+No model calls, adoption, Compare changes or
+hierarchy construction occurred. The user subsequently authorized the method
+clarification and consolidation below; their empirical effects remain untested.
+
+### Bootstrap-v117 defining-method clarification and scope consolidation
+
+The user approved both wording fixes identified in the v116 audit.
+[Bootstrap-v117](Hierarchy-bootstrap-v117.md) is a native hash-pinned revision
+of v116 with four replacements. It permits a design or method needed to define
+the chosen sense, while preventing non-defining details from becoming extra
+membership conditions. Three repeated reminders about example-specific
+restrictions, identity and scope are shortened or removed. The unchanged main
+scope paragraph, naming instruction and per-alternative rules retain those
+requirements.
+
+Both independent reviewers found no lost substantive rule or unintended scope
+change in the draft. The boundary-selection check and final standalone-meaning
+check remain byte-identical, as do input/output contracts and both complete
+examples. The instruction text has 32 fewer whitespace-delimited words; that
+count does not establish a latency or cost improvement.
+
+Nine native revision tests and exact replacement/hash/preserved-check tests
+pass. Native offline preparation preserves the two HR04 inputs and medium
+settings with a locally cache-eligible 4,683-token prefix. Both cases remain
+unrun in `target/bootstrap-v117-clarity-draft-v1/prepared`.
+That preparation made no model calls. The subsequent user-authorized
+[focused qualification](bootstrap-v117-focused-qualification-v1.md) compares
+22 fresh v109/v117 definitions per arm, then repeats consequential witnesses
+and isolates the two scope-prohibition blocks. All inputs remain ASv6.100.
+The Soup mugs/Pottery incompatibility recurs with unchanged v117; its Food
+closure qualification does not recur. Experimental v118–v120 are diagnostic
+removals from v117, not adopted meanings or an approved inheritance policy.
+Full-collection qualification, empty/null calibration and the scope contract
+remain open. No Compare calls or hierarchy construction are part of this work.
+
+### Bootstrap-v122 supported original-branch scope
+
+The user approved interpreting this original Pottery → Soup mugs branch as
+pottery soup mugs, with carving technique and morning-tea use optional. The
+[verbatim decision](bootstrap-v117-focused-qualification-v1.md#user-reviewed-soup-mugs-boundary)
+is specific to that source entry; it does not impose every ancestor restriction
+or transfer boundaries to other entries with the same title.
+
+[Bootstrap-v121](Hierarchy-bootstrap-v121.md) replaces V117's two conflicting
+prohibitions with a supported original-branch interpretation rule. Before
+inference, review catches an absolute descendant-exhaustiveness claim.
+[Bootstrap-v122](Hierarchy-bootstrap-v122.md) corrects it to prohibit automatic
+exhaustiveness. Both examples, the factual-evidence rules, named alternatives,
+required parts and output contract remain unchanged. V121 remains unrun.
+
+V122's fresh 22-entry qualification and two-case repeat validate every answer.
+The approved pottery boundary holds, with broad categories and alternatives
+preserved. The stock-free counterexample was invalid for the identified particular
+oven-cooking event; the post establishes stock in that event. Food's broad
+consumption-purpose condition is explicit, while a separate kind-preservation
+review disagreement remains visible. Neither issue is silently repaired or
+turned into universal semantic gold.
+
+The [full native collection](bootstrap-v117-focused-qualification-v1.md#frozen-full-collection-qualification)
+is prepared with the original 346 ASv6.100 inputs. Native history scoped to the
+completed focused experiment preserves exactly its 22 original producers;
+324 definitions are new. The earlier broad-history preparation remains unrun,
+because it would substitute two latest repeat receipts. No cache or receipt is
+manually edited. Full review and qualification remain pending; V122 is not
+activated. No Compare inference or hierarchy construction occurs.

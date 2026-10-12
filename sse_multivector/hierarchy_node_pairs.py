@@ -406,10 +406,43 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
         return cases, {'version': local_version, 'cases': len(cases),
                        'application_allowed': False}
 
+    saved_cases = {}
+
+    def saved_meaning(reference, original, label):
+        _fields(reference, label, {'experiment', 'case'})
+        description = 'local meaning' if label == 'local_meaning_from' else 'canonical meaning'
+        directory = engine._resolve_path(reference['experiment'],
+                                         'meaning experiment', Path(base))
+        case_id = engine._expect_identifier(reference['case'], 'meaning case')
+        if load_report is None:
+            raise ValueError(label + ' requires validated experiment reports')
+        if directory not in saved_cases:
+            report = load_report(directory)
+            if report['adapter'] != 'hierarchy_local_nodes':
+                raise ValueError(label + ' requires hierarchy_local_nodes experiment')
+            saved_cases[directory] = {case['id']: case for case in report['cases']}
+        saved = saved_cases[directory].get(case_id)
+        if saved is None or saved['status'] != 'valid' or not saved.get('receipt'):
+            raise ValueError(label + ' requires a valid saved meaning case')
+        local = entry(original)
+        post = engine._expect_string(notes[original['note_id']]['text'], 'local post')
+        saved_input = json.loads(saved['inputs']['INPUT_JSON'])
+        expected_input = {'local': {'entry': local, 'post': post}}
+        if (isinstance(saved_input, dict)
+                and isinstance(saved_input.get('local'), dict)
+                and set(saved_input['local']) == {'post', 'hierarchy'}):
+            expected_input = {'local': {'post': post, 'hierarchy': hierarchy(original, local)}}
+        if saved['evidence']['local'] != original or saved_input != expected_input:
+            raise ValueError('saved ' + description + ' evidence does not match original local input')
+        meaning = saved['parsed']['meaning']
+        if not isinstance(meaning, str) or not meaning.strip():
+            raise ValueError('saved ' + description + ' must be nonempty text')
+        return meaning, {'experiment': str(directory), 'case': case_id, 'receipt': saved['receipt']}
+
     states = source['canonical_states']
     if not isinstance(states, dict) or not states:
         raise ValueError('canonical_states must be a nonempty object')
-    graphs, trials, state_provenance = {}, {}, {}
+    graphs, trials, state_provenance, canonical_producers = {}, {}, {}, {}
     for state, rows in states.items():
         engine._expect_identifier(state, 'canonical state')
         if isinstance(rows, dict) and source['schema_version'] == 2:
@@ -441,20 +474,32 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
                 rows = trials[trial_path]['nodes']
         if not isinstance(rows, list) or not rows:
             raise ValueError('canonical state requires nodes')
-        nodes = {}
+        nodes, producers = {}, {}
         for node in rows:
-            _fields(node, 'canonical node', {'id', 'subject', 'meaning', 'entries', 'parents'})
+            fields = {'id', 'subject', 'entries', 'parents'}
+            fields.add('meaning_from' if isinstance(node, dict) and 'meaning_from' in node else 'meaning')
+            _fields(node, 'canonical node', fields)
             identifier = engine._expect_identifier(node['id'], 'canonical node ID')
             if identifier in nodes:
                 raise ValueError('duplicate canonical node ID')
-            for field in ('subject', 'meaning'):
-                engine._expect_string(node[field], 'canonical ' + field)
+            engine._expect_string(node['subject'], 'canonical subject')
             if not isinstance(node['entries'], list) or not node['entries']:
                 raise ValueError('canonical node requires supporting entries')
             refs = [json.dumps(ref, sort_keys=True) for ref in node['entries']]
             if len(set(refs)) != len(refs):
                 raise ValueError('duplicate canonical supporting entry')
             support = [entry(ref) for ref in node['entries']]
+            if 'meaning_from' in node:
+                if len(node['entries']) != 1:
+                    raise ValueError('canonical meaning_from requires one original supporting entry')
+                meaning, producers[identifier] = saved_meaning(
+                    node['meaning_from'], node['entries'][0], 'canonical meaning_from')
+                if node['subject'] != support[0]['subject']:
+                    raise ValueError('canonical meaning_from subject does not match original entry')
+                node = {key: value for key, value in node.items() if key != 'meaning_from'}
+                node['meaning'] = meaning
+            else:
+                engine._expect_string(node['meaning'], 'canonical meaning')
             parents = engine._validate_string_array(node['parents'], 'canonical parents', allow_empty=True)
             if len(set(parents)) != len(parents):
                 raise ValueError('duplicate canonical parent')
@@ -466,10 +511,11 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
         except CycleError as exc:
             raise ValueError('canonical state contains a cycle') from exc
         graphs[state] = nodes
+        canonical_producers[state] = producers
 
     if not isinstance(source['pairs'], list) or not source['pairs']:
         raise ValueError('node pairs require nonempty pairs')
-    cases, seen, saved_cases = [], set(), {}
+    cases, seen = [], set()
     for pair in source['pairs']:
         fields = {'id', 'local', 'canonical', 'review'}
         if isinstance(pair, dict):
@@ -520,38 +566,13 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
                 raise ValueError('local_meaning must be nonempty text')
             payload['local']['meaning'] = meaning
         provenance = {}
+        if canonical_producers[reference['state']]:
+            provenance['canonical_meaning_from'] = canonical_producers[reference['state']]
         if 'local_meaning_from' in pair:
-            reference_meaning = pair['local_meaning_from']
-            _fields(reference_meaning, 'local_meaning_from', {'experiment', 'case'})
-            directory = engine._resolve_path(reference_meaning['experiment'],
-                                             'meaning experiment', Path(base))
-            case_id = engine._expect_identifier(reference_meaning['case'], 'meaning case')
-            if load_report is None:
-                raise ValueError('local_meaning_from requires validated experiment reports')
-            if directory not in saved_cases:
-                report = load_report(directory)
-                if report['adapter'] != 'hierarchy_local_nodes':
-                    raise ValueError('local_meaning_from requires hierarchy_local_nodes experiment')
-                saved_cases[directory] = {case['id']: case for case in report['cases']}
-            saved = saved_cases[directory].get(case_id)
-            if saved is None or saved['status'] != 'valid' or not saved.get('receipt'):
-                raise ValueError('local_meaning_from requires a valid saved meaning case')
-            saved_input = json.loads(saved['inputs']['INPUT_JSON'])
-            expected_input = {'local': payload['local']}
-            if (isinstance(saved_input, dict) and
-                    isinstance(saved_input.get('local'), dict) and
-                    set(saved_input['local']) == {'post', 'hierarchy'}):
-                expected_input = {'local': {
-                    'post': post, 'hierarchy': hierarchy(pair['local'], local)}}
-            if (saved['evidence']['local'] != pair['local'] or
-                    saved_input != expected_input):
-                raise ValueError('saved local meaning evidence does not match original local input')
-            meaning = saved['parsed']['meaning']
-            if not isinstance(meaning, str) or not meaning.strip():
-                raise ValueError('saved local meaning must be nonempty text')
+            meaning, producer = saved_meaning(
+                pair['local_meaning_from'], pair['local'], 'local_meaning_from')
             payload['local']['meaning'] = meaning
-            provenance['local_meaning_from'] = {
-                'experiment': str(directory), 'case': case_id, 'receipt': saved['receipt']}
+            provenance['local_meaning_from'] = producer
         if not isinstance(pair['review'], dict):
             raise ValueError('node pair review must be an object')
         cases.append({'id': identifier,
@@ -561,6 +582,75 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
                                    **state_provenance.get(reference['state'], {}),
                                    'review': pair['review'], **provenance, 'application_allowed': False}})
     return cases, {'version': version, 'cases': len(cases), 'application_allowed': False}
+
+
+def create_saved_comparisons(source, *, base, read, load_report):
+    """Retain exact receipt-bound A/B inputs; old answers remain audit evidence."""
+    _fields(source, 'saved comparisons', {'schema_version', 'saved_comparisons'})
+    selections = source['saved_comparisons']
+    if (type(source['schema_version']) is not int or source['schema_version'] != 1
+            or not isinstance(selections, list) or not 1 <= len(selections) <= 128):
+        raise ValueError('expected schema 1 and 1 through 128 saved comparisons')
+    if load_report is None:
+        raise ValueError('saved comparisons require validated experiment reports')
+    cases, identifiers = [], set()
+    for selection in selections:
+        fields = {'id', 'experiment', 'case_id', 'reverse'}
+        if isinstance(selection, dict):
+            fields.update(key for key in ('review', 'record_sha256') if key in selection)
+        _fields(selection, 'saved comparison selection', fields)
+        identifier = engine._expect_identifier(selection['id'], 'comparison id')
+        if identifier in identifiers:
+            raise ValueError('duplicate saved comparison id')
+        identifiers.add(identifier)
+        if type(selection['reverse']) is not bool:
+            raise ValueError('saved comparison reverse must be boolean')
+        review = selection.get('review', {})
+        if not isinstance(review, dict):
+            raise ValueError('saved comparison review must be an object')
+        reference = selection['experiment']
+        _fields(reference, 'saved comparison reference', {'path', 'sha256'})
+        directory = engine._resolve_path(reference['path'], 'saved comparison', Path(base))
+        expected = engine._expect_sha256(reference['sha256'], 'saved comparison sha256')
+        envelope_path = directory / 'experiment.json'
+        if engine._sha256_file(envelope_path) != expected:
+            raise ValueError('saved comparison reference hash differs')
+        read(envelope_path)
+        report = load_report(directory)
+        if report['adapter'] not in {'generic', 'hierarchy_node_pairs'}:
+            raise ValueError('saved comparison requires a generic or hierarchy_node_pairs experiment')
+        case_id = engine._expect_identifier(selection['case_id'], 'saved comparison case_id')
+        matching = [case for case in report['cases'] if case['id'] == case_id]
+        if (len(matching) != 1 or matching[0]['status'] != 'valid'
+                or not matching[0].get('receipt')):
+            raise ValueError('saved comparison requires a valid receipt-bound case')
+        saved = matching[0]
+        if 'record_sha256' in selection:
+            expected_receipt = engine._expect_sha256(
+                selection['record_sha256'], 'saved comparison record_sha256')
+            if saved['receipt']['record_sha256'] != expected_receipt:
+                raise ValueError('saved comparison receipt hash differs')
+        _fields(saved['inputs'], 'saved comparison inputs', {'INPUT_JSON'})
+        original = json.loads(saved['inputs']['INPUT_JSON'],
+                              object_pairs_hook=engine._position_decoder().unique_object)
+        _fields(original, 'saved comparison input', {'A', 'B'})
+        for role in ('A', 'B'):
+            _fields(original[role], 'saved comparison ' + role, {'subject', 'meaning'})
+            for key in ('subject', 'meaning'):
+                text = engine._expect_string(original[role][key], 'saved comparison ' + key)
+                if not text.strip():
+                    raise ValueError('saved comparison ' + key + ' must be nonempty text')
+        validate(saved['output'], diagnostics=True, symmetric=True)
+        raw = saved['inputs']['INPUT_JSON']
+        if selection['reverse']:
+            raw = json.dumps({'A': original['B'], 'B': original['A']}, ensure_ascii=False)
+        cases.append(dict(id=identifier, inputs={'INPUT_JSON': raw}, evidence=dict(
+            saved_comparison=dict(selection=selection, experiment=str(directory),
+                prompt_id=report['prompt_id'], input_sha256=saved['input_sha256'],
+                receipt=saved['receipt'], parsed=saved['parsed'], original_input=original,
+                original_evidence=saved.get('evidence', {})),
+            review=review, application_allowed=False)))
+    return cases, dict(input_view='saved_comparisons', cases=len(cases), application_allowed=False)
 
 
 def create_counterexample_checks(source, *, base, read, load_report):

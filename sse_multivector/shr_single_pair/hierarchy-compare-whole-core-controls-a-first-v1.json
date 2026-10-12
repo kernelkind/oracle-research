@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "included-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"},\"B\":{\"subject\":\"Manufacturing pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-known-purpose-controls",
+        "pair_id": "included-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "Every sealed manufacturing pressure vessel meets the parent's liquid-heating design and sale-product manufacturing purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "included-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Manufacturing pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale.\"},\"B\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-known-purpose-controls",
+        "pair_id": "included-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "Every sealed manufacturing pressure vessel meets the parent's liquid-heating design and sale-product manufacturing purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "excluded-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"},\"B\":{\"subject\":\"Laboratory measurement pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with the sole design purpose of measuring their pressure–temperature behavior in basic laboratory research.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-known-purpose-controls",
+        "pair_id": "excluded-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "A sealed vessel designed solely for basic-research measurement has no manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Actual repurposing cannot establish the required design intention.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "excluded-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Laboratory measurement pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with the sole design purpose of measuring their pressure–temperature behavior in basic laboratory research.\"},\"B\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-known-purpose-controls",
+        "pair_id": "excluded-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "A sealed vessel designed solely for basic-research measurement has no manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Actual repurposing cannot establish the required design intention.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "unrestricted-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"},\"B\":{\"subject\":\"Liquid-heating pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with no restriction on their design purpose.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-known-purpose-controls",
+        "pair_id": "unrestricted-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "The child expressly permits research-only design purposes that do not meet manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Explicit purpose freedom is not unresolved wording.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "unrestricted-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Liquid-heating pressure vessels\",\"meaning\":\"Sealed pressure vessels designed to hold liquids while heat is applied to those liquids, with no restriction on their design purpose.\"},\"B\":{\"subject\":\"Liquid-heating vessels for commercial chemical manufacturing\",\"meaning\":\"Vessels designed to hold liquids while heat is applied to those liquids as part of manufacturing chemical products intended for sale. This category permits both open and sealed vessels.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified nonfood diagnostic scopes; no AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-known-purpose-controls",
+        "pair_id": "unrestricted-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "The child expressly permits research-only design purposes that do not meet manufacturing-for-sale design purpose. An open manufacturing vat qualifies for the parent and is outside the sealed pressure-vessel child. Explicit purpose freedom is not unresolved wording.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "kind-repair-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Pedal-powered cargo tricycles\",\"meaning\":\"Three-wheeled road vehicles designed to carry cargo and to be propelled by a rider operating pedals, without a motor or engine.\"},\"B\":{\"subject\":\"Cargo-tricycle repair\",\"meaning\":\"The activity of restoring to working order three-wheeled road vehicles designed to carry cargo and to be propelled by a rider operating pedals, without a motor or engine.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "kind-repair",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "The repaired vehicles meet every specified tricycle condition; repair information need not itself be a vehicle. Independent operation of an undamaged qualifying cargo tricycle, without restoration activity or role, fits A and escapes B.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "kind-repair-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Cargo-tricycle repair\",\"meaning\":\"The activity of restoring to working order three-wheeled road vehicles designed to carry cargo and to be propelled by a rider operating pedals, without a motor or engine.\"},\"B\":{\"subject\":\"Pedal-powered cargo tricycles\",\"meaning\":\"Three-wheeled road vehicles designed to carry cargo and to be propelled by a rider operating pedals, without a motor or engine.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "kind-repair",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "The repaired vehicles meet every specified tricycle condition; repair information need not itself be a vehicle. Independent operation of an undamaged qualifying cargo tricycle, without restoration activity or role, fits A and escapes B.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "activity-intended-tool-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Painting wooden signboards\",\"meaning\":\"The activity of applying paint to wooden signboards to form visible lettering.\"},\"B\":{\"subject\":\"Signboard-painting brushes\",\"meaning\":\"Hand-held brushes designed exclusively for applying paint to wooden signboards to form visible lettering.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "activity-intended-tool",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "B supplies exactly the intended role allowed beneath A, including information about properties or production of those brushes. Painting lettering with a brush-free robot and atomizer fits A and need not concern brushes or a brush-related role.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "activity-intended-tool-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Signboard-painting brushes\",\"meaning\":\"Hand-held brushes designed exclusively for applying paint to wooden signboards to form visible lettering.\"},\"B\":{\"subject\":\"Painting wooden signboards\",\"meaning\":\"The activity of applying paint to wooden signboards to form visible lettering.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "activity-intended-tool",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "B supplies exactly the intended role allowed beneath A, including information about properties or production of those brushes. Painting lettering with a brush-free robot and atomizer fits A and need not concern brushes or a brush-related role.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "fixed-identity-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Lamp Lumen\",\"meaning\":\"The particular physical lamp named Lumen: a battery-powered portable lamp designed for indoor emergency illumination.\"},\"B\":{\"subject\":\"Indoor emergency lamps\",\"meaning\":\"Battery-powered portable lamps designed for indoor emergency illumination.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "fixed-identity",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "The same Lumen satisfies every B requirement. Specifications of an explicitly distinct qualifying lamp fit B and escape the particular Lumen topic without assigning any unknown property to Lumen.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "fixed-identity-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Indoor emergency lamps\",\"meaning\":\"Battery-powered portable lamps designed for indoor emergency illumination.\"},\"B\":{\"subject\":\"Lamp Lumen\",\"meaning\":\"The particular physical lamp named Lumen: a battery-powered portable lamp designed for indoor emergency illumination.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "fixed-identity",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "The same Lumen satisfies every B requirement. Specifications of an explicitly distinct qualifying lamp fit B and escape the particular Lumen topic without assigning any unknown property to Lumen.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "overlapping-alternatives-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Rowing or sailing boats\",\"meaning\":\"Boats designed for propulsion by oars, by wind-filled sails, or by both.\"},\"B\":{\"subject\":\"Sailing or motor boats\",\"meaning\":\"Boats designed for propulsion by wind-filled sails, by engines, or by both.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "overlapping-alternatives",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "An engine-only design fits B but neither A alternative; an oar-only design fits A but neither B alternative. The shared sailing alternative cannot establish whole-scope coverage.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "overlapping-alternatives-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Sailing or motor boats\",\"meaning\":\"Boats designed for propulsion by wind-filled sails, by engines, or by both.\"},\"B\":{\"subject\":\"Rowing or sailing boats\",\"meaning\":\"Boats designed for propulsion by oars, by wind-filled sails, or by both.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "overlapping-alternatives",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "An engine-only design fits B but neither A alternative; an oar-only design fits A but neither B alternative. The shared sailing alternative cannot establish whole-scope coverage.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "explicit-state-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Completed piano performances\",\"meaning\":\"Piano performances that had already occurred and finished by 12:00 UTC on 1 October 2026.\"},\"B\":{\"subject\":\"Unstarted planned piano performances\",\"meaning\":\"Piano performances that, at 12:00 UTC on 1 October 2026, were intended but had not begun.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "explicit-state",
+        "orientation": "forward",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "At the same stated instant, an intended unstarted recital fits B and fails A; an independent finished recital fits A and fails B. Earlier planning of the latter cannot satisfy the unstarted state at that instant.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "explicit-state-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Unstarted planned piano performances\",\"meaning\":\"Piano performances that, at 12:00 UTC on 1 October 2026, were intended but had not begun.\"},\"B\":{\"subject\":\"Completed piano performances\",\"meaning\":\"Piano performances that had already occurred and finished by 12:00 UTC on 1 October 2026.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified independent holdout meanings; no source AS tree or Bootstrap generation.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "whole-core-fresh-holdouts",
+        "pair_id": "explicit-state",
+        "orientation": "reverse",
+        "input_order": [
+          "A",
+          "B"
+        ],
+        "application_allowed": false,
+        "qualification": "Designed without candidate instructions; two independent agent assessments before inference. Expectations are provisional semantic controls, not user gold.",
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "At the same stated instant, an intended unstarted recital fits B and fails A; an independent finished recital fits A and fails B. Earlier planning of the latter cannot satisfy the unstarted state at that instant.",
+          "user_gold": false
+        }
+      }
+    }
+  ]
+}

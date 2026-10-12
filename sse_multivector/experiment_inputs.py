@@ -133,8 +133,10 @@ def prepare_file(dataset, path, template, load_report=None):
                 preparation['input_order'] = source['input_order']
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     saved_counterexamples = dataset['adapter'] == 'generic' and 'saved_counterexamples' in source
-    if saved_counterexamples or dataset['adapter'] in {'hierarchy_node_pairs', 'hierarchy_local_nodes',
-                                                       'hierarchy_meaning_diagnostics'}:
+    saved_comparisons = (dataset['adapter'] in {'generic', 'hierarchy_node_pairs'}
+                         and 'saved_comparisons' in source)
+    if saved_counterexamples or saved_comparisons or dataset['adapter'] in {
+            'hierarchy_node_pairs', 'hierarchy_local_nodes', 'hierarchy_meaning_diagnostics'}:
         try:
             from . import hierarchy_node_pairs as node_pairs
         except ImportError:
@@ -170,7 +172,10 @@ def prepare_file(dataset, path, template, load_report=None):
                 reports[directory] = result
             return reports[directory]
 
-        if saved_counterexamples:
+        if saved_comparisons:
+            cases, preparation = node_pairs.create_saved_comparisons(
+                source, base=path.parent, read=read, load_report=saved_report)
+        elif saved_counterexamples:
             cases, preparation = node_pairs.create_counterexample_checks(
                 source, base=path.parent, read=read, load_report=saved_report)
         elif dataset['adapter'] == 'hierarchy_meaning_diagnostics':

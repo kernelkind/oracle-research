@@ -1,0 +1,9 @@
+{
+  "base_sha256": "49d936bd6d5e251bcc1317f34a87fd71c25eb1e63f972e5ec8824b81f73eb9ed",
+  "edits": [
+    {
+      "old": "Conditions that are neither required nor necessarily implied may vary; their absence alone is not ambiguity.",
+      "new": "For a general kind or activity, conditions that are neither required nor necessarily implied may vary across its cases; their absence alone is not ambiguity. For a particular entity or event, a property that is neither stated nor necessarily implied remains unknown; do not choose it to construct a counterexample or prove coverage."
+    }
+  ]
+}

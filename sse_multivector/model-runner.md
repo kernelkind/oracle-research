@@ -199,6 +199,91 @@ are 13.34 seconds low and 14.04 medium, not a causal speedup. Low is not adopted
 the recommendation is to retain medium pending matched qualification. No
 Bootstrap prompt, Compare label, hierarchy or UI changed.
 
+The separate [HR04 C003/C004 Food diagnostic](shr_single_pair/bootstrap-hr04-food-boundaries-v1.md)
+registers two exact original ASv6.100 roots for future Bootstrap tests. Three
+fresh unchanged-v109 medium draws per input produce six valid definitions;
+the historical nourishment-or-component condition does not recur. All nine
+attempts, including three warmups, have complete usage: $0.0477292 native
+API-equivalent cost, zero reuse/failures. Inputs and actual provider requests
+match HR04 exactly. This establishes a bounded producer-variation diagnostic,
+not equivalence, negative gold, or permission to rewrite historical meanings.
+The user's subsequent partial review accepts the old C003 poisoned-drink
+counterexample as exposing an insufficiently bounded explicit meaning. The
+ceremonial-gold witness and whole pair remain unreviewed; no judgment transfers
+to the fresh meanings. Compare should evaluate the supplied boundaries rather
+than add an unstated condition to remove this accepted witness.
+
+The [Bootstrap regression collection v4](shr_single_pair/hierarchy-bootstrap-asv6.100-regressions-v4.json)
+now retains 346 distinct original inputs, including these two Food roots. C003's
+accepted witness is node-specific review evidence, never model input or a fresh
+expected output. Its [preparation specification](shr_single_pair/hierarchy-bootstrap-v109-asv6.100-regressions-v4.spec.json)
+uses unchanged v109 for offline preparation validation; preparation does not
+authorize a run. Earlier collection/specification bindings remain frozen.
+
+[Bootstrap-v113](shr_single_pair/Hierarchy-bootstrap-v113.md) is the subsequent
+user-authorized draft from working v109. Its single definition-writing
+paragraph change preserves chosen-kind identity and defining conditions through
+rewording and removes a duplicate broader-category warning. Nine native
+revision tests and matched offline HR04 preparation pass; the 4,600-token
+prefix remains cache-eligible. No model qualification, adoption, Compare or
+hierarchy work occurred.
+
+The subsequent authorized [Bootstrap-v114 draft](shr_single_pair/Hierarchy-bootstrap-v114.md)
+revises boundary selection as well as expression from working v109. Shared
+conditions apply to each alternative, role/component admission specifies its
+qualifying kind, and checks cover unintended inclusion and exclusion within
+the chosen information topic. The final meaning must express the same scope
+without diagnostic supplementation. V113 remains the expression-only control;
+neither draft is model-qualified or adopted. Nine native revision tests and
+exact unchanged input/output/example checks pass. Offline preparation retains
+the two HR04 inputs and medium settings with a 4,689-token cache-eligible prefix;
+both cases are unrun. No calls, Compare changes or hierarchy work occurred.
+
+[Bootstrap-v115](shr_single_pair/Hierarchy-bootstrap-v115.md) is the subsequent
+authorized example-only draft from v114. It changes the Feedback anonymity
+resolution and justification to preserve the shared content condition across
+anonymous and identified responses. Inputs, final meanings, instructions and
+schema are unchanged. Nine revision tests and exact example/quote/hash checks
+pass. Offline preparation preserves the two HR04 inputs and medium settings;
+the 4,712-token prefix is cache-eligible and both cases are unrun. No inference
+or adoption occurred. V114 remains the matched control for
+the example change.
+
+[Bootstrap-v116](shr_single_pair/Hierarchy-bootstrap-v116.md) corrects only the
+Feedback anonymity answer: the anonymity decision comes first, followed by
+the shared content condition. Nine revision tests and exact example/schema/
+quotation checks pass. The [official-guidance audit](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v116-direct-answer-and-official-guidance-audit)
+records two untested clarity risks: the method-detail prohibition and repeated
+scope rules. Offline preparation preserves both HR04 inputs and medium settings
+with a 4,719-token cache-eligible prefix; both cases remain unrun. Broader edits
+and model qualification remain open; no calls or
+adoption occurred.
+
+The authorized [Bootstrap-v117 draft](shr_single_pair/Hierarchy-bootstrap-v117.md)
+clarifies that defining designs/methods remain permitted and removes repeated
+scope reminders. Main scope rules, both scope checks, examples and schema stay
+unchanged. Two written reviews and nine native revision tests pass. Offline
+preparation retains both HR04 inputs and medium settings with a 4,683-token
+cache-eligible prefix; those two draft-preparation cases remain unrun.
+The subsequent [focused qualification](shr_single_pair/bootstrap-v117-focused-qualification-v1.md)
+uses fresh matched v109/v117 requests for 22 selected ASv6.100 entries, automatic
+prefix caching and the persistent attempt counter. Native individual reviews,
+independently frozen branch checks and fresh repeats are separate evidence.
+V118–v120 isolate scope-prohibition wording; they remain experimental.
+Full-collection qualification, empty/null calibration and the unresolved scope
+contract remain open. No adoption, Compare calls or hierarchy build occurred.
+
+The continuing [V122 branch-scope qualification](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v122-supported-original-branch-scope)
+implements the user-reviewed pottery Soup mugs interpretation while preserving
+named alternatives, original-post factual unknowns and category abstraction.
+V121 stays unrun after a preflight closed-set correction; V122's 22 focused
+definitions and two-case repeat validate. Full qualification uses all 346 current
+ASv6.100 inputs, with the native history root limited to the completed focused
+experiment to preserve its exact 22 original producers. Scoped history selects
+reuse evidence; it does not change model-facing inputs or fabricate receipts.
+The remaining 324 definitions are new. Full review is pending; no activation,
+Compare inference or hierarchy build is part of this Bootstrap stage.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -239,6 +324,27 @@ exact extraction does not certify that a proposal is semantically valid.
 Frozen source files, producer receipts and complete original diagnostics remain
 bound for review. This diagnostic cannot apply hierarchy changes and uses the
 new spec's ordinary response schema, rather than the production Compare schema.
+
+For exact saved A/B comparison panels, a `generic` or `hierarchy_node_pairs`
+dataset may declare schema 1 with `saved_comparisons`. Each selector has `id`,
+an envelope-hash-bound `experiment` reference (`path`, `sha256`), `case_id`,
+boolean `reverse`, and optional outside-input `review`. Preparation requires a
+valid native Compare receipt and strict A/B subject/meaning inputs. Optional
+`record_sha256` pins the exact saved result; the HR05 panel supplies it for every
+selection so an appended source result cannot silently replace that receipt.
+Without that selector, preparation uses the currently validated saved result.
+Forward
+inputs retain their exact original bytes; reversals exchange the complete two
+nodes. Original outputs, evidence and receipts remain audit evidence outside
+model input and never become expected semantic labels automatically. The
+existing protected-source reader binds source envelopes, manifests and receipts.
+These panels cannot apply hierarchy changes or regenerate endpoint meanings.
+With `review.comparison_role` (`isolated-forward` or `isolated-reverse`) and
+`review.reversal_pair`, the native consistency report checks copied/swapped
+endpoints against the same original receipt and original A/B role. It does not
+join coincident wording from unrelated original cases into complete chains or
+fabricate Bootstrap producer references. Existing producer-bound chain checks
+retain their own validation and identity rules.
 
 For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
 collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
@@ -1760,6 +1866,148 @@ sixteen fresh attempts including four warmups and seven verification reuses.
 The historical provisional uncertainty remains alongside explicit subsequent
 acceptances; this test changes no review-precedence semantics and does not
 establish broad reviewer qualification.
+
+The [four additional-note coverage trial](distillation-review-v1/README.md#dcsv1-four-additional-notes-october-11)
+adds 24 new DCS inputs from the frozen sixty. Candidate preparation now honors
+exact input/output/check-bound external actual-edge disputes, preserving the
+existing native-review veto and otherwise-positive omission behavior. This
+corrects the approved unresolved-edge rule; it adds no acceptance requirement.
+The native regression first fails, then all twenty relevant tests pass. Three
+disputed edges are retained before their five affected inputs run; only one
+rendered input changes, while the other twenty-three retain exact parity.
+Twenty-two complete search outputs are accepted and two remain unresolved.
+Both returned witnesses reuse unchanged DSLv10 responses. The gas-fee/Payments
+pair has conflicting search and verification results; neither model agreement
+nor the verifier Boolean establishes semantic correctness. The original two
+experiment worktrees remain frozen, with integration in a separate checkout.
+Native accounting records 29 fresh attempts including five warmups, two
+verification reuses, no retries or failures, and 28.27% fresh cached input.
+Prompts, effort settings, review precedence and final qualification remain
+unchanged; the full-evaluation runtime is still unqualified.
+
+The [focused payment diagnostic](distillation-review-v1/README.md#payment-type-disagreement-diagnostic-october-11)
+uses native exact fresh DCSv1/DSLv10 repeats and four pre-assessed authored
+DSLv10 controls. DCS again selects Payments; unchanged DSL flips its earlier
+rejection to acceptance. All four control decisions and explanations pass,
+and a source-only trusted training Payments/price edge subsequently supplies
+the category interpretation for accepting both exact outputs. The earlier
+DSL charge/rate exclusion is too narrow. Final agent acceptances are appended
+without discarding provisional uncertainty or changing review precedence.
+Native accounting
+validates seven fresh calls including one eligible DCS warmup, no reuse,
+retry or failure, and a 58.39-second generation span. Prompts and source
+bindings remain unchanged; no new semantic rule or prompt edit is adopted,
+and further votes do not supply semantic ground truth. Supplying the trusted
+example to both prompts is subsequently authorized and tested below.
+
+The [trusted payment example trial](distillation-review-v1/README.md#trusted-payment-example-prompt-trial-october-11)
+added identical source-grounded precedent to experimental **DCSv2/DSLv11**
+through pinned native revisions. Six fresh complete outputs pass full-output
+agent audit; exact inputs, evidence, settings, schemas and cache boundaries
+retain parity. The DCS prefix grows to 1,285 tokens with a new native key; DSL
+remains uncached. Generation takes 49.47 seconds. Native accounting records
+eight attempts including warming and one recovered socket failure, with no
+reuse or unfinished case. Missing failed-call usage keeps total API-equivalent
+cost and aggregate cache savings unknown; known subtotal is $0.0866192.
+DCS's one-case warming adds $0.0029972 in net estimated cost. Production
+defaults and broader qualification remain unchanged. The experiment worktree
+is retained for source bindings; NGP/Investments interpretation remains open.
+Those example-bearing versions are subsequently **withdrawn**: the unchanged
+baseline already passed the same six exposed cases, so no benefit was shown.
+Their withdrawn current prompt/revision files are removed; frozen experimental
+sources and receipts remain intact.
+
+The [fresh development trial](distillation-review-v1/README.md#fresh-development-after-example-withdrawal-october-11)
+uses unchanged DCSv1/DSLv10 as experimental baselines and selects validation
+posts outside the original sixty's 54 note IDs and maintained development
+definitions. The small DSL trial uses existing source-bound `distillation_verdict`
+schema-2 actual-edge preparation; it tests the common AS relationship rule,
+without claiming DCS search/coverage-workflow validation or inventing missing
+matching premises. Independent pre-call labels and unresolved interpretations
+stay separate. The exposed original sixty remain regression/workload evidence;
+a later unseen-note accuracy assessment requires separately reserved cases.
+The completed source-bound DSLv10 trial contains ten actual pairs on four
+posts outside both exclusion sets: six frozen positive expectations, two
+negative expectations and two uncertainties. All eight resolved decisions and
+complete explanations pass independent audit; uncertainties remain unscored.
+Native accounting includes only the final experiment: ten fresh calls,
+106.45 seconds, no reuse/retry/failure/warming/cache hit, and complete
+API-equivalent estimate $0.164466. Its natural prefix has 76 tokens, below the
+warming threshold. Prompts, schemas and production code remain unchanged;
+the frozen task worktree is retained. DCS null-search qualification still
+requires separate testing with its genuine matching/self-guard prerequisites.
+
+The subsequent [native coverage diagnostic](distillation-review-v1/README.md#native-coverage-diagnostic-with-genuine-prerequisites)
+freezes actual saved answers and pre-call assessments, runs complete matching
+and necessary self guards through native groups, then searches residual
+candidates. Seven source-null searches and one positive Songs-beneath-Music
+control pass independent full-output audit; unchanged DSLv10 separately verifies
+the positive pair. Original premise ledgers remain frozen; verification uses
+a separate native experiment. Support and unrelated relationship checks stay
+unrun and cannot license omissions. Native accounting includes 22 fresh
+attempts, one warmup, six duplicate occurrence reuses, no failures/retries or
+missing usage, and $0.17604 API-equivalent cost. Warming produces no cached
+tokens and adds $0.00495. Source selection and auditing between stages account
+for much of the 724.576-second first-to-last run span; the union of native run
+intervals is 150.743 seconds. N13 is previously DSL-exposed; N53 excludes that
+four-post trial. Prompts, schemas and production behavior stay unchanged.
+One positive control does not qualify diverse-data false-null reliability,
+minimum reasoning effort or full-evaluation runtime. Frozen artifacts retain
+the task worktree. The subsequent [high comparison](distillation-review-v1/README.md#high-comparison-on-the-frozen-coverage-controls)
+reuses the same eight DCS cases and one DSL verifier with native fresh calls.
+All nine complete outputs pass independent audit without observed substantive
+degradation. Three groups run concurrently in 23.106 seconds; matched native
+cost falls from $0.101884 to $0.062544 (38.61%), with identical input tokens,
+no cached tokens and one warmup in each run. There are no retries, failures,
+reuse or missing usage. Matching premises remain at xhigh/mechanical settings;
+this small mixed-control comparison does not qualify minimum effort across
+all checks. The subsequent [medium comparison](distillation-review-v1/README.md#medium-comparison-on-the-frozen-coverage-controls)
+also passes all nine full-output audits, using the same inputs, prompts and
+cache policy. Its three concurrent groups finish in 19.054 seconds; ten fresh
+attempts cost $0.055674, 45.36% below matched xhigh and 10.98% below high.
+There are no retries, failures, reuse, missing usage or cached tokens. Medium
+passes this limited panel; the following low comparison completes the effort
+descent before expansion. Matching/support and broader qualification remain
+open, and production defaults stay unchanged. The subsequent [low comparison](distillation-review-v1/README.md#low-comparison-on-the-frozen-coverage-controls)
+also passes all nine full-output audits and all 44 candidate rejection reasons.
+Three concurrent groups finish in 18.087 seconds; ten fresh attempts cost
+$0.054944, 46.07% below matched xhigh and only 1.31% below medium. Inputs and
+cache policy remain identical; cached tokens, retries, failures, reuse and
+missing usage remain zero. Low is the lowest passing level tested on this
+limited panel. The subsequent [four-note diagnostic](distillation-review-v1/README.md#four-note-expansion-and-step-back-to-medium)
+reuses twenty established source judgments on four saved answers: twelve
+coverage searches, seven DSL witnesses and one actual missing-restriction edge.
+Low passes 19/20 but falsely rejects Peacock beneath Television, adding a
+television-content/activity requirement absent from the broad parent. Its five
+percentage-point loss exceeds the approved two-point allowance. Under the
+standing policy, the same cases immediately run at medium and pass 20/20 full
+output audits. A weak illustration in one otherwise-supported negative is
+explicitly caveated. Each level sends 23 fresh attempts including three warmups,
+with no retries/failures/reuse/missing usage. Concurrent spans are 27.871/26.054
+seconds and API-equivalent costs $0.1207736/$0.1286736 for low/medium. Both have
+4,096 cached input tokens; warming outweighs the observed cache savings.
+Source snapshots and original expectation metadata stay frozen; interpretation
+judgments use the documented corrected source labels. This targeted regression
+does not evaluate every subject or retest matching/post support. The following
+[matching/support comparison](distillation-review-v1/README.md#medium-matching-and-support-on-the-same-four-answers)
+does test every occurrence of those two checks on the same four saved answers.
+Native routing handles 58 decisions mechanically and 96 through duplicate
+reuse, leaving ninety fresh semantic calls plus one eligible warmup. Medium
+support passes 45/45 resolved decisions; matching passes 39/40, excluding five
+pre-existing ambiguous interpretations. Posting falsely returns null despite
+its established Post sharing interpretation. Matching's 2.5-point loss exceeds
+the approved two-point allowance and triggers the standing high step-up.
+Medium runs complete in 24.625 seconds, with no retries/failures/missing usage
+and $0.1937144 API-equivalent cost; warming-inclusive cache savings are 10.62%.
+The [high matching repeat](distillation-review-v1/README.md#high-matching-step-up-on-the-same-four-answers)
+fixes Posting and retains all 40/40 resolved decisions in 25.040 seconds,
+using forty-five calls plus one warmup and $0.1191624 API-equivalent cost.
+There are no retries/failures/missing usage; net cache savings are 9.05%.
+Five interpretation uncertainties and three correct-null explanation caveats
+remain visible in native reviews. High matching and medium support are
+expansion candidates, not a globally qualified minimum. Complete coverage and
+relationship reruns at the candidate efforts remain open before note-count
+expansion. Prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -7093,6 +7341,17 @@ preserves null-answer uncertainty. Existing local/canonical paths are unchanged.
 Native pair consistency supports symmetric reversals and chains without
 requiring the removed meaning copy or applying canonical placement guards.
 
+Canonical fixtures in `hierarchy_node_pairs` may supply
+`meaning_from: {"experiment": "...", "case": "..."}` instead of literal
+`meaning`, with one original supporting entry and its unchanged subject. Native
+preparation validates the saved non-null Bootstrap answer, receipt and exact
+original selected entry, post and complete schema-4 tree. The same resolver
+validates `local_meaning_from`; both endpoint receipts remain in review evidence
+and hashed source bindings. Symmetric projection sends only subject and meaning.
+This prepares comparisons without regenerating or manually copying producer
+definitions. Twelve new CLI checks and 95 existing pair/snapshot/consistency
+checks pass; the initial production-path test failed before this support.
+
 The authorized examples ablation compares V179 with experimental V180, which
 removes only its synthetic-example section. Five fixed ASv6.100/Bootstrap-v96
 pairs, both orientations and two fresh draws yield 40 comparison requests.
@@ -7289,3 +7548,136 @@ development baseline. Native usage records 64 first attempts, no answer reuse,
 warmup, retry, failure or missing usage, 17 backend prefix-cache reads and
 $0.4786384 API-equivalent catalog cost. The existing shared counter moves 19,141
 to 19,205. See [preparation, completed evidence and next diagnostic limits](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v184-explicit-ambiguity-instruction-test).
+
+### Compare-v185 whole instruction-core qualification
+
+Experimental [Compare-v185](shr_single_pair/Hierarchy-compare-v185.md) rewrites
+the V179 instructional core while retaining the A/B input, four output fields,
+schema and two synthetic examples unchanged. The user-authorized whole-prompt
+audit supersedes the previously proposed endpoint ablation as the immediate
+next experiment. A fresh matched screen uses the original unresolved
+Stockpots/Cookware pair, three unchanged nonfood purpose controls and five
+independently designed synthetic holdouts. Both semantic assignments and both
+physical JSON member orders yield 72 planned calls across V179/V185. Synthetic
+expectations remain agent assessments outside model input; no Bootstrap or AS
+generation occurs, and the frozen producer panels remain unchanged.
+
+Use native prepare/repeat, the shared automatic queue, Sol 6.1 medium/SSE and
+the existing persistent counter. Explicit cache warming is disabled equally
+in both arms. Strict directional validation, semantic proof review and reversal
+and order checks gate further testing. Candidate failure stops this screen;
+survival would require fresh confirmation and broader qualification before
+adoption. See [frozen design and gates](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#v185-whole-instruction-core-qualification).
+
+The first screen completes: 72 fresh valid first attempts, all strict symmetric
+directional checks passed, no retry/reuse/warmup/failure/missing usage. Both
+arms match 32/32 clear-control labels with zero reversal or member-order
+conflicts. V185 has 2/2 Stockpots reversal conflicts and 2/2 member-order
+changes; fresh V179 has 1/2 of each. The small disputed-pair result is not a
+general performance ranking. V185 fails qualification and receives no second
+draw or broader adoption test. Native usage is $0.4713536 API-equivalent; the
+persistent counter moves to 19,277. Seventy-three production node-pair tests
+pass. Full proof review and exact request/receipt audit are recorded with the
+maintained results; neither prompt is certified by consistent clear controls
+alone.
+
+### Fixed-V179 meal-design boundary diagnostic
+
+Under unchanged Compare-v179, the user-authorized diagnostic compares explicit
+meal-required versus unrestricted Cookware and meal-included versus excluded
+Stockpots. Both axes retain stipulated food identity; laboratory design stays
+fixed between child variants. The original and one-original bridges keep
+unresolved semantic expectations. Six fully synthetic conditions, including
+direct same-subject variant controls, have independently qualified provisional
+agent labels outside model input. No producer meanings, prompts or hierarchies
+are changed.
+
+The first 44-call block passes closed-anchor labels, proofs, validation and
+order checks, admitting one unchanged fresh 44-call confirmation. Across both,
+48/48 closed-anchor responses are supported; all 80 copy/bridge responses have
+zero reversal, member-order or repeat changes. The untouched original has
+3/4 reversal conflicts, 3/4 member-order changes and 1/4 repeat changes.
+This shows explicit design clauses are followed in these copies, not a general
+Compare repair, original semantic gold or a causal word diagnosis.
+
+Native aggregate records 88 valid outputs from 91 attempts: three temporary
+HTTP/2 stream failures recover on their second attempts. Their usage remains
+unknown; $0.610562 API-equivalent is a known subtotal only. No answer reuse,
+warmups, terminal failure, Bootstrap work or hierarchy generation occurs.
+The persistent counter reaches 19,368. See [frozen design and completed
+qualification](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fixed-v179-meal-design-boundary-diagnostic).
+
+The subsequent [independently frozen v109 scope screen](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#independently-frozen-bootstrap-v109-scope-screen)
+collects twenty-five exact pairs in both directions. Final preflight/review
+retains ten provisionally labeled controls and fifteen unresolved probes;
+historical labels and original AS ancestry are not gold. All twenty control
+responses pass independent proof review. Five probe reversal conflicts remain.
+The v3 metadata correction uses fifty exact receipt reuses and zero calls to
+enable the native reversal checker; its preceding empty result had skipped all
+cases. A fresh two-case author repeat retains identity substitution in V179.
+
+Experimental [Compare-v186](shr_single_pair/Hierarchy-compare-v186.md) changes
+only the permission for unspecified conditions to vary, distinguishing general
+kinds from particular entities' unknown properties. Its twenty-two-case first
+draw preserves all twenty control labels and removes the author reversal, but
+the positive personhood inference remains qualified. The candidate is not
+adopted or broadly confirmed. It uses 23 attempts including one warmup, no
+reuse/retry/failure/missing usage, and $0.1426876 API-equivalent cost; the shared
+counter reaches 19,454/20,000. Automatic caching splits the fixed developer
+prefix from variable user input; audit confirms distinct responses and no
+conversation linkage.
+
+The [separate HR05 panel](shr_single_pair/hierarchy-compare-hr05-fixed-scopes-source-v1.json)
+selects six exact saved pairs, both orientations, using `saved_comparisons`.
+Five are unresolved proof/scope probes. The user accepts the exact C035/MrBeast
+Compare positive and classifies its problem as the Consolidation-v4 explicit
+meaning. That control is retained separately from approval of the parent topic.
+HR05's mixed Bootstrap-v109/Consolidation-v4 endpoints remain honestly labeled
+and separate from the independently generated Bootstrap-only scope screen.
+No Bootstrap prompt, historical endpoint or hierarchy is changed.
+
+The [completed matched HR05 screen](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-hr05-matched-screen)
+has twelve fresh valid responses per prompt, with exact original result pins.
+V179 retains one Equipment/Lunch boxes reversal conflict among six settled
+pairs; V186 has one intention/suitability conflict among five settled pairs and
+returns uncertainty for the sixth brand pair. The latter conflict admits a
+mistaken nourishing intention in one orientation, then treats that same intention
+as proof of objective suitability in the reverse. These are comparison
+inconsistencies without predetermined semantic gold. Bread-purpose inference,
+Equipment qualifier grammar and ordinary restaurant-commerce readings remain
+qualified; consistent labels alone do not clear them. All four user-approved
+MrBeast control responses survive. V186 is not adopted; V179 remains the
+development baseline, preserving its known failures.
+
+Independent audit verifies twenty-four valid case receipts, twenty-six unique
+responses including warmups, identical input/code/schema/provider settings and
+the intended single-rule prompt difference, with no conversation linkage.
+Native usage records 26 attempts, zero answer reuse/retries/failures/missing
+usage, fourteen comparison cache hits and $0.1855808 API-equivalent catalog
+cost. The persistent shared counter reads 19,532/20,000 after the run, including
+other agents' intervening calls; the native aggregate bounds this panel's own
+26 attempts. No Bootstrap, hierarchy or UI work is performed.
+
+### Compare-v187–v191 bounded gate status
+
+The [maintained gate record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#compare-v187-necessary-coverage-conditions)
+retains the unchanged twelve ASv6.100-derived HR05 comparisons and six separate
+synthetic intention/capability controls. V188 removes the observed reversal in
+one draw but still imports particular brand facts; V189 stops that fact import
+and retains an Equipment reversal; V190's compatible-role instruction does not
+remove it. No candidate is adopted and V179 remains the development baseline.
+
+Experimental V191 changes only question specificity relative to V190. Its final
+two allowed Equipment comparisons both return neither and name the non-food
+boundary, but the remaining sixteen gate cases, fresh confirmation and broader
+qualification are unrun. Equipment's modifier-scope qualification remains;
+reciprocal answers do not establish new human semantic gold.
+
+The shared persistent counter reaches 20,000/20,000; inference stops. The
+[native aggregate source](shr_single_pair/hierarchy-compare-v187-v191-gate-usage-v1.json)
+counts this loop's own 83 attempts, including eight warmups and one recovered
+retry, with seventy-four valid comparisons and zero exact reuses. One failed
+attempt lacks usage: $0.5447196 is a known API-equivalent subtotal only, not a
+complete cost or subscription charge. Generated native receipts and unrun cases
+remain in the retained task worktree. No Bootstrap, hierarchy, UI or outgoing
+owner-message work is performed by this Compare loop.
