@@ -5,10 +5,11 @@ document records decisions for a future version, not the current generation
 algorithm. Landing this document in `main` does not activate V2.
 
 For V2, the user approved guaranteed L1 selection by prominence, additional L1s
-for uncovered notes, prominence-ordered refinement of multi-note leaves, and
-retaining the child when an equal-note-set parent has only that child. Other
-equal-note-set cases and automatic shaping remain open. The current constructor
-still follows the
+for uncovered notes, prominence-ordered refinement of multi-note leaves, a
+provisional additional eligibility rule for deeper entries matching existing
+canonical headings, and retaining the child when an equal-note-set parent has
+only that child. Other equal-note-set cases and automatic shaping remain open.
+The current constructor still follows the
 [standalone traversal design](hierarchy-traversal-draft.md).
 
 ## Purpose
@@ -126,10 +127,58 @@ local branches have no unused descendants left. Record a multi-note group that
 remains after exhaustion. A note represented only at an internal canonical node
 does not require additional comparisons solely to create a singleton node for it.
 
+## Additional deeper-entry eligibility — provisional V2 rule
+
+**Approved provisionally October 11, 2026; future work, not implemented.** After
+the guaranteed L1 pass, additional L1 work for uncovered notes, and their
+triggered consolidation finish, an unused local child is also eligible when:
+
+- Its original immediate local parent has been admitted to the canonical
+  hierarchy. Equivalent admission counts; a held parent does not.
+- Its heading matches an existing canonical heading whose node does not yet
+  represent that child's note. Count own supporting notes plus recursive
+  descendants, deduplicating note IDs.
+
+The user's reply to adding this rule was: "ok, i suppose that sounds reasonable".
+
+This first rule uses the same heading wording as a selection hint. It applies
+even when the canonical node representing the original parent is a one-note
+leaf. The heading match establishes eligibility only, not equivalent meaning or
+containment. Establish the child's fixed meaning and PPv35 prominence with its
+original evidence; retain prominence priority, round robin across notes, and no
+50-point cutoff for deeper entries. Every selected entry follows ordinary
+traversal of the whole canonical hierarchy and existing placement checks.
+Do not force placement at the matching heading or process the same local entry
+twice.
+
+The HR05 Bread case motivates this rule:
+
+| Original post | Local entry | HR05 outcome |
+| --- | --- | --- |
+| Sourdough preparation | L1 Bread `1` | Admitted as Bread C015, representing this note only |
+| Cranberry sourdough | Food `1` -> Bread `1.1` | Food admitted as C004, a one-note leaf; Bread unselected |
+| Bread-and-avocado dinner | Food `1` -> Bread `1.2` | Food admitted as C021, a one-note leaf; Bread unselected |
+
+An offline check of HR05's admitted original parents and unused L2 entries
+found three candidates with an existing canonical heading that does not yet
+represent their note: these two Bread entries and Dinner `1.3` from the
+pizza-and-sushi post. Evidence remains in the saved
+[HR05 state](../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/HR05/state.json)
+and [original subject entries](../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/subjects.json).
+No new meanings, prominence scores or comparisons were generated. Their
+relationships and any resulting browsing improvement remain untested.
+
+Ordering these candidates against multi-note-leaf work remains open. This rule
+does not establish discovery of shared topics whose headings differ or which
+have no existing canonical node. Shaping and its paused decisions remain open.
+
 ## Selection completion and shaping
 
 Selection has no remaining work when every guaranteed L1 has been processed,
-every note is represented, and no multi-note leaf has eligible unused descendants.
+every note is represented, no multi-note leaf has eligible unused descendants,
+and no unused local child qualifies under the additional heading-match rule.
+Any selected entry still needs a recorded placement or hold and completed
+triggered consolidation before selection can finish.
 Uncovered notes remain an unresolved outcome rather than successful coverage.
 
 The finished browsing hierarchy must strictly narrow the distinct-note set at
@@ -247,8 +296,11 @@ and validation. Six remains a trigger, not a hard maximum.
 
 Meaning generation and prominence scoring cover every original L1, including
 those outside the guaranteed pass. Deeper scoring covers eligible entries in
-the relevant local branches of multi-note leaves, not every deeper entry of
-every note. The added scoring work grows with the entries assessed and their
+the relevant local branches of multi-note leaves and children qualifying under
+the additional heading-match rule, not every deeper entry of every note.
+Heading matching uses already available local and canonical headings; it does
+not require model judgments for every local/canonical pair. The added scoring
+work grows with the entries assessed and their
 source-post lengths, not every local/canonical pair. Reuse exact saved meanings,
 prominence answers and comparisons where available.
 

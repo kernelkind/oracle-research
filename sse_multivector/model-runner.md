@@ -259,6 +259,15 @@ with a 4,719-token cache-eligible prefix; both cases remain unrun. Broader edits
 and model qualification remain open; no calls or
 adoption occurred.
 
+The authorized [Bootstrap-v117 draft](shr_single_pair/Hierarchy-bootstrap-v117.md)
+clarifies that defining designs/methods remain permitted and removes repeated
+scope reminders. Main scope rules, both scope checks, examples and schema stay
+unchanged. Two written reviews and nine native revision tests pass. Model
+qualification and empty/null regression coverage remain the next proposed work.
+Offline preparation retains both HR04 inputs and medium settings with a
+4,683-token cache-eligible prefix; both cases remain unrun and
+no inference or adoption occurred.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
