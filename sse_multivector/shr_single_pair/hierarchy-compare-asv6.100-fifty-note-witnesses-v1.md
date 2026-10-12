@@ -8712,3 +8712,31 @@ adapter is required. This assesses admission under unchanged definitions, not
 Bootstrap generation, comparison-label gold or a replacement Compare contract.
 Single-meaning and paired representations differ in namespace and subject
 duplication as well as counterpart presence; any effect must retain that caveat.
+
+### Fixed-candidate admission diagnostic v1: frozen design
+
+`Compare-admission-diagnostic-v1` is an auxiliary diagnostic, not a replacement
+Compare prompt or a Bootstrap producer. Two neutral steel-loop configurations
+are assessed against each unchanged B109 definition: a directly human-graspable
+loop and a machine-only loop inaccessible and too small for direct human grasp.
+Neither configuration labels the loop a handle or presupposes its admission.
+The teacher must preserve the named kind as well as the material and function.
+Unresolved readings remain uncertain; a positive instance is not universal proof.
+
+Native preparation creates six experiments under
+`target/compare-admission-diagnostic-v1`: single, A-first and B-first, each with
+two fresh draws of two requests. The single source verifies original ASv6.100
+and both producer receipts; paired sources preserve original input bytes and
+evidence through hash-pinned prepared experiments. No post, context, ancestor,
+historical answer or expected label enters model input. Source files specify
+Sol 6.1 medium/SSE and the shared worker, with caching disabled for this short
+prompt; no padding or external concurrency control is introduced.
+
+The twelve requests assess the same candidates, enabling checks for changed
+membership judgments across A/B assignment, input order and single/pair forms.
+Single/pair differences also change subject duplication and field namespace,
+so they cannot isolate counterpart causality. Audit exactly one assessment per
+supplied definition and candidate: the generic schema alone does not enforce
+that cross-product. Retain any disagreement or missing assessment without
+turning the unresolved original pair into semantic gold. No attempt allowance
+is supplied; the retired counter remains historical and untouched.
