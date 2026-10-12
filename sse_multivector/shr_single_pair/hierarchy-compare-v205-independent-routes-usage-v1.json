@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v205-independent-routes": [
+      "../../target/compare-v205-independent-routes-screen-v1"
+    ]
+  }
+}

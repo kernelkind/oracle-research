@@ -8020,3 +8020,25 @@ functional positives, with correct diagnostic IDs and no invented material.
 A failed screen ends this candidate's expansion. A promising screen requires
 fresh confirmation and the triad/resolved/producer controls before adoption.
 Earlier alternative interventions and negative results remain preserved.
+
+### V205 result and missing-fact demonstration
+
+All eight responses validate. Two of four decorative comparisons correctly
+identify an unknown direct Paper route; intended-reverse and actual-forward
+still declare unsupported exclusion. All four functional positives survive.
+This partial result fails the preregistered screen, so no wider V205 execution
+follows and no causal gain is claimed. Nine fresh attempts include one warmup,
+zero reuse/retry/failure/missing usage and $0.0679264 API-equivalent cost.
+
+The intended-reverse answer explicitly says the supplied meaning does not
+establish direct Paper membership, then uses that absence to claim exclusion.
+This exposes a distinction between unproved coverage and proved exclusion, not
+merely overlooking a route. Existing rules require null when an unknown
+particular fact decides membership; neither existing example demonstrates null.
+An independent reviewer recommends an example-only diagnostic before another
+warning. Retain the positive performer/recipient example and replace the second
+example with an independently fictional particular mountain whose required
+summit elevation is unknown. General-kind counterexamples remain permitted.
+Keep all instructions, four fields and validation meanings fixed. Removing the
+shared-term watch demonstration is a qualification limit, not an isolated
+one-sentence treatment. No validation data enter the new example.
