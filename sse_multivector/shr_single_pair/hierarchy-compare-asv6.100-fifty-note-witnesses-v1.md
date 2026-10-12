@@ -7194,3 +7194,40 @@ other agents' admissions. A failing candidate receives no fresh repeat; a
 promising candidate still needs repeat and broader qualification within the
 remaining cap. Missing qualification stays incomplete rather than being treated
 as adoption. No Bootstrap or hierarchy work is performed here.
+
+### V189 result and V190 compatible-role contrast
+
+V189 completes eighteen valid comparisons and preserves all six synthetic
+controls and both approved MrBeast positives. The brand proof now records its
+missing commercial-offering condition as unresolved in both orientations,
+without importing actual offerings. This is qualified missing-fact handling,
+not semantic certification or indiscriminate uncertainty.
+
+The gate still fails: Equipment/Lunch boxes has a reversal conflict. Forward
+coverage derives non-food identity and design from portable containment and
+intended lunch-food use. Reverse admits an edible bread container preserving
+that same role. Independent review identifies a presumed exclusion: a required
+functional role does not itself rule out a compatible additional kind, role or
+property. Equipment's modifier interpretation remains unresolved; the conflict
+does not establish which complete pair label is correct. V189 receives no
+repeat or broad qualification.
+
+Native exports and aggregate are under
+`target/compare-v189-intention-capability-v1`: twenty attempts including two
+warmups, eighteen valid responses, zero reuse/retries/failures/missing usage,
+seventeen comparison cache hits and $0.1188740 API-equivalent catalog cost.
+The strict production validator accepts all eighteen output structures;
+the receipt-bound checker has five settled complete pairs, one conflicting
+pair and one unresolved brand pair. These are mechanical scope checks, not
+six independently certified semantic labels.
+
+[Experimental V190](Hierarchy-compare-v190.md) retains V189 and adds only:
+"A required role alone does not exclude a compatible additional role or
+property." This tests presumed exclusivity without a lunch-container exception
+or preferred label. The same eighteen-case gate, frozen meanings, A/B schema
+and examples remain. The full native revision records the composed changes
+against V179. At preparation the shared counter is 19,977/20,000; no cap reset
+or extra allowance is introduced. Any unrun or insufficiently repeated
+qualification remains unresolved. Straightforward criteria and concise proof
+diagnostics follow [official reasoning prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively);
+that guidance does not establish this semantic hypothesis.
