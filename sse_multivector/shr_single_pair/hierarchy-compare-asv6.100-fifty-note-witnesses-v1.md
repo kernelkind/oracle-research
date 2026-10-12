@@ -7147,3 +7147,50 @@ full revision remains against V179, with the retained V187 change explicitly
 recorded. Schema, A/B input and examples remain unchanged. The same eighteen-case
 gate and passing criteria apply under the remaining shared allowance; no new
 cap or reset is introduced.
+
+### V188 gate: reciprocal labels, remaining particular-fact proof gap
+
+The unchanged eighteen-case gate completes with eighteen valid responses:
+all six provisional synthetic labels and both exact user-approved MrBeast
+positives survive, and the native HR05 checker finds zero reversal conflicts
+among six complete pairs. Food/Bread and intention/suitability now use reciprocal
+intention-based readings. This is one draw, not proof of causal wording,
+semantic gold for the real probes, or an adoption recommendation.
+
+Two independent reviewers accept the six controls and MrBeast proofs. Both
+identify the remaining brand proof issue: coverage is established by adding
+particular lighting, hardware or commercial design-goods offerings absent from
+the fixed "London design brand" meaning. These might be true external facts,
+but are contingent rather than necessary implications of that fixed string.
+The predeclared proof-quality gate is therefore not cleared. Equipment's
+coordinated non-food modifier and the restaurant commerce reading remain
+qualifications, not newly forced labels. Native agent reviews preserve the
+ten real-probe uncertainties and eight accepted control/preservation cases.
+
+Native exports are `target/compare-v188-intention-capability-v1/{hr05,controls}-native.json`;
+the native aggregate `usage.json` records twenty actual attempts including two
+warmups, zero reuse/retries/failures/missing usage, eleven comparison cache hits,
+and $0.1374472 API-equivalent catalog cost, not subscription billing. All eighteen
+responses pass the existing strict symmetric production validator. Preparation
+audits verify exact V179 HR05 inputs/evidence, unchanged synthetic definitions,
+ASv6.100 provenance, task source bindings and no expectation leakage. Thirty-eight
+native revision/saved-comparison/consistency tests pass on combined local main.
+
+### V189: particular unknown properties in coverage proofs
+
+[Experimental V189](Hierarchy-compare-v189.md) retains V188 and adds the exact
+generic-versus-particular distinction previously isolated in V186. General
+kinds permit varying unstated conditions; a particular entity's property absent
+from its meaning and necessary implications remains unknown, rather than being
+chosen for either a counterexample or coverage proof. The native full revision
+records all three changes against V179; the local V188 contrast changes only
+this distinction. A/B input, schema, examples and frozen test meanings remain
+unchanged. No preferred brand label is prescribed, and the supplied human
+identity/occupation implications in MrBeast must survive.
+
+The same eighteen-case gate and prior passing criteria apply. There is no new
+allowance: the shared counter reads 19,957/20,000 before this preparation, including
+other agents' admissions. A failing candidate receives no fresh repeat; a
+promising candidate still needs repeat and broader qualification within the
+remaining cap. Missing qualification stays incomplete rather than being treated
+as adoption. No Bootstrap or hierarchy work is performed here.
