@@ -3,6 +3,20 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
+## Current model-attempt policy
+
+The user permanently removed the shared **20,000 model-attempt cap** for
+Bootstrap, Compare and hierarchy work. Run authorized experiments through the
+shared runner without `--attempt-budget`; do not restore the retired counter or
+impose another attempt cap unless the user explicitly sets one. Earlier
+instructions in this record to use that counter are historical and superseded
+for current execution.
+
+Retain historical used counts, claims, outputs and receipts unchanged. Fresh
+attempts, retries, exact reuses and usage remain recorded by the native runner.
+This decision does not change task authorization, deliberately bounded
+unrelated experiments or the monetary ledger.
+
 ## Approved sense and factual-evidence rule
 
 The user approved these rules verbatim, replying **“agree”**:

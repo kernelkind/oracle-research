@@ -1,5 +1,18 @@
 # General model runner
 
+## Current Bootstrap, Compare and hierarchy attempt policy
+
+The user permanently removed the shared **20,000 model-attempt cap**. For
+authorized Bootstrap, Compare and hierarchy experiments, invoke the shared
+runner without `--attempt-budget`. Do not restore the retired counter or impose
+another attempt cap unless the user explicitly sets one. Earlier counter
+instructions in historical findings are superseded for current execution.
+
+Preserve historical used counts, claims and receipts. The native runner still
+records fresh attempts, retries, exact reuses and usage without a persistent
+attempt budget. Generic optional budget support, deliberately bounded unrelated
+experiments, task authorization and the monetary ledger remain unchanged.
+
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
 [Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md).
