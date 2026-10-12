@@ -72,6 +72,43 @@ relation remain unreviewed by the user. This partial judgment is bound to the
 exact old meaning, not transferred to fresh definitions or other poison cases.
 Do not silently add missing conditions or retroactively repair fixed meanings.
 
+## Retained meaning-quality regression
+
+The [versioned input selection](hierarchy-bootstrap-hr04-food-boundaries-v2.json)
+retains both original inputs and adds the exact C003 meaning, accepted poison
+witness, producer/comparison receipt references and verbatim user judgment to
+C003's review evidence. The [ASv6.100 regression collection v4](hierarchy-bootstrap-asv6.100-regressions-v4.json)
+includes that selection. The earlier selection and collection remain unchanged
+for frozen experiments.
+
+This is a review regression for whether each fresh meaning expresses its chosen
+membership conditions clearly and consistently. The old meaning is not an
+expected output; neither poison exclusion nor C003/C004 equivalence is a required
+fresh label. Review the exact new wording before deciding which examples fit it.
+The accepted old admission must not be repaired inside Compare.
+
+Native preparation keeps the post and complete selected-root tree in Bootstrap
+input. The historical meaning, witness, judgment and review questions remain
+outside the rendered prompt, in `evidence.review`; collection preparation
+retains node-specific evidence under `historical_witnesses`. Receipt references
+inside review metadata are descriptive, not automatic receipt validation; the
+two original native receipts were inspected separately.
+
+The [unchanged-v109 preparation specification](hierarchy-bootstrap-v109-asv6.100-regressions-v4.spec.json)
+supports an offline input/isolation check. It does not select a new Bootstrap
+candidate or authorize inference. No Bootstrap prompt or historical artifact
+is changed by retaining this regression.
+
+Offline native preparation in the Compare task worktree's
+`target/bootstrap-hr04-poison-regression-retention-v1` validated all 346 collection
+inputs, including the exact C003/C004 original input hashes and 34/24-entry trees.
+The accepted C003 witness survives collection preparation outside the model
+input and prompt. Three existing production-path checks passed for schema-4
+inputs, review isolation and collection deduplication. All cases remain unrun;
+no model calls were made for this retention. Older relative corpus bindings
+resolve in the retained Bootstrap task worktree; their definition bytes match
+the committed project copies.
+
 ## Fresh unchanged-prompt draws
 
 Three native `--repeat` experiments each generated the same two entries from

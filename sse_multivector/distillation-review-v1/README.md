@@ -6154,9 +6154,146 @@ native reviews, exposure proof and one-group usage summary. The worktree is
 retained for source bindings. DCSv1/DSLv10 hashes and all production code remain
 unchanged. This small, purpose-selected sample tests the shared relationship
 rule only; it qualifies neither DCS null-search reliability, broader accuracy,
-minimum reasoning effort nor full-evaluation runtime. The most useful next
-step is a source-bound fresh DCS negative-search trial with real matching and
-self-guard prerequisites, followed by complete-output audit of every null.
+minimum reasoning effort nor full-evaluation runtime. The subsequent native
+coverage diagnostic below adds genuine matching/self-guard prerequisites and
+complete-output audit of every null.
+
+### Native coverage diagnostic with genuine prerequisites
+
+The user approves the next small DCSv1 negative-search trial. Native sampling
+freezes two answers with seed `fresh-dcs-20261011-495` and a separate positive
+answer with seed `fresh-dcs-positive-20261011-82`; counts are respectively
+two and one random answers, with no hard cohort. Seeds are selected from saved
+source structure, without reviewer outputs. These are purposive development
+cases. All selected posts exclude the original sixty's 54 note IDs and the
+39 notes in maintained prior-source definitions. The initial N75 answer is
+source-assessed but receives no calls: Trust/Trustworthiness remains uncertain
+and it provides no resolved positive placement control. N13 was exposed to
+the preceding DSL trial; N53 was absent from that four-post trial. Neither
+selection is a representative or independently reserved accuracy sample.
+
+Pre-call native assessments retain every distinct trusted teacher subject as
+required, grouping only identical wording. Production evaluation preparation
+binds actual saved generations, ASv6.100, complete posts and context rows.
+Generic native `run` executes complete matching and only necessary self guards;
+support and unrelated relationship comparisons remain unrun. Unrun actual
+edges cannot license descendant omission. All model premises used by the
+selected searches receive full-output agent audit before coverage snapshots
+are frozen; exact trusted wording supplies mechanical premises.
+
+| Saved answer | Genuine prerequisites | Selected DCS result | Independent full-output audit |
+| --- | --- | --- | --- |
+| `M02-checkpoint-800-N0013` | Eleven complete matching occurrences: six mechanical, three fresh distinct calls and two duplicate reuses. Eight positive self guards: six mechanical, one fresh distinct call and one duplicate reuse. | Seven null searches; the eighth required meaning, the complete greeting, settles `no_full_match`. | All seven decisions and all 44 candidate rejection reasons accepted. |
+| `M01-checkpoint-200-N0053` | Eighteen complete matching occurrences: seven mechanical, eight fresh distinct calls and three duplicate reuses. Target Songs match/self guard are exact mechanical positives. | Teacher Songs has its only full match at student `2`; DCS returns student `1`, Music, as the missing compatible placement. | Correct witness and explanation accepted; separate unchanged DSLv10 accepts Music → Songs. |
+
+The second answer supplies the positive control absent from the first sample.
+General Songs occurs separately from Music; Music's descendants name particular
+song/action meanings rather than an equal-meaning Songs copy. Music has no
+teacher match, and no uncovered candidate supplies a trusted mechanical
+relationship for Songs, so this search survives earlier settlement rules.
+Its other fifteen teacher compatibility sets remain unscored; Tours and News
+matching interpretations retain their pre-call uncertainties. Only the Songs
+DCS case is dispatched. The pre-assessed witness verifier runs concurrently
+in a separate native experiment. Original prerequisite results and reviews
+remain frozen, and both coverage snapshots validate after all audits.
+
+All **eight selected DCS decisions and complete explanations pass** independent
+agent audit: seven correct nulls and one positive, also verified by DSLv10.
+Native accounting records **22 fresh attempts**: eleven matching calls, one
+semantic self guard, eight searches, one witness verifier and one prefix
+warmup. Six duplicate occurrence reuses add no calls. There are no failures,
+retries or missing usage. Input is **27,185 tokens**; output is **12,167**,
+including **8,981 reasoning tokens**. Complete API-equivalent cost is
+**$0.17604**, with no subscription cash charge. The accounting report retains
+70 deliberately unrun comparisons in the original self-guard experiment and
+therefore marks that broader experiment incomplete; it does not certify a
+complete three-check evaluation.
+
+The seven-case DCS prefix is eligible at 1,067 tokens and warmed, but receives
+**zero cached tokens**. Warming adds $0.00495 to the estimate, producing net
+savings of **−2.89%** across the trial. The one-case positive prefix is eligible
+at 1,177 tokens; its one-attempt allowance prioritizes the comparison and
+skips warming. Native scheduling records **150.743 seconds** in the union of
+run invocation intervals and **724.576 seconds** from the first run's start to
+the last finish; source selection, assessment and audit between stages explain
+the difference. Those intervals do not include preparation before the first
+run or final documentation work.
+
+Artifacts, native reviews, exposure proof, immutable selections and usage
+summary remain ignored under
+`oracle-mvp-review-fresh-dcs/target/distillation-review-v1/fresh-dcs/`.
+Generation source is `c662a7ab`; subsequent main synchronization leaves bound
+review code and prompt bytes unchanged. Retain this worktree for source
+references. DCSv1/DSLv10, schemas,
+production defaults and review precedence remain unchanged. This bounded
+test finds no search error; one resolved positive cannot establish a low
+false-null rate on diverse data, minimum reasoning effort or full-run timing.
+The following high comparison reuses these frozen mixed controls, preserving
+uncertainties and complete-output scoring.
+
+### High comparison on the frozen coverage controls
+
+The user approves the faster comparison after asking to reduce iteration
+overhead. Native `prepare --from --reasoning-effort high --repeat` reuses the
+seven negative DCS inputs, the positive Songs/Music input and its DSLv10
+verifier. Exact case IDs, inputs, prompt bytes and model retain parity with
+xhigh; original premise snapshots, source expectations and results stay
+frozen. All three new groups run concurrently through the shared queue.
+
+Independent complete-output audit accepts **all nine high verdicts**: seven
+correct nulls and their 44 candidate explanations, the Music witness, and the
+positive DSL verdict. There is **no observed substantive degradation** on
+these controls. Only DCS and this one DSL pair are retested; matching premises
+remain the frozen xhigh/mechanical results. This is development evidence,
+with one positive search, rather than a minimum-effort qualification across
+all checks or diverse data.
+
+| Native matched accounting | Xhigh | High |
+| --- | ---: | ---: |
+| Fresh attempts, including one warmup | 10 | 10 |
+| Input tokens | 16,257 | 16,257 |
+| Cached input tokens | 0 | 0 |
+| Output tokens, including reasoning | 6,937 | 3,003 |
+| Reasoning tokens, already in output | 4,487 | 634 |
+| API-equivalent cost | $0.101884 | $0.062544 |
+
+High costs **38.61% less** for these exact requests; neither run has retries,
+failures, reuse or missing usage. The concurrent high run span is **23.106
+seconds**, including warming. The xhigh groups were run in separate stages,
+so their overall elapsed span is not a controlled latency comparison. Eligible
+seven-case caching still produces no hits; its high warmup adds $0.00370.
+The one-case positive skips warming under the same allowance policy.
+
+Native groups, attributed reviews, scheduling evidence and matched native
+usage summaries remain ignored under `fresh-dcs/high/` and its parent in the
+retained task worktree. Documentation verification and source bindings pass;
+prompts, schemas and production defaults stay unchanged. The following medium
+comparison uses the same frozen controls before any panel expansion.
+
+### Medium comparison on the frozen coverage controls
+
+The user approves medium on the same nine cases. Native fresh preparations
+inherit the high groups, preserving exact inputs, prompts, schemas, model,
+source judgments and cache policy; only reasoning effort changes. The three
+groups run concurrently. Independent full-output audit accepts **all nine
+verdicts**, including every one of the 44 null-candidate reasons. No
+substantive decision or explanation degradation is observed versus high or
+xhigh on this panel.
+
+Native accounting records **ten fresh attempts**, including one warmup, with
+no reuse, retries, failures or missing usage. Input remains **16,257 tokens**;
+output is **2,316 tokens**, including **41 reasoning tokens**. API-equivalent
+cost is **$0.055674**, **45.36% below matched xhigh** and **10.98% below high**.
+The concurrent run span is **19.054 seconds**, including warming. Cached
+input remains zero; the warmup adds $0.00289. Native results, current agent
+reviews and usage evidence remain ignored under `fresh-dcs/medium/` and its
+parent in the retained task worktree.
+
+Medium is the lowest effort tested successfully on these limited controls.
+Matching premises still use xhigh/mechanical results; broader matching,
+support and diverse-data qualification remain open. Prompts, schemas and
+production defaults stay unchanged. The next useful comparison is low on
+these same frozen cases before expanding the panel.
 
 ## Actual distilled wording: offline preview (October 8)
 

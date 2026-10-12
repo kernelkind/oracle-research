@@ -213,6 +213,13 @@ ceremonial-gold witness and whole pair remain unreviewed; no judgment transfers
 to the fresh meanings. Compare should evaluate the supplied boundaries rather
 than add an unstated condition to remove this accepted witness.
 
+The [Bootstrap regression collection v4](shr_single_pair/hierarchy-bootstrap-asv6.100-regressions-v4.json)
+now retains 346 distinct original inputs, including these two Food roots. C003's
+accepted witness is node-specific review evidence, never model input or a fresh
+expected output. Its [preparation specification](shr_single_pair/hierarchy-bootstrap-v109-asv6.100-regressions-v4.spec.json)
+uses unchanged v109 for offline preparation validation; preparation does not
+authorize a run. Earlier collection/specification bindings remain frozen.
+
 [Bootstrap-v113](shr_single_pair/Hierarchy-bootstrap-v113.md) is the subsequent
 user-authorized draft from working v109. Its single definition-writing
 paragraph change preserves chosen-kind identity and defining conditions through
@@ -220,6 +227,17 @@ rewording and removes a duplicate broader-category warning. Nine native
 revision tests and matched offline HR04 preparation pass; the 4,600-token
 prefix remains cache-eligible. No model qualification, adoption, Compare or
 hierarchy work occurred.
+
+The subsequent authorized [Bootstrap-v114 draft](shr_single_pair/Hierarchy-bootstrap-v114.md)
+revises boundary selection as well as expression from working v109. Shared
+conditions apply to each alternative, role/component admission specifies its
+qualifying kind, and checks cover unintended inclusion and exclusion within
+the chosen information topic. The final meaning must express the same scope
+without diagnostic supplementation. V113 remains the expression-only control;
+neither draft is model-qualified or adopted. Nine native revision tests and
+exact unchanged input/output/example checks pass. Offline preparation retains
+the two HR04 inputs and medium settings with a 4,689-token cache-eligible prefix;
+both cases are unrun. No calls, Compare changes or hierarchy work occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
@@ -1851,7 +1869,40 @@ Native accounting includes only the final experiment: ten fresh calls,
 API-equivalent estimate $0.164466. Its natural prefix has 76 tokens, below the
 warming threshold. Prompts, schemas and production code remain unchanged;
 the frozen task worktree is retained. DCS null-search qualification still
-requires its genuine matching/self-guard prerequisites and separate testing.
+requires separate testing with its genuine matching/self-guard prerequisites.
+
+The subsequent [native coverage diagnostic](distillation-review-v1/README.md#native-coverage-diagnostic-with-genuine-prerequisites)
+freezes actual saved answers and pre-call assessments, runs complete matching
+and necessary self guards through native groups, then searches residual
+candidates. Seven source-null searches and one positive Songs-beneath-Music
+control pass independent full-output audit; unchanged DSLv10 separately verifies
+the positive pair. Original premise ledgers remain frozen; verification uses
+a separate native experiment. Support and unrelated relationship checks stay
+unrun and cannot license omissions. Native accounting includes 22 fresh
+attempts, one warmup, six duplicate occurrence reuses, no failures/retries or
+missing usage, and $0.17604 API-equivalent cost. Warming produces no cached
+tokens and adds $0.00495. Source selection and auditing between stages account
+for much of the 724.576-second first-to-last run span; the union of native run
+intervals is 150.743 seconds. N13 is previously DSL-exposed; N53 excludes that
+four-post trial. Prompts, schemas and production behavior stay unchanged.
+One positive control does not qualify diverse-data false-null reliability,
+minimum reasoning effort or full-evaluation runtime. Frozen artifacts retain
+the task worktree. The subsequent [high comparison](distillation-review-v1/README.md#high-comparison-on-the-frozen-coverage-controls)
+reuses the same eight DCS cases and one DSL verifier with native fresh calls.
+All nine complete outputs pass independent audit without observed substantive
+degradation. Three groups run concurrently in 23.106 seconds; matched native
+cost falls from $0.101884 to $0.062544 (38.61%), with identical input tokens,
+no cached tokens and one warmup in each run. There are no retries, failures,
+reuse or missing usage. Matching premises remain at xhigh/mechanical settings;
+this small mixed-control comparison does not qualify minimum effort across
+all checks. The subsequent [medium comparison](distillation-review-v1/README.md#medium-comparison-on-the-frozen-coverage-controls)
+also passes all nine full-output audits, using the same inputs, prompts and
+cache policy. Its three concurrent groups finish in 19.054 seconds; ten fresh
+attempts cost $0.055674, 45.36% below matched xhigh and 10.98% below high.
+There are no retries, failures, reuse, missing usage or cached tokens. Medium
+is the lowest tested passing effort on this limited panel; the next comparison
+is low before expanding it. Matching/support and broader qualification remain
+open, and production defaults stay unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -7184,6 +7235,17 @@ uses the A/B direction names, requires each diagnostic ID exactly once and
 preserves null-answer uncertainty. Existing local/canonical paths are unchanged.
 Native pair consistency supports symmetric reversals and chains without
 requiring the removed meaning copy or applying canonical placement guards.
+
+Canonical fixtures in `hierarchy_node_pairs` may supply
+`meaning_from: {"experiment": "...", "case": "..."}` instead of literal
+`meaning`, with one original supporting entry and its unchanged subject. Native
+preparation validates the saved non-null Bootstrap answer, receipt and exact
+original selected entry, post and complete schema-4 tree. The same resolver
+validates `local_meaning_from`; both endpoint receipts remain in review evidence
+and hashed source bindings. Symmetric projection sends only subject and meaning.
+This prepares comparisons without regenerating or manually copying producer
+definitions. Twelve new CLI checks and 95 existing pair/snapshot/consistency
+checks pass; the initial production-path test failed before this support.
 
 The authorized examples ablation compares V179 with experimental V180, which
 removes only its synthetic-example section. Five fixed ASv6.100/Bootstrap-v96

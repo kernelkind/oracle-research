@@ -14,6 +14,13 @@
       "artifact_path": "target/hierarchy-hr04-twelve-note-v1/final/state.json",
       "sha256": "f482553bd90d76b9b4eeac77ec0662419dd3387465d1dbc67d046c034cce19b7",
       "family": "Canonical"
+    },
+    {
+      "version_id": "HR05",
+      "identity": "d87ac1e138f3c47a34a3f195d8f79d3f9cb320d341998e366a2062b5664e9752",
+      "artifact_path": "target/hierarchy-hr05-twenty-four-note-v1/HR05/state.json",
+      "sha256": "2c660067560b80055fafd33a97d9fa49ef5861b5daae829f8f9edc9b52abd8e3",
+      "family": "Canonical"
     }
   ]
 }

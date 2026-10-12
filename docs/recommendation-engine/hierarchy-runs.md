@@ -1,16 +1,61 @@
 # Official hierarchy runs and experimental parameters
 
 This Markdown file is the register of official hierarchy runs and their
-experimental parameters. **HR05** is the approved 24-note rerun in progress.
+experimental parameters. **HR05** is the completed 24-note rerun with a review UI.
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
 ## HR05 — ASv6.100 24-note hierarchy
 
-Approved as a rerun of HR04 with 24 notes. Execution is in progress. The
+Approved as a rerun of HR04 with 24 notes and completed October 11, 2026. The
 [run definition](../../sse_multivector/hierarchy-runs/hr05/traversal.spec.json)
-records complete note IDs in their original selection order. A review UI using
-the existing terminal hierarchy viewer will be prepared after the run.
+records complete note IDs in their original selection order. The prompts, model
+settings and hierarchy source match HR04; the selected note count changed from
+12 to 24, with a fresh 500-attempt allowance.
+
+### Result
+
+| Measurement | Saved result |
+| --- | --- |
+| Construction / execution status | complete / complete |
+| Notes represented and individually accessible | 24 of 24 |
+| Raw graph and browsing menu | 30 nodes, 26 edges, 5 roots |
+| Maximum child choices | 5 |
+| Structural audit | Passed; all 26 edges strictly narrow note sets, all 18 leaves contain one note, no violations |
+| Selected local entries | 26, all L1 roots; 24 placed and two searches retained without placement after stopping |
+| Local placements | 23 additions and one equivalent |
+| Consolidation proposals | 15: seven placed, eight held |
+| Held local entries | 0 |
+| Native attempts | 459 of 500: 119 warmups and 340 ordinary attempts |
+| Valid model answers | 339; three provider failures recovered by retry, no terminal failures |
+| Unrun prepared cases | 5 speculative comparisons, paused when construction stopped |
+| Exact answer reuses | 0 |
+| Known API-equivalent cost subtotal | $2.12428; complete total unknown because three recovered failed attempts have no usage |
+
+The run stopped during L1. It did not need deeper refinement or removal of
+equal-note-set steps, so it does not establish their behavior with live model
+judgments. The structural audit does not grade meanings or relationships; its
+`done` field deliberately remains false. Saved teacher judgments and all eight
+held proposals remain unchanged. The native usage report has `complete: false`
+because five speculative cases remain unrun; construction and execution are
+complete. The attempt ledger and counter reconcile exactly. The saved cost is
+an API catalogue estimate, not a subscription charge.
+
+### Review UI
+
+Open the existing terminal hierarchy viewer:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hr05-review-ui-v1/launch.sh
+```
+
+Use `j`/`k` to select, `Enter` to open, `n` for all notes, `d` for direct notes,
+`o` for notes outside children, `?` for meanings and details, and `q` to exit.
+The UI preserves all 30 hierarchy nodes, shared parents, fixed meanings and the
+24 full original note bodies. It adds one display root labelled **HR05**, with
+no filtering or display collapse. The launcher's production `--check` passed.
+The exporter used the generation commits below; the exact existing viewer
+binary is retained, with its build commit and build dirty state marked unknown.
 
 ### Inputs and construction
 
@@ -69,13 +114,43 @@ contains all selected IDs, settings, source bindings and initial native plans.
 The hierarchy source, prompts and runner fingerprints match HR04. The subject
 corpus SHA-256 remains
 `18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a`.
-Resume from the retained task worktree with the same attempt-budget path;
-source stays frozen throughout execution.
+Later documentation and prompt-development commits do not change these
+generation commits. The retained task worktree and shared runner remain frozen
+for source bindings, native receipts and review UI paths. The final graph, menu,
+audit, usage and attempt ledger are preserved under
+`target/hierarchy-hr05-twenty-four-note-v1/HR05/`.
 
-| Live artifact | File |
+| Saved artifact | File |
 | --- | --- |
-| Graph and browsing menu | [Current state](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/state.json) |
-| Attempt allowance and usage | [Persistent counter](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/attempt-budget.json) |
+| Raw hierarchy | [HR05 raw state](../../target/hierarchy-catalogue/outputs/HR05.json) |
+| Browsing menu | [HR05 menu](../../target/hierarchy-catalogue/outputs/HR05-related-1.json) |
+| Review UI export | [HR05 viewer hierarchy](../../target/hierarchy-catalogue/outputs/HR05-related-2.json) |
+| Complete parameters and evidence | [HR05 record](../../target/hierarchy-catalogue/records/HR05.json) |
+| Structural audit | [Saved audit](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/HR05/audit.json) |
+| Native usage and allowance reconciliation | [Saved usage](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/HR05/usage.json) |
+| Attempt allowance | [Persistent counter](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/attempt-budget.json) |
+| Final source and output provenance | [Saved provenance](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/HR05/code-provenance.json) |
+| Exact generator source snapshots | [43-file source archive](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/code-snapshot/manifest.json) |
+| Review UI launcher | [Open HR05](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hr05-review-ui-v1/launch.sh) |
+| Review UI provenance | [Export, notes and binary hashes](../../../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hr05-review-ui-v1/provenance.json) |
+
+### SHA-256 bindings
+
+| Input, source or output | SHA-256 |
+| --- | --- |
+| Run definition and note order | `6e2848ec7c291df8abc89ef0fe87175b38dc72233e8aa96bf35ec418d341dec3` |
+| Bootstrap-v109 prompt | `caa77221193ce816c6112ea20ea81fcf4bf4739994fa06102e4b41f132128cd1` |
+| Compare-v179 prompt | `49d936bd6d5e251bcc1317f34a87fd71c25eb1e63f972e5ec8824b81f73eb9ed` |
+| Consolidation-v4 prompt | `144e23d89c65910f0851d4163ac7dff1baee248ebf5dab5c8779c843f9aae7c6` |
+| Bootstrap response schema | `5806c8c66ce8a8a9b13fb9f5ff6445eb79bb918cf15925a17fd9354a1877809c` |
+| Compare response schema | `9bdea40731448a9ef7b73372743cc258c5f6dc9419377c1d6c563d9dd12bc522` |
+| Shared-runner fingerprint | `67a3688360b285fa4de34c08f2009df12708246143163e7a35d7ea04301cc0b8` |
+| Request-code fingerprint | `15429b548cf904622a33bdad86c20d523da097c1956cc736ebbb2a513ded9018` |
+| Source archive manifest | `a7b75f63a20ae0efc0c2ab0a3410f2d65e5d1784adf1c51720cb4d4914f58e5c` |
+| Raw hierarchy | `2c660067560b80055fafd33a97d9fa49ef5861b5daae829f8f9edc9b52abd8e3` |
+| Browsing menu | `ec666a427c0855c78c2cbc41abd7c0eab03b7c74025d210471cbef1993524168` |
+| Review UI hierarchy export | `3d654734d4f07cb5ece1a3a520e902012c5a0562a83e001b7a908ea0efe2acdd` |
+| Review UI full notes | `11bb71d9852f6a1f3f7e3bfae2c54630900588c725df5825e5fa9af10e498fe9` |
 
 ## HR04 — ASv6.100 12-note hierarchy
 

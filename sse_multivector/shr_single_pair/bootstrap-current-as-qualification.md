@@ -693,13 +693,19 @@ implicit is a Bootstrap failure. The final meaning must express the chosen
 boundary. This does not predetermine a narrow or broad choice, or establish
 unknown facts about a particular consumer or occurrence.
 
-The [full reusable selection](hierarchy-bootstrap-asv6.100-regressions-v3.json)
+The [original reusable selection v3](hierarchy-bootstrap-asv6.100-regressions-v3.json)
 contains 344 selected entries from 38 posts and 122 root trees, with 222 immediate
 and 384 recursive selected-ancestor checks. It is a development collection,
 not an unseen reliability benchmark or complete selection of every local entry.
 Source corpora, model answers and receipts stay ignored in retained task
 worktrees; relative source paths are resolved there. No subject extraction or
 canonical construction is needed to rerun the saved collection.
+
+The [current selection v4](hierarchy-bootstrap-asv6.100-regressions-v4.json)
+retains those inputs and adds the two exact HR04 Food roots, giving 346 distinct
+inputs from the same 38 posts. The [retained C003 regression](bootstrap-hr04-food-boundaries-v1.md#retained-meaning-quality-regression)
+keeps its accepted historical poison admission outside Bootstrap input. That
+partial approval is not an expected fresh meaning or whole-pair label.
 
 ## Completed activity-boundary diagnostics
 
@@ -3631,3 +3637,45 @@ eligible at 4,600 estimated prefix tokens. The prepared trial is
 worktree, with both cases unrun. No teacher calls, prompt adoption, Compare
 changes or hierarchy work occurred. The versioned full-file review is v109
 against v113; approval and subsequent matched testing remain separate.
+
+### Bootstrap-v114 boundary-selection and expression draft
+
+The user authorized a broader edit after reviewing why faithful expression
+alone cannot repair a boundary already chosen too broadly. The historical
+HR04 C003 resolution itself admits nourishment **or** components of something
+eaten or drunk. Merely preserving that condition can preserve the accepted
+poisoned-drink counterexample. [Bootstrap-v114](Hierarchy-bootstrap-v114.md)
+therefore revises the ambiguity, resolution and definition-writing sections
+together, directly from working baseline v109. V113 remains the separate
+expression-only draft for a future controlled comparison.
+
+V114 distinguishes conditions shared by every admitted kind from conditions
+specific to an alternative. A role, use or component relationship must specify
+the qualifying kind as well as the relationship. Before recording the final
+conditions, it checks for information admitted outside the chosen interpretation
+and information wrongly excluded within it. The final definition must express
+the same conditions without relying on diagnostics to supply missing scope.
+These checks do not prescribe a universal Food boundary or require definitions
+with the same subject to be equivalent.
+
+Two independent written reviews identified a risk in checking whether every
+physical member of a named kind qualifies: a role-specific topic can legitimately
+exclude some members of the broader kind. The created version instead checks
+the information covered by the chosen interpretation. Original restrictions,
+jointly required parts, named alternatives, unknown instance facts and null
+meanings remain supported. The input, factual-evidence instructions, four-field
+output schema and both synthetic examples are byte-identical to v109.
+
+Nine native revision tests, exact replacement checks and revision hashes pass.
+Native offline preparation retains the two original HR04 inputs, model, medium
+reasoning and schema; the 4,689-token prefix is locally cache-eligible. Both
+cases remain unrun in `target/bootstrap-v114-boundary-draft-v1/prepared` in the
+retained correctness worktree. No model calls, adoption, Compare edits or
+hierarchy construction occurred. The self-check is an untested hypothesis,
+not an independent verifier or a guarantee of unambiguous scope.
+
+The next proposed qualification compares v109, v113 and v114 on the two Food
+witnesses and four nonfood controls. Independent reviewers should assess final
+meanings before reading diagnostics, preserving original evidence and judging
+both unintended inclusion and lost legitimate coverage. That proposal has not
+been prepared or run beyond the two-case offline mechanical check above.
