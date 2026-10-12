@@ -8063,3 +8063,29 @@ functional positives; a failed screen prevents broader expansion. A promising
 candidate needs fresh confirmation plus resolved human-handhold, MrBeast,
 brand-uncertainty, complete-triad and producer-panel checks before adoption.
 No instruction convention, schema or input evidence changes.
+
+### V206 result and physical-versus-design source audit
+
+All eight responses validate and retain four functional positives, but none of
+the four decorative answers establishes the required unknown-route treatment.
+The candidate fails its screen; no broader V206 qualification follows. Do not
+interpret its consistent negative labels as correct exclusion or declare a
+causal effect from one draw.
+
+A separate input-only semantic audit supports uncertainty while qualifying the
+fixture: a physical surface pattern may be a property of a paper covering; an
+independent design/content topic does not gain Paper coverage through its medium.
+A mathematical description can still describe a physical property. The original
+wording does not clearly settle these readings. Its production irrelevance
+closes only that connection. Source-role actual versus intended changes neither
+issue. The review read input strings but encountered maintained status in the
+workflow documentation, so it is not fully blind to earlier status commentary.
+
+Keep the original fixture and its results unchanged. A separate six-case source
+now explicitly bounds the child to physical colour-and-shape appearance, varying
+only a paper surface, an uncoated steel surface and omitted surface material.
+Provisional agent expectations are respectively Paper coverage, neither and
+uncertain in exact reversals. They are synthetic, not new human gold, AS or
+Bootstrap outputs. Matched V202/V206 tests isolate factual membership treatment
+with clearer information scope; they do not retroactively certify the original
+pattern readings or turn omission into a negative judgment.
