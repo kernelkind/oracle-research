@@ -32,6 +32,16 @@ pairs, all unresolved probes; the 20 provisional control directions are
 consistent. Current model selection must therefore consider control agreement
 and student reversal consistency, rather than rank raw teacher matches alone.
 
+The completed B109 Qwen transfer passes have 40 valid outputs each. After
+shared-rule adjudication, epoch one has 30 accept / 6 reject / 4 uncertain
+source-based assessments, versus 27 / 9 / 4 at epoch four. Median execution is
+14.94/14.58 seconds with 20.49 GiB peak CUDA allocation. These provisional
+reviews include B109 instruction following; they are not blind gold accuracy.
+Stronger adaptation to the old B96 targets does not automatically improve
+transfer to B109. Gemma's matched passes and C179 model evaluation remain
+pending, so this does not select a production checkpoint or change the
+foundation recommendation yet.
+
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
 four-field API also carries ambiguities, resolutions and quoted evidence.
