@@ -56,6 +56,9 @@ consistently correct the disputed coverage. Food C009 is excluded in all four.
 These remain bounded agent assessments, with stock's purpose interpretation
 unsettled. See
 [the illustration contrast](#audit-v5-food-illustration-contrast).
+The next authorized contrast states the consumer condition directly for both
+materials and producer organisms, keeping the illustration omitted. See
+[the condition-wording test](#audit-v5-food-condition-wording-contrast).
 
 The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
@@ -5417,3 +5420,65 @@ in this bounded baseline check. No new prominence behavior is established.
 This integration does not change those paths or rewrite shared-runner policy
 to satisfy old expectations. These unrelated checks are reported explicitly,
 not counted as successful consolidation validation.
+
+## Audit-v5 Food condition wording contrast
+
+The user asks to proceed with consolidation work after local main integration.
+This resumes the suggested input-only diagnostic, with the unchanged Audit-v5
+prompt and output schema. The two synthetic variants share the original saved
+v17 Food-first producer receipt and omit its final illustrative sentence.
+
+Control:
+
+> Food resources are materials intended for people to eat or drink and organisms grown or raised to provide such materials.
+
+Direct condition:
+
+> Food resources are materials intended for people to eat or drink. Food resources also include organisms grown or raised to provide materials intended for people to eat or drink.
+
+The literal intended coverage is the same: both alternatives require materials
+intended for human consumption. The changed wording replaces “such materials”
+with that condition written directly for producer organisms and separates the
+alternatives into sentences. This tests the combined formulation, not which of
+its wording or punctuation changes causes an answer. It is not a canonical
+meaning repair or a new consolidation prompt version.
+
+The [source](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-condition-v1.json)
+uses the existing `meaning_edit` preparation path for both variants, with
+`include_nomination: false`. All six sibling meanings, their order, parent,
+proposal title and original receipt stay fixed. Synthetic metadata remains
+outside model input and application stays forbidden. The
+[spec](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-condition-v1.spec.json)
+preserves GPT-6.1 Sol medium, ordinary SSE, prompt/schema and selected worker.
+Native `prepare --repeat` and a second `prepare --from ... --repeat` freeze two
+independent draws per condition; neither receives an earlier answer or review
+in model context. Both preparations complete before dispatch, allowing their
+four cases to share the native runner's internal queue. No cache warming is
+added to this small diagnostic.
+
+Pre-call criteria stay bounded: human-purpose Food C003 must be included;
+stoves C001 and brand C005 must be excluded; unrestricted-consumer Food C009
+must be excluded. Beets C007 admits plants grown for edible roots without a
+human-destination condition, so it is excluded under the registered literal
+whole-meaning criterion. That remains an agent criterion, not new human gold.
+Chicken stock C006's culinary-purpose implication remains unsettled; its
+judgment is reported separately and cannot certify or reject a full list alone.
+An uncertain target/control remains unresolved, not a successful correction.
+
+Two fresh answers per condition test recurrence only. The previous illustration
+contrast stays separate historical evidence; it is not rerun or treated as a
+contemporaneous control. Reviews remain attributed to the agent. The
+[native usage selection](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-condition-usage-v1.json)
+counts the four new cases separately from earlier trials, including any actual
+provider retries and missing usage. The permanently retired shared hierarchy
+attempt counter is not restored; old counters and claims remain unchanged.
+
+This follows official guidance to keep reasoning instructions direct and use
+scoped comparisons with explicit criteria, while keeping unsettled automated
+judgments distinct from human labels:
+[reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+and [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
+Those sources support the evaluation discipline, not this semantic hypothesis.
+Total preparation and input size depend on this one six-sibling group, not the
+whole corpus. No production per-node step, Bootstrap/Compare edit, hierarchy
+change, UI refresh, runner implementation or external agent message is added.
