@@ -281,8 +281,15 @@ definitions and two-case repeat validate. Full qualification uses all 346 curren
 ASv6.100 inputs, with the native history root limited to the completed focused
 experiment to preserve its exact 22 original producers. Scoped history selects
 reuse evidence; it does not change model-facing inputs or fabricate receipts.
-The remaining 324 definitions are new. Full review is pending; no activation,
-Compare inference or hierarchy build is part of this Bootstrap stage.
+The remaining 324 definitions are new. The [completed full review](shr_single_pair/bootstrap-v122-full-qualification-v1.md)
+covers 346 definitions and 384 selected ancestor checks, with one flagged
+factual statement, four individual uncertainties and three exact-output scope
+conflicts. Compatible paired repeats retain separate producer bindings; they
+do not replace the original cohort. Native activity locks serialize review
+mutation, so material flags were persisted through one writer and full review
+coverage is documented against the frozen cohort rather than claimed as 346
+native verdicts. V122 is not activated; the shared counter is exhausted at
+20,000 and inference is stopped. No Compare or hierarchy work occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at

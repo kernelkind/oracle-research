@@ -3812,5 +3812,13 @@ is prepared with the original 346 ASv6.100 inputs. Native history scoped to the
 completed focused experiment preserves exactly its 22 original producers;
 324 definitions are new. The earlier broad-history preparation remains unrun,
 because it would substitute two latest repeat receipts. No cache or receipt is
-manually edited. Full review and qualification remain pending; V122 is not
-activated. No Compare inference or hierarchy construction occurs.
+manually edited. The [completed full qualification](bootstrap-v122-full-qualification-v1.md)
+records all 346 valid nonnull outputs: agent review assesses 341 accepts or
+qualified accepts, four uncertainties and one unsupported particular-stage
+statement. All 384 selected ancestor checks are assessed; three fixed-output
+scope implications fail. Fresh paired repeats fit different independently
+chosen boundaries and do not repair those original outputs. V122 remains
+unactivated; the whole-branch invariant is not solved. The shared 20,000-attempt
+cap is exhausted, so model work is stopped. No Compare inference or hierarchy
+construction occurs. The proposed next diagnostic supplies exact fixed ancestor
+definitions to a child; that input-contract change is not implemented or approved.
