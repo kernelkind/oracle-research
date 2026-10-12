@@ -7549,3 +7549,47 @@ candidate negates the whole condition. Missing particular identity facts cannot
 be assigned, and source ancestry supplies no proof. Original labels stay
 unresolved. Qualification tracks candidate admission/exclusion and necessary
 proofs, not just lower reversal counts or increased uncertainty.
+
+### V196 first draw and fresh confirmation
+
+The first thirty-two-case test and an unchanged fresh repeat both validate all
+responses and preserve all twelve synthetic controls plus both approved MrBeast
+positives. Each draw still has a settled metal-handholds/grips reversal. Its
+forward question now targets a missing handhold but supplies only a generic
+lifting-handle description; the answer treats every handle grip as a handhold.
+Reverse supplies an exclusively machine-gripped microscopic part and admits it.
+Thus the whole-condition wording improves some questions without consistently
+resolving candidate construction or term interpretation.
+
+Restaurant is uncertainty versus positive in draw one and reciprocal positives
+in draw two. The original sourdough-purpose pair is uncertainty in both directions
+in draw one, then positive versus uncertainty in the repeat. Neither uncertainty
+inflation nor disappearance of a settled reversal certifies consistent scope.
+The other selected sourdough shortcut and mental-thinking probes are reciprocal
+positives in both draws, with their semantic qualifications still retained.
+V196 remains experimental and unadopted. Native exports are
+`target/compare-v196-whole-condition{-repeat,}-v1/*-native.json`.
+
+Independent review accepts the clear synthetic controls but flags incomplete
+necessary proofs in the open probes. In particular, an ordinary mixing or kneading
+example does not close preliminary learning/planning, and the author's personhood
+cannot be supplied merely from an easy literal-malfunction question. The prior
+qualification of recipe reading is retained: a stated future-bake purpose already
+establishes more than bare association, and permitted activity connections require
+assessment. No source edge or old positive is restored as gold.
+
+The native two-draw source records seventy-two fresh attempts including eight
+warmups, sixty-four valid comparisons, zero reuse/retry/failure/missing usage and
+$0.4571976 API-equivalent cost. No cap is restored. The repeat uses the same
+executable bindings and frozen request inputs, explicit --repeat, independent
+response receipts and no conversation linkage.
+
+The [six explicit-handhold controls](hierarchy-compare-explicit-handhold-controls-v1.json)
+resolve the parent role as a grasping point usable directly by a human hand and
+separately define all-human-graspable, machine-only, and mixed child categories.
+They are synthetic diagnostic variants, not Bootstrap outputs or replacements
+for the unchanged original probe; no producer receipt is asserted. The provisional
+positive/neither/neither labels and rationale stay outside model input. This
+isolates honoring explicit conditions from interpreting the original implicit
+handhold/grip relationship. These definitions are never prompt examples or
+applied hierarchy changes.
