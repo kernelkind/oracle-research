@@ -106,6 +106,114 @@ class PromptAssemblyTests(unittest.TestCase):
             self.assertIn('differs', result.stderr)
             self.assertEqual(self.destination.read_bytes(), b'Existing frozen version')
 
+    def paired_specs(self):
+        shared = {'path': 'part-1.md', 'sha256': sha256(self.parts[1])}
+        companion = self.root / 'Partner-v1.assembly.json'
+        other = {**self.manifest, 'prompt_id': 'Partner-v1',
+                 'output': {'path': 'Partner-v1.md', 'sha256': sha256(self.expected)},
+                 'shared': shared, 'companion': self.spec.name}
+        self.manifest.update(shared=shared, companion=companion.name)
+        self.write_spec()
+        companion.write_text(json.dumps(other))
+        return companion
+
+    def test_paired_assembly_rejects_different_shared_rules_before_writing(self):
+        companion = self.paired_specs()
+        other = json.loads(companion.read_text())
+        alternate = b'Different shared rules\n'
+        (self.root / 'alternate.md').write_bytes(alternate)
+        other['shared'] = {'path': 'alternate.md', 'sha256': sha256(alternate)}
+        other['parts'][1] = other['shared']
+        other['output']['sha256'] = sha256(self.parts[0] + alternate)
+        companion.write_text(json.dumps(other))
+        result = self.invoke()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('shared rules differ', result.stderr)
+        self.assertFalse(self.destination.exists())
+
+    def test_sync_publishes_both_versions_and_preserves_old_prompts(self):
+        companion = self.paired_specs()
+        self.assertEqual(self.invoke().returncode, 0)
+        self.assertEqual(self.invoke(spec=companion).returncode, 0)
+        original = {p: p.read_bytes() for p in (
+            self.spec, companion, self.destination, self.root / 'Partner-v1.md')}
+        rules = self.root / 'rules-v2.md'
+        rules.write_bytes(b'Updated shared definition rules.\n')
+        result = subprocess.run([
+            sys.executable, str(CLI), 'sync', str(self.spec),
+            '--rules', str(rules), '--prompt-id', 'Draft-v2',
+            '--companion-id', 'Partner-v2'], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for identifier in ('Draft-v2', 'Partner-v2'):
+            new_spec = self.root / (identifier + '.assembly.json')
+            self.assertEqual(self.invoke('check', new_spec).returncode, 0)
+            self.assertEqual((self.root / (identifier + '.md')).read_bytes(),
+                             self.parts[0] + rules.read_bytes())
+            self.assertEqual(json.loads(new_spec.read_text())['shared'],
+                             {'path': 'rules-v2.md', 'sha256': sha256(rules.read_bytes())})
+        self.assertEqual({p: p.read_bytes() for p in original}, original)
+
+    def test_sync_refuses_collision_without_partial_publication(self):
+        companion = self.paired_specs()
+        self.assertEqual(self.invoke().returncode, 0)
+        self.assertEqual(self.invoke(spec=companion).returncode, 0)
+        rules = self.root / 'rules-v2.md'
+        rules.write_bytes(b'Updated shared definition rules.\n')
+        existing = self.root / 'Partner-v2.md'
+        existing.write_bytes(b'Already frozen\n')
+        result = subprocess.run([
+            sys.executable, str(CLI), 'sync', str(self.spec),
+            '--rules', str(rules), '--prompt-id', 'Draft-v2',
+            '--companion-id', 'Partner-v2'], capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('already exists', result.stderr)
+        self.assertFalse((self.root / 'Draft-v2.md').exists())
+        self.assertFalse((self.root / 'Draft-v2.assembly.json').exists())
+        self.assertEqual(existing.read_bytes(), b'Already frozen\n')
+
+    def test_sync_rolls_back_failed_pair_validation(self):
+        companion = self.paired_specs()
+        self.assertEqual(self.invoke().returncode, 0)
+        self.assertEqual(self.invoke(spec=companion).returncode, 0)
+        rules = self.root / 'rules-v2.md'
+        # This appears in the wrapper already, violating single inclusion.
+        rules.write_bytes(self.parts[0])
+        result = subprocess.run([
+            sys.executable, str(CLI), 'sync', str(self.spec),
+            '--rules', str(rules), '--prompt-id', 'Draft-v2',
+            '--companion-id', 'Partner-v2'], capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('exactly once', result.stderr)
+        for identifier in ('Draft-v2', 'Partner-v2'):
+            self.assertFalse((self.root / (identifier + '.md')).exists())
+            self.assertFalse((self.root / (identifier + '.assembly.json')).exists())
+
+    def test_future_bootstrap_and_consolidation_versions_have_matching_shared_rules(self):
+        initial = [PROMPTS / 'Hierarchy-bootstrap-v129.assembly.json',
+                   PROMPTS / 'Hierarchy-consolidation-v21.assembly.json']
+        for path in initial:
+            self.assertTrue(path.exists(), str(path))
+        for family, first_version in (('bootstrap', 129), ('consolidation', 21)):
+            for prompt in PROMPTS.glob(f'Hierarchy-{family}-v*.md'):
+                version = int(prompt.stem.rsplit('-v', 1)[1])
+                if version < first_version:
+                    continue
+                manifest = prompt.with_suffix('.assembly.json')
+                self.assertTrue(manifest.exists(), f'Publish {prompt.name} with paired assembly')
+                spec = json.loads(manifest.read_text())
+                self.assertIn('shared', spec)
+                self.assertIn('companion', spec)
+                self.assertEqual(self.invoke('check', manifest).returncode, 0)
+        fragment = (PROMPTS / 'prompt_parts/explicit-meaning-rules-v6.md').read_bytes()
+        self.assertNotIn(b'resolutions', fragment)
+        self.assertNotIn(b'null meaning', fragment)
+        for identifier in ('Hierarchy-bootstrap-v129', 'Hierarchy-consolidation-v21'):
+            self.assertEqual((PROMPTS / (identifier + '.md')).read_bytes().count(fragment), 1)
+        self.assertEqual(sha256((PROMPTS / 'Hierarchy-bootstrap-v126.md').read_bytes()),
+                         '85dbf0b23de1dd085cdd7519650d0e9bcf9bd7264e4d517b1a1f461c436e3f30')
+        self.assertEqual(sha256((PROMPTS / 'Hierarchy-consolidation-v20.md').read_bytes()),
+                         '07b87f7f54ca079564228c067a40f7ec3655388763aa4796bdd7bbbff79a21be')
+
     def test_manifest_rejects_unversioned_output_and_output_as_its_own_source(self):
         self.manifest['output']['path'] = 'different-name.md'
         self.write_spec()
@@ -445,7 +553,8 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
                         'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16',
                         'Hierarchy-consolidation-v17', 'Hierarchy-consolidation-v18',
-                        'Hierarchy-consolidation-v19', 'Hierarchy-consolidation-v20'):
+                        'Hierarchy-consolidation-v19', 'Hierarchy-consolidation-v20',
+                        'Hierarchy-consolidation-v21', 'Hierarchy-bootstrap-v129'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',

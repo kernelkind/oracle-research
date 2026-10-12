@@ -3,6 +3,16 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
+## Shared definition-writing publication
+
+Bootstrap-v129 and Consolidation-v21 introduce synchronized source assembly
+using explicit-meaning-rules-v6. They port the common writing instructions from
+working experimental v126 while keeping task-specific evidence, diagnostics and
+null behavior outside the shared source. Neither has new inference qualification
+or activation from this mechanical change; v126 remains the working experimental
+baseline described below. Future common writing changes must publish both new
+prompt versions together. See [the native workflow](../model-runner.md#synchronized-bootstrap-and-consolidation-definition-writing).
+
 ## Current model-attempt policy
 
 The user permanently removed the shared **20,000 model-attempt cap** for

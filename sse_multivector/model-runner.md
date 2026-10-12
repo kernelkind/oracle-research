@@ -1,5 +1,52 @@
 # General model runner
 
+## Synchronized Bootstrap and consolidation definition-writing
+
+Shared definition-writing changes must reach both prompts. The initial paired
+sources are experimental [Bootstrap-v129](shr_single_pair/Hierarchy-bootstrap-v129.md)
+and [Consolidation-v21](shr_single_pair/Hierarchy-consolidation-v21.md), each using
+the same [rules-v6](shr_single_pair/prompt_parts/explicit-meaning-rules-v6.md).
+These rules port the common writing instructions from working experimental
+Bootstrap-v126. Bootstrap's evidence/resolution references and null-meaning
+behavior remain in its wrapper; consolidation's proposal, containment and null
+response remain in its wrapper. Historical versions remain frozen. This is a
+source synchronization change, not a measured prompt improvement or activation.
+
+To change common wording, author a new version of the shared rules and publish
+both new prompt versions in one operation. For example, after actually creating
+`explicit-meaning-rules-v7.md`:
+
+```bash
+python3 sse_multivector/prompt_assembly.py sync \
+  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v129.assembly.json \
+  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v7.md \
+  --prompt-id Hierarchy-bootstrap-v130 \
+  --companion-id Hierarchy-consolidation-v22
+```
+
+Run from the authorized task worktree. This command writes both new complete
+prompts and their paired manifests, preserving all nonshared source parts and
+prior versions. It checks both outputs and refuses collisions; a failed final
+validation removes files created by that invocation. New IDs must increase
+within their prompt families. It makes no model calls and changes no experiment
+spec or selected model prompt. Wrapper-only revisions may keep the same shared
+version and matching companion, but must still have a checked paired assembly.
+
+Normal `experiment-runner prepare --spec` and `prepare --from ... --prompt ...`
+validate the pair before publication. New Bootstrap-v129+ and Consolidation-v21+
+prompts without paired manifests, mismatched version identities or differing
+shared rules are rejected. The prepared plan freezes both manifests, both
+compiled prompts and their file-backed parts; literal parts stay in the pinned
+manifests. Existing frozen requests are not rewritten. The generic runner only
+validates hashes returned by the project's optional `prompt_sources` hook;
+Oracle owns the pairing policy. Checking and hashing this bounded set happens
+once per preparation, not per sibling comparison or corpus note.
+
+Regression coverage verifies new-prompt pairing, exact shared text, independent
+task rules, immutable historical files, collision refusal, failure cleanup and
+native CLI source binding. Semantic qualification of the synchronized pair is
+separate from these mechanical checks.
+
 ## Current Bootstrap, Compare and hierarchy attempt policy
 
 The user permanently removed the shared **20,000 model-attempt cap**. For

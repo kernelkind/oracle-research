@@ -16,6 +16,74 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def paired_prompt_spec(self):
+        shared = self.root / 'rules-v1.md'
+        shared.write_text('Shared definition rules.\n')
+        rule = dict(path=shared.name, sha256=hashlib.sha256(shared.read_bytes()).hexdigest())
+        for identifier, peer in (('Hierarchy-bootstrap-v129', 'Hierarchy-consolidation-v21'),
+                                 ('Hierarchy-consolidation-v21', 'Hierarchy-bootstrap-v129')):
+            content = shared.read_bytes() + b'{POST}\n'
+            prompt = self.root / (identifier + '.md')
+            prompt.write_bytes(content)
+            self.write(identifier + '.assembly.json', dict(schema_version=1,
+                prompt_id=identifier, output=dict(path=prompt.name, sha256=hashlib.sha256(content).hexdigest()),
+                parts=[rule, dict(text='{POST}\n')], shared=rule,
+                companion=peer + '.assembly.json'))
+        spec = json.loads(self.spec.read_text())
+        spec['prompt'] = dict(id='Hierarchy-bootstrap-v129', path='Hierarchy-bootstrap-v129.md')
+        self.write('spec.json', spec)
+        return shared
+
+    def test_paired_prompt_preparation_freezes_sources_and_rejects_companion_drift(self):
+        shared = self.paired_prompt_spec()
+        self.prepare()
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        for path in (shared, self.root / 'Hierarchy-bootstrap-v129.assembly.json',
+                     self.root / 'Hierarchy-consolidation-v21.assembly.json',
+                     self.root / 'Hierarchy-consolidation-v21.md'):
+            self.assertEqual(plan['sources'][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.cli('prepare', 'E2', '--from', 'E1', '--prompt',
+                 self.root / 'Hierarchy-consolidation-v21.md',
+                 '--prompt-id', 'Hierarchy-consolidation-v21')
+        peer = self.root / 'Hierarchy-consolidation-v21.md'
+        peer.write_bytes(peer.read_bytes() + b'Drifted shared wording.\n')
+        failed = self.cli('prepare', 'bad', '--spec', self.spec, ok=False)
+        self.assertIn('companion prompt differs', failed.stderr)
+        self.assertFalse((self.root / 'bad').exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_new_managed_prompt_requires_pair_and_matching_version_identity(self):
+        self.paired_prompt_spec()
+        spec = json.loads(self.spec.read_text())
+        spec['prompt']['id'] = 'Hierarchy-bootstrap-v130'
+        self.write('spec.json', spec)
+        failed = self.cli('prepare', 'wrong-id', '--spec', self.spec, ok=False)
+        self.assertIn('prompt version differs from its assembly', failed.stderr)
+        new = self.root / 'Hierarchy-bootstrap-v130.md'
+        new.write_text('Unpaired new prompt {POST}\n')
+        spec['prompt']['path'] = new.name
+        self.write('spec.json', spec)
+        failed = self.cli('prepare', 'unpaired', '--spec', self.spec, ok=False)
+        self.assertIn('requires a paired assembly', failed.stderr)
+        self.assertFalse((self.root / 'unpaired').exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_bootstrap_pair_requires_a_consolidation_companion(self):
+        self.paired_prompt_spec()
+        old_peer = json.loads((self.root / 'Hierarchy-consolidation-v21.assembly.json').read_text())
+        old_peer['prompt_id'] = 'Hierarchy-bootstrap-v130'
+        old_peer['output']['path'] = 'Hierarchy-bootstrap-v130.md'
+        self.write('Hierarchy-bootstrap-v130.assembly.json', old_peer)
+        (self.root / 'Hierarchy-bootstrap-v130.md').write_bytes(
+            (self.root / 'Hierarchy-consolidation-v21.md').read_bytes())
+        own = json.loads((self.root / 'Hierarchy-bootstrap-v129.assembly.json').read_text())
+        own['companion'] = 'Hierarchy-bootstrap-v130.assembly.json'
+        self.write('Hierarchy-bootstrap-v129.assembly.json', own)
+        failed = self.cli('prepare', 'wrong-family', '--spec', self.spec, ok=False)
+        self.assertIn('wrong prompt family', failed.stderr)
+        self.assertFalse((self.root / 'wrong-family').exists())
+        self.assertEqual(self.calls(), [])
+
     def consolidation_spec(self, parent=None):
         self.prompt.write_text('GENERIC PROMPT: propose a parent. {INPUT_JSON}')
         nodes = [dict(id=f'C{i}', subject=f'Topic {i}', meaning=f'Meaning {i}',

@@ -6057,3 +6057,63 @@ Use the original Stock input and independent draws, retaining a positive
 control and the existing purpose qualifications. This suggestion does not
 create a new prompt, authorize further calls, edit another teacher or start
 another experiment.
+
+## Required synchronization of shared definition-writing
+
+The user requires the shared definition-writing wording to synchronize as
+Bootstrap develops. This supersedes independently maintaining consolidation's
+rules-v5 snapshot as the current publication workflow. Historical v20 and all
+earlier source files, outputs and receipts remain unchanged. Shared source
+publication is required; semantic approval, prompt selection and further
+inference remain separate.
+
+The initial synchronized pair is experimental
+[Bootstrap-v129](shr_single_pair/Hierarchy-bootstrap-v129.md) and
+[Consolidation-v21](shr_single_pair/Hierarchy-consolidation-v21.md), both reading
+[explicit-meaning-rules-v6](shr_single_pair/prompt_parts/explicit-meaning-rules-v6.md).
+The source uses the current common writing instructions from working Bootstrap
+v126. Bootstrap-v128 landed during this task and is preserved; its writing
+section agrees with v126. The new common wording names each admitted kind,
+preserves its complete conditions and alternatives, states required roles and
+actions, checks standalone scope and describes optional variations. Bootstrap's
+post evidence, `resolutions` references and null-meaning behavior remain in its
+wrapper. Consolidation retains its parent/sibling checks, independent sibling
+restriction instruction, display-panel example and object-or-null schema.
+Neither the proposed instruction-placement experiment nor an example change
+is bundled into this source-synchronization work.
+
+The common source is written once. Both assembly manifests pin the same path
+and SHA-256 and name a matching companion. The existing assembler's new `sync`
+command replaces that one part in both next prompt versions, preserving all
+other source parts. It refuses existing destinations, validates both outputs
+and removes newly created files if final validation fails. It never edits
+earlier versions. Wrapper-only revisions can keep the same shared version and
+matching companion. Future shared changes must use this publication route;
+the [native workflow](model-runner.md#synchronized-bootstrap-and-consolidation-definition-writing)
+contains the command and the repository instructions record the requirement.
+
+Normal native preparation invokes the project's `prompt_sources` validator.
+For Bootstrap-v129+ and Consolidation-v21+, missing paired manifests, mismatched
+version IDs, wrong companion families, altered compiled text and differing
+shared parts fail before an experiment is created or inference is dispatched.
+The plan records both manifests, both compiled prompts and all file-backed
+parts as hashed sources. A generic optional project hook belongs to the shared
+runner; Oracle's pairing policy stays here. Existing projects without the hook
+retain their behavior, and unchanged `prepare --from` keeps its frozen prompt
+and source dependencies. The compiler/validator is included in project code
+bindings. Hashing two bounded prompts and their parts happens once per native
+preparation, not per corpus node or sibling comparison.
+
+Tests exercise publication, immutable prior versions, collisions, cleanup on
+failed validation, exact shared text and real native CLI preparation/replacement.
+They fail first on unsupported paired manifests, absent source hashes and
+missing real paired versions, then pass after implementation. Tests use local
+fixtures; no teacher calls, paid resources, hierarchy changes, UI refresh or
+external-agent message is made. The synchronized pair is mechanically checked
+and unactivated; no semantic gain is claimed from assembly success.
+
+The next useful prompt-development step is to qualify Consolidation-v21 on
+the exact saved HR09 groups before testing more consolidation-only wording.
+Its common definition-writing text now differs from v20, so the prior v20
+result is a baseline rather than certification of the new pair. This is a
+suggestion, not a new experiment or additional spending authorization.

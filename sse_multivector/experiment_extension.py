@@ -922,9 +922,43 @@ def handle_command(args):
         return NotImplemented
     return 0
 
+def prompt_sources(prompt):
+    """Bind paired definition-writing prompts before native preparation."""
+    import re
+    from . import prompt_assembly
+    path = Path(prompt['source_path']).resolve()
+    match = re.fullmatch(r'Hierarchy-(bootstrap|consolidation)-v([0-9]+)', prompt['id'])
+    managed = bool(match and int(match[2]) >= (129 if match[1] == 'bootstrap' else 21))
+    spec_path = path.with_suffix('.assembly.json')
+    if not spec_path.exists():
+        if managed:
+            raise ValueError('this prompt version requires a paired assembly')
+        return {}
+    spec, output, content = prompt_assembly.compile_spec(spec_path)
+    if managed and (spec['prompt_id'] != prompt['id'] or output != path):
+        raise ValueError('prompt version differs from its assembly')
+    if managed and 'shared' not in spec:
+        raise ValueError('this prompt version requires a paired assembly')
+    if 'shared' not in spec:
+        return {}
+    prompt_assembly.assemble(spec_path, 'check')
+    if content.decode('utf-8') != prompt['text'] or output != path:
+        raise ValueError('prompt text differs from its paired assembly')
+    peer_path, peer, peer_output, _ = prompt_assembly.paired_spec(spec_path, spec)
+    if managed:
+        other_family = 'consolidation' if match[1] == 'bootstrap' else 'bootstrap'
+        if not re.fullmatch('Hierarchy-' + other_family + r'-v[0-9]+', peer['prompt_id']):
+            raise ValueError('definition-writing companion has the wrong prompt family')
+    paths = {spec_path, peer_path, output, peer_output}
+    for location, manifest in ((spec_path, spec), (peer_path, peer)):
+        paths.update(prompt_assembly.pinned_file(part, location.parent)
+                     for part in manifest['parts'] if 'path' in part)
+    return {str(source): engine._sha256_file(source) for source in sorted(paths)}
+
+
 def code_files(dataset):
     directory = Path(__file__).parent
-    names = ['experiment_inputs.py', 'experiment_extension.py', 'grouped_masks.py',
+    names = ['experiment_inputs.py', 'experiment_extension.py', 'prompt_assembly.py', 'grouped_masks.py',
              'local_model.py', 'local_weight_model.py', 'distillation_run.py',
              'hierarchy_inputs.py', 'bounded_hierarchy_candidates.py',
              'bounded_hierarchy_workflow.py', 'bounded_hierarchy_graph.py', 'bounded_hierarchy_build.py']
