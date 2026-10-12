@@ -7916,3 +7916,9 @@ controls remain intact; the candidate is not adopted. The next isolated test
 uses the native fixed-meaning projection's B-first input order, preserving A/B
 assignments and producer receipts. Presentation sensitivity, if found, is a
 diagnosis rather than a certified relationship or prompt repair.
+
+V209's actual B-first input test changes the original Metal pair's outcome in
+all three reverse repeats and two of three forward repeats. Two of the three
+draws still conflict on reversal. This establishes presentation sensitivity,
+not a semantic repair; A/B assignments, fixed meanings and diagnostic order
+remain unchanged. Native usage is complete and the original label stays open.

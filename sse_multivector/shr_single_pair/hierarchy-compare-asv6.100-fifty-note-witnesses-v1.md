@@ -8461,3 +8461,61 @@ Compare fresh repeated Metal orientations against the preserved A-first draws.
 If outcomes follow physical position, that establishes presentation sensitivity,
 not semantic correctness. Unknown original scope remains unresolved rather than
 being relabeled to make a preferred orientation pass.
+
+### V209 actual input-order result: presentation sensitivity persists
+
+The native projection verifies byte-identical subject/meaning values and unchanged
+A/B assignments, with only the top-level input member order changed. All six
+comparisons complete valid, fresh, with no reuse. Three B-first draws yield:
+
+| Draw | Forward, Metal as A | Reverse, Metal as B |
+|---|---|---|
+| 1 | neither | B_contains_A |
+| 2 | neither | B_contains_A |
+| 3 | A_contains_B | B_contains_A |
+
+The preserved three fresh A-first V209 draws each yield A_contains_B forward and
+neither reverse. Thus presentation changes the interpretation in all three
+reverse checks and two forward checks; it does not deterministically select one
+outcome. Two B-first draws still have settled reversal conflicts; the third is
+reciprocally consistent but not semantically certified. All outputs retain
+A_contains_B-first diagnostic order, so input-member order and reporting order
+are distinct in this result. No order-normalization workaround is adopted.
+
+The concrete disagreement is whether the child definition's grip necessarily
+provides the parent's required handhold. Positive proofs claim that implication;
+negative proofs admit inaccessible, microscopic or robot-only grips. The original
+wording also calls these parts handles. These are competing scope interpretations,
+not a validated preferred label or evidence that either producer meaning should
+be silently rewritten. Independent review must assess supported readings and
+necessary implication before another prompt treatment.
+
+Native `hierarchy-compare-v209-input-order-usage-v1.json` records nine fresh
+attempts including three warmups, zero reuse/retries/failures/missing usage, and
+$0.0467464 API-equivalent cost. The six responses retain their producer-bound
+receipts in `target/compare-v209-input-order-diagnostic-v1/draw-{1,2,3}`.
+The historical allowance remains retired; no substitute call cap was supplied.
+
+### V214: establish supported interpretations before directional roles
+
+Two fresh internal reviewers assess each original definition separately, without
+the counterpart. Both admit an ordinary human-usable steel carrying handle. Both
+leave an inaccessible steel loop used only by mechanical jaws unresolved under
+their respective definition: material and lifting establish neither the named
+handle kind nor the scope of grip/handhold. These read-only assessments support
+a material interpretation qualification, not new human gold or a teacher panel.
+The physical cases are review probes, not new prompt examples or producer text.
+
+V214 changes only V209's initial interpretation instruction: establish supported
+interpretations before assigning directional roles, and retain those interpretations
+through both tests rather than selecting readings to suit a proof or counterexample.
+All information-connection, admission, property, output and example text remains
+byte-identical to V209. Native revision provenance remains against approved V179.
+This is an experimental ordering of the semantic task, not a certified fix or
+an instruction to disclose reasoning traces or rewrite supplied meanings.
+
+Screen both original Metal orientations in both physical input orders with fresh
+repeats, plus explicit-human and physical-property controls. Correctly explained
+uncertainty on an ambiguous producer scope is acceptable; erasing resolved
+controls is not. A lower reversal count alone is insufficient. Any promising
+effect requires the broader fixed-producer core and independent proof review.
