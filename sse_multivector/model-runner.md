@@ -1887,8 +1887,15 @@ intervals is 150.743 seconds. N13 is previously DSL-exposed; N53 excludes that
 four-post trial. Prompts, schemas and production behavior stay unchanged.
 One positive control does not qualify diverse-data false-null reliability,
 minimum reasoning effort or full-evaluation runtime. Frozen artifacts retain
-the task worktree; the next comparison can reuse these assessed inputs at
-lower reasoning without repeating source selection.
+the task worktree. The subsequent [high comparison](distillation-review-v1/README.md#high-comparison-on-the-frozen-coverage-controls)
+reuses the same eight DCS cases and one DSL verifier with native fresh calls.
+All nine complete outputs pass independent audit without observed substantive
+degradation. Three groups run concurrently in 23.106 seconds; matched native
+cost falls from $0.101884 to $0.062544 (38.61%), with identical input tokens,
+no cached tokens and one warmup in each run. There are no retries, failures,
+reuse or missing usage. Matching premises remain at xhigh/mechanical settings;
+this small mixed-control comparison does not qualify minimum effort across
+all checks. The next comparison is medium on the frozen controls.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

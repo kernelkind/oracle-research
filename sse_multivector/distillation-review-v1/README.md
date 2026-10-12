@@ -6222,14 +6222,53 @@ run or final documentation work.
 Artifacts, native reviews, exposure proof, immutable selections and usage
 summary remain ignored under
 `oracle-mvp-review-fresh-dcs/target/distillation-review-v1/fresh-dcs/`.
-Generation source is `c662a7ab`; subsequent main synchronization changes only
-unrelated committed documentation/specs, leaving bound code and prompt bytes
-unchanged. Retain this worktree for source references. DCSv1/DSLv10, schemas,
+Generation source is `c662a7ab`; subsequent main synchronization leaves bound
+review code and prompt bytes unchanged. Retain this worktree for source
+references. DCSv1/DSLv10, schemas,
 production defaults and review precedence remain unchanged. This bounded
 test finds no search error; one resolved positive cannot establish a low
 false-null rate on diverse data, minimum reasoning effort or full-run timing.
-The next useful step is a lower-reasoning comparison on these frozen mixed
-controls, preserving uncertainties and complete-output scoring.
+The following high comparison reuses these frozen mixed controls, preserving
+uncertainties and complete-output scoring.
+
+### High comparison on the frozen coverage controls
+
+The user approves the faster comparison after asking to reduce iteration
+overhead. Native `prepare --from --reasoning-effort high --repeat` reuses the
+seven negative DCS inputs, the positive Songs/Music input and its DSLv10
+verifier. Exact case IDs, inputs, prompt bytes and model retain parity with
+xhigh; original premise snapshots, source expectations and results stay
+frozen. All three new groups run concurrently through the shared queue.
+
+Independent complete-output audit accepts **all nine high verdicts**: seven
+correct nulls and their 44 candidate explanations, the Music witness, and the
+positive DSL verdict. There is **no observed substantive degradation** on
+these controls. Only DCS and this one DSL pair are retested; matching premises
+remain the frozen xhigh/mechanical results. This is development evidence,
+with one positive search, rather than a minimum-effort qualification across
+all checks or diverse data.
+
+| Native matched accounting | Xhigh | High |
+| --- | ---: | ---: |
+| Fresh attempts, including one warmup | 10 | 10 |
+| Input tokens | 16,257 | 16,257 |
+| Cached input tokens | 0 | 0 |
+| Output tokens, including reasoning | 6,937 | 3,003 |
+| Reasoning tokens, already in output | 4,487 | 634 |
+| API-equivalent cost | $0.101884 | $0.062544 |
+
+High costs **38.61% less** for these exact requests; neither run has retries,
+failures, reuse or missing usage. The concurrent high run span is **23.106
+seconds**, including warming. The xhigh groups were run in separate stages,
+so their overall elapsed span is not a controlled latency comparison. Eligible
+seven-case caching still produces no hits; its high warmup adds $0.00370.
+The one-case positive skips warming under the same allowance policy.
+
+Native groups, attributed reviews, scheduling evidence and matched native
+usage summaries remain ignored under `fresh-dcs/high/` and its parent in the
+retained task worktree. Documentation verification and source bindings pass;
+prompts, schemas and production defaults stay unchanged. The next useful
+comparison is medium on the same frozen controls before expanding the panel.
 
 ## Actual distilled wording: offline preview (October 8)
 
