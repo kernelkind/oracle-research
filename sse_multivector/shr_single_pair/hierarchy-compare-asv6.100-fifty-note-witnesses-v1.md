@@ -8883,3 +8883,33 @@ are not newly dispatched calls. Check that any improved consistency preserves
 general-kind variation when actually justified, does not invent restrictions,
 and is supported rather than achieved through blanket uncertainty. No Bootstrap
 or hierarchy changes follow from the test.
+
+### V221 result: deleting general variation does not establish the cause or a repair
+
+All thirty-four newly dispatched candidate comparisons complete valid. Two of
+four original-pair reversal checks conflict, one in each input order, matching
+the saved fresh V217 conflict count. The individual conflicting draws differ;
+this small sample cannot estimate an effect size or establish that the clause
+never contributes. Its isolated removal does not eliminate the demonstrated
+failure. The same incompatible grip/handhold premises remain in the proofs.
+
+All eighteen physical, explicit-human and intention/capability control outcomes
+are retained. The four functional-aspect cases remain positive; all four
+original decorative-aspect cases are unresolved. Those original negative or
+uncertain expectations remain qualified rather than mandatory gold. No broader
+producer pass or adoption follows. Native revisions and receipts are preserved.
+
+The native usage source includes the unchanged already-dispatched V217 reference:
+forty-two total comparisons and fifty-four attempts including twelve warmups,
+zero reuse/retries/failures/missing usage, $0.2744564 API-equivalent cost. Eight
+reference comparisons and four reference warmups were already accounted for in
+V220; they are not new calls or additive costs. The source explicitly separates
+them from the V221 candidate groups. Nine native revision tests pass on combined
+main; the prior 111-codepath suite remains passed with code unchanged.
+
+Next isolate the bare necessary implication of the handhold requirement from
+candidate admission and whole-information-scope coverage. Use the same original
+meaning-only and paired inputs, without loop examples or old judgments. The
+question concerns qualifying physical parts themselves, not whether every
+admitted information case is itself a physical part. This is an auxiliary
+diagnosis, not another main prompt line, Bootstrap revision or certified label.
