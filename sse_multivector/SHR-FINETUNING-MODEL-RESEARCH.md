@@ -16,8 +16,9 @@ of the new tasks. See
 The user has now confirmed re-evaluation with the completed HR05 build's exact
 **Bootstrap-v109 / Compare-v179** pair. All Compare meanings must have v109
 producer provenance. This rerun evaluates the saved v96/v48 fits without new
-gradients; its results remain pending. Compare-v179's A/B fixed-meaning input
-has no canonical branch fields. The earlier recommendation and branch results
+gradients; all four Bootstrap and eight Compare passes are complete.
+Compare-v179's A/B fixed-meaning input has no canonical branch fields.
+The earlier recommendation and branch results
 remain evidence for their original versions, rather than qualification of this
 new contract.
 
@@ -25,10 +26,11 @@ The new Compare evaluator keeps the old fitting instructions, targets and saved
 heads immutable while selecting exact C179 instructions and B109 producer
 receipts. It maps the trained directional indices to `A_contains_B` and
 `B_contains_A`, with no diagnostic generation or added branch fields. Its CPU
-regressions and 71.16-second four-path GPU integration pass; actual Compare model
-passes remain pending. All 200 panel encodings pass exact tokenizer admission
-without truncation. The 50 existing C179 references contain five inconsistent reversal
-pairs, all unresolved probes; the 20 provisional control directions are
+regressions and 71.16-second four-path GPU integration pass. All completed model
+reports authenticate the original fitting artifacts and record zero updates and
+zero training examples. All 200 panel encodings pass exact tokenizer admission
+without truncation. The 50 existing C179 references contain five inconsistent
+reversal pairs, all unresolved probes; the 20 provisional control directions are
 consistent. Current model selection must therefore consider control agreement
 and student reversal consistency, rather than rank raw teacher matches alone.
 
@@ -48,8 +50,34 @@ better preserves generic food topics and planned food-portion identity. Qwen's
 measured worker execution median is about 4.54 times faster on these serving
 paths. Gemma's current unmerged-expert path limits extrapolation to optimized
 architecture cost. Qwen remains the practical Bootstrap starting-model
-recommendation, with Gemma retained as a credible alternative. C179 Compare
-evaluation remains pending; no production adapter or epoch is selected.
+recommendation, with Gemma retained as a credible alternative. No production
+adapter or epoch is selected.
+
+On C179, both saved Kev epochs and Qwen epoch four make identical decisions on
+all 50 cases: 20/20 provisional controls, 21/30 probe teacher matches and 25/25
+reciprocal pairs. Outside the five contradictory teacher families they match
+36/40 directions; the four remaining differences are unresolved equivalence
+probes, not certified errors. Qwen epoch one matches 19/20 controls and reverses
+23/25 pairs. Neither model predicts uncertainty, and no reference supports
+measuring that label. Both Ettin variants match only 10/20 controls and 17/50
+teacher directions; three checkpoints predict `neither` everywhere and the last
+adds three incorrect asymmetries. This establishes failure of those saved fits
+to transfer, not an encoder-size ceiling.
+
+There is no current-panel quality winner between Qwen and Kev. Qwen's native
+forward takes 156.75 seconds versus Kev's 222.46/222.77, about 1.42 times faster,
+with 17.37 versus 18.83/18.86 GiB peak allocation. Kev's earlier matched B96/C48
+first-epoch fitting reached the shared 44/46 result in 49.65 phase minutes,
+versus Qwen's measured fourth epoch at 141.37. Kev's full four-epoch phase took
+191.21 minutes; Qwen's intervening checkpoints were not measured. The broader
+original-version panels favored Kev. Retain Kev as the provisional
+Compare starting choice on that combined evidence, with Qwen an equally
+credible current-contract alternative and the faster measured inference path.
+The current transfer tie does not establish Kev superiority or choose final
+training settings. Both training paths are ready; final fitting and independent
+qualification still follow prompt freeze. Native reports, timings and bindings
+are in the
+[completed HR05 transfer results](SHR-STUDENT-PREPARATION.md#hr05-compare-saved-checkpoint-transfer).
 
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
@@ -79,7 +107,7 @@ The useful distinction is the actual supervised output and complete input,
 not the old SHR/SP model ranking. A common foundation with two adapters is
 possible; different foundations are equally possible. Neither is an approved
 architecture. Complete per-call and whole-build cost matter: a cheap decision
-head still processes the supplied branch, and small active parameter counts
+head still processes the complete supplied input, and small active parameter counts
 do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
@@ -307,8 +335,8 @@ Qwen passes. Epoch one leads on isolated regressions and epoch four on branches;
 this tradeoff selects neither production pilot adapter nor checkpoint epoch.
 The 21 short single-support branch fixtures from three notes do not establish
 production branch capacity or complete hierarchy performance.
-All authorized Compare and focused Bootstrap evaluations are complete. The owned
-GB10 model server and tunnel were stopped; this work did not restart or delete
+All B96/C48 broader Compare and focused Bootstrap evaluations are complete.
+The owned GB10 model server and tunnel were stopped; this work did not restart or delete
 the previously paused serving container. The owned worktree retains needed
 ignored artifacts and absolute native receipt paths.
 See the
