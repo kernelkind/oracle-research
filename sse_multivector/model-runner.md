@@ -2131,6 +2131,18 @@ that contribution. It preserves the original native reports and labels;
 remaining interpretation conventions are pending, with no new model calls or
 prompt edits.
 
+The subsequent [sixteen-answer mixed-effort expansion](distillation-review-v1/README.md#sixteen-answer-mixed-effort-expansion-october-12)
+adds the next eight structurally valid distinct notes within the same frozen
+sixty. It retains high matching/relationships/coverage, medium support and
+eligible-prefix warming. Source audits find four errors among 528 resolved
+reviewer decisions, excluding separate witness verifiers; twenty-six source
+interpretations remain unscored. Current efforts and xhigh both score 216/219
+resolved exact-input pairs on the added answers, with one support loss and one
+gain. Native collection yields seven complete distilled-model scores and nine
+partial scores. A Payments witness from gas fees and its rejecting exact high
+DSL check both remain source-uncertain. No prompt, schema or default changes;
+the final sixty and general two-point loss bound remain open.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,
