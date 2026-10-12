@@ -98,9 +98,10 @@ leaves containing more than one distinct note.
 
 1. Choose the unfinished leaf containing the most distinct notes. Use saved
    canonical-node order to break ties.
-2. For each note in that leaf, identify the original local branch supporting
-   it. Initially, consider only the L2 children of that branch's local root,
-   rather than every L2 across the note's other local roots.
+2. For each note in that leaf, identify the original local entries supporting
+   the canonical node. Start with those entries' immediate original children,
+   regardless of their original level numbers. Do not restart at the note's
+   L1 roots or select siblings outside the supporting branches.
 3. Establish each eligible child's explicit meaning and run PPv35 using that
    meaning and its complete original post, as for L1. Prominence sets priority;
    there is **no 50-point cutoff** at these deeper levels.
@@ -114,14 +115,40 @@ leaves containing more than one distinct note.
 For a leaf containing notes A, B and C, selection proceeds as:
 
 ```text
-A's highest unused L2 -> B's highest unused L2 -> C's highest unused L2
-A's next unused L2    -> B's next unused L2    -> C's next unused L2
+A's highest unused child -> B's highest unused child -> C's highest unused child
+A's next unused child    -> B's next unused child    -> C's next unused child
 ```
 
-When the relevant L2 is exhausted and refinement is still needed, repeat at L3
-and subsequent levels within those original local branches. Continue rotating
-across notes and selecting the highest-prominence unused node at that level.
-Do not repeat a local node already processed through another leaf.
+When those immediate children are exhausted and further selection is still
+needed, continue to deeper original descendants within the same supporting
+branches, processing nearer descendants before more distant ones. Retain each
+entry's original numbering; the supporting entries and their children can be
+at different original levels in different notes. Continue rotating across
+notes and selecting the highest-prominence unused node at the next depth in
+its supporting branch. Do not repeat a local node already processed through
+another leaf.
+
+**Branch selection approved October 11, 2026:** the user replied
+"sure" to starting from the immediate children of each local entry supporting
+the canonical node. If both Bread entries below are admitted as support for
+canonical Bread, the next candidates are Sourdough bread in both posts:
+
+```text
+Sourdough-preparation post
+Bread [1]                         <- supporting entry
+└── Sourdough bread [1.1]          <- immediate child, original L2
+
+Cranberry-bread post
+Food [1]
+└── Bread [1.1]                    <- supporting entry
+    └── Sourdough bread [1.1.1]    <- immediate child, original L3
+```
+
+The cranberry post's Cranberries, Rosemary, Brown sugar and Cinnamon entries
+are siblings of its supporting Bread entry beneath Food; they are outside this
+Bread branch. Selection still invokes ordinary traversal rather than forcing
+canonical placement beneath Bread. This example assumes the Bread admissions;
+it does not record new comparison results.
 
 Stop expanding a leaf when it represents one note or its relevant original
 local branches have no unused descendants left. Record a multi-note group that
