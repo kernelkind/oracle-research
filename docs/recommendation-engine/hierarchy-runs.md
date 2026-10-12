@@ -28,10 +28,11 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Ready for reviewed continuation | Ready for reviewed continuation | Ready for reviewed continuation |
+| Status | Running after reviewed continuation | Running after reviewed continuation | Running after reviewed continuation |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
 | Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
+| Continuation provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/continuation-provenance-v1.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/continuation-provenance-v1.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/continuation-provenance-v1.json) |
 | Subject trees | Saved ASv6.100 from HR03 | Same | Same |
 | Local subject entries / L1 roots | 832 / 150 | 832 / 150 | 1,510 / 326 |
 | Bootstrap | v109 | v122 | v122 |
@@ -110,7 +111,15 @@ the original and replacement constructor paths and hashes, the effective PP
 cache setting, and the archived zero-call preparation. All selected prompt
 bytes, note inputs and persistent counters remain fixed. The three production
 regressions and relevant constructor/graph/receipt/viewer suite pass 59 tests;
-the resumed source commit will be recorded before new dispatch.
+all three also pass on the combined landed result.
+
+The cache fix is commit `90cfa66026a9167a314607a22f7a4b7ad1eceb56` on local
+`main`. All three continuation source worktrees are frozen at
+`542d5697ccee1b85b28f3ded0a9e093c36de0c1b`; the original worktrees and
+meaning receipts remain unchanged. Native `source_upgrades` records all eight
+constructor bindings, old/new source hashes, PP caching true to false, and the
+archived unprepared batch. The original counters were 152/3,000, 151/3,000 and
+178/10,000 at continuation; none was reset. New prominence requests are running.
 
 ## Token usage and API cost
 
