@@ -19,6 +19,9 @@
     ],
     "fixed_proposal_coverage_diagnostics": [
       "../../target/canonical-shaping-selection-v1/consolidation-audit-v2-hr05-fixed-v1"
+    ],
+    "schema_repaired_coverage_diagnostics": [
+      "../../target/canonical-shaping-selection-v1/consolidation-audit-v2-hr05-schema-v2-v1"
     ]
   }
 }

@@ -217,7 +217,8 @@ class ExperimentTests(unittest.TestCase):
                              path=str(fixture_prompt))
         spec['dataset'] = dict(adapter='canonical_consolidation_review', path='coverage-source.json')
         spec['runner']['output_schema'] = json.loads(
-            (prompts / 'Hierarchy-consolidation-audit-v2.output.schema.json').read_text())
+            (prompts / 'Hierarchy-consolidation-audit-v2.output-v2.schema.json').read_text())
+        self.assertNotIn('uniqueItems', spec['runner']['output_schema']['properties']['children'])
         coverage_spec = self.write('coverage-spec.json', spec)
         self.cli('prepare', 'coverage', '--spec', coverage_spec)
         case = self.show('coverage')['cases'][0]

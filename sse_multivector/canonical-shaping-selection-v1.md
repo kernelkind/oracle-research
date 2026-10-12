@@ -4721,3 +4721,29 @@ consider the same fixed MrBeast C025 identity, rather than substituting a
 conventional resource interpretation. Remaining cases are assessed from their
 unchanged meanings, with ambiguity retained. These are bounded agent criteria,
 not human gold. No expected IDs or agent reviews enter the native input.
+
+Both initial diagnostic requests fail with HTTP 400 `invalid_request_error`,
+one HTTP attempt each, no answer and no named parameter. They consume the two
+remaining launches, leaving the original counter at 14/14. Raw provider usage
+is absent; the SDK's normalized zeros do not establish zero cost. The native
+summary correctly retains two missing-usage attempts and an unknown complete
+cost. These failures are transport outcomes, not semantic diagnostic answers.
+
+The schema uses `uniqueItems`, unnecessary for this bounded diagnostic's prompt
+requirement to return distinct IDs. The rejection does not establish that field
+as the cause. A versioned schema-only repair,
+[output schema v2](shr_single_pair/Hierarchy-consolidation-audit-v2.output-v2.schema.json),
+removes only that constraint, preserving nullable arrays and the unchanged
+audit-v2 prompt. The original rejected schema, spec, requests and receipts stay
+fixed. The existing production-path test first fails on the absent versioned
+schema, then passes with the two existing source-protection checks.
+
+This routine format repair of the already-authorized small diagnostic is bounded
+at two replacement attempts in a separate counter,
+`consolidation-audit-v2-hr05-schema-v2-budget-v1.json`; the total task ceiling
+becomes 16 including both rejected requests. The original 14/14 counter is not
+reset or expanded. This is a new request identity with a changed schema, not an
+automatic retry of an invalid request. Native preparation uses the same
+receipt-bound proposal source and unchanged meanings, model, reasoning and
+uncached SSE layout. No provider compatibility or field-causality conclusion
+is claimed before the replacement observations.
