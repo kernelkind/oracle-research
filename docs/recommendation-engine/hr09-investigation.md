@@ -4,10 +4,11 @@ This is the maintained evidence source for the HR09 investigation. Record saved
 observations separately from semantic judgments, hypotheses and experiments.
 Evidence IDs remain stable as the investigation grows.
 
-User instruction, October 12, 2026: **“we are not assigning fault yet”**.
-User judgments are recorded separately below and apply to the exact supplied
-inputs. No responsible component or proposed correction has been established.
-Recording a model answer alone does not endorse it.
+At the start of this investigation, the user instructed: **“we are not assigning
+fault yet”**. Subsequent explicit user judgments and fault assignments are
+recorded separately below and apply to their stated cases. E001 has no fault
+assignment; E002 assigns fault to Bootstrap. No proposed correction has been
+approved. Recording a model answer alone does not endorse it.
 Existing investigation or prompt-trial findings elsewhere are not automatically
 adopted as judgments in this record.
 
@@ -155,3 +156,123 @@ assign a meaning-generation failure or approve a change.
 
 The comparison judgment is recorded above. These remaining questions have no
 reviewed answers; no causal attribution or new experimental result is recorded.
+
+
+## E002 — Food nests beneath Food on the fourth placement
+
+Status: **user-reviewed; the comparison distinction is correct for the supplied
+meanings; fault assigned to Bootstrap**. The user has not specified which
+meaning should change or approved a prompt correction.
+
+### Position and state transition
+
+Saved step index `3` (zero-based), the fourth local placement. Selection phase:
+`guaranteed_l1`. No consolidation had occurred.
+
+Before:
+
+```text
+Rocket stoves · C001 (N001)
+Dinner · C002 (N007)
+Food · C003 (N063)
+```
+
+Incoming local: **Food (N037), original local number `1`**, from the cranberry,
+rosemary, brown sugar and cinnamon sourdough post. Original context: “The
+food-related hashtag and the description of sourdough bread establish the food
+topic.” Original note ID:
+`ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895`.
+The existing Food is C003 from N063, whose provenance is recorded in E001.
+
+### Exact comparison input
+
+`A` is incoming local Food (N037); `B` is canonical Food · C003 (N063). The
+comparison received only these titles and fixed meanings, not the posts or
+local contexts.
+
+```json
+{
+  "A": {
+    "subject": "Food",
+    "meaning": "Food is edible material intended for human consumption as nourishment or as an ingredient in something eaten. It includes prepared foods and edible culinary ingredients, including but not limited to bread, cranberries, rosemary, brown sugar and cinnamon."
+  },
+  "B": {
+    "subject": "Food",
+    "meaning": "Food is substances intended for human consumption as nourishment or as part of eating, encompassing prepared dishes and edible ingredients used to prepare or season them, including but not limited to mushroom risotto with shrimp and its culinary ingredients."
+  }
+}
+```
+
+### Saved comparison and consequence
+
+Relation: **`B_contains_A`** — canonical C003 contains the incoming local Food.
+The counterexample against the reverse direction was, verbatim:
+
+> A deadly poisonous death-cap mushroom risotto mistakenly prepared and intended for humans to eat as nourishment.
+
+The model's justification was:
+
+> A risotto made with deadly poisonous death-cap mushrooms, mistakenly intended as human nourishment, satisfies B's general requirement of a substance intended for human consumption. B does not require every such substance to be edible. The poisonous dish fails A's edibility requirement, and information about that dish does not concern a qualifying edible food merely because its maker intended it as nourishment.
+
+For canonical Food containing local Food, the saved answer was:
+
+> B covers the entire A scope.
+
+Its justification was:
+
+> Every material in A is a substance intended for human consumption. A's nourishment purpose directly satisfies B's nourishment alternative, and A's intended use as an ingredient in something eaten satisfies B's part-of-eating alternative. A's prepared foods and edible culinary ingredients retain these requirements. B imposes no additional identity or consumer restriction absent from A.
+
+The final reason was:
+
+> A requires edibility as well as intended human consumption; B's general scope requires the intended consumption but does not guarantee edibility.
+
+The incoming node was added as C004 beneath C003:
+
+```text
+Rocket stoves · C001 (N001)
+Dinner · C002 (N007)
+Food · C003 (N063)
+└── Food · C004 (N037)
+```
+
+### User review and fault assignment
+
+Verbatim user judgment:
+
+> the counterexample provided by the compare model is correct here. bootstrap is at fault
+
+The user accepts the edibility counterexample distinguishing the supplied
+meanings and assigns fault to Bootstrap. The model's comparison is not recorded
+as an error. The recorded generation consequence is an additional Food node
+and edge produced from meanings that differ in their required edibility.
+
+This assignment concerns the Bootstrap meanings in this case. It does not
+establish that every same-titled node must have the same meaning, identify which
+of these two definitions should be revised, or establish a general correction.
+No prompt edit or new experiment has been authorized by this judgment.
+
+### Provenance and verification
+
+- [Frozen HR09 state](/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json), step index `3`;
+  state SHA-256 `059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e`.
+- [Frozen comparison experiment](/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00006/experiment/experiment.json), case `C003`;
+  [native results](/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00006/experiment/run/results.jsonl), line `2`.
+- Canonical receipt-record SHA-256:
+  `1ddcfa4f172c33f1b52d0860e9f1702d8bbee24c5427fd0b95d3b21805e3d4ef`.
+- Bootstrap-v122 producers in the [original meaning batch](/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00000/experiment/experiment.json):
+  `L00002` for N063 Food and `L00003` for N037 Food. Exact prompt references and
+  hashes are recorded in E001; Compare is v192 in both cases.
+
+The native report validates the receipt; its parsed answer matches the saved
+step answer. The exact input comes from the prepared case. No model calls,
+prompt changes, graph changes, UI updates or agent messages were made for this
+record.
+
+### Remaining questions
+
+- Which generated meaning, or which aspect of the generation contract, should
+  change to correct this Bootstrap outcome?
+- What controlled experiment would distinguish candidate corrections while
+  preserving valid distinctions between genuinely different meanings?
+
+No correction or experimental result is recorded yet.
