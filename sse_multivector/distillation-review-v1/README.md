@@ -2287,6 +2287,33 @@ validate before output creation. They change settings for new preparations,
 preserve request inputs and mechanical routing, and allow verified history
 at each check's exact effort to be reused without rewriting frozen manifests.
 
+`--support-reasoning-effort` similarly overrides support alone. The eight-note
+mixed-effort trial uses `--reasoning-effort high --support-reasoning-effort
+medium`, retaining high matching and relationships. Invalid support efforts
+fail before creating output; omitted overrides retain existing defaults.
+
+Coverage preparation now settles an already completed, accepted exact
+compatibility comparison beneath an uncovered student subject without another
+DCS call. Its settlement retains the native input/output identity, receipt and
+complete-output audit. Rejected, uncertain, stale or unaudited comparisons cannot
+supply this deduction.
+
+`collect-distillation-coverage-search COVERAGE --output REPORT` assembles the
+bounded workflow through the existing production `score_partial` path without
+inference or execution of the unused compatibility matrix. Repeat
+`--verification-experiment PATH` for native DSL witnesses and `--premise-audit
+PATH` for exact complete-output assessments, including DCS outputs. A null search
+requires acceptance of its complete evidence; a positive requires an accepted
+exact positive DSL comparison. Missing or disputed premises remain pending.
+Preparation audits stay bound, additional withdrawals invalidate their
+settlements, and frozen source/receipt changes are refused. Support and actual
+edge audits gate correctness; matching and self-guard audits gate coverage.
+Collection writes a fresh report and preserves the original native artifacts.
+The new support override and collector have production-path failing controls
+before implementation. The combined evaluation/coverage/effort suite passes
+70 of 72 tests; its two remaining failures are the previously established
+shared-runner stop-reason and legacy concurrency-eight fixture defects.
+
 Four new production-path preparation and validation tests pass after first
 demonstrating the missing CLI options. The 62-test evaluation/coverage/effort
 regression run has 60 passes and two failures also reproduced on unmodified
