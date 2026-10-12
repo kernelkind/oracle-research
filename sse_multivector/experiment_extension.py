@@ -240,7 +240,7 @@ def review(args):
     if args.ordering and not args.cosine_comparison:
         raise ValueError("--ordering requires --cosine-comparison")
     with locked(directory):
-        result = report(directory)
+        result = report(directory, include_request_preview=args.ui)
         if args.ui:
             if any((args.case, args.role, args.verdict, args.comment)):
                 raise ValueError("--ui cannot record a CLI judgment")
@@ -387,7 +387,7 @@ def review(args):
                 "output_sha256": inputs.digest(case["output"]),
             },
         )
-        write(directory / "report.json", report(directory))
+        write(directory / "report.json", report(directory, include_request_preview=False))
         print(f"Recorded {args.role} review for {args.case}. Model calls made: 0")
 
 

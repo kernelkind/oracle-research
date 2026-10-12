@@ -3160,6 +3160,35 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(case["status"], "unrun")
         self.assertEqual(self.calls(), [])
 
+    def test_cli_review_skips_unused_request_preview_and_preserves_bindings(self):
+        from unittest.mock import patch
+        from sse_multivector import experiment, experiment_extension, experiment_inputs
+
+        self.prepare()
+        self.cli("run", "E1", "--only", "one")
+        original = self.show("E1", "--case", "one")
+        directory = self.root / "E1"
+        protected = {name: (directory / name).read_bytes() for name in (
+            "experiment.json", "runner-config.json", "run/manifest.json", "run/results.jsonl")}
+        calls = self.calls()
+        args = experiment.parser().parse_args([
+            "review", str(directory), "--case", "one", "--role", "agent",
+            "--verdict", "accept", "--comment", "Exact saved answer inspected."])
+
+        with patch.object(experiment, "request_preview", side_effect=AssertionError(
+                "metadata review must not inspect unused requests")):
+            experiment_extension.review(args)
+
+        recorded = json.loads((directory / "reviews.jsonl").read_text())
+        self.assertEqual(recorded["input_sha256"], original["input_sha256"])
+        self.assertEqual(recorded["output_sha256"], experiment_inputs.digest(original["output"]))
+        result = json.loads((directory / "report.json").read_text())
+        self.assertEqual([(case["id"], case["status"]) for case in result["cases"]],
+                         [("one", "valid"), ("two", "unrun")])
+        self.assertEqual(result["cases"][0]["reviews"][0]["verdict"], "accept")
+        self.assertEqual({name: (directory / name).read_bytes() for name in protected}, protected)
+        self.assertEqual(self.calls(), calls)
+
     def mask_spec(self):
         self.prompt.write_text("GENERIC PROMPT\n{POST}\n{SUBJECT}\n{INDEXED_POST}")
         self.cases.write_text(

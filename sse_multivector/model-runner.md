@@ -968,6 +968,11 @@ Only `run` performs inference. `prepare`, `show`, `revise`, `review`, `collect` 
 or provider acceptance. User approval and the repository spending rules still
 apply before `run`; preparing an experiment does not authorize spending.
 
+Recording a CLI judgment with `review --case` skips request-availability previews
+for unused cases, including when refreshing the complete saved report. The review
+still binds the exact saved input and output, preserves all cases in the report,
+and makes no model calls. UI reviews retain their usual request previews.
+
 The general `run-model.sh` transport remains available to non-experiment callers.
 Local weights use the same experiment workflow with `--provider local`,
 `--transport http`, `--runner-binary sse_multivector/run-local-model.sh` and
