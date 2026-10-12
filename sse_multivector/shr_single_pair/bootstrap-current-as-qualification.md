@@ -3602,3 +3602,32 @@ cost is $0.0477292 with complete usage. No Bootstrap edit, Compare test,
 hierarchy change or UI update occurred. The useful next draft would preserve
 chosen-kind conditions consistently through final wording without prescribing
 one Food boundary or assuming matching subjects must merge.
+
+### Bootstrap-v113 definition-writing draft
+
+After the HR04 Food diagnostic, the user authorized a focused draft carrying
+chosen kinds and defining conditions consistently into the final meaning.
+[Bootstrap-v113](Hierarchy-bootstrap-v113.md) is a direct, hash-pinned native
+revision of working baseline v109. It changes only the first paragraph under
+`Write the meaning`: its opening preserves each admitted kind's identity and
+defining conditions through rewording, and prohibits substituting a broader
+kind or adding new membership conditions. The redundant later sentence about
+descriptive features replacing identity is removed from that paragraph.
+
+This targets faithful expression of a chosen kind, rather than prescribing a
+Food, edibility, consumer or nourishment boundary. Two independent read-only
+reviews found the draft compatible with material alternatives, person roles,
+activity processes, unknown instance facts and legitimate empty resolutions.
+The following limits on defining nested concepts and activity technical
+features remain in place. Every other prompt byte, including both examples
+and the input/output instructions, is identical to v109. This is a written
+contract review, not evidence that the wording repairs the model's behavior.
+
+Nine native prompt-revision tests and exact paragraph/hash checks pass.
+Offline preparation of the existing two-case HR04 regression preserves both
+input strings, model, medium effort and schema. Automatic caching remains
+eligible at 4,600 estimated prefix tokens. The prepared trial is
+`target/bootstrap-v113-definition-draft-v1/prepared` in the retained correctness
+worktree, with both cases unrun. No teacher calls, prompt adoption, Compare
+changes or hierarchy work occurred. The versioned full-file review is v109
+against v113; approval and subsequent matched testing remain separate.

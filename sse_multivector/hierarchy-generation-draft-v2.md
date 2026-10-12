@@ -1,6 +1,6 @@
 # Hierarchy generation V2 — FUTURE WORK
 
-**Status: V2 — FUTURE WORK. Design draft; not implemented or tested.** This
+**Status: V2 — FUTURE WORK. Design draft; no V2 implementation or generation trial.** This
 document records decisions for a future version, not the current generation
 algorithm. Landing this document in `main` does not activate V2.
 
@@ -153,6 +153,83 @@ Equal-note-set cases involving a parent with multiple children remain open.
 Automatic shaping is not implemented. The selection rules alone do not resolve
 all equal-note-set edges or establish that a finished hierarchy has passed this
 requirement.
+
+## V2 — FUTURE WORK: consolidation investigation
+
+**Offline structural findings, not an approved shaping rule or semantic
+validation.** The controls assume fixed meanings and valid containment; no model
+calls were made. They exercise the existing `_placement`, `_apply`,
+`finish_nodes` and `_note_sets` functions at source commit `65e5aa30`.
+Inputs, outputs and source hashes are retained in the ignored
+[structural controls](../../oracle-mvp-hierarchy-v2-shaping-investigation/target/v2-shaping-investigation/structural-controls.json).
+
+### Moving the check alone does not fix the problem
+
+The refined control starts with six roots: Vegetables, Fruits and four unrelated
+topics representing notes C through F. Vegetables represents A and B and has
+Potatoes A and Broccoli B beneath it. Fruits represents B. Consolidation proposes
+Food above Vegetables and Fruits, covering two of the six offered roots.
+
+The existing placement checks permit the assumed containment relationships.
+The consolidation-specific check then rejects the raw Food-to-Vegetables edge
+because both represent A and B. The original graph remains unchanged. Removing
+only that rejection would not secure a useful finished grouping: the existing
+shaper removes Food, returning to six roots.
+
+An explicit candidate finished graph instead bypasses Vegetables on Food's
+branch and retains Food above Potatoes, Broccoli and Fruits. All its edges have
+original transitive containment witnesses. Every retained heading, meaning and
+original support entry is unchanged; all retained note sets and global note
+coverage are preserved.
+
+| Structural control | Root choices | Largest choice group | Every edge narrows | Selections to a singleton for A / B |
+| --- | ---: | ---: | --- | --- |
+| Before the proposal | 6 | 6 | Yes | 2 / 1 |
+| Raw Food proposal | 5 | 5 | No | 3 / 2 |
+| Existing shaper applied to the raw proposal | 6 | 6 | Yes | 2 / 1 |
+| Candidate retaining Food and bypassing Vegetables | 5 | 5 | Yes | 2 / 2 |
+
+The candidate reduces root choices but increases B's shortest singleton route
+by one selection. This is a tradeoff, not proof of a better hierarchy. Shortest
+singleton routes do not measure every way a user may reach a note or choose a
+topic. No API-cost or overall-quality improvement is established by this control.
+
+### Refinement and other branches matter
+
+Before Potatoes and Broccoli exist, Vegetables is a multi-note leaf with its own
+support for A and B. Bypassing it and retaining synthetic Food above Fruits
+loses A: synthetic Food has no original support of its own. Thus coverage alone
+at the start of refinement is insufficient to justify this transformation.
+It must be checked against the actually available descendants and evidence.
+
+A separate control gives Vegetables another parent whose note set is A, B and
+C. Vegetables usefully narrows that branch to A and B. The candidate bypasses
+only Food-to-Vegetables, retains Vegetables beneath the other parent, and exposes
+Potatoes and Broccoli beneath Food. All retained note sets and containment
+witnesses survive. This shows why a child should not be erased globally just
+because its edge under one parent is redundant.
+
+### Unapproved direction to investigate next
+
+Assess a consolidation proposal together with a prospective finished shape,
+after the relevant refinement has made that shape possible. Semantic placement
+checks, fixed meanings and original evidence remain mandatory. The assessment
+would check:
+
+- Preservation of global note access and the represented notes of retained
+  groups, including the notes the proposed group is meant to collect.
+- Valid containment witnesses and strict narrowing for every retained edge.
+- Preservation of useful placements on other parent branches.
+- Choice counts and route lengths before and after shaping, without treating
+  fewer roots alone as proof of improved browsing.
+
+A semantically valid proposal may be premature while a nominated multi-note
+leaf remains unrefined. A possible approach is to retain that proposal for
+reassessment when its descendants change, reusing unchanged saved judgments
+instead of resampling its meaning. This remains a hypothesis: proposal timing,
+the multiple-child shaping rule and the acceptable choice-versus-depth tradeoff
+still require review. These findings do not activate V2 or change the current
+constructor, consolidation prompt or documentation.
 
 ## Existing construction rules
 

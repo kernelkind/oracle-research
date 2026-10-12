@@ -213,6 +213,14 @@ ceremonial-gold witness and whole pair remain unreviewed; no judgment transfers
 to the fresh meanings. Compare should evaluate the supplied boundaries rather
 than add an unstated condition to remove this accepted witness.
 
+[Bootstrap-v113](shr_single_pair/Hierarchy-bootstrap-v113.md) is the subsequent
+user-authorized draft from working v109. Its single definition-writing
+paragraph change preserves chosen-kind identity and defining conditions through
+rewording and removes a duplicate broader-category warning. Nine native
+revision tests and matched offline HR04 preparation pass; the 4,600-token
+prefix remains cache-eligible. No model qualification, adoption, Compare or
+hierarchy work occurred.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
