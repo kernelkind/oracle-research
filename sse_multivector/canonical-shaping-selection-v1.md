@@ -1,5 +1,12 @@
 # Selecting local entries to reduce overcrowding
 
+The newest user-authorized draft is
+[Hierarchy-consolidation-v15](shr_single_pair/Hierarchy-consolidation-v15.md).
+Only its synthetic geometry example changes: three wholly covered siblings are
+included, while both exclusions remain. Instructions, shared meaning-writing
+rules and output contract are unchanged from v14. No model calls or measured
+improvement are claimed. See [the example-only draft](#consolidation-v15-synthetic-complete-coverage-draft).
+
 The latest user-authorized tested candidate is
 [Hierarchy-consolidation-v14](shr_single_pair/Hierarchy-consolidation-v14.md).
 It separates identifying all covered siblings from checking the proposed
@@ -4340,3 +4347,56 @@ prompt version, source hierarchy, native receipt, saved review, UI or exhausted
 counter changes. Registration remains isolated as requested. The next proposed
 example-only iteration can use both this equivalence control and the omission
 case; no revision or new inference is begun here.
+
+## Consolidation-v15 synthetic complete-coverage draft
+
+After confirming that the prompt example will be synthetic and unrelated to the
+regressions, the user replies "proceed" to the example-only draft. This
+authorizes drafting v15, not new inference or a reset of exhausted counters.
+
+[Hierarchy-consolidation-v15](shr_single_pair/Hierarchy-consolidation-v15.md)
+adds Blue pentagons E5 to the existing geometry input, after Blue circles E4.
+The example output keeps the same Blue polygons meaning and now includes E2,
+E3 and E5. Its explanation explicitly says that all three matching shapes are
+included. The unchanged exclusions remain: Squares E1 does not require blue
+color, and Blue circles E4 lacks the polygon boundary. The proposal still fits
+Blue shapes E0 and is narrower than that parent. Three of five sibling IDs are
+selected, satisfying the existing proper-subgroup requirement.
+
+The drafting hypothesis is that the two-child example encourages
+stopping at an initial pair. The saved Food draws do not establish that internal
+cause, and the synthetic example is not an expected Meals or Foodstuffs answer.
+No test topic, post, fixed real-node definition or historical model answer enters
+the example. All text before the example and after it remains byte-identical to
+v14, including the shared writing, activity/plans instruction and JSON contract.
+
+The existing production assembly check is extended first and fails on the
+missing v15 manifest. The shared runner's native `revise` creates v15 and its
+receipt against last-approved v3. Production `prompt_assembly.py build` verifies
+the pinned wrapper and unchanged parts; the native preparation check freezes
+the complete assembled prompt without inference. The version-specific check
+also verifies that the difference is confined to the synthetic example. These
+mechanical checks do not establish semantic effectiveness. All 37 relevant
+checks pass after synchronization with main at `4d4d171d`; no teacher calls occur.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v15.assembly.json)
+retains shared writing SHA-256
+`d3abcd9495e98c98e747b2bd160868ecb5287be8270e23482184e44e773fc92e`.
+V15 SHA-256 is
+`89ada99a213be8637c6fce916f6a5d4da22abfa199978ce0ce9af1e6e58b6249`.
+The [native revision receipt](shr_single_pair/Hierarchy-consolidation-v15.md.revision.json)
+retains last-approved v3 as the full-diff baseline; historical prompts and
+producer receipts remain unchanged. The task remains isolated as requested.
+
+The example addresses the exact coverage requirement with unrelated topics and
+agrees with the existing instructions. This follows the example-alignment
+principle in [OpenAI reasoning best practices](https://developers.openai.com/api/docs/guides/reasoning-best-practices);
+the guidance does not establish that this example will fix the observed omission.
+
+The proposed next screen uses six maximum attempts: two fresh v15 Food draws,
+one v14 HR04 equivalence-control draw and one v15 draw of that same control,
+including the two inherited prefix warmups. Food reuses its saved v14 baseline;
+the unrun HR04 control first needs a matched v14 draw. This distinguishes a
+candidate improvement from an untested equivalence regression without forcing
+an old heading. No experiment preparation or model call for that screen is
+undertaken by this drafting task.
