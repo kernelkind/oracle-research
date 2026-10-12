@@ -7958,3 +7958,12 @@ and differs between two standalone draws. All required assessment records are
 audited. This localizes proof qualifications without certifying the original
 relation or adopting a main Compare candidate; native usage and frozen meanings
 remain preserved. No Bootstrap or hierarchy work is performed.
+
+Experimental V220 joint A/B candidate evidence and V221's isolated variation-
+sentence deletion each retain closed controls but fail two of four original
+Metal reversal checks, matching the fresh V217 conflict count. Neither is
+adopted; V220's broader twenty-two prepared cases remain unrun. A separate bare
+implication diagnostic is stable in both orders but asserts the same unqualified
+grip/handhold bridge. Results establish task-dependent interpretation, not
+semantic gold or a certified repair. Native accounting separates saved reference
+costs from fresh work and keeps the retired attempt counter untouched.

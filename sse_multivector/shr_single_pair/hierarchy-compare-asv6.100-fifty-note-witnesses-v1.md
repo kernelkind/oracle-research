@@ -8934,3 +8934,35 @@ is less explicit about that permission. Do not equate the auxiliary instructions
 or a not-necessary answer with a certified full-information-scope counterexample.
 A necessary answer must hold under all supported readings. This diagnostic can
 localize the premise problem but does not certify an original relationship.
+
+### Bare implication result: stable assertions do not transfer to candidate admission
+
+All twelve requests complete valid with the exact required node coverage and
+order, producing twenty assessments. Metal and Steel/brass each receive ten
+necessary judgments, including both standalone draws and both paired orders.
+Metal's condition is quoted directly from its own definition. Steel/brass
+justifications assert that serving as grips for holding, lifting or manipulating
+necessarily provides the stated handhold. They do not independently certify
+that lexical bridge or close the machine-handle boundary.
+
+Read this alongside, not in place of, admission v2: nine uncertain and one
+admitted Steel/brass machine case. Main V220/V221 continues to alternate the
+universal bridge with a supposedly admitted no-handhold robotic case. The
+demonstrated dependency is task framing. Removing concrete cases, information
+connections and relation judgment changes the result; it does not isolate the
+counterexample branch as the sole cause or prove the positive label right.
+The same frozen meanings remain unchanged and original semantic gold open.
+
+Native usage reports twelve fresh attempts, twelve valid responses, no reuse,
+warmups/retries/failures/missing usage, and $0.019874 API-equivalent cost. No
+main Compare version is adopted. Source prompts, specs and maintained findings
+are landed; saved inputs/outputs/receipts remain ignored native artifacts.
+
+The useful next diagnostic is independent validation of generated counterexample
+admission and exclusion in fresh context, preserving each node's subject and
+meaning and keeping the old verdict outside input. V220's joint evidence stayed
+inside the original relation-generation response and merely repeated its chosen
+reading. A rejected or unresolved witness cannot itself prove full coverage.
+Check native preparation support before proceeding; do not hand-assemble the
+saved witness inputs or add a universal production verifier without separately
+considering its scale and authorized implementation scope.
