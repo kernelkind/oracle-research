@@ -272,8 +272,9 @@ remains unknown.
 The user authorized resume on October 12, 2026. The existing native driver
 resumed the original `trial` from frozen continuation commit
 `542d5697ccee1b85b28f3ded0a9e093c36de0c1b` and runner
-`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`. Saved code, prompts, selection,
-graph, answers and the 10,000-attempt counter remain fixed. It prepared a new
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`. Code, prompts and note selection
+remain fixed. The existing graph and answers are preserved; new work advances
+the same 10,000-attempt counter. It prepared a new
 native warmup child; the warmup and previously unrun comparison succeeded at
 2,637 attempts. Construction continues. The
 [resume provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/resume-20261012-v1-provenance.json)
