@@ -8224,3 +8224,36 @@ A failed control or proof prevents adoption; unresolved original meanings are
 not negative gold. After this gate, run the unchanged fifty-case single-version
 B109 producer collection separately, checking reversals, equivalent substitution
 and full proofs rather than requiring its historical labels.
+
+### V209 wider controlled gate: labels and proofs retained
+
+All fifty-six comparisons complete valid. Exact fresh physical confirmation
+retains known-paper positives, known-steel negatives and both omitted-material
+nulls. Functional-production positives and the original decorative nulls survive.
+Both whole-information triads remain reciprocal and internally consistent. The
+six explicit-human, six commerce and six intention/capability controls retain
+resolved relationships; two approved MrBeast positives and two unknown-brand
+nulls survive. All eight goal/illustration controls retain the physical canopy
+purpose without requiring success or importing a laboratory-use restriction.
+
+Three independent read-only reviews examine all gate responses. No definite
+proof or directional-ID defect is found. The older decorative fixture still
+permits physical-pattern and independent design/content readings; an unknown
+carrier is not certified as its only possible uncertainty. The paper-covering
+physical positives concern the qualifying component, not the entire pump.
+These targeted nulls coexist with retained positive and negative controls, so
+the outcome is not wholesale abstention. Synthetic expectations remain
+provisional and distinct from actual user approvals.
+
+Native source `hierarchy-compare-v209-qualified-controls-usage-v1.json` records
+sixty-six fresh attempts including eight warmups and two recovered provider
+failures, no exact reuse, and two attempts lacking usage. $0.3529888 is a known
+API-equivalent subtotal only. Native old-array relation_diagnostics does not
+cover these generic fixed A/B object inputs; do not interpret its incomplete
+counts as current reversal results. Exact pairs and proofs were inspected from
+native exports. The single-version B109 panel uses its existing dedicated
+node_pair_consistency reporting, with historical labels remaining diagnostic.
+
+The unchanged fifty-case B109 panel is now prepared for V209 execution after this
+controlled proof gate. V209 remains experimental, not a replacement for the
+approved V179 development reference or a hierarchy-generation adoption.
