@@ -8543,3 +8543,35 @@ Native `hierarchy-compare-v214-interpretation-screen-usage-v1.json` records twen
 fresh attempts including six warmups, zero reuse/retries/failures/missing usage,
 and $0.1697392 API-equivalent cost. The original inputs, producer receipts,
 candidate meanings and earlier native exports remain unchanged.
+
+### V215–V216: consolidate the body without replacing examples
+
+The next experimental treatment simplifies the accumulated instruction body,
+following official guidance to keep reasoning-model instructions clear and
+direct rather than prescribing a reasoning trace. That guidance does not certify
+this containment convention or predict the effect of this rewrite:
+https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively
+
+V215 is a prepared, unrun draft. Independent preflight finds that its shortened
+unknown-fact rule omits necessary implications, and its activity paragraph says
+participants rather than participant roles. Its outcome-based reading rule also
+changes the earlier ambiguity procedure. Preserve the draft and its prepared
+artifacts as unrun; no teacher result or cost is attributed to it.
+
+V216 restores the necessary-implication exception, participant roles and V209's
+exact final necessary-implication/reading rule. It keeps the output section,
+both fictional examples and the input tail byte-identical to V209. The revised
+body states fixed independent meanings, general variability versus particular
+unknown facts, required roles/states, qualified kind-property/production and
+activity/means connections, whole-child coverage, complete parent-route exclusion
+and ambiguity handling once. It removes overlapping search prescriptions and
+repeated warnings rather than adding another case-specific exception.
+
+This is a full-body rewrite experiment, not an isolated causal-word ablation
+or a certified semantic equivalence of instructions. Screen the eighteen-case
+frozen B109 core, six additional crossed-order/repeated Metal checks, six physical,
+six explicit-human, four particular-identity and eight functional/decorative
+production controls. The original decorative qualification remains; the four
+functional positives test preservation of useful production connections.
+No original open relationship becomes human gold. Any apparent improvement
+requires sound proofs, fresh confirmation and wider producer qualification.
