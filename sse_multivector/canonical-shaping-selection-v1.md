@@ -12,7 +12,11 @@ See [the completed v17 screen](#completed-v17-hr05-screen).
 
 The current user-authorized diagnostic is
 [Audit-v3](shr_single_pair/Hierarchy-consolidation-audit-v3.md), comparing the
-same fixed proposals with and without their previous child lists. See
+same fixed proposals with and without their previous child lists. Four fresh
+answers correct the targeted Food C009 selection only when that list is omitted;
+the MrBeast omission remains in both conditions. The nomination-free Food list
+also retains a qualified Beets scope error, so neither complete list is cleared.
+One draw per condition does not establish an anchoring effect. See
 [the controlled nomination test](#audit-v3-previous-nomination-contrast).
 
 The preceding user-authorized tested candidate is
@@ -4812,12 +4816,10 @@ pass. V17's shared writing and synthetic example remain byte-identical to v16.
 The tested source and maintained results stay in the requested isolated task
 worktree; no main integration, push, UI refresh or external-agent message occurs.
 
-The next suggested diagnostic removes the earlier nomination from otherwise
-identical fixed-proposal input. That would address the known anchoring
-limitation before another scope-wording change. Existing production preparation
-always carries the saved nomination, so the smallest reusable source-bound
-support would be needed; inputs must not be assembled manually. This screen
-does not implement that option or authorize a production validation stage.
+The known anchoring limitation motivates the subsequently authorized Audit-v3
+contrast below. At this earlier checkpoint, production preparation always
+carries the saved nomination; v17's screen alone does not isolate its effect
+or authorize a production validation stage.
 
 ## Audit-v3 previous-nomination contrast
 
@@ -4871,3 +4873,62 @@ only native `run` will dispatch. Main is synchronized at `c47e7552` before
 implementation. The user-requested task remains isolated; no change to the
 main consolidation prompt, hierarchy, construction policy, UI or another
 agent's worktree is made.
+
+### Completed Audit-v3 contrast
+
+All four native GPT-6.1 Sol medium responses are valid, with one fresh draw per
+case and condition. The fixed proposals retain their original meanings.
+
+| Fixed proposal | Previous child list provided | Previous child list omitted |
+|---|---|---|
+| Food resources / proposal-1 | C003, C006, C007, C009 | C003, C006, C007 |
+| Material resources / proposal-2 | C028, C034 | C028, C034 |
+
+Removing the earlier nomination excludes Food C009 from the people-only Food
+resources proposal. That corrects the targeted selection in this draw and is
+consistent with anchoring, but a single paired observation does not establish
+causality or reliability. The complete nomination-free list is still not cleared:
+Beets C007 permits beet plants grown for edible roots without requiring human
+consumers. Plants grown exclusively for animal feed satisfy that alternative,
+while the proposal requires organisms producing human-intended food. Its root
+alternative does not eliminate the plant alternative. This is a bounded literal
+agent assessment, not a new human judgment. Chicken stock's human-purpose and
+consumption-intention interpretation remains separately unresolved.
+
+Both Material resources answers omit MrBeast C025. The fixed proposal admits
+tangible organisms capable of providing nourishment, without requiring those
+organisms to be grown for food. Under the existing literal agent assessment, the
+fixed human identity fits that alternative. Thus a visible earlier child list is
+not necessary for this observed omission. This assessment is not human gold for
+the newer proposal; the user's older task-capability MrBeast control has a
+different fixed meaning. Both conditions receive agent rejects, as do both Food
+lists; these reviews preserve the unresolved stock interpretation rather than
+claiming every other inclusion is certified.
+
+Actual saved HTTP requests confirm that each paired body differs only by
+omitting `proposal.children`. Instructions, complete sibling order and meanings,
+parent, proposed title/meaning, schema and model settings match. Effective opaque
+account/scope metadata match across the conditions. Four distinct upstream
+responses have HTTP 200 and one HTTP attempt each, without answer reuse,
+warmups, retries or conversation linkage. Original producer receipts retain
+their lists unchanged. No prompt rewrite, graph change or UI update is applied.
+
+The new counter and claim ledger reconcile at **4/4 attempts**; older counters
+remain unchanged. The native final report is
+`target/canonical-shaping-selection-v1/consolidation-audit-v3-hr05-reviewed-v1.json`,
+with conditions retained separately by the maintained usage selection. Complete
+known usage is **3,162 input tokens**, zero cached reads or writes, and **166
+output tokens including 87 reasoning tokens** already counted in output.
+The API-equivalent catalog total is **$0.007984**, not a subscription charge.
+There are no failures, missing usage or summary warnings. All 72 relevant
+production-path assembly, revision, consolidation and source-protection checks
+pass. Main is synchronized again at `3c345eb5`; the task remains in its expressly
+requested isolated worktree.
+
+The next suggested diagnostic would omit prior nominations and request one
+short decisive justification for each sibling's coverage decision. Its purpose
+would be to identify which fixed parent requirement is being applied or missed
+before changing the main consolidation instructions. This is a proposed future
+test, not a request for private reasoning traces, an implemented prompt or an
+additional model-call authorization. The current screen does not establish that
+another generic scope reminder would address the remaining errors.
