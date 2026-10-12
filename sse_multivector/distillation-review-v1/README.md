@@ -6289,11 +6289,37 @@ input remains zero; the warmup adds $0.00289. Native results, current agent
 reviews and usage evidence remain ignored under `fresh-dcs/medium/` and its
 parent in the retained task worktree.
 
-Medium is the lowest effort tested successfully on these limited controls.
+Medium passes these limited controls.
 Matching premises still use xhigh/mechanical results; broader matching,
 support and diverse-data qualification remain open. Prompts, schemas and
-production defaults stay unchanged. The next useful comparison is low on
-these same frozen cases before expanding the panel.
+production defaults stay unchanged. The following low comparison completes
+the planned effort descent on these same frozen cases.
+
+### Low comparison on the frozen coverage controls
+
+The user approves low on the same nine cases. Native fresh preparations
+inherit the medium groups with exact input, prompt, schema, model, source
+judgment and cache-policy parity; only reasoning effort changes. Three groups
+run concurrently. Independent full-output audit accepts **all nine verdicts**
+and all **44 null-candidate explanations**, without substantive degradation
+versus xhigh, high or medium.
+
+Native accounting records **ten fresh attempts**, including one warmup, with
+no reuse, retries, failures or missing usage. Input remains **16,257 tokens**;
+output is **2,243 tokens**, including **42 reasoning tokens**. API-equivalent
+cost is **$0.054944**, **46.07% below matched xhigh** and **1.31% below medium**.
+The concurrent run span is **18.087 seconds**, including warming. Cached
+input remains zero; the warmup adds $0.00290. Native results, current agent
+reviews and usage evidence remain ignored under `fresh-dcs/low/` and its
+parent in the retained task worktree.
+
+Low is the lowest passing effort tested on this small panel. Its small
+additional saving versus medium does not establish equivalent reliability
+on harder cases. Matching premises still use xhigh/mechanical results;
+matching, post support and broader relationship/search qualification remain
+open. Prompts, schemas and production defaults stay unchanged. The next
+useful test expands low to four complete saved answers with more positive
+placement and missing-restriction cases before returning to larger panels.
 
 ## Actual distilled wording: offline preview (October 8)
 

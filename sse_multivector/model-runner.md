@@ -1900,9 +1900,17 @@ also passes all nine full-output audits, using the same inputs, prompts and
 cache policy. Its three concurrent groups finish in 19.054 seconds; ten fresh
 attempts cost $0.055674, 45.36% below matched xhigh and 10.98% below high.
 There are no retries, failures, reuse, missing usage or cached tokens. Medium
-is the lowest tested passing effort on this limited panel; the next comparison
-is low before expanding it. Matching/support and broader qualification remain
-open, and production defaults stay unchanged.
+passes this limited panel; the following low comparison completes the effort
+descent before expansion. Matching/support and broader qualification remain
+open, and production defaults stay unchanged. The subsequent [low comparison](distillation-review-v1/README.md#low-comparison-on-the-frozen-coverage-controls)
+also passes all nine full-output audits and all 44 candidate rejection reasons.
+Three concurrent groups finish in 18.087 seconds; ten fresh attempts cost
+$0.054944, 46.07% below matched xhigh and only 1.31% below medium. Inputs and
+cache policy remain identical; cached tokens, retries, failures, reuse and
+missing usage remain zero. Low is the lowest passing level tested on this
+limited panel. The next test expands to four complete answers with more
+positive placements and missing restrictions; broader qualification and
+production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
