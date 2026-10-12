@@ -329,6 +329,7 @@ class PromptAssemblyTests(unittest.TestCase):
             ('v13', 'v11', 'e388dca5ff6d498f29b3fd0051d7af77922344b20e61ed01796ebb20d3419461'),
             ('v14', 'v13', 'baa849577fdfd0f9b46f035192681e8d8dca4db6163bc2b1ed430a33b946e644'),
             ('v15', 'v14', '514630345cf469ec79b41573b37d9e50414c8cbce0803c3dc6de54370493d377'),
+            ('v16', 'v15', '89ada99a213be8637c6fce916f6a5d4da22abfa199978ce0ce9af1e6e58b6249'),
         ):
             with self.subTest(version=version):
                 spec = PROMPTS / f'Hierarchy-consolidation-{version}.assembly.json'
@@ -342,7 +343,7 @@ class PromptAssemblyTests(unittest.TestCase):
                 boundary = b'\n# Check the proposal\n'
                 self.assertEqual(prompt.split(boundary, 1)[0], old_prompt.split(boundary, 1)[0])
                 example = b'\n# Synthetic example\n'
-                if version == 'v15':
+                if version in ('v15', 'v16'):
                     self.assertEqual(prompt.split(example, 1)[0], old_prompt.split(example, 1)[0])
                     output = b'\n# Output\n'
                     self.assertEqual(prompt.split(output, 1)[1], old_prompt.split(output, 1)[1])
@@ -376,7 +377,7 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10',
                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
-                        'Hierarchy-consolidation-v15'):
+                        'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
@@ -385,7 +386,7 @@ class PromptAssemblyTests(unittest.TestCase):
                                                         'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10',
                                                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
                                                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
-                                                        'Hierarchy-consolidation-v15')
+                                                        'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16')
                                      or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')

@@ -1,6 +1,14 @@
 # Selecting local entries to reduce overcrowding
 
 The newest user-authorized draft is
+[Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
+Its unrelated synthetic example covers two device topics and a third topic
+through a required component role, while excluding siblings missing the blue
+background requirement or requiring a red background. Instructions remain
+unchanged from v14/v15. V16 is untested by inference; see
+[the component-role draft](#consolidation-v16-synthetic-component-role-draft).
+
+The simpler untested draft is
 [Hierarchy-consolidation-v15](shr_single_pair/Hierarchy-consolidation-v15.md).
 Only its synthetic geometry example changes: three wholly covered siblings are
 included, while both exclusions remain. Instructions, shared meaning-writing
@@ -4400,3 +4408,62 @@ the unrun HR04 control first needs a matched v14 draw. This distinguishes a
 candidate improvement from an untested equivalence regression without forcing
 an old heading. No experiment preparation or model call for that screen is
 undertaken by this drafting task.
+
+## Consolidation-v16 synthetic component-role draft
+
+The user asks whether the geometry example is sufficiently complex. The agent
+distinguishes its limited pair-count hypothesis from the actual composition-
+scope question and proposes a synthetic component-role example. The user replies
+"proceed" to that separate draft. V15 remains unchanged for comparison; this
+authorizes drafting v16, not further inference.
+
+[Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md)
+replaces only the synthetic example with invented Display panels topics. The
+supplied parent explicitly includes panels and their installed components.
+The proposed Blue display panels meaning requires uniformly blue backgrounds
+and covers their composition, explicitly defined as installed components.
+
+| Synthetic sibling | Example outcome | Defining reason |
+|---|---|---|
+| E1: Blue text panels | Include | Requires a uniformly blue background |
+| E2: Blue image panels | Include | Requires a uniformly blue background |
+| E3: Indicator lights in display panels | Exclude | Installed-component role is stated, but the panel background is not restricted to blue |
+| E4: Red display panels | Exclude | Requires a uniformly red background |
+| E5: Red indicator lights in blue display panels | Include | Requires installation as components in blue-background panels; emitted red light does not alter that containing-panel condition |
+
+This illustrates complete coverage across devices and qualifying parts. The
+third positive follows an explicitly stated component relationship rather than
+being another direct panel subtype. A near-match cannot acquire the missing
+blue-background condition from its position. Removing that defining condition
+while covering panels and their installed components would reproduce the
+supplied parent's scope. No Meals, Foodstuffs, post or real fixed-node wording
+enters the example. All five supplied topics fit the broad synthetic parent;
+three fit the narrower proposal.
+
+All bytes outside the example remain identical to v15, including shared writing,
+the activity/plans rule and the output contract. The existing production assembly
+check is extended first and fails on the missing v16 manifest. Native shared-
+runner `revise` creates v16 against last-approved v3; production assembly verifies
+the pinned parts, and the native preparation test freezes the complete prompt
+without inference. These integrity checks do not establish a semantic fix.
+All 37 relevant checks pass after main synchronization at `8f5c8142`.
+The embedded example also passes the production consolidation input/output
+validator with three selected IDs from five siblings.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v16.assembly.json)
+retains shared writing SHA-256
+`d3abcd9495e98c98e747b2bd160868ecb5287be8270e23482184e44e773fc92e`.
+V16 SHA-256 is
+`9e44bae31b2b577097791ea77c2e4af0f737dd092340e8f5bb3158a52132afab`.
+The [native revision receipt](shr_single_pair/Hierarchy-consolidation-v16.md.revision.json)
+retains the approved v3 baseline, and earlier prompt/producer bytes remain
+unchanged. Only committed main is synchronized into this task; unrelated
+canonical-checkout integration is untouched. The task remains isolated.
+
+The proposed next screen uses eight maximum attempts: two fresh Food draws per
+v15 and v16, plus one v14 and one v16 draw of the HR04 equivalence input, including
+two inherited prefix warmups. That is six consolidation calls and two warmups. The
+existing v14 Food draws supply their frozen baseline. This directly compares the
+simple and component-role examples on the omission case and checks that the
+candidate still rejects equivalent-parent proposals. No new preparation or
+inference for that screen is undertaken here; all earlier caps remain exhausted.
