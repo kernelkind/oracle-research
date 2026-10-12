@@ -176,6 +176,224 @@ class CompareCheckpointEvaluationTests(CompareStudentPilotTests):
         self.assertEqual(result.returncode == 0, ok, result.stderr)
         return result
 
+    def transfer_sources(self, bootstrap_id='Hierarchy-bootstrap-v109', *, source_role='evaluation',
+                         bootstrap_name='Hierarchy-bootstrap-v109', compare_name='Hierarchy-compare-v179',
+                         existing_sources=False, exposure=None):
+        """Keep the original fit frozen; prepare a new native producer and A/B panel."""
+        from sse_multivector.hierarchy_node_pairs import project_symmetric_fixed_meanings
+        if not existing_sources:
+            self.evaluation_sources()
+        bootstrap_prompt = self.root/(bootstrap_name+'.md')
+        bootstrap_prompt.write_text('GENERIC PROMPT: define the selected topic under the new snapshot.\n{INPUT_JSON}')
+        spec = json.loads((self.root/('evaluation-spec.json' if source_role=='evaluation' else 'spec.json')).read_text())
+        spec['prompt'] = dict(id=bootstrap_id, path=str(bootstrap_prompt))
+        if exposure is not None:
+            sources = [{k:c[k] for k in ('id','inputs','evidence')}
+                       for c in self.show('bootstrap-evaluation')['cases']]
+            original = self.show('bootstrap-train')['cases'][0]
+            for case in sources:
+                if exposure == 'author':
+                    case['evidence']['pubkey'] = original['evidence']['pubkey']
+                else:
+                    payload = json.loads(case['inputs']['INPUT_JSON'])
+                    payload['local']['post'] = json.loads(original['inputs']['INPUT_JSON'])['local']['post']
+                    case['inputs']['INPUT_JSON'] = json.dumps(payload)
+            self.write('transfer-producer-inputs.json',dict(cases=sources))
+            spec['dataset'] = dict(adapter='generic',path='transfer-producer-inputs.json')
+        self.write('transfer-bootstrap-spec.json', spec)
+        self.cli('prepare', 'transfer-bootstrap', '--spec', self.root/'transfer-bootstrap-spec.json')
+        answer = dict(meaning='Plants', ambiguities=[], resolutions=[], evidence=[])
+        self.cli('run', 'transfer-bootstrap', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        meanings = {c['id']:c for c in self.show('transfer-bootstrap')['cases']}
+        cases = []
+        for original in self.show('compare-'+source_role)['cases']:
+            evidence = {k:v for k,v in original['evidence'].items()
+                        if k not in ('source_bootstrap', 'source_provenance')}
+            payload = json.loads(original['inputs']['INPUT_JSON'])
+            def proof(side):
+                row = meanings[evidence[side]['case_id']]
+                return dict(experiment=str(self.root/'transfer-bootstrap'), case=row['id'],
+                            receipt=row['receipt'])
+            evidence['local_meaning_from'] = proof('local')
+            evidence['canonical_meaning_from'] = {payload['canonical']['id']:proof('canonical')}
+            cases.append(project_symmetric_fixed_meanings(dict(
+                id=original['id'], inputs=original['inputs'], evidence=evidence)))
+        self.write('transfer-inputs.json', dict(cases=cases))
+        compare_prompt = self.root/(compare_name+'.md')
+        compare_prompt.write_text('GENERIC PROMPT: compare only the fixed scopes A and B.\n{INPUT_JSON}')
+        spec = json.loads((self.root/'compare-evaluation-spec.json').read_text())
+        spec['prompt'] = dict(id=compare_name, path=str(compare_prompt))
+        spec['dataset'] = dict(adapter='generic', path='transfer-inputs.json')
+        spec['runner']['output_schema_path'] = str(Path(__file__).parent/'shr_single_pair/Hierarchy-compare-v179.output.schema.json')
+        self.write('transfer-spec.json', spec)
+        self.cli('prepare', 'transfer', '--spec', self.root/'transfer-spec.json')
+        teacher = dict(questions=[dict(id=key, question='Test the complete fixed scope.')
+                                 for key in ('A_contains_B', 'B_contains_A')],
+                       answers=[dict(question_id=key, answer='Provisional fixture outcome.',
+                                     justification='Fixture diagnostic; no semantic gold.')
+                                for key in ('A_contains_B', 'B_contains_A')],
+                       relation='A_contains_B', reason='Provisional transfer fixture.')
+        self.cli('run', 'transfer', env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(teacher)})
+        return bootstrap_prompt, compare_prompt
+
+    def transfer_cli(self, bootstrap_prompt, compare_prompt, *extra, ok=True, output='evaluation-data',
+                     experiment='transfer', teacher=True):
+        diagnostics = ['--teacher-experiment',self.root/'transfer'] if teacher else []
+        return self.evaluation_cli('--bootstrap-prompt', bootstrap_prompt,
+            '--compare-prompt', compare_prompt, '--fit-bootstrap-prompt', self.prompt,
+            *diagnostics, *extra, ok=ok, experiment=experiment, output=output)
+
+    def transfer_panel(self, cases, name, *, schema=None, repeat=False):
+        self.write(name+'-inputs.json',dict(cases=cases))
+        spec = json.loads((self.root/'transfer-spec.json').read_text())
+        spec['dataset']['path'] = name+'-inputs.json'
+        if schema is not None:
+            spec['runner']['output_schema_path'] = str(self.write(name+'-schema.json',schema))
+        self.write(name+'-spec.json',spec)
+        self.cli('prepare',name,'--spec',self.root/(name+'-spec.json'),*(['--repeat'] if repeat else []))
+
+    def test_native_ab_transfer_keeps_original_fit_and_separate_prompt_bindings(self):
+        from sse_multivector.distillation_run import sha256
+        bootstrap_prompt, compare_prompt = self.transfer_sources()
+        frozen = {name:(self.root/'pilot'/name).read_bytes()
+                  for name in ('data.json', 'manifest.json')}
+        calls = self.log.read_bytes()
+        self.transfer_cli(bootstrap_prompt, compare_prompt)
+        data = json.loads((self.root/'evaluation-data/data.json').read_text())
+        manifest = json.loads((self.root/'evaluation-data/manifest.json').read_text())
+        self.assertEqual(data['labels'], ['equivalent','A_contains_B','B_contains_A','neither','uncertain'])
+        self.assertEqual(manifest['evaluation_contract'], 'symmetric_fixed_meanings')
+        self.assertEqual(manifest['evaluation_role'], 'saved_checkpoint_transfer')
+        self.assertEqual(manifest['compare_prompt_sha256'], sha256(compare_prompt))
+        self.assertEqual(manifest['bootstrap_prompt_sha256'], sha256(bootstrap_prompt))
+        self.assertEqual(manifest['fit_bootstrap_prompt_sha256'], sha256(self.prompt))
+        self.assertEqual(manifest['fit_compare_prompt_sha256'], sha256(self.root/'compare-prompt.txt'))
+        self.assertEqual(manifest['trained_labels'],
+                         ['equivalent','local_contains_canonical','canonical_contains_local','neither','uncertain'])
+        self.assertEqual([row['target'] for row in data['evaluation']], ['A_contains_B']*3)
+        self.assertEqual(sum(row['identity_control'] for row in data['evaluation']), 1)
+        for row in data['evaluation']:
+            payload = json.loads(row['input_json'])
+            self.assertEqual(set(payload), {'A','B'})
+            self.assertTrue(all(set(node)=={'subject','meaning'} for node in payload.values()))
+            self.assertIn(row['input_json'], row['state'])
+            self.assertIn('Provisional transfer fixture.', row['teacher']['output'])
+        self.assertEqual(self.log.read_bytes(), calls)
+        self.assertTrue(all((self.root/'pilot'/name).read_bytes()==raw for name,raw in frozen.items()))
+
+    def test_native_ab_transfer_can_prepare_predictions_without_teacher_answers(self):
+        bootstrap_prompt, compare_prompt = self.transfer_sources()
+        self.transfer_cli(bootstrap_prompt,compare_prompt,teacher=False)
+        data = json.loads((self.root/'evaluation-data/data.json').read_text())
+        manifest = json.loads((self.root/'evaluation-data/manifest.json').read_text())
+        self.assertFalse(manifest['teacher_answers'])
+        self.assertTrue(all(row['target'] is None and row['teacher'] is None for row in data['evaluation']))
+
+    def test_ab_transfer_selected_prompt_identity_is_not_hardcoded_to_one_revision(self):
+        bootstrap_prompt, compare_prompt = self.transfer_sources(bootstrap_id='Hierarchy-bootstrap-v110',
+            bootstrap_name='Hierarchy-bootstrap-v110',compare_name='Hierarchy-compare-v180')
+        self.transfer_cli(bootstrap_prompt,compare_prompt)
+        manifest = json.loads((self.root/'evaluation-data/manifest.json').read_text())
+        self.assertEqual(manifest['bootstrap_prompt_id'],'Hierarchy-bootstrap-v110')
+        self.assertEqual(manifest['compare_prompt_id'],'Hierarchy-compare-v180')
+
+    def test_ab_transfer_rejects_mixed_producer_and_compare_versions(self):
+        bootstrap_prompt, compare_prompt = self.transfer_sources(bootstrap_id='Hierarchy-bootstrap-v108')
+        failure = self.transfer_cli(bootstrap_prompt,compare_prompt,ok=False)
+        self.assertIn('exact Bootstrap-v109 producer instructions',failure.stderr)
+        self.assertFalse((self.root/'evaluation-data').exists())
+        self.cli('prepare','wrong-compare','--from',self.root/'transfer','--prompt',compare_prompt,
+                 '--prompt-id','Hierarchy-compare-v178')
+        failure = self.transfer_cli(bootstrap_prompt,compare_prompt,ok=False,experiment='wrong-compare',teacher=False)
+        self.assertIn('exact Compare-v179',failure.stderr)
+
+    def test_ab_transfer_rejects_forged_endpoints_receipts_and_roles(self):
+        bootstrap_prompt, compare_prompt = self.transfer_sources()
+        original = json.loads((self.root/'transfer-inputs.json').read_text())['cases']
+        calls = self.log.read_bytes()
+        for field, message in [('meaning','meaning differs from Bootstrap-v109'),
+                               ('subject','subject differs from selected Bootstrap'),
+                               ('extra','only native A/B subject and meaning'),
+                               ('receipt','Bootstrap-v109 meaning receipt differs'),
+                               ('role','A/B role differs from original Bootstrap')]:
+            with self.subTest(field=field):
+                cases = json.loads(json.dumps(original))
+                case = cases[0]
+                payload = json.loads(case['inputs']['INPUT_JSON'])
+                if field in ('meaning','subject'):
+                    payload['A'][field] = 'Forged selected topic'
+                elif field=='extra':
+                    payload['B']['post'] = 'A/B input must not include a post.'
+                elif field=='receipt':
+                    case['evidence']['local_meaning_from']['receipt']['record_sha256'] = '0'*64
+                else:
+                    case['evidence']['local']['number'] = '999'
+                case['inputs']['INPUT_JSON'] = json.dumps(payload)
+                name = 'forged-'+field
+                self.transfer_panel(cases,name)
+                failure = self.transfer_cli(bootstrap_prompt,compare_prompt,experiment=name,
+                                            output='refused-'+field,teacher=False,ok=False)
+                self.assertIn(message,failure.stderr)
+                self.assertFalse((self.root/('refused-'+field)).exists())
+        self.assertEqual(self.log.read_bytes(),calls)
+
+    def assert_transfer_exposure_rejected(self, exposure):
+        if exposure=='note':
+            bootstrap_prompt,compare_prompt = self.transfer_sources(source_role='train')
+        else:
+            # Every producer and panel remains native. A different note identity
+            # must not hide a fitting author or normalized post.
+            bootstrap_prompt,compare_prompt = self.transfer_sources(exposure=exposure)
+        failure = self.transfer_cli(bootstrap_prompt,compare_prompt,ok=False)
+        self.assertIn('overlaps original training note/author/content',failure.stderr)
+        self.assertFalse((self.root/'evaluation-data').exists())
+
+    def test_ab_transfer_rejects_original_training_note_exposure(self):
+        self.assert_transfer_exposure_rejected('note')
+
+    def test_ab_transfer_rejects_original_training_author_exposure(self):
+        self.assert_transfer_exposure_rejected('author')
+
+    def test_ab_transfer_rejects_original_training_content_exposure(self):
+        self.assert_transfer_exposure_rejected('content')
+
+    def test_ab_transfer_refuses_legacy_teacher_schema_and_duplicate_directions(self):
+        bootstrap_prompt,compare_prompt = self.transfer_sources()
+        cases = json.loads((self.root/'transfer-inputs.json').read_text())['cases']
+        answer = dict(meaning='Plants',relation='A_contains_B',reason='Legacy teacher shape is not C179.')
+        self.transfer_panel(cases,'wrong-schema',schema=dict(type='object'))
+        self.cli('run','wrong-schema',env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(answer)})
+        failure = self.transfer_cli(bootstrap_prompt,compare_prompt,'--teacher-experiment',self.root/'wrong-schema',ok=False)
+        self.assertIn('expected questions, answers, relation, and reason',failure.stderr)
+        # The negative trial must not reuse the earlier valid teacher receipt.
+        self.transfer_panel(cases,'duplicate-directions',repeat=True)
+        answer = dict(questions=[dict(id='A_contains_B',question='Same direction twice.')]*2,
+            answers=[dict(question_id='A_contains_B',answer='Coverage.',justification='Duplicate.')]*2,
+            relation='equivalent',reason='Duplicate diagnostics.')
+        self.cli('run','duplicate-directions',env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(answer)})
+        failure = self.transfer_cli(bootstrap_prompt,compare_prompt,'--teacher-experiment',self.root/'duplicate-directions',ok=False)
+        self.assertIn('each containment direction exactly once',failure.stderr)
+
+    def test_ab_transfer_eval_preserves_original_fit_and_trained_label_guards(self):
+        from sse_multivector.distillation_run import sha256
+        bootstrap_prompt,compare_prompt = self.transfer_sources()
+        self.transfer_cli(bootstrap_prompt,compare_prompt)
+        self.evaluation_fit_fixture()
+        path = self.root/'evaluation-data/manifest.json'
+        manifest = json.loads(path.read_text())
+        original = path.read_bytes()
+        manifest['fit_compare_prompt_sha256'] = sha256(compare_prompt)
+        self.write('evaluation-data/manifest.json',manifest)
+        failure = self.evaluate_cli()
+        self.assertIn('evaluation data or original training binding differs',failure.stderr)
+        path.write_bytes(original)
+        manifest = json.loads(original)
+        manifest['trained_labels'] = manifest['trained_labels'][::-1]
+        self.write('evaluation-data/manifest.json',manifest)
+        failure = self.evaluate_cli()
+        self.assertIn('A/B transfer readout or original fitting contract differs',failure.stderr)
+        self.assertFalse((self.root/'evaluated').exists())
+
     def test_evaluation_preparation_reuses_frozen_inputs_without_answers_or_inference(self):
         self.evaluation_sources()
         before = self.log.read_bytes()
@@ -561,6 +779,7 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
         case = self.branch_experiment()
         self.evaluation_cli(experiment='branch')
         row = read_json(self.root/'evaluation-data/data.json')['evaluation'][0]
+        bootstrap_prompt, compare_prompt = self.transfer_sources(existing_sources=True)
         # Train and verify through an older, differently hashed module;
         # retain its exact snapshot after new source occupies the original path.
         from shutil import copytree
@@ -641,6 +860,10 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                 evaluation_path = self.root/('relocated-evaluation-'+kind)
                 self.evaluation_cli('--training-data', training_path, '--fit-code', fitter_snapshot,
                     experiment='branch', output=evaluation_path.name)
+                transfer_path = self.root/('transfer-data-'+kind)
+                self.transfer_cli(bootstrap_prompt, compare_prompt, '--training-data', training_path,
+                    '--fit-code', fitter_snapshot, output=transfer_path.name)
+                transfer_row = read_json(transfer_path/'data.json')['evaluation'][0]
                 before = file_hashes(fit)
                 output = self.root/('evaluated-'+kind)
                 command = [sys.executable, '-P', '-m', 'sse_multivector.compare_student_pilot', 'evaluate',
@@ -671,6 +894,26 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                 self.assertEqual(report['training_examples_seen'], 0)
                 self.assertEqual([r['epoch'] for r in report['checkpoints']], [1,4])
                 self.assertEqual(file_hashes(fit), before)
+                transfer_command = list(command)
+                transfer_command[transfer_command.index('--data')+1] = str(transfer_path)
+                transfer_command[transfer_command.index('--output')+1] = str(self.root/('transfer-evaluated-'+kind))
+                transfer_command[transfer_command.index('--evaluation-manifest-sha256')+1] = sha256(transfer_path/'manifest.json')
+                owner_transfer = self.root/'transfer'
+                parked_transfer = self.root/'transfer-not-mounted'
+                owner_transfer.rename(parked_transfer)
+                result = subprocess.run(transfer_command, env=evaluation_environment, text=True, capture_output=True)
+                parked_transfer.rename(owner_transfer)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                transfer_report = read_json(self.root/('transfer-evaluated-'+kind)/'report.json')
+                self.assertTrue(transfer_report['complete'])
+                self.assertEqual(transfer_report['evaluation_role'], 'saved_checkpoint_transfer')
+                self.assertEqual(transfer_report['trained_labels'], list(pilot.LABELS))
+                self.assertEqual(transfer_report['evaluation_labels'], list(pilot.AB_LABELS))
+                self.assertEqual(transfer_report['updates'], 0)
+                self.assertEqual(transfer_report['training_examples_seen'], 0)
+                self.assertEqual(transfer_report['binding']['original_fit_binding'], report['binding']['original_fit_binding'])
+                self.assertEqual([r['epoch'] for r in transfer_report['checkpoints']], [1,4])
+                self.assertEqual(file_hashes(fit), before)
                 checkpoint = fit/'checkpoints/epoch-4'
                 with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
                     if kind.startswith('encoder'):
@@ -680,6 +923,10 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                         tokens = tokenizer(state, return_tensors='pt', truncation=False)
                         logits = model(**{k:v.cuda() for k,v in tokens.items() if k != 'token_type_ids'}).logits
                         expected = pilot.LABELS[logits.argmax().item()]
+                        state = transfer_row['input_json'] if kind == 'encoder_input_json' else transfer_row['state']
+                        tokens = tokenizer(state, return_tensors='pt', truncation=False)
+                        logits = model(**{k:v.cuda() for k,v in tokens.items() if k != 'token_type_ids'}).logits
+                        transfer_expected = pilot.AB_LABELS[logits.argmax().item()]
                     elif kind == 'causal_lm':
                         model = subject_training_model(dict(native, device='cuda', max_length=4096,
                             efficient_attention=True, lora_target_modules='all-linear', lora_rank=16,
@@ -692,6 +939,16 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                         logits = model(**{k:v.cuda() for k,v in tokens.items()}, use_cache=False,
                             logits_to_keep=1).logits[:, -1, ids].float()
                         expected = list(question['criteria'])[logits.argmax().item()]
+                        transfer_question = dict(pilot.AB_QUESTION, criteria={
+                            pilot.AB_LABELS[pilot.LABELS.index(key)]:pilot.AB_QUESTION['criteria'][
+                                pilot.AB_LABELS[pilot.LABELS.index(key)]] for key in question['criteria']})
+                        prompt = tokenizer.apply_chat_template([dict(role='user', content=choice_prompt(
+                            transfer_row['state'], transfer_question, 'options'))], add_generation_prompt=True,
+                            enable_thinking=False, tokenize=False)+native['answer_prefix']
+                        tokens = tokenizer(prompt, add_special_tokens=False, return_tensors='pt')
+                        logits = model(**{k:v.cuda() for k,v in tokens.items()}, use_cache=False,
+                            logits_to_keep=1).logits[:, -1, ids].float()
+                        transfer_expected = list(transfer_question['criteria'])[logits.argmax().item()]
                     else:
                         pointer = LocalWeights(native_path)
                         backbone = prepare_model_for_kbit_training(pointer.model, use_gradient_checkpointing=True)
@@ -706,6 +963,14 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                             instr=question['instructions'], options=[f'{key}: {question["criteria"][key]}'
                                 for key in keys], label=0)]), max_state=4096, max_branch=4096, strict=True)
                         expected = keys[pointer.pointer_logits(encoded).argmax().item()]
+                        transfer_keys = [pilot.AB_LABELS[pilot.LABELS.index(key)] for key in keys]
+                        encoded = pointer.encoder(tokenizer, dict(state=transfer_row['state'], questions=[dict(
+                            instr=pilot.AB_QUESTION['instructions'], options=[
+                                f'{key}: {pilot.AB_QUESTION["criteria"][key]}' for key in transfer_keys], label=0)]),
+                            max_state=4096, max_branch=4096, strict=True)
+                        transfer_expected = transfer_keys[pointer.pointer_logits(encoded).argmax().item()]
+                        self.assertTrue(all(p.grad is None for p in pointer.model.parameters()))
+                        self.assertTrue(all(p.grad is None for p in pointer.head.parameters()))
                         del pointer, backbone
                     if kind != 'pointer':
                         self.assertTrue(all(p.grad is None for p in model.parameters()))
@@ -714,6 +979,11 @@ class CompareCheckpointEvaluationGPUIntegrationTests(CompareCheckpointEvaluation
                 self.assertEqual(decision['relation'], expected)
                 self.assertEqual(decision['evidence'], case['evidence'])
                 self.assertIsNone(report['checkpoints'][-1]['evaluation']['teacher_agreement'])
+                transfer_decision = transfer_report['checkpoints'][-1]['evaluation']['decisions'][0]
+                self.assertEqual(transfer_decision['relation'], transfer_expected)
+                self.assertEqual(transfer_decision['case_id'], transfer_row['case_id'])
+                self.assertEqual(transfer_decision['evidence'], transfer_row['evidence'])
+                self.assertEqual(transfer_report['checkpoints'][-1]['evaluation']['label_order'], list(pilot.AB_LABELS))
                 self.assertEqual(file_hashes(fit), before)
                 torch.cuda.empty_cache()
 
