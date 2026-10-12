@@ -3783,3 +3783,34 @@ closure qualification does not recur. Experimental v118–v120 are diagnostic
 removals from v117, not adopted meanings or an approved inheritance policy.
 Full-collection qualification, empty/null calibration and the scope contract
 remain open. No Compare calls or hierarchy construction are part of this work.
+
+### Bootstrap-v122 supported original-branch scope
+
+The user approved interpreting this original Pottery → Soup mugs branch as
+pottery soup mugs, with carving technique and morning-tea use optional. The
+[verbatim decision](bootstrap-v117-focused-qualification-v1.md#user-reviewed-soup-mugs-boundary)
+is specific to that source entry; it does not impose every ancestor restriction
+or transfer boundaries to other entries with the same title.
+
+[Bootstrap-v121](Hierarchy-bootstrap-v121.md) replaces V117's two conflicting
+prohibitions with a supported original-branch interpretation rule. Before
+inference, review catches an absolute descendant-exhaustiveness claim.
+[Bootstrap-v122](Hierarchy-bootstrap-v122.md) corrects it to prohibit automatic
+exhaustiveness. Both examples, the factual-evidence rules, named alternatives,
+required parts and output contract remain unchanged. V121 remains unrun.
+
+V122's fresh 22-entry qualification and two-case repeat validate every answer.
+The approved pottery boundary holds, with broad categories and alternatives
+preserved. The stock-free counterexample was invalid for the identified particular
+oven-cooking event; the post establishes stock in that event. Food's broad
+consumption-purpose condition is explicit, while a separate kind-preservation
+review disagreement remains visible. Neither issue is silently repaired or
+turned into universal semantic gold.
+
+The [full native collection](bootstrap-v117-focused-qualification-v1.md#frozen-full-collection-qualification)
+is prepared with the original 346 ASv6.100 inputs. Native history scoped to the
+completed focused experiment preserves exactly its 22 original producers;
+324 definitions are new. The earlier broad-history preparation remains unrun,
+because it would substitute two latest repeat receipts. No cache or receipt is
+manually edited. Full review and qualification remain pending; V122 is not
+activated. No Compare inference or hierarchy construction occurs.

@@ -17,6 +17,51 @@ They were registered later, so ID order is not generation order. The intervening
 | HR04 | 12 | ASv6.100 | v109 / v179 |
 | HR05 | 24 | ASv6.100 | v109 / v179 |
 
+## Token usage and API cost
+
+These totals cover hierarchy construction: Bootstrap, Compare and consolidation,
+including warmups, retries, unused charged producers and the original generation
+behind exact answer reuses, counted once. Separate subject extraction and vector
+encoding are excluded. HR06 includes its three-note base and the seven original
+producer calls behind reused answers.
+
+| Run | Uncached input | Cached input | Output | Reasoning within output | Known total tokens |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| HR06 | 388,609 | 0 | 23,141 | 2,816 | 411,750 |
+| HR07 | 2,335,245 | 4,790,016 | 398,063 | 56,493 | 7,523,324 |
+| HR03 | 1,576,819 | 3,422,720 | 279,473 | 47,330 | 5,279,012 |
+| HR04 | 63,494 | 324,096 | 58,375 | 14,516 | 445,965 |
+| HR05 | 155,217 | 898,560 | 172,399 | 43,644 | 1,226,176 |
+
+Known total tokens = uncached input + cached input + output. Reasoning is already
+included in output and must not be added again. All five reports record zero
+cache-write tokens. Failed calls with missing usage are excluded from these
+known subtotals; their consumption is unknown.
+
+| Run | Known API-equivalent generation cost | Calls missing usage/cost |
+| --- | ---: | ---: |
+| HR06 | $1.008628 | 0 |
+| HR07 | $9.1301216 | 7 |
+| HR03 | $6.290640 | 12 |
+| HR04 | $0.7431476 | 1 |
+| HR05 | $2.124280 | 3 |
+
+Costs use the saved per-call API catalogue estimates, not subscription charges
+or current-price recalculation. HR06's complete saved generation estimate
+includes $0.907694 newly dispatched during the three-to-eight-note lineage plus
+original generation behind reused answers. The other four cost totals remain
+incomplete because recovered failures lack usage and cost estimates.
+
+HR03's [original full report](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/usage-v2.json)
+also includes ASv6.100 extraction: another 549,380 known tokens and $1.005864,
+with two additional failed calls missing usage. Its combined extraction and
+construction inventory has 5,828,392 known tokens and a $7.296504 known cost subtotal. The
+[construction-only native report](../../target/hierarchy-catalogue/usage/HR03-hierarchy.json)
+used above excludes only that AS experiment; its
+[354-experiment inventory](../../target/hierarchy-catalogue/usage/HR03-hierarchy-source.json)
+retains all hierarchy producers and comparisons. HR04–HR07 usage reports are
+linked in their run records below.
+
 ## HR05 — ASv6.100 24-note hierarchy
 
 Approved as a rerun of HR04 with 24 notes and completed October 11, 2026. The

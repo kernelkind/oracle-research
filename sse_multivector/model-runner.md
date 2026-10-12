@@ -273,6 +273,17 @@ V118–v120 isolate scope-prohibition wording; they remain experimental.
 Full-collection qualification, empty/null calibration and the unresolved scope
 contract remain open. No adoption, Compare calls or hierarchy build occurred.
 
+The continuing [V122 branch-scope qualification](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v122-supported-original-branch-scope)
+implements the user-reviewed pottery Soup mugs interpretation while preserving
+named alternatives, original-post factual unknowns and category abstraction.
+V121 stays unrun after a preflight closed-set correction; V122's 22 focused
+definitions and two-case repeat validate. Full qualification uses all 346 current
+ASv6.100 inputs, with the native history root limited to the completed focused
+experiment to preserve its exact 22 original producers. Scoped history selects
+reuse evidence; it does not change model-facing inputs or fabricate receipts.
+The remaining 324 definitions are new. Full review is pending; no activation,
+Compare inference or hierarchy build is part of this Bootstrap stage.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -7655,3 +7666,27 @@ usage, fourteen comparison cache hits and $0.1855808 API-equivalent catalog
 cost. The persistent shared counter reads 19,532/20,000 after the run, including
 other agents' intervening calls; the native aggregate bounds this panel's own
 26 attempts. No Bootstrap, hierarchy or UI work is performed.
+
+### Compare-v187–v191 bounded gate status
+
+The [maintained gate record](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#compare-v187-necessary-coverage-conditions)
+retains the unchanged twelve ASv6.100-derived HR05 comparisons and six separate
+synthetic intention/capability controls. V188 removes the observed reversal in
+one draw but still imports particular brand facts; V189 stops that fact import
+and retains an Equipment reversal; V190's compatible-role instruction does not
+remove it. No candidate is adopted and V179 remains the development baseline.
+
+Experimental V191 changes only question specificity relative to V190. Its final
+two allowed Equipment comparisons both return neither and name the non-food
+boundary, but the remaining sixteen gate cases, fresh confirmation and broader
+qualification are unrun. Equipment's modifier-scope qualification remains;
+reciprocal answers do not establish new human semantic gold.
+
+The shared persistent counter reaches 20,000/20,000; inference stops. The
+[native aggregate source](shr_single_pair/hierarchy-compare-v187-v191-gate-usage-v1.json)
+counts this loop's own 83 attempts, including eight warmups and one recovered
+retry, with seventy-four valid comparisons and zero exact reuses. One failed
+attempt lacks usage: $0.5447196 is a known API-equivalent subtotal only, not a
+complete cost or subscription charge. Generated native receipts and unrun cases
+remain in the retained task worktree. No Bootstrap, hierarchy, UI or outgoing
+owner-message work is performed by this Compare loop.
