@@ -136,3 +136,13 @@ All 23 focused prompt-revision and saved-comparison tests pass. The exact
 replacement check confirms only the two declared phrases changed. Historical
 legacy-suite limitations remain recorded in the prior v123 report; this stage
 does not claim that the full legacy integration suite passes.
+
+After integration, all 20 current-main prompt-assembly tests also pass. Main's
+native `prepare --from` frozen-input check at
+`target/bootstrap-v124-main-frozen-input-check-v1` reproduces every input and
+rendered prompt byte exactly, with four unrun cases and zero model attempts.
+This checks the shared workflow with already frozen data; it is not a fresh
+AS generation or a new semantic sample. A separate spec-based preflight was
+interrupted during the large main experiment-history lookup, before creating
+its experiment or making calls. No runner change was made to address that
+inventory latency. The completed check uses the existing task history root.
