@@ -7711,3 +7711,27 @@ and `target/compare-v197-qualification-v1/*/native.json`. Native usage records
 forty-nine fresh attempts including five warmups, forty-four valid comparisons,
 zero reuse/retry/failure/missing usage and $0.350682 API-equivalent cost, not a
 subscription charge. V197 remains experimental and unqualified.
+
+### Bounded production connection: V198 draft and V199 candidate
+
+[V198](Hierarchy-compare-v198.md) is an unrun draft adding a general production
+scope boundary. Independent preflight identifies two unintended readings: "how
+a kind is made" could restrict production information to technique; "objects
+used" could imply actual use is required. The next edit increments to
+[experimental V199](Hierarchy-compare-v199.md), preserving both draft versions
+and native revisions. Neither is automatically adopted. V199 changes only two
+kind-connection sentences relative to V197: production information must concern
+producing the qualifying kind; an actual or intended production role alone does
+not establish that information about the object's other aspects concerns that
+production. Activity/participant/means coverage remains independently defined.
+
+The [eight matched production-aspect requests](hierarchy-compare-production-aspect-controls-v1.json)
+compare Paper with functional versus expressly unrelated decorative information
+about one qualified pump, separately fixing intended and actual use. Each pair
+is reversed exactly. Role wording is identical within each aspect contrast;
+only intended versus actual qualification varies across role configurations.
+The entity facts and information boundaries are supplied, not inferred. These
+are separately labeled synthetic diagnostics, not producer outputs, source
+hierarchies, human gold or future prompt examples. All individual labels stay
+unresolved. Test V197 on these new inputs as a matched reference and V199 on the
+unchanged twelve triad cases before wider qualification.
