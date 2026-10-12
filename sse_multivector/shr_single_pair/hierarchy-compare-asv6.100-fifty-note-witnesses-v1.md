@@ -8042,3 +8042,24 @@ summit elevation is unknown. General-kind counterexamples remain permitted.
 Keep all instructions, four fields and validation meanings fixed. Removing the
 shared-term watch demonstration is a qualification limit, not an isolated
 one-sentence treatment. No validation data enter the new example.
+
+### V206: demonstrate unknown particular membership
+
+V206 retains V202's instructions and first example byte for byte, replacing
+only the complete Watch repair demonstration with the independently fictional
+High mountain peaks / Mount Aster comparison. Summit elevation at least 4,000
+metres defines the general parent; the particular peak's elevation is unstated.
+The example returns null without assigning either a low or qualifying elevation.
+The reverse uses a distinct unrelated hypothetical 4,300-metre peak, preserving
+permission for general-kind counterexamples. It has exactly two examples and
+contains no regression subjects, producer outputs or user judgments.
+
+Both example outputs validate through production. Prefix size is 2,174 tokens,
+versus V202's 2,148, preserving native cache eligibility. This is an entire
+example replacement, including removal of the shared-term repair lesson; it
+cannot isolate the causal effect of one sentence. Start with the unchanged eight
+aspect cases. Require all four particular unknown-route checks and all four
+functional positives; a failed screen prevents broader expansion. A promising
+candidate needs fresh confirmation plus resolved human-handhold, MrBeast,
+brand-uncertainty, complete-triad and producer-panel checks before adoption.
+No instruction convention, schema or input evidence changes.
