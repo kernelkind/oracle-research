@@ -7798,3 +7798,38 @@ unknown. V200 is preserved as an unrun draft; V201 is the actual next candidate.
 The three V197/V199 production experiments use thirty-one fresh attempts,
 twenty-eight valid comparisons, zero reuse/retry/failure/missing usage and
 $0.2409708 API-equivalent cost, not a subscription charge.
+
+### V201 qualification and question-procedure ablation
+
+All fifty-eight V201 responses validate. Independent review confirms correct
+directional IDs across the twenty scope/aspect cases; the V199 swap does not
+recur. Both triads remain reciprocal and internally consistent, functional pump
+coverage remains supported, and all eighteen explicit smoke/commerce/handhold
+controls plus two approved MrBeast positives survive. The unchanged original
+handhold/grip probe still reverses. Original sourdough and Restaurant reciprocals
+remain qualified interpretations, not newly certified gold.
+
+The added unknown-route rule does not repair any of the four decorative proofs.
+They still equate escaping production with escaping Paper's entire scope and
+assert that the unknown carrier need not be checked. Keep their membership
+unresolved and their source fixed. The first-draw native usage records sixty-five
+fresh attempts including seven warmups, fifty-eight valid comparisons, zero
+reuse/retry/failure/missing usage and $0.4188332 API-equivalent cost, not a
+subscription charge. V201 remains experimental and unqualified.
+
+[Experimental V202](Hierarchy-compare-v202.md) changes only V201's question
+procedure. It removes mandatory concrete-candidate selection, the preference
+for one parent condition and the associated procedural constraints. The question
+now asks whether child information can escape every parent alternative and
+connection. All semantic rules, fields, examples and input meanings stay fixed.
+The hypothesis is that the prior single-condition candidate focus restricts
+attention to the production route, despite the full-parent exclusion requirement.
+This is a coupled procedure ablation, not identification of one responsible word.
+
+The examples remain concrete, which preserves a possible demonstration anchor;
+failure does not rule out all question-anchoring mechanisms. Preregistered
+qualification requires identifying the unknown direct Paper-property route, not
+merely raising null counts. Retain functional and activity/equipment positives
+and all resolved handhold controls. A matched fresh V201 aspect repeat separates
+sampling variation from a contrast with old outputs. Source metadata and earlier
+agent/user judgments remain outside the A/B model input.

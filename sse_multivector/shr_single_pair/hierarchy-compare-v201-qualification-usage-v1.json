@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v201-complete-scope": [
+      "../../target/compare-v201-qualification-v1/scope",
+      "../../target/compare-v201-qualification-v1/aspect"
+    ],
+    "v201-retained-qualification": [
+      "../../target/compare-v201-qualification-v1/hr05",
+      "../../target/compare-v201-qualification-v1/smoke",
+      "../../target/compare-v201-qualification-v1/commerce",
+      "../../target/compare-v201-qualification-v1/broader",
+      "../../target/compare-v201-qualification-v1/handhold"
+    ]
+  }
+}

@@ -7811,3 +7811,25 @@ held pending diagnosis. Separate explicit-commerce synthetic controls test resol
 boundaries without replacing any original producer meaning or certifying an old
 label. Native aggregate definitions and detailed qualifications remain in the
 maintained gate record.
+
+### Latest Compare scope qualification (V196–V202)
+
+The approved A/B development reference remains Compare-v179. V196–V201 are
+experimental and unqualified; V198 and V200 are preserved unrun drafts. Whole-
+child information coverage removes an observed Food-chain contradiction; bounded
+kind-production coverage removes the Paper contradiction in the subsequent
+diagnostic draws, preserving activity-to-equipment and narrow functional
+production information. These bounded results do not certify all frozen producer
+relationships. Unknown material facts in particular decorative topics still
+prevent complete parent exclusion, and the original handhold/grip probe remains
+unstable. A V199 diagnostic-ID swap did not recur in the V201 scope panel.
+
+V201 preserves eighteen resolved synthetic controls and two approved MrBeast
+positives, but fails the unknown-route qualification. V202 is a prepared prompt
+procedure ablation with unchanged semantic rules, source meanings and four-field
+output schema; it is not adopted. Native inputs, receipts, agent qualifications,
+usage and fresh/reuse distinctions are maintained in the
+[Compare findings](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md).
+The removed attempt allowance remains removed; retained monetary and task scope
+constraints still apply. No Bootstrap or hierarchy construction changes follow
+from integrating these experimental definitions.
