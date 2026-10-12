@@ -2,7 +2,7 @@
 
 ## Bootstrap and Compare selection
 
-Updated October 11, 2026. The authorized goal is one student choice per prompt
+Updated October 12, 2026. The authorized goal is one student choice per prompt
 and verified training readiness before freeze, followed by one planned final
 fine-tune per prompt. The completed matched pilot and broader development
 evidence support recommending **Qwen3.8-27B starting weights for Bootstrap**
@@ -13,12 +13,32 @@ Earlier SHR results below inform candidate priorities but are not measurements
 of the new tasks. See
 [current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
+The user has now confirmed re-evaluation with the completed HR05 build's exact
+**Bootstrap-v109 / Compare-v179** pair. All Compare meanings must have v109
+producer provenance. This rerun evaluates the saved v96/v48 fits without new
+gradients; its results remain pending. Compare-v179's A/B fixed-meaning input
+has no canonical branch fields. The earlier recommendation and branch results
+remain evidence for their original versions, rather than qualification of this
+new contract.
+
+The new Compare evaluator keeps the old fitting instructions, targets and saved
+heads immutable while selecting exact C179 instructions and B109 producer
+receipts. It maps the trained directional indices to `A_contains_B` and
+`B_contains_A`, with no diagnostic generation or added branch fields. Its CPU
+regressions and 71.16-second four-path GPU integration pass; actual Compare model
+passes remain pending. All 200 panel encodings pass exact tokenizer admission
+without truncation. The 50 existing C179 references contain five inconsistent reversal
+pairs, all unresolved probes; the 20 provisional control directions are
+consistent. Current model selection must therefore consider control agreement
+and student reversal consistency, rather than rank raw teacher matches alone.
+
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
 four-field API also carries ambiguities, resolutions and quoted evidence.
 It needs a generative model; a classification-only Kev or Ettin checkpoint
-cannot supply this contract. Compare consumes already fixed meanings and a
-canonical branch, then decides one of five relations. The user confirmed a
+cannot supply this contract. The HR05-aligned Compare-v179 consumes A/B subjects
+and fixed meanings, then decides one of five relations. The earlier Compare-v48
+pilot additionally supplied a canonical branch. The user confirmed a
 **relation-only distilled Compare output**, making decision models eligible.
 The frozen Compare-v48 development pilot's teacher API copies the local meaning
 and gives a diagnostic reason. The later Compare-v75 definition additionally returns
@@ -45,11 +65,11 @@ do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
 | --- | --- | --- | --- |
-| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and production branch coverage |
+| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and independent A/B coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Retained for generative quality with fewer active parameters; expert adaptation and long suffix training/reload verified on GB10 | Potentially useful for many repeated decisions | Representative meaning-generation learning and semantic fidelity |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
-| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent coverage, production branch lengths and checkpoint tradeoff |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent A/B coverage and checkpoint tradeoff |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
 | Ettin-1B encoder | Cannot generate a Bootstrap meaning | Inexpensive input-JSON candidate with measured transfer limits | Broader reviewed learning and evaluation coverage; its random head is not a published task model |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |

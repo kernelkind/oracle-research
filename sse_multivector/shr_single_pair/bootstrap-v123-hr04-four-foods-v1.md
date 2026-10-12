@@ -145,3 +145,18 @@ revision/input/settings/receipt and evidence-quotation checks passed. No code
 behavior or input/schema contract changed. The general instruction edit has
 not been newly qualified against nonfood cases or the full branch collection;
 those limits prevent activation or a comprehensive-success claim.
+
+After concurrent consolidation work landed, routine main synchronization
+preserved both sets of integration tests and documentation. Twenty-three
+prompt-revision/saved-comparison checks pass again. Thirty-one consolidation
+and assembly checks pass; the combined 42-test check also reports 11 failures
+in legacy task-branch checks against the updated shared runner (unsupported
+expectation options, obsolete manifest/history expectations and missing old
+source bindings). Those checks were not removed or changed to hide failures.
+Incoming hash-pinned assembly fragments retain intentional boundary whitespace;
+they are not reformatted to suppress inherited diff-check warnings.
+
+An additional native offline preparation in current main,
+`target/bootstrap-v123-main-input-check-v1`, produces all four exact tested input
+strings and hashes, with zero model calls. This confirms current main can
+prepare the tested source collection independently of the legacy branch.

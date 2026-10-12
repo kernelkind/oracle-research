@@ -24,6 +24,16 @@ from .experiment_inputs import digest, render
 
 LABELS = ('equivalent', 'local_contains_canonical', 'canonical_contains_local', 'neither', 'uncertain')
 INVERSE = dict(zip(LABELS, (LABELS[0], LABELS[2], LABELS[1], LABELS[3], LABELS[4])))
+AB_LABELS = ('equivalent', 'A_contains_B', 'B_contains_A', 'neither', 'uncertain')
+AB_QUESTION = dict(instructions='Apply the full Compare instructions in the state to its final A/B input. '
+    'Preserve both fixed information scopes. Select exactly one relation. For this student decision, '
+    'return only the relation; do not generate questions, answers or a diagnostic reason.',
+    criteria=dict(zip(AB_LABELS, (
+        'Each fixed information scope covers the other completely.',
+        'A covers the whole B information scope and a valid counterexample disproves reverse coverage.',
+        'B covers the whole A information scope and a valid counterexample disproves reverse coverage.',
+        'Valid counterexamples disprove complete coverage in both directions.',
+        'At least one containment direction remains unresolved.'))), output_field='relation')
 
 
 def reviewed_targets(bundle, producers):
@@ -155,14 +165,28 @@ def training_data(data_path, *, current_code=True, fit_code=None):
 
 
 def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experiment=None, fit_code=None,
-                    split_manifest=None):
+                    split_manifest=None, compare_prompt=None, fit_bootstrap_prompt=None):
     """Derive complete native evaluation cases, never trusting copied targets."""
     experiment, training_path, bootstrap_prompt = map(Path, (experiment, training_path, bootstrap_prompt))
     original, fitted, collection = training_data(training_path, current_code=False, fit_code=fit_code)
     if len(original['prompt_sha256']) != 1:
         raise ValueError('evaluation requires one frozen Compare training prompt')
-    compare_hash = original['prompt_sha256'][0]
+    fit_compare_hash = original['prompt_sha256'][0]
+    transfer = compare_prompt is not None
+    if transfer and fit_bootstrap_prompt is None:
+        raise ValueError('transfer evaluation requires the original fit Bootstrap prompt')
+    if not transfer and fit_bootstrap_prompt is not None:
+        raise ValueError('fit-bootstrap-prompt requires an explicit transfer Compare prompt')
+    fit_bootstrap_prompt = Path(fit_bootstrap_prompt) if transfer else bootstrap_prompt
+    fit_bootstrap = ('Hierarchy-bootstrap-v96', sha256(fit_bootstrap_prompt))
     bootstrap_hash = sha256(bootstrap_prompt)
+    bootstrap_id = bootstrap_prompt.stem if transfer else 'Hierarchy-bootstrap-v96'
+    compare_id = Path(compare_prompt).stem if transfer else 'Hierarchy-compare-v48'
+    if transfer and (not bootstrap_id.startswith('Hierarchy-bootstrap-')
+                     or not compare_id.startswith('Hierarchy-compare-')):
+        raise ValueError('transfer prompt filenames must retain their native prompt IDs')
+    compare_hash = sha256(compare_prompt) if transfer else fit_compare_hash
+    evaluation_bootstrap = (bootstrap_id, bootstrap_hash)
     protected = {}
 
     def protect(path, expected=None):
@@ -261,21 +285,24 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
             corpora[path] = {n['note_id']: n for n in notes}
         return corpora[path]
 
-    def source_bundle(evidence, base):
+    def source_bundle(evidence, base, expected_bootstrap):
+        bootstrap_id, bootstrap_hash = expected_bootstrap
+        version = bootstrap_id.replace('Hierarchy-bootstrap-', 'Bootstrap-', 1)
         reference, producer = evidence['source_bootstrap'], evidence['source_provenance']
         path = protect(base/reference['path'], reference['sha256'])
         producer_path = protect(base/producer['path'], producer['sha256'])
-        if path not in bundles:
+        key = (path, expected_bootstrap)
+        if key not in bundles:
             bundle, provenance = read_json(path), read_json(producer_path)
             if (bundle.get('schema_version') != 1 or provenance.get('schema_version') != 1
                     or provenance.get('inference_calls') != 0 or len(bundle.get('prompts', {})) != 1
                     or bootstrap_hash not in bundle['prompts']
                     or hashlib.sha256(bundle['prompts'][bootstrap_hash]['text'].encode()).hexdigest() != bootstrap_hash):
-                raise ValueError('evaluation requires exact Bootstrap-v96 producer instructions')
+                raise ValueError(f'evaluation requires exact {version} producer instructions')
             receipts = {(p['experiment'], c['id']): (p['prompt_id'], c['receipt'])
                         for p in provenance['experiments'] for c in p['cases']}
             if len(receipts) != sum(len(p['cases']) for p in provenance['experiments']):
-                raise ValueError('duplicate Bootstrap-v96 producer identity')
+                raise ValueError(f'duplicate {version} producer identity')
             saved = {}
             for row in bundle['cases']:
                 producer_population(row['evidence']['local']['note_id'], row['evidence'].get('split'))
@@ -285,49 +312,51 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
                 planned = next((case for case in producer_plan['cases'] if case['id'] == row['case_id']), None)
                 if planned is None or planned['evidence'] != row['evidence']:
                     raise ValueError('Bootstrap collection evidence differs from native producer')
-                if (row['prompt_id'] != 'Hierarchy-bootstrap-v96'
-                        or producer_plan['prompt']['id'] != 'Hierarchy-bootstrap-v96'
+                if (row['prompt_id'] != bootstrap_id
+                        or producer_plan['prompt']['id'] != bootstrap_id
                         or hashlib.sha256(producer_plan['prompt']['text'].encode()).hexdigest() != bootstrap_hash
                         or row['prompt_sha256'] != bootstrap_hash
                         or digest(row['inputs']) != row['input_sha256']
                         or receipts.get((row['experiment'], row['case_id'])) !=
                            (row['prompt_id'], row['receipt'])):
-                    raise ValueError('Bootstrap-v96 producer provenance differs')
+                    raise ValueError(f'{version} producer provenance differs')
                 saved[(row['experiment'], row['case_id'])] = row
             if len(saved) != len(bundle['cases']):
-                raise ValueError('duplicate Bootstrap-v96 meaning identity')
-            bundles[path] = saved
-        return bundles[path]
+                raise ValueError(f'duplicate {version} meaning identity')
+            bundles[key] = saved
+        return bundles[key]
 
-    def meaning_proof(reference, value, evidence, base):
+    def meaning_proof(reference, value, evidence, base, expected_bootstrap):
+        bootstrap_id, bootstrap_hash = expected_bootstrap
+        version = bootstrap_id.replace('Hierarchy-bootstrap-', 'Bootstrap-', 1)
         if 'source_bootstrap' in evidence:
-            rows = source_bundle(evidence, base)
+            rows = source_bundle(evidence, base, expected_bootstrap)
             key = (reference['experiment'], reference['case_id'])
             saved = rows.get(key)
             if saved is None or saved['receipt'] != reference['receipt']:
-                raise ValueError('Bootstrap-v96 meaning receipt differs')
+                raise ValueError(f'{version} meaning receipt differs')
             support = saved['evidence']['local']
             population = producer_population(support['note_id'], saved['evidence'].get('split'))
             if populations is None and saved['evidence'].get('split') != 'train':
                 raise ValueError('Bootstrap producer requires original TRAIN population evidence')
             producer_plan, actual_rows = native(reference['experiment'], answers=True)
             actual_row = actual_rows.get(reference['case_id'])
-            if (producer_plan['prompt']['id'] != 'Hierarchy-bootstrap-v96'
+            if (producer_plan['prompt']['id'] != bootstrap_id
                     or hashlib.sha256(producer_plan['prompt']['text'].encode()).hexdigest() != bootstrap_hash
                     or actual_row is None or actual_row['status'] != 'valid'
                     or actual_row['evidence'] != saved['evidence']
                     or actual_row.get('receipt') != saved['receipt'] or actual_row['inputs'] != saved['inputs']
                     or (actual_row.get('parsed') or json.loads(actual_row['output'])) != saved['answer']):
-                raise ValueError('Bootstrap-v96 collection differs from native producer evidence')
+                raise ValueError(f'{version} collection differs from native producer evidence')
             local = json.loads(saved['inputs']['INPUT_JSON'])['local']
             support = saved['evidence']['local']
             identity = dict(note_id=support['note_id'], pubkey=saved['evidence']['pubkey'], post=local['post'])
             actual = saved['answer']['meaning']
         else:
             plan, _ = native(reference['experiment'])
-            if (plan['prompt']['id'] != 'Hierarchy-bootstrap-v96'
+            if (plan['prompt']['id'] != bootstrap_id
                     or hashlib.sha256(plan['prompt']['text'].encode()).hexdigest() != bootstrap_hash):
-                raise ValueError('evaluation requires exact Bootstrap-v96 producer instructions')
+                raise ValueError(f'evaluation requires exact {version} producer instructions')
             planned = next((r for r in plan['cases'] if r['id'] == reference['case']), None)
             if planned is None:
                 raise ValueError('Bootstrap producer requires original TRAIN population evidence')
@@ -347,7 +376,7 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
             saved = rows.get(reference['case'])
             if (saved is None or saved['status'] != 'valid'
                     or saved.get('receipt') != reference['receipt']):
-                raise ValueError('Bootstrap-v96 meaning receipt differs')
+                raise ValueError(f'{version} meaning receipt differs')
             support = saved['evidence']['local']
             local = json.loads(saved['inputs']['INPUT_JSON'])['local']
             if 'corpus' in saved['evidence']:
@@ -362,23 +391,33 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
                 identity = dict(note_id=support['note_id'], pubkey=saved['evidence']['pubkey'], post=local['post'])
             actual = (saved.get('parsed') or json.loads(saved['output']))['meaning']
         if not isinstance(actual, str) or not actual.strip() or actual != value:
-            raise ValueError('evaluation meaning differs from Bootstrap-v96 producer')
+            raise ValueError(f'evaluation meaning differs from {version} producer')
         if reference.get('note_id', support['note_id']) != support['note_id']:
             raise ValueError('Bootstrap producer supporting note differs')
         if (reference.get('number', support['number']) != support['number']
                 or reference.get('local', support) != support):
             raise ValueError('Bootstrap producer supporting entry differs')
         identity['number'] = support['number']
+        entry = (next((row for row in local['hierarchy']['entries']
+                       if row['number'] == local['hierarchy']['selected']), None)
+                 if 'hierarchy' in local else local.get('entry'))
+        if (not isinstance(entry, dict) or not isinstance(entry.get('subject'), str)
+                or 'hierarchy' in local and local['hierarchy']['selected'] != support['number']):
+            raise ValueError('Bootstrap producer selected subject differs')
+        identity['subject'] = entry['subject']
         identity.update(population)
         return identity
 
     protect(bootstrap_prompt)
+    protect(fit_bootstrap_prompt)
+    if transfer:
+        protect(compare_prompt)
     protect(training_path/'manifest.json')
     protect(training_path/'data.json')
     plan, _ = native(experiment)
-    if (plan['prompt']['id'] != 'Hierarchy-compare-v48'
+    if (plan['prompt']['id'] != compare_id
             or hashlib.sha256(plan['prompt']['text'].encode()).hexdigest() != compare_hash):
-        raise ValueError('evaluation requires exact Compare-v48 training instructions')
+        raise ValueError('evaluation requires exact '+compare_id.replace('Hierarchy-compare-', 'Compare-', 1)+' instructions')
     train_notes, train_authors, train_texts = set(), set(), set()
     original_cases = {(r['experiment'], r['case_id']): r for r in collection['cases']}
     for row in fitted['train']:
@@ -389,7 +428,8 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
         if 'source_bootstrap' not in original_case['evidence']:
             raise ValueError('original training requires frozen Bootstrap-v96 meaning provenance')
         for side in ('local', 'canonical'):
-            meaning_proof(original_case['evidence'][side], payload[side]['meaning'], original_case['evidence'], base)
+            meaning_proof(original_case['evidence'][side], payload[side]['meaning'], original_case['evidence'], base,
+                          fit_bootstrap)
         train_texts.add(' '.join(payload['local']['post'].split()))
         for side in ('local', 'canonical'):
             train_notes.add(row['evidence'][side]['note_id'])
@@ -397,44 +437,69 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
     teacher_rows = None
     if teacher_experiment is not None:
         teacher_plan, _ = native(teacher_experiment)
-        if (teacher_plan['prompt']['id'] != 'Hierarchy-compare-v48'
+        if (teacher_plan['prompt']['id'] != compare_id
                 or hashlib.sha256(teacher_plan['prompt']['text'].encode()).hexdigest() != compare_hash
                 or [(r['id'], r['inputs']) for r in teacher_plan['cases']] !=
                    [(r['id'], r['inputs']) for r in plan['cases']]):
-            raise ValueError('teacher diagnostics differ from frozen Compare-v48 cases')
+            raise ValueError('teacher diagnostics differ from frozen '+compare_id.replace('Hierarchy-compare-', 'Compare-', 1)+' cases')
     rows = []
     for case in plan['cases']:
         if 'mechanical' in case:
             raise ValueError('evaluation requires input-only native cases, not mechanical answers')
         payload = json.loads(case['inputs']['INPUT_JSON'])
-        evidence, local, canonical = case['evidence'], payload['local'], payload['canonical']
+        evidence = case['evidence']
         if evidence.get('split', 'train') != 'train':
             raise ValueError('evaluation must not expose reserved or validation populations')
-        if not all(name in canonical for name in ('parents', 'ancestors', 'descendants')):
-            raise ValueError('evaluation requires complete canonical branches')
         proofs = []
         base = Path(plan['dataset']['path']).parent
-        if 'source_bootstrap' in evidence:
-            proofs.append(meaning_proof(evidence['local'], local['meaning'], evidence, base))
-            if canonical['parents'] or canonical['ancestors'] or canonical['descendants']:
-                raise ValueError('canonical branch meanings require native Bootstrap producer provenance')
-            proofs.append(meaning_proof(evidence['canonical'], canonical['meaning'], evidence, base))
+        if transfer:
+            if (set(payload) != {'A', 'B'} or evidence.get('input_view') != 'symmetric_fixed_meanings'
+                    or any(not isinstance(node, dict) or set(node) != {'subject', 'meaning'}
+                           or any(not isinstance(value, str) or not value.strip() for value in node.values())
+                           for node in payload.values())):
+                raise ValueError('transfer evaluation requires only native A/B subject and meaning inputs')
+            if 'source_bootstrap' in evidence:
+                references = [evidence['local'], evidence['canonical']]
+            else:
+                source_input = evidence.get('source_input', evidence.get('unprojected_input', {}))
+                canonical_id = evidence.get('canonical', {}).get('id') or source_input.get('canonical', {}).get('id')
+                references = [evidence.get('local_meaning_from'),
+                              evidence.get('canonical_meaning_from', {}).get(canonical_id)]
+                if any(reference is None for reference in references):
+                    raise ValueError('both A/B meanings require selected native Bootstrap producer provenance')
+            for side, reference, original_side in zip(('A', 'B'), references, ('local', 'canonical')):
+                identity = meaning_proof(reference, payload[side]['meaning'], evidence, base, evaluation_bootstrap)
+                if payload[side]['subject'] != identity['subject']:
+                    raise ValueError('evaluation subject differs from selected Bootstrap producer')
+                declared = evidence.get(original_side, {})
+                if any(key in declared and declared[key] != identity[key] for key in ('note_id', 'number')):
+                    raise ValueError('evaluation A/B role differs from original Bootstrap source')
+                proofs.append(identity)
         else:
-            if 'local_meaning_from' not in evidence or 'canonical_meaning_from' not in evidence:
-                raise ValueError('all evaluation meanings require native Bootstrap-v96 producer provenance')
-            proofs.append(meaning_proof(evidence['local_meaning_from'], local['meaning'], evidence, base))
-            nodes = [canonical, *canonical['ancestors'], *canonical['descendants']]
-            by_id = {n['id']: n for n in nodes}
-            if len(by_id) != len(nodes) or set(canonical['parents']) - set(by_id):
-                raise ValueError('canonical branches contain duplicate or missing nodes')
-            references = evidence['canonical_meaning_from']
-            if set(by_id) - set(references):
-                raise ValueError('every canonical ancestor/descendant requires Bootstrap-v96 provenance')
-            for node in nodes:
-                proofs.append(meaning_proof(references[node['id']], node['meaning'], evidence, base))
-        if (proofs[0]['post'] != local['post'] or proofs[0]['note_id'] != evidence['local']['note_id']
-                or proofs[0]['number'] != evidence['local']['number']):
-            raise ValueError('evaluation local input differs from original Bootstrap source')
+            local, canonical = payload['local'], payload['canonical']
+            if not all(name in canonical for name in ('parents', 'ancestors', 'descendants')):
+                raise ValueError('evaluation requires complete canonical branches')
+            if 'source_bootstrap' in evidence:
+                proofs.append(meaning_proof(evidence['local'], local['meaning'], evidence, base, evaluation_bootstrap))
+                if canonical['parents'] or canonical['ancestors'] or canonical['descendants']:
+                    raise ValueError('canonical branch meanings require native Bootstrap producer provenance')
+                proofs.append(meaning_proof(evidence['canonical'], canonical['meaning'], evidence, base, evaluation_bootstrap))
+            else:
+                if 'local_meaning_from' not in evidence or 'canonical_meaning_from' not in evidence:
+                    raise ValueError('all evaluation meanings require native Bootstrap-v96 producer provenance')
+                proofs.append(meaning_proof(evidence['local_meaning_from'], local['meaning'], evidence, base, evaluation_bootstrap))
+                nodes = [canonical, *canonical['ancestors'], *canonical['descendants']]
+                by_id = {n['id']: n for n in nodes}
+                if len(by_id) != len(nodes) or set(canonical['parents']) - set(by_id):
+                    raise ValueError('canonical branches contain duplicate or missing nodes')
+                references = evidence['canonical_meaning_from']
+                if set(by_id) - set(references):
+                    raise ValueError('every canonical ancestor/descendant requires Bootstrap-v96 provenance')
+                for node in nodes:
+                    proofs.append(meaning_proof(references[node['id']], node['meaning'], evidence, base, evaluation_bootstrap))
+            if (proofs[0]['post'] != local['post'] or proofs[0]['note_id'] != evidence['local']['note_id']
+                    or proofs[0]['number'] != evidence['local']['number']):
+                raise ValueError('evaluation local input differs from original Bootstrap source')
         for identity in proofs:
             if (identity['note_id'] in train_notes or identity['pubkey'] in train_authors
                     or ' '.join(identity['post'].split()) in train_texts):
@@ -455,10 +520,14 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
                     or saved['inputs'] != case['inputs']):
                 raise ValueError('teacher diagnostics require complete valid identical native inputs')
             answer = saved.get('parsed') or json.loads(saved['output'])
-            validate_answer(answer, json.loads(row['input_json'])['local']['meaning'])
+            if transfer:
+                from .hierarchy_node_pairs import validate
+                answer = validate(saved['output'], diagnostics=True, symmetric=True)
+            else:
+                validate_answer(answer, json.loads(row['input_json'])['local']['meaning'])
             row['target'] = answer['relation']
             row['teacher'] = {key:saved.get(key) for key in ('parsed', 'output', 'reviews', 'receipt', 'evidence')}
-    data = dict(schema_version=1, task='compare', labels=LABELS, evaluation=rows)
+    data = dict(schema_version=1, task='compare', labels=AB_LABELS if transfer else LABELS, evaluation=rows)
     manifest = dict(schema_version=1, task='compare_evaluation', sources=protected,
         preparation=dict(experiment=str(experiment.resolve()), training_data=str(training_path.resolve()),
             bootstrap_prompt=str(bootstrap_prompt.resolve()),
@@ -470,16 +539,24 @@ def evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experim
         bootstrap_prompt_sha256=bootstrap_hash, cases=len(rows), teacher_answers=teacher_rows is not None,
         application_allowed=False, semantic_status='Provisional teacher agreement diagnostics; '
         'teacher answers and reviews remain evidence, not gold accuracy or training supervision.')
+    if transfer:
+        manifest['preparation'].update(compare_prompt=str(Path(compare_prompt).resolve()),
+                                      fit_bootstrap_prompt=str(fit_bootstrap_prompt.resolve()))
+        manifest.update(evaluation_contract='symmetric_fixed_meanings', evaluation_role='saved_checkpoint_transfer',
+            compare_prompt_id=compare_id, bootstrap_prompt_id=bootstrap_id,
+            fit_compare_prompt_sha256=fit_compare_hash, fit_bootstrap_prompt_sha256=fit_bootstrap[1],
+            trained_labels=list(LABELS), student_readout=AB_QUESTION)
     return data, manifest
 
 
 def prepare_evaluation(experiment, training_path, bootstrap_prompt, output, teacher_experiment=None, fit_code=None,
-                       split_manifest=None):
+                       split_manifest=None, compare_prompt=None, fit_bootstrap_prompt=None):
     """Freeze input-only native cases and optional provisional teacher diagnostics."""
     output = Path(output)
     if output.exists():
         raise FileExistsError(output)
-    data, manifest = evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experiment, fit_code, split_manifest)
+    data, manifest = evaluation_data(experiment, training_path, bootstrap_prompt, teacher_experiment, fit_code,
+                                     split_manifest, compare_prompt, fit_bootstrap_prompt)
     write_json(output/'data.json', data)
     manifest.update(data_sha256=sha256(output/'data.json'), code_sha256={str(Path(__file__).resolve()): sha256(__file__)})
     write_json(output/'manifest.json', manifest)
@@ -532,6 +609,7 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
             raise ValueError('native pilot requires the pinned five-way batch-one readout')
     manifest, data, collection = training_data(data_path, current_code=stage != 'evaluate', fit_code=fit_code)
     fit_report = selected = evaluation_manifest = None
+    labels, transfer = LABELS, False
     if stage == 'evaluate':
         fit_output, evaluation_path = map(Path, (fit_output, evaluation_path))
         if (evaluation_manifest_sha256 is not None and
@@ -555,9 +633,22 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
                        for c in selected)):
             raise ValueError('evaluation checkpoint selection, verification or saved hashes differ')
         evaluation_manifest = read_json(evaluation_path/'manifest.json')
+        contract = evaluation_manifest.get('evaluation_contract')
+        if contract not in (None, 'symmetric_fixed_meanings'):
+            raise ValueError('unsupported Compare evaluation contract')
+        transfer = contract == 'symmetric_fixed_meanings'
+        if transfer:
+            if (evaluation_manifest.get('evaluation_role') != 'saved_checkpoint_transfer'
+                    or evaluation_manifest.get('trained_labels') != list(LABELS)
+                    or evaluation_manifest.get('student_readout') != AB_QUESTION
+                    or not evaluation_manifest.get('preparation', {}).get('compare_prompt')
+                    or not evaluation_manifest.get('preparation', {}).get('fit_bootstrap_prompt')):
+                raise ValueError('A/B transfer readout or original fitting contract differs')
+            labels = AB_LABELS
+        fit_prompt_key = 'fit_compare_prompt_sha256' if transfer else 'compare_prompt_sha256'
         if (evaluation_manifest.get('task') != 'compare_evaluation'
                 or evaluation_manifest['training_data_sha256'] != manifest['data_sha256']
-                or [evaluation_manifest['compare_prompt_sha256']] != manifest['prompt_sha256']
+                or [evaluation_manifest[fit_prompt_key]] != manifest['prompt_sha256']
                 or sha256(evaluation_path/'data.json') != evaluation_manifest['data_sha256']):
             raise ValueError('Compare evaluation data or original training binding differs')
         if evaluation_manifest_sha256 is None:
@@ -565,7 +656,7 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
                 if sha256(path) != expected:
                     raise ValueError('Compare evaluation source or preparation code differs')
         data = read_json(evaluation_path/'data.json')
-        if data['task'] != 'compare' or tuple(data['labels']) != LABELS or not data['evaluation']:
+        if data['task'] != 'compare' or tuple(data['labels']) != labels or not data['evaluation']:
             raise ValueError('Compare evaluation target definition differs')
         preparation = evaluation_manifest['preparation']
         if preparation['fit_code'] != (str(Path(fit_code).resolve()) if fit_code is not None else None):
@@ -573,7 +664,7 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
         if evaluation_manifest_sha256 is None:
             expected_data, expected_manifest = evaluation_data(preparation['experiment'],
                 preparation['training_data'], preparation['bootstrap_prompt'], preparation['teacher_experiment'], fit_code,
-                preparation['split_manifest'])
+                preparation['split_manifest'], preparation.get('compare_prompt'), preparation.get('fit_bootstrap_prompt'))
             if (digest(data) != digest(expected_data) or
                     any(evaluation_manifest.get(key) != value for key, value in expected_manifest.items())):
                 raise ValueError('prepared evaluation differs from native inputs and teacher evidence')
@@ -597,6 +688,10 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
                                                   torch.cuda.get_device_properties(0).total_memory))
     tokenizer = AutoTokenizer.from_pretrained(config['model'], revision=config['revision'])
     keys = list(native['question']['criteria']) if native else list(LABELS)
+    question = native['question'] if native else None
+    if transfer and native:
+        keys = [AB_LABELS[LABELS.index(key)] for key in keys]
+        question = dict(AB_QUESTION, criteria={key:AB_QUESTION['criteria'][key] for key in keys})
     candidate_ids = None
     pointer = None
     if kind == 'pointer':
@@ -620,7 +715,6 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
             state = (source_inputs[(row['experiment'], row['case_id'])]
                      if source_inputs is not None else row['state'])
             if kind == 'pointer':
-                question = native['question']
                 record = dict(state=state, questions=[dict(instr=question['instructions'],
                     options=[f'{key}: {question["criteria"][key]}' for key in keys], label=0)])
                 prepared = encode(tokenizer, record, max_state=config['max_length'],
@@ -629,7 +723,7 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
                     position_ids=prepared['pos'], decide_idx=prepared['decide_idx'][0],
                     opt_idx=prepared['opt_idx'][0])
             elif kind == 'causal_lm':
-                prompt = choice_prompt(state, native['question'], 'options')
+                prompt = choice_prompt(state, question, 'options')
                 rendered = tokenizer.apply_chat_template([dict(role='user', content=prompt)],
                     add_generation_prompt=True, enable_thinking=False, tokenize=False) + native.get('answer_prefix', '')
                 ids = tokenizer(rendered, add_special_tokens=False, truncation=False)
@@ -667,6 +761,9 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
             input_tokens=dict(evaluation=dict(examples=len(encoded['evaluation']),
                 total=sum(len(v['input_ids']) for v in encoded['evaluation']),
                 maximum=max(len(v['input_ids']) for v in encoded['evaluation']))))
+        if transfer:
+            report.update(evaluation_role='saved_checkpoint_transfer', trained_labels=list(LABELS),
+                          evaluation_labels=list(labels))
     else:
         report = dict(schema_version=1, binding=binding, config=config, data=manifest,
             training_pid=os.getpid(), complete=False, training_finished=False, updates=0,
@@ -740,11 +837,11 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
             row = encoded[role][indexes[0]]
             h = model(**inputs).last_hidden_state[0].float()
             values = pointer.head(h[row['decide_idx']], h[row['opt_idx']]).unsqueeze(0)
-        return values[:, [keys.index(label) for label in LABELS]]
+        return values[:, [keys.index(label) for label in labels]]
 
     def evaluate(model):
         mode(model, False)
-        decisions, confusion = [], [[0]*5 for _ in LABELS]
+        decisions, confusion = [], [[0]*len(labels) for _ in labels]
         torch.cuda.synchronize()
         start = time.perf_counter()
         with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
@@ -757,9 +854,9 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
                 for i, choice in zip(indexes, logits.argmax(-1).cpu().tolist()):
                     row = data['evaluation'][i]
                     if row['target'] is not None:
-                        target = LABELS.index(row['target'])
+                        target = labels.index(row['target'])
                         confusion[target][choice] += 1
-                    decisions.append(dict(case_id=row['case_id'], relation=LABELS[choice], target=row['target'],
+                    decisions.append(dict(case_id=row['case_id'], relation=labels[choice], target=row['target'],
                         identity_control=(row['identity_control'] if stage == 'evaluate' else
                             row['evidence'].get('family') == 'same_entry_control'),
                         **(dict(evidence=row['evidence'], teacher=row['teacher']) if stage == 'evaluate' else {})))
@@ -770,7 +867,7 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
         nonself = [d for d in decisions if not d['identity_control']]
         labelled_nonself = [d for d in nonself if d['target'] is not None]
         per_label = {}
-        for i, label in enumerate(LABELS):
+        for i, label in enumerate(labels):
             support, predicted = sum(confusion[i]), sum(row[i] for row in confusion)
             tp = confusion[i][i]
             per_label[label] = dict(support=support, predicted=predicted,
@@ -782,7 +879,7 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
             non_identity_cases=len(nonself), non_identity_teacher_cases=len(labelled_nonself),
             non_identity_teacher_agreement=(sum(d['relation'] == d['target'] for d in labelled_nonself)
                 /len(labelled_nonself) if labelled_nonself else None),
-            per_label=per_label, confusion=confusion, label_order=LABELS, decisions=decisions,
+            per_label=per_label, confusion=confusion, label_order=labels, decisions=decisions,
             seconds=seconds, examples_per_second=len(decisions)/seconds)
 
     publish()
@@ -854,10 +951,10 @@ def train(config_path, data_path, output, stage, *, evaluation_path=None, fit_ou
                 for offset in range(0, len(order), config['batch_size']):
                     reserve()
                     indexes = order[offset:offset+config['batch_size']]
-                    labels = torch.tensor([LABELS.index(data['train'][i]['target']) for i in indexes], device='cuda')
+                    targets = torch.tensor([LABELS.index(data['train'][i]['target']) for i in indexes], device='cuda')
                     optimizer.zero_grad(set_to_none=True)
                     with torch.autocast('cuda', dtype=torch.bfloat16):
-                        loss = torch.nn.functional.cross_entropy(scores(model, 'train', indexes).float(), labels)
+                        loss = torch.nn.functional.cross_entropy(scores(model, 'train', indexes).float(), targets)
                     loss.backward()
                     norm = torch.nn.utils.clip_grad_norm_(parameters, 1.)
                     loss_value, norm_value = loss.item(), norm.item()
@@ -914,6 +1011,10 @@ def main():
     command.add_argument('--teacher-experiment', type=Path)
     command.add_argument('--fit-code', type=Path, help='read-only copy of the original fitter with its exact frozen SHA')
     command.add_argument('--split-manifest', type=Path, help='original 1000/100/200 ASv6.100 roster for external diagnostics')
+    command.add_argument('--compare-prompt', type=Path,
+                         help='explicit selected A/B transfer prompt; native prompt ID is its filename stem')
+    command.add_argument('--fit-bootstrap-prompt', type=Path,
+                         help='original Bootstrap snapshot for immutable fit provenance during A/B transfer')
     command = commands.add_parser('train', help='fit an encoder or native decision readout and verify saved weights')
     for name in ('config', 'data', 'output'):
         command.add_argument('--'+name, required=True, type=Path)
@@ -930,7 +1031,8 @@ def main():
         print(json.dumps({key: result[key] for key in ('counts', 'excluded', 'all_five_labels', 'canonical_branches')}))
     elif args.command == 'prepare-evaluation':
         result = prepare_evaluation(args.experiment, args.training_data, args.bootstrap_prompt,
-                                    args.output, args.teacher_experiment, args.fit_code, args.split_manifest)
+                                    args.output, args.teacher_experiment, args.fit_code, args.split_manifest,
+                                    args.compare_prompt, args.fit_bootstrap_prompt)
         print(json.dumps({key: result[key] for key in ('cases', 'teacher_answers', 'semantic_status')}))
     elif args.command == 'evaluate':
         result = train(args.config, args.training_data, args.output, 'evaluate',

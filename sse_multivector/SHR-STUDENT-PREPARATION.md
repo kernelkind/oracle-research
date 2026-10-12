@@ -17,6 +17,51 @@ pilot adapter or epoch is selected. Bootstrap's final
 target format, training volume and settings remain open. The owned worktree
 retains needed source-bound artifacts and native receipt paths.
 
+The user subsequently confirmed an HR05-aligned saved-checkpoint rerun using
+exactly **Bootstrap-v109 / Compare-v179**, with v109-produced meanings throughout
+Compare. This is evaluation of the existing v96/v48 pilot weights, with no new
+gradients or final training. Compare-v179 supplies only symmetric A/B subjects
+and fixed meanings; canonical branches are absent from its model input. The
+original experiments remain historical, source-bound evidence. The new matched
+evaluation is pending, and may change the starting-model recommendation.
+
+Native `bootstrap_student_pilot prepare-prompt` preserves the complete selected
+teacher instructions and appends the existing single-field meaning/null student
+contract, without requiring teacher answers or assigning training roles. It
+records both prompt hashes, makes no model calls and refuses to overwrite an
+existing prompt. Its five preparation/generation regressions pass.
+
+Compare transfer preparation separately binds the original C48/B96 fit and the
+selected C179/B109 evaluation. Both A/B subjects and meanings must match their
+selected native Bootstrap producers. The saved five-way indices retain their
+directions under `A_contains_B` and `B_contains_A`; the current readout returns
+only the relation. Native preparation preserves the original fit guards and
+rejects mixed versions, forged producer receipts and fitting exposure. The
+four-module CPU suite passes 57 tests with 39 explicit GPU cases skipped;
+the extended four-path GPU check passes in 71.16 seconds. It verifies both
+legacy and A/B evaluation, reversed option order, direct-forward agreement,
+zero updates and unchanged fitting artifacts. The first staged check stopped
+before weights because its bundle omitted the C179 schema; the corrected
+immutable runtime is `hr05-matched-student-evaluation-v1/compare-evaluation-runtime-v2`.
+Its 527-file snapshot SHA-256 is
+`e7f10cfc572a5e1690231875560f073ae017aa524a84acba3be5c10ea093140d`.
+
+Exact cached-tokenizer preflight also passes all 200 Compare encodings without
+truncation or CUDA initialization. Maximum lengths are 2,171 for Ettin full
+state, 162 for Ettin input JSON, 2,234 for Qwen and 2,194 for Kev; their unchanged
+limits are 7,168/7,168/8,192/8,192 respectively. All four native prepared data
+files have SHA-256
+`a4d300956cd541ed0e9bc6a74dcec10b8e768c2f51a016e47f31a84fdbb9f605`.
+
+The HR05-aligned panel uses the same 40 disjoint Bootstrap cases. Compare reuses
+50 complete C179 judgments on B109-produced meanings: 20 directions are
+provisional controls and 30 are unresolved probes. All five teacher reversal
+conflicts occur among probes; a reciprocal student can match at most 45/50
+unchanged teacher targets. There are no `uncertain` references and only one
+nonidentity-equivalence pair. Report controls and reversal consistency separately
+from provisional teacher agreement. These exposed, correlated cases do not
+establish final accuracy, refusal reliability or a model-capacity ceiling.
+
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence

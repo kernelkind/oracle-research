@@ -30,6 +30,27 @@ class BootstrapStudentPilotTests(unittest.TestCase):
         self.assertEqual(result.returncode == 0, ok, result.stderr)
         return result
 
+    def test_new_generation_prompt_preserves_teacher_rules_without_training_targets(self):
+        import hashlib
+        teacher = Path(__file__).parent/'shr_single_pair/Hierarchy-bootstrap-v109.md'
+        output = self.root/'new-student-prompt.txt'
+        command = [sys.executable, '-m', 'sse_multivector.bootstrap_student_pilot',
+            'prepare-prompt', '--teacher-prompt', str(teacher), '--output', str(output)]
+        result = subprocess.run(command, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        text = output.read_text()
+        self.assertTrue(text.startswith(teacher.read_text()))
+        self.assertIn('Return a JSON object with only the `meaning` field.', text)
+        self.assertIn('or null when the meaning cannot be established.', text)
+        provenance = json.loads(result.stdout)
+        self.assertEqual(provenance['teacher_prompt_sha256'], hashlib.sha256(teacher.read_bytes()).hexdigest())
+        self.assertEqual(provenance['student_prompt_sha256'], hashlib.sha256(output.read_bytes()).hexdigest())
+        self.assertEqual(provenance['inference_calls'], 0)
+        before = output.read_bytes()
+        repeated = subprocess.run(command, text=True, capture_output=True)
+        self.assertNotEqual(repeated.returncode, 0)
+        self.assertEqual(output.read_bytes(), before)
+
     def test_native_targets_keep_complete_inputs_and_only_supervise_meaning(self):
         self.teachers()
         before = self.log.read_bytes()
