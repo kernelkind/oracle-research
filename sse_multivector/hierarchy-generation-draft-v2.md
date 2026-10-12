@@ -4,8 +4,10 @@
 HR09 completed construction with 24/24 notes; HR08 exhausted selection with
 23/24. The user stopped HR10 after resume at 4,088/10,000 attempts, retaining
 48/50 notes and 136/164 guaranteed entries settled. Its frozen source, prompts
-and attempt counter are preserved; final stop accounting and review UI are being
-prepared. No hierarchy-quality
+and attempt counter are preserved; its current snapshot, native audit, usage
+report and checked review UI are saved in the
+[official run register](../docs/recommendation-engine/hierarchy-runs.md#hr10--asv6100-50-note-v2-new-prompts-user-stopped).
+No hierarchy-quality
 qualification is claimed.** V2
 replaces the previous selection implementation through the existing shared-runner
 commands. The FUTURE WORK label denotes pending qualification with real model

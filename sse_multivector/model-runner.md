@@ -1761,9 +1761,13 @@ succeeded at 2,637 attempts. The user subsequently stopped HR10 at
 entries settled. The driver exited 130; execution is `user_stopped` and the
 graph remains `constructing` in `guaranteed_l1`. The old native run summary
 still describes the historical provider blockage and does not describe this
-user stop. The register preserves the pre-resume checkpoint, its review UI and
-usage reports separately; final user-stop catalogue, audit, UI and accounting
-are being prepared.
+user stop. The current snapshot, native audit, checked UI and usage reports are
+saved in the register, which preserves the historical pre-resume artifacts
+separately. Current usage reconciles 4,088 attempts across 685 experiments and
+separately records 762 exact answer reuses. Known construction cost is $21.0438648 newly
+dispatched or $25.8199556 including unique original producers behind reuses;
+45 attempts lack usage/cost, so both are API-equivalent subtotals. Generation
+usage has 13,332,277 known tokens, with reasoning already included in output.
 A tested native eligibility fix runs the
 short PPv35 prefix uncached while retaining caching for eligible prompts.
 Reviewed continuation can bind stopped construction to a separate isolated
