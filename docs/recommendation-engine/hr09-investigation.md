@@ -5,14 +5,16 @@ observations separately from semantic judgments, hypotheses and experiments.
 Evidence IDs remain stable as the investigation grows.
 
 User instruction, October 12, 2026: **“we are not assigning fault yet”**.
-No expected relation, error label, responsible component or proposed correction
-has been established for E001. Recording a model answer does not endorse it.
+User judgments are recorded separately below and apply to the exact supplied
+inputs. No responsible component or proposed correction has been established.
+Recording a model answer alone does not endorse it.
 Existing investigation or prompt-trial findings elsewhere are not automatically
 adopted as judgments in this record.
 
 ## E001 — Food and Dinner remain separate on the third placement
 
-Status: **observed; correctness and fault unresolved**. This is the first case
+Status: **user-reviewed; the saved `neither` answer is correct for these exact
+meanings**. Meaning generation remains unreviewed; no fault is assigned. This is the first case
 entered into this investigation, not a claim that all earlier inputs have been
 qualified or that this is the earliest possible defect.
 
@@ -128,15 +130,28 @@ The shared runner's read-only `show --case C002 --json` validated the native
 receipt. The saved answer was matched to its receipt digest and to construction
 step `2`; the exact input was read from the frozen prepared case. No new model
 calls, prompt changes, graph changes, UI updates or agent messages were made to
-record E001. No new semantic judgment was supplied by the user.
+record E001. The initial evidence entry contained no user semantic judgment;
+the subsequent review is recorded separately below.
+
+### User review
+
+The user approved the saved Compare answer for this exact input:
+
+> i think the compare answer is correct here. dinner cannot be fully within food bc it is not restricted to human consumption
+
+Reviewed relation: **`neither`**. In particular, the user accepts that Dinner's
+meaning admits nonhuman consumption while this Food meaning requires human
+consumption, so Food does not contain Dinner's entire scope. This settles the
+comparison judgment for E001. It does not establish whether either generated
+meaning is the desired definition for its original local node, and does not
+assign a meaning-generation failure or approve a change.
 
 ### Open questions
 
-- What relation should these two supplied meanings establish?
 - Do the generated meanings represent the intended information scopes of the
   original local nodes?
-- Does the nonhuman-recipient counterexample respect Dinner's supplied meaning
-  and the intended comparison contract?
+- How does this reviewed separation contribute to the final hierarchy's
+  structure and browsing decisions?
 
-These are questions for investigation. No answer, causal attribution or
-experimental result is recorded yet.
+The comparison judgment is recorded above. These remaining questions have no
+reviewed answers; no causal attribution or new experimental result is recorded.
