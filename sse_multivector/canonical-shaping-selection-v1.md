@@ -5754,3 +5754,163 @@ important upper-containment requirement before another wording edit; Food and
 Material scope qualifications must still be retained. This suggestion is not
 preparation or authorization of another run. No hierarchy, UI, comparison
 prompt, bootstrap prompt, production guard or external agent is changed.
+
+## HR09 consolidation audit and unchanged-v19 screen
+
+The user requests review of HR09 consolidation performance and then approves
+the suggested exact-group screen. HR09 is the completed 24-note ASv6.100 V2
+run, using Bootstrap-v122, Compare-v192 and Consolidation-v18. Its immutable
+`oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json`
+has SHA-256
+`059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e`.
+This screen uses unchanged experimental Consolidation-v19; it does not activate
+that version, alter the saved graph, or edit Compare or Bootstrap.
+
+The read-only audit finds 57 consolidation decisions: 29 placed, 20 blocked
+on nominated-child coverage, four blocked on graph contradictions, three
+uncertain and one null. Reconstructing all 20 coverage gates finds no failed
+existing-parent containment gate. Stock appears in ten nominated-child
+disagreements and Slush drinks in seven; overlapping counts are not accuracy
+scores or independently validated human judgments. Six placed proposals gain
+additional offered siblings through Compare. Eating practices nominates three
+but acquires seven children; no later consolidation request targets that node.
+The unrequested seven-child group concerns construction triggering, not the
+consolidation prompt's responsibility.
+
+### Pre-call assessment and exact inputs
+
+Native `prepare --from` preserves each original complete input and the saved
+v18 answer as baseline. It changes only the prompt to unchanged v19 and selects
+the current shared runner. Five inputs come from HR09 producers 14 (Stock /
+Human eating), 32 (Heat-producing appliances), 118 (Simmered foods), 263
+(rejected Slush / Food and drink), and 375 (accepted Slush / Food and eating).
+The offered sibling counts are respectively 6, 10, 6, 8 and 13. The last three
+include their exact supplied parent; these are original historical groups,
+not selections rebuilt from the final graph. Both Slush inputs are retained
+because their full groups and parent definitions differ. Their saved outcomes
+do not establish an identical-input contradiction.
+
+A second native preparation for each input uses `--from ... --repeat` before
+any generation, preserving first/repeat inputs and settings while deliberately
+dispatching independent answers. Model settings remain GPT-6.1 Sol / medium /
+SSE with the same output schema. The eligible v19 prefix contains 1,327 estimated
+o200k_base tokens. Ten generation requests and ten automatic warmups are
+expected; actual failures, retries and usage are retained separately. The
+retired shared attempt counter is not restored. The maintained
+[native usage selection](shr_single_pair/hierarchy-consolidation-v19-hr09-usage-v1.json)
+counts only new first draws and intentional repeats. The five historical v18
+producers remain individually bound as native baselines and are not rerun or
+counted as new work.
+
+Assess each emitted definition independently: useful proper-subset grouping,
+coverage of every selected child's whole fixed meaning, all omitted siblings,
+and strict containment beneath the supplied parent. Different coherent topics
+are allowed. If the Heating or Simmered input chooses another topic, record
+that the particular positive control was not exercised rather than forcing
+its expected title or child IDs. Null or wholesale uncertainty alone is not
+successful consolidation.
+
+Preserve the unresolved distinction between a kind's defining function and
+a particular instance's intended use. A human-only proposal may not silently
+include unrestricted animal consumption. Conversely, a discarded laboratory
+sample does not automatically establish that a drink kind lacks a defining
+drink function. A plant alternative must be covered as a plant, not only as
+one edible harvested part. Evaluate each candidate's actual required conditions
+and alternatives; do not turn HR09's old Compare labels, discarded-sample
+counterexamples or one fitting example into new human gold. Native agent
+reviews record these qualifications. No comparison-prompt calls, hierarchy
+placement, trigger change, UI refresh or external message is part of this screen.
+
+### Completed unchanged-v19 HR09 screen
+
+All ten generation answers validate, with no nulls, malformed outputs, reuse,
+failures or retries. The checks confirm exact original/first/repeat inputs,
+identical first/repeat prompt and settings, current shared-worker paths, and
+the unchanged v19 SHA-256
+`4abab9a5dad919537fdf47b05e20cca1ee66ec52955a7d79ae8f741803da6303`.
+Twenty-three existing production-path assembly and native-preparation checks
+pass. All ten answers receive receipt-bound native **agent** reviews; no user
+judgment or historical Compare label is promoted to semantic gold.
+
+| Original group | First draw | Independent repeat | Bounded agent assessment |
+|---|---|---|---|
+| Stock / Human eating | Human food and meals; C002/C003/C006/C007 | Food and eating; same IDs | Reject under the stated consumer criterion: human-consumption restriction still selects unrestricted Dinner and Stock |
+| Heat-producing appliances | Food and drink; C002/C003/C006/C009/C016 | Food; same IDs | Uncertain on Stock's purpose implication; appliance control not exercised |
+| Simmered foods | Animal-derived foods; C006/C031 | Animal-derived foods; same IDs | Qualified accept under kind-function reading; simmered-food control not exercised |
+| Rejected Slush group | Foods and beverages; C071/C074/C101 | Food and drink; same IDs | Uncertain on kind function versus particular intended consumption |
+| Accepted Slush group | Food and eating; C071/C074/C115/C133 | Food and food-related activities; same IDs | Same purpose qualification; historical acceptance does not certify these new meanings |
+
+The two Stock answers reproduce the added human-consumer boundary. First draw:
+
+> Human food is substances intended for human consumption as nourishment or as part of eating. This topic includes such substances, meals comprising them, and plants cultivated for their edible parts.
+
+Independent repeat:
+
+> Food and eating encompasses substances intended for human consumption as nourishment or as part of eating, their consumption, and meals composed of them. It also includes plants cultivated for their edible parts as sources of food.
+
+Each nominates Chicken stock, whose fixed meaning defines a savory culinary
+liquid by chicken and simmering without requiring a human consumer. Dinner's
+fixed meaning also does not restrict its consumer. A cultivated-plant
+alternative does not cover either of these two children. These are bounded
+agent rejections under the pre-call consumer criterion, not a new general
+human judgment about Food or a fresh Compare result. The unchanged v19
+counterexample wording has not demonstrated correction of this mismatch.
+
+The Slush first-draw meanings respectively say substances "for eating or
+drinking" and foods/beverages "consumed or intended for consumption by humans
+or other animals". Both select the same fixed Slush drinks definition based
+on beverage identity and ice-crystal structure. The original discarded-lab-batch
+rejection cannot automatically be reused as gold for these different final
+definitions. Kind function and individual intended use remain unresolved, and
+both Slush groups stay uncertain rather than counted as four corrected answers.
+The complete plant alternatives and prospective gastronomic experiences are
+explicitly covered, without importing associated purposes into the other
+general activity siblings.
+
+The Simmered input produces animal-derived foods covering Stock and Milk in
+both draws. Under the recorded kind-function reading, their culinary/nutritional
+identity fits the edible-substance/ingredient definition beneath C040 Food.
+Stew cannot be forced into this grouping because its fixed definition permits
+vegetarian ingredients. This is a qualified agent accept, not certification of
+particular-use purpose boundaries. Both Heating draws instead select a food
+group. Those alternatives are allowed, but no answer exercises either exact
+historical positive grouping. Therefore the original appliance and simmered
+controls have not passed this actual-generation screen merely because those
+inputs were supplied.
+
+Actual generation receipts confirm identical complete first/repeat request
+bodies in all five groups, distinct response references, HTTP 200, raw reported
+GPT-6.1 Sol and medium requested effort. No previous-response or conversation
+link is supplied. The current native cache layout supplies two developer items
+and one variable user item; the v19 pair uses this layout unchanged. These
+checks qualify independent repeats but do not make historical v18 and current
+v19 a matched-executable or message-layout ablation.
+
+Across each first/repeat pair, nominated IDs are stable but definitions differ;
+stable IDs do not establish fixed-scope reliability. Complete status is two
+bounded rejects, two qualified accepts and six uncertainties. This is not a
+measured accuracy rate or evidence of a reliable v18-to-v19 improvement. V19
+remains experimental, unapplied and unchanged. All historical HR09 state and
+receipts remain intact.
+
+Native fresh accounting records **20 actual attempts: ten generation answers
+and ten automatic warmups**, zero reuses, failures, retries or missing usage.
+Complete API-equivalent catalog cost is **$0.1022844**, with 26,970 uncached
+input tokens, 6,144 cached input tokens, zero cache-write tokens and 4,773
+output tokens including 3,996 reasoning tokens. Four generation requests have
+cached reads. These are observed native usage estimates, not subscription
+billing or operational-policy savings. Historical v18 generations and any
+original hierarchy validation work are excluded from this fresh total. The
+ignored native report is
+`target/canonical-shaping-selection-v1/consolidation-v19-hr09-fresh-usage-v1.json`.
+An earlier ignored combined report preserves historical plus fresh accounting
+at its own frozen selection hash; it must not be quoted as fresh work.
+
+The next suggested development isolates the repeated consumer-boundary error
+in consolidation rather than copying the disputed discarded-sample rejection.
+Any revision should replace the relevant existing instruction and preserve
+the shared definition-writing bytes, schema and independent controls. The
+exact appliance and simmered proposals remain useful fixed-meaning controls,
+but an unrestricted generator may choose another valid grouping. Clarify the
+Slush kind-versus-instance convention before using it to prescribe a prompt
+change. This suggestion does not start further edits or inference.
