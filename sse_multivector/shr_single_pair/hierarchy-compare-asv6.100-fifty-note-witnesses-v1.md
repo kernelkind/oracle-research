@@ -7864,3 +7864,38 @@ fresh attempts including six warmups, forty-two valid comparisons, zero
 reuse/retry/failure/missing usage and $0.272776 API-equivalent cost. The reference
 uses native --repeat and distinct responses; its twelve outputs are new samples,
 not reused baseline answers. No allowance or new attempt cap is imposed.
+
+### V202 broader producer panel: unresolved instability
+
+The unchanged V202 panel completes all fifty responses with valid receipts.
+Native consistency reports four settled reversal conflicts: original sourdough /
+Food preparation, general sourdough substitution, time-purpose general
+substitution and metal-handle alternatives. Three overlapping equivalence
+substitution witnesses concern the sourdough definitions; these are dependent
+witnesses, not additional independent error counts. Mental states / attention
+has one positive and one unresolved direction. Do not adopt V202.
+
+The sourdough answers alternate between treating Food preparation's explicit
+bread illustration as necessary whole-scope coverage and enforcing its
+ready-to-eat restriction against permanently inedible laboratory bread-making.
+That establishes unstable interpretation, without certifying either disputed
+label. A laboratory purpose alone is not a counterexample: food readiness does
+not require actual consumption or an intention that someone eat it. The generic
+bread comparison was already an open source probe, not a certified positive
+control. Keep producer boundaries and interpretation failures separate.
+
+Native usage records fifty-two fresh attempts, including one warmup and one
+recovered provider failure/retry, zero exact reuses and fifty valid final cases.
+One failed attempt lacks usage. The $0.2894336 API-equivalent known subtotal is
+therefore not a complete cost or subscription charge. No attempt allowance or
+new cap was imposed.
+
+Before adding another reminder, isolate conditional illustrations on eight
+fully synthetic cases. The canopy-goal source compares a numeric mature-canopy
+cultivation goal with unrestricted cultivation, with and without an illustrative
+activity name, plus laboratory cultivation retaining the identical physical
+goal. The contrast preserves goals rather than asserting attained size.
+Later research use does not negate that physical goal. Provisional agent
+expectations stay outside inputs, are not human gold, and these cases never
+become prompt examples or hierarchy placements. Baseline V202 runs first;
+no new prompt revision is justified merely by the unresolved food probe.
