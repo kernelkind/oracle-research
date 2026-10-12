@@ -6,9 +6,10 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 Each run's raw build, browsing menu and export share its ID.
 
 **HR08** has finished with a partial result: 23 of 24 notes, after eligible
-selection was exhausted. **HR09** completed with all 24 notes; its final evidence
-is being saved. **HR10** is still running. Their fixed
-V2 parameters are recorded below; native preparation pinned exact source
+selection was exhausted. **HR09** completed with all 24 notes. **HR10** stopped
+with a provider-blocked partial result, 48 of 50 notes. No driver is running.
+Status checked October 12, 2026 at 15:17 UTC. Their fixed V2 parameters are
+recorded below; native preparation pinned exact source
 commits, prompt hashes and input evidence before model requests.
 
 **HR06** and **HR07** preserve the two earlier ASv6.48 builds the user reviewed.
@@ -30,7 +31,7 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Exhausted selection; partial, 23/24 notes | Complete, 24/24 notes; final evidence being saved | Running after reviewed continuation |
+| Status | Exhausted selection; partial, 23/24 notes | Complete, 24/24 notes | Provider-blocked; partial, 48/50 notes |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
 | Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
@@ -101,8 +102,10 @@ These official runs evaluate them without declaring the prompts qualified or
 changing their adoption status. Each output will receive its run ID, a review
 view, a native usage report and API-equivalent cost accounting. Full generation
 commits and clean uncommitted-source status were recorded before execution;
-HR08's terminal structural, token and cost results are recorded below; HR09
-and HR10 results remain pending.
+Final HR08/HR09 results and the stopped HR10 checkpoint are recorded below.
+HR10 retains an unfinished graph after its final cache warmup exhausted the
+native two-attempt provider retry allowance. The 10,000-attempt ceiling was
+not exhausted.
 
 ### Initial execution checkpoint
 
@@ -127,7 +130,7 @@ meaning receipts remain unchanged. Native `source_upgrades` records all eight
 constructor bindings, old/new source hashes, PP caching true to false, and the
 archived unprepared batch. The original counters were 152/3,000, 151/3,000 and
 178/10,000 at continuation; none was reset. Prominence preparation and scoring
-have finished, and hierarchy placements are running.
+have finished. The saved outcomes below supersede this initial checkpoint.
 
 ### Scoring checkpoint
 
@@ -146,7 +149,7 @@ prominence requests are made for those entries. The saved answers remain
 unchanged and are not manually retried. A note with unresolved original L1
 scoring is not eligible for V2 selection. These unresolved entries prevent
 construction from being reported complete even if the remaining selection
-finishes; final results will retain the native status and coverage measurements.
+finishes. Saved results below retain the native status and coverage measurements.
 
 ## Token usage and API cost
 
@@ -165,6 +168,8 @@ producer calls behind reused answers.
 | HR04 | 63,494 | 324,096 | 58,375 | 14,516 | 445,965 |
 | HR05 | 155,217 | 898,560 | 172,399 | 43,644 | 1,226,176 |
 | HR08 | 963,210 | 4,528,896 | 1,046,126 | 260,212 | 6,538,232 |
+| HR09 | 1,096,320 | 4,925,056 | 1,149,130 | 314,234 | 7,170,506 |
+| HR10 | 1,482,908 | 6,448,384 | 1,421,127 | 374,549 | 9,352,419 |
 
 Known total tokens = uncached input + cached input + output. Reasoning is already
 included in output and must not be added again. All listed reports record zero
@@ -179,6 +184,8 @@ known subtotals; their consumption is unknown.
 | HR04 | $0.7431476 | 1 |
 | HR05 | $2.124280 | 3 |
 | HR08 | $12.8405696 | 28 |
+| HR09 | $14.1764456 | 10 |
+| HR10 | $17.8219244 | 27 |
 
 Costs use the saved per-call API catalogue estimates, not subscription charges
 or current-price recalculation. HR06's complete saved generation estimate
@@ -188,7 +195,16 @@ incomplete because failed attempts lack usage and cost estimates. HR08 includes
 one exact prominence-answer reuse from HR09. Its newly dispatched subtotal is
 $12.8365336; the generation subtotal above includes that original producer.
 Do not sum per-run generation costs across HR08–HR10: shared producer calls
-would be counted more than once. A combined native report will deduplicate them.
+would be counted more than once. HR09 has no reuses; HR10 has 709, with a newly
+dispatched cost subtotal of $13.3828492. The combined native report counts each
+original producer once. At HR10's stopped checkpoint, the
+[combined report](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-v1.json)
+and [inventory](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-source-v1.json)
+cover 1,275 experiments and 7,884 fresh attempts: **20,755,595 known tokens**
+and **$40.3958284 known API-equivalent cost**, with 65 failed attempts missing
+usage and cost. All reused producers occur in this combined inventory; no
+additional source calls are added. Future HR10 continuation requires a fresh
+report; these files preserve this checkpoint.
 
 HR03's [original full report](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/usage-v2.json)
 also includes ASv6.100 extraction: another 549,380 known tokens and $1.005864,
@@ -199,6 +215,122 @@ used above excludes only that AS experiment; its
 [354-experiment inventory](../../target/hierarchy-catalogue/usage/HR03-hierarchy-source.json)
 retains all hierarchy producers and comparisons. HR04–HR07 usage reports are
 linked in their run records below.
+
+## HR09 — ASv6.100 24-note V2, new prompts
+
+Completed October 12, 2026 with native construction and execution status
+`complete`, after eligible selection and dispatched work finished. It uses
+Bootstrap-v122, Compare-v192, Consolidation-v18 and PPv35-post-meaning-v1.
+
+| Measurement | Saved result |
+| --- | --- |
+| Notes represented and individually accessible | 24 of 24 |
+| Guaranteed original L1 entries settled | 90 of 90 |
+| Local selections | 94: 77 additions, one equivalent, 16 held |
+| Consolidation | 29 parents placed, 27 proposals held |
+| Raw graph | 106 nodes, 123 edges, three roots |
+| Shaped browsing menu | 103 nodes, 120 strictly narrowing edges, three roots |
+| Maximum child choices | Seven; one warning above the soft target of six |
+| Multi-note leaves / unresolved original scoring | Zero / zero |
+| Native attempts | 2,646 of 3,000: 419 warmups and 2,227 ordinary attempts; counter delta zero |
+| Exact answer reuses | Zero |
+| Model cases | 2,218 valid; zero malformed, failed or unrun |
+| Failed / recovered / retry attempts | 10 / 10 / 10 |
+| Known API-equivalent generation cost | $14.1764456; 10 recovered failed calls have unknown usage and cost |
+
+The [immutable state](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json)
+has SHA-256 `059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e`.
+The [final code provenance](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/code-provenance.json)
+records initial Oracle `1a7f68a3b27b8ab19f30256a6c613ce28768e0d9`, continuation
+`542d5697ccee1b85b28f3ded0a9e093c36de0c1b` and runner
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`, all clean. It labels the correction
+of an initial plan digest incorrectly described as a manifest digest; original
+files, prompts, model outputs and receipts are preserved.
+
+The [native structural audit](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/audit.json)
+passes all structural constraints. Its `done: false` and ungraded semantic
+assessment do not override native construction completion. The
+[usage report](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/usage.json)
+has `complete: true`, `usage_complete: false`; its
+[inventory](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/usage-source.json)
+includes every charged experiment.
+
+Open the checked review UI, with all 24 original note bodies:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hr09-review-ui-v1/launch.sh
+```
+
+The [UI provenance](../../../oracle-mvp-hierarchy-hr09-v2/target/hr09-review-ui-v1/provenance.json)
+records exact native exports, the exporter commit and the existing HR05 viewer
+binary hash. No display placements were added; the original binary build commit
+remains unknown.
+
+## HR10 — ASv6.100 50-note V2, new prompts, resumable stopped checkpoint
+
+Stopped October 12, 2026 with native graph status `constructing` and execution
+status `blocked`. The final comparison cache warmup, batch `00443`, failed twice
+with provider `server_error`, after approximately 61 seconds each, below its
+1,800-second timeout. The driver exited with status 1. No manual retry or
+attempt-counter reset occurred. This is an unfinished official run.
+Native resume can prepare a new warmup child while preserving the exhausted
+child's two failed attempts, the current graph and the same attempt counter.
+There are 7,365 attempts remaining. The stopped checkpoint is preserved, while
+HR10's final immutable catalogue binding is deferred to allow continuation under
+the same run ID. No resume has been started.
+
+| Measurement | Saved result |
+| --- | --- |
+| Notes represented and individually accessible | 48 of 50 |
+| Selection phase | `guaranteed_l1` |
+| Guaranteed original L1 entries settled | 92 of 164; two additional selections remain unsettled |
+| Settled local entries | 92: 78 additions, four equivalents, 10 held |
+| Consolidation | 24 parents placed, 37 proposals held |
+| Raw graph and current browsing menu | 102 nodes, 123 strictly narrowing edges, five roots |
+| Maximum child choices | 11; four nodes exceed the soft target of six |
+| Multi-note leaves | One two-note leaf, C083 |
+| Unresolved original scoring | Two null Coffeechain meanings; both notes excluded from eligible selection |
+| Native attempts | 2,635 of 10,000; counter delta zero |
+| Native experiments / exact answer reuses | 444 / 709 |
+| Model cases | 2,941 valid, one terminal comparison failure, one unrun comparison blocked by warmup |
+| Failed / recovered / retry attempts | 27 / 23 / 25 |
+| Known API-equivalent fresh / generation cost | $13.3828492 / $17.8219244; 27 failed calls have unknown usage and cost |
+
+An earlier consolidation comparison, `batch-00132/C057`, failed twice with
+streaming socket closures after 45.28 and 38.21 seconds; its proposal remains
+held. The final warmup failure stopped further construction. The two unresolved
+original meanings independently prevent completion under V2; saved answers
+remain unchanged. Every current displayed edge narrows note sets, but the
+native structural audit fails missing-note coverage.
+
+The [immutable stopped state](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10/state.json)
+has SHA-256 `3ee17399c36543a3f8531c5538cbd4fd19d046ef1ea7db6032804926eeacb1d7`.
+The [final code provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10/code-provenance.json)
+preserves initial Oracle `1a7f68a3b27b8ab19f30256a6c613ce28768e0d9`, continuation
+`542d5697ccee1b85b28f3ded0a9e093c36de0c1b` and runner
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`, all clean. It labels completion
+and cache metadata corrections while retaining the original provenance.
+
+The [native audit](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10/native-audit.json),
+[usage report](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10/native-usage-summary.json)
+and [inventory](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10/usage-source.json)
+retain this stopped outcome. Both usage completion flags are false. Generation
+usage includes the exact original producer calls behind reused answers; subject
+extraction remains excluded.
+
+Open the checked stopped-checkpoint review UI:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr10-v2/target/hr10-review-ui-v1/launch.sh
+```
+
+It includes all 50 original note bodies. The two missing notes appear only on
+the display root, labelled unresolved, without canonical placements. The
+[UI provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hr10-review-ui-v1/provenance.json)
+preserves exact native exports, records the frozen exporter and existing HR05
+binary hashes, and confirms the viewer check. The binary's original build
+commit remains unknown. This UI describes the stopped checkpoint and does not
+imply that construction completed.
 
 ## HR08 — ASv6.100 24-note V2, previous prompts
 
