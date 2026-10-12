@@ -1972,9 +1972,26 @@ seconds and API-equivalent costs $0.1207736/$0.1286736 for low/medium. Both have
 4,096 cached input tokens; warming outweighs the observed cache savings.
 Source snapshots and original expectation metadata stay frozen; interpretation
 judgments use the documented corrected source labels. This targeted regression
-does not evaluate every subject or retest matching/post support. Medium is the
-candidate to test on those remaining checks before expanding the note panel;
-prompts, schemas and production defaults remain unchanged.
+does not evaluate every subject or retest matching/post support. The following
+[matching/support comparison](distillation-review-v1/README.md#medium-matching-and-support-on-the-same-four-answers)
+does test every occurrence of those two checks on the same four saved answers.
+Native routing handles 58 decisions mechanically and 96 through duplicate
+reuse, leaving ninety fresh semantic calls plus one eligible warmup. Medium
+support passes 45/45 resolved decisions; matching passes 39/40, excluding five
+pre-existing ambiguous interpretations. Posting falsely returns null despite
+its established Post sharing interpretation. Matching's 2.5-point loss exceeds
+the approved two-point allowance and triggers the standing high step-up.
+Medium runs complete in 24.625 seconds, with no retries/failures/missing usage
+and $0.1937144 API-equivalent cost; warming-inclusive cache savings are 10.62%.
+The [high matching repeat](distillation-review-v1/README.md#high-matching-step-up-on-the-same-four-answers)
+fixes Posting and retains all 40/40 resolved decisions in 25.040 seconds,
+using forty-five calls plus one warmup and $0.1191624 API-equivalent cost.
+There are no retries/failures/missing usage; net cache savings are 9.05%.
+Five interpretation uncertainties and three correct-null explanation caveats
+remain visible in native reviews. High matching and medium support are
+expansion candidates, not a globally qualified minimum. Complete coverage and
+relationship reruns at the candidate efforts remain open before note-count
+expansion. Prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
