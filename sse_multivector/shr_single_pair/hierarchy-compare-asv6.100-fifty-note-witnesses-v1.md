@@ -7983,3 +7983,20 @@ This qualification does not affect Pump P's explicit particular identity or the
 proper-name brand probe. V203's brand inclusion demonstrably omits its parent's
 commercial condition, and the decorative exclusions still fail to check direct
 Paper-property coverage when the particular pattern carrier is unknown.
+
+### V204 result: positive-example opening does not repair the route failure
+
+All twenty responses validate. Again only intended-decoration reverse identifies
+its unknown Paper carrier; the other three exclusions address production without
+establishing exclusion from direct material-property coverage. Functional
+production positives, six explicit human-handhold controls and two approved
+MrBeast positives survive. The brand returns null in both orientations. That
+retention does not establish a repair: the wider unknown-route qualification
+fails, and the positive-example opening is not identified as its cause. The
+attention diagnostics remain subject to the input-only scope qualification.
+
+Native agent reviews reject the three incomplete V204 decorative exclusions and
+the V203 reverse-brand proof, without fabricating user gold or changing source
+expectations. Original exports remain preserved. V204 uses twenty-four fresh
+attempts including four warmups, zero reuse/retry/failure/missing usage and
+$0.1448672 API-equivalent cost. It is not adopted.
