@@ -239,6 +239,16 @@ exact unchanged input/output/example checks pass. Offline preparation retains
 the two HR04 inputs and medium settings with a 4,689-token cache-eligible prefix;
 both cases are unrun. No calls, Compare changes or hierarchy work occurred.
 
+[Bootstrap-v115](shr_single_pair/Hierarchy-bootstrap-v115.md) is the subsequent
+authorized example-only draft from v114. It changes the Feedback anonymity
+resolution and justification to preserve the shared content condition across
+anonymous and identified responses. Inputs, final meanings, instructions and
+schema are unchanged. Nine revision tests and exact example/quote/hash checks
+pass. Offline preparation preserves the two HR04 inputs and medium settings;
+the 4,712-token prefix is cache-eligible and both cases are unrun. No inference
+or adoption occurred. V114 remains the matched control for
+the example change.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
