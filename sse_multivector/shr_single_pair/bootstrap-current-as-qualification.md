@@ -693,13 +693,19 @@ implicit is a Bootstrap failure. The final meaning must express the chosen
 boundary. This does not predetermine a narrow or broad choice, or establish
 unknown facts about a particular consumer or occurrence.
 
-The [full reusable selection](hierarchy-bootstrap-asv6.100-regressions-v3.json)
+The [original reusable selection v3](hierarchy-bootstrap-asv6.100-regressions-v3.json)
 contains 344 selected entries from 38 posts and 122 root trees, with 222 immediate
 and 384 recursive selected-ancestor checks. It is a development collection,
 not an unseen reliability benchmark or complete selection of every local entry.
 Source corpora, model answers and receipts stay ignored in retained task
 worktrees; relative source paths are resolved there. No subject extraction or
 canonical construction is needed to rerun the saved collection.
+
+The [current selection v4](hierarchy-bootstrap-asv6.100-regressions-v4.json)
+retains those inputs and adds the two exact HR04 Food roots, giving 346 distinct
+inputs from the same 38 posts. The [retained C003 regression](bootstrap-hr04-food-boundaries-v1.md#retained-meaning-quality-regression)
+keeps its accepted historical poison admission outside Bootstrap input. That
+partial approval is not an expected fresh meaning or whole-pair label.
 
 ## Completed activity-boundary diagnostics
 

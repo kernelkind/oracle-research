@@ -213,6 +213,13 @@ ceremonial-gold witness and whole pair remain unreviewed; no judgment transfers
 to the fresh meanings. Compare should evaluate the supplied boundaries rather
 than add an unstated condition to remove this accepted witness.
 
+The [Bootstrap regression collection v4](shr_single_pair/hierarchy-bootstrap-asv6.100-regressions-v4.json)
+now retains 346 distinct original inputs, including these two Food roots. C003's
+accepted witness is node-specific review evidence, never model input or a fresh
+expected output. Its [preparation specification](shr_single_pair/hierarchy-bootstrap-v109-asv6.100-regressions-v4.spec.json)
+uses unchanged v109 for offline preparation validation; preparation does not
+authorize a run. Earlier collection/specification bindings remain frozen.
+
 [Bootstrap-v113](shr_single_pair/Hierarchy-bootstrap-v113.md) is the subsequent
 user-authorized draft from working v109. Its single definition-writing
 paragraph change preserves chosen-kind identity and defining conditions through
