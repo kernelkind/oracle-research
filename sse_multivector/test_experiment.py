@@ -224,6 +224,57 @@ class ExperimentTests(unittest.TestCase):
         self.assertIn('include_nomination is only supported for whole-group review', failure.stderr)
         self.assertEqual(len(self.calls()), 2)
 
+    def test_consolidation_review_meaning_edit_is_bound_and_synthetic(self):
+        self.consolidation_spec(parent='P')
+        self.prepare()
+        proposal = dict(title='Equipment', meaning='Equipment used in preparation. Examples include tools.',
+                        children=['C0', 'C1'])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(proposal)})
+        original = self.show('E1', '--case', 'group')
+        envelope = self.root / 'E1/experiment.json'
+        edit = dict(before=proposal['meaning'], after='Equipment used in preparation.')
+        reference = dict(experiment=dict(path='E1',
+            sha256=hashlib.sha256(envelope.read_bytes()).hexdigest()), case='group')
+        source = dict(schema_version=1, include_nomination=False,
+            proposals=[reference, {**reference, 'meaning_edit': edit}])
+        self.write('meaning-edit-source.json', source)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='canonical_consolidation_review', path='meaning-edit-source.json')
+        path = self.write('meaning-edit-spec.json', spec)
+        self.cli('prepare', 'meaning-edits', '--spec', path)
+        cases = self.show('meaning-edits')['cases']
+        baseline, changed = [json.loads(case['inputs']['INPUT_JSON']) for case in cases]
+        expected = json.loads(json.dumps(baseline))
+        expected['proposal']['meaning'] = edit['after']
+        self.assertEqual(changed, expected)
+        self.assertEqual(baseline['proposal'], {key: proposal[key] for key in ('title', 'meaning')})
+        self.assertTrue(cases[1]['evidence']['synthetic'])
+        self.assertFalse(cases[1]['evidence']['application_allowed'])
+        self.assertEqual(cases[1]['evidence']['meaning_edit'], edit)
+        self.assertEqual(cases[1]['evidence']['proposal_receipt'], original['receipt'])
+        self.assertEqual(self.show('E1', '--case', 'group')['receipt'], original['receipt'])
+        self.assertEqual(len(self.calls()), 1, 'preparation makes no calls')
+        for index, (bad, error) in enumerate([
+            (dict(before='Stale meaning', after=edit['after']), 'proposal meaning edit before differs'),
+            (dict(before=edit['before'], after=''), 'proposal meaning edit after'),
+            (dict(before=edit['before'], after=None), 'proposal meaning edit after'),
+            (dict(before=edit['before'], after='   '), 'proposal meaning edit after'),
+            (dict(before=edit['before'], after=edit['before']), 'proposal meaning edit must change'),
+        ]):
+            with self.subTest(index=index):
+                source['proposals'][1]['meaning_edit'] = bad
+                self.write('meaning-edit-source.json', source)
+                failure = self.cli('prepare', f'bad-meaning-edit-{index}', '--spec', path, ok=False)
+                self.assertIn(error, failure.stderr)
+        source['proposals'][1]['meaning_edit'] = edit
+        source.pop('include_nomination')
+        self.write('meaning-edit-source.json', source)
+        spec['dataset']['adapter'] = 'canonical_consolidation_pairs'
+        pair_spec = self.write('pair-meaning-edit-spec.json', spec)
+        failure = self.cli('prepare', 'pair-meaning-edits', '--spec', pair_spec, ok=False)
+        self.assertIn('meaning_edit is only supported for whole-group review', failure.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
     def test_consolidation_coverage_diagnostic_preserves_meaning_and_recomputes_children(self):
         self.consolidation_spec(parent='P')
         self.prepare()

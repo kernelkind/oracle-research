@@ -42,6 +42,9 @@ The current user-authorized diagnostic is
 [Audit-v5](shr_single_pair/Hierarchy-consolidation-audit-v5.md), sharing v18's
 coverage conditions on the same fixed Food and Material proposals plus the
 saved heating positive control. Output and producer meanings remain unchanged.
+Its next authorized screen isolates the Food proposal's illustrative sentence,
+using the unchanged Audit-v5 prompt and a labeled synthetic input variant. See
+[the illustration contrast](#audit-v5-food-illustration-contrast).
 
 The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
@@ -5230,3 +5233,60 @@ does not repair a canonical meaning or assume that the model already interprets
 both texts equivalently. The existing source-bound adapter has no proposal-edit
 option, so minimal tested preparation support would be needed after approval.
 No such option, variant or additional inference is implemented in this screen.
+
+## Audit-v5 Food illustration contrast
+
+The user approves the proposed input contrast. The unchanged Audit-v5 prompt
+and output schema compare the original v17 Food-first proposal with a synthetic
+variant omitting only its final illustrative sentence. Both keep this defining
+sentence verbatim:
+
+> Food resources are materials intended for people to eat or drink and organisms grown or raised to provide such materials.
+
+The original's removed sentence lists prepared dishes, culinary ingredients,
+edible roots and plants grown for edible parts. The six sibling meanings,
+parent, title, ordering, missing prior nomination and model settings stay fixed.
+This tests whether the illustration affects the Beets coverage decision. It
+does not assume the model interprets both texts equivalently or change any
+canonical node, original proposal answer or receipt. No prompt is edited and
+no new prompt version is claimed.
+
+The existing source-bound whole-group loader adds an optional `meaning_edit`
+inside each proposal reference. It binds the complete original `before` text
+and changed nonblank `after` text, copies the model-input proposal, and records
+the edit and `synthetic: true` only in evidence. Default preparation is unchanged;
+pairwise preparation rejects edits. The production CLI test is written first
+and fails on the unsupported field. It then checks unchanged inputs apart from
+the meaning, preserved original receipt, synthetic/non-application flags and
+rejection of stale, empty, non-string, blank and unchanged edits, plus the
+pairwise restriction. No runner command or manual model-input assembly is added.
+
+The [source](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-illustration-v1.json)
+contains two references to the same receipt, one unchanged and one edited.
+The [spec](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-illustration-v1.spec.json)
+retains native GPT-6.1 Sol medium/SSE and the exact Audit-v5 prompt/schema.
+Native `prepare --repeat` intentionally dispatches the original control rather
+than reusing an earlier answer. A second `prepare --from ... --repeat` freezes
+an independent second draw for both conditions. Prompt/settings and each
+condition's complete input remain identical across draws. No earlier output or
+review enters the model context. All 74 relevant production-path checks pass.
+
+Pre-call bounded criteria remain fixed: the people-only material alternative
+excludes unrestricted Food C009; Beets C007's plant alternative must establish
+the human food destination required by the proposed producer-organism
+alternative. Food C003 is a positive control, stoves/brand remain negatives,
+and Chicken stock's purpose inference stays qualified. The illustration is
+data, not a hardcoded expected judgment. An uncertain Beets response is retained
+as unresolved. Two draws per condition can test recurrence, not establish a
+reliable effect or the model's internal cause. These are agent criteria rather
+than new human gold.
+
+The new persistent counter is
+`consolidation-audit-v5-hr05-food-illustration-budget-v1.json`, with an
+**eight-attempt ceiling including bounded provider retries**. Planned work is
+four fresh case calls, no warmups or cache experiment; spare attempts cover
+recovery only. The [native usage selection](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-illustration-usage-v1.json)
+separates first draw and fresh repeat. Previous counters stay fixed, including
+the v18 9/12 screen. Main is synchronized at `24908ab0`. This two-input diagnostic
+adds no production per-node stage and remains in the expressly isolated task
+worktree; no graph, UI, Bootstrap/Compare prompt or external agent is changed.

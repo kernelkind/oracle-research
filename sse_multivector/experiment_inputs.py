@@ -885,7 +885,10 @@ def prepare_saved_consolidations(source, base, read, load_report, sources, *, pa
         raise ValueError('consolidation comparisons require validated experiment reports')
     cases = []
     for index, item in enumerate(source['proposals'], 1):
-        engine._expect_fields(item, 'saved proposal', {'experiment', 'case'})
+        fields = {'experiment', 'case'} | ({'meaning_edit'} if 'meaning_edit' in item else set())
+        engine._expect_fields(item, 'saved proposal', fields)
+        if pairwise and 'meaning_edit' in item:
+            raise ValueError('meaning_edit is only supported for whole-group review')
         engine._expect_fields(item['experiment'], 'proposal experiment', {'path', 'sha256'})
         directory = engine._resolve_path(item['experiment']['path'], 'proposal experiment', base)
         envelope = directory / 'experiment.json'
@@ -914,12 +917,26 @@ def prepare_saved_consolidations(source, base, read, load_report, sources, *, pa
         sources[str(receipt_path)] = engine._sha256_file(receipt_path)
         offered = json.loads(saved['inputs']['INPUT_JSON'])
         if not pairwise:
-            proposal_input = proposal if include_nomination else {
+            proposal_input = dict(proposal) if include_nomination else {
                 key: proposal[key] for key in ('title', 'meaning')}
+            evidence = dict(proposal_experiment=str(directory), proposal_case=item['case'],
+                            proposal_receipt=saved['receipt'], application_allowed=False)
+            if 'meaning_edit' in item:
+                edit = item['meaning_edit']
+                engine._expect_fields(edit, 'proposal meaning edit', {'before', 'after'})
+                for key in ('before', 'after'):
+                    engine._expect_string(edit[key], 'proposal meaning edit ' + key)
+                if not edit['after'].strip():
+                    raise ValueError('proposal meaning edit after must not be blank')
+                if edit['before'] != proposal['meaning']:
+                    raise ValueError('proposal meaning edit before differs from saved meaning')
+                if edit['after'] == edit['before']:
+                    raise ValueError('proposal meaning edit must change the saved meaning')
+                proposal_input['meaning'] = edit['after']
+                evidence.update(synthetic=True, meaning_edit=edit)
             cases.append(dict(id=f'proposal-{index}',
                 inputs=dict(INPUT_JSON=json.dumps({**offered, 'proposal': proposal_input}, ensure_ascii=False)),
-                evidence=dict(proposal_experiment=str(directory), proposal_case=item['case'],
-                    proposal_receipt=saved['receipt'], application_allowed=False)))
+                evidence=evidence))
             continue
         state = read(Path(saved['evidence']['state']))
         nodes = {node['id']: node for node in state['nodes']}
