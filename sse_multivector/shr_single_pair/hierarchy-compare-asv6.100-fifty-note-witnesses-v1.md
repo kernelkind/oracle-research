@@ -6855,3 +6855,16 @@ current producer meanings whose relevant boundaries have been independently
 settled, then test reversals and complete chains without forcing old labels.
 This recommendation is not prepared or run here. The present source copies
 must not be silently promoted to producer definitions or human gold.
+
+## User-reviewed HR04 C003 poison admission
+
+After inspecting the exact HR04 C003/C004 inputs and native producer/comparison
+receipts, the user accepts the poisoned-drink witness as exposing insufficient
+closure of C003's explicit meaning. The [primary Food-boundary record](bootstrap-hr04-food-boundaries-v1.md#historical-distinction)
+preserves their verbatim judgment. For this exact component clause, Compare
+should not invent a missing restriction to exclude the accepted witness.
+The earlier Bootstrap-versus-Compare interpretation concern is settled only
+for that admission. The ceremonial-gold witness, whole pair relation, other
+Food definitions and general comparison reliability remain open. No prompt,
+frozen input, native output, comparison schema or hierarchy is changed, and
+this review is not transferred to fresh producer definitions.
