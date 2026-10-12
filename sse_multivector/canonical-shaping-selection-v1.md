@@ -1,13 +1,16 @@
 # Selecting local entries to reduce overcrowding
 
-The newest user-authorized draft is
+The newest user-authorized tested candidate is
 [Hierarchy-consolidation-v17](shr_single_pair/Hierarchy-consolidation-v17.md).
 Only the scope-checking instructions change: supplied meanings and their
 necessary implications are authoritative, and inclusion/exclusion are decided
 from the final proposed meaning. Shared writing, example and output remain
-byte-identical to v16. See [the v17 screen](#consolidation-v17-fixed-meaning-scope-checks).
+byte-identical to v16. Six fresh draws have two clear agent rejects, two qualified
+accepts and two unresolved assessments. Fixed-proposal coverage diagnostics
+repeat the two clear failure mechanisms; v17 remains experimental and unapplied.
+See [the completed v17 screen](#completed-v17-hr05-screen).
 
-The newest user-authorized tested candidate is
+The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
 Its unrelated synthetic example covers two device topics and a third topic
 through a required component role, while excluding siblings missing the blue
@@ -4747,3 +4750,66 @@ automatic retry of an invalid request. Native preparation uses the same
 receipt-bound proposal source and unchanged meanings, model, reasoning and
 uncached SSE layout. No provider compatibility or field-causality conclusion
 is claimed before the replacement observations.
+
+### Completed v17 HR05 screen
+
+The six generation answers are valid native GPT-6.1 Sol medium/SSE results.
+Agent grading retains the v16 pre-call rubric and does not promote uncertain
+scope interpretations to human gold.
+
+| Exact HR05 input | First draw | Fresh repeat |
+|---|---|---|
+| Food group | Reject: human consumers required by both material and producer-organism alternatives; C009 does not require them | Uncertain: the human condition is gone; the stock's entire scope versus required consumption intention remains unsettled |
+| Material group | Qualified accept: supplies/equipment plus explicitly food/drink-producing organisms | Reject: organisms merely capable of providing nourishment also admit the fixed human MrBeast identity, omitted from the list |
+| Heating control | Qualified accept: Rocket stoves and Crockpots both fit the cooking-or-heating device meaning | Uncertain: an alternate food/source topic states an ingredient role, but whether the stock kind necessarily establishes it throughout remains unsettled |
+
+Observed clear rejects decrease from four in v16's six draws to two in v17;
+qualified accepts increase from one to two, and uncertainty increases from one
+to two. V17 exercises the available heating-appliance positive grouping once.
+This small, unblinded agent-assessed screen does not establish a reliable
+accuracy gain or resolution of the original mechanisms. Proposals remain
+unapplied, and no canonical meaning or graph is repaired.
+
+Both schema-repaired fixed-proposal diagnostics return valid answers while
+retaining their generated meanings unchanged. The Food diagnostic still lists
+C003/C006/C007/C009, including C009 beneath the people-only meaning. The material
+diagnostic still lists only C028/C034, omitting C025 beneath a broad organism
+nourishment-capability alternative. Both receive attributed agent rejects.
+Thus focused coverage checking does not correct these two selected cases in this
+setup. Their old nominated child lists are visible in the input, so the result
+does not isolate anchoring or prove that definition generation is irrelevant.
+
+The two rejected and two successful diagnostic request bodies differ only by
+removing `uniqueItems` from the schema. Each replacement has one HTTP attempt
+and HTTP 200. The prompt, complete inputs, fixed meanings and nullable-array
+contract are unchanged. This establishes a working schema for these requests;
+the earlier generic HTTP 400 did not identify its parameter. No general
+subscription-schema guarantee or proxy/service change is claimed.
+
+New task accounting is **16 actual attempts**: six generation answers, six
+warmups, two HTTP 400 rejections, and two successful fixed-proposal diagnostics.
+The counters and claim ledgers reconcile at 14/14 plus 2/2; the v16 12/12 counter
+and all older exhausted counters stay fixed. There are no answer reuses or
+automatic retries. The generation subtotal is **$0.0471372** and the successful
+diagnostic subtotal **$0.008134**, giving **$0.0552712 known API-equivalent cost**.
+The complete cost is unknown because both rejected requests lack raw usage.
+Known input is 18,940 tokens, including 7,552 cached and 11,388 uncached; writes
+are zero. Output is 3,174 tokens including 2,708 reasoning tokens already counted
+in output. The saved v16 cost is a separate historical subtotal, not new work.
+
+The complete native selection retains both rejected attempts and both valid
+replacements in separate groups. Its ignored final report is
+`target/canonical-shaping-selection-v1/consolidation-v17-hr05-reviewed-v1.json`.
+Native `review` records the six generation and two diagnostic assessments;
+source receipts and previous reports are immutable. All 71 relevant assembly,
+revision, subject-consolidation and receipt-bound whole-group diagnostic tests
+pass. V17's shared writing and synthetic example remain byte-identical to v16.
+The tested source and maintained results stay in the requested isolated task
+worktree; no main integration, push, UI refresh or external-agent message occurs.
+
+The next suggested diagnostic removes the earlier nomination from otherwise
+identical fixed-proposal input. That would address the known anchoring
+limitation before another scope-wording change. Existing production preparation
+always carries the saved nomination, so the smallest reusable source-bound
+support would be needed; inputs must not be assembled manually. This screen
+does not implement that option or authorize a production validation stage.
