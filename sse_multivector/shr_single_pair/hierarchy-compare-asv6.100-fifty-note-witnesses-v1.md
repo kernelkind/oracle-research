@@ -6678,3 +6678,180 @@ and unique response IDs pass. Each actual body contains exactly one user
 prompt, empty instructions, `store:false` and no conversation linkage. Native
 generation and review records remain unchanged; no source or proof blocker
 explains away the observed comparison inconsistency.
+
+## Fixed-V179 meal-design boundary diagnostic
+
+### Frozen design
+
+After the failed V185 screen, the user authorizes testing explicit meal-design
+intention versus food identity under **unchanged Compare-v179**. No Compare
+prompt, Bootstrap prompt, producer meaning or hierarchy is changed. The exact
+original Cookware/Stockpots case remains a descriptive control, inherited
+through native `prepare --from`; its correct label remains unresolved.
+
+Four directly supplied diagnostic copies close the disputed boundaries. Both
+parent copies keep the same food-holding/heat-cooking design and qualifying
+cocotte/frying-pan illustrations. Both expressly count edible culinary stock
+as food regardless of intended consumption. Their final clause differs only
+by `must` versus `need not` require meal preparation as a design purpose.
+Both child copies explicitly retain food, holding, heat cooking and stock
+preparation, the same food-identity sentence and a laboratory-design purpose.
+Their final clause differs only by `also` versus `not` include meal preparation
+as a design purpose. A dual laboratory-and-meal design is coherent; actual use
+or consumption is not substituted for design intention. Hypothetical permitted
+designs supply counterexamples without asserting actual instances exist.
+
+Two independent read-only preflight assessments qualify the exact closed
+matrix: meal-included Stockpots fit either parent; meal-excluded Stockpots fit
+only the unrestricted parent. Direct parent-copy comparison requires the
+unrestricted copy to contain the required copy; direct child-copy comparison
+is neither. The classifications are provisional agent semantic controls,
+not human gold or certified Bootstrap outputs. Physical exclusion between
+designs is not itself the definition of information-topic containment: both
+directional proofs must also exclude permitted information connections.
+
+The full 3-by-3 cross of original/required/unrestricted parents and
+original/meal-included/meal-excluded children has nine conditions. Add the
+two direct same-subject contrasts: eleven semantic pairs total. Six fully
+synthetic conditions are closed semantic anchors. The original and four
+one-original bridges are descriptive with null expected labels; they must not
+select the original interpretation by majority vote. Even the apparently
+positive original-parent/meal-included-child bridge is kept outside the
+closed-anchor gate. Direct same-subject failure would establish failure to
+honor the supplied definitions, not prove that names caused it.
+
+The [A-first](hierarchy-compare-meal-design-boundary-a-first-v1.json) and
+[B-first](hierarchy-compare-meal-design-boundary-b-first-v1.json) generic sources
+carry twenty diagnostic cases each: ten conditions in both A/B mappings.
+The exact original two cases in each order are inherited separately. All
+copies use the original native JSON serialization; native preparation must
+assemble identical instructions, schema and request convention across
+adapters, apart from supplied endpoint descriptions and controlled order.
+Expectations, source qualifications and original provenance remain outside
+model input. No generated parent meaning, post, local tree or old label enters
+the requests.
+
+The first block prepares four native directories under
+`target/compare-v179-meal-design-boundary-v1/{original,diagnostic}`, with
+`a-first-01` and `b-first-01`: **44 planned fresh calls**. All use intentional
+`--repeat`, Sol 6.1 medium/SSE, the same worker and four-field schema, unchanged
+V179/examples, no explicit warming and the shared automatic queue. The existing
+persistent 20,000-attempt counter reads 19,277 before preparation; provider
+retries/failures count, with at most two lifetime attempts per case. Native
+[first-block usage](hierarchy-compare-v179-meal-design-boundary-first-screen-usage-v1.json)
+and [conditional aggregate](hierarchy-compare-v179-meal-design-boundary-usage-v1.json)
+preserve separate original/diagnostic accounting.
+
+Only if all six closed anchors pass labels, directional proof review, strict
+validation, reversal and member-order checks does an unchanged second fresh
+block follow: another 44 calls, **88 total absent retries**. The disputed
+original/bridge labels are evaluated descriptively rather than used as gold
+gates. Native request/receipt and independent-context checks remain required.
+The result can distinguish following explicit design clauses from unstable
+comparison of closed scopes. It cannot certify the original relation or name
+the original reversal's causal word: moving to a diagnostic copy changes
+several lexical facts. Within the closed matrix, food identity and laboratory
+purpose are fixed while meal-design intention is controlled.
+
+### Completed two-block diagnostic
+
+The first block passes its gate: all 24 closed-anchor responses match their
+provisional expectations, and independent review supports both proofs and
+questions in all 24. Original/bridge outcomes remain descriptive. The
+unchanged second block is prepared natively with `--from ...-01 --repeat`;
+prompt, cases, runner, schema and each adapter's code bindings are identical
+between draws. Its 24 closed-anchor responses also match and pass fresh
+independent review. Both blocks therefore complete with **88 valid responses**,
+including **48/48 supported closed-anchor responses and 96 directional proofs**.
+
+| Response family | Responses | Reversal conflicts | Member-order changes | Repeat changes |
+|---|---:|---:|---:|---:|
+| Six closed semantic anchors | 48 | 0/24 | 0/24 | 0/24 |
+| Four one-original bridges | 32 | 0/16 | 0/16 | 0/16 |
+| Exact original Cookware/Stockpots pair | 8 | 3/4 | 3/4 | 1/4 |
+
+Every diagnostic-copy condition gives the same normalized label in all eight
+presentations/draws. Required Cookware rejects meal-excluded Stockpots while
+unrestricted Cookware contains them; both parents contain meal-included
+Stockpots. Unrestricted Cookware contains the required variant, and the two
+opposite Stockpots purpose variants are neither despite identical subjects.
+This is evidence that V179 can follow the explicit meal-design distinction
+while retaining food identity and laboratory purpose. It is not broad Compare
+qualification or certification of these manually supplied scopes as producer
+definitions.
+
+All four bridges are stable: original Cookware contains meal-included
+Stockpots; original Cookware versus meal-excluded Stockpots is neither;
+required Cookware versus original Stockpots is neither; unrestricted Cookware
+contains original Stockpots. The labels alone do not adjudicate an original
+meaning. The latter two proofs still rely on an interpretation of the
+original Stockpots wording. Likewise, rejection beneath original Cookware
+assumes its meal clause imposes a universal design requirement. Closing either
+endpoint stabilizes these observations, but several lexical facts change in
+moving to a copy, so this does not isolate the original causal word.
+
+The untouched original has five `neither` and three Cookware-containment
+responses. Its positive proofs promote stock preparation to meal preparation;
+negative proofs admit exclusively experimental food-stock designs without
+meal intention. Both meanings and the instructions remain identical between
+these readings. No model nulls are emitted. Original semantic gold remains
+unresolved; the observed contradiction is not repaired by stable copies,
+majority vote or selecting whichever original label resembles an anchor.
+
+Native aggregate usage records **91 actual attempts**, including three
+recovered provider failures, zero answer reuse or warming and no terminal
+failed/unrun cases. The shared counter moves **19,277 to 19,368**, leaving 632
+at this read. All three failed body streams are classified by the production
+runner as temporary HTTP/2 internal stream errors after HTTP 200, with socket
+termination and no completed answer; the same cases succeed on attempt two.
+Each failed attempt remains charged to the counter and has unknown usage.
+The **$0.610562 API-equivalent cost is a known subtotal**, not an exact total
+or subscription charge. Native usage preserves the three unknowns rather
+than pricing them at zero. Provider retries remain within two lifetime
+attempts per case; no service investigation, paid-resource change or external
+message is initiated.
+
+Existing strict symmetric directional validation accepts all 88 responses.
+The request-generating code, schema, V179 instructions/examples and native
+JSON serialization match between real controls and generic copies. An initial
+overstrict plan-code assertion detects only the extra
+`hierarchy_node_pair_consistency.py` bound by the original adapter; that is a
+post-generation evaluator, absent from the generic adapter, not a request
+difference. All shared code hashes match. Current source meanings remain
+unchanged, and original Bootstrap-v96 / ASv6.100 receipts are not attached to
+diagnostic copies as if those copies had been generated.
+
+The final independent provenance audit validates all 91 dispatched bodies,
+88 successful receipts and generation-snapshot bindings. Each body carries
+one exact user prompt, empty instructions, `store:false` and no conversation
+linkage. Completed response IDs are unique; all 904 bound source hashes match.
+All 44 member-order contrasts change only JSON member order and all 44
+reversal comparisons exchange the exact endpoints. Recovered attempts repeat
+identical bodies. Native original producer receipts and ASv6.100 inputs remain
+intact. Backend cache reads do not create conversation linkage.
+
+Separate original/bridge proof review checks all 40 responses across both
+draws. The 32 bridges retain the explicit food and design clauses consistently.
+Their qualifications remain conditional where an original endpoint supplies
+the interpretation: eight unrestricted-parent/original-child positives rely
+on the culinary-food reading of original stock. Among the eight exact
+original outputs, five negative proofs conditionally separate experimental
+designs; three positives have meal-purpose proof gaps under the universal
+meal-design interpretation. Two positive original outputs also under-establish
+their independent frying-pan witness's meal intention. These assessments do
+not yield an accuracy percentage against original gold.
+
+Native reviews accept the 48 closed-anchor responses and preserve uncertainty
+for all 40 original/bridge responses. Original model relations remain unchanged.
+Native `final-generation.json` and `final-reviewed.json` verify all nonreview
+fields and receipts are preserved. No homemade comparison or review artifacts
+replace the supported workflow.
+
+The practical finding is narrower than a Compare fix: these closed definitions
+are handled consistently under unchanged V179, while the original combination
+retains unstable interpretation. Another instruction reminder is not justified
+by this evidence. The next useful qualification would use separately frozen,
+current producer meanings whose relevant boundaries have been independently
+settled, then test reversals and complete chains without forcing old labels.
+This recommendation is not prepared or run here. The present source copies
+must not be silently promoted to producer definitions or human gold.
