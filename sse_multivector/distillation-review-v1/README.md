@@ -6062,6 +6062,19 @@ training split label of the inserted example. References:
 [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
 and [primary adaptive-analysis research](https://arxiv.org/abs/1411.2664).
 
+The same audit finds that DCSv1/DSLv10 already distinguish broad type meaning
+from an explicitly required occurrence; the earlier payment flip does not by
+itself establish a missing instruction. DCS negative/null errors require
+particular attention because positive witnesses receive a separate pair
+check, while enumerating every rejected candidate establishes record
+completeness rather than semantic correctness. Explanations still require
+complete-output audit; a schema cannot certify their reasoning. DSLv10's
+evidence-before-decision instruction and the shared schema's `valid`-before-
+`reason` order are a contract issue to investigate, not a demonstrated cause
+or an authorized schema change. Finally, candidate counts and repeated context
+affect tokens, service time and auditing effort even when call count falls.
+These findings authorize no additional prompt, schema or workflow changes.
+
 The original sixty-answer selection contains **54 distinct validation posts**.
 All sixty have matching/support development results; relationship development
 and prompt revisions also used this panel. Neither the whole sixty nor a
@@ -6086,6 +6099,64 @@ not exercise DCS candidate search or complete coverage preparation: no pristine
 matching/self-guard snapshots outside the old panel were found, and their
 prerequisites are not fabricated. No prompt wording is changed in response to
 these new cases.
+
+### Completed fresh DSLv10 trial
+
+| Case | Actual parent → child | Frozen expectation | Model verdict | Complete-output assessment |
+| --- | --- | --- | --- | --- |
+| N13a | Test notes → Test note from the author's new identity | True | True | Accepted |
+| N13b | Nostr → Greeting to Nostr | True | True | Accepted |
+| N25a | Santa hats → The author's Santa hat | True | True | Accepted |
+| N25b | Time required for acquisition → The author's eventual acquisition of a Santa hat after some time | True | True | Accepted |
+| N47a | Cloudflare's claim that they implemented Matrix on Cloudflare workers → Cloudflare's false claim that they implemented Matrix on Cloudflare workers | True | True | Accepted |
+| N47b | Implementation of Matrix on Cloudflare workers → Non-implementation of Matrix on Cloudflare workers | Unresolved | True | Uncertain |
+| N75a | Bitcoin treasury companies → Bitcoin treasury companies characterized as clowns | True | True | Accepted |
+| N75b | Clowns → Bitcoin treasury companies characterized as clowns | Unresolved | True | Uncertain |
+| N25c | Author's current possession of a Santa hat → Some time taken by the author to acquire a Santa hat | False | False | Accepted |
+| N47c | Social-media engagement metrics → 38 points | False | False | Accepted |
+
+All **eight resolved expectations** pass independent complete-output audit;
+the two pre-call uncertainties remain separate, with no established model
+error or post-call label correction. N47b retains the activity-topic versus
+negated-action boundary; N75b retains the figurative characterization's referent
+and type boundary. The model's true verdicts do not establish their gold labels.
+The negative cases correctly reject loss of **current possession** and loss of
+the **social-media engagement** qualification. No hypothetical change to the
+fixed author's facts is needed. All ten outputs have current attributed native
+agent reviews: eight acceptances and two uncertainties. These are agent
+assessments, not user-confirmed gold or a population accuracy estimate.
+
+The four source posts are validation indices **13, 25, 47 and 75**. The first
+eight pairs retain exact inputs and input hashes from their unlabeled native
+preparation; the two negative cases come from other saved versions of the
+same four posts. Note IDs overlap neither the original panel's 54 notes nor
+the 39 notes in maintained saved-generation development definitions. The
+ignored exposure proof binds both exclusion sources and their hashes. Native
+preparation verifies all ten real immediate edges and complete source inputs;
+none is mechanical or reused. The final definition freezes six true, two false
+and two unresolved labels before inference. Earlier prototype preparations
+make zero calls and are excluded from accounting.
+
+The single used experiment, `dsl-final`, completes **ten fresh calls** with no
+retries, failures, warming, cache hits or missing usage. The default natural
+prefix is **76 tokens**, below the 1,024-token warming threshold, so explicit
+prefix caching is disabled. Native run duration is **106.45 seconds**; all ten
+requests are admitted within 76 ms, with maximum worker admission wait of
+108 ms. Mean model service is 39.03 seconds and median 27.66 seconds; the
+longest case is the unresolved N47b. Observed work is 13,813 input tokens and
+13,684 output tokens including 11,950 reasoning tokens. Complete native
+API-equivalent estimate is **$0.164466**, not subscription cash charges.
+
+Generation sources are frozen at `cd01aaa4` in
+`oracle-mvp-review-fresh-development`; artifacts remain ignored under
+`target/distillation-review-v1/fresh-development/`, including the final source,
+native reviews, exposure proof and one-group usage summary. The worktree is
+retained for source bindings. DCSv1/DSLv10 hashes and all production code remain
+unchanged. This small, purpose-selected sample tests the shared relationship
+rule only; it qualifies neither DCS null-search reliability, broader accuracy,
+minimum reasoning effort nor full-evaluation runtime. The most useful next
+step is a source-bound fresh DCS negative-search trial with real matching and
+self-guard prerequisites, followed by complete-output audit of every null.
 
 ## Actual distilled wording: offline preview (October 8)
 

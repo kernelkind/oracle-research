@@ -1820,6 +1820,16 @@ without claiming DCS search/coverage-workflow validation or inventing missing
 matching premises. Independent pre-call labels and unresolved interpretations
 stay separate. The exposed original sixty remain regression/workload evidence;
 a later unseen-note accuracy assessment requires separately reserved cases.
+The completed source-bound DSLv10 trial contains ten actual pairs on four
+posts outside both exclusion sets: six frozen positive expectations, two
+negative expectations and two uncertainties. All eight resolved decisions and
+complete explanations pass independent audit; uncertainties remain unscored.
+Native accounting includes only the final experiment: ten fresh calls,
+106.45 seconds, no reuse/retry/failure/warming/cache hit, and complete
+API-equivalent estimate $0.164466. Its natural prefix has 76 tokens, below the
+warming threshold. Prompts, schemas and production code remain unchanged;
+the frozen task worktree is retained. DCS null-search qualification still
+requires its genuine matching/self-guard prerequisites and separate testing.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
