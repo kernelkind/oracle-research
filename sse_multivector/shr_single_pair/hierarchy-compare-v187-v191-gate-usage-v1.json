@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v187": [
+      "../../target/compare-v187-intention-capability-v1/hr05",
+      "../../target/compare-v187-intention-capability-v1/controls"
+    ],
+    "v188": [
+      "../../target/compare-v188-intention-capability-v1/hr05",
+      "../../target/compare-v188-intention-capability-v1/controls"
+    ],
+    "v189": [
+      "../../target/compare-v189-intention-capability-v1/hr05",
+      "../../target/compare-v189-intention-capability-v1/controls"
+    ],
+    "v190": [
+      "../../target/compare-v190-intention-capability-v1/hr05",
+      "../../target/compare-v190-intention-capability-v1/controls"
+    ],
+    "v191": [
+      "../../target/compare-v191-intention-capability-v1/hr05",
+      "../../target/compare-v191-intention-capability-v1/controls"
+    ]
+  }
+}
