@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "hr05": [
+      "../../target/compare-v190-intention-capability-v1/hr05"
+    ],
+    "synthetic-controls": [
+      "../../target/compare-v190-intention-capability-v1/controls"
+    ]
+  }
+}
