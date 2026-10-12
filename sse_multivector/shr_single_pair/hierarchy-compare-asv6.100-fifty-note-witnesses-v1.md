@@ -7624,3 +7624,28 @@ not producer outputs, source hierarchies or future prompt examples.
 Test unchanged V196 first. Only an observed response/proof defect justifies a
 subsequent focused scope change. Existing original and resolved-boundary panels
 remain unchanged. No extra graph context or descendant evidence enters A/B.
+
+All twelve baseline responses validate and all six pairs reverse consistently.
+The Food triad nevertheless contradicts whole-scope containment in both
+orientations: Food contains Food preparation, Food preparation contains Cooking
+vessels, and Food versus Cooking vessels is neither. The shortcut's counterexample
+is information about a qualifying saucepan's steel construction. The accepted
+activity-to-vessel response explicitly admits that same kind of composition
+information through the vessel's preparation role. The kind-to-activity proof
+only establishes that its processed material satisfies Food's conditions; it
+does not check all information admitted by the activity's own scope. This is a
+demonstrated consistency failure with unchanged meanings, without proving which
+individual label must change.
+
+The Paper triad accepts all three links in both orientations. It describes the
+press as paper-production information rather than independently checking its
+entire machine scope. This draw is internally consistent but not a semantic
+certification. The different domain responses are diagnostic evidence, not proof
+that Food and Paper must receive identical labels. Native baseline export:
+`target/compare-v196-whole-information-scope-v1/native.json`.
+
+Native accounting for the six resolved-handhold and twelve whole-scope
+comparisons records twenty fresh attempts including two warmups, eighteen valid
+responses, zero reuse/retry/failure/missing usage and $0.109524 API-equivalent
+cost. This is catalog accounting, not a subscription charge. The retired attempt
+counter remains unchanged; no replacement attempt allowance is imposed.
