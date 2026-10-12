@@ -309,6 +309,27 @@ Frozen source files, producer receipts and complete original diagnostics remain
 bound for review. This diagnostic cannot apply hierarchy changes and uses the
 new spec's ordinary response schema, rather than the production Compare schema.
 
+For exact saved A/B comparison panels, a `generic` or `hierarchy_node_pairs`
+dataset may declare schema 1 with `saved_comparisons`. Each selector has `id`,
+an envelope-hash-bound `experiment` reference (`path`, `sha256`), `case_id`,
+boolean `reverse`, and optional outside-input `review`. Preparation requires a
+valid native Compare receipt and strict A/B subject/meaning inputs. Optional
+`record_sha256` pins the exact saved result; the HR05 panel supplies it for every
+selection so an appended source result cannot silently replace that receipt.
+Without that selector, preparation uses the currently validated saved result.
+Forward
+inputs retain their exact original bytes; reversals exchange the complete two
+nodes. Original outputs, evidence and receipts remain audit evidence outside
+model input and never become expected semantic labels automatically. The
+existing protected-source reader binds source envelopes, manifests and receipts.
+These panels cannot apply hierarchy changes or regenerate endpoint meanings.
+With `review.comparison_role` (`isolated-forward` or `isolated-reverse`) and
+`review.reversal_pair`, the native consistency report checks copied/swapped
+endpoints against the same original receipt and original A/B role. It does not
+join coincident wording from unrelated original cases into complete chains or
+fabricate Bootstrap producer references. Existing producer-bound chain checks
+retain their own validation and identity rules.
+
 For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
 collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
 Preparation validates and deduplicates the original source-bound inputs before
@@ -7552,3 +7573,32 @@ unknown; $0.610562 API-equivalent is a known subtotal only. No answer reuse,
 warmups, terminal failure, Bootstrap work or hierarchy generation occurs.
 The persistent counter reaches 19,368. See [frozen design and completed
 qualification](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fixed-v179-meal-design-boundary-diagnostic).
+
+The subsequent [independently frozen v109 scope screen](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#independently-frozen-bootstrap-v109-scope-screen)
+collects twenty-five exact pairs in both directions. Final preflight/review
+retains ten provisionally labeled controls and fifteen unresolved probes;
+historical labels and original AS ancestry are not gold. All twenty control
+responses pass independent proof review. Five probe reversal conflicts remain.
+The v3 metadata correction uses fifty exact receipt reuses and zero calls to
+enable the native reversal checker; its preceding empty result had skipped all
+cases. A fresh two-case author repeat retains identity substitution in V179.
+
+Experimental [Compare-v186](shr_single_pair/Hierarchy-compare-v186.md) changes
+only the permission for unspecified conditions to vary, distinguishing general
+kinds from particular entities' unknown properties. Its twenty-two-case first
+draw preserves all twenty control labels and removes the author reversal, but
+the positive personhood inference remains qualified. The candidate is not
+adopted or broadly confirmed. It uses 23 attempts including one warmup, no
+reuse/retry/failure/missing usage, and $0.1426876 API-equivalent cost; the shared
+counter reaches 19,454/20,000. Automatic caching splits the fixed developer
+prefix from variable user input; audit confirms distinct responses and no
+conversation linkage.
+
+The [separate HR05 panel](shr_single_pair/hierarchy-compare-hr05-fixed-scopes-source-v1.json)
+selects six exact saved pairs, both orientations, using `saved_comparisons`.
+Five are unresolved proof/scope probes. The user accepts the exact C035/MrBeast
+Compare positive and classifies its problem as the Consolidation-v4 explicit
+meaning. That control is retained separately from approval of the parent topic.
+HR05's mixed Bootstrap-v109/Consolidation-v4 endpoints remain honestly labeled
+and separate from the independently generated Bootstrap-only scope screen.
+No Bootstrap prompt, historical endpoint or hierarchy is changed.
