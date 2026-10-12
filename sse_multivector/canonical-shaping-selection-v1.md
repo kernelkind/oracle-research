@@ -1,6 +1,12 @@
 # Selecting local entries to reduce overcrowding
 
-The newest user-authorized tested candidate is
+The newest user-authorized candidate is
+[Hierarchy-consolidation-v18](shr_single_pair/Hierarchy-consolidation-v18.md),
+prepared for testing with direct coverage conditions for every admitted child
+alternative. Shared meaning writing, synthetic example and output remain
+byte-identical to v17. See [the conditions screen](#consolidation-v18-alternative-coverage-conditions).
+
+The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v17](shr_single_pair/Hierarchy-consolidation-v17.md).
 Only the scope-checking instructions change: supplied meanings and their
 necessary implications are authoritative, and inclusion/exclusion are decided
@@ -19,7 +25,7 @@ also retains a qualified Beets scope error, so neither complete list is cleared.
 One draw per condition does not establish an anchoring effect. See
 [the controlled nomination test](#audit-v3-previous-nomination-contrast).
 
-The current user-authorized diagnostic is
+The preceding user-authorized diagnostic is
 [Audit-v4](shr_single_pair/Hierarchy-consolidation-audit-v4.md), requesting one
 coverage decision and short decisive justification per sibling on the same
 nomination-free fixed proposals. Coverage instructions remain byte-identical
@@ -28,6 +34,11 @@ sibling assessments but restore the rejected Food C009 inclusion and retain
 the Material omission. The justifications expose the stated interpretations;
 they do not establish a correction or the cause of the earlier answers. See
 [the justification diagnostic](#audit-v4-per-sibling-justifications).
+
+The current user-authorized diagnostic is
+[Audit-v5](shr_single_pair/Hierarchy-consolidation-audit-v5.md), sharing v18's
+coverage conditions on the same fixed Food and Material proposals plus the
+saved heating positive control. Output and producer meanings remain unchanged.
 
 The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
@@ -5061,3 +5072,72 @@ heating positive control. This is a wording hypothesis within the existing
 whole-meaning containment contract, not a new semantic rule, a forced MrBeast
 label or an implemented revision. The Material interpretation qualification and
 Chicken stock uncertainty remain visible rather than being counted as resolved.
+
+## Consolidation-v18 alternative coverage conditions
+
+The user approves replacing the main consolidation coverage paragraph and
+testing the same problem groups with a positive control. V18 changes only the
+two coverage paragraphs within `Identify the children`. Every kind, role or
+alternative admitted by a sibling must satisfy all required conditions of a
+covered proposed kind or relationship. One fitting example/use is insufficient.
+Required consumers, purposes, roles and states must follow from the fixed
+meaning or its necessary implications; illustrative examples and conventional
+associations cannot supply them. Include all meeting these conditions. This
+clarifies the existing whole-meaning contract without changing canonical scope.
+
+Shared writing, all text before `Identify the children`, the synthetic display
+panel example and output remain byte-identical to v17. The pinned wrapper is
+`prompt_sources/Hierarchy-consolidation-v18.after.md`; production assembly
+reconstructs the complete prompt and native `revise` retains the last-approved
+v3 diff baseline. V18 SHA-256 is
+`3d01c0854762ca6e4baa8fe752fd1b409334cfb874a360da61543e38c0bdf9fd`.
+The existing production assembly test is extended first and fails on the absent
+v18 manifest. All 73 relevant checks pass after assembly. Native fake-worker
+preparation includes v18. The same test verifies exact coverage-wording equality
+with Audit-v5 and preservation of the audit's output contract.
+
+Audit-v5 replaces only Audit-v4's coverage paragraphs with the same wording.
+It retains per-sibling decisions/short justifications and the exact schema.
+SHA-256 is
+`54e8db903070824c5492ad75f095f13fea09e33342bf3cd289bb99578b8058d6`.
+The [diagnostic source](shr_single_pair/hierarchy-consolidation-audit-v5-hr05.json)
+retains both original problem-proposal references and adds the saved v17
+heating-first producer. Earlier nominations remain omitted; original meanings,
+complete sibling groups/order and receipts remain fixed. Its
+[native spec](shr_single_pair/hierarchy-consolidation-audit-v5-hr05.spec.json)
+uses the existing source-bound adapter without new runner code.
+
+Three fresh main-prompt generations inherit the exact v17 Food/Material/Heating
+first-draw inputs and medium/SSE settings through native `prepare --from`,
+replacing only the template and selecting the current shared worker. Their
+inherited native caching has a 1,295-token prefix and automatic warming. Three
+uncached Audit-v5 cases separately test coverage under the original fixed
+proposals. This avoids treating a changed definition as proof that the earlier
+coverage error is corrected. One fresh draw per case does not establish reliable
+improvement; the saved v17 six-draw distribution is not compared as if v18 also
+had six generation draws.
+
+Pre-call bounded agent criteria stay fixed: Food C009 must not acquire human
+consumers absent from its meaning; Beets' plant alternative must establish the
+proposal's required destination; the broad capability proposal must address
+MrBeast's fixed human identity under the existing literal reading. Stock's
+kind-purpose inference and the Material information-topic interpretation remain
+qualified, without new human gold. The fixed heating control covers Rocket
+stoves C001 and Crockpots C012, and excludes its five other siblings. Main
+generation is judged under its own final definition for complete coverage,
+consistent conditions, usefulness and the existing structural output rules;
+different coherent topics are allowed. Null is not counted as a corrected
+positive control. All these root cases have no current parent, so this screen
+does not qualify placement beneath a supplied parent.
+
+The new persistent counter is `consolidation-v18-hr05-budget-v1.json`, with a
+**12-attempt ceiling including warmups, failures and provider retries**. Expected
+work is three generation answers, three native warmups and three fixed-proposal
+answers; the remaining allowance covers bounded recovery, not extra tests.
+Previous counters remain unchanged. The
+[native usage selection](shr_single_pair/hierarchy-consolidation-v18-hr05-usage-v1.json)
+keeps saved v17 first draws, fresh v18 generations and Audit-v5 calls separate.
+No verdict, expectation or diagnostic answer enters generation input. This
+bounded prompt-development screen adds no production per-node step and scans
+no corpus. Main is synchronized at `d48e0de5`; work remains in the expressly
+isolated worktree, with no graph, UI, Bootstrap or Compare edits or messages.
