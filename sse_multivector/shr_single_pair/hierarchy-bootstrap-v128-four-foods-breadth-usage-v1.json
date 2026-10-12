@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v128_four_foods_fresh": [
+      "../../target/bootstrap-v128-four-foods-breadth-v1/draw1"
+    ]
+  }
+}

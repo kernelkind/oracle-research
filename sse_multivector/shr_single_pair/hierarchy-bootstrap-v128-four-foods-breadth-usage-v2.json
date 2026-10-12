@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v128_four_foods_fresh": [
+      "../../target/bootstrap-v128-four-foods-breadth-v1/draw1"
+    ],
+    "v128_sourdough_brisket_repeat": [
+      "../../target/bootstrap-v128-four-foods-breadth-v1/repeat"
+    ]
+  }
+}
