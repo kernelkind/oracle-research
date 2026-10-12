@@ -281,8 +281,15 @@ definitions and two-case repeat validate. Full qualification uses all 346 curren
 ASv6.100 inputs, with the native history root limited to the completed focused
 experiment to preserve its exact 22 original producers. Scoped history selects
 reuse evidence; it does not change model-facing inputs or fabricate receipts.
-The remaining 324 definitions are new. Full review is pending; no activation,
-Compare inference or hierarchy build is part of this Bootstrap stage.
+The remaining 324 definitions are new. The [completed full review](shr_single_pair/bootstrap-v122-full-qualification-v1.md)
+covers 346 definitions and 384 selected ancestor checks, with one flagged
+factual statement, four individual uncertainties and three exact-output scope
+conflicts. Compatible paired repeats retain separate producer bindings; they
+do not replace the original cohort. Native activity locks serialize review
+mutation, so material flags were persisted through one writer and full review
+coverage is documented against the frozen cohort rather than claimed as 346
+native verdicts. V122 is not activated; the shared counter is exhausted at
+20,000 and inference is stopped. No Compare or hierarchy work occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
@@ -2014,9 +2021,21 @@ using forty-five calls plus one warmup and $0.1191624 API-equivalent cost.
 There are no retries/failures/missing usage; net cache savings are 9.05%.
 Five interpretation uncertainties and three correct-null explanation caveats
 remain visible in native reviews. High matching and medium support are
-expansion candidates, not a globally qualified minimum. Complete coverage and
-relationship reruns at the candidate efforts remain open before note-count
-expansion. Prompts, schemas and production defaults remain unchanged.
+expansion candidates, not a globally qualified minimum.
+The [complete four-answer trial](distillation-review-v1/README.md#complete-four-answer-review-and-effort-step-ups-october-11)
+reuses those matching/support results and finishes the necessary actual-edge,
+guard and coverage work. Medium rejects a valid human-family Mothers edge;
+high corrects it. Medium DCS selects an invalid Incest witness, caught by high
+DSL, and a fresh repeated medium call misses Peacock's valid Television match.
+High final coverage restores that match. Its thirty resolved searches are
+correct, with four source interpretations unscored; all selected witnesses
+already have exact high DSL outputs. The tested expansion candidates are now
+high matching/relationships/coverage and medium support, with no joined final
+score or global qualification. Local accounting is 246 attempts, including
+both levels, verifiers, 24 warmups, three recovered transport failures and three
+redundant calls. The known API-equivalent subtotal is $1.4636508; failed-attempt
+usage is unknown. Final high DCS takes 71.636 seconds, separate from preparation
+and audit time. Prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -2029,6 +2048,12 @@ and delegates requests, reuse, warmups, retry handling and receipts to the share
 runner. Compatible-heading comparisons use the configured relationship template,
 defaulting to DSLv2; required flags and meaning groups come from a source-bound
 candidate-independent assessment.
+Evaluation preparation's optional `--matching-reasoning-effort` overrides
+matching alone while `--reasoning-effort` supplies the other check settings.
+Coverage-search preparation also accepts `--reasoning-effort`, retaining
+xhigh as its default. This lets new native preparations bind the tested
+high matching / medium other-check combination and reuse exact saved requests
+without changing source wording, mechanical rules or existing manifests.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use

@@ -93,6 +93,39 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / 'calls.json').exists())
 
+    def test_native_cli_prepares_high_matching_with_medium_other_checks(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection()
+        frozen = selected.read_bytes()
+        baseline = self.root / "medium-default"
+        evaluation.prepare(selected, baseline, reasoning_effort="medium")
+        destination = self.root / "mixed-efforts"
+        self.native("prepare-distillation-review-evaluation", selected,
+            "--output", destination, "--reasoning-effort", "medium",
+            "--matching-reasoning-effort", "high")
+        original = evaluation.report(baseline)
+        changed = evaluation.report(destination)
+        for old, new in zip(original["experiments"], changed["experiments"]):
+            check = new["cases"][0]["evidence"]["check"]
+            self.assertEqual(new["settings"]["reasoning_effort"],
+                             "high" if check == "matching" else "medium")
+            self.assertEqual({k: v for k, v in new["settings"].items() if k != "reasoning_effort"},
+                             {k: v for k, v in old["settings"].items() if k != "reasoning_effort"})
+            self.assertEqual([(c["id"], c["inputs"], c["evidence"], c["prompt"], c.get("origin"))
+                              for c in new["cases"]],
+                             [(c["id"], c["inputs"], c["evidence"], c["prompt"], c.get("origin"))
+                              for c in old["cases"]])
+        self.assertEqual(selected.read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_bad_matching_effort_is_rejected_before_creating_output(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        destination = self.root / "invalid-effort"
+        with self.assertRaisesRegex(ValueError, "matching_reasoning_effort"):
+            evaluation.prepare(self.root / "missing-selection.json", destination,
+                               matching_reasoning_effort="none")
+        self.assertFalse(destination.exists())
+
     def test_prepare_answer_subset_preserves_complete_native_cases_and_frozen_sources(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         from sse_multivector import distillation_review_assessment as assessment
