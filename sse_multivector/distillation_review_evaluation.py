@@ -263,7 +263,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     return dict(frozen, output=str(output), summary=report(output)["summary"])
 
 
-def report(output):
+def report(output, *, include_request_summary=True):
     """Join native outcomes to every selected answer and numbered occurrence."""
     from experiment_runner import experiment, project
     project.configure(Path(__file__).resolve().parents[1])
@@ -367,9 +367,10 @@ def report(output):
         score_mismatches=sum(bool(row["qualification"]["score_differences"]) for row in value["answers"]),
         checks={check: _check_summary([case for row in value["answers"] for case in row["checks"][check]])
                 for check in _DEFINITIONS}) for cohort, value in cohorts.items()}
-    skipped = {(check, case["id"]) for value in cohorts.values() for answer in value["answers"]
-               for check, rows in answer["checks"].items() for case in rows if case["status"] == "skipped"}
-    summary["requests"] = _request_summary(experiments, skipped)
+    if include_request_summary:
+        skipped = {(check, case["id"]) for value in cohorts.values() for answer in value["answers"]
+                   for check, rows in answer["checks"].items() for case in rows if case["status"] == "skipped"}
+        summary["requests"] = _request_summary(experiments, skipped)
     return dict(schema_version=1, output=str(output), selection=frozen["selection"], sources=sources,
                 experiments=experiments, usage=usage, generation_usage=generation_usage, summary=summary, **cohorts)
 

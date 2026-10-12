@@ -343,6 +343,98 @@ class DistillationCoverageSearchTests(unittest.TestCase):
                 self.assertEqual(sum(Path(call.args[0]) == path for call in hashing.call_args_list), 1)
                 self.assertEqual(protected[str(path)], coverage.engine._sha256_file(path))
 
+    def test_native_preparation_derives_the_validated_source_only_once(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker = self.baseline("single-source", edge_valid=True)
+        with patch.object(coverage.evaluation, "report", wraps=coverage.evaluation.report) as reporting:
+            with patch.object(coverage, "_cases", wraps=coverage._cases) as deriving:
+                prepared = coverage.prepare(baseline, self.root / "single-source-coverage", runner_binary=worker)
+        self.assertGreater(prepared["search_cases"], 0)
+        self.assertEqual(reporting.call_count, 1)
+        self.assertEqual(deriving.call_count, 1)
+
+    def test_native_preparation_rejects_a_new_review_ledger_before_completion(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker = self.baseline("new-reviews", edge_valid=True)
+        original = coverage.evaluation.report(baseline)
+        ledger = Path(original["experiments"][0]["experiment"]) / "reviews.jsonl"
+        self.assertFalse(ledger.exists())
+        native_prepare = experiment.prepare
+        def prepare(*args, **kwargs):
+            value = native_prepare(*args, **kwargs)
+            ledger.write_text("")
+            return value
+        with patch.object(experiment, "prepare", side_effect=prepare):
+            with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+                coverage.prepare(baseline, self.root / "new-reviews-coverage", runner_binary=worker)
+
+    def test_native_preparation_rejects_reviews_added_while_deriving_cases(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker = self.baseline("reviews-during-cases", edge_valid=True)
+        original = coverage.evaluation.report(baseline)
+        ledger = Path(original["experiments"][0]["experiment"]) / "reviews.jsonl"
+        native_cases = coverage._cases
+        def cases(*args, **kwargs):
+            value = native_cases(*args, **kwargs)
+            ledger.write_text("")
+            return value
+        with patch.object(coverage, "_cases", side_effect=cases):
+            with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+                coverage.prepare(baseline, self.root / "reviews-during-cases-coverage", runner_binary=worker)
+
+    def test_snapshot_rejects_reviews_added_during_the_native_report(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker = self.baseline("reviews-during-report", edge_valid=True)
+        original = coverage.evaluation.report(baseline)
+        ledger = Path(original["experiments"][0]["experiment"]) / "reviews.jsonl"
+        native_report = coverage.evaluation.report
+        def report(*args, **kwargs):
+            value = native_report(*args, **kwargs)
+            ledger.write_text("")
+            return value
+        with patch.object(coverage.evaluation, "report", side_effect=report):
+            with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+                coverage.prepare(baseline, self.root / "reviews-during-report-coverage", runner_binary=worker)
+
+    def test_native_preparation_rejects_a_new_result_ledger_for_an_unrun_source(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker = self.baseline("new-results")
+        original = coverage.evaluation.report(baseline)
+        results = next(Path(experiment.load(Path(row["experiment"]))[0]["run_directory"]) / "results.jsonl"
+            for row in original["experiments"] if not (Path(row["experiment"]) / "run/results.jsonl").exists())
+        self.assertFalse(results.exists())
+        native_prepare = experiment.prepare
+        def prepare(*args, **kwargs):
+            value = native_prepare(*args, **kwargs)
+            results.write_text("")
+            return value
+        with patch.object(experiment, "prepare", side_effect=prepare):
+            with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+                coverage.prepare(baseline, self.root / "new-results-coverage", runner_binary=worker)
+
+    def test_cached_source_keeps_exact_cases_and_rejects_removed_reviews(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker = self.baseline("removed-reviews", edge_valid=True)
+        original = coverage.evaluation.report(baseline)
+        native = next(row for row in original["experiments"] if any(
+            case.get("origin") != "mechanical" and case["status"] == "valid" for case in row["cases"]))
+        case = next(case for case in native["cases"] if case.get("origin") != "mechanical" and case["status"] == "valid")
+        fixture.native("review", native["experiment"], "--case", case["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Complete native source assessment.")
+        reference = dict(path=str(baseline / "evaluation.json"), sha256=coverage.engine._sha256_file(baseline / "evaluation.json"))
+        source = dict(schema_version=1, evaluation=reference, answer_ids=[original["random"]["answers"][0]["id"]])
+        context = {}
+        cached = coverage.prepare_source(source, baseline, preparation_context=context)
+        self.assertEqual(cached, coverage.prepare_source(source, baseline))
+        self.assertEqual(cached, coverage.prepare_source(source, baseline, preparation_context=context))
+        ledger = Path(native["experiment"]) / "reviews.jsonl"
+        ledger.unlink()
+        with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+            coverage.prepare_source(source, baseline, preparation_context=context)
+
     def test_native_preparation_rejects_receipt_changed_before_final_recheck(self):
         from experiment_runner import experiment
         from sse_multivector import distillation_coverage_search as coverage

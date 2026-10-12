@@ -50,7 +50,7 @@ def render(template, inputs):
     return re.sub(r"\{([A-Z][A-Z0-9_]*)\}", substitute, template)
 
 
-def prepare_file(dataset, path, template, load_report=None):
+def prepare_file(dataset, path, template, load_report=None, *, preparation_context=None):
     """Load dataset references and hash the exact bytes used for preparation."""
     path = Path(path).resolve()
     sources = {}
@@ -224,7 +224,7 @@ def prepare_file(dataset, path, template, load_report=None):
     if dataset['adapter'] == 'distillation_coverage_search':
         from . import distillation_coverage_search
         cases, protected, preparation = distillation_coverage_search.prepare_source(
-            source, path.parent, dataset.get('select'))
+            source, path.parent, dataset.get('select'), preparation_context=preparation_context)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_review_evaluation':

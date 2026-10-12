@@ -12,21 +12,34 @@ from . import distillation_review_evaluation as evaluation
 from . import extraction_pipeline as engine
 
 
-def _snapshot(reference, base):
+def _snapshot(reference, base, *, observed_paths=None):
     """Load only an independently verified frozen native evaluation."""
     from experiment_runner import experiment
     review._fields(reference, {"path", "sha256"}, "coverage evaluation reference")
     path = engine._resolve_path(reference["path"], "coverage evaluation reference", Path(base))
     if path.name != "evaluation.json" or engine._sha256_file(path) != reference["sha256"]:
         raise ValueError("coverage evaluation hash differs")
-    report = evaluation.report(path.parent)
+    frozen = experiment.read(path)
+    plans, initial_paths = {}, {path, path.parent / "evaluation.complete.json"}
+    for entry in frozen["experiments"]:
+        directory = Path(entry["path"])
+        plan, _, _ = experiment.load(directory)
+        plans[directory] = plan
+        initial_paths.update(map(Path, plan["sources"]))
+        initial_paths.update(directory / filename for filename in plan["files"])
+        initial_paths.update((directory / "experiment.json", directory / "reviews.jsonl",
+                             Path(plan["run_directory"]) / "results.jsonl",
+                             Path(plan["run_directory"]) / "manifest.json"))
+    state = {str(item): _file_state(item) for item in initial_paths}
+    report = evaluation.report(path.parent, include_request_summary=False)
+    _check_preparation_state(state)
     protected = dict(report["sources"])
     receipt_hashes = {}
     for item in (path, path.parent / "evaluation.complete.json"):
         protected[str(item)] = engine._sha256_file(item)
     for native in report["experiments"]:
         directory = Path(native["experiment"])
-        plan, _, _ = experiment.load(directory)
+        plan = plans[directory]
         protected.update(plan["sources"])
         for filename, checksum in plan["files"].items():
             protected[str(directory / filename)] = checksum
@@ -42,10 +55,35 @@ def _snapshot(reference, base):
                     if item not in receipt_hashes:
                         receipt_hashes[item] = engine._sha256_file(item)
                     protected[str(item)] = receipt_hashes[item]
-    frozen = experiment.read(path)
     bundle, _ = evaluation._selection(frozen["selection"], path.parent)
     assessments = evaluation._assessments(frozen["assessment_directory"], bundle)
+    _check_preparation_state(state)
+    if observed_paths is not None:
+        observed_paths.update(state)
     return report, assessments, protected
+
+
+def _source_key(source, base):
+    resolved = dict(source, evaluation=dict(source["evaluation"], path=str(engine._resolve_path(
+        source["evaluation"]["path"], "coverage evaluation reference", Path(base)))))
+    if "premise_audits" in source:
+        resolved["premise_audits"] = [dict(row, path=str(engine._resolve_path(
+            row["path"], "coverage premise audit", Path(base)))) for row in source["premise_audits"]]
+    return json.dumps(resolved, sort_keys=True)
+
+
+def _file_state(path):
+    try:
+        value = Path(path).stat()
+    except FileNotFoundError:
+        return None
+    return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
+
+
+def _check_preparation_state(state):
+    for filename, expected in state.items():
+        if _file_state(filename) != expected:
+            raise ValueError("coverage premise changed while preparing: " + filename)
 
 
 def _premise_audits(references, base, protected):
@@ -309,23 +347,42 @@ def _cases(report, assessments, audits=None):
     return cases, settlements, guards
 
 
-def prepare_source(source, base, selected=None):
+def prepare_source(source, base, selected=None, *, preparation_context=None):
     fields = {"schema_version", "evaluation", "answer_ids"}
     review._fields(source, fields | ({"premise_audits"} if "premise_audits" in source else set()), "coverage search source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("coverage search source schema_version must be 1")
-    report, assessments, protected = _snapshot(source["evaluation"], base)
-    report = evaluation._answer_subset(report, source["answer_ids"])
-    audits = _premise_audits(source.get("premise_audits", []), base, protected)
-    cases, settlements, guards = _cases(report, assessments, audits)
+    key = _source_key(source, base)
+    prepared = None if preparation_context is None else preparation_context.get("coverage_source", {}).get(key)
+    if prepared is not None:
+        _check_preparation_state(prepared["state"])
+        cases, protected, preparation = prepared["cases"], prepared["protected"], prepared["preparation"]
+    else:
+        observed = {}
+        snapshot = None if preparation_context is None else preparation_context.get("coverage_snapshot", {}).get(key)
+        if snapshot is None:
+            report, assessments, protected = _snapshot(source["evaluation"], base, observed_paths=observed)
+            state = {**{str(path): _file_state(path) for path in protected}, **observed}
+        else:
+            report, assessments, protected, observed, state = snapshot
+            _check_preparation_state(state)
+        report = evaluation._answer_subset(report, source["answer_ids"])
+        audits = _premise_audits(source.get("premise_audits", []), base, protected)
+        state = {**state, **{path: _file_state(path) for path in protected if path not in state}}
+        cases, settlements, guards = _cases(report, assessments, audits)
+        _check_preparation_state(state)
+        preparation = dict(settlements=settlements, matching_self_guards=guards,
+            semantic_status="Experimental, unqualified searches.")
+        if preparation_context is not None:
+            preparation_context.setdefault("coverage_source", {})[key] = dict(
+                cases=cases, protected=protected, preparation=preparation, state=state)
     if selected is not None:
         engine._validate_string_array(selected, "coverage search selection", allow_empty=False)
         known = {row["id"] for row in cases}
         if len(selected) != len(set(selected)) or set(selected) - known:
             raise ValueError("unknown or duplicate coverage search selection")
         cases = [row for row in cases if row["id"] in selected]
-    return cases, protected, dict(settlements=settlements, matching_self_guards=guards,
-        qualification_case_ids=[row["id"] for row in cases], semantic_status="Experimental, unqualified searches.")
+    return cases, protected, dict(preparation, qualification_case_ids=[row["id"] for row in cases])
 
 
 def validate(case, raw):
@@ -380,14 +437,18 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
     if output.exists():
         raise ValueError("coverage search output already exists")
     reference = dict(path=str(path), sha256=engine._sha256_file(path))
+    observed = {}
+    snapshot = _snapshot(reference, path.parent, observed_paths=observed)
     if answer_ids is None:
-        baseline = evaluation.report(path.parent)
+        baseline = snapshot[0]
         answer_ids = [answer["id"] for cohort in ("random", "challenge") for answer in baseline[cohort]["answers"]]
     source = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids)
     if premise_audits is not None:
         source["premise_audits"] = [dict(path=str(Path(audit).expanduser().resolve()),
             sha256=engine._sha256_file(Path(audit).expanduser().resolve())) for audit in premise_audits]
-    cases, protected, preparation = prepare_source(source, path.parent)
+    state = {**{str(item): _file_state(item) for item in snapshot[2]}, **observed}
+    context = dict(coverage_snapshot={_source_key(source, path.parent): (*snapshot, observed, state)})
+    cases, protected, preparation = prepare_source(source, path.parent, preparation_context=context)
     directory = Path(__file__).parent / "distillation-review-v1"
     template = (directory / "coverage-search-prompt-v1.md").read_text()
     by_prefix = {}
@@ -423,9 +484,11 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
             str(Path(history_root).resolve() if history_root is not None else output)]
         if cached:
             arguments.append("--prompt-cache")
-        experiment.prepare(experiment.parser().parse_args(arguments), include_request_preview=False)
+        experiment.prepare(experiment.parser().parse_args(arguments), include_request_preview=False,
+                           preparation_context=context)
         experiments.append(dict(path=str(destination), sha256=engine._sha256_file(destination / "experiment.json"),
                                 occurrences=len(rows), prefix_cached=cached))
+    _check_preparation_state(context["coverage_source"][_source_key(source, path.parent)]["state"])
     for filename, checksum in protected.items():
         if engine._sha256_file(Path(filename)) != checksum:
             raise ValueError("coverage premise changed while preparing: " + filename)

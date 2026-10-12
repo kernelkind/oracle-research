@@ -93,6 +93,18 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertEqual(selected.read_bytes(), frozen)
         self.assertFalse((self.root / 'calls.json').exists())
 
+    def test_source_report_omits_request_lookup_without_changing_verified_outcomes(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        directory = self.root / "evaluation"
+        evaluation.prepare(self.selection(), directory, runner_binary=self.worker())
+        expected = evaluation.report(directory)
+        expected["summary"].pop("requests")
+        with patch.object(evaluation, "_request_summary",
+                          side_effect=AssertionError("source reporting must not look up unused requests")):
+            actual = evaluation.report(directory, include_request_summary=False)
+        self.assertEqual(actual, expected)
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_native_cli_prepares_high_matching_with_medium_other_checks(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         selected = self.selection()

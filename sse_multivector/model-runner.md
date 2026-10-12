@@ -2280,6 +2280,24 @@ returns eleven complete distilled-model scores and twenty-one partial scores
 with no inference. These agent-assessed development cases do not qualify the
 final sixty or the general two-point loss bound.
 
+The [review metadata turnaround fix](distillation-review-v1/README.md#review-metadata-turnaround-fix-october-12)
+removes repeated source reports and case derivation within one coverage
+preparation, preserving source checks and all semantic inputs. Native offline
+replay reduces 24-group, 109-case preparation from at least 397.35 seconds to
+26.93 seconds, with exact case, prompt, evidence and cache-setting parity.
+No model calls or frozen producer changes are involved.
+
+Before freezing coverage, run
+`show-distillation-review-evaluation EVALUATION --unreviewed --output INVENTORY`.
+Repeat `--premise-audit PATH` to recognize existing exact complete-output audits;
+that flag requires `--unreviewed`. The inventory separates new output versions
+needing assessment, pending required outputs and exact proofs needing native
+import. Only required semantic outputs enter the inventory; reject and uncertain
+assessments remain assessed without accepting coverage premises. Import exact
+proofs first, audit new versions as outputs arrive with one ledger writer, and
+check that all three inventories are empty before freezing and preparing once.
+The existing report command without `--unreviewed` retains its normal behavior.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,

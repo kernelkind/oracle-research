@@ -466,6 +466,97 @@ def review(args):
         print(f"Recorded {len(rows)} attributed reviews. Model calls made: 0")
 
 
+def unreviewed_evaluation(directory, premise_audits=None):
+    """Find required exact output versions needing assessment before freezing."""
+    from . import distillation_coverage_search as coverage
+    from . import distillation_review as review
+    directory = Path(directory).expanduser().resolve()
+    path = directory / "evaluation.json"
+    result, assessments, protected = coverage._snapshot(
+        dict(path=str(path), sha256=engine._sha256_file(path)), directory)
+    references = [dict(path=str(Path(item).expanduser().resolve()),
+        sha256=engine._sha256_file(Path(item).expanduser().resolve())) for item in premise_audits or []]
+    audits = coverage._premise_audits(references, directory, protected)
+    required = set()
+    for cohort in ("random", "challenge"):
+        for answer in result[cohort]["answers"]:
+            if answer["errors"]:
+                continue
+            checks = answer["checks"]
+            required.update((check, row["id"]) for check in ("matching", "support") for row in checks[check])
+            supported = {row["evidence"]["student_number"] for row in checks["support"]
+                         if row["status"] == "valid" and row["parsed"]["valid"] is True}
+            required.update(("relationship", row["id"]) for row in checks["relationship"]
+                if row["evidence"]["role"] == "actual_relationship"
+                and row["evidence"]["student_number"] in supported)
+            teacher = review._TeacherIndex(answer["teacher"])
+            groups = assessments["contexts"].get(answer["id"])
+            if groups is None:
+                raise ValueError("unreviewed preflight requires frozen teacher meanings")
+            for group in groups:
+                if not group["required"]:
+                    continue
+                identifiers = {teacher.by_number[number] for number in group["teacher_numbers"]}
+                matches = {row["evidence"]["student_number"] for row in checks["matching"]
+                           if row["status"] == "valid" and row["parsed"]["teacher_id"] in identifiers}
+                required.update(("relationship", row["id"]) for row in checks["relationship"]
+                    if row["evidence"]["role"] == "compatibility"
+                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]
+                    and row["evidence"]["heading_number"] in matches)
+    versions, pending = {}, []
+    for native in result["experiments"]:
+        for row in native["cases"]:
+            if (row["evidence"]["check"], row["id"]) not in required or row.get("origin") == "mechanical":
+                continue
+            if row["status"] != "valid":
+                pending.append(dict(experiment=native["experiment"], case_id=row["id"],
+                                    check=row["evidence"]["check"], status=row["status"]))
+                continue
+            check = row["evidence"]["check"]
+            key = (check, row["prompt"], json.dumps(row["inputs"], sort_keys=True, ensure_ascii=False), row["output"])
+            group = versions.setdefault(key, dict(check=check, origin=row.get("origin", "semantic"),
+                input_sha256=row["input_sha256"], inputs=row["inputs"], prompt=row["prompt"],
+                output=row["output"], parsed=row["parsed"], aliases=[], assessments=[]))
+            bound = coverage._bound_premise_audits(row, audits)[1]
+            current = [item for item in row["reviews"] if item.get("current") is True
+                and item.get("role") in {"agent", "user"} and item.get("verdict") in {"accept", "reject", "uncertain"}
+                and isinstance(item.get("comment"), str) and item["comment"].strip()]
+            group["aliases"].append(dict(experiment=native["experiment"], case_id=row["id"],
+                evidence=row["evidence"], reviewed=bool(current or bound), receipt=row.get("receipt")))
+            group["assessments"].extend(dict(experiment=native["experiment"], case_id=row["id"], review=item)
+                                        for item in current)
+            group["assessments"].extend(dict(premise_audit=item) for item in bound)
+    # An exact assessment on an unused alias still proves this complete version;
+    # it does not make the unused comparison part of the required workload.
+    for native in result["experiments"]:
+        for row in native["cases"]:
+            if (row["evidence"]["check"], row["id"]) in required or row["status"] != "valid" or row.get("origin") == "mechanical":
+                continue
+            key = (row["evidence"]["check"], row["prompt"],
+                   json.dumps(row["inputs"], sort_keys=True, ensure_ascii=False), row["output"])
+            group = versions.get(key)
+            if group is None:
+                continue
+            group["assessments"].extend(dict(experiment=native["experiment"], case_id=row["id"], review=item)
+                for item in row["reviews"] if item.get("current") is True and item.get("role") in {"agent", "user"}
+                and item.get("verdict") in {"accept", "reject", "uncertain"}
+                and isinstance(item.get("comment"), str) and item["comment"].strip())
+    unreviewed = [group for group in versions.values() if not group["assessments"]]
+    reusable = [group for group in versions.values()
+                if group["assessments"] and any(not alias["reviewed"] for alias in group["aliases"])]
+    for filename, checksum in protected.items():
+        if engine._sha256_file(Path(filename)) != checksum:
+            raise ValueError("preflight source changed: " + filename)
+    return dict(schema_version=1, output=str(directory), inference_calls=0, sources=protected,
+        summary=dict(required_semantic_versions=len(versions), unreviewed_versions=len(unreviewed),
+            pending_required_outputs=len(pending),
+            unreviewed_aliases=sum(len(group["aliases"]) for group in unreviewed),
+            reusable_review_versions=len(reusable),
+            aliases_needing_reusable_reviews=sum(not alias["reviewed"] for group in reusable for alias in group["aliases"])),
+        unreviewed=unreviewed, reusable_reviews=reusable, pending=pending,
+        semantic_status="Accept, reject and uncertain are assessments; only accepted premises can settle coverage.")
+
+
 def score_review(args):
     """Score an explicitly supplied report without creating a model receipt."""
     try:
@@ -575,6 +666,8 @@ def add_commands(commands):
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path)
+    p.add_argument('--unreviewed', action='store_true', help='show distinct required output versions still needing attributed assessment before freezing')
+    p.add_argument('--premise-audit', type=Path, action='append', help='recognize existing exact complete-output assessments; requires --unreviewed')
     p = commands.add_parser('run-distillation-review-evaluation', help='run prepared native groups with a shared attempt limit')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--max-new-attempts', type=int)
@@ -766,9 +859,15 @@ def handle_command(args):
                 attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason,
                 answer_ids=args.answer_id)
         else:
-            result = evaluation.report(args.evaluation)
+            if args.premise_audit and not args.unreviewed:
+                raise ValueError('--premise-audit requires --unreviewed')
+            result = (unreviewed_evaluation(args.evaluation, args.premise_audit) if args.unreviewed
+                      else evaluation.report(args.evaluation))
             if args.output:
                 write(args.output, result)
+            if args.unreviewed:
+                print(json.dumps(result, ensure_ascii=False, indent=2))
+                return
         compact = {key: result[key] for key in ('output', 'inference_calls', 'summary', 'usage') if key in result}
         if args.command == 'prepare-distillation-review-evaluation':
             compact['experiments'] = result['experiments']

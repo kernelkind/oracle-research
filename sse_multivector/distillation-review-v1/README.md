@@ -7057,14 +7057,57 @@ recording between active windows dominate that span; the overall task also
 includes the metadata implementation, earlier source inventories and final
 collection/accounting. This does not establish full-evaluation turnaround.
 
-Read-only investigation identifies repeated source-only snapshots as removable
-metadata work: every coverage group rebuilds the full native evaluation report,
-including request-availability previews for unused matrix rows. Explicit answer
-IDs remove only the initial redundant report. A later isolated change can omit
-those availability summaries from source-only snapshots and share a hash-verified
-snapshot within one preparation invocation. No live snapshot cache, source
-validation bypass or frozen producer change is introduced here. All 914 final
-collection source hashes still match after the documentation update.
+At the end of this expansion, investigation identified repeated source-only
+snapshots as removable metadata work: every coverage group rebuilt the full
+native evaluation report, including request-availability previews for unused
+matrix rows. The isolated fix and offline replay are recorded below; the frozen
+thirty-two-answer producer and its 914 protected source files remain unchanged.
+
+## Review metadata turnaround fix (October 12)
+
+Coverage preparation now loads one verified source report and derives cases once
+per invocation, sharing them across native groups. Source-only reports omit
+request-availability summaries for unused rows. Default reports retain them.
+Reuse ends with the invocation; source, review-ledger and receipt changes during
+preparation fail validation, including newly created or removed ledgers. Final
+SHA256 checks remain required.
+
+An offline native replay prepares the same **24 groups and 109 cases in 26.93
+seconds**, versus a historical lower bound of 397.35 seconds: at least **14.75
+times faster**. Inputs, rendered prompts, evidence, runner/cache settings, 156
+settlements and 333 guards match exactly. All 914 prior protected hashes still
+match. No model calls were made. This measures preparation, not total audit time.
+Relevant production-path suites pass 77 tests. One existing shared attempt-cap
+and resume test fails with both the unchanged earlier producer and this change;
+the shared runner reports stopped dispatch alongside exhausted allowance, which
+the existing evaluation wrapper does not recognize. That separate failure is
+not changed by this metadata task.
+
+Before freezing new coverage, use
+`show-distillation-review-evaluation EVALUATION --unreviewed`, with repeated
+`--premise-audit` paths where applicable. It identifies required complete output
+versions needing assessment, separately from pending outputs and exact proofs
+needing native import to other occurrences. Check identity includes the check
+and case ID; version identity includes the full inputs, prompt and raw output.
+Reject and uncertain assessments count as reviewed without accepting premises.
+Mechanical results and unused comparisons do not enter this audit inventory.
+The replay inventories 958 required versions in 13.56 seconds, with zero pending,
+unreviewed or reusable-review gaps.
+
+For subsequent iterations, import exact existing proofs first, audit only new
+complete output versions, and assign one writer to each review ledger. Audit
+available outputs while independent model groups run. Before freezing, resolve
+all inventory gaps, then prepare coverage once and collect/account once. Known
+inputs reuse their source inventory; changed model explanations still require
+assessment. No prompt, semantic rule, effort setting or acceptance requirement
+changes here.
+
+Replay artifacts are ignored beneath
+`oracle-mvp-review-metadata-speed/target/distillation-review-v1/metadata-speed/`:
+`coverage-verified/`, `coverage-verified-parity-timing.json`,
+`preflight-verified.json` and `preflight-verified-timing.json`. This producer and
+the pinned `experiment-runner-review-mixed-thirty-two` runtime remain necessary
+for the replay's absolute source bindings.
 
 ## Actual distilled wording: offline preview (October 8)
 
